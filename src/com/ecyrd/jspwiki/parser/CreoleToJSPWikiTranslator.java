@@ -499,43 +499,4 @@ public class CreoleToJSPWikiTranslator
         matcher.appendTail(result);
         return result.toString();
     }
-
-    public static void main(String[] args)
-    {
-
-        String code = "Liste:\n\n-1\n-2\n--2.1\n--2.2\n---2.2.1\n-3\nEnde der Liste\n\n--Steff\n\n----\n\nUnd noch was --Steff";
-        System.out.println(code);
-        System.out.println("---------------------");
-        System.out.println(translateLists(code, "-", "*", "#"));
-
-        String creole = "== Header Large ==\n\n";
-        creole += "=== Header Medium ===\n\n";
-        creole += "==== Header Small ====\n\n";
-        creole += "This is **bold** or //italic// or a [[SimpleLink]] or [[PageName|LinkTitle]].\n\n";
-        creole += "This is **bold\nacross lines**\n";
-        creole += "This is **bold\n\nacross paragraphs which does not work**\n\n";
-        creole += "Image: {{image.png}} or with caption: {{image.png|Some image}}\n";
-        creole += "This is **parsed** an {{{ this is **not parsed**}}}, but //this// again\n";
-        creole += "This is\\\\\ntest\n";
-        creole += "Normal text {{{preformatted text}}} Normal text\n";
-        creole += "|C00|C01|C02\n";
-        creole += "|C10|C11|C12\n";
-        creole += "Text\n";
-        creole += "-list1\n";
-        creole += "--list2\n";
-        creole += "----\n";
-        creole += "-----Test It\n";
-        creole += "--\n";
-        creole += "-hello\n";
-        creole += "hi\n";
-        creole += "--Hi\n";
-        creole += "-Hi\n";
-        creole += "Hall0====Hallo";
-
-        System.out.println(creole);
-        System.out.println("\n=================================\n");
-
-        CreoleToJSPWikiTranslator translator = new CreoleToJSPWikiTranslator();
-        System.out.println(translator.translate(new Properties(), creole));
-    }
 }

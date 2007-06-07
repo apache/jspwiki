@@ -25,40 +25,56 @@ import com.ecyrd.jspwiki.parser.CreoleToJSPWikiTranslator;
  * @see <a href="http://www.wikicreole.org/wiki/MixedMode">[[WikiCreole:MixedMode]]</a> 
  */
 
-public class CreoleFilter extends BasicPageFilter {
+public class CreoleFilter extends BasicPageFilter 
+{
+    /**
+     *  {@inheritDoc}
+     */
+    public void initialize(WikiEngine engine, Properties props) throws FilterException 
+    {
+    }
 
-	public void initialize(WikiEngine engine, Properties props) throws FilterException {
-	}
-	
-	public String preSave( WikiContext wikiContext, String content )
+    /**
+     *  {@inheritDoc}
+     */
+    public String preSave( WikiContext wikiContext, String content )
     throws FilterException
     {
-		try {
-			String username=wikiContext.getCurrentUser().getName();
+        try 
+        {
+            String username=wikiContext.getCurrentUser().getName();
             Properties prop = wikiContext.getEngine().getWikiProperties();
-			return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
-		}catch(Exception e ){
-			e.printStackTrace();
-			return e.getMessage();
-		}
-	}
+            return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
+        }
+        catch(Exception e )
+        {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
 
-	public String preTranslate(WikiContext wikiContext, String content)
-			throws FilterException {
+    /**
+     *  {@inheritDoc}
+     */
 
-		try{
+    public String preTranslate(WikiContext wikiContext, String content)
+        throws FilterException 
+    {
+        try
+        {
             Properties prop = wikiContext.getEngine().getWikiProperties();
-			return new CreoleToJSPWikiTranslator().translate(prop ,content);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return content
-					+ "\n \n %%error \n"
-					+ "[CreoleFilterError]: This page was not translated by the CreoleFilter due to "
-					+ "the following error: " + e.getMessage() + "\n \n"
-					+ "%%\n \n";
-		}
-
-	}
+            return new CreoleToJSPWikiTranslator().translate(prop ,content);
+            
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+            return content
+                   + "\n \n %%error \n"
+                   + "[CreoleFilterError]: This page was not translated by the CreoleFilter due to "
+                   + "the following error: " + e.getMessage() + "\n \n"
+                   + "%%\n \n";
+        }
+    }
 
 }

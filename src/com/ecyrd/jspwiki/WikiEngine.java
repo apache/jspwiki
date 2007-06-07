@@ -803,6 +803,7 @@ public class WikiEngine
      *  @see #getURL(String, String, String, boolean)
      *  @see WikiContext#getURL(String, String)
      *  @since 2.0.42.
+     *  @param attName Attachment name
      *  @deprecated
      */
     public String getAttachmentURL( String attName )

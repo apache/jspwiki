@@ -90,6 +90,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
     /**
      *  Creates a new PageManager.
+     *  
+     *  @param engine WikiEngine instance
+     *  @param props Properties to use for initialization
      *  @throws WikiException If anything goes wrong, you get this.
      */
     public PageManager( WikiEngine engine, Properties props )
@@ -656,7 +659,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
         }
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public Collection modules()
     {
         // TODO Auto-generated method stub
@@ -665,11 +670,13 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
 
     /**
-     * Listens for {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
-     * events. If a user profile's name changes, each page ACL is inspected. If an entry contains
-     * a name that has changed, it is replaced with the new one. No events are emitted
-     * as a consequence of this method, because the page contents are still the same; it is
-     * only the representations of the names within the ACL that are changing.
+     *  Listens for {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#PROFILE_NAME_CHANGED}
+     *  events. If a user profile's name changes, each page ACL is inspected. If an entry contains
+     *  a name that has changed, it is replaced with the new one. No events are emitted
+     *  as a consequence of this method, because the page contents are still the same; it is
+     *  only the representations of the names within the ACL that are changing.
+     * 
+     *  @param event The event
      */
     public void actionPerformed(WikiEvent event)
     {
@@ -723,12 +730,14 @@ public class PageManager extends ModuleManager implements WikiEventListener
     }
 
     /**
-     * For a single wiki page, replaces all Acl entries matching a supplied array of Principals with a new Principal.
-     * @param page the wiki page whose Acl is to be modified
-     * @param oldPrincipals an array of Principals to replace; all AclEntry objects whose
-     * {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
-     * @param newPrincipal the Principal that should receive the old Principals' permissions
-     * @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
+     *  For a single wiki page, replaces all Acl entries matching a supplied array of Principals 
+     *  with a new Principal.
+     * 
+     *  @param page the wiki page whose Acl is to be modified
+     *  @param oldPrincipals an array of Principals to replace; all AclEntry objects whose
+     *   {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
+     *  @param newPrincipal the Principal that should receive the old Principals' permissions
+     *  @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
      */
     protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
     {

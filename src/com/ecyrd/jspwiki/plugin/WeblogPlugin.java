@@ -467,7 +467,10 @@ public class WeblogPlugin
         }
     }
 
-    /** Mark us as being a real weblog. */
+    /** 
+     *  Mark us as being a real weblog. 
+     *  {@inheritDoc}
+     */
     public void executeParser(PluginContent element, WikiContext context, Map params)
     {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );

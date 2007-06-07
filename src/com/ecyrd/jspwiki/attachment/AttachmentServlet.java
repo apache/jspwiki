@@ -111,7 +111,9 @@ public class AttachmentServlet
     //private final DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
-     * Initializes the servlet from WikiEngine properties.
+     *  Initializes the servlet from WikiEngine properties.
+     *   
+     *  {@inheritDoc}
      */
     public void init( ServletConfig config )
         throws ServletException
@@ -201,8 +203,10 @@ public class AttachmentServlet
     }
 
     /**
-     * Serves a GET with two parameters: 'wikiname' specifying the wikiname
-     * of the attachment, 'version' specifying the version indicator.
+     *  Serves a GET with two parameters: 'wikiname' specifying the wikiname
+     *  of the attachment, 'version' specifying the version indicator.
+     *  
+     *  {@inheritDoc}
      */
 
     // FIXME: Messages would need to be localized somehow.
@@ -425,6 +429,8 @@ public class AttachmentServlet
      * two parts. The first, named 'page', is the WikiName identifier
      * for the parent file. The second, named 'content', is the binary
      * content of the file.
+     * 
+     * {@inheritDoc}
      */
     public void doPost( HttpServletRequest  req, HttpServletResponse res )
         throws IOException, ServletException
@@ -445,6 +451,9 @@ public class AttachmentServlet
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void doPut( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
@@ -592,11 +601,13 @@ public class AttachmentServlet
      * @param filename the name of the file to upload
      * @param errorPage the place to which you want to get a redirection
      * @param parentPage the page to which the file should be attached
+     * @param changenote The change note
+     * @param contentLength The content length
      * @return <code>true</code> if upload results in the creation of a new page;
      * <code>false</code> otherwise
-     * @throws RedirectException
-     * @throws IOException
-     * @throws ProviderException
+     * @throws RedirectException If the content needs to be redirected
+     * @throws IOException       If there is a problem in the upload.
+     * @throws ProviderException If there is a problem in the backend.
      */
     protected boolean executeUpload( WikiContext context, InputStream data,
                                      String filename, String errorPage,
@@ -715,6 +726,11 @@ public class AttachmentServlet
         return created;
     }
 
+    /**
+     *  Provides tracking for upload progress.
+     *  
+     *  @author Janne Jalkanen
+     */
     private class UploadListener
        extends    ProgressItem
        implements ProgressListener

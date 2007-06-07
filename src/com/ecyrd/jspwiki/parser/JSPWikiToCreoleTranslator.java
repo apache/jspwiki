@@ -9,6 +9,6 @@ package com.ecyrd.jspwiki.parser;
  *
  */
 
-public class JSPWikiToCreoleTranslator {
-	
+public class JSPWikiToCreoleTranslator 
+{	
 }
