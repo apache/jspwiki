@@ -25,7 +25,7 @@
   </div>
 </c:if>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>" 
+<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/><wiki:Param name='editor' value='plain'/></wiki:Link>" 
        class="wikiform" 
         name="setCookie" id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />" 
@@ -88,14 +88,14 @@
   </td>
   </tr>
   
-  <%-- FIXME: temporary removed; "editor" session parameter to be set - see EditContent.jsp, editorManager.java 
+  <%-- FIXME: EditroIterator doesnt work from UserPrefs ?? 
   <tr>
-  <td><label for="prefEditorType"><u>E</u>ditor Type</label></td>
+  <td><label for="prefEditorType"><fmt:message key="edit.chooseeditor"/></label></td>
   <td>
-  <select id="prefEditorType" name="prefEditorType" >
-    <option <%= ("plain".equals(prefEditorType)) ? "selected=\'selected\'" : "" %> value="plain">Standard wiki-markup editor</option>
-    <option <%= ("WikiWizard".equals(prefEditorType)) ? "selected=\'selected\'" : "" %> value="WikiWizard">WikiWizard</option>
-    <option <%= ("FCK".equals(prefEditorType)) ? "selected=\'selected\'" : "" %> value="FCK">FCK Editor</option>
+    <select id="prefEditorType" name="prefEditorType">
+      <wiki:EditorIterator id="edt">
+        <option <%=edt.isSelected()%> value="<%=edt.getURL()%>"><%=edt.getName()%></option>
+      </wiki:EditorIterator>
   </select>
   </td>
   </tr>

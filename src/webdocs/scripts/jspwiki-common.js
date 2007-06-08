@@ -50,9 +50,6 @@ function $getText(el) {
 	return el.innerText || el.textContent || '';
 }
 Element.extend({
-	getText: function() {
-		return this.innerText || this.textContent || '';
-	},
 	/* wrapper = new Element('div').injectWrapper(node); */
 	injectWrapper: function(el){
 		while( el.firstChild ) this.appendChild( el.firstChild );
@@ -925,7 +922,6 @@ var WikiAccordion = {
 				}        
 				contents.push(tab.addClass('tab'));
 			});
-
 			new Accordion(toggles, contents, {     
 				alwaysHide: !togglemenu,
 				//FIXME 
@@ -1050,7 +1046,7 @@ var SearchBox = {
 		var qv = this.query.value ;
 		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
 
-		$('searchTarget').setHTML( "("+qv+") :" );
+		$('searchTarget').setHTML('('+qv+') :');
 		$('searchSpin').show();
 
 		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
@@ -1060,7 +1056,7 @@ var SearchBox = {
 				result.list.each(function(el){
 					new Element('li').adopt( 
 						new Element('a',{'href':Wiki.BaseURL+"Wiki.jsp?page="+el.map.page}).setHTML(el.map.page), 
-						new Element('span',{'class':'small'}).setHTML("("+el.map.score+")")
+						new Element('span',{'class':'small'}).setHTML(" ("+el.map.score+")")
 					).injectInside(frag);
 				});
 				$('searchOutput').empty().adopt(frag);

@@ -48,6 +48,11 @@
   <wiki:Include page="AttachmentTab.jsp"/>
 </wiki:Tab>
   
+<wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+         url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+         accesskey="i" >
+</wiki:Tab>
+    
 <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' >
   <wiki:InsertPage page="EditPageHelp" />
   <wiki:NoSuchPage page="EditPageHelp">

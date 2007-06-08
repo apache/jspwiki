@@ -21,7 +21,7 @@
        title="<fmt:message key='actions.home.title' ><fmt:param><%=homepage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
   </span>
   
-  <wiki:CheckRequestContext context='info|diff|upload|edit'>
+  <wiki:CheckRequestContext context='edit'>
     <span class="actionView">
       <wiki:PageType type="page">
         <a href="<wiki:Link format='url' />" accesskey="v" 
@@ -36,14 +36,6 @@
     </span>
   </wiki:CheckRequestContext>
   
-  <wiki:CheckRequestContext context='!info'>
-  <span class="actionInfo" >
-      <a href="<wiki:PageInfoLink format='url' />" id="moreinfo" accesskey="i" 
-        title="<fmt:message key='actions.info.title'/>"><fmt:message 
-          key='actions.info'/></a>
-  </span>
-  </wiki:CheckRequestContext>
-
   <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
       <span class="actionEdit">

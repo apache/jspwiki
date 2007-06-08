@@ -17,7 +17,7 @@
            size="20" autocomplete="off"
       accesskey="f"></input>
   <button type="submit"
-  		 name="go" id="searchSubmit"
+  		 name="searchSubmit" id="searchSubmit"
   		value="<fmt:message key='find.submit.go'/>"
   		title="<fmt:message key='find.submit.go'/>"></button>
   </div>

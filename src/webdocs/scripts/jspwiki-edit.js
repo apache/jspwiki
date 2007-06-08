@@ -36,15 +36,13 @@ var EditTools =
     this.mainarea = $('editorarea'); if( !this.mainarea ) return;
     this.textarea = this.mainarea;
     
-    /* add textarea resize drag bar */
+    /* add textarea resize drag bar - dont for WikiWizard */
+    if( this.textarea.getStyle('visibility')=='visible') { 
 	var h = new Element('div',{'class':'textarea-resizer', 'title':'edit.resize'.localize()})
 		.injectAfter(this.textarea);	
 	this.textarea.makeResizable({handle:h, modifiers: {x:false, y:'height'} });			
+	}
   } ,
-    
-  /**
-   ** TOOLBAR stuff
-   **/
   
   /* TOOLBAR: find&replace */
   doReplace: function( )

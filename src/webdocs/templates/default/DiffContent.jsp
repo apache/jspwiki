@@ -3,6 +3,7 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setBundle basename="templates.default"/>
 
@@ -13,7 +14,17 @@
   pageContext.setAttribute( "diffprovider", c.getEngine().getVariable(c,"jspwiki.diffProvider"));
  %>
 
-<wiki:TabbedSection>
+<wiki:TabbedSection defaultTab="diffcontent">
+  <wiki:Tab id="pagecontent" title="View" accesskey="v" 
+	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
+  </wiki:Tab>
+
+  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+           accesskey="i" >
+  </wiki:Tab>
+    
+
 <wiki:Tab id="diffcontent" title="Page Difference">
 
 <wiki:PageExists>
@@ -48,17 +59,6 @@
        </c:if>
 
     </form>
-    <br />
-    <fmt:message key="diff.goback">
-       <fmt:param><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></fmt:param>
-       <fmt:param>
-         <wiki:PageInfoLink>
-           <fmt:message key="diff.versionhistory">
-             <fmt:param><wiki:PageName /></fmt:param>
-           </fmt:message>
-         </wiki:PageInfoLink>
-       </fmt:param>
-    </fmt:message>
   </div>
 
   <div class="diffbody">

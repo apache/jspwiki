@@ -174,6 +174,10 @@
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
 
+  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
+    <wiki:Include page="AttachmentTab.jsp"/>
+  </wiki:Tab>
+
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>" accesskey="i" >
 
   <p>
@@ -325,10 +329,6 @@
 
     <%-- } /* itemcount > 1 */ --%>
     </wiki:CheckVersion>
-  </wiki:Tab>
-
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
   </wiki:Tab>
 
   <wiki:Tab id="incomingLinks" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab.links")%>">

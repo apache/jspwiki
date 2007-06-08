@@ -289,7 +289,6 @@ a.footnote {
 .additinfo {
 	background-color:#e0e0ff; /*#fff7c0;*/
 }
-
 .diffnote,
 .information,
 .warning,
@@ -527,7 +526,7 @@ body.comment {
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
-	background:#bbb; 
+	background:#f93; 
 	cursor:s-resize; /* css3 row-resize */ 
 	height:4px; 
 }
@@ -729,11 +728,11 @@ body.comment {
  	background:url(images/arrup.png) no-repeat center;
 }
 .quick2bottom a {
+	top:0;
  	background:url(images/arrdown.png) no-repeat center;
 }
 .quick2top a:hover, .quick2bottom a:hover {
 	background-color:#f93;
-	color:white;
 }
 
 
@@ -827,27 +826,13 @@ body.view {
 	background:#eee;
 	border:1px solid #bbb;
 	text-align:center;
+	font-size:1.4em;
 }
 .index .body {
 }
 .index .section {
 	color:red;
-}
-
-div.index {
-}
-div.index .header {
-	padding:4px;
-	background:#f0f0f0;
-}
-div.index .body {
-}
-div.index .section a {
-	display:block;
-	padding:0 0.25em;
-	color:black;
-	font-weight:bold;
-	text-decoration:none;
+	font-size:1.4em;
 }
 
 /* +++ 625 Table of contents plugin +++ */
@@ -912,7 +897,7 @@ div.index .section a {
 	display:block;
 	list-style-type:none;
 }
-.archiveyea {
+.archiveyear {
 	font-weight:bold;
 	text-decoration:none;
 	margin-left:0 !important;
@@ -956,8 +941,6 @@ div.index .section a {
 .recentchanges tr.odd td {
 	background-color:transparent;
 } 
-
-
 
 
 /* +++ 800 JSPWiki JSP Taglibs +++ */

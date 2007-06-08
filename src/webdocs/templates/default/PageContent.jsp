@@ -9,17 +9,6 @@
   int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
-  
-  WikiPage wikiPage = c.getPage();
-
-  String creationDate   ="";
-  String creationAuthor ="";
-  //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
-  if( firstPage != null )
-  {
-    creationAuthor = firstPage.getAuthor();
-  }
 %>
 
 <wiki:TabbedSection defaultTab='${param.tab}' >
@@ -32,6 +21,11 @@
 
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
     <wiki:Include page="AttachmentTab.jsp"/>
+  </wiki:Tab>
+    
+  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+           accesskey="i" >
   </wiki:Tab>
     
   </wiki:PageExists>

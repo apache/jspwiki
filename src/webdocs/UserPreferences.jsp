@@ -9,6 +9,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.user.DuplicateUserException" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
+<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -26,6 +27,11 @@
     UserManager userMgr = wiki.getUserManager();
     WikiSession wikiSession = wikiContext.getWikiSession();
 
+    if( request.getParameter(EditorManager.PARA_EDITOR) != null )
+    {
+    	String editor = request.getParameter(EditorManager.PARA_EDITOR);
+    	session.setAttribute(EditorManager.PARA_EDITOR,editor);
+    }
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) )
     {
