@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
@@ -63,6 +65,14 @@ public abstract class IteratorTag
             m_iterator = arg.iterator();
     }
 
+    public void setList( Object[] arg )
+    {
+        if( arg != null )
+        {
+            m_iterator = Arrays.asList(arg).iterator();
+        }
+    }
+    
     /**
      *  Sets the iterator directly that is used to form the iteration.
      */
@@ -92,8 +102,7 @@ public abstract class IteratorTag
     
     public int doStartTag()
     {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+        m_wikiContext = WikiContext.findContext(pageContext);
         
         resetIterator();
         
