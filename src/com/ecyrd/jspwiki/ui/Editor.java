@@ -45,6 +45,7 @@ public class Editor
         return m_editorName;
     }
 
+    // FIXME: Fails, if the editoriterator is on a non-editor page.
     public String getURL()
     {
         String uri = m_wikiContext.getHttpRequest().getRequestURI();
