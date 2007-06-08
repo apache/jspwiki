@@ -1,6 +1,11 @@
-2007-06-03  Dirk Frederickx (dirk.frederickx@gmail.com)
+2007-06-09  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.77
+
+       * Refactored EditorIteratorTag; Added editor changes
+       to the UserPreferences.       
+
+2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * Info tab is back, now making use of the new tab url parameter.
        

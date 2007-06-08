@@ -88,18 +88,16 @@
   </td>
   </tr>
   
-  <%-- FIXME: EditroIterator doesnt work from UserPrefs ?? 
   <tr>
   <td><label for="prefEditorType"><fmt:message key="edit.chooseeditor"/></label></td>
   <td>
     <select id="prefEditorType" name="prefEditorType">
       <wiki:EditorIterator id="edt">
-        <option <%=edt.isSelected()%> value="<%=edt.getURL()%>"><%=edt.getName()%></option>
+        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
   </select>
   </td>
   </tr>
-  --%>
   
   <tr>
   <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
