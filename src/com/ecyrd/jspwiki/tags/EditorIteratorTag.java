@@ -49,88 +49,21 @@ public class EditorIteratorTag
 
     public final int doStartTag()
     {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+        m_wikiContext = WikiContext.findContext(pageContext);
 
         WikiEngine engine = m_wikiContext.getEngine();
         EditorManager mgr    = engine.getEditorManager();
 
-        try
-        {
-            if( mgr != null )
-            {
-                // FIXME3.0: This makes no sense.
-                String[] editorList = mgr.getEditorList();
-                
-                Collection editors = new ArrayList();
-                
-                for ( int i = 0; i < editorList.length; i++ )
-                {
-                    editors.add(new Editor(m_wikiContext, editorList[i]));
-                } 
-
-                if( editors.size() == 0 )
-                {
-                    log.debug("No editors configured.");
-
-                    // There are no editors.
-                    return SKIP_BODY;
-                }
-
-                m_iterator = editors.iterator();
-
-                if ( m_iterator.hasNext() )
-                {
-                    WikiContext context = (WikiContext)m_wikiContext.clone();
-                    Editor editor = (Editor) m_iterator.next();
-                    
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
-                    pageContext.setAttribute( getId(), editor );
-                    return EVAL_BODY_BUFFERED;
-                }
-
-                return SKIP_BODY;
-            }
-        }
-        catch( Exception e )
-        {
-            log.fatal("Provider failed while trying to iterate through editors",e);
-            // FIXME: Throw something.
-        }
-
-        return SKIP_BODY;
-    }
-    
-    public int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
-                bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
-                // FIXME: throw something?
-            }
-        }
+        String[] editorList = mgr.getEditorList();
         
-        if ( m_iterator != null && m_iterator.hasNext() )
+        Collection editors = new ArrayList();
+        
+        for ( int i = 0; i < editorList.length; i++ )
         {
-            Editor edtr = (Editor) m_iterator.next(); 
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(), edtr );
-            return EVAL_BODY_BUFFERED;
-        }
-
-        return SKIP_BODY;
+            editors.add(new Editor(m_wikiContext, editorList[i]));
+        } 
+        setList( editors );
+        
+        return super.doStartTag();
     }
 }
