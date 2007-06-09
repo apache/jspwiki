@@ -154,6 +154,8 @@ public class AttachmentManager
 
     /**
      *  Returns true, if attachments are enabled and running.
+     *
+     *  @return A boolean value indicating whether attachment functionality is enabled.
      */
     public boolean attachmentsEnabled()
     {
@@ -301,6 +303,7 @@ public class AttachmentManager
      *
      *  @param wikipage The wiki page from which you are seeking attachments for.
      *  @return a valid collection of attachments.
+     *  @throws ProviderException If there was something wrong in the backend.
      */
 
     // FIXME: This API should be changed to return a List.
@@ -345,11 +348,13 @@ public class AttachmentManager
     }
 
     /**
-     *  Finds an attachment from the repository as a stream.
+     *  Finds a (real) attachment from the repository as a stream.
      *
      *  @param att Attachment
      *  @return An InputStream to read from.  May return null, if
      *          attachments are disabled.
+     *  @throws IOException If the stream cannot be opened
+     *  @throws ProviderException If the backend fails due to some other reason.
      */
     public InputStream getAttachmentStream( Attachment att )
         throws IOException,
@@ -358,6 +363,18 @@ public class AttachmentManager
         return getAttachmentStream( null, att );
     }
 
+    /**
+     *  Returns an attachment stream using the particular WikiContext.  This method
+     *  should be used instead of getAttachmentStream(Attachment), since it also allows
+     *  the DynamicAttachments to function.
+     *
+     *  @param ctx The Wiki Context
+     *  @param att The Attachment to find
+     *  @return An InputStream.  May return null, if attachments are disabled.  You must
+     *          take care of closing it.
+     *  @throws ProviderException If the backend fails due to some reason
+     *  @throws IOException If the stream cannot be opened
+     */
     public InputStream getAttachmentStream( WikiContext ctx, Attachment att )
         throws ProviderException, IOException
     {
@@ -376,11 +393,26 @@ public class AttachmentManager
 
     private Cache m_dynamicAttachments = new Cache( true, false, false );
 
+    /**
+     *  Stores a dynamic attachment.  Unlike storeAttachment(), this just stores
+     *  the attachment in the memory.
+     *
+     *  @param ctx A WikiContext
+     *  @param att An attachment to store
+     */
     public void storeDynamicAttachment( WikiContext ctx, DynamicAttachment att )
     {
         m_dynamicAttachments.putInCache( att.getName(),  att );
     }
 
+    /**
+     *  Finds a DynamicAttachment.  Normally, you should just use getAttachmentInfo(),
+     *  since that will find also DynamicAttachments.
+     *
+     *  @param name The name of the attachment to look for
+     *  @return An Attachment, or null.
+     *  @see #getAttachmentInfo(String)
+     */
 
     public DynamicAttachment getDynamicAttachment( String name )
     {
@@ -491,6 +523,7 @@ public class AttachmentManager
      *
      *  @return A collection of attachments.  If attachments are disabled, will
      *          return an empty collection.
+     *  @throws ProviderException If something went wrong with the backend
      */
     public Collection getAllAttachments()
         throws ProviderException
@@ -514,7 +547,10 @@ public class AttachmentManager
     }
 
     /**
-     * Deletes the given attachment version.
+     *  Deletes the given attachment version.
+     *
+     *  @param att The attachment to delete
+     *  @throws ProviderException If something goes wrong with the backend.
      */
     public void deleteVersion( Attachment att )
         throws ProviderException
@@ -523,7 +559,9 @@ public class AttachmentManager
     }
 
     /**
-     * Deletes all versions of the given attachment.
+     *  Deletes all versions of the given attachment.
+     *  @param att The Attachment to delete.
+     *  @throws ProviderException if something goes wrong with the backend.
      */
     // FIXME: Should also use events!
     public void deleteAttachment( Attachment att )
