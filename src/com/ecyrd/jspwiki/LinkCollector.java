@@ -33,11 +33,18 @@ public class LinkCollector
 {
     private ArrayList m_items = new ArrayList();
 
+    /**
+     * Returns a List of Strings representing links.
+     * @return the link collection
+     */
     public Collection getLinks()
     {
         return m_items;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String mutate( WikiContext context, String in )
     {
         m_items.add( in );

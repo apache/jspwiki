@@ -37,9 +37,16 @@ import com.ecyrd.jspwiki.WikiPage;
  *  @author Janne Jalkanen
  *  @since 2.1.61.
  */
-public class HttpUtil
+public final class HttpUtil
 {
     static Logger log = Logger.getLogger( HttpUtil.class );
+    
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private HttpUtil()
+    {
+    }
 
     /**
      *  Attempts to retrieve the given cookie value from the request.
@@ -77,7 +84,7 @@ public class HttpUtil
             }
         }
 
-        return( null );
+        return null;
     }
 
     /**
@@ -95,6 +102,9 @@ public class HttpUtil
     
     /**
      *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
+     *  @param req the HTTP request
+     *  @param page the wiki page to check for
+     *  @return the result of the check
      */
     public static boolean checkFor304( HttpServletRequest req,
                                        WikiPage page )

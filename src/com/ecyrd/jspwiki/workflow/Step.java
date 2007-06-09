@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -187,10 +206,7 @@ public interface Step
      * be started because the underlying implementation encounters an error,
      * it the implementation should throw a WikiException.
      * 
-     * @throws IllegalStateException
-     *             if the Step has already been started
-     * @throws WikiException
-     *             if the step encounters errors while starting
+     * @throws WikiException if the step encounters errors while starting
      */
     public void start() throws WikiException;
 
@@ -198,17 +214,14 @@ public interface Step
      * Sets the current Outcome for the step. If the Outcome is a "completion"
      * Outcome, it should also sets the completon time and mark the Step as
      * complete. Once a Step has been marked complete, this method cannot be
-     * called again.
+     * called again. If the supplied Outcome is not in the set returned by
+     * {@link #getAvailableOutcomes()}, or is not  {@link Outcome#STEP_CONTINUE}
+     * or {@link Outcome#STEP_ABORT}, this method returns an
+     * IllegalArgumentException. If the caller attempts to set an Outcome
+     * and the Step has already completed, this method throws an 
+     * IllegalStateException.
      * 
-     * @param outcome
-     *            whether the step should be considered completed
-     * @throws IllegalStateException
-     *             if the caller attempts to set an Outcome and the Step has
-     *             already completed
-     * @throws IllegalArgumentException
-     *             if the caller attempts to set an Outcome that is not in those
-     *             returned by {@link #getAvailableOutcomes()}, 
-     *             {@link Outcome#STEP_CONTINUE} or {@link Outcome#STEP_ABORT}.
+     * @param outcome whether the step should be considered completed
      */
     public void setOutcome(Outcome outcome);
 

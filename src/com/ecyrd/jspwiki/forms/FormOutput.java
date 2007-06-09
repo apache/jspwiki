@@ -74,7 +74,7 @@ public class FormOutput
             // ahead and let the handler (populator) put stuff into
             // the context, otherwise we'll just hide.
             if( populator == null || !PARAM_HANDLER.equals( populator ) )
-                return( "" );
+                return "";
             // If population was allowed, we should first  
         }
 
@@ -82,8 +82,8 @@ public class FormOutput
         if( handler == null || handler.length() == 0 )
         {
             // Need to print out an error here as this form is misconfigured
-            return( "<p class=\"error\">Argument '" +
-                    PARAM_HANDLER + "' required for Form plugin</p>" );
+            return "<p class=\"error\">Argument '" +
+                    PARAM_HANDLER + "' required for Form plugin</p>";
         }
 
         String sourcePage = ctx.getPage().getName();
@@ -136,9 +136,9 @@ public class FormOutput
         storeFormInfo( ctx, info );
 
         if( error != null )
-            return( error );
+            return error;
 
-        return( handlerOutput != null ? handlerOutput : "" );
+        return handlerOutput != null ? handlerOutput : "";
     }
 
 }

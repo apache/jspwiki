@@ -20,10 +20,7 @@
 */
 package com.ecyrd.jspwiki.util;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,32 +31,41 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author ebu
  */
-public class FormUtil
+public final class FormUtil
 {
     /**
-     * Looks for a named value in the Map. Returns either the
+     * Private constructor to prevent direct instantiation.
+     */
+    private FormUtil()
+    {
+    }
+    
+    /**
+     * <p>Looks for a named value in the Map. Returns either the
      * value named by key, or values named by key.0, key.1, ...
      * if the direct value is not found. The values are packed
-     * in an ArrayList.
-     *
+     * in an ArrayList.</p>
      * <p>This is a utility method, mainly used when we don't know
      * whether there was just one value, or several, in a mapping list
-     * (e.g. an HttpRequest / FORM checkbox).
+     * (e.g. an HttpRequest / FORM checkbox).</p>
+     * @param params the Map container form parameters
+     * @param key the key to look up
+     * @return the List of keys
      */
-    public static ArrayList getValues( Map params, String key )
+    public static List getValues( Map params, String key )
     {
         if( params == null || key == null )
-            return( new ArrayList(0) );
+            return new ArrayList(0);
 
         Object entry = params.get( key );
         if( entry != null )
         {
             ArrayList rval = new ArrayList(1);
             rval.add( entry );
-            return( rval );
+            return rval;
         }
 
-        return( getNumberedValues( params, key ) );
+        return getNumberedValues( params, key );
     }
 
 
@@ -88,7 +94,7 @@ public class FormUtil
             params.size() == 0 || 
             keyPrefix == null || 
             keyPrefix.length() == 0 )
-            return( rval );
+            return rval;
 
         String fullPrefix = null;
         if( keyPrefix.charAt( keyPrefix.length() - 1 ) == '.' )
@@ -101,7 +107,7 @@ public class FormUtil
         if( value == null )
             value = params.get( fullPrefix + (ix++) );
         if( value == null )
-            return( rval );
+            return rval;
         while( true )
         {
             rval.add( value );
@@ -110,24 +116,25 @@ public class FormUtil
                 break;
         }
 
-        return( rval );
+        return rval;
     }
 
 
     /**
-     * Converts the parameter contents of an HTTP request into a map,
+     * <p>Converts the parameter contents of an HTTP request into a map,
      * modifying the keys to preserve multiple values per key. This
-     * is done by adding an ordered suffix to the key:
-     * <p><pre>foo=bar,baz,xyzzy</pre>
-     * <p>becomes
-     * <p><pre>foo.0=bar foo.1=baz foo.2=xyzzy</pre>
-     *
+     * is done by adding an ordered suffix to the key:</p>
+     * <p><pre>foo=bar,baz,xyzzy</pre></p>
+     * <p>becomes</p>
+     * <p><pre>foo.0=bar foo.1=baz foo.2=xyzzy</pre></p>
      * <p>If filterPrefix is specified, only keys starting with the prefix
      * are included in the result map. If the prefix is null, all keys are
-     * checked.
-     *
+     * checked.</p>
      * <p>FIX: this is not necessarily encoding-safe: see
-     * WikiContext.getHttpParameter().
+     * WikiContext.getHttpParameter().</p>
+     * @param req the HTTP request
+     * @param filterPrefix the prefix
+     * @return the Map containing parsed key/value pairs
      */
     public static Map requestToMap( HttpServletRequest req, 
                                     String filterPrefix )
@@ -165,7 +172,7 @@ public class FormUtil
             }
         }
 
-        return( params );
+        return params;
     }
 
 }

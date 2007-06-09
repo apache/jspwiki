@@ -49,7 +49,7 @@ public class Note implements WikiPlugin
         String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
         if (commandline == null || commandline.length() == 0)
         {
-            return ("Unable to obtain plugin command line from parameter'" + PluginManager.PARAM_CMDLINE + "'"); // I18N
+            return "Unable to obtain plugin command line from parameter'" + PluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 
         String commentImage = imageUrl(context);

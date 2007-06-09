@@ -39,7 +39,7 @@ import com.ecyrd.jspwiki.WikiException;
  *  @author Janne Jalkanen
  *  @since 2.1.29.
  */
-public class ClassUtil
+public final class ClassUtil
 {
     private static final Logger log = Logger.getLogger(ClassUtil.class);
     /**
@@ -90,6 +90,13 @@ public class ClassUtil
         }
     }
 
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private ClassUtil()
+    {
+    }
+    
     /**
      *  Attempts to find a class from a collection of packages.  This will first
      *  attempt to find the class based on just the className parameter, but

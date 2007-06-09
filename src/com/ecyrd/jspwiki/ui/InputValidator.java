@@ -34,8 +34,10 @@ import com.ecyrd.jspwiki.WikiSession;
  */
 public final class InputValidator
 {
+    /** Standard input validator. */
     public static final int        STANDARD       = 0;
 
+    /** Input validator for e-mail addresses. **/
     public static final int        EMAIL          = 1;
 
     /**
@@ -88,7 +90,7 @@ public final class InputValidator
      * {@link #validate(String, String, int)}.
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
-     * @param type
+     * @param type the pattern type to use (<em>e.g.</em>, {@link #STANDARD, #EMAIL}.
      * @return returns <code>true</code> if valid, <code>false</code>
      * otherwise
      */
@@ -150,6 +152,8 @@ public final class InputValidator
                 m_session.addMessage( m_form, label + " cannot contain these characters: \"'<>;&{}" );
             }
             return valid;
+         default:
+             break;
         }
         throw new IllegalArgumentException( "Invalid input type." );
     }
@@ -162,6 +166,6 @@ public final class InputValidator
      */
     public static final boolean isBlank( String input )
     {
-        return ( input == null || input.trim().length() < 1 );
+        return input == null || input.trim().length() < 1;
     }
 }

@@ -58,15 +58,15 @@ public class WikiEngineEvent extends WikiEvent
 
      /**
       *  Constructs an instance of this event.
-      *
-      * @param source  the Object that is the source of the event,
-      *                which <b>must</b> be the WikiEngine.
-      * @throws ClassCastException if <tt>source</tt> is not a WikiEngine.
+      * @param eventSource  the Object that is the source of the event,
+      * which <b>must</b> be the WikiEngine. If it is not, this
+      * method thows a ClassCastException
+      * @param type the event type
       */
-    public WikiEngineEvent( Object source, int type )
+    public WikiEngineEvent( Object eventSource, int type )
     {
-        super( source, type );
-        m_engine = (WikiEngine)source;
+        super( eventSource, type );
+        m_engine = (WikiEngine)eventSource;
     }
 
 
@@ -112,11 +112,13 @@ public class WikiEngineEvent extends WikiEvent
 
 
    /**
-     * Returns true if the int value is a WikiPageEvent type.
+     * Returns <code>true</code> if the int value is a WikiPageEvent type.
+     * @param type the event type
+     * @return the result
      */
     public static boolean isValidType( int type )
     {
-        return ( type >= INITIALIZING && type <= STOPPED );
+        return type >= INITIALIZING && type <= STOPPED;
     }
 
 

@@ -480,7 +480,7 @@ public class SpamFilter
                 String userAgent     = req.getHeader("User-Agent");
                 String referrer      = req.getHeader( "Referer");
                 String permalink     = context.getViewURL( context.getPage().getName() );
-                String commentType   = (context.getRequestContext().equals(WikiContext.COMMENT) ? "comment" : "edit" );
+                String commentType   = context.getRequestContext().equals(WikiContext.COMMENT) ? "comment" : "edit";
                 String commentAuthor = context.getCurrentUser().getName();
                 String commentAuthorEmail = null;
                 String commentAuthorURL   = null;

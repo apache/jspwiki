@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
 
 /**
  *  Generates single tabbed page layout.
@@ -53,6 +52,9 @@ public class TabTag extends WikiTagBase
     private String m_tabTitle;
     private String m_url;
 
+    /**
+     * {@inheritDoc}
+     */
     public void doFinally()
     {
         super.doFinally();
@@ -63,21 +65,37 @@ public class TabTag extends WikiTagBase
         m_url       = null;
     }
 
+    /**
+     * Sets the tab ID.
+     * @param aTabID the ID
+     */
     public void setId(String aTabID)
     {
         m_tabID = aTabID;
     }
 
+    /**
+     * Sets the tab title.
+     * @param aTabTitle the tab title
+     */
     public void setTitle(String aTabTitle)
     {
         m_tabTitle = aTabTitle;
     }
 
+    /**
+     * Sets the tab access key.
+     * @param anAccesskey the access key
+     */
     public void setAccesskey(String anAccesskey)
     {
         m_accesskey = anAccesskey; //take only the first char
     }
 
+    /**
+     * Sets the tab URL.
+     * @param url the URL
+     */
     public void setUrl( String url )
     {
         m_url = url;
@@ -86,7 +104,7 @@ public class TabTag extends WikiTagBase
     // insert <u> ..accesskey.. </u> in title
     private boolean handleAccesskey()
     {
-        if( (m_tabTitle == null) || (m_accesskey == null) ) return( false );
+        if( (m_tabTitle == null) || (m_accesskey == null) ) return false;
 
         int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
         if( pos > -1 )
@@ -94,9 +112,12 @@ public class TabTag extends WikiTagBase
             m_tabTitle = m_tabTitle.substring( 0, pos ) + "<u>"
                        + m_tabTitle.charAt( pos ) + "</u>" + m_tabTitle.substring( pos+1 );
         }
-        return( true );
+        return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int doWikiStartTag() throws JspTagException
     {
         TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
@@ -141,6 +162,9 @@ public class TabTag extends WikiTagBase
         return EVAL_BODY_INCLUDE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int doEndTag() throws javax.servlet.jsp.JspTagException
     {
         TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );

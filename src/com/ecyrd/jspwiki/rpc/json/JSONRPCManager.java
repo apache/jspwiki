@@ -62,9 +62,10 @@ public final class JSONRPCManager extends RPCManager
     private static HashMap c_globalObjects = new HashMap();
     
     /** Prevent instantiation */
-    
     private JSONRPCManager()
-    {}
+    {
+        super();
+    }
     
     /**
      *  Emits JavaScript to do a JSON RPC Call.  You would use this method e.g.

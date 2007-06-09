@@ -30,7 +30,7 @@ import java.util.TreeMap;
  * @author Sebastian Baltes (sbaltes@gmx.com)
  * @version 1.0
  */
-public class PropertiesUtils
+public final class PropertiesUtils
 {
     private static final String OTHER_WHITESPACE = "\t\r\n\014";
     private static final char[] HEXDIGIT = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
@@ -44,8 +44,8 @@ public class PropertiesUtils
      * like Properties.store, but stores the properties in sorted order
      * </p>
      *
-     * @param properties
-     * @return String
+     * @param properties the properties object
+     * @return String the properties, nicely formatted 
      */
     public static String toSortedString( Properties properties )
     {

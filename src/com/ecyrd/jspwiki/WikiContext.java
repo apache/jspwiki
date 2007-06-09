@@ -236,7 +236,7 @@ public class WikiContext
         }
         
         // Log in the user if new session or the container status changed
-        boolean doLogin = ( (request != null) && m_session.isNew() );
+        boolean doLogin = (request != null) && m_session.isNew();
         
         // Debugging...
         if( log.isDebugEnabled() )

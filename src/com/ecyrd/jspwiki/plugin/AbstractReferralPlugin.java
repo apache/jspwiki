@@ -175,7 +175,7 @@ public abstract class AbstractReferralPlugin
             //
             //  include='*' means the same as no include.
             //
-            boolean includeThis = (m_include == null);
+            boolean includeThis = m_include == null;
 
             if( m_include != null )
             {

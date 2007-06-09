@@ -192,6 +192,6 @@ public class ExternalDiffProvider implements DiffProvider
         }
 
         out.append( "</table>\n" );
-        return (out.toString());
+        return out.toString();
     }
 }

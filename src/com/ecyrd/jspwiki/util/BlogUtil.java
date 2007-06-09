@@ -28,14 +28,23 @@ import com.ecyrd.jspwiki.*;
  *  @author Janne Jalkanen
  *  @since 2.2.
  */
-public class BlogUtil
+public final class BlogUtil
 {
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private BlogUtil()
+    {
+    }
+    
+    /** Wiki variable storing the blog's name. */
     public static final String VAR_BLOGNAME = "blogname";
 
     /**
-     *  Figure out a site name for a feed.
+     * Figure out a site name for a feed.
+     * @param context the wiki context
+     * @return the site name
      */
-    
     public static String getSiteName( WikiContext context )
     {
         WikiEngine engine = context.getEngine();

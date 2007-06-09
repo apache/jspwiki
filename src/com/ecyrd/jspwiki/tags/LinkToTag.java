@@ -92,7 +92,7 @@ public class LinkToTag
             {
                 pageName = p.getName();
 
-                isattachment = (p instanceof Attachment);
+                isattachment = p instanceof Attachment;
             }
             else
             {

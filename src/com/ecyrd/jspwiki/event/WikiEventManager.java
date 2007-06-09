@@ -142,12 +142,12 @@ import org.apache.log4j.Logger;
  * @author Murray Altheim
  * @since 2.4.20
  */
-public class WikiEventManager
+public final class WikiEventManager
 {
     private static final Logger log = Logger.getLogger(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
-    private static boolean permitMonitor = false;
+    private static boolean c_permitMonitor = false;
 
     /* Optional listener to be used as all-event monitor. */
     private static WikiEventListener c_monitor = null;
@@ -204,7 +204,7 @@ public class WikiEventManager
      *  <h3>Monitor Listener</h3>
      *
      *  If <tt>client</tt> is a reference to the WikiEventManager class
-     *  itself and the compile-time flag {@link #permitMonitor} is true,
+     *  itself and the compile-time flag {@link #c_permitMonitor} is true,
      *  this attaches the listener as an all-event monitor, overwriting
      *  any previous listener (hence returning true).
      *  <p>
@@ -224,14 +224,11 @@ public class WikiEventManager
     {
         if ( client == WikiEventManager.class )
         {
-            if ( permitMonitor ) c_monitor = listener;
-            return permitMonitor;
+            if ( c_permitMonitor ) c_monitor = listener;
+            return c_permitMonitor;
         }
-        else
-        {
-            WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-            return delegate.addWikiEventListener(listener);
-        }
+        WikiEventDelegate delegate = getInstance().getDelegateFor(client);
+        return delegate.addWikiEventListener(listener);
     }
 
 
@@ -251,11 +248,8 @@ public class WikiEventManager
             c_monitor = null;
             return true;
         }
-        else
-        {
-            WikiEventDelegate delegate = getInstance().getDelegateFor(client);
-            return delegate.removeWikiEventListener(listener);
-        }
+        WikiEventDelegate delegate = getInstance().getDelegateFor(client);
+        return delegate.removeWikiEventListener(listener);
     }
 
 

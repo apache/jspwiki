@@ -57,7 +57,7 @@ public class FormClose
         // After this, it is safe to add other Forms.
         storeFormInfo( ctx, null );
 
-        return( tags.toString() );
+        return tags.toString();
 
     }
 }

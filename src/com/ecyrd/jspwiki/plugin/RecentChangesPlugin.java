@@ -57,10 +57,13 @@ public class RecentChangesPlugin
         Calendar aa = Calendar.getInstance(); aa.setTime(a);
         Calendar bb = Calendar.getInstance(); bb.setTime(b);
 
-        return( aa.get( Calendar.YEAR ) == bb.get( Calendar.YEAR ) &&
-                aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR ) );
+        return aa.get( Calendar.YEAR ) == bb.get( Calendar.YEAR ) &&
+                aa.get( Calendar.DAY_OF_YEAR ) == bb.get( Calendar.DAY_OF_YEAR );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -127,7 +130,7 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
-                String link = context.getURL( ((pageref instanceof Attachment) ? WikiContext.ATTACH : WikiContext.VIEW), 
+                String link = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
                                               pageref.getName() ) ;
                 
                 a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
@@ -197,7 +200,7 @@ public class RecentChangesPlugin
                 {
                     String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
                     
-                    row.addElement( new td((changenote != null ? TextUtil.replaceEntities(changenote) : "")).setClass("changenote") );
+                    row.addElement( new td(changenote != null ? TextUtil.replaceEntities(changenote) : "").setClass("changenote") );
                 }
                 
                 //  Revert note
@@ -250,7 +253,7 @@ public class RecentChangesPlugin
     private String get(Map params, String defaultValue, String paramName)
     {
         String value = (String) params.get(paramName);
-        return (null == value ? defaultValue : value);
+        return null == value ? defaultValue : value;
     }
 
     

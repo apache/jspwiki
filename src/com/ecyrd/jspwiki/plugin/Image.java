@@ -183,7 +183,7 @@ public class Image
         else if( s.length() > 0 ) // check [a-zA-z]
         {
             char c = s.charAt(0);
-            return ( Character.isLowerCase(c) || Character.isUpperCase(c) );
+            return Character.isLowerCase(c) || Character.isUpperCase(c);
         }
         return false;
     }

@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -266,10 +285,8 @@ public class Workflow
      * is a Decision, it is removed from the DecisionQueue. This method
      * can be called at any point in the lifecycle prior to completion, but it
      * cannot be called twice. It finishes by calling the {@link #cleanup()}
-     * method to flush retained objects.
-     *
-     * @throws IllegalStateException
-     *             if the Workflow had been previously aborted
+     * method to flush retained objects. If the Workflow had been previously
+     * aborted, this method throws an IllegalStateException.
      */
     public final synchronized void abort()
     {
@@ -303,10 +320,9 @@ public class Workflow
      * {@link #getMessageArguments()}. The object <em>must</em> be an type
      * used by the {@link java.text.MessageFormat}: String, Date, or Number
      * (BigDecimal, BigInteger, Byte, Double, Float, Integer, Long, Short).
-     *
+     * If the object is not of type String, Number or Date, this method throws
+     * an IllegalArgumentException.
      * @param obj the object to add
-     * @throws IllegalArgumentException if the object is not of type
-     * String, Number or Date
      */
     public final void addMessageArgument(Object obj)
     {
@@ -428,7 +444,7 @@ public class Workflow
         List args = new ArrayList();
         args.add(m_owner.getName());
         Principal actor = getCurrentActor();
-        args.add((actor == null ? "-" : actor.getName()));
+        args.add(actor == null ? "-" : actor.getName());
         args.addAll(m_messageArgs);
         return args.toArray(new Object[args.size()]);
     }
@@ -547,11 +563,8 @@ public class Workflow
      * paused, this method throws an IllegalStateException. If any of the
      * Steps in this Workflow throw a WikiException, the Workflow will abort
      * and propagate the exception to callers.
-     *
-     * @throws IllegalStateException
-     *             if the Workflow has not previously been paused
-     * @throws WikiException
-     *             if the current task's
+     * @throws WikiException if the current task's {@link Task#execute()} method
+     * throws an exception
      */
     public final synchronized void restart() throws WikiException
     {
@@ -637,9 +650,8 @@ public class Workflow
      * returns an {@linkplain IllegalStateException}. If any of the
      * Steps in this Workflow throw a WikiException, the Workflow will abort
      * and propagate the exception to callers.
-     *
-     * @throws IllegalStateException
-     *             if the Workflow has already been started
+     * @throws WikiException if the current Step's {@link Step#start()}
+     * method throws an exception of any kind
      */
     public final synchronized void start() throws WikiException
     {
@@ -676,9 +688,6 @@ public class Workflow
      * running or has already been paused, this method throws an
      * IllegalStateException. Once paused, the Workflow can be un-paused by
      * executing the {@link #restart()} method.
-     *
-     * @throws IllegalStateException
-     *             if the Workflow has already been paused
      */
     public final synchronized void waitstate()
     {
@@ -735,6 +744,8 @@ public class Workflow
      * {@link Step#execute()}. If the <code>execute</code> throws an
      * exception, this method will propagate the exception immediately
      * to callers without aborting.
+     * @throws WikiException if the current Step's {@link Step#start()}
+     * method throws an exception of any kind
      */
     protected final void processCurrentStep() throws WikiException
     {

@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 /**
@@ -19,17 +38,22 @@ public final class Outcome
     /** Continue workflow step (without errors) */
     public static final Outcome STEP_CONTINUE = new Outcome("outcome.step.continue", false);
 
+    /** Acknowlege the Decision. */
     public static final Outcome DECISION_ACKNOWLEDGE = new Outcome("outcome.decision.acknowledge", true);
 
+    /** Approve the Decision (and complete the step). */
     public static final Outcome DECISION_APPROVE = new Outcome("outcome.decision.approve", true);
 
+    /** Deny the Decision (and complete the step). */
     public static final Outcome DECISION_DENY = new Outcome("outcome.decision.deny", true);
 
+    /** Put the Decision on hold (and pause the step). */
     public static final Outcome DECISION_HOLD = new Outcome("outcome.decision.hold", false);
 
+    /** Reassign the Decision to another actor (and pause the step). */
     public static final Outcome DECISION_REASSIGN = new Outcome("outcome.decision.reassign", false);
 
-    private static final Outcome[] c_outcomes = new Outcome[] { STEP_COMPLETE, STEP_ABORT, STEP_CONTINUE, DECISION_ACKNOWLEDGE,
+    private static final Outcome[] OUTCOMES = new Outcome[] { STEP_COMPLETE, STEP_ABORT, STEP_CONTINUE, DECISION_ACKNOWLEDGE,
                                                                DECISION_APPROVE, DECISION_DENY, DECISION_HOLD, DECISION_REASSIGN };
 
     private final String m_key;
@@ -82,6 +106,7 @@ public final class Outcome
     /**
      * The hashcode of an Outcome is identical to the hashcode of its message
      * key, multiplied by 2 if it is a "completion" Outcome.
+     * @return the hash code
      */
     public int hashCode()
     {
@@ -89,7 +114,9 @@ public final class Outcome
     }
 
     /**
-     * Two Outcome objects are
+     * Two Outcome objects are equal if their message keys are equal.
+     * @param obj the object to test
+     * @return <code>true</code> if logically equal, <code>false</code> if not
      */
     public boolean equals(Object obj)
     {
@@ -114,17 +141,20 @@ public final class Outcome
     {
         if (key != null)
         {
-            for (int i = 0; i < c_outcomes.length; i++)
+            for (int i = 0; i < OUTCOMES.length; i++)
             {
-                if (c_outcomes[i].m_key.equals(key))
+                if (OUTCOMES[i].m_key.equals(key))
                 {
-                    return c_outcomes[i];
+                    return OUTCOMES[i];
                 }
             }
         }
         throw new NoSuchOutcomeException("Outcome " + key + " not found.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String toString()
     {
         return "[Outcome:" + m_key + "]";

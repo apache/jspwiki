@@ -106,7 +106,7 @@ public class CheckVersionTag
                 break;
 
               case NOTFIRST:
-                include = (version > 1);
+                include = version > 1;
                 break;
             }
 

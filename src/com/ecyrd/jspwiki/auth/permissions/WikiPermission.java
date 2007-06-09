@@ -104,6 +104,8 @@ public final class WikiPermission extends Permission
     /**
      * Two WikiPermission objects are considered equal if their wikis and
      * actions (after normalization) are equal.
+     * @param obj the object to test
+     * @return the result
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public final boolean equals( Object obj )
@@ -113,7 +115,7 @@ public final class WikiPermission extends Permission
             return false;
         }
         WikiPermission p = (WikiPermission) obj;
-        return ( p.m_mask == m_mask && p.m_wiki != null && p.m_wiki.equals( m_wiki ) );
+        return  p.m_mask == m_mask && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
     /**
@@ -121,6 +123,7 @@ public final class WikiPermission extends Permission
      * "editPreferences", "editProfile", or "login". The actions
      * will always be sorted in alphabetic order, and will always appear in
      * lower case.
+     * @return the actions
      * @see java.security.Permission#getActions()
      */
     public final String getActions()
@@ -174,7 +177,7 @@ public final class WikiPermission extends Permission
         int impliedMask = impliedMask( m_mask );
 
         // If actions aren't a proper subset, return false
-        return ( impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask );
+        return impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask;
     }
 
     /**

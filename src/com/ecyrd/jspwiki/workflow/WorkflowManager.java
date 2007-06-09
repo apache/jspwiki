@@ -1,3 +1,22 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package com.ecyrd.jspwiki.workflow;
 
 import java.security.Principal;
@@ -31,7 +50,8 @@ public class WorkflowManager implements WikiEventListener
 
     private final List m_completed;
 
-    protected final String PROPERTY_APPROVER_PREFIX = "jspwiki.approver.";
+    /** The prefix to use for looking up <code>jspwiki.properties</code> approval roles. */
+    protected static final String PROPERTY_APPROVER_PREFIX = "jspwiki.approver.";
 
     /**
      * Constructs a new WorkflowManager, with an empty workflow cache. New
@@ -49,9 +69,9 @@ public class WorkflowManager implements WikiEventListener
      * Adds a new workflow to the set of workflows and starts it. The new
      * workflow is automatically assigned a unique ID. If another workflow with
      * the same ID already exists, this method throws a WikIException.
-     *
-     * @param workflow
-     *            the workflow to start
+     * @param workflow the workflow to start
+     * @throws WikiException if a workflow the automatically assigned
+     * ID already exist; this should not happen normally
      */
     public void start( Workflow workflow ) throws WikiException
     {
@@ -84,12 +104,18 @@ public class WorkflowManager implements WikiEventListener
 
     /**
      * Initializes the WorkflowManager using a specfied WikiEngine and
-     * properties.
-     *
-     * @param engine
-     *            the wiki engine to associate with this WorkflowManager
-     * @param props
-     *            the wiki engine's properties
+     * properties. Any properties that begin with
+     * {@link #PROPERTY_APPROVER_PREFIX} will be assumed to be
+     * Decisions that require approval. For a given property key, everything
+     * after the prefix denotes the Decision's message key. The property
+     * value indicates the Principal (Role, GroupPrincipal, WikiPrincipal) that
+     * must approve the Decision. For example, if the property key/value pair
+     * is <code>jspwiki.approver.workflow.saveWikiPage=Admin</code>,
+     * the Decision's message key is <code>workflow.saveWikiPage</code>.
+     * The Principal <code>Admin</code> will be resolved via
+     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#resolvePrincipal(String)}.
+     * @param engine the wiki engine to associate with this WorkflowManager
+     * @param props the wiki engine's properties
      */
     public void initialize( WikiEngine engine, Properties props )
     {
@@ -138,9 +164,10 @@ public class WorkflowManager implements WikiEventListener
      * Principal is Unresolved, throws WikiException. This particular
      * implementation always returns the GroupPrincipal <code>Admin</code>
      *
-     * @param messageKey
+     * @param messageKey the Decision's message key
      * @return the actor who approves Decisions
-     * @throws WikiException
+     * @throws WikiException if the message key was not found, or the
+     * Principal value corresponding to the key could not be resolved
      */
     public Principal getApprover( String messageKey ) throws WikiException
     {
@@ -246,6 +273,7 @@ public class WorkflowManager implements WikiEventListener
      * {@link com.ecyrd.jspwiki.event.WorkflowEvent#COMPLETED} events. If a
      * workflow is created, it is automatically added to the cache. If one is
      * aborted or completed, it is automatically removed.
+     * @param event the event passed to this listener
      */
     public void actionPerformed(WikiEvent event)
     {
@@ -265,6 +293,8 @@ public class WorkflowManager implements WikiEventListener
                 case WorkflowEvent.CREATED:
                     // Add to manager
                     add( workflow );
+                    break;
+                default:
                     break;
             }
         }

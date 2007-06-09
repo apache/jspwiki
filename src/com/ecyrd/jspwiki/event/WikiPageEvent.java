@@ -233,7 +233,7 @@ public class WikiPageEvent extends WikiEvent
      */
     public static boolean isValidType( int type )
     {
-        return ( type >= PAGE_LOCK && type <= PAGE_DELETED );
+        return type >= PAGE_LOCK && type <= PAGE_DELETED;
     }
 
 

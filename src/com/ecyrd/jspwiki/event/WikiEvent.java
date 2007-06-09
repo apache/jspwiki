@@ -119,7 +119,7 @@ public abstract class WikiEvent extends EventObject
      */
     public static boolean isValidType( int type )
     {
-        return ( type != ERROR && type != UNDEFINED );
+        return type != ERROR && type != UNDEFINED;
     }
 
 

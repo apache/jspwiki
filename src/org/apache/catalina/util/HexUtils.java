@@ -75,26 +75,26 @@ public final class HexUtils
             char c2 = digits.charAt(i + 1);
             byte b = 0;
             if ((c1 >= '0') && (c1 <= '9'))
-                b += ((c1 - '0') * 16);
+                b += (c1 - '0') * 16;
             else if ((c1 >= 'a') && (c1 <= 'f'))
-                b += ((c1 - 'a' + 10) * 16);
+                b += (c1 - 'a' + 10) * 16;
             else if ((c1 >= 'A') && (c1 <= 'F'))
-                b += ((c1 - 'A' + 10) * 16);
+                b += (c1 - 'A' + 10) * 16;
             else
                 throw new IllegalArgumentException
                     ("Bad hexadecimal digit");
             if ((c2 >= '0') && (c2 <= '9'))
-                b += (c2 - '0');
+                b += c2 - '0';
             else if ((c2 >= 'a') && (c2 <= 'f'))
-                b += (c2 - 'a' + 10);
+                b += c2 - 'a' + 10;
             else if ((c2 >= 'A') && (c2 <= 'F'))
-                b += (c2 - 'A' + 10);
+                b += c2 - 'A' + 10;
             else
                 throw new IllegalArgumentException
                     ("Bad hexadecimal digit");
             baos.write(b);
         }
-        return (baos.toByteArray());
+        return baos.toByteArray();
 
     }
 
@@ -111,10 +111,10 @@ public final class HexUtils
         StringBuffer sb = new StringBuffer(bytes.length * 2);
         for (int i = 0; i < bytes.length; i++)
         {
-            sb.append(convertDigit((bytes[i] >> 4)));
-            sb.append(convertDigit((bytes[i] & 0x0f)));
+            sb.append(convertDigit(bytes[i] >> 4));
+            sb.append(convertDigit(bytes[i] & 0x0f));
         }
-        return (sb.toString());
+        return sb.toString();
 
     }
 
@@ -165,9 +165,9 @@ public final class HexUtils
         value &= 0x0f;
         if (value >= 10)
         {
-            return ((char) (value - 10 + 'a'));
+            return (char) (value - 10 + 'a');
         }
-        return ((char) (value + '0'));
+        return (char) (value + '0');
     }
 
 }

@@ -63,13 +63,18 @@ public class CachingAttachmentProvider
     private long m_cacheMisses = 0;
     private long m_cacheHits   = 0;
 
+    /** The extension to append to directory names to denote an attachment directory. */
     public static final String DIR_EXTENSION   = "-att";
-    public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
     
+    /** Property that supplies the directory used to store attachments. */
+    public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
 
     // FIXME: Make settable.
     private int  m_refreshPeriod = 60*10; // 10 minutes at the moment
 
+    /**
+     * {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -115,6 +120,9 @@ public class CachingAttachmentProvider
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void putAttachmentData( Attachment att, InputStream data )
         throws ProviderException,
                IOException
@@ -124,6 +132,9 @@ public class CachingAttachmentProvider
         m_cache.flushEntry( att.getParentName() );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public InputStream getAttachmentData( Attachment att )
         throws ProviderException,
                IOException
@@ -131,6 +142,9 @@ public class CachingAttachmentProvider
         return m_provider.getAttachmentData( att );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Collection listAttachments( WikiPage page )
         throws ProviderException
     {
@@ -182,11 +196,17 @@ public class CachingAttachmentProvider
         return list;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public Collection findAttachments( QueryItem[] query )
     {
         return m_provider.findAttachments( query );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List listAllChanged( Date timestamp )
         throws ProviderException
     {
@@ -230,6 +250,9 @@ public class CachingAttachmentProvider
         return c;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
@@ -293,17 +316,17 @@ public class CachingAttachmentProvider
         return null;
     }
 
-            
-
     /**
-     *  Returns version history.  Each element should be
-     *  an Attachment.
+     * {@inheritDoc}
      */
     public List getVersionHistory( Attachment att )
     {
         return m_provider.getVersionHistory( att );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void deleteVersion( Attachment att )
         throws ProviderException
     {
@@ -312,6 +335,9 @@ public class CachingAttachmentProvider
         m_provider.deleteVersion( att );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
@@ -319,20 +345,27 @@ public class CachingAttachmentProvider
         m_provider.deleteAttachment( att );
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public synchronized String getProviderInfo()
     {              
-        return("Real provider: "+m_provider.getClass().getName()+
+        return "Real provider: "+m_provider.getClass().getName()+
                ".  Cache misses: "+m_cacheMisses+
-               ".  Cache hits: "+m_cacheHits);
+               ".  Cache hits: "+m_cacheHits;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public WikiAttachmentProvider getRealProvider()
     {
         return m_provider;
     }
     
-
+    /**
+     * {@inheritDoc}
+     */
     public void moveAttachmentsForPage( String oldParent, String newParent )
         throws ProviderException
     {

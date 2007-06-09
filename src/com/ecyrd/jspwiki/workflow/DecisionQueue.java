@@ -42,6 +42,9 @@ public class DecisionQueue
 
     private volatile int m_next;
 
+    /**
+     * Constructs a new DecisionQueue.
+     */
     public DecisionQueue()
     {
         m_next = 1000;
@@ -127,13 +130,15 @@ public class DecisionQueue
 
     /**
      * Attempts to complete a Decision by calling
-     * {@link Decision#decide(Outcome)}. If the decision completes
+     * {@link Decision#decide(Outcome)}. This will cause the Step immediately
+     * following the Decision (if any) to start. If the decision completes
      * successfully, this method also removes the completed decision from the
      * queue.
      *
-     * @param decision
-     * @param outcome
-     * @throws WikiException
+     * @param decision the Decision for which the Outcome will be supplied
+     * @param outcome the Outcome of the Decision
+     * @throws WikiException if the succeeding Step cannot start
+     * for any reason
      */
     public void decide(Decision decision, Outcome outcome) throws WikiException
     {
@@ -151,11 +156,9 @@ public class DecisionQueue
      * Reassigns the owner of the Decision to a new owner. Under the covers,
      * this method calls {@link Decision#reassign(Principal)}.
      *
-     * @param decision
-     *            the Decision to reassign
-     * @param owner
-     *            the new owner
-     * @throws WikiException
+     * @param decision the Decision to reassign
+     * @param owner the new owner
+     * @throws WikiException never
      */
     public synchronized void reassign(Decision decision, Principal owner) throws WikiException
     {

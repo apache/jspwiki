@@ -193,7 +193,7 @@ public final class WikiSession implements WikiEventListener
      */
     public final boolean isAsserted()
     {
-        return ( m_subject.getPrincipals().contains( Role.ASSERTED ) );
+        return m_subject.getPrincipals().contains( Role.ASSERTED );
     }
 
     /**
@@ -243,9 +243,9 @@ public final class WikiSession implements WikiEventListener
     public final boolean isAnonymous()
     {
         Set principals = m_subject.getPrincipals();
-        return ( principals.contains( Role.ANONYMOUS ) ||
+        return principals.contains( Role.ANONYMOUS ) ||
                  principals.contains( WikiPrincipal.GUEST ) ||
-                 isIPV4Address( getUserPrincipal().getName() ) );
+                 isIPV4Address( getUserPrincipal().getName() );
     }
 
     /**
@@ -1008,8 +1008,8 @@ public final class WikiSession implements WikiEventListener
         for( int i = 0; i < name.length(); i++ )
         {
             int ch = name.charAt( i );
-            boolean isDigit = ( ch >= ONE && ch <= NINE );
-            boolean isDot = ( ch == DOT );
+            boolean isDigit = ch >= ONE && ch <= NINE;
+            boolean isDot = ch == DOT;
             if ( !isDigit && !isDot )
             {
                 return false;
@@ -1031,7 +1031,7 @@ public final class WikiSession implements WikiEventListener
                 currentOctet++;
             }
         }
-        return ( currentOctet == 3 );
+        return  currentOctet == 3;
     }
 
 }

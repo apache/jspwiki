@@ -613,7 +613,7 @@ public class PluginManager extends ModuleManager
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
                 if ( pos != -1 )
                 {
-                    int end = ( pos + commandline.length() + 2 );
+                    int end = pos + commandline.length() + 2;
                     int[] bounds = new int[] { pos, end };
                     arglist.put( PARAM_BOUNDS, bounds );
                 }
@@ -747,7 +747,7 @@ public class PluginManager extends ModuleManager
     // FIXME: This class needs a better interface to return all sorts of possible
     //        information from the plugin XML.  In fact, it probably should have
     //        some sort of a superclass system.
-    protected static class WikiPluginInfo
+    protected static final class WikiPluginInfo
         extends WikiModuleInfo
     {
         private String m_className;

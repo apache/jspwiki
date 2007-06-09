@@ -137,7 +137,7 @@ public class FormOpen
         tag.append( "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN );
         tag.append( "\" value=\"" + formName + "\"/>\n" );
 
-        return( tag.toString() );
+        return tag.toString();
     }
 
 }

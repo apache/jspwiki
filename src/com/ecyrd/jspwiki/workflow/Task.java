@@ -73,6 +73,10 @@ public abstract class Task extends AbstractStep
         setWorkflow( workflow );
     }
 
+    /**
+     * Returns {@link SystemPrincipal#SYSTEM_USER}.
+     * @return the system principal
+     */
     public final Principal getActor()
     {
         return SystemPrincipal.SYSTEM_USER;

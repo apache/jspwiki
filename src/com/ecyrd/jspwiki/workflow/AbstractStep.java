@@ -98,31 +98,52 @@ public abstract class AbstractStep implements Step
         setWorkflow( workflow );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final void addSuccessor(Outcome outcome, Step step)
     {
         m_successors.put( outcome, step );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final Collection getAvailableOutcomes()
     {
         Set outcomes = m_successors.keySet();
         return Collections.unmodifiableCollection( outcomes );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final List getErrors()
     {
         return Collections.unmodifiableList( m_errors );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract Outcome execute() throws WikiException;
 
+    /**
+     * {@inheritDoc}
+     */
     public abstract Principal getActor();
 
+    /**
+     * {@inheritDoc}
+     */
     public final Date getEndTime()
     {
         return m_end;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final Object[] getMessageArguments()
     {
         if ( m_workflow == null )
@@ -132,16 +153,25 @@ public abstract class AbstractStep implements Step
         return m_workflow.getMessageArguments();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final String getMessageKey()
     {
         return m_key;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final synchronized Outcome getOutcome()
     {
         return m_outcome;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Principal getOwner()
     {
         if ( m_workflow == null )
@@ -151,26 +181,41 @@ public abstract class AbstractStep implements Step
         return m_workflow.getOwner();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final Date getStartTime()
     {
         return m_start;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final synchronized Workflow getWorkflow()
     {
         return m_workflow;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final boolean isCompleted()
     {
         return m_completed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final boolean isStarted()
     {
         return m_started;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final synchronized void setOutcome(Outcome outcome)
     {
         // Is this an allowed Outcome?
@@ -196,6 +241,9 @@ public abstract class AbstractStep implements Step
         m_outcome = outcome;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final synchronized void start() throws WikiException
     {
         if ( m_started )
@@ -206,6 +254,9 @@ public abstract class AbstractStep implements Step
         m_start = new Date( System.currentTimeMillis() );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final Step getSuccessor( Outcome outcome )
     {
         return (Step) m_successors.get( outcome );
@@ -215,6 +266,7 @@ public abstract class AbstractStep implements Step
 
     /**
      * Protected method that sets the parent Workflow post-construction.
+     * @param workflow the parent workflow to set
      */
     protected final synchronized void setWorkflow( Workflow workflow )
     {

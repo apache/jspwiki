@@ -372,7 +372,7 @@ public class VariableManager
             {
                 Object metadata = pg.getAttribute( varName );
                 if( metadata != null )
-                    return( metadata.toString() );
+                    return metadata.toString();
             }
 
             // Next-to-final straw: attempt to fetch using property name

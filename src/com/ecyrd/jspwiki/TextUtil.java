@@ -36,6 +36,8 @@ public class TextUtil
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
      *  its functionality.
+     *  @param rs the string to encode
+     *  @return the URL-encoded string
      */
     protected static String urlEncode( byte[] rs )
     {
@@ -202,12 +204,12 @@ public class TextUtil
         // Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) )
         {
-            return( TextUtil.urlEncodeUTF8( data ) );
+            return TextUtil.urlEncodeUTF8( data );
         }
 
         try
         {
-            return( TextUtil.urlEncode( data.getBytes(encoding) ) );
+            return TextUtil.urlEncode( data.getBytes(encoding) );
         }
         catch (UnsupportedEncodingException uee)
         {
@@ -230,12 +232,12 @@ public class TextUtil
         // Don't see why it would be horribly kludgy, though.
         if( "UTF-8".equals( encoding ) )
         {
-            return( TextUtil.urlDecodeUTF8( data ) );
+            return TextUtil.urlDecodeUTF8( data );
         }
 
         try
         {
-            return( TextUtil.urlDecode( data.getBytes(encoding), encoding ) );
+            return TextUtil.urlDecode( data.getBytes(encoding), encoding );
         }
         catch (UnsupportedEncodingException uee)
         {
@@ -408,8 +410,8 @@ public class TextUtil
 
         val = val.trim();
 
-        return ( val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
-                 val.equalsIgnoreCase("yes") );
+        return val.equalsIgnoreCase("true") || val.equalsIgnoreCase("on") ||
+                 val.equalsIgnoreCase("yes");
     }
 
     /**

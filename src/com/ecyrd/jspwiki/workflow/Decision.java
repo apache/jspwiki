@@ -63,6 +63,15 @@ public abstract class Decision extends AbstractStep
 
     private final List m_facts;
 
+    /**
+     * Constructs a new Decision for a required "actor" Principal, having a default Outcome.
+     * @param workflow the parent Workflow object
+     * @param messageKey the i18n message key that represents the message the actor will see
+     * @param actor the Principal (<em>e.g.</em>, a WikiPrincipal, Role, GroupPrincipal) who is
+     * required to select an appropriate Outcome
+     * @param defaultOutcome the Outcome that the user interface will recommend as the
+     * default choice
+     */
     public Decision(Workflow workflow, String messageKey, Principal actor, Outcome defaultOutcome)
     {
         super(workflow, messageKey);
@@ -90,16 +99,12 @@ public abstract class Decision extends AbstractStep
      * the workflow after re-start will be re-thrown to callers.</p>
      * <p>This method cannot be invoked if the Decision is not the
      * current Workflow step; all other invocations will throw
-     * an IllegalStateException.</p>
+     * an IllegalStateException. If the Outcome supplied to this method
+     * is one one of the Outcomes returned by {@link #getAvailableOutcomes()},
+     * an IllegalArgumentException will be thrown.</p>
      *
      * @param outcome
      *            the Outcome of the Decision
-     * @throws IllegalStateException
-     *             if invoked when this Decision is not the parent Workflow's
-     *             currently active Step
-     * @throws IllegalArgumentException
-     *             if the Outcome is not one of the Outcomes returned by
-     *             {@link #getAvailableOutcomes()}
      * @throws WikiException
      *             if the act of restarting the Workflow throws an exception
      */
@@ -127,6 +132,8 @@ public abstract class Decision extends AbstractStep
      * if the current Outcome isn't a completion (which will be true if the
      * {@link #decide(Outcome)} method hasn't been executed yet. This method
      * will also add the Decision to the associated DecisionQueue.
+     * @return the Outcome of the execution
+     * @throws WikiException never
      */
     public Outcome execute() throws WikiException
     {
@@ -146,6 +153,9 @@ public abstract class Decision extends AbstractStep
         return Outcome.STEP_CONTINUE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final Principal getActor()
     {
         return m_actor;
@@ -199,11 +209,10 @@ public abstract class Decision extends AbstractStep
 
     /**
      * Reassigns the Decision to a new actor (that is, provide an outcome).
+     * If the Decision is not reassignable, this method throws 
+     * an IllegalArgumentException.
      *
-     * @param actor
-     *            the actor to reassign the Decision to
-     * @throws IllegalArgumentException
-     *             if the Decision cannot be reassigned
+     * @param actor the actor to reassign the Decision to
      */
     public final synchronized void reassign(Principal actor)
     {
