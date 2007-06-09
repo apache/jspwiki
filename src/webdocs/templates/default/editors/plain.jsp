@@ -52,7 +52,7 @@
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
        class="wikiform"
         name="editform" id="editform" 
-    onsubmit="return Wiki.submitOnce( this );"
+    onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
@@ -63,19 +63,13 @@
   <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
 
   <p>
-  <input type="submit" name="ok" value="Save" style="display:none;"/>
-  <input type="button" name="ox" value="<fmt:message key='editor.plain.save.submit'/>" 
-      onclick="this.form.ok.click();" 
+  <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>" 
     accesskey="s"
         title="<fmt:message key='editor.plain.save.title'/>" />
-  <input type="submit" name="preview" value="Preview" style="display:none;"/>
-  <input type="button" name="previex" value="<fmt:message key='editor.plain.preview.submit'/>" 
-      onclick="this.form.preview.click();" 
+  <input type="submit" name="preview" value="<fmt:message key='editor.plain.preview.submit'/>" 
     accesskey="v"
         title="<fmt:message key='editor.plain.preview.title'/>" />
-  <input type="submit" name="cancel" value="Cancel" style="display:none;"/>
-  <input type="button" name="cancex" value="<fmt:message key='editor.plain.cancel.submit'/>" 
-      onclick="this.form.cancel.click();" 
+  <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>" 
     accesskey="q" 
         title="<fmt:message key='editor.plain.cancel.title'/>" />
   </p>

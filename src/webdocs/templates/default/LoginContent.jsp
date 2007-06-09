@@ -69,8 +69,7 @@
       <td />
       <td>
         <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-        <input type="submit" name="submitlogin" value="login" style="display:none;"/>
-        <input type="button" name="submitlogix" value="<fmt:message key='login.submit.login'/>" onclick="this.form.submitlogin.click();" />
+        <input type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
       </td>
     </tr>
     </table>
@@ -131,8 +130,7 @@
       <td />
       <td>
         <input type="hidden" name="action" value="resetPassword"/>
-        <input type="submit" name="Submit" value="Reset password!" style="display:none;"/>
-        <input type="button" name="Submix" value="<fmt:message key='login.lostpw.submit'/>" onclick="this.form.Submit.click()"/>
+        <input type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
       </td>
     </tr>
   </table>
@@ -148,7 +146,7 @@
       </a>
     </div>
     <div class="formhelp">
-      Wanna login?
+      <fmt:message key="login.invite"/>
       <a href="#" onclick="TabbedSection.onclick('logincontent');"
                     title="<fmt:message key='login.title'/>" >
         <fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message>

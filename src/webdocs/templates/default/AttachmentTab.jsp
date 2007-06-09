@@ -40,9 +40,7 @@
    <tr>
       <td></td>
       <td>
-        <input type="submit" name="upload" value="Upload<fmt:message key='attach.add.submit'/>" style="display:none;"/>
-        <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" 
-        	onclick="this.form.upload.click();"/>
+        <input type="submit" name="upload" id="upload" value="<fmt:message key='attach.add.submit'/>" />
         <input type="hidden" name="action" value="upload" />
         <div id="progressbar"><div class="ajaxprogress"></div></div>
       </td>
@@ -56,13 +54,6 @@
 <wiki:Permission permission="!upload">
 <div class="formhelp"><fmt:message key="attach.add.permission"/></div>
 </wiki:Permission>
-
-
-<%-- FIXME
-<wiki:CheckRequestContext context='upload'>
-  <p>Back to <wiki:Link><wiki:PageName/></wiki:Link></p>
-</wiki:CheckRequestContext>
---%>
 
 <wiki:HasAttachments>
 

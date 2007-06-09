@@ -1,3 +1,20 @@
+2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+       * 2.5.80
+       
+       * Refactoring of SubmitOnce functionality, such that is doesn't harm
+       when javascript is off. Wiki.SubmitOnce() prevents you from pressing
+       submit buttons multiple times.  
+       Editing is now possible (and login etc.) while javascript is off.
+       (ref. http://bugs.jspwiki.org/show_bug.cgi?id=3)
+       
+       * Added experimental GroupTab.
+       
+       * Info tab added to Upload.jsp
+       
+       * Minor missing i18n fixed. Small css fixes
+
+
 2007-06-09  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.79

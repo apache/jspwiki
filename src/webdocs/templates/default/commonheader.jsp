@@ -27,11 +27,9 @@
 <wiki:CheckRequestContext context='edit|comment'>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js'/>" ></script>
 </wiki:CheckRequestContext>
-<%-- TODO
 <wiki:CheckRequestContext context='viewGroup|editGroup|deleteGroup|createGroup|prefs'>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-prefs.js'/>" ></script>
 </wiki:CheckRequestContext>
---%>
 <wiki:IncludeResources type="script"/>
 
 <%-- COOKIE read client preferences --%>

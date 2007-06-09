@@ -166,7 +166,7 @@ fieldset {
 	padding:0.5em;
 	border:1px solid #bbb;
 }
-.wikiform input[type='submit'], .wikiform input[type='button'] {
+.wikiform input[type='submit'], .wikiform input[type='button'],.wikiform input[type='file'], .wikiform button {
 	cursor:pointer;
 }
 .wikiform input, .wikiform option {
@@ -174,7 +174,7 @@ fieldset {
 }
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
-tt,pre {
+code,tt,pre {
 	font-family:Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 }
@@ -370,7 +370,7 @@ td .error {
 #attachments {
 }
 
-#uploax {
+#upload {
 	float:left;
 }
 #progressbar {

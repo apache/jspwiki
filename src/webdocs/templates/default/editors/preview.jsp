@@ -41,19 +41,13 @@
             cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
 
   <div id="previewsavebutton">
-    <input type="submit" name="edit" value="Keep editing" style="display:none;"/>
-    <input type="button" name="edix" value="<fmt:message key='editor.preview.edit.submit'/>" 
-        onclick="this.form.edit.click();" 
+    <input type="submit" name="edit" value="<fmt:message key='editor.preview.edit.submit'/>" 
       accesskey="e"
           title="<fmt:message key='editor.preview.edit.title'/>" />
-    <input type="submit" name="ok" value="Save" style="display:none;"/>
-    <input type="button" name="ox" value="<fmt:message key='editor.preview.save.submit'/>" 
-        onclick="this.form.ok.click();" 
+    <input type="submit" name="ok" value="<fmt:message key='editor.preview.save.submit'/>" 
       accesskey="s"
           title="<fmt:message key='editor.preview.save.title'/>" />
-    <input type="submit" name="cancel" value="Cancel" style="display:none;"/>
-    <input type="button" name="cancex" value="<fmt:message key='editor.preview.cancel.submit'/>"  
-        onclick="this.form.cancel.click();" 
+    <input type="submit" name="cancel" value="<fmt:message key='editor.preview.cancel.submit'/>"  
       accesskey="q" 
           title="<fmt:message key='editor.preview.cancel.title'/>" />
   </div>

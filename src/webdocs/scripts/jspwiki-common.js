@@ -333,11 +333,13 @@ var Wiki = {
 		if(target) $(target).scrollTo();	
 	},
 
-	/* SubmitOnce: hide the real submit button, add proxy buttons which get disabled on submit */
+	/* SubmitOnce: disable all buttons to avoid double submit */
 	submitOnce: function(form){
+		(function(){ 
 		$A(form.elements).each(function(e){
-			if( e.type.toLowerCase() == 'button') e.disabled = true;
-		});
+				if( (/submit|button/i).test(e.type)) e.disabled = true;
+			});
+		}).delay(10);
 		return true;
 	},
 

@@ -249,8 +249,7 @@
   <td>
   </td>
   <td>
-    <input type="submit" name="ok" value="Save User Preferences" style="display:none;"/>
-    <input type="button" name="ox" value="Save User Preferences" onclick="this.form.ok.click();" />
+    <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit'/>" />
 
     <input type="hidden" name="action" value="setAssertedName" />
     <wiki:UserCheck status="anonymous">
@@ -273,8 +272,7 @@
               return Wiki.submitOnce( this );" 
       method="POST" accept-charset="<wiki:ContentEncoding />" >
 
-  <input type="submit" name="ok" value="Remove user preferences" style="display:none;" />
-  <input type="button" name="ox" value="<fmt:message key='prefs.clear.submit'/>" onclick="this.form.ok.click();" />
+  <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />
   <input type="hidden" name="action" value="clearAssertedName" />
 
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>

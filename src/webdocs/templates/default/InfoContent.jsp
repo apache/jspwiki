@@ -226,10 +226,9 @@
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" >
-      <input type="submit" name="rename" value="Rename Page" style="display:none;"/>
-      <input type="button" name="renamx" value="<fmt:message key='info.rename.submit' />"
-          onclick="this.form.rename.click();" />
-      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" >&nbsp;&nbsp;
+      <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
+      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" >
+      &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" >
       <fmt:message key="info.updatereferrers"/>
 
@@ -248,9 +247,8 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
 
-      <input type="submit" name="delete-all" value="Delete" id="delete-all" style="display:none;"/>
-      <input type="button" name="delete-alx" value="<fmt:message key='info.delete.submit'/>"
-          onclick="$('delete-all').click();"
+      <input type="submit" name="delete-all" id="delete-all" 
+            value="<fmt:message key='info.delete.submit'/>"
           <wiki:HasAttachments>disabled</wiki:HasAttachments> />
       <wiki:HasAttachments><fmt:message key='info.delete.attachmentwarning'/></wiki:HasAttachments>
 
@@ -398,9 +396,7 @@
   <tr>
     <td></td>
     <td>
-    <input type="submit" name="upload" value="Upload" style="display:none;"/>
-    <input type="button" name="uploax" value="<fmt:message key='attach.add.submit'/>" id="uploax" onclick="this.form.upload.click();"/>
-    <input type="hidden" name="action"  value="upload" />
+    <input type="submit" name="upload" value="<fmt:message key='attach.add.submit'/>" id="upload" /> <input type="hidden" name="action"  value="upload" />
     <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
         <div id="progressbar"><div class="ajaxprogress"></div></div>
     </td>
@@ -422,9 +418,8 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
 
-     <input type="submit" name="delete-all" value="Delete" id="delete-all" style="display:none;"/>
-     <input type="button" name="delete-alx" value="<fmt:message key='info.deleteattachment.submit' />"
-          onclick="$('delete-all').click();" />
+     <input type="submit" name="delete-all" id="delete-all" 
+           value="<fmt:message key='info.deleteattachment.submit' />" />
 
     </form>
 

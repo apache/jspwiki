@@ -18,8 +18,8 @@
       accesskey="f"></input>
   <button type="submit"
   		 name="searchSubmit" id="searchSubmit"
-  		value="<fmt:message key='find.submit.find'/>"
-  		title="<fmt:message key='find.submit.find'/>"></button>
+  		value="<fmt:message key='find.submit.go'/>"
+  		title="<fmt:message key='find.submit.go'/>"></button>
   </div>
 
   <div id="searchboxMenu" style='visibility:hidden;'>

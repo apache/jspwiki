@@ -31,14 +31,19 @@
 
   <div id="page">
     <wiki:TabbedSection defaultTab="attachments" >
-      <wiki:Tab id="pagecontent" title="View" accesskey="v" 
-			   url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
-        <%--<wiki:Include page="PageTab.jsp"/> --%>
+      <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' 
+			   url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
+	     accesskey="v" >
       </wiki:Tab>
       <wiki:PageExists>
-      <wiki:Tab id="attachments" title="<%= attTitle %>" accesskey="a">
+      <wiki:Tab id="attachments" title="<%= attTitle %>" >
         <wiki:Include page="AttachmentTab.jsp"/>
       </wiki:Tab>
+      <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+               url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+         accesskey="i" >
+      </wiki:Tab>
+    
       </wiki:PageExists>
     </wiki:TabbedSection>
   </div>

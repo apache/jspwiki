@@ -146,12 +146,10 @@
        <td />
        <td>
        <wiki:UserProfile property="exists">
-        <input type="submit" name="ok" value="Save User Profile" style="display:none;" />
-        <input type="button" name="ox" value="<fmt:message key='prefs.save.submit' />" onclick="this.form.ok.click();" />
+        <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
        </wiki:UserProfile>
        <wiki:UserProfile property="new">
-         <input type="submit" name="ok" value="Create User Profile" style="display:none;" />
-         <input type="button" name="ox" value="<fmt:message key='prefs.save.submit' />" onclick="this.form.ok.click();" />
+         <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
        </wiki:UserProfile>
        <input type="hidden" name="action" value="saveProfile" />
 
