@@ -1,3 +1,12 @@
+2007-06-09  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+       * 2.5.79
+
+       * Fixed minor issue with default template saying "go" instead
+       of "find".
+
+       * First alpha release of JSPWiki 2.6.
+
 2007-06-09  Andrew Jaquith <andrew AT freshcookies DOT org>
 
        * 2.5.78
@@ -9,26 +18,26 @@
        * 2.5.77
 
        * Refactored EditorIteratorTag; Added editor changes
-       to the UserPreferences.       
+       to the UserPreferences.
 
 2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * Info tab is back, now making use of the new tab url parameter.
-       
+
        * Stylesheets of the Smart and OrderedList skins have been refactored.
-       
-       * Submit of the quick Navigation menu now defaults back to the 
+
+       * Submit of the quick Navigation menu now defaults back to the
        advanced Search page. The same applies to clicking the looking-glass icon.
-       
-       * Upgraded to mootools v1.11       
+
+       * Upgraded to mootools v1.11
 
 2007-06-05  Christoph Sauer (sauer@hs-heilbronn.de)
 
        * 2.5.76
-       
+
        * JSPWiki now supports WikiCreole 1.0:
        Checked in CreoleToJSPWiki renderer plus CreolePageFilter.
-       This will allow users to operate JSPWiki in WikiCreole mixed mode. 
+       This will allow users to operate JSPWiki in WikiCreole mixed mode.
        see http://www.wikicreole.org for more infos about WikiCreole.
 
 2007-06-03  Dirk Frederickx (dirk.frederickx@gmail.com)
@@ -37,7 +46,7 @@
 
        * Progress bar fixed to run on Safari or Opera as well.
        It uses now css style visibility:hidden iso display:none.
-       
+
        * Minor css fixes.
 
 2007-06-04  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>

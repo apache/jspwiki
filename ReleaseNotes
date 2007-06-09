@@ -117,3 +117,7 @@ KNOWN PROBLEMS
 * GroupTab is missing.
 
 * Brushed javascript editor is not yet completely ported
+
+* Our documentation simply sucks at this point.  Please forgive us,
+  and point where those fixes are needed.  We will improve upon
+  this during our progress towards a stable.
