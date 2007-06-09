@@ -6,6 +6,7 @@ Do not deploy in a production environment, unless you are absolutely sure
 of what you are doing.  However, things you *can* be doing are e.g. donating
 localizations, testing browser and servlet container compatibility, etc.
 
+Bugs should go to bugs.jspwiki.org instead of the JSPWiki bug tracker.
 
 NEW FEATURES
 ============
