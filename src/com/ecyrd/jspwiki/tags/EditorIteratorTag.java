@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -19,12 +19,8 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
@@ -44,7 +40,7 @@ public class EditorIteratorTag
     extends IteratorTag
 {
     private static final long serialVersionUID = 0L;
-    
+
     static    Logger    log = Logger.getLogger( EditorIteratorTag.class );
 
     public final int doStartTag()
@@ -55,15 +51,15 @@ public class EditorIteratorTag
         EditorManager mgr    = engine.getEditorManager();
 
         String[] editorList = mgr.getEditorList();
-        
+
         Collection editors = new ArrayList();
-        
+
         for ( int i = 0; i < editorList.length; i++ )
         {
             editors.add(new Editor(m_wikiContext, editorList[i]));
-        } 
+        }
         setList( editors );
-        
+
         return super.doStartTag();
     }
 }

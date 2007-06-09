@@ -320,7 +320,7 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
 
     /**
      * This might not work, users will have to resolve this ambiguity by hand...
-     * 
+     *
      * @throws Exception
      */
     public void testBulletListBoldAmbiguity() throws Exception
@@ -441,13 +441,15 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
         assertEquals(src, translate(src));
     }
 
+/*
+// FIXME: this should be enabled
     public void testExtensions4() throws Exception
     {
         String src = "<<JuwiOpen submit=\'http://www.jspwiki.org\' >>";
 
         String target = "[{JuwiOpen submit=\'http://www.jspwiki.org\' }]";
     }
-
+*/
     public void testHeaderNotAtBeginning()
     {
         String src = "Hallo==Hallo";

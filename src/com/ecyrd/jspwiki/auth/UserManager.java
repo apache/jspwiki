@@ -41,10 +41,8 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
-import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
-import com.ecyrd.jspwiki.search.SearchManager.JSONSearch;
 import com.ecyrd.jspwiki.ui.InputValidator;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.MailUtil;
@@ -112,7 +110,7 @@ public final class UserManager
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
         addWikiEventListener( engine.getPageManager() );
-        
+
         JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(), new AllPermission(null) );
     }
 
@@ -274,7 +272,7 @@ public final class UserManager
      * @throws DuplicateUserException if the proposed profile's login name or full name collides with another
      * @throws WikiException if the save fails for some reason. If the current user does not have
      * permission to save the profile, this will be a {@link com.ecyrd.jspwiki.auth.WikiSecurityException};
-     * if if the user profile must be approved before it can be saved, it will be a 
+     * if if the user profile must be approved before it can be saved, it will be a
      * {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}. All other WikiException
      * indicate a condition that is not normal is probably due to mis-configuration
      */
@@ -545,7 +543,7 @@ public final class UserManager
     {
         return m_database.getWikiNames();
     }
-    
+
     /**
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
@@ -557,7 +555,7 @@ public final class UserManager
 
         /**
          * No-op.
-         * @throws WikiSecurityException never... 
+         * @throws WikiSecurityException never...
          */
         public void commit() throws WikiSecurityException
         {
@@ -781,26 +779,26 @@ public final class UserManager
 
     /**
      *  Implements the JSON API for usermanager.
-     *  
+     *
      *  @author Janne Jalkanen
      */
     public final class JSONUserModule implements RPCCallable
     {
         /**
          *  Directly returns the UserProfile object attached to an uid.
-         *  
+         *
          *  @param uid The user id (e.g. WikiName)
          *  @return A UserProfile object
          *  @throws NoSuchPrincipalException If such a name does not exist.
          */
-        public UserProfile getUserInfo( String uid ) 
+        public UserProfile getUserInfo( String uid )
             throws NoSuchPrincipalException
         {
             log.info("request "+uid);
             UserProfile prof = m_database.find( uid );
-            
+
             log.info("answer "+prof);
-            
+
             return prof;
         }
     }

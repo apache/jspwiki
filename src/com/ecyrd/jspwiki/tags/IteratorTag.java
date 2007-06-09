@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -20,14 +20,14 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Collection;
+import java.util.Iterator;
+
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
@@ -72,7 +72,7 @@ public abstract class IteratorTag
             m_iterator = Arrays.asList(arg).iterator();
         }
     }
-    
+
     /**
      *  Sets the iterator directly that is used to form the iteration.
      */
@@ -91,7 +91,7 @@ public abstract class IteratorTag
     {
         m_iterator = null;
     }
-    
+
     /**
      *  Override this method to reset your own iterator.
      */
@@ -99,13 +99,13 @@ public abstract class IteratorTag
     {
         // No operation here
     }
-    
+
     public int doStartTag()
     {
         m_wikiContext = WikiContext.findContext(pageContext);
-        
+
         resetIterator();
-        
+
         if( m_iterator == null ) return SKIP_BODY;
 
         if( m_iterator.hasNext() )
@@ -125,9 +125,9 @@ public abstract class IteratorTag
         //  Build a clone of the current context
         //
         WikiContext context = (WikiContext)m_wikiContext.clone();
-        
+
         Object o = m_iterator.next();
-        
+
         if( o instanceof WikiPage )
             context.setPage( (WikiPage)o );
 
@@ -176,7 +176,7 @@ public abstract class IteratorTag
 
         return SKIP_BODY;
     }
-    
+
     public void doCatch(Throwable arg0) throws Throwable
     {
     }
@@ -187,7 +187,7 @@ public abstract class IteratorTag
         resetIterator();
         m_iterator = null;
         m_pageName = null;
-        m_wikiContext = null;        
+        m_wikiContext = null;
     }
 
 }
