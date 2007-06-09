@@ -15,7 +15,7 @@
  %>
 
 <wiki:TabbedSection defaultTab="diffcontent">
-  <wiki:Tab id="pagecontent" title="View" accesskey="v" 
+  <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext,"view.tab")%>" accesskey="v" 
 	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
   </wiki:Tab>
 
@@ -25,7 +25,7 @@
   </wiki:Tab>
     
 
-<wiki:Tab id="diffcontent" title="Page Difference">
+<wiki:Tab id="diffcontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "diff.tab")%>">
 
 <wiki:PageExists>
 
