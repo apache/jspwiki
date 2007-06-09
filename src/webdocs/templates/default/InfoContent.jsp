@@ -221,7 +221,7 @@
   <wiki:Permission permission="rename">
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
            class="wikiform"
-            name="renameform"
+              id="renameform"
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
@@ -243,7 +243,7 @@
   <wiki:Permission permission="delete">
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="wikiform"
-            name="deleteForm"
+              id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
 
@@ -369,7 +369,7 @@
   <wiki:Permission permission="upload">
   <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>" 
          class="wikiform"
-          name="uploadform"
+            id="uploadform"
       onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"
         method="post" accept-charset="<wiki:ContentEncoding/>"
        enctype="multipart/form-data" >
@@ -414,7 +414,7 @@
     <h3><fmt:message key="info.deleteattachment"/></h3>
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="wikiform"
-            name="deleteForm"
+              id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
 

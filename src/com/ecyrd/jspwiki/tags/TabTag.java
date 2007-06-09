@@ -109,8 +109,8 @@ public class TabTag extends WikiTagBase
         int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
         if( pos > -1 )
         {
-            m_tabTitle = m_tabTitle.substring( 0, pos ) + "<u>"
-                       + m_tabTitle.charAt( pos ) + "</u>" + m_tabTitle.substring( pos+1 );
+            m_tabTitle = m_tabTitle.substring( 0, pos ) + "<span class='accesskey'>"
+                       + m_tabTitle.charAt( pos ) + "</span>" + m_tabTitle.substring( pos+1 );
         }
         return true;
     }

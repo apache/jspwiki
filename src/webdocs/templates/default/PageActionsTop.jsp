@@ -99,8 +99,10 @@
   <%-- more actions dropdown -- converted to popup by javascript 
        so all basic actions are accessible even if js is not avail --%>
   <form class="wikiform" id="actionsmenu" method="get" action="" style="display:inline;">
-  <select name="actionsMore" id="actionsMore"
-      onchange="if ((this.selectedIndex != 0) && (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;    <option class="actionsMore" value="" checked='checked'><fmt:message key="actions.more"/></option>
+  <select name="actionsMore" 
+            id="actionsMore"
+      onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
+    <option class="actionsMore" value="" checked='checked'><fmt:message key="actions.more"/></option>
 
     <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>

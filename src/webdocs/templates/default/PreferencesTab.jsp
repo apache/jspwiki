@@ -27,7 +27,7 @@
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/><wiki:Param name='editor' value='plain'/></wiki:Link>" 
        class="wikiform" 
-        name="setCookie" id="setCookie"
+          id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />" 
     onsubmit="var s=[];
              ['prefSkin','prefTimeFormat','prefTimeZone'].each(function(el){
@@ -267,7 +267,7 @@
 <h3>Removing User Preferences</h3>
 
 <form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
-        name="clearCookie" id="clearCookie"
+          id="clearCookie"
     onsubmit="Cookie.remove( 'JSPWikiUserPrefs' ); 
               return Wiki.submitOnce( this );" 
       method="POST" accept-charset="<wiki:ContentEncoding />" >

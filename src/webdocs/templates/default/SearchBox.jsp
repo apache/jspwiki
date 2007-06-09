@@ -6,7 +6,7 @@
 
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
         class="wikiform"
-        name="searchForm" id="searchForm"
+           id="searchForm" 
         accept-charset="<wiki:ContentEncoding />">
 
   <div>

@@ -16,7 +16,7 @@
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' 
       format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
-        name="editProfile" id="editProfile" 
+          id="editProfile" 
        class="wikiform"
     onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="UTF-8">

@@ -1,5 +1,9 @@
 2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
+       * Several XHTML STRICT compliance issues fixed.
+
+2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
+
        * 2.5.80
        
        * Refactoring of SubmitOnce functionality, such that is doesn't harm

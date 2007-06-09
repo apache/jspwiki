@@ -14,7 +14,7 @@
 
 <form action="<wiki:Link format='url' jsp='Search.jsp'/>"
        class="wikiform"
-        name="searchform2" id="searchform2"
+          id="searchform2"
          accept-charset="<wiki:ContentEncoding/>">
 
   <p><label for="query"><fmt:message key="find.input" /></label></p>

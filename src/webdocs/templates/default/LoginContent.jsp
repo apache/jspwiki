@@ -31,7 +31,7 @@
     <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
 <form action="<%=postURL%>"
-        name="login" id="login"
+          id="login"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding />" >
@@ -107,7 +107,7 @@
 
 <div align="center">
 <form action="LostPassword.jsp"
-        name="lostpw" id="lostpw"
+          id="lostpw"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding />" >

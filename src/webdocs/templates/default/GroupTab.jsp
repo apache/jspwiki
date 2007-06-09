@@ -80,7 +80,7 @@
               name="membersfield" id="membersfield" ></textarea>
     </div>
     <form action="<wiki:Link format='url' jsp='Group.jsp'/>" 
-            name="groupForm" id="groupForm" 
+              id="groupForm" 
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
       <input type="hidden" name="group"   value="" />

@@ -978,6 +978,9 @@ table.calendar tr.weekdays {
  *   "active" is the active tab  :border-bottom --white-- to 'reopen' the tabmenu border
  *   "alerttab" is a --red-- tab used in edit mode for msg like lock etc.
  */
+.accesskey {
+	text-decoration:underline;
+}
 .hidetab {
 	height:0;
 	overflow:hidden; 

@@ -65,7 +65,7 @@
     <%-- hidden delete form --%>
     <form action="tbd"
            class="wikiform"
-            name="deleteForm" id="deleteForm" style="display:none;"
+              id="deleteForm" style="display:none;"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return(confirm('<fmt:message key="attach.deleteconfirm"/>') && Wiki.submitOnce(this) );" >
 

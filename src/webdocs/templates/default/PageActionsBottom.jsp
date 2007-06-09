@@ -93,7 +93,7 @@
         title="<fmt:message key='info.rsspagefeed.title'>
                  <fmt:param><wiki:PageName /></fmt:param>
                </fmt:message>" >
-        <img src="<wiki:Link jsp='images/xml.png' format='url'/>" border="0" alt="[RSS]"/>
+        <img src="<wiki:Link jsp='images/xml.png' format='url'/>" alt="[RSS]"/>
       </a>
       </wiki:PageExists>
 
