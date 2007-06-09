@@ -25,6 +25,12 @@ import java.util.ResourceBundle;
 
 import com.ecyrd.jspwiki.WikiEngine;
 
+/**
+ *  Manages all internationalization in JSPWiki.
+ *  
+ *  @author Janne Jalkanen
+ *  @since 2.6
+ */
 public class InternationalizationManager
 {
     public static final String CORE_BUNDLE = "CoreResources";
@@ -35,9 +41,17 @@ public class InternationalizationManager
     {   
     }
     
+    /**
+     *  Returns a String from the CORE_BUNDLE using English as the default
+     *  locale.
+     *  
+     *  @param key Key to find
+     *  @return The English string
+     *  @throws MissingResourceException If there is no such key
+     */
     public String get( String key ) throws MissingResourceException
     {
-        return get( JSPWIKI_BUNDLE, Locale.ENGLISH, key );
+        return get( CORE_BUNDLE, Locale.ENGLISH, key );
     }
     
     /**
@@ -46,6 +60,7 @@ public class InternationalizationManager
      *  @param bundle The ResourceBundle to find.  Must exist.
      *  @param locale The Locale to use.  Set to null to get the default locale.
      *  @return A localized string
+     *  @throws MissingResourceException If the key cannot be located at all, even from the default locale.
      */
     public ResourceBundle getBundle( String bundle, Locale locale ) throws MissingResourceException
     
@@ -65,6 +80,7 @@ public class InternationalizationManager
      *  @param locale Locale to use - null for default
      *  @param key    Which key to use.
      *  @return A localized string (or from the default language, if not found)
+     *  @throws MissingResourceException If the key cannot be located at all, even from the default locale.
      */
     public String get( String bundle, Locale locale, String key ) throws MissingResourceException
     {
