@@ -107,3 +107,7 @@ KNOWN PROBLEMS
      signed with the same key as jspwiki.jar, and
   2) any plugin, which constructs new WikiPages will fail because
      of the constructor has been changed.
+
+* The default template does not work at all if you turn off
+  Javascript.  We are aware of this and working on a fix.
+
