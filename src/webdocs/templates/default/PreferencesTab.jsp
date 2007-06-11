@@ -254,7 +254,7 @@
     <input type="hidden" name="action" value="setAssertedName" />
     <wiki:UserCheck status="anonymous">
     </wiki:UserCheck>
-    <div class="formhelp">Your choices will be saved in your browser as cookies.</div>
+    <div class="formhelp"><fmt:message key='prefs.cookies'/></div>
   </td>
   </tr>
 
@@ -264,7 +264,7 @@
 <!-- Clearing the 'asserted name' and other perfs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
-<h3>Removing User Preferences</h3>
+<h3><fmt:message key='prefs.clear.heading'/></h3>
 
 <form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="clearCookie"

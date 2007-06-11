@@ -169,7 +169,7 @@
 
   <wiki:TabbedSection defaultTab="info">
   
-  <wiki:Tab id="pagecontent" title="View" accesskey="v" 
+  <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>" accesskey="v" 
 	       url="<%=wikiContext.getURL(WikiContext.VIEW, wikiContext.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
