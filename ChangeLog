@@ -1,3 +1,11 @@
+2007-06-11  Christoph Sauer (sauer@hs-heilbronn.de)
+
+      * 2.5.82
+      
+      * Added German localisation.
+      
+      * Added missing i18n tags in PageInfo and UserPreferences
+
 2007-06-10  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.81
