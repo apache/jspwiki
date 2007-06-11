@@ -17,7 +17,7 @@
           id="searchform2"
          accept-charset="<wiki:ContentEncoding/>">
 
-  <p><label for="query"><fmt:message key="find.input" /></label></p>
+  <h4><fmt:message key="find.input" /></h4>
   <p>
     <input type="text"
            name="query" id="query2" 

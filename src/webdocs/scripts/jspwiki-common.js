@@ -958,7 +958,7 @@ var SearchBox = {
 	    this.query = q; 
 	    q.observe(this.ajaxQuickSearch.bind(this) ); 
 
-		q.form.addEvent('submit',this.submit.bind(this))
+		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
 			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
 			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))

@@ -249,7 +249,7 @@
   <td>
   </td>
   <td>
-    <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit'/>" />
+    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" />
 
     <input type="hidden" name="action" value="setAssertedName" />
     <wiki:UserCheck status="anonymous">
