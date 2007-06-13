@@ -1,26 +1,32 @@
+2007-06-13  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.84
+
+        * Bug fix: Bug 8, Multiple spaces in page names are not cleaned
+
 2007-06-11  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * Added Finnish localization.  No version bump, as there
         is no functionality change.
-        
+
 2007-06-11  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.83
-      
+
         * Fixed blocking IE javascript bug.
-       
+
 2007-06-11  Christoph Sauer (sauer@hs-heilbronn.de)
 
         * 2.5.82
-      
+
         * Added German localisation.
-       
+
         * Added missing i18n tags in PageInfo and UserPreferences
 
 2007-06-10  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
        * 2.5.81
-       
+
        * Fixed a couple of localization issues (diff tab
        was not localized properly).
 
@@ -31,17 +37,17 @@
 2007-06-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
        * 2.5.80
-       
+
        * Refactoring of SubmitOnce functionality, such that is doesn't harm
        when javascript is off. Wiki.SubmitOnce() prevents you from pressing
-       submit buttons multiple times.  
+       submit buttons multiple times.
        Editing is now possible (and login etc.) while javascript is off.
        (ref. http://bugs.jspwiki.org/show_bug.cgi?id=3)
-       
+
        * Added experimental GroupTab.
-       
+
        * Info tab added to Upload.jsp
-       
+
        * Minor missing i18n fixed. Small css fixes
 
 
