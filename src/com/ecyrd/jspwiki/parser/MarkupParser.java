@@ -1,4 +1,4 @@
-/* 
+/*
   JSPWiki - a JSP-based WikiWiki clone.
 
   Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *   Provides an abstract class for the parser instances.
- *   
+ *
  *   @author Janne Jalkanen
  *   @since  2.4
  */
@@ -63,13 +63,13 @@ public abstract class MarkupParser
     public static final String     PROP_ALLOWHTML        = "jspwiki.translatorReader.allowHTML";
     /** If set to "true", enables plugins during parsing */
     public static final String     PROP_RUNPLUGINS       = "jspwiki.translatorReader.runPlugins";
-    
+
     /** Lists all punctuation characters allowed in WikiMarkup. These
         will not be cleaned away. This is for compatibility for older versions
         of JSPWiki. */
-    
+
     protected static final String           LEGACY_CHARS_ALLOWED      = "._";
-    
+
     /** Lists all punctuation characters allowed in page names. */
     protected static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
 
@@ -79,7 +79,7 @@ public abstract class MarkupParser
         m_context = context;
         setInputReader( in );
     }
-    
+
     /**
      *  Replaces the current input character stream with a new one.
      *  @param in New source for input.  If null, this method does nothing.
@@ -179,7 +179,7 @@ public abstract class MarkupParser
     {
         m_inlineImages = toggle;
     }
-    
+
     /**
      *  Parses the document.
      *  @return the parsed document, as a WikiDocument
@@ -188,7 +188,7 @@ public abstract class MarkupParser
     public abstract WikiDocument parse()
          throws IOException;
 
-    /** 
+    /**
      *  Return the current position in the reader stream.
      *  The value will be -1 prior to reading.
      * @return the reader position as an int.
@@ -201,7 +201,7 @@ public abstract class MarkupParser
     /**
      * Returns the next token in the stream.  This is the most called method
      * in the entire parser, so it needs to be lean and mean.
-     * 
+     *
      * @return The next token in the stream; or, if the stream is ended, -1.
      * @throws IOException If something bad happens
      * @throws NullPointerException If you have not yet created an input document.
@@ -220,7 +220,7 @@ public abstract class MarkupParser
      */
     protected void pushBack( int c )
         throws IOException
-    {        
+    {
         if( c != -1 && m_in != null )
         {
             m_pos--;
@@ -246,10 +246,12 @@ public abstract class MarkupParser
     }
 
     /**
-     *  Cleans a Wiki name based on a list of characters.
+     *  Cleans a Wiki name based on a list of characters.  Also, any multiple
+     *  whitespace is collapsed into a single space, and any leading or trailing
+     *  space is removed.
      *
      *  @param link Link to be cleared. Null is safe, and causes this to return null.
-     * @param allowedChars TODO
+     *  @param allowedChars Characters which are allowed in the string.
      *  @return A cleaned link.
      *
      *  @since 2.6
@@ -270,17 +272,36 @@ public abstract class MarkupParser
         //
         //  Also capitalize things, if necessary.
         //
-    
+
         boolean isWord = true;  // If true, we've just crossed a word boundary
-        
+        boolean wasSpace = false;
+
         for( int i = 0; i < link.length(); i++ )
         {
             char ch = link.charAt(i);
 
+            //
+            //  Cleans away repetitive whitespace and only uses the first one.
+            //
+            if( Character.isWhitespace(ch) )
+            {
+                if( wasSpace )
+                    continue;
+
+                wasSpace = true;
+            }
+            else
+            {
+                wasSpace = false;
+            }
+
+            //
+            //  Check if it is allowed to use this char, and capitalize, if necessary.
+            //
             if( Character.isLetterOrDigit( ch ) || allowedChars.indexOf(ch) != -1 )
             {
                 // Is a letter
-                
+
                 if( isWord ) ch = Character.toUpperCase( ch );
                 clean.append( ch );
                 isWord = false;
@@ -290,7 +311,7 @@ public abstract class MarkupParser
                 isWord = true;
             }
         }
-    
+
         return clean.toString();
     }
 
