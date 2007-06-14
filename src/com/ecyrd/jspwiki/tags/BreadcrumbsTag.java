@@ -99,7 +99,7 @@ public class BreadcrumbsTag extends WikiTagBase
         {
             if( trail.isEmpty() )
             {
-                trail.push(page);
+                trail.pushItem(page);
             }
             else
             {
@@ -108,7 +108,7 @@ public class BreadcrumbsTag extends WikiTagBase
                 //
                 if( !((String) trail.getLast()).equals(page) )
                 {
-                    trail.push(page);
+                    trail.pushItem(page);
                     log.debug("added page: " + page);
                 }
                 log.debug("didn't add page because of refresh");
@@ -162,7 +162,7 @@ public class BreadcrumbsTag extends WikiTagBase
             m_size = size;
         }
 
-        Object push(Object o)
+        Object pushItem(Object o)
         {
             add(o);
             if( size() > m_size )
