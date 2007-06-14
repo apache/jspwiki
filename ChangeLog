@@ -1,3 +1,9 @@
+2007-06-14  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.85
+        
+        * Bug fix: Bug 58, BreadcrumbsTag.java does not compile under JDK 6
+        
 2007-06-13  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.84
