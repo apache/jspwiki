@@ -1,8 +1,8 @@
-#Wed May 09 21:59:14 EEST 2007
+#Fri Jun 15 00:28:19 EEST 2007
 eclipse.preferences.version=1
 formatter_profile=_Janne's coding conventions
 formatter_settings_version=10
-internal.default.compliance=user
+internal.default.compliance=default
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;org;com;
 org.eclipse.jdt.ui.ondemandthreshold=5

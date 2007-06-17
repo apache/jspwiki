@@ -1,3 +1,30 @@
+2007-06-16  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.86
+        
+        * [Bug 29], search path is now trim()med properly. Thanks
+        to David Au.
+        
+        * A couple of fixes to warnings courtesy of Alex Samad.
+        
+        * [Bug 12], AM/PM are now correct in preferences.
+        
+        * Created new Preferences object, and refactored some old
+        preferences code from commonheader.jsp into it.  This also
+        means that instead of using ${prefTimeZone} you would use
+        ${prefs["TimeZone"]} in your variables.  This is far more
+        extensible and future-proof than before.  The HttpSession
+        now gets a Preferences object under the name "prefs".  There
+        are also some utility methods in the Preferences class which
+        abstract this away.  (It's also a lot faster because we do
+        not parse the cookie every single time.)
+        
+        * [Bug 63]: The default eclipse coding style file now
+        has .xml suffix.
+        
+        * Checkstyle config under doc/eclipse also now gains a .xml
+        suffix.
+
 2007-06-14  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.85
