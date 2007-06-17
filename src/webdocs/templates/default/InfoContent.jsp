@@ -186,7 +186,7 @@
     <fmt:param>
       <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />"
         title="<fmt:message key='info.pagediff.title' />" >
-        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefDateFormat}" />
+        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
       </a>
     </fmt:param>
     <fmt:param><wiki:Author /></fmt:param>
@@ -209,7 +209,7 @@
       <%--<fmt:param><wiki:Link version="1"><%= creationDate %></wiki:Link></fmt:param>--%>
       <fmt:param>
         <wiki:Link version="1">
-          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefDateFormat}" />
+          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
         </wiki:Link>
       </fmt:param>
       <fmt:param><%= creationAuthor %></fmt:param>
@@ -291,7 +291,7 @@
           </wiki:LinkTo>
         </td>
 
-        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefDateFormat}" /></td>
+        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
         <td>
           <%--<fmt:formatNumber value='<%=Double.toString(currentPage.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb--%>
           <wiki:PageSize />
@@ -476,7 +476,7 @@
       <td nowrap style="text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td nowrap><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefDateFormat}" /></td>
+	  <td nowrap><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.

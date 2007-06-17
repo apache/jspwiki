@@ -10,6 +10,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
 <%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 
@@ -72,6 +73,7 @@
     }
     if( "setAssertedName".equals(request.getParameter("action")) )
     {
+        Preferences.reloadPreferences(pageContext);
         String assertedName = request.getParameter("assertedName");
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
         response.sendRedirect( wiki.getViewURL(null) );

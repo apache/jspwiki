@@ -73,14 +73,14 @@
       <wiki:CheckVersion mode="latest">
          <fmt:message key="info.lastmodified">
             <fmt:param><wiki:PageVersion /></fmt:param>
-            <fmt:param><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefDateFormat}'/></wiki:DiffLink></fmt:param>
+            <fmt:param><wiki:DiffLink version="latest" newVersion="previous"><wiki:PageDate format='${prefs["DateFormat"]}'/></wiki:DiffLink></fmt:param>
             <fmt:param><wiki:Author /></fmt:param>
          </fmt:message>
       </wiki:CheckVersion>
   
       <wiki:CheckVersion mode="notlatest">
         <fmt:message key="actions.publishedon">
-           <fmt:param><wiki:PageDate format='${prefDateFormat}'/></fmt:param>
+           <fmt:param><wiki:PageDate format='${prefs["DateFormat"]}'/></fmt:param>
            <fmt:param><wiki:Author /></fmt:param>
         </fmt:message>
       </wiki:CheckVersion>

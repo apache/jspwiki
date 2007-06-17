@@ -122,8 +122,8 @@
 
 <%
   /* see commonheader.jsp */
-  String prefDateFormat = (String) session.getAttribute("prefDateFormat");
-  String prefTimeZone   = (String) session.getAttribute("prefTimeZone");
+  String prefDateFormat = Preferences.getPreference( pageContext, "DateFormat" );
+  String prefTimeZone   = Preferences.getPreference( pageContext, "TimeZone" );
 
   int pagesize  = 20; //default #revisions shown per page
   int maxpages  = 9;  //max #paginations links -- choose odd figure
@@ -176,7 +176,7 @@
     <fmt:param>
       <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />"
         title="<fmt:message key='info.pagediff.title' />" >
-        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefDateFormat}" />
+        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
       </a>
     </fmt:param>
     <fmt:param><wiki:Author /></fmt:param>
@@ -198,7 +198,7 @@
       <%--<fmt:param><wiki:Link version="1"><%= creationDate %></wiki:Link></fmt:param>--%>
       <fmt:param>
         <wiki:Link version="1">
-          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefDateFormat}" />
+          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
         </wiki:Link>
       </fmt:param>
       <fmt:param><%= creationAuthor %></fmt:param>
@@ -297,7 +297,7 @@
           </wiki:LinkTo>
         </td>
 
-        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefDateFormat}" /></td>
+        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
         <td>
           <%--<fmt:formatNumber value='<%=((float)currentPage.getSize())/1000 %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb--%>
           <wiki:PageSize />
@@ -477,7 +477,7 @@
       <td style="text-align:right;">
         <fmt:formatNumber value='<%=((float)att.getSize())/1000 %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefDateFormat}" /></td>
+	  <td><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
       <td><wiki:Author /></td>
 
       <wiki:Permission permission="upload">

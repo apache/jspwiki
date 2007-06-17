@@ -130,14 +130,14 @@
        <td><label>Creation date</label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
- 	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefDateFormat}" />
+ 	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs['DateFormat']}" />
        </td>
      </tr>
      <tr class="additinfo">
        <td><label>Last modified</label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
- 	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefDateFormat}" />
+ 	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs['DateFormat']}" />
        </td>
      </tr>
      </wiki:UserProfile>

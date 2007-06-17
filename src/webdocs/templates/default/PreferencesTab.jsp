@@ -1,6 +1,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -8,9 +9,9 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   /* see commonheader.jsp */
-  String prefDateFormat     = (String) session.getAttribute("prefDateFormat");
-  String prefTimeZone       = (String) session.getAttribute("prefTimeZone");
-  String prefEditorType     = (String) session.getAttribute("prefEditorType"); //TODO
+  String prefDateFormat     = Preferences.getPreference(pageContext,"DateFormat");
+  String prefTimeZone       = Preferences.getPreference(pageContext,"TimeZone");
+  String prefEditorType     = Preferences.getPreference(pageContext,"EditorType"); //TODO
 
   WikiContext c = WikiContext.findContext( pageContext );
   pageContext.setAttribute( "skins", c.getEngine().getTemplateManager().listSkins(pageContext, c.getTemplate() ) );
@@ -28,7 +29,7 @@
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/><wiki:Param name='editor' value='plain'/></wiki:Link>" 
        class="wikiform" 
           id="setCookie"
-      method="post" accept-charset="<wiki:ContentEncoding />" 
+      method="post" accept-charset="<wiki:ContentEncoding />"
     onsubmit="var s=[];
              ['prefSkin','prefTimeFormat','prefTimeZone'].each(function(el){
                if($(el)) s.push($(el).getValue());
@@ -113,23 +114,23 @@
       ,"EEE, dd/MM/yyyy"
       ,"EEE, dd/MM/yyyy, Z"
       ,"EEE, dd/MM/yyyy, zzzz"
-      ,"d/MM/yy hh:mm"
-      ,"d/MM/yy HH:mm a"
-      ,"d/MM/yy HH:mm a, Z"
+      ,"d/MM/yy HH:mm"
+      ,"d/MM/yy hh:mm a"
+      ,"d/MM/yy hh:mm a, Z"
       ,"dd-MMM"
       ,"dd-MMM-yy"
       ,"dd-MMM-yyyy"
       ,"EEE, dd-MMM-yyyy"
       ,"EEE, dd-MMM-yyyy, Z"
       ,"EEE, dd-MMM-yyyy, zzzz"
-      ,"dd-MMM-yyyy hh:mm"
-      ,"dd-MMM-yyyy HH:mm a"
-      ,"dd-MMM-yyyy HH:mm a, Z"
+      ,"dd-MMM-yyyy HH:mm"
+      ,"dd-MMM-yyyy hh:mm a"
+      ,"dd-MMM-yyyy hh:mm a, Z"
       ,"MMMM dd, yyyy"
-      ,"MMMM dd, yyyy hh:mm"
-      ,"MMMM dd, yyyy HH:mm a"
-      ,"MMMM, EEE dd,yyyy HH:mm a"
-      ,"MMMM, EEEE dd,yyyy HH:mm a"
+      ,"MMMM dd, yyyy HH:mm"
+      ,"MMMM dd, yyyy hh:mm a"
+      ,"MMMM, EEE dd,yyyy hh:mm a"
+      ,"MMMM, EEEE dd,yyyy hh:mm a"
       } ;
       java.util.Date d = new java.util.Date() ;  // Now.
       for( int i=0; i < arrTimeFormat.length; i++ )
@@ -178,7 +179,7 @@
        , {  "-3600000" , "(UTC-1) Azores, Cape Verde Islands" }
        , {         "0" , "(UTC) Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" }
        , {   "3600000" , "(UTC+1) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" }
-       , {   "7200000" , "(UTC+2) Kaliningrad, South Africa, Warsaw" }
+       , {   "7200000" , "(UTC+2) Helsinki, Athens, Kaliningrad, South Africa, Warsaw" }
        , {  "10800000" , "(UTC+3) Baghdad, Riyadh, Moscow, Nairobi" }
        , {  "12600000" , "(UTC+3.30) Tehran" }
        , {  "14400000" , "(UTC+4) Adu Dhabi, Baku, Muscat, Tbilisi" }
@@ -261,7 +262,7 @@
 </table>
 </form>
   
-<!-- Clearing the 'asserted name' and other perfs in the cookie -->
+<!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
 <h3><fmt:message key='prefs.clear.heading'/></h3>

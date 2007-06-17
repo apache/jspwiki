@@ -1,6 +1,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -34,41 +36,7 @@
 
 <%-- COOKIE read client preferences --%>
 <%
-  /* cookie-format:
-   * skinname DELIM dateformat DELIM timezone DELIM editareaheight DELIM editortype
-   * FIXME: move to JSON object  -- but how to parse in java
-   */
-  String DELIM  = "\u00a0";
-  String prefSkinName = "PlainVanilla"; /* FIXME: default skin - should be settable via jspwiki.properties */
-  String prefFontSize = null; 
-  String prefTimeZone = java.util.TimeZone.getDefault().getID(); /* TODO */
-  String prefDateFormat = "dd-MMM-yyyy hh:mm"; /* TODO should this be part of default.properties ??*/
-
-  Cookie[] cookies = request.getCookies();
-  if (cookies != null)
-  {
-    for (int i = 0; i < cookies.length; i++)
-    {
-       if( "JSPWikiUserPrefs".equals( cookies[i].getName() ) )
-       {
-          String s = TextUtil.urlDecodeUTF8 (cookies[i].getValue() ) ;
-
-          java.util.StringTokenizer st = new java.util.StringTokenizer (s, DELIM);
-
-          if( st.hasMoreTokens() ) prefSkinName = st.nextToken();
-          if( st.hasMoreTokens() ) prefDateFormat = st.nextToken();
-          if( st.hasMoreTokens() ) prefTimeZone = st.nextToken();
-          if( st.hasMoreTokens() ) prefFontSize = st.nextToken();
-
-          break;
-       }
-    }
-  }
-  session.setAttribute("prefSkinName",       prefSkinName );
-  session.setAttribute("prefDateFormat",     prefDateFormat );
-  session.setAttribute("prefTimeZone",       prefTimeZone );
-  session.setAttribute("prefFontSize",       prefFontSize );
-
+   Preferences.setupPreferences(pageContext);
  %>
 
 <script type="text/javascript">
@@ -111,11 +79,11 @@ Wiki.init({
 	'TemplateDir': '<wiki:Link format="url" templatefile=""/>',
 	'PageName': '<wiki:Variable var="pagename" />',/* pagename without blanks */
 	'UserName':  '<wiki:UserName />',
-	'DELIM': '<%=DELIM %>',
-	'PrefSkinName': '<c:out value="${prefSkinName}" />',
-	'PrefTimeZone': '<c:out value="${prefTimeZone}" />',
-	'PrefDateFormat': '<c:out value="${prefDateFormat}" />',
-	'PrefFontSize': '<c:out value="${prefFontSize}" />'
+	'DELIM': '<%=Preferences.DELIM %>',
+	'PrefSkinName': '<c:out value="${prefs['SkinName']}" />',
+	'PrefTimeZone': '<c:out value="${prefs['TimeZone']}" />',
+	'PrefDateFormat': '<c:out value="${prefs['DateFormat']}" />',
+	'PrefFontSize': '<c:out value="${prefs['FontSize']}" />'
 	});
 <wiki:IncludeResources type="jsfunction"/>
 
@@ -141,11 +109,11 @@ Wiki.init({
 <%-- SKINS : extra stylesheets, extra javascript --%>
 <c:if test='${!empty prefSkinName}'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
-     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.css' />" />
+     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.css' />" />
 <%--
 <link rel="stylesheet" type="text/css" media="print" 
-     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/print_skin.css' />" />
+     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/print_skin.css' />" />
 --%>
 <script type="text/javascript" 
-         src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefSkinName}/skin.js' />" ></script>
+         src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.js' />" ></script>
 </c:if>
