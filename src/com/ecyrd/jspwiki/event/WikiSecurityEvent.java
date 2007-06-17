@@ -22,8 +22,8 @@ package com.ecyrd.jspwiki.event;
 import java.security.Principal;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import com.ecyrd.jspwiki.event.WikiEvent;
 
@@ -148,15 +148,15 @@ public final class WikiSecurityEvent extends WikiEvent
         }
         this.m_principal = principal;
         this.m_target = target;
-        if ( log.isEnabledFor( Priority.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
+        if ( log.isEnabledFor( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
         {
             log.error( this );
         }
-        else if ( log.isEnabledFor( Priority.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
+        else if ( log.isEnabledFor( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
         {
             log.warn( this );
         }
-        else if ( log.isEnabledFor( Priority.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
+        else if ( log.isEnabledFor( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
         {
             log.info( this );
         }
