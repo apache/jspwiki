@@ -200,7 +200,7 @@ public class PluginManager extends ModuleManager
 
             while( tok.hasMoreTokens() )
             {
-                m_searchPath.add( tok.nextToken() );
+                m_searchPath.add( tok.nextToken().trim() );
             }
         }
 
