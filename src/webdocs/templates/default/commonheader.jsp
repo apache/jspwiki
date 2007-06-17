@@ -107,7 +107,7 @@ Wiki.init({
 <wiki:FeedDiscovery />
 
 <%-- SKINS : extra stylesheets, extra javascript --%>
-<c:if test='${!empty prefSkinName}'>
+<c:if test='${!empty prefs["SkinName"]}'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.css' />" />
 <%--

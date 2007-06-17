@@ -16,6 +16,12 @@
   <wiki:CheckVersion mode="notlatest">
     <meta name="robots" content="noindex,nofollow" />
   </wiki:CheckVersion>
+  <wiki:CheckRequestContext context="diff|info">
+    <meta name="robots" content="noindex,nofollow" />
+  </wiki:CheckRequestContext>
+  <wiki:CheckRequestContext context="!view">
+    <meta name="robots" content="noindex,follow" />
+  </wiki:CheckRequestContext>
 </head>
 
 <body class="view">

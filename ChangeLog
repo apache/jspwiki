@@ -1,3 +1,15 @@
+2007-06-16  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.87
+
+        * BUG 62 resolved: no sensitve info in LeftMenu during Login.
+        
+        * Fix some SkinName issue relate to the new preferences object.
+        
+        * BUG 52 resolved: Diff.jsp and PageInfo.jsp should not be indexed
+        
+        * TextArea resize bar image.
+
 2007-06-16  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.86

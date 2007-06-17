@@ -20,7 +20,7 @@
     </fmt:message>
     </wiki:CheckRequestContext>
   </title>
-  <meta name="ROBOTS" content="NOINDEX" />
+  <meta name="robots" content="noindex,follow" />
   <wiki:Include page="commonheader.jsp"/>
 </head>
 

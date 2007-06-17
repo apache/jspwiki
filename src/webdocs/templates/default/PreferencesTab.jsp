@@ -9,13 +9,12 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   /* see commonheader.jsp */
-  String prefDateFormat     = Preferences.getPreference(pageContext,"DateFormat");
-  String prefTimeZone       = Preferences.getPreference(pageContext,"TimeZone");
-  String prefEditorType     = Preferences.getPreference(pageContext,"EditorType"); //TODO
+  String prefDateFormat = Preferences.getPreference(pageContext,"DateFormat");
+  String prefTimeZone   = Preferences.getPreference(pageContext,"TimeZone");
+  String prefEditorType = Preferences.getPreference(pageContext,"EditorType"); //TODO
 
   WikiContext c = WikiContext.findContext( pageContext );
   pageContext.setAttribute( "skins", c.getEngine().getTemplateManager().listSkins(pageContext, c.getTemplate() ) );
-
 %>
 
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
@@ -70,7 +69,7 @@
   <td>
   <select id="prefSkin" name="prefSkin">
     <c:forEach items="${skins}" var="i">
-      <option value='<c:out value='${i}'/>' <c:if test='${i == prefSkinName}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
+      <option value='<c:out value='${i}'/>' <c:if test='${i == prefs["SkinName"]}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
     </c:forEach>
   </select>
   </td>

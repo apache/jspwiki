@@ -25,6 +25,8 @@
     </wiki:UserCheck>
   </div>
   
+  
+  <wiki:CheckRequestContext context='!login'>
   <wiki:UserCheck status="known">
   <wiki:Translate>[{TEST page='{$username}Favorites'
 
@@ -53,6 +55,7 @@
       </div>
     </wiki:NoSuchPage>
   </div>
+  </wiki:CheckRequestContext>
   
   <div class="wikiversion"><%=Release.APPNAME%> v<%=Release.getVersionString()%></div>
   

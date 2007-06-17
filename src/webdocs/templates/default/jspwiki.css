@@ -49,7 +49,7 @@
 	position:absolute;
 	left:2em;
 	width:18%;
-	top:80px; /* make place for the logo */
+	top:100px; /* make place for the logo */
 }
 #footer {
 	border-top:2px solid #d7d7d7;
@@ -526,9 +526,12 @@ body.comment {
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
-	background:#f93; 
+    background:#f93 url(images/resize-horizontal.gif) top center;
 	cursor:s-resize; /* css3 row-resize */ 
-	height:4px; 
+    font-size:1px;
+	height:6px; 
+    line-height:6px;
+    overflow:hidden;
 }
 .edit textarea {
 	font-family:Monaco, "Courier New", Courier, monospace;
@@ -582,6 +585,7 @@ body.comment {
 
 /* +++ 440 Favorites +++ */
 .username {
+	border:1px solid #bbb;
 	font-style:italic;
 	font-weight:bold;
 	padding:0.25em 1em;
