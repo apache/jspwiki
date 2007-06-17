@@ -104,6 +104,8 @@ public class PageLock
     /**
      *  Returns the amount of time left in minutes, rounded up to the nearest
      *  minute (so you get a zero only at the last minute).
+     *  
+     *  @return Time left in minutes.
      */
     public long getTimeLeft()
     {

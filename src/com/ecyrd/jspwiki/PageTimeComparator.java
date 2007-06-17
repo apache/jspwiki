@@ -39,6 +39,9 @@ public class PageTimeComparator
 
     static Logger log = Logger.getLogger( PageTimeComparator.class ); 
 
+    /**
+     *  {@inheritDoc}
+     */
     public int compare( Object o1, Object o2 )
     {
         WikiPage w1 = (WikiPage)o1;

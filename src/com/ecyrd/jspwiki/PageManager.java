@@ -61,19 +61,36 @@ public class PageManager extends ModuleManager implements WikiEventListener
 {
     private static final long serialVersionUID = 1L;
 
+    /** The property value for setting the current page provider.  Value is {@value}. */
     public static final String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
+    
+    /** The property value for setting the cache on/off.  Value is {@value}. */
     public static final String PROP_USECACHE     = "jspwiki.usePageCache";
+    
+    /** The property value for setting the amount of time before the page locks expire. 
+     *  Value is {@value}.
+     */
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
+    
     public static final String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
     public static final String PRESAVE_WIKI_CONTEXT = "wikiContext";
     public static final String SAVE_APPROVER = "workflow.saveWikiPage";
     public static final String SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
     public static final String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
     public static final String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
+    
+    /** Fact name for storing the page name.  Value is {@value}. */
     public static final String FACT_PAGE_NAME = "fact.pageName";
+    
+    /** Fact name for storing a diff text. Value is {@value}. */
     public static final String FACT_DIFF_TEXT = "fact.diffText";
+    
+    /** Fact name for storing the current text.  Value is {@value}. */
     public static final String FACT_CURRENT_TEXT = "fact.currentText";
+    
+    /** Fact name for storing the proposed (edited) text.  Value is {@value}. */
     public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
+    
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
     static Logger log = Logger.getLogger( PageManager.class );
