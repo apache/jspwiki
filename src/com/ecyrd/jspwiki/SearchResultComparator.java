@@ -35,6 +35,8 @@ public class SearchResultComparator
     /**
      *  Compares two SearchResult objects, returning
      *  the one that scored higher.
+     *  
+     *  {@inheritDoc}
      */
     public int compare( Object o1, Object o2 )
     {

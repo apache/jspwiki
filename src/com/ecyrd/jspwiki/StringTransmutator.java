@@ -28,6 +28,10 @@ public interface StringTransmutator
 {
     /**
      *  Returns a changed String, suitable for Wiki context.
+     *  
+     *  @param context WikiContext in which mutation is to be done
+     *  @param source  The source string.
+     *  @return The mutated string.
      */
     public String mutate( WikiContext context, String source );
 }
