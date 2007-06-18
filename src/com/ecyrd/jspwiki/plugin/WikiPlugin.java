@@ -31,6 +31,8 @@ import com.ecyrd.jspwiki.WikiContext;
  */
 public interface WikiPlugin
 {
+    static final String CORE_PLUGINS_RESOURCEBUNDLE = "com.ecyrd.jspwiki.plugin.PluginResources";
+
     /**
      *  This is the main entry point for any plugin.  The parameters are parsed,
      *  and a special parameter called "_body" signifies the name of the plugin

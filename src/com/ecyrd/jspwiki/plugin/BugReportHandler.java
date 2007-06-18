@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.plugin;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -65,7 +66,7 @@ public class BugReportHandler
         String    version;
         String    submitter = null;
         SimpleDateFormat format = new SimpleDateFormat( DEFAULT_DATEFORMAT );
-
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         title       = (String) params.get( TITLE );
         description = (String) params.get( DESCRIPTION );
@@ -78,7 +79,7 @@ public class BugReportHandler
             submitter = wup.getName();
         }
 
-        if( title == null ) throw new PluginException("Title is required");
+        if( title == null ) throw new PluginException(rb.getString("bugreporthandler.titlerequired"));
         if( title.length() == 0 ) return "";
 
         if( description == null ) description = "";
@@ -159,7 +160,11 @@ public class BugReportHandler
             context.getEngine().saveText( newContext,
                                           str.toString() );
 
-            return "A new bug report has been created: <a href=\""+context.getViewURL(pageName)+"\">"+pageName+"</a>";
+            MessageFormat formatter = new MessageFormat("");
+            formatter.applyPattern( rb.getString("bugreporthandler.new") );
+            String[] args = { "<a href=\""+context.getViewURL(pageName)+"\">"+pageName+"</a>" };
+
+            return formatter.format( args );
         }
         catch( RedirectException e )
         {
@@ -171,7 +176,7 @@ public class BugReportHandler
         {
             log.error("Unable to save page!",e);
 
-            return "Unable to create bug report";
+            return rb.getString("bugreporthandler.unable");
         }
     }
 

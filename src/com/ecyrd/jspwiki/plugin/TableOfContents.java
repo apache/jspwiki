@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -48,12 +48,12 @@ public class TableOfContents
     private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
 
     StringBuffer m_buf = new StringBuffer();
-    private boolean m_usingNumberedList = false; 
-    private String m_prefix = ""; 
-    private int m_starting = 0; 
-    private int m_level1Index = 0; 
-    private int m_level2Index = 0; 
-    private int m_level3Index = 0; 
+    private boolean m_usingNumberedList = false;
+    private String m_prefix = "";
+    private int m_starting = 0;
+    private int m_level1Index = 0;
+    private int m_level2Index = 0;
+    private int m_level3Index = 0;
     private int m_lastLevel = 0;
 
     public void headingAdded( WikiContext context, Heading hd )
@@ -78,17 +78,17 @@ public class TableOfContents
             throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
         }
 
-        if (m_level1Index < m_starting) 
+        if (m_level1Index < m_starting)
         {
             // in case we never had a large heading ...
             m_level1Index++;
         }
-        if ((m_lastLevel == Heading.HEADING_SMALL) && (hd.m_level != Heading.HEADING_SMALL)) 
+        if ((m_lastLevel == Heading.HEADING_SMALL) && (hd.m_level != Heading.HEADING_SMALL))
         {
             m_level3Index = 0;
         }
         if ( ((m_lastLevel == Heading.HEADING_SMALL) || (m_lastLevel == Heading.HEADING_MEDIUM)) &&
-                  (hd.m_level == Heading.HEADING_LARGE) ) 
+                  (hd.m_level == Heading.HEADING_LARGE) )
         {
             m_level3Index = 0;
             m_level2Index = 0;
@@ -96,12 +96,12 @@ public class TableOfContents
 
         String titleSection = hd.m_titleSection.replace( '%', '_' );
         String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
-        
+
         String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
         String sectref = "#section-"+pageName+"-"+titleSection;
 
         m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">");
-        if (m_usingNumberedList) 
+        if (m_usingNumberedList)
         {
             switch( hd.m_level )
             {
@@ -122,17 +122,17 @@ public class TableOfContents
 
         m_lastLevel = hd.m_level;
     }
-    
+
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
         WikiPage   page   = context.getPage();
-        ResourceBundle rb = context.getBundle("com.ecyrd.jspwiki.plugin.PluginResources");
-        
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
             return rb.getString("tableofcontents.title");
-        
+
         StringBuffer sb = new StringBuffer();
 
         sb.append("<div class=\"toc\">\n");
@@ -150,30 +150,30 @@ public class TableOfContents
 
         // should we use an ordered list?
         m_usingNumberedList = false;
-        if (params.containsKey(PARAM_NUMBERED)) 
+        if (params.containsKey(PARAM_NUMBERED))
         {
             String numbered = (String)params.get(PARAM_NUMBERED);
-            if (numbered.equalsIgnoreCase("true")) 
+            if (numbered.equalsIgnoreCase("true"))
             {
                 m_usingNumberedList = true;
             }
-            else if (numbered.equalsIgnoreCase("yes")) 
+            else if (numbered.equalsIgnoreCase("yes"))
             {
                 m_usingNumberedList = true;
             }
         }
-        
+
         // if we are using a numbered list, get the rest of the parameters (if any) ...
-        if (m_usingNumberedList) 
+        if (m_usingNumberedList)
         {
             int start = 0;
             String startStr = (String)params.get(PARAM_START);
-            if ((startStr != null) && (startStr.matches("^\\d+$"))) 
+            if ((startStr != null) && (startStr.matches("^\\d+$")))
             {
                 start = Integer.parseInt(startStr);
             }
             if (start < 0) start = 0;
-            
+
             m_starting = start;
             m_level1Index = start - 1;
             if (m_level1Index < 0) m_level1Index = 0;
@@ -187,7 +187,7 @@ public class TableOfContents
         try
         {
             String wikiText = engine.getPureText( page );
-            
+
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
             JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
                                                                   new StringReader(wikiText) );
