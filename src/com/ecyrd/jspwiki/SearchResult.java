@@ -19,16 +19,25 @@
  */
 package com.ecyrd.jspwiki;
 
+/**
+ *  Defines a search result.
+ *  
+ *  @author Janne Jalkanen
+ */
 // FIXME3.0: Move to the search-package
 public interface SearchResult
 {
     /**
      *  Return the page.
+     *  
+     *  @return the WikiPage object containing this result
      */
     public WikiPage getPage();
 
     /**
      *  Returns the score.
+     *  
+     *  @return A positive score value.  Note that there is no upper limit for the score.
      */
 
     public int getScore();

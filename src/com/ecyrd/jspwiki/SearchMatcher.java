@@ -33,12 +33,18 @@ import java.io.StringReader;
  * @since 2.1.5
  * @author ebu at ecyrd dot com
  */
-// FIXME3.0: Move to the "search" -package
+// FIXME: Move to the "search" -package in 3.0
 public class SearchMatcher
 {
     private QueryItem[] m_queries;
     private WikiEngine m_engine;
 
+    /**
+     *  Creates a new SearchMatcher.
+     *  
+     *  @param engine The WikiEngine
+     *  @param queries A list of queries
+     */
     public SearchMatcher( WikiEngine engine, QueryItem[] queries )
     {
         m_engine = engine;
@@ -51,6 +57,11 @@ public class SearchMatcher
      * the quality of the match.
      *
      * <p>This method would benefit of regexps (1.4) and streaming. FIXME!
+     * 
+     * @param wikiname The name of the page
+     * @param pageText The content of the page
+     * @return A SearchResult item, or null, there are no queries
+     * @throws IOException If reading page content fails
      */
     public SearchResult matchPageContent( String wikiname, String pageText )
         throws IOException
@@ -124,28 +135,53 @@ public class SearchMatcher
         return null;
     }
 
+    /**
+     *  A local search result.
+     *  
+     */
     public class SearchResultImpl
         implements SearchResult
     {
         int      m_score;
         WikiPage m_page;
 
+        /**
+         *  Create a new SearchResult with a given name and a score.
+         *  
+         *  @param name Page Name
+         *  @param score A score from 0+
+         */
         public SearchResultImpl( String name, int score )
         {
             m_page  = new WikiPage( m_engine, name );
             m_score = score;
         }
 
+        /**
+         *  Returns Wikipage for this result.
+         *  @return WikiPage
+         */
         public WikiPage getPage()
         {
             return m_page;
         }
 
+        /**
+         *  Returns a score for this match.
+         *  
+         *  @return Score from 0+
+         */
         public int getScore()
         {
             return m_score;
         }
 
+        /**
+         *  Returns an empty array, since BasicSearchProvider does not support
+         *  context matching.
+         *  
+         *  @return an empty array
+         */
         public String[] getContexts()
         {
             // Unimplemented
