@@ -29,10 +29,16 @@ import java.util.Random;
  *  Contains a number of static utility methods.
  */
 // FIXME3.0: Move to the "util" package
-public class TextUtil
+public final class TextUtil
 {
     static final String   HEX_DIGITS = "0123456789ABCDEF";
 
+    /**
+     *  Private constructor prevents instantiation.
+     */
+    private TextUtil()
+    {}
+    
     /**
      *  java.net.URLEncoder.encode() method in JDK < 1.4 is buggy.  This duplicates
      *  its functionality.
@@ -90,6 +96,13 @@ public class TextUtil
      *  Bug parade, bug #4257115</A> for more information.
      *  <P>
      *  Thanks to CJB for this fix.
+     *  
+     *  @param bytes The byte array containing the bytes of the string
+     *  @param encoding The encoding in which the string should be interpreted
+     *  @return A decoded String
+     *  
+     *  @throws UnsupportedEncodingException If the encoding is unknown.
+     *  @throws IllegalArgumentException If the byte array is not a valid string.
      */
     protected static String urlDecode( byte[] bytes, String encoding )
         throws UnsupportedEncodingException,
@@ -146,6 +159,9 @@ public class TextUtil
 
     /**
      *  As java.net.URLEncoder class, but this does it in UTF8 character set.
+     *  
+     *  @param text The text to decode
+     *  @return An URLEncoded string.
      */
     public static String urlEncodeUTF8( String text )
     {
@@ -172,6 +188,9 @@ public class TextUtil
     /**
      *  As java.net.URLDecoder class, but for UTF-8 strings.  null is a safe
      *  value and returns null.
+     *  
+     *  @param utf8 The UTF-8 encoded string
+     *  @return A plain, normal string.
      */
     public static String urlDecodeUTF8( String utf8 )
     {
@@ -197,6 +216,10 @@ public class TextUtil
      *
      * <p>This implementation is the same as in
      * FileSystemProvider.mangleName().
+     * 
+     * @param data A string to encode
+     * @param encoding The encoding in which to encode
+     * @return An URL encoded string.
      */
     public static String urlEncode( String data, String encoding )
     {
@@ -223,6 +246,12 @@ public class TextUtil
      *
      * <p>This implementation is the same as in
      * FileSystemProvider.unmangleName().
+     * 
+     * @param data The URL-encoded string to decode
+     * @param encoding The encoding to use
+     * @return A decoded string.
+     * @throws UnsupportedEncodingException If the encoding is unknown
+     * @throws IllegalArgumentException If the data cannot be decoded.
      */
     public static String urlDecode( String data, String encoding )
         throws UnsupportedEncodingException,
@@ -252,6 +281,8 @@ public class TextUtil
      *  respective names.
      *
      *  @since 1.6.1
+     *  @param src The source string.
+     *  @return The encoded string.
      */
     public static String replaceEntities( String src )
     {
@@ -269,6 +300,7 @@ public class TextUtil
      *  @param orig Original string.  Null is safe.
      *  @param src  The string to find.
      *  @param dest The string to replace <I>src</I> with.
+     *  @return A string with the replacement done.
      */
     public static final String replaceString( String orig, String src, String dest )
     {
@@ -301,6 +333,7 @@ public class TextUtil
      *  @param end Where the replacing should end.
      *  @param orig Original string.  Null is safe.
      *  @param text The new text to insert into the string.
+     *  @return The string with the orig replaced with text.
      */
     public static String replaceString( String orig, int start, int end, String text )
     {
@@ -316,6 +349,10 @@ public class TextUtil
     /**
      *  Parses an integer parameter, returning a default value
      *  if the value is null or a non-number.
+     *  
+     *  @param value The value to parse
+     *  @param defvalue A default value in case the value is not a number
+     *  @return The parsed value (or defvalue).
      */
 
     public static int parseIntParameter( String value, int defvalue )
@@ -336,6 +373,10 @@ public class TextUtil
      *  list.  If the value does not exist, or is a non-integer, returns defVal.
      *
      *  @since 2.1.48.
+     *  @param props The property set to look through
+     *  @param key   The key to look for
+     *  @param defVal If the property is not found or is a non-integer, returns this value.
+     *  @return The property value as an integer (or defVal).
      */
     public static int getIntegerProperty( Properties props,
                                           String key,
@@ -426,6 +467,9 @@ public class TextUtil
      *
      *  The reason why we're using CRLF is that most browser already
      *  return CRLF since that is the closest thing to a HTTP standard.
+     *  
+     *  @param postData The data to normalize
+     *  @return Normalized data
      */
     public static String normalizePostData( String postData )
     {
@@ -679,7 +723,7 @@ public class TextUtil
      *  embedded in a java properties file.  All references outside the ASCII range
      *  are replaced with \\uXXXX.
      *
-     *  @param s
+     *  @param s The string to convert
      *  @return the ASCII string
      */
     public static String native2Ascii(String s)
@@ -711,7 +755,7 @@ public class TextUtil
         {
             '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
         };
-        return hexDigit[(nibble & 0xF)];
+        return hexDigit[nibble & 0xF];
     }
 
     /**
@@ -742,6 +786,8 @@ public class TextUtil
      *  the argument is NOT a number.
      *
      *  @since 2.4
+     *  @param s String to check
+     *  @return True, if s represents a number.  False otherwise.
      */
 
     public static boolean isNumber( String s )
