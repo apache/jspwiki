@@ -120,10 +120,13 @@ public class WikiContext
     /** An error has been encountered and the user needs to be informed. */
     public static final String    ERROR    = WikiCommand.ERROR.getRequestContext();
 
+    /** User is uploading something. */
     public static final String    UPLOAD   = PageCommand.UPLOAD.getRequestContext();
 
+    /** User is commenting something. */
     public static final String    COMMENT  = PageCommand.COMMENT.getRequestContext();
     
+    /** User is searching for content. */
     public static final String    FIND     = WikiCommand.FIND.getRequestContext();
 
     /** User wishes to create a new group */
@@ -138,11 +141,19 @@ public class WikiContext
     /** User is viewing an existing group */
     public static final String    VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
     
+    /** User is editing preferences */
     public static final String    PREFS    = WikiCommand.PREFS.getRequestContext();
     
+    /** User is renaming a page. */
     public static final String    RENAME   = PageCommand.RENAME.getRequestContext();
+    
+    /** User is deleting a page or an attachment. */
     public static final String    DELETE   = PageCommand.DELETE.getRequestContext();
+    
+    /** User is downloading an attachment. */
     public static final String    ATTACH   = PageCommand.ATTACH.getRequestContext();
+    
+    /** RSS feed is being generated. */
     public static final String    RSS      = PageCommand.RSS.getRequestContext();
 
     /** This is not a JSPWiki context, use it to access static files. */
@@ -151,6 +162,7 @@ public class WikiContext
     /** Same as NONE; this is just a clarification. */
     public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
 
+    /** User is doing administrative things. */
     public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
 
     private static final Logger   log      = Logger.getLogger( WikiContext.class );
@@ -197,6 +209,7 @@ public class WikiContext
      *             <code>command</code> are <code>null</code>
      */
     public WikiContext( WikiEngine engine, HttpServletRequest request, Command command )
+        throws IllegalArgumentException
     {
         super();
         if ( engine == null || command == null )
@@ -288,6 +301,7 @@ public class WikiContext
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.ui.Command#getContentTemplate()
      */
     public String getContentTemplate()
@@ -296,6 +310,7 @@ public class WikiContext
     }
     
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.ui.Command#getJSP()
      */
     public String getJSP()
@@ -387,6 +402,8 @@ public class WikiContext
     
     /**
      *  Returns the handling engine.
+     *  
+     *  @return The wikiengine owning this context.
      */
     public WikiEngine getEngine()
     {
@@ -395,6 +412,8 @@ public class WikiContext
 
     /**
      *  Returns the page that is being handled.
+     *  
+     *  @return the page which was fetched.
      */
     public WikiPage getPage()
     {
@@ -404,6 +423,7 @@ public class WikiContext
     /**
      *  Sets the page that is being handled.
      *
+     *  @param page The wikipage
      *  @since 2.1.37.
      */
     public void setPage( WikiPage page )
@@ -414,6 +434,7 @@ public class WikiContext
 
     /**
      *  Returns the request context.
+     *  @return The name of the request context (e.g. VIEW).
      */
     public String getRequestContext()
     {
@@ -432,6 +453,7 @@ public class WikiContext
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.ui.Command#getTarget()
      */
     public Object getTarget()
@@ -440,6 +462,7 @@ public class WikiContext
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.ui.Command#getURLPattern()
      */
     public String getURLPattern()
@@ -511,6 +534,8 @@ public class WikiContext
 
     /**
      *  Sets the template to be used for this request.
+     *  
+     *  @param dir The template name
      *  @since 2.1.15.
      */
     public void setTemplate( String dir )
@@ -543,6 +568,7 @@ public class WikiContext
     /**
      *  Gets the template that is to be used throughout this request.
      *  @since 2.1.15.
+     *  @return template name
      */
     public String getTemplate()
     {
@@ -555,6 +581,8 @@ public class WikiContext
      *  May return null, in case the current
      *  user has not yet been determined; or this is an internal system.
      *  If the WikiSession has not been set, <em>always</em> returns null.
+     *  
+     *  @return The current user; or maybe null in case of internal calls.
      */
     public Principal getCurrentUser()
     {
@@ -566,11 +594,24 @@ public class WikiContext
         return m_session.getUserPrincipal();
     }
 
+    /**
+     *  A shortcut to generate a VIEW url.
+     *  
+     *  @param page The page to which to link.
+     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     */
     public String getViewURL( String page )
     {
         return getURL( VIEW, page, null );
     }
 
+    /**
+     *  Creates an URL for the given request context.
+     *  
+     *  @param context e.g. WikiContext.EDIT
+     *  @param page The page to which to link
+     *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
+     */
     public String getURL( String context,
                           String page )
     {
@@ -581,6 +622,12 @@ public class WikiContext
      *  Returns an URL from a page. It this WikiContext instance was constructed
      *  with an actual HttpServletRequest, we will attempt to construct the
      *  URL using HttpUtil, which preserves the HTTPS portion if it was used.
+     *  
+     *  @param context The request context (e.g. WikiContext.UPLOAD)
+     *  @param page    The page to which to link
+     *  @param params  A list of parameters, separated with "&amp;"
+     *  
+     *  @return An URL to the given context and page.
      */
     public String getURL( String context,
                           String page,
@@ -609,6 +656,7 @@ public class WikiContext
      *  Returns a shallow clone of the WikiContext.
      *
      *  @since 2.1.37.
+     *  @return A shallow clone of the WikiContext
      */
     public Object clone()
     {
@@ -635,10 +683,12 @@ public class WikiContext
     }
     
     /**
-     * Returns the WikiSession associated with the context.
-     * This method is guaranteed to always return a valid WikiSession. 
-     * If this context was constructed without an associated 
-     * HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
+     *  Returns the WikiSession associated with the context.
+     *  This method is guaranteed to always return a valid WikiSession. 
+     *  If this context was constructed without an associated 
+     *  HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
+     * 
+     *  @return The WikiSession associate with this context.
      */  
     public WikiSession getWikiSession() 
     {
@@ -653,8 +703,8 @@ public class WikiContext
      *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *  
      *  @since 2.4
-     * @param pageContext the JSP page context
-     * @return Current WikiContext, or null, of no context exists.
+     *  @param pageContext the JSP page context
+     *  @return Current WikiContext, or null, of no context exists.
      */
     public static WikiContext findContext( PageContext pageContext )
     {
@@ -718,6 +768,8 @@ public class WikiContext
      * the new targeted Command. If the Command associated with this
      * WikiContext is already "targeted", it is returned instead.
      * @see com.ecyrd.jspwiki.ui.Command#targetedCommand(java.lang.Object)
+     * 
+     * {@inheritDoc}
      */
     public Command targetedCommand( Object target )
     {
@@ -742,6 +794,7 @@ public class WikiContext
      * NOT guaranteed to be default behavior in the future.
      * @param response the http response
      * @return the result of the access check
+     * @throws IOException In case something goes wrong
      */
     public boolean hasAccess( HttpServletResponse response ) throws IOException
     {
@@ -758,6 +811,9 @@ public class WikiContext
      * the wiki context will be added to the request as attribute
      * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      * @return the result of the access check
+     * @param response The servlet response object
+     * @param redirect If true, makes an automatic redirect to the response
+     * @throws IOException If something goes wrong
      */
     public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException
     {
@@ -899,6 +955,15 @@ public class WikiContext
         }
     }
     
+    /**
+     *  Locates the i18n ResourceBundle given.  This method interprets
+     *  the request locale, and uses that to figure out which language the
+     *  user wants.
+     *  @see com.ecyrd.jspwiki.i18n.InternationalizationManager
+     *  @param bundle The name of the bundle you are looking for.
+     *  @return A resource bundle object
+     *  @throws MissingResourceException If the bundle cannot be found
+     */
     // FIXME: This method should really cache the ResourceBundles or something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
@@ -915,6 +980,9 @@ public class WikiContext
     /**
      *  Returns the locale of the HTTP request if available,
      *  otherwise returns the default Locale of the server.
+     *  
+     *  @return A valid locale object
+     *  @param context The WikiContext
      */
     public static Locale getLocale( WikiContext context )
     {
