@@ -78,9 +78,9 @@ public class DynamicAttachment extends Attachment
     /**
      *  Creates a DynamicAttachment.
      *
-     *  @param engine
-     *  @param parentPage
-     *  @param fileName
+     *  @param engine  The engine which owns this attachment
+     *  @param parentPage The page which owns this attachment
+     *  @param fileName The filename of the attachment
      *  @param provider The provider which will be used to generate the attachment.
      */
     public DynamicAttachment(WikiEngine engine,

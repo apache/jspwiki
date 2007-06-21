@@ -81,8 +81,8 @@ public class AttachmentServlet
     private WikiEngine m_engine;
     static Logger log = Logger.getLogger(AttachmentServlet.class.getName());
 
-    public static final String HDR_VERSION     = "version";
-    public static final String HDR_NAME        = "page";
+    private static final String HDR_VERSION     = "version";
+    // private static final String HDR_NAME        = "page";
 
     /** Default expiry period is 1 day */
     protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
@@ -183,6 +183,14 @@ public class AttachmentServlet
         return m_allowedPatterns.length == 0;
     }
 
+    /**
+     *  Implements the PROPFIND method.
+     *  
+     *  @param req The servlet request
+     *  @param res The servlet response
+     *  @throws IOException If input/output fails
+     *  @throws ServletException If the servlet has issues
+     */
     public void doPropFind( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
@@ -194,6 +202,12 @@ public class AttachmentServlet
 
         dm.execute( req, res, path );
     }
+    /**
+     *  Implements the OPTIONS method.
+     *  
+     *  @param req The servlet request
+     *  @param res The servlet response
+     */
 
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
     {
@@ -502,7 +516,10 @@ public class AttachmentServlet
     /**
      *  Uploads a specific mime multipart input set, intercepts exceptions.
      *
+     *  @param req The servlet request
      *  @return The page to which we should go next.
+     *  @throws RedirectException If there's an error and a redirection is needed
+     *  @throws IOException If upload fails
      */
     protected String upload( HttpServletRequest req )
         throws RedirectException,
