@@ -162,6 +162,8 @@ public final class WikiSession implements WikiEventListener
 
     /**
      * Returns <code>true</code> if the wiki session is newly initialized.
+     * 
+     * @return True, if this is a new session.
      */
     protected final boolean isNew()
     {
@@ -254,6 +256,8 @@ public final class WikiSession implements WikiEventListener
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager}.
      * @param application the name of the application
      * @param handler the callback handler
+     * @return A new login context
+     * @throws LoginException If the login context cannot be created
      */
     public final LoginContext getLoginContext( String application, CallbackHandler handler ) throws LoginException
     {
@@ -378,6 +382,7 @@ public final class WikiSession implements WikiEventListener
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages(String)}.
      * @return the current messsages.
+     * @param topic The topic
      */
     public final String[] getMessages( String topic )
     {
@@ -477,6 +482,7 @@ public final class WikiSession implements WikiEventListener
      * GroupManager. This method adds Principals to the private Subject managed
      * by the WikiSession.
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
+     * {@inheritDoc}
      */
     public final void actionPerformed( WikiEvent event )
     {
@@ -571,6 +577,12 @@ public final class WikiSession implements WikiEventListener
                         }
                         break;
                     }
+                    
+                    //
+                    //  No action, if the event is not recognized.
+                    //
+                    default:
+                        break;
                 }
             }
         }

@@ -41,8 +41,11 @@ public class WikiServlet
 {
     private static final long serialVersionUID = 3258410651167633973L;
     private WikiEngine m_engine;
-    Logger log = Logger.getLogger(this.getClass().getName());
+    static final Logger log = Logger.getLogger(WikiServlet.class.getName());
 
+    /**
+     *  {@inheritDoc}
+     */
     public void init( ServletConfig config )
         throws ServletException 
     {
@@ -68,12 +71,18 @@ public class WikiServlet
         super.destroy();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void doPost( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
         doGet( req, res );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public void doGet( HttpServletRequest req, HttpServletResponse res ) 
         throws IOException, ServletException 
     {
