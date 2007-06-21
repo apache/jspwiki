@@ -64,13 +64,16 @@ public class ExternalDiffProvider implements DiffProvider
     //I don't think this 'feature' ever worked right, did it?...
     private boolean m_traditionalColorization = true;
 
-
+    /**
+     *  Creates a new ExternalDiffProvider.
+     */
     public ExternalDiffProvider()
     {
     }
 
     /**
      * @see com.ecyrd.jspwiki.WikiProvider#getProviderInfo()
+     * {@inheritDoc}
      */
     public String getProviderInfo()
     {
@@ -78,6 +81,7 @@ public class ExternalDiffProvider implements DiffProvider
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
      */
     public void initialize( WikiEngine engine, Properties properties )
@@ -96,6 +100,7 @@ public class ExternalDiffProvider implements DiffProvider
 
     /**
      * Makes the diff by calling "diff" program.
+     * {@inheritDoc}
      */
     public String makeDiffHtml(String p1, String p2)
     {

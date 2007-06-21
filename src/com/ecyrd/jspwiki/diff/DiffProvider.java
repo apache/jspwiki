@@ -27,29 +27,44 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiProvider;
 
 /**
- * TODO 
+ *  Provides an SPI for creating a diff between two page versions.
  */
 public interface DiffProvider extends WikiProvider
 {
     /**
      * The return string is to be XHTML compliant ready to display html.  No further
      * processing of this text will be done by the wiki engine.
+     * 
+     * @return An XHTML diff.
+     * @param oldWikiText the old text
+     * @param newWikiText the new text
      */
-    String makeDiffHtml(String oldWikiText, String newWikiText);
+    public String makeDiffHtml(String oldWikiText, String newWikiText);
     
-    
+    /**
+     *  If there is no diff provider set, this provider will work instead.
+     */
     public static class NullDiffProvider implements DiffProvider
     {
+        /**
+         *  {@inheritDoc}
+         */
         public String makeDiffHtml(String oldWikiText, String newWikiText)
         {
             return "You are using the NullDiffProvider, check your properties file.";
         }
 
+        /**
+         *  {@inheritDoc}
+         */
         public void initialize(WikiEngine engine, Properties properties) 
             throws NoRequiredPropertyException, IOException
         {
         }
 
+        /**
+         *  {@inheritDoc}
+         */
         public String getProviderInfo()
         {
             return "NullDiffProvider";

@@ -40,11 +40,18 @@ public class DifferenceManager
 {
     private static final Logger log = Logger.getLogger(DifferenceManager.class);
 
+    /** Property value for storing a diff provider.  Value is {@value}. */
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";
 
 
     private DiffProvider m_provider;
 
+    /**
+     *  Creates a new DifferenceManager for the given engine.
+     *  
+     *  @param engine The WikiEngine.
+     *  @param props A set of properties.
+     */
     public DifferenceManager(WikiEngine engine, Properties props)
     {
         loadProvider(props);
@@ -105,6 +112,8 @@ public class DifferenceManager
     /**
      *   Returns valid XHTML string to be used in any way you please.
      *
+     *   @param firstWikiText The old text
+     *   @param secondWikiText the new text
      *   @return XHTML, or empty string, if no difference detected.
      */
     public String makeDiff(String firstWikiText, String secondWikiText)
