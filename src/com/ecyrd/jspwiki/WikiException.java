@@ -32,6 +32,8 @@ public class WikiException
 
     /**
      *  Constructs an exception.
+     *  
+     *  @param msg The message in the exception.
      */
     public WikiException( String msg )
     {

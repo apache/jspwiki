@@ -38,6 +38,11 @@ public interface WikiProvider
 
     /**
      *  Initializes the page provider.
+     *  
+     *  @param engine WikiEngine to own this provider
+     *  @param properties A set of properties used to initialize this provider
+     *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
+     *  @throws IOException If there is an IO problem
      */
     public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,
@@ -47,6 +52,7 @@ public interface WikiProvider
      *  Return a valid HTML string for information.  May
      *  be anything.
      *  @since 1.6.4
+     *  @return A string describing the provider.
      */
 
     public String getProviderInfo();
