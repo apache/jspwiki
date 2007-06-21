@@ -34,12 +34,7 @@ public class Attachment
 {
     private String m_fileName;
     private String m_parentName;
-    private int    m_status = CREATED;
     private boolean m_cacheable = true;
-
-    public static final int CREATED       = 0;
-    public static final int UPLOADING     = 1;
-    public static final int COMPLETE      = 2;
 
     /**
      *  Creates a new attachment.  The final name of the attachment will be 
@@ -59,11 +54,12 @@ public class Attachment
 
     /**
      *  Returns a human-readable, only-debugging-suitable description.
+     *  
+     *  @return A debugging string
      */
     public String toString()
     {
-        return "Attachment ["+getName()+";mod="+getLastModified()+
-               ";status="+m_status+"]";
+        return "Attachment ["+getName()+";mod="+getLastModified()+"]";
     }
 
     /**
@@ -86,7 +82,7 @@ public class Attachment
     {
         m_fileName = name;
     }
-
+/*
     public int getStatus()
     {
         return m_status;
@@ -96,7 +92,7 @@ public class Attachment
     {
         m_status = status;
     }
-
+*/
     /**
      *  Returns the name of the parent of this Attachment, i.e. the page
      *  which contains this attachment.
