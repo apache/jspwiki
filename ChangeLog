@@ -4,7 +4,7 @@
         
         * Cookie handling has been refactored. JSPWikiUserPrefs is now JSON based.
         Also the height of the edit textarea is 'cookiefied', so jspwiki remembers
-        your prefered height of the editor area. (BUG 66)
+        your prefered height of the editor area. (BUG 67)
         
         * Fixed handling of form focus() logic. JSPWiki now correctly puts the focus
         on the first visible form element. This also resolves a JS crash on IE.
