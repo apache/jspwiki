@@ -30,6 +30,106 @@
  **/
 
 
+
+var Hash = new Class({
+	length: 0,
+
+	initialize: function(object){
+		this.obj = object || {};
+		this.setLength();
+	},
+	get: function(key){
+		return (this.hasKey(key)) ? this.obj[key] : null;
+	},
+	hasKey: function(key){
+		return (key in this.obj);
+	},
+	set: function(key, value){
+		if (!this.hasKey(key)) this.length++;
+		this.obj[key] = value;
+		return this;
+	},
+	setLength: function(){
+		this.length = 0;
+		for (var p in this.obj) this.length++;
+		return this;
+	},
+	remove: function(key){
+		if (this.hasKey(key)){
+			delete this.obj[key];
+			this.length--;
+		}
+		return this;
+	},
+	each: function(fn, bind){
+		$each(this.obj, fn, bind);
+	},
+	extend: function(obj){
+		$extend(this.obj, obj);
+		return this.setLength();
+	},
+	merge: function(){
+		this.obj = $merge.apply(null, [this.obj].extend(arguments));
+		return this.setLength();
+	},
+	empty: function(){
+		this.obj = {};
+		this.length = 0;
+		return this;
+	},
+	keys: function(){
+		var keys = [];
+		for (var property in this.obj) keys.push(property);
+		return keys;
+	},
+	values: function(){
+		var values = [];
+		for (var property in this.obj) values.push(this.obj[property]);
+		return values;
+	}
+});
+
+function $H(obj){
+	return new Hash(obj);
+};
+
+
+Hash.Cookie = Hash.extend({
+	initialize: function(name, options){
+		this.name = name;
+		this.options = $extend({'autoSave': true}, options || {});
+		this.load();
+	},
+
+	save: function(){
+		if (this.length == 0){
+			Cookie.remove(this.name, this.options);
+			return true;
+		}
+		var str = Json.toString(this.obj);
+		if (str.length > 4096) return false;
+		Cookie.set(this.name, str, this.options);
+		return true;
+	},
+
+	load: function(){
+		this.obj = Json.evaluate(Cookie.get(this.name), true) || {};
+		this.setLength();
+	}
+});
+
+Hash.Cookie.Methods = {};
+
+['extend', 'set', 'merge', 'empty', 'remove'].each(function(method){
+	Hash.Cookie.Methods[method] = function(){
+		Hash.prototype[method].apply(this, arguments);
+		if (this.options.autoSave) this.save();
+		return this;
+	};
+});
+Hash.Cookie.implement(Hash.Cookie.Methods);
+
+
 /* extend mootools */
 
 String.extend({
@@ -57,7 +157,10 @@ Element.extend({
 		return this;
 	},
 	visible: function() {
-		return( this.style.display != 'none' );
+		if(this.style.visibility == 'hidden') return false;
+		if(this.style.display == 'none' ) return false;
+		if ([window, document].contains(this.parentNode)) return true;
+		return $(this.parentNode).visible();
 	},
 	hide: function() {
 		this.style.display = 'none';
@@ -67,9 +170,6 @@ Element.extend({
 		this.style.display = '';
 		return this;
 	},	
-	toggle: function() {
-		return this.visible() ? this.hide(): this.show();
-	},
 	scrollTo: function(x, y){
 		this.scrollLeft = x;
 		this.scrollTop = y;
@@ -121,30 +221,6 @@ var Observer = new Class({
 		this.clear();
 	}
 });
-
-/* Cookie: based on mootools, uses encode/decode stuff iso escape */
-//FIXME :: can this be removed in favour of standard mootools version 
-Cookie = {
-	set: function(key, value, path, expires, domain, secure){
-			var c = [], date = new Date();
-			date.setTime(date.getTime() + ((expires || 365)*86400000));
-			c.push(key + "=" + encodeURIComponent(value));
-			//c.push(key + "=" + escape(value));
-			c.push("expires=" + date.toGMTString());
-			c.push("path=" + (path ? path: "/"));
-			if(domain) c.push("domain="+domain);
-			if(secure) c.push("secure");
-			document.cookie = c.join("; "); 
-	},
-	get: function(key){
-		var value = document.cookie.match('(?:^|;)\\s*'+key+'=([^;]*)');
-		//return value ? unescape(value[1]): false;
-		return value ? decodeURIComponent(value[1]): false;
-	},
-	remove: function(key){
-			this.set(key, '', -1);
-	}
-}; 
 
 
 // see http://forum.mootools.net/topic.php?id=959 ...
@@ -243,8 +319,8 @@ var Wiki = {
 	JSONid : 10000,
 	init: function(props){
 		Object.extend(Wiki,props || {'DELIM':'\u00A4'}); 
-		this.BasePath = this.BaseURL.slice( this.BaseURL.indexOf( location.host )
-											+ location.host.length, -1 );
+		var h=location.host;
+		this.BasePath = this.BaseURL.slice(this.BaseURL.indexOf(h)+h.length,-1);
         //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 	},
@@ -254,32 +330,40 @@ var Wiki = {
 	},
 	
 	onPageLoad: function(){
+		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 		this.PermissioneEdit = ( $E('.actionEdit') != undefined ); //deduct permission level
 		this.url = null;
 		this.parseLocationHash.periodical(500);
 
-		// put focus on the first form element within a page
-		var f = $('workarea')	// plain.jsp
-			|| $('editorarea')	// plain.jsp
-			|| $('editor')		// Comment.jsp
-			|| $('j_username')	// Login.jsp
-			|| $('prefSkin')	// UserPreference.jsp
-			|| $('query2');		// Search.jsp
-		if(f && f.visible()) f.focus();	//IE chokes when focus on invisible element
+        /* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
+		['editorarea','j_username','loginname','assertedName','query2'].some(function(el){
+			el = $(el);
+			if(el && el.visible()) { el.focus(); return true; }
+			return false;
+		});
 
-		/* */
+		/* this assumes you always work with relative font sizes eg em or ex, not in px or pt*/
 		this.DefaultFontSize = $E('body').getStyle('font-size').toFloat();
-		if(this.PrefFontSize) { this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); } 
-		else this.PrefFontSize = this.DefaultFontSize;
-		/* */
+		this.PrefFontSize = this.prefs.get('FontSize');
+		if(this.PrefFontSize) { 
+			this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); 
+		} else {
+			this.PrefFontSize = this.DefaultFontSize;
+		}
+
 		this.replaceMoreBox(); /* visual sugar */
 	},
-
+	savePrefs: function(){
+		/* why not move this serverside ?? */
+    	if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
+    	if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
+    	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
+	},
 	changeFontSize: function(incr){
 	  this.PrefFontSize += incr;
+		this.prefs.set('FontSize',this.PrefFontSize);
 	  $E('body').setStyle('font-size',this.PrefFontSize);
 	},
-
 	resetFontSize: function(){
 		this.PrefFontSize=this.DefaultFontSize;
 		this.changeFontSize(0);
@@ -956,7 +1040,7 @@ var SearchBox = {
 	onPageLoadQuickSearch : function(){
 		var q = $('query'); if( !q ) return;
 	    this.query = q; 
-	    q.observe(this.ajaxQuickSearch.bind(this) ); 
+	    q.setProperty('autocomplete','off').observe(this.ajaxQuickSearch.bind(this) ); 
 
 		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
@@ -1033,7 +1117,7 @@ var SearchBox = {
 		if( !this.recent.test(v) ){
 			if(this.recent.length > 9) this.recent.pop();
 			this.recent.unshift(v);
-			Cookie.set('JSPWikiSearchBox', this.recent.join(Wiki.DELIM), Wiki.BasePath);
+			Cookie.set('JSPWikiSearchBox', this.recent.join(Wiki.DELIM), {path:Wiki.BasePath});
 		}
 		if(v.trim() != '') location.href = this.query.form.action + '?query=' + v;
 	},
@@ -1456,7 +1540,7 @@ var Collapsable =
 		if(collapse) bodyfx.start(bodyHeight, 0); else bodyfx.start(bodyHeight);
 		
 		ck.value = ck.value.substring(0,bulletidx) + (collapse ? 'c' : 'o') + ck.value.substring(bulletidx+1) ;
-		Cookie.set(ck.name, ck.value, Wiki.BasePath);
+		Cookie.set(ck.name, ck.value, {path:Wiki.BasePath, duration:20});
 	},
 
 	// parse initial cookie versus actual document 
@@ -2012,7 +2096,7 @@ var ZebraTable = {
 	zebrafy: function(isDefault, c1,c2){
 		var j=0;
 		$A($T(this).rows).each(function(r,i){
-			if(i==0 || !$(r).visible()) return;
+			if(i==0 || (r.style.display=='none')) return;
 			if(isDefault) (j++ % 2 == 0) ? $(r).addClass('odd') : $(r).removeClass('odd');
 			else $(r).setStyle('background-color', (j++ % 2 == 0) ? c1 : c2 );
 		});

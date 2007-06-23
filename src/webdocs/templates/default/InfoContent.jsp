@@ -169,7 +169,9 @@
 
   <wiki:TabbedSection defaultTab="info">
   
-  <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>" accesskey="v" 
+  <wiki:Tab id="pagecontent" 
+         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>' 
+     accesskey="v" 
 	       url="<%=wikiContext.getURL(WikiContext.VIEW, wikiContext.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
@@ -225,11 +227,11 @@
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
-      <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" >
+      <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" >
+      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
       &nbsp;&nbsp;
-      <input type="checkbox" name="references" checked="checked" >
+      <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>
 
     </form>
@@ -248,9 +250,7 @@
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
 
       <input type="submit" name="delete-all" id="delete-all" 
-            value="<fmt:message key='info.delete.submit'/>"
-          <wiki:HasAttachments>disabled</wiki:HasAttachments> />
-      <wiki:HasAttachments><fmt:message key='info.delete.attachmentwarning'/></wiki:HasAttachments>
+            value="<fmt:message key='info.delete.submit'/>" >
 
     </form>
   </wiki:Permission>

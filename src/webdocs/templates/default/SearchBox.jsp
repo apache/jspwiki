@@ -7,14 +7,14 @@
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
         class="wikiform"
            id="searchForm" 
-        accept-charset="<wiki:ContentEncoding />">
+       method="post" accept-charset="<wiki:ContentEncoding />">
 
   <div>
   <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
         onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
            type="text" value="<fmt:message key='sbox.search.submit'/>"
            name="query" id="query"
-           size="20" autocomplete="off"
+           size="20" 
       accesskey="f"></input>
   <button type="submit"
   		 name="searchSubmit" id="searchSubmit"
@@ -50,7 +50,7 @@
     <div id="recentSearches" style="display:none;">
       <fmt:message key="sbox.recentsearches"/>
       <span><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></span>
-      <ul id="recentItems"></ul>
+      <ul id="recentItems" />
     </div>
   </div>
 

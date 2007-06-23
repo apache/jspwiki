@@ -61,70 +61,31 @@ public class Preferences
     {
         WikiContext context = WikiContext.findContext( pageContext );
         
-        Preferences prefs = parseCookiePreferences( (HttpServletRequest) pageContext.getRequest() );
-            
+        Preferences prefs = new Preferences();
+        /* FIXME: load default prefs, better read from jspwiki.properties */
+        prefs.put("SkinName", "PlainVanilla" );
+        prefs.put("DateFormat", "dd-MMM-yyyy HH:mm" );
+        prefs.put("TimeZone", java.util.TimeZone.getDefault().getID() );
+                
+       // Preferences prefs = parseCookiePreferences( (HttpServletRequest) pageContext.getRequest() );
+        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
+
         pageContext.getSession().setAttribute( SESSIONPREFS, prefs );        
     }
 
-    /**
-     *  This is a helper method which parses the user cookie and stores
-     *  the preferences into the session.
-     *  <p>
-     *  This should be replaced with the JSON method, below.
-     *  @param request
-     */
-    private static Preferences parseCookiePreferences( HttpServletRequest request )
-    {
-        String prefSkinName = "PlainVanilla"; /* FIXME: default skin - should be settable via jspwiki.properties */
-        String prefFontSize = null; 
-        String prefTimeZone = java.util.TimeZone.getDefault().getID(); /* TODO */
-        String prefDateFormat = "dd-MMM-yyyy HH:mm"; /* TODO should this be part of default.properties ??*/
-    
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null)
-        {
-          for (int i = 0; i < cookies.length; i++)
-          {
-             if( "JSPWikiUserPrefs".equals( cookies[i].getName() ) )
-             {
-                String s = TextUtil.urlDecodeUTF8 (cookies[i].getValue() ) ;
-    
-                java.util.StringTokenizer st = new java.util.StringTokenizer (s, DELIM);
-    
-                if( st.hasMoreTokens() ) prefSkinName = st.nextToken();
-                if( st.hasMoreTokens() ) prefDateFormat = st.nextToken();
-                if( st.hasMoreTokens() ) prefTimeZone = st.nextToken();
-                if( st.hasMoreTokens() ) prefFontSize = st.nextToken();
-    
-                break;
-             }
-          }
-        }
-        
-        Preferences prefs = new Preferences();
-        
-        prefs.put("SkinName",       prefSkinName );
-        prefs.put("DateFormat",     prefDateFormat );
-        prefs.put("TimeZone",       prefTimeZone );
-        prefs.put("FontSize",       prefFontSize );
-        
-        return prefs;
-    }
-
+ 
     /**
      *  Parses new-style preferences stored as JSON objects and stores them
      *  in the session.  Everything in the cookie is stored.
      *  
-     *  FIXME: Not yet complete.
-     *  
      *  @param request
+     *  @param prefs The default hashmap of preferences
      *  
      */
-    private static void parseJSONPreferences( HttpServletRequest request )
+    private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs )
     {
-        HttpSession session = request.getSession();
-        
-        String prefVal = HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" );
+        //FIXME: urlDecodeUTF8 should better go in HttpUtil ??
+        String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
         
         if( prefVal != null )
         {
@@ -135,8 +96,7 @@ public class Preferences
                 for( Iterator i = jo.keys(); i.hasNext(); )
                 {
                     String key = (String)i.next();
-                    
-                    session.setAttribute( key, jo.getString(key) );
+                    prefs.put(key, jo.getString(key) );
                 }
             }
             catch( ParseException e )

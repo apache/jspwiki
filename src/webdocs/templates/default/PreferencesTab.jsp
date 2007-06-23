@@ -29,17 +29,11 @@
        class="wikiform" 
           id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />"
-    onsubmit="var s=[];
-             ['prefSkin','prefTimeFormat','prefTimeZone'].each(function(el){
-               if($(el)) s.push($(el).getValue());
-             });
-             if(Wiki.PrefFontSize) s.push(Wiki.PrefFontSize);
-             Cookie.set( 'JSPWikiUserPrefs', s.join(Wiki.DELIM), Wiki.BasePath); 
-             return Wiki.submitOnce( this ); " >
+    onsubmit="Wiki.savePrefs(); return Wiki.submitOnce(this);" >
 <table>
 
   <tr>
-  <td><label for="username"><fmt:message key="prefs.assertedname"/></label></td>
+  <td><label for="assertedName"><fmt:message key="prefs.assertedname"/></label></td>
   <td> 
   <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='wikiname' />" />
   <%-- CHECK THIS
@@ -268,8 +262,7 @@
 
 <form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="clearCookie"
-    onsubmit="Cookie.remove( 'JSPWikiUserPrefs' ); 
-              return Wiki.submitOnce( this );" 
+    onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
       method="POST" accept-charset="<wiki:ContentEncoding />" >
 
   <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />

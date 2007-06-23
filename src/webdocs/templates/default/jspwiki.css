@@ -100,7 +100,7 @@ table {
 	empty-cells:show; 
 }
 
-h1, h2, h3, h4, p, pre, blockquote, label, ul, ol, dl, hr, .hr {
+h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr {
 	margin:0.5em 0; 
 }
 th, td { 
@@ -174,11 +174,12 @@ fieldset {
 }
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
-code,tt,pre {
+code,tt, pre {
 	font-family:Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 }
 pre {
+	clear:both;
 	white-space:pre;
 	margin:1em 2em;
 	padding:0.5em;
@@ -331,7 +332,7 @@ td .error {
 	border:1px solid #bbb;
 	background:#eee;
 	padding:0.25em;
-	margin-left:0.25em;
+	margin-left:0.5em;
 	font-size:90%;
 }
 .commentbox li {
@@ -1045,7 +1046,7 @@ table.calendar tr.weekdays {
 }
 
 .togglemenu {
-	color:grey;
+	color:gray;
 	font-weight:bold; 
 	margin-top:1em;
 	line-height:1.2;

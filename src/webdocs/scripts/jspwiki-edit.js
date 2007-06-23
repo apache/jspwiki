@@ -37,10 +37,16 @@ var EditTools =
     this.textarea = this.mainarea;
     
     /* add textarea resize drag bar - dont for WikiWizard */
-    if( this.textarea.getStyle('visibility')=='visible') { 
+    if(this.textarea.visible) { 
+		var hh=Wiki.prefs.get('EditorSize');
+		if(hh) this.textarea.setStyle('height',hh);
 	var h = new Element('div',{'class':'textarea-resizer', 'title':'edit.resize'.localize()})
 		.injectAfter(this.textarea);	
-	this.textarea.makeResizable({handle:h, modifiers: {x:false, y:'height'} });			
+		this.textarea.makeResizable({
+			handle:h, 
+			modifiers: {x:false, y:'height'}, 
+			onComplete: function(){	Wiki.prefs.set('EditorSize',this.value.now.y); }
+		});			
 	}
   } ,
   

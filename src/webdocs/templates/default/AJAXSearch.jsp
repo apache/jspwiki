@@ -1,4 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>

@@ -39,13 +39,12 @@
    Preferences.setupPreferences(pageContext);
  %>
 
+<%-- I18N Javascript. Get the i18n script data from the server.
+  This creates a new global JS variable called "LocalizedStrings", which is an associative 
+  array of key-value pairs  --%>
+
 <script type="text/javascript">
 //<![CDATA[
-
-/* I18N
-   Get the i18n scripts from the server.  This creates a new global JS variable called
-   "LocalizedStrings", which is an associative array of key-value pairs.  You can then search
-   this array based on the abstract key in the script file. */
 
 var LocalizedStrings = { 
 <%
@@ -78,12 +77,7 @@ Wiki.init({
 	'BaseURL': '<wiki:BaseURL />',
 	'TemplateDir': '<wiki:Link format="url" templatefile=""/>',
 	'PageName': '<wiki:Variable var="pagename" />',/* pagename without blanks */
-	'UserName':  '<wiki:UserName />',
-	'DELIM': '<%=Preferences.DELIM %>',
-	'PrefSkinName': '<c:out value="${prefs['SkinName']}" />',
-	'PrefTimeZone': '<c:out value="${prefs['TimeZone']}" />',
-	'PrefDateFormat': '<c:out value="${prefs['DateFormat']}" />',
-	'PrefFontSize': '<c:out value="${prefs['FontSize']}" />'
+	'UserName': '<wiki:UserName />'
 	});
 <wiki:IncludeResources type="jsfunction"/>
 
@@ -107,7 +101,7 @@ Wiki.init({
 <wiki:FeedDiscovery />
 
 <%-- SKINS : extra stylesheets, extra javascript --%>
-<c:if test='${!empty prefs["SkinName"]}'>
+<c:if test='${(!empty prefs["SkinName"]) && (prefs["SkinName"] !="PlainVanilla") }'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.css' />" />
 <%--
