@@ -1,4 +1,4 @@
-2007-06-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+2007-06-30  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.90
 
@@ -11,7 +11,7 @@
             - login.error.noaccess
 
         * In addition, there are further localization done in top-level
-        JSPs.  New strings are:
+        JSPs.  New strings in CoreResources are:
 
             - security.error.noaccess.logged
             - security.error.noaccess
