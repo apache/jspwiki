@@ -555,6 +555,8 @@ public class AttachmentManager
     public void deleteVersion( Attachment att )
         throws ProviderException
     {
+        if( m_provider == null ) return;
+
         m_provider.deleteVersion( att );
     }
 
@@ -567,6 +569,8 @@ public class AttachmentManager
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
+        if( m_provider == null ) return;
+
         m_provider.deleteAttachment( att );
 
         m_engine.getSearchManager().pageRemoved( att );
