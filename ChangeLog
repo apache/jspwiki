@@ -1,17 +1,56 @@
+2007-06-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.90
+
+        * [Bug 71]: Login.jsp is now localized.  All localizers, please
+        note that there are three new strings to localize in
+        "templates.default" -bundle:
+
+            - login.error.capslock
+            - login.error.password
+            - login.error.noaccess
+
+        * In addition, there are further localization done in top-level
+        JSPs.  New strings are:
+
+            - security.error.noaccess.logged
+            - security.error.noaccess
+            - security.error.wrongip
+            - rename.empty
+            - rename.error.title
+            - rename.error.reason
+            - rename.identical
+            - rename.exists
+            - rename.unknownerror
+            - lostpwd.newpassword.email
+            - lostpwd.newpassword.subject
+            - lostpwd.nouser
+            - lostpwd.nomail
+            - lostpwd.emailed
+            - lostpwd.reset.title
+            - lostpwd.reset.clickhere
+            - lostpwd.reset.login
+            - lostpwd.reset.unable
+            - lostpwd.reset.blurb
+            - lostpwd.reset.submit
+
+        * Updated English and Finnish localizations (and fixed a couple of
+        sillinesses in the Finnish localization)
+
 2007-06-23  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.89
-        
+
         * Cookie handling has been refactored. JSPWikiUserPrefs is now JSON based.
         Also the height of the edit textarea is 'cookiefied', so jspwiki remembers
         your prefered height of the editor area. (BUG 67)
-        
+
         * Fixed handling of form focus() logic. JSPWiki now correctly puts the focus
         on the first visible form element. This also resolves a JS crash on IE.
-        
+
         * Some improvement on XHTML compliance (BUG 9) Still some refactoring
         needed on dropdown menu to improve compliance.
-        
+
         * Added UTF8 support to AJAXSearch.jsp
 
 2007-06-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>

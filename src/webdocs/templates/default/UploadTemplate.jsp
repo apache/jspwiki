@@ -31,7 +31,7 @@
 
   <div id="page">
     <wiki:TabbedSection defaultTab="attachments" >
-      <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' 
+      <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
 			   url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
 	     accesskey="v" >
       </wiki:Tab>
@@ -43,7 +43,7 @@
                url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
          accesskey="i" >
       </wiki:Tab>
-    
+
       </wiki:PageExists>
     </wiki:TabbedSection>
   </div>
