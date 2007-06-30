@@ -2,7 +2,11 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%! 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.*" %>
+<fmt:setBundle basename="CoreResources"/>
+<%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 
@@ -11,24 +15,26 @@
     // Create wiki context and check for authorization
 	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
     if(!wikiContext.hasAccess( response )) return;
-	
+
     String renameFrom = wikiContext.getName();
     String renameTo = request.getParameter( "renameto");
-    
+
     boolean changeReferences = false;
 
-    if (request.getParameter("references") != null) 
+    ResourceBundle rb = wikiContext.getBundle("CoreResources");
+
+    if (request.getParameter("references") != null)
     {
         changeReferences = true;
     }
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    
+
     log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
-    
+
     WikiSession wikiSession = wikiContext.getWikiSession();
-    try 
+    try
     {
         if (renameTo.length() > 0)
         {
@@ -41,51 +47,53 @@
         }
         else
         {
-            wikiSession.addMessage( "New page name empty.<br/>\nClick <b>back</b> on your browser and fill in the new name.");
+            wikiSession.addMessage(rb.getString("rename.empty"));
 
             log.info("Page rename request failed because new page name was left blank");
-        
+
 %>
-            <h3>Unable to rename page</h3>
+            <h3><fmt:message key="rename.error.title"/></h3>
 
             <dl>
-               <dt><b>Reason:</b></dt>
+               <dt><b><fmt:message key="rename.error.reason"/></b></dt>
                <dd>
                   <wiki:Messages div="error" />
-               </dd>      
+               </dd>
             </dl>
 <%
         }
 
-    } 
-    catch (WikiException e) 
+    }
+    catch (WikiException e)
     {
-        if (e.getMessage().equals("Page exists")) 
+        if (e.getMessage().equals("Page exists"))
         {
             if (renameTo.equals( renameFrom ))
             {
                 log.info("Page rename request failed because page names are identical");
-                wikiSession.addMessage( "Page names identical.<br/>\nClick <b>back</b> on your browser and change the new name." );
+                wikiSession.addMessage( rb.getString("rename.identical") );
             }
             else
             {
                 log.info("Page rename request failed because new page name is already in use");
-                wikiSession.addMessage( "Page \"" + renameTo + "\" already exists.<br/>\nClick <b>back</b> on your browser and change the new name or delete the page \"" + renameTo + "\" first." );
+                Object[] args = { renameTo };
+                wikiSession.addMessage(MessageFormat.format(rb.getString("rename.exists"),args));
             }
-        } 
-        else 
+        }
+        else
         {
-            wikiSession.addMessage( "An Unknown error occurred (" + e.toString() + ")" );
+            Object[] args = { e.toString() };
+            wikiSession.addMessage( MessageFormat.format(rb.getString("rename.unknownerror"),args));
         }
 
 %>
-       <h3>Unable to rename page</h3>
+       <h3><fmt:message key="rename.error.title"/></h3>
 
        <dl>
-          <dt><b>Reason:</b></dt>
+          <dt><b><fmt:message key="rename.error.reason"/></b></dt>
           <dd>
              <wiki:Messages div="error" />
-          </dd>      
+          </dd>
        </dl>
 <%
     }

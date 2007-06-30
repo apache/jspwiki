@@ -7,7 +7,9 @@
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.util.*" %>
+<fmt:setBundle basename="templates.default"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
@@ -20,6 +22,7 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
+    ResourceBundle rb = wikiContext.getBundle("templates.default");
 
     // Set the redirect-page variable if one was passed as a parameter
     if( request.getParameter( "redirect" ) != null )
@@ -40,7 +43,7 @@
         // Weepy tears and hankies all 'round.
         if( wikiSession.isAuthenticated() )
         {
-            response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
+            response.sendError( HttpServletResponse.SC_FORBIDDEN, rb.getString("login.error.noaccess") );
             return;
         }
 
@@ -63,11 +66,11 @@
                 log.info( "Failed to authenticate user " + uid );
                 if ( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
                 {
-                    wikiSession.addMessage("Invalid login (please check your Caps Lock key)");
+                    wikiSession.addMessage( rb.getString("login.error.capslock") );
                 }
                 else
                 {
-                    wikiSession.addMessage("Not a valid login.");
+                    wikiSession.addMessage( rb.getString("login.error.password") );
                 }
             }
         }
@@ -81,7 +84,7 @@
         Object seen = session.getAttribute("_redirect");
         if( seen != null )
         {
-            response.sendError( HttpServletResponse.SC_FORBIDDEN, "It seems you don't have access to that. Sorry." );
+            response.sendError( HttpServletResponse.SC_FORBIDDEN, rb.getString("login.error.noaccess") );
             session.removeAttribute("_redirect");
             return;
         }

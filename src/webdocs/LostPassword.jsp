@@ -1,14 +1,18 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.text.*" %>
 <%@ page import="javax.mail.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.user.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="com.ecyrd.jspwiki.i18n.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="CoreResources"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 
@@ -19,6 +23,9 @@
         String name = request.getParameter("name");
         UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
         boolean success = false;
+        ResourceBundle rb = wiki.getInternationalizationManager().getBundle( "CoreResources",
+                                                                             request.getLocale() );
+
         try
         {
             UserProfile profile = null;
@@ -41,15 +48,18 @@
 
 			// Try sending email first, as that is more likely to fail.
 
-             String mailMessage = "As requested, your new password for login '"
-                    + profile.getLoginName() + "' is '" + randomPassword + "'.\n\n" +
-                    "You may log in at "
-                    + wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, "") + ".\n\n"
-                    + "--" + wiki.getApplicationName();
+            Object[] args = { profile.getLoginName(),
+                             randomPassword,
+                             wiki.getURLConstructor().makeURL(WikiContext.NONE, "Login.jsp", true, ""),
+                             wiki.getApplicationName()
+            };
 
+            String mailMessage = MessageFormat.format( rb.getString("lostpwd.newpassword.email"), args );
+
+            Object[] args2 = { wiki.getApplicationName() };
  			MailUtil.sendMessage( wiki,
-                                    email,
- 			                      "New password for " + wiki.getApplicationName(),
+                                  email,
+ 			                      MessageFormat.format( rb.getString("lostpwd.newpassword.subject"), args2),
  			                      mailMessage );
 
             log.info("User "+email+" requested and received a new password.");
@@ -63,22 +73,23 @@
         }
         catch (NoSuchPrincipalException e)
         {
-            message = "No user or email '" + name + "' was found.";
+            Object[] args = { name };
+            message = MessageFormat.format( rb.getString("lostpwd.nouser"), args );
             log.info("Tried to reset password for non-existent user '" + name + "'");
         }
         catch (SendFailedException e)
         {
-            message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
+            message = rb.getString("lostpwd.nomail");
             log.error("Tried to reset password and got SendFailedException: " + e);
         }
         catch (AuthenticationFailedException e)
         {
-            message = "Internal error: couldn't send the email!  Contact the site administrator, please.";
+            message = rb.getString("lostpwd.nomail");
             log.error("Tried to reset password and got AuthenticationFailedException: " + e);
         }
         catch (Exception e)
         {
-            message = "Internal error. Contact the site administrator, please.";
+            message = rb.getString("lostpwd.nomail");
             log.error("Tried to reset password and got another exception: " + e);
         }
         return success;
@@ -100,6 +111,8 @@
 	                              wikiContext,
 	                              PageContext.REQUEST_SCOPE );
 	}
+
+	ResourceBundle rb = wikiContext.getBundle("CoreResources");
 
     WikiSession wikiSession = wikiContext.getWikiSession();
     String action  = request.getParameter("action");
@@ -140,15 +153,14 @@
       if ((action != null) && (action.equals("resetPassword"))) {
 	      if (resetPassword(wiki, request)) {
 	          done = true;
-	          wikiSession.addMessage("A new password has been emailed to the requested account.");
+	          wikiSession.addMessage( rb.getString("lostpwd.emailed") );
 	          %>
 
-            <h3>Password reset</h3>
+            <h3><fmt:message key="lostpwd.reset.title"/></h3>
 
             <wiki:Messages div="information" />
 
-            <p><a href=Login.jsp>Click here</a> to log in
-            once you retrieve your new password.</p>
+            <p><fmt:message key="lostpwd.reset.login"><fmt:param><a href="Login.jsp"><fmt:message key="lostpwd.reset.clickhere"/></a></fmt:param></fmt:message></p>
             <%
 	      }
 	      else
@@ -157,7 +169,7 @@
               wikiSession.addMessage(message);
 	          %>
 
-              <h3>Unable to reset password.  Please try again.</h3>
+              <h3><fmt:message key="lostpwd.reset.unable"/></h3>
 
               <wiki:Messages div="error" />
 
@@ -169,11 +181,11 @@
 
       if (!done) {
       %>
-      <div>Lost or forgot your password?  Enter your account name or email here:
+      <div><fmt:message key="lostpwd.reset.blurb"/>
       <form method="post" accept-charset="UTF-8">
         <input type="hidden" name="action" value="resetPassword"/>
         <input type="text" name="name"/>
-        <input type="submit" name="Submit" value="Reset password!"/>
+        <input type="submit" name="Submit" value='<fmt:message key="lostpwd.reset.submit"/>'/>
       </form>
       </div>
 

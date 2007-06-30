@@ -10,8 +10,9 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
-<%! 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 
@@ -21,11 +22,12 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
     if( !wikiContext.hasAccess( response ) ) return;
     String pagereq = wikiContext.getName();
-    
-    WikiSession wikiSession = wikiContext.getWikiSession(); 
+
+    ResourceBundle rb = wikiContext.getBundle("CoreResources");
+    WikiSession wikiSession = wikiContext.getWikiSession();
     String storedUser = wikiSession.getUserPrincipal().getName();
 
-    if( wikiSession.isAnonymous() ) 
+    if( wikiSession.isAnonymous() )
     {
         storedUser  = request.getParameter( "author" );
     }
@@ -37,7 +39,7 @@
     String link    = request.getParameter("link");
     String remember = request.getParameter("remember");
     String changenote = request.getParameter( "changenote" );
-    
+
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
     if( latestversion == null )
@@ -49,30 +51,30 @@
     //  Setup everything for the editors and possible preview.  We store everything in the
     //  session.
     //
-    
+
     if( remember == null )
     {
         remember = (String)session.getAttribute("remember");
     }
 
     if( remember == null ) remember = "false";
-    
+
     session.setAttribute("remember",remember);
-    
+
     if( author == null )
     {
         author = storedUser;
-    }    
+    }
     if( author == null || author.length() == 0 ) author = "AnonymousCoward";
 
     session.setAttribute("author",author);
-    
+
     if( link == null )
     {
         link = HttpUtil.retrieveCookieValue( request, "link" );
         if( link == null ) link = "";
     }
-    
+
     session.setAttribute( "link", link );
 
     //
@@ -85,13 +87,13 @@
         log.info("Saving page "+pagereq+". User="+storedUser+", host="+request.getRemoteAddr() );
 
         //  Modifications are written here before actual saving
-        
+
         WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
         //  is the best place to show errors, though.
-       
+
         long pagedate   = Long.parseLong(request.getParameter("edittime"));
 
         Date change = latestversion.getLastModified();
@@ -115,11 +117,11 @@
         String ipaddr = request.getParameter("addr");
         if( !request.getRemoteAddr().equals(ipaddr) )
         {
-            wikiSession.addMessage( "Attempt to post from a different IP address than where the page was originally fetched.");
+            wikiSession.addMessage( rb.getString("security.wrongip") );
             pageContext.forward( "Error.jsp" );
             return;
         }
-        
+
         //
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.
@@ -135,15 +137,15 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote == null ) changenote = (String) session.getAttribute("changenote");
-        
+
         session.removeAttribute("changenote");
-        
+
         modifiedPage.setAttribute( WikiPage.CHANGENOTE, "Comment by "+storedUser );
 
         //
         //  Build comment part
         //
-            
+
         StringBuffer pageText = new StringBuffer(wiki.getPureText( wikipage ));
 
         log.debug("Page initial contents are "+pageText.length()+" chars");
@@ -154,7 +156,7 @@
         if( pageText.length() > 0 )
         {
             pageText.append( "\n\n----\n\n" );
-        }        
+        }
 
         pageText.append( EditorManager.getEditedText(pageContext) );
 
@@ -162,14 +164,14 @@
         if( author != null && author.length() > 0 )
         {
             String signature = author;
-            
+
             if( link != null && link.length() > 0 )
             {
                 link = HttpUtil.guessValidURI( link );
-                
+
                 signature = "["+author+"|"+link+"]";
             }
-            
+
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
 
@@ -185,7 +187,7 @@
                 response.addCookie( linkcookie );
             }
 
-            CookieAssertionLoginModule.setUserCookie( response, author );            
+            CookieAssertionLoginModule.setUserCookie( response, author );
         }
         else
         {
@@ -242,7 +244,7 @@
     //  that instead of the edited version.
     //
     long lastchange = 0;
-    
+
     Date d = latestversion.getLastModified();
     if( d != null ) lastchange = d.getTime();
 
@@ -252,11 +254,11 @@
 
     //  This is a hack to get the preview to work.
     // pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
-	
+
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage, 
+    PageLock lock = wiki.getPageManager().lockPage( wikipage,
                                                     storedUser );
 
     if( lock != null )
