@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki;
 import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.ui.*;
 
@@ -49,7 +51,7 @@ import com.ecyrd.jspwiki.ui.*;
  *  between different instances of the same plugin.  A WikiContext
  *  variable is valid until the processing of the page has ended.  For
  *  an example, please see the Counter plugin.</p>
- *  <p>When a WikiContext is created, it automatically associates a 
+ *  <p>When a WikiContext is created, it automatically associates a
  *  {@link WikiSession} object with the user's HttpSession. The
  *  WikiSession contains information about the user's authentication
  *  status, and is consulted by {@link #getCurrentUser()}.
@@ -58,7 +60,7 @@ import com.ecyrd.jspwiki.ui.*;
  *  use getPage()!</p>
  *
  *  @see com.ecyrd.jspwiki.plugin.Counter
- *  
+ *
  *  @author Janne Jalkanen
  *  @author Andrew R. Jaquith
  */
@@ -66,7 +68,7 @@ public class WikiContext
     implements Cloneable, Command
 {
     private    Command m_command = null;
-    
+
     private    WikiPage   m_page;
     private    WikiPage   m_realPage;
     private    WikiEngine m_engine;
@@ -84,7 +86,7 @@ public class WikiContext
 
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String    INSTALL  = WikiCommand.INSTALL.getRequestContext();
-    
+
     /** The VIEW context - the user just wants to view the page
         contents. */
     public static final String    VIEW     = PageCommand.VIEW.getRequestContext();
@@ -103,7 +105,7 @@ public class WikiContext
 
     /** JSPWiki wants to display a message. */
     public static final String    MESSAGE  = WikiCommand.MESSAGE.getRequestContext();
-    
+
     /** User is viewing a DIFF between the two versions of the page. */
     public static final String    DIFF     = PageCommand.DIFF.getRequestContext();
 
@@ -125,40 +127,40 @@ public class WikiContext
 
     /** User is commenting something. */
     public static final String    COMMENT  = PageCommand.COMMENT.getRequestContext();
-    
+
     /** User is searching for content. */
     public static final String    FIND     = WikiCommand.FIND.getRequestContext();
 
     /** User wishes to create a new group */
     public static final String    CREATE_GROUP = WikiCommand.CREATE_GROUP.getRequestContext();
-    
+
     /** User is deleting an existing group. */
     public static final String    DELETE_GROUP = GroupCommand.DELETE_GROUP.getRequestContext();
-    
+
     /** User is editing an existing group. */
     public static final String    EDIT_GROUP = GroupCommand.EDIT_GROUP.getRequestContext();
-    
+
     /** User is viewing an existing group */
     public static final String    VIEW_GROUP = GroupCommand.VIEW_GROUP.getRequestContext();
-    
+
     /** User is editing preferences */
     public static final String    PREFS    = WikiCommand.PREFS.getRequestContext();
-    
+
     /** User is renaming a page. */
     public static final String    RENAME   = PageCommand.RENAME.getRequestContext();
-    
+
     /** User is deleting a page or an attachment. */
     public static final String    DELETE   = PageCommand.DELETE.getRequestContext();
-    
+
     /** User is downloading an attachment. */
     public static final String    ATTACH   = PageCommand.ATTACH.getRequestContext();
-    
+
     /** RSS feed is being generated. */
     public static final String    RSS      = PageCommand.RSS.getRequestContext();
 
     /** This is not a JSPWiki context, use it to access static files. */
-    public static final String    NONE     = PageCommand.NONE.getRequestContext();  
-    
+    public static final String    NONE     = PageCommand.NONE.getRequestContext();
+
     /** Same as NONE; this is just a clarification. */
     public static final String    OTHER    = PageCommand.OTHER.getRequestContext();
 
@@ -166,7 +168,7 @@ public class WikiContext
     public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
 
     private static final Logger   log      = Logger.getLogger( WikiContext.class );
-    
+
     private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
 
     /**
@@ -175,13 +177,13 @@ public class WikiContext
      *  @param engine The WikiEngine that is handling the request.
      *  @param page   The WikiPage.  If you want to create a
      *  WikiContext for an older version of a page, you must use this
-     *  constructor. 
+     *  constructor.
      */
     public WikiContext( WikiEngine engine, WikiPage page )
     {
         this( engine, null, findCommand( engine, null, page ) );
     }
-    
+
     /**
      * <p>
      * Creates a new WikiContext for the given WikiEngine, Command and
@@ -216,41 +218,41 @@ public class WikiContext
         {
             throw new IllegalArgumentException( "Parameter engine and command must not be null." );
         }
-        
+
         m_engine = engine;
         m_request = request;
         m_session = WikiSession.getWikiSession( engine, request );
         m_command = command;
-        
+
         // If PageCommand, get the WikiPage
         if( command instanceof PageCommand )
         {
             m_page = (WikiPage)((PageCommand)command).getTarget();
         }
-        
+
         // If page not supplied, default to front page to avoid NPEs
         if( m_page == null )
         {
             m_page = m_engine.getPage( m_engine.getFrontPage() );
-            
+
             // Front page does not exist?
             if( m_page == null )
             {
                 m_page = new WikiPage( m_engine, m_engine.getFrontPage() );
             }
         }
-        
+
         m_realPage = m_page;
-        
+
         // Special case: retarget any empty 'view' PageCommands to the front page
         if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null )
         {
             m_command = command.targetedCommand( m_page );
         }
-        
+
         // Log in the user if new session or the container status changed
         boolean doLogin = (request != null) && m_session.isNew();
-        
+
         // Debugging...
         if( log.isDebugEnabled() )
         {
@@ -259,10 +261,10 @@ public class WikiContext
             log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
             log.debug( "Do we need to log the user in? " + doLogin );
         }
-        
+
         if( doLogin || m_session.isContainerStatusChanged( request ) )
         {
-            try 
+            try
             {
                 engine.getAuthenticationManager().login( request );
             }
@@ -278,11 +280,11 @@ public class WikiContext
         {
             m_session.setNew( false );
         }
-        
+
         // Figure out what template to use
         setDefaultTemplate( request );
     }
-    
+
     /**
      * Creates a new WikiContext for the given WikiEngine, WikiPage and
      * HttpServletRequest. This method simply looks up the appropriate Command
@@ -295,7 +297,7 @@ public class WikiContext
      * @param page The WikiPage. If you want to create a WikiContext for an
      *            older version of a page, you must supply this parameter
      */
-    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page) 
+    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page)
     {
         this( engine, request, findCommand( engine, request, page ) );
     }
@@ -308,7 +310,7 @@ public class WikiContext
     {
         return m_command.getContentTemplate();
     }
-    
+
     /**
      * {@inheritDoc}
      * @see com.ecyrd.jspwiki.ui.Command#getJSP()
@@ -344,7 +346,7 @@ public class WikiContext
         updateCommand( m_command.getRequestContext() );
         return old;
     }
-    
+
     /**
      *  Gets a reference to the real page whose content is currently being rendered.
      *  If your plugin e.g. does some variable setting, be aware that if it
@@ -357,7 +359,7 @@ public class WikiContext
      *  that's what the getPage() will return - regardless of whether your plugin
      *  resides on the LeftMenu or on the Main page.  However, getRealPage()
      *  will return "LeftMenu".
-     *  
+     *
      *  @return A reference to the real page.
      *  @see com.ecyrd.jspwiki.tags.InsertPageTag
      *  @see com.ecyrd.jspwiki.parser.JSPWikiMarkupParser
@@ -366,11 +368,11 @@ public class WikiContext
     {
         return m_realPage;
     }
-    
+
     /**
      *  Figure out to which page we are really going to.  Considers
      *  special page names from the jspwiki.properties, and possible aliases.
-     *  This method forwards requests to 
+     *  This method forwards requests to
      *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
      *  @return A complete URL to the new page to redirect to
      *  @since 2.2
@@ -380,13 +382,13 @@ public class WikiContext
     {
         String pagename = m_page.getName();
         String redirURL = null;
-        
+
         redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
 
         if( redirURL == null )
         {
             String alias = (String)m_page.getAttribute( WikiPage.ALIAS );
-            
+
             if( alias != null )
             {
                 redirURL = getViewURL( alias );
@@ -399,10 +401,10 @@ public class WikiContext
 
         return redirURL;
     }
-    
+
     /**
      *  Returns the handling engine.
-     *  
+     *
      *  @return The wikiengine owning this context.
      */
     public WikiEngine getEngine()
@@ -412,7 +414,7 @@ public class WikiContext
 
     /**
      *  Returns the page that is being handled.
-     *  
+     *
      *  @return the page which was fetched.
      */
     public WikiPage getPage()
@@ -496,9 +498,9 @@ public class WikiContext
     }
 
     /**
-     *  This method will safely return any HTTP parameters that 
+     *  This method will safely return any HTTP parameters that
      *  might have been defined.  You should use this method instead
-     *  of peeking directly into the result of getHttpRequest(), since 
+     *  of peeking directly into the result of getHttpRequest(), since
      *  this method is smart enough to do all of the right things,
      *  figure out UTF-8 encoded parameters, etc.
      *
@@ -534,7 +536,7 @@ public class WikiContext
 
     /**
      *  Sets the template to be used for this request.
-     *  
+     *
      *  @param dir The template name
      *  @since 2.1.15.
      */
@@ -564,7 +566,7 @@ public class WikiContext
         }
         return m_command.getName();
     }
-    
+
     /**
      *  Gets the template that is to be used throughout this request.
      *  @since 2.1.15.
@@ -577,16 +579,16 @@ public class WikiContext
 
     /**
      *  Convenience method that gets the current user. Delegates the
-     *  lookup to the WikiSession associated with this WikiContect. 
+     *  lookup to the WikiSession associated with this WikiContect.
      *  May return null, in case the current
      *  user has not yet been determined; or this is an internal system.
      *  If the WikiSession has not been set, <em>always</em> returns null.
-     *  
+     *
      *  @return The current user; or maybe null in case of internal calls.
      */
     public Principal getCurrentUser()
     {
-        if (m_session == null) 
+        if (m_session == null)
         {
             // This shouldn't happen, really...
             return WikiPrincipal.GUEST;
@@ -596,7 +598,7 @@ public class WikiContext
 
     /**
      *  A shortcut to generate a VIEW url.
-     *  
+     *
      *  @param page The page to which to link.
      *  @return An URL to the page.  This honours the current absolute/relative setting.
      */
@@ -607,7 +609,7 @@ public class WikiContext
 
     /**
      *  Creates an URL for the given request context.
-     *  
+     *
      *  @param context e.g. WikiContext.EDIT
      *  @param page The page to which to link
      *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
@@ -622,11 +624,11 @@ public class WikiContext
      *  Returns an URL from a page. It this WikiContext instance was constructed
      *  with an actual HttpServletRequest, we will attempt to construct the
      *  URL using HttpUtil, which preserves the HTTPS portion if it was used.
-     *  
+     *
      *  @param context The request context (e.g. WikiContext.UPLOAD)
      *  @param page    The page to which to link
      *  @param params  A list of parameters, separated with "&amp;"
-     *  
+     *
      *  @return An URL to the given context and page.
      */
     public String getURL( String context,
@@ -651,7 +653,7 @@ public class WikiContext
     {
         return m_command;
     }
-    
+
     /**
      *  Returns a shallow clone of the WikiContext.
      *
@@ -665,10 +667,10 @@ public class WikiContext
             // super.clone() must always be called to make sure that inherited objects
             // get the right type
             WikiContext copy = (WikiContext)super.clone();
-        
+
             copy.m_engine = m_engine;
             copy.m_command = m_command;
-        
+
             copy.m_template       = m_template;
             copy.m_variableMap    = m_variableMap;
             copy.m_request        = m_request;
@@ -678,30 +680,30 @@ public class WikiContext
             return copy;
         }
         catch( CloneNotSupportedException e ){} // Never happens
-        
+
         return null;
     }
-    
+
     /**
      *  Returns the WikiSession associated with the context.
-     *  This method is guaranteed to always return a valid WikiSession. 
-     *  If this context was constructed without an associated 
+     *  This method is guaranteed to always return a valid WikiSession.
+     *  If this context was constructed without an associated
      *  HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
-     * 
+     *
      *  @return The WikiSession associate with this context.
-     */  
-    public WikiSession getWikiSession() 
+     */
+    public WikiSession getWikiSession()
     {
         return m_session;
     }
-    
+
     /**
      *  This method can be used to find the WikiContext programmatically
      *  from a JSP PageContext. We check the page context scope
      *  first, then the request context. The wiki context, if it exists,
-     *  is looked up using the key 
+     *  is looked up using the key
      *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     *  
+     *
      *  @since 2.4
      *  @param pageContext the JSP page context
      *  @return Current WikiContext, or null, of no context exists.
@@ -717,14 +719,14 @@ public class WikiContext
         }
         return context;
     }
-    
+
     /**
-     * Returns the permission required to successfully execute this context. 
+     * Returns the permission required to successfully execute this context.
      * For example, the a wiki context of VIEW for a certain page means that
      * the PagePermission "view" is required for the page. In some cases, no
      * particular permission is required, in which case a dummy permission will
      * be returned ({@link java.util.PropertyPermission}<code> "os.name",
-     * "read"</code>). This method is guaranteed to always return a valid, 
+     * "read"</code>). This method is guaranteed to always return a valid,
      * non-null permission.
      * @return the permission
      * @since 2.4
@@ -752,23 +754,23 @@ public class WikiContext
                 return new AllPermission( m_engine.getApplicationName() );
             }
         }
-        
+
         // TODO: we should really break the contract so that this
         // method returns null, but until then we will use this hack
         if ( m_command.requiredPermission() == null )
         {
             return DUMMY_PERMISSION;
         }
-        
+
         return m_command.requiredPermission();
     }
-    
+
     /**
      * Associates a target with the current Command and returns
      * the new targeted Command. If the Command associated with this
      * WikiContext is already "targeted", it is returned instead.
      * @see com.ecyrd.jspwiki.ui.Command#targetedCommand(java.lang.Object)
-     * 
+     *
      * {@inheritDoc}
      */
     public Command targetedCommand( Object target )
@@ -819,7 +821,8 @@ public class WikiContext
     {
         AuthorizationManager mgr = m_engine.getAuthorizationManager();
         boolean allowed = mgr.checkPermission( m_session, requiredPermission() );
-        
+        ResourceBundle rb = getBundle(InternationalizationManager.CORE_BUNDLE);
+
         // Stash the wiki context
         if( allowed )
         {
@@ -828,46 +831,47 @@ public class WikiContext
                 m_request.setAttribute( WikiTagBase.ATTR_CONTEXT, this );
             }
         }
-        
+
         // If access not allowed, redirect
         if( !allowed && redirect )
         {
             Principal currentUser  = m_session.getUserPrincipal();
+            Object[] arguments = { getName() };
             if( m_session.isAuthenticated() )
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + getName() + "'. Do you want to log in as another user?.");
+                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), arguments) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
                 String pageurl = m_engine.encodeName( m_page.getName() );
-                m_session.addMessage("You don't have access to '" + getName() + "'. Please log in first.");
+                m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), arguments) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
         }
         return allowed;
     }
-    
+
     /**
      *  Returns true, if the current user has administrative permissions (i.e. the omnipotent
      *  AllPermission).
-     *  
+     *
      *  @since 2.4.46
      *  @return true, if the user has all permissions.
      */
     public boolean hasAdminPermissions()
     {
         boolean admin = false;
-        
-        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(), 
+
+        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(),
                                                                     new AllPermission(m_engine.getApplicationName()) );
-        
+
         return admin;
     }
-    
+
     /**
      * Figures out which template a new WikiContext should be using.
      * @param request the HTTP request
@@ -878,14 +882,14 @@ public class WikiContext
         //        existence, or else it is possible to create pages that
         //        cannot be shown.
         String defaultTemplate = m_engine.getTemplateDir();
-        
+
         //  Figure out which template we should be using for this page.
         String template = null;
         if ( request != null )
         {
             template = request.getParameter( "skin" );
         }
-        
+
         // If request doesn't supply the value, extract from wiki page
         if( template == null )
         {
@@ -896,7 +900,7 @@ public class WikiContext
             }
 
         }
-        
+
         // If something over-wrote the default, set the new value.
         if ( template != null )
         {
@@ -907,7 +911,7 @@ public class WikiContext
             setTemplate( defaultTemplate );
         }
     }
-    
+
     /**
      * Looks up and returns a PageCommand based on a supplied WikiPage and HTTP
      * request. First, the appropriate Command is obtained by examining the HTTP
@@ -931,13 +935,13 @@ public class WikiContext
     }
 
     /**
-     * Protected method that updates the internally cached Command. 
+     * Protected method that updates the internally cached Command.
      * Will always be called when the page name, request context, or variable
      * changes.
      * @param requestContext the desired request context
      * @since 2.4
      */
-    protected void updateCommand( String requestContext ) 
+    protected void updateCommand( String requestContext )
     {
         if ( requestContext == null )
         {
@@ -948,13 +952,13 @@ public class WikiContext
             CommandResolver resolver = m_engine.getCommandResolver();
             m_command = resolver.findCommand( m_request, requestContext );
         }
-        
+
         if ( m_command instanceof PageCommand && m_page != null )
         {
             m_command = m_command.targetedCommand( m_page );
         }
     }
-    
+
     /**
      *  Locates the i18n ResourceBundle given.  This method interprets
      *  the request locale, and uses that to figure out which language the
@@ -968,19 +972,19 @@ public class WikiContext
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
         Locale loc = null;
-        
-        if( m_request != null ) 
+
+        if( m_request != null )
             loc = m_request.getLocale();
-            
+
         ResourceBundle b = m_engine.getInternationalizationManager().getBundle(bundle, loc);
-        
+
         return b;
     }
-    
+
     /**
      *  Returns the locale of the HTTP request if available,
      *  otherwise returns the default Locale of the server.
-     *  
+     *
      *  @return A valid locale object
      *  @param context The WikiContext
      */
