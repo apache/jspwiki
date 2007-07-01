@@ -51,7 +51,10 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Properties#Properties(Properties)
+     *  Creates new properties.
+     *  
+     *  @param defaultValues A list of default values, which are used if in subsequent gets
+     *                       a key is not found.
      */
     public CommentedProperties( Properties defaultValues )
     {
@@ -59,7 +62,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Properties#load(java.io.InputStream)
+     *{@inheritDoc}
      */
     public synchronized void load( InputStream inStream ) throws IOException
     {
@@ -70,6 +73,9 @@ public class CommentedProperties extends Properties
         super.load( new ByteArrayInputStream( m_propertyString.getBytes("ISO-8859-1") ) );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public synchronized void load( Reader in ) throws IOException
     {
         m_propertyString = FileUtil.readContents( in );
@@ -79,7 +85,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
+     * {@inheritDoc}
      */
     public synchronized Object setProperty( String key, String value )
     {
@@ -87,7 +93,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Properties#store(java.io.OutputStream, java.lang.String)
+     * {@inheritDoc}
      */
     public synchronized void store( OutputStream out, String comments ) throws IOException
     {
@@ -97,7 +103,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Hashtable#put(java.lang.Object, java.lang.Object)
+     * {@inheritDoc}
      */
     public synchronized Object put( Object arg0, Object arg1 )
     {
@@ -109,7 +115,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Hashtable#putAll(java.util.Map)
+     * {@inheritDoc}
      */
     public synchronized void putAll( Map arg0 )
     {
@@ -125,7 +131,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Hashtable#remove(java.lang.Object)
+     * {@inheritDoc}
      */
     public synchronized Object remove( Object key )
     {
@@ -137,7 +143,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     * @see java.util.Hashtable#toString()
+     * {@inheritDoc}
      */
     public synchronized String toString()
     {

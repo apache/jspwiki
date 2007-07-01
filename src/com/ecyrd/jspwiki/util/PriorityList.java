@@ -98,6 +98,8 @@ public class PriorityList
 
     /**
      *  Returns the current size of the list.
+     *  
+     *  @return size of the list.
      */
     public int size()
     {

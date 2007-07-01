@@ -310,6 +310,8 @@ public final class WatchDog
 
     /**
      *  Strictly for debugging/informative purposes.
+     *  
+     *  @return Random ramblings.
      */
     public String toString()
     {
