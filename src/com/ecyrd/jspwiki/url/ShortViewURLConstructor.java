@@ -37,6 +37,9 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class ShortViewURLConstructor 
     extends ShortURLConstructor
 {
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, 
                             Properties properties )
     {
@@ -63,6 +66,9 @@ public class ShortViewURLConstructor
                               absolute );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String makeURL( String context,
                            String name,
                            boolean absolute,
@@ -93,6 +99,9 @@ public class ShortViewURLConstructor
     /**
      *   Since we're only called from WikiServlet, where we get the VIEW requests,
      *   we can safely return this.
+     *   
+     *   @param {@inheritDoc}
+     *   @return {@inheritDoc}
      */
     public String getForwardPage( HttpServletRequest req )
     {        

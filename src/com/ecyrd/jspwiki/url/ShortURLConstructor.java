@@ -58,6 +58,7 @@ public class ShortURLConstructor
      */
     public static final String PROP_PREFIX = "jspwiki.shortURLConstructor.prefix";
     
+    /** {@inheritDoc} */
     public void initialize( WikiEngine engine, 
                             Properties properties )
     {
@@ -168,8 +169,7 @@ public class ShortURLConstructor
     }
 
     /**
-     *  Constructs the URL with a bunch of parameters.
-     *  @param parameters If null or empty, no parameters are added.
+     *  {@inheritDoc}
      */
     public String makeURL( String context,
                            String name,
@@ -199,8 +199,7 @@ public class ShortURLConstructor
     }
 
     /**
-     *  Should parse the "page" parameter from the actual
-     *  request.
+     * {@inheritDoc}
      */
     public String parsePage( String context,
                              HttpServletRequest request,
@@ -218,6 +217,9 @@ public class ShortURLConstructor
         return pagereq;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getForwardPage( HttpServletRequest req )
     {
         String jspPage = req.getParameter( "do" );

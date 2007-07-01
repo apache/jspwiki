@@ -56,6 +56,10 @@ public class DefaultURLConstructor
      */
     protected String m_pathPrefix = "";
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, 
                             Properties properties )
     {
@@ -139,6 +143,7 @@ public class DefaultURLConstructor
      * @throws IllegalArgumentException if the context cannot be found
      */
     public static String getURLPattern( String context, String name )
+        throws IllegalArgumentException
     {
         if( context.equals(WikiContext.VIEW) )
         {
@@ -164,6 +169,8 @@ public class DefaultURLConstructor
     /**
      *  Constructs the URL with a bunch of parameters.
      *  @param parameters If null or empty, no parameters are added.
+     *  
+     *  {@inheritDoc}
      */
     public String makeURL( String context,
                            String name,
@@ -195,6 +202,8 @@ public class DefaultURLConstructor
     /**
      *  Should parse the "page" parameter from the actual
      *  request.
+     *  
+     *  {@inheritDoc}
      */
     public String parsePage( String context,
                              HttpServletRequest request,
@@ -252,6 +261,13 @@ public class DefaultURLConstructor
      *  Takes the name of the page from the request URI.
      *  The initial slash is also removed.  If there is no page,
      *  returns null.
+     *  
+     *  @param request The request to parse
+     *  @param encoding The encoding to use
+     *  
+     *  @return a parsed page name, or null, if it cannot be found
+     *  
+     *  @throws UnsupportedEncodingException If the encoding is not recognized.
      */
     public static String parsePageFromURL( HttpServletRequest request,
                                            String encoding )
@@ -282,7 +298,8 @@ public class DefaultURLConstructor
     /**
      *  This method is not needed for the DefaultURLConstructor.
      *  
-     *  @since
+     *  @return {@inheritDoc}
+     *  @param {@inheritDoc}
      */
     public String getForwardPage( HttpServletRequest request )
     {

@@ -41,6 +41,9 @@ public interface URLConstructor
      *  Initializes.  Note that the engine is not fully initialized
      *  at this point, so don't do anything fancy here - use lazy
      *  init, if you have to.
+     *  
+     *  @param  engine The WikiEngine that this URLConstructor belongs to
+     *  @param properties Properties used to initialize
      */
     public void initialize( WikiEngine engine, 
                             Properties properties );
@@ -74,6 +77,7 @@ public interface URLConstructor
      *  @param request The HTTP request that was used when coming here
      *  @param encoding The encoding with which the request was made (UTF-8 or ISO-8859-1).
      *  @return This method must return the name of the resource.
+     *  @throws IOException If parsing failes
      */
     public String parsePage( String context,
                              HttpServletRequest request,
