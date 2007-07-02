@@ -36,7 +36,8 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 
 /**
- *  This class takes care of managing JSPWiki templates.
+ *  This class takes care of managing JSPWiki templates.  This class also provides
+ *  the ResourceRequest mechanism.
  *
  *  @since 2.1.62
  *  @author Janne Jalkanen
@@ -47,40 +48,48 @@ public class TemplateManager
     private static final String SKIN_DIRECTORY = "skins";
 
     /**
-     * Requests a JavaScript function to be called during window.onload.
+     * Requests a JavaScript function to be called during window.onload. Value is {@value}.
      */
     public static final String RESOURCE_JSFUNCTION = "jsfunction";
 
     /**
-     * Requests a stylesheet to be inserted.
+     * Requests a stylesheet to be inserted. Value is {@value}.
      */
     public static final String RESOURCE_STYLESHEET = "stylesheet";
 
     /**
-     * Requests a script to be loaded.
+     * Requests a script to be loaded.  Value is {@value}.
      */
     public static final String RESOURCE_SCRIPT     = "script";
 
     /**
-     *  Requests inlined CSS.
+     *  Requests inlined CSS. Value is {@value}.
      */
     public static final String RESOURCE_INLINECSS  = "inlinecss";
 
-    /** The default directory for the properties. */
+    /** The default directory for the properties. Value is {@value}. */
     public static final String DIRECTORY           = "templates";
 
+    /** The name of the default template.  Value is {@value}. */
     public static final String DEFAULT_TEMPLATE    = "default";
 
     /** Name of the file that contains the properties.*/
 
     public static final String PROPERTYFILE        = "template.properties";
 
+    /** The name under which the resource includes map is stored in the WikiContext. */
     public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
 
     // private Cache              m_propertyCache;
 
     protected static final Logger log = Logger.getLogger( TemplateManager.class );
 
+    /**
+     *  Creates a new TemplateManager.  There is typically one manager per engine.
+     *  
+     *  @param engine The owning engine.
+     *  @param properties The property list used to initialize this.
+     */
     public TemplateManager( WikiEngine engine, Properties properties )
     {
         super(engine);
@@ -116,11 +125,13 @@ public class TemplateManager
     }
 
     /**
-     *  Tries to locate a given resource from the template directory.
+     *  Tries to locate a given resource from the template directory. If the
+     *  given resource is not found under the current name, returns the
+     *  path to the corresponding one in the default template.
      *
-     *  @param sContext
-     *  @param name
-     *  @return
+     *  @param sContext The servlet context
+     *  @param name The name of the resource
+     *  @return The name of the resource which was found.
      */
     private static String findResource( ServletContext sContext, String name )
     {
@@ -151,6 +162,14 @@ public class TemplateManager
         return name;
     }
 
+    /**
+     *  Attempts to find a resource from the given template, and if it's not found
+     *  attempts to locate it from the default template.
+     * @param sContext
+     * @param template
+     * @param name
+     * @return
+     */
     private static String findResource( ServletContext sContext, String template, String name )
     {
         if( name.charAt(0) == '/' )
@@ -167,6 +186,10 @@ public class TemplateManager
     /**
      *  An utility method for finding a JSP page.  It searches only under
      *  either current context or by the absolute name.
+     *  
+     *  @param pageContext the JSP PageContext
+     *  @param name The name of the JSP page to look for (e.g "Wiki.jsp")
+     *  @return The context path to the resource
      */
     public String findJSP( PageContext pageContext, String name )
     {
@@ -194,6 +217,13 @@ public class TemplateManager
         return name;
     }
 
+    /**
+     *  Returns the full name (/templates/foo/bar) for name=bar, template=foo.
+     *  
+     * @param template
+     * @param name
+     * @return
+     */
     private static final String makeFullJSPName( String template, String name )
     {
         return "/"+DIRECTORY+"/"+template+"/"+name;
@@ -304,7 +334,8 @@ public class TemplateManager
      *   in the directories, it just lists them.  This may change
      *   in the future.
      *
-     *   @param template
+     *   @param pageContext the JSP PageContext
+     *   @param template The template to search
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
      */
@@ -458,6 +489,10 @@ public class TemplateManager
     /**
      *  Returns resource requests for a particular type.  If there are no resources,
      *  returns an empty array.
+     *  
+     *  @param ctx WikiContext
+     *  @param type The resource request type
+     *  @return a String array for the resource requests
      */
 
     public static String[] getResourceRequests( WikiContext ctx, String type )
@@ -476,7 +511,7 @@ public class TemplateManager
     }
 
     /**
-     *  returns all those types that have been requested so far.
+     *  Returns all those types that have been requested so far.
      *
      * @param ctx the wiki context
      * @return the array of types requested
@@ -503,6 +538,8 @@ public class TemplateManager
     /**
      *  Returns an empty collection, since at the moment the TemplateManager
      *  does not manage any modules.
+     *  
+     *  @return {@inheritDoc}
      */
     public Collection modules()
     {
