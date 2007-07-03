@@ -84,6 +84,9 @@ public class TemplateManager
 
     protected static final Logger log = Logger.getLogger( TemplateManager.class );
 
+    /** Requests a HTTP header.  Value is {@value}. */
+    public static final String RESOURCE_HTTPHEADER = "httpheader";
+
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
      *  

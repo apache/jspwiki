@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.TextUtil;
@@ -105,6 +106,22 @@ public class WikiJSPFilter extends WikiServletFilter
                 // Only now write the (real) response to the client.
                 // response.setContentLength(r.length());
                 // response.setContentType(encoding);
+                
+                //
+                //  Add HTTP header Resource Requests
+                //
+                String[] headers = TemplateManager.getResourceRequests( wikiContext,
+                                                                        TemplateManager.RESOURCE_HTTPHEADER );
+                
+                for( int i = 0; i < headers.length; i++ )
+                {
+                    String[] s = StringUtils.split( headers[i], ':' );
+                    if( s.length > 1 )
+                    {
+                        ((HttpServletResponse)response).addHeader( s[0], s[1] );
+                    }
+                }
+                
                 response.getWriter().write(r);
             
                 // Clean up the UI messages and loggers
