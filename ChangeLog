@@ -1,3 +1,11 @@
+2007-07-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.91
+        
+        * There have been loads and loads of fixes to Checkstyle warnings.
+        
+        * Added RESOURE_HTTPHEADER from Alex Samad.  Thanks!
+
 2007-06-30  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.90
