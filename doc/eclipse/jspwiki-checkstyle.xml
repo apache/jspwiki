@@ -3,7 +3,7 @@
 	This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-Checkstyle-Configuration: Janne's coding style
+Checkstyle-Configuration: JSPWiki Coding Style
 Description:
 
 -->
@@ -57,7 +57,9 @@ Description:
             <property name="severity" value="ignore"/>
         </module>
         <module name="MissingSwitchDefault"/>
-        <module name="ModifiedControlVariable"/>
+        <module name="ModifiedControlVariable">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="MultipleVariableDeclarations"/>
         <module name="PackageDeclaration"/>
         <module name="ParameterAssignment">
