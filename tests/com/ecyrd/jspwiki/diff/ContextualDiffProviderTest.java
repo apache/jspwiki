@@ -3,11 +3,13 @@ package com.ecyrd.jspwiki.diff;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.log4j.PropertyConfigurator;
+
+import com.ecyrd.jspwiki.*;
 
 public class ContextualDiffProviderTest extends TestCase
 {
@@ -43,7 +45,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testNoChanges() throws NoRequiredPropertyException, IOException
+    public void testNoChanges() throws IOException, WikiException
     {
         diffTest(null, "", "", "");
         diffTest(null, "A", "A", "A");
@@ -56,7 +58,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testSimpleInsertions() throws NoRequiredPropertyException, IOException
+    public void testSimpleInsertions() throws IOException, WikiException
     {
         // Ah, the white space trailing an insertion is tacked onto the insertion, this is fair, the
         // alternative would be to greedily take the leading whitespace before the insertion as part
@@ -81,7 +83,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testSimpleDeletions() throws NoRequiredPropertyException, IOException
+    public void testSimpleDeletions() throws IOException, WikiException
     {
         // Simple deletes...
         diffTest(null, "A B C", "A C", "A |-B -|C");
@@ -99,7 +101,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testContextLimits() throws NoRequiredPropertyException, IOException
+    public void testContextLimits() throws IOException, WikiException
     {
         // No change
         diffTest("1", "A B C D E F G H I", "A B C D E F G H I", "A...");
@@ -123,14 +125,14 @@ public class ContextualDiffProviderTest extends TestCase
                 
     }
 
-    public void testMultiples() throws NoRequiredPropertyException, IOException
+    public void testMultiples() throws IOException, WikiException
     {
         diffTest(null, "A F", "A B C D E F", "A |^B C D E ^|F");
         diffTest(null, "A B C D E F", "A F", "A |-B C D E -|F");
         
     }
 
-    public void testSimpleChanges() throws NoRequiredPropertyException, IOException
+    public void testSimpleChanges() throws IOException, WikiException
     {
         // *changes* are actually an insert and a delete in the output...
 
@@ -164,7 +166,7 @@ public class ContextualDiffProviderTest extends TestCase
      */
     
     private void diffTest(String contextLimit, String oldText, String newText, String expectedDiff)
-        throws NoRequiredPropertyException, IOException
+        throws IOException, WikiException
     {
         ContextualDiffProvider diff = new ContextualDiffProvider();
 
@@ -176,7 +178,12 @@ public class ContextualDiffProviderTest extends TestCase
 
         diff.initialize(null, props);
 
-        String actualDiff = diff.makeDiffHtml(oldText, newText);
+        props.load( TestEngine.findTestProperties() );
+        PropertyConfigurator.configure(props);
+        TestEngine engine = new TestEngine(props);
+        
+        WikiContext ctx = new WikiContext( engine, new WikiPage(engine,"Dummy") );
+        String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
         assertEquals(expectedDiff, actualDiff);
     }

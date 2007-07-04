@@ -20,11 +20,12 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes difference between two pages using a HTML table.  If there is
@@ -43,40 +44,54 @@ public class InsertDiffTag
 {
     private static final long serialVersionUID = 0L;
     
+    /** Attribute which is used to store the old page content to the Page Context */
     public static final String ATTR_OLDVERSION = "insertdiff.old";
+
+    /** Attribute which is used to store the new page content to the Page Context */
     public static final String ATTR_NEWVERSION = "insertdiff.new";
 
     protected String m_pageName;
 
+    /** {@inheritDoc} */
     public void initTag()
     {
         super.initTag();
         m_pageName = null;
     }
 
+    /**
+     *  Sets the page name.
+     *  @param page Page to get diff from.
+     */
     public void setPage( String page )
     {
         m_pageName = page;
     }
 
+    /**
+     *  Gets the page name.
+     * @return The page name.
+     */
     public String getPage()
     {
         return m_pageName;
     }
 
+    /** {@inheritDoc} */
     public final int doWikiStartTag()
         throws IOException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
-
+        WikiContext ctx;
+        
         if( m_pageName == null )
         {
-            page = m_wikiContext.getPage();
+            ctx = m_wikiContext;
         }
         else
         {
-            page = engine.getPage( m_pageName );
+            ctx = (WikiContext)m_wikiContext.clone();
+            ctx.setPage( engine.getPage(m_pageName) );
         }
 
         Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,
@@ -86,11 +101,11 @@ public class InsertDiffTag
 
         log.info("Request diff between version "+verold+" and "+vernew);
 
-        if( page != null )
+        if( ctx.getPage() != null )
         {
             JspWriter out = pageContext.getOut();
 
-            String diff = engine.getDiff( page.getName(), 
+            String diff = engine.getDiff( ctx, 
                                           vernew.intValue(), 
                                           verold.intValue() );
 

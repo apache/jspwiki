@@ -169,9 +169,10 @@ public class RSSGenerator
         StringBuffer buf = new StringBuffer();
         String author = getAuthor(page);
 
+        WikiContext ctx = new WikiContext( m_engine, page );
         if( page.getVersion() > 1 )
         {
-            String diff = m_engine.getDiff( page.getName(),
+            String diff = m_engine.getDiff( ctx,
                                             page.getVersion()-1, // FIXME: Will fail when non-contiguous versions
                                             page.getVersion() );
 
