@@ -6,6 +6,14 @@
         change, so WikiEngine.makeDiff() now takes a WikiContext as a parameter.
         I don't think many people were using it, though, so it's not a major
         issue.
+        
+        * New localizations in CoreResources-bundle:
+        
+            - diff.traditional.added
+            - diff.traditional.changed
+            - diff.traditional.removed
+            - diff.traditional.oneline
+            - diff.traditional.lines
 
 2007-07-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
