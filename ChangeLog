@@ -1,3 +1,12 @@
+2007-07-04  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.92
+        
+        * DiffProviders are now localized.  Unfortunately, this meant an API
+        change, so WikiEngine.makeDiff() now takes a WikiContext as a parameter.
+        I don't think many people were using it, though, so it's not a major
+        issue.
+
 2007-07-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.91
