@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiProvider;
 
@@ -36,10 +37,11 @@ public interface DiffProvider extends WikiProvider
      * processing of this text will be done by the wiki engine.
      * 
      * @return An XHTML diff.
+     * @param context The Wiki Context
      * @param oldWikiText the old text
      * @param newWikiText the new text
      */
-    public String makeDiffHtml(String oldWikiText, String newWikiText);
+    public String makeDiffHtml(WikiContext context, String oldWikiText, String newWikiText);
     
     /**
      *  If there is no diff provider set, this provider will work instead.
@@ -49,7 +51,7 @@ public interface DiffProvider extends WikiProvider
         /**
          *  {@inheritDoc}
          */
-        public String makeDiffHtml(String oldWikiText, String newWikiText)
+        public String makeDiffHtml(WikiContext ctx, String oldWikiText, String newWikiText)
         {
             return "You are using the NullDiffProvider, check your properties file.";
         }

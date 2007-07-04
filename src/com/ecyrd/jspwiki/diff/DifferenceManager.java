@@ -26,6 +26,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.util.ClassUtil;
 
@@ -112,16 +113,17 @@ public class DifferenceManager
     /**
      *   Returns valid XHTML string to be used in any way you please.
      *
+     *   @param context The Wiki Context
      *   @param firstWikiText The old text
      *   @param secondWikiText the new text
      *   @return XHTML, or empty string, if no difference detected.
      */
-    public String makeDiff(String firstWikiText, String secondWikiText)
+    public String makeDiff(WikiContext context, String firstWikiText, String secondWikiText)
     {
         String diff = null;
         try
         {
-            diff = m_provider.makeDiffHtml( firstWikiText, secondWikiText);
+            diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText);
 
             if( diff == null )
                 diff = "";

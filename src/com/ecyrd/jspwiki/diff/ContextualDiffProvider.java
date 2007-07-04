@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
@@ -126,7 +127,7 @@ public class ContextualDiffProvider implements DiffProvider
      * @see com.ecyrd.jspwiki.diff.DiffProvider#makeDiffHtml(java.lang.String,
      *      java.lang.String)
      */
-    public synchronized String makeDiffHtml( String wikiOld, String wikiNew )
+    public synchronized String makeDiffHtml( WikiContext ctx, String wikiOld, String wikiNew )
     {
         //
         // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;

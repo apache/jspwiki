@@ -28,10 +28,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.*;
 
 /**
  * This DiffProvider allows external command line tools to be used to generate
@@ -102,7 +99,7 @@ public class ExternalDiffProvider implements DiffProvider
      * Makes the diff by calling "diff" program.
      * {@inheritDoc}
      */
-    public String makeDiffHtml(String p1, String p2)
+    public String makeDiffHtml( WikiContext ctx, String p1, String p2 )
     {
         File f1 = null;
         File f2 = null;

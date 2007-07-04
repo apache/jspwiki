@@ -21,22 +21,22 @@
 package com.ecyrd.jspwiki.diff;
 
 import java.io.IOException;
+import java.text.ChoiceFormat;
+import java.text.Format;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
-import org.apache.commons.jrcs.diff.AddDelta;
-import org.apache.commons.jrcs.diff.ChangeDelta;
-import org.apache.commons.jrcs.diff.Chunk;
-import org.apache.commons.jrcs.diff.DeleteDelta;
-import org.apache.commons.jrcs.diff.Diff;
-import org.apache.commons.jrcs.diff.DifferentiationFailedException;
-import org.apache.commons.jrcs.diff.Revision;
-import org.apache.commons.jrcs.diff.RevisionVisitor;
+import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 
 /**
@@ -81,7 +81,7 @@ public class TraditionalDiffProvider implements DiffProvider
      * Makes a diff using the BMSI utility package. We use our own diff printer,
      * which makes things easier.
      */
-    public String makeDiffHtml(String p1, String p2)
+    public String makeDiffHtml( WikiContext ctx, String p1, String p2 )
     {
         String diffResult = "";
 
@@ -101,7 +101,7 @@ public class TraditionalDiffProvider implements DiffProvider
             StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
 
             ret.append("<table class=\"diff\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n");
-            rev.accept( new RevisionPrint(ret) );
+            rev.accept( new RevisionPrint(ctx,ret) );
             ret.append("</table>\n");
 
             return ret.toString();
@@ -120,10 +120,14 @@ public class TraditionalDiffProvider implements DiffProvider
         implements RevisionVisitor
     {
         private StringBuffer m_result = null;
-
-        private RevisionPrint(StringBuffer sb)
+        private WikiContext  m_context;
+        private ResourceBundle m_rb;
+        
+        private RevisionPrint(WikiContext ctx,StringBuffer sb)
         {
             m_result = sb;
+            m_context = ctx;
+            m_rb = ctx.getBundle( InternationalizationManager.CORE_BUNDLE );
         }
 
         public void visit(Revision rev)
@@ -134,14 +138,14 @@ public class TraditionalDiffProvider implements DiffProvider
         public void visit(AddDelta delta)
         {
             Chunk changed = delta.getRevised();
-            print(changed, " added ");
+            print(changed, m_rb.getString( "diff.traditional.added" ) );
             changed.toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
         }
 
         public void visit(ChangeDelta delta)
         {
             Chunk changed = delta.getOriginal();
-            print(changed, " changed ");
+            print(changed, m_rb.getString( "diff.traditional.changed") );
             changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
             delta.getRevised().toString(m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE);
         }
@@ -149,19 +153,32 @@ public class TraditionalDiffProvider implements DiffProvider
         public void visit(DeleteDelta delta)
         {
             Chunk changed = delta.getOriginal();
-            print(changed, " removed ");
+            print(changed, m_rb.getString( "diff.traditional.removed") );
             changed.toString(m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE);
         }
 
         private void print(Chunk changed, String type)
         {
             m_result.append(CSS_DIFF_UNCHANGED);
-            m_result.append("At line ");
-            m_result.append(changed.first() + 1);
-            m_result.append(type);
-            m_result.append(changed.size());
-            m_result.append(" line");
-            m_result.append((changed.size() == 1) ? "." : "s.");
+            
+            String[] choiceString = 
+            {
+               m_rb.getString("diff.traditional.oneline"),
+               m_rb.getString("diff.traditional.lines")
+            };
+            double[] choiceLimits = { 1, 2 };
+            
+            MessageFormat fmt = new MessageFormat("");
+            fmt.setLocale( WikiContext.getLocale(m_context) );
+            ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
+            fmt.applyPattern( type );
+            Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };
+            fmt.setFormats( formats );
+            
+            Object[] params = { new Integer(changed.first() + 1), 
+                                new Integer(changed.size()),
+                                new Integer(changed.size()) };
+            m_result.append( fmt.format(params) );
             m_result.append(CSS_DIFF_CLOSE);
         }
     }
