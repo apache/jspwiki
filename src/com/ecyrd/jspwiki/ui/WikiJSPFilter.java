@@ -28,12 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.event.*;
+import com.ecyrd.jspwiki.event.WikiEventManager;
+import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 import com.ecyrd.jspwiki.util.WatchDog;
 
@@ -68,6 +68,7 @@ import com.ecyrd.jspwiki.util.WatchDog;
  */
 public class WikiJSPFilter extends WikiServletFilter
 {
+    /** {@inheritDoc} */
     public void doFilter( ServletRequest  request,
                           ServletResponse response,
                           FilterChain     chain )
@@ -80,7 +81,7 @@ public class WikiJSPFilter extends WikiServletFilter
 
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
           
-            ServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
+            HttpServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
         
             // fire PAGE_REQUESTED event
             String pagename = DefaultURLConstructor.parsePageFromURL(
@@ -98,7 +99,7 @@ public class WikiJSPFilter extends WikiServletFilter
             {
                 w.enterState( "Delivering response", 30 );
                 WikiContext wikiContext = getWikiContext( request );
-                String r = filter( wikiContext, responseWrapper.toString() );
+                String r = filter( wikiContext, responseWrapper );
         
                 //String encoding = "UTF-8";
                 //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
@@ -107,25 +108,10 @@ public class WikiJSPFilter extends WikiServletFilter
                 // response.setContentLength(r.length());
                 // response.setContentType(encoding);
                 
-                //
-                //  Add HTTP header Resource Requests
-                //
-                String[] headers = TemplateManager.getResourceRequests( wikiContext,
-                                                                        TemplateManager.RESOURCE_HTTPHEADER );
-                
-                for( int i = 0; i < headers.length; i++ )
-                {
-                    String[] s = StringUtils.split( headers[i], ':' );
-                    if( s.length > 1 )
-                    {
-                        ((HttpServletResponse)response).addHeader( s[0], s[1] );
-                    }
-                }
-                
                 response.getWriter().write(r);
             
                 // Clean up the UI messages and loggers
-                if ( wikiContext != null )
+                if( wikiContext != null )
                 {
                     wikiContext.getWikiSession().clearMessages();
                 }
@@ -148,21 +134,46 @@ public class WikiJSPFilter extends WikiServletFilter
     }
 
     /**
-     * Goes through all types.
+     * Goes through all types and writes the appropriate response.
      * 
      * @param wikiContext The usual processing context
      * @param string The source string
      * @return The modified string with all the insertions in place.
      */
-    private String filter(WikiContext wikiContext, String string )
+    private String filter(WikiContext wikiContext, HttpServletResponse response )
     {
-        String[] resourceTypes = TemplateManager.getResourceTypes( wikiContext );
-        
-        for( int i = 0; i < resourceTypes.length; i++ )
+        String string = response.toString();
+
+        if( wikiContext != null )
         {
-            string = insertResources( wikiContext, string, resourceTypes[i] );
-        }
+            String[] resourceTypes = TemplateManager.getResourceTypes( wikiContext );
+
+            for( int i = 0; i < resourceTypes.length; i++ )
+            {
+                string = insertResources( wikiContext, string, resourceTypes[i] );
+            }
         
+            //
+            //  Add HTTP header Resource Requests
+            //
+            String[] headers = TemplateManager.getResourceRequests( wikiContext,
+                                                                    TemplateManager.RESOURCE_HTTPHEADER );
+        
+            for( int i = 0; i < headers.length; i++ )
+            {
+                String key = headers[i];
+                String value = "";
+                int split = headers[i].indexOf(':');
+                if( split > 0 && split < headers[i].length()-1 )
+                {
+                    key = headers[i].substring( 0, split );
+                    value = headers[i].substring( split+1 );
+                }
+            
+                response.addHeader( key.trim(), value.trim() );
+            }
+        }
+
         return string;
     }
 
@@ -226,7 +237,7 @@ public class WikiJSPFilter extends WikiServletFilter
          *  How large the initial buffer should be.  This should be tuned to achieve
          *  a balance in speed and memory consumption.
          */
-        private int INIT_BUFFER_SIZE = 4096;
+        private static final int INIT_BUFFER_SIZE = 4096;
         
         public MyServletResponseWrapper( HttpServletResponse r )
         {
