@@ -55,7 +55,7 @@ public final class Release
      *  values are "-alpha" and "-beta" for alpha and beta versions,
      *  respectively.
      */
-    private static final String    POSTFIX       = "-beta";
+    private static final String    POSTFIX       = "-cvs";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
