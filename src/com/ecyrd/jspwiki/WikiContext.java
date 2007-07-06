@@ -699,8 +699,8 @@ public class WikiContext
 
     /**
      *  This method can be used to find the WikiContext programmatically
-     *  from a JSP PageContext. We check the page context scope
-     *  first, then the request context. The wiki context, if it exists,
+     *  from a JSP PageContext. We check the request context. 
+     *  The wiki context, if it exists,
      *  is looked up using the key
      *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
      *
@@ -710,13 +710,8 @@ public class WikiContext
      */
     public static WikiContext findContext( PageContext pageContext )
     {
-        // Try the page context first, then the request
-        WikiContext context = (WikiContext)pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.PAGE_SCOPE );
-        if ( context == null )
-        {
-            HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-            context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
-        }
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        WikiContext context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
         return context;
     }
 
