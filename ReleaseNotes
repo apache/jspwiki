@@ -1,6 +1,7 @@
 
-This is the first alpha release of JSPWiki 2.6.  As such, this is to be
-considered unstable, but feature-complete.
+This is a beta release of JSPWiki 2.6.  As such, this is to be
+considered relatively stable, feature-complete, but quite possibly still
+buggy.
 
 Do not deploy in a production environment, unless you are absolutely sure
 of what you are doing.  However, things you *can* be doing are e.g. donating
