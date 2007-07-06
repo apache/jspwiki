@@ -477,6 +477,10 @@ public class TemplateManager
         {
             resourceString = resource;
         }
+        else if( type.equals(RESOURCE_HTTPHEADER) )
+        {
+            resourceString = resource;
+        }
 
         if( resourceString != null )
         {
