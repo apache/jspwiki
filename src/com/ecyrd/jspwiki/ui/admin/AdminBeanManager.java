@@ -120,7 +120,10 @@ public class AdminBeanManager
 
                 ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
 
-                m_mbeanServer.registerMBean( ab, name );
+                if( !m_mbeanServer.isRegistered(name))
+                {
+                    m_mbeanServer.registerMBean( ab, name );
+                }
             }
 
             m_allBeans.add( ab );
