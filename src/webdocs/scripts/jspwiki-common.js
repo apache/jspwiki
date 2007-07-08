@@ -1012,7 +1012,7 @@ var SearchBox = {
     	q2.observe( runquery );
 		
 		$('scope').addEvent('change', changescope);
-		$('details').addEvent('change', runquery);
+		$('details').addEvent('click', runquery);
 	},
 
 	submit: function(){ 
