@@ -50,7 +50,6 @@
     <div id="recentSearches" style="display:none;">
       <fmt:message key="sbox.recentsearches"/>
       <span><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></span>
-      <ul id="recentItems" />
     </div>
   </div>
 

@@ -64,7 +64,7 @@
      <!-- Password; not displayed if container auth used -->
      <wiki:UserProfile property="canChangePassword">
        <tr>
-         <td><label for="password"><fmt:message key="prefs.password"/></td>
+         <td><label for="password"><fmt:message key="prefs.password"/></label></td>
          <%--
                <wiki:UserProfile property="exists">Change Password</wiki:UserProfile>
                <wiki:UserProfile property="new">Set Password</wiki:UserProfile>

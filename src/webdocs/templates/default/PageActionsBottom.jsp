@@ -4,14 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.default"/>
 <%
-  String homepage = "Main";
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
-  WikiPage wikiPage = wikiContext.getPage();
-  try 
-  { 
-    homepage = wikiContext.getEngine().getFrontPage(); 
-  } 
-  catch( Exception  e )  { /* dont care */ } ;
+  WikiContext c = WikiContext.findContext(pageContext);
+  WikiPage wikipage = c.getPage();
+  String frontpage = c.getEngine().getVariable(c,"jspwiki.frontPage");
 %>
 <%-- similar to PageActionsTop, except for
      ** no accesskey definitions
@@ -19,57 +14,63 @@
      ** no Login/Logout, quick2Bottom 
   --%>
 <div id='actionsBottom' class="pageactions"> 
-
-  <span class="actionHome">
-    <a href="<wiki:LinkTo page='<%= homepage %>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=homepage%></fmt:param></fmt:message>" >
+  <ul style="float:right;">
+  <li>
+  <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />" class="action home"
+    title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> ">
      <fmt:message key='actions.home' />
     </a>
-  </span>
-  
+  </li>
   <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
-      <span class="actionEdit">
+	  <li>
         <wiki:PageType type="page">
-          <a href="<wiki:EditLink format='url' />" accesskey="e" 
+          <a href="<wiki:EditLink format='url' />" accesskey="e"  class="action edit"
             title="<fmt:message key='actions.edit.title'/>" ><fmt:message key='actions.edit'/></a>
         </wiki:PageType>
         <wiki:PageType type="attachment">
-          <a href="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />" accesskey="e" 
+          <a href="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />" accesskey="e" class="action edit"
             title="<fmt:message key='actions.editparent.title'/>" ><fmt:message key='actions.editparent'/></a>
         </wiki:PageType>
-      </span>
+      </li>
     </wiki:Permission>
   
+    <wiki:PageExists>  
     <wiki:Permission permission="comment">
-    <span class="actionComment">
+	  <li>
       <wiki:PageType type="page">
-        <a href="Comment.jsp?page=<wiki:Variable var='pagename' />"
+        <a href="Comment.jsp?page=<wiki:Variable var='pagename' />" class="action comment"
            title="<fmt:message key="actions.comment.title"/>" ><fmt:message key="actions.comment"/></a>
       </wiki:PageType>
       <wiki:PageType type="attachment">
-        <a href="Comment.jsp?page=<wiki:ParentPageName />"
+        <a href="Comment.jsp?page=<wiki:ParentPageName />" class="action comment"
           title="<fmt:message key="actions.addcommenttoparent"/>" ><fmt:message key="actions.comment"/></a>
       </wiki:PageType>
-      </span>
+      </li>
     </wiki:Permission>
+    </wiki:PageExists>  
   </wiki:CheckRequestContext>
   
   
   <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>
-      <span class="actionPrefs">
-        <wiki:Link jsp="UserPreferences.jsp"><fmt:message key="actions.prefs"/></wiki:Link>
-      </span>
+	  <li>
+      <a href="<wiki:Link jsp='UserPreferences.jsp' format='url' />" class="action prefs">
+          <fmt:message key="actions.prefs"/>
+      </a>
+      </li>
     </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
 
-  <span class="quick2top"><a href="#top" title="<fmt:message key='actions.gototop'/>" >&laquo;</a>
-  </span>
+  <li>
+    <a href="#top" class="action quick2top" title="<fmt:message key='actions.gototop'/>" >&laquo;</a>
+  </li>
+  </ul>
 
   <%-- summary page info--%>
   <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
     <div class="pageinfo">
+      <wiki:PageExists>  
       <wiki:CheckVersion mode="latest">
          <fmt:message key="info.lastmodified">
             <fmt:param><wiki:PageVersion /></fmt:param>
@@ -85,9 +86,8 @@
         </fmt:message>
       </wiki:CheckVersion>
 
-      <wiki:PageExists>  
       <a href="<wiki:Link format='url' jsp='rss.jsp'>
-                 <wiki:Param name='page' value='<%=wikiPage.getName()%>'/>
+                 <wiki:Param name='page' value='<%=wikipage.getName()%>'/>
                  <wiki:Param name='mode' value='wiki'/>
                </wiki:Link>"
         title="<fmt:message key='info.rsspagefeed.title'>

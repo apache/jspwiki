@@ -31,19 +31,11 @@
     </div>
   </wiki:CheckVersion>
     
-  <div id="editorbar">  
-    <fmt:message key="edit.chooseeditor"/>
-    <select onchange="location.href=this.value">
-      <wiki:EditorIterator id="editor">
-        <option <%=editor.isSelected()%> value="<%=editor.getURL()%>"><%=editor.getName()%></option>
-      </wiki:EditorIterator>
-    </select>
-  </div>
-
   <wiki:Editor />
     
 </wiki:Tab>
   
+<wiki:PageExists>  
 <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
   <wiki:Include page="AttachmentTab.jsp"/>
 </wiki:Tab>
@@ -52,6 +44,7 @@
          url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
          accesskey="i" >
 </wiki:Tab>
+</wiki:PageExists>  
     
 <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' >
   <wiki:InsertPage page="EditPageHelp" />

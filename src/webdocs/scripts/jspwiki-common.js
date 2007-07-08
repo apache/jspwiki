@@ -4,7 +4,7 @@
  ** Nov 06-Mar 07: aligned with MooTools ##
  ** moo v1.1 selection needed:  
  **   Core, Class,  Native, Element(ex. Dimensions), Window,
- **   Effects(ex. Scroll, Slide), Drag(Base), Remote, Plugins(Tips, Accordion)
+ **   Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
  **
  ** 100 Wiki object (page parms, UserPrefs and setting focus) ##
  ** 110 WikiSlimbox : attachment viewer ##
@@ -29,105 +29,6 @@
  ** 300 Prettify
  **/
 
-
-
-var Hash = new Class({
-	length: 0,
-
-	initialize: function(object){
-		this.obj = object || {};
-		this.setLength();
-	},
-	get: function(key){
-		return (this.hasKey(key)) ? this.obj[key] : null;
-	},
-	hasKey: function(key){
-		return (key in this.obj);
-	},
-	set: function(key, value){
-		if (!this.hasKey(key)) this.length++;
-		this.obj[key] = value;
-		return this;
-	},
-	setLength: function(){
-		this.length = 0;
-		for (var p in this.obj) this.length++;
-		return this;
-	},
-	remove: function(key){
-		if (this.hasKey(key)){
-			delete this.obj[key];
-			this.length--;
-		}
-		return this;
-	},
-	each: function(fn, bind){
-		$each(this.obj, fn, bind);
-	},
-	extend: function(obj){
-		$extend(this.obj, obj);
-		return this.setLength();
-	},
-	merge: function(){
-		this.obj = $merge.apply(null, [this.obj].extend(arguments));
-		return this.setLength();
-	},
-	empty: function(){
-		this.obj = {};
-		this.length = 0;
-		return this;
-	},
-	keys: function(){
-		var keys = [];
-		for (var property in this.obj) keys.push(property);
-		return keys;
-	},
-	values: function(){
-		var values = [];
-		for (var property in this.obj) values.push(this.obj[property]);
-		return values;
-	}
-});
-
-function $H(obj){
-	return new Hash(obj);
-};
-
-
-Hash.Cookie = Hash.extend({
-	initialize: function(name, options){
-		this.name = name;
-		this.options = $extend({'autoSave': true}, options || {});
-		this.load();
-	},
-
-	save: function(){
-		if (this.length == 0){
-			Cookie.remove(this.name, this.options);
-			return true;
-		}
-		var str = Json.toString(this.obj);
-		if (str.length > 4096) return false;
-		Cookie.set(this.name, str, this.options);
-		return true;
-	},
-
-	load: function(){
-		this.obj = Json.evaluate(Cookie.get(this.name), true) || {};
-		this.setLength();
-	}
-});
-
-Hash.Cookie.Methods = {};
-
-['extend', 'set', 'merge', 'empty', 'remove'].each(function(method){
-	Hash.Cookie.Methods[method] = function(){
-		Hash.prototype[method].apply(this, arguments);
-		if (this.options.autoSave) this.save();
-		return this;
-	};
-});
-Hash.Cookie.implement(Hash.Cookie.Methods);
 
 
 /* extend mootools */
@@ -205,7 +106,7 @@ var Observer = new Class({
 		this.timeout = null;
 		this.listener = this.fired.bind(this);
 		this.value = this.element.value;  //CHECK: use getValue() ?
-		this.element.addEvent(this.options.event, this.listener);
+		this.element.setProperty('autocomplete','off').addEvent(this.options.event, this.listener);
 	},
 	fired: function() {
 		if (this.value == this.element.value) return;
@@ -317,12 +218,14 @@ function getAncestorByTagName( node, tagName )
 var Wiki = {
 
 	JSONid : 10000,
+	DELIM : '\u00A4',
 	init: function(props){
-		Object.extend(Wiki,props || {'DELIM':'\u00A4'}); 
+		Object.extend(Wiki,props || {}); 
 		var h=location.host;
 		this.BasePath = this.BaseURL.slice(this.BaseURL.indexOf(h)+h.length,-1);
         //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
+		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 	},
 
 	getPageElement: function(){ 
@@ -330,7 +233,6 @@ var Wiki = {
 	},
 	
 	onPageLoad: function(){
-		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 		this.PermissioneEdit = ( $E('.actionEdit') != undefined ); //deduct permission level
 		this.url = null;
 		this.parseLocationHash.periodical(500);
@@ -346,7 +248,7 @@ var Wiki = {
 		this.DefaultFontSize = $E('body').getStyle('font-size').toFloat();
 		this.PrefFontSize = this.prefs.get('FontSize');
 		if(this.PrefFontSize) { 
-			this.PrefFontSize=this.PrefFontSize.toFloat(); this.changeFontSize(0); 
+			this.PrefFontSize=this.PrefFontSize.toInt(); this.changeFontSize(0); 
 		} else {
 			this.PrefFontSize = this.DefaultFontSize;
 		}
@@ -360,9 +262,9 @@ var Wiki = {
     	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
 	},
 	changeFontSize: function(incr){
-	  this.PrefFontSize += incr;
+	  	this.PrefFontSize += incr;
 		this.prefs.set('FontSize',this.PrefFontSize);
-	  $E('body').setStyle('font-size',this.PrefFontSize);
+		$E('body').setStyle('font-size',this.PrefFontSize);
 	},
 	resetFontSize: function(){
 		this.PrefFontSize=this.DefaultFontSize;
@@ -370,24 +272,28 @@ var Wiki = {
 	},
 
 	replaceMoreBox: function(){
-		var more = $('actionsMorePopupItems'),
-			hover = more.getParent().effect('opacity', {wait:false}).set(0),
-			selection = $('actionsMore');
+		var more = $('morebutton');
+			popup = new Element('ul').inject(more), 
+			hover = popup.effect('opacity', {wait:false}).set(0),
+			select = $('actionsMore');
+			separator = '';
 
-		$('actionsMoreLink').show()
-		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
-			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
-		
-		$A(selection.options).each(function(o){
+		$A(select.options).each(function(o){
 			if(o.value == "") return;
 			if(o.value == "separator"){
-				new Element('hr').inject(more); 
+				separator = 'separator';
 			} else {
-				new Element('a',{'class':o.className, 'href':o.value}).setHTML(o.text)
-				.inject( new Element('li').inject(more) );
+				new Element('a',{
+					'class':o.className, 
+					'href':o.value
+				}).setHTML(o.text).inject(new Element('li',{'class':separator}).inject(popup));
+				separator='';
 			}
 		});
-		selection.getParent().remove();
+		select.getParent().hide();
+		more.show()
+		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
+			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
 	},
 
 	parseLocationHash: function(){
@@ -1040,7 +946,7 @@ var SearchBox = {
 	onPageLoadQuickSearch : function(){
 		var q = $('query'); if( !q ) return;
 	    this.query = q; 
-	    q.setProperty('autocomplete','off').observe(this.ajaxQuickSearch.bind(this) ); 
+	    q.observe(this.ajaxQuickSearch.bind(this) ); 
 
 		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
@@ -1051,19 +957,16 @@ var SearchBox = {
 		this.hover = $('searchboxMenu').setProperty('visibility','visible')
 			.effect('opacity', {wait:false}).set(0);
     
-		/* FIXME: recentSearches; use advanced search-input on safari */
+		/* use advanced search-input on safari */
 		if(window.xwebkit){
 			q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
 		} else {
 			$('recentClear').addEvent('click', this.clear.bind(this));
-			var ul = $('recentItems');
 
-			this.recent = Cookie.get('JSPWikiSearchBox');
-			if( !this.recent ) return;
-			this.recent = this.recent.split(Wiki.DELIM);
+			this.recent = Wiki.prefs.get('RecentSearch'); if(!this.recent) return;
 
+			var ul = new Element('ul',{'id':'recentItems'}).injectInside($('recentSearches').show());
 			this.recent.each(function(el){
-			    $('recentSearches').show(); 
 				new Element('a',{
 					'href':'#', 
 					'events': {'click':function(){ q.value = el; q.form.submit(); }}
@@ -1079,7 +982,10 @@ var SearchBox = {
 		
 		var runquery = function(){
 			var q2 = this.query2.value;
-			if( !q2 || (q2.trim()=='') ) return;
+			if( !q2 || (q2.trim()=='')) { 
+				$('searchResult2').empty();
+				return; 
+			}
 			$('spin').show();
 
 			var scope = $('scope'), 
@@ -1107,8 +1013,6 @@ var SearchBox = {
 		
 		$('scope').addEvent('change', changescope);
 		$('details').addEvent('change', runquery);
-		//$('go').hide();
-		//$('ok').hide();
 	},
 
 	submit: function(){ 
@@ -1117,21 +1021,23 @@ var SearchBox = {
 		if( !this.recent.test(v) ){
 			if(this.recent.length > 9) this.recent.pop();
 			this.recent.unshift(v);
-			Cookie.set('JSPWikiSearchBox', this.recent.join(Wiki.DELIM), {path:Wiki.BasePath});
+			Wiki.prefs.set('RecentSearch', this.recent);
 		}
 		if(v.trim() != '') location.href = this.query.form.action + '?query=' + v;
 	},
 
-	clear: function(){
-		Cookie.remove(this.Cookie);
+	clear: function(){		
 		this.recent = [];
-		$('recentSearches').hide();
+		Wiki.prefs.remove('RecentSearch');
+		$('recentSearches','recentClear').hide();
 	},
 
     ajaxQuickSearch: function(){
 		var qv = this.query.value ;
-		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) return;
-
+		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) {
+			$('searchOutput').empty();
+			return;
+		}
 		$('searchTarget').setHTML('('+qv+') :');
 		$('searchSpin').show();
 

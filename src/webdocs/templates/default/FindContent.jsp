@@ -22,17 +22,17 @@
     <input type="text"
            name="query" id="query2" 
           value="<c:out value='${query}'/>" 
-           size="40" autocomplete="off" />
+           size="40" />
 
     <input type="checkbox" name="details" id="details" <c:if test='${param.details == "on"}'>checked='checked'</c:if> />
     <fmt:message key="find.details" />
 
     <select name="scope" id="scope" > 
-      <option value="" <c:if test="${empty param.scope}">selected</c:if> ><fmt:message key='find.scope.all' /></option>
-      <option value="author:" <c:if test='${param.scope eq "author:"}'>selected</c:if> ><fmt:message key='find.scope.authors' /></option>
-      <option value="name:" <c:if test='${param.scope eq "name:"}'>selected</c:if> ><fmt:message key='find.scope.pagename' /></option>
-      <option value="contents:" <c:if test='${param.scope eq "contents:"}'>selected</c:if> ><fmt:message key='find.scope.content' /></option>
-      <option value="attachment:" <c:if test='${param.scope eq "attachment:"}'>selected</c:if> ><fmt:message key='find.scope.attach' /></option>       
+      <option value="" <c:if test="${empty param.scope}">selected="selected"</c:if> ><fmt:message key='find.scope.all' /></option>
+      <option value="author:" <c:if test='${param.scope eq "author:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.authors' /></option>
+      <option value="name:" <c:if test='${param.scope eq "name:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.pagename' /></option>
+      <option value="contents:" <c:if test='${param.scope eq "contents:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.content' /></option>
+      <option value="attachment:" <c:if test='${param.scope eq "attachment:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.attach' /></option>       
     </select>
 
 	<input type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find"/>" />
@@ -40,7 +40,7 @@
     <input type="hidden" name="start" id="start" value="0" />
     <input type="hidden" name="maxitems" id="maxitems" value="20" />
 
-    <span id="spin" style="position:absolute; display:none;" title="Search busy" ></span>
+    <span id="spin" class="spin" style="position:absolute;display:none;"></span>
   </p>
 </form>
 

@@ -25,7 +25,7 @@
   </div>
 </c:if>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/><wiki:Param name='editor' value='plain'/></wiki:Link>" 
+<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>" 
        class="wikiform" 
           id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />"
@@ -83,9 +83,9 @@
   </tr>
   
   <tr>
-  <td><label for="prefEditorType"><fmt:message key="edit.chooseeditor"/></label></td>
+  <td><label for="editor"><fmt:message key="edit.chooseeditor"/></label></td>
   <td>
-    <select id="prefEditorType" name="prefEditorType">
+    <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
         <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
@@ -240,14 +240,14 @@
   </tr>
   --%>
  <tr>
-  <td>
-  </td>
+  <td>&nbsp;</td>
   <td>
     <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" />
-
     <input type="hidden" name="action" value="setAssertedName" />
+    <%-- remove this ?? 
     <wiki:UserCheck status="anonymous">
     </wiki:UserCheck>
+    --%>
     <div class="formhelp"><fmt:message key='prefs.cookies'/></div>
   </td>
   </tr>
@@ -263,11 +263,11 @@
 <form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="clearCookie"
     onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
-      method="POST" accept-charset="<wiki:ContentEncoding />" >
-
+      method="post" accept-charset="<wiki:ContentEncoding />" >
+  <div>
   <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />
   <input type="hidden" name="action" value="clearAssertedName" />
-
+  </div>
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>
 
 </form>

@@ -3,24 +3,15 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <fmt:setBundle basename="templates.default"/>
 <%
-  String homepage = "Main";
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
-  try 
-  { 
-    homepage = wikiContext.getEngine().getFrontPage(); 
-  } 
-  catch( Exception  e )  { /* dont care */ } ;
+  WikiContext c = WikiContext.findContext(pageContext);
+  String frontPage = c.getEngine().getVariable(c,"jspwiki.frontPage");
 %>
 
 <div id="header">
 
   <div class="applicationlogo" > 
-    <%--FIXME<a href="<wiki:LinkTo page='SystemInfo' format='url'/>" title="JSPWiki System Info"><wiki:Variable var="ApplicationName" /></a>--%>
-    <a href="<wiki:LinkTo page='<%= homepage %>' format='url'/>" 
-      title="<fmt:message key='header.homepage.title' />"><wiki:Variable var="ApplicationName" /></a>
-    <%-- fmt: doeesnt work ???
-    <wiki:LinkTo page="<%=homepage %>" title="<fmt:message key='header.homepage.title' />" ><wiki:Variable var="ApplicationName" /></wiki:LinkTo>
-    --%>
+    <a href="<wiki:LinkTo page='<%=frontPage%>' format='url' />"
+       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontPage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
   </div>
 
   <div class="companylogo"></div>

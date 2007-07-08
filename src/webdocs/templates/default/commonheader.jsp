@@ -26,12 +26,6 @@
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js'/>"></script>
-<wiki:CheckRequestContext context='edit|comment'>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js'/>" ></script>
-</wiki:CheckRequestContext>
-<wiki:CheckRequestContext context='viewGroup|editGroup|deleteGroup|createGroup|prefs'>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-prefs.js'/>" ></script>
-</wiki:CheckRequestContext>
 <wiki:IncludeResources type="script"/>
 
 <%-- COOKIE read client preferences --%>
@@ -89,7 +83,11 @@ Wiki.init({
     title="Search <wiki:Variable var="ApplicationName" />" />
 <link rel="help"   href="<wiki:LinkTo format='url' page='TextFormattingRules'/>" 
     title="Help" />
-<link rel="start"  href="<wiki:LinkTo format='url' page='Main'/>" 
+<% 
+  WikiContext c = WikiContext.findContext( pageContext );  
+  String frontPage = c.getEngine().getVariable(c,"jspwiki.frontPage");
+ %>
+ <link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontPage%>' />" 
     title="Front page" />
 <link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" 
@@ -101,7 +99,7 @@ Wiki.init({
 <wiki:FeedDiscovery />
 
 <%-- SKINS : extra stylesheets, extra javascript --%>
-<c:if test='${(!empty prefs["SkinName"]) && (prefs["SkinName"] !="PlainVanilla") }'>
+<c:if test='${(!empty prefs["SkinName"]) && (prefs["SkinName"]!="PlainVanilla") }'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print" 
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.css' />" />
 <%--

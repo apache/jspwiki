@@ -61,12 +61,13 @@
 }
 #actionsTop	{ 
 	position:absolute; 
-	right:2.25em; 
+	right:2em; 
 	margin-top:0.5em; 
 }
 #actionsBottom {
 	text-align:right;
 	position:relative;
+	margin-bottom:0.5em;
 }
 
 
@@ -134,10 +135,9 @@ ul,ol {
 }
 dl dt {
 	font-weight:bold;
-	font-size:1.2em;
 }
 dl dd {
-	margin-left:5em;
+	margin-left:2em;
 }
 
 /* +++ 225 Forms, Labels, form-values and form-help +++ */
@@ -274,6 +274,10 @@ a.footnote {
 	margin-left:auto;
 	margin-right:auto;
 	text-align:left;
+}
+.quote {
+	border-left:4px solid silver;
+	padding-left:1.5em;
 }
 .ltr {
 	direction:ltr;
@@ -534,7 +538,32 @@ body.comment {
     line-height:6px;
     overflow:hidden;
 }
-.edit textarea {
+#toolbar, #editassist {
+	margin:0.5em 0;
+}
+#toolbar span {
+	float:left;
+	display:block;
+	padding:0.25em 0;
+	margin-right:0.5em;
+}
+a.tool {
+	float:left;
+	display:block;
+	background:#eee;
+	border:1px solid #bbb;
+	padding:0.25em;
+	margin-right:2px;
+	text-decoration: none;
+}
+a.tool:hover, .btn:hover {
+	background-color:#f93 !important;
+}
+#editassist a.tool {
+	float:right;
+	margin:0 0 0 0.5em;
+}
+body.edit textarea {
 	font-family:Monaco, "Courier New", Courier, monospace;
 	font-size:1em;
 	padding:4px;
@@ -546,14 +575,7 @@ body.comment {
 #editform input {
 	margin-right:2em;
 }
-
-#editorbar {
-	float:right;
-	text-align:right;
-	width:25%;
-}
-#commentcontent,
-#editcontent {
+#commentcontent, #editcontent {
 	width:99%;
 }
 #edithelp {
@@ -662,82 +684,80 @@ body.comment {
 
 /* +++ 470 PageActions +++ */
 .pageactions {
-	padding:0.25em 2em 0 0;
 	line-height:1.5;
 }
-.pageactions a {
-	padding:0.5em;
-}
-.pageactions .pageinfo a  { 
-	padding:0;
-}
-.pageactions a:hover {
-	background-color:#f93;
-}
-.pageactions .pageinfo a:hover {
-	background-color:transparent;
-}
 .pageactions .pageinfo {
-	margin:0.25em 0 0 0;
+	clear:both;
+	margin:0.25em 0;
 }
-.pageinfo,
-.actionHome,
-.actionView,
-.actionEdit,
-.actionComment,
-.actionPrefs,
-.actionAttach,
-.actionInfo,
-.actionIndex,
-.actionRecentChanges,
-.actionLogin,
-.actionLogout {
-}
-#actionsMorePopup {
-	position:absolute;
-	top:2em;
-	right:0;
-	z-index:20;
-	background:white;
-	border:2px solid #bbb;
-}
-#actionsMorePopup ul {
+.pageactions ul {
 	list-style:none;
+	z-index:10;
 	margin:0;
 	padding:0;
 }
-#actionsMorePopup li {
+.pageactions li {
+	position:relative;
 	display:block;
-	line-height:1.5;
+	float:left;
 }
-#actionsMorePopup li:hover {
+.pageactions li ul {
+	position:absolute;
+	right:0; 
+	background:white;
+	border:2px solid #bbb;
+}
+.pageactions li ul li {
+	display:block;
+	white-space:nowrap;
+	float:none;
+}
+.pageactions li ul li.separator { 
+	border-top:2px solid #bbb;
+}
+a.action {
+	display:block;
+	padding:0.25em 0.5em;
+	text-decoration: none;
+}
+a.action:hover,a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#f93;
 }
-#actionsMorePopup a {
+.pageactions .pageinfo a.action:hover {
 	background-color:transparent;
 }
-#actionsMorePopup .actionSeparator { 
-	height:2px;
-	border-bottom:2px solid #bbb;
+
+a.action.home,
+a.action.view,
+a.action.edit,
+a.action.comment,
+a.action.prefs,
+a.action.attach,
+a.action.info,
+a.action.index,
+a.action.more,
+a.action.recentChanges,
+a.action.systeminfo,
+a.action.viewgroup,
+a.action.editgroup,
+a.action.deletegroup,
+a.action.creategroup,
+a.action.workflow,
+a.action.login,
+a.action.logout {
 }
 
-.quick2top a, .quick2bottom a {
-	position:absolute; 
-	right:0;
+a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
 	padding:0; 
 	text-indent:20px;
  	width:20px; 
 }
-.quick2top a {
+a.action.quick2top {
  	background:url(images/arrup.png) no-repeat center;
 }
-.quick2bottom a {
-	top:0;
+a.action.quick2bottom {
  	background:url(images/arrdown.png) no-repeat center;
-}
-.quick2top a:hover, .quick2bottom a:hover {
-	background-color:#f93;
 }
 
 
@@ -758,10 +778,11 @@ body.comment {
 
 
 /* +++ 485 SearchBox +++ */
-.spin, #spin { 
+.spin { 
 	background:url(images/spin.gif) no-repeat;
 	width:16px;
 	height:16px;
+	margin:0 0.5em;
 }
 .searchbox {
 	margin:0 0 0 0.5em;
@@ -824,18 +845,18 @@ body.view {
 }
 
 /* +++ 620 Index plugin +++ */
-.index {
+div.index {
 }
-.index .header {
+div.index .header {
 	padding:4px;
 	background:#eee;
 	border:1px solid #bbb;
 	text-align:center;
 	font-size:1.4em;
 }
-.index .body {
+div.index .body {
 }
-.index .section {
+div.index .section {
 	color:red;
 	font-size:1.4em;
 }
@@ -927,23 +948,23 @@ body.view {
 
 
 /* +++ 640 RecentChangesPlugin +++ */
-.recentchanges {
+table.recentchanges {
 	table-layout:fixed;
 } /*faster renderer */
-.recentchanges .changenote { 
+table.recentchanges .changenote { 
 	font-style:italic;
 }
-.recentchanges td {
+table.recentchanges td {
 	vertical-align:top;
 	border-bottom:1px solid #eee;
 }
-.recentchanges .date {
+table.recentchanges .date {
 	vertical-align:bottom;
 	border-top:1.5em solid white;
 	background-color:#eee !important;
 	border-bottom:none;
 }
-.recentchanges tr.odd td {
+table.recentchanges tr.odd td {
 	background-color:transparent;
 } 
 
@@ -994,8 +1015,10 @@ table.calendar tr.weekdays {
 	padding:0.5em;
 	border:1px solid #bbb;
 	border-top:none;
+	margin-bottom:0.5em;
 }
 .tabmenu {
+	margin-top:0.5em;
 	padding:0.25em 1em;
 	font-weight:bold;
 	line-height:normal;
@@ -1044,18 +1067,15 @@ table.calendar tr.weekdays {
 .accordion .tab {
 	padding:0 1em;
 }
-
 .togglemenu {
 	color:gray;
 	font-weight:bold; 
 	margin-top:1em;
-	line-height:1.2;
 	padding:0.25em 0.5em;
 }
 .togglemenu .toggle {
 	background:#eee;
 	border:1px solid #bbb;
-	border-bottom:none;
 	cursor:pointer;
 	display:inline;
 	margin-left:-1px;

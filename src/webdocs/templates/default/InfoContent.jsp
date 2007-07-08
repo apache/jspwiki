@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
@@ -361,7 +362,14 @@
   String progressId = wikiContext.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
-  <wiki:TabbedSection>
+  <wiki:TabbedSection defaultTab="info">
+  <wiki:Tab id="pagecontent" 
+         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>' 
+     accesskey="v" 
+	       url="<%=wikiContext.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
+      <%--<wiki:Include page="PageTab.jsp"/> --%>
+  </wiki:Tab>
+
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>" accesskey="i" >
 
   <h3><fmt:message key="info.uploadnew"/></h3>
@@ -424,13 +432,6 @@
     </form>
 
   </wiki:Permission>
-
-  <p>
-  <fmt:message key='info.backtoparentpage'>
-    <fmt:param><a href="<wiki:LinkToParent format='url' />&tab=attachments"><wiki:ParentPageName /></a></fmt:param>
-  </fmt:message>
-  </p>
-
 
   <%-- FIXME why not add pagination here - no need for large amounts of attach versions on one page --%>
   <h3><fmt:message key='info.attachment.history' /></h3>

@@ -1,6 +1,3 @@
-<%--
-<script type='text/javascript' src='scripts/wikiwizard-jspwiki.js' language='Javascript'></script>
---%>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="java.io.Serializable"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
