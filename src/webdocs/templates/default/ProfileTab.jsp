@@ -143,7 +143,7 @@
      </wiki:UserProfile>
 
      <tr>
-       <td />
+       <td>&nbsp;</td>
        <td>
        <wiki:UserProfile property="exists">
         <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
@@ -156,11 +156,7 @@
        <wiki:UserCheck status="assertionsAllowed">
           <div class="formhelp"><fmt:message key="prefs.cookie.info"/></div>
         </wiki:UserCheck>
-       <%-- trivial msg <fmt:message key="prefs.save.description"/> --%>
        </td>
      </tr>
-
    </table>
-
 </form>
-

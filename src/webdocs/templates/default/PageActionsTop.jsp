@@ -99,7 +99,7 @@
   <li>
   <select name="actionsMore" id="actionsMore"
       onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
-    <option class="actionsMore" value="" checked='checked'><fmt:message key="actions.more"/></option>
+    <option class="actionsMore" value="" selected='selected'><fmt:message key="actions.more"/></option>
 
     <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>

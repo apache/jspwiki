@@ -17,14 +17,6 @@
   </wiki:Tab>
 
   <wiki:Tab id="commentcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.addcomment")%>'>
-  <div id="editorbar">  
-    <fmt:message key="edit.chooseeditor"/>
-    <select onchange="location.href=this.value">
-      <wiki:EditorIterator id="editor">
-        <option <%=editor.isSelected()%> value="<%=editor.getURL()%>"><%=editor.getName()%></option>
-      </wiki:EditorIterator>
-    </select>
-  </div>
 
   <wiki:Editor />
   </wiki:Tab>

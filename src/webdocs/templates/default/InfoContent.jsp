@@ -202,7 +202,7 @@
     title="<fmt:message key='info.rsspagefeed.title'>
              <fmt:param><wiki:PageName /></fmt:param>
            </fmt:message>" >
-    <img src="<wiki:Link jsp='images/xml.png' format='url'/>" border="0" alt="[RSS]"/>
+    <img src="<wiki:Link jsp='images/xml.png' format='url'/>" alt="[RSS]"/>
   </a>
   </p>
 
@@ -227,14 +227,14 @@
               id="renameform"
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
-
+      <div>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
       &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>
-
+      </div>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!rename">
@@ -249,10 +249,10 @@
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
-
+      <div>
       <input type="submit" name="delete-all" id="delete-all" 
             value="<fmt:message key='info.delete.submit'/>" >
-
+      </div>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!delete">
@@ -276,7 +276,7 @@
         <th><fmt:message key="info.size"/></th>
         <th><fmt:message key="info.author"/></th>
         <th><fmt:message key="info.changes"/></th>
-      <th width="30%"><fmt:message key="info.changenote"/></th>
+      <th class='changenote'><fmt:message key="info.changenote"/></th>
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
@@ -385,8 +385,6 @@
   <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
 
-
-  <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
   <table>
   <tr>
     <td colspan="2"><div class="formhelp"><fmt:message key="info.uploadnew.help" /></div></td>
@@ -404,6 +402,7 @@
   <tr>
     <td></td>
     <td>
+    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <input type="submit" name="upload" value="<fmt:message key='attach.add.submit'/>" id="upload" /> <input type="hidden" name="action"  value="upload" />
     <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
         <div id="progressbar"><div class="ajaxprogress"></div></div>
@@ -425,10 +424,10 @@
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
-
+     <div>
      <input type="submit" name="delete-all" id="delete-all" 
            value="<fmt:message key='info.deleteattachment.submit' />" />
-
+     </div>
     </form>
 
   </wiki:Permission>
@@ -450,7 +449,7 @@
          <th><fmt:message key="info.actions"/></th>
       </wiki:Permission>
       --%>
-      <th width="30%"><fmt:message key="info.changenote"/></th>
+      <th  class='changenote'><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
@@ -474,10 +473,10 @@
       <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
                        title="<%= name %>"
                        class="attachment" ><wiki:PageVersion /></a></td>
-      <td nowrap style="text-align:right;">
+      <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td nowrap><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
+	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.
@@ -489,7 +488,7 @@
          </td>
       </wiki:Permission>
       --%>
-      <td>
+      <td class='changenote'>
       <%
          String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
          if( changeNote != null ) {

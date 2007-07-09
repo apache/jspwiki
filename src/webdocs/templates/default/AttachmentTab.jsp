@@ -21,8 +21,6 @@
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>"
       onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');" >
-    <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
-
     <table>
     <tr>
       <td colspan="2"><div class="formhelp"><fmt:message key="attach.add.info" /></div></td>
@@ -40,6 +38,7 @@
    <tr>
       <td></td>
       <td>
+        <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
         <input type="submit" name="upload" id="upload" value="<fmt:message key='attach.add.submit'/>" />
         <input type="hidden" name="action" value="upload" />
         <div id="progressbar"><div class="ajaxprogress"></div></div>

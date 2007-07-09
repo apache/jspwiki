@@ -32,7 +32,7 @@
   <div class="diffnote">
     <form action="<wiki:Link jsp='Diff.jsp'format='url' />" 
           method="get" accept-charset="UTF-8">
-
+       <div>
        <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
        <fmt:message key="diff.difference">
          <fmt:param>
@@ -57,7 +57,7 @@
            <fmt:message key="diff.gotofirst"/>
          </a>&raquo;&raquo;
        </c:if>
-
+       </div>
     </form>
   </div>
 

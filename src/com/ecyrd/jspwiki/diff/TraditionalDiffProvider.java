@@ -50,8 +50,8 @@ public class TraditionalDiffProvider implements DiffProvider
 {
     private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);
 
-    private static final String CSS_DIFF_ADDED = "<tr><td bgcolor=\"#99FF99\" class=\"diffadd\">";
-    private static final String CSS_DIFF_REMOVED = "<tr><td bgcolor=\"#FF9933\" class=\"diffrem\">";
+    private static final String CSS_DIFF_ADDED = "<tr><td class=\"diffadd\">";
+    private static final String CSS_DIFF_REMOVED = "<tr><td class=\"diffrem\">";
     private static final String CSS_DIFF_UNCHANGED = "<tr><td class=\"diff\">";
     private static final String CSS_DIFF_CLOSE = "</td></tr>" + Diff.NL;
 

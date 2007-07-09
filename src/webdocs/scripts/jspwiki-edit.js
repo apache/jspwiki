@@ -18,6 +18,8 @@ var EditTools =
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 		
+		this.WikiLanguage = this.initWikiLanguage();
+		
 		/* make textarea more intelligent */
 		new postEditor.create(this.textarea,'changenote', this.WikiLanguage);
 
@@ -54,7 +56,8 @@ var EditTools =
 		
 	},
 
-	WikiLanguage: {
+	initWikiLanguage: function(){
+		return {
 snippets: {
 	"toc" : {
 		snippet:["","[{TableOfContents }]", "\n"],
@@ -179,6 +182,7 @@ smartTypingPairs: {
 //ctrl+shift+number - not used in jspwiki -- yet ;-)
 selections: {
 }
+		}
 	},
 	
 	insertTextArea: function(snippet) {

@@ -105,7 +105,7 @@
 
 <%-- FIXME error flow on lostpw nok --%>
 
-<div align="center">
+<div class="center">
 <form action="LostPassword.jsp"
           id="lostpw"
        class="wikiform"
@@ -164,7 +164,7 @@
   </wiki:Tab>
   </wiki:Permission>
 
-  <wiki:Tab id="LoginPageHelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>' >
+  <wiki:Tab id="loginpagehelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>' >
   <wiki:InsertPage page="LoginPageHelp" />
   <wiki:NoSuchPage page="LoginPageHelp">
     <div class="error">

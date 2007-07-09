@@ -119,7 +119,7 @@
   </div>
     <p>
     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-    <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
+    <input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
     </p>
   </wiki:CheckRequestContext>
 

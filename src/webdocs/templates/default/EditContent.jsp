@@ -57,10 +57,4 @@
   </wiki:NoSuchPage>  
 </wiki:Tab>
 
-<%-- include all find & replace help in help tab  
-  <wiki:Tab id="searchbarhelp" title="<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.findreplacehelp")%>">
-    <wiki:InsertPage page="EditFindAndReplaceHelp" />
-  </wiki:Tab>
---%>
-  
 </wiki:TabbedSection>

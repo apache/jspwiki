@@ -1,3 +1,22 @@
+2007-07-09  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.95
+
+        * Stabilising 2.5.94.
+        
+        * Remove editor type selector from CommentContent.jsp
+        
+        * Bugfix on tab switching in the Login and UserPreferences pages
+        
+        * Bugfix: the SIGN shortcut was not working in Edit Assist
+        
+        * Bugfix: typo in commonheader.jsp caused jspwiki-edit.js to be loaded twice
+        
+        * Bugfix: z-index adjusted for More.. menu to satisfy IE editors.
+        
+        * Fixed remaining xhtml issues. (BUG  9)
+        
+
 2007-07-08  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.94

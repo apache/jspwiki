@@ -20,7 +20,7 @@
 <form action="<%=action%>"
       method="post" accept-charset="<wiki:ContentEncoding/>" 
        class="wikiform"
-        name="editform" id="editform"
+          id="editform"
     onsubmit="return Wiki.submitOnce( this );"
      enctype="application/x-www-form-urlencoded">
 
@@ -35,11 +35,12 @@
     <input type="hidden" name="edittime" value="<c:out value='${lastchange}' />" />
     <input type="hidden" name="addr" value="<%=request.getRemoteAddr()%>" />   
   </p>
-  <textarea style="display:none;" readonly="true"
+  <div>
+  <textarea style="display:none;" readonly="readonly"
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
             rows="4" 
             cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
-
+  </div>
   <div id="previewsavebutton">
     <input type="submit" name="edit" value="<fmt:message key='editor.preview.edit.submit'/>" 
       accesskey="e"

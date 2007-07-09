@@ -76,18 +76,16 @@
   </td>
   <td id="groupmembers">
     <div style="float:left;">
-    <textarea rows="8" cols="30" disabled
+    <textarea rows="8" cols="30" disabled="disabled"
               name="membersfield" id="membersfield" ></textarea>
     </div>
     <form action="<wiki:Link format='url' jsp='Group.jsp'/>" 
               id="groupForm" 
           method="post" accept-charset="<wiki:ContentEncoding />" >
-
+      <div>
       <input type="hidden" name="group"   value="" />
       <input type="hidden" name="members" value="" />
       <input type="hidden" name="action"  value="save" />
-
-      <div>
       <input type="button" disabled
              name="saveButton" id="saveButton" 
             value="Save Group"  
@@ -95,7 +93,7 @@
 
       <wiki:Permission permission="createGroups">
       <div>
-      <input type="button" disabled  
+      <input type="button" disabled="disabled"  
              name="createButton" id="createButton"
             value="Save New Group" 
             style="display:none; "
@@ -103,14 +101,14 @@
       </wiki:Permission>
 
       <div>
-      <input type="button" disabled
+      <input type="button" disabled="disabled"
              name="cancelButton" id="cancelButton" 
             value="Cancel" 
           onclick="WikiGroup.toggle();" /></div>
 
       <wiki:Permission permission="deleteGroup">
       <div>
-      <input type="button" disabled 
+      <input type="button" disabled="disabled" 
              name="deleteButton" id="deleteButton"
             value="Delete Group" 
           onclick="confirm( 'Please confirm that you want to delete this group permanently!' ) 
