@@ -10,27 +10,27 @@
         
         * Replace all hardcoded references to 'Main' by 'wiki.frontPage'  (BUG 42)
 
-		* Improved the loading of additional Javascript chunks. jspwiki-edit.js is now 
-		only loaded with plain.jsp, so no more interference with WikiWizard (BUG 78)
-		
-		* Major refactoring of the 'More...' dropdown menu. It now perfectly runs on Firefox,
-		Opera, Camina, Safari and (i hope ;-) on IE. Plse test test test on IE6 and IE7 and report
-		bugs. The new menu is also XHTML compliant.
-		Many improvements have been done on the remaining XHTML compliancy issues.
+        * Improved the loading of additional Javascript chunks. jspwiki-edit.js is now 
+        only loaded with plain.jsp, so no more interference with WikiWizard (BUG 78)
 
-		* The Editor type selector is now moved to the UserPreferences page, instead of the
-		Edit.jsp. Changing the editor type during an edit session was dangerous, 
-		as changes to the page are not saved. Now you can set your preferred editor in MyPrefs.
-
-		* The editor textarea has been boosted with Posteditor 
-		(see http://icebeat.bitacoras.com/mootools/posteditor/ for a demo)
-		The textarea now supports the TAB key, smart 'typing pairs' (suchs as () [] {} ) 
-		and has some fancy tab-completion of commonly used commands. 
-		Try entering toc+TAB to see the effect.
-		The PostEditor is only functional on non-IE browsers, and if Javascript is on.
-		
-		* The Editor assist toolbar provides a set of buttons to assist newbies in entering
-		wiki markup. Supports both non-IE as IE, only if Javascript is on.
+        * Major refactoring of the 'More...' dropdown menu. It now perfectly runs on Firefox,
+        Opera, Camina, Safari and (i hope ;-) on IE. Plse test test test on IE6 and IE7 and report
+        bugs. The new menu is also XHTML compliant.
+        Many improvements have been done on the remaining XHTML compliancy issues.
+        
+        * The Editor type selector is now moved to the UserPreferences page, instead of the
+        Edit.jsp. Changing the editor type during an edit session was dangerous, 
+        as changes to the page are not saved. Now you can set your preferred editor in MyPrefs.
+        
+        * The editor textarea has been boosted with Posteditor 
+        (see http://icebeat.bitacoras.com/mootools/posteditor/ for a demo)
+        The textarea now supports the TAB key, smart 'typing pairs' (suchs as () [] {} ) 
+        and has some fancy tab-completion of commonly used commands. 
+        Try entering toc+TAB to see the effect.
+        The PostEditor is only functional on non-IE browsers, and if Javascript is on.
+        
+        * The Editor assist toolbar provides a set of buttons to assist newbies in entering
+        wiki markup. Supports both non-IE as IE, only if Javascript is on.
 
 
 2007-07-06  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
