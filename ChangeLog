@@ -1,3 +1,8 @@
+2007-07-10  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * [BUG 81] Added the _en resource bundles to the JAR build by copying
+        the default bundles in build.xml.  No bump, no functionality change.
+
 2007-07-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.95
