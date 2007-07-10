@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.86 2007-07-10 20:46:08 jalkanen Exp $
+    $Id: build.xml,v 1.87 2007-07-10 20:47:41 jalkanen Exp $
 -->
 
 <!--
@@ -284,7 +284,7 @@
   	       used. FIXME: Figure out a better way to do this in the future. -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
-	  <copy file="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.i18n}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
+	  <copy file="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
