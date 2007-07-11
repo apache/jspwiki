@@ -1,3 +1,25 @@
+2007-07-11  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.96
+
+        * Added a bunch of missing localizations, reported by Youheng Hu.
+        New localizable strings in CoreResources are:
+
+           - security.error.createprofilebeforelogin
+           - security.error.blankpassword
+           - security.error.passwordnomatch
+           - security.error.illegalfullname
+           - security.error.illegalloginname
+           - security.user.loginname
+           - security.user.fullname
+           - security.user.email
+           - validate.unsafechars
+           - validate.invalidemail
+           - validate.invalidid
+
+        * WikiSession gains getLocale() method, which provides a cached
+        locale object.
+
 2007-07-10  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * [BUG 81] Added the _en resource bundles to the JAR build by copying
@@ -8,19 +30,19 @@
         * 2.5.95
 
         * Stabilising 2.5.94.
-        
+
         * Remove editor type selector from CommentContent.jsp
-        
+
         * Bugfix on tab switching in the Login and UserPreferences pages
-        
+
         * Bugfix: the SIGN shortcut was not working in Edit Assist
-        
+
         * Bugfix: typo in commonheader.jsp caused jspwiki-edit.js to be loaded twice
-        
+
         * Bugfix: z-index adjusted for More.. menu to satisfy IE editors.
-        
+
         * Fixed remaining xhtml issues. (BUG  9)
-        
+
 
 2007-07-08  Dirk Frederickx (dirk.frederickx@gmail.com)
 
@@ -31,28 +53,28 @@
         your prefered height of the editor area. (BUG 67)
         The RecentSearches memory has been added to the JSPWikiUserPrefs and doesn't require
         an additional cookie. (less cookie dirt)
-        
+
         * Replace all hardcoded references to 'Main' by 'wiki.frontPage'  (BUG 42)
 
-        * Improved the loading of additional Javascript chunks. jspwiki-edit.js is now 
+        * Improved the loading of additional Javascript chunks. jspwiki-edit.js is now
         only loaded with plain.jsp, so no more interference with WikiWizard (BUG 78)
 
         * Major refactoring of the 'More...' dropdown menu. It now perfectly runs on Firefox,
         Opera, Camina, Safari and (i hope ;-) on IE. Plse test test test on IE6 and IE7 and report
         bugs. The new menu is also XHTML compliant.
         Many improvements have been done on the remaining XHTML compliancy issues.
-        
+
         * The Editor type selector is now moved to the UserPreferences page, instead of the
-        Edit.jsp. Changing the editor type during an edit session was dangerous, 
+        Edit.jsp. Changing the editor type during an edit session was dangerous,
         as changes to the page are not saved. Now you can set your preferred editor in MyPrefs.
-        
-        * The editor textarea has been boosted with Posteditor 
+
+        * The editor textarea has been boosted with Posteditor
         (see http://icebeat.bitacoras.com/mootools/posteditor/ for a demo)
-        The textarea now supports the TAB key, smart 'typing pairs' (suchs as () [] {} ) 
-        and has some fancy tab-completion of commonly used commands. 
+        The textarea now supports the TAB key, smart 'typing pairs' (suchs as () [] {} )
+        and has some fancy tab-completion of commonly used commands.
         Try entering toc+TAB to see the effect.
         The PostEditor is only functional on non-IE browsers, and if Javascript is on.
-        
+
         * The Editor assist toolbar provides a set of buttons to assist newbies in entering
         wiki markup. Supports both non-IE as IE, only if Javascript is on.
 
@@ -60,23 +82,23 @@
 2007-07-06  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.93
-        
+
         * RESOURCE_HTTPHEADER didn't work if adding dates.
-        
+
         * AdminBeanManager is now a bit more robust if a bean is already
         registered.  Thanks to Alex Samad for the patch.
 
 2007-07-04  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.92
-        
+
         * DiffProviders are now localized.  Unfortunately, this meant an API
         change, so WikiEngine.makeDiff() now takes a WikiContext as a parameter.
         I don't think many people were using it, though, so it's not a major
         issue.
-        
+
         * New localizations in CoreResources-bundle:
-        
+
             - diff.traditional.added
             - diff.traditional.changed
             - diff.traditional.removed
@@ -86,9 +108,9 @@
 2007-07-03  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.91
-        
+
         * There have been loads and loads of fixes to Checkstyle warnings.
-        
+
         * Added RESOURE_HTTPHEADER from Alex Samad.  Thanks!
 
 2007-06-30  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
