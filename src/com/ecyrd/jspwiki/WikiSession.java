@@ -22,14 +22,7 @@ package com.ecyrd.jspwiki;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -140,6 +133,8 @@ public final class WikiSession implements WikiEventListener
 
     private Principal           m_loginPrincipal      = WikiPrincipal.GUEST;
 
+    private Locale              m_cachedLocale        = Locale.getDefault();
+
     /**
      * Returns <code>true</code> if one of this WikiSession's user Principals
      * can be shown to belong to a particular wiki group. If the user is
@@ -162,7 +157,7 @@ public final class WikiSession implements WikiEventListener
 
     /**
      * Returns <code>true</code> if the wiki session is newly initialized.
-     * 
+     *
      * @return True, if this is a new session.
      */
     protected final boolean isNew()
@@ -305,6 +300,22 @@ public final class WikiSession implements WikiEventListener
             return ((PrincipalWrapper)m_userPrincipal).getPrincipal();
         }
         return m_userPrincipal;
+    }
+
+    /**
+     *  Returns a cached Locale object for this user.  It's better to use
+     *  WikiContext's corresponding getBundle() method, since that will actually
+     *  react if the user changes the locale in the middle, but if that's not
+     *  available (or, for some reason, you need the speed), this method can
+     *  also be used.  The Locale expires when the WikiSession expires, and
+     *  currently there is no way to reset the Locale.
+     *
+     *  @return A cached Locale object
+     *  @since 2.5.96
+     */
+    public final Locale getLocale()
+    {
+        return m_cachedLocale;
     }
 
     /**
@@ -577,7 +588,7 @@ public final class WikiSession implements WikiEventListener
                         }
                         break;
                     }
-                    
+
                     //
                     //  No action, if the event is not recognized.
                     //
@@ -900,6 +911,8 @@ public final class WikiSession implements WikiEventListener
 
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
+
+        wikiSession.m_cachedLocale = request.getLocale();
 
         return wikiSession;
     }
