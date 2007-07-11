@@ -21,8 +21,10 @@ package com.ecyrd.jspwiki.auth;
 
 import java.security.Permission;
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 
 import javax.mail.MessagingException;
@@ -41,6 +43,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
 import com.ecyrd.jspwiki.ui.InputValidator;
@@ -473,6 +476,7 @@ public final class UserManager
         boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
         InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
+        ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
         // If container-managed auth and user not logged in, throw an error
         // unless we're allowed to add profiles to the container
@@ -480,12 +484,12 @@ public final class UserManager
              && !context.getWikiSession().isAuthenticated()
              && !m_database.isSharedWithContainer() )
         {
-            session.addMessage( SESSION_MESSAGES, "You must log in before creating a profile." );
+            session.addMessage( SESSION_MESSAGES, rb.getString("security.error.createprofilebeforelogin") );
         }
 
-        validator.validateNotNull( profile.getLoginName(), "Login name" );
-        validator.validateNotNull( profile.getFullname(), "Full name" );
-        validator.validate( profile.getEmail(), "E-mail address", InputValidator.EMAIL );
+        validator.validateNotNull( profile.getLoginName(), rb.getString("security.user.loginname") );
+        validator.validateNotNull( profile.getFullname(), rb.getString("security.user.fullname") );
+        validator.validate( profile.getEmail(), rb.getString("security.user.email"), InputValidator.EMAIL );
 
         // If new profile, passwords must match and can't be null
         if ( !m_engine.getAuthenticationManager().isContainerAuthenticated() )
@@ -495,7 +499,7 @@ public final class UserManager
             {
                 if ( isNew )
                 {
-                    session.addMessage( SESSION_MESSAGES, "Password cannot be blank" );
+                    session.addMessage( SESSION_MESSAGES, rb.getString("security.error.blankpassword") );
                 }
             }
             else
@@ -504,7 +508,7 @@ public final class UserManager
                 String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if ( !password.equals( password2 ) )
                 {
-                    session.addMessage( SESSION_MESSAGES, "Passwords don't match" );
+                    session.addMessage( SESSION_MESSAGES, rb.getString("security.error.passwordnomatch") );
                 }
             }
         }
@@ -519,7 +523,9 @@ public final class UserManager
             otherProfile = m_database.find( fullName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) )
             {
-                session.addMessage( SESSION_MESSAGES, "Full name '" + fullName + "' is illegal" );
+                Object[] args = { fullName };
+                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalfullname"),
+                                                                            args ) );
             }
         }
         catch ( NoSuchPrincipalException e)
@@ -531,7 +537,9 @@ public final class UserManager
             otherProfile = m_database.find( loginName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) )
             {
-                session.addMessage( SESSION_MESSAGES, "Login name '" + loginName + "' is illegal" );
+                Object[] args = { loginName };
+                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString("security.error.illegalloginname"),
+                                                                            args ) );
             }
         }
         catch ( NoSuchPrincipalException e)

@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -19,10 +19,13 @@
  */
 package com.ecyrd.jspwiki.ui;
 
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 /**
  * Provides basic validation services for HTTP parameters. Three standard
@@ -44,12 +47,12 @@ public final class InputValidator
      * @since 2.4.82
      */
     public static final int        ID             = 2;
-    
+
     protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
 
     protected static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>;&@\\xff{}\\$%\\\\]" );
 
-    /** Used when checking against IDs such as a full name when saving groups. 
+    /** Used when checking against IDs such as a full name when saving groups.
      *  @since 2.4.82 */
     protected static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
 
@@ -122,7 +125,10 @@ public final class InputValidator
         {
             return true;
         }
-        
+
+        ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
+                                                      m_session.getLocale() );
+
         // Otherwise, see if it matches the pattern for the target type
         Matcher matcher;
         boolean valid;
@@ -133,7 +139,9 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                m_session.addMessage( m_form, label + " cannot contain these characters: \"'<>;&@{}%$\\" );
+                Object[] args = { label };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"),
+                                                                    args ) );
             }
             return valid;
         case EMAIL:
@@ -141,7 +149,9 @@ public final class InputValidator
             valid = matcher.matches();
             if ( !valid )
             {
-                m_session.addMessage( m_form, label + " is not valid" );
+                Object[] args = { label };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidemail"),
+                                                                    args ) );
             }
             return valid;
         case ID:
@@ -149,7 +159,9 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                m_session.addMessage( m_form, label + " cannot contain these characters: \"'<>;&{}" );
+                Object[] args = { label };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidid"),
+                                                                    args ) );
             }
             return valid;
          default:
