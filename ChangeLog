@@ -1,3 +1,13 @@
+2007-07-12  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.97
+        
+        * Changed "validate.unsafechars" i18n pattern to fix a fatal
+        bug with it.  Also deleted "validate.invalidid", since it's no
+        longer needed.
+        
+        * Updated Finnish localization (fi).
+
 2007-07-11  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.96
