@@ -139,7 +139,7 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                Object[] args = { label };
+                Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;\\@{}%$" };
                 m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"),
                                                                     args ) );
             }
@@ -159,8 +159,8 @@ public final class InputValidator
             valid = !matcher.find();
             if ( !valid )
             {
-                Object[] args = { label };
-                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.invalidid"),
+                Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
+                m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.unsafechars"),
                                                                     args ) );
             }
             return valid;
