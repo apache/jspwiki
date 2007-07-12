@@ -83,6 +83,22 @@ jspwiki.attachmentProvider = BasicAttachmentProvider
 jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 
 #
+#  You can tell the BasicAttachmentProvider to add a flag
+#  so that browsers do not cache certain (or all) attachment
+#  types. This is useful in intranet environments. You should activate
+#  this if your users complain that their excel files are not uploaded
+#  correctly and they still do have an old version: Usually the
+#  file was uploaded correctly, but they get the locally cached version
+#  
+#  You can use regular expressions to disable the cache, e.g the
+#  following example will disable browser cache for all excel and word files
+#
+#  If you don't define this property, cache is enabled by default for
+#  all attachments
+#  
+#  jspwiki.basicAttachmentProvider.disableCache = .*\.xls|.*\.doc
+
+#
 #  You can limit the maximum size of an attachment by setting this
 #  value.  The value is in bytes, and by default all attachments
 #  are accepted.

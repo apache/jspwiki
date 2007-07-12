@@ -387,6 +387,17 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
 
         assertEquals(target, translate(src));
     }
+    
+    public void testTables5() throws Exception
+    {
+
+        // does a empty line between two tables get lost?
+        String src = "|a|b|\r\n" + "\r\n" +  "|x|y|\r\nTest";
+
+        String target = "|a|b\r\n" + "\r\n" +  "|x|y\r\nTest";
+
+        assertEquals(target, translate(src));
+    }
 
     public void testTableHeaders1() throws Exception
     {
@@ -441,15 +452,40 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
         assertEquals(src, translate(src));
     }
 
-/*
-// FIXME: this should be enabled
     public void testExtensions4() throws Exception
     {
-        String src = "<<JuwiOpen submit=\'http://www.jspwiki.org\' >>";
+        String src = "<<FormOpen submit=\'http://www.jspwiki.org\' >>";
 
-        String target = "[{JuwiOpen submit=\'http://www.jspwiki.org\' }]";
+        String target = "[{FormOpen submit=\'http://www.jspwiki.org\' }]";
+        
+        assertEquals(target, translate(src));
     }
-*/
+
+    public void testExtensions5() 
+    {
+        
+        String src =
+            "<<Script\r\n" +
+            "\r\n" +
+            "//Comment\r\n" +
+            ">>\r\n" +
+            "\r\n" +
+            "[[http://www.xyz.com/]]\r\n";
+
+        String target = 
+            "[{Script\r\n" +
+            "\r\n" +
+            "//Comment\r\n" +
+            "}]\r\n" +
+            "\r\n" +
+            "[http://www.xyz.com/]";
+        
+        System.out.println(src);
+        System.out.println(translate(src));
+        
+        assertEquals(target, translate(src));
+    }
+    
     public void testHeaderNotAtBeginning()
     {
         String src = "Hallo==Hallo";
