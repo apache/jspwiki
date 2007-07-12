@@ -1,3 +1,16 @@
+2007-07-12  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.5.98
+
+        * Added jspwiki.basicAttachmentProvider.disableCache property. It takes
+          a regex that let you define for which filename patterns to disable the
+          browser cache. See more on this in the jspwiki.properties.tmpl comment
+        
+        * Fixed Bug in CreolePageFilter: Two tables seperated by a blank line
+          where rendered as one table
+        
+        * Checked in German localisation for CoreResources
+        
 2007-07-12  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.97
