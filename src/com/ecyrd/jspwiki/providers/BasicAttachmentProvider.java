@@ -35,6 +35,8 @@ import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -77,6 +79,13 @@ public class BasicAttachmentProvider
     private WikiEngine         m_engine;
     private String             m_storageDir;
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
+    
+    /*
+     * Disable client cache for files with patterns
+     * since 2.5.96
+     */
+    private Pattern            m_disableCache = null;
+    public static final String PROP_DISABLECACHE = "jspwiki.basicAttachmentProvider.disableCache";
 
     public static final String PROPERTY_FILE   = "attachment.properties";
 
@@ -91,6 +100,12 @@ public class BasicAttachmentProvider
     {
         m_engine = engine;
         m_storageDir = WikiEngine.getRequiredProperty( properties, PROP_STORAGEDIR );
+        
+        String patternString = engine.getWikiProperties().getProperty( PROP_DISABLECACHE );
+        if ( patternString != null )
+        {
+            m_disableCache = Pattern.compile(patternString);
+        }
 
         //
         //  Check if the directory exists - if it doesn't, create it.
@@ -533,6 +548,16 @@ public class BasicAttachmentProvider
         }
 
         att.setVersion( version );
+        
+        // Should attachment be cachable by the client (browser)?
+        if (m_disableCache != null) 
+        {
+            Matcher matcher = m_disableCache.matcher(name);
+            if (matcher.matches()) 
+            {
+                att.setCacheable(false);
+            }
+        }
         
 
         // System.out.println("Fetching info on version "+version);
