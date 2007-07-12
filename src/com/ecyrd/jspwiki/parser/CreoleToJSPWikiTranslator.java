@@ -125,7 +125,7 @@ public class CreoleToJSPWikiTranslator
 
     private static final String JSPWIKI_LINEBREAKS = "$1\\\\\\\\$2";
 
-    private static final String CREOLE_TABLE = "(\n|\r|\r\n|^)(\\|[^\n\r]*)\\|\\s*(\n|\r|\r\n|$)";
+    private static final String CREOLE_TABLE = "(\n|\r|\r\n|^)(\\|[^\n\r]*)\\|(\\t| )*(\n|\r|\r\n|$)";
 
     private static final String CREOLE_PLUGIN = "\\<\\<((?s:.)*?)\\>\\>";
 
@@ -143,7 +143,7 @@ public class CreoleToJSPWikiTranslator
 
     private static final String JSPWIKI_LINK_IMAGE_X = "[{\u2016 src='$2' link='$1' caption='$5' \u2015}]";
 
-    private static final String JSPWIKI_TABLE = "$1$2$3";
+    private static final String JSPWIKI_TABLE = "$1$2$4";
 
     /* TODO Is it possible to use just protect :// ? */
     private static final String URL_PROTECTED = "http://|ftp://|https://";
