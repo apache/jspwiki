@@ -1,3 +1,9 @@
+2007-07-13  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * checked in missing /com/ecyrd/jspwiki/plugin/PluginResources 
+          german translation. [Bug 74] closed.
+        
+
 2007-07-12  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.5.98
