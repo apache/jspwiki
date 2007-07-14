@@ -331,12 +331,15 @@ public final class AuthenticationManager
             if (loginConfig != null)
             {
                 AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-                for ( int i = 0; i < configs.length; i++ )
+                if( configs != null )
                 {
-                    AppConfigurationEntry config = configs[i];
-                    if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
+                    for ( int i = 0; i < configs.length; i++ )
                     {
-                        c_allowsAssertions = Boolean.TRUE;
+                        AppConfigurationEntry config = configs[i];
+                        if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
+                        {
+                            c_allowsAssertions = Boolean.TRUE;
+                        }
                     }
                 }
             }
@@ -373,12 +376,16 @@ public final class AuthenticationManager
             if (loginConfig != null)
             {
                 AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-                for ( int i = 0; i < configs.length; i++ )
+
+                if( configs != null )
                 {
-                    AppConfigurationEntry config = configs[i];
-                    if ( COOKIE_AUTHENTICATION_MODULE.equals( config.getLoginModuleName() ) )
+                    for ( int i = 0; i < configs.length; i++ )
                     {
-                        c_allowsAuthentication = Boolean.TRUE;
+                        AppConfigurationEntry config = configs[i];
+                        if ( COOKIE_AUTHENTICATION_MODULE.equals( config.getLoginModuleName() ) )
+                        {
+                            c_allowsAuthentication = Boolean.TRUE;
+                        }
                     }
                 }
             }
