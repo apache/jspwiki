@@ -60,7 +60,7 @@ public class FileSystemProviderTest extends TestCase
 
         m_provider.putPageText( page, "test" );
         
-        File resultfile = new File( m_pagedir, "%C5%E4Test.txt" );
+        File resultfile = new File( m_pagedir, "Main/%C5%E4Test.txt" );
         
         assertTrue("No such file", resultfile.exists());
         
@@ -77,7 +77,7 @@ public class FileSystemProviderTest extends TestCase
 
         m_providerUTF8.putPageText( page, "test\u00d6" );
 
-        File resultfile = new File( m_pagedir, "%C3%85%C3%A4Test.txt" );
+        File resultfile = new File( m_pagedir, "Main/%C3%85%C3%A4Test.txt" );
 
         assertTrue("No such file", resultfile.exists());
 
@@ -98,7 +98,7 @@ public class FileSystemProviderTest extends TestCase
 
         m_providerUTF8.putPageText( page, "test" );
         
-        File resultfile = new File( m_pagedir, "Test%2FFoobar.txt" );
+        File resultfile = new File( m_pagedir, "Main/Test%2FFoobar.txt" );
         
         assertTrue("No such file", resultfile.exists());
         
@@ -115,7 +115,7 @@ public class FileSystemProviderTest extends TestCase
 
         m_provider.putPageText( page, "test" );
    
-        File resultfile = new File( m_pagedir, "Test%2FFoobar.txt" );
+        File resultfile = new File( m_pagedir, "Main/Test%2FFoobar.txt" );
    
         assertTrue("No such file", resultfile.exists());
    
@@ -230,21 +230,21 @@ public class FileSystemProviderTest extends TestCase
         
         m_provider.putPageText( p, "v1" );
 
-        File f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
+        File f = new File( files, "Main/Test"+FileSystemProvider.FILE_EXT );
 
         assertTrue( "file does not exist", f.exists() );
         
-        f = new File( files, "Test.properties" );
+        f = new File( files, "Main/Test.properties" );
         
         assertTrue( "property file does not exist", f.exists() );
         
         m_provider.deletePage( "Test" );
 
-        f = new File( files, "Test"+FileSystemProvider.FILE_EXT );
+        f = new File( files, "Main/Test"+FileSystemProvider.FILE_EXT );
 
         assertFalse( "file exists", f.exists() );
         
-        f = new File( files, "Test.properties" );
+        f = new File( files, "Main/Test.properties" );
         
         assertFalse( "properties exist", f.exists() );
     }

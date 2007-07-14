@@ -4,12 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
@@ -163,7 +158,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public Locale getLocale()
     {
-        return null;
+        return Locale.getDefault();
     }
 
     /**
@@ -171,7 +166,9 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public Enumeration getLocales()
     {
-        return null;
+        Vector ls = new Vector();
+        ls.add( getLocale() );
+        return ls.elements();
     }
 
     /**

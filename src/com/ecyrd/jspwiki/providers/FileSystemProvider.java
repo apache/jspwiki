@@ -81,8 +81,8 @@ public class FileSystemProvider
                 props.setProperty( "changenote", changenote );
             }
             
-            File file = new File( getPageDirectory(), 
-                                  mangleName(page.getName())+PROP_EXT );
+            File file = new File( getPageDirectory(page.getWiki()), 
+                                  mangleName(page.getNamePart())+PROP_EXT );
      
             out = new FileOutputStream( file );
 
@@ -105,8 +105,8 @@ public class FileSystemProvider
 
         try
         {
-            File file = new File( getPageDirectory(), 
-                                  mangleName(page.getName())+PROP_EXT );
+            File file = new File( getPageDirectory(page.getWiki()), 
+                                  mangleName(page.getNamePart())+PROP_EXT );
 
             if( file.exists() )
             {
@@ -150,12 +150,26 @@ public class FileSystemProvider
         return p;
     }
 
-    public void deletePage(String pageName) throws ProviderException
+    public void deletePage(String path) throws ProviderException
     {
-        super.deletePage(pageName);
+        super.deletePage(path);
 
-        File file = new File( getPageDirectory(), 
-                              mangleName(pageName)+PROP_EXT );
+        int idx = path.indexOf(':');
+        String wiki, page;
+        
+        if( idx >= 0 )
+        {
+            wiki = path.substring(0,idx);
+            page = path.substring(idx+1);
+        }
+        else
+        {
+            wiki = m_engine.getWikiManager().getDefaultWiki().getName();
+            page = path;
+        }
+        
+        File file = new File( getPageDirectory(wiki), 
+                              mangleName(page)+PROP_EXT );
         
         if( file.exists() ) file.delete();
     }

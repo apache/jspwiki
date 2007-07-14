@@ -108,6 +108,7 @@ public class InsertPageTag
         }
         else
         {
+            m_pageName = m_wikiContext.resolvePage(m_pageName);
             insertedPage = engine.getPage( m_pageName );
         }
 

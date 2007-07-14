@@ -362,6 +362,8 @@ public class LinkParser
         protected Link( String text ) throws ParseException
         {
             setText(text);
+            if( text.indexOf(':') != -1 )
+                setReference(text);
         }
 
         /**

@@ -154,7 +154,7 @@ public class VariableManagerTest extends TestCase
     {
         String res = m_variableManager.expandVariables( m_context, "Testing {$pagename}, {$applicationname}" );
 
-        assertEquals( "Testing "+PAGE_NAME+", JSPWiki", res );
+        assertEquals( "Testing "+PAGE_NAME+", JSPWiki-Multi", res );
     }
 
     public void testExpand4()

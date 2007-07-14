@@ -35,13 +35,7 @@ public class VersioningFileProviderTest extends TestCase
     {
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        // Remove file
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
-        f.delete();
-
-        f = new File( files, "OLD" );
-
-        TestEngine.deleteAll(f);
+        TestEngine.deleteAll( new File(files) );
     }
 
     /**

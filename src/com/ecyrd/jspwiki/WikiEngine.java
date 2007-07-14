@@ -255,6 +255,8 @@ public class WikiEngine
 
     private AdminBeanManager m_adminBeanManager;
 
+    private WikiManager      m_wikiManager;
+    
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -486,6 +488,8 @@ public class WikiEngine
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
+            m_wikiManager = new WikiManager();
+
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
@@ -535,6 +539,8 @@ public class WikiEngine
             m_filterManager     = (FilterManager)
                 ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
 
+            m_wikiManager.initialize( this, props );
+            
             //
             //  ReferenceManager has the side effect of loading all
             //  pages.  Therefore after this point, all page attributes
@@ -1752,6 +1758,27 @@ public class WikiEngine
         }
     }
 
+    public Collection getRecentChanges( String wiki )
+    {
+        try
+        {
+            Collection pages = m_pageManager.getAllPages( wiki );
+            Collection  atts = m_attachmentManager.getAllAttachments( wiki );
+
+            TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
+
+            sortedPages.addAll( pages );
+            sortedPages.addAll( atts );
+
+            return sortedPages;
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to fetch all pages: ",e);
+            return null;
+        }
+    }
+
     /**
      *  Parses an incoming search request, then
      *  does a search.
@@ -2206,6 +2233,11 @@ public class WikiEngine
         return m_userManager;
     }
 
+    public WikiManager getWikiManager()
+    {
+        return m_wikiManager;
+    }
+    
     /**
      *  Returns the GroupManager employed by this WikiEngine.
      *  @since 2.3

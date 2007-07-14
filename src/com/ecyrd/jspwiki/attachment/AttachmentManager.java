@@ -530,12 +530,30 @@ public class AttachmentManager
     {
         if( attachmentsEnabled() )
         {
-            return m_provider.listAllChanged( new Date(0L) );
+            ArrayList ls = new ArrayList();
+            
+            for( Iterator i = m_engine.getPageManager().getProvider().listAllWikis().iterator(); i.hasNext(); )
+            {
+                ls.addAll( m_provider.listAllChanged( (String)i.next(), new Date(0L)));
+            }
+            
+            return ls;
         }
 
         return new ArrayList();
     }
 
+    public Collection getAllAttachments( String wiki )
+    throws ProviderException
+    {
+        if( attachmentsEnabled() )
+        {
+            return m_provider.listAllChanged( wiki, new Date(0L) );
+        }
+        
+        return new ArrayList();
+    }
+    
     /**
      *  Returns the current attachment provider.
      *

@@ -990,4 +990,22 @@ public class WikiContext
                 ? request.getLocale() : Locale.getDefault();
     }
 
+    /**
+     *  Resolves a page name to a FQN.
+     * @param page
+     * @return
+     */
+    public String resolvePage( String page )
+    {
+        int idx = page.indexOf(':');
+        
+        if( idx >= 0 )
+        {
+            return page;
+        }
+        
+        page = m_page.getWiki() + ":" + page;
+        
+        return page;
+    }
 }

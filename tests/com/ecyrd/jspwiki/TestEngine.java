@@ -173,10 +173,14 @@ public class TestEngine extends WikiEngine
 
         try
         {
+            int idx = name.indexOf(':');
+            String wiki = "Main";
+            if( idx != -1 ) { wiki = name.substring(0,idx); name = name.substring(idx+1); }
+            
             properties.load( findTestProperties() );
             String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-            File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
+            File f = new File( files, mangleName(wiki)+"/"+mangleName(name)+FileSystemProvider.FILE_EXT );
 
             f.delete();
 
@@ -200,8 +204,11 @@ public class TestEngine extends WikiEngine
         try
         {
             String files = getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            int idx = page.indexOf(':');
+            String wiki = "Main";
+            if( idx != -1 ) { wiki = page.substring(0,idx); page = page.substring(idx+1); }
 
-            File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
+            File f = new File( files, mangleName(wiki)+"/"+TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
 
             deleteAll( f );
         }

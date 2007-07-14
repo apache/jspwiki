@@ -79,11 +79,11 @@ public class BasicAttachmentProviderTest extends TestCase
 
         String tmpfiles = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
-        File f = new File( tmpfiles, NAME1+BasicAttachmentProvider.DIR_EXTENSION );
+        File f = new File( tmpfiles, "Main/"+NAME1+BasicAttachmentProvider.DIR_EXTENSION );
 
         TestEngine.deleteAll( f );
 
-        f = new File( tmpfiles, NAME2+BasicAttachmentProvider.DIR_EXTENSION );
+        f = new File( tmpfiles, "Main/"+NAME2+BasicAttachmentProvider.DIR_EXTENSION );
 
         TestEngine.deleteAll( f );
         
@@ -188,7 +188,7 @@ public class BasicAttachmentProviderTest extends TestCase
         File in = makeAttachmentFile();
 
         File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
-        File extrafile = makeExtraFile( sDir, "foobar.blob" );
+        File extrafile = makeExtraFile( sDir, "Main/foobar.blob" );
 
         try
         {
@@ -228,7 +228,7 @@ public class BasicAttachmentProviderTest extends TestCase
         File in = makeAttachmentFile();
 
         File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
-        File attDir = new File( sDir, NAME1+"-att" );
+        File attDir = new File( sDir, "Main/"+NAME1+"-att" );
 
 
         Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
@@ -271,7 +271,7 @@ public class BasicAttachmentProviderTest extends TestCase
         File in = makeAttachmentFile();
 
         File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
-        File attDir = new File( sDir, NAME1+"-att" );
+        File attDir = new File( sDir, "Main/"+NAME1+"-att" );
 
         Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
 

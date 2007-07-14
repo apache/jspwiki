@@ -78,7 +78,7 @@ public class CachingProviderTest extends TestCase
         
         String dir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
         
-        File f = new File( dir, "Testi.txt" );
+        File f = new File( dir, "Main/Testi.txt" );
         String content = "[fuufaa]";
         
         PrintWriter out = new PrintWriter( new FileWriter(f) );

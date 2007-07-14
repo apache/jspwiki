@@ -594,7 +594,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "Test" );
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         assertTrue( "Didn't create it!", saved.exists() );
 
@@ -616,10 +616,10 @@ public class WikiEngineTest extends TestCase
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
+        File attfile = new File( atts, "Main/"+NAME1+"-att/TestAtt.txt-dir" );
         
         assertTrue( "Didn't create it!", saved.exists() );
 
@@ -643,10 +643,10 @@ public class WikiEngineTest extends TestCase
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-        File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
+        File attfile = new File( atts, "Main/"+NAME1+"-att/TestAtt.txt-dir" );
         
         assertTrue( "Didn't create it!", saved.exists() );
 
@@ -733,7 +733,7 @@ public class WikiEngineTest extends TestCase
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         assertTrue( "No file!", saved.exists() );
 
@@ -774,7 +774,7 @@ public class WikiEngineTest extends TestCase
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         assertTrue( "No file!", saved.exists() );
 
@@ -810,7 +810,7 @@ public class WikiEngineTest extends TestCase
 
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, "Main/"+NAME1+FileSystemProvider.FILE_EXT );
 
         assertTrue( "No file!", saved.exists() );
 

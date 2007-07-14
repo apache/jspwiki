@@ -172,7 +172,7 @@ public class IndexPlugin implements WikiPlugin
 
         try
         {
-            Collection allPages = pageManager.getAllPages();
+            Collection allPages = pageManager.getAllPages(wikiContext.getPage().getWiki());
             result.addAll( allPages );
         }
         catch( ProviderException e )

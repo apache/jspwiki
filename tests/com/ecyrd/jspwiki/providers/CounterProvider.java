@@ -161,6 +161,23 @@ public class CounterProvider
         // TODO Auto-generated method stub
         
     }
+
+    public Collection getAllPages(String wiki) throws ProviderException
+    {
+        return getAllPages();
+    }
+
+    public int getPageCount(Wiki wiki) throws ProviderException
+    {
+        return getPageCount();
+    }
+
+    public Collection listAllWikis()
+    {
+        ArrayList list = new ArrayList();
+        list.add("Main");
+        return list;
+    }
     
     
 }

@@ -2368,7 +2368,36 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate(src) );
     }
 
+    public void testMultiWiki1() throws Exception
+    {
+        newPage("Main:FooBar");
+        newPage("FooBar:Main");
+        
+        String src = "[FooBar]";
+        
+        assertTrue( translate(src).indexOf("/Wiki.jsp?page=FooBar") != -1 );
+    }
 
+
+    public void testMultiWiki2() throws Exception
+    {
+        newPage("Main:FooBar");
+        newPage("FooBar:Main");
+        
+        String src = "[FooBar:Main]";
+        
+        String res = translate(src);
+        assertTrue( res.indexOf("/Wiki.jsp?page=FooBar%3AMain") != -1 );
+    }
+    
+    public void testMultiWiki3() throws Exception
+    {
+        String src = "[FooBar:Main]";
+        
+        String res = translate(src);
+        assertTrue( res.indexOf("/Wiki.jsp?page=FooBar%3AMain") != -1 );
+    }
+    
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText =
         "Please ''check [RecentChanges].\n" +

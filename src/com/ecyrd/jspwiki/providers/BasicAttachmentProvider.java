@@ -138,9 +138,18 @@ public class BasicAttachmentProvider
     private File findPageDir( String wikipage )
         throws ProviderException
     {
+        int idx = wikipage.indexOf(':');
+        String wiki = "Main";
+        
+        if( idx > 0 )
+        {
+            wiki = wikipage.substring(0,idx);
+            wikipage = wikipage.substring(idx+1);
+        }
+
         wikipage = mangleName( wikipage );
 
-        File f = new File( m_storageDir, wikipage+DIR_EXTENSION );
+        File f = new File( m_storageDir, mangleName(wiki)+"/"+wikipage+DIR_EXTENSION );
 
         if( f.exists() && !f.isDirectory() )
         {
@@ -492,11 +501,24 @@ public class BasicAttachmentProvider
         return null;
     }
 
+    public List listAllChanged( Date timestamp ) throws ProviderException
+    {
+        Collection all = m_engine.getPageManager().getProvider().listAllWikis();
+        ArrayList  ls  = new ArrayList();
+        
+        for( Iterator i = all.iterator(); i.hasNext(); )
+        {
+            ls.addAll( listAllChanged((String)i.next(), timestamp) );
+        }
+        
+        return ls;
+    }
+    
     // FIXME: Very unoptimized.
-    public List listAllChanged( Date timestamp )
+    public List listAllChanged( String wiki, Date timestamp )
         throws ProviderException
     {
-        File attDir = new File( m_storageDir );
+        File attDir = new File( m_storageDir + "/" + mangleName(wiki) );
 
         if( !attDir.exists() )
         {

@@ -200,9 +200,24 @@ public class PageManager extends ModuleManager implements WikiEventListener
     public Collection getAllPages()
         throws ProviderException
     {
-        return m_provider.getAllPages();
+        List res = new ArrayList();
+        Collection c = m_provider.listAllWikis();
+        
+        for( Iterator i = c.iterator(); i.hasNext(); )
+        {
+            String wiki = (String) i.next();
+            
+            res.addAll( m_provider.getAllPages(wiki) );
+        }
+        
+        return res;
     }
-
+    
+    public Collection getAllPages( String wiki ) throws ProviderException
+    {
+        return m_provider.getAllPages( wiki );
+    }
+    
     /**
      *  Fetches the page text from the repository.  This method also does some sanity checks,
      *  like checking for the pageName validity, etc.  Also, if the page repository has been
@@ -498,7 +513,17 @@ public class PageManager extends ModuleManager implements WikiEventListener
     {
         try
         {
-            return m_provider.getAllPages().size();
+            Collection c = m_provider.listAllWikis();
+            int total = 0;
+            
+            for( Iterator i = c.iterator(); i.hasNext(); )
+            {
+                String wiki = (String) i.next();
+            
+                total += m_provider.getAllPages(wiki).size();
+            }
+            
+            return total;
         }
         catch( ProviderException e )
         {

@@ -90,7 +90,7 @@ public interface WikiAttachmentProvider
      *  @param timestamp List all files from this date onward.
      *  @return A List of Attachment objects, in most-recently-changed first order.
      */
-    public List listAllChanged( Date timestamp )
+    public List listAllChanged( String wiki, Date timestamp )
         throws ProviderException;
 
     /**

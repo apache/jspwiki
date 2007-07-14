@@ -46,7 +46,7 @@ public final class Release
     /**
      *  This is the default application name.
      */
-    public static final String     APPNAME       = "JSPWiki";
+    public static final String     APPNAME       = "JSPWiki-Multi";
 
     /**
      *  This should be empty when doing a release - otherwise

@@ -1440,7 +1440,7 @@ public class JSPWikiMarkupParser
                 }
             }
             else if( link.isInterwikiLink() )
-            {
+            {   
                 // It's an interwiki link
                 // InterWiki links also get added to external link chain
                 // after the links have been resolved.
@@ -1458,6 +1458,13 @@ public class JSPWikiMarkupParser
                 if( m_wysiwygEditorMode )
                 {
                     makeLink( INTERWIKI, extWiki + ":" + wikiPage, linktext, null, link.getAttributes() );
+                }
+                else if( m_engine.getWikiManager().hasWiki(extWiki) )
+                {
+                    //
+                    //  This is an internal wiki link to another wiki within this wiki
+                    //
+                    handleInternalLink( sb, link );
                 }
                 else
                 {
@@ -1501,67 +1508,7 @@ public class JSPWikiMarkupParser
             }
             else
             {
-                int hashMark = -1;
-
-                //
-                //  Internal wiki link, but is it an attachment link?
-                //
-                String attachment = findAttachment( linkref );
-                if( attachment != null )
-                {
-                    callMutatorChain( m_attachmentLinkMutatorChain, attachment );
-
-                    if( isImageLink( linkref ) )
-                    {
-                        attachment = m_context.getURL( WikiContext.ATTACH, attachment );
-                        sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
-                    }
-                    else
-                    {
-                        makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );
-                    }
-                }
-                else if( (hashMark = linkref.indexOf('#')) != -1 )
-                {
-                    // It's an internal Wiki link, but to a named section
-
-                    String namedSection = linkref.substring( hashMark+1 );
-                    linkref = linkref.substring( 0, hashMark );
-
-                    linkref = MarkupParser.cleanLink( linkref );
-
-                    callMutatorChain( m_localLinkMutatorChain, linkref );
-
-                    String matchedLink;
-                    if( (matchedLink = linkExists( linkref )) != null )
-                    {
-                        String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
-                        sectref = sectref.replace('%', '_');
-                        makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
-                    }
-                    else
-                    {
-                        makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
-                    }
-                }
-                else
-                {
-                    // It's an internal Wiki link
-                    linkref = MarkupParser.cleanLink( linkref );
-
-                    callMutatorChain( m_localLinkMutatorChain, linkref );
-
-                    String matchedLink = linkExists( linkref );
-
-                    if( matchedLink != null )
-                    {
-                        makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
-                    }
-                    else
-                    {
-                        makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
-                    }
-                }
+                handleInternalLink( sb, link );
             }
         }
         catch( ParseException e )
@@ -1571,6 +1518,76 @@ public class JSPWikiMarkupParser
         }
 
         return m_currentElement;
+    }
+
+    private void handleInternalLink(StringBuffer sb, LinkParser.Link link)
+    {
+        int hashMark = -1;
+        String linktext = link.getText();
+        String linkref  = link.getReference();
+        
+        linkref = m_context.resolvePage(linkref);
+
+        //
+        //  Internal wiki link, but is it an attachment link?
+        //
+        String attachment = findAttachment( linkref );
+        if( attachment != null )
+        {
+            callMutatorChain( m_attachmentLinkMutatorChain, attachment );
+
+            if( isImageLink( linkref ) )
+            {
+                attachment = m_context.getURL( WikiContext.ATTACH, attachment );
+                sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
+            }
+            else
+            {
+                makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );
+            }
+        }
+        else if( (hashMark = linkref.indexOf('#')) != -1 )
+        {
+            // It's an internal Wiki link, but to a named section
+
+            String namedSection = linkref.substring( hashMark+1 );
+            linkref = linkref.substring( 0, hashMark );
+
+            linkref = MarkupParser.cleanLink( linkref );
+
+            callMutatorChain( m_localLinkMutatorChain, linkref );
+
+            String matchedLink;
+            if( (matchedLink = linkExists( linkref )) != null )
+            {
+                String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
+                sectref = sectref.replace('%', '_');
+                makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
+            }
+            else
+            {
+                makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+            }
+        }
+        else
+        {
+            
+            // It's an internal Wiki link
+            linkref = MarkupParser.cleanLink( linkref );
+
+            callMutatorChain( m_localLinkMutatorChain, linkref );
+
+            String matchedLink = linkExists( linkref );
+
+            if( matchedLink != null )
+            {
+                makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
+            }
+            else
+            {
+                makeLink( EDIT, linkref, linktext, null, link.getAttributes() );
+            }
+        }
     }
 
     private String findAttachment( String linktext )

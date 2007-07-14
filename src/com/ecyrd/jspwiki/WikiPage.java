@@ -43,7 +43,7 @@ public class WikiPage
 
     private       String     m_name;
     private       WikiEngine m_engine;
-    private       String     m_wiki;
+    private       Wiki       m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
@@ -76,9 +76,27 @@ public class WikiPage
     {
         m_engine = engine;
         m_name = name;
-        m_wiki = engine.getApplicationName();
+        
+        int idx = name.indexOf(':');
+        
+        if( idx > 0 )
+        {
+            m_wiki = engine.getWikiManager().getWiki(name.substring(0,idx));
+            m_name = name.substring(idx+1);
+        }
+        else
+        {
+            m_wiki = engine.getWikiManager().getDefaultWiki();
+        }
     }
 
+    public WikiPage( WikiEngine engine, Wiki wiki, String name )
+    {
+        m_engine = engine;
+        m_name = name;
+        m_wiki = wiki;
+    }
+    
     /**
      *  Returns the name of the page.
      *  
@@ -86,9 +104,24 @@ public class WikiPage
      */
     public String getName()
     {
-        return m_name;
+        if( m_wiki.equals(m_engine.getWikiManager().getDefaultWiki() ))
+        {
+            return getNamePart();
+        }
+        
+        return getPath();
     }
 
+    public String getPath()
+    {
+        return m_wiki.getName() + ":" + m_name;
+    }
+    
+    public String getNamePart()
+    {
+        return m_name;
+    }
+    
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
      *  available.  Typically attributes are things that do not need to be stored
@@ -257,7 +290,7 @@ public class WikiPage
      */
     public String getWiki()
     {
-        return m_wiki;
+        return m_wiki.getName();
     }
 
     /**
@@ -299,7 +332,7 @@ public class WikiPage
      */
     public String toString()
     {
-        return "WikiPage ["+m_wiki+":"+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+        return "WikiPage ["+m_wiki.getName()+":"+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
     }
 
     /**

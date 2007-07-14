@@ -112,6 +112,15 @@ public abstract class AbstractFileProvider
         return m_pageDirectory;
     }
 
+    String getPageDirectory( String wiki )
+    {
+        File f = new File(m_pageDirectory,mangleName(wiki));
+        
+        if( !f.exists() ) f.mkdirs();
+        
+        return f.getAbsolutePath();
+    }
+    
     private static final String[] WINDOWS_DEVICE_NAMES =
     {
         "con", "prn", "nul", "aux", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
@@ -167,11 +176,24 @@ public abstract class AbstractFileProvider
     /**
      *  Finds a Wiki page from the page repository.
      */
-    protected File findPage( String page )
+    protected File findPage( String path )
     {
-        return new File( m_pageDirectory, mangleName(page)+FILE_EXT );
+        int idx = path.indexOf(':');
+        String wiki, page;
+        
+        if( idx >= 0 )
+        {
+            wiki = path.substring(0,idx);
+            page = path.substring(idx+1);
+        }
+        else
+        {
+            wiki = m_engine.getWikiManager().getDefaultWiki().getName();
+            page = path;
+        }
+        
+        return new File( getPageDirectory(wiki), mangleName(page)+FILE_EXT );
     }
-
     
     public boolean pageExists( String page )
     {
@@ -242,7 +264,7 @@ public abstract class AbstractFileProvider
     public void putPageText( WikiPage page, String text )        
         throws ProviderException
     {
-        File file = findPage( page.getName() );
+        File file = findPage( page.getPath() );
         PrintWriter out = null;
 
         try
@@ -254,7 +276,7 @@ public abstract class AbstractFileProvider
         }
         catch( IOException e )
         {
-            log.error( "Saving failed" );
+            log.error( "Saving failed", e );
         }
         finally
         {
@@ -262,14 +284,31 @@ public abstract class AbstractFileProvider
         }
     }
 
-    public Collection getAllPages()
+    public Collection listAllWikis()
+    {
+        ArrayList set = new ArrayList();
+
+        File wikipagedir = new File( m_pageDirectory );
+
+        File[] dirs = wikipagedir.listFiles();
+        
+        for( int i = 0; i < dirs.length; i++ )
+        {
+            if( dirs[i].isDirectory() && !dirs[i].getName().equals("RCS") && !dirs[i].getName().equals("CVS") )
+                set.add( dirs[i].getName() );
+        }
+        
+        return set;
+    }
+    
+    public Collection getAllPages( String wiki )
         throws ProviderException
     {
         log.debug("Getting all pages...");
 
         ArrayList set = new ArrayList();
 
-        File wikipagedir = new File( m_pageDirectory );
+        File wikipagedir = new File( m_pageDirectory, mangleName(wiki) );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
@@ -305,9 +344,9 @@ public abstract class AbstractFileProvider
         return new ArrayList(); // FIXME
     }
 
-    public int getPageCount()
+    public int getPageCount( Wiki wiki )
     {
-        File wikipagedir = new File( m_pageDirectory );
+        File wikipagedir = new File( m_pageDirectory, mangleName(wiki.getName()) );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 

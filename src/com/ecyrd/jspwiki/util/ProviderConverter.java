@@ -103,7 +103,7 @@ public class ProviderConverter
         
         destProvider.initialize( engine, props );
         
-        Collection allPages = sourceProvider.getAllPages();
+        Collection allPages = sourceProvider.getAllPages(""); // FIXME
         
         int idx = 1;
         

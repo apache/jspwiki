@@ -72,9 +72,11 @@ public interface WikiPageProvider
      *  Collection should be a WikiPage.
      */
 
-    public Collection getAllPages()
+    public Collection getAllPages( String wiki )
         throws ProviderException;
 
+    public Collection listAllWikis();
+    
     /**
      *  Gets a list of recent changes.
      *  @since 1.6.4
@@ -87,7 +89,7 @@ public interface WikiPageProvider
      *  @since 1.6.4
      */
 
-    public int getPageCount()
+    public int getPageCount( Wiki wiki )
         throws ProviderException;
 
     /**

@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
+
 import com.ecyrd.jspwiki.*;
 
 /**
@@ -134,6 +135,23 @@ public class VerySimpleProvider implements WikiPageProvider
     {
         // TODO Auto-generated method stub
         
+    }
+
+    public Collection getAllPages(String wiki) throws ProviderException
+    {
+        return getAllPages();
+    }
+
+    public int getPageCount(Wiki wiki) throws ProviderException
+    {
+        return getPageCount();
+    }
+
+    public Collection listAllWikis()
+    {
+        ArrayList list = new ArrayList();
+        list.add("Main");
+        return list;
     }
     
 }

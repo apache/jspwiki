@@ -263,7 +263,7 @@ public class CachingProvider
             else if( cached.getVersion() != refreshed.getVersion() )
             {
                 //  The newest version has been deleted, but older versions still remain
-                log.debug("Page "+cached.getName()+" newest version deleted, reloading...");
+                log.debug("Page "+cached.getPath()+" newest version deleted, reloading...");
 
                 m_cache.putInCache( name, refreshed );
                 // Requests for this page are now no longer denied
@@ -279,7 +279,7 @@ public class CachingProvider
             {
                 //  Yes, the page has been modified externally and nobody told us
 
-                log.info("Page "+cached.getName()+" changed, reloading...");
+                log.info("Page "+cached.getPath()+" changed, reloading...");
 
                 m_cache.putInCache( name, refreshed );
                 // Requests for this page are now no longer denied
@@ -573,29 +573,29 @@ public class CachingProvider
 
             // Refresh caches properly
 
-            m_cache.flushEntry( page.getName() );
-            m_textCache.flushEntry( page.getName() );
-            m_historyCache.flushEntry( page.getName() );
-            m_negCache.flushEntry( page.getName() );
+            m_cache.flushEntry( page.getPath() );
+            m_textCache.flushEntry( page.getPath() );
+            m_historyCache.flushEntry( page.getPath() );
+            m_negCache.flushEntry( page.getPath() );
 
             // Refresh caches
             try
             {
-                getPageInfoFromCache( page.getName() );
+                getPageInfoFromCache( page.getPath() );
             }
             catch(RepositoryModifiedException e) {} // Expected
         }
     }
 
 
-    public Collection getAllPages()
+    public Collection getAllPages( String wiki )
         throws ProviderException
     {
         Collection all;
 
         if( m_gotall == false )
         {
-            all = m_provider.getAllPages();
+            all = m_provider.getAllPages( wiki );
 
             // Make sure that all pages are in the cache.
 
@@ -605,9 +605,9 @@ public class CachingProvider
                 {
                     WikiPage p = (WikiPage) i.next();
 
-                    m_cache.putInCache( p.getName(), p );
+                    m_cache.putInCache( p.getPath(), p );
                     // Requests for this page are now no longer denied
-                    m_negCache.putInCache( p.getName(), null );
+                    m_negCache.putInCache( p.getPath(), null );
                 }
 
                 m_gotall = true;
@@ -615,7 +615,7 @@ public class CachingProvider
         }
         else
         {
-            all = m_allCollector.getAllItems();
+            all = m_allCollector.getAllItems( wiki );
         }
 
         return all;
@@ -626,10 +626,10 @@ public class CachingProvider
         return m_provider.getAllChangedSince( date );
     }
 
-    public int getPageCount()
+    public int getPageCount( Wiki wiki )
         throws ProviderException
     {
-        return m_provider.getPageCount();
+        return m_provider.getPageCount( wiki );
     }
 
     public Collection findPages( QueryItem[] query )
@@ -656,7 +656,7 @@ public class CachingProvider
 
             try
             {
-                String data = m_provider.getPageText(page.getName(), page.getVersion());
+                String data = m_provider.getPageText(page.getPath(), page.getVersion());
 
                 WikiContext ctx = new WikiContext( m_engine, page );
                 MarkupParser parser = mgr.getParser( ctx, data );
@@ -849,10 +849,16 @@ public class CachingProvider
          *
          * @return
          */
-        public Set getAllItems()
+        public Set getAllItems(String wiki)
         {
             Set ret = new TreeSet();
-            ret.addAll(m_allItems.values());
+            
+            Map items = (Map)m_allItems.get(wiki);
+            
+            if( items != null )
+            {
+                ret.addAll(items.values());
+            }
 
             return ret;
         }
@@ -885,7 +891,8 @@ public class CachingProvider
 
             if( item != null )
             {
-                m_allItems.remove( item );
+                Map map = (Map)m_allItems.get( item.getWiki() );
+                if( map != null ) map.remove( item );
             }
         }
 
@@ -895,16 +902,47 @@ public class CachingProvider
 
             if( item != null )
             {
+                Map map = (Map)m_allItems.get( item.getWiki() );
+                
                 // Item added or replaced.
-                m_allItems.put( item.getName(), item );
+                
+                if( map == null )
+                {
+                    map = new HashMap();
+                    m_allItems.put( item.getWiki(), map );
+                }
+                
+                map.put( item.getPath(), item );
             }
             else
             {
                 // Removed item
                 // FIXME: If the page system is changed during this time, we'll just fail gracefully
 
-                m_allItems.remove( arg0.getKey() );
+                int idx = arg0.getKey().indexOf(':');
+                String wiki;
+                
+                if( idx >= 0 )
+                {
+                    wiki = arg0.getKey().substring(0,idx);
+                }
+                else
+                {
+                    wiki = "Main";
+                }
+                
+                Map map = (Map) m_allItems.get(wiki);
+                
+                if( map != null )
+                {
+                    map.remove( arg0.getKey() );
+                }
             }
         }
+    }
+
+    public Collection listAllWikis()
+    {
+        return m_provider.listAllWikis();
     }
 }

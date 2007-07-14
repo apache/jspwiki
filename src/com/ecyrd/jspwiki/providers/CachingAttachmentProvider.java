@@ -207,11 +207,11 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
-    public List listAllChanged( Date timestamp )
+    public List listAllChanged( String wiki, Date timestamp )
         throws ProviderException
     {
         // FIXME: Should cache
-        return m_provider.listAllChanged( timestamp );
+        return m_provider.listAllChanged( wiki, timestamp );
     }
 
     /**

@@ -71,7 +71,7 @@ public abstract class MarkupParser
     protected static final String           LEGACY_CHARS_ALLOWED      = "._";
 
     /** Lists all punctuation characters allowed in page names. */
-    protected static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+    protected static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$:";
 
     protected MarkupParser( WikiContext context, Reader in )
     {
