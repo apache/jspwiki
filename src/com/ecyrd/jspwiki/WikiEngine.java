@@ -416,10 +416,26 @@ public class WikiEngine
         }
 
         log.info("*******************************************");
-        log.info("JSPWiki "+Release.VERSTR+" starting. Whee!");
+        log.info(Release.APPNAME+" "+Release.getVersionString()+" starting. Whee!");
 
         fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
+        log.debug("Java version: "+System.getProperty("java.runtime.version"));
+        log.debug("Java vendor: "+System.getProperty("java.vm.vendor"));
+        log.debug("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version")+" "+System.getProperty("os.arch"));
+        log.debug("Default server locale: "+Locale.getDefault());
+        log.debug("Default server timezone: "+TimeZone.getDefault().getDisplayName(true, TimeZone.LONG));
+        
+        if( m_servletContext != null )
+        {
+            log.info("Servlet container: "+m_servletContext.getServerInfo() );
+            if( m_servletContext.getMajorVersion() < 2 || 
+                (m_servletContext.getMajorVersion() == 2 && m_servletContext.getMinorVersion() < 4) )
+            {
+                throw new InternalWikiException("I require a container which supports at least version 2.4 of Servlet specification");
+            }
+        }
+        
         log.debug("Configuring WikiEngine...");
 
         //  Initializes the CommandResolver
@@ -491,9 +507,8 @@ public class WikiEngine
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
             m_attachmentManager = (AttachmentManager)ClassUtil.getMappedObject(AttachmentManager.class.getName(), this, props );
             m_variableManager   = (VariableManager)ClassUtil.getMappedObject(VariableManager.class.getName(), props );
-            m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+            // m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
             m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
-            m_renderingManager.initialize( this, props );
 
             m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
 
@@ -534,6 +549,10 @@ public class WikiEngine
             // are availabe to the initialize() method
             m_filterManager     = (FilterManager)
                 ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
+
+            // RenderingManager depends on FilterManager events.
+            
+            m_renderingManager.initialize( this, props );
 
             //
             //  ReferenceManager has the side effect of loading all
