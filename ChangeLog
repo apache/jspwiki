@@ -1,3 +1,23 @@
+2007-07-14  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.99
+        
+        * [Bug 77]: We were starting two FilterManagers - apps were
+        registering to the other one, and events were fired with the
+        other one... Heh.
+
+        * Startup now outputs a lot more useful info about the environment
+        (enabled by setting WikiEngine to DEBUG).
+        
+        * WebSphere Community Edition (WSCE 1.0) was crashing at startup,
+        due to AuthenticationManager.hasCookieAuthentication() assuming
+        non-null JAAS lists.
+        
+        * TestHttpServletRequest now returns a sane locale (so that no
+        NPE's occur anymore in tests).
+        
+        * Updated Finnish localization up-to-date.
+
 2007-07-14  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * Checked in spanish (es_ES) translation.
@@ -12,7 +32,6 @@
         * checked in missing /com/ecyrd/jspwiki/plugin/PluginResources 
           german translation. [Bug 74] closed.
         
-
 2007-07-12  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.5.98
