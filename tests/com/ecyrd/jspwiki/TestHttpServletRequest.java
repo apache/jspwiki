@@ -163,7 +163,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public Locale getLocale()
     {
-        return null;
+        return Locale.ENGLISH;
     }
 
     /**
