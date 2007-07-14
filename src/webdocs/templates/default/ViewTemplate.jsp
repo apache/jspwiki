@@ -30,13 +30,18 @@
 
   <wiki:Include page="Header.jsp" />
 
-  <wiki:Include page="PageActionsTop.jsp"/>
+  <div id="content">
 
-  <div id="page"><wiki:Content/></div>
+    <div id="page">
+      <wiki:Include page="PageActionsTop.jsp"/>
+      <wiki:Content/>
+      <wiki:Include page="PageActionsBottom.jsp"/>
+    </div>
 
-  <wiki:Include page="Favorites.jsp"/>
+    <wiki:Include page="Favorites.jsp"/>
 
-  <wiki:Include page="PageActionsBottom.jsp"/>
+	<div style="clear:both;"></div>
+  </div>
 
   <wiki:Include page="Footer.jsp" />
 

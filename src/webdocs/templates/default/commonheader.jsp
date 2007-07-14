@@ -85,9 +85,9 @@ Wiki.init({
     title="Help" />
 <% 
   WikiContext c = WikiContext.findContext( pageContext );  
-  String frontPage = c.getEngine().getVariable(c,"jspwiki.frontPage");
+  String frontpage = c.getEngine().getFrontPage(); 
  %>
- <link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontPage%>' />" 
+ <link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontpage%>' />" 
     title="Front page" />
 <link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" 

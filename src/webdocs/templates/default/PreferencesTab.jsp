@@ -43,7 +43,7 @@
   </tr>
   <wiki:UserCheck status="anonymous">
   <tr>
-  <td />
+  <td>&nbsp;</td>
   <td>
   <div class="formhelp">
     <fmt:message key="prefs.assertedname.description">

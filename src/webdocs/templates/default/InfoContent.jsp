@@ -220,27 +220,27 @@
     </p>
   </wiki:CheckVersion>
 
-  <p>
   <wiki:Permission permission="rename">
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
            class="wikiform"
               id="renameform"
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
-      <div>
+      <p>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
       &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>
-      </div>
+      </p>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!rename">
+      <p>
       <fmt:message key="info.rename.permission"/>
+      </p>
   </wiki:Permission>
-  </p>
 
   <p>
   <wiki:Permission permission="delete">

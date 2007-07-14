@@ -36,11 +36,14 @@ var EditTools =
 			e.stop();
 		}).getParent().show();
 
+		//FIXME: stop-event not yet working properly
+		$('replace').addEvent('click', function(e) { EditTools.doReplace(); new Event(e).stop(); });
+		$('tbREDO').addEvent('click', function(e) { EditTools.redoTextarea(); new Event(e).stop(); });
+		$('tbUNDO').addEvent('click', function(e) { new Event(e).stop(); EditTools.undoTextarea();  })
+			.getParent().getParent().show();
+
 		toolbar.getElements('a.tool').each(function(el){
-			var t = el.getText();
-			var s = this.WikiLanguage.snippets[t];
-			if(!s) return
-			el.addEvent('click', this.insertTextArea.pass([s.snippet],this));
+			el.addEvent('click', this.insertTextArea.pass(el,this));
 		},this);
 
 		/* add textarea resize drag bar */
@@ -185,16 +188,17 @@ selections: {
 		}
 	},
 	
-	insertTextArea: function(snippet) {
+	insertTextArea: function(el) {
+		var snippy = this.WikiLanguage.snippets[el.getText()]; if(!snippy) return
+
 		var s = TextArea.getSelection(this.textarea),
-			t = snippet.join('');
+			t = snippy.snippet.join('');
 		EditTools.storeTextarea();
 
-		if( !TextArea.isSelectionAtStartOfLine(this.textarea)) { 
+		if((el.rel=='break') && (!TextArea.isSelectionAtStartOfLine(this.textarea))) { 
 			t = "\n" + t;
 		}
-		//t = this.getSelectedColor(t);
-		//t = t.replace( /\$/, s)
+		if(s) t = t.replace( snippy.tab[0], s)
 		TextArea.setSelection(this.textarea, t);
 	} ,
 
@@ -231,8 +235,6 @@ selections: {
 			TextArea.setSelection( this.textarea, data );
 		}
 		if(this.textarea.onchange) this.textarea.onchange();
-		
-		return true;
 	} ,
 			
 	/* TOOLBAR: cut/copy/paste clipboard functionality */
@@ -269,7 +271,7 @@ selections: {
 		$('tbREDO').disabled = 'true';
 		if(this.UNDOstack.length > this.UNDOdepth) this.UNDOstack.shift();
 	},
-	undoTextarea : function( ){
+	undoTextarea : function(){
 		if(this.UNDOstack.length > 0){
 			$('tbREDO').disabled = '';
 			this.REDOstack.push(this.textarea.value);
@@ -279,6 +281,7 @@ selections: {
 		if(!this.selector) return;
 		this.onSelectorLoad();
 		this.onSelectorChanged();
+
 		this.textarea.focus();
 	},	
 	redoTextarea : function(){

@@ -1,3 +1,29 @@
+2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.100
+        
+        * Finalising xhtml fixes. I hope to close (BUG 9) really soon now.
+        
+        * The Frontpage variable can not be use cause it is not always set. 
+        Falling back to engine.getFrontPage() (BUG 82)
+        
+        * The Edit Assist and the resize bar are now also availble in the Add Comment page
+        
+        * The Edit Assist buttons have been improved. Pressing a button will replace the selected
+        text properly, instead of just overwriting it. (EG, select a word and press the BOLD button
+        to replace theword by __word__) Also the handling of newline has been improved as
+        some markup should always appear at the start of a new line. (EG, headers, tables, ...)
+        (ref also BUG 83)
+        
+        * Experimental, but looks promising ;-)  When JSPWiki rendered on a narrow screen, (eg 200x320px)
+        page-tabs were overlapping with page-actions, and not usable anymore.
+        Now, the tabs nicely shift below the page-actions when the screen is very small.
+        This will help JSPWiki to be usable on mobile divices such as S60 or iPhone. (BUG 80)  
+        As always:: please test this on IE browsers and feedback. Testing was done FF, Safari, Opera and Camino ok.
+                  
+        * The Smart and OrderList skin have now aligned with latest pageactions changes
+        
+        
 2007-07-14  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.99

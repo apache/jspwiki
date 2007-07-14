@@ -6,7 +6,7 @@
 <%
   WikiContext c = WikiContext.findContext(pageContext);
   WikiPage wikipage = c.getPage();
-  String frontpage = c.getEngine().getVariable(c,"jspwiki.frontPage");
+  String frontpage = c.getEngine().getFrontPage(); 
 %>
 <%-- similar to PageActionsTop, except for
      ** no accesskey definitions

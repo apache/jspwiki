@@ -31,7 +31,7 @@
     </tr>
     <tr>
       <td><label for="changenote"><fmt:message key="attach.add.changenote"/></label></td>
-      <td><input type="text" name="changenote" id="changenote" maxlength="80" size="60" />
+      <td><input type="text" name="changenote" maxlength="80" size="60" />
     <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>" /></td>
     </tr>
 
@@ -83,7 +83,7 @@
       <th><fmt:message key="info.date"/></th>
       <th><fmt:message key="info.author"/></th>
       <wiki:Permission permission="delete"><th><fmt:message key="info.actions"/></th></wiki:Permission>
-      <th width="30%"><fmt:message key="info.changenote"/></th>
+      <th class="changenote"><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:AttachmentsIterator id="att">
@@ -98,13 +98,13 @@
     <tr>
       <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
       <td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>
-      <td nowrap style="text-align:right;">
+      <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
       <td style="text-align:center;">
         <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title'/>"><wiki:PageVersion /></a>
       </td>
-	  <td nowrap><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
+	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
       <td><wiki:Author /></td>
       <wiki:Permission permission="delete">
       <td>
@@ -114,7 +114,7 @@
               onclick="$('deleteForm').setProperty('action',this.src); $('delete-all').click();" />
       </td>
       </wiki:Permission>
-      <td>
+      <td class="changenote">
       <%
          String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
          if( changeNote != null ) {

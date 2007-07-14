@@ -5,7 +5,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
-  String frontpage = c.getEngine().getVariable(c,"jspwiki.frontPage");
+  String frontpage = c.getEngine().getFrontPage(); 
 %>
 
 <%-- similar to PageActionsBottom, except for accesskeys, More... dropdown, quick2Bottom --%>

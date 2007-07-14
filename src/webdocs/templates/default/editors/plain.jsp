@@ -75,7 +75,6 @@
         title="<fmt:message key='editor.plain.cancel.title'/>" />
   </p>
   
-  <wiki:CheckRequestContext context="edit">
   <div>
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
          class="editor" 
@@ -89,16 +88,16 @@
       <a href="#" class="tool closed" rel="" title="Toggle additional Edit tools">Edit assist</a>
     </div>
     <div id="toolbar">
-      <span title="shift+enter for next next field">Enter Keyword+Tab: </span>
+      <span title="shift+enter for next next field"><label>Enter Keyword+Tab: </label></span>
 	  <a href="#" class="tool" rel="" id="tbLink" title="link - Insert wiki link">link</a>
-	  <a href="#" class="tool" rel="" id="tbH1" title="h1 - Insert heading1">h1</a>
-	  <a href="#" class="tool" rel="" id="tbH2" title="h2 - Insert heading2">h2</a>
-	  <a href="#" class="tool" rel="" id="tbH3" title="h3 - Insert heading3">h3</a>
+	  <a href="#" class="tool" rel="break" id="tbH1" title="h1 - Insert heading1">h1</a>
+	  <a href="#" class="tool" rel="break" id="tbH2" title="h2 - Insert heading2">h2</a>
+	  <a href="#" class="tool" rel="break" id="tbH3" title="h3 - Insert heading3">h3</a>
       <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="" id="tbHR" title="hr - Insert horizontal ruler">hr</a>
+	  <a href="#" class="tool" rel="break" id="tbHR" title="hr - Insert horizontal ruler">hr</a>
 	  <a href="#" class="tool" rel="" id="tbBR" title="br - Insert line break">br</a>
-	  <a href="#" class="tool" rel="" id="tbPRE" title="pre - Insert preformatted block">pre</a>
-	  <a href="#" class="tool" rel="" id="tbDL" title="dl - Insert definition list">dl</a>
+	  <a href="#" class="tool" rel="break" id="tbPRE" title="pre - Insert preformatted block">pre</a>
+	  <a href="#" class="tool" rel="break" id="tbDL" title="dl - Insert definition list">dl</a>
       <span>&nbsp;</span>
 	  <a href="#" class="tool" rel="" id="tbB" title="bold">bold</a>
 	  <a href="#" class="tool" rel="" id="tbI" title="italic">italic</a>
@@ -107,13 +106,13 @@
 	  <a href="#" class="tool" rel="" id="tbSUB" title="sub - subscript">sub</a>
 	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="strike - strikethrough">strike</a>
       <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="" id="tbTOC" title="toc - Insert table of contents">toc</a>
-	  <a href="#" class="tool" rel="" id="tbTAB" title="tab - Insert tabbed section">tab</a>
-	  <a href="#" class="tool" rel="" id="tbTABLE" title="table - Insert table">table</a>
+	  <a href="#" class="tool" rel="break" id="tbTOC" title="toc - Insert table of contents">toc</a>
+	  <a href="#" class="tool" rel="break" id="tbTAB" title="tab - Insert tabbed section">tab</a>
+	  <a href="#" class="tool" rel="break" id="tbTABLE" title="table - Insert table">table</a>
 	  <a href="#" class="tool" rel="" id="tbIMG" title="img - Insert image">img</a>
-	  <a href="#" class="tool" rel="" id="tbCODE" title="code - Insert code block">code</a>
+	  <a href="#" class="tool" rel="break" id="tbCODE" title="code - Insert code block">code</a>
 	  <a href="#" class="tool" rel="" id="tbQUOTE" title="quote - Insert quoted block">quote</a>
-	  <a href="#" class="tool" rel="" id="tbSIGN" title="sign - Insert your signature">sign</a>
+	  <a href="#" class="tool" rel="break" id="tbSIGN" title="sign - Insert your signature">sign</a>
 	  <div style="clear:both;"></div>
     </div>
   </div>
@@ -121,17 +120,7 @@
     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
     <input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
     </p>
-  </wiki:CheckRequestContext>
-
   <wiki:CheckRequestContext context="comment">
-  <div>
-  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
-         class="editor" 
-       onkeyup="getSuggestions(this.id)"
-       onclick="setCursorPos(this.id)" 
-      onchange="setCursorPos(this.id)"
-          rows="10" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
-  </div>
     <fieldset>
 	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
@@ -140,7 +129,6 @@
     <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
-	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
     <p>
     <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
     <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
@@ -151,8 +139,8 @@
 </form>
 </div>
 
-<form action="#" class='wikiform'>
-<p>
+<form id="searchbar" action="#" class='wikiform'>
+<p style="display:none;">
 <%-- Search and replace section --%>
   <span style="white-space:nowrap;">
   <label for="tbFIND"><fmt:message key="editor.plain.find"/></label>
@@ -175,12 +163,11 @@
   <label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
   </span>
   <span style="white-space:nowrap;">
-  <input type="button" name="replace" id="replace" value="<fmt:message key='editor.plain.find.submit' />" 
-  onmousedown="EditTools.doReplace()" />
+  <input type="button" name="replace" id="replace" value="<fmt:message key='editor.plain.find.submit' />" />
   <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
-  onmousedown="EditTools.redoTextarea()" title="Redo" disabled="disabled" />
+        title="<fmt:message key='editor.plain.redo.title' />" disabled="disabled" />
   <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
-  onmousedown="EditTools.undoTextarea()" title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
+        title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
   </span>
 </p>
 </form>

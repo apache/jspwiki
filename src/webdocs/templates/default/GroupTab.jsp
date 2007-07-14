@@ -86,7 +86,7 @@
       <input type="hidden" name="group"   value="" />
       <input type="hidden" name="members" value="" />
       <input type="hidden" name="action"  value="save" />
-      <input type="button" disabled
+      <input type="button" disabled="disabled"
              name="saveButton" id="saveButton" 
             value="Save Group"  
           onclick="WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='EditGroup.jsp' />' );" /></div>
