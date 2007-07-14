@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.render;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -319,7 +320,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
             {
                 String pageName = ((WikiPageEvent) event).getPageName();
                 m_documentCache.flushPattern( pageName );
-                Set referringPages = m_engine.getReferenceManager().findReferredBy( pageName );
+                Collection referringPages = m_engine.getReferenceManager().findReferrers( pageName );
 
                 //
                 //  Flush also those pages that refer to this page (if an nonexistant page
