@@ -1,3 +1,12 @@
+2007-07-14  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * Checked in spanish (es_ES) translation.
+        
+        * Added localization for validateNotNull at InputValidator, one new 
+        localizable string in CoreResources:
+          
+           - validate.cantbenull
+
 2007-07-13  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * checked in missing /com/ecyrd/jspwiki/plugin/PluginResources 

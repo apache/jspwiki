@@ -101,7 +101,12 @@ public final class InputValidator
     {
         if ( isBlank( input ) )
         {
-            m_session.addMessage( m_form, label + " cannot be blank" );
+            ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
+                                                          m_session.getLocale() );
+            
+            Object[] args = { label };
+            m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"),
+                                                                args ) );
             return false;
         }
         return validate( input, label, type ) && !isBlank( input );
