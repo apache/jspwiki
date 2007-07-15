@@ -18,7 +18,7 @@
 <head>
   <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
   <wiki:Include page="commonheader.jsp"/>
-  <meta name="robots" content="noindex,nofollow">
+  <meta name="robots" content="noindex,nofollow" />
 </head>
 
 <body>

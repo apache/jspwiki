@@ -85,34 +85,37 @@
   </div>
   <div style="display:none;">
     <div id="editassist">
-      <a href="#" class="tool closed" rel="" title="Toggle additional Edit tools">Edit assist</a>
+      <a href="#" class="tool closed" rel="" title="<fmt:message key='editor.plain.editassist.title'/>">
+        <fmt:message key='editor.plain.editassist'/>
+      </a>
     </div>
+
     <div id="toolbar">
-      <span title="shift+enter for next next field"><label>Enter Keyword+Tab: </label></span>
-	  <a href="#" class="tool" rel="" id="tbLink" title="link - Insert wiki link">link</a>
-	  <a href="#" class="tool" rel="break" id="tbH1" title="h1 - Insert heading1">h1</a>
-	  <a href="#" class="tool" rel="break" id="tbH2" title="h2 - Insert heading2">h2</a>
-	  <a href="#" class="tool" rel="break" id="tbH3" title="h3 - Insert heading3">h3</a>
+      <span title="<fmt:message key='editor.plain.posteditor.title'/>"><label><fmt:message key='editor.plain.posteditor'/></label></span>
+	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
+	  <a href="#" class="tool" rel="break" id="tbH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
+	  <a href="#" class="tool" rel="break" id="tbH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
+	  <a href="#" class="tool" rel="break" id="tbH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
       <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="break" id="tbHR" title="hr - Insert horizontal ruler">hr</a>
-	  <a href="#" class="tool" rel="" id="tbBR" title="br - Insert line break">br</a>
-	  <a href="#" class="tool" rel="break" id="tbPRE" title="pre - Insert preformatted block">pre</a>
-	  <a href="#" class="tool" rel="break" id="tbDL" title="dl - Insert definition list">dl</a>
+	  <a href="#" class="tool" rel="break" id="tbHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
+	  <a href="#" class="tool" rel="" id="tbBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
+	  <a href="#" class="tool" rel="break" id="tbPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
+	  <a href="#" class="tool" rel="break" id="tbDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
       <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="" id="tbB" title="bold">bold</a>
-	  <a href="#" class="tool" rel="" id="tbI" title="italic">italic</a>
-	  <a href="#" class="tool" rel="" id="tbMONO" title="mono - monospace">mono</a>
-	  <a href="#" class="tool" rel="" id="tbSUP" title="sup - superscript">sup</a>
-	  <a href="#" class="tool" rel="" id="tbSUB" title="sub - subscript">sub</a>
-	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="strike - strikethrough">strike</a>
+	  <a href="#" class="tool" rel="" id="tbB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
+	  <a href="#" class="tool" rel="" id="tbI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
+	  <a href="#" class="tool" rel="" id="tbMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
+	  <a href="#" class="tool" rel="" id="tbSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
+	  <a href="#" class="tool" rel="" id="tbSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
+	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
       <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="break" id="tbTOC" title="toc - Insert table of contents">toc</a>
-	  <a href="#" class="tool" rel="break" id="tbTAB" title="tab - Insert tabbed section">tab</a>
-	  <a href="#" class="tool" rel="break" id="tbTABLE" title="table - Insert table">table</a>
-	  <a href="#" class="tool" rel="" id="tbIMG" title="img - Insert image">img</a>
-	  <a href="#" class="tool" rel="break" id="tbCODE" title="code - Insert code block">code</a>
-	  <a href="#" class="tool" rel="" id="tbQUOTE" title="quote - Insert quoted block">quote</a>
-	  <a href="#" class="tool" rel="break" id="tbSIGN" title="sign - Insert your signature">sign</a>
+	  <a href="#" class="tool" rel="break" id="tbTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>
+	  <a href="#" class="tool" rel="break" id="tbTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
+	  <a href="#" class="tool" rel="break" id="tbTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
+	  <a href="#" class="tool" rel="" id="tbIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
+	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
+	  <a href="#" class="tool" rel="" id="tbQUOTE" title="<fmt:message key='editor.plain.tbQUOTE.title'/>">quote</a>
+	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
 	  <div style="clear:both;"></div>
     </div>
   </div>

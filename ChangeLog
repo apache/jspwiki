@@ -1,5 +1,16 @@
 2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
 
+        * 2.5.101
+        
+        * Few more xhtml issues resolved.
+        
+        * Default Template is now fixed for IE6. 
+        
+        * Edit Assist toolbar tips localized.
+        
+        
+2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
+
         * 2.5.100
         
         * Finalising xhtml fixes. I hope to close (BUG 9) really soon now.

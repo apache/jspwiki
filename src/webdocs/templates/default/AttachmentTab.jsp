@@ -26,12 +26,12 @@
       <td colspan="2"><div class="formhelp"><fmt:message key="attach.add.info" /></div></td>
     </tr>
     <tr>
-      <td><label for="content"><fmt:message key="attach.add.selectfile"/></label></td>
-      <td><input type="file" name="content" id="content" size="60"/></td>
+      <td><label for="attachfilename"><fmt:message key="attach.add.selectfile"/></label></td>
+      <td><input type="file" name="content" id="attachfilename" size="60"/></td>
     </tr>
     <tr>
-      <td><label for="changenote"><fmt:message key="attach.add.changenote"/></label></td>
-      <td><input type="text" name="changenote" maxlength="80" size="60" />
+      <td><label for="attachnote"><fmt:message key="attach.add.changenote"/></label></td>
+      <td><input type="text" name="changenote" id="attachnote" maxlength="80" size="60" />
     <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>" /></td>
     </tr>
 
