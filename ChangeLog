@@ -6,8 +6,7 @@
         
         * Default Template is now fixed for IE6. 
         
-        * Edit Assist toolbar tips localized.
-        
+        * Edit Assist toolbar tips localized.    
         
 2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
 
@@ -33,7 +32,6 @@
         As always:: please test this on IE browsers and feedback. Testing was done FF, Safari, Opera and Camino ok.
                   
         * The Smart and OrderList skin have now aligned with latest pageactions changes
-        
         
 2007-07-14  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
