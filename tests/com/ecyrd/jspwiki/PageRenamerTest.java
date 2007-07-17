@@ -35,7 +35,9 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("TestPage2");
         TestEngine.deleteTestPage("FooTest");
         TestEngine.deleteTestPage("Test");
-        
+        TestEngine.deleteTestPage("CdauthNew");
+        TestEngine.deleteTestPage("Cdauth");
+
         TestEngine.emptyWorkDir();
     }
 
@@ -224,6 +226,100 @@ public class PageRenamerTest extends TestCase
         assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
     }
 
+    public void testSamePage() throws Exception
+    {
+        m_engine.saveText( "TestPage", "[TestPage]");
+        
+        rename( "TestPage", "FooTest" );
+
+        WikiPage p = m_engine.getPage( "FooTest" );
+        
+        assertNotNull( "no page", p );
+        
+        assertEquals("[FooTest]", m_engine.getText("FooTest").trim() );
+    }
+
+    public void testBrokenLink1() throws Exception
+    {
+        m_engine.saveText( "TestPage", "hubbub");
+        m_engine.saveText( "TestPage2", "[TestPage|]" );
+        
+        rename( "TestPage", "FooTest" );
+
+        WikiPage p = m_engine.getPage( "FooTest" );
+        
+        assertNotNull( "no page", p );
+        
+        // Should be no change
+        assertEquals("[TestPage|]", m_engine.getText("TestPage2").trim() );
+    }
+
+    public void testBrokenLink2() throws Exception
+    {
+        m_engine.saveText( "TestPage", "hubbub");
+        m_engine.saveText( "TestPage2", "[|TestPage]" );
+        
+        WikiPage p;
+        rename( "TestPage", "FooTest" );
+
+        p = m_engine.getPage( "FooTest" );
+        
+        assertNotNull( "no page", p );
+        
+        assertEquals("[|FooTest]", m_engine.getText("TestPage2").trim() );
+    }
+
+    private void rename( String src, String dst ) throws WikiException
+    {
+        WikiPage p = m_engine.getPage(src);
+
+        WikiContext context = new WikiContext(m_engine, p);
+        
+        m_engine.renamePage(context, src, dst, true);
+    }
+
+    public void testBug25() throws Exception
+    {
+        String src = "[Cdauth/attach.txt] [link|Cdauth/attach.txt] [cdauth|Cdauth/attach.txt]"+
+                     "[CDauth/attach.txt] [link|CDauth/attach.txt] [cdauth|CDauth/attach.txt]"+
+                     "[cdauth/attach.txt] [link|cdauth/attach.txt] [cdauth|cdauth/attach.txt]";
+        
+        String dst = "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]"+
+                     "[CDauth/attach.txt] [link|CDauth/attach.txt] [cdauth|CDauth/attach.txt]"+
+                     "[cdauthNew/attach.txt] [link|cdauthNew/attach.txt] [cdauth|cdauthNew/attach.txt]";
+        
+        m_engine.saveText( "Cdauth", "xxx" );
+        m_engine.saveText( "TestPage", src );
+        
+        rename( "Cdauth", "CdauthNew" );
+        
+        assertEquals( dst, m_engine.getText("TestPage") );
+    }
+    
+    public void testBug21() throws Exception
+    {
+        String src = "[Link to TestPage2|TestPage2]";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "[Link to Test|Test]", m_engine.getText( "TestPage" ).trim() );
+    }
+
+    public void testExtendedLinks() throws Exception
+    {
+        String src = "[Link to TestPage2|TestPage2|target='_new']";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "[Link to Test|Test|target='_new']", m_engine.getText( "TestPage" ).trim() );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( PageRenamerTest.class );
