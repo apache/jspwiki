@@ -1,3 +1,16 @@
+2007-07-17 Christoph Sauer (sauer@hs-heilbronn.de)
+
+        * 2.5.102
+        
+        * Bug 13 fixed. Chuck found that by using WikiWizard 1.1.1 instead of 1.1, 
+          it would load properly. However, it would not import the text with JavaScript 
+          due to a new security mechanism built into Mac OS X. To remedy this problem, 
+          we added scriptable="true" to the applet tag and it should work now.
+          
+       *  Added missing german localisations. Added a class called MissingTranslations
+          that helps diff the ressource property files. Simply change 
+
+
 2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.101
