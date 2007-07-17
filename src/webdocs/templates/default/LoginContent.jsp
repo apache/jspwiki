@@ -66,7 +66,7 @@
     </tr>
     <% } %>
     <tr>
-      <td />
+      <td>&npsp;</td>
       <td>
         <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
         <input type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
@@ -127,7 +127,7 @@
       <td><input type="text" size="24" name="name" id="name" /></td>
     </tr>
     <tr>
-      <td />
+      <td>&nbsp;</td>
       <td>
         <input type="hidden" name="action" value="resetPassword"/>
         <input type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />

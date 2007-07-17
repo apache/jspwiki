@@ -20,7 +20,7 @@
 	margin:1em 2em; 
 	padding:0.25em;
 }
-#header, #xxpage, #xxactionsBottom, #footer {
+#header, #footer {
 	margin-left:20%;
 }
 #header .applicationlogo {
@@ -391,7 +391,7 @@ td .error {
 	background:url(images/progress.gif) repeat-x;
 	height:18px;
 	text-align:center;
-	width:0%;
+	width:0;
 }
 .attachtype {
 	line-height:1.6;
@@ -627,7 +627,6 @@ body.edit textarea {
 	margin-left:2em; 
 }
 .gBar {
-	xxposition:relative;
 }
 .graphBar {
 	border-color:#f93;
@@ -705,7 +704,7 @@ th.changenote, td.changenote {
 }
 .pageactions li ul {
 	position:absolute;
-	right:0; 
+	right:2.5em;
 	background:white;
 	border:2px solid #bbb;
 	z-index:10;
@@ -757,10 +756,10 @@ a.action.quick2top, a.action.quick2bottom {
  	width:20px; 
 }
 a.action.quick2top {
- 	background:url(images/arrup.png) no-repeat center;
+ 	background:url(images/arrup.png) no-repeat 3px 3px;
 }
 a.action.quick2bottom {
- 	background:url(images/arrdown.png) no-repeat center;
+ 	background:url(images/arrdown.png) no-repeat 3px 3px;
 }
 
 
@@ -1100,6 +1099,7 @@ table.calendar tr.weekdays {
 */
 
 /* margin is not compatible with scrollHeigth used by accordion - replace it by padding */
+/*
 .tab h1, .tab h2, .tab h3, .tab h4, 
 .tab p, .tab pre, .tab blockquote, .tab label, 
 .tab ul, .tab ol, .tab dl, .xxtab hr {
@@ -1107,7 +1107,7 @@ table.calendar tr.weekdays {
 	padding-top:0.5em;
 	padding-bottom:0.5em;
 }
-
+*/
 
 /* +++ 912 wiki columns +++ */
 .columns {

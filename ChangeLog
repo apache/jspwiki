@@ -1,4 +1,15 @@
-2007-07-17 Christoph Sauer (sauer@hs-heilbronn.de)
+2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * No version bumb-- some small fixes only.
+        
+        * Few small IE6 tweaks: position of actionmenu popup, 
+        position of triangle icons for top and bottom link
+        
+        * Remaining xhtml issues (empty <td/> are not allowed) (BUG 9)
+        All pages of xhtml compliant, excpet UserPreferences.
+
+        
+ 2007-07-17 Christoph Sauer (sauer@hs-heilbronn.de)
 
         * 2.5.102
         
@@ -21,6 +32,32 @@
         * Default Template is now fixed for IE6. 
         
         * Edit Assist toolbar tips localized.    
+          New localisable items, since v2.5.100
+
+            editor.plain.posteditor=Enter Keyword+Tab: 
+            editor.plain.posteditor.title=shift+enter for next next field
+            editor.plain.editassist=Edit Assist
+            editor.plain.editassist.title=Toggle Edit Assist buttons
+            editor.plain.tbLink.title=link - Insert wiki link
+            editor.plain.tbH1.title=h1 - Insert heading1
+            editor.plain.tbH2.title=h2 - Insert heading2
+            editor.plain.tbH3.title=h3 - Insert heading3
+            editor.plain.tbHR.title=hr - Insert horizontal ruler
+            editor.plain.tbBR.title=br - Insert line break
+            editor.plain.tbPRE.title=pre - Insert preformatted block
+            editor.plain.tbDL.title=dl - Insert definition list
+            editor.plain.tbB.title=bold
+            editor.plain.tbI.title=italiceditor.plain.tbMONO.title=mono - monospace
+            editor.plain.tbSUP.title=sup - superscript
+            editor.plain.tbSUB.title=sub - subscript
+            editor.plain.tbSTRIKE.title=strike - strikethrough
+            editor.plain.tbTOC.title=toc - Insert table of contents
+            editor.plain.tbTAB.title=tab - Insert tabbed section
+            editor.plain.tbTABLE.title=table - Insert table
+            editor.plain.tbIMG.title=img - Insert image
+            editor.plain.tbCODE.title=code - Insert code block
+            editor.plain.tbQUOTE.title=quote - Insert quoted block
+            editor.plain.tbSIGN.title=sign - Insert your signature
         
 2007-07-14  Dirk Frederickx (dirk.frederickx@gmail.com)
 
