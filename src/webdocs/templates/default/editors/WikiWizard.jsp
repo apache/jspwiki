@@ -121,7 +121,8 @@ int maxSize = TextUtil.getIntegerProperty( engine.getWikiProperties(),
         name='WikiWizard'
         width='100%'
         height='70%'
-        mayscript>
+        mayscript
+        scriptable='true'>
         
 	<param name="attachments" value="<%=attString%>" />
 	<param name="attachpermission" value="<wiki:Permission permission="upload">true</wiki:Permission>" />
