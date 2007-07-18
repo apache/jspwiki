@@ -1,5 +1,9 @@
 #!/bin/sh
-
+#
+# This script runs the WebUnit tests for JSPWiki.  You should tweak
+# it according to your own setup.  You can also look on all the things
+# that the webtests expect to be running.
+#
 # Couple of notes:
 #
 # This script is destructive in the sense that it will restart your
@@ -16,6 +20,8 @@
 export CATALINA_HOME=${HOME}/Java/tomcat-webtest
 
 ${CATALINA_HOME}/bin/shutdown.sh
+
+sleep 5
 
 rm -rf ${CATALINA_HOME}/webapps/test*
 rm -rf ${CATALINA_HOME}/conf/Catalina/localhost/test*
