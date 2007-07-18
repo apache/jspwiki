@@ -23,8 +23,10 @@ import java.security.Principal;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiProvider;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally.
@@ -34,6 +36,10 @@ import com.ecyrd.jspwiki.WikiContext;
  *    <li>group - A "|" -separated list of group names.
  *    <li>user  - A "|" -separated list of user names.
  *    <li>ip    - A "|" -separated list of ip addresses.
+ *    <li>var   - A wiki variable
+ *    <li>page  - A page name
+ *    <li>contains - A Perl5 regexp pattern
+ *    <li>is    - A Perl5 regexp pattern
  *  </ul>
  *  
  *  <p>If any of them match, the body of the plugin is executed.  You can
@@ -58,6 +64,16 @@ import com.ecyrd.jspwiki.WikiContext;
  *  and for Jill, !Jack matches.  These are not regular expressions (though
  *  they might become so in the future).<p>
  *  
+ *  <p>To check for page content, use</p>
+ *  <pre>
+ *  [{If page='TestPage' contains='xyzzy'
+ *  
+ *  Page contains the text "xyzzy"}]  
+ *  </pre>
+ *  
+ *  <p>The difference between "contains" and "is" is that "is" is always an exact match,
+ *  whereas "contains" just checks if a pattern is available.</p>
+ *  
  *  <p>Another caveat is that the plugin body content is not counted
  *  towards ReferenceManager links.  So any links do not appear on any reference
  *  lists.  Depending on your position, this may be a good or a bad
@@ -78,11 +94,29 @@ public class IfPlugin implements WikiPlugin
         String group = (String)params.get("group");
         String user  = (String)params.get("user");
         String ip    = (String)params.get("ip");
+        String page  = (String)params.get("page");
+        String contains = (String)params.get("contains");
+        String var   = (String)params.get("var");
+        String is    = (String)params.get("is");
         
         include |= checkGroup(context, group);
         include |= checkUser(context, user);
         include |= checkIP(context, ip);
-
+        
+        if( page != null )
+        {
+            String content = context.getEngine().getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            include |= checkContains(context,content,contains);
+            include |= checkIs(context,content,is);
+        }
+        
+        if( var != null )
+        {
+            String content = context.getEngine().getVariable(context, var);
+            include |= checkContains(context,content,contains);
+            include |= checkIs(context,content,is);
+        }
+        
         if( include )
         {
             String ztuff = (String) params.get( PluginManager.PARAM_BODY );
@@ -155,5 +189,42 @@ public class IfPlugin implements WikiPlugin
             include |= ipaddr.equals( context.getHttpRequest().getRemoteAddr() ) ^ invert;
         }
         return include;
+    }
+    
+    private boolean doMatch( String content, String pattern )
+        throws PluginException
+    {
+        PatternCompiler compiler = new Perl5Compiler();
+        PatternMatcher  matcher  = new Perl5Matcher();
+        
+        try
+        {
+            Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
+            // m_exceptPattern = compiler.compile( exceptPattern, Perl5Compiler.SINGLELINE_MASK );
+            return matcher.matches( content, matchp );
+        }
+        catch( MalformedPatternException e )
+        {
+            throw new PluginException("Faulty pattern "+pattern);
+        }
+        
+    }
+    
+    private boolean checkContains( WikiContext context, String pagecontent, String matchPattern )
+        throws PluginException
+    {
+        if( pagecontent == null || matchPattern == null ) return false;
+        
+        return doMatch( pagecontent, ".*"+matchPattern+".*" );
+    }
+    
+    private boolean checkIs( WikiContext context, String content, String matchPattern )
+        throws PluginException
+    {
+        if( content == null || matchPattern == null ) return false;
+        
+        matchPattern = "^"+matchPattern+"$";
+        
+        return doMatch(content, matchPattern);
     }
 }
