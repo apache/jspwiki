@@ -1,3 +1,17 @@
+2007-07-18  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.104
+        
+        * The "Home" link now get's the actual name of the home/front page 
+        (suggested by Claudua Frers)
+        Remove the key='actions.home'  from i18n properties
+        
+        * Fixed floating issue between TabbedSections and CommentBoxes inside pages. 
+        (reported by Alex Samad)
+        
+        * More xhtml fixes on PreferncesTab and default.properties.
+        
+        
 2007-07-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * 2.5.103

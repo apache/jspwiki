@@ -66,7 +66,7 @@
     </tr>
     <% } %>
     <tr>
-      <td>&npsp;</td>
+      <td>&nbsp;</td>
       <td>
         <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
         <input type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />

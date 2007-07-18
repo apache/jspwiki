@@ -15,7 +15,7 @@
   <li>
   <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
     class="action home"
-    title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
+    title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><%=frontpage%></a>
   </li>
   
   <wiki:CheckRequestContext context='edit'>
