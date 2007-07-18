@@ -52,7 +52,7 @@
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">
 	<li>
-        <a href="<wiki:Link jsp='Login.jsp' format='url' />" class="action login"
+        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>" class="action login"
           title="<fmt:message key='actions.login.title'/>"><fmt:message key="actions.login"/></a>
 	</li>
     </wiki:Permission>
