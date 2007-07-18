@@ -286,14 +286,16 @@ public class PageRenamerTest extends TestCase
         
         String dst = "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]"+
                      "[CDauth/attach.txt] [link|CDauth/attach.txt] [cdauth|CDauth/attach.txt]"+
-                     "[cdauthNew/attach.txt] [link|cdauthNew/attach.txt] [cdauth|cdauthNew/attach.txt]";
+                     "[CdauthNew/attach.txt] [link|CdauthNew/attach.txt] [cdauth|CdauthNew/attach.txt]";
         
         m_engine.saveText( "Cdauth", "xxx" );
         m_engine.saveText( "TestPage", src );
         
+        m_engine.addAttachment( "Cdauth", "attach.txt", "Puppua".getBytes() );
+        
         rename( "Cdauth", "CdauthNew" );
         
-        assertEquals( dst, m_engine.getText("TestPage") );
+        assertEquals( dst, m_engine.getText("TestPage").trim() );
     }
     
     public void testBug21() throws Exception
