@@ -1,3 +1,15 @@
+2007-07-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.103
+        
+        * [Bug 21]: Turned out to be a problem of self-referencing
+        pages.
+        
+        * [Bug 85]: Added an extra check for this case.  It still throws
+        an exception, but at least it's a lot more useful to debug.
+        
+        * [Bug 25]: Was related to Bug 21.  Added test cases and fixed.
+
 2007-07-17  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
         * Updated Finnish localization.
