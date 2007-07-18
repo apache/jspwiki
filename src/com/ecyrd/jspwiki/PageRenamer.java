@@ -55,13 +55,6 @@ public class PageRenamer
     private Pattern m_longLinkPattern = null;
     private Pattern m_camelCaseLinkPattern = null;
 
-    /** Extension to be appended onto directories to denote they contain attachments. */
-    public static final String DIR_EXTENSION   = "-att";
-    
-    /** Property key denoting storage directory for attachments. */
-    public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
-
-
     /**
      * Constructor, ties this renamer instance to a WikiEngine.
      * @param engine the wiki engine
@@ -206,6 +199,10 @@ public class PageRenamer
             updateReferrerOnRename( context, oldName, newName, changeReferrers, referrerName );
         }
 
+        //  Manage self-references, which the RefMgr is not managing for us
+        
+        updateReferrerOnRename( context, oldName, newName, changeReferrers, newName );
+        
         m_wikiEngine.getReferenceManager().clearPageEntries( oldName );
 
         String text = m_wikiEngine.getText( newName );
@@ -328,6 +325,11 @@ public class PageRenamer
             String anchor = "";
             String subpage = "";
 
+            if( link == null )
+            {
+                throw new InternalWikiException( "Null link while trying to rename!  Culprit text is "+text );
+            }
+            
             int hash;
             if( (hash = link.indexOf('#')) != -1 )
             {
