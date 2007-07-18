@@ -12,6 +12,9 @@
         
         * Added IfPlugin; thanks to Scott A. Bybee who explained to me
         how useful conditional wikitext can be.
+        
+        * [Bug 87]: Login process now returns you to the same page
+        where you chose to login.
 
 2007-07-17  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
