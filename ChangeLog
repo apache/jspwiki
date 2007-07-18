@@ -9,6 +9,9 @@
         an exception, but at least it's a lot more useful to debug.
         
         * [Bug 25]: Was related to Bug 21.  Added test cases and fixed.
+        
+        * Added IfPlugin; thanks to Scott A. Bybee who explained to me
+        how useful conditional wikitext can be.
 
 2007-07-17  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
