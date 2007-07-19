@@ -9,6 +9,7 @@
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
 <%
+    String bean = request.getParameter("bean");
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
@@ -46,4 +47,18 @@
     pageContext.setAttribute( "engine", wiki, PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( "context", wikiContext, PageContext.REQUEST_SCOPE );
 
+    if( request.getMethod().equalsIgnoreCase("post") && bean != null )
+    {
+        AdminBean ab = wiki.getAdminBeanManager().findBean( bean );
+        
+        if( ab != null )
+        {
+            ab.doPost( wikiContext );
+        }
+        else
+        {
+            wikiContext.getWikiSession().addMessage( "No such bean "+bean+" was found!" );
+        }
+    }
+    
 %><wiki:Include page="<%=contentPage%>" />
