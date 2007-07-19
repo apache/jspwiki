@@ -193,7 +193,7 @@ public class TabTag extends WikiTagBase
 
             if( m_url != null )
             {
-                sb.append( "href='"+m_url+"'" );
+                sb.append( " href='"+m_url+"'" );
             }
             else
             {
