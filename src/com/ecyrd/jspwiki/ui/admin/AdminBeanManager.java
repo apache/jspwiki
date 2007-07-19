@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
+import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
 
 /**
  *  Provides a manager class for all AdminBeans within JSPWiki.  This class
@@ -202,6 +203,7 @@ public class AdminBeanManager
         try
         {
             registerAdminBean( new CoreBean(m_engine) );
+            registerAdminBean( new UserBean(m_engine) );
         }
         catch (NotCompliantMBeanException e)
         {
@@ -225,6 +227,26 @@ public class AdminBeanManager
         return m_allBeans;
     }
 
+    /**
+     *  Locates a bean based on the AdminBean.getId() out of all
+     *  the registered beans.
+     *  
+     *  @param id ID
+     *  @return An AdminBean, or null, if no such bean is found.
+     */
+    public AdminBean findBean( String id )
+    {
+        for( Iterator i = m_allBeans.iterator(); i.hasNext(); )
+        {
+            AdminBean ab = (AdminBean) i.next();
+            
+            if( ab.getId().equals(id) )
+                return ab;
+        }
+        
+        return null;
+    }
+    
     /**
      *  A JDK 1.4 version of something which gets us the MBeanServer.  It
      *  binds to the first server it can find.
