@@ -113,10 +113,12 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
         return null;
     }
 
-    /** FIXME: This method should generate a random id or something... */
+    /**
+     *  By default, this method returns the class name of the bean.  This is
+     *  suitable, if you have a singleton bean.
+     */
     public String getId()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getClass().getName();
     }
 }
