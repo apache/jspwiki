@@ -1,3 +1,11 @@
+2007-07-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
+
+        * 2.5.105
+        
+        * AdminUI has now rudimentary user management - it's now
+        possible to add, change and remove user accounts using the adminUI.
+        AdminUI is reachable through admin/Admin.jsp.
+
 2007-07-18  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.104
@@ -10,7 +18,6 @@
         (reported by Alex Samad)
         
         * More xhtml fixes on PreferncesTab and default.properties.
-        
         
 2007-07-18  Janne Jalkanen <Janne.Jalkanen@ecyrd.com>
 
