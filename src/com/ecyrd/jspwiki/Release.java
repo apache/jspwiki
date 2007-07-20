@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -34,7 +34,7 @@ public class Release
      */
     public static final String     APPNAME       = "JSPWiki";
 
-    /** 
+    /**
      *  This should be empty when doing a release - otherwise
      *  keep it as "cvs" so that whenever someone checks out the code,
      *  they know it is a bleeding-edge version.  Other possible
@@ -45,13 +45,13 @@ public class Release
 
     public static final int        VERSION       = 2;
     public static final int        REVISION      = 4;
-    public static final int        MINORREVISION = 102;
+    public static final int        MINORREVISION = 103;
 
     /**
      *  This is the generic version string you should use
      *  when printing out the version.  It is of the form "x.y.z-ttt".
      */
-    public static final String     VERSTR        = 
+    public static final String     VERSTR        =
         VERSION+"."+REVISION+"."+MINORREVISION+POSTFIX;
 
     /**
@@ -80,7 +80,7 @@ public class Release
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
         int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
-        
+
         if( VERSION == reqVersion )
         {
             if( REVISION == reqRevision )
@@ -89,7 +89,7 @@ public class Release
                 {
                     return true;
                 }
-                
+
                 return MINORREVISION > reqMinorRevision;
             }
 
@@ -109,12 +109,12 @@ public class Release
         throws IllegalArgumentException
     {
         if( version == null ) return true;
-        
+
         String[] versionComponents = StringUtils.split(version,".-");
         int reqVersion       = versionComponents.length > 0 ? Integer.parseInt(versionComponents[0]) : Release.VERSION;
         int reqRevision      = versionComponents.length > 1 ? Integer.parseInt(versionComponents[1]) : Release.REVISION;
         int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt(versionComponents[2]) : Release.MINORREVISION;
-        
+
         if( VERSION == reqVersion )
         {
             if( REVISION == reqRevision )
@@ -123,7 +123,7 @@ public class Release
                 {
                     return true;
                 }
-                
+
                 return MINORREVISION < reqMinorRevision;
             }
 
@@ -132,7 +132,7 @@ public class Release
 
         return VERSION < reqVersion;
     }
-    
+
     /**
      *  Executing this class directly from command line prints out
      *  the current version.  It is very useful for things like
