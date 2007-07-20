@@ -429,7 +429,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "The page \"~ASamplePage\" is not a hyperlink.";
 
-        assertEquals( "The page \"ASamplePage\" is not a hyperlink.",
+        assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.",
                       translate(src) );
     }
 
@@ -2368,6 +2368,14 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate(src) );
     }
 
+    public void testXSS1() throws Exception
+    {
+        String src = "[http://www.host.com/du=\"> <img src=\"foobar\" onerror=\"alert(document.cookie)\"/>]";
+
+        String dst = translate(src);
+
+        assertEquals( "<a class=\"external\" href=\"http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;\">http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;</a>", dst );
+    }
 
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText =
