@@ -470,6 +470,8 @@ public class JSPWikiMarkupParser
      */
     protected Element createAnchor(int type, String link, String text, String section) 
     { 
+        text = escapeHTMLEntities( text );
+        section = escapeHTMLEntities( section );
         Element el = new Element("a");
         el.setAttribute("class",CLASS_TYPES[type]); 
         el.setAttribute("href",link+section); 
@@ -711,7 +713,7 @@ public class JSPWikiMarkupParser
             
             if( !m_allowHTML )
             {
-                buf = escapeHTMLEntities(m_plainTextBuf);
+                buf = escapeHTMLEntities(m_plainTextBuf.toString());
             }
             else
             {
@@ -827,7 +829,7 @@ public class JSPWikiMarkupParser
      *  @param buf
      *  @return
      */
-    private String escapeHTMLEntities(StringBuffer buf)
+    private String escapeHTMLEntities(String buf)
     {
         StringBuffer tmpBuf = new StringBuffer( buf.length() + 20 );
         
@@ -842,6 +844,10 @@ public class JSPWikiMarkupParser
             else if( ch == '>' ) 
             {
                 tmpBuf.append("&gt;");
+            }
+            else if( ch == '\"' )
+            {
+                tmpBuf.append("&quot;");
             }
             else if( ch == '&' )
             {
