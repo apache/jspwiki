@@ -11,9 +11,8 @@
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 %>
   
-<wiki:TabbedSection>  
-<wiki:Tab id="editcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.edit")%>' >
-  
+<wiki:TabbedSection defaultTab="editcontent">  
+  <wiki:Tab id="editcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.edit")%>' >
   <wiki:CheckLock mode="locked" id="lock">
     <div class="error">
       <fmt:message key="edit.locked">
@@ -35,18 +34,20 @@
     
 </wiki:Tab>
   
-<wiki:PageExists>  
-<wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-  <wiki:Include page="AttachmentTab.jsp"/>
-</wiki:Tab>
-  
-<wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-         url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-         accesskey="i" >
-</wiki:Tab>
-</wiki:PageExists>  
+  <wiki:PageExists>  
+
+  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
+    <wiki:Include page="AttachmentTab.jsp"/>
+  </wiki:Tab>
+
+  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+           accesskey="i" >
+  </wiki:Tab>
+
+  </wiki:PageExists>  
     
-<wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' >
+  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' >
   <wiki:InsertPage page="EditPageHelp" />
   <wiki:NoSuchPage page="EditPageHelp">
     <div class="error">
@@ -55,6 +56,6 @@
       </fmt:message>
     </div>
   </wiki:NoSuchPage>  
-</wiki:Tab>
+  </wiki:Tab>
 
 </wiki:TabbedSection>

@@ -1,8 +1,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -122,17 +122,16 @@
   int maxpages  = 9;  //max #paginations links -- choose odd figure
   int itemcount = 0;  //number of page versions
 
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
-  WikiPage wikiPage = wikiContext.getPage();
-  int attCount = wikiContext.getEngine().getAttachmentManager()
-                            .listAttachments( wikiContext.getPage() ).size();
+  WikiContext c = WikiContext.findContext(pageContext);
+  WikiPage wikiPage = c.getPage();
+  int attCount = c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
   String creationDate   ="";
   String creationAuthor ="";
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = wikiContext.getEngine().getPage( wikiPage.getName(), 1 );
+  WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
@@ -173,7 +172,7 @@
   <wiki:Tab id="pagecontent" 
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>' 
      accesskey="v" 
-	       url="<%=wikiContext.getURL(WikiContext.VIEW, wikiContext.getPage().getName())%>">
+	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
 
@@ -181,8 +180,8 @@
     <wiki:Include page="AttachmentTab.jsp"/>
   </wiki:Tab>
 
+  <%-- actual infopage content --%>
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>" accesskey="i" >
-
   <p>
   <fmt:message key='info.lastmodified'>
     <fmt:param><wiki:PageVersion >1</wiki:PageVersion></fmt:param>
@@ -237,30 +236,44 @@
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!rename">
-      <p>
-      <fmt:message key="info.rename.permission"/>
-      </p>
+      <p><fmt:message key="info.rename.permission"/></p>
   </wiki:Permission>
 
-  <p>
   <wiki:Permission permission="delete">
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="wikiform"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
-      <div>
+      <p>
       <input type="submit" name="delete-all" id="delete-all" 
             value="<fmt:message key='info.delete.submit'/>" >
-      </div>
+      </p>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!delete">
-      <fmt:message key="info.delete.permission"/>
+      <p><fmt:message key="info.delete.permission"/></p>
   </wiki:Permission>
-  </p>
 
-  <br />
+  <div class="collapsebox-closed" id="incomingLinks">
+  <h4><fmt:message key="info.tab.incoming" /></h4>
+    <wiki:LinkTo><wiki:PageName /></wiki:LinkTo>
+    <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+  </div>
+
+  <div class="collapsebox-closed" id="outgoingLinks">
+  <h4><fmt:message key="info.tab.outgoing" /></h4>
+    <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+  </div>
+
+  <div style="clear:both;"></div>
+
+  <%-- DIFF section --%>
+  <wiki:CheckRequestContext context='diff'>
+     <wiki:Include page="DiffTab.jsp"/>
+  </wiki:CheckRequestContext>
+  <%-- DIFF section --%>
+  
 
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
     <wiki:CheckVersion mode="notfirst">
@@ -330,6 +343,7 @@
     </wiki:CheckVersion>
   </wiki:Tab>
 
+  <%--
   <wiki:Tab id="incomingLinks" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab.links")%>">
 	<table class="wikitable">
 	<tr>
@@ -348,25 +362,51 @@
 	</table>
   </wiki:Tab>
 
-  </wiki:TabbedSection> <%-- end of .tabs --%>
+  <wiki:Tab id='diffcontent' title='<%=LocaleSupport.getLocalizedMessage(pageContext, "diff.tab")%>'
+           url='<%=c.getURL(WikiContext.DIFF, c.getPage().getName() )%>' 
+     accesskey='d'>  
+  </wiki:Tab>
+  --%>
 
+
+  <%--
+  <wiki:CheckRequestContext context='view|info|diff|upload'>
+  --%>
+    <wiki:Permission permission="edit">
+      <wiki:PageType type="page">
+        <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.edit")%>'
+           url="<%=c.getURL(WikiContext.EDIT, c.getPage().getName())%>"
+           accesskey="e" >
+        </wiki:Tab>
+      </wiki:PageType>
+      <wiki:PageType type="attachment">
+        <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"actions.editparent.title")%>'
+           url="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"
+           accesskey="e" >
+        </wiki:Tab>
+      </wiki:PageType>
+    </wiki:Permission>
+  <%--
+  </wiki:CheckRequestContext>    
+  --%>
+
+  </wiki:TabbedSection>
 
 </wiki:PageType>
-
 
 
 <%-- part 2 : attachments --%>
 <wiki:PageType type="attachment">
 <%
   int MAXATTACHNAMELENGTH = 30;
-  String progressId = wikiContext.getEngine().getProgressManager().getNewProgressIdentifier();
+  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
   <wiki:TabbedSection defaultTab="info">
   <wiki:Tab id="pagecontent" 
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>' 
      accesskey="v" 
-	       url="<%=wikiContext.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
+	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
 

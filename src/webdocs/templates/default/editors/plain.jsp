@@ -59,7 +59,7 @@
      enctype="application/x-www-form-urlencoded" >
 
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-  <p>
+  <p id="submitbuttons">
   <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />
   <input name="action" type="hidden" value="save" />
   <input name="edittime" type="hidden" value="<c:out value='${lastchange}' />" />
@@ -91,7 +91,6 @@
     </div>
 
     <div id="toolbar">
-      <span title="<fmt:message key='editor.plain.posteditor.title'/>"><label><fmt:message key='editor.plain.posteditor'/></label></span>
 	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
 	  <a href="#" class="tool" rel="break" id="tbH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
 	  <a href="#" class="tool" rel="break" id="tbH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
@@ -116,7 +115,17 @@
 	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
 	  <a href="#" class="tool" rel="" id="tbQUOTE" title="<fmt:message key='editor.plain.tbQUOTE.title'/>">quote</a>
 	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
-	  <div style="clear:both;"></div>
+	  <div style="clear:both;">
+	  </div>
+      <div >
+	<%--
+      <label title="<fmt:message key='editor.plain.posteditor.title'/>"><fmt:message key='editor.plain.posteditor'/></label>
+    --%>
+      <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>"/>
+      <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
+      <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>"/>
+      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>	  
+	  </div>
     </div>
   </div>
     <p>

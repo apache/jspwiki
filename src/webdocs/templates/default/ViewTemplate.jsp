@@ -30,7 +30,7 @@
 
   <wiki:Include page="Header.jsp" />
 
-  <div id="content">
+  <div id="content" class="favp">
 
     <div id="page">
       <wiki:Include page="PageActionsTop.jsp"/>

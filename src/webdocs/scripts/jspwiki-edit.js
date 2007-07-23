@@ -18,10 +18,29 @@ var EditTools =
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 		
-		this.WikiLanguage = this.initWikiLanguage();
-		
 		/* make textarea more intelligent */
-		new postEditor.create(this.textarea,'changenote', this.WikiLanguage);
+		this.wikisnippets = this.getWikiSnippets();
+		this.wikismartpairs = this.getWikiSmartPairs();
+		this.posteditor = new postEditor.create(this.textarea,'changenote');
+		
+		/* patch posteditor DF Jul 07 */
+		/* righ-arrow nok on FF, nop on Safari */
+		this.posteditor.onKeyRight = Class.empty; 				
+		/* make posteditor changes undoable */
+		this.posteditor.value = function(value) {
+			EditTools.storeTextarea();
+			this.element.value = value.join("");
+		};
+		
+		['smartpairs', 'tabcompletion'].each( function(el){
+			$(el).setProperty('checked', Wiki.prefs.get(el) || false)
+				 .addEvent('click',function(e) {
+					Wiki.prefs.set(el,this.checked);
+					EditTools.initPostEditor();
+				 });
+		},this);
+				
+		this.initPostEditor();
 
 		/* activate editassist toolbar */
 		var toolbar = $('toolbar');
@@ -36,7 +55,8 @@ var EditTools =
 			e.stop();
 		}).getParent().show();
 
-		//FIXME: stop-event not yet working properly
+
+		//FIXME: stop-event not yet working properly on eg UNDO
 		$('replace').addEvent('click', function(e) { EditTools.doReplace(); new Event(e).stop(); });
 		$('tbREDO').addEvent('click', function(e) { EditTools.redoTextarea(); new Event(e).stop(); });
 		$('tbUNDO').addEvent('click', function(e) { new Event(e).stop(); EditTools.undoTextarea();  })
@@ -59,9 +79,13 @@ var EditTools =
 		
 	},
 
-	initWikiLanguage: function(){
+	initPostEditor: function(){
+		this.posteditor.changeSmartTypingPairs( $('smartpairs').checked ? this.wikismartpairs : {} );
+		this.posteditor.changeSnippets( $('tabcompletion').checked ? this.wikisnippets : {} );	
+	},
+
+	getWikiSnippets: function(){
 		return {
-snippets: {
 	"toc" : {
 		snippet:["","[{TableOfContents }]", "\n"],
 		tab:['[{TableOfContents }]', '']
@@ -168,28 +192,22 @@ snippets: {
 			};
 		}
 	}
-},
-smartTypingPairs: {
-	'"' : '"',
-	'(' : ')',
-	'{' : '}',
-	'[' : ']',
-	"<" : ">",
-	"'" : {
-		scope : {
-			"{{{":"}}}"
-		},
-		pair : "'"
-	}
-},
-//ctrl+shift+number - not used in jspwiki -- yet ;-)
-selections: {
-}
+} /* return */
+
+	},
+	getWikiSmartPairs: function(){
+		return {
+		'"' : '"',
+		'(' : ')',
+		'{' : '}',
+		'[' : ']',
+		'<' : '>',
+		"'" : { scope:{ "{{{":"}}}" }, pair:"'" }
 		}
 	},
 	
 	insertTextArea: function(el) {
-		var snippy = this.WikiLanguage.snippets[el.getText()]; if(!snippy) return
+		var snippy = this.wikisnippets[el.getText()]; if(!snippy) return
 
 		var s = TextArea.getSelection(this.textarea),
 			t = snippy.snippet.join('');

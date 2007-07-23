@@ -45,10 +45,10 @@ public class InsertDiffTag
     private static final long serialVersionUID = 0L;
     
     /** Attribute which is used to store the old page content to the Page Context */
-    public static final String ATTR_OLDVERSION = "insertdiff.old";
+    public static final String ATTR_OLDVERSION = "olddiff";
 
     /** Attribute which is used to store the new page content to the Page Context */
-    public static final String ATTR_NEWVERSION = "insertdiff.new";
+    public static final String ATTR_NEWVERSION = "newdiff";
 
     protected String m_pageName;
 

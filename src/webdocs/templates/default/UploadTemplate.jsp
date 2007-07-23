@@ -35,8 +35,9 @@
       <wiki:TabbedSection defaultTab="attachments" >
         <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
 	  		     url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
-	     accesskey="v" >
+	       accesskey="v" >
         </wiki:Tab>
+        
         <wiki:PageExists>
         <wiki:Tab id="attachments" title="<%= attTitle %>" >
           <wiki:Include page="AttachmentTab.jsp"/>
@@ -45,6 +46,22 @@
                  url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
            accesskey="i" >
         </wiki:Tab>
+
+        <wiki:Permission permission="edit">
+          <wiki:PageType type="page">
+            <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.edit")%>'
+                     url="<%=c.getURL(WikiContext.EDIT, c.getPage().getName())%>"
+               accesskey="e" >
+            </wiki:Tab>
+          </wiki:PageType>
+            
+          <wiki:PageType type="attachment">
+            <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"actions.editparent.title")%>'
+                     url="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"
+               accesskey="e" >
+            </wiki:Tab>
+          </wiki:PageType>
+        </wiki:Permission>
 
         </wiki:PageExists>
       </wiki:TabbedSection>

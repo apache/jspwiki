@@ -18,6 +18,7 @@
     title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><%=frontpage%></a>
   </li>
   
+<%--
   <wiki:CheckRequestContext context='edit'>
   <li>
       <wiki:PageType type="page">
@@ -32,7 +33,8 @@
       </wiki:PageType>
   </li>
   </wiki:CheckRequestContext>
-  
+ --%>
+  <%--
   <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
 	<li>
@@ -47,7 +49,9 @@
     </li>
     </wiki:Permission>
   </wiki:CheckRequestContext>
-
+  --%>
+  
+  <%--
   <wiki:UserCheck status="notAuthenticated">
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">
@@ -65,7 +69,7 @@
         title="<fmt:message key='actions.logout.title'/>"><fmt:message key="actions.logout"/></a>
     </li>
   </wiki:UserCheck>
-
+  --%>
 
   <%-- FIXME : to be moved into tabs of UserPreferences --%>
   <wiki:CheckRequestContext context='viewGroup'>
@@ -101,6 +105,7 @@
       onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
     <option class="actionsMore" value="" selected='selected'><fmt:message key="actions.more"/></option>
 
+    <%--
     <wiki:CheckRequestContext context='!prefs'>
     <wiki:CheckRequestContext context='!preview'>
       <option class="action prefs" value="<wiki:Link jsp='UserPreferences.jsp' format='url' />">
@@ -108,6 +113,7 @@
       </option>
     </wiki:CheckRequestContext>
     </wiki:CheckRequestContext>
+    --%>
     
     <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:PageExists>  
@@ -130,6 +136,11 @@
     <option value="separator" disabled="disabled" ><fmt:message key='actions.separator' /></option>
     </wiki:CheckRequestContext>
 
+    <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
+       title="<fmt:message key='actions.rawpage.title' />">View page source<fmt:message key='actions.rawpage' />
+    </option>
+  
+
     <option class="action index" value="<wiki:LinkTo page='PageIndex' format='url' />"
        title="<fmt:message key='actions.index.title' />"><fmt:message key='actions.index' />
     </option>
@@ -138,9 +149,11 @@
         title="<fmt:message key='actions.recentchanges.title'/>" ><fmt:message key='actions.recentchanges' />
     </option>
 
+	<%--
     <option class="action systeminfo" value="<wiki:Link page='SystemInfo' format='url' />"
       title="<fmt:message key='actions.systeminfo.title' />"><fmt:message key='actions.systeminfo' />
     </option>
+    --%>
     
     <wiki:UserCheck status="authenticated">
       <option value="separator" disabled="disabled" class="actionSeparator"><fmt:message key='actions.separator' /></option>

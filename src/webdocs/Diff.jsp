@@ -21,7 +21,8 @@
     {
     w.enterState("Generating INFO response",60);
     
-    String pageurl = wiki.encodeName( pagereq );
+    // Notused ? 
+    // String pageurl = wiki.encodeName( pagereq );
 
     // If "r1" is null, then assume current version (= -1)
     // If "r2" is null, then assume the previous version (=current version-1)

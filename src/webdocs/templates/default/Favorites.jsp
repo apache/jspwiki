@@ -3,8 +3,37 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%
+  WikiContext c = WikiContext.findContext(pageContext);
+  String frontpage = c.getEngine().getFrontPage(); 
+%>
 
 <div id="favorites">
+  <div id="user">
+  <wiki:UserCheck status="notAuthenticated">
+  <wiki:CheckRequestContext context='!login'>
+    <wiki:Permission permission="login">
+        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>" 
+          class="action login"
+          title="<fmt:message key='actions.login.title'/>"><fmt:message key="actions.login"/></a>
+    </wiki:Permission>
+  </wiki:CheckRequestContext>
+  </wiki:UserCheck>
+  
+  <wiki:UserCheck status="authenticated">
+      <a href="<wiki:Link jsp='Logout.jsp' format='url' />" 
+        class="action logout"
+        title="<fmt:message key='actions.logout.title'/>"><fmt:message key="actions.logout"/></a>
+  </wiki:UserCheck>
+
+  <wiki:CheckRequestContext context='!prefs'>
+  <wiki:CheckRequestContext context='!preview'>
+    <a href="<wiki:Link jsp='UserPreferences.jsp' format='url' ><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>"
+    class="action prefs" >
+      <fmt:message key="actions.prefs" />
+    </a>
+  </wiki:CheckRequestContext>
+  </wiki:CheckRequestContext>
 
   <div class="username">
     <wiki:UserCheck status="anonymous">
@@ -24,8 +53,8 @@
       </fmt:message>
     </wiki:UserCheck>
   </div>
-  
-  
+  <div style="clear:both;"></div>
+  </div>
   <wiki:CheckRequestContext context='!login'>
   <wiki:UserCheck status="known">
   <wiki:Translate>[{TEST page='{$username}Favorites'

@@ -1,3 +1,52 @@
+2007-07-23  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.107
+
+        * Many 'usability' improvements based on many many inputs from
+        Claudia, Murray, Alex and Janne. Hope you like them :-)
+
+        All screens now consistenty show 3 TABS (view, attach and info)
+        The Edit action has become a 'pseudo' TAB positioned right next 
+        to the standard set of tabs, but visually different.
+        For the time being, Add-Comment remains hidden in the More dropdown 
+        as it is less frequently used.
+        The More action has been visually adjusted as a kind of 'button'.
+
+        The Link tab and Diff tabs are incorporated in the Info screen as
+        collapsable boxes, and are only shown depending on the context.
+        This brings back all page info (links, version history) back under one
+        single place.
+
+        A new --USER-- bar is added with UserName, Login/Register, Prefs and Logout
+        actions. These actions are not anylonger in the top pageactions sections.
+        This USER bar is positioned at the top of the screen (PlainVanilla skin)
+        or in the Favorites sections (SMART skin)
+        
+		The bottom page actions have been simplified to the max. 
+		When clicking the 'goto TOP' triangle, you are just one click away
+		from all remaining actions and buttons. (this was the most easiest for now ;-)
+		
+		Pending stuff: allow configurable 'quick-links' to be added next to and 
+		inside the More... menu. Skins may not yet be up to date with all changes 
+		- expect some glitches here and there.
+
+        * Fixed the Diff dropdown selectors when no parameters (r1 and r2) are provided.
+
+        * Editor/Posteditor improvements:
+        Checkboxes were added to turn on/off the Tab Completion and 
+        Smart TypingPairs. Your settings are cookie-fied.
+        Some new i18n keywords added:
+        
+        editor.plain.smartpairs= Smart Typing Pairs
+        editor.plain.smartpairs.title= Auto pairing of () [] {} "" ''
+        editor.plain.tabcompletion=Tab Completion (keyword+Tab)
+        editor.plain.tabcompletion.title=Auto expansion of keyword to Wiki Markup
+        
+        All posteditor functions are now also undo-able.
+        
+        The Posteditor now correctly handles Shift+right-arrow in Firefox. (Bug 91)
+
+        
 2007-07-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.106

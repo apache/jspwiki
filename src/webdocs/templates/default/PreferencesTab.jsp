@@ -54,6 +54,7 @@
         </a>
       </fmt:param>
     </fmt:message>
+  </div>
   </td>
   </tr>
   </wiki:UserCheck>

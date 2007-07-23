@@ -1357,6 +1357,7 @@ var Collapsable =
 		this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
 		this.initialise( "favorites",   "JSPWikiCollapseFavorites" );
 		this.initialise( "pagecontent", "JSPWikiCollapse" + Wiki.PageName );
+		this.initialise( "info" );
 	},
 
 	initialise: function( page, cookie){
@@ -1365,7 +1366,7 @@ var Collapsable =
 		this.pims.push({
 			'name':cookie,
 			'value':'',
-			'initial':Cookie.get(cookie) 
+			'initial': (cookie ? Cookie.get(cookie) : "") 
 		});
 		$ES('.collapse', page).each(function(el){ 
 			this.collapseNode(el); 
@@ -1446,7 +1447,7 @@ var Collapsable =
 		if(collapse) bodyfx.start(bodyHeight, 0); else bodyfx.start(bodyHeight);
 		
 		ck.value = ck.value.substring(0,bulletidx) + (collapse ? 'c' : 'o') + ck.value.substring(bulletidx+1) ;
-		Cookie.set(ck.name, ck.value, {path:Wiki.BasePath, duration:20});
+		if(ck.name) Cookie.set(ck.name, ck.value, {path:Wiki.BasePath, duration:20});
 	},
 
 	// parse initial cookie versus actual document 

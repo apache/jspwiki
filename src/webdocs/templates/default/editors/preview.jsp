@@ -41,7 +41,7 @@
             rows="4" 
             cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
   </div>
-  <div id="previewsavebutton">
+  <div id="submitbuttons">
     <input type="submit" name="edit" value="<fmt:message key='editor.preview.edit.submit'/>" 
       accesskey="e"
           title="<fmt:message key='editor.preview.edit.title'/>" />

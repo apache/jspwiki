@@ -23,11 +23,21 @@
 #header, #footer {
 	margin-left:20%;
 }
+#header {
+	margin-top:2em;
+}
 #header .applicationlogo {
 	position:absolute;
 	left:2em; 
 	width:18%;
 	text-align:center;
+}
+/* take user out of #favorites, and put it at the top of the universe */
+#favorites #user {
+	position:absolute;
+	right:2em; /*respect the body */
+	top:1em;
+	height:2em;
 }
 #footer .applicationlogo,
 #footer .companylogo,
@@ -47,7 +57,7 @@
 }
 #favorites {
 	float:left;
-	margin-top:2em;
+	margin-top:1em;
 	width:18%;
 }
 #footer {
@@ -57,6 +67,12 @@
 }
 #content { 
 	margin-top:1em;
+}
+#content.favp #page, #content.pfav #favorites {
+	float:right;
+}
+#content.pfav #page, #content.favp #favorites {
+	float:left;
 }
 #page { 
 	width:80%;
@@ -477,11 +493,10 @@ td .error {
 
 /* +++ 420 DiffContent and Diff Providers:Traditional and External +++ */
 #diffcontent {
+	clear:both;
 }
 .diffbody {
-	display:block;
-	margin:1em .5em;
-	padding:0.25em;
+	padding:0.5em;
 }
 /* .diffnote equals .information */
 td.diffadd,
@@ -524,6 +539,15 @@ td.diff {
 
 
 /* +++ 425 Edit/EditContent and CommentContent +++ */
+#menu-edit {
+	border:none;
+	background:none;
+	margin:0;
+	color:blue;
+}
+#menu-edit:hover {
+
+}
 body.edit {
 } 
 body.comment {
@@ -558,7 +582,7 @@ a.tool {
 	margin-right:2px;
 	text-decoration: none;
 }
-a.tool:hover, .btn:hover {
+a.tool:hover, .btn:hover, #menu-edit:hover {
 	background-color:#f93 !important;
 }
 #editassist a.tool {
@@ -574,7 +598,7 @@ body.edit textarea {
 	width:100%;
 	padding:4px;
 }
-#editform input {
+#submitbuttons input {
 	margin-right:2em;
 }
 #commentcontent, #editcontent {
@@ -609,11 +633,16 @@ body.edit textarea {
 }
 
 /* +++ 440 Favorites +++ */
-.username {
+#user a.action, #user .username {
+	float:left;
+	background:#eee;
 	border:1px solid #bbb;
+	padding:0.25em 0.5em;
+	margin:0 1px;
+}
+#user .username {
 	font-style:italic;
-	font-weight:bold;
-	padding:0.25em 1em;
+	border:1px solid white;
 }
 .wikiversion,
 .rssfeed {
@@ -669,6 +698,10 @@ body.edit textarea {
 #infocontent {
 }
 #incomingLinks, #outgoingLinks, #externalLinks, #attachmentLinks, #versionhistory {
+	width:30%;
+	overflow:hidden;	
+	margin-right:0.5em;
+	float:left;
 }  
 #versionhistory td {
 	white-space:nowrap;
@@ -688,10 +721,6 @@ th.changenote, td.changenote {
 /* +++ 470 PageActions +++ */
 .pageactions {
 	line-height:1.5;
-}
-.pageactions .pageinfo {
-	clear:both;
-	margin:0.25em 0;
 }
 .pageactions ul {
 	list-style:none;
@@ -722,11 +751,8 @@ a.action {
 	padding:0.25em 0.5em;
 	text-decoration: none;
 }
-a.action:hover,a.action.quick2bottom:hover, a.action.quick2top:hover {
-	background-color:#f93;
-}
-.pageactions .pageinfo a.action:hover {
-	background-color:transparent;
+a.action:hover, #user a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
+	background-color:#f93 !important;
 }
 
 a.action.home,
@@ -748,14 +774,22 @@ a.action.workflow,
 a.action.login,
 a.action.logout {
 }
+a.action.more {
+	background:#eee;
+	margin:-1px 0;
+	border:1px solid #bbb;
+	border-bottom:none;
+}
 
 a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
 	padding:0; 
 	text-indent:20px;
  	width:20px; 
+ 	margin:0 0 0 2px;
 }
 a.action.quick2top {
+	float:right;
  	background:url(images/arrup.png) no-repeat 3px 3px;
 }
 a.action.quick2bottom {
@@ -785,10 +819,11 @@ a.action.quick2bottom {
 	margin:0 0.5em;
 }
 .searchbox {
-	margin:0 0 0 0.5em;
+	margin:0.5em 0 0 0.5em;
 }
 #searchSubmit {
-	margin:0; padding:0;
+	margin:0; 
+	padding:0;
 	width:16px; 
 	height:16px;
 	border:none;
@@ -801,8 +836,8 @@ a.action.quick2bottom {
 	position:absolute;
 	padding:0.25em;
 	z-index:15;
-	right:2em;
-	top:3.5em;
+	right:4em;
+	top:5.5em;
 	background:white;
 	border:2px solid #bbb;
 }
@@ -1076,7 +1111,7 @@ table.calendar tr.weekdays {
 .togglemenu {
 	color:gray;
 	font-weight:bold; 
-	margin-top:1em;
+	margin:1em 0 -1px 0;
 	padding:0.25em 0.5em;
 }
 .togglemenu .toggle {
@@ -1094,7 +1129,6 @@ table.calendar tr.weekdays {
 	color:black;
 } 
 .tabbedAccordion {
-	border:1px solid #bbb;
 	padding:0.5em;
 }
 /* ie only hack no needed ?
@@ -1203,6 +1237,9 @@ div.collapse li {
 	padding:0.25em 0.5em;
 }
 .collapsetitle {
+}
+.collapsetitle:hover {
+	background:#eee;
 }
 .collapsebody {
 	margin:0 1em;	 
