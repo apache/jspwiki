@@ -29,7 +29,10 @@
 		Pending stuff: allow configurable 'quick-links' to be added next to and 
 		inside the More... menu. Skins may not yet be up to date with all changes 
 		- expect some glitches here and there.
-
+		
+		* Added link to 'View source page' to the More menu. New i18n property:`
+		actions.rawpage=View Page Source
+		
         * Fixed the Diff dropdown selectors when no parameters (r1 and r2) are provided.
 
         * Editor/Posteditor improvements:
@@ -45,6 +48,8 @@
         All posteditor functions are now also undo-able.
         
         The Posteditor now correctly handles Shift+right-arrow in Firefox. (Bug 91)
+        
+        * Fixed Bug 86 Commentbox and Tabbedsection not playing well (reported by Alex Samad)
 
         
 2007-07-20  Janne Jalkanen <jalkanen@ecyrd.com>

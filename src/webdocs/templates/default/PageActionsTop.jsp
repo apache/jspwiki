@@ -137,7 +137,7 @@
     </wiki:CheckRequestContext>
 
     <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
-       title="<fmt:message key='actions.rawpage.title' />">View page source<fmt:message key='actions.rawpage' />
+       title="<fmt:message key='actions.rawpage.title' />"><fmt:message key='actions.rawpage' />
     </option>
   
 
