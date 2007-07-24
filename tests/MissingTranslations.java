@@ -42,9 +42,9 @@ public class MissingTranslations
 
         System.out.println("Missing Properties in " + other + ":");
         System.out.println("------------------------------------");
-        Enumeration enum = p.propertyNames();        
-        while(enum.hasMoreElements()) {
-            String name = (String)enum.nextElement();
+        Enumeration enm = p.propertyNames();        
+        while(enm.hasMoreElements()) {
+            String name = (String)enm.nextElement();
             String value = p.getProperty(name);
             
             if (p2.get(name) == null) {
