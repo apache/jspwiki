@@ -69,7 +69,7 @@ public class RSSCoffeeCupLinkTag
             JspWriter out = pageContext.getOut();
             out.print("<a href=\"http://127.0.0.1:5335/system/pages/subscriptions/?url="+rssURL+"\">");
             out.print("<img src=\""+engine.getBaseURL()+"images/xmlCoffeeCup.png\"");
-            out.print("border=\"0\" title=\""+getTitle()+"\"/>");
+            out.print("title=\""+getTitle()+"\"/>");
             out.print("</a>");
         }
 

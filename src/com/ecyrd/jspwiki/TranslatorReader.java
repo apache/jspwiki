@@ -2639,7 +2639,7 @@ public class TranslatorReader extends Reader
 
                 result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
                          "<a href=\""+infolink+
-                         "\"><img src=\""+imglink+"\" border=\"0\" alt=\"(info)\"/></a>";
+                         "\"><img src=\""+imglink+"\" alt=\"(info)\"/></a>";
                 break;
 
               default:

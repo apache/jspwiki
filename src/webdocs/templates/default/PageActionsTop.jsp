@@ -4,37 +4,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
-  String frontpage = c.getEngine().getFrontPage(); 
+  //WikiContext c = WikiContext.findContext(pageContext);
+  //String frontpage = c.getEngine().getFrontPage(); 
 %>
 
 <%-- similar to PageActionsBottom, except for accesskeys, More... dropdown, quick2Bottom --%>
 <div id="actionsTop" class="pageactions"> 
   <form class="wikiform" method="get" action="" >
   <ul>
-  <li>
-  <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
-    class="action home"
-    title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><%=frontpage%></a>
-  </li>
-  
-<%--
-  <wiki:CheckRequestContext context='edit'>
-  <li>
-      <wiki:PageType type="page">
-        <a href="<wiki:Link format='url' />" accesskey="v" class="action view"
-          title="<fmt:message key='actions.view.title'/>"><fmt:message 
-            key='actions.view'/></a>
-      </wiki:PageType>
-      <wiki:PageType type="attachment">
-        <a href="<wiki:LinkToParent format='url' />" accesskey="v" class="action view"
-          title="<fmt:message key='actions.viewparent.title'/>"><fmt:message 
-            key='actions.view'/></a>
-      </wiki:PageType>
-  </li>
-  </wiki:CheckRequestContext>
- --%>
-  <%--
+
   <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
 	<li>
@@ -49,27 +27,6 @@
     </li>
     </wiki:Permission>
   </wiki:CheckRequestContext>
-  --%>
-  
-  <%--
-  <wiki:UserCheck status="notAuthenticated">
-  <wiki:CheckRequestContext context='!login'>
-    <wiki:Permission permission="login">
-	<li>
-        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>" class="action login"
-          title="<fmt:message key='actions.login.title'/>"><fmt:message key="actions.login"/></a>
-	</li>
-    </wiki:Permission>
-  </wiki:CheckRequestContext>
-  </wiki:UserCheck>
-
-  <wiki:UserCheck status="authenticated">
-	<li>
-      <a href="<wiki:Link jsp='Logout.jsp' format='url' />" class="action logout"
-        title="<fmt:message key='actions.logout.title'/>"><fmt:message key="actions.logout"/></a>
-    </li>
-  </wiki:UserCheck>
-  --%>
 
   <%-- FIXME : to be moved into tabs of UserPreferences --%>
   <wiki:CheckRequestContext context='viewGroup'>
@@ -105,16 +62,6 @@
       onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
     <option class="actionsMore" value="" selected='selected'><fmt:message key="actions.more"/></option>
 
-    <%--
-    <wiki:CheckRequestContext context='!prefs'>
-    <wiki:CheckRequestContext context='!preview'>
-      <option class="action prefs" value="<wiki:Link jsp='UserPreferences.jsp' format='url' />">
-        <fmt:message key="actions.prefs" />
-      </option>
-    </wiki:CheckRequestContext>
-    </wiki:CheckRequestContext>
-    --%>
-    
     <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:PageExists>  
     <wiki:Permission permission="comment">
@@ -132,14 +79,24 @@
     </wiki:PageExists>  
     </wiki:CheckRequestContext>
     
-    <wiki:CheckRequestContext context='view|info|diff|upload|login|edit'>
-    <option value="separator" disabled="disabled" ><fmt:message key='actions.separator' /></option>
-    </wiki:CheckRequestContext>
-
     <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
        title="<fmt:message key='actions.rawpage.title' />"><fmt:message key='actions.rawpage' />
     </option>
   
+    <wiki:UserCheck status="authenticated">
+      <option class="action workflow" value="<wiki:Link jsp='Workflow.jsp' format='url' />" 
+        title="<fmt:message key='actions.workflow.title' />"><fmt:message key='actions.workflow' />
+      </option>
+
+    </wiki:UserCheck>
+
+    <wiki:Permission permission="createGroups">
+      <option class="action creategroup" value="<wiki:Link jsp='NewGroup.jsp' format='url' />" 
+        title="<fmt:message key='actions.creategroup.title' />"><fmt:message key='actions.creategroup' />
+      </option>
+    </wiki:Permission>
+
+    <option value="separator" disabled="disabled" ><fmt:message key='actions.separator' /></option>
 
     <option class="action index" value="<wiki:LinkTo page='PageIndex' format='url' />"
        title="<fmt:message key='actions.index.title' />"><fmt:message key='actions.index' />
@@ -155,29 +112,17 @@
     </option>
     --%>
     
-    <wiki:UserCheck status="authenticated">
-      <option value="separator" disabled="disabled" class="actionSeparator"><fmt:message key='actions.separator' /></option>
-
-      <option class="action workflow" value="<wiki:Link jsp='Workflow.jsp' format='url' />" 
-        title="<fmt:message key='actions.workflow.title' />"><fmt:message key='actions.workflow' />
-      </option>
-
-    </wiki:UserCheck>
-
-    <wiki:Permission permission="createGroups">
-      <option class="action creategroup" value="<wiki:Link jsp='NewGroup.jsp' format='url' />" 
-        title="<fmt:message key='actions.creategroup.title' />"><fmt:message key='actions.creategroup' />
-      </option>
-    </wiki:Permission>
 
   </select>
   </li>
   <li id="morebutton">
     <a href="#" class="action more"><fmt:message key="actions.more"/></a>
   </li>
+<%--
   <li>
     <a class="action quick2bottom" href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a>
   </li>
+--%>
   </ul>
 
   </form>

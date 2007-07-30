@@ -343,53 +343,6 @@
     </wiki:CheckVersion>
   </wiki:Tab>
 
-  <%--
-  <wiki:Tab id="incomingLinks" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab.links")%>">
-	<table class="wikitable">
-	<tr>
-	<th><fmt:message key="info.tab.incoming" /></th>
-	<th><fmt:message key="info.tab.outgoing" /></th>
-	</tr>
-	<tr>
-	<td>
-    <wiki:LinkTo><wiki:PageName /></wiki:LinkTo>
-    <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
-	</td>
-	<td>
-    <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
-	</td>
-	</tr>
-	</table>
-  </wiki:Tab>
-
-  <wiki:Tab id='diffcontent' title='<%=LocaleSupport.getLocalizedMessage(pageContext, "diff.tab")%>'
-           url='<%=c.getURL(WikiContext.DIFF, c.getPage().getName() )%>' 
-     accesskey='d'>  
-  </wiki:Tab>
-  --%>
-
-
-  <%--
-  <wiki:CheckRequestContext context='view|info|diff|upload'>
-  --%>
-    <wiki:Permission permission="edit">
-      <wiki:PageType type="page">
-        <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.edit")%>'
-           url="<%=c.getURL(WikiContext.EDIT, c.getPage().getName())%>"
-           accesskey="e" >
-        </wiki:Tab>
-      </wiki:PageType>
-      <wiki:PageType type="attachment">
-        <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"actions.editparent.title")%>'
-           url="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"
-           accesskey="e" >
-        </wiki:Tab>
-      </wiki:PageType>
-    </wiki:Permission>
-  <%--
-  </wiki:CheckRequestContext>    
-  --%>
-
   </wiki:TabbedSection>
 
 </wiki:PageType>
@@ -407,7 +360,6 @@
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>' 
      accesskey="v" 
 	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
-      <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
 
   <wiki:Tab id="info" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>" accesskey="i" >
@@ -457,7 +409,6 @@
   </wiki:Permission>
 
   <wiki:Permission permission="delete">
-
     <h3><fmt:message key="info.deleteattachment"/></h3>
     <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
            class="wikiform"
@@ -469,7 +420,6 @@
            value="<fmt:message key='info.deleteattachment.submit' />" />
      </div>
     </form>
-
   </wiki:Permission>
 
   <%-- FIXME why not add pagination here - no need for large amounts of attach versions on one page --%>

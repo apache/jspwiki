@@ -10,6 +10,24 @@
 
 <div id="favorites">
   <div id="user">
+  <div class="username">
+    <wiki:UserCheck status="anonymous">
+      <fmt:message key="fav.greet.anonymous" />
+    </wiki:UserCheck>
+    <wiki:UserCheck status="asserted">
+      <fmt:message key="fav.greet.asserted">
+        <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+        <%--
+        <fmt:param><wiki:LinkTo page='UserPreferences'><wiki:UserName/></wiki:Link></fmt:param>
+        --%>
+      </fmt:message>
+    </wiki:UserCheck>
+    <wiki:UserCheck status="authenticated">
+      <fmt:message key="fav.greet.authenticated">
+        <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+      </fmt:message>
+    </wiki:UserCheck>
+  </div>
   <wiki:UserCheck status="notAuthenticated">
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">
@@ -29,32 +47,15 @@
   <wiki:CheckRequestContext context='!prefs'>
   <wiki:CheckRequestContext context='!preview'>
     <a href="<wiki:Link jsp='UserPreferences.jsp' format='url' ><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>"
-    class="action prefs" >
-      <fmt:message key="actions.prefs" />
+      class="action prefs" accesskey="p"
+      title="<fmt:message key='actions.prefs.title'/>"><fmt:message key="actions.prefs" />
     </a>
   </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
 
-  <div class="username">
-    <wiki:UserCheck status="anonymous">
-      <fmt:message key="fav.greet.anonymous" />
-    </wiki:UserCheck>
-    <wiki:UserCheck status="asserted">
-      <fmt:message key="fav.greet.asserted">
-        <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
-        <%--
-        <fmt:param><wiki:LinkTo page='UserPreferences'><wiki:UserName/></wiki:Link></fmt:param>
-        --%>
-      </fmt:message>
-    </wiki:UserCheck>
-    <wiki:UserCheck status="authenticated">
-      <fmt:message key="fav.greet.authenticated">
-        <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
-      </fmt:message>
-    </wiki:UserCheck>
-  </div>
   <div style="clear:both;"></div>
   </div>
+  
   <wiki:CheckRequestContext context='!login'>
   <wiki:UserCheck status="known">
   <wiki:Translate>[{TEST page='{$username}Favorites'

@@ -60,12 +60,36 @@
   </wiki:UserCheck>
 
   <tr>
+  <td><label for="editor"><fmt:message key="edit.chooseeditor"/></label></td>
+  <td>
+    <select id="editor" name="editor">
+      <wiki:EditorIterator id="edt">
+        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
+      </wiki:EditorIterator>
+  </select>
+  </td>
+  </tr>
+  
+  <tr>
   <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
   <td>
   <select id="prefSkin" name="prefSkin">
     <c:forEach items="${skins}" var="i">
       <option value='<c:out value='${i}'/>' <c:if test='${i == prefs["SkinName"]}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
     </c:forEach>
+  </select>
+  </td>
+  </tr>
+
+  <tr>
+  <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label></td>
+  <td>
+  <select id="prefOrientation" name="prefOrientation" onchange="Wiki.changeOrientation();">
+      <option value='fav-left' <c:if test='${"fav-left" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
+      <option value='fav-right' <c:if test='${"fav-right" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
+  <%--
+      <option value='fav-hide' <c:if test='${"fav-hide" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.fav-hide"/></option>
+  --%>
   </select>
   </td>
   </tr>
@@ -80,17 +104,6 @@
 		  title="<fmt:message key='pref.fontsize.title.reset' />"></input>
 	<input type="button" value="+" onclick="Wiki.changeFontSize(1);"
 		  title="<fmt:message key='pref.fontsize.title.up' />"></input>
-  </td>
-  </tr>
-  
-  <tr>
-  <td><label for="editor"><fmt:message key="edit.chooseeditor"/></label></td>
-  <td>
-    <select id="editor" name="editor">
-      <wiki:EditorIterator id="edt">
-        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
-      </wiki:EditorIterator>
-  </select>
   </td>
   </tr>
   
@@ -244,6 +257,7 @@
   <td>&nbsp;</td>
   <td>
     <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" />
+    <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
     <input type="hidden" name="action" value="setAssertedName" />
     <%-- remove this ?? 
     <wiki:UserCheck status="anonymous">

@@ -260,17 +260,20 @@ var Wiki = {
     	if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
     	if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
     	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
+    	if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
+		this.prefs.set('FontSize',this.PrefFontSize);
 	},
 	changeFontSize: function(incr){
 	  	this.PrefFontSize += incr;
-		this.prefs.set('FontSize',this.PrefFontSize);
 		$E('body').setStyle('font-size',this.PrefFontSize);
 	},
 	resetFontSize: function(){
 		this.PrefFontSize=this.DefaultFontSize;
 		this.changeFontSize(0);
 	},
-
+	changeOrientation: function(){
+		$('content').className = $('prefOrientation').value;
+	},
 	replaceMoreBox: function(){
 		var more = $('morebutton');
 			popup = new Element('ul').inject(more), 
@@ -293,7 +296,22 @@ var Wiki = {
 		select.getParent().hide();
 		more.show()
 		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
-			.addEvent('mouseover',(function(){ hover.start(0.9) }).bind(this));
+			.addEvent('mouseover',(function(){ Wiki.locatemenu(more,popup); hover.start(0.9) }).bind(this));
+	},
+
+	locatemenu: function(base,el){
+		var win = {'x': window.getWidth(), 'y': window.getHeight()},
+			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
+			corner = {'x': base.offsetLeft, 'y': base.offsetTop},
+			offset = {'x': base.offsetWidth-el.offsetWidth, 'y': base.offsetHeight },
+			popup = {'x': el.offsetWidth, 'y': el.offsetHeight},
+			prop = {'x': 'left', 'y': 'top'};
+
+		for (var z in prop){
+			var pos = corner[z] + offset[z]; /*top-left corner of base */
+			if ((pos + popup[z] - scroll[z]) > win[z]) pos = win[z] - popup[z] + scroll[z];
+			el.setStyle(prop[z], pos);
+		};
 	},
 
 	parseLocationHash: function(){
@@ -424,7 +442,7 @@ var WikiSlimbox = {
 			$ES(filter.join(','),slim).each(function(el){
 				var href = el.src||el.href;
 				var rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
-				if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$')) return;
+				if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$','i')) return;
 				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
 				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
 					.injectBefore(el);
@@ -829,6 +847,15 @@ var QuickLinks = {
 var TabbedSection = {
 
 	onPageLoad: function(){
+
+		// charge existing tabmenu's with click handlers
+		$$('.tabmenu a').each(function(el){
+			if(el.href) return;
+			var tab = $(el.id.substr(5)); //drop 'menu-' prefix
+			el.addEvent('click', this.clickTab.bind(tab) );
+		},this);	
+	
+		// convert tabbedSections into tabmenu's with click handlers
 		$$('.tabbedSection').each( function(tt){
 			tt.addClass('tabs'); //css styling is on tabs
 			var tabmenu = new Element('div',{'class':'tabmenu'}).injectBefore(tt);
@@ -837,43 +864,41 @@ var TabbedSection = {
 				if( !tab.className.test('^tab-') ) return;
 
 				if( !tab.id || (tab.id=="") ) tab.id = tab.className;
-				var title = tab.className.substr(4).deCamelize();
+				var title = tab.className.substr(4).deCamelize(); //drop 'tab-' prefix
 
 				//use class to make tabs visible during printing !
-				(i==0) ? tab.removeClass('hidetab'): tab.addClass('hidetab');
+				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
-				var span = new Element('span').inject(tabmenu);
-				var menu = new Element('a')
-					.setProperties({'id':'menu-'+tab.id, 'href':'javascript:void(0)'})
-					.addEvent('click',function(){ TabbedSection.onclick(tab.id); })
-					.appendText(title)
-					.inject(span);
+				new Element('div',{'styles':{'clear':'both'}}).injectInside(tab);
+
+				var menu = new Element('a', {
+					'id':'menu-'+tab.id, 
+					'events':{ 'click': this.clickTab.bind(tab)  }
+				}).appendText(title).inject(tabmenu);
 				if( i==0 ) menu.addClass('activetab');        
-			});
+			},this);
 		}, this);
 	},
 
-	onclick: function(tabID){
-		var tab = $(tabID), 
-			tabs = $(tab.parentNode),
-			menu = $('menu-'+tab.id);
-
-		for(var t=tabs.getFirst(); t; t=t.getNext()){
-			if( !t.id ) continue;
-			var m = $('menu-'+t.id);
-			if( !m || !m.hasClass('activetab') ) continue;
-
-			if( t.id == tabID ) break; //already active
-			m.removeClass('activetab');      
-			menu.addClass('activetab');
-			t.addClass('hidetab');
-			tab.removeClass('hidetab').show();
-			break;
-		}
-		/*
-		location.hash=tabID; //nok screens jumps to much
-		*/
+	clickTab: function(){
+		var menu = $('menu-'+this.id);
+		this.getParent().getChildren().some( function(el){
+			if(el.id){
+				var m = $('menu-'+el.id);
+				if( m && m.hasClass('activetab') ) {
+					if( el.id != this.id ) {
+						m.removeClass('activetab');      
+						menu.addClass('activetab');
+						el.addClass('hidetab');
+						this.removeClass('hidetab').show();
+					}
+					return true;
+				}
+			}
+			return false;
+		},this);		
 	}
+	
 }
 
 /** 132 Accordion for Tabs, Accordeons, CollapseBoxes
@@ -948,15 +973,15 @@ var SearchBox = {
 	    this.query = q; 
 	    q.observe(this.ajaxQuickSearch.bind(this) ); 
 
+		this.hover = $('searchboxMenu').setProperty('visibility','visible')
+			.effect('opacity', {wait:false}).set(0);
+    
 		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
 			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
 			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))
-			  .addEvent('mouseover',function(){ this.hover.start(0.9) }.bind(this));
+			  .addEvent('mouseover',function(){ Wiki.locatemenu(this.query, $('searchboxMenu') ); this.hover.start(0.9) }.bind(this));
 		
-		this.hover = $('searchboxMenu').setProperty('visibility','visible')
-			.effect('opacity', {wait:false}).set(0);
-    
 		/* use advanced search-input on safari */
 		if(window.xwebkit){
 			q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
@@ -1052,6 +1077,7 @@ var SearchBox = {
 					).injectInside(frag);
 				});
 				$('searchOutput').empty().adopt(frag);
+				Wiki.locatemenu( $('query'), $('searchboxMenu') );
 		});
 	} ,
 
@@ -2082,7 +2108,7 @@ var WikiPrettify = {
 window.addEvent('load', function(){
 
 	Wiki.onPageLoad();
-	//WikiReflection.onPageLoad(); //before accordion cause impacts height!
+	WikiReflection.onPageLoad(); //before accordion cause impacts height!
 	WikiAccordion.onPageLoad();
 
 	TabbedSection.onPageLoad(); //after coordion or safari

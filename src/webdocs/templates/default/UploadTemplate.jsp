@@ -47,14 +47,6 @@
            accesskey="i" >
         </wiki:Tab>
 
-        <wiki:Permission permission="edit">
-          <wiki:PageType type="page">
-            <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.edit")%>'
-                     url="<%=c.getURL(WikiContext.EDIT, c.getPage().getName())%>"
-               accesskey="e" >
-            </wiki:Tab>
-          </wiki:PageType>
-            
           <wiki:PageType type="attachment">
             <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"actions.editparent.title")%>'
                      url="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"

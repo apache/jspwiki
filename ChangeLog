@@ -1,3 +1,45 @@
+2007-07-30  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.108 - template changes & usability
+        
+        * The 'Edit' button is now back in its previous position. (after recent popularity poll ;-)
+        The 'More' button now has a little down-icon as visual clue that it's actually a dropdown.
+        The GoTo-Bottom triangle has been removed (reduce screen clutter, not used much anyway)
+        The GoTo-Top button is still there.
+        The 'Login', 'Logout' and 'My prefs' are put below Greeting, which is more natural.
+        (with still 2 different approachs in the default and Smart skin)
+        
+        * New preference added to select Left/Rigth position the Favoristes menu.
+        The position of the 'More' menu and 'Find/Recentchanges' dropdowns is now calculated on the fly.
+
+        prefs.user.orientation=Favorites style
+        prefs.user.orientation.left=Left
+        prefs.user.orientation.right=Left
+
+        * Smart and OrderedList skins are now aligned with latest GUI changes
+        
+        *  After setting new UserPreferences, you get now redirected back to the page you came from.
+        (similar to login)
+        
+        * XHTML compliance improvements.
+        Border settings have been removed from img elements. (RecentChangesPlugin, 
+        RSSCoffeeCupLinkTag, TranslatorReader)
+        Replace all <u> in default.properties by <span class="accesskey">
+
+        editor.plain.name=Your <span class='accesskey'>n</span>ame
+        editor.plain.email=Homepage or e<span class='accesskey'>m</span>ail
+        actions.edit=<span class='acceskey'>E</span>dit
+        actions.editparent=<span class='acceskey'>E</span>dit parent page
+        actions.prefs=My <span class='acceskey'>P</span>refs
+        actions.prefs.title=Manage user preferences [ p ]
+        
+        * The attachment img viewers now alos supports capitalised extensions 
+        (eg both jpg and JPG can be reviewed)
+        
+        * Small refactorings on the Tabbed Sections. (simplified TabTag html)
+        All content inside a tab, also the floated content, will nicely fint inside the tab.
+        (ref bug 101)
+
 2007-07-24  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * Updated spanish (es_ES) translation.

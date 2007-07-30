@@ -1,23 +1,21 @@
 /*
  * CSS intended specificly for print media
  */
- 
 .applicationlogo, .companylogo,
 .searchbox, .breadcrumbs, .pageactions, .quicklinks,
 #actionsTop, #actionsBottom, #favorites,
 .collapsebox .collapseOpen, .collapsebox .collapseClose, 
-.table-filter .filterrow,
-.tabmenu { 
+.table-filter .filterrow, .tabmenu { 
 	display:none; 
 }
-
 #attachments, #addcomment,
 #pagelinks, #pagecontent, 
 #editcontent, #previewcontent, #diffcontent, #infocontent,
-#findquery, #userPrefs { 
-	display:block; visibility:visible; 
+#findquery, #userPrefs, 
+#pagecontent .tabmenu { 
+	display:block;
+	visibility:visible; 
 }
-
 tt,pre {
 	overflow:visible; 
 }
@@ -41,15 +39,11 @@ a:after 		{ content:attr(href); color:grey;
 	position:static;
 }
 
-.tabs { 
-	border:none; 
-}
-
 .hidetab { 
 	display:block; 
+	height:auto;
 	border-top:1px solid #bbb; 
 }
-
 .accordion .active, .tabbedAccordion .active { 
 	height:auto !important;
 }

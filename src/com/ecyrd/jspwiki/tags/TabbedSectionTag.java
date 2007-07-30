@@ -131,7 +131,7 @@ public class TabbedSectionTag extends BodyTagSupport
                 m_buffer.append( "<div class=\"tabs\">" );
                 m_buffer.append( bodyContent.getString() );
                 bodyContent.clearBody();
-                m_buffer.append( "<div style=\"clear:both; height:0px;\" > </div>\n</div>\n" );
+                m_buffer.append( "<div style=\"clear:both;\" ></div>\n</div>\n" );
             }
             return SKIP_BODY;
         }

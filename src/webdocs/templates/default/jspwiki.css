@@ -57,7 +57,7 @@
 }
 #favorites {
 	float:left;
-	margin-top:1em;
+	margin-top:2em;
 	width:18%;
 }
 #footer {
@@ -68,10 +68,10 @@
 #content { 
 	margin-top:1em;
 }
-#content.favp #page, #content.pfav #favorites {
+#content.fav-left #page, #content.fav-right #favorites {
 	float:right;
 }
-#content.pfav #page, #content.favp #favorites {
+#content.fav-right #page, #content.fav-left #favorites {
 	float:left;
 }
 #page { 
@@ -105,7 +105,7 @@ fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
 }
 /* remember to define focus styles! */
 :focus {
-	outline: 0;
+	outline:0;
 }
 body { 
 	color:black; 
@@ -120,7 +120,7 @@ table {
 	empty-cells:show; 
 }
 
-h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr {
+h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr, .quote {
 	margin:0.5em 0; 
 }
 th, td { 
@@ -175,7 +175,6 @@ dl dd {
 }
 legend, label {
 	font-weight:bold;
-	font-size:90%;
 	white-space:nowrap;
 	padding-right:0.5em;
 }
@@ -384,7 +383,6 @@ td .error {
 .zebra-table tr.odd td {
 	background-color:#eee;
 }
-
 .wikitable * td.split {
 	border-top:1px solid #d9d9d9;
 } /* CHECK */
@@ -465,7 +463,6 @@ td .error {
 #attach-swf {
 	background-image:url(images/page_white_flash.png);
 }
-
 #attach-mov {
 	background-image:url(images/film.png);
 }
@@ -539,15 +536,6 @@ td.diff {
 
 
 /* +++ 425 Edit/EditContent and CommentContent +++ */
-#menu-edit {
-	border:none;
-	background:none;
-	margin:0;
-	color:blue;
-}
-#menu-edit:hover {
-
-}
 body.edit {
 } 
 body.comment {
@@ -582,7 +570,7 @@ a.tool {
 	margin-right:2px;
 	text-decoration: none;
 }
-a.tool:hover, .btn:hover, #menu-edit:hover {
+a.tool:hover, .btn:hover {
 	background-color:#f93 !important;
 }
 #editassist a.tool {
@@ -635,14 +623,11 @@ body.edit textarea {
 /* +++ 440 Favorites +++ */
 #user a.action, #user .username {
 	float:left;
-	background:#eee;
-	border:1px solid #bbb;
 	padding:0.25em 0.5em;
-	margin:0 1px;
+	line-height:normal;
 }
 #user .username {
 	font-style:italic;
-	border:1px solid white;
 }
 .wikiversion,
 .rssfeed {
@@ -733,7 +718,7 @@ th.changenote, td.changenote {
 }
 .pageactions li ul {
 	position:absolute;
-	right:2.5em;
+	left:0; /*right:2.5em; */
 	background:white;
 	border:2px solid #bbb;
 	z-index:10;
@@ -750,12 +735,12 @@ a.action {
 	display:block;
 	padding:0.25em 0.5em;
 	text-decoration: none;
+	line-height:normal;
 }
 a.action:hover, #user a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#f93 !important;
 }
 
-a.action.home,
 a.action.view,
 a.action.edit,
 a.action.comment,
@@ -774,13 +759,21 @@ a.action.workflow,
 a.action.login,
 a.action.logout {
 }
+#user a.action,
+a.action.edit,
 a.action.more {
+	margin-left:4px;
+	border:1px solid #bbb;		
 	background:#eee;
-	margin:-1px 0;
-	border:1px solid #bbb;
+}
+a.action.edit,
+a.action.more {
 	border-bottom:none;
 }
-
+a.action.more {
+	padding-right:1.5em;
+	background: #eee url(images/arrdown-small.png) 95%  center  no-repeat;
+}
 a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
 	padding:0; 
@@ -836,7 +829,7 @@ a.action.quick2bottom {
 	position:absolute;
 	padding:0.25em;
 	z-index:15;
-	right:4em;
+	left:0; /*right:4em;*/
 	top:5.5em;
 	background:white;
 	border:2px solid #bbb;
@@ -1053,9 +1046,8 @@ table.calendar tr.weekdays {
 	margin-bottom:0.5em;
 }
 .tabmenu {
-	padding:0.25em 1em;
+	padding:0 1em;
 	font-weight:bold;
-	line-height:normal;
 } 
 /* nested tabs should not allow floated stuff to appear next to the tabmenu - ugh */
 .tabs .tabmenu {
@@ -1091,7 +1083,8 @@ table.calendar tr.weekdays {
 
 
 /* +++ 910 Accordion +++ */
-.accordion,  .tabbedAccordion {
+.accordion, .tabbedAccordion {
+	clear:both;
 	border:1px solid #bbb;
 	margin-bottom:0.5em;
 }
@@ -1109,17 +1102,18 @@ table.calendar tr.weekdays {
 	padding:0 1em;
 }
 .togglemenu {
+    clear:both; /* check out */
 	color:gray;
 	font-weight:bold; 
-	margin:1em 0 -1px 0;
 	padding:0.25em 0.5em;
 }
 .togglemenu .toggle {
+	float:left;
 	background:#eee;
 	border:1px solid #bbb;
 	cursor:pointer;
 	display:inline;
-	margin-left:-1px;
+	margin:0 0 -1px -1px;
 	padding:0.25em 0.5em;
 }
 .togglemenu .toggle.active {
@@ -1225,7 +1219,7 @@ div.collapse li {
 .collapsebox {
 	border:1px solid #bbb;
 	position:relative;
-	margin:1em 0;
+	margin:0 0 1em 0;
 	overflow:hidden;
 }
 /*IE bug -- set width to ensure position:relative working properly */

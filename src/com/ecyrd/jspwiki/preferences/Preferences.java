@@ -66,6 +66,7 @@ public class Preferences
         prefs.put("SkinName", "PlainVanilla" );
         prefs.put("DateFormat", "dd-MMM-yyyy HH:mm" );
         prefs.put("TimeZone", java.util.TimeZone.getDefault().getID() );
+        prefs.put("orientation", "fav-left" );
                 
        // Preferences prefs = parseCookiePreferences( (HttpServletRequest) pageContext.getRequest() );
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );

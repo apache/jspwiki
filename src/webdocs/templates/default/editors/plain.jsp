@@ -121,9 +121,9 @@
 	<%--
       <label title="<fmt:message key='editor.plain.posteditor.title'/>"><fmt:message key='editor.plain.posteditor'/></label>
     --%>
-      <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>"/>
+      <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
       <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
-      <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>"/>
+      <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>
       <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>	  
 	  </div>
     </div>
@@ -138,7 +138,7 @@
     <p>
     <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
     <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
-    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
+    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>/>
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
     <p>

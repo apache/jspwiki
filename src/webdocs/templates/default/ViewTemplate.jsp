@@ -30,7 +30,7 @@
 
   <wiki:Include page="Header.jsp" />
 
-  <div id="content" class="favp">
+  <div id="content" class='${prefs['orientation']}'>
 
     <div id="page">
       <wiki:Include page="PageActionsTop.jsp"/>

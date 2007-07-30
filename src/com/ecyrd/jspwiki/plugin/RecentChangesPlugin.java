@@ -104,7 +104,7 @@ public class RecentChangesPlugin
             DateFormat tfmt = getTimeFormat(params);
 
             table rt = new table();
-            rt.setBorder(0).setCellPadding(spacing).setClass("recentchanges");
+            rt.setCellPadding(spacing).setClass("recentchanges");
 
             for( Iterator i = changes.iterator(); i.hasNext(); )
             {
@@ -145,7 +145,7 @@ public class RecentChangesPlugin
                 if( pageref instanceof Attachment )
                 {
                     linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
-                    linkel.addElement( new img().setBorder(0).setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
+                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
 
                     col.addElement( linkel );
                 }

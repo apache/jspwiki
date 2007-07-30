@@ -9,8 +9,8 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
-  String progressId = wikiContext.getEngine().getProgressManager().getNewProgressIdentifier();
+  WikiContext c = WikiContext.findContext(pageContext);
+  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
 <h3><fmt:message key="attach.add"/></h3>

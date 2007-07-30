@@ -67,7 +67,12 @@
         }
         if ( wikiSession.getMessages( "profile" ).length == 0 )
         {
-            response.sendRedirect( wiki.getViewURL(null) );
+            String redirectPage = request.getParameter( "redirect" );
+            String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+
+            log.info( "Redirecting user to " + viewUrl );
+            response.sendRedirect( viewUrl );
+            //response.sendRedirect( wiki.getViewURL(null) );
             return;
         }
     }
@@ -76,7 +81,13 @@
         Preferences.reloadPreferences(pageContext);
         String assertedName = request.getParameter("assertedName");
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
-        response.sendRedirect( wiki.getViewURL(null) );
+
+        String redirectPage = request.getParameter( "redirect" );
+        String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+
+        log.info( "Redirecting user to " + viewUrl );
+        response.sendRedirect( viewUrl );
+        //response.sendRedirect( wiki.getViewURL(null) );
         return;
     }
     if( "clearAssertedName".equals(request.getParameter("action")) )

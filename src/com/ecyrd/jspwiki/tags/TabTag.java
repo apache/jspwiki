@@ -146,7 +146,7 @@ public class TabTag extends WikiTagBase
 
         if( !parent.validateDefaultTab( m_tabID) )
         {
-            sb.append( " style=\"display:none;\"" );
+            sb.append( " class=\"hidetab\"" );
         }
         sb.append( " >\n" );
 
@@ -182,7 +182,7 @@ public class TabTag extends WikiTagBase
         }
         else if( parent.isStateGenerateTabMenu() )
         {
-            sb.append( "<span><a" );
+            sb.append( "<a" );
 
             if( parent.validateDefaultTab( m_tabID ) )
             {
@@ -195,10 +195,6 @@ public class TabTag extends WikiTagBase
             {
                 sb.append( " href='"+m_url+"'" );
             }
-            else
-            {
-                sb.append( " onclick=\"TabbedSection.onclick(\'" + m_tabID + "\')\"" );
-            }
 
             if( handleAccesskey() )
             {
@@ -207,7 +203,7 @@ public class TabTag extends WikiTagBase
 
             sb.append( " >" );
             sb.append( m_tabTitle );
-            sb.append( "</a></span>" );
+            sb.append( "</a>" );
         }
 
         try
