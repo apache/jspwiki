@@ -1,10 +1,10 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="java.util.Collection" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
@@ -21,116 +21,9 @@
   Logger log = Logger.getLogger("JSPWikiSearch");
   WikiEngine wiki;
 %>
-<%!  
-  // FIXME: this should better be something like a wiki:Pagination TLD tag
-  // FIXME: how to i18n
-  //
-  // 0 20 40 60
-  // 0 20 40 60 80 next
-  // previous 20 40 *60* 80 100 next
-  // previous 40 60 80 100 120
-
-  /* makePagination : return html string with pagination links 
-   *    (eg:  previous 1 2 3 next)
-   * startitem  : cursor
-   * itemcount  : total number of items
-   * pagesize   : number of items per page
-   * maxpages   : number of pages directly accessible via a pagination link
-   * linkAttr : html attributes of the generated links: use '%s' to replace with item offset
-   */
-  String wiki_Pagination( int startitem, int itemcount, int pagesize, int maxpages, String linkAttr, PageContext pageContext )
-  {    
-    if( itemcount <= pagesize ) return null; 
-  
-    int maxs = pagesize * maxpages;
-    int mids = pagesize * ( maxpages / 2 );
-
-    StringBuffer pagination = new StringBuffer();
-    pagination.append( "<div class='pagination'>");
-    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination") );
-
-
-    int cursor = 0;
-    int cursormax = itemcount;
- 
-    if( itemcount > maxs )   //need to calculate real window ends
-    { 
-      if( startitem > mids ) cursor = startitem - mids;
-      if( (cursor + maxs) > itemcount ) 
-        cursor = ( ( 1 + itemcount/pagesize ) * pagesize ) - maxs ; 
-      
-      cursormax = cursor + maxs;
-    }
-               
-    if( (startitem == -1) || (cursor > 0) ) 
-      appendLink ( pagination, linkAttr, 0, pagesize, 
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.first"), pageContext );
-    if( (startitem != -1 ) && (startitem-pagesize >= 0) ) 
-      appendLink( pagination, linkAttr, startitem-pagesize, pagesize, 
-                  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.previous"), pageContext );
-
-    if( startitem != -1 )
-    {
-      while( cursor < cursormax )
-      {
-        if( cursor == startitem ) 
-        { 
-          pagination.append( "<span class='cursor'>" + (1+cursor/pagesize)+ "</span>&nbsp;&nbsp;" ); 
-        } 
-        else 
-        { 
-          appendLink( pagination, linkAttr, cursor, pagesize, Integer.toString(1+cursor/pagesize), pageContext );
-        }
-        cursor += pagesize;
-      }     
-    }
-
-    if( (startitem != -1) && (startitem + pagesize < itemcount) ) 
-      appendLink( pagination, linkAttr, startitem+pagesize, pagesize, 
-                  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.next"), pageContext );
-
-    if( (startitem == -1) || (cursormax < itemcount) ) 
-      appendLink ( pagination, linkAttr, ( (itemcount/pagesize) * pagesize ), pagesize, 
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.last"), pageContext );
-
-    if( startitem == -1 ) 
-    { 
-      pagination.append( "<span class='cursor'>" ); 
-      pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all") );
-      pagination.append( "</span>&nbsp;&nbsp;" ); 
-    } 
-    else
-    {
-      appendLink ( pagination, linkAttr, -1 , -1, 
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all"), pageContext );
-    }
-    
-    //pagination.append( " (Total items: " + itemcount + ")</div>" );
-    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total", new Object[]{new Integer(itemcount)} ) );
-    pagination.append( "</div>" );
-    
-    return pagination.toString();
-  } 
-
-  // linkAttr : use '%s' to replace with cursor offset
-  // eg :
-  // linkAttr = "href='#' title='%s' onclick='$(start).value= %s; updateSearchResult();'";
-  void appendLink( StringBuffer sb, String linkAttr, int linkFrom, int pagesize, String linkText, PageContext pageContext )
-  {
-    String title =  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.showall");
-    //if( linkFrom > -1 ) title = "Show page from " + (linkFrom+1) + " to "+ (linkFrom+pagesize) ;
-    if( linkFrom > -1 ) 
-      title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show", new Object[]{new Integer(linkFrom+1), new Integer(linkFrom+pagesize) } );
-
-    sb.append( "<a title=\"" + title + "\" " );
-    sb.append( TextUtil.replaceString( linkAttr, "%s", Integer.toString(linkFrom) ) );
-    sb.append( ">" + linkText + "</a>&nbsp;&nbsp;" );
-  } ;
-
-%>
 <%
   /* ********************* actual start ********************* */
-  /* FIXME: too much hackin on this level */
+  /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
   if(!wikiContext.hasAccess( response )) return;
@@ -173,46 +66,14 @@
        wikiContext.getWikiSession().addMessage( e.getMessage() );
     }
   }
-  /**************************************************************/ 
- 
+%>
+<%
   int startitem    = 0;    // first item to show
-  int pagesize    = 20;   // #items to show in one go
-  int maxpages     = 9;    // max pagination links -- odd figure
-  int itemcount;           // #items in items
 
   String parm_start    = request.getParameter( "start");
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
 
-  String parm_pagesize = request.getParameter( "pagesize"); 
-  if( parm_pagesize != null ) pagesize = Integer.parseInt( parm_pagesize ) ;
-
-  String parm_details = request.getParameter( "details");
-
-  /**********/  
-  String start = (String)request.getParameter("start");
-    
-  int startVal = 0;
-    
-  try
-  {
-    startVal = Integer.parseInt(start);
-  } catch(Exception e) {}
-    
-  if( startVal < 0 ) startVal = 0;
-    
-  int endVal = startVal + 20;
-    
   Collection list = (Collection)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
-                                                             
- int prevSize = 0, nextSize = 0;
-    
- if( list != null )
- {
-   if( endVal > list.size() ) endVal = list.size();
-   prevSize = Math.max( startVal, 20 );
-   nextSize = Math.min(list.size() - endVal, 20);
- }
-
 %>
 
 <wiki:SearchResults>
@@ -232,42 +93,10 @@
        target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
   </p>
   
-
-<%--          <p>
-          <i><fmt:message key="find.resultsstart">
-             <fmt:param><wiki:SearchResultsSize/></fmt:param>
-             <fmt:param><%=startVal+1%></fmt:param>
-             <fmt:param><%=endVal%></fmt:param>
-             </fmt:message>
-          </p>
-<%--
-          <% if( startVal > 0 ) { %>
-          <wiki:Link jsp="Search.jsp">
-              <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
-              <wiki:Param name="start" value="<%=Integer.toString(startVal-prevSize)%>"/>
-              <fmt:message key="find.getprevious">
-                 <fmt:param><%=prevSize%></fmt:param>
-              </fmt:message>
-          </wiki:Link>.
-          <% } %>
-          
-          <% if( endVal < list.size() ) { %>
-          <wiki:Link jsp="Search.jsp">
-              <wiki:Param name="query" value="<%=URLEncoder.encode(query)%>"/>
-              <wiki:Param name="start" value="<%=Integer.toString(endVal)%>"/>
-              <fmt:message key="find.getnext">
-                 <fmt:param><%=nextSize%></fmt:param>
-              </fmt:message>
-          </wiki:Link>.
-          <% } %>
-          </p>
-          <p>
---%>
-<%
-  String linkAttr = "href='#' title='Show search block starting at %s' onclick='$(\"start\").value=%s; updateSearchResult();'";
-  String pagination = wiki_Pagination(startitem, list.size(), pagesize, maxpages, linkAttr, pageContext);
-%>
-    <%= (pagination == null) ? "" : pagination %>
+  <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" 
+                     fmtkey="info.pagination"
+                       href="#" 
+                    onclick="$('start').value=%s; SearchBox.runfullsearch();" />
 
     <div class="graphBars">
     <div class="zebra-table">
@@ -278,15 +107,14 @@
          <th align="left"><fmt:message key="find.results.score"/></th>
       </tr>
 
-      <wiki:SearchResultIterator id="searchref" start="<%=Integer.toString(startVal)%>" maxItems="20">
+      <wiki:SearchResultIterator id="searchref" start="<%=Integer.toString(startitem)%>" maxItems="20">
       <tr>
         <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
         <td><span class="gBar"><%= searchref.getScore() %></span></td>
       </tr>
 
+	  <c:if test="${param.details == 'on'}">
 <%
-      if( parm_details != null )
-      {
         String[] contexts = searchref.getContexts();
         if( (contexts != null) && (contexts.length > 0) ) 
         {
@@ -308,22 +136,19 @@
        </tr>
 <% 
         }
-      } /* parm_details */
 %>
-
+	  </c:if><%-- details --%>
         </wiki:SearchResultIterator>
 
         <wiki:IfNoSearchResults>
         <tr>
-          <td colspan="2"><b><fmt:message key="find.noresults"/></b></td>
+          <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults"/></td>
         </tr>
         </wiki:IfNoSearchResults>
 
       </table>
     </div>
     </div>
-
-    <%= (pagination == null) ? "" : pagination %>
-
+    ${pagination}
 
    </wiki:SearchResults>

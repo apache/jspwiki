@@ -65,6 +65,7 @@
 }
 #footer .copyright { 
 }
+
 #content { 
 	margin-top:1em;
 }
@@ -74,6 +75,15 @@
 #content.fav-right #page, #content.fav-left #favorites {
 	float:left;
 }
+#content.fav-hidden #page {
+	width:100%
+}
+#content.fav-hidden #favorites {
+	float:none;
+	width:200px;
+    padding:0.5em;
+}
+
 #page { 
 	width:80%;
 	float:right;
@@ -654,12 +664,15 @@ body.edit textarea {
 .fragment_ellipsis {
 	font-weight:bold;
 }
+.nosearchresult {
+	font-style:italic;
+}
 /* For the search_highlight.js.  This style defines the how the words that have
    been found look like.  If you look for "thingy", you will get these following
    in the results.
    <span class="searchword">thingy</span>
  */
-.searchword, .cursor, .searchmatch {
+.cursor, .searchword, .searchmatch {
 	background-color:#f93;
 	color:black;
 	text-decoration:inherit;
@@ -696,6 +709,12 @@ body.edit textarea {
 	padding:.5em;
 	background:#e0e0ff;	 
 }
+.pagination a, .pagination .cursor {
+	padding:0 0.2em;
+}
+.pagination a:hover {
+	background-color:#f93;
+}
 td.changenote {
 	font-style:italic;
 } /* fixme */
@@ -723,6 +742,10 @@ th.changenote, td.changenote {
 	border:2px solid #bbb;
 	z-index:10;
 }
+.pageactions li ul li ul {
+	position:static;
+	left:auto;
+}
 .pageactions li ul li {
 	display:block;
 	white-space:nowrap;
@@ -731,6 +754,17 @@ th.changenote, td.changenote {
 .pageactions li ul li.separator { 
 	border-top:2px solid #bbb;
 }
+
+/* undo settings for nested information! */
+.pageactions li ul li ul {
+	position:static;
+	left:auto;
+	border:none;
+}
+.pageactions li ul li ul li {
+/* nothing to undo ?? */
+}
+
 a.action {
 	display:block;
 	padding:0.25em 0.5em;

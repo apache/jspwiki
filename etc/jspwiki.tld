@@ -663,6 +663,46 @@
   </tag>
 
   <tag>
+    <name>SetPagination</name>
+    <tagclass>com.ecyrd.jspwiki.tags.SetPaginationTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>Returns pagination string and cache it in the pageContext</info>
+    <attribute>
+       <name>start</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>total</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>pagesize</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>maxlinks</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>fmtkey</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>href</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+       <name>onclick</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>TabbedSection</name>
     <tagclass>com.ecyrd.jspwiki.tags.TabbedSectionTag</tagclass>
     <bodycontent>JSP</bodycontent>

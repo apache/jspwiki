@@ -21,6 +21,8 @@ var EditTools =
 		/* make textarea more intelligent */
 		this.wikisnippets = this.getWikiSnippets();
 		this.wikismartpairs = this.getWikiSmartPairs();
+
+		if(!window.ie) {
 		this.posteditor = new postEditor.create(this.textarea,'changenote');
 		
 		/* patch posteditor DF Jul 07 */
@@ -41,6 +43,8 @@ var EditTools =
 		},this);
 				
 		this.initPostEditor();
+		}
+		
 
 		/* activate editassist toolbar */
 		var toolbar = $('toolbar');
@@ -80,6 +84,7 @@ var EditTools =
 	},
 
 	initPostEditor: function(){
+		if(! this.posteditor) return;
 		this.posteditor.changeSmartTypingPairs( $('smartpairs').checked ? this.wikismartpairs : {} );
 		this.posteditor.changeSnippets( $('tabcompletion').checked ? this.wikisnippets : {} );	
 	},

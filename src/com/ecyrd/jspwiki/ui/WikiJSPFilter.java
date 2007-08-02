@@ -194,7 +194,7 @@ public class WikiJSPFilter extends WikiServletFilter
             return string;
         }
 
-        String marker = TemplateManager.getMarker( type );
+        String marker = TemplateManager.getMarker( wikiContext, type );
         int idx = string.indexOf( marker );
         
         if( idx == -1 )

@@ -38,10 +38,10 @@ String.extend({
 		if( size <=1 ) return this;
 		var a = new Array( size );
 		for( var i=0; i < size; i++ ) { a[i] = this; }
-		return( a.join("") );
+		return a.join("");
 	},
 	deCamelize: function(){
-		return this.replace(/([a-z])([A-Z])/g,'$1 $2');
+		return this.replace(/([a-z])([A-Z])/g,"$1 $2");
 	}
 });
 
@@ -272,7 +272,7 @@ var Wiki = {
 		this.changeFontSize(0);
 	},
 	changeOrientation: function(){
-		$('content').className = $('prefOrientation').value;
+		$('content').className = $('prefOrientation').getValue();
 	},
 	replaceMoreBox: function(){
 		var more = $('morebutton');
@@ -293,6 +293,12 @@ var Wiki = {
 				separator='';
 			}
 		});
+
+		/* if orientation is hidden favorites, move the favorites block inside the more menu */
+		if( $('content').hasClass('fav-hidden') ) {
+		  $('favorites').inject(new Element('li',{'class':'separator'}).inject(popup));		
+		}
+		
 		select.getParent().hide();
 		more.show()
 		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
@@ -368,7 +374,7 @@ var Wiki = {
 			method: 'post', 
 			onComplete: function(result){ 
 				var r = Json.evaluate(result,true);
-				if(!r) return
+				if(!r) return;
 				if(r.result) fn(r.result);
 				else if(r.error) fn(r.error);
 			}
@@ -443,7 +449,6 @@ var WikiSlimbox = {
 				var href = el.src||el.href;
 				var rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
 				if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$','i')) return;
-				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
 				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
 					.injectBefore(el);
 				if(el.src) 
@@ -1005,7 +1010,20 @@ var SearchBox = {
 		this.query2 = q2;
 		//q2.form.addEvent('submit',this.submit.bind(this))
 		
-		var runquery = function(){
+		
+    	var changescope = function(){
+	    	var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
+			this.query2.value = $('scope').getValue() + qq;
+			this.runfullsearch();
+		}.bind(this);
+    	
+    	q2.observe( this.runfullsearch.bind(this) );
+		
+		$('scope').addEvent('change', changescope);
+		$('details').addEvent('click', this.runfullsearch.bind(this));
+	},
+
+	runfullsearch : function(){
 			var q2 = this.query2.value;
 			if( !q2 || (q2.trim()=='')) { 
 				$('searchResult2').empty();
@@ -1025,19 +1043,6 @@ var SearchBox = {
 				method: 'post',
 				onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
 			}).request();
-
-    	}.bind(this);
-
-    	var changescope = function(){
-	    	var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
-			this.query2.value = $('scope').getValue() + qq;
-			runquery();
-		}.bind(this);
-    	
-    	q2.observe( runquery );
-		
-		$('scope').addEvent('change', changescope);
-		$('details').addEvent('click', runquery);
 	},
 
 	submit: function(){ 
@@ -1413,8 +1418,8 @@ var Collapsable =
 		if(isclosed) el.removeClass('collapsebox-closed').addClass('collapsebox');
 
 		var bullet  = this.bullet.clone();
-		this.newBullet( bullet, body, !isclosed );
 		title.adopt( bullet ).addClass('collapsetitle');
+		this.newBullet( bullet, body, !isclosed );
 	},
 
 	// Modifies the list such that sublists can be hidden/shown by clicking the listitem bullet
@@ -1727,7 +1732,9 @@ var Sortable =
 		var datatype = Sortable.guessDataType(rows,colidx);
 
 		//do the actual sorting
-		if(th.hasClass('sort')) rows.sort( Sortable.createCompare( colidx, datatype ) )
+		if(th.hasClass('sort')){ 
+			rows.sort( Sortable.createCompare(colidx, datatype) )
+		}
 		else rows.reverse(); 
 		
 		var fl=th.hasClass('sortDescending');
@@ -1771,9 +1778,7 @@ var Sortable =
 			var val1 = Sortable.convert( $getText(row1.cells[i]), datatype );
 			var val2 = Sortable.convert( $getText(row2.cells[i]), datatype );
 
-			if     ( val1 < val2 ) return -1
-			else if( val1 > val2 ) return 1
-			else return 0;
+			if(val1<val2){ return -1 } else if(val1>val2){ return 1 } else return 0;
 		}
 	}
 }

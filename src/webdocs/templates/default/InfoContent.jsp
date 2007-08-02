@@ -9,127 +9,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setBundle basename="templates.default"/>
 
-<%!
-  // FIXME: this should better be something like a wiki:Pagination TLD tag
-  // FIXME: how to i18n
-  //
-  // 0 20 40 60
-  // 0 20 40 60 80 next
-  // previous 20 40 *60* 80 100 next
-  // previous 40 60 80 100 120
-
-  /* makePagination : return html string with pagination links
-   *    (eg:  previous 1 2 3 next)
-   * startitem  : cursor
-   * itemcount  : total number of items
-   * pagesize   : number of items per page
-   * maxpages   : number of pages directly accessible via a pagination link
-   * linkAttr : html attributes of the generated links: use '%s' to replace with item offset
-   */
-  String wiki_Pagination( int startitem, int itemcount, int pagesize, int maxpages, String linkAttr, PageContext pageContext )
-  {
-    if( itemcount <= pagesize ) return null;
-
-    int maxs = pagesize * maxpages;
-    int mids = pagesize * ( maxpages / 2 );
-
-    StringBuffer pagination = new StringBuffer();
-    pagination.append( "<div class='pagination'>");
-    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination") );
-
-
-    int cursor = 0;
-    int cursormax = itemcount;
-
-    if( itemcount > maxs )   //need to calculate real window ends
-    {
-      if( startitem > mids ) cursor = startitem - mids;
-      if( (cursor + maxs) > itemcount )
-        cursor = ( ( 1 + itemcount/pagesize ) * pagesize ) - maxs ;
-
-      cursormax = cursor + maxs;
-    }
-
-    if( (startitem == -1) || (cursor > 0) )
-      appendLink ( pagination, linkAttr, 0, pagesize,
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.first"), pageContext );
-    if( (startitem != -1 ) && (startitem-pagesize >= 0) )
-      appendLink( pagination, linkAttr, startitem-pagesize, pagesize,
-                  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.previous"), pageContext );
-
-    if( startitem != -1 )
-    {
-      while( cursor < cursormax )
-      {
-        if( cursor == startitem )
-        {
-          pagination.append( "<span class='cursor'>" + (1+cursor/pagesize)+ "</span>&nbsp;&nbsp;" );
-        }
-        else
-        {
-          appendLink( pagination, linkAttr, cursor, pagesize, Integer.toString(1+cursor/pagesize), pageContext );
-        }
-        cursor += pagesize;
-      }
-    }
-
-    if( (startitem != -1) && (startitem + pagesize < itemcount) )
-      appendLink( pagination, linkAttr, startitem+pagesize, pagesize,
-                  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.next"), pageContext );
-
-    if( (startitem == -1) || (cursormax < itemcount) )
-      appendLink ( pagination, linkAttr, ( (itemcount/pagesize) * pagesize ), pagesize,
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.last"), pageContext );
-
-    if( startitem == -1 )
-    {
-      pagination.append( "<span class='cursor'>" );
-      pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all") );
-      pagination.append( "</span>&nbsp;&nbsp;" );
-    }
-    else
-    {
-      appendLink ( pagination, linkAttr, -1 , -1,
-                   LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.all"), pageContext );
-    }
-
-    //pagination.append( " (Total items: " + itemcount + ")</div>" );
-    pagination.append( LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.total", new Object[]{new Integer(itemcount)} ) );
-    pagination.append( "</div>" );
-
-    return pagination.toString();
-  }
-
-  // linkAttr : use '%s' to replace with cursor offset
-  // eg :
-  // linkAttr = "href='#' title='%s' onclick='$(start).value= %s; updateSearchResult();'";
-  void appendLink( StringBuffer sb, String linkAttr, int linkFrom, int pagesize, String linkText, PageContext pageContext )
-  {
-    String title =  LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.showall");
-    //if( linkFrom > -1 ) title = "Show page from " + (linkFrom+1) + " to "+ (linkFrom+pagesize) ;
-    if( linkFrom > -1 )
-      title = LocaleSupport.getLocalizedMessage(pageContext, "info.pagination.show", new Object[]{new Integer(linkFrom+1), new Integer(linkFrom+pagesize) } );
-
-    sb.append( "<a title=\"" + title + "\" " );
-    sb.append( TextUtil.replaceString( linkAttr, "%s", Integer.toString(linkFrom) ) );
-    sb.append( ">" + linkText + "</a>&nbsp;&nbsp;" );
-  } ;
-
-%>
-
 <%
-  int pagesize  = 20; //default #revisions shown per page
-  int maxpages  = 9;  //max #paginations links -- choose odd figure
-  int itemcount = 0;  //number of page versions
-
   WikiContext c = WikiContext.findContext(pageContext);
   WikiPage wikiPage = c.getPage();
   int attCount = c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
-  String creationDate   ="";
   String creationAuthor ="";
+
   //FIXME -- seems not to work correctly for attachments !!
   WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
@@ -137,31 +25,21 @@
     creationAuthor = firstPage.getAuthor();
   }
 
+  int itemcount = 0;  //number of page versions
   try
   {
     itemcount = wikiPage.getVersion(); /* highest version */
   }
   catch( Exception  e )  { /* dont care */ }
 
+  int pagesize = 20;
   int startitem = itemcount;
-
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
-  if( startitem > itemcount ) startitem = itemcount;
-  if( startitem < -1 ) startitem = 0;
-
-  String parm_pagesize = (String)request.getParameter( "pagesize" );
-  if( parm_pagesize != null ) pagesize = Integer.parseInt( parm_pagesize ) ;
-
+  /*round to start of a pagination block */
   if( startitem > -1 ) startitem = ( (startitem/pagesize) * pagesize );
 
-  String linkAttr = "href='#' onclick='location.href= $(\"moreinfo\").href + \"&start=%s\"; ' ";
-  String pagination = wiki_Pagination(startitem, itemcount, pagesize, maxpages, linkAttr, pageContext);
-
 %>
-<%--FIXME --%>
-<a href="<wiki:PageInfoLink format='url' />" id="moreinfo" style="display:none" ><fmt:message key='actions.info'/></a>
-
 <wiki:PageExists>
 
 <%-- part 1 : normal wiki pages --%>
@@ -208,7 +86,6 @@
   <wiki:CheckVersion mode="notfirst">
     <p>
     <fmt:message key='info.createdon'>
-      <%--<fmt:param><wiki:Link version="1"><%= creationDate %></wiki:Link></fmt:param>--%>
       <fmt:param>
         <wiki:Link version="1">
           <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
@@ -279,7 +156,9 @@
     <wiki:CheckVersion mode="notfirst">
     <%-- if( itemcount > 1 ) { --%>
 
-    <%= (pagination == null) ? "" : pagination %>
+    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="1" 
+                       fmtkey="info.pagination"
+                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName())+"&start=%s"%>' />
 
     <div class="zebra-table <wiki:CheckRequestContext context='info'>sortable table-filter</wiki:CheckRequestContext>">
     <table class="wikitable center" >
@@ -337,8 +216,7 @@
 
     </table>
     </div>
-    <%= (pagination == null) ? "" : pagination %>
-
+     ${pagination}
     <%-- } /* itemcount > 1 */ --%>
     </wiki:CheckVersion>
   </wiki:Tab>

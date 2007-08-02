@@ -26,6 +26,7 @@ import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.jstl.fmt.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -51,6 +52,11 @@ public class TemplateManager
      * Requests a JavaScript function to be called during window.onload. Value is {@value}.
      */
     public static final String RESOURCE_JSFUNCTION = "jsfunction";
+
+    /**
+     * Requests a JavaScript associative array with all localized strings.
+     */
+    public static final String RESOURCE_JSLOCALIZEDSTRINGS = "jslocalizedstrings";
 
     /**
      * Requests a stylesheet to be inserted. Value is {@value}.
@@ -404,20 +410,66 @@ public class TemplateManager
 */
     /**
      *  Returns the include resources marker for a given type.  This is in a
-     *  HTML comment format.
+     *  HTML or Javascript comment format.
      *
+     *  @param wiki context
      *  @param type the marker
      *  @return the generated marker comment
      */
-    public static String getMarker( String type )
+    public static String getMarker(WikiContext context, String type )
     {
-        if( type.equals(RESOURCE_JSFUNCTION) )
+        if( type.equals(RESOURCE_JSLOCALIZEDSTRINGS) )
+        {
+            return getJSLocalizedStrings( context );
+        }
+        else if( type.equals(RESOURCE_JSFUNCTION) )
         {
             return "/* INCLUDERESOURCES ("+type+") */";
         }
         return "<!-- INCLUDERESOURCES ("+type+") -->";
     }
 
+    /**
+     *  Extract all i18n strings in the javascript domain. (javascript.*)
+     *  Returns a javascript snippet which defines the LoacalizedStings array.
+     *
+     *  @param wiki context
+     *  @return Javascript snippet which defines the LocaliedStrings array
+     *  @author Dirk Frederickx
+     *  @since 2.5.108
+     */
+    private static String getJSLocalizedStrings( WikiContext context )
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append( "var LocalizedStrings = {\n");
+
+        ResourceBundle rb = context.getBundle("templates.default");        
+
+        boolean first = true;
+
+        for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
+        {
+            String key = (String)en.nextElement();
+        
+            if( key.startsWith("javascript") )
+            {
+                if( first )
+                {
+                    first = false; 
+                } 
+                else 
+                { 
+                    sb.append( ",\n" ); 
+                }
+                sb.append( "\""+key+"\":\""+rb.getString(key)+"\"" );
+            }         
+        }
+        sb.append("\n};\n");
+        
+        return( sb.toString() );
+    }
+    
     /**
      *  Adds a resource request to the current request context.
      *  The content will be added at the resource-type marker

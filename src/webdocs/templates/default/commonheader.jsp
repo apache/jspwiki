@@ -6,6 +6,7 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.default"/>
 <%-- 
    This file provides a common header which includes the important JSPWiki scripts and other files.
    You need to include this in your template, within <head> and </head>.  It is recommended that
@@ -33,37 +34,11 @@
    Preferences.setupPreferences(pageContext);
  %>
 
-<%-- I18N Javascript. Get the i18n script data from the server.
-  This creates a new global JS variable called "LocalizedStrings", which is an associative 
-  array of key-value pairs  --%>
-
 <script type="text/javascript">
 //<![CDATA[
 
-var LocalizedStrings = { 
-<%
-    WikiContext context = WikiContext.findContext( pageContext );
-    ResourceBundle rb = context.getBundle("templates.default");
-    boolean first = true;
-    for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
-    {
-        String key = (String)en.nextElement();
-        
-        if( key.startsWith("javascript") )
-        {
-            if( first )
-            {
-              first = false; 
-            } 
-            else 
-            { 
-              out.println(","); 
-            }
-            out.print( "\""+key+"\" : \""+rb.getString(key)+"\"");
-        }         
-    }
-%>
-};
+/* Localise javascript strings: defines global array LocalizedStrings */
+<wiki:IncludeResources type="jslocalizedstrings"/>
 
 /* Initialise glboal Wiki js object with server and page dependent variables */
 /* FIXME : better is to add this to the window.onload handler */

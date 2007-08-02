@@ -49,7 +49,8 @@ public class IncludeResourcesTag extends WikiTagBase
     
     public int doWikiStartTag() throws Exception
     {
-        String marker = TemplateManager.getMarker(m_type);
+        //String marker = m_wikiContext.getEngine().getTemplateManager().getMarker(m_wikiContext, m_type);
+        String marker = TemplateManager.getMarker(m_wikiContext, m_type);
 
         pageContext.getOut().println( marker );
         

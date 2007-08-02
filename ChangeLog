@@ -1,5 +1,23 @@
 2007-07-30  Dirk Frederickx (dirk.frederickx@gmail.com)
 
+        * 2.5.109 - internal cleanup of JSP's, few bugfixes (one for IE)
+        
+        * Added new <wiki:SetPagination> Tag to get rid of java hacking 
+        in InfoContent.jsp and AJAXSearch.jsp. Fixed a few bugs on pagination 
+        as well. Now pagination does show up properly at version=20.
+        (reported by Milt Taylor)
+
+        * New marker defined 'jslocalizedstrings' to cleanup commonheader.jsp.
+        Some refinement is still needed, but it works for now.
+
+        * Fixed IE crash in jspwiki-edit.js causing edit toolbars not to be
+        rendered. (as reported by Milt Taylor)
+        
+        * Bugfix: Attachment upload was not working anymore (introduced in 2.5.107)
+
+
+2007-07-30  Dirk Frederickx (dirk.frederickx@gmail.com)
+
         * 2.5.108 - template changes & usability
         
         * The 'Edit' button is now back in its previous position. (after recent popularity poll ;-)
@@ -37,7 +55,7 @@
         (eg both jpg and JPG can be reviewed)
         
         * Small refactorings on the Tabbed Sections. (simplified TabTag html)
-        All content inside a tab, also the floated content, will nicely fint inside the tab.
+        All content inside a tab, also the floated content, will nicely fit inside the tab.
         (ref bug 101)
 
 2007-07-24  Juan Pablo Santos <juanpablo.santos@gmail.com>

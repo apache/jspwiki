@@ -88,7 +88,7 @@
       <option value='fav-left' <c:if test='${"fav-left" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
       <option value='fav-right' <c:if test='${"fav-right" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
   <%--
-      <option value='fav-hide' <c:if test='${"fav-hide" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.fav-hide"/></option>
+      <option value='fav-hidden' <c:if test='${"fav-hidden" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.fav-hide"/></option>
   --%>
   </select>
   </td>
@@ -256,13 +256,10 @@
  <tr>
   <td>&nbsp;</td>
   <td>
-    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" />
+    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" 
+      accesskey="s" />
     <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
     <input type="hidden" name="action" value="setAssertedName" />
-    <%-- remove this ?? 
-    <wiki:UserCheck status="anonymous">
-    </wiki:UserCheck>
-    --%>
     <div class="formhelp"><fmt:message key='prefs.cookies'/></div>
   </td>
   </tr>
