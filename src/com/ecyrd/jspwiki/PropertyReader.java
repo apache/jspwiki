@@ -27,18 +27,15 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-
 /**
- * Property Reader for the WikiEngine. Reads the properties for the
- * WikiEngine and implements the feature of
- * cascading properties and variable substitution, wich come in handy
- * in a multi wiki installation environment: It reduces the
+ * Property Reader for the WikiEngine. Reads the properties for the WikiEngine
+ * and implements the feature of cascading properties and variable substitution,
+ * which come in handy in a multi wiki installation environment: It reduces the
  * need for (shell) scripting in order to generate different jspwiki.properties
  * to a minimum.
  *
  * @author Christoph Sauer
  * @since 2.5.x
- *
  */
 public final class PropertyReader
 {
@@ -47,7 +44,6 @@ public final class PropertyReader
      *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE.
      *  {@value #DEFAULT_PROPERTYFILE}
      */
-
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
 
     public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
@@ -82,31 +78,29 @@ public final class PropertyReader
     {}
 
     /**
-     * Loads the webapp properties based on servlet context information.
-     * Returns a Properties object containing the settings, or null if unable
-     * to load it. (The default file is WEB-INF/jspwiki.properties, and can
-     * be overridden by setting PARAM_PROPERTYFILE in the server or webapp
-     * configuration.)
+     *  Loads the webapp properties based on servlet context information.
+     *  Returns a Properties object containing the settings, or null if unable
+     *  to load it. (The default file is WEB-INF/jspwiki.properties, and can
+     *  be overridden by setting PARAM_PROPERTYFILE in the server or webapp
+     *  configuration.)
      *
-     * You can define additional property files and merge them to the
-     * default properties file in a similar process you define
-     * cascading style sheets we call cascading propertiy files.
-     * This way you can overwrite the default values and only specify
-     * the properties you need to change in a multiple wiki environment.
-     *
-     * You define a cascade in the
-     * context mapping of your servlet container.
-     *
-     * jspwiki.properties.cascade.1
-     * jspwiki.properties.cascade.2
-     * jspwiki.properties.cascade.3
-     *
-     * and so on. You have to number your cascade in an
-     * decending way starting with one. This means you cannot leave out numbers
-     * in your cascade... This method is based on an idea by Olaf Kaus, see
-     * [JSPWiki:MultipleWikis]
-     *
-     *
+     *  <h3>Cascading Properties</h3>
+     *  <p>
+     *  You can define additional property files and merge them into the default
+     *  properties file in a similar process to how you define cascading style
+     *  sheets; hence we call this <i>cascading property files</i>. This way you
+     *  can overwrite the default values and only specify the properties you
+     *  need to change in a multiple wiki environment.
+     *  <p>
+     *  You define a cascade in the context mapping of your servlet container.
+     *  <pre>
+     *  jspwiki.properties.cascade.1
+     *  jspwiki.properties.cascade.2
+     *  jspwiki.properties.cascade.3
+     *  </pre>
+     *  and so on. You have to number your cascade in a descending way starting
+     *  with "1". This means you cannot leave out numbers in your cascade. This
+     *  method is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis].
      */
     public static Properties loadWebAppProps( ServletContext context )
     {
@@ -120,7 +114,8 @@ public final class PropertyReader
             //
             if( propertyFile == null )
             {
-                context.log("No "+PARAM_PROPERTYFILE+" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
+                context.log("No "+PARAM_PROPERTYFILE
+                        +" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
                 //  Use the default property file.
                 propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
             }
@@ -135,7 +130,7 @@ public final class PropertyReader
                 throw new WikiException("Property file cannot be found!"+propertyFile);
             }
 
-            Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+            Properties props = getDefaultProperties();
             props.load( propertyStream );
 
             //this will add additional properties to the default ones:
@@ -151,7 +146,8 @@ public final class PropertyReader
         }
         catch( Exception e )
         {
-            context.log( Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
+            context.log( Release.APPNAME
+                    +": Unable to load and setup properties from jspwiki.properties. "+e.getMessage() );
         }
         finally
         {
@@ -170,18 +166,40 @@ public final class PropertyReader
 
 
     /**
-     * Implement the cascade functionality
+     *  Returns the default property set as a Properties object.
+     */
+    public static final Properties getDefaultProperties()
+    {
+        return new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+    }
+
+
+    /**
+     *  Returns the ServletContext Init parameter if has been set, otherwise
+     *  checks for a System property of the same name. If neither are defined,
+     *  returns null. This permits both Servlet- and System-defined cascading
+     *  properties.
+     */
+    private static String getInitParameter( ServletContext context, String name )
+    {
+        String value = context.getInitParameter(name);
+        return ( value != null )
+                ? value
+                : System.getProperty(name) ;
+    }
+
+
+    /**
+     *  Implement the cascade functionality.
      *
-     * @param context -
-     *            where to read the cascade from
-     * @param defaultProperties -
-     *            properties to merge the cascading properties to
+     * @param context             where to read the cascade from
+     * @param defaultProperties   properties to merge the cascading properties to
      * @author Christoph Sauer
      * @since 2.5.x
      */
     private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)
     {
-        if (context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + "1") == null)
+        if( getInitParameter(context,PARAM_PROPERTYFILE_CASCADEPREFIX + "1") == null )
         {
             context.log(" No cascading properties defined for this context");
             return;
@@ -194,7 +212,7 @@ public final class PropertyReader
         while (more)
         {
             depth++;
-            String propertyFile = context.getInitParameter(PARAM_PROPERTYFILE_CASCADEPREFIX + depth);
+            String propertyFile = getInitParameter(context,PARAM_PROPERTYFILE_CASCADEPREFIX + depth);
 
             if (propertyFile == null)
             {
@@ -212,8 +230,9 @@ public final class PropertyReader
             }
             catch (Exception e)
             {
-                context.log(" " + Release.APPNAME + ": Unable to load and setup properties from " + propertyFile + "."
-                            + e.getMessage());
+                context.log(" " + Release.APPNAME
+                        + ": Unable to load and setup properties from " + propertyFile + "."
+                        + e.getMessage());
             }
             finally
             {
@@ -235,17 +254,20 @@ public final class PropertyReader
     }
 
     /**
-     * You define a property variable by using the prefix "var.x" as a property. Then,
-     * in property values you use the $x identifier to use this variable.
+     *  You define a property variable by using the prefix "var.x" as a
+     *  property. In property values you can then use the "$x" identifier
+     *  to use this variable.
      *
-     * For example you could declare a base directory for all your files like this and
-     * use it in all your other property definitions with a $basedir. Note that it does
-     * not matter if you define the variable before it's usage.
-     *
-     * var.basedir = /p/mywiki;
-     * jspwiki.fileSystemProvider.pageDir =         $basedir/www/
-     * jspwiki.basicAttachmentProvider.storageDir = $basedir/www/
-     * jspwiki.workDir =                            $basedir/wrk/
+     *  For example you could declare a base directory for all your files
+     *  like this and use it in all your other property definitions with
+     *  a "$basedir". Note that it does not matter if you define the
+     *  variable before its usage.
+     *  <pre>
+     *  var.basedir = /p/mywiki;
+     *  jspwiki.fileSystemProvider.pageDir =         $basedir/www/
+     *  jspwiki.basicAttachmentProvider.storageDir = $basedir/www/
+     *  jspwiki.workDir =                            $basedir/wrk/
+     *  </pre>
      *
      * @param properties - properties to expand;
      */
