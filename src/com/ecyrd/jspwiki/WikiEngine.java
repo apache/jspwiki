@@ -151,6 +151,10 @@ public class WikiEngine
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
+    /** The name of the property containing the ACLManager implementing class.
+     *  The value is {@value}. */
+    public static final String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
+
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
 
@@ -285,7 +289,7 @@ public class WikiEngine
      *  @param config The ServletConfig of the webapp servlet/JSP calling this method.
      *  @param props  A set of properties, or null, if we are to load JSPWiki's default
      *                jspwiki.properties (this is the usual case).
-     *               
+     *
      *  @return One well-behaving WikiEngine instance.
      */
     public static synchronized WikiEngine getInstance( ServletConfig config,
@@ -300,7 +304,7 @@ public class WikiEngine
      *  @param context The ServletContext of the webapp servlet/JSP calling this method.
      *  @param props  A set of properties, or null, if we are to load JSPWiki's default
      *                jspwiki.properties (this is the usual case).
-     *               
+     *
      *  @return One fully functional, properly behaving WikiEngine.
      *  @throws InternalWikiException If the WikiEngine instantiation fails.
      */
@@ -345,7 +349,7 @@ public class WikiEngine
     /**
      *  Instantiate the WikiEngine using a given set of properties.
      *  Use this constructor for testing purposes only.
-     *  
+     *
      *  @param properties A set of properties to use to initialize this WikiEngine.
      *  @throws WikiException If the initialization fails.
      */
@@ -360,7 +364,7 @@ public class WikiEngine
      *  WikiEngine will figure out where to look for the property
      *  file.
      *  Do not use this method - use WikiEngine.getInstance() instead.
-     *  
+     *
      *  @param context A ServletContext.
      *  @param appid   An Application ID.  This application is an unique random string which
      *                 is used to recognize this WikiEngine.
@@ -425,17 +429,17 @@ public class WikiEngine
         log.debug("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version")+" "+System.getProperty("os.arch"));
         log.debug("Default server locale: "+Locale.getDefault());
         log.debug("Default server timezone: "+TimeZone.getDefault().getDisplayName(true, TimeZone.LONG));
-        
+
         if( m_servletContext != null )
         {
             log.info("Servlet container: "+m_servletContext.getServerInfo() );
-            if( m_servletContext.getMajorVersion() < 2 || 
+            if( m_servletContext.getMajorVersion() < 2 ||
                 (m_servletContext.getMajorVersion() == 2 && m_servletContext.getMinorVersion() < 4) )
             {
                 throw new InternalWikiException("I require a container which supports at least version 2.4 of Servlet specification");
             }
         }
-        
+
         log.debug("Configuring WikiEngine...");
 
         //  Initializes the CommandResolver
@@ -498,7 +502,7 @@ public class WikiEngine
         try
         {
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
-                                                  TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+                    TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
@@ -551,7 +555,7 @@ public class WikiEngine
                 ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
 
             // RenderingManager depends on FilterManager events.
-            
+
             m_renderingManager.initialize( this, props );
 
             //
@@ -644,7 +648,7 @@ public class WikiEngine
     /**
      *  Initializes the reference manager. Scans all existing WikiPages for
      *  internal links and adds them to the ReferenceManager object.
-     * 
+     *
      *  @throws WikiException If the reference manager initialization fails.
      */
     public void initReferenceManager() throws WikiException
@@ -702,7 +706,7 @@ public class WikiEngine
      *  with.  Note that this method returns a direct reference, so it's possible
      *  to manipulate the properties.  However, this is not advised unless you
      *  really know what you're doing.
-     *  
+     *
      *  @return The wiki properties
      */
 
@@ -713,7 +717,7 @@ public class WikiEngine
 
     /**
      *  Returns the JSPWiki working directory set with "jspwiki.workDir".
-     *  
+     *
      *  @since 2.1.100
      *  @return The working directory.
      */
@@ -746,7 +750,7 @@ public class WikiEngine
 
     /**
      *  Returns the current TemplateManager.
-     *  
+     *
      *  @return A TemplateManager instance.
      */
     public TemplateManager getTemplateManager()
@@ -801,9 +805,9 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic URL to an editor.  Please use WikiContext.getURL() or 
+     *  Returns the basic URL to an editor.  Please use WikiContext.getURL() or
      *  WikiEngine.getURL() instead.
-     *  
+     *
      *  @see #getURL(String, String, String, boolean)
      *  @see WikiContext#getURL(String, String)
      *  @deprecated
@@ -816,9 +820,9 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the basic attachment URL.Please use WikiContext.getURL() or 
+     *  Returns the basic attachment URL.Please use WikiContext.getURL() or
      *  WikiEngine.getURL() instead.
-     *  
+     *
      *  @see #getURL(String, String, String, boolean)
      *  @see WikiContext#getURL(String, String)
      *  @since 2.0.42.
@@ -832,7 +836,7 @@ public class WikiEngine
 
     /**
      *  Returns an URL if a WikiContext is not available.
-     *  
+     *
      *  @param context The WikiContext (VIEW, EDIT, etc...)
      *  @param pageName Name of the page, as usual
      *  @param params List of parameters. May be null, if no parameters.
@@ -846,7 +850,7 @@ public class WikiEngine
 
     /**
      *  Returns the default front page, if no page is used.
-     *  
+     *
      *  @return The front page name.
      */
 
@@ -973,7 +977,7 @@ public class WikiEngine
 
     /**
      *  Returns a collection of all supported InterWiki links.
-     *  
+     *
      *  @return A Collection of Strings.
      */
     public Collection getAllInterWikiLinks()
@@ -995,7 +999,7 @@ public class WikiEngine
 
     /**
      *  Returns a collection of all image types that get inlined.
-     *  
+     *
      *  @return A Collection of Strings with a regexp pattern.
      */
 
@@ -1015,7 +1019,7 @@ public class WikiEngine
      *  setting.  They're typically used to give Wiki page names to e.g. custom JSP
      *  pages.
      *  </p>
-     *  
+     *
      *  @param original The page to check
      *  @return A reference to the page, or null, if there's no special page.
      */
@@ -1026,7 +1030,7 @@ public class WikiEngine
 
     /**
      *  Returns the name of the application.
-     *  
+     *
      *  @return A string describing the name of this application.
      */
 
@@ -1045,7 +1049,7 @@ public class WikiEngine
      *  the name.
      *
      *  @param title The title to beautify
-     *  @return A beautified title (or, if beautification is off, 
+     *  @return A beautified title (or, if beautification is off,
      *          returns the title without modification)
      *  @since 1.7.11
      */
@@ -1172,7 +1176,7 @@ public class WikiEngine
     /**
      *  Returns true, if the requested page (or an alias) exists, with the
      *  specified version in the WikiPage.
-     *  
+     *
      *  @param page A WikiPage object describing the name and version.
      *  @return true, if the page (or alias, or attachment) exists.
      *  @throws ProviderException If something goes badly wrong.
@@ -1228,7 +1232,7 @@ public class WikiEngine
     /**
      *  Decodes a URL-encoded request back to regular life.  This properly heeds
      *  the encoding as defined in the settings file.
-     *  
+     *
      *  @param pagerequest The URL-encoded string to decode
      *  @return A decoded string.
      *  @see #encodeName(String)
@@ -1391,7 +1395,7 @@ public class WikiEngine
     /**
      *  Returns the converted HTML of the page using a different
      *  context than the default context.
-     *  
+     *
      *  @param  context A WikiContext in which you wish to render this page in.
      *  @param  page WikiPage reference.
      *  @return HTML-rendered version of the page.
@@ -1493,7 +1497,7 @@ public class WikiEngine
     /**
      *  Reads a WikiPageful of data from a String and returns all links
      *  internal to this Wiki in a Collection.
-     *  
+     *
      *  @param page The WikiPage to scan
      *  @param pagedata The page contents
      *  @return a Collection of Strings
@@ -1515,12 +1519,12 @@ public class WikiEngine
 
     /**
      *  Just convert WikiText to HTML.
-     *  
+     *
      *  @param context The WikiContext in which to do the conversion
      *  @param pagedata The data to render
      *  @param localLinkHook Is called whenever a wiki link is found
      *  @param extLinkHook   Is called whenever an external link is found
-     *  
+     *
      *  @return HTML-rendered page text.
      */
 
@@ -1539,7 +1543,7 @@ public class WikiEngine
      *  @param pagedata The data to render
      *  @param localLinkHook Is called whenever a wiki link is found
      *  @param extLinkHook   Is called whenever an external link is found
-     *  @param attLinkHook   Is called whenever an attachment link is found  
+     *  @param attLinkHook   Is called whenever an attachment link is found
      *  @return HTML-rendered page text.
      */
 
@@ -1554,7 +1558,7 @@ public class WikiEngine
 
     /**
      *  Helper method for doing the HTML translation.
-     *  
+     *
      *  @param context The WikiContext in which to do the conversion
      *  @param pagedata The data to render
      *  @param localLinkHook Is called whenever a wiki link is found
@@ -1630,7 +1634,7 @@ public class WikiEngine
 
     /**
      *  Updates all references for the given page.
-     *  
+     *
      *  @param page wiki page for which references should be updated
      */
     public void updateReferences( WikiPage page )
@@ -1659,7 +1663,7 @@ public class WikiEngine
      *  @throws WikiException if the save operation encounters an error during the
      *  save operation. If the page-save operation requires approval, the exception will
      *  be of type {@link com.ecyrd.jspwiki.workflow.DecisionRequiredException}. Individual
-     *  PageFilters, such as the {@link com.ecyrd.jspwiki.filters.SpamFilter} may also 
+     *  PageFilters, such as the {@link com.ecyrd.jspwiki.filters.SpamFilter} may also
      *  throw a {@link com.ecyrd.jspwiki.filters.RedirectException}.
      */
     public void saveText( WikiContext context, String text )
@@ -1777,7 +1781,7 @@ public class WikiEngine
      *  <P>
      *  The query is dependent on the actual chosen search provider - each one of them has
      *  a language of its own.
-     *  
+     *
      *  @param query The query string
      *  @return A Collection of SearchResult objects.
      *  @throws ProviderException If the searching failed
@@ -1907,7 +1911,7 @@ public class WikiEngine
     /**
      *  Returns this object's ReferenceManager.
      *  @return The current ReferenceManager instance.
-     *  
+     *
      *  @since 1.6.1
      */
     public ReferenceManager getReferenceManager()
@@ -1972,7 +1976,7 @@ public class WikiEngine
     /**
      *  Returns the current PageManager which is responsible for storing
      *  and managing WikiPages.
-     *  
+     *
      *  @return The current PageManager instance.
      */
     public PageManager getPageManager()
@@ -2003,7 +2007,7 @@ public class WikiEngine
 
     /**
      *  Returns the currently used authorization manager.
-     *  
+     *
      *  @return The current AuthorizationManager instance
      */
     public AuthorizationManager getAuthorizationManager()
@@ -2013,7 +2017,7 @@ public class WikiEngine
 
     /**
      *  Returns the currently used authentication manager.
-     *  
+     *
      *  @return The current AuthenticationManager instance.
      */
     public AuthenticationManager getAuthenticationManager()
@@ -2072,7 +2076,7 @@ public class WikiEngine
      *  @param request the HTTP request
      *  @param requestContext the default context to use
      *  @return a new WikiContext object.
-     *  
+     *
      *  @see com.ecyrd.jspwiki.ui.CommandResolver
      *  @see com.ecyrd.jspwiki.ui.Command
      *  @since 2.1.15.
@@ -2163,7 +2167,7 @@ public class WikiEngine
     /**
      *  Returns the root path.  The root path is where the WikiEngine is
      *  located in the file system.
-     *  
+     *
      *  @since 2.2
      *  @return A path to where the Wiki is installed in the local filesystem.
      */
@@ -2237,7 +2241,7 @@ public class WikiEngine
 
     /**
      *  Returns the current AdminBeanManager.
-     *  
+     *
      *  @return The current AdminBeanManager
      *  @since  2.6
      */
@@ -2249,16 +2253,30 @@ public class WikiEngine
     /**
      *  Returns the AclManager employed by this WikiEngine.
      *  The AclManager is lazily initialized.
-     *  @since 2.3
-     *  @return The current AclManager.
+     *  <p>
+     *  The AclManager implementing class may be set by the
+     *  System property {@link #PROP_ACL_MANAGER_IMPL}.
+     *  </p>
+     *
+     * @since 2.3
+     * @return The current AclManager.
      */
     public AclManager getAclManager()
     {
-        if (m_aclManager == null)
+        if( m_aclManager == null )
         {
-            // TODO: make this pluginizable
-            m_aclManager = new DefaultAclManager();
-            m_aclManager.initialize( this, m_properties );
+            try
+            {
+                String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL,
+                                                     DefaultAclManager.class.getName() );
+                m_aclManager = (AclManager)ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
+                m_aclManager.initialize( this, m_properties );
+            }
+            catch ( WikiException we )
+            {
+                log.fatal( "unable to instantiate class for AclManager: " + we.getMessage() );
+                throw new InternalWikiException("Cannot instantiate AclManager, please check logs.");
+            }
         }
         return m_aclManager;
     }
@@ -2274,7 +2292,7 @@ public class WikiEngine
 
     /**
      *  Returns the current EditorManager instance.
-     *  
+     *
      *  @return The current EditorManager.
      */
     public EditorManager getEditorManager()
@@ -2284,7 +2302,7 @@ public class WikiEngine
 
     /**
      *  Returns the current i18n manager.
-     *  
+     *
      *  @return The current Intertan... Interante... Internatatializ... Whatever.
      */
     public InternationalizationManager getInternationalizationManager()
@@ -2339,7 +2357,7 @@ public class WikiEngine
 
     /**
      *  Gets an attribute from the engine.
-     *  
+     *
      *  @param key the attribute name
      *  @return the value
      */
@@ -2350,7 +2368,7 @@ public class WikiEngine
 
     /**
      *  Removes an attribute.
-     * 
+     *
      *  @param key The key of the attribute to remove.
      *  @return The previous attribute, if it existed.
      */
@@ -2361,7 +2379,7 @@ public class WikiEngine
 
     /**
      *  Returns a WatchDog for current thread.
-     * 
+     *
      *  @return The current thread WatchDog.
      *  @since 2.4.92
      */
