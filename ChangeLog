@@ -1,3 +1,9 @@
+2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * "ant war" now compresses jspwiki-edit.js, jspwiki-common.js
+        and jspwiki-prefs.js using the Rhino library.  This should bring
+        in considerable savings to bandwidth and response.
+
 2007-08-03  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.110
