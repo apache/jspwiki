@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.87 2007-07-10 20:47:41 jalkanen Exp $
+    $Id: build.xml,v 1.88 2007-08-03 21:05:41 jalkanen Exp $
 -->
 
 <!--
@@ -365,7 +365,7 @@
            of the WAR-file.
    -->
 
-  <target name="war" depends="installinit,jar"
+  <target name="war" depends="installinit,jar,compressedjs"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
@@ -374,15 +374,35 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
+       <lib dir="lib" includes="*.jar" excludes="*rhino.jar,servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
+       <fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
   </target>
 
+  <!-- We compress the Javascript using Dojos Rhino system.  Very useful.
+       If you don't want to use the compressed stuff, just copy the default
+       .js files from the distro on top of the compressed ones from the WAR. 
+   -->
+  <target name="compressedjs">
+	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
+  	<java jar="lib/custom_rhino.jar" 
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-common.js" 
+  		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
+  		  fork="true"/>
+  	<java jar="lib/custom_rhino.jar" 
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" 
+  		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
+  		  fork="true"/>
+  	<java jar="lib/custom_rhino.jar" 
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" 
+  		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
+  		  fork="true"/>
+  </target>
 
   <target name="opened-war" depends="war"
    description="Creates an opened JSPWiki war hierarchy into the build dir.">
