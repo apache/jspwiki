@@ -95,19 +95,6 @@
   </tr>
 
   <tr>
-  <td><label for="prefFontSize" ><fmt:message key="prefs.user.fontsize"/></label></td>
-  <td>
-	<input type="button" value="-" onclick="Wiki.changeFontSize(-1);"
-		  title="<fmt:message key='pref.fontsize.title.down' />"></input>
-	<input type="button" value="<fmt:message key='pref.fontsize.reset' />"
-	    onclick="Wiki.resetFontSize();" name="prefFontSize" id="prefFontSize"
-		  title="<fmt:message key='pref.fontsize.title.reset' />"></input>
-	<input type="button" value="+" onclick="Wiki.changeFontSize(1);"
-		  title="<fmt:message key='pref.fontsize.title.up' />"></input>
-  </td>
-  </tr>
-  
-  <tr>
   <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
   <td>
   <select id="prefTimeFormat" name="prefTimeFormat" >

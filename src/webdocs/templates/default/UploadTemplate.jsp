@@ -13,7 +13,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html id="top">
+<html id="top" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
   <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
@@ -23,7 +23,7 @@
 
 <body>
 
-<div id="wikibody" >
+<div id="wikibody" class="${prefs['orientation']}">
 
   <wiki:Include page="Header.jsp" />
 
@@ -46,14 +46,6 @@
                  url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
            accesskey="i" >
         </wiki:Tab>
-
-          <wiki:PageType type="attachment">
-            <wiki:Tab id="edit" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"actions.editparent.title")%>'
-                     url="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName />"
-               accesskey="e" >
-            </wiki:Tab>
-          </wiki:PageType>
-        </wiki:Permission>
 
         </wiki:PageExists>
       </wiki:TabbedSection>

@@ -96,27 +96,13 @@
       </option>
     </wiki:Permission>
 
-    <option value="separator" disabled="disabled" ><fmt:message key='actions.separator' /></option>
-
-    <option class="action index" value="<wiki:LinkTo page='PageIndex' format='url' />"
-       title="<fmt:message key='actions.index.title' />"><fmt:message key='actions.index' />
-    </option>
-  
-    <option class="action recentchanges" value="<wiki:LinkTo page='RecentChanges' format='url' />"
-        title="<fmt:message key='actions.recentchanges.title'/>" ><fmt:message key='actions.recentchanges' />
-    </option>
-
-	<%--
-    <option class="action systeminfo" value="<wiki:Link page='SystemInfo' format='url' />"
-      title="<fmt:message key='actions.systeminfo.title' />"><fmt:message key='actions.systeminfo' />
-    </option>
-    --%>
-    
-
   </select>
   </li>
   <li id="morebutton">
     <a href="#" class="action more"><fmt:message key="actions.more"/></a>
+    <div id="moremenu">
+      <wiki:InsertPage page="MoreMenu" />
+    </div>
   </li>
 <%--
   <li>

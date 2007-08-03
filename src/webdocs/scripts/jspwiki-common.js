@@ -244,15 +244,6 @@ var Wiki = {
 			return false;
 		});
 
-		/* this assumes you always work with relative font sizes eg em or ex, not in px or pt*/
-		this.DefaultFontSize = $E('body').getStyle('font-size').toFloat();
-		this.PrefFontSize = this.prefs.get('FontSize');
-		if(this.PrefFontSize) { 
-			this.PrefFontSize=this.PrefFontSize.toInt(); this.changeFontSize(0); 
-		} else {
-			this.PrefFontSize = this.DefaultFontSize;
-		}
-
 		this.replaceMoreBox(); /* visual sugar */
 	},
 	savePrefs: function(){
@@ -263,16 +254,9 @@ var Wiki = {
     	if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
 		this.prefs.set('FontSize',this.PrefFontSize);
 	},
-	changeFontSize: function(incr){
-	  	this.PrefFontSize += incr;
-		$E('body').setStyle('font-size',this.PrefFontSize);
-	},
-	resetFontSize: function(){
-		this.PrefFontSize=this.DefaultFontSize;
-		this.changeFontSize(0);
-	},
+
 	changeOrientation: function(){
-		$('content').className = $('prefOrientation').getValue();
+		$('wikibody').className = $('prefOrientation').getValue();
 	},
 	replaceMoreBox: function(){
 		var more = $('morebutton');
@@ -293,11 +277,7 @@ var Wiki = {
 				separator='';
 			}
 		});
-
-		/* if orientation is hidden favorites, move the favorites block inside the more menu */
-		if( $('content').hasClass('fav-hidden') ) {
-		  $('favorites').inject(new Element('li',{'class':'separator'}).inject(popup));		
-		}
+		$('moremenu').inject(new Element('li',{'class':'separator'}).inject(popup));
 		
 		select.getParent().hide();
 		more.show()

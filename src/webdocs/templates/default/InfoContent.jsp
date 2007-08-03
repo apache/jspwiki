@@ -156,11 +156,11 @@
     <wiki:CheckVersion mode="notfirst">
     <%-- if( itemcount > 1 ) { --%>
 
-    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="1" 
+    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" 
                        fmtkey="info.pagination"
                          href='<%=c.getURL(WikiContext.INFO, c.getPage().getName())+"&start=%s"%>' />
 
-    <div class="zebra-table <wiki:CheckRequestContext context='info'>sortable table-filter</wiki:CheckRequestContext>">
+    <div class="zebra-table sortable table-filter">
     <table class="wikitable center" >
       <tr>
         <th><fmt:message key="info.version"/></th>
