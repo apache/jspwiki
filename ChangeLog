@@ -1,9 +1,19 @@
+2007-08-03  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.110
+
+        * Added patch from Murray to provide property cascading from
+        system properties.
+
+        * Added patch from Murray to provide setting of AclManager
+        (use jspwiki.aclManager=<class>).
+
 2007-07-30  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.109 - internal cleanup of JSP's, few bugfixes (one for IE)
-        
-        * Added new <wiki:SetPagination> Tag to get rid of java hacking 
-        in InfoContent.jsp and AJAXSearch.jsp. Fixed a few bugs on pagination 
+
+        * Added new <wiki:SetPagination> Tag to get rid of java hacking
+        in InfoContent.jsp and AJAXSearch.jsp. Fixed a few bugs on pagination
         as well. Now pagination does show up properly at version=20.
         (reported by Milt Taylor)
 
@@ -12,21 +22,21 @@
 
         * Fixed IE crash in jspwiki-edit.js causing edit toolbars not to be
         rendered. (as reported by Milt Taylor)
-        
+
         * Bugfix: Attachment upload was not working anymore (introduced in 2.5.107)
 
 
 2007-07-30  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.108 - template changes & usability
-        
+
         * The 'Edit' button is now back in its previous position. (after recent popularity poll ;-)
         The 'More' button now has a little down-icon as visual clue that it's actually a dropdown.
         The GoTo-Bottom triangle has been removed (reduce screen clutter, not used much anyway)
         The GoTo-Top button is still there.
         The 'Login', 'Logout' and 'My prefs' are put below Greeting, which is more natural.
         (with still 2 different approachs in the default and Smart skin)
-        
+
         * New preference added to select Left/Rigth position the Favoristes menu.
         The position of the 'More' menu and 'Find/Recentchanges' dropdowns is now calculated on the fly.
 
@@ -35,12 +45,12 @@
         prefs.user.orientation.right=Left
 
         * Smart and OrderedList skins are now aligned with latest GUI changes
-        
+
         *  After setting new UserPreferences, you get now redirected back to the page you came from.
         (similar to login)
-        
+
         * XHTML compliance improvements.
-        Border settings have been removed from img elements. (RecentChangesPlugin, 
+        Border settings have been removed from img elements. (RecentChangesPlugin,
         RSSCoffeeCupLinkTag, TranslatorReader)
         Replace all <u> in default.properties by <span class="accesskey">
 
@@ -50,10 +60,10 @@
         actions.editparent=<span class='acceskey'>E</span>dit parent page
         actions.prefs=My <span class='acceskey'>P</span>refs
         actions.prefs.title=Manage user preferences [ p ]
-        
-        * The attachment img viewers now alos supports capitalised extensions 
+
+        * The attachment img viewers now alos supports capitalised extensions
         (eg both jpg and JPG can be reviewed)
-        
+
         * Small refactorings on the Tabbed Sections. (simplified TabTag html)
         All content inside a tab, also the floated content, will nicely fit inside the tab.
         (ref bug 101)
@@ -90,15 +100,15 @@
         actions. These actions are not anylonger in the top pageactions sections.
         This USER bar is positioned at the top of the screen (PlainVanilla skin)
         or in the Favorites sections (SMART skin)
-        
+
         The bottom page actions have been simplified to the max.
         When clicking the 'goto TOP' triangle, you are just one click away
         from all remaining actions and buttons. (this was the most easiest for now ;-)
-        
+
         Pending stuff: allow configurable 'quick-links' to be added next to and
         inside the More... menu. Skins may not yet be up to date with all changes
         - expect some glitches here and there.
-        
+
         * Added link to 'View source page' to the More menu. New i18n property:`
         actions.rawpage=View Page Source
 
