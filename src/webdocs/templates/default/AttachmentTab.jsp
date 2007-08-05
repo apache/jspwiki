@@ -13,11 +13,13 @@
   String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
+<div id="addattachment">
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
   <wiki:Permission permission="upload">
   <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
          class="wikiform"
+            id="uploadform"
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>"
       onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');" >
@@ -53,6 +55,7 @@
 <wiki:Permission permission="!upload">
 <div class="formhelp"><fmt:message key="attach.add.permission"/></div>
 </wiki:Permission>
+</div>
 
 <wiki:HasAttachments>
 

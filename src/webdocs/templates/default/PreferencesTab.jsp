@@ -87,9 +87,9 @@
   <select id="prefOrientation" name="prefOrientation" onchange="Wiki.changeOrientation();">
       <option value='fav-left' <c:if test='${"fav-left" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
       <option value='fav-right' <c:if test='${"fav-right" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
-  <%--
+      <%--
       <option value='fav-hidden' <c:if test='${"fav-hidden" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.fav-hide"/></option>
-  --%>
+      --%>
   </select>
   </td>
   </tr>

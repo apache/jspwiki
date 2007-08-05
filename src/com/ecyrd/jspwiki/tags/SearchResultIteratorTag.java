@@ -64,14 +64,14 @@ public class SearchResultIteratorTag
         m_maxItems = m_count = 0;
     }
 
-    public void setMaxItems( String arg )
+    public void setMaxItems( int arg )
     {
-        m_maxItems = Integer.parseInt(arg);
+        m_maxItems = arg;
     }
 
-    public void setStart( String arg )
+    public void setStart( int arg )
     {
-        m_start = Integer.parseInt(arg);
+        m_start = arg;
     }
     
     public final int doStartTag()

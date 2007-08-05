@@ -10,21 +10,17 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setBundle basename="CoreResources"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 
     String message = null;
-    public boolean resetPassword(WikiEngine wiki, HttpServletRequest request)
+    public boolean resetPassword(WikiEngine wiki, HttpServletRequest request, ResourceBundle rb )
     {
         // Reset pw for account name
         String name = request.getParameter("name");
         UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
         boolean success = false;
-        ResourceBundle rb = wiki.getInternationalizationManager().getBundle( "CoreResources",
-                                                                             request.getLocale() );
 
         try
         {
@@ -95,7 +91,6 @@
         return success;
     }
 %>
-
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
 
@@ -106,7 +101,7 @@
 	// If no context, it means we're using container auth.  So, create one anyway
 	if( wikiContext == null )
 	{
-	    wikiContext = wiki.createContext( request, WikiContext.LOGIN );
+	    wikiContext = wiki.createContext( request, WikiContext.LOGIN ); /* reuse login context ! */
 	    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
 	                              wikiContext,
 	                              PageContext.REQUEST_SCOPE );
@@ -117,89 +112,27 @@
     WikiSession wikiSession = wikiContext.getWikiSession();
     String action  = request.getParameter("action");
 
+    boolean done = false;
+
+    if ((action != null) && (action.equals("resetPassword"))) {
+	    if ( resetPassword( wiki, request, rb ) ) {
+	        done = true;
+	        wikiSession.addMessage( "resetpw", rb.getString("lostpwd.emailed") );
+            pageContext.setAttribute("passwordreset","done");
+	    }
+	    else // Error
+	    {
+            wikiSession.addMessage( "resetpw", message);
+	    } 
+    }
+
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     response.setHeader( "Cache-control", "max-age=0" );
     response.setDateHeader( "Expires", new Date().getTime() );
     response.setDateHeader( "Last-Modified", new Date().getTime() );
 
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "ViewTemplate.jsp" );                                                            
 %>
-
-
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
-  <wiki:Include page="commonheader.jsp"/>
-</head>
-
-<body class="view" bgcolor="#FFFFFF">
-<a name="Top"></a>
-
-<div id="wikibody" >
-  <wiki:Include page="Header.jsp" />
-
-  <!-- Removed application logo here since it may conflict with other templates.
-       TODO: LostPassword.jsp needs to be properly integrated into the templating system
-       in order to be translatable -->
-
-  <div id="page">
-  <%
-      boolean done = false;
-
-      if ((action != null) && (action.equals("resetPassword"))) {
-	      if (resetPassword(wiki, request)) {
-	          done = true;
-	          wikiSession.addMessage( rb.getString("lostpwd.emailed") );
-	          %>
-
-            <h3><fmt:message key="lostpwd.reset.title"/></h3>
-
-            <wiki:Messages div="information" />
-
-            <p><fmt:message key="lostpwd.reset.login"><fmt:param><a href="Login.jsp"><fmt:message key="lostpwd.reset.clickhere"/></a></fmt:param></fmt:message></p>
-            <%
-	      }
-	      else
-	      {
-	          // Error
-              wikiSession.addMessage(message);
-	          %>
-
-              <h3><fmt:message key="lostpwd.reset.unable"/></h3>
-
-              <wiki:Messages div="error" />
-
-              <%
-	      }
-      }
-
-      // Display something to ask for a username
-
-      if (!done) {
-      %>
-      <div><fmt:message key="lostpwd.reset.blurb"/>
-      <form method="post" accept-charset="UTF-8">
-        <input type="hidden" name="action" value="resetPassword"/>
-        <input type="text" name="name"/>
-        <input type="submit" name="Submit" value='<fmt:message key="lostpwd.reset.submit"/>'/>
-      </form>
-      </div>
-
-    <%} %>
-  </div>
-
-  <div id="favorites"><wiki:Include page="Favorites.jsp"/></div>
-
-  <wiki:Include page="Footer.jsp" />
-
-  <div style="clear:both; height:0px;" > </div>
-
-</div>
-<a name="Bottom"></a>
-
-</body>
-</html>
+<wiki:Include page="<%=contentPage%>" />

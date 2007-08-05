@@ -37,6 +37,9 @@
     if( "saveProfile".equals(request.getParameter("action")) )
     {
         UserProfile profile = userMgr.parseProfile( wikiContext );
+        boolean isNew = profile.isNew();
+        log.info( "New profiles should be redirected to Login context iso UserPref "+isNew );
+         
         // Validate the profile
         userMgr.validateProfile( wikiContext, profile );
 
@@ -75,6 +78,18 @@
             //response.sendRedirect( wiki.getViewURL(null) );
             return;
         }
+        /* errors occured when creating a new profile: redirect to Login.jsp */
+        /* FIXME should this not better be a separate Register.jsp command */
+        if( isNew )
+        {
+            //wikiContext.setRequestContext( WikiContext.LOGIN );
+            //response.sendRedirect( wikiContext.getURL(WikiContext.LOGIN,"Login.jsp", "tab=register") );
+            
+            String redirect = wiki.getURL(WikiContext.LOGIN,"Login.jsp","tab=register",true);
+            response.sendRedirect( redirect );
+            return;
+
+        }
     }
     if( "setAssertedName".equals(request.getParameter("action")) )
     {
@@ -87,7 +102,6 @@
 
         log.info( "Redirecting user to " + viewUrl );
         response.sendRedirect( viewUrl );
-        //response.sendRedirect( wiki.getViewURL(null) );
         return;
     }
     if( "clearAssertedName".equals(request.getParameter("action")) )

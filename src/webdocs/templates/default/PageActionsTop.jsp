@@ -57,6 +57,7 @@
 
   <%-- more actions dropdown -- converted to popup by javascript 
        so all basic actions are accessible even if js is not avail --%>
+  <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview|find'>
   <li>
   <select name="actionsMore" id="actionsMore"
       onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
@@ -79,9 +80,11 @@
     </wiki:PageExists>  
     </wiki:CheckRequestContext>
     
+    <wiki:CheckRequestContext context='!find'>
     <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
        title="<fmt:message key='actions.rawpage.title' />"><fmt:message key='actions.rawpage' />
     </option>
+    </wiki:CheckRequestContext>
   
     <wiki:UserCheck status="authenticated">
       <option class="action workflow" value="<wiki:Link jsp='Workflow.jsp' format='url' />" 
@@ -104,6 +107,7 @@
       <wiki:InsertPage page="MoreMenu" />
     </div>
   </li>
+  </wiki:CheckRequestContext>
 <%--
   <li>
     <a class="action quick2bottom" href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a>

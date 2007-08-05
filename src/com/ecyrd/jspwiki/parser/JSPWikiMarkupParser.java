@@ -63,8 +63,8 @@ public class JSPWikiMarkupParser
     public static final String CLASS_WIKIPAGE = "wikipage";
 
     /** The value for anchor element <tt>class</tt> attributes when used
-      * for edit page links. The value is "editpage". */
-    public static final String CLASS_EDITPAGE = "editpage";
+      * for edit page links. The value is "createpage". */
+    public static final String CLASS_EDITPAGE = "createpage";
 
     /** The value for anchor element <tt>class</tt> attributes when used
       * for interwiki page links. The value is "interwiki". */

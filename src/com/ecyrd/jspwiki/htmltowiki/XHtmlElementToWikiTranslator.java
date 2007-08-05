@@ -118,7 +118,7 @@ public class XHtmlElementToWikiTranslator
                 String cssClass = base.getAttributeValue( "class" );
 
                 // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
-                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|editpage|external|interwiki|attachment" );
+                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment" );
 
                 Map styleProps = null;
 
@@ -755,7 +755,7 @@ public class XHtmlElementToWikiTranslator
     {
         String classVal = a.getAttributeValue( "class" );
 
-        return classVal != null && classVal.equals( "editpage" );
+        return classVal != null && classVal.equals( "createpage" );
     }
 
     /**
@@ -773,7 +773,7 @@ public class XHtmlElementToWikiTranslator
 
         String cssClass = a.getAttributeValue( "class" );
         if( cssClass != null && !cssClass.equals( "" )
-            && !cssClass.matches( "wikipage|editpage|external|interwiki|attachment" ) )
+            && !cssClass.matches( "wikipage|createpage|external|interwiki|attachment" ) )
         {
             attributesMap.put( "class", cssClass.replaceAll( "'", "\"" ) );
         }

@@ -48,7 +48,7 @@ public class WysiwygEditingRenderer
     private static final String CLASS_ATTRIBUTE = "class";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String EDITPAGE = "editpage";
+    private static final String EDITPAGE = "createpage";
     private static final String WIKIPAGE = "wikipage";
     private static final String LINEBREAK = "\n";
     private static final String LINKS_TRANSLATION = "$1#$2";

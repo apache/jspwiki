@@ -244,7 +244,7 @@ var Wiki = {
 			return false;
 		});
 
-		this.replaceMoreBox(); /* visual sugar */
+		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
 	},
 	savePrefs: function(){
 		/* why not move this serverside ?? */
@@ -875,7 +875,7 @@ var TabbedSection = {
 						m.removeClass('activetab');      
 						menu.addClass('activetab');
 						el.addClass('hidetab');
-						this.removeClass('hidetab').show();
+						this.removeClass('hidetab'); //.show();
 					}
 					return true;
 				}
@@ -1004,26 +1004,26 @@ var SearchBox = {
 	},
 
 	runfullsearch : function(){
-			var q2 = this.query2.value;
-			if( !q2 || (q2.trim()=='')) { 
-				$('searchResult2').empty();
-				return; 
-			}
-			$('spin').show();
+		var q2 = this.query2.value;
+		if( !q2 || (q2.trim()=='')) { 
+			$('searchResult2').empty();
+			return; 
+		}
+		$('spin').show();
 
-			var scope = $('scope'), 
-				match= q2.match(/^(?:author:|name:|contents:|attachment:)/) ||"";
-			$each(scope.options, function(option){
-				if (option.value == match) option.selected = true;
-			});
+		var scope = $('scope'), 
+			match= q2.match(/^(?:author:|name:|contents:|attachment:)/) ||"";
+		$each(scope.options, function(option){
+			if (option.value == match) option.selected = true;
+		});
 
-			new Ajax(Wiki.TemplateDir+'AJAXSearch.jsp', {
-				postBody: $('searchform2').toQueryString(),
-				update: 'searchResult2', 
-				method: 'post',
-				onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
-			}).request();
-	},
+		new Ajax(Wiki.TemplateDir+'AJAXSearch.jsp', {
+			postBody: $('searchform2').toQueryString(),
+			update: 'searchResult2', 
+			method: 'post',
+			onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
+		}).request();
+    },
 
 	submit: function(){ 
 		var v = this.query.value;

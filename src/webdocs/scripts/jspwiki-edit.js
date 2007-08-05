@@ -33,7 +33,7 @@ var EditTools =
 			EditTools.storeTextarea();
 			this.element.value = value.join("");
 		};
-		
+
 		['smartpairs', 'tabcompletion'].each( function(el){
 			$(el).setProperty('checked', Wiki.prefs.get(el) || false)
 				 .addEvent('click',function(e) {

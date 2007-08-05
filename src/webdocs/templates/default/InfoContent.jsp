@@ -24,7 +24,7 @@
   {
     creationAuthor = firstPage.getAuthor();
   }
-
+  
   int itemcount = 0;  //number of page versions
   try
   {
@@ -158,7 +158,7 @@
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" 
                        fmtkey="info.pagination"
-                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName())+"&start=%s"%>' />
+                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
 
     <div class="zebra-table sortable table-filter">
     <table class="wikitable center" >

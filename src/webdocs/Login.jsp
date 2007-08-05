@@ -6,10 +6,13 @@
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%--
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="CoreResources"/>
 <fmt:setBundle basename="templates.default"/>
+--%>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
@@ -22,7 +25,7 @@
                               wikiContext,
                               PageContext.REQUEST_SCOPE );
     WikiSession wikiSession = wikiContext.getWikiSession();
-    ResourceBundle rb = wikiContext.getBundle("templates.default");
+    ResourceBundle rb = wikiContext.getBundle("CoreResources");
 
     // Set the redirect-page variable if one was passed as a parameter
     if( request.getParameter( "redirect" ) != null )
@@ -66,11 +69,11 @@
                 log.info( "Failed to authenticate user " + uid );
                 if ( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
                 {
-                    wikiSession.addMessage( rb.getString("login.error.capslock") );
+                    wikiSession.addMessage( "login", rb.getString("login.error.capslock") );
                 }
                 else
                 {
-                    wikiSession.addMessage( rb.getString("login.error.password") );
+                    wikiSession.addMessage( "login", rb.getString("login.error.password") );
                 }
             }
         }

@@ -2570,7 +2570,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case EDIT:
-                result = "<a class=\"editpage\" title=\"Create '"+link+"'\" href=\""+
+                result = "<a class=\"createpage\" title=\"Create '"+link+"'\" href=\""+
                          getURL(WikiContext.EDIT, link)+"\">"+
                          text+"</a>";
                 break;

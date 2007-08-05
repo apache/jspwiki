@@ -4,6 +4,7 @@
 .applicationlogo, .companylogo,
 .searchbox, .breadcrumbs, .pageactions, .quicklinks,
 #actionsTop, #actionsBottom, #favorites,
+#addattachment,
 .collapsebox .collapseOpen, .collapsebox .collapseClose, 
 .table-filter .filterrow, .tabmenu { 
 	display:none; 
@@ -40,7 +41,6 @@ a:after 		{ content:attr(href); color:grey;
 }
 
 .hidetab { 
-	display:block; 
 	height:auto;
 	border-top:1px solid #bbb; 
 }

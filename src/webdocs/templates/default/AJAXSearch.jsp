@@ -68,12 +68,14 @@
   }
 %>
 <%
-  int startitem    = 0;    // first item to show
+  int startitem = 0; // first item to show
+  int maxitems = 20; // number of items to show in result
 
   String parm_start    = request.getParameter( "start");
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
 
   Collection list = (Collection)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
+  if( startitem == -1 ) maxitems = list.size(); //show all
 %>
 
 <wiki:SearchResults>
@@ -92,12 +94,12 @@
         title="Wikipedia Search '<c:out value='${param.query}'/>'"
        target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
   </p>
-  
+
   <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" 
                      fmtkey="info.pagination"
                        href="#" 
                     onclick="$('start').value=%s; SearchBox.runfullsearch();" />
-
+  
     <div class="graphBars">
     <div class="zebra-table">
     <table class="wikitable" >
@@ -107,7 +109,7 @@
          <th align="left"><fmt:message key="find.results.score"/></th>
       </tr>
 
-      <wiki:SearchResultIterator id="searchref" start="<%=Integer.toString(startitem)%>" maxItems="20">
+      <wiki:SearchResultIterator id="searchref" start="${param.start}" maxItems="<%=maxitems%>">
       <tr>
         <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
         <td><span class="gBar"><%= searchref.getScore() %></span></td>
@@ -138,13 +140,13 @@
         }
 %>
 	  </c:if><%-- details --%>
-        </wiki:SearchResultIterator>
+      </wiki:SearchResultIterator>
 
-        <wiki:IfNoSearchResults>
+      <wiki:IfNoSearchResults>
         <tr>
           <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults"/></td>
         </tr>
-        </wiki:IfNoSearchResults>
+      </wiki:IfNoSearchResults>
 
       </table>
     </div>

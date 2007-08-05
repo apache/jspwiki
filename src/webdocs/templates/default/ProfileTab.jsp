@@ -25,12 +25,6 @@
       <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
       <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile"/></wiki:UserProfile>
       </h3>
-      <%-- trivial help
-      <div class="formhelp">
-      <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile.help"/></wiki:UserProfile>
-      <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile.help"/></wiki:UserProfile>
-      </div>
-      --%>
 
       <c:if test="${param.tab eq 'profile'}" >
         <div class="formhelp">

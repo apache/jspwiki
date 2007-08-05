@@ -227,7 +227,7 @@ a:focus {
 }
 a.wikipage {
 }
-a.editpage {
+a.createpage {
 	color:red;
 	text-decoration:none;
 	border-bottom:1px dashed red;
