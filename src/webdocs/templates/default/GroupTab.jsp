@@ -13,7 +13,7 @@
 <fmt:setBundle basename="templates.default"/>
 
 <%!
-  String printWikiGroupPutGroup( Group group, String name, boolean cursor)
+  String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)
   {
     Principal[] m = group.members();
     java.util.Arrays.sort( m, new PrincipalComparator() );
@@ -30,13 +30,13 @@
       for( int j=0; j < m.length; j++ ) { ss.append( m[j].getName().trim()+"\\n" ); }
       
       ss.append( delim );
-      ss.append( "Created on " );
+      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
       ss.append( (group.getCreated()==null) ? "" : group.getCreated().toString() );
-      ss.append( " by " );
+      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.by") );
       ss.append( group.getCreator() );
-      ss.append( "<br />Last modified on " );
+      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
       ss.append( (group.getLastModified()==null) ? "" : group.getLastModified().toString() );
-      ss.append( " by " );
+      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.by") );
       ss.append( group.getModifier() );
       ss.append( "\", " );
       ss.append( ( cursor ) ? "true" : "false" );
@@ -59,7 +59,7 @@
   <td id="groupnames" rowspan="2">
     <div id="grouptemplate" 
             style="display:none; " 
-            title="Click to edit this group"
+            title="<fmt:message key="grp.groupnames.title"/>"
           onclick="WikiGroup.toggle(); WikiGroup.onMouseOverGroup(this);"
       onmouseover="WikiGroup.onMouseOverGroup(this);" ></div>
 
@@ -68,7 +68,7 @@
       onmouseover="WikiGroup.onMouseOverGroup(this);" >
       <input type="text" size="30" 
                id="newgroup"
-            value="(new group name)"
+            value="<fmt:message key="grp.newgroupname"/>"
            onblur="if( this.value == '' ) { this.value = this.defaultValue; }; " 
           onfocus="if( this.value == this.defaultValue ) { this.value = ''; WikiGroup.onClickNew(); }; "/>
     </div>
@@ -88,14 +88,14 @@
       <input type="hidden" name="action"  value="save" />
       <input type="button" disabled="disabled"
              name="saveButton" id="saveButton" 
-            value="Save Group"  
+            value="<fmt:message key="grp.savegroup"/>"  
           onclick="WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='EditGroup.jsp' />' );" /></div>
 
       <wiki:Permission permission="createGroups">
       <div>
       <input type="button" disabled="disabled"  
              name="createButton" id="createButton"
-            value="Save New Group" 
+            value="<fmt:message key="grp.savenewgroup"/>" 
             style="display:none; "
           onclick="WikiGroup.onSubmitNew( this.form, '<wiki:Link format='url' jsp='NewGroup.jsp' />' );" /></div>
       </wiki:Permission>
@@ -103,15 +103,15 @@
       <div>
       <input type="button" disabled="disabled"
              name="cancelButton" id="cancelButton" 
-            value="Cancel" 
+            value="<fmt:message key="grp.cancel"/>" 
           onclick="WikiGroup.toggle();" /></div>
 
       <wiki:Permission permission="deleteGroup">
       <div>
       <input type="button" disabled="disabled" 
              name="deleteButton" id="deleteButton"
-            value="Delete Group" 
-          onclick="confirm( 'Please confirm that you want to delete this group permanently!' ) 
+            value="<fmt:message key="grp.deletegroup"/>" 
+          onclick="confirm( '<fmt:message key="grp.deletegroup.confirm"/>' ) 
                 && WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='DeleteGroup.jsp' />' );" /></div>
       </wiki:Permission>
     </form>
@@ -119,14 +119,13 @@
   </tr>
   <tr valign="top">
   <td>
-    <div class="formhelp">The membership for this group. Only members of this group can edit it.
-    <br />Enter each user&#8217;s wiki name or full name, separated by carriage returns.</div>
+    <div class="formhelp"><fmt:message key="grp.formhelp"/></div>
     <p id="groupinfo" class="formhelp"></p>
   </td>
   </tr>
 </table>
 
-<h3>All Groups</h3>
+<h3><fmt:message key="grp.allgroups"/></h3>
 <p><wiki:Translate>[{Groups}]</wiki:Translate></p>
 
 
@@ -147,7 +146,7 @@
       String name = roles[i].getName();
       Group group = c.getEngine().getGroupManager().getGroup( name );
 
-      %><%= printWikiGroupPutGroup( group, name, name.equals( groupname ) )  %><%
+      %><%= printWikiGroupPutGroup( group, name, name.equals( groupname ), pageContext )  %><%
     }
   }
 %>

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,6 +36,7 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 /**
  * <p>
@@ -220,6 +222,8 @@ public class UserProfileTag extends WikiTagBase
     {
         Principal[] roles = context.getWikiSession().getRoles();
         List tempRoles = new ArrayList();
+        ResourceBundle rb = context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        
         for ( int i = 0; i < roles.length; i++ )
         {
             if( roles[i] instanceof GroupPrincipal )
@@ -229,7 +233,7 @@ public class UserProfileTag extends WikiTagBase
         }
         if ( tempRoles.size() == 0 )
         {
-            return "(none)";
+            return rb.getString("userprofile.nogroups");
         }
 
         StringBuffer sb = new StringBuffer();
@@ -259,6 +263,8 @@ public class UserProfileTag extends WikiTagBase
     {
         Principal[] roles = context.getWikiSession().getRoles();
         List tempRoles = new ArrayList();
+        ResourceBundle rb = context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        
         for ( int i = 0; i < roles.length; i++ )
         {
             if ( roles[i] instanceof Role )
@@ -268,7 +274,7 @@ public class UserProfileTag extends WikiTagBase
         }
         if ( tempRoles.size() == 0 )
         {
-            return "(none)";
+            return rb.getString("userprofile.noroles");
         }
 
         StringBuffer sb = new StringBuffer();

@@ -114,11 +114,11 @@
 
      <wiki:UserProfile property="exists">
      <tr class="additinfo">
-       <td><label>Roles</label></td>
+       <td><label><fmt:message key="prefs.roles"/></label></td>
        <td><div class="formvalue"><wiki:UserProfile property="roles" /></div></td>
      </tr>
      <tr class="additinfo">
-       <td><label>Groups</label></td>
+       <td><label><fmt:message key="prefs.groups"/></label></td>
        <td>
          <%-- TODO this should become clickable group links so you can immediately go and look at them if you want --%>
          <div class="formvalue"><wiki:UserProfile property="groups" /></div>
@@ -127,14 +127,14 @@
      </tr>
 
      <tr class="additinfo">
-       <td><label>Creation date</label></td>
+       <td><label><fmt:message key="prefs.creationdate"/></label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
  	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs['DateFormat']}" />
        </td>
      </tr>
      <tr class="additinfo">
-       <td><label>Last modified</label></td>
+       <td><label><fmt:message key="prefs.profile.lastmodified"/></label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
  	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs['DateFormat']}" />

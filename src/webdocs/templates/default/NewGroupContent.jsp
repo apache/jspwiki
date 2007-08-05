@@ -1,6 +1,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
@@ -12,6 +13,7 @@
 <%
   // Extract the group name and members
   String name = request.getParameter( "group" );
+
   Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
   Principal[] members = null;
 
@@ -20,6 +22,12 @@
     name = group.getName();
     members = group.members();
     Arrays.sort( members, new PrincipalComparator() );
+  }
+  
+  // FIXME : find better way to i18nize default group name
+  if ( "MyGroup".equals(name) ) 
+  {
+	  name = LocaleSupport.getLocalizedMessage(pageContext, "newgroup.defaultgroupname");
   }
 %>
 
@@ -66,7 +74,7 @@
       </td>
     </tr>
     </table>
-    <input type="submit" name="ok" value="Create group" />
+    <input type="submit" name="ok" value="<fmt:message key="newgroup.creategroup"/>" />
     <input type="hidden" name="action" value="save" />
     <div class="formhelp">
          <fmt:message key="newgroup.instructions.end"/>

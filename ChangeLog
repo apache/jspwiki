@@ -1,3 +1,36 @@
+2007-08-05  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * i18nized some JSPs with hard-coded text. New localizable strings:
+        	
+			- GroupTab.jsp (default.properties)
+			grp.createdon
+			grp.by
+			grp.lastmodified
+			grp.groupnames.title
+			grp.newgroupname
+			grp.savegroup
+			grp.savenewgroup
+			grp.cancel
+			grp.deletegroup
+			grp.deletegroup.confirm
+			grp.formhelp
+			grp.allgroups
+			
+			- NewGroupContent.jsp (default.properties)
+			newgroup.creategroup
+			
+			- PreferencesContent.jsp (ProfileTab.jsp, default.properties)
+			prefs.roles
+			prefs.groups
+			prefs.creationdate
+			prefs.profile.lastmodified
+			
+			- UserProfileTag (coreresources.properties)
+			userprofile.nogroups
+			userprofile.noroles
+        
+        * Updated spanish (es_ES) translation.
+        
 2007-08-04  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.111
