@@ -4,7 +4,6 @@
         	
 			- GroupTab.jsp (default.properties)
 			grp.createdon
-			grp.by
 			grp.lastmodified
 			grp.groupnames.title
 			grp.newgroupname
@@ -15,6 +14,7 @@
 			grp.deletegroup.confirm
 			grp.formhelp
 			grp.allgroups
+			(grp.by removed due to proper use of MessageFormat)
 			
 			- NewGroupContent.jsp (default.properties)
 			newgroup.creategroup

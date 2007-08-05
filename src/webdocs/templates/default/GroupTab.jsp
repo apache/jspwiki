@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
+<%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.WikiContext" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
@@ -21,6 +22,8 @@
     String delim = "\", \"";
       
     StringBuffer ss = new StringBuffer();
+    MessageFormat mf = null;
+    Object[] args = null;
       
       ss.append( "WikiGroup.putGroup( \"" );
       
@@ -30,14 +33,14 @@
       for( int j=0; j < m.length; j++ ) { ss.append( m[j].getName().trim()+"\\n" ); }
       
       ss.append( delim );
-      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
-      ss.append( (group.getCreated()==null) ? "" : group.getCreated().toString() );
-      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.by") );
-      ss.append( group.getCreator() );
-      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
-      ss.append( (group.getLastModified()==null) ? "" : group.getLastModified().toString() );
-      ss.append( LocaleSupport.getLocalizedMessage(pageContext, "grp.by") );
-      ss.append( group.getModifier() );
+      mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
+      args = new Object[]{(group.getCreated()==null) ? "" : group.getCreated().toString(), group.getCreator()};
+      ss.append( mf.format( args ) );
+      
+      mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
+      args = new Object[]{(group.getCreated()==null) ? "" : group.getCreated().toString(), group.getModifier()};
+      ss.append( mf.format( args ) );
+      
       ss.append( "\", " );
       ss.append( ( cursor ) ? "true" : "false" );
       
