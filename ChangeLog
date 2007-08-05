@@ -1,7 +1,11 @@
+2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Updated Finnish localization.
+
 2007-08-05  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * i18nized some JSPs with hard-coded text. New localizable strings:
-        	
+
 			- GroupTab.jsp (default.properties)
 			grp.createdon
 			grp.lastmodified
@@ -15,22 +19,22 @@
 			grp.formhelp
 			grp.allgroups
 			(grp.by removed due to proper use of MessageFormat)
-			
+
 			- NewGroupContent.jsp (default.properties)
 			newgroup.creategroup
-			
+
 			- PreferencesContent.jsp (ProfileTab.jsp, default.properties)
 			prefs.roles
 			prefs.groups
 			prefs.creationdate
 			prefs.profile.lastmodified
-			
+
 			- UserProfileTag (coreresources.properties)
 			userprofile.nogroups
 			userprofile.noroles
-        
+
         * Updated spanish (es_ES) translation.
-        
+
 2007-08-04  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.111
@@ -39,13 +43,13 @@
 
         * More menu is now extendable (BUG 20)
         A new page called 'MoreMenu' can now be used to extend the More menu
-        with extra stuff, such a links to Recent Changes, Page Index, 
+        with extra stuff, such a links to Recent Changes, Page Index,
         System Info, About, Site Map, etc. The behaviour is similar as for the LeftMenu.
         It is only functional when JS is turned on in your browser.
         Otherwise the more menu is an ordinary dropdown.
 
         * Fixed Favorites position (left/right) in Edit and Upload view
-        
+
         * Removed font resizing stuff. No real add value. (and not working in IE anyway)
 
 2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
