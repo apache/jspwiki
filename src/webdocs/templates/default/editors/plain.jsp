@@ -117,10 +117,7 @@
 	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
 	  <div style="clear:both;">
 	  </div>
-      <div >
-	<%--
-      <label title="<fmt:message key='editor.plain.posteditor.title'/>"><fmt:message key='editor.plain.posteditor'/></label>
-    --%>
+      <div style="display:none;">
       <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
       <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
       <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>

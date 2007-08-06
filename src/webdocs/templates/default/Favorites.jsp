@@ -10,7 +10,7 @@
 
 <div id="favorites">
   <div id="user">
-  <div class="username">
+  <span class="username">
     <wiki:UserCheck status="anonymous">
       <fmt:message key="fav.greet.anonymous" />
     </wiki:UserCheck>
@@ -27,7 +27,7 @@
         <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
       </fmt:message>
     </wiki:UserCheck>
-  </div>
+  </span>
   <wiki:UserCheck status="notAuthenticated">
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">

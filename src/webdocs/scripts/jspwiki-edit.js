@@ -41,6 +41,7 @@ var EditTools =
 					EditTools.initPostEditor();
 				 });
 		},this);
+		$('smartpairs').getParent().show();
 				
 		this.initPostEditor();
 		}

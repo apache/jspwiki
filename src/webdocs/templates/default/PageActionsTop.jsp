@@ -9,6 +9,7 @@
 %>
 
 <%-- similar to PageActionsBottom, except for accesskeys, More... dropdown, quick2Bottom --%>
+<wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview|find|viewGroup|editGroup'>
 <div id="actionsTop" class="pageactions"> 
   <form class="wikiform" method="get" action="" >
   <ul>
@@ -57,7 +58,6 @@
 
   <%-- more actions dropdown -- converted to popup by javascript 
        so all basic actions are accessible even if js is not avail --%>
-  <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview|find'>
   <li>
   <select name="actionsMore" id="actionsMore"
       onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
@@ -107,7 +107,6 @@
       <wiki:InsertPage page="MoreMenu" />
     </div>
   </li>
-  </wiki:CheckRequestContext>
 <%--
   <li>
     <a class="action quick2bottom" href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a>
@@ -117,3 +116,4 @@
 
   </form>
 </div>
+</wiki:CheckRequestContext>

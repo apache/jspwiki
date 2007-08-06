@@ -32,13 +32,6 @@
 	width:18%;
 	text-align:center;
 }
-/* take user out of #favorites, and put it at the top of the universe */
-#favorites #user {
-	position:absolute;
-	right:2em; /*respect the body */
-	top:1em;
-	height:2em;
-}
 #footer .applicationlogo,
 #footer .companylogo,
 #footer .wikiversion,
@@ -60,8 +53,14 @@
 	margin-top:2em;
 	width:18%;
 }
+/* take user out of #favorites, and put it at the top of the universe */
+#favorites #user {
+	position:absolute;
+	right:2em; /*respect the body */
+	top:1em;
+	height:2em;
+}
 #footer {
-	border-top:2px solid #d7d7d7;
 }
 #footer .copyright { 
 }
@@ -149,7 +148,9 @@ h2, h3, h4 {
 	clear:both;
 	margin:1em 0;
 }
-
+b, i {
+	color:inherit;
+}
 /* +++ 220 Lists and bullets +++ */
 ul ul, ol ol {
 	margin:0;
@@ -628,9 +629,8 @@ body.edit textarea {
 
 /* +++ 440 Favorites +++ */
 #user a.action, #user .username {
-	float:left;
+	display:inline;
 	padding:0.25em 0.5em;
-	line-height:normal;
 }
 #user .username {
 	font-style:italic;
@@ -1087,7 +1087,7 @@ table.calendar tr.weekdays {
 
 /* IE only:top 2px to have same size as inside '.tabmenu a' elements */
 * html .tabmenu {
-	margin-top:1px;
+	margin-bottom:-1px;
 }
 .tabmenu a {
 	float:left;

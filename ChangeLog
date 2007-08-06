@@ -1,3 +1,21 @@
+2007-08-06  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.114 - Few IE fixes
+        
+        * Some annoying IE layout issues fixed: 
+        TAB layouts and positioning of User greeting & login & prefs.
+        There is still a major bug on the positioning of the popup menu's
+        in IE  which makes the More menu and Navigation menu's not usable.
+        Ongoing.
+        
+        * Checkboxes for Tab-completion and Smart-typing-pairs are not
+        functional in IE, so now they are hidden in that browser. (BUG 103)
+        
+        * Added the LoginHelp page.
+        
+        * Ensure xhtml compliance when suppressing the PageActionsTop
+        in 'login' and 'prefs' context   
+
 2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.113
