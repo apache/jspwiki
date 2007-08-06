@@ -7,6 +7,8 @@
         overridden in your local template without having to change
         commonheader.jsp
 
+        * Updated Finnish localization.
+
 2007-08-05  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.112 - Login/LostPassword/Register user fixes
