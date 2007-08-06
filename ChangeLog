@@ -1,23 +1,32 @@
+2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.113
+
+        * Added "localheader.jsp", which is included from commonheader.jsp.
+        The idea is that it is an "empty" header file which can be safely
+        overridden in your local template without having to change
+        commonheader.jsp
+
 2007-08-05  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.112 - Login/LostPassword/Register user fixes
-        
+
         * Fixed 'show-all' search results in Find. Only display of blocks of 20 was working.
-        
-        * Renamed the css class 'editpage' to 'createpage'  
+
+        * Renamed the css class 'editpage' to 'createpage'
         because that's actually what it is. (BUG 55)
-        
+
         * Login/LostPassword/Register jsp's clean up and bugfixes:
-        
+
         Handling of Lost/Reset Password is now properly covered by template jsps. (BUG 38)
 
         Still todo: the handling of Create/Modify User Profile (part of UserPreference and Login flow)
-        need to be refactored. When creating a new user profile in the Login screens, the error handling 
+        need to be refactored. When creating a new user profile in the Login screens, the error handling
         get's processed by UserPrefs. Confusing.
-        
+
         Some i18n resources where shifted to the right CoreResources or templates.default bundle.
         (this still needs to be done for all language specific resource files !!)
-  
+
         # Login.jsp  (moved from template.default to CoreResources)
         login.error.capslock=Invalid login (please check your Caps Lock key)
         login.error.password=Not a valid login.
