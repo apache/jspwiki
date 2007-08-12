@@ -54,17 +54,18 @@
 	width:18%;
 }
 /* take user out of #favorites, and put it at the top of the universe */
-#favorites #user {
+#user {
 	position:absolute;
 	right:2em; /*respect the body */
 	top:1em;
-	height:2em;
+}
+* html #user {
+	width:300%; /* overwrite inherited parent width, ie-quirck */
 }
 #footer {
 }
 #footer .copyright { 
 }
-
 #content { 
 	margin-top:1em;
 }
@@ -78,7 +79,6 @@
 	margin-left:0;
 	margin-right:20%;
 }
-
 #page { 
 	width:80%;
 	float:right;
@@ -628,8 +628,11 @@ body.edit textarea {
 }
 
 /* +++ 440 Favorites +++ */
+#userbox {
+	float:right;
+}
 #user a.action, #user .username {
-	display:inline;
+	display:inline; /*undo .action*/
 	padding:0.25em 0.5em;
 }
 #user .username {
@@ -922,7 +925,7 @@ div.index .section {
 
 /* +++ 625 Table of contents plugin +++ */
 .toc {
-	width:60% 
+	width:60%; 
 }
 .toc h4 {
 	font-size:1.4em;
@@ -1067,8 +1070,7 @@ table.calendar tr.weekdays {
 	text-decoration:underline;
 }
 .hidetab {
-	height:0;
-	overflow:hidden; 
+	display:none;
 }
 .tabs {
 	clear:both;
@@ -1206,52 +1208,45 @@ table.calendar tr.weekdays {
 
 /* +++ 920 Collapsable lists +++ */
 div.collapse ul, div.collapse ol {
-	margin-left:1.5em;
-	padding:0;
+	padding-left:1.5em;
 }
 div.collapse * ul, div.collapse * ol {
-	margin-left:0;
-	padding-left:1.5em;
+	xxpadding-left:1.5em;
+}
+* html div.collapse * ul, * html div.collapse * ol {
+	position:relative; /* needed for ie */
 }
 div.collapse li {
 	list-style:none;
-	position:relative;
 }
 /* collapse icons */   
 .collapseBullet, .collapseOpen, .collapseClose {
+	text-align:center;
 	text-decoration:none;
-	font-weight:bold;
 	color:blue;
-	font-family:Monaco, "Courier New", Courier, monospace;
+	font:bold small-caps small Monaco, "Courier New", Courier, monospace;
+	width:1em;
 	padding:0.25em;
-	font-variant:small-caps;
+	margin-top:-0.25em;
 }
 .collapseOpen:hover, .collapseClose:hover {
 	background-color:#f93;
 	color:white;
 }
-.collapseOpen,
-.collapseClose {
+.collapseOpen, .collapseClose {
 	cursor:pointer;
 }
-
-.collapseBullet,
-.collapseOpen,
-.collapseClose {
-	position:absolute;
-}
-
 .collapse .collapseBullet, .collapse .collapseOpen, .collapse .collapseClose { 
-	left:-1.5em !important;
-	right:auto !important;
+	float:left;
+	margin-left:-1.5em;
 }
 
 /* +++ collapsebox +++ */
 .collapsebox {
+    clear:right; /* avoid clash with intern floated bullet */
 	border:1px solid #bbb;
 	position:relative;
 	margin:0 0 1em 0;
-	overflow:hidden;
 }
 /*IE bug -- set width to ensure position:relative working properly */
 * html .collapsebox {
@@ -1270,14 +1265,8 @@ div.collapse li {
 	margin:0 1em;	 
 }
 .collapsebox .collapseOpen, .collapsebox .collapseClose {
-	left:auto;
-	right:0;
-	top:0;
+	float:right;
 }
-.collapsebox .quicklinks { 
-	display:none;
-}
-
 
 /* +++ 930 Sortable tables +++ */
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {

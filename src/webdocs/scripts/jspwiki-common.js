@@ -189,16 +189,12 @@ String.extend({
 	}
 });
 
-
 /* FIXME parse number anywhere inside a string */
 Number.REparsefloat = new RegExp( "([+-]?\\d+(:?\\.\\d+)?(:?e[-+]?\\d+)?)", "i");
-/* parse a date anywhere inside a string */
-/* todo */
-
 
 /** TABLE stuff **/
 function $T(el) {
-	var t = $(el ); 
+	var t = $(el); 
 	return (t && t.tBodies[0]) ? $(t.tBodies[0]) : t;
 };
 
@@ -227,13 +223,9 @@ var Wiki = {
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 	},
-
-	getPageElement: function(){ 
-		return($('page') || $E('.page')); //FIXME make more simple now 
-	},
 	
 	onPageLoad: function(){
-		this.PermissioneEdit = ( $E('.actionEdit') != undefined ); //deduct permission level
+		this.PermissionEdit = ($E('a.edit') != undefined); //deduct permission level
 		this.url = null;
 		this.parseLocationHash.periodical(500);
 
@@ -1398,7 +1390,7 @@ var Collapsable =
 		if(isclosed) el.removeClass('collapsebox-closed').addClass('collapsebox');
 
 		var bullet  = this.bullet.clone();
-		title.adopt( bullet ).addClass('collapsetitle');
+		bullet.injectTop( title.addClass('collapsetitle') );
 		this.newBullet( bullet, body, !isclosed );
 	},
 
@@ -1868,9 +1860,9 @@ var Categories =
 		$$('.category a.wikipage').each(function(link){
 			var page = Wiki.href2pagename(link.href );
 
-			var wrap = new Element('span').injectBefore(link).adopt(link);
-			var popup = new Element('div',{'class':'categoryPopup'}).inject(wrap);
-			var popeff = popup.effect('opacity',{wait:false}).set(0);
+			var wrap = new Element('span').injectBefore(link).adopt(link),
+				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap),
+				popeff = popup.effect('opacity',{wait:false}).set(0);
 
 			link.addClass('categoryLink')
 				.setProperties({ href:'#', title: 'Click to show category [' + page + '] ...' })
@@ -1890,7 +1882,6 @@ var Categories =
 		});
 	} 
 }
-
 /* FIXME Convert url to wiki-pagename */
 Wiki.href2pagename = function(href){
 	if( href.test(/\?page=([^&]+)/) ) return RegExp.$1;

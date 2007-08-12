@@ -174,9 +174,9 @@
 </wiki:Tab>
 </wiki:UserCheck>
 
-<%-- Register new user functionality --%>
+<%-- Register new user profile --%>
 <wiki:Permission permission='editProfile'>
-<wiki:Tab id="register" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%>' >
+<wiki:Tab id="profile" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%>' >
   <wiki:Include page='ProfileTab.jsp'/>
 </wiki:Tab>
 </wiki:Permission>

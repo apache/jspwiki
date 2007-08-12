@@ -3,7 +3,6 @@
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
 <%! 
     /**
      * This page contains the logic for finding and including
@@ -14,8 +13,8 @@
        will prevent direct access to it.
      */
     Logger log = Logger.getLogger("JSPWiki"); 
-%>
 
+%>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
@@ -37,5 +36,5 @@
                                                             "ViewTemplate.jsp" );
                                                             
     log.debug("Login template content is: " + contentPage);
-%>
-    <wiki:Include page="<%=contentPage%>" />
+    
+%><wiki:Include page="<%=contentPage%>" />

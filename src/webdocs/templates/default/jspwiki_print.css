@@ -39,11 +39,12 @@ a:after 		{ content:attr(href); color:grey;
 	clear:both;
 	position:static;
 }
-
 .hidetab { 
-	height:auto;
-	border-top:1px solid #bbb; 
+	display:block;
 }
 .accordion .active, .tabbedAccordion .active { 
 	height:auto !important;
+}
+a.slimbox {
+	display:none;
 }

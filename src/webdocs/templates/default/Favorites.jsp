@@ -10,6 +10,7 @@
 
 <div id="favorites">
   <div id="user">
+  <div id="userbox">
   <span class="username">
     <wiki:UserCheck status="anonymous">
       <fmt:message key="fav.greet.anonymous" />
@@ -52,13 +53,13 @@
     </a>
   </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
-
+  </div>
   <div style="clear:both;"></div>
   </div>
   
   <wiki:CheckRequestContext context='!login'>
   <wiki:UserCheck status="known">
-  <wiki:Translate>[{If page='{$username}Favorites'
+  <wiki:Translate>[{TEST page='{$username}Favorites'
 
 %%collapsebox-closed
 ! [My Favorites|{$username}Favorites]

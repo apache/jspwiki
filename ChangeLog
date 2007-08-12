@@ -1,3 +1,19 @@
+2007-08-12  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.115 - More IE fixes (more to come)
+        
+        * Collapsable lists were not working in the current STRICT DTD mode, 
+        due to a remarkable IE bug (ref. http://mt-olympus.com/emmett/bug_overflow_positionrelative.php )
+        
+        * The USER greeting box needed an fix, for IE.
+        
+        * Fixed the visibility of the Attachment Tab for IE 
+
+        * The handling of the user profile Creation (under login context) and 
+        user profile modifications (under Pref context) has been fixed. 
+        Errors during creation or update are now routed back to the correct contexts.
+
+
 2007-08-06  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.114 - Few IE fixes

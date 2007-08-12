@@ -4,19 +4,16 @@
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.auth.user.DuplicateUserException" %>
+<%@ page import="com.ecyrd.jspwiki.auth.user.UserProfile" %>
+<%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%--
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="CoreResources"/>
-<fmt:setBundle basename="templates.default"/>
---%>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
-
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     AuthenticationManager mgr = wiki.getAuthenticationManager();
@@ -35,6 +32,47 @@
     else
     {
         wikiContext.setVariable( "redirect", wiki.getFrontPage());
+    }
+    // Are we saving the profile?
+    if( "saveProfile".equals(request.getParameter("action")) )
+    {
+        UserManager userMgr = wiki.getUserManager();
+        UserProfile profile = userMgr.parseProfile( wikiContext );
+         
+        // Validate the profile
+        userMgr.validateProfile( wikiContext, profile );
+
+        // If no errors, save the profile now & refresh the principal set!
+        if ( wikiSession.getMessages( "profile" ).length == 0 )
+        {
+            try
+            {
+                userMgr.setUserProfile( wikiSession, profile );
+                CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
+            }
+            catch( DuplicateUserException e )
+            {
+                // User collision! (full name or wiki name already taken)
+                wikiSession.addMessage( "profile", e.getMessage() );
+            }
+            catch( DecisionRequiredException e )
+            {
+                String redirect = wiki.getURL(WikiContext.VIEW,"ApprovalRequiredForUserProfiles",null,true);
+                response.sendRedirect( redirect );
+                return;
+            }
+            catch( WikiSecurityException e )
+            {
+                // Something went horribly wrong! Maybe it's an I/O error...
+                wikiSession.addMessage( "profile", e.getMessage() );
+            }
+        }
+        if ( wikiSession.getMessages( "profile" ).length == 0 )
+        {
+            String redirectPage = request.getParameter( "redirect" );
+            response.sendRedirect( wiki.getViewURL(redirectPage) );
+            return;
+        }
     }
 
     // If NOT using container auth, perform all of the access control logic here...
@@ -141,5 +179,4 @@
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
-%>
-<jsp:include page="LoginForm.jsp" />
+%><jsp:include page="LoginForm.jsp" />

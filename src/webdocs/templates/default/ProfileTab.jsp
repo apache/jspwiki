@@ -13,9 +13,11 @@
   UserManager manager = wikiContext.getEngine().getUserManager();
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
-
-<form action="<wiki:Link jsp='UserPreferences.jsp' 
-      format='url'><wiki:Param name='tab' value='profile'/></wiki:Link>" 
+<form action="<wiki:CheckRequestContext 
+     context='login'><wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='tab'
+       value='profile'/></wiki:Link></wiki:CheckRequestContext><wiki:CheckRequestContext 
+     context='prefs'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
+       value='profile'/></wiki:Link></wiki:CheckRequestContext>" 
           id="editProfile" 
        class="wikiform"
     onsubmit="return Wiki.submitOnce( this );"
@@ -59,10 +61,6 @@
      <wiki:UserProfile property="canChangePassword">
        <tr>
          <td><label for="password"><fmt:message key="prefs.password"/></label></td>
-         <%--
-               <wiki:UserProfile property="exists">Change Password</wiki:UserProfile>
-               <wiki:UserProfile property="new">Set Password</wiki:UserProfile>
-         --%>
          <td>
             <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
             <label for="password0">Old</label>&nbsp;
@@ -76,12 +74,6 @@
           <td>
             <input type="password" name="password2" id="password2" size="20" value="" />
             <%-- extra validation ? min size, allowed chars? --%>
-            <%-- trivial help
-            <div class="formhelp">
-              <fmt:message key="prefs.password.description"/>
-              <fmt:message key="prefs.password2.description"/>
-            </div>
-            --%>
          </td>
        </tr>
      </wiki:UserProfile>
@@ -145,6 +137,7 @@
        <wiki:UserProfile property="new">
          <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
        </wiki:UserProfile>
+       <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
        <input type="hidden" name="action" value="saveProfile" />
 
        <wiki:UserCheck status="assertionsAllowed">
