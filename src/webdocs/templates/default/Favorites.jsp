@@ -11,28 +11,34 @@
 <div id="favorites">
   <div id="user">
   <div id="userbox">
-  <span class="username">
     <wiki:UserCheck status="anonymous">
+      <span class="username anonymous">
       <fmt:message key="fav.greet.anonymous" />
+      </span>
     </wiki:UserCheck>
     <wiki:UserCheck status="asserted">
+      <span class="username asserted">
       <fmt:message key="fav.greet.asserted">
         <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
         <%--
         <fmt:param><wiki:LinkTo page='UserPreferences'><wiki:UserName/></wiki:Link></fmt:param>
         --%>
       </fmt:message>
+      </span>
     </wiki:UserCheck>
     <wiki:UserCheck status="authenticated">
+      <span class="username authenticated">
       <fmt:message key="fav.greet.authenticated">
         <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
       </fmt:message>
+      </span>
     </wiki:UserCheck>
-  </span>
+    
   <wiki:UserCheck status="notAuthenticated">
   <wiki:CheckRequestContext context='!login'>
     <wiki:Permission permission="login">
-        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>" 
+        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param 
+           name='redirect' value='<%=c.getPage().getName()%>'/></wiki:Link>" 
           class="action login"
           title="<fmt:message key='actions.login.title'/>"><fmt:message key="actions.login"/></a>
     </wiki:Permission>

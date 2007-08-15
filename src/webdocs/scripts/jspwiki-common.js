@@ -280,7 +280,9 @@ var Wiki = {
 	locatemenu: function(base,el){
 		var win = {'x': window.getWidth(), 'y': window.getHeight()},
 			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
-			corner = {'x': base.offsetLeft, 'y': base.offsetTop},
+			//corner = {'x': base.offsetLeft, 'y': base.offsetTop},
+			//IE fix needed
+			corner = {'x': base.getPositionedOffset('left'), 'y': base.getPositionedOffset('top')},
 			offset = {'x': base.offsetWidth-el.offsetWidth, 'y': base.offsetHeight },
 			popup = {'x': el.offsetWidth, 'y': el.offsetHeight},
 			prop = {'x': 'left', 'y': 'top'};

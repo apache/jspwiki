@@ -630,6 +630,7 @@ body.edit textarea {
 /* +++ 440 Favorites +++ */
 #userbox {
 	float:right;
+	padding:0.25em 0; /* needed for ie */
 }
 #user a.action, #user .username {
 	display:inline; /*undo .action*/
@@ -638,6 +639,13 @@ body.edit textarea {
 #user .username {
 	font-style:italic;
 }
+.username.anonymous {
+}
+.username.asserted {
+}
+.username.authenticated {
+}
+
 .wikiversion,
 .rssfeed {
 	font-size:90%;
@@ -1208,10 +1216,16 @@ table.calendar tr.weekdays {
 
 /* +++ 920 Collapsable lists +++ */
 div.collapse ul, div.collapse ol {
+	margin-left:1.5em;
+	padding-left:0;
+	xxpadding-left:1.5em;
+}
+/* ie hack to ensure first level of bullets are showns properly  ugh! */
+* html div.collapse ul, * html div.collapse ol {
 	padding-left:1.5em;
 }
 div.collapse * ul, div.collapse * ol {
-	xxpadding-left:1.5em;
+	padding-left:1.5em;
 }
 * html div.collapse * ul, * html div.collapse * ol {
 	position:relative; /* needed for ie */

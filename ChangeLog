@@ -1,3 +1,16 @@
+2007-08-15  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.116 - More fixes for IE
+        
+        * More fixes for collapsable lists and the Greeting box.
+        
+        * Positioning of popup menu's now also correct on IE.
+        
+        * CSS-classes were added reflect anonymous, asserted, authenticed status.
+        The SMART skin has user icons reflecting the login status. 
+        (suggested by Murray Altheim)
+        
+        
 2007-08-12  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.115 - More IE fixes (more to come)
