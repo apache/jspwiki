@@ -1,3 +1,10 @@
+2007-08-17  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * 2.5.117 - Page renaming caused a NullPointerException under some circumstances,
+        filed as Bug 85. Fixed, seemed to be caused when renaming a non-existing page 
+        (cfr. with http://bugs.jspwiki.org/show_bug.cgi?id=85). Added some JUnit tests to 
+        check this.
+        
 2007-08-15  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.116 - More fixes for IE

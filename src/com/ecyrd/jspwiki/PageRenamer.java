@@ -233,7 +233,7 @@ public class PageRenamer
 
             if (context.getPage() != null)
             {
-                PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( m_wikiEngine.getPage(referrerName) );
+                PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( context.getPage() );
                 m_wikiEngine.getPageManager().unlockPage( lock );
 
                 tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );

@@ -322,6 +322,78 @@ public class PageRenamerTest extends TestCase
         assertEquals( "[Link to Test|Test|target='_new']", m_engine.getText( "TestPage" ).trim() );
     }
     
+    public void testBug85_case1() throws Exception 
+    {
+        // renaming a non-existing page
+        // This fails under 2.5.116, cfr. with http://bugs.jspwiki.org/show_bug.cgi?id=85
+        // m_engine.saveText( "TestPage", "blablahblahbla" );
+        try
+        {
+            rename("TestPage123", "Main8887");
+            rename("Main8887", "TestPage123"); 
+        }
+        catch (NullPointerException npe)
+        {
+            npe.printStackTrace();
+            System.out.println("NPE: Bug 85 caught?");
+            fail();
+        }
+    }
+    
+    public void testBug85_case2() throws Exception 
+    {
+        try
+        {
+            // renaming a non-existing page, but we call m_engine.saveText() before renaming 
+            // this does not fail under 2.5.116
+            m_engine.saveText( "TestPage1234", "blablahblahbla" );
+            rename("TestPage1234", "Main8887");
+            rename("Main8887", "TestPage1234");
+        }
+        catch (NullPointerException npe)
+        {
+            npe.printStackTrace();
+            System.out.println("NPE: Bug 85 caught?");
+            fail();
+        }
+    }
+    
+    public void testBug85_case3() throws Exception 
+    {
+        try
+        {
+            // renaming an existing page
+            // this does not fail under 2.5.116
+            // m_engine.saveText( "Main", "blablahblahbla" );
+            rename("Main", "Main8887");
+            rename("Main8887", "Main");
+        }
+        catch (NullPointerException npe)
+        {
+            npe.printStackTrace();
+            System.out.println("NPE: Bug 85 caught?");
+            fail();
+        }
+    }
+    
+    public void testBug85_case4() throws Exception 
+    {
+        try
+        {
+            // renaming an existing page, and we call m_engine.saveText() before renaming
+            // this does not fail under 2.5.116
+            m_engine.saveText( "Main", "blablahblahbla" );
+            rename("Main", "Main8887");
+            rename("Main8887", "Main");
+        }
+        catch (NullPointerException npe)
+        {
+            npe.printStackTrace();
+            System.out.println("NPE: Bug 85 caught?");
+            fail();
+        }
+    }
+    
     public static Test suite()
     {
         return new TestSuite( PageRenamerTest.class );
