@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.88 2007-08-03 21:05:41 jalkanen Exp $
+    $Id: build.xml,v 1.89 2007-08-19 16:56:24 jalkanen Exp $
 -->
 
 <!--
@@ -386,20 +386,20 @@
 
   <!-- We compress the Javascript using Dojos Rhino system.  Very useful.
        If you don't want to use the compressed stuff, just copy the default
-       .js files from the distro on top of the compressed ones from the WAR. 
+       .js files from the distro on top of the compressed ones from the WAR.
    -->
   <target name="compressedjs">
 	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
-  	<java jar="lib/custom_rhino.jar" 
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-common.js" 
+  	<java jar="lib/custom_rhino.jar"
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-common.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
   		  fork="true"/>
-  	<java jar="lib/custom_rhino.jar" 
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" 
+  	<java jar="lib/custom_rhino.jar"
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-edit.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
   		  fork="true"/>
-  	<java jar="lib/custom_rhino.jar" 
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" 
+  	<java jar="lib/custom_rhino.jar"
+  		  args="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
   		  fork="true"/>
   </target>
@@ -1196,7 +1196,7 @@ To automate the JAR signing processs, you can add the property
   <!-- Special "init" target for Hypersonic -->
   <target name="hsql-init" depends="hsql-check-start,hsql-start" />
 
-  <target name="hsql-check-start">
+  <target name="hsql-check-start" depends="db-properties">
     <echo message="Checking to see if Hypersonic JDBC server is running already." />
     <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
     <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>

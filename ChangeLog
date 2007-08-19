@@ -1,56 +1,61 @@
+2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Fixed a bunch of failing unit tests - the change of "editpage"
+        to "createpage" had for some reason slipped everyone's attention.
+
 2007-08-17  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * 2.5.117 - Page renaming caused a NullPointerException under some circumstances,
-        filed as Bug 85. Fixed, seemed to be caused when renaming a non-existing page 
-        (cfr. with http://bugs.jspwiki.org/show_bug.cgi?id=85). Added some JUnit tests to 
+        filed as Bug 85. Fixed, seemed to be caused when renaming a non-existing page
+        (cfr. with http://bugs.jspwiki.org/show_bug.cgi?id=85). Added some JUnit tests to
         check this.
-        
+
 2007-08-15  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.116 - More fixes for IE
-        
+
         * More fixes for collapsable lists and the Greeting box.
-        
+
         * Positioning of popup menu's now also correct on IE.
-        
+
         * CSS-classes were added reflect anonymous, asserted, authenticed status.
-        The SMART skin has user icons reflecting the login status. 
+        The SMART skin has user icons reflecting the login status.
         (suggested by Murray Altheim)
-        
-        
+
+
 2007-08-12  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.115 - More IE fixes (more to come)
-        
-        * Collapsable lists were not working in the current STRICT DTD mode, 
-        due to a remarkable IE bug (ref. http://mt-olympus.com/emmett/bug_overflow_positionrelative.php )
-        
-        * The USER greeting box needed an fix, for IE.
-        
-        * Fixed the visibility of the Attachment Tab for IE 
 
-        * The handling of the user profile Creation (under login context) and 
-        user profile modifications (under Pref context) has been fixed. 
+        * Collapsable lists were not working in the current STRICT DTD mode,
+        due to a remarkable IE bug (ref. http://mt-olympus.com/emmett/bug_overflow_positionrelative.php )
+
+        * The USER greeting box needed an fix, for IE.
+
+        * Fixed the visibility of the Attachment Tab for IE
+
+        * The handling of the user profile Creation (under login context) and
+        user profile modifications (under Pref context) has been fixed.
         Errors during creation or update are now routed back to the correct contexts.
 
 
 2007-08-06  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.114 - Few IE fixes
-        
-        * Some annoying IE layout issues fixed: 
+
+        * Some annoying IE layout issues fixed:
         TAB layouts and positioning of User greeting & login & prefs.
         There is still a major bug on the positioning of the popup menu's
         in IE  which makes the More menu and Navigation menu's not usable.
         Ongoing.
-        
+
         * Checkboxes for Tab-completion and Smart-typing-pairs are not
         functional in IE, so now they are hidden in that browser. (BUG 103)
-        
+
         * Added the LoginHelp page.
-        
+
         * Ensure xhtml compliance when suppressing the PageActionsTop
-        in 'login' and 'prefs' context   
+        in 'login' and 'prefs' context
 
 2007-08-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
