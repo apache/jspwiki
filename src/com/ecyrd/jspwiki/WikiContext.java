@@ -835,14 +835,14 @@ public class WikiContext
             if( m_session.isAuthenticated() )
             {
                 log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission() + ")" );
-                String pageurl = m_engine.encodeName( m_page.getName() );
+                String pageurl = m_page.getName();
                 m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), arguments) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
             else
             {
                 log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission() + ")");
-                String pageurl = m_engine.encodeName( m_page.getName() );
+                String pageurl = m_page.getName();
                 m_session.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), arguments) );
                 response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null, false ) );
             }
