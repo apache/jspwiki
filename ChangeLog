@@ -1,5 +1,11 @@
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.5.118
+
+        * [Bug 110]: WikiContext.checkAccess() was doing double encoding,
+        and therefore pages with spaces would be returning wrong login
+        URLs.  Reported by Alex Samad.
+
         * Fixed a bunch of failing unit tests - the change of "editpage"
         to "createpage" had for some reason slipped everyone's attention.
 
