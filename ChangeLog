@@ -2,7 +2,7 @@
 
         * 2.5.119
 
-        * [Bug 70]: Added "exists" parameter to IfPlugin.
+        * [Bug 89]: Added "exists" parameter to IfPlugin.
 
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
