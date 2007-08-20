@@ -1,5 +1,11 @@
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.5.119
+
+        * [Bug 70]: Added "exists" parameter to IfPlugin.
+
+2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
         * 2.5.118
 
         * [Bug 110]: WikiContext.checkAccess() was doing double encoding,
