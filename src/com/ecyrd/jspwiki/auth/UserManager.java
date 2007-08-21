@@ -729,8 +729,8 @@ public final class UserManager
                         + "Login name: " + profile.getLoginName() + "\n"
                         + "Your name : " + profile.getFullname() + "\n"
                         + "E-mail    : " + profile.getEmail() + "\n\n"
-                        + "If you forget your password, you can re-set it at "
-                        + m_engine.getBaseURL() + "\\LostPassword.jsp";
+                        + "If you forget your password, you can reset it at "
+                        + m_engine.getURL(WikiContext.LOGIN, null, null, true);
                     MailUtil.sendMessage( m_engine, to, subject, content);
                 }
                 catch ( AddressException e)
