@@ -1,5 +1,5 @@
-<!-- This is a local JSP header file, which you can override in your own template
-     if you want to put something in the <head> -section of the page.  This page is
+<%-- This is a local JSP header file, which you can override in your own template
+     if you want to put something in the head-section of the page.  This page is
      included after the commonheader.jsp.
 
      The JSPWiki default template and distribution will never have anything here
@@ -13,4 +13,4 @@
      and just put a new localheader.jsp in it.  JSPWiki will always use the
      files in the "default" template, if it cannot locate an equivalent file in
      your defined template directory.
-     -->
+     --%>
