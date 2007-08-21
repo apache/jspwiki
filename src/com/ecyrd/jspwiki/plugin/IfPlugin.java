@@ -82,7 +82,9 @@ import com.ecyrd.jspwiki.WikiProvider;
  *
  *  Page "TestPage" exists.}]
  *  </pre>
- *
+ *  <p>With the same mechanism, it's also possible to test for the existence
+ *  of a variable - just use "var" instead of "page".</p>
+ *  
  *  <p>Another caveat is that the plugin body content is not counted
  *  towards ReferenceManager links.  So any links do not appear on any reference
  *  lists.  Depending on your position, this may be a good or a bad
@@ -126,6 +128,7 @@ public class IfPlugin implements WikiPlugin
             String content = context.getEngine().getVariable(context, var);
             include |= checkContains(context,content,contains);
             include |= checkIs(context,content,is);
+            include |= checkVarExists(context,content,exists);
         }
 
         if( include )
@@ -140,7 +143,14 @@ public class IfPlugin implements WikiPlugin
 
     private boolean checkExists(WikiContext context, String page, String exists )
     {
+        if( exists == null ) return false;
         return !context.getEngine().pageExists(page) ^ TextUtil.isPositive(exists);
+    }
+
+    private boolean checkVarExists(WikiContext context, String varContent, String exists )
+    {
+        if( exists == null ) return false;
+        return (varContent == null ) ^ TextUtil.isPositive(exists);
     }
 
     private boolean checkGroup(WikiContext context, String group)
