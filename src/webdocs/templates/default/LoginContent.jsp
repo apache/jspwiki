@@ -85,7 +85,7 @@
     </div>
     <div class="formhelp">
       <fmt:message key="login.nopassword"/>
-      <a href="#" onclick="$('menu-register').fireEvent('click');"
+      <a href="#" onclick="$('menu-profile').fireEvent('click');"
                     title="<fmt:message key='login.registernow.title'/>" >
         <fmt:message key="login.registernow">
           <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
@@ -156,7 +156,7 @@
   <div class="formhelp">
     <fmt:message key="login.nopassword"/>
     <%--<a href="UserPreferences.jsp?tab=profile">--%>
-    <a href="#" onclick="$('menu-register').fireEvent('click');"
+    <a href="#" onclick="$('menu-profile').fireEvent('click');"
                   title="<fmt:message key='login.registernow.title'/>" >
       <fmt:message key="login.registernow">
         <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
