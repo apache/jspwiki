@@ -1,3 +1,10 @@
+2007-08-21  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.120
+        
+        * [Bug 89]: Added support also for [{If var='xyssy' exists='true'}],
+        requested by Dirk.
+
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.119
