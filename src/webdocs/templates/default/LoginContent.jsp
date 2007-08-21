@@ -8,23 +8,22 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 
-<%!
-  public void jspInit()
-  {
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    AuthenticationManager mgr = wiki.getAuthenticationManager();
-    if ( mgr.isContainerAuthenticated() )
+<%
+    String postURL = "";
+    WikiContext ctx = WikiContext.findContext( pageContext );
+    AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
+    
+    if( mgr.isContainerAuthenticated() )
     {
-      postURL = "j_security_check";
+        postURL = "j_security_check";
     }
     else
     {
-      postURL = "Login.jsp";
+        postURL = ctx.getURL( WikiContext.LOGIN, "" );
     }
-  }
-  String postURL="";
+
+    boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication(); 
 %>
-<% boolean supportsCookieAuthentication = WikiEngine.getInstance(getServletConfig()).getAuthenticationManager().allowsCookieAuthentication(); %>
 <wiki:TabbedSection defaultTab="${param.tab}">
 
 <%-- Login functionality --%>
@@ -103,7 +102,7 @@
 <wiki:Tab id="lostpassword" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>">
 
 <div class="center">
-<form action="LostPassword.jsp?tab=lostpassword"
+<form action="<wiki:Link jsp='LostPassword.jsp'><wiki:Param name='tab' value='lostpassword'/></wiki:Link>"
           id="lostpw"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
@@ -117,7 +116,7 @@
                   prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
       <p>
         <fmt:message key="login.lostpw.reset.login">
-          <fmt:param><a href="Login.jsp"><fmt:message key="login.lostpw.reset.clickhere"/></a></fmt:param>
+          <fmt:param><a href="<wiki:Link jsp='Login.jsp' />"><fmt:message key="login.lostpw.reset.clickhere"/></a></fmt:param>
         </fmt:message>
       </p>
   </c:when>
