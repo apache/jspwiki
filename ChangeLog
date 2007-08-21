@@ -4,6 +4,14 @@
         
         * [Bug 89]: Added support also for [{If var='xyssy' exists='true'}],
         requested by Dirk.
+        
+        * Localized WeblogEntryPlugin (strangely enough, the plugin text
+        was already in the resource file.)
+        
+        * [Bug 39]: Fixed the login issue, but many things still remain.
+        
+        * Fixed issue with login email sending which was using a hard-coded 
+        URL.
 
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
