@@ -67,6 +67,8 @@ public class WeblogEntryPlugin implements WikiPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        
         String weblogName = (String)params.get( PARAM_BLOGNAME );
         if( weblogName == null )
         {
@@ -77,12 +79,11 @@ public class WeblogEntryPlugin implements WikiPlugin
         StringBuffer sb = new StringBuffer();
 
         String entryText = (String) params.get(PARAM_ENTRYTEXT);
-        if( entryText == null ) entryText = "New entry";
+        if( entryText == null ) 
+            entryText = rb.getString("weblogentryplugin.newentry");
         
         String url = context.getURL( WikiContext.NONE, "NewBlogEntry.jsp", "page="+engine.encodeName(weblogName) );
             
-        //sb.append("<a href=\""+engine.getEditURL(blogPage)+"\">New entry</a>");
-        //sb.append("<a href=\""+engine.getBaseURL()+"NewBlogEntry.jsp?page="+engine.encodeName(weblogName)+"\">"+entryText+"</a>");
         sb.append("<a href=\""+url+"\">"+entryText+"</a>");
 
         return sb.toString();
