@@ -1,3 +1,12 @@
+2007-08-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.121
+        
+        * [Bug 10]: Fixed.
+        
+        * Made findSuggestionMenu transparent since it sometimes blocks
+        the view.  Also reduced fontsize a bit.
+
 2007-08-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.120
