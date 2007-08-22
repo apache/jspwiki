@@ -82,21 +82,23 @@ public class SearchManager
          *  Currently the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
-         *  @param value the page name
+         *  @param wikiName the page name
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List getSuggestions( String value, int maxLength )
+        public List getSuggestions( String wikiName, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
             List list = new ArrayList(maxLength);
 
-            if( value.length() > 0 )
+            if( wikiName.length() > 0 )
             {
-                value = MarkupParser.cleanLink(value);
-                value = value.toLowerCase();
+                wikiName = MarkupParser.cleanLink(wikiName);
+                wikiName = wikiName.toLowerCase();
 
+                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase();
+                
                 Set allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
@@ -104,7 +106,7 @@ public class SearchManager
                 {
                     String p = (String) i.next();
                     String pp = p.toLowerCase();
-                    if( pp.startsWith( value ) )
+                    if( pp.startsWith( wikiName ) || pp.startsWith( oldStyleName ) )
                     {
                         list.add( p );
                         counter++;
@@ -113,7 +115,7 @@ public class SearchManager
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+value+" done in "+sw);
+            if( log.isDebugEnabled() ) log.debug("Suggestion request for "+wikiName+" done in "+sw);
             return list;
         }
 
