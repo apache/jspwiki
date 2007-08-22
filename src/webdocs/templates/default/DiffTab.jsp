@@ -15,7 +15,7 @@
  %>
 
 <wiki:PageExists>
-<form action="<wiki:Link jsp='Diff.jsp'format='url' />" method="get" accept-charset="UTF-8">
+<form action="<wiki:Link jsp='Diff.jsp' format='url' />" method="get" accept-charset="UTF-8">
 <div class="collapsebox" id="diffcontent">
   <h4>
        <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />

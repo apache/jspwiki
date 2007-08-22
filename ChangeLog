@@ -1,3 +1,9 @@
+2007-08-22  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.122
+        
+        * [Bug 113]: Error with 'join wiki now!' link creating new accounts
+   
 2007-08-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.121
