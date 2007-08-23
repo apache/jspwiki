@@ -56,7 +56,7 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 /**
  *  Interface for the search providers that handle searching the Wiki
  *
- *  @author Arent-Jan Banck for Informatica
+ *  @author Arent-Jan Banck
  *  @since 2.2.21.
  */
 public class LuceneSearchProvider implements SearchProvider
@@ -149,7 +149,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Returns the handling engine.
-     *  
+     *
      *  @return Current WikiEngine
      */
     protected WikiEngine getEngine()
@@ -159,7 +159,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Performs a full Lucene reindex, if necessary.
-     *  
+     *
      *  @throws IOException If there's a problem during indexing
      */
     protected void doFullLuceneReindex()
@@ -339,7 +339,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Updates the lucene index for a single page.
-     *  
+     *
      *  @param page The WikiPage to check
      *  @param text The page text to index.
      */
@@ -396,11 +396,11 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Indexes page using the given IndexWriter
-     *  
+     *
      *  @param page WikiPage
      *  @param text Page text to index
      *  @param writer The Lucene IndexWriter to use for indexing
-     *  @throws IOException If there's an indexing problem 
+     *  @throws IOException If there's an indexing problem
      *
      */
     protected void luceneIndexPage( WikiPage page, String text, IndexWriter writer )
@@ -479,7 +479,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Adds a page-text pair to the lucene update queue.  Safe to call always
-     *  
+     *
      *  @param page WikiPage to add to the update queue.
      */
     public void reindexPage( WikiPage page )
@@ -519,7 +519,7 @@ public class LuceneSearchProvider implements SearchProvider
     {
         return findPages( query, FLAG_CONTEXTS );
     }
-    
+
     /**
      *  Create contexts also.  Generating contexts can be expensive,
      *  so they're not on by default.
@@ -528,7 +528,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     /**
      *  Searches pages using a particular combination of flags.
-     *  
+     *
      *  @param query The query to perform in Lucene query language
      *  @param flags A set of flags
      *  @return A Collection of SearchResult instances
@@ -540,7 +540,7 @@ public class LuceneSearchProvider implements SearchProvider
         Searcher  searcher = null;
         ArrayList list     = null;
         Highlighter highlighter = null;
-        
+
         try
         {
             String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS };

@@ -42,7 +42,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
 /**
  *  Manages searching the Wiki.
  *
- *  @author Arent-Jan Banck for Informatica
+ *  @author Arent-Jan Banck
  *  @since 2.2.21.
  */
 
@@ -98,7 +98,7 @@ public class SearchManager
                 wikiName = wikiName.toLowerCase();
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase();
-                
+
                 Set allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
@@ -138,12 +138,12 @@ public class SearchManager
                 try
                 {
                     Collection c;
-                    
+
                     if( m_searchProvider instanceof LuceneSearchProvider )
                         c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
                     else
                         c = m_searchProvider.findPages( searchString );
-                        
+
                     int count = 0;
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
