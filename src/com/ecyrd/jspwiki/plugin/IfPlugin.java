@@ -17,6 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 package com.ecyrd.jspwiki.plugin;
 
 import java.security.Principal;
@@ -90,26 +91,61 @@ import com.ecyrd.jspwiki.WikiProvider;
  *  lists.  Depending on your position, this may be a good or a bad
  *  thing.</p>
  *
+ *  <h3>Calling Externally</h3>
+ *
+ *  <p>The functional, decision-making part of this plugin may be called from
+ *  other code (e.g., other plugins) since it is available as a static method
+ *  {@link #ifInclude(WikiContext,Map)}. Note that the plugin body may contain
+ *  references to other plugins.</p>
+ *
  *  @author Janne Jalkanen
+ *  @author Murray Altheim
  *  @since 2.6
  */
 public class IfPlugin implements WikiPlugin
 {
+    public static final String PARAM_GROUP    = "group";
+    public static final String PARAM_USER     = "user";
+    public static final String PARAM_IP       = "ip";
+    public static final String PARAM_PAGE     = "page";
+    public static final String PARAM_CONTAINS = "contains";
+    public static final String PARAM_VAR      = "var";
+    public static final String PARAM_IS       = "is";
+    public static final String PARAM_EXISTS   = "exists";
+
     /**
      *  {@inheritDoc}
      */
     public String execute(WikiContext context, Map params) throws PluginException
     {
+        return ifInclude(context,params)
+                ? context.getEngine().textToHTML(
+                        context,(String)params.get(PluginManager.PARAM_BODY) )
+                : "" ;
+    }
+
+
+    /**
+     *  Returns a boolean result based on processing the WikiContext and
+     *  parameter Map as according to the rules stated in the IfPlugin
+     *  documentation. 
+     *  As a static method this may be called by other classes.
+     *
+     * @param context   The current WikiContext.
+     * @param params    The parameter Map which contains key-value pairs.
+     */
+    public static boolean ifInclude( WikiContext context, Map params ) throws PluginException
+    {
         boolean include = false;
 
-        String group = (String)params.get("group");
-        String user  = (String)params.get("user");
-        String ip    = (String)params.get("ip");
-        String page  = (String)params.get("page");
-        String contains = (String)params.get("contains");
-        String var   = (String)params.get("var");
-        String is    = (String)params.get("is");
-        String exists = (String)params.get("exists");
+        String group    = (String)params.get(PARAM_GROUP);
+        String user     = (String)params.get(PARAM_USER);
+        String ip       = (String)params.get(PARAM_IP);
+        String page     = (String)params.get(PARAM_PAGE);
+        String contains = (String)params.get(PARAM_CONTAINS);
+        String var      = (String)params.get(PARAM_VAR);
+        String is       = (String)params.get(PARAM_IS);
+        String exists   = (String)params.get(PARAM_EXISTS);
 
         include |= checkGroup(context, group);
         include |= checkUser(context, user);
@@ -118,42 +154,35 @@ public class IfPlugin implements WikiPlugin
         if( page != null )
         {
             String content = context.getEngine().getPureText(page, WikiProvider.LATEST_VERSION).trim();
-            include |= checkContains(context,content,contains);
-            include |= checkIs(context,content,is);
+            include |= checkContains(content,contains);
+            include |= checkIs(content,is);
             include |= checkExists(context,page,exists);
         }
 
         if( var != null )
         {
             String content = context.getEngine().getVariable(context, var);
-            include |= checkContains(context,content,contains);
-            include |= checkIs(context,content,is);
-            include |= checkVarExists(context,content,exists);
+            include |= checkContains(content,contains);
+            include |= checkIs(content,is);
+            include |= checkVarExists(content,exists);
         }
 
-        if( include )
-        {
-            String ztuff = (String) params.get( PluginManager.PARAM_BODY );
-
-            return context.getEngine().textToHTML( context, ztuff );
-        }
-
-        return "";
+        return include;
     }
 
-    private boolean checkExists(WikiContext context, String page, String exists )
+    private static boolean checkExists( WikiContext context, String page, String exists )
     {
         if( exists == null ) return false;
         return !context.getEngine().pageExists(page) ^ TextUtil.isPositive(exists);
     }
 
-    private boolean checkVarExists(WikiContext context, String varContent, String exists )
+    private static boolean checkVarExists( String varContent, String exists )
     {
         if( exists == null ) return false;
         return (varContent == null ) ^ TextUtil.isPositive(exists);
     }
 
-    private boolean checkGroup(WikiContext context, String group)
+    private static boolean checkGroup( WikiContext context, String group )
     {
         if( group == null ) return false;
         String[] groupList = StringUtils.split(group,'|');
@@ -176,7 +205,7 @@ public class IfPlugin implements WikiPlugin
         return include;
     }
 
-    private boolean checkUser(WikiContext context, String user)
+    private static boolean checkUser( WikiContext context, String user )
     {
         if( user == null || context.getCurrentUser() == null ) return false;
 
@@ -197,7 +226,7 @@ public class IfPlugin implements WikiPlugin
     }
 
     // TODO: Add subnetwork matching, e.g. 10.0.0.0/8
-    private boolean checkIP(WikiContext context, String ipaddr)
+    private static boolean checkIP( WikiContext context, String ipaddr )
     {
         if( ipaddr == null || context.getHttpRequest() == null ) return false;
 
@@ -217,7 +246,7 @@ public class IfPlugin implements WikiPlugin
         return include;
     }
 
-    private boolean doMatch( String content, String pattern )
+    private static boolean doMatch( String content, String pattern )
         throws PluginException
     {
         PatternCompiler compiler = new Perl5Compiler();
@@ -236,7 +265,7 @@ public class IfPlugin implements WikiPlugin
 
     }
 
-    private boolean checkContains( WikiContext context, String pagecontent, String matchPattern )
+    private static boolean checkContains( String pagecontent, String matchPattern )
         throws PluginException
     {
         if( pagecontent == null || matchPattern == null ) return false;
@@ -244,7 +273,7 @@ public class IfPlugin implements WikiPlugin
         return doMatch( pagecontent, ".*"+matchPattern+".*" );
     }
 
-    private boolean checkIs( WikiContext context, String content, String matchPattern )
+    private static boolean checkIs( String content, String matchPattern )
         throws PluginException
     {
         if( content == null || matchPattern == null ) return false;
