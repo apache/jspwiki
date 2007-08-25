@@ -65,7 +65,7 @@
   
   <wiki:CheckRequestContext context='!login'>
   <wiki:UserCheck status="known">
-  <wiki:Translate>[{TEST page='{$username}Favorites'
+  <wiki:Translate>[{If page='{$username}Favorites' exists='true'
 
 %%collapsebox-closed
 ! [My Favorites|{$username}Favorites]
