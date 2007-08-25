@@ -15,7 +15,7 @@
       <author>Janne Jalkanen</author>
       <path>editors/plain.jsp</path>
       <minVersion>2.4</minVersion>
-      <maxVersion>2.5</maxVersion>
+      <maxVersion>2.6</maxVersion>
       <adminBean>com.ecyrd.jspwiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
 
@@ -23,14 +23,8 @@
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
       <minVersion>2.4</minVersion>
-      <maxVersion>2.5</maxVersion>
+      <maxVersion>2.6</maxVersion>
    </editor>
-
-   <plugin class="com.ecyrd.jspwiki.plugin.Test">
-      <author>Dirk Frederickx</author>
-      <minVersion>2.5</minVersion>
-      <alias>TEST</alias>
-   </plugin>
 
    <plugin class="com.ecyrd.jspwiki.plugin.IfPlugin">
       <author>Janne Jalkanen</author>
