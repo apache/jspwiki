@@ -113,12 +113,12 @@ KNOWN PROBLEMS
 * The default template does not work at all if you turn off
   Javascript.  We are aware of this and working on a fix.
 
-* The editor suggestion list is not yet properly integrated.
-
-* GroupTab is missing.
-
 * Brushed javascript editor is not yet completely ported
 
 * Our documentation simply sucks at this point.  Please forgive us,
   and point where those fixes are needed.  We will improve upon
   this during our progress towards a stable.
+
+* The ShortURLConstructor does not work reliably.  Please use
+  ShortViewURLConstructor, or Apache mod_rewrite.
+  

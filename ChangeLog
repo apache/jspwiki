@@ -5,6 +5,9 @@
         * [Bug 89]: Removed Test plugin (now that IfPlugin can do all the
         same things).
 
+        * [Bug 32]: LuceneSearchProvider now also indexes the page
+        with all the non-letters removed.
+
 2007-08-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.123
