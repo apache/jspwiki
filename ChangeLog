@@ -7,6 +7,9 @@
 
         * [Bug 32]: LuceneSearchProvider now also indexes the page
         with all the non-letters removed.
+        
+        * [Bug 121]: RSS.rdf is now only generated of pages to which
+        the Anonymous user has access to.
 
 2007-08-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
