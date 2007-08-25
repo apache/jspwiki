@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.search;
 import java.io.*;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -47,11 +48,13 @@ import org.apache.lucene.store.FSDirectory;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WatchDog;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
+import com.opensymphony.oscache.util.StringUtil;
 
 /**
  *  Interface for the search providers that handle searching the Wiki
@@ -94,6 +97,8 @@ public class LuceneSearchProvider implements SearchProvider
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
 
+    private static String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
+    
     /**
      *  {@inheritDoc}
      */
@@ -421,7 +426,12 @@ public class LuceneSearchProvider implements SearchProvider
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
-        field = new Field(LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + page.getName(),
+        String unTokenizedTitle = StringUtils.replaceChars( page.getName(),
+                                                            MarkupParser.PUNCTUATION_CHARS_ALLOWED,
+                                                            c_punctuationSpaces );
+        
+        field = new Field(LUCENE_PAGE_NAME, 
+                          TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
                           Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
 
