@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -333,10 +335,22 @@ public class RSSGenerator
 
         Collection changed = m_engine.getRecentChanges();
 
+        WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
             WikiPage page = (WikiPage) i.next();
+            
+            //
+            //  Check if the anonymous user has view access to this page.
+            //
+            
+            if( !m_engine.getAuthorizationManager().checkPermission(session,
+                                                                    new PagePermission(page,PagePermission.VIEW_ACTION) ) )
+            {
+                // No permission, skip to the next one.
+                continue;
+            }
             
             Entry e = new Entry();
             
