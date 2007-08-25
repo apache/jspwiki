@@ -1,3 +1,10 @@
+2007-08-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.124
+        
+        * [Bug 89]: Removed Test plugin (now that IfPlugin can do all the
+        same things).
+
 2007-08-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.123
