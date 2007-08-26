@@ -55,7 +55,7 @@ public final class Release
      *  values are "-alpha" and "-beta" for alpha and beta versions,
      *  respectively.
      */
-    private static final String    POSTFIX       = "-beta";
+    private static final String    POSTFIX       = "-cvs";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -64,7 +64,7 @@ public final class Release
     public static final int        REVISION      = 5;
 
     /** The minor revision, or a "build number", if you wish. */
-    public static final int        MINORREVISION = 125;
+    public static final int        MINORREVISION = 126;
 
     /**
      *  This is the generic version string you should use

@@ -1,8 +1,18 @@
+2007-08-26  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.126
+        
+        * Performance optimizations: PagePermission constructor
+        no longer uses String.split() but StringUtils.split().
+        String.split() is a regexp function, and they're always
+        expensive.
+
 2007-08-26  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.125
         
         * Add UserBox.jsp 
+        
         * Spaces should not break action buttons such as 'Log In' or 'My Prefs'. 
         (reported by Murray Altheim)
         
