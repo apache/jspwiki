@@ -47,7 +47,7 @@ public final class TextUtil
      */
     protected static String urlEncode( byte[] rs )
     {
-        StringBuffer result = new StringBuffer();
+        StringBuffer result = new StringBuffer(rs.length*2);
 
         // Does the URLEncoding.  We could use the java.net one, but
         // it does not eat byte[]s.
@@ -308,7 +308,7 @@ public final class TextUtil
         if ( src == null || dest == null ) throw new NullPointerException();
         if ( src.length() == 0 ) return orig;
 
-        StringBuffer res = new StringBuffer();
+        StringBuffer res = new StringBuffer(orig.length()+20); // Pure guesswork
         int start = 0;
         int end = 0;
         int last = 0;
