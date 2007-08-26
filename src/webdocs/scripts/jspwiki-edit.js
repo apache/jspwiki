@@ -22,7 +22,7 @@ var EditTools =
 		this.wikisnippets = this.getWikiSnippets();
 		this.wikismartpairs = this.getWikiSmartPairs();
 
-		if(!window.ie) {
+	if(!window.ie) {
 		this.posteditor = new postEditor.create(this.textarea,'changenote');
 		
 		/* patch posteditor DF Jul 07 */
@@ -44,7 +44,7 @@ var EditTools =
 		$('smartpairs').getParent().show();
 				
 		this.initPostEditor();
-		}
+	} /* end window.ie */
 		
 
 		/* activate editassist toolbar */

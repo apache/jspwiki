@@ -21,7 +21,7 @@
 %>
 <wiki:TabbedSection defaultTab='${param.tab} %>' >
 
-<wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "workflow.tab")%>" >
+<wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "workflow.tab")%>' >
 
 <h3><fmt:message key="workflow.heading" /></h3>
 <p><fmt:message key="workflow.instructions"/></p>

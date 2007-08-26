@@ -28,7 +28,7 @@
 
 <%-- Login functionality --%>
 <wiki:UserCheck status="notauthenticated">
-<wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.tab")%>">
+<wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.tab")%>'>
 <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
 <form action="<%=postURL%>"
@@ -99,7 +99,7 @@
 </wiki:Tab>
 
 <%-- Lost pasword functionality --%>
-<wiki:Tab id="lostpassword" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>">
+<wiki:Tab id="lostpassword" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>'>
 
 <div class="center">
 <form action="<wiki:Link jsp='LostPassword.jsp'><wiki:Param name='tab' value='lostpassword'/></wiki:Link>"

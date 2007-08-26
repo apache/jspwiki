@@ -10,7 +10,7 @@
 <fmt:setBundle basename="templates.default"/>
 
 <wiki:TabbedSection>
-<wiki:Tab id="findcontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab")%>" accesskey="s">
+<wiki:Tab id="findcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab")%>' accesskey="s">
 
 <form action="<wiki:Link format='url' jsp='Search.jsp'/>"
        class="wikiform"

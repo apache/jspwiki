@@ -53,7 +53,7 @@ function confirmDelete()
 </script>
 
 <wiki:TabbedSection defaultTab="${param.tab}">
-  <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>">
+  <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>'>
   <h3><%=name%></h3>
 
 <%

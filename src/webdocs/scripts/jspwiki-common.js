@@ -75,6 +75,7 @@ Element.extend({
 		this.scrollLeft = x;
 		this.scrollTop = y;
 	},
+	/* probably obsolete now */
 	getPositionedOffset: function(what) {
 		what = "offset"+what.capitalize();
 		var el=this, offset=0;
@@ -84,6 +85,21 @@ Element.extend({
 			if (el && /relative|absolute/.test($(el).getStyle('position'))) break;
 		} while (el);
 		return offset;
+	},
+	/* dimensions.js */
+	getPosition: function(overflown){
+		overflown = overflown || [];
+		var el = this, left = 0, top = 0;
+		do {
+			left += el.offsetLeft || 0;
+			top += el.offsetTop || 0;
+			el = el.offsetParent;
+		} while (el);
+		overflown.each(function(element){
+			left -= element.scrollLeft || 0;
+			top -= element.scrollTop || 0;
+		});
+		return {'x': left, 'y': top};
 	}
 });
 
@@ -123,7 +139,6 @@ var Observer = new Class({
 	}
 });
 
-
 // see http://forum.mootools.net/topic.php?id=959 ...
 var Color = new Class({
 
@@ -154,9 +169,10 @@ var Color = new Class({
 			return new Color(rgb);
 	}
 });
+
 function $C(color){
 	return new Color(color);
-};
+}
 
 //FIXME
 Color.implement({
@@ -185,7 +201,8 @@ String.extend({
 		var s = LocalizedStrings["javascript."+this], args = arguments;
 		if(!s) return("???" + this + "???");
         return s.replace(/\{(\d)\}/g, function(m){ 
-        	return args[m.charAt(1)] || "???"+m.charAt(1)+"???"});
+        	return args[m.charAt(1)] || "???"+m.charAt(1)+"???";
+        });
 	}
 });
 
@@ -225,7 +242,7 @@ var Wiki = {
 	},
 	
 	onPageLoad: function(){
-		this.PermissionEdit = ($E('a.edit') != undefined); //deduct permission level
+		this.PermissionEdit = ($E('a.edit') !== undefined); //deduct permission level
 		this.url = null;
 		this.parseLocationHash.periodical(500);
 
@@ -244,6 +261,7 @@ var Wiki = {
     	if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
     	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
     	if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
+		if($('editor')) this.prefs.set('Editor', $('editor').getValue()); /* bug 117 */
 		this.prefs.set('FontSize',this.PrefFontSize);
 	},
 
@@ -251,10 +269,10 @@ var Wiki = {
 		$('wikibody').className = $('prefOrientation').getValue();
 	},
 	replaceMoreBox: function(){
-		var more = $('morebutton');
+		var more = $('morebutton'),
 			popup = new Element('ul').inject(more), 
 			hover = popup.effect('opacity', {wait:false}).set(0),
-			select = $('actionsMore');
+			select = $('actionsMore'),
 			separator = '';
 
 		$A(select.options).each(function(o){
@@ -282,7 +300,8 @@ var Wiki = {
 			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
 			//corner = {'x': base.offsetLeft, 'y': base.offsetTop},
 			//IE fix needed
-			corner = {'x': base.getPositionedOffset('left'), 'y': base.getPositionedOffset('top')},
+			//corner = {'x': base.getPositionedOffset('left'), 'y': base.getPositionedOffset('top')},
+			corner = base.getPosition(),
 			offset = {'x': base.offsetWidth-el.offsetWidth, 'y': base.offsetHeight },
 			popup = {'x': el.offsetWidth, 'y': el.offsetHeight},
 			prop = {'x': 'left', 'y': 'top'};

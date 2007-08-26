@@ -16,6 +16,8 @@
 
   <div class="companylogo"></div>
 
+  <wiki:Include page="UserBox.jsp" />
+
   <div class="pagename"><wiki:PageName /></div>
 
   <div class="searchbox"><wiki:Include page="SearchBox.jsp" /></div>

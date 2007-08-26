@@ -12,11 +12,11 @@
   </fmt:message>
 </wiki:Tab>
  
-<wiki:Tab id="conflictOther" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%>" >
+<wiki:Tab id="conflictOther" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%>' >
   <tt><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></tt>      
 </wiki:Tab>
  
-<wiki:Tab id="conflictOwn" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%>" >
+<wiki:Tab id="conflictOwn" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%>' >
   <tt><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></tt>
 </wiki:Tab>
 

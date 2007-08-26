@@ -24,7 +24,6 @@
 	margin-left:20%;
 }
 #header {
-	margin-top:2em;
 }
 #header .applicationlogo {
 	position:absolute;
@@ -39,7 +38,11 @@
 #header .companylogo { 
 	display:none; 
 }
+#header .userbox {
+	float:right;
+}
 #header .pagename {
+	clear:both;
 	float:left;
 }
 #header .searchbox {
@@ -53,14 +56,14 @@
 	margin-top:2em;
 	width:18%;
 }
-/* take user out of #favorites, and put it at the top of the universe */
-#user {
-	position:absolute;
-	right:2em; /*respect the body */
-	top:1em;
+#favorites .userbox {
+	border:1px solid #bbb;
+	margin-bottom:0.5em;
+	padding:0.25em 0.5em;
+	display:none; 
 }
-* html #user {
-	width:300%; /* overwrite inherited parent width, ie-quirck */
+#favorites .login, #favorites .logoff {
+	clear:left;
 }
 #footer {
 }
@@ -135,6 +138,9 @@ th, td {
 	display:block;
 	clear:both;
 	border-bottom:1px solid #bbb; 
+}
+.clearbox {
+	clear:both;
 }
 
 /* +++ 210 Page titles, headings, and paragraphs +++ */
@@ -318,23 +324,17 @@ a.footnote {
 .additinfo {
 	background-color:#e0e0ff;
 }
-.diffnote,
-.information,
-.warning,
-.error {
+.diffnote, .information, .warning, .error {
 	display:block;
 	margin:1em .5em;
 	padding:1em 1em 1em 2.5em;
 	background-position:.8em .9em;
 	background-repeat:no-repeat;
 }
-td .information,
-td .warning,
-td .error {
+td .information, td .warning, td .error {
 	margin:0;
 }
-.diffnote,
-.information {
+.diffnote, .information {
 	background-image:url(images/information.png);
 	background-color:#e0e0ff;
 }
@@ -397,7 +397,7 @@ td .error {
 /* +++ 350 Attachments +++ */
 #attachments {
 }
-
+/* upload submit button */
 #upload {
 	float:left;
 }
@@ -503,9 +503,7 @@ td .error {
 	padding:0.5em;
 }
 /* .diffnote equals .information */
-td.diffadd,
-td.diffrem,
-td.diff {
+td.diffadd, td.diffrem, td.diff {
 	font-family:Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 	line-height:1;
@@ -608,11 +606,11 @@ body.edit textarea {
 }
 #findSuggestionMenu {
 	position:absolute;
+	background-color:white;
+	border:2px solid #bbb;
+	z-index:10;
 	top:0;
 	left:0;
-	z-index:10;
-	border:2px solid #bbb;
-	background-color:white;
 	opacity: 0.85;
 	font-size: 85%;
 }
@@ -630,16 +628,14 @@ body.edit textarea {
 }
 
 /* +++ 440 Favorites +++ */
-#userbox {
-	float:right;
-	padding:0.25em 0; /* needed for ie */
+.userbox {
 }
-#user a.action, #user .username {
-	display:inline; /*undo .action*/
-	padding:0.25em 0.5em;
+.userbox a, .userbox .username {
+	float:left;
 }
-#user .username {
+.username {
 	font-style:italic;
+	padding:0.25em 0.5em;
 }
 .username.anonymous {
 }
@@ -746,9 +742,9 @@ th.changenote, td.changenote {
 }
 .pageactions li ul {
 	position:absolute;
-	left:0; /*right:2.5em; */
 	background:white;
 	border:2px solid #bbb;
+	left:0; /*right:2.5em; */
 	z-index:10;
 }
 .pageactions li ul li ul {
@@ -773,18 +769,18 @@ th.changenote, td.changenote {
 .pageactions li ul li ul li {
 /* nothing to undo ?? */
 }
-
 #moremenu {
 	line-height:1.5;
 	padding:0.25em 0.5em;
 }
-a.action {
+a.action, .username {
 	display:block;
 	padding:0.25em 0.5em;
-	text-decoration: none;
+	text-decoration:none;
 	line-height:normal;
+	white-space:nowrap;
 }
-a.action:hover, #user a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
+a.action:hover, .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#f93 !important;
 }
 
@@ -806,7 +802,7 @@ a.action.workflow,
 a.action.login,
 a.action.logout {
 }
-#user a.action, a.action.edit, a.action.more {
+.userbox a.action, a.action.edit, a.action.more {
 	margin-left:4px;
 	border:1px solid #bbb;		
 	background:#eee;
@@ -871,12 +867,12 @@ a.action.quick2bottom {
 }
 #searchboxMenu {
 	position:absolute;
-	padding:0.25em;
-	z-index:15;
-	left:0; /*right:4em;*/
-	top:5.5em;
 	background:white;
 	border:2px solid #bbb;
+	padding:0.25em;
+	left:0; /*right:4em;*/
+	xxtop:5.5em;
+	z-index:15;
 }
 #searchboxMenu ul {
 	list-style:none;

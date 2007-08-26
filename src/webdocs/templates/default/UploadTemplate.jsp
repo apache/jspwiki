@@ -56,7 +56,7 @@
 
     <wiki:Include page="Favorites.jsp"/>
 
-	<div style="clear:both;"></div>
+	<div class="clearbox"></div>
   </div>
 
   <wiki:Include page="Footer.jsp" />

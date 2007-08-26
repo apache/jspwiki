@@ -14,7 +14,7 @@
 
 <wiki:TabbedSection defaultTab='${param.tab}' >
 
-  <wiki:Tab id="pagecontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>" accesskey="v">
+  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' accesskey="v">
     <wiki:Include page="PageTab.jsp"/>
     <wiki:PageType type="attachment">
       <div class="information">

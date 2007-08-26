@@ -6,7 +6,7 @@
 
 <%-- Inserts page content for preview. --%>
 <wiki:TabbedSection>
-<wiki:Tab id="previewcontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "preview.tab")%>">
+<wiki:Tab id="previewcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "preview.tab")%>'>
 
   <div class="information">
     <fmt:message key="preview.info"/>

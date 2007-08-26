@@ -27,7 +27,7 @@
 %>
 
 <wiki:TabbedSection defaultTab="${param.tab}">
-  <wiki:Tab id="logincontent" title="<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>">
+  <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>'>
 
   <h3><%=name%></h3>
 
@@ -51,7 +51,7 @@
      </fmt:message>
     </div>
     <div class="formhelp">
-      <wiki:Messages div="error" topic="group" prefix="<%=LocaleSupport.getLocalizedMessage(pageContext,"editgroup.saveerror") %>" />
+      <wiki:Messages div="error" topic="group" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"editgroup.saveerror") %>' />
     </div>
 
     <table class="wikitable">
