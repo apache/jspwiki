@@ -42,6 +42,7 @@ public class VariableManager
 {
     //private static Logger log = Logger.getLogger( VariableManager.class );
    
+    // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";
     public static final String VAR_MSG   = "msg";
     
@@ -54,6 +55,10 @@ public class VariableManager
         "jspwiki.auth.masterpassword"
     };
     
+    /**
+     *  Creates a VariableManager object using the property list given.
+     *  @param props The properties.
+     */
     public VariableManager( Properties props )
     {
     }
@@ -63,6 +68,9 @@ public class VariableManager
      *  a variable.
      *  <P>
      *  Currently we just check if the link starts with "{$".
+     *  
+     *  @param link The link text
+     *  @return true, if this represents a variable link.
      */
     public static boolean isVariableLink( String link )
     {
@@ -70,12 +78,16 @@ public class VariableManager
     }
 
     /**
-     *  Parses the link and finds a value.
-     *  <P>
-     *  A variable is inserted using the notation [{$variablename}].
+     *  Parses the link and finds a value.  This is essentially used
+     *  once {@link #isVariableLink(String)} has found that the link text
+     *  actually contains a variable.  For example, you could pass in
+     *  "{$username}" and get back "JanneJalkanen".
      *
+     *  @param  context The WikiContext
+     *  @param  link    The link text containing the variable name.
+     *  @return The variable value.
      *  @throws IllegalArgumentException If the format is not valid (does not 
-     *          start with {$, is zero length, etc.)
+     *          start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
     public String parseAndGetValue( WikiContext context,
@@ -104,6 +116,7 @@ public class VariableManager
      *
      *  @param context The WikiContext of the current page.
      *  @param source  The source string.
+     *  @return The source string with variables expanded.
      */
     // FIXME: somewhat slow.
     public String expandVariables( WikiContext context,
@@ -156,6 +169,16 @@ public class VariableManager
         return result.toString();
     }
 
+    /**
+     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}.
+     *  The only difference is that this method does not throw an exception, but it
+     *  returns the given default value instead.
+     *  
+     *  @param context WikiContext
+     *  @param varName The name of the variable
+     *  @param defValue A default value.
+     *  @return The variable value, or if not found, the default value.
+     */
     public String getValue( WikiContext context, String varName, String defValue )
     {
         try
@@ -184,8 +207,11 @@ public class VariableManager
      *  Use this method only whenever you really need to have a parameter that
      *  can be overridden by anyone using the wiki.
      *  
+     *  @param context The WikiContext
      *  @param varName Name of the variable.
      *
+     *  @return The variable value.
+     *  
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
@@ -204,7 +230,6 @@ public class VariableManager
 
         // Faster than doing equalsIgnoreCase()
         String name = varName.toLowerCase();
-        StringBuffer res = new StringBuffer();
 
         for( int i = 0; i < THE_BIG_NO_NO_LIST.length; i++ )
         {
@@ -253,20 +278,22 @@ public class VariableManager
         }
         else if( name.equals("interwikilinks") )
         {
-            // FIXME: Use StringBuffer
+            StringBuffer res = new StringBuffer();
+
             for( Iterator i = context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
                 String link = (String) i.next();
                 res.append( link );
                 res.append( " --> " );
-                res.append( context.getEngine().getInterWikiURL(link) );
-                
+                res.append( context.getEngine().getInterWikiURL(link) );    
             }
+            return res.toString();
         }
         else if( name.equals("inlinedimages") )
         {
-            // FIXME: Use StringBuffer
+            StringBuffer res = new StringBuffer();
+
             for( Iterator i = context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
@@ -274,6 +301,8 @@ public class VariableManager
                 String ptrn = (String) i.next();
                 res.append(ptrn);
             }
+            
+            return res.toString();
         }
         else if( name.equals("pluginpath") )
         {
@@ -400,7 +429,5 @@ public class VariableManager
   
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
-        
-        return res.toString();
     }
 }
