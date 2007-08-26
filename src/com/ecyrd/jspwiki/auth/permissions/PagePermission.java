@@ -23,6 +23,8 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.ecyrd.jspwiki.WikiPage;
 
 /**
@@ -149,7 +151,7 @@ public final class PagePermission extends Permission
 
         // Parse wiki and page (which may include wiki name and page)
         // Strip out attachment separator; it is irrelevant.
-        String[] pathParams = page.split( WIKI_SEPARATOR );
+        String[] pathParams = StringUtils.split( page, WIKI_SEPARATOR );
         String pageName;
         if ( pathParams.length >= 2 )
         {
@@ -165,7 +167,7 @@ public final class PagePermission extends Permission
         m_page = ( pos == -1 ) ? pageName : pageName.substring( 0, pos );
 
         // Parse actions
-        String[] pageActions = actions.toLowerCase().split( ACTION_SEPARATOR );
+        String[] pageActions = StringUtils.split( actions.toLowerCase(), ACTION_SEPARATOR );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuffer buffer = new StringBuffer();
@@ -408,7 +410,7 @@ public final class PagePermission extends Permission
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        String[] actionList = actions.split( ACTION_SEPARATOR );
+        String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
         for( int i = 0; i < actionList.length; i++ )
         {
             String action = actionList[i];
