@@ -28,6 +28,7 @@ public class UserBean extends SimpleAdminBean
         return new String[0];
     }
 
+    // FIXME: We don't yet support MBean for this kind of stuff.
     public String[] getMethodNames()
     {
         return new String[0];
