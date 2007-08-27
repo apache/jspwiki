@@ -1,3 +1,11 @@
+2007-08-28  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.128
+        
+        * Added SearchManagerBean to the admin UI.  It's now possible
+        to force a reindex of all pages, either from your MBean manager
+        or the Admin UI.
+
 2007-08-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.127
