@@ -1,7 +1,13 @@
+2007-08-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.127
+
+        * Login redirections were failing; fixed with some bubble gum.
+
 2007-08-26  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.126
-        
+
         * Performance optimizations: PagePermission constructor
         no longer uses String.split() but StringUtils.split().
         String.split() is a regexp function, and they're always
@@ -10,61 +16,61 @@
 2007-08-26  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.125
-        
-        * Add UserBox.jsp 
-        
-        * Spaces should not break action buttons such as 'Log In' or 'My Prefs'. 
+
+        * Add UserBox.jsp
+
+        * Spaces should not break action buttons such as 'Log In' or 'My Prefs'.
         (reported by Murray Altheim)
-        
+
         * [Bug 120] : Fix unbalanced JSP single or double quote's. (eg on Websphere or BEA)
-        
+
 2007-08-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.124
-        
+
         * [Bug 89]: Removed Test plugin (now that IfPlugin can do all the
         same things).
 
         * [Bug 32]: LuceneSearchProvider now also indexes the page
         with all the non-letters removed.
-        
+
         * [Bug 121]: RSS.rdf is now only generated of pages to which
         the Anonymous user has access to.
 
 2007-08-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.123
-        
+
         * Added Murray's patch to allow static calling of IfPlugin.
 
 2007-08-22  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.122
-        
+
         * [Bug 113]: Error with 'join wiki now!' link creating new accounts
-   
+
 2007-08-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.121
-        
+
         * [Bug 10]: Fixed.
-        
+
         * Made findSuggestionMenu transparent since it sometimes blocks
         the view.  Also reduced fontsize a bit.
 
 2007-08-21  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.120
-        
+
         * [Bug 89]: Added support also for [{If var='xyssy' exists='true'}],
         requested by Dirk.
-        
+
         * Localized WeblogEntryPlugin (strangely enough, the plugin text
         was already in the resource file.)
-        
+
         * [Bug 39]: Fixed the login issue, but many things still remain.
-        
-        * Fixed issue with login email sending which was using a hard-coded 
+
+        * Fixed issue with login email sending which was using a hard-coded
         URL.
 
 2007-08-19  Janne Jalkanen <jalkanen@ecyrd.com>

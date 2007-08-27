@@ -98,7 +98,7 @@ public class LuceneSearchProvider implements SearchProvider
     private static final int MAX_FRAGMENTS = 3;
 
     private static String c_punctuationSpaces = StringUtils.repeat(" ", MarkupParser.PUNCTUATION_CHARS_ALLOWED.length() );
-    
+
     /**
      *  {@inheritDoc}
      */
@@ -429,8 +429,8 @@ public class LuceneSearchProvider implements SearchProvider
         String unTokenizedTitle = StringUtils.replaceChars( page.getName(),
                                                             MarkupParser.PUNCTUATION_CHARS_ALLOWED,
                                                             c_punctuationSpaces );
-        
-        field = new Field(LUCENE_PAGE_NAME, 
+
+        field = new Field(LUCENE_PAGE_NAME,
                           TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle,
                           Field.Store.YES, Field.Index.TOKENIZED, Field.TermVector.NO);
         doc.add( field );
