@@ -12,17 +12,17 @@
     String postURL = "";
     WikiContext ctx = WikiContext.findContext( pageContext );
     AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
-    
+
     if( mgr.isContainerAuthenticated() )
     {
         postURL = "j_security_check";
     }
     else
     {
-        postURL = ctx.getURL( WikiContext.LOGIN, "" );
+        postURL = ctx.getURL( WikiContext.LOGIN, (String)ctx.getVariable("redirect") );
     }
 
-    boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication(); 
+    boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication();
 %>
 <wiki:TabbedSection defaultTab="${param.tab}">
 
