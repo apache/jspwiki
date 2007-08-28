@@ -184,7 +184,7 @@
         catch( RedirectException ex )
         {
             // FIXME: Cut-n-paste code.
-            //wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
+            wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
             session.setAttribute( "message", ex.getMessage() );
             session.setAttribute(EditorManager.REQ_EDITEDTEXT,
                                  EditorManager.getEditedText(pageContext));
