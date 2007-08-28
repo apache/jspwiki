@@ -50,9 +50,12 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *    <li>similarchanges - How many similar page changes are allowed before the host is banned.  Default is 2.  (since 2.4.72)</li>
  *    <li>bantime - How long an IP address stays on the temporary ban list (default is 60 for 60 minutes).</li>
  *    <li>maxurls - How many URLs can be added to the page before it is considered spam (default is 5)</li>
+ *    <li>akismet-apikey - The Akismet API key (see akismet.org)</li>
+ *    <li>ignoreauthenticated - If set to "true", all authenticated users are ignored and never caught in SpamFilter</li>
+ *    <li>captcha - Sets the captcha technology to use.  Current allowed values are "none" and "asirra".</li>
  *  </ul>
  *
- *  <p>Changes by admin users are ignored.</p>
+ *  <p>Changes by admin users are ignored in any case.</p>
  *
  *  @since 2.1.112
  *  @author Janne Jalkanen
@@ -61,16 +64,17 @@ public class SpamFilter
     extends BasicPageFilter
 {
     private static final String LISTVAR = "spamwords";
-    public static final String  PROP_WORDLIST  = "wordlist";
-    public static final String  PROP_ERRORPAGE = "errorpage";
-    public static final String  PROP_PAGECHANGES = "pagechangesinminute";
-    public static final String  PROP_SIMILARCHANGES = "similarchanges";
-    public static final String  PROP_BANTIME   = "bantime";
-    public static final String  PROP_BLACKLIST = "blacklist";
-    public static final String  PROP_MAXURLS   = "maxurls";
-    public static final String  PROP_AKISMET_API_KEY = "akismet-apikey";
-    public static final String  PROP_IGNORE_AUTHENTICATED = "ignoreauthenticated";
-
+    public static final String  PROP_WORDLIST              = "wordlist";
+    public static final String  PROP_ERRORPAGE             = "errorpage";
+    public static final String  PROP_PAGECHANGES           = "pagechangesinminute";
+    public static final String  PROP_SIMILARCHANGES        = "similarchanges";
+    public static final String  PROP_BANTIME               = "bantime";
+    public static final String  PROP_BLACKLIST             = "blacklist";
+    public static final String  PROP_MAXURLS               = "maxurls";
+    public static final String  PROP_AKISMET_API_KEY       = "akismet-apikey";
+    public static final String  PROP_IGNORE_AUTHENTICATED  = "ignoreauthenticated";
+    public static final String  PROP_CAPTCHA               = "captcha";
+    
     private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
 
     private String          m_forbiddenWordsPage = "SpamFilterWordList";
@@ -109,11 +113,13 @@ public class SpamFilter
      */
     private int             m_maxUrls = 10;
 
-    private Pattern         m_UrlPattern;
+    private Pattern         m_urlPattern;
     private Akismet         m_akismet;
 
     private String          m_akismetAPIKey = null;
 
+    private boolean         m_useCaptcha = false;
+    
     /**
      * If set to true, will ignore anyone who is in Authenticated role.
      */
@@ -147,9 +153,12 @@ public class SpamFilter
         m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties,
                                                              PROP_IGNORE_AUTHENTICATED,
                                                              m_ignoreAuthenticated );
+        
+        m_useCaptcha = properties.getProperty( PROP_CAPTCHA, "" ).equals("asirra");
+        
         try
         {
-            m_UrlPattern = m_compiler.compile( URL_REGEXP );
+            m_urlPattern = m_compiler.compile( URL_REGEXP );
         }
         catch( MalformedPatternException e )
         {
@@ -191,9 +200,31 @@ public class SpamFilter
             case NOTE:
                 spamlog.info("NOTE "+source+" "+uid+" "+page+" "+message);
                 break;
+            default:
+                throw new InternalWikiException("Illegal type "+type);
         }
 
         return uid;
+    }
+
+
+    public String preSave( WikiContext context, String content )
+        throws RedirectException
+    {
+        cleanBanList();
+        refreshBlacklists(context);
+
+        String change = getChange( context, content );
+
+        if(!ignoreThisUser(context))
+        {
+            checkBanList( context, change );
+            checkSinglePageChange( context, content, change );
+            checkPatternList(context, content, change);
+        }
+
+        log( context, ACCEPT, "-", change );
+        return content;
     }
 
     /**
@@ -282,21 +313,6 @@ public class SpamFilter
         return compiledpatterns;
     }
 
-    private String getUniqueID()
-    {
-        StringBuffer sb = new StringBuffer();
-        Random rand = new Random();
-
-        for( int i = 0; i < 6; i++ )
-        {
-            char x = (char)('A'+rand.nextInt(26));
-
-            sb.append(x);
-        }
-
-        return sb.toString();
-    }
-
     /**
      *  Takes a single page change and performs a load of tests on the content change.
      *  An admin can modify anything.
@@ -360,7 +376,6 @@ public class SpamFilter
             {
                 Host host = new Host( addr, null );
 
-
                 m_temporaryBanList.add( host );
 
                 String uid = log( context, REJECT, "TooManyModifications", change );
@@ -389,7 +404,7 @@ public class SpamFilter
             String tstChange = change;
             int    urlCounter = 0;
 
-            while( m_matcher.contains(tstChange,m_UrlPattern) )
+            while( m_matcher.contains(tstChange,m_urlPattern) )
             {
                 MatchResult m = m_matcher.getMatch();
 
@@ -412,7 +427,14 @@ public class SpamFilter
             }
 
             //
-            //  Do Akismet check
+            //  Check bot trap
+            //
+            
+            checkBotTrap( context, change );
+            
+            //
+            //  Do Akismet check.  This is good to be the last, because this is the most
+            //  expensive operation.
             //
 
             checkAkismet( context, change );
@@ -421,25 +443,6 @@ public class SpamFilter
         }
     }
 
-    private boolean ignoreThisUser(WikiContext context)
-    {
-        if( context.hasAdminPermissions() )
-        {
-            return true;
-        }
-
-        if( m_ignoreAuthenticated && context.getWikiSession().isAuthenticated() )
-        {
-            return true;
-        }
-
-        if( context.getVariable("captcha") != null )
-        {
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      *  Checks against the akismet system.
@@ -517,6 +520,45 @@ public class SpamFilter
         }
     }
 
+    /**
+     *  Returns a static string which can be used to detect spambots which
+     *  just wildly fill in all the fields.
+     *  
+     *  @return A string
+     */
+    public static String getBotFieldName()
+    {
+        return "submitauth";
+    }
+    
+    /**
+     *  This checks whether an invisible field is available in the request, and
+     *  whether it's contents are suspected spam.
+     *  
+     *  @param context
+     *  @param change
+     * @throws RedirectException 
+     */
+    private void checkBotTrap( WikiContext context, String change ) throws RedirectException
+    {
+        HttpServletRequest request = context.getHttpRequest();
+        
+        if( request != null )
+        {
+            String unspam = request.getParameter( getBotFieldName() );
+            if( unspam != null && unspam.length() > 0 )
+            {
+                String uid = log( context, REJECT, "BotTrap", change );
+                
+                log.info("SPAM:BotTrap ("+uid+").  Wildly behaving bot detected.");
+
+                throw new RedirectException("Spamming attempt detected. (Incident code "+uid+")",
+                                            getRedirectPage(context) );
+
+            }
+        }
+    }
+    
     /**
      *  Goes through the ban list and cleans away any host which has expired from it.
      */
@@ -648,25 +690,14 @@ public class SpamFilter
 
     }
 
-    public String preSave( WikiContext context, String content )
-        throws RedirectException
-    {
-        cleanBanList();
-        refreshBlacklists(context);
-
-        String change = getChange( context, content );
-
-        if(!ignoreThisUser(context))
-        {
-            checkBanList( context, change );
-            checkSinglePageChange( context, content, change );
-            checkPatternList(context, content, change);
-        }
-
-        log( context, ACCEPT, "-", change );
-        return content;
-    }
-
+    /**
+     *  Does a check against a known pattern list.
+     *  
+     *  @param context
+     *  @param content
+     *  @param change
+     *  @throws RedirectException
+     */
     private void checkPatternList(WikiContext context, String content, String change) throws RedirectException
     {
         //
@@ -697,11 +728,6 @@ public class SpamFilter
                                              getRedirectPage(context) );
             }
         }
-    }
-
-    private String getRedirectPage( WikiContext ctx )
-    {
-        return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName(ctx.getPage().getName()) );
     }
 
     /**
@@ -773,6 +799,68 @@ public class SpamFilter
 
         return change.toString();
     }
+
+    /**
+     *  Returns true, if this user should be ignored.
+     *  
+     * @param context
+     * @return
+     */
+    private boolean ignoreThisUser(WikiContext context)
+    {
+        if( context.hasAdminPermissions() )
+        {
+            return true;
+        }
+
+        if( m_ignoreAuthenticated && context.getWikiSession().isAuthenticated() )
+        {
+            return true;
+        }
+
+        if( context.getVariable("captcha") != null )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     *  Returns a random string of six uppercase characters.
+     *  
+     *  @return A random string
+     */
+    private String getUniqueID()
+    {
+        StringBuffer sb = new StringBuffer();
+        Random rand = new Random();
+
+        for( int i = 0; i < 6; i++ )
+        {
+            char x = (char)('A'+rand.nextInt(26));
+
+            sb.append(x);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     *  Returns a page to which we shall redirect, based on the current value
+     *  of the "captcha" parameter.
+     *  
+     *  @param ctx WikiContext
+     *  @return An URL to redirect to
+     */
+    private String getRedirectPage( WikiContext ctx )
+    {
+        if( m_useCaptcha )
+            return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName(ctx.getPage().getName()) );
+        
+        return ctx.getURL( WikiContext.VIEW, m_errorPage );
+    }
+
 
     /**
      *  A local class for storing host information.
