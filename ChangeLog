@@ -1,5 +1,14 @@
 2007-08-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.5.129
+        
+        * Fixed a number of bugs in the SpamFilter, and added automatic
+        bot detection according to idea from
+        http://www.modernbluedesign.com/web-design-blog/fighting-spam-with-css/
+
+        * SpamFilter captcha is now user-settable.  Possible options
+        are "none" and "asirra".
+
         * 2.5.128
         
         * Added SearchManagerBean to the admin UI.  It's now possible
