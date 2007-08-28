@@ -102,7 +102,7 @@
 <wiki:Tab id="lostpassword" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>'>
 
 <div class="center">
-<form action="<wiki:Link jsp='LostPassword.jsp'><wiki:Param name='tab' value='lostpassword'/></wiki:Link>"
+<form action="<wiki:Link jsp='LostPassword.jsp' format='url'><wiki:Param name='tab' value='lostpassword'/></wiki:Link>"
           id="lostpw"
        class="wikiform"
     onsubmit="return Wiki.submitOnce(this);"
