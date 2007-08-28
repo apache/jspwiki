@@ -86,7 +86,7 @@
   </div>
   <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
        Normal user should never see this field, nor type anything in it. --%>
-  <div style="display:block;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
+  <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
   <div style="display:none;">
     <div id="editassist">
       <a href="#" class="tool closed" rel="" title="<fmt:message key='editor.plain.editassist.title'/>">
