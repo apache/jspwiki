@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
+<%@ page import="com.ecyrd.jspwiki.filters.SpamFilter" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
@@ -83,6 +84,9 @@
       onchange="setCursorPos(this.id)"
           rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
   </div>
+  <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
+       Normal user should never see this field, nor type anything in it. --%>
+  <div style="display:block;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
   <div style="display:none;">
     <div id="editassist">
       <a href="#" class="tool closed" rel="" title="<fmt:message key='editor.plain.editassist.title'/>">
