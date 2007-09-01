@@ -37,11 +37,37 @@ import java.util.*;
 public class UnusedPagesPlugin
     extends AbstractReferralPlugin
 {
+    /**
+     *  If set to "true", attachments are excluded from display.  Value is {@value}.
+     */
+    public static final String PARAM_EXCLUDEATTS = "excludeattachments";
+
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         Collection links = refmgr.findUnreferenced();
+        //
+        // filter out attachments if "excludeattachments" was requested:
+        //
+        String prop = (String) params.get( PARAM_EXCLUDEATTS );
+        if( TextUtil.isPositive(prop) ) 
+        {
+            //  remove links to attachments (recognizable by a slash in it)
+            //  FIXME: In 3.0, this assumption is going to fail. FIXME3.0
+            Iterator iterator = links.iterator();
+            while( iterator.hasNext() ) 
+            {
+                String link = (String) iterator.next();
+                if (link.indexOf("/")!=-1) 
+                {
+                    iterator.remove();
+                }
+            }
+        }
 
         super.initialize( context, params );
 
@@ -56,3 +82,4 @@ public class UnusedPagesPlugin
     }
 
 }
+
