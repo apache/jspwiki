@@ -1,4 +1,13 @@
-2007-09-02  Dirk Frederickx (dirk.frederickx@gmail.com)
+2007-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.131
+        
+        * [Bug 131]: Added Harry Metske's patch to allow "excludeattachments"
+        on UnusedPagesPlugin for those who need it.
+        
+        * Updated Finnish localization.
+
+2007-09-01  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.130
 
