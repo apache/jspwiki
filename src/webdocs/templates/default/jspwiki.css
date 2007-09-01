@@ -87,7 +87,6 @@
 	float:right;
 }
 #actionsTop	{ 
-	position:float; 
 	float:right;
 	right:2em; 
 	z-index:10;
@@ -606,13 +605,11 @@ body.edit textarea {
 }
 #findSuggestionMenu {
 	position:absolute;
-	background-color:white;
+	background:white;
 	border:2px solid #bbb;
 	z-index:10;
-	top:0;
-	left:0;
-	opacity: 0.85;
-	font-size: 85%;
+	opacity:0.85;
+	font-size:85%;
 }
 #findSuggestionMenu ul {
 	list-style:none;
@@ -620,12 +617,13 @@ body.edit textarea {
 	padding:0;
 }
 #findSuggestionMenu li { 
-	display:block;
 	padding:0.25em;
 }
+/* not usefull
 #findSuggestionMenu li:hover { 
 	background:#f93;
 }
+*/
 
 /* +++ 440 Favorites +++ */
 .userbox {
@@ -870,8 +868,7 @@ a.action.quick2bottom {
 	background:white;
 	border:2px solid #bbb;
 	padding:0.25em;
-	left:0; /*right:4em;*/
-	xxtop:5.5em;
+	left:0;
 	z-index:15;
 }
 #searchboxMenu ul {
@@ -1216,7 +1213,6 @@ table.calendar tr.weekdays {
 div.collapse ul, div.collapse ol {
 	margin-left:1.5em;
 	padding-left:0;
-	xxpadding-left:1.5em;
 }
 /* ie hack to ensure first level of bullets are showns properly  ugh! */
 * html div.collapse ul, * html div.collapse ol {

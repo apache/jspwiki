@@ -342,6 +342,7 @@ var Wiki = {
 
 	/* SubmitOnce: disable all buttons to avoid double submit */
 	submitOnce: function(form){
+		window.onbeforeunload = null; /* regular exit of this page -- see jspwiki-edit.js */
 		(function(){ 
 		$A(form.elements).each(function(e){
 				if( (/submit|button/i).test(e.type)) e.disabled = true;
@@ -1179,7 +1180,7 @@ var WikiColors =
 		{
 			result = c;
 		}
-		if( this.REparseColor.test(result) ) result = '#' + result;
+		if( this.REparseColor.test(result) ) { result = '#' + result; }
 		return result;
 	}
 }
@@ -1381,6 +1382,7 @@ var Collapsable =
 		this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
 		this.initialise( "favorites",   "JSPWikiCollapseFavorites" );
 		this.initialise( "pagecontent", "JSPWikiCollapse" + Wiki.PageName );
+		this.initialise( "previewcontent", "JSPWikiCollapse" + Wiki.PageName );
 		this.initialise( "info" );
 	},
 

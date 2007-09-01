@@ -47,9 +47,6 @@
 
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
-<%-- FIXME: better have it created by some js :: move it to jspwiki-edit.js --%>
-<div id="findSuggestionMenu" style='visibility:hidden;'></div>
-
 <form action="<wiki:CheckRequestContext 
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext 
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 

@@ -15,37 +15,21 @@
 var EditTools = 
 {
 	onPageLoad: function(){
+
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 		
+		window.onbeforeunload = (function(){
+			if(this.textarea.value != this.textarea.defaultValue) { 
+				return "edit.areyousure".localize();
+			};
+		}).bind(this);
+
 		/* make textarea more intelligent */
 		this.wikisnippets = this.getWikiSnippets();
 		this.wikismartpairs = this.getWikiSmartPairs();
 
-	if(!window.ie) {
-		this.posteditor = new postEditor.create(this.textarea,'changenote');
-		
-		/* patch posteditor DF Jul 07 */
-		/* righ-arrow nok on FF, nop on Safari */
-		this.posteditor.onKeyRight = Class.empty; 				
-		/* make posteditor changes undoable */
-		this.posteditor.value = function(value) {
-			EditTools.storeTextarea();
-			this.element.value = value.join("");
-		};
-
-		['smartpairs', 'tabcompletion'].each( function(el){
-			$(el).setProperty('checked', Wiki.prefs.get(el) || false)
-				 .addEvent('click',function(e) {
-					Wiki.prefs.set(el,this.checked);
-					EditTools.initPostEditor();
-				 });
-		},this);
-		$('smartpairs').getParent().show();
-				
-		this.initPostEditor();
-	} /* end window.ie */
-		
+		this.onPageLoadPostEditor();
 
 		/* activate editassist toolbar */
 		var toolbar = $('toolbar');
@@ -84,6 +68,30 @@ var EditTools =
 		
 	},
 
+	onPageLoadPostEditor: function(){
+		if(window.ie) return;
+		this.posteditor = new postEditor.create(this.textarea,'changenote');
+		
+		/* patch posteditor DF Jul 07 */
+		/* righ-arrow nok on FF, nop on Safari */
+		this.posteditor.onKeyRight = Class.empty; 				
+		/* make posteditor changes undoable */
+		this.posteditor.value = function(value) {
+			EditTools.storeTextarea();
+			this.element.value = value.join("");
+		};
+
+		['smartpairs', 'tabcompletion'].each( function(el){
+			$(el).setProperty('checked', Wiki.prefs.get(el) || false)
+				 .addEvent('click',function(e) {
+					Wiki.prefs.set(el,this.checked);
+					EditTools.initPostEditor();
+				 });
+		},this);
+		$('smartpairs').getParent().show();
+				
+		this.initPostEditor();	
+	},	
 	initPostEditor: function(){
 		if(! this.posteditor) return;
 		this.posteditor.changeSmartTypingPairs( $('smartpairs').checked ? this.wikismartpairs : {} );
@@ -211,7 +219,6 @@ var EditTools =
 		"'" : { scope:{ "{{{":"}}}" }, pair:"'" }
 		}
 	},
-	
 	insertTextArea: function(el) {
 		var snippy = this.wikisnippets[el.getText()]; if(!snippy) return
 
@@ -319,6 +326,14 @@ var EditTools =
 		this.onSelectorLoad();
 		this.onSelectorChanged();
 		this.textarea.focus();
+	},
+	getSuggestionMenu: function(){
+		var mID = 'findSuggestionMenu',
+			m = $(mID);
+		if( !m ) {
+			m = new Element('div',{'id':mID}).injectTop( $('favorites') );
+		}
+		return m;
 	}			  
 } 
 
@@ -465,52 +480,41 @@ function insertString(stringToInsert) {
 	myForm.myTextArea.value = firstPart + stringToInsert + secondPart;
 } 
 
-/*******************************/
-//JSON-RPC
-//POST is
-//{"id": 2, "method": "search.getSuggestions", "params": ["p", 10]}
-//response is
-//{"result":{"list":["Pic\/ruby.jpg","Pic\/telenet-smile.gif","Pic\/spin-greyblocks.gif","Pic\/shadow_transparent2.png","Pic\/monkey-mam-child.jpg","Pic\/brushed-button.jpg","Pic\/resizecursorv.png","Pic\/UserKeychainIcon.tiff","PrototypeJavascriptLibrary","Pizza Margerita"],"javaClass":"java.util.ArrayList"},"id":2}
-
+/**
+ ** JSON-RPC
+ ** POST is
+ ** {"id": 2, "method": "search.getSuggestions", "params": ["p", 10]}
+ ** Response is
+ ** {"result":{"list":["Pic\/ruby.jpg","Pic\/telenet-smile.gif","Pic\/spin-greyblocks.gif","Pic\/shadow_transparent2.png","Pic\/monkey-mam-child.jpg","Pic\/brushed-button.jpg","Pic\/resizecursorv.png","Pic\/UserKeychainIcon.tiff","PrototypeJavascriptLibrary","Pizza Margerita"],"javaClass":"java.util.ArrayList"},"id":2}
+ **/
 function getSuggestions(id)
 {
 	if(window.ie) return;
-	var textNode = document.getElementById(id);
-	var val = textNode.value;
-	var searchword;
+	var textNode = $(id),
+		val = textNode.value,
+		searchword;
 	
 	var pos = getCursorPos(textNode);
-	for( i = pos-1; i > 0; i-- )
-	{
+	for( i = pos-1; i > 0; i-- ){
 		if( val.charAt(i) == ']' ) break;
 		if( val.charAt(i) == '[' && i < val.length-1 ) { searchword = val.substring(i+1,pos); break; }
 	}
 
-	if( searchword )
-	{
-		jsonrpc.search.getSuggestions( callback, searchword, 10 );
-	}
-	else
-	{
-		var menuNode = document.getElementById("findSuggestionMenu");
-		menuNode.style.visibility = "hidden";
+	if(searchword){
+		jsonrpc.search.getSuggestions(callback, searchword, 10);
+	} else {
+		EditTools.getSuggestionMenu().hide();
 	}
 }
-function callback(result,exception)
+function callback(result, exception)
 {   
-	 if(exception) { alert(exception.message); return; }
+	if(exception) { alert(exception.message); return; }
 	 
-	 var menuNode = document.getElementById("findSuggestionMenu");
-	 
-	 var html = "<ul>";
-	 for( i = 0; i < result.list.length; i++ )
-	 {
-			html += "<li>"+result.list[i]+"</li>";
-	 }
-	 html += "</ul>";
-	 menuNode.innerHTML = html;
-	 menuNode.style.visibility = "visible";
-}
+	var menuNode = EditTools.getSuggestionMenu(), html = [];
 
+	result.list.each(function(el) { html.push('<li>'+el+'</li>'); });
+
+	menuNode.show().setHTML('<ul>',html.join(''),'</ul>');
+}
 
 window.addEvent('load', EditTools.onPageLoad.bind(EditTools) ); //edit only

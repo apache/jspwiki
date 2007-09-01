@@ -20,6 +20,7 @@ public abstract class CommonTests extends TestCase
     public CommonTests( String name, String baseURL )
     {
         super( name );
+        //com.meterware.httpunit.HttpUnitOptions.setScriptingEnabled( false );
         m_baseURL = baseURL;
         newSession();
     }

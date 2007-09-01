@@ -59,16 +59,14 @@ public class Preferences
     
     public static void reloadPreferences( PageContext pageContext )
     {
-        WikiContext context = WikiContext.findContext( pageContext );
-        
         Preferences prefs = new Preferences();
         /* FIXME: load default prefs, better read from jspwiki.properties */
         prefs.put("SkinName", "PlainVanilla" );
         prefs.put("DateFormat", "dd-MMM-yyyy HH:mm" );
         prefs.put("TimeZone", java.util.TimeZone.getDefault().getID() );
         prefs.put("orientation", "fav-left" );
+        //prefs.put("editor", "plain" );
                 
-       // Preferences prefs = parseCookiePreferences( (HttpServletRequest) pageContext.getRequest() );
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
 
         pageContext.getSession().setAttribute( SESSIONPREFS, prefs );        
@@ -108,6 +106,24 @@ public class Preferences
 
     /**
      *  Returns a preference value programmatically.
+     *  FIXME
+     *  
+     *  @param wikiContext
+     *  @param name
+     *  @return
+     */
+    public static String getPreference( WikiContext wikiContext, String name )
+    {
+        Preferences prefs = (Preferences)wikiContext.getHttpRequest().getSession().getAttribute( SESSIONPREFS );
+        
+        if( prefs != null )
+            return (String)prefs.get( name );
+        
+        return null;
+    }
+    /**
+     *  Returns a preference value programmatically.
+     *  FIXME
      *  
      *  @param pageContext
      *  @param name

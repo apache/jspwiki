@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.89 2007-08-19 16:56:24 jalkanen Exp $
+    $Id: build.xml,v 1.90 2007-09-01 19:41:22 brushed Exp $
 -->
 
 <!--
@@ -391,17 +391,20 @@
   <target name="compressedjs">
 	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
   	<java jar="lib/custom_rhino.jar"
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-common.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
-  		  fork="true"/>
+  		  fork="true">
+  	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-common.js" />
+  	</java>
   	<java jar="lib/custom_rhino.jar"
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-edit.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
-  		  fork="true"/>
+  		  fork="true">
+	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" />
+	</java>
   	<java jar="lib/custom_rhino.jar"
-  		  args="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
-  		  fork="true"/>
+  		  fork="true">
+	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" />
+	</java>
   </target>
 
   <target name="opened-war" depends="war"

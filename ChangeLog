@@ -1,3 +1,23 @@
+2007-09-02  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.130
+
+        * Fixed missing html attrib in LostPassword tab
+        
+        * The Edit findSuggestionMenu has been moved into the Favorites, 
+        so it nicely accomodates with Left or Right position of the favorites block.
+        
+        * [ BUG 132 ] Collapsable lists and boxes now also are rendered in preview mode
+        
+        * [ BUG 123 ] Added a confirm box in case you click aways from the page without saving.
+        When you leave the edit session without first saving your changees (eg clicking the 
+        Info tab, clicking any page link, etc.) a popup window asks you to confirm.
+
+        javascript.edit.areyousure=Without clicking the Save button, your changes will be lost. \
+            Are you sure you want to exit this page?
+            
+        * [ BUG 126 ] Remove 'spurious' css errors.        
+
 2007-08-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.129

@@ -44,6 +44,7 @@
    <a href="<wiki:Link jsp='Logout.jsp' format='url' />" 
      class="action logout"
      title="<fmt:message key='actions.logout.title'/>"><fmt:message key="actions.logout"/></a>
+   <%--onclick="return( confirm('<fmt:message key="actions.confirmlogout"/>') && (location=this.href) );"--%>
   </wiki:UserCheck>
 
   <wiki:CheckRequestContext context='!prefs'>

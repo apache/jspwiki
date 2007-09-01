@@ -33,6 +33,7 @@
     {
         wikiContext.setVariable( "redirect", wiki.getFrontPage());
     }
+
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) )
     {

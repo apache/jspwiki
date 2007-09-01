@@ -193,7 +193,7 @@ public class EditorManager extends ModuleManager
         if( context.getRequestContext().equals(WikiContext.PREVIEW) )
             return EDITOR_PREVIEW;
 
-        String editor = null;
+        String editor = null; 
 
         // If a parameter "editor" is provided, then set it as session attribute, so that following
         // calls can make use of it. This parameter is set by the links created
