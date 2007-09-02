@@ -1,4 +1,11 @@
-2007-08-01  Janne Jalkanen <jalkanen@ecyrd.com>
+2007-09-02  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.132
+        
+        * Fixed search menu for Smart skin. (improve compat. with IE)
+        
+
+2007-09-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.131
         

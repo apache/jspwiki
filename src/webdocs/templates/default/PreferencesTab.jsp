@@ -11,7 +11,6 @@
   /* see commonheader.jsp */
   String prefDateFormat = Preferences.getPreference(pageContext,"DateFormat");
   String prefTimeZone   = Preferences.getPreference(pageContext,"TimeZone");
-  String prefEditorType = Preferences.getPreference(pageContext,"EditorType"); //TODO
 
   WikiContext c = WikiContext.findContext( pageContext );
   pageContext.setAttribute( "skins", c.getEngine().getTemplateManager().listSkins(pageContext, c.getTemplate() ) );

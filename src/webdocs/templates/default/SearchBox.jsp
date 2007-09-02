@@ -21,7 +21,6 @@
   		value="<fmt:message key='find.submit.go'/>"
   		title="<fmt:message key='find.submit.go'/>"></button>
   </div>
-
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
       <a href="#" id='quickView'

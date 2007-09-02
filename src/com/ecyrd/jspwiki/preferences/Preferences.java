@@ -31,8 +31,6 @@ public class Preferences
      */
     public static final String SESSIONPREFS = "prefs";
      
-    public static final String DELIM  = "\u00a0";
-
     /**
      *  This is an utility method which is called to make sure that the
      *  JSP pages do have proper access to any user preferences.  It should be

@@ -261,7 +261,7 @@ var Wiki = {
     	if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
     	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
     	if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
-		if($('editor')) this.prefs.set('Editor', $('editor').getValue()); /* bug 117 */
+		//if($('editor')) this.prefs.set('Editor', $('editor').getValue()); /* bug 117 */
 		this.prefs.set('FontSize',this.PrefFontSize);
 	},
 
@@ -298,9 +298,6 @@ var Wiki = {
 	locatemenu: function(base,el){
 		var win = {'x': window.getWidth(), 'y': window.getHeight()},
 			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
-			//corner = {'x': base.offsetLeft, 'y': base.offsetTop},
-			//IE fix needed
-			//corner = {'x': base.getPositionedOffset('left'), 'y': base.getPositionedOffset('top')},
 			corner = base.getPosition(),
 			offset = {'x': base.offsetWidth-el.offsetWidth, 'y': base.offsetHeight },
 			popup = {'x': el.offsetWidth, 'y': el.offsetHeight},
@@ -981,7 +978,7 @@ var SearchBox = {
 			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))
 			  .addEvent('mouseover',function(){ Wiki.locatemenu(this.query, $('searchboxMenu') ); this.hover.start(0.9) }.bind(this));
 		
-		/* use advanced search-input on safari */
+		/* use advanced search-input on safari - experimental */
 		if(window.xwebkit){
 			q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
 		} else {
