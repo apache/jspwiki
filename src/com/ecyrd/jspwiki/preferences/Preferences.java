@@ -3,14 +3,15 @@ package com.ecyrd.jspwiki.preferences;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.json.JSONObject;
 
+import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.util.HttpUtil;
@@ -58,12 +59,17 @@ public class Preferences
     public static void reloadPreferences( PageContext pageContext )
     {
         Preferences prefs = new Preferences();
-        /* FIXME: load default prefs, better read from jspwiki.properties */
-        prefs.put("SkinName", "PlainVanilla" );
-        prefs.put("DateFormat", "dd-MMM-yyyy HH:mm" );
-        prefs.put("TimeZone", java.util.TimeZone.getDefault().getID() );
-        prefs.put("orientation", "fav-left" );
-        //prefs.put("editor", "plain" );
+        Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
+        
+        prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
+        prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", "dd-MMM-yyyy HH:mm" ) );
+        prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
+                                                          java.util.TimeZone.getDefault().getID() ) );
+        prefs.put("orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
+        
+        // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
+        // disabling it until knowing why it's happening
+        // prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
                 
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
 
