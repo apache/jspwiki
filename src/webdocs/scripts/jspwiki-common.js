@@ -360,7 +360,7 @@ var Wiki = {
 
 	JSONid : 10000,
 	jsonrpc: function(method, params, fn) {	
-		new Ajax( Wiki.BaseURL+'JSON-RPC', {
+		new Ajax( Wiki.JsonUrl, {
 			postBody: Json.toString({"id":Wiki.JSONid++, "method":method, "params":params}), 
 			method: 'post', 
 			onComplete: function(result){ 
