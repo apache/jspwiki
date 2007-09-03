@@ -373,49 +373,6 @@ var Wiki = {
 	}	
 }
 
-/* FIXME: redundant with Wiki.jsonrpc */
-/* Helps in making JSPWiki AJAX calls.  Based on mootools code.
- * Usage: WikiAjax.request( [callback,] method, args... ).
- */
-var WikiAjax = {
-	request : function(){
-		var args = [];
-		var callback = null;
-		for(var i=0;i<arguments.length;i++) args.push(arguments[i]);
-		if(typeof args[0] == "function") callback = args.shift();
-		var method = args.shift();
-
-		var AjaxRequest = new Ajax( Wiki.BaseURL+'JSON-RPC', {
-			postBody: Json.toString({
-				"id": Wiki.JSONid++, "method": method, "params": args
-			}), 
-			method: 'post', 
-			onComplete: function(result){ 
-				var r = Json.evaluate(result,true);
-				if( !r ) return;
-
-				if( r.error )
-				{
-					e = r.error;
-					if( e.code == 590 )
-						alert( "AJAX Parse Error" );
-					else if( e.code == 591 )
-						alert( "No such method" );
-					else if( e.code == 490 )
-						alert( "Remote exception "+e.msg );
-					else
-						alert( "AJAX error "+e.code );
-						
-					return;
-				}
-				
-				if( !r.result ) return;
-				callback(r.result);
-			}
-		}).request();
-	}
-}
-
 
 /** 110 WikiSlimbox
  ** Inspired http://www.digitalia.be/software/slimbox by Christophe Bleys

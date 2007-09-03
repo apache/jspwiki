@@ -17,38 +17,30 @@ function constructdate(date)
 
 function refreshUserInfo()
 {
-   idlist = document.getElementById('userid');
-   userid = idlist.options[idlist.selectedIndex].value;
+   var userid = $('userid').getValue();
 
    if( userid == '--New--' ) return;
 
-   WikiAjax.request( function(userprofile){
-      loginname = document.getElementById('loginname');
-      loginid   = document.getElementById('loginid');
-      fullname  = document.getElementById('fullname');
-      email     = document.getElementById('email');
-      lastmodified = document.getElementById('lastmodified');
-      creationdate = document.getElementById('creationdate');
-
-      loginid.value   = userprofile.loginName;
-      loginname.value = userprofile.loginName;
-      fullname.value  = userprofile.fullname;
-      email.value     = userprofile.email;
-      lastmodified.innerHTML = constructdate(userprofile.lastModified);
-      creationdate.innerHTML = constructdate(userprofile.created);
-   }, "users.getUserInfo", userid );
+   Wiki.jsonrpc("users.getUserInfo", [userid], function(userprofile){
+      $('loginname').value = userprofile.loginName;
+      $('loginid').value = userprofile.loginName;
+      $('fullname').value = userprofile.fullname;
+      $('email').value = userprofile.email;
+      $('lastmodified').setHTML(constructdate(userprofile.lastModified));
+      $('creationdate').setHTML(constructdate(userprofile.created));
+   });
 }
 
 function addNew()
 {
-  document.getElementById('loginid').value = "--New--";
-  document.getElementById('loginname').value = "--New--";
-  document.getElementById('fullname').value = "Undefined";
-  document.getElementById('email').value = "";
-  document.getElementById('lastmodified').innerHTML = "";
-  document.getElementById('creationdate').innerHTML = "";
+  $('loginid').value = "--New--";
+  $('loginname').value = "--New--";
+  $('fullname').value = "Undefined";
+  $('email').value = "";
+  $('lastmodified').innerHTML = "";
+  $('creationdate').innerHTML = "";
  
-  idlist=document.getElementById('userid');
+  var idlist=$('userid');
   var len = idlist.options.length;
   idlist.options[len] = new Option('--New--','--New--');
   idlist.selectedIndex = len;
