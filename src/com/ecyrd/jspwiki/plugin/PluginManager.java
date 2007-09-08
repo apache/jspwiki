@@ -329,7 +329,7 @@ public class PluginManager extends ModuleManager
         throws PluginException
     {
         if( !m_pluginsEnabled )
-            return( "" );
+            return "";
 
         try
         {
@@ -555,7 +555,7 @@ public class PluginManager extends ModuleManager
         throws PluginException
     {
         if( !m_pluginsEnabled )
-            return( "" );
+            return "";
 
         PatternMatcher  matcher  = new Perl5Matcher();
 
@@ -747,7 +747,7 @@ public class PluginManager extends ModuleManager
     // FIXME: This class needs a better interface to return all sorts of possible
     //        information from the plugin XML.  In fact, it probably should have
     //        some sort of a superclass system.
-    protected static final class WikiPluginInfo
+    public static final class WikiPluginInfo
         extends WikiModuleInfo
     {
         private String m_className;
@@ -955,10 +955,20 @@ public class PluginManager extends ModuleManager
         }
     } // WikiPluginClass
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection modules()
     {
-        ArrayList ls = new ArrayList();
-        ls.addAll( m_pluginClassMap.values() );
+        TreeSet ls = new TreeSet();
+        
+        for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
+        {
+            WikiModuleInfo wmi = (WikiModuleInfo)i.next();
+            
+            if( !ls.contains(wmi) ) ls.add(wmi);
+        }
+        
         return ls;
     }
 
