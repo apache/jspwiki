@@ -24,6 +24,7 @@
       <path>editors/WikiWizard.jsp</path>
       <minVersion>2.4</minVersion>
       <maxVersion>2.6</maxVersion>
+      <adminBean>com.ecyrd.jspwiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
    </editor>
 
    <plugin class="com.ecyrd.jspwiki.plugin.IfPlugin">
@@ -31,4 +32,10 @@
       <minVersion>2.4</minVersion>
       <alias>If</alias>
    </plugin>
+
+   <plugin class="com.ecyrd.jspwiki.plugin.Note">
+      <author>Janne Jalkanen</author>
+      <minVersion>2.4</minVersion>
+   </plugin>
+
 </modules>
