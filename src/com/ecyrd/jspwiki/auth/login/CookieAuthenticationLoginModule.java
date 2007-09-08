@@ -336,9 +336,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
         File[] files = cookieDir.listFiles();
 
-        //long obsoleteDateLimit = System.currentTimeMillis() - (days+1) * 24 * 60 * 60 * 1000L;
-
-        long obsoleteDateLimit = System.currentTimeMillis() - 30 * 1000L;
+        long obsoleteDateLimit = System.currentTimeMillis() - (days+1) * 24 * 60 * 60 * 1000L;
 
         int  deleteCount = 0;
 
