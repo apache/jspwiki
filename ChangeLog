@@ -1,3 +1,14 @@
+2007-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.136
+        
+        * D'oh, due to some debug code left in CookieAuthenticationLoginModule,
+        it was expiring sessions in 30 seconds.
+        
+        * AdminUI now shows all known plugins and whether they are compatible
+        with this version of JSPWiki.  WikiWizard also gains an AdminBean
+        (though it doesn't do anything).
+
 2007-09-04  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.135
