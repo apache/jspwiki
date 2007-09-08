@@ -35,6 +35,7 @@ import com.ecyrd.jspwiki.FileUtil;
  *  @since 2.4
  */
 public class WikiModuleInfo
+    implements Comparable
 {
     protected String m_name;
     protected String m_scriptLocation;
@@ -52,6 +53,27 @@ public class WikiModuleInfo
         m_name = name;
     }
     
+    /**
+     *  The WikiModuleInfo is equal to another WikiModuleInfo, if the name is equal.  All
+     *  objects are unique across JSPWiki.
+     */
+    public boolean equals(Object obj)
+    {
+        if( obj instanceof WikiModuleInfo )
+        {
+            return ((WikiModuleInfo)obj).m_name.equals( m_name );
+        }
+        
+        return false;
+    }
+
+
+    public int hashCode()
+    {
+        return m_name.hashCode();
+    }
+
+
     protected void initializeFromXML( Element el )
     {
         m_scriptLocation     = el.getChildText("script");
@@ -144,6 +166,16 @@ public class WikiModuleInfo
         out.close();
         
         return text;
+    }
+
+    public int compareTo(Object arg0)
+    {
+        if( arg0 instanceof WikiModuleInfo )
+        {
+            return m_name.compareTo( ((WikiModuleInfo)arg0).getName() );
+        }
+        
+        throw new ClassCastException(arg0.getClass().getName());
     }
 
 }
