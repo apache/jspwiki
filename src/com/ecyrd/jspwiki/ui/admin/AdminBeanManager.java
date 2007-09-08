@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
+import com.ecyrd.jspwiki.ui.admin.beans.PluginBean;
 import com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean;
 import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
 
@@ -206,6 +207,7 @@ public class AdminBeanManager
             registerAdminBean( new CoreBean(m_engine) );
             registerAdminBean( new UserBean(m_engine) );
             registerAdminBean( new SearchManagerBean(m_engine) );
+            registerAdminBean( new PluginBean(m_engine) );
         }
         catch (NotCompliantMBeanException e)
         {
