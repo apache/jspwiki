@@ -46,6 +46,7 @@
 	float:left;
 }
 #header .searchbox {
+	clear:right;
 	float:right;
 }
 #header .breadcrumbs {
@@ -94,6 +95,9 @@
 #actionsBottom {
 	text-align:right;
 	margin-bottom:0.5em;
+}
+* html #header, * html .userbox {
+	height:1% /*hasLayout:true; --ie peekaboo/layout hack */
 }
 
 
@@ -252,7 +256,7 @@ a.feed {
 
 /* +++ 260 Image styles +++ */
 img {
-	border:0;
+	border:none;
 	/* max-width:99%; FIXME ff ok to fit in parent */
 }
 img.inline {
@@ -627,8 +631,9 @@ body.edit textarea {
 
 /* +++ 440 Favorites +++ */
 .userbox {
+	overflow:hidden;
 }
-.userbox a, .userbox .username {
+.userbox .action, .userbox .username {
 	float:left;
 }
 .username {
@@ -720,9 +725,13 @@ body.edit textarea {
 }
 td.changenote {
 	font-style:italic;
-} /* fixme */
+}
 th.changenote, td.changenote {
 	width:30%;
+	overflow:hidden;
+}
+#info th select {
+	display:block;
 }
 
 /* +++ 470 PageActions +++ */
@@ -957,26 +966,33 @@ div.index .section {
 /* +++ 630 Weblog and weblogarchive plugins +++ */
 .weblog {
 	margin:0 2em;
+	clear:both;
 }
 .weblogentry {
+	margin:0.5em 0;
 }
 .weblogentryheading {
-	margin-top:1em;
-	padding:0 0.5em;
+	padding:0.25em 0.5em;
+	font-size:90%;
 	background:#e0e0e0;
+	float:right;
 }
 .weblogentrytitle {
 	padding:0.25em 0.5em;
 	font-size:120%;
+	line-height:1.2;
 	font-weight:bold;
+	background:#e0e0e0;
 }
 .weblogentrybody {
 	margin-left:0.5em;
+	clear:both;
 }
 .weblogentryfooter {
 	font-size:90%;
-	padding:0 0.5em;
-	background:#e0e0e0;
+	padding:0.25em 0.5em;
+	xxbackground:#e0e0e0;
+	border-bottom:3px solid #e0e0e0;
 	clear:both;
 }
 .weblogarchive {
@@ -1223,6 +1239,7 @@ div.collapse * ul, div.collapse * ol {
 }
 * html div.collapse * ul, * html div.collapse * ol {
 	position:relative; /* needed for ie */
+	height:1%; /* hasLayout hack -- check*/
 }
 div.collapse li {
 	list-style:none;
@@ -1262,7 +1279,7 @@ div.collapse li {
 }  
 .collapsebox h2, .collapsebox h3, .collapsebox h4 {
 	margin:0;
-	padding:0.25em 0.5em;
+	padding:0.25em 0em;
 }
 .collapsetitle {
 }
@@ -1273,14 +1290,14 @@ div.collapse li {
 	margin:0 1em;	 
 }
 .collapsebox .collapseOpen, .collapsebox .collapseClose {
-	float:right;
+	float:left;
 }
 
 /* +++ 930 Sortable tables +++ */
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
 	cursor:pointer;
 	background-repeat:no-repeat;
-	background-position:0.25em 50%;
+	background-position:0.25em 0.25em;
 }
 .sortable .sort, .sortable .sortAscending, .sortable .sortDescending {
 	padding-left:16px;

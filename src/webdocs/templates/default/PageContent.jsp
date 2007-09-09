@@ -22,7 +22,7 @@
 	      <fmt:param><wiki:LinkToParent><wiki:ParentPageName/></wiki:LinkToParent></fmt:param>
         </fmt:message>
       </div>
-      <div style="width:99%; overflow:scroll;">
+      <div style="overflow:hidden;">
         <wiki:Translate>[<%= c.getPage().getName()%>]</wiki:Translate>
       </div>
     </wiki:PageType>    

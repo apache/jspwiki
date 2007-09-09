@@ -30,16 +30,9 @@
  **/
 
 
-
 /* extend mootools */
 
 String.extend({
-	repeat: function( size ){
-		if( size <=1 ) return this;
-		var a = new Array( size );
-		for( var i=0; i < size; i++ ) { a[i] = this; }
-		return a.join("");
-	},
 	deCamelize: function(){
 		return this.replace(/([a-z])([A-Z])/g,"$1 $2");
 	}
@@ -57,6 +50,7 @@ Element.extend({
 		el.appendChild( this ) ;
 		return this;
 	},
+	/* check if this element is visible - if needed check visibility of parent */
 	visible: function() {
 		if(this.style.visibility == 'hidden') return false;
 		if(this.style.display == 'none' ) return false;
@@ -74,17 +68,6 @@ Element.extend({
 	scrollTo: function(x, y){
 		this.scrollLeft = x;
 		this.scrollTop = y;
-	},
-	/* probably obsolete now */
-	getPositionedOffset: function(what) {
-		what = "offset"+what.capitalize();
-		var el=this, offset=0;
-		do {
-			offset += el[what] || 0;
-			el = el.offsetParent;
-			if (el && /relative|absolute/.test($(el).getStyle('position'))) break;
-		} while (el);
-		return offset;
 	},
 	/* dimensions.js */
 	getPosition: function(overflown){
@@ -121,12 +104,12 @@ var Observer = new Class({
 		this.callback = fn;
 		this.timeout = null;
 		this.listener = this.fired.bind(this);
-		this.value = this.element.value;  //CHECK: use getValue() ?
+		this.value = this.element.getValue();
 		this.element.setProperty('autocomplete','off').addEvent(this.options.event, this.listener);
 	},
 	fired: function() {
 		if (this.value == this.element.value) return;
-		this.clear(); /*bugfix*/
+		this.clear();
 		this.value = this.element.value;
 		this.timeout = this.callback.delay(this.options.delay, null, [this.element]);
 	},
@@ -191,7 +174,7 @@ Color.implement({
 
 
 /* I18N Support
- * LocalizedStrings takes form { "javascript.resource key":"localised resource key {0}" }
+ * LocalizedStrings takes form { "some.resource.key":"localised resource key {0}" }
  * Examples:
  * "moreInfo".localize();
  * "imageInfo".localize(2,4); => expects "Image {0} of {1}"
@@ -235,12 +218,14 @@ var Wiki = {
 	init: function(props){
 		Object.extend(Wiki,props || {}); 
 		var h=location.host;
-		this.BasePath = this.BaseURL.slice(this.BaseURL.indexOf(h)+h.length,-1);
+		this.BasePath = this.BaseUrl.slice(this.BaseUrl.indexOf(h)+h.length,-1);
         //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 	},
-	
+	getUrl: function(pagename){
+		return this.PageUrl.replace(/%23%24%25/, pagename);
+	},	
 	onPageLoad: function(){
 		this.PermissionEdit = ($E('a.edit') !== undefined); //deduct permission level
 		this.url = null;
@@ -1023,9 +1008,10 @@ var SearchBox = {
 				$('searchSpin').hide(); 
 				if(!result.list) return;
 				var frag = new Element('ul');
+				
 				result.list.each(function(el){
 					new Element('li').adopt( 
-						new Element('a',{'href':Wiki.BaseURL+"Wiki.jsp?page="+el.map.page}).setHTML(el.map.page), 
+						new Element('a',{'href':Wiki.getUrl(el.map.page) }).setHTML(el.map.page), 
 						new Element('span',{'class':'small'}).setHTML(" ("+el.map.score+")")
 					).injectInside(frag);
 				});
@@ -1656,8 +1642,8 @@ var Sortable =
 	},
 
 	sort: function(th){
-		var table = getAncestorByTagName(th, "table" );
-		var filter = (table.filterStack),
+		var table = getAncestorByTagName(th, "table" ),
+			filter = (table.filterStack),
 			rows = (table.sortCache || []),
 			colidx = 0, //target column to sort
 			body = $T(table); 
@@ -1744,11 +1730,28 @@ var TableFilter =
 		$$('.table-filter table').each( function(table){
 			if( table.rows.length < 2 ) return;
 
+			/*
+	        $A(table.rows[0].cells).each(function(e,i){
+				var s = new Element('select',{ 
+					'events': { 
+						'click':function(event){ event.stop(); }.bindWithEvent(), 
+						'change':TableFilter.filter 
+					} 
+				});
+				s.fcol = i; //store index
+				e.adopt(s);	        
+	        },this);
+			*/
+			
 			var r = $(table.insertRow(TableFilter.FilterRow)).addClass('filterrow');
 			for(var j=0; j < table.rows[0].cells.length; j++ ){
-				var s = new Element('select');
-				s.onchange = TableFilter.filter;
-				s.fCol     = j; //store index
+				var s = new Element('select',{ 
+					'events': { 
+						'change':TableFilter.filter 
+					} 
+				});
+				s.fcol = j; //store index
+				
 				new Element('th').adopt(s).inject(r);
 			}
 			table.filterStack = [];
@@ -1758,20 +1761,18 @@ var TableFilter =
 
 	buildEmptyFilters: function(table){
 		for(var i=0; i < table.rows[0].cells.length; i++){
-			if(!TableFilter.isFiltered(table, i)) TableFilter.buildFilter(table, i);
+	        var ff = table.filterStack.some(function(f){ return f.fcol==i });
+			if(!ff) TableFilter.buildFilter(table, i);
 		}
-		if(table.zebra) table.zebra();
-			
-	},
-
-	isFiltered: function(table, col){
-        return table.filterStack.some(function(f){ return f.fCol==col });
+		if(table.zebra) table.zebra();			
 	},
 
 	// this function initialises a column dropdown filter
 	buildFilter: function(table, col, selectedValue){
 		// Get a reference to the dropdownbox.
 		var select = table.rows[TableFilter.FilterRow].cells[col].firstChild;
+		//var select = $(table.rows[0].cells[col]).getLast();
+		if(!select) return; //empty dropdown
 		select.options.length = 0;
 
         var rows=[];
@@ -1791,30 +1792,34 @@ var TableFilter =
         	value = v;
         	select.options[select.options.length] = new Option(v, value);
         });
-		if(selectedValue != undefined) select.value = selectedValue;
-		else select.options[0].selected = true;
+        (select.options.length <= 2) ? select.hide() : select.show();
+        if(selectedValue != undefined) {
+        	select.value = selectedValue;
+		} else {
+			select.options[0].selected = true;
+		}
 	},
 
 	filter: function(){ //onchange handler of filter dropdowns
-		var col   = this.fCol,
+		var col   = this.fcol,
 			value = this.value,
 			table = getAncestorByTagName(this, 'table');
 		if( !table || table.style.display == 'none') return;
 
 		// First check if the column is allready in the filter.
 		if(table.filterStack.every(function(f,i){
-			if(f.fCol != col) return true;
+			if(f.fcol != col) return true;
 			if(value == TableFilter.All) table.filterStack.splice(i, 1);
 			else f.fValue = value;
 			return false;
-		}) ) table.filterStack.push( {fValue:value, fCol:col} );
+		}) ) table.filterStack.push( {fValue:value, fcol:col} );
 
         $A(table.rows).each(function(r,i){ //show all
         	r.style.display='';
         });
 
         table.filterStack.each(function(f){ //now filter the right rows
-            var v = f.fValue, c = f.fCol;
+            var v = f.fValue, c = f.fcol;
 			TableFilter.buildFilter(table, c, v);
 
 			var j=0;
@@ -1852,7 +1857,7 @@ var Categories =
 						link.setProperty('title', '').removeEvent('click');
 						wrap.addEvent('mouseover', function(e) { popeff.start(0.9); })
 							.addEvent('mouseout', function(e) { popeff.start(0); });
-						popup.setStyle('left', link.getPositionedOffset('left') + 'px');
+						popup.setStyle('left', link.getPosition().x + 'px');
 						popeff.start(0.9); }
 				}).request();
 			});
@@ -1935,7 +1940,7 @@ var WikiColumns =
 		if(!breaks || breaks.length==0) return;
 
         var colCount = breaks.length+1;
-        width = (width=='auto') ? 99/colCount+'%' : width/colCount+'px';
+        width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
 
 		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
 			col = colDef.clone().injectBefore(el.getFirst()),
@@ -2048,7 +2053,7 @@ var HighlightWord =
  * based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
  */
 var WikiPrettify = {
-	onPageLoad : function(){
+	onPageLoad: function(){
 		var els = $$('.prettify pre, .prettify code'); if(!els) return;
 
 		//TODO: load assets .css and .js
@@ -2079,8 +2084,6 @@ window.addEvent('load', function(){
 	HighlightWord.onPageLoad();
 	GraphBar.onPageLoad();
 	Categories.onPageLoad();
-
-	//EditTools.onPageLoad();
 
 	WikiSlimbox.onPageLoad();
 	WikiTips.onPageLoad();

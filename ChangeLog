@@ -1,3 +1,14 @@
+2007-09-09  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.137
+        
+        * Few javascript fixes for improved URL constructor compatibility [ BUG 115 ]
+        The generated links in the ajax search dropdown are now compatible with
+        the selected URL constructor.
+        
+        * More IE fixes to improve rendering of floats. ( ref. IE6 peekaboo bug )
+
+        
 2007-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.136

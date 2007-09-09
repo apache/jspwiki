@@ -37,13 +37,14 @@
 <script type="text/javascript">
 //<![CDATA[
 
-/* Localise javascript strings: defines global array LocalizedStrings */
+/* Localized javascript strings: LocalizedStrings[] */
 <wiki:IncludeResources type="jslocalizedstrings"/>
 
 /* Initialise glboal Wiki js object with server and page dependent variables */
 /* FIXME : better is to add this to the window.onload handler */
 Wiki.init({
-	'BaseURL': '<wiki:BaseURL />',
+	'BaseUrl': '<wiki:BaseURL />',
+	'PageUrl': '<wiki:Link format="url" absolute="true" page="#$%"/>', /* unusual pagename */
 	'TemplateDir': '<wiki:Link format="url" templatefile=""/>',
 	'PageName': '<wiki:Variable var="pagename" />',/* pagename without blanks */
 	'UserName': '<wiki:UserName />',

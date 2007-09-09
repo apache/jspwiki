@@ -161,14 +161,14 @@
                          href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
 
     <div class="zebra-table sortable table-filter">
-    <table class="wikitable center" >
+    <table class="wikitable" >
       <tr>
         <th><fmt:message key="info.version"/></th>
         <th><fmt:message key="info.date"/></th>
         <th><fmt:message key="info.size"/></th>
         <th><fmt:message key="info.author"/></th>
         <th><fmt:message key="info.changes"/></th>
-      <th class='changenote'><fmt:message key="info.changenote"/></th>
+        <th class='changenote'><fmt:message key="info.changenote"/></th>
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
