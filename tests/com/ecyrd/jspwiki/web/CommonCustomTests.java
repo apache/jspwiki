@@ -3,9 +3,9 @@ package com.ecyrd.jspwiki.web;
 
 public abstract class CommonCustomTests extends CommonTests
 {
-    public CommonCustomTests( String name, String baseURL )
+    public CommonCustomTests( String name, String uRL )
     {
-        super( name, baseURL );
+        super( name, uRL );
     }
     
     public void testCreateProfile()

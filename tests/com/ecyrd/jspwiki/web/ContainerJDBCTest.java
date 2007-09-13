@@ -6,7 +6,7 @@ public class ContainerJDBCTest extends CommonContainerTests
     
     public ContainerJDBCTest( String s )
     {
-        super( s, "http://localhost:8080/test-container-jdbc/" );
+        super( s, "test-container-jdbc/" );
     }
 
     public void testCreateProfile()

@@ -6,7 +6,7 @@ public class ContainerTest extends CommonContainerTests
 
     public ContainerTest( String s )
     {
-        super( s, "http://localhost:8080/test-container/" );
+        super( s, "test-container/" );
     }
 
     public void testCreateProfile()

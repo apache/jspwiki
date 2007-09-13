@@ -4,7 +4,7 @@ public class CustomAbsoluteTest extends CommonCustomTests
 {
     public CustomAbsoluteTest( String s )
     {
-        super( s, "http://localhost:8080/test-custom-absolute/" );
+        super( s, "test-custom-absolute/" );
     }
 
 }

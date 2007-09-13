@@ -28,7 +28,7 @@
   <!-- Checks to see if the context is already deployed -->
   <target name="webtest-setup-init">
     <condition property="context.installed">
-      <http url="http://localhost:8080/${webtest.context}/Wiki.jsp" />
+      <http url="http://${tomcat.host}:${tomcat.port}/${webtest.context}/Wiki.jsp" />
     </condition>
   </target>
   
@@ -51,10 +51,11 @@
   <!-- Tomcat deployment tasks -->
   
   <!-- These macros deploy and undeploy WAR files to a Tomcat
-       server, assumed to be already running locally on port 8080.
-       The manager app MUST be installed and running in order for
-       this to work properly. Also, the 'tomcat.admin' and
-       'tomcat.password' properties must be set in build.properties.
+       server, assumed to be already running on ${tomcat.host} port 
+       ${tomcat.port}. The manager app MUST be installed and running in 
+       order for this to work properly. Also, the 'tomcat.admin',
+       'tomcat.password', 'tomcat.host' and 'tomcat.port' properties 
+       must be set in build.properties.
        To run these macros, calling tasks must have already
        run the task 'tomcat-init'.
   -->
@@ -66,6 +67,8 @@
       <!-- We need the tomcat.admin and tomcat.password properties -->
       <check-property prop="tomcat.admin" />
       <check-property prop="tomcat.password" />
+      <check-property prop="tomcat.host" />
+      <check-property prop="tomcat.port" />
     
       <!-- Declare the Tomcat deploy task -->
       <taskdef classname="org.apache.catalina.ant.DeployTask" name="deploy">
@@ -133,7 +136,7 @@
       </war>
       
       <!-- Deploy the webapp -->
-      <deploy url="http://localhost:8080/manager/" 
+      <deploy url="http://${tomcat.host}:${tomcat.port}/manager/" 
         username="${tomcat.admin}" password="${tomcat.password}"
         path="/@{context}"
         war="file:///${basedir}/${tests.build}/@{context}/@{context}.war" />
@@ -146,7 +149,9 @@
       <!-- We need the tomcat.admin and tomcat.password properties -->
       <check-property prop="tomcat.admin" />
       <check-property prop="tomcat.password" />
-    
+      <check-property prop="tomcat.host" />
+      <check-property prop="tomcat.port" />
+    	
       <!-- Declare the Tomcat deploy task -->
       <taskdef classname="org.apache.catalina.ant.UndeployTask" name="undeploy">
         <classpath>
@@ -155,7 +160,7 @@
       </taskdef>
       
       <!-- Undeploy the webapp -->
-      <undeploy url="http://localhost:8080/manager/" 
+      <undeploy url="http://${tomcat.host}:${tomcat.port}/manager/" 
         username="${tomcat.admin}" password="${tomcat.password}"
         path="/@{context}" />
     </sequential>

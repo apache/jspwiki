@@ -1,3 +1,9 @@
+2007-09-14  Juan Pablo Santos (juanpablo.santos@gmail.com)
+
+        * web tests no longer require the servlet container to be running at
+        http://localhost:8080/. Now you can set host & port at the build.properties 
+        file indicated in build.xml
+
 2007-09-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.137
@@ -38,11 +44,11 @@
 
         * 2.5.133
         
-        * [ BUG 133 ]: Release.isOlderOrEqual() was not comparing revisions
+        * [Bug 133]: Release.isOlderOrEqual() was not comparing revisions
         properly and, in the end, Editors were not registering. Something 
         similar was happening with Release.isNewerOrEqual(), fixed as well.
         
-        * [ BUG 122 ]: Partly fixed. Preferences for default template are now readed 
+        * [Bug 122]: Partly fixed. Preferences for default template are now readed 
         from jspwiki.properties instead of being hardcoded in 
         com.ecyrd.jspwiki.preferences.Preferences. Cfr. with jspwiki.properties.tmpl 
         lines 258 - 261. 

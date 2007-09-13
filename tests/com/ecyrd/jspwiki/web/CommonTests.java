@@ -1,12 +1,16 @@
 package com.ecyrd.jspwiki.web;
 
-import java.io.IOException;
-
-import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
-import com.meterware.httpunit.WebResponse;
+import java.io.*;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 import net.sourceforge.jwebunit.WebTester;
+
+import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
+import com.meterware.httpunit.WebResponse;
 
 public abstract class CommonTests extends TestCase
 {
@@ -17,11 +21,11 @@ public abstract class CommonTests extends TestCase
     protected WebTester t;
     protected final String m_baseURL;
 
-    public CommonTests( String name, String baseURL )
+    public CommonTests( String name, String uRL )
     {
         super( name );
         //com.meterware.httpunit.HttpUnitOptions.setScriptingEnabled( false );
-        m_baseURL = baseURL;
+        m_baseURL = getHostAndPort() + uRL;
         newSession();
     }
 
@@ -494,6 +498,59 @@ public abstract class CommonTests extends TestCase
         t.getTestContext().getWebClient().getClientProperties().setAcceptCookies( true );
         t.getTestContext().setBaseUrl( m_baseURL );
         t.beginAt( "/Wiki.jsp" );
+    }
+    
+    private String getHostAndPort() 
+    {
+        Properties p = new Properties();
+        String buildFile = "build.properties";
+        String host = "http://localhost";
+        String port = ":8080/";
+        BufferedReader in = null;
+        
+        try
+        {
+            // search which properties file is being used by build.xml.
+            // build.xml is NOT loaded by the classloader, so we have to do some trickery
+            // in order to avoid instantiating a File object with a hard-coded, absolute
+            // path. Instead of doing that, we determine from where the class was loaded
+            // (cfr. http://www.exampledepot.com/egs/java.lang/ClassOrigin.html) and, from
+            // there, we set the relative location of build.xml
+            
+            Class cls = this.getClass();
+            ProtectionDomain pDomain = cls.getProtectionDomain();
+            CodeSource cSource = pDomain.getCodeSource();
+            URL loc = cSource.getLocation(); // ${JSPWiki}/classes
+            in = new BufferedReader(new FileReader(new File(loc.getFile() + "../build.xml")));
+            
+            String line;
+            while ( ( line = in.readLine() ) != null ) 
+            {
+                line = line.trim();
+                if ( line.startsWith( "<property name=\"build.properties\" value=\"" ) ) 
+                {
+                    int beginsIn = "<property name=\"build.properties\" value=\"".length();
+                    int endsAt = line.lastIndexOf("\"");
+                    buildFile = line.substring( beginsIn, endsAt );
+                }
+            }
+            
+            // buildFile is also NOT loaded by the classloader. Luckily it's path is relative 
+            // to build.xml path, as it is defined inside it.
+            p.load(new FileInputStream(loc.getFile() + "../" + buildFile));
+            if (p.getProperty("tomcat.host") != null) {
+                host = "http://" + p.getProperty("tomcat.host"); 
+            }
+            if (p.getProperty("tomcat.port") != null) {
+                port = ":" + p.getProperty("tomcat.port") + "/"; 
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.out.println("Error loading build.properties");
+        }
+        return host + port;
     }
     
 }
