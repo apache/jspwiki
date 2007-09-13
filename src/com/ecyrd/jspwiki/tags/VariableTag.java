@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 
@@ -104,7 +105,7 @@ public class VariableTag
         {
             value = msg;
         }
-        out.write( value );
+        out.write( TextUtil.replaceEntities(value) );
         return( SKIP_BODY );
     }
 }
