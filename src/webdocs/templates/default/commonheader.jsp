@@ -70,7 +70,7 @@
 
 <% if(prefSkinName != null) { %>
  <link rel="stylesheet" type="text/css"
-       href="<wiki:Link format='url' templatefile='<%="skins/"+prefSkinName%>'/>" />
+       href="<wiki:Link format='url' templatefile='<%="skins/"+TextUtil.replaceEntities(prefSkinName)%>'/>" />
 <% } %>
 
 <script type="text/javascript">Wiki.loadBrowserSpecificCSS("<wiki:BaseURL/>","<wiki:TemplateDir/>","<wiki:Variable var="pagename" />");</script>

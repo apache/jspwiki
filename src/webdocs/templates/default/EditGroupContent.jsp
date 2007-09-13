@@ -4,6 +4,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%! 
     Category log = Category.getInstance("JSPWiki"); 
@@ -23,12 +24,12 @@
   }
 %>
 
-<h3>Edit Group <%=name%></h3>
+<h3>Edit Group <%=TextUtil.replaceEntities(name)%></h3>
 
 <div class="formcontainer">
   <div class="instructions">
     This page allows you to add or edit members for the wiki group called 
-    <em><%=name%></em>. Generally, only members of the group can edit the 
+    <em><%=TextUtil.replaceEntities(name)%></em>. Generally, only members of the group can edit the 
     membership list. By default, the person who creates the group is a member.
   </div>
   <div class="instructions">
@@ -48,7 +49,7 @@
     %>
     <div class="block">
       <label>Members</label>
-      <textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
+      <textarea id="members" name="members" rows="20" cols="40"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="description">
         The membership for this group. Enter each user&#8217;s wiki name
         or full name, separated by carriage returns.
@@ -59,11 +60,11 @@
       <!-- Any errors? -->
       <div class="instructions">
         When you click &#8220;Save group,&#8221; this group will be saved as a group
-        called <strong><%=name%></strong>. You can specify this
+        called <strong><%=TextUtil.replaceEntities(name)%></strong>. You can specify this
         name in page access control lists (ACLs).
       </div>
       <input type="submit" name="ok" value="Save group" />
-      <input type="hidden" name="group" value="<%=name%>" />
+      <input type="hidden" name="group" value="<%=TextUtil.replaceEntities(name)%>" />
       <input type="hidden" name="action" value="save" />
     </div>
   </form>

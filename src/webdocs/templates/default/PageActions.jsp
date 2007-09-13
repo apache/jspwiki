@@ -1,5 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%
   /* see commonheader.jsp */
   String prefDateFormat     = (String) session.getAttribute("prefDateFormat");

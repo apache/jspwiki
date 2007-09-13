@@ -4,6 +4,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
+<%@ page import="com.ecyrd.jspwiki.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 
 <%
@@ -34,7 +35,7 @@
     <!-- Name -->
     <div class="block">
       <label>Name</label>
-      <input type="text" name="group" size="30" value="<%=name%>" />
+      <input type="text" name="group" size="30" value="<%=TextUtil.replaceEntities(name)%>" />
       <div class="description">
         The name of the new group.
       </div>
@@ -51,7 +52,7 @@
     %>
     <div class="block">
       <label>Members</label>
-      <textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
+      <textarea id="members" name="members" rows="20" cols="40"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="description">
         The membership for this group. Enter each user&#8217;s wiki name
         or full name, separated by carriage returns.

@@ -207,7 +207,7 @@ function confirmDelete()
        {
            changeNote = TextUtil.replaceEntities(changeNote);
        %>
-       <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=changeNote%></td></tr>
+       <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=TextUtil.replaceEntities(changeNote)%></td></tr>
        <% } %>
     <% } %>
     </wiki:HistoryIterator>
@@ -387,7 +387,7 @@ function confirmDelete()
         String changeNote = (String)currentPage.getAttribute(WikiPage.CHANGENOTE);
         if( changeNote != null )
         { %>
-          <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=changeNote%></td></tr>
+          <tr><td>&nbsp;</td><td colspan="4" class="changenote"><%=TextUtil.replaceEntities(changeNote)%></td></tr>
      <% } %>
     <% } %>
     </wiki:HistoryIterator>

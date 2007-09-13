@@ -1,7 +1,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="com.ecyrd.jspwiki.WikiContext" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
@@ -49,7 +49,7 @@ function confirmDelete()
 }
 </script>
 
-<h3>Group <%=name%></h3>
+<h3>Group <%=TextUtil.replaceEntities(name)%></h3>
 
 <%
   if ( group == null )
@@ -82,7 +82,7 @@ function confirmDelete()
 %>
     <div class="formcontainer">
       <div class="instructions">
-        This is the wiki group called  <em><%=name%></em>.
+        This is the wiki group called  <em><%=TextUtil.replaceEntities(name)%></em>.
         Only members of this group can edit it.
       </div>
     
