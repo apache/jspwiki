@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+
 import java.util.*;
 
 import org.apache.ecs.ConcreteElement;
@@ -40,13 +42,14 @@ public class FormSelect
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
 
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         Map previousValues = null;
         
         if( info != null )
         {
             if( info.hide() )
             {
-                return "<p>(no need to show input field now)</p>";
+                return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
@@ -57,8 +60,8 @@ public class FormSelect
         }
 
         ConcreteElement field = null;
-
-        field = buildSelect( params, previousValues );
+        
+        field = buildSelect( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
@@ -71,12 +74,14 @@ public class FormSelect
     /**
      * Builds a Select element.
      */
-    private select buildSelect( Map pluginParams, Map ctxValues )
+    private select buildSelect( Map pluginParams, Map ctxValues, ResourceBundle rb )
         throws PluginException
     {
         String inputName = (String)pluginParams.get( PARAM_INPUTNAME );
         if( inputName == null )
-            throw new PluginException( "Select element is missing parameter 'name'." );
+        {
+            throw new PluginException( rb.getString( "formselect.namemissing" ) );
+        }
     
         String inputValue = (String)pluginParams.get( PARAM_VALUE );
         String previousValue = (String)ctxValues.get( inputName );

@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+
 import java.util.*;
 
 import org.apache.ecs.xhtml.input;
@@ -45,9 +47,10 @@ public class FormInput
         String inputValue = (String)params.get( PARAM_VALUE );
         String inputType  = (String)params.get( PARAM_TYPE );
         String size       = (String)params.get( PARAM_SIZE );
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( inputName == null )
-            throw new PluginException( "Input element is missing parameter 'name'." );
+            throw new PluginException( rb.getString( "forminput.namemissing" ) );
         if( inputValue == null )
             inputValue = "";
 
@@ -58,7 +61,7 @@ public class FormInput
         {
             if( info.hide() )
             {
-                return( "<p>(no need to show input field now)</p>" );
+                return( "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>" );
             }
             previousValues = info.getSubmission();
         }

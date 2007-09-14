@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+
 import java.util.*;
 
 import org.apache.ecs.ConcreteElement;
@@ -42,12 +44,13 @@ public class FormTextarea
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
         Map previousValues = null;
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( info != null )
         {
             if( info.hide() )
             {
-                return "<p>(no need to show textarea field now)</p>";
+                return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
@@ -59,7 +62,7 @@ public class FormTextarea
 
         ConcreteElement field = null;
 
-        field = buildTextArea( params, previousValues );
+        field = buildTextArea( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
         if( field != null )
@@ -68,8 +71,7 @@ public class FormTextarea
         return "";
     }
 
-    private textarea buildTextArea( Map params,
-                                    Map previousValues )
+    private textarea buildTextArea( Map params, Map previousValues, ResourceBundle rb )
         throws PluginException
     {
         String inputName = (String)params.get( PARAM_INPUTNAME );
@@ -77,8 +79,7 @@ public class FormTextarea
         String cols = (String)params.get( PARAM_COLS );
 
         if( inputName == null )
-            throw new PluginException( "Textarea element is missing " +
-                                       "parameter 'name'." );
+            throw new PluginException( rb.getString( "formtextarea.namemissing" ) );
 
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped

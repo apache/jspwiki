@@ -61,7 +61,9 @@ public class CurrentTimePlugin
         }
         catch( IllegalArgumentException e )
         {
-            throw new PluginException("You specified bad format: "+e.getMessage());
+            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            
+            throw new PluginException( rb.getString("currenttimeplugin.badformat") + e.getMessage() );
         }
     }
 

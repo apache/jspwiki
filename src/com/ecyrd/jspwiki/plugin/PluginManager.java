@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.io.*;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.commons.lang.ClassUtils;
@@ -331,6 +332,8 @@ public class PluginManager extends ModuleManager
         if( !m_pluginsEnabled )
             return "";
 
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        Object[] args = { classname };
         try
         {
             WikiPlugin plugin;
@@ -361,15 +364,15 @@ public class PluginManager extends ModuleManager
             }
             catch( InstantiationException e )
             {
-                throw new PluginException( "Cannot instantiate plugin "+classname, e );
+                throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.cannotinstantiate" ), args ), e );
             }
             catch( IllegalAccessException e )
             {
-                throw new PluginException( "Not allowed to access plugin "+classname, e );
+                throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notallowed" ), args ), e );
             }
             catch( Exception e )
             {
-                throw new PluginException( "Instantiation of plugin "+classname+" failed.", e );
+                throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.instantationfailed" ), args), e );
             }
 
             //
@@ -398,17 +401,17 @@ public class PluginManager extends ModuleManager
                     return stackTrace( params, t );
                 }
 
-                throw new PluginException( "Plugin failed", t );
+                throw new PluginException( rb.getString( "plugin.error.pluginfailed" ), t );
             }
 
         }
         catch( ClassNotFoundException e )
         {
-            throw new PluginException( "Could not find plugin "+classname, e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.couldnotfind" ), args ), e );
         }
         catch( ClassCastException e )
         {
-            throw new PluginException( "Class "+classname+" is not a Wiki plugin.", e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), args ), e );
         }
     }
 
@@ -557,6 +560,8 @@ public class PluginManager extends ModuleManager
         if( !m_pluginsEnabled )
             return "";
 
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        Object[] obArgs = { commandline };
         PatternMatcher  matcher  = new Perl5Matcher();
 
         try
@@ -578,13 +583,13 @@ public class PluginManager extends ModuleManager
         {
             String msg =  "Missing parameter in plugin definition: "+commandline;
             log.warn( msg, e );
-            throw new PluginException( msg );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.missingparameter" ), obArgs ) );
         }
         catch( IOException e )
         {
             String msg = "Zyrf.  Problems with parsing arguments: "+commandline;
             log.warn( msg, e );
-            throw new PluginException( msg );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.parsingarguments" ), obArgs ) );
         }
 
         // FIXME: We could either return an empty string "", or
@@ -980,6 +985,8 @@ public class PluginManager extends ModuleManager
         if( !m_pluginsEnabled )
             return;
 
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        Object[] args = { content.getPluginName() };
         Map params = content.getParameters();
         try
         {
@@ -1009,23 +1016,23 @@ public class PluginManager extends ModuleManager
         }
         catch( InstantiationException e )
         {
-            throw new PluginException( "Cannot instantiate plugin "+content.getPluginName(), e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.cannotinstantiate" ), args), e );
         }
         catch( IllegalAccessException e )
         {
-            throw new PluginException( "Not allowed to access plugin "+content.getPluginName(), e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notallowed" ), args), e );
         }
         catch( ClassNotFoundException e )
         {
-            throw new PluginException( "Could not find plugin "+content.getPluginName() );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.couldnotfind" ), args) );
         }
         catch( ClassCastException e )
         {
-            throw new PluginException( "Class "+content.getPluginName()+" is not a Wiki plugin.", e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.notawikiplugin" ), args), e );
         }
         catch( Exception e )
         {
-            throw new PluginException( "Instantiation of plugin "+content.getPluginName()+" failed.", e );
+            throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.instantationfailed" ), args), e );
         }
     }
 }

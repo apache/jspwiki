@@ -20,16 +20,19 @@
 package com.ecyrd.jspwiki;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -873,7 +876,9 @@ public class TranslatorReader extends Reader
         }
         catch( Exception e )
         {
-            m_renderer.makeError(" Invalid SET found: "+link);
+            ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+            Object[] args = { link };
+            m_renderer.makeError( MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), args ) );
         }
 
         return "";
@@ -912,7 +917,11 @@ public class TranslatorReader extends Reader
             {
                 log.info( "Failed to insert plugin", e );
                 log.info( "Root cause:",e.getRootThrowable() );
-                included = m_renderer.makeError("Plugin insertion failed: "+e.getMessage());
+                
+                ResourceBundle rb = m_context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                Object[] args = { e.getMessage() };
+                
+                included = m_renderer.makeError( MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), args ) );
             }
 
             sb.append( included );
@@ -1008,7 +1017,10 @@ public class TranslatorReader extends Reader
             }
             else
             {
-                sb.append( link+" "+m_renderer.makeError("No InterWiki reference defined in properties for Wiki called '"+extWiki+"'!)") );
+                ResourceBundle rb = m_context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                Object[] args = { extWiki };
+                
+                sb.append( link+" "+m_renderer.makeError( MessageFormat.format( rb.getString( "plugin.error.nointerwikiref" ), args ) ) );
             }
         }
         else if( reallink.startsWith("#") )

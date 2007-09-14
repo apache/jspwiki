@@ -20,9 +20,13 @@
 */
 package com.ecyrd.jspwiki.forms;
 
-import com.ecyrd.jspwiki.*;
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.plugin.PluginException;
-import java.util.*;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
 /**
  *  Opens a WikiForm.
@@ -74,9 +78,13 @@ public class FormOpen
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         String formName = (String)params.get( PARAM_FORM );
         if( formName == null )
-            throw new PluginException( "The FormOpen element is missing the '"+PARAM_FORM+"' parameter." );
+        {
+            Object[] args = { PARAM_FORM };
+            throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), args ) );
+        }
         String hide     = (String)params.get( PARAM_HIDEFORM );
         String sourcePage = ctx.getPage().getName();
         String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
@@ -88,7 +96,7 @@ public class FormOpen
 
         if( !(method.equalsIgnoreCase("get") || method.equalsIgnoreCase("post")) )
         {
-            throw new PluginException("Method must be either 'post' or 'get'");
+            throw new PluginException( rb.getString( "formopen.postorgetonly" ) );
         }
 
         FormInfo info = getFormInfo( ctx );
@@ -107,7 +115,7 @@ public class FormOpen
                     info.getStatus() == FormInfo.EXECUTED )
                 {
                     info.setHide( true );
-                    return( "<p>(no need to show form open now)" );
+                    return( "<p>" + rb.getString( "formopen.noneedtoshow" ) + "</p>" );
                 }
             }
             else

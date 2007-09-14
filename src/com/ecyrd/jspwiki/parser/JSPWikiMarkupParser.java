@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.parser;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.*;
 
 import javax.xml.transform.Result;
@@ -38,8 +39,10 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.CleanTextRenderer;
 import com.ecyrd.jspwiki.render.RenderingManager;
@@ -1352,7 +1355,9 @@ public class JSPWikiMarkupParser
         }
         catch( Exception e )
         {
-            return makeError(" Invalid SET found: "+link);
+            ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+            Object[] args = { link };
+            return makeError( MessageFormat.format( rb.getString( "markupparser.error.invalidset" ), args ) );
         }
 
         return m_currentElement;
@@ -1373,6 +1378,8 @@ public class JSPWikiMarkupParser
      */
     private Element handleHyperlinks( String linktext, int pos )
     {
+        ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        
         StringBuffer sb = new StringBuffer(linktext.length()+80);
 
         if( isAccessRule( linktext ) )
@@ -1403,7 +1410,9 @@ public class JSPWikiMarkupParser
                 //log.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode )
                 {
-                    return addElement( makeError("Plugin insertion failed: "+e.getMessage()) );
+                    ResourceBundle rbPlugin = m_context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                    Object[] args = { e.getMessage() };
+                    return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ), args ) ) );
                 }
             }
 
@@ -1490,8 +1499,8 @@ public class JSPWikiMarkupParser
                     }
                     else
                     {
-                        addElement( makeError("No InterWiki reference defined in properties for Wiki called '"
-                                              + extWiki + "'!)") );
+                        Object[] args = { extWiki };
+                        addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
                 }
             }
@@ -1573,7 +1582,8 @@ public class JSPWikiMarkupParser
         catch( ParseException e )
         {
             log.info("Parser failure: ",e);
-            addElement( makeError( "Parser failed: "+e.getMessage() ) );
+            Object[] args = { e.getMessage() };
+            addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.parserfailure" ), args ) ) );
         }
 
         return m_currentElement;
@@ -2306,7 +2316,8 @@ public class JSPWikiMarkupParser
             if( style != null && style.indexOf("javascript:") != -1 )
             {
                 log.debug("Attempt to output javascript within CSS:"+style);
-                return addElement( makeError("Attempt to output javascript!") );
+                ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+                return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
             }
 
             //

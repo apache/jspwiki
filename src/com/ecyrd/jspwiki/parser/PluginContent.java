@@ -19,15 +19,18 @@
 */
 package com.ecyrd.jspwiki.parser;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.jdom.Text;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
@@ -166,7 +169,10 @@ public class PluginContent extends Text
             else
             {
                 // log.info("Failed to execute plugin",e);
-                result = JSPWikiMarkupParser.makeError("Plugin insertion failed: "+e.getMessage()).getText();
+                ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                Object[] args = { e.getMessage() };
+                result = JSPWikiMarkupParser.makeError( 
+                                 MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), args ) ).getText();
             }
         }
         

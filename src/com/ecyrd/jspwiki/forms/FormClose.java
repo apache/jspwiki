@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+
 import java.util.*;
 
 /**
@@ -49,7 +51,8 @@ public class FormClose
         {
             if( info.hide() )
             {
-                return( "<p>(no need to show close now)</p>" );
+                ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+                return( "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>" );
             }
         }
 

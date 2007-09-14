@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
+
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -50,6 +52,7 @@ public class ReferringPagesPlugin
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         String pageName = (String)params.get( PARAM_PAGE );
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         
         if( pageName == null )
         {
@@ -69,7 +72,7 @@ public class ReferringPagesPlugin
             String extras = (String)params.get( PARAM_EXTRAS );
             if( extras == null )
             {
-                extras = "...and %d more\\\\";
+                extras = rb.getString("referringpagesplugin.more");
             }
             
             log.debug( "Fetching referring pages for "+page.getName()+
@@ -82,8 +85,8 @@ public class ReferringPagesPlugin
 
                 if( items < links.size() && items > 0 )
                 {
-                    extras = TextUtil.replaceString( extras, "%d", 
-                                                     ""+(links.size()-items) );
+                    Object[] args = { "" + ( links.size() - items) };
+                    extras = MessageFormat.format(extras, args); 
                     wikitext += extras;
                 }
             }
@@ -93,7 +96,7 @@ public class ReferringPagesPlugin
             //
             if( links == null || links.size() == 0 )
             {
-                wikitext = "...nobody";
+                wikitext = rb.getString("referringpagesplugin.nobody");
             }
 
             return makeHTML( context, wikitext );

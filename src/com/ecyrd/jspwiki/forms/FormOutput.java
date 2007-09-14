@@ -20,11 +20,14 @@
 */
 package com.ecyrd.jspwiki.forms;
 
-import com.ecyrd.jspwiki.*;
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
-import java.util.*;
-
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.util.FormUtil;
 
 /**
@@ -57,6 +60,7 @@ public class FormOutput
         {
             return "";
         }
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         
         // If we are NOT here due to this form being submitted, we do nothing.
         // The submitted form MUST have parameter 'formname' equal to the name
@@ -81,9 +85,9 @@ public class FormOutput
         String handler = (String)params.get( PARAM_HANDLER );
         if( handler == null || handler.length() == 0 )
         {
+            Object[] args = { PARAM_HANDLER };
             // Need to print out an error here as this form is misconfigured
-            return "<p class=\"error\">Argument '" +
-                    PARAM_HANDLER + "' required for Form plugin</p>";
+            return "<p class=\"error\">" + MessageFormat.format( rb.getString( "formoutput.missingargument" ), args ) + "</p>";
         }
 
         String sourcePage = ctx.getPage().getName();
@@ -126,7 +130,7 @@ public class FormOutput
         }
         catch( PluginException pe )
         {
-            error = "<p class=\"error\">" + pe.getMessage();
+            error = "<p class=\"error\">" + pe.getMessage() + "</p>";
             info.setError( error );
             info.setStatus( FormInfo.ERROR );
         }

@@ -1,6 +1,36 @@
 2007-09-14  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
-        * web tests no longer require the servlet container to be running at
+        * 2.5.138
+        
+        * Localized Referring Pages and Current Time plugins (again, strangely enough, 
+        the plugins' texts were already in the resource file.). Updated 
+        referringpagesplugin.more localized text, it was looking for two parameters and
+        the plugin uses only one.
+        
+        * Localized also Forms Plugins, JSPWikiMarkupParser, PluginContent,  
+        TranslatorReader and PluginManager. New localized strings:
+        + CoreResources.properties    
+		    # JSPWikiMarkupParser 
+		    - markupparser.error.invalidset = Invalid SET found: {0}
+		    - markupparser.error.nointerwikiref = No InterWiki reference defined in 
+		    		properties for Wiki called '{0}'!
+		    - markupparser.error.parserfailure = Parser failed: {0}
+		    - markupparser.error.javascriptattempt = Attempt to output javascript!
+		+ PluginResources.properties
+			# Forms Plugins
+		    - formclose.noneedtoshow = (no need to show close now)
+		    - forminput.namemissing = Input element is missing parameter 'name'.
+		    - forminput.noneedtoshow = (no need to show input field now)
+		    - formopen.missingparam = The FormOpen element is missing the '{0}' 
+		    		parameter.
+		    - formopen.postorgetonly = Method must be either 'post' or 'get'
+		    - formopen.noneedtoshow = (no need to show form open now)
+		    - formoutput.missingargument = Argument '{0}' required for Form plugin
+		    - formselect.namemissing = Select element is missing parameter 'name'.
+		    - formtextarea.noneedtoshow = (no need to show textarea field now)
+		    - formtextarea.namemissing = Textarea element is missing parameter 'name'.  
+        
+        * Web tests no longer require the servlet container to be running at
         http://localhost:8080/. Now you can set host & port at the build.properties 
         file indicated in build.xml
 
