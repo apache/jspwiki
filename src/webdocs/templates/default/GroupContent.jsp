@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.WikiContext" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
@@ -10,8 +10,8 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 
 <%
@@ -23,7 +23,7 @@
   String created = "";
   String modifier = "";
   String creator = "";
-  
+
   if ( group != null )
   {
     name = group.getName();
@@ -40,13 +40,15 @@
       modified = group.getLastModified().toString();
     }
   }
+
+  name = TextUtil.replaceEntities(name);
 %>
 
 
 <script language="javascript" type="text/javascript">
 function confirmDelete()
 {
-  var reallydelete = confirm("<fmt:message key="group.areyousure"><fmt:param><%=group%></fmt:param></fmt:message>");
+  var reallydelete = confirm("<fmt:message key="group.areyousure"><fmt:param><%=name%></fmt:param></fmt:message>");
 
   return reallydelete;
 }
@@ -60,7 +62,7 @@ function confirmDelete()
   if ( group == null )
   {
     WikiContext c = WikiContext.findContext( pageContext );
-    
+
     if ( c.getWikiSession().getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
     {
 %>
@@ -125,10 +127,10 @@ function confirmDelete()
         <fmt:message key="group.creator">
            <fmt:param><%=creator%></fmt:param>
            <fmt:param><%=created%></fmt:param>
-        </fmt:message> 
+        </fmt:message>
         </td>
       </tr>
-    </table>        
+    </table>
 <%
   }
 %>

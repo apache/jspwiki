@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 
@@ -32,7 +33,7 @@ import com.ecyrd.jspwiki.NoSuchVariableException;
  *  <P><B>Attributes</B></P>
  *  <UL>
  *    <LI>var - Name of the variable.  Required.
- *    <LI>default - Revert to this value, if the value of "var" is null. 
+ *    <LI>default - Revert to this value, if the value of "var" is null.
  *                  If left out, this tag will produce a concise error message
  *                  if the named variable is not found. Set to empty (default="")
  *                  to hide the message.
@@ -47,7 +48,7 @@ public class VariableTag
     extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
-    
+
     private String m_var      = null;
     private String m_default  = null;
 
@@ -71,7 +72,7 @@ public class VariableTag
     {
         m_default = arg;
     }
-    
+
     public final int doWikiStartTag()
         throws JspException,
                IOException
@@ -80,7 +81,7 @@ public class VariableTag
         JspWriter out = pageContext.getOut();
         String msg = null;
         String value = null;
-        
+
         try
         {
             value = engine.getVariableManager().getValue( m_wikiContext,
@@ -104,7 +105,7 @@ public class VariableTag
         {
             value = msg;
         }
-        out.write( value );
-        return( SKIP_BODY );
+        out.write( TextUtil.replaceEntities(value) );
+        return SKIP_BODY;
     }
 }

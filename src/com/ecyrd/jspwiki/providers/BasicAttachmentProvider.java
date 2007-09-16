@@ -409,9 +409,17 @@ public class BasicAttachmentProvider
     {
         File attDir = findAttachmentDir( att );
 
-        File f = findFile( attDir, att );
+        try
+        {
+            File f = findFile( attDir, att );
 
-        return new FileInputStream( f );
+            return new FileInputStream( f );
+        }
+        catch( FileNotFoundException e )
+        {
+            log.error("File not found: "+e.getMessage());
+            throw new ProviderException("No such page was found.");
+        }
     }
 
     public Collection listAttachments( WikiPage page )
@@ -577,6 +585,10 @@ public class BasicAttachmentProvider
 
             att.setSize( f.length() );
             att.setLastModified( new Date(f.lastModified()) );
+        }
+        catch( FileNotFoundException e )
+        {
+            return null;
         }
         catch( IOException e )
         {

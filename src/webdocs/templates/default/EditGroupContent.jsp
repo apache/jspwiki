@@ -5,11 +5,12 @@
 <%@ page import="java.util.Arrays" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = Logger.getLogger("JSPWiki");
 %>
 
 <%
@@ -17,13 +18,14 @@
   String name = request.getParameter( "group" );
   Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
   Principal[] members = null;
-  
+
   if ( group != null )
   {
     name = group.getName();
     members = group.members();
     Arrays.sort( members, new PrincipalComparator() );
   }
+  name = TextUtil.replaceEntities(name);
 %>
 
 <wiki:TabbedSection defaultTab="${param.tab}">
@@ -31,11 +33,11 @@
 
   <h3><%=name%></h3>
 
-  <form action="<wiki:Link format='url' jsp='EditGroup.jsp'/>" 
+  <form action="<wiki:Link format='url' jsp='EditGroup.jsp'/>"
          class="wikiform"
-            id="editGroup" 
+            id="editGroup"
         method="POST" accept-charset="UTF-8">
-      
+
     <!-- Members -->
     <%
       StringBuffer s = new StringBuffer();
@@ -62,7 +64,7 @@
     <tr>
       <th><label>Members</label></th>
       <td>
-      <textarea id="members" name="members" rows="10" cols="30"><%=s.toString()%></textarea>
+      <textarea id="members" name="members" rows="10" cols="30"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp"><fmt:message key="editgroup.memberlist"/></div>
       </td>
     </tr>

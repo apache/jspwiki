@@ -1,18 +1,30 @@
+2007-09-16  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.139
+
+        * [BUG 136]: Fixed several XSS vulnerabilities in plain.jsp,
+        commonheader.jsp, GroupContent.jsp, EditGroupContent.jsp,
+        InfoContent.jsp, NewGroupContent.jsp, VariableTag, UserProfileTag
+        and MessagesTag.  Reported by Jason Kratzer.
+
+        * Fixes a local path disclosure vulnerability in
+        BasicAttachmentProvider.  Reported by Jason Kratzer.
+
 2007-09-14  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
         * 2.5.138
-        
-        * Localized Referring Pages and Current Time plugins (again, strangely enough, 
-        the plugins' texts were already in the resource file.). Updated 
+
+        * Localized Referring Pages and Current Time plugins (again, strangely enough,
+        the plugins' texts were already in the resource file.). Updated
         referringpagesplugin.more localized text, it was looking for two parameters and
         the plugin uses only one.
-        
-        * Localized also Forms Plugins, JSPWikiMarkupParser, PluginContent,  
+
+        * Localized also Forms Plugins, JSPWikiMarkupParser, PluginContent,
         TranslatorReader and PluginManager. New localized strings:
-        + CoreResources.properties    
-		    # JSPWikiMarkupParser 
+        + CoreResources.properties
+		    # JSPWikiMarkupParser
 		    - markupparser.error.invalidset = Invalid SET found: {0}
-		    - markupparser.error.nointerwikiref = No InterWiki reference defined in 
+		    - markupparser.error.nointerwikiref = No InterWiki reference defined in
 		    		properties for Wiki called '{0}'!
 		    - markupparser.error.parserfailure = Parser failed: {0}
 		    - markupparser.error.javascriptattempt = Attempt to output javascript!
@@ -21,37 +33,37 @@
 		    - formclose.noneedtoshow = (no need to show close now)
 		    - forminput.namemissing = Input element is missing parameter 'name'.
 		    - forminput.noneedtoshow = (no need to show input field now)
-		    - formopen.missingparam = The FormOpen element is missing the '{0}' 
+		    - formopen.missingparam = The FormOpen element is missing the '{0}'
 		    		parameter.
 		    - formopen.postorgetonly = Method must be either 'post' or 'get'
 		    - formopen.noneedtoshow = (no need to show form open now)
 		    - formoutput.missingargument = Argument '{0}' required for Form plugin
 		    - formselect.namemissing = Select element is missing parameter 'name'.
 		    - formtextarea.noneedtoshow = (no need to show textarea field now)
-		    - formtextarea.namemissing = Textarea element is missing parameter 'name'.  
-        
+		    - formtextarea.namemissing = Textarea element is missing parameter 'name'.
+
         * Web tests no longer require the servlet container to be running at
-        http://localhost:8080/. Now you can set host & port at the build.properties 
+        http://localhost:8080/. Now you can set host & port at the build.properties
         file indicated in build.xml
 
 2007-09-09  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.137
-        
+
         * Few javascript fixes for improved URL constructor compatibility [ BUG 115 ]
         The generated links in the ajax search dropdown are now compatible with
         the selected URL constructor.
-        
+
         * More IE fixes to improve rendering of floats. ( ref. IE6 peekaboo bug )
 
-        
+
 2007-09-08  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.136
-        
+
         * D'oh, due to some debug code left in CookieAuthenticationLoginModule,
         it was expiring sessions in 30 seconds.
-        
+
         * AdminUI now shows all known plugins and whether they are compatible
         with this version of JSPWiki.  WikiWizard also gains an AdminBean
         (though it doesn't do anything).
@@ -61,44 +73,44 @@
         * 2.5.135
 
         * [Bug 135]: Turned out to be a faulty quote in Finnish translation.
-        
+
         * [Bug 134]: Ditto.
 
 2007-09-03  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.134
-        
+
         * Fixed the JSON-RPC url, to be independent on the url constructor
-        
+
 2007-09-02  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
         * 2.5.133
-        
+
         * [Bug 133]: Release.isOlderOrEqual() was not comparing revisions
-        properly and, in the end, Editors were not registering. Something 
+        properly and, in the end, Editors were not registering. Something
         similar was happening with Release.isNewerOrEqual(), fixed as well.
-        
-        * [Bug 122]: Partly fixed. Preferences for default template are now readed 
-        from jspwiki.properties instead of being hardcoded in 
-        com.ecyrd.jspwiki.preferences.Preferences. Cfr. with jspwiki.properties.tmpl 
-        lines 258 - 261. 
-        
+
+        * [Bug 122]: Partly fixed. Preferences for default template are now readed
+        from jspwiki.properties instead of being hardcoded in
+        com.ecyrd.jspwiki.preferences.Preferences. Cfr. with jspwiki.properties.tmpl
+        lines 258 - 261.
+
         * Updated es_ES locales
 
 2007-09-02  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.132
-        
+
         * Fixed search menu for Smart skin. (improve compat. with IE)
-        
+
 
 2007-09-01  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.131
-        
+
         * [Bug 131]: Added Harry Metske's patch to allow "excludeattachments"
         on UnusedPagesPlugin for those who need it.
-        
+
         * Updated Finnish localization.
 
 2007-09-01  Dirk Frederickx (dirk.frederickx@gmail.com)
@@ -106,25 +118,25 @@
         * 2.5.130
 
         * Fixed missing html attrib in LostPassword tab
-        
-        * The Edit findSuggestionMenu has been moved into the Favorites, 
+
+        * The Edit findSuggestionMenu has been moved into the Favorites,
         so it nicely accomodates with Left or Right position of the favorites block.
-        
+
         * [ BUG 132 ] Collapsable lists and boxes now also are rendered in preview mode
-        
+
         * [ BUG 123 ] Added a confirm box in case you click aways from the page without saving.
-        When you leave the edit session without first saving your changees (eg clicking the 
+        When you leave the edit session without first saving your changees (eg clicking the
         Info tab, clicking any page link, etc.) a popup window asks you to confirm.
 
         javascript.edit.areyousure=Without clicking the Save button, your changes will be lost. \
             Are you sure you want to exit this page?
-            
-        * [ BUG 126 ] Remove 'spurious' css errors.        
+
+        * [ BUG 126 ] Remove 'spurious' css errors.
 
 2007-08-28  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.129
-        
+
         * Fixed a number of bugs in the SpamFilter, and added automatic
         bot detection according to idea from
         http://www.modernbluedesign.com/web-design-blog/fighting-spam-with-css/
@@ -133,7 +145,7 @@
         are "none" and "asirra".
 
         * 2.5.128
-        
+
         * Added SearchManagerBean to the admin UI.  It's now possible
         to force a reindex of all pages, either from your MBean manager
         or the Admin UI.

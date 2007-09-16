@@ -2,6 +2,7 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.ResourceBundle" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
@@ -23,12 +24,14 @@
     members = group.members();
     Arrays.sort( members, new PrincipalComparator() );
   }
-  
+
   // FIXME : find better way to i18nize default group name
-  if ( "MyGroup".equals(name) ) 
+  if ( "MyGroup".equals(name) )
   {
 	  name = LocaleSupport.getLocalizedMessage(pageContext, "newgroup.defaultgroupname");
   }
+
+  name = TextUtil.replaceEntities(name);
 %>
 
 <wiki:TabbedSection defaultTab="${param.tab}">
@@ -67,7 +70,7 @@
     %>
     <tr>
       <th><label><fmt:message key="group.members"/></label></th>
-      <td><textarea id="members" name="members" rows="20" cols="40"><%=s.toString()%></textarea>
+      <td><textarea id="members" name="members" rows="20" cols="40"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp">
         <fmt:message key="newgroup.members.description"/>
       </div>

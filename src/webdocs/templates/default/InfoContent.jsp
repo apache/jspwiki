@@ -24,7 +24,7 @@
   {
     creationAuthor = firstPage.getAuthor();
   }
-  
+
   int itemcount = 0;  //number of page versions
   try
   {
@@ -46,10 +46,10 @@
 <wiki:PageType type="page">
 
   <wiki:TabbedSection defaultTab="info">
-  
-  <wiki:Tab id="pagecontent" 
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>' 
-     accesskey="v" 
+
+  <wiki:Tab id="pagecontent"
+         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
+     accesskey="v"
 	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
@@ -123,7 +123,7 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
       <p>
-      <input type="submit" name="delete-all" id="delete-all" 
+      <input type="submit" name="delete-all" id="delete-all"
             value="<fmt:message key='info.delete.submit'/>" >
       </p>
     </form>
@@ -150,13 +150,13 @@
      <wiki:Include page="DiffTab.jsp"/>
   </wiki:CheckRequestContext>
   <%-- DIFF section --%>
-  
+
 
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
     <wiki:CheckVersion mode="notfirst">
     <%-- if( itemcount > 1 ) { --%>
 
-    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" 
+    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
                          href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
 
@@ -234,9 +234,9 @@
 %>
 
   <wiki:TabbedSection defaultTab="info">
-  <wiki:Tab id="pagecontent" 
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>' 
-     accesskey="v" 
+  <wiki:Tab id="pagecontent"
+         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>'
+     accesskey="v"
 	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
   </wiki:Tab>
 
@@ -245,7 +245,7 @@
   <h3><fmt:message key="info.uploadnew"/></h3>
 
   <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>" 
+  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
       onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"
@@ -294,7 +294,7 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
      <div>
-     <input type="submit" name="delete-all" id="delete-all" 
+     <input type="submit" name="delete-all" id="delete-all"
            value="<fmt:message key='info.deleteattachment.submit' />" />
      </div>
     </form>
@@ -360,6 +360,7 @@
       <%
          String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
          if( changeNote != null ) {
+             changeNote = TextUtil.replaceEntities(changeNote);
          %><%=changeNote%><%
          }
       %>

@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiSession;
 
 /**
@@ -47,7 +48,7 @@ public class MessagesTag extends WikiTagBase
     private String              m_prefix         = "";
 
     private String              m_topic          = null;
-    
+
     private String              m_div            = "information";
 
     private static final String CLEAR            = "clear";
@@ -75,7 +76,7 @@ public class MessagesTag extends WikiTagBase
     {
         m_div = div;
     }
-    
+
     public void setAction( String action )
     {
         m_action = action.toLowerCase();
@@ -103,7 +104,7 @@ public class MessagesTag extends WikiTagBase
                 StringBuffer sb = new StringBuffer();
                 if ( messages.length == 1 )
                 {
-                    sb.append( "<div class=\"" + m_div + "\">" + m_prefix + messages[0] + "</div>" );
+                    sb.append( "<div class=\"" + m_div + "\">" + m_prefix + TextUtil.replaceEntities(messages[0]) + "</div>" );
                 }
                 else
                 {
@@ -111,7 +112,7 @@ public class MessagesTag extends WikiTagBase
                     sb.append( "<ul>" );
                     for( int i = 0; i < messages.length; i++ )
                     {
-                        sb.append( "<li>" + messages[i] + "</li>" );
+                        sb.append( "<li>" + TextUtil.replaceEntities(messages[i]) + "</li>" );
                     }
                     sb.append( "</ul></div>" );
                 }

@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
@@ -201,7 +202,7 @@ public class UserProfileTag extends WikiTagBase
 
         if ( result != null )
         {
-            pageContext.getOut().print( result );
+            pageContext.getOut().print( TextUtil.replaceEntities(result) );
         }
         return SKIP_BODY;
     }
