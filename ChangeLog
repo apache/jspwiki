@@ -9,6 +9,12 @@
 
         * Fixes a local path disclosure vulnerability in
         BasicAttachmentProvider.  Reported by Jason Kratzer.
+        
+        * Updated Finnish localization
+        
+        * Also fixed a number of instances of apostrophe (') use in
+        localization files - better to use &#39; to avoid loads of nastiness
+        with certain constructions.
 
 2007-09-14  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
