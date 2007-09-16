@@ -1,4 +1,4 @@
-/* 
+/*
  JSPWiki - a JSP-based WikiWiki clone.
 
  Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
@@ -38,8 +39,8 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 /**
  * <p>
  * Returns user profile attributes, or empty strings if the user has not been
- * validated. This tag has a single attribute, "property." 
- * The <code>property</code> attribute may contain one of the following 
+ * validated. This tag has a single attribute, "property."
+ * The <code>property</code> attribute may contain one of the following
  * case-insensitive values:
  * </p>
  * <ul>
@@ -49,7 +50,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * <code>groups</code> - a sorted list of the groups a user belongs to</li>
  * <code>loginname</code> - user's login name. If the current user does not have
  * a profile, the user's login principal (such as one provided by a container
- * login module, user cookie, or anonyous IP address), will supply the login 
+ * login module, user cookie, or anonyous IP address), will supply the login
  * name property</li>
  * <code>roles</code> - a sorted list of the roles a user possesses</li>
  * <code>wikiname</code> - user's wiki name</li>
@@ -67,27 +68,27 @@ public class UserProfileTag extends WikiTagBase
     private static final long serialVersionUID = 3258410625431582003L;
 
     public  static final String BLANK = "(not set)";
-    
+
     private static final String CREATED   = "created";
 
     private static final String EMAIL     = "email";
 
     private static final String EXISTS    = "exists";
-    
+
     private static final String FULLNAME  = "fullname";
-    
+
     private static final String GROUPS    = "groups";
-    
+
     private static final String LOGINNAME = "loginname";
-        
+
     private static final String MODIFIED  = "modified";
-    
+
     private static final String NEW       = "new";
-    
+
     private static final String ROLES     = "roles";
-    
+
     private static final String WIKINAME  = "wikiname";
-    
+
     private String             m_prop;
 
     public void initTag()
@@ -101,7 +102,7 @@ public class UserProfileTag extends WikiTagBase
         UserManager manager = m_wikiContext.getEngine().getUserManager();
         UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
-        
+
         if ( EXISTS.equals( m_prop ) )
         {
             return profile.isNew() ? SKIP_BODY : EVAL_BODY_INCLUDE;
@@ -142,7 +143,7 @@ public class UserProfileTag extends WikiTagBase
         else if ( WIKINAME.equals( m_prop ) )
         {
             result = profile.getWikiName();
-            
+
             if( result == null )
             {
                 //
@@ -160,7 +161,7 @@ public class UserProfileTag extends WikiTagBase
         }
         if ( result != null )
         {
-            pageContext.getOut().print( result );
+            pageContext.getOut().print( TextUtil.replaceEntities(result) );
         }
         return SKIP_BODY;
     }
@@ -169,7 +170,7 @@ public class UserProfileTag extends WikiTagBase
     {
         m_prop = property.toLowerCase().trim();
     }
-    
+
     /**
      * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Group} objects a user possesses
      * in his or her WikiSession. The result is computed by consulting
@@ -192,14 +193,14 @@ public class UserProfileTag extends WikiTagBase
         {
             return "(none)";
         }
-        
+
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = (String)tempRoles.get( i );
             {
                 sb.append( name );
-                if ( i < ( tempRoles.size() - 1 ) ) 
+                if ( i < ( tempRoles.size() - 1 ) )
                 {
                     sb.append(',');
                     sb.append(' ');
@@ -208,7 +209,7 @@ public class UserProfileTag extends WikiTagBase
         }
         return sb.toString();
     }
-    
+
     /**
      * Returns a sorted list of the {@link com.ecyrd.jspwiki.auth.authorize.Role} objects a user possesses
      * in his or her WikiSession. The result is computed by consulting
@@ -231,14 +232,14 @@ public class UserProfileTag extends WikiTagBase
         {
             return "(none)";
         }
-        
+
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = (String)tempRoles.get( i );
             {
                 sb.append( name );
-                if ( i < ( tempRoles.size() - 1 ) ) 
+                if ( i < ( tempRoles.size() - 1 ) )
                 {
                     sb.append(',');
                     sb.append(' ');
