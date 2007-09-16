@@ -1,11 +1,11 @@
 2007-09-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.4.104
-        
+
         * Fixes several XSS vulnerabilities in Diff, PageInfo,
-        Edit, Comment, Login, NewGroup and EditGroup.  Thanks heaps
-        to Jason Katzer for finding these!
-        
+        Edit, Comment, Login, NewGroup, UserProfile and EditGroup.
+        Thanks heaps to Jason Katzer for finding these!
+
         * Fixed a local path disclosure vulnerability in attachments.
         Thanks also to Jason Katzer!
 
