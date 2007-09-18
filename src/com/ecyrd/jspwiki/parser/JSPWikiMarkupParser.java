@@ -510,6 +510,8 @@ public class JSPWikiMarkupParser
         {
             type = EMPTY;
         }
+        ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        Object[] args = { link };
 
         switch(type)
         {
@@ -519,7 +521,7 @@ public class JSPWikiMarkupParser
 
             case EDIT:
                 el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
-                el.setAttribute("title","Create '"+link+"'");
+                el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), args ) );
                 break;
 
             case EMPTY:

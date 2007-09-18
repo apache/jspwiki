@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.90 2007-09-01 19:41:22 brushed Exp $
+    $Id: build.xml,v 1.91 2007-09-18 21:59:47 jp Exp $
 -->
 
 <!--
@@ -118,7 +118,7 @@
   <!-- Define the CVS properties.  These are used when building the
        source distribution.  Normally, you shouldn't have to care about these.
    -->
-  <property name="cvs.root" value=":ext:grey.ecyrd.com:/p/cvs" />
+  <property name="cvs.root" value=":ext:cvs.jspwiki.org:/p/cvs" />
   <property name="cvs.module" value="JSPWiki" />
   <property name="cvs.tag" value="HEAD" />
 
@@ -634,7 +634,7 @@
   <!-- This target runs web unit tests using JWebUnit, which
        extends JUnit. These tests assumes you have Tomcat
        or higher installed **and** that it is running on
-       localhost:8080 when you execute this target. The Manager
+       ${tomcat.host}:${tomcat.port} when you execute this target. The Manager
        app must be configured. Also, the Tomcat server's toncat-users.xml
        file must contain a user named 'janne' with a password 'myP@5sw0rd'
        and an assigned role of 'Authenticated'.
@@ -671,7 +671,7 @@
         toFile="${tests.build}/jspwiki.properties.custom-absolute" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom-absolute">
       <entry key="jspwiki.referenceStyle" value="absolute" />
-      <entry key="jspwiki.baseURL" value="http://localhost:8080/test-custom-absolute/" />
+      <entry key="jspwiki.baseURL" value="http://${tomcat.host}:${tomcat.port}/test-custom-absolute/" />
     </propertyfile>
     <webtest-setup context="test-custom-absolute"
       webxml="${tests.build}/web.xml.custom"

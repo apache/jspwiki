@@ -1,3 +1,10 @@
+2007-09-18  Juan Pablo Santos (juanpablo.santos@gmail.com)
+
+		* Fixed a pair of typos: use of tomcat.host & port instead of localhost:8080 in 
+		build.xml + cvs.root property pointing to cvs.jspwiki.org instead of 
+		grey.ecyrd.com and one more localized string at CoreResources.properties, 
+			- markupparser.link.create = Create &#39;{0}&#39;
+		
 2007-09-16  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.139
