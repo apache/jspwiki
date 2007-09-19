@@ -1,10 +1,14 @@
+2007-09-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Updated Finnish localization
+
 2007-09-18  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
-        * Fixed a pair of typos: use of tomcat.host & port instead of localhost:8080 in 
-        build.xml + cvs.root property pointing to cvs.jspwiki.org instead of 
-        grey.ecyrd.com and one more localized string at CoreResources.properties, 
+        * Fixed a pair of typos: use of tomcat.host & port instead of localhost:8080 in
+        build.xml + cvs.root property pointing to cvs.jspwiki.org instead of
+        grey.ecyrd.com and one more localized string at CoreResources.properties,
 		    - markupparser.link.create = Create &#39;{0}&#39;
-		
+
 2007-09-16  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.139
@@ -16,9 +20,9 @@
 
         * Fixes a local path disclosure vulnerability in
         BasicAttachmentProvider.  Reported by Jason Kratzer.
-        
+
         * Updated Finnish localization
-        
+
         * Also fixed a number of instances of apostrophe (') use in
         localization files - better to use &#39; to avoid loads of nastiness
         with certain constructions.
