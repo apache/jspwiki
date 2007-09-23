@@ -132,6 +132,14 @@ public final class WatchDog
      */
     private static void scrub()
     {
+        //
+        //  During finalization, the object may already be cleared (depending
+        //  on the finalization order).  Therefore, it's possible that this
+        //  method is called from another thread after the WatchDog itself
+        //  has been cleared.
+        //
+        if( c_kennel == null ) return;
+
         synchronized( c_kennel )
         {
             for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
@@ -310,7 +318,7 @@ public final class WatchDog
 
     /**
      *  Strictly for debugging/informative purposes.
-     *  
+     *
      *  @return Random ramblings.
      */
     public String toString()
