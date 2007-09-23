@@ -32,11 +32,15 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.event.WikiEngineEvent;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
 import com.ecyrd.jspwiki.ui.admin.beans.PluginBean;
 import com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean;
 import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
+import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
  *  Provides a manager class for all AdminBeans within JSPWiki.  This class
@@ -45,7 +49,7 @@ import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
  *  @author Janne Jalkanen
  *  @since  2.5.52
  */
-public class AdminBeanManager
+public class AdminBeanManager implements WikiEventListener
 {
     private WikiEngine m_engine;
     private ArrayList  m_allBeans;
@@ -82,6 +86,7 @@ public class AdminBeanManager
             log.info( m_mbeanServer.getDefaultDomain() );
         }
 
+        m_engine.addWikiEventListener( this );
         initialize();
     }
 
@@ -106,6 +111,7 @@ public class AdminBeanManager
         }
     }
 
+
     /**
      *  Register an AdminBean.  If the AdminBean is also a JMX MBean, it
      *  also gets registered to the MBeanServer we've found.
@@ -118,10 +124,7 @@ public class AdminBeanManager
         {
             if( ab instanceof DynamicMBean && m_mbeanServer != null )
             {
-                String component = getJMXTitleString( ab.getType() );
-                String title     = ab.getTitle();
-
-                ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
+                ObjectName name = getObjectName(ab);
 
                 if( !m_mbeanServer.isRegistered(name))
                 {
@@ -153,6 +156,15 @@ public class AdminBeanManager
         {
             log.error("Evil NPE occurred",e);
         }
+    }
+
+    private ObjectName getObjectName(AdminBean ab) throws MalformedObjectNameException
+    {
+        String component = getJMXTitleString( ab.getType() );
+        String title     = ab.getTitle();
+
+        ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
+        return name;
     }
 
     /**
@@ -234,7 +246,7 @@ public class AdminBeanManager
     /**
      *  Locates a bean based on the AdminBean.getId() out of all
      *  the registered beans.
-     *  
+     *
      *  @param id ID
      *  @return An AdminBean, or null, if no such bean is found.
      */
@@ -243,14 +255,14 @@ public class AdminBeanManager
         for( Iterator i = m_allBeans.iterator(); i.hasNext(); )
         {
             AdminBean ab = (AdminBean) i.next();
-            
+
             if( ab.getId().equals(id) )
                 return ab;
         }
-        
+
         return null;
     }
-    
+
     /**
      *  A JDK 1.4 version of something which gets us the MBeanServer.  It
      *  binds to the first server it can find.
@@ -303,8 +315,8 @@ public class AdminBeanManager
     /**
      *  Returns the type identifier for a string type.
      *
-     *  @param type
-     *  @return
+     *  @param type A type string.
+     *  @return A type value.
      */
     public static int getTypeFromString(String type)
     {
@@ -314,5 +326,45 @@ public class AdminBeanManager
             return AdminBean.EDITOR;
 
         return AdminBean.UNKNOWN;
+    }
+
+    /**
+     *  Unregisters AdminBeans upon SHUTDOWN event.
+     *
+     *  @param event {@inheritDoc}
+     */
+    public void actionPerformed(WikiEvent event)
+    {
+        if( event instanceof WikiEngineEvent )
+        {
+            if( ((WikiEngineEvent)event).getType() == WikiEngineEvent.SHUTDOWN )
+            {
+                for( Iterator i = m_allBeans.iterator(); i.hasNext(); )
+                {
+                    try
+                    {
+                        AdminBean ab = (AdminBean) i.next();
+                        ObjectName on = getObjectName( ab );
+                        if( m_mbeanServer.isRegistered( on ) )
+                        {
+                            m_mbeanServer.unregisterMBean(on);
+                            log.info("Unregistered AdminBean "+ab.getTitle());
+                        }
+                    }
+                    catch( MalformedObjectNameException e )
+                    {
+                        log.error("Malformed object name when unregistering",e);
+                    }
+                    catch (InstanceNotFoundException e)
+                    {
+                        log.error("Object was registered; yet claims that it's not there",e);
+                    }
+                    catch (MBeanRegistrationException e)
+                    {
+                        log.error("Registration exception while unregistering",e);
+                    }
+                }
+            }
+        }
     }
 }
