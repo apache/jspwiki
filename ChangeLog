@@ -1,3 +1,11 @@
+2007-09-23  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.140
+
+        * Fixed issue with deploy/redeploy - removed a thrown exception
+        in WatchDog, and made the AdminBeans properly unregister upon
+        shutdown.
+
 2007-09-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * Updated Finnish localization
