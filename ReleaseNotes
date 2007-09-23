@@ -100,9 +100,9 @@ partially:
 KNOWN PROBLEMS
 ==============
 
-* WebDav and static RSS generation do not yet support the new
+* WebDav does not yet support the new
   authentication/permissions scheme.  Therefore, if you have very
-  sensitive data in your wiki, you might not want to enable these.
+  sensitive data in your wiki, you might not want to enable it.
 
 * Not all old plugins work.  Specifically, plugins from 2.2, which
   1) use com.ecyrd.jspwiki package, will fail because they are not
@@ -113,12 +113,9 @@ KNOWN PROBLEMS
 * The default template does not work at all if you turn off
   Javascript.  We are aware of this and working on a fix.
 
-* Brushed javascript editor is not yet completely ported
-
 * Our documentation simply sucks at this point.  Please forgive us,
   and point where those fixes are needed.  We will improve upon
   this during our progress towards a stable.
 
 * The ShortURLConstructor does not work reliably.  Please use
   ShortViewURLConstructor, or Apache mod_rewrite.
-  
