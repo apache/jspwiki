@@ -36,7 +36,7 @@ NEW FEATURES
 * Far improved FCK WYSIWYG editor support
 
 * All new default template with all sorts of awesome goodies, such as upload
-  progress indicator, etc!
+  progress indicator, etc!  It is based on the ever-popular BrushedTemplate!
 
 * No more JAR signing!  Unfortunately, though, if you're running JSPWiki with
   a global security policy, you will still need to sign the JAR yourself using
@@ -47,36 +47,23 @@ NEW FEATURES
 UPGRADE NOTES
 =============
 
-Upgrading from previous releases of 2.4:
+Upgrading from 2.4:
 
-* You should be able to just install the JSP files (top-level and
-  the default template), and the set of JAR files.
+* Reinstall in a new directory
 
-* In addition, please check web.xml for any additional definitions
-  that may have been added.
+* You can copy old templates directly to the new templates
+  directory.  Templates should be for the most part be compatible
+  between 2.6 and 2.4 - though obviously most 2.4 templates do
+  not have localization.
+  
+* Copy old jspwiki.properties over the default jspwiki.properties
+  and everything should just work.
 
-Upgrading from 2.x:
+* Copy old filters.xml to new WEB-INF/classes directory
 
-* Please reinstall in a new directory.  Then move your modified
-  templates into the new templates/ -directory.  You MUST
-  have the default template in place, else things might not
-  work.  If you have modified the default template, please
-  rename your old template to "mymodifications" or something.
-  You must NOT modify the default template anymore.
-
-* Replace jspwiki.properties with your old configuration file.
-  It should run unmodified, though you might want to go through
-  the new file to see new options.  Most specifically:
-
-  * jspwiki.baseURL is now mandatory
-
-  * jspwiki.workDir is a good idea to set
-
-  * Set jspwiki.security=off, if you don't want JSPWiki to
-  use its own security system.  If you do, head over
-  to doc.jspwiki.org/2.4 for further instructions.
-
-* You can copy your old filters.xml to WEB-INF/classes
+* Optional: check your jspwiki.policy file against the new one:
+  some definitions have changed.
+  
 
 Upgrading from earlier installations:
 

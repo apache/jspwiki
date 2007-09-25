@@ -1,3 +1,10 @@
+2007-09-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.141
+        
+        * Added Murray's patch to allow better extensibility for
+        LuceneSearchProvider.
+
 2007-09-23  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.140
