@@ -400,21 +400,21 @@ public class LuceneSearchProvider implements SearchProvider
     }
 
     /**
-     *  Indexes page using the given IndexWriter
+     *  Indexes page using the given IndexWriter.
      *
      *  @param page WikiPage
      *  @param text Page text to index
      *  @param writer The Lucene IndexWriter to use for indexing
+     *  @return the created index Document
      *  @throws IOException If there's an indexing problem
-     *
      */
-    protected void luceneIndexPage( WikiPage page, String text, IndexWriter writer )
+    protected Document luceneIndexPage( WikiPage page, String text, IndexWriter writer )
         throws IOException
     {
         // make a new, empty document
         Document doc = new Document();
 
-        if( text == null ) return;
+        if( text == null ) return doc;
 
         // Raw name is the keyword we'll use to refer to this document for updates.
         Field field = new Field(LUCENE_ID, page.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED);
@@ -466,6 +466,8 @@ public class LuceneSearchProvider implements SearchProvider
             log.error("Failed to get attachments for page", e);
         }
         writer.addDocument(doc);
+
+        return doc;
     }
 
     /**
