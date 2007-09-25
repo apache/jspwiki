@@ -2220,6 +2220,16 @@ public class WikiEngine
     }
 
     /**
+     *  Returns the PageRenamer employed by this WikiEngine.
+     *  @since 2.5.141
+     *  @return The current PageRenamer instance.
+     */
+    public PageRenamer getPageRenamer()
+    {
+        return m_pageRenamer;
+    }
+
+    /**
      *  Returns the UserManager employed by this WikiEngine.
      *  @since 2.3
      *  @return The current UserManager instance.
