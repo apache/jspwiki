@@ -32,8 +32,7 @@
 
     <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <input type="hidden" name="action" value="save" />
-    <input type="hidden" name="edittime" value="<c:out value='${lastchange}' />" />
-    <input type="hidden" name="addr" value="<%=request.getRemoteAddr()%>" />   
+    <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
   </p>
   <div>
   <textarea style="display:none;" readonly="readonly"

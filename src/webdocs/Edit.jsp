@@ -45,7 +45,7 @@
     String changenote = findParam( pageContext, "changenote" );
     String text    = EditorManager.getEditedText( pageContext );
     String link    = findParam( pageContext, "link");
-    String edittime = findParam( pageContext, "edittime");
+    String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
     String captcha = (String)session.getAttribute("captcha");
 
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous()
@@ -94,11 +94,9 @@
         //  best place to check for concurrent changes.  It certainly
         //  is the best place to show errors, though.
 
-        long pagedate   = Long.parseLong(edittime);
+        String h = SpamFilter.getSpamHash( latestversion, request );
 
-        Date change = latestversion.getLastModified();
-
-        if( change != null && change.getTime() != pagedate )
+        if( !h.equals(spamhash) )
         {
             //
             // Someone changed the page while we were editing it!
@@ -193,8 +191,7 @@
             if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
 
             session.setAttribute("changenote", changenote != null ? changenote : "" );
-            session.setAttribute("edittime", edittime);
-            session.setAttribute("addr", request.getRemoteAddr());
+            session.setAttribute(SpamFilter.getHashFieldName(request), spamhash);
             response.sendRedirect( ex.getRedirect() );
             return;
         }
@@ -239,13 +236,10 @@
     //  the newest version is the one that is changed, we need to track
     //  that instead of the edited version.
     //
-    long lastchange = 0;
-
-    Date d = latestversion.getLastModified();
-    if( d != null ) lastchange = d.getTime();
+    String lastchange = SpamFilter.getSpamHash( latestversion, request );
 
     pageContext.setAttribute( "lastchange",
-                              Long.toString( lastchange ),
+                              lastchange,
                               PageContext.REQUEST_SCOPE );
 
     //

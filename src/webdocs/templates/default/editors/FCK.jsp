@@ -66,8 +66,7 @@
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
         <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
         <input name="action" type="hidden" value="save" />
-        <input name="edittime" type="hidden" value="<c:out value='${lastchange}' />" />
-        <input name="addr" type="hidden" value="<%=request.getRemoteAddr()%>" />
+        <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
     </p>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 <script type="text/javascript">
