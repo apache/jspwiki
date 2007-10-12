@@ -869,9 +869,10 @@ public class SpamFilter
      *  to detect edit conflicts.  It currently incorporates the last-modified
      *  date of the page, and the IP address of the submitter.
      *  
-     *  @param page
-     *  @param request
-     *  @return
+     *  @param page The WikiPage under edit
+     *  @param request The HTTP Request
+     *  @since 2.6
+     *  @return A hash value for this page and session
      */
     public static final String getSpamHash( WikiPage page, HttpServletRequest request )
     {
@@ -890,9 +891,9 @@ public class SpamFilter
      *  The reason why this is not hardcoded is that in the future this will be
      *  used to provide a per-session unique value for the field name.
      *  
-     *  @param page
-     *  @param request
-     *  @return
+     *  @param request The page request
+     *  @return The name to be used in the hash field
+     *  @since  2.6
      */
     public static final String getHashFieldName( HttpServletRequest request )
     {
