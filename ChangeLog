@@ -1,3 +1,13 @@
+2007-10-13  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.142
+        
+        * Combined edittime and addr fields into one hash value.
+        
+        * Also improved edit process slightly to catch bots.
+        
+        * SpamFilter now also matches against the IP address.
+
 2007-09-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.141
