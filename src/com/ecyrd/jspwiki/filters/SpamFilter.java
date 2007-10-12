@@ -709,6 +709,9 @@ public class SpamFilter
             return;
         }
 
+        if( context.getHttpRequest() != null )
+            change += context.getHttpRequest().getRemoteAddr();
+        
         for( Iterator i = m_spamPatterns.iterator(); i.hasNext(); )
         {
             Pattern p = (Pattern) i.next();
@@ -796,7 +799,7 @@ public class SpamFilter
         {
             change.append("\r\n"+page.getAuthor());
         }
-
+            
         return change.toString();
     }
 
@@ -861,7 +864,37 @@ public class SpamFilter
         return ctx.getURL( WikiContext.VIEW, m_errorPage );
     }
 
-
+    /**
+     *  This method is used to calculate an unique code when submitting the page.
+     *  
+     *  @param page
+     *  @param request
+     *  @return
+     */
+    public static final String getSpamHash( WikiPage page, HttpServletRequest request )
+    {
+        long lastModified = 0;
+        
+        if( page.getLastModified() != null )
+            lastModified = page.getLastModified().getTime();
+        
+        long remote = request.getRemoteAddr().hashCode();
+        
+        return Long.toString( lastModified ^ remote );
+    }
+    
+    /**
+     *  Returns the name of the hash field to be used in this request.
+     *  
+     *  @param page
+     *  @param request
+     *  @return
+     */
+    public static final String getHashFieldName( HttpServletRequest request )
+    {
+        return "hash";
+    }
+    
     /**
      *  A local class for storing host information.
      *
