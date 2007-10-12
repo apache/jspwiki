@@ -865,7 +865,9 @@ public class SpamFilter
     }
 
     /**
-     *  This method is used to calculate an unique code when submitting the page.
+     *  This method is used to calculate an unique code when submitting the page
+     *  to detect edit conflicts.  It currently incorporates the last-modified
+     *  date of the page, and the IP address of the submitter.
      *  
      *  @param page
      *  @param request
@@ -885,6 +887,8 @@ public class SpamFilter
     
     /**
      *  Returns the name of the hash field to be used in this request.
+     *  The reason why this is not hardcoded is that in the future this will be
+     *  used to provide a per-session unique value for the field name.
      *  
      *  @param page
      *  @param request
