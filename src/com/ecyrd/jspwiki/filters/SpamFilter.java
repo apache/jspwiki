@@ -23,6 +23,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
 import net.sf.akismet.Akismet;
 
@@ -35,6 +37,7 @@ import org.apache.oro.text.regex.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.ui.EditorManager;
 
 /**
  *  This is Herb, the JSPWiki spamfilter that can also do choke modifications.
@@ -180,7 +183,7 @@ public class SpamFilter
     private static final int ACCEPT = 1;
     private static final int NOTE   = 2;
 
-    private String log( WikiContext ctx, int type, String source, String message )
+    private static String log( WikiContext ctx, int type, String source, String message )
     {
         message = TextUtil.replaceString( message, "\r\n", "\\r\\n" );
         message = TextUtil.replaceString( message, "\"", "\\\"" );
@@ -740,7 +743,7 @@ public class SpamFilter
      *  @param newText
      *  @return Empty string, if there is no change.
      */
-    private String getChange( WikiContext context, String newText )
+    private static String getChange( WikiContext context, String newText )
     {
         WikiPage page = context.getPage();
         StringBuffer change = new StringBuffer();
@@ -901,7 +904,8 @@ public class SpamFilter
     
     /** The HASH_DELAY value is a maximum amount of time that an user can keep
      *  a session open, because after the value has expired, we will invent a new
-     *  hash field name.
+     *  hash field name.  By default this is {@value} hours, which should be ample
+     *  time for someone.
      */
     private static final long HASH_DELAY = 24;
     
@@ -929,6 +933,45 @@ public class SpamFilter
         }
         
         return hash != null ? hash : c_hashName;
+    }
+    
+    
+    /**
+     *  This method checks if the hash value is still valid, i.e. if it exists at all. This
+     *  can occur in two cases: either this is a spam bot which is not adaptive, or it is
+     *  someone who has been editing one page for too long, and their session has expired.
+     *  <p>
+     *  This method puts a redirect to the http response field to page "SessionExpired"
+     *  and logs the incident in the spam log (it may or may not be spam, but it's rather likely
+     *  that it is).
+     *  
+     *  @param context
+     *  @param pageContext
+     *  @return True, if hash is okay.  False, if hash is not okay, and you need to redirect.
+     *  @throws IOException If redirection fails
+     *  @since 2.6
+     */
+    public static final boolean checkHash( WikiContext context, PageContext pageContext )
+        throws IOException
+    {
+        String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() ); 
+        
+        if( pageContext.getRequest().getParameter(hashName) == null )
+        {
+            if( pageContext.getAttribute( hashName ) == null )
+            {
+                String change = getChange( context, EditorManager.getEditedText( pageContext ) );
+                
+                log( context, REJECT, "MissingHash", change );
+            
+                String redirect = context.getURL(WikiContext.VIEW,"SessionExpired");
+                ((HttpServletResponse)pageContext.getResponse()).sendRedirect( redirect );
+            
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /**
