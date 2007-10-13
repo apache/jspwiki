@@ -834,7 +834,7 @@ public class SpamFilter
      *  
      *  @return A random string
      */
-    private String getUniqueID()
+    private static String getUniqueID()
     {
         StringBuffer sb = new StringBuffer();
         Random rand = new Random();
@@ -888,16 +888,47 @@ public class SpamFilter
     
     /**
      *  Returns the name of the hash field to be used in this request.
-     *  The reason why this is not hardcoded is that in the future this will be
-     *  used to provide a per-session unique value for the field name.
+     *  The value is unique per session, and once the session has expired,
+     *  you cannot edit anymore.
      *  
      *  @param request The page request
      *  @return The name to be used in the hash field
      *  @since  2.6
      */
+    
+    private static String c_hashName;
+    private static long   c_lastUpdate;
+    
+    /** The HASH_DELAY value is a maximum amount of time that an user can keep
+     *  a session open, because after the value has expired, we will invent a new
+     *  hash field name.
+     */
+    private static final long HASH_DELAY = 24;
+    
     public static final String getHashFieldName( HttpServletRequest request )
     {
-        return "hash";
+        String hash = null;
+        
+        if( request.getSession() != null )
+        {
+            hash = (String)request.getSession().getAttribute("_hash");
+            
+            if( hash == null )
+            {
+                hash = c_hashName;
+        
+                request.getSession().setAttribute( "_hash", hash );
+            }
+        }
+        
+        if( c_hashName == null || c_lastUpdate < (System.currentTimeMillis() - HASH_DELAY*60*60*1000) )
+        {
+            c_hashName = getUniqueID().toLowerCase();
+            
+            c_lastUpdate = System.currentTimeMillis();
+        }
+        
+        return hash != null ? hash : c_hashName;
     }
     
     /**
