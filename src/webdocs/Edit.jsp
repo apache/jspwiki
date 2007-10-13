@@ -92,12 +92,8 @@
         //  Check for session expiry
         //
         
-        if( spamhash == null )
+        if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
-            log.info("Expired session; redirecting...");
-          
-        	String redirect = wikiContext.getURL(WikiContext.VIEW,"SessionExpired");
-            response.sendRedirect( redirect );
             return;
         }
         

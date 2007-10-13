@@ -1,5 +1,6 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -19,15 +20,12 @@
                               session.getAttribute( EditorManager.REQ_EDITEDTEXT ),
                               PageContext.REQUEST_SCOPE );
 
-    long lastchange = 0;
-
-    Date d = wikiContext.getPage().getLastModified();
-    if( d != null ) lastchange = d.getTime();
+    String lastchange = SpamFilter.getSpamHash( wikiContext.getPage(), request );
 
     pageContext.setAttribute( "lastchange",
-                              Long.toString( lastchange ),
+                              lastchange,
                               PageContext.REQUEST_SCOPE );
-
+   
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
