@@ -94,34 +94,13 @@
         //  best place to check for concurrent changes.  It certainly
         //  is the best place to show errors, though.
 
-        long pagedate   = Long.parseLong(request.getParameter("edittime"));
-
-        Date change = latestversion.getLastModified();
-
-        if( change != null && change.getTime() != pagedate )
+        String spamhash = request.getParameter( SpamFilter.getHashFieldName(request) );
+        
+        if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
-            //
-            // Someone changed the page while we were editing it!
-            //
-
-            log.info("Page changed, warning user.");
-
-            pageContext.forward( "PageModified.jsp" );
             return;
         }
-
-        //
-        //  Do a basic check that the IP address is the same as to where
-        //  the page was originally requested.  This curbs some bots.
-        //
-        String ipaddr = request.getParameter("addr");
-        if( !request.getRemoteAddr().equals(ipaddr) )
-        {
-            wikiSession.addMessage( rb.getString("security.wrongip") );
-            pageContext.forward( "Error.jsp" );
-            return;
-        }
-
+        
         //
         //  We expire ALL locks at this moment, simply because someone has
         //  already broken it.
