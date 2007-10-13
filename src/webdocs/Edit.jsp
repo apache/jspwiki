@@ -88,6 +88,19 @@
     {
         log.info("Saving page "+pagereq+". User="+user+", host="+request.getRemoteAddr() );
 
+        //
+        //  Check for session expiry
+        //
+        
+        if( spamhash == null )
+        {
+            log.info("Expired session; redirecting...");
+          
+        	String redirect = wikiContext.getURL(WikiContext.VIEW,"SessionExpired");
+            response.sendRedirect( redirect );
+            return;
+        }
+        
         WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
