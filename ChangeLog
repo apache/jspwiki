@@ -1,5 +1,11 @@
 2007-10-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.5.143
+
+        * Some additional improvements to SpamFilter, which now
+        keeps track of user sessions and stores some data in it
+        (yes, I'm being a bit vague here on purpose).
+
         * 2.5.142
         
         * Combined edittime and addr fields into one hash value.
