@@ -56,6 +56,9 @@ import com.ecyrd.jspwiki.ui.EditorManager;
  *    <li>akismet-apikey - The Akismet API key (see akismet.org)</li>
  *    <li>ignoreauthenticated - If set to "true", all authenticated users are ignored and never caught in SpamFilter</li>
  *    <li>captcha - Sets the captcha technology to use.  Current allowed values are "none" and "asirra".</li>
+ *    <li>strategy - Sets the filtering strategy to use.  If set to "eager", will stop at the first probable
+ *        match, and won't consider any other tests.  This is the default, as it's considerably lighter. If set to "score", will go through all of the tests
+ *        and calculates a score for the spam, which is then compared to a filter level value.
  *  </ul>
  *
  *  <p>Changes by admin users are ignored in any case.</p>
@@ -66,6 +69,14 @@ import com.ecyrd.jspwiki.ui.EditorManager;
 public class SpamFilter
     extends BasicPageFilter
 {
+    private static final String ATTR_SPAMFILTER_SCORE = "spamfilter.score";
+    private static final String REASON_REGEXP = "Regexp";
+    private static final String REASON_IP_BANNED_TEMPORARILY = "IPBannedTemporarily";
+    private static final String REASON_BOT_TRAP = "BotTrap";
+    private static final String REASON_AKISMET = "Akismet";
+    private static final String REASON_TOO_MANY_URLS = "TooManyUrls";
+    private static final String REASON_SIMILAR_MODIFICATIONS = "SimilarModifications";
+    private static final String REASON_TOO_MANY_MODIFICATIONS = "TooManyModifications";
     private static final String LISTVAR = "spamwords";
     public static final String  PROP_WORDLIST              = "wordlist";
     public static final String  PROP_ERRORPAGE             = "errorpage";
@@ -77,6 +88,10 @@ public class SpamFilter
     public static final String  PROP_AKISMET_API_KEY       = "akismet-apikey";
     public static final String  PROP_IGNORE_AUTHENTICATED  = "ignoreauthenticated";
     public static final String  PROP_CAPTCHA               = "captcha";
+    public static final String  PROP_FILTERSTRATEGY        = "strategy";
+    
+    public static final String  STRATEGY_EAGER             = "eager";
+    public static final String  STRATEGY_SCORE             = "score";
     
     private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
 
@@ -123,11 +138,16 @@ public class SpamFilter
 
     private boolean         m_useCaptcha = false;
     
+    /** The limit at which we consider something to be spam. */
+    private int             m_scoreLimit = 1;
+    
     /**
      * If set to true, will ignore anyone who is in Authenticated role.
      */
     private boolean         m_ignoreAuthenticated = false;
 
+    private boolean         m_stopAtFirstMatch = true;
+    
     public void initialize( WikiEngine engine, Properties properties )
     {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST,
@@ -173,6 +193,10 @@ public class SpamFilter
                                                       PROP_AKISMET_API_KEY,
                                                       m_akismetAPIKey );
 
+        m_stopAtFirstMatch = TextUtil.getStringProperty( properties,
+                                                         PROP_FILTERSTRATEGY, 
+                                                         STRATEGY_EAGER ).equals(STRATEGY_EAGER);
+        
         log.info("# Spam filter initialized.  Temporary ban time "+m_banTime+
                  " mins, max page changes/minute: "+m_limitSinglePageChanges );
 
@@ -226,10 +250,38 @@ public class SpamFilter
             checkPatternList(context, content, change);
         }
 
+        if( !m_stopAtFirstMatch )
+        {
+            Integer score = (Integer)context.getVariable(ATTR_SPAMFILTER_SCORE);
+            
+            if( score != null && score.intValue() >= m_scoreLimit )
+            {
+                throw new RedirectException( "Herb says you got too many points",
+                                             getRedirectPage(context) );
+            }
+        }
+        
         log( context, ACCEPT, "-", change );
         return content;
     }
 
+    private void checkStrategy( WikiContext context, String error, String message )
+        throws RedirectException
+    {
+        if( m_stopAtFirstMatch )
+        {
+            throw new RedirectException( message, getRedirectPage(context) );
+        }
+        
+        Integer score = (Integer)context.getVariable( ATTR_SPAMFILTER_SCORE );
+        
+        if( score != null )
+            score = new Integer( score.intValue()+1 );
+        else
+            score = new Integer( 1 );
+        
+        context.setVariable( ATTR_SPAMFILTER_SCORE, score );
+    }
     /**
      *  Parses a list of patterns and returns a Collection of compiled Pattern
      *  objects.
@@ -381,10 +433,9 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, "TooManyModifications", change );
+                String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change );
                 log.info( "SPAM:TooManyModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             getRedirectPage(context) );
+                checkStrategy( context, REASON_TOO_MANY_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")" );
             }
 
             if( changeCounter >= m_limitSimilarChanges )
@@ -393,11 +444,10 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, "SimilarModifications", change );
+                String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change );
 
                 log.info("SPAM:SimilarModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many similar modifications" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             getRedirectPage(context) );
+                checkStrategy( context, REASON_SIMILAR_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
             }
 
             //
@@ -422,11 +472,10 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, "TooManyUrls", change );
+                String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change );
 
                 log.info("SPAM:TooManyUrls ("+uid+"). Added host "+addr+" to temporary ban list for adding too many URLs" );
-                throw new RedirectException( "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")",
-                                             getRedirectPage(context) );
+                checkStrategy( context, REASON_TOO_MANY_URLS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")" );
             }
 
             //
@@ -512,12 +561,11 @@ public class SpamFilter
 
                     // m_temporaryBanList.add( host );
 
-                    String uid = log( context, REJECT, "Akismet", change );
+                    String uid = log( context, REJECT, REASON_AKISMET, change );
 
                     log.info("SPAM:Akismet ("+uid+"). Akismet thinks this change is spam; added host to temporary ban list.");
 
-                    throw new RedirectException("Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code "+uid+")",
-                                                getRedirectPage(context) );
+                    checkStrategy( context, REASON_AKISMET, "Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code "+uid+")");
                 }
             }
         }
@@ -551,12 +599,11 @@ public class SpamFilter
             String unspam = request.getParameter( getBotFieldName() );
             if( unspam != null && unspam.length() > 0 )
             {
-                String uid = log( context, REJECT, "BotTrap", change );
+                String uid = log( context, REJECT, REASON_BOT_TRAP, change );
                 
                 log.info("SPAM:BotTrap ("+uid+").  Wildly behaving bot detected.");
 
-                throw new RedirectException("Spamming attempt detected. (Incident code "+uid+")",
-                                            getRedirectPage(context) );
+                checkStrategy( context, REASON_BOT_TRAP, "Spamming attempt detected. (Incident code "+uid+")");
 
             }
         }
@@ -607,10 +654,9 @@ public class SpamFilter
                 {
                     long timeleft = (host.getReleaseTime() - now) / 1000L;
 
-                    log( context, REJECT, "IPBannedTemporarily", change );
+                    log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change );
 
-                    throw new RedirectException( "You have been temporarily banned from modifying this wiki. ("+timeleft+" seconds of ban left)",
-                                                 getRedirectPage(context) );
+                    checkStrategy( context, REASON_IP_BANNED_TEMPORARILY, "You have been temporarily banned from modifying this wiki. ("+timeleft+" seconds of ban left)");
                 }
             }
         }
@@ -726,12 +772,11 @@ public class SpamFilter
                 //
                 //  Spam filter has a match.
                 //
-                String uid = log( context, REJECT, "Regexp("+p.getPattern()+")", change);
+                String uid = log( context, REJECT, REASON_REGEXP+"("+p.getPattern()+")", change);
 
                 log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.getPattern()+"'");
 
-                throw new RedirectException( "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")",
-                                             getRedirectPage(context) );
+                checkStrategy( context, REASON_REGEXP, "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")");
             }
         }
     }
