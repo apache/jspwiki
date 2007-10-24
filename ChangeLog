@@ -1,3 +1,10 @@
+2007-10-24  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.144
+        
+        * SpamFilter now has the ability to check against all the
+        tests by setting <strategy>score</strategy>.
+
 2007-10-13  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.143
