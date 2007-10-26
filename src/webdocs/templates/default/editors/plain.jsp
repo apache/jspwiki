@@ -70,6 +70,10 @@
   <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>" 
     accesskey="q" 
         title="<fmt:message key='editor.plain.cancel.title'/>" />
+  <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
+        title="<fmt:message key='editor.plain.redo.title' />" disabled="disabled" />
+  <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
+        title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
   </p>
   
   <div>
@@ -173,10 +177,6 @@
   </span>
   <span style="white-space:nowrap;">
   <input type="button" name="replace" id="replace" value="<fmt:message key='editor.plain.find.submit' />" />
-  <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
-        title="<fmt:message key='editor.plain.redo.title' />" disabled="disabled" />
-  <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
-        title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
   </span>
 </p>
 </form>

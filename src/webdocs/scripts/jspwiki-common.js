@@ -16,7 +16,7 @@
  ** 150 Colors, GraphBar object: e.g. used on the findpage
  ** 160 URL
  **
- ** 200 Collapsable list items
+ ** 200 Collapsible list items
  ** 220 RoundedCorners ffs
  ** 230 Sortable (clever table-sort) ##
  ** 240 Table-filter (excel like table filters ##
@@ -31,7 +31,6 @@
 
 
 /* extend mootools */
-
 String.extend({
 	deCamelize: function(){
 		return this.replace(/([a-z])([A-Z])/g,"$1 $2");
@@ -65,6 +64,10 @@ Element.extend({
 		this.style.display = '';
 		return this;
 	},	
+	toggle: function() {
+		this.visible() ? this.hide() : this.show();  
+		return this;
+	},
 	scrollTo: function(x, y){
 		this.scrollLeft = x;
 		this.scrollTop = y;
@@ -123,6 +126,7 @@ var Observer = new Class({
 });
 
 // see http://forum.mootools.net/topic.php?id=959 ...
+//FIXME
 var Color = new Class({
 
 	initialize: function(color){
@@ -226,6 +230,11 @@ var Wiki = {
 	getUrl: function(pagename){
 		return this.PageUrl.replace(/%23%24%25/, pagename);
 	},	
+	/* retrieve pagename from any wikipage url format */
+	getPageName: function(url){
+		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, '(.+)');
+		return url.match(new RegExp(s))[1];
+	},
 	onPageLoad: function(){
 		this.PermissionEdit = ($E('a.edit') !== undefined); //deduct permission level
 		this.url = null;
@@ -369,8 +378,8 @@ var Wiki = {
 var WikiSlimbox = {
 
 	onPageLoad: function(){
-		var i=0,
-			lnk=new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
+		var i = 0,
+			lnk = new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
 			
 		$$('*[class^=slimbox]').each(function(slim){
 			var group = 'lightbox'+ i++,
@@ -382,13 +391,18 @@ var WikiSlimbox = {
 				var href = el.src||el.href;
 				var rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
 				if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$','i')) return;
-				lnk.clone().setProperties({'href':href, 'rel':group+' '+rel,'title':el.alt||el.getText()})
-					.injectBefore(el);
-				if(el.src) 
-					el.replaceWith(new Element('a',{'class':'attachment','href':el.src}).setHTML(el.alt||el.getText()));
+				lnk.clone().setProperties({
+					'href':href, 
+					'rel':group+' '+rel,
+					'title':el.alt||el.getText()
+				}).injectBefore(el);
+				if(el.src) el.replaceWith(new Element('a',{
+					'class':'attachment',
+					'href':el.src
+				}).setHTML(el.alt||el.getText()));
 			});
 		});
-		if(i) Lightbox.init({errorMessage:"slimbox.error".localize()});
+		if(i) Lightbox.init();
 		//new Asset.javascript(Wiki.TemplateDir+'scripts/slimbox.js');
 	}
 }
@@ -398,7 +412,7 @@ var WikiSlimbox = {
 	by Christophe Beyls (http://www.digitalia.be) - MIT-style license.
 	Inspired by the original Lightbox v2 by Lokesh Dhakar.
 
-	Updated by Dirk Frederickx ./ JSPWiki
+	Updated by Dirk Frederickx to fit JSPWiki needs
 	- minimum size of image canvas DONE
 	- add maximum size of image w.r.t window size DONE
 	- CLOSE icon -> close x text iso icon DONE
@@ -408,18 +422,17 @@ var WikiSlimbox = {
 	- up arrow : prev image DONE
 	- allow the same picture occuring several times DONE
 	- add support for external page links  => slimbox_ex DONE
-	- FFS make resizable, & draggable 
 */
 var Lightbox = {
 
 	init: function(options){
-		this.options = Object.extend({
+		this.options = $extend({
 			resizeDuration: 400,
-			resizeTransition: Fx.Transitions.sineInOut,
+			resizeTransition: false, /*Fx.Transitions.sineInOut,*/
 			initialWidth: 250,
 			initialHeight: 250,
 			animateCaption: true,
-			errorMessage: '<h2>Error</h2>There was a problem with your request.<br />Please try again.'
+			errorMessage: "slimbox.error".localize()
 		}, options || {});
 
 		this.anchors=[];
@@ -432,33 +445,52 @@ var Lightbox = {
 		this.eventKeyDown = this.keyboardListener.bindAsEventListener(this);
 		this.eventPosition = this.position.bind(this);
 
-		this.overlay = new Element('div').setProperty('id', 'lbOverlay').inject(document.body);
+		/*	Build float panel
+			<div id="lbOverlay"></div>
+			<div id="lbCenter">
+				<div id="lbImage">
+					<!-- img or iframe element is inserted here -->
+				</div>
+			</div>
+			<div id="lbBottomContainer">
+				<div id="lbBottom">
+					<div id="lbCaption">
+					<div id="lbNumber">
+					<a id="lbCloseLink"></a>
+					<div style="clear:both;"></div>
+				</div>
+			</div>
+		*/
+		this.overlay = new Element('div', {'id': 'lbOverlay'}).injectInside(document.body);
 
-		this.center = new Element('div').setProperty('id', 'lbCenter').setStyles({width: this.options.initialWidth+'px', height: this.options.initialHeight+'px', marginLeft: '-'+(this.options.initialWidth/2)+'px', display: 'none'}).inject(document.body);
-		this.image = new Element('div').setProperty('id', 'lbImage').inject(this.center);
-		this.prevLink = new Element('a').setProperties({id: 'lbPrevLink', href: '#', title:'Previous [up arrow] [<-left arrow]'}).setStyle('display', 'none').setHTML('&laquo; Prev').inject(this.center);
-		this.nextLink = this.prevLink.clone().setProperties({id:'lbNextLink', title:'Next [space] [down arrow] [right arrow->]'}).setHTML('Next &raquo;').inject(this.center);
+		this.center = new Element('div', {'id': 'lbCenter', 'styles': {'width': this.options.initialWidth, 'height': this.options.initialHeight, 'marginLeft': -(this.options.initialWidth/2), 'display': 'none'}}).injectInside(document.body);
+		new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).injectInside(this.center).onclick = this.overlay.onclick = this.close.bind(this);
+		this.image = new Element('div', {'id': 'lbImage'}).injectInside(this.center);
+
+		this.bottomContainer = new Element('div', {'id': 'lbBottomContainer', 'styles': {'display': 'none'}}).injectInside(document.body);
+		this.bottom = new Element('div', {'id': 'lbBottom'}).injectInside(this.bottomContainer);
+		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).setHTML('Close &#215;').injectInside(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
+		this.caption = new Element('div', {'id': 'lbCaption'}).injectInside(this.bottom);
+
+		var info = new Element('div').injectInside(this.bottom);  
+		this.prevLink = new Element('a', {'id': 'lbPrevLink', 'href': '#', 'styles': {'display': 'none'}}).setHTML("slimbox.previous".localize()).injectInside(info);
+		this.number = new Element('span', {'id': 'lbNumber'}).injectInside(info);
+		this.nextLink = this.prevLink.clone().setProperties({'id': 'lbNextLink' }).setHTML("slimbox.next".localize()).injectInside(info);
 		this.prevLink.onclick = this.previous.bind(this);
 		this.nextLink.onclick = this.next.bind(this);
 
-		this.bottomContainer = new Element('div').setProperty('id', 'lbBottomContainer').setStyle('display', 'none').inject(document.body);
-		this.bottom = new Element('div').setProperty('id', 'lbBottom').inject(this.bottomContainer);
-		new Element('a').setProperties({id: 'lbCloseLink', href: '#', title:'Close [Esc]'}).setHTML('Close &#215;').inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
-		this.caption = new Element('div').setProperty('id', 'lbCaption').inject(this.bottom);
-		this.number = new Element('div').setProperty('id', 'lbNumber').inject(this.bottom);
-		this.error = new Element('div').setProperty('id', 'lbError').setHTML(this.options.errorMessage);
+ 		this.error = new Element('div').setProperty('id', 'lbError').setHTML(this.options.errorMessage);
+		new Element('div', {'styles': {'clear': 'both'}}).injectInside(this.bottom);
 		
-		new Element('div').setStyle('clear', 'both').inject(this.bottom);
-
 		var nextEffect = this.nextEffect.bind(this);
 		this.fx = {
 			overlay: this.overlay.effect('opacity', {duration: 500}).hide(),
-			resize: this.center.effects({duration: this.options.resizeDuration, transition: this.options.resizeTransition, onComplete: nextEffect}),
+			resize: this.center.effects($extend({duration: this.options.resizeDuration, onComplete: nextEffect}, this.options.resizeTransition ? {transition: this.options.resizeTransition} : {})),
 			image: this.image.effect('opacity', {duration: 500, onComplete: nextEffect}),
 			bottom: this.bottom.effect('margin-top', {duration: 400, onComplete: nextEffect})
 		};
 
-		this.fxs = new Fx.Elements([this.center, this.image], {duration: this.options.resizeDuration, transition: this.options.resizeTransition, onComplete: nextEffect});
+		this.fxs = new Fx.Elements([this.center, this.image], $extend({duration: this.options.resizeDuration, onComplete: nextEffect}, this.options.resizeTransition ? {transition: this.options.resizeTransition} : {}));
 		
 		this.preloadPrev = new Image();
 		this.preloadNext = new Image();
@@ -483,13 +515,13 @@ var Lightbox = {
 		this.position();
 		this.setup(true);
 		this.top = window.getScrollTop() + (window.getHeight() / 15);
-		this.center.setStyles({top: this.top+'px', display: ''});
+		this.center.setStyles({top: this.top, display: ''});
 		this.fx.overlay.start(0.7);
 		return this.changeImage(imageNum);
 	},
 
 	position: function(){
-		this.overlay.setStyles({top: window.getScrollTop()+'px', height: window.getHeight()+'px'});
+		this.overlay.setStyles({top: window.getScrollTop(), height: window.getHeight()});
 	},
 
 	setup: function(open){
@@ -534,24 +566,22 @@ var Lightbox = {
 		this.center.className = 'lbLoading';
 
 		this.preload = new Image();
-		this.image.setHTML('').setStyle('overflow','hidden');
+		this.image.empty().setStyle('overflow','hidden');
         if( this.images[imageNum][2] == 'img' ){
 			this.preload.onload = this.nextEffect.bind(this);
 			this.preload.src = this.images[imageNum][0];
 		} else {			
-			//FIXME -- better to work with iFrame
-			this.ajaxFailed = false;
-			var nextEffect = this.nextEffect.bind(this);
-			var ajaxFailure = this.ajaxFailure.bind(this);
-			var ajaxOptions = {
-				method: 	'get',
-				update: 	this.image, 
-//				evalScripts: true,
-//				evalResponse: true,
-				onComplete: this.nextEffect.bind(this), 
-				onFailure:  this.ajaxFailure.bind(this)
-			};
-			this.ajaxRequest = new Ajax(this.images[imageNum][0], ajaxOptions).request();
+			this.iframeId = "lbFrame_"+new Date().getTime();	// Safari would not update iframe content that has static id.
+			this.so = new Element('iframe').setProperties({
+				id: this.iframeId, 
+//				width: this.contentsWidth, 
+//				height: this.contentsHeight, 
+				frameBorder:0, 
+				scrolling:'auto', 
+				src:this.images[imageNum][0]
+			}).injectInside(this.image);
+			this.nextEffect();	//asynchronous loading?
+
 		}
 		return false;
 	},
@@ -560,22 +590,18 @@ var Lightbox = {
 		this.ajaxFailed = true;
 		this.image.setHTML('').adopt(this.error.clone());
 		this.nextEffect();
-//		this.center.setStyle('cursor', 'pointer');
-//		this.bottom.setStyle('cursor', 'pointer');
-//		this.center.onclick = this.bottom.onclick = this.close.bind(this);		
 	},
 	
-
 	nextEffect: function(){
 		switch (this.step++){
 		case 1:
 			this.center.className = '';
-			this.caption.setHTML('').adopt(new Element('a')
-				.setProperties({
+			this.caption.empty().adopt(new Element('a', {
 					'href':this.images[this.activeImage][0],
 					'title':"slimbox.directLink".localize()
 				}).setHTML(this.images[this.activeImage][1] || ''));
-			var type = (this.images[this.activeImage][2]=='img') ? "slimbox.info" : "slimbox.remote Request";
+				
+			var type = (this.images[this.activeImage][2]=='img') ? "slimbox.info" : "slimbox.remoteRequest";
 			this.number.setHTML((this.images.length == 1) ? '' : type.localize(this.activeImage+1, this.images.length));
 			this.image.style.backgroundImage = 'none';
 
@@ -588,22 +614,20 @@ var Lightbox = {
 			if(h > wh) { w = Math.round(w * wh/h); h = wh; }
 
 			this.image.style.width = this.bottom.style.width = w+'px';
-			this.image.style.height = this.prevLink.style.height = this.nextLink.style.height = h+'px';
+			this.image.style.height = /*this.prevLink.style.height = this.nextLink.style.height = */ h+'px';
 			
-		if( this.images[this.activeImage][2]=='img') {
-			this.image.style.backgroundImage = 'url('+this.images[this.activeImage][0]+')';
+			if( this.images[this.activeImage][2]=='img') {
+				this.image.style.backgroundImage = 'url('+this.images[this.activeImage][0]+')';
 
-			if (this.activeImage) this.preloadPrev.src = this.images[this.activeImage-1][0];
-			if (this.activeImage != (this.images.length - 1)) this.preloadNext.src = this.images[this.activeImage+1][0];
+				if (this.activeImage) this.preloadPrev.src = this.images[this.activeImage-1][0];
+				if (this.activeImage != (this.images.length - 1)) this.preloadNext.src = this.images[this.activeImage+1][0];
 			
-			this.number.setHTML(this.number.innerHTML+'&nbsp;&nbsp;['+this.preload.width+'&#215;'+this.preload.height+']');
+				this.number.setHTML(this.number.innerHTML+'&nbsp;&nbsp;['+this.preload.width+'&#215;'+this.preload.height+']');
+			} else {
+				this.so.style.width=w+'px';
+				this.so.style.height=h+'px';
 			}
-			this.step++;
 
-		case 2:
-			this.step++;
-
-		case 3:
 			if (this.options.animateCaption) this.bottomContainer.setStyles({height: '0px', display: ''});
 
 			this.fxs.start({
@@ -612,7 +636,7 @@ var Lightbox = {
 			});	
 
 			break;
-		case 4:
+		case 2:
 			//this.center.style.backgroundColor = '#000';
 			this.image.setStyle('overflow','auto');
 			this.bottomContainer.setStyles({ top: (this.top + this.center.clientHeight)+'px', marginLeft: this.center.style.marginLeft });
@@ -623,7 +647,7 @@ var Lightbox = {
 				break;
 			}
 			this.bottomContainer.style.height = '';
-		case 5:
+		case 3:
 			if (this.activeImage) this.prevLink.style.display = '';
 			if (this.activeImage != (this.images.length - 1)) this.nextLink.style.display = '';
 			this.step = 0;
@@ -650,7 +674,7 @@ var Lightbox = {
  ** Freely distributable under MIT-style license.
  ** Adapted for JSPWiki/BrushedTemplate, D.Frederickx, Sep 06
  ** Use:
- ** 	%%Reflection-height-opacity  [some-image.jpg] %%
+ ** 	%%reflection-height-opacity  [some-image.jpg] %%
  **/
 var WikiReflection = {
 
@@ -666,67 +690,50 @@ var WikiReflection = {
 /* FIXME : add delayed loading of reflection library */
 var Reflection = {
 
-	defaultHeight: 0.3,
-	defaultOpacity: 0.5,
+	options: { height: 0.33, opacity: 0.5 },
 
-	add: function(img, height, opacity)
-	{
-		//Reflection.remove(image); FIXME - is this still needed?
-		height  = ( height  ) ? height/100 : this.defaultHeight;
-		opacity = ( opacity ) ? opacity/100: this.defaultOpacity;
+	add: function(img, height, opacity) {
+		//TODO Reflection.remove(image); --is this still needed?
+		height  = (height ) ? height/100 : this.options.height;
+		opacity = (opacity) ? opacity/100: this.options.opacity;
 
-		try
-		{
-			var div  = document.createElement('div'); //umbrella div
-			var imgW = imgWX = img.width; imgWX +='px'; 
-			var imgH = img.height;
-			var rH   = Math.floor(imgH * height); //reflection height
+		var div = new Element('div').injectAfter(img).adopt(img),
+			imgW = img.width,
+			imgH = img.height,
+			rH   = Math.floor(imgH * height); //reflection height
 
-			div.style.cssText =
-			img.style.cssText = 'vertical-align:bottom';
+		div.style.cssText = img.backupStyle = img.style.cssText;
+		div.className = img.className.replace(/\breflection\b/, "");
+		div.setStyles({'width': "100%", 'height': Math.floor(imgH * (1+height) ), "maxWidth": imgW });	
+		
+		img.style.cssText = 'vertical-align: bottom';
+		//img.className = 'inline reflected';  //FIXME: is this still needed ??
 
-			div.className = img.className.replace(/\bReflection\b/, "");
-			//div.style.width = imgWX;
-			div.style.width = "100%";
-			div.style.maxWidth = imgWX;
-			div.style.height = Math.floor(imgH * (1+height) ) + 'px';
+		if( window.ie ){ 
+			new Element('img', {'src': img.src, 'styles': {
+				'width': imgW,
+				'marginBottom': "-" + (imgH - rH) + 'px',
+				'filter': 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity='+(opacity*100)+', style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy='+(height*100)+')'
+			}}).injectInside(div);
+		} else {
+			var r = new Element('canvas', {'width':imgW, 'height':rH, 'styles': {'width':imgW, 'height': rH}}).injectInside(div);
+			if( !r.getContext ) return;
 
-			img.className = 'inline reflected';  //FIXME: is this still needed ??
-			img.parentNode.replaceChild(div, img);
-			div.appendChild(img);
+			var ctx = r.getContext("2d");
+			ctx.save();
+			ctx.translate(0, imgH-1);
+			ctx.scale(1, -1);
+			ctx.drawImage(img, 0, 0, imgW, imgH);
+			ctx.restore();
+			ctx.globalCompositeOperation = "destination-out";
 
-			if( document.all && !window.opera ){  //ie
-				var r = new Element('img');
-				div.appendChild(r);
-				r.src = img.src;
-				r.style.width = imgWX;
-				r.style.marginBottom = "-" + (imgH - rH) + 'px';
-				r.style.filter = 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity='+(opacity*100)+', style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy='+(height*100)+')';
-			} else {
-				var r = new Element('canvas');
-				if( !r.getContext ) return;
-
-				div.appendChild(r);
-				r.width  = imgW;  r.style.width  = imgWX;
-				r.height = rH;    r.style.height = rH + 'px';
-
-				var ctx = r.getContext("2d");
-				ctx.save();
-				ctx.translate(0, imgH-1);
-				ctx.scale(1, -1);
-				ctx.drawImage(img, 0, 0, imgW, imgH);
-				ctx.restore();
-				ctx.globalCompositeOperation = "destination-out";
-
-				var g = ctx.createLinearGradient(0, 0, 0, rH);
-				g.addColorStop( 0, "rgba(255, 255, 255, " + (1 - opacity) + ")" );
-				g.addColorStop( 1, "rgba(255, 255, 255, 1.0)" );
-				ctx.fillStyle = g;
-				ctx.rect( 0, 0, imgW, rH );
-				ctx.fill(); 
-			}
+			var g = ctx.createLinearGradient(0, 0, 0, rH);
+			g.addColorStop( 0, "rgba(255, 255, 255, " + (1 - opacity) + ")" );
+			g.addColorStop( 1, "rgba(255, 255, 255, 1.0)" );
+			ctx.fillStyle = g;
+			ctx.rect( 0, 0, imgW, rH );
+			ctx.fill(); 
 		}
-		catch (e) { }
 	}
 }
  
@@ -1307,14 +1314,14 @@ var GraphBar =
 	}
 }
 
-/** 200 Collapsable list and boxes
+/** 200 Collapsible list and boxes
  ** See also David Lindquist <first name><at><last name><dot><net>
  ** See: http://www.gazingus.org/html/DOM-Scripted_Lists_Revisited.html
  **
  ** Add support for collabsable boxes, Nov 05, D.Frederickx
  ** Refactored on mootools, including effects, May 07, D.Frederickx
  **/
-var Collapsable =
+var Collapsible =
 {
 	pims : [], // all me cookies
 
@@ -1344,17 +1351,16 @@ var Collapsable =
 
 	collapseBox: function(el){
 		var title = el.getFirst(); if( !title ) return;
-		var body = new Element('div', {'class':'collapsebody'}); // wrap other siblings
+		var body = new Element('div', {'class':'collapsebody'}), 
+			bullet  = this.bullet.clone(),
+			isclosed = el.hasClass('collapsebox-closed');
 
-		while(title.nextSibling) body.appendChild(title.nextSibling);
+		while(title.nextSibling) body.appendChild(title.nextSibling); // wrap other siblings
 		el.appendChild(body);
 		
-		var isclosed = el.hasClass('collapsebox-closed');
 		if(isclosed) el.removeClass('collapsebox-closed').addClass('collapsebox');
-
-		var bullet  = this.bullet.clone();
 		bullet.injectTop( title.addClass('collapsetitle') );
-		this.newBullet( bullet, body, !isclosed );
+		this.newBullet(bullet, body, !isclosed, title );
 	},
 
 	// Modifies the list such that sublists can be hidden/shown by clicking the listitem bullet
@@ -1374,31 +1380,33 @@ var Collapsable =
 			}
 			if( emptyLI ) return;
 			
-			var bullet = this.bullet.clone();
+			var bullet = this.bullet.clone().injectTop(li);
 			if(ulol) this.newBullet(bullet, ulol, (ulol.getTag()=='ul'));
-			bullet.injectTop(li);
 		},this);
 	},
 
-	newBullet: function(bullet, body, isopen){
-		var ck = this.pims.getLast();
+	newBullet: function(bullet, body, isopen, clicktarget){
+		var ck = this.pims.getLast(); //read cookie
 		isopen = this.parseCookie(isopen);
+		if(!clicktarget) clicktarget = bullet;
 
 		var bodyfx = body.setStyle('overflow','hidden')
 			.effect('height', { 
 				wait:false,
-				onStart:this.toggleBullet.bind(bullet),
+				onStart:this.renderBullet.bind(bullet),
 				onComplete:function(){ if(bullet.hasClass('collapseOpen')) body.setStyle('height','auto'); } 
 			});
 
-		bullet.addEvent('click', this.clickBullet.bind(bullet, [ck, ck.value.length-1, bodyfx]))
-			  .className = (isopen ? 'collapseClose' : 'collapseOpen'); //ready for first toggle
-
+		bullet.className = (isopen ? 'collapseClose' : 'collapseOpen'); //ready for rendering
+		clicktarget.addEvent('click', this.clickBullet.bind(bullet, [ck, ck.value.length-1, bodyfx]))
+			.addEvent('mouseenter', function(){ clicktarget.addClass('collapseHover')} )
+			.addEvent('mouseleave', function(){ clicktarget.removeClass('collapseHover')} );
+			  
 		bodyfx.fireEvent('onStart');
 		if(!isopen) bodyfx.set(0); //.set( isopen ? body.scrollHeight : 0 );	
 	},
 
-	toggleBullet: function(){
+	renderBullet: function(){
 		if(this.hasClass('collapseClose')){
 			this.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).setHTML('-'); /* &raquo; */
 		} else {
@@ -1840,11 +1848,10 @@ var Categories =
 		this.jsp = Wiki.TemplateDir + '/AJAXCategories.jsp';
 
 		$$('.category a.wikipage').each(function(link){
-			var page = Wiki.href2pagename(link.href );
-
-			var wrap = new Element('span').injectBefore(link).adopt(link),
+			var page = Wiki.getPageName(link.href),
+				wrap = new Element('span').injectBefore(link).adopt(link),
 				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap),
-				popeff = popup.effect('opacity',{wait:false}).set(0);
+				popfx = popup.effect('opacity',{wait:false}).set(0);
 
 			link.addClass('categoryLink')
 				.setProperties({ href:'#', title: 'Click to show category [' + page + '] ...' })
@@ -1855,19 +1862,15 @@ var Categories =
 					update: popup,
 					onComplete: function(){
 						link.setProperty('title', '').removeEvent('click');
-						wrap.addEvent('mouseover', function(e) { popeff.start(0.9); })
-							.addEvent('mouseout', function(e) { popeff.start(0); });
-						popup.setStyle('left', link.getPosition().x + 'px');
-						popeff.start(0.9); }
+						wrap.addEvent('mouseover', function(e){ popfx.start(0.9); })
+							.addEvent('mouseout', function(e){ popfx.start(0); });
+						popup.setStyle('left', link.getPosition().x);
+						popfx.start(0.9); 
+					}
 				}).request();
 			});
 		});
 	} 
-}
-/* FIXME Convert url to wiki-pagename */
-Wiki.href2pagename = function(href){
-	if( href.test(/\?page=([^&]+)/) ) return RegExp.$1;
-	return href;
 }
 
 /**
@@ -2073,7 +2076,7 @@ window.addEvent('load', function(){
 	QuickLinks.onPageLoad();
 	
 	//console.profile();
-	Collapsable.onPageLoad();
+	Collapsible.onPageLoad();
 	//console.profileEnd();
 
 	SearchBox.onPageLoad();

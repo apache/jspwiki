@@ -1,3 +1,38 @@
+2007-10-26  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.145 - many IE6 fixes and small gui updates
+
+        * Heading rendered wrong in IE6, because IE doesn't like floats with margins.
+        [JSPWIKI-4]
+        * By default, the more-menu is hidden by default, to avoid bumpy screen rendering 
+        for slower page loads. [JSPWiki-9]
+        * TabbedSections in IE6 had annoying additional spacing between tab and body
+
+        * BUGZILLA 115: URL Constructor compatibility is fixed for Ajax enabled searches.
+
+        * Align look n feel of collapsible lists, boxes and accordions.
+        All hovered actions now get a consistent, neutral color, instead of the previous orange tint. 
+        (reported by Murray Altheim)
+
+        * CollapsibleBox update: you can now click anywhere on the title of a collabsible box 
+        to open or close it. Previously, you had to hit the +/- collapse button.
+
+        * The %%category now supports any url constructor type. (was failing on jspwiki.org) 
+        The look 'n feel of the category popup has been aligned with Tip-Style. 
+        (no more orange, but transparent dark grey)
+
+        * The Redo/Undo buttons are moved to the top of the Edit.jsp form, because they function 
+        irrespective of the search functions. 
+
+        * TOC has become a floating element, such that commentboxes and toc's can nicely 
+        float next to each-other. Downside is that, when entering text right after a TOC, the text will 
+        float next to the toc. To prevent this, you can always enter a \\ (wiki linebreak) which 
+        will nicely push the contents under any float. (clear:both)  [JSPWiki-1]
+
+        * added 2 new i18n resources
+        javascript.slimbox.previous=&laquo;Previous
+        javascript.slimbox.next=Next&raquo;
+
 2007-10-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.144

@@ -46,9 +46,9 @@ var EditTools =
 
 
 		//FIXME: stop-event not yet working properly on eg UNDO
-		$('replace').addEvent('click', function(e) { EditTools.doReplace(); new Event(e).stop(); });
 		$('tbREDO').addEvent('click', function(e) { EditTools.redoTextarea(); new Event(e).stop(); });
-		$('tbUNDO').addEvent('click', function(e) { new Event(e).stop(); EditTools.undoTextarea();  })
+		$('tbUNDO').addEvent('click', function(e) { new Event(e).stop(); EditTools.undoTextarea();  });
+		$('replace').addEvent('click', function(e) { EditTools.doReplace(); new Event(e).stop(); })
 			.getParent().getParent().show();
 
 		toolbar.getElements('a.tool').each(function(el){

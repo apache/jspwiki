@@ -101,9 +101,9 @@
 
   </select>
   </li>
-  <li id="morebutton">
+  <li id="morebutton" style="display:none">
     <a href="#" class="action more"><fmt:message key="actions.more"/></a>
-    <div id="moremenu">
+    <div id="moremenu" >
       <wiki:InsertPage page="MoreMenu" />
     </div>
   </li>

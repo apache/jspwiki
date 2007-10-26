@@ -62,7 +62,7 @@
   <td id="groupnames" rowspan="2">
     <div id="grouptemplate" 
             style="display:none; " 
-            title="<fmt:message key="grp.groupnames.title"/>"
+            title='<fmt:message key="grp.groupnames.title"/>'
           onclick="WikiGroup.toggle(); WikiGroup.onMouseOverGroup(this);"
       onmouseover="WikiGroup.onMouseOverGroup(this);" ></div>
 
@@ -71,7 +71,7 @@
       onmouseover="WikiGroup.onMouseOverGroup(this);" >
       <input type="text" size="30" 
                id="newgroup"
-            value="<fmt:message key="grp.newgroupname"/>"
+            value='<fmt:message key="grp.newgroupname"/>'
            onblur="if( this.value == '' ) { this.value = this.defaultValue; }; " 
           onfocus="if( this.value == this.defaultValue ) { this.value = ''; WikiGroup.onClickNew(); }; "/>
     </div>
@@ -91,14 +91,14 @@
       <input type="hidden" name="action"  value="save" />
       <input type="button" disabled="disabled"
              name="saveButton" id="saveButton" 
-            value="<fmt:message key="grp.savegroup"/>"  
+            value='<fmt:message key="grp.savegroup"/>' 
           onclick="WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='EditGroup.jsp' />' );" /></div>
 
       <wiki:Permission permission="createGroups">
       <div>
       <input type="button" disabled="disabled"  
              name="createButton" id="createButton"
-            value="<fmt:message key="grp.savenewgroup"/>" 
+            value='<fmt:message key="grp.savenewgroup"/>' 
             style="display:none; "
           onclick="WikiGroup.onSubmitNew( this.form, '<wiki:Link format='url' jsp='NewGroup.jsp' />' );" /></div>
       </wiki:Permission>
@@ -106,14 +106,14 @@
       <div>
       <input type="button" disabled="disabled"
              name="cancelButton" id="cancelButton" 
-            value="<fmt:message key="grp.cancel"/>" 
+            value='<fmt:message key="grp.cancel"/>' 
           onclick="WikiGroup.toggle();" /></div>
 
       <wiki:Permission permission="deleteGroup">
       <div>
       <input type="button" disabled="disabled" 
              name="deleteButton" id="deleteButton"
-            value="<fmt:message key="grp.deletegroup"/>" 
+            value='<fmt:message key="grp.deletegroup"/>' 
           onclick="confirm( '<fmt:message key="grp.deletegroup.confirm"/>' ) 
                 && WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='DeleteGroup.jsp' />' );" /></div>
       </wiki:Permission>

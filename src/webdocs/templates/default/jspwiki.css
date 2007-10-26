@@ -9,7 +9,8 @@
 	#d7d7d7 table header(darker grey)
 	#bbb table borders,
 	#d9e8ff edit background
-	#f93 highlight colors, searchbars, ...  (amber)
+	#d7d7d7 hover color
+	#f93 highlight color, searchbars, ...  (amber)
 	#e0e0ff information (light blue)
 	#ffff80 warning (light yellow)
 	#ffe0e0 error (light pink)
@@ -21,13 +22,13 @@
 	padding:0.25em;
 }
 #header, #footer {
-	margin-left:20%;
-}
-#header {
+	padding:0 0 0 20%;
+	width:80%;
 }
 #header .applicationlogo {
 	position:absolute;
 	left:2em; 
+	right:auto;
 	width:18%;
 	text-align:center;
 }
@@ -79,10 +80,14 @@
 #wikibody.fav-right #page, #wikibody.fav-left #favorites {
 	float:left;
 }
-#wikibody.fav-right #footer {
-	margin-left:0;
-	margin-right:20%;
+#wikibody.fav-right #header, #wikibody.fav-right #footer {
+	padding:0 20% 0 0;
 }
+#wikibody.fav-right #header .applicationlogo {
+	left:auto;
+	right:2em; 
+}
+
 #page { 
 	width:80%;
 	float:right;
@@ -160,6 +165,9 @@ h2, h3, h4 {
 b, i {
 	color:inherit;
 }
+br {
+	clear:both;
+}
 /* +++ 220 Lists and bullets +++ */
 ul ul, ol ol {
 	margin:0;
@@ -207,7 +215,7 @@ fieldset {
 }
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
-code,tt, pre {
+code, tt, pre {
 	font-family:Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 }
@@ -358,6 +366,7 @@ td .information, td .warning, td .error {
 /* +++ 290 Comment boxes (used on some pages) +++ */
 .commentbox {
 	float:right;
+	clear:right;
 	width:35%;
 	overflow:hidden;
 	border:1px solid #bbb;
@@ -579,7 +588,7 @@ a.tool {
 	text-decoration: none;
 }
 a.tool:hover, .btn:hover {
-	background-color:#f93 !important;
+	background-color:#d7d7d7 !important;
 }
 #editassist a.tool {
 	float:right;
@@ -625,7 +634,7 @@ body.edit textarea {
 }
 /* not usefull
 #findSuggestionMenu li:hover { 
-	background:#f93;
+	background:#d7d7d7;
 }
 */
 
@@ -662,7 +671,7 @@ body.edit textarea {
 }
 .graphBar {
 	border-color:#f93;
-	padding:2px;
+	padding:0;
 }
 .fragment {
 	margin:0.25em;
@@ -680,7 +689,10 @@ body.edit textarea {
    in the results.
    <span class="searchword">thingy</span>
  */
-.cursor, .searchword, .searchmatch {
+.cursor {
+	background-color:#d7d7d7;
+}
+.searchword, .searchmatch {
 	background-color:#f93;
 	color:black;
 	text-decoration:inherit;
@@ -721,7 +733,7 @@ body.edit textarea {
 	padding:0 0.2em;
 }
 .pagination a:hover {
-	background-color:#f93;
+	background-color:#d7d7d7;
 }
 td.changenote {
 	font-style:italic;
@@ -788,7 +800,7 @@ a.action, .username {
 	white-space:nowrap;
 }
 a.action:hover, .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
-	background-color:#f93 !important;
+	background-color:#d7d7d7 !important;
 }
 
 a.action.view,
@@ -890,7 +902,7 @@ a.action.quick2bottom {
 }
 
 #searchTools a:hover, #searchboxMenu li:hover { 
-	background:#f93;
+	background:#d7d7d7;
 }
 #searchboxMenu div {
 	margin:0.5em 0;
@@ -937,7 +949,9 @@ div.index .section {
 
 /* +++ 625 Table of contents plugin +++ */
 .toc {
-	width:60%; 
+	 width:60%; 
+	 float:left;
+	 clear:left;
 }
 .toc h4 {
 	font-size:1.4em;
@@ -1106,9 +1120,10 @@ table.calendar tr.weekdays {
 	clear:both;
 }
 
-/* IE only:top 2px to have same size as inside '.tabmenu a' elements */
+/* IE only:add 2px to fit size of '.tabmenu a' */
 * html .tabmenu {
-	margin-bottom:-1px;
+	xxmargin:1px 0;
+	border:1px solid white;
 }
 .tabmenu a {
 	float:left;
@@ -1141,14 +1156,16 @@ table.calendar tr.weekdays {
 	margin-bottom:0.5em;
 }
 .accordion .toggle {
-	background:#d7d7d7;
+	border: 2px solid #eee;
+	background:#eee;
+	color:blue;
 	cursor:pointer;
 	font-weight:bold;
 	line-height:1.4;
 	padding:0.25em 1em;
 }
 .toggle:hover {
-	color:blue;
+	background:#d7d7d7;
 }
 .accordion .tab {
 	padding:0 1em;
@@ -1225,7 +1242,7 @@ table.calendar tr.weekdays {
 }
 
 
-/* +++ 920 Collapsable lists +++ */
+/* +++ 920 Collapsible lists +++ */
 div.collapse ul, div.collapse ol {
 	margin-left:1.5em;
 	padding-left:0;
@@ -1254,12 +1271,11 @@ div.collapse li {
 	padding:0.25em;
 	margin-top:-0.25em;
 }
-.collapseOpen:hover, .collapseClose:hover {
-	background-color:#f93;
-	color:white;
-}
 .collapseOpen, .collapseClose {
 	cursor:pointer;
+}
+.collapseHover {
+	background:#d7d7d7;
 }
 .collapse .collapseBullet, .collapse .collapseOpen, .collapse .collapseClose { 
 	float:left;
@@ -1277,14 +1293,10 @@ div.collapse li {
 * html .collapsebox {
 	width:99%;
 }  
-.collapsebox h2, .collapsebox h3, .collapsebox h4 {
+.collapsetitle {
 	margin:0;
 	padding:0.25em 0em;
-}
-.collapsetitle {
-}
-.collapsetitle:hover {
-	background:#eee;
+	border: 2px solid white;
 }
 .collapsebody {
 	margin:0 1em;	 
@@ -1295,12 +1307,10 @@ div.collapse li {
 
 /* +++ 930 Sortable tables +++ */
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
-	cursor:pointer;
 	background-repeat:no-repeat;
-	background-position:0.25em 0.25em;
-}
-.sortable .sort, .sortable .sortAscending, .sortable .sortDescending {
-	padding-left:16px;
+	background-position:center left;
+	cursor:pointer;
+	padding-left:11px;
 }
 .sortable .sort {
 	background-image:url(images/sortable.gif);
@@ -1324,7 +1334,7 @@ a.slimbox:visited, a.slimbox:active, a.slimbox:link {
 	border:none;
 }
 a.slimbox:hover {
-	background:#f93;
+	background:#d7d7d7;
 }
 
 #lbOverlay {
@@ -1335,17 +1345,24 @@ a.slimbox:hover {
 	background-color:#000;
 	cursor:pointer;
 }
-#lbCenter, 
-#lbBottomContainer {
+#lbCenter, #lbBottomContainer {
 	position:absolute;
 	left:50%;
 	overflow:hidden;
-	background-color:#fff;
 	font-family:Verdana, Helvetica, sans-serif;
 	font-size:90%;
 	color:#666;
 	line-height:1.5;
 	text-align:left;
+}
+#lbBottomContainer {
+	padding:0 12px;
+}
+#lbCenter {
+	padding:12px 12px 0 12px;
+}
+#lbCenter a {
+	outline:none;
 }
 .lbLoading {
 	background:#fff url(images/spin.gif) no-repeat center;
@@ -1353,12 +1370,45 @@ a.slimbox:hover {
 #lbImage {
 	border:10px solid #fff;
 	border-top-width:1.4em;
+	background-color:#fff;
 	background-repeat:no-repeat;
 	background-position:center center;
 	position:relative;
 }
-#lbPrevLink, 
+#lbBottom {
+	border:10px solid #fff;
+	border-top-style:none;
+	background-color:#fff;
+}
+#lbBottom div {
+	white-space:nowrap;
+	overflow:hidden;
+}
+#lbCaption {
+	font-weight:bold;
+}
+#lbPrevLink {
+	padding-right:1em;
+}
 #lbNextLink {
+	padding-left:1em;
+}
+#lbCloseLink {
+	display:block;
+	position:absolute;
+	width:28px;
+	height:28px;
+	top:0;
+	right:0;
+	background:url(images/slimbox_close.png) no-repeat center;
+	z-index:10;
+}
+#lbBottomContainer *:visited, #lbBottomContainer *:active, #lbBottomContainer *:link,
+#lbCenter *:visited, #lbCenter *:active, #lbCenter *:link {
+	text-decoration:none;
+	border-bottom:none;
+}
+/*#lbPrevLink, #lbNextLink {
 	display:block;
 	position:absolute;
 	top:0;
@@ -1368,84 +1418,56 @@ a.slimbox:hover {
 #lbPrevLink {
 	left:10px;
 }
-/*#lbPrevLink:hover {
+#lbPrevLink:hover {
 	background:transparent url"images/prevlabel.gif") no-repeat 0% 15%;
-}*/
+}
 #lbNextLink {
 	right:10px;
 	text-align:right;
 }
-/*#lbNextLink:hover {
+#lbNextLink:hover {
 	background:transparent url"images/nextlabel.gif") no-repeat 100% 15%;
 }*/
-
-/*
-#lbCenter,
-#lbBottom {
-	font-family:Verdana, Helvetica, sans-serif;
-	font-size:10px;
-					  color:#666;
-	line-height:1.4em;
-	text-align:left;
-}*/
-#lbBottom {
-	border:10px solid #fff;
-	border-top-style:none;
-}
-/*#lbCloseLink {
-	display:block;
-	float:right;
-	width:66px;
-	height:22px;
-	background:transparent url(images/closelabel.gif) no-repeat center;
-	margin:5px 0;
-}*/
-#lbBottomContainer *:visited, #lbBottomContainer *:active, #lbBottomContainer *:link,
-#lbCenter *:visited, #lbCenter *:active, #lbCenter *:link {
-	text-decoration:none;
-	border-bottom:none;
-}
-#lbCloseLink {
-	display:block;
-	float:right;
-}
-#lbCaption,
-#lbNumber {
-	margin-right:20%;
-}
-#lbCaption {
-	font-weight:bold;
-}
 
 
 /* +++ 950 Categorised +++ */
 .categoryLink {
-	border-bottom:2px solid #fc3;
+	border-bottom:2px solid #545454;
+	text-decoration:none;
 } 
 .categoryPopup {
-	border:2px solid #f93;
-	background:#fc3;
+	color:white;
+	width:172px;
+	z-index:100;
+	font-size:90%;
+	margin-top:2px;
 	position:absolute;
 	z-index:10;
-	font-size:0.9em;
+}
+.categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
+	color:inherit;
+	text-decoration:none;
 }
 .categoryTitle {
-	padding:0.5em;
-}
-.categoryTitle a:link   { 
+	margin:0 0 1px 0;
+	padding:8px;
+	background:url(images/tip.png) top left;
 	font-weight:bold;
 }
 .categoryText {
+	padding:4px 0;
+	background:url(images/tip.png) bottom right;
 }
 .categoryText ul {
 	list-style:none;
+	margin:0 !important;
 	padding:0 !important;
 }
 .categoryText li {
-	padding:0 0.5em;
+	padding:0 8px;
 }
 .categoryTitle:hover, .categoryText li:hover { 
-	background:#f93;
+	background:black;
 }
 
 
