@@ -3,7 +3,7 @@
         * 2.5.146 - more IE6 fixes and small gui updates
 
          * Refactored collapsible lists in view of ie compatibility.
-         * Improve layout consistentcy of the quick navigation action buttons
+         * Improved layout consistentcy of the quick navigation action buttons
          * Resolved double loading of print.css. (commonheader.jsp)
          
 
