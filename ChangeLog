@@ -1,3 +1,12 @@
+2007-10-27  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.146 - more IE6 fixes and small gui updates
+
+         * Refactored collapsible lists in view of ie compatibility.
+         * Improve layout consistentcy of the quick navigation action buttons
+         * Resolved double loading of print.css. (commonheader.jsp)
+         
+
 2007-10-26  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.145 - many IE6 fixes and small gui updates

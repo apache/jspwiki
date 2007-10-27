@@ -91,6 +91,7 @@
 #page { 
 	width:80%;
 	float:right;
+	max-width:80%; /* FFS test in IE */
 }
 #actionsTop	{ 
 	float:right;
@@ -216,7 +217,7 @@ fieldset {
 
 /* +++ 240 Pre-formatted text blocks and code +++ */
 code, tt, pre {
-	font-family:Monaco, "Courier New", Courier, monospace;
+	font:110% Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 }
 pre {
@@ -516,7 +517,7 @@ td .information, td .warning, td .error {
 }
 /* .diffnote equals .information */
 td.diffadd, td.diffrem, td.diff {
-	font-family:Monaco, "Courier New", Courier, monospace;
+	font:110% Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 	line-height:1;
 }
@@ -532,7 +533,7 @@ td.diff {
 
 /* +++ 421 Contextual diff provider +++ */
 .diff-wikitext {
-	font-family:Monaco, "Courier New", Courier, monospace;
+	font:110% Monaco, "Courier New", Courier, monospace;
 	line-height:1;
 	overflow:auto;
 }
@@ -595,8 +596,7 @@ a.tool:hover, .btn:hover {
 	margin:0 0 0 0.5em;
 }
 body.edit textarea {
-	font-family:Monaco, "Courier New", Courier, monospace;
-	font-size:1em;
+	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px;
 } 
 #editorarea {
@@ -632,18 +632,16 @@ body.edit textarea {
 #findSuggestionMenu li { 
 	padding:0.25em;
 }
-/* not usefull
-#findSuggestionMenu li:hover { 
-	background:#d7d7d7;
-}
-*/
 
 /* +++ 440 Favorites +++ */
 .userbox {
 	overflow:hidden;
+	padding:0.25em 0;
 }
-.userbox .action, .userbox .username {
+#favorites .userbox a.action, #favorites .userbox .username {
 	float:left;
+	display:block;
+	margin-right:4px; /*spacing between buttons */
 }
 .username {
 	font-style:italic;
@@ -656,8 +654,7 @@ body.edit textarea {
 .username.authenticated {
 }
 
-.wikiversion,
-.rssfeed {
+.wikiversion, .rssfeed {
 	font-size:90%;
 	padding:0.5em;
 	text-align:center;
@@ -675,8 +672,7 @@ body.edit textarea {
 }
 .fragment {
 	margin:0.25em;
-	font-family:Monaco, "Courier New", Courier, monospace;
-	font-size:0.9em;
+	font:90% Monaco, "Courier New", Courier, monospace;
 }
 .fragment_ellipsis {
 	font-weight:bold;
@@ -792,14 +788,15 @@ th.changenote, td.changenote {
 	line-height:1.5;
 	padding:0.25em 0.5em;
 }
-a.action, .username {
-	display:block;
+#morebutton ul a.action {
 	padding:0.25em 0.5em;
 	text-decoration:none;
-	line-height:normal;
-	white-space:nowrap;
 }
-a.action:hover, .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
+.pageactions a.action {
+	display:block;
+}
+#moremenu a:hover, a.action:hover, 
+.userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#d7d7d7 !important;
 }
 
@@ -821,17 +818,21 @@ a.action.workflow,
 a.action.login,
 a.action.logout {
 }
-.userbox a.action, a.action.edit, a.action.more {
-	margin-left:4px;
+#searchTools a.action, .userbox a.action, a.action.edit, a.action.more {
+	padding:0.25em 0.5em;
+	text-decoration:none;
+	line-height:normal;
 	border:1px solid #bbb;		
 	background:#eee;
+	white-space:nowrap;
 }
 a.action.edit, a.action.more {
+	margin-left:4px;
 	border-bottom:none;
 }
 a.action.more {
 	padding-right:1.5em;
-	background: #eee url(images/arrdown-small.png) 95%  center  no-repeat;
+	background: #eee url(images/arrdown-small.png) 95% center no-repeat;
 }
 a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
@@ -846,6 +847,7 @@ a.action.quick2top {
 }
 a.action.quick2bottom {
  	background:url(images/arrdown.png) no-repeat 3px 3px;
+ 	height:16px;
 }
 
 
@@ -1139,7 +1141,7 @@ table.calendar tr.weekdays {
 	line-height:normal;
 }
 .tabmenu a:hover {
-	color:blue;
+	background:#d7d7d7;
 }
 .tabmenu a.activetab {
 	color:black;
@@ -1158,13 +1160,12 @@ table.calendar tr.weekdays {
 .accordion .toggle {
 	border: 2px solid #eee;
 	background:#eee;
-	color:blue;
 	cursor:pointer;
 	font-weight:bold;
 	line-height:1.4;
 	padding:0.25em 1em;
 }
-.toggle:hover {
+.accordion .toggle:hover, .togglemenu .toggle:hover {
 	background:#d7d7d7;
 }
 .accordion .tab {
@@ -1244,42 +1245,38 @@ table.calendar tr.weekdays {
 
 /* +++ 920 Collapsible lists +++ */
 div.collapse ul, div.collapse ol {
-	margin-left:1.5em;
-	padding-left:0;
+	margin:0;
+	padding:0;
 }
 /* ie hack to ensure first level of bullets are showns properly  ugh! */
 * html div.collapse ul, * html div.collapse ol {
 	padding-left:1.5em;
 }
-div.collapse * ul, div.collapse * ol {
-	padding-left:1.5em;
-}
 * html div.collapse * ul, * html div.collapse * ol {
-	position:relative; /* needed for ie */
-	height:1%; /* hasLayout hack -- check*/
+	xxposition:relative; /* needed for ie */
+	xxheight:1%; /* hasLayout hack -- check*/
 }
 div.collapse li {
-	list-style:none;
+	list-style-type:none;
+}
+.collapse .collapsebody {
+	padding-left:1.5em;
 }
 /* collapse icons */   
 .collapseBullet, .collapseOpen, .collapseClose {
+	float:left;
 	text-align:center;
 	text-decoration:none;
 	color:blue;
-	font:bold small-caps small Monaco, "Courier New", Courier, monospace;
-	width:1em;
-	padding:0.25em;
-	margin-top:-0.25em;
+	font:bold small Monaco, "Courier New", Courier, monospace;
+	width:1.5em;
+	height:1.2em;
 }
 .collapseOpen, .collapseClose {
 	cursor:pointer;
 }
 .collapseHover {
 	background:#d7d7d7;
-}
-.collapse .collapseBullet, .collapse .collapseOpen, .collapse .collapseClose { 
-	float:left;
-	margin-left:-1.5em;
 }
 
 /* +++ collapsebox +++ */
@@ -1298,7 +1295,7 @@ div.collapse li {
 	padding:0.25em 0em;
 	border: 2px solid white;
 }
-.collapsebody {
+.collapsebox .collapsebody {
 	margin:0 1em;	 
 }
 .collapsebox .collapseOpen, .collapsebox .collapseClose {
@@ -1349,8 +1346,7 @@ a.slimbox:hover {
 	position:absolute;
 	left:50%;
 	overflow:hidden;
-	font-family:Verdana, Helvetica, sans-serif;
-	font-size:90%;
+	font: 90% Verdana, Helvetica, sans-serif;
 	color:#666;
 	line-height:1.5;
 	text-align:left;
@@ -1384,7 +1380,7 @@ a.slimbox:hover {
 	white-space:nowrap;
 	overflow:hidden;
 }
-#lbCaption {
+#lbCaption, #lbPrevLink, #lbNextLink {
 	font-weight:bold;
 }
 #lbPrevLink {
@@ -1408,26 +1404,6 @@ a.slimbox:hover {
 	text-decoration:none;
 	border-bottom:none;
 }
-/*#lbPrevLink, #lbNextLink {
-	display:block;
-	position:absolute;
-	top:0;
-	width:45%;
-	outline:none;
-}
-#lbPrevLink {
-	left:10px;
-}
-#lbPrevLink:hover {
-	background:transparent url"images/prevlabel.gif") no-repeat 0% 15%;
-}
-#lbNextLink {
-	right:10px;
-	text-align:right;
-}
-#lbNextLink:hover {
-	background:transparent url"images/nextlabel.gif") no-repeat 100% 15%;
-}*/
 
 
 /* +++ 950 Categorised +++ */

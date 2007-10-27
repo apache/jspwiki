@@ -271,17 +271,11 @@ var Wiki = {
 
 		$A(select.options).each(function(o){
 			if(o.value == "") return;
-			if(o.value == "separator"){
-				separator = 'separator';
-			} else {
-				new Element('a',{
-					'class':o.className, 
-					'href':o.value
-				}).setHTML(o.text).inject(new Element('li',{'class':separator}).inject(popup));
-				separator='';
-			}
+			separator='separator';
+			new Element('a',{'class':o.className,'href':o.value})
+				.setHTML(o.text).inject(new Element('li').inject(popup));
 		});
-		$('moremenu').inject(new Element('li',{'class':'separator'}).inject(popup));
+		$('moremenu').inject(new Element('li',{'class':separator}).inject(popup));
 		
 		select.getParent().hide();
 		more.show()
@@ -461,26 +455,26 @@ var Lightbox = {
 				</div>
 			</div>
 		*/
-		this.overlay = new Element('div', {'id': 'lbOverlay'}).injectInside(document.body);
+		this.overlay = new Element('div', {'id': 'lbOverlay'}).inject(document.body);
 
-		this.center = new Element('div', {'id': 'lbCenter', 'styles': {'width': this.options.initialWidth, 'height': this.options.initialHeight, 'marginLeft': -(this.options.initialWidth/2), 'display': 'none'}}).injectInside(document.body);
-		new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).injectInside(this.center).onclick = this.overlay.onclick = this.close.bind(this);
-		this.image = new Element('div', {'id': 'lbImage'}).injectInside(this.center);
+		this.center = new Element('div', {'id': 'lbCenter', 'styles': {'width': this.options.initialWidth, 'height': this.options.initialHeight, 'marginLeft': -(this.options.initialWidth/2), 'display': 'none'}}).inject(document.body);
+		new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).inject(this.center).onclick = this.overlay.onclick = this.close.bind(this);
+		this.image = new Element('div', {'id': 'lbImage'}).inject(this.center);
 
-		this.bottomContainer = new Element('div', {'id': 'lbBottomContainer', 'styles': {'display': 'none'}}).injectInside(document.body);
-		this.bottom = new Element('div', {'id': 'lbBottom'}).injectInside(this.bottomContainer);
-		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).setHTML('Close &#215;').injectInside(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
-		this.caption = new Element('div', {'id': 'lbCaption'}).injectInside(this.bottom);
+		this.bottomContainer = new Element('div', {'id': 'lbBottomContainer', 'styles': {'display': 'none'}}).inject(document.body);
+		this.bottom = new Element('div', {'id': 'lbBottom'}).inject(this.bottomContainer);
+		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).setHTML('Close &#215;').inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
+		this.caption = new Element('div', {'id': 'lbCaption'}).inject(this.bottom);
 
-		var info = new Element('div').injectInside(this.bottom);  
-		this.prevLink = new Element('a', {'id': 'lbPrevLink', 'href': '#', 'styles': {'display': 'none'}}).setHTML("slimbox.previous".localize()).injectInside(info);
-		this.number = new Element('span', {'id': 'lbNumber'}).injectInside(info);
-		this.nextLink = this.prevLink.clone().setProperties({'id': 'lbNextLink' }).setHTML("slimbox.next".localize()).injectInside(info);
+		var info = new Element('div').inject(this.bottom);  
+		this.prevLink = new Element('a', {'id': 'lbPrevLink', 'href': '#', 'styles': {'display': 'none'}}).setHTML("slimbox.previous".localize()).inject(info);
+		this.number = new Element('span', {'id': 'lbNumber'}).inject(info);
+		this.nextLink = this.prevLink.clone().setProperties({'id': 'lbNextLink' }).setHTML("slimbox.next".localize()).inject(info);
 		this.prevLink.onclick = this.previous.bind(this);
 		this.nextLink.onclick = this.next.bind(this);
 
  		this.error = new Element('div').setProperty('id', 'lbError').setHTML(this.options.errorMessage);
-		new Element('div', {'styles': {'clear': 'both'}}).injectInside(this.bottom);
+		new Element('div', {'styles': {'clear': 'both'}}).inject(this.bottom);
 		
 		var nextEffect = this.nextEffect.bind(this);
 		this.fx = {
@@ -579,7 +573,7 @@ var Lightbox = {
 				frameBorder:0, 
 				scrolling:'auto', 
 				src:this.images[imageNum][0]
-			}).injectInside(this.image);
+			}).inject(this.image);
 			this.nextEffect();	//asynchronous loading?
 
 		}
@@ -702,10 +696,10 @@ var Reflection = {
 			imgH = img.height,
 			rH   = Math.floor(imgH * height); //reflection height
 
-		div.style.cssText = img.backupStyle = img.style.cssText;
 		div.className = img.className.replace(/\breflection\b/, "");
-		div.setStyles({'width': "100%", 'height': Math.floor(imgH * (1+height) ), "maxWidth": imgW });	
-		
+		div.style.cssText = img.backupStyle = img.style.cssText;
+		//div.setStyles({'width':img.width, 'height':imgH +rH, "maxWidth": imgW });
+		div.setStyles({'width':img.width, 'height':imgH +rH });
 		img.style.cssText = 'vertical-align: bottom';
 		//img.className = 'inline reflected';  //FIXME: is this still needed ??
 
@@ -714,9 +708,9 @@ var Reflection = {
 				'width': imgW,
 				'marginBottom': "-" + (imgH - rH) + 'px',
 				'filter': 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity='+(opacity*100)+', style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy='+(height*100)+')'
-			}}).injectInside(div);
+			}}).inject(div);
 		} else {
-			var r = new Element('canvas', {'width':imgW, 'height':rH, 'styles': {'width':imgW, 'height': rH}}).injectInside(div);
+			var r = new Element('canvas', {'width':imgW, 'height':rH, 'styles': {'width':imgW, 'height': rH}}).inject(div);
 			if( !r.getContext ) return;
 
 			var ctx = r.getContext("2d");
@@ -814,7 +808,7 @@ var TabbedSection = {
 				//use class to make tabs visible during printing !
 				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
-				new Element('div',{'styles':{'clear':'both'}}).injectInside(tab);
+				new Element('div',{'styles':{'clear':'both'}}).inject(tab);
 
 				var menu = new Element('a', {
 					'id':'menu-'+tab.id, 
@@ -935,7 +929,7 @@ var SearchBox = {
 
 			this.recent = Wiki.prefs.get('RecentSearch'); if(!this.recent) return;
 
-			var ul = new Element('ul',{'id':'recentItems'}).injectInside($('recentSearches').show());
+			var ul = new Element('ul',{'id':'recentItems'}).inject($('recentSearches').show());
 			this.recent.each(function(el){
 				new Element('a',{
 					'href':'#', 
@@ -1020,7 +1014,7 @@ var SearchBox = {
 					new Element('li').adopt( 
 						new Element('a',{'href':Wiki.getUrl(el.map.page) }).setHTML(el.map.page), 
 						new Element('span',{'class':'small'}).setHTML(" ("+el.map.score+")")
-					).injectInside(frag);
+					).inject(frag);
 				});
 				$('searchOutput').empty().adopt(frag);
 				Wiki.locatemenu( $('query'), $('searchboxMenu') );
@@ -1380,6 +1374,7 @@ var Collapsible =
 			}
 			if( emptyLI ) return;
 			
+			new Element('div',{'class':'collapsebody'}).injectWrapper(li);
 			var bullet = this.bullet.clone().injectTop(li);
 			if(ulol) this.newBullet(bullet, ulol, (ulol.getTag()=='ul'));
 		},this);

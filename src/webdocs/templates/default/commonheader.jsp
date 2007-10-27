@@ -20,6 +20,8 @@
 <%-- CSS stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css"
      href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
+<%-- put this at the top, to avoid double load when not yet cached --%>
+<link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
@@ -66,7 +68,6 @@ Wiki.init({
  %>
  <link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontpage%>' />"
     title="Front page" />
-<link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>"
     title="Print friendly" />
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css'/>"
