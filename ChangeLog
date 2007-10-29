@@ -1,4 +1,16 @@
-2007-10-27  Dirk Frederickx (dirk.frederickx@gmail.com)
+2007-10-29  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.147 - more IE6 fixes 
+
+         * Pages with wide preformatted {{{text blocks}}} where not overflowing correctly on ie6.
+         [JSPWiki-2]
+
+         * More updates on collapsible lists for ie6. More testing required.
+
+         * Fixed the SearchBoxMenu to ensure proper width on ie6
+         
+   
+ 2007-10-27  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.146 - more IE6 fixes and small gui updates
 
