@@ -99,8 +99,11 @@
 }
 #actionsTop	{ 
 	float:right;
-	right:2em; 
 	z-index:10;
+}
+/* ie hack */
+* html #actionsTop	{ 
+	margin-top:2px;
 }
 #actionsBottom {
 	text-align:right;
@@ -236,6 +239,7 @@ pre {
 * html pre {
 	overflow:visible; overflow-x:auto; /*proprieatary ie*/
 	width:95%;  /* hasLayout=true */
+	margin:1em auto;  /* otherwise funny effect on more menu ugh */
 	padding-bottom:1.5em; /*take scrollbar into account on ie*/
 }
                            
@@ -382,7 +386,7 @@ td .information, td .warning, td .error {
 	border:1px solid #bbb;
 	background:#eee;
 	padding:0.25em;
-	margin-left:0.5em;
+	margin:0 0.5em;
 	font-size:90%;
 }
 .commentbox li {
@@ -572,7 +576,7 @@ body.comment {
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
-    background:#f93 url(images/resize-horizontal.gif) top center;
+    background:#d7d7d7 url(images/resize-horizontal.gif) top center;
 	cursor:s-resize; /* css3 row-resize */ 
     font-size:1px;
 	height:6px; 
@@ -604,13 +608,14 @@ a.tool:hover, .btn:hover {
 	float:right;
 	margin:0 0 0 0.5em;
 }
-body.edit textarea {
+#editorarea {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px;
-} 
-#editorarea {
 	width:100%;
-	padding:4px;
+}
+/* ie6 hack ensure moremenu remains properly alighned */
+* html #editorarea {
+	padding:4px auto;
 }
 #submitbuttons input {
 	margin-right:2em;
@@ -862,6 +867,13 @@ a.action.quick2bottom {
 
 /* +++ 472 PageContent.jsp +++ */
 #pagecontent {
+	padding:0.5em 0;
+}
+html>body #info, html>body #pagecontent {
+	overflow:auto;
+}
+* html #info, * html #pagecontent {
+	overflow-x:auto;
 }
  
 
@@ -1225,7 +1237,9 @@ table.calendar tr.weekdays {
 */
 
 /* +++ 912 wiki columns +++ */
-.columns {
+/*ie hack */
+* html .columns {
+	width:100%;
 }
 .columns .col {
 	float:left;
@@ -1260,9 +1274,9 @@ div.collapse ul, div.collapse ol {
 	margin:0;
 	padding:0;
 }
-/* ie hack to ensure first level of bullets are showns properly  ugh! */
+/* ie6 hack : avoid strange side-effect on borders */
 * html div.collapse ul, * html div.collapse ol {
-	padding-left:1.5em;
+	width:100%;
 }
 div.collapse li {
 	list-style-type:none;
@@ -1270,8 +1284,14 @@ div.collapse li {
 .collapse .collapsebody {
 	padding-left:1.5em;
 }
+/* ie6 hack */
+* html .collapse .collapsebody {
+	float:left;
+	padding-left:0.5em;
+}
 /* collapse icons */   
 .collapseBullet, .collapseOpen, .collapseClose {
+	clear:left;
 	float:left;
 	text-align:center;
 	text-decoration:none;
@@ -1292,22 +1312,15 @@ div.collapse li {
     clear:right; /* avoid clash with intern floated bullet */
 	border:1px solid #bbb;
 	position:relative;
-	margin:0 0 1em 0;
-}
-/*IE bug -- set width to ensure position:relative working properly */
-* html .collapsebox {
-	width:99%;
+	margin:0 0 0.5em 0;
 }  
 .collapsetitle {
 	margin:0;
-	padding:0.25em 0em;
+	padding:0.25em 0;
 	border: 2px solid white;
 }
 .collapsebox .collapsebody {
-	margin:0 1em;	 
-}
-.collapsebox .collapseOpen, .collapsebox .collapseClose {
-	float:left;
+	margin:0 0.5em;
 }
 
 /* +++ 930 Sortable tables +++ */
@@ -1407,6 +1420,14 @@ a.slimbox:hover {
 	background:url(images/slimbox_close.png) no-repeat;
 	z-index:10;
 }
+/* gif icons for ie */
+* html #lbCloseLink {
+	background:url(images/slimbox_close.gif) 4px 12px no-repeat;
+}
+* html #lbCloseLink:hover {
+	background-image:url(images/slimbox_close_hover.gif);
+}
+
 #lbBottomContainer *:visited, #lbBottomContainer *:active, #lbBottomContainer *:link,
 #lbCenter *:visited, #lbCenter *:active, #lbCenter *:link {
 	text-decoration:none;

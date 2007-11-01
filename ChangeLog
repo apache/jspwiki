@@ -1,3 +1,31 @@
+2007-11-1  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.149 - various ie6 fixes in css and javascript
+        
+        * The Accordion style now support dynamic content. Iow, accordion sections
+        will dynamically grow/shrink with dynamic content such as collapsible lists or boxes.
+        
+        * The body of a page and the Info tab have gotten a css overflow:auto style. to support wide pages.
+        When contents becomes too wide (eg wide tables) the pagecontent will overflow horizontally 
+        with scrollbars at the bottom of the page.
+        Add small ie6 fix for wide preformatted {{{blocks}}}
+        For ie6, specific proprietary overflow-x style is used.
+        
+        * Long values in table filter dropdowns are trimmed to maximum 32chars. This will reduce 
+        the occurance of wide tables in eg Page Info tab.
+
+        * Added slimbox icon gifs for ie only. 
+
+        * IE6 Collapsible List is working again. (finally)
+
+        * IE6 Layout of the Edit and More tabs is now properly aligned with the rest of the page border
+        
+        * Fixed the mouse-selection bug on the edit textarea, for ie6.
+        
+        * Improved editor toolbar handling for ie6, with better handling of selected text in the textarea.
+        [BUGZILLA BUG 118]
+
+
 2007-10-30  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.148 - ie6 fixes cont'd

@@ -100,8 +100,8 @@ Element.extend({
 var Observer = new Class({
 	initialize: function(el, fn, options){
 		this.options = Object.extend({
-       	    event: 'keyup',
-		    delay: 300
+	   	    event: 'keyup',
+			delay: 300
 		}, options || {});
 		this.element = $(el);
 		this.callback = fn;
@@ -187,9 +187,9 @@ String.extend({
 	localize: function(){
 		var s = LocalizedStrings["javascript."+this], args = arguments;
 		if(!s) return("???" + this + "???");
-        return s.replace(/\{(\d)\}/g, function(m){ 
-        	return args[m.charAt(1)] || "???"+m.charAt(1)+"???";
-        });
+		return s.replace(/\{(\d)\}/g, function(m){ 
+			return args[m.charAt(1)] || "???"+m.charAt(1)+"???";
+		});
 	}
 });
 
@@ -223,7 +223,7 @@ var Wiki = {
 		Object.extend(Wiki,props || {}); 
 		var h=location.host;
 		this.BasePath = this.BaseUrl.slice(this.BaseUrl.indexOf(h)+h.length,-1);
-        //this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
+		//this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 	},
@@ -240,7 +240,7 @@ var Wiki = {
 		this.url = null;
 		this.parseLocationHash.periodical(500);
 
-        /* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
+		/* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
 		['editorarea','j_username','loginname','assertedName','query2'].some(function(el){
 			el = $(el);
 			if(el && el.visible()) { el.focus(); return true; }
@@ -251,10 +251,10 @@ var Wiki = {
 	},
 	savePrefs: function(){
 		/* why not move this serverside ?? */
-    	if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
-    	if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
-    	if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
-    	if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
+		if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
+		if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
+		if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
+		if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
 		//if($('editor')) this.prefs.set('Editor', $('editor').getValue()); /* bug 117 */
 		this.prefs.set('FontSize',this.PrefFontSize);
 	},
@@ -561,7 +561,7 @@ var Lightbox = {
 
 		this.preload = new Image();
 		this.image.empty().setStyle('overflow','hidden');
-        if( this.images[imageNum][2] == 'img' ){
+		if( this.images[imageNum][2] == 'img' ){
 			this.preload.onload = this.nextEffect.bind(this);
 			this.preload.src = this.images[imageNum][0];
 		} else {			
@@ -880,15 +880,17 @@ var WikiAccordion = {
 			});
 			new Accordion(toggles, contents, {     
 				alwaysHide: !togglemenu,
-				//FIXME 
-				xxonComplete: function(){
-							var el = this.elements[this.previous];
-							if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
+				onComplete: function(){
+					var el = $(this.elements[this.previous]);
+					if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
 				},
 				onActive: function(toggle,content){                          
-							toggle.addClass('active'); content.addClass('active'); },
+					toggle.addClass('active'); content.addClass('active'); 
+				},
 				onBackground: function(toggle,content){ 
-							toggle.removeClass('active'); content.removeClass('active');} 
+					content.setStyle('height', content['offsetHeight']);
+					toggle.removeClass('active'); content.removeClass('active');
+				} 
 			});
 		});
 	}
@@ -909,12 +911,12 @@ var SearchBox = {
 
 	onPageLoadQuickSearch : function(){
 		var q = $('query'); if( !q ) return;
-	    this.query = q; 
-	    q.observe(this.ajaxQuickSearch.bind(this) ); 
+		this.query = q; 
+		q.observe(this.ajaxQuickSearch.bind(this) ); 
 
 		this.hover = $('searchboxMenu').setProperty('visibility','visible')
 			.effect('opacity', {wait:false}).set(0);
-    
+	
 		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
 			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
@@ -945,13 +947,13 @@ var SearchBox = {
 		//q2.form.addEvent('submit',this.submit.bind(this))
 		
 		
-    	var changescope = function(){
-	    	var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
+		var changescope = function(){
+			var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
 			this.query2.value = $('scope').getValue() + qq;
 			this.runfullsearch();
 		}.bind(this);
-    	
-    	q2.observe( this.runfullsearch.bind(this) );
+		
+		q2.observe( this.runfullsearch.bind(this) );
 		
 		$('scope').addEvent('change', changescope);
 		$('details').addEvent('click', this.runfullsearch.bind(this));
@@ -977,7 +979,7 @@ var SearchBox = {
 			method: 'post',
 			onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
 		}).request();
-    },
+	},
 
 	submit: function(){ 
 		var v = this.query.value;
@@ -996,7 +998,7 @@ var SearchBox = {
 		$('recentSearches','recentClear').hide();
 	},
 
-    ajaxQuickSearch: function(){
+	ajaxQuickSearch: function(){
 		var qv = this.query.value ;
 		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) {
 			$('searchOutput').empty();
@@ -1440,6 +1442,7 @@ var Collapsible =
 	}
 }
 
+
 /** 220 RoundedCorners --experimental
  ** based on Nifty corners by Allesandro Fulciniti
  ** www.pro.html.it
@@ -1729,12 +1732,12 @@ var TableFilter =
 	onPageLoad: function(){
 		this.All = "filter.all".localize();
 		this.FilterRow = 1; //row number of filter dropdowns
-        
+		
 		$$('.table-filter table').each( function(table){
 			if( table.rows.length < 2 ) return;
 
 			/*
-	        $A(table.rows[0].cells).each(function(e,i){
+			$A(table.rows[0].cells).each(function(e,i){
 				var s = new Element('select',{ 
 					'events': { 
 						'click':function(event){ event.stop(); }.bindWithEvent(), 
@@ -1743,7 +1746,7 @@ var TableFilter =
 				});
 				s.fcol = i; //store index
 				e.adopt(s);	        
-	        },this);
+			},this);
 			*/
 			
 			var r = $(table.insertRow(TableFilter.FilterRow)).addClass('filterrow');
@@ -1764,7 +1767,7 @@ var TableFilter =
 
 	buildEmptyFilters: function(table){
 		for(var i=0; i < table.rows[0].cells.length; i++){
-	        var ff = table.filterStack.some(function(f){ return f.fcol==i });
+			var ff = table.filterStack.some(function(f){ return f.fcol==i });
 			if(!ff) TableFilter.buildFilter(table, i);
 		}
 		if(table.zebra) table.zebra();			
@@ -1778,7 +1781,7 @@ var TableFilter =
 		if(!select) return; //empty dropdown
 		select.options.length = 0;
 
-        var rows=[];
+		var rows=[];
 		$A(table.rows).each(function(r,i){
 			if((i==0) || (i==TableFilter.FilterRow)) return;
 			if(r.style.display == 'none') return;
@@ -1787,17 +1790,18 @@ var TableFilter =
 		rows.sort(Sortable.createCompare(col, Sortable.guessDataType(rows,col)));
 
 		//add only unique strings to the dropdownbox
-		select.options[0]= new Option(TableFilter.All, TableFilter.All);
+		select.options[0]= new Option(this.All, this.All);
 		var value;
-        rows.each(function(r,i){
-        	var v = $getText(r.cells[col]).clean().toLowerCase();
-        	if(v == value) return;
-        	value = v;
-        	select.options[select.options.length] = new Option(v, value);
-        });
-        (select.options.length <= 2) ? select.hide() : select.show();
-        if(selectedValue != undefined) {
-        	select.value = selectedValue;
+		rows.each(function(r,i){
+			var v = $getText(r.cells[col]).clean().toLowerCase();
+			if(v == value) return;
+			value = v;
+			if(v.length > 32) v = v.substr(0,32)+ "...";
+			select.options[select.options.length] = new Option(v, value);
+		});
+		(select.options.length <= 2) ? select.hide() : select.show();
+		if(selectedValue != undefined) {
+			select.value = selectedValue;
 		} else {
 			select.options[0].selected = true;
 		}
@@ -1817,16 +1821,16 @@ var TableFilter =
 			return false;
 		}) ) table.filterStack.push( {fValue:value, fcol:col} );
 
-        $A(table.rows).each(function(r,i){ //show all
-        	r.style.display='';
-        });
+		$A(table.rows).each(function(r,i){ //show all
+			r.style.display='';
+		});
 
-        table.filterStack.each(function(f){ //now filter the right rows
-            var v = f.fValue, c = f.fcol;
+		table.filterStack.each(function(f){ //now filter the right rows
+			var v = f.fValue, c = f.fcol;
 			TableFilter.buildFilter(table, c, v);
 
 			var j=0;
-            $A(table.rows).each(function(r,i){
+			$A(table.rows).each(function(r,i){
 				if((i==0) || (i==TableFilter.FilterRow)) return;
 				if(v != $getText(r.cells[c]).clean().toLowerCase()) r.style.display = 'none';
 			});
@@ -1937,21 +1941,21 @@ var WikiColumns =
 		var breaks = $ES('hr',el);
 		if(!breaks || breaks.length==0) return;
 
-        var colCount = breaks.length+1;
-        width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
+		var colCount = breaks.length+1;
+		width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
 
 		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
 			col = colDef.clone().injectBefore(el.getFirst()),
-        	n;
-        while(n = col.nextSibling){
-        	if(n.tagName && n.tagName.toLowerCase() == 'hr'){
+			n;
+		while(n = col.nextSibling){
+			if(n.tagName && n.tagName.toLowerCase() == 'hr'){
 				col = colDef.clone();
 				$(n).replaceWith(col);
 				continue;
 			}
 			col.appendChild(n);
-        }
-        new Element('div',{'styles':{'clear':'both'}}).inject(el);
+		}
+		new Element('div',{'styles':{'clear':'both'}}).inject(el);
 	}
 }
 

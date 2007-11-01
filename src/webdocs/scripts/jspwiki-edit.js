@@ -28,7 +28,6 @@ var EditTools =
 		/* make textarea more intelligent */
 		this.wikisnippets = this.getWikiSnippets();
 		this.wikismartpairs = this.getWikiSmartPairs();
-
 		this.onPageLoadPostEditor();
 
 		/* activate editassist toolbar */
@@ -231,6 +230,7 @@ var EditTools =
 		}
 		if(s) t = t.replace( snippy.tab[0], s)
 		TextArea.setSelection(this.textarea, t);
+		return false; /*don't propagate*/
 	} ,
 
 	/* TOOLBAR: find&replace */
@@ -352,7 +352,7 @@ var TextArea =
 		var f = $(id); 
 		if(!f) return ''; 
 		
-		if(document.selection){  //IE
+		if(window.ie){
 			f.focus();
 			return document.selection.createRange().text;
 		}
@@ -371,9 +371,11 @@ var TextArea =
 		if(!f) return ''; 
 		f.focus();
 		 
-		if(document.selection){  //IE
-			document.selection.createRange().text = aValue;
-			f.focus();
+		if(window.ie){
+			var r = document.selection.createRange();
+			r.text = aValue;
+			r.moveStart('character',-aValue.length);
+			r.select();
 		}
 		else if(f.selectionStart || f.selectionStart == '0'){ //MOZILLA/NETSCAPE
 			f.focus();   
@@ -401,10 +403,11 @@ var TextArea =
 		if(!f) return ''; 
 		f.focus();
 
-		if(document.selection){  //IE
+		if(window.ie){
 			var r1 = document.selection.createRange(),
 				r2 = document.selection.createRange();
 			r2.moveStart( "character", -1);
+			if(r2.text=="") r2.moveEnd( "character", 1);
 			if(r1.compareEndPoints("StartToStart", r2) == 0) return true;
 			if(r2.text.charAt(0).match( /[\n\r]/ )) return true;
 		}
@@ -424,7 +427,8 @@ var globalCursorPos; // global variabe to keep track of where the cursor was
 //sets the global variable to keep track of the cursor position
 function setCursorPos(id) 
 {
-	globalCursorPos = getCursorPos( document.getElementById(id) );
+	if(window.ie) return;
+	globalCursorPos = getCursorPos( $(id) );
 }
 
 function getCursorPos(textElement) 
@@ -432,8 +436,7 @@ function getCursorPos(textElement)
 	//save off the current value to restore it later,
 	var sOldText = textElement.value;
 
-	// For IE
-	if( document.selection )
+	if(window.ie)
 	{
 		var objRange = document.selection.createRange();
 		var sOldRange = objRange.text;
@@ -442,7 +445,8 @@ function getCursorPos(textElement)
 		var sWeirdString = '#%~';
 
 		//insert the weirdstring where the cursor is at
-		objRange.text = sOldRange + sWeirdString; objRange.moveStart('character', (0 - sOldRange.length - sWeirdString.length));
+		objRange.text = sOldRange + sWeirdString; 
+		objRange.moveStart('character', (0 - sOldRange.length - sWeirdString.length));
 
 		//save off the new string with the weirdstring in it
 		var sNewText = textElement.value;
