@@ -420,7 +420,7 @@ td .information, td .warning, td .error {
 } /* CHECK */
 
 /* +++ 350 Attachments +++ */
-#attachments {
+#attach {
 }
 /* upload submit button */
 #upload {
@@ -868,10 +868,10 @@ a.action.quick2bottom {
 #pagecontent {
 	padding:0.5em 0;
 }
-html>body #info, html>body #pagecontent {
+html>body #info, html>body #pagecontent, html>body #attach {
 	overflow:auto;
 }
-* html #info, * html #pagecontent {
+* html #info, * html #pagecontent, * html #attach {
 	overflow-x:auto;
 }
  
