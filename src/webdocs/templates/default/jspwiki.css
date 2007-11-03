@@ -43,7 +43,6 @@
 	float:right;
 }
 #header .pagename {
-	clear:both;
 	float:left;
 }
 #header .searchbox {
@@ -103,7 +102,7 @@
 }
 /* ie hack */
 * html #actionsTop	{ 
-	margin-top:2px;
+	margin-top:1px;
 }
 #actionsBottom {
 	text-align:right;
@@ -385,7 +384,7 @@ td .information, td .warning, td .error {
 	overflow:hidden;
 	border:1px solid #bbb;
 	background:#eee;
-	padding:0.25em;
+	padding:0.5em;
 	margin:0 0.5em;
 	font-size:90%;
 }
@@ -1148,7 +1147,6 @@ table.calendar tr.weekdays {
 
 /* IE only:add 2px to fit size of '.tabmenu a' */
 * html .tabmenu {
-	xxmargin:1px 0;
 	border:1px solid white;
 }
 .tabmenu a {
