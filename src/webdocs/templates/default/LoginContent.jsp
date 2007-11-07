@@ -19,7 +19,9 @@
     }
     else
     {
-        postURL = ctx.getURL( WikiContext.LOGIN, (String)ctx.getVariable("redirect") );
+        String redir = (String)ctx.getVariable("redirect");
+        if( redir == null ) redir = ctx.getEngine().getFrontPage();
+        postURL = ctx.getURL( WikiContext.LOGIN, redir );
     }
 
     boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication();
