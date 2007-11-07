@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
@@ -356,6 +357,8 @@ public final class MailUtil
         String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
         String account  = props.getProperty( PROP_MAIL_ACCOUNT );
         String password = props.getProperty( PROP_MAIL_PASSWORD );
+        boolean starttls = TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, true);
+        
         boolean useAuthentication = account != null && account.length() > 0;
 
         Properties mailProps = new Properties();
@@ -365,7 +368,7 @@ public final class MailUtil
         mailProps.put( PROP_MAIL_PORT, port );
         mailProps.put( PROP_MAIL_TIMEOUT, DEFAULT_MAIL_TIMEOUT );
         mailProps.put( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_TIMEOUT );
-        mailProps.put( PROP_MAIL_STARTTLS, TRUE );
+        mailProps.put( PROP_MAIL_STARTTLS, starttls ? TRUE : FALSE );
 
         // Add SMTP authentication if required
         Session session = null;
