@@ -216,23 +216,27 @@ public class SpamFilter
 
         String uid = getUniqueID();
 
-        String page = ctx.getPage().getName();
-
+        String page   = ctx.getPage().getName();
+        String reason = "UNKNOWN";
+        String addr   = ctx.getHttpRequest() != null ? ctx.getHttpRequest().getRemoteAddr() : "-";
+        
         switch( type )
         {
             case REJECT:
-                spamlog.info("REJECTED "+source+" "+uid+" "+page+" "+message);
+                reason = "REJECTED";
                 break;
             case ACCEPT:
-                spamlog.info("ACCEPTED "+source+" "+uid+" "+page+" "+message);
+                reason = "ACCEPTED";
                 break;
             case NOTE:
-                spamlog.info("NOTE "+source+" "+uid+" "+page+" "+message);
+                reason = "NOTE";
                 break;
             default:
                 throw new InternalWikiException("Illegal type "+type);
         }
 
+        spamlog.info( reason+" "+source+" "+uid+" "+addr+" \""+page+"\" "+message );
+        
         return uid;
     }
 
@@ -1046,6 +1050,19 @@ public class SpamFilter
         return true;
     }
     
+    public static final String insertInputFields( PageContext pageContext )
+    {
+        WikiContext ctx = WikiContext.findContext(pageContext);
+        WikiEngine engine = ctx.getEngine();
+        
+        StringBuffer sb = new StringBuffer();
+        if (engine.getContentEncoding().equals("UTF-8"))
+        {
+            sb.append("<input name='encodingcheck' type='hidden' value='\u3041' />\n");    
+        }
+       
+        return sb.toString();
+    }
     /**
      *  A local class for storing host information.
      *
