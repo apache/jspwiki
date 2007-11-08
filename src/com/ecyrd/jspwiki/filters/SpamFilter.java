@@ -77,6 +77,8 @@ public class SpamFilter
     private static final String REASON_TOO_MANY_URLS = "TooManyUrls";
     private static final String REASON_SIMILAR_MODIFICATIONS = "SimilarModifications";
     private static final String REASON_TOO_MANY_MODIFICATIONS = "TooManyModifications";
+    private static final String REASON_UTF8_TRAP = "UTF8Trap";
+    
     private static final String LISTVAR = "spamwords";
     public static final String  PROP_WORDLIST              = "wordlist";
     public static final String  PROP_ERRORPAGE             = "errorpage";
@@ -485,6 +487,12 @@ public class SpamFilter
             checkBotTrap( context, change );
             
             //
+            //  Check UTF-8 mangling
+            //
+            
+            checkUTF8( context, change );
+            
+            //
             //  Do Akismet check.  This is good to be the last, because this is the most
             //  expensive operation.
             //
@@ -579,7 +587,7 @@ public class SpamFilter
      */
     public static String getBotFieldName()
     {
-        return "submitauth";
+        return "submit_auth";
     }
     
     /**
@@ -605,6 +613,25 @@ public class SpamFilter
 
                 checkStrategy( context, REASON_BOT_TRAP, "Spamming attempt detected. (Incident code "+uid+")");
 
+            }
+        }
+    }
+    
+    private void checkUTF8( WikiContext context, String change ) throws RedirectException
+    {
+        HttpServletRequest request = context.getHttpRequest();
+        
+        if( request != null )
+        {
+            String utf8field = request.getParameter( "encodingcheck" );
+            
+            if( utf8field != null && !utf8field.equals("\u3041") )
+            {
+                String uid = log( context, REJECT, REASON_UTF8_TRAP, change );
+                
+                log.info("SPAM:UTF8Trap ("+uid+").  Wildly posting dumb bot detected.");
+
+                checkStrategy( context, REASON_UTF8_TRAP, "Spamming attempt detected. (Incident code "+uid+")");
             }
         }
     }
