@@ -60,9 +60,7 @@
   <p id="submitbuttons">
   <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />
   <input name="action" type="hidden" value="save" />
-  <% if (engine.getContentEncoding().equals("UTF-8")) { %>
-    <input name="encodingcheck" type="hidden" value='<% out.write("\u3041"); %>' />
-  <% } %>
+  <%=SpamFilter.insertInputFields( pageContext )%>
   <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
   <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>" 
     accesskey="s"
