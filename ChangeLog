@@ -6,6 +6,11 @@
         also from the property file.  Previously it would always default
         to true, making it fail when there was a self-signed certificate
         at the other end.
+        
+        * Added an UTF-8 check to SpamFilter to catch bots which munge
+        UTF-8 and cause major breakage...
+        
+        * Fixed some issues with the password recovery email localizations.
 
 2007-11-3  Dirk Frederickx (dirk.frederickx@gmail.com)
 
