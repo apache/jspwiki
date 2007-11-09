@@ -1,3 +1,23 @@
+2007-11-09  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.152
+
+        * [JSPWIKI-19]: Fixed localization which was encoding HTML entities
+        even though there was no need.
+        
+        * [JSPWIKI-12]: Fixed localization.
+        
+        * Added Murray's patch for WikiPageRenameEvent.
+        
+        * [JSPWIKI-28]: LinkParser was failing dismally with interwiki links.
+        Added a new unit test to catch these, and rewrote LinkParser interwiki
+        link parsing.
+        
+        * LuceneSearchProvider.getAttachmentContent() is now protected for
+        subclassers.
+        
+        * ClassUtil is now a bit more verbose.
+
 2007-11-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.151
