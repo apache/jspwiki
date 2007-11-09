@@ -199,24 +199,6 @@ public class WikiPageEvent extends WikiEvent
 
 
    /**
-     * Sets the type of this event.
-     *
-     * @param type      the type of this WikiPageEvent.
-     */
-    protected void setType( int type )
-    {
-        if ( isValidType(type) )
-        {
-            super.setType(type);
-        }
-        else
-        {
-            super.setType(ERROR);
-        }
-    }
-
-
-   /**
      * Returns the Wiki page name associated with this event.
      * This may be null if unavailable.
      *
@@ -241,7 +223,7 @@ public class WikiPageEvent extends WikiEvent
      * Returns a textual representation of the event type.
      * @return a String representation of the type
      */
-    public final String eventName()
+    public String eventName()
     {
         switch ( getType() )
         {
@@ -278,7 +260,7 @@ public class WikiPageEvent extends WikiEvent
    /** Returns a human-readable description of the event type.
      * @return a String description of the type
      */
-    public final String getTypeDescription()
+    public String getTypeDescription()
     {
         switch ( getType() )
         {
