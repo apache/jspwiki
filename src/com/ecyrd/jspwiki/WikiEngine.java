@@ -845,6 +845,7 @@ public class WikiEngine
      */
     public String getURL( String context, String pageName, String params, boolean absolute )
     {
+        if( pageName == null ) pageName = getFrontPage();
         return m_urlConstructor.makeURL( context, pageName, absolute, params );
     }
 
