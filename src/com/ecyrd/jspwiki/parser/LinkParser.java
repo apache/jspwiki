@@ -269,14 +269,10 @@ public class LinkParser
                 catch( ParseException pe )
                 {
                     log.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
-                //  throw new RuntimeException("syntax error parsing link attributes '"
-                //          +attribs+"': " + pe.getMessage()); // TEMP
                 }
                 catch( NoSuchElementException nse )
                 {
                     log.warn("expected more tokens while parsing link attributes '" + attribs + "'");
-                //  throw new RuntimeException("expected more tokens while parsing link attributes '"
-                //          + attribs + "'"); // TEMP
                 }
             }
 
@@ -284,8 +280,6 @@ public class LinkParser
         catch( Exception e )
         {
             log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
-        //  throw new RuntimeException( e.getClass().getName() + " thrown by link parser: "
-        //          + e.getMessage() );
         }
 
         return link;
@@ -416,7 +410,6 @@ public class LinkParser
                 throw new ParseException("null link reference value");
             }
             m_ref = ref;
-            m_interwikiPoint = m_ref.indexOf(':');
         }
 
         /**
@@ -448,6 +441,10 @@ public class LinkParser
          */
         public boolean isInterwikiLink()
         {
+            if( !hasReference() ) m_ref = m_text;
+
+            m_interwikiPoint = m_ref.indexOf(':');
+
             return m_interwikiPoint != -1;
         }
 
@@ -462,9 +459,12 @@ public class LinkParser
          */
         public String getExternalWiki()
         {
-            return m_interwikiPoint != -1
-                    ? m_ref.substring( 0, m_interwikiPoint )
-                    : null ;
+            if( isInterwikiLink() )
+            {
+                return m_ref.substring( 0, m_interwikiPoint );
+            }
+            
+            return null;
         }
 
         /** 
@@ -478,9 +478,12 @@ public class LinkParser
          */
         public String getExternalWikiPage()
         {
-            return m_interwikiPoint != -1
-                    ? m_ref.substring( m_interwikiPoint+1 )
-                    : null ;
+            if( isInterwikiLink() )
+            {
+                return m_ref.substring( m_interwikiPoint+1 );
+            }
+            
+            return null;
         }
 
         /**
