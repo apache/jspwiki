@@ -274,7 +274,7 @@ public class LuceneSearchProvider implements SearchProvider
      *  Fetches the attachment content from the repository.
      *  Content is flat text that can be used for indexing/searching or display
      */
-    private String getAttachmentContent( String attachmentName, int version )
+    protected String getAttachmentContent( String attachmentName, int version )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
 
@@ -301,7 +301,7 @@ public class LuceneSearchProvider implements SearchProvider
      * FIXME This is a very simple implementation of some text-based attachment, mainly used for testing.
      * This should be replaced /moved to Attachment search providers or some other 'plugable' wat to search attachments
      */
-    private String getAttachmentContent( Attachment att )
+    protected String getAttachmentContent( Attachment att )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
         //FIXME: Add attachment plugin structure
