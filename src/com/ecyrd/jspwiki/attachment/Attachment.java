@@ -82,17 +82,7 @@ public class Attachment
     {
         m_fileName = name;
     }
-/*
-    public int getStatus()
-    {
-        return m_status;
-    }
 
-    public void setStatus( int status )
-    {
-        m_status = status;
-    }
-*/
     /**
      *  Returns the name of the parent of this Attachment, i.e. the page
      *  which contains this attachment.
