@@ -5,13 +5,14 @@
         * Form element focus was failing on preferences pages in IE [JSPWiki-24]
         
         * Added TitleBox to the template. When creating a page 'TitleBox', it's contents
-        will be included in the header of the wiki site. This allows you to put a title message
-        or specific announcements or newsflashes on your site. [Suggested by M.Murray]
+        will be included at the top of the header of the wiki site. 
+        This allows you to put a title message or specific announcements or newsflashes 
+        on your site. [Suggested by M.Murray & Janne]
         
         * Added a new skin PlainVanilla 1024x768, which has a fixed width layout iso
-        the fluid layouts used in the default PlainVanilla skin which fits to the screen width.
-        This new skin allows to better support IE browsers, when showing wide images.
-        (IE has bad terrible suport)
+        the fluid layouts used in the default PlainVanilla skin.
+        This new skin allows to better support IE browsers when showing wide images.
+        (IE has terrible float support)
         
         
 2007-11-09  Janne Jalkanen <jalkanen@ecyrd.com>
