@@ -51,8 +51,8 @@ Element.extend({
 	},
 	/* check if this element is visible - if needed check visibility of parent */
 	visible: function() {
-		if(this.style.visibility == 'hidden') return false;
-		if(this.style.display == 'none' ) return false;
+		if(this.getStyle('visibility') == 'hidden') return false;
+		if(this.getStyle('display') == 'none' ) return false;
 		if ([window, document].contains(this.parentNode)) return true;
 		return $(this.parentNode).visible();
 	},

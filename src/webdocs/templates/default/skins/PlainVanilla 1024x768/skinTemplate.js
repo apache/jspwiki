@@ -1,0 +1,6 @@
+/**
+ ** Skin javascript extensions
+ **
+ **/
+
+ 

@@ -66,8 +66,6 @@
 #favorites .login, #favorites .logoff {
 	clear:left;
 }
-#footer {
-}
 #footer .copyright { 
 }
 #content { 
@@ -159,6 +157,10 @@ th, td {
 }
 
 /* +++ 210 Page titles, headings, and paragraphs +++ */
+.titlebox {
+	color:#555;
+	padding:0.25em 1em;
+}
 .pagename {
 	font-size:175%;
 	line-height:1.4;
@@ -713,6 +715,7 @@ a.tool:hover, .btn:hover {
 	padding:0.25em;
 	font-size:90%;
 	text-align:center;
+	color:#555;
 }
 
 /* +++ 460 Header +++ */
