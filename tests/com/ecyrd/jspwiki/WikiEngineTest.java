@@ -902,4 +902,30 @@ public class WikiEngineTest extends TestCase
         
         assertEquals( "has wrong referrer", "NewNameTestPage", pages.iterator().next() );        
     }
+    
+    public void testChangeNoteOldVersion2() throws Exception
+    {
+        WikiPage p = new WikiPage( m_engine, NAME1 );
+    
+        WikiContext context = new WikiContext(m_engine,p);
+
+        context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
+        
+        m_engine.saveText( context, "test" );
+
+        for( int i = 0; i < 5; i++ )
+        {
+            WikiPage p2 = (WikiPage)m_engine.getPage( NAME1 ).clone();
+            p2.removeAttribute(WikiPage.CHANGENOTE);
+
+            context.setPage( p2 );
+
+            m_engine.saveText( context, "test"+i );
+        }
+
+        WikiPage p3 = m_engine.getPage( NAME1, -1 );
+    
+        assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+    }
+
 }

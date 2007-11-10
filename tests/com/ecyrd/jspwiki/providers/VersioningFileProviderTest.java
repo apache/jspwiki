@@ -303,6 +303,32 @@ public class VersioningFileProviderTest extends TestCase
         
         assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
     }
+
+    public void testChangeNoteOldVersion2() throws Exception
+    {
+        WikiPage p = new WikiPage( engine, NAME1 );
+    
+        WikiContext context = new WikiContext(engine,p);
+
+        context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
+        
+        engine.saveText( context, "test" );
+
+        for( int i = 0; i < 5; i++ )
+        {
+            WikiPage p2 = (WikiPage)engine.getPage( NAME1 ).clone();
+            p2.removeAttribute(WikiPage.CHANGENOTE);
+
+            context.setPage( p2 );
+
+            engine.saveText( context, "test"+i );
+        }
+
+        WikiPage p3 = engine.getPage( NAME1, -1 );
+    
+        assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( VersioningFileProviderTest.class );
