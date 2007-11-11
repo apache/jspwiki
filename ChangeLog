@@ -1,4 +1,4 @@
-2007-11-3  Dirk Frederickx (dirk.frederickx@gmail.com)
+2007-11-10  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.153
         
@@ -7,7 +7,7 @@
         * Added TitleBox to the template. When creating a page 'TitleBox', it's contents
         will be included at the top of the header of the wiki site. 
         This allows you to put a title message or specific announcements or newsflashes 
-        on your site. [Suggested by M.Murray & Janne]
+        on your site. [Suggested by Murray & Janne]
         
         * Added a new skin PlainVanilla 1024x768, which has a fixed width layout iso
         the fluid layouts used in the default PlainVanilla skin.
