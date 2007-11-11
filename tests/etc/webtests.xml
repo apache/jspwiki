@@ -3,8 +3,8 @@
   <!-- This Ant build file is designed to be called by the
        "webtest-setup" macro in the top-level build.xml file.
        If executed by itself, it will fail horribly and make
-       many unpleasant noises. It runs tests against a local
-       Tomcat web application server running on port 8080.
+       many unpleasant noises. It runs tests against a Tomcat 
+       web application server running on port ${tomcat.port}.
        
        The tests require a few properties to be defined 
        by the calling Ant script:
@@ -18,7 +18,7 @@
                            the app server, and does not undeploy
                            them. This property is optional.
                        
-       The test scripts are written using JWebUnit, and reside
+       The test scripts are written using JMeter, and reside
        in tests/com/ecyrd/jspwiki/web.
        
        For those of you following along at home, there are
@@ -28,7 +28,7 @@
   <!-- Checks to see if the context is already deployed -->
   <target name="webtest-setup-init">
     <condition property="context.installed">
-      <http url="http://${tomcat.host}:${tomcat.port}/${webtest.context}/Wiki.jsp" />
+      <http url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/${webtest.context}/Wiki.jsp" />
     </condition>
   </target>
   
@@ -46,6 +46,10 @@
     <tomcat-undeploy context="${webtest.context}" />
   </target>
   
+  <target name="webtest-jmeter-exec">
+  	<jmeter-test context="${webtest.context}" />
+  </target>
+  
 	<!-- ============================================================== -->
   
   <!-- Tomcat deployment tasks -->
@@ -54,8 +58,8 @@
        server, assumed to be already running on ${tomcat.host} port 
        ${tomcat.port}. The manager app MUST be installed and running in 
        order for this to work properly. Also, the 'tomcat.admin',
-       'tomcat.password', 'tomcat.host' and 'tomcat.port' properties 
-       must be set in build.properties.
+       'tomcat.password', 'tomcat.host', 'tomcat.protocol' and 
+       'tomcat.port' properties must be set in build.properties.
        To run these macros, calling tasks must have already
        run the task 'tomcat-init'.
   -->
@@ -69,6 +73,7 @@
       <check-property prop="tomcat.password" />
       <check-property prop="tomcat.host" />
       <check-property prop="tomcat.port" />
+      <check-property prop="tomcat.protocol" />
     
       <!-- Declare the Tomcat deploy task -->
       <taskdef classname="org.apache.catalina.ant.DeployTask" name="deploy">
@@ -122,7 +127,7 @@
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
          <lib dir="lib" includes="*.jar"
-           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,httpunit*.jar,jwebunit*.jar"/>
+           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,httpunit*.jar,jwebunit*.jar,ant-jmeter*.jar"/>
          <lib file="${jarfile}" />
          <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
@@ -136,7 +141,7 @@
       </war>
       
       <!-- Deploy the webapp -->
-      <deploy url="http://${tomcat.host}:${tomcat.port}/manager/" 
+      <deploy url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager/" 
         username="${tomcat.admin}" password="${tomcat.password}"
         path="/@{context}"
         war="file:///${basedir}/${tests.build}/@{context}/@{context}.war" />
@@ -151,6 +156,7 @@
       <check-property prop="tomcat.password" />
       <check-property prop="tomcat.host" />
       <check-property prop="tomcat.port" />
+      <check-property prop="tomcat.protocol" />
     	
       <!-- Declare the Tomcat deploy task -->
       <taskdef classname="org.apache.catalina.ant.UndeployTask" name="undeploy">
@@ -160,10 +166,70 @@
       </taskdef>
       
       <!-- Undeploy the webapp -->
-      <undeploy url="http://${tomcat.host}:${tomcat.port}/manager/" 
+      <undeploy url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager/" 
         username="${tomcat.admin}" password="${tomcat.password}"
         path="/@{context}" />
     </sequential>
+  </macrodef>
+	
+	<!-- ============================================================== -->
+  
+  <!-- JMeter execution test task -->
+	
+  <!-- This macro executes the JMeter test plan located on 
+  	   com/ecyrd/jspwiki/web/jmeter-tests.jmx. It expects your favourite
+  	   server up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
+  	   For this reason, these properties must be set up in your 
+  	   build.properties file. Also, it is needed to set up in 
+  	   this file the 'jmeter.home' property.
+  -->
+	
+  <macrodef name="jmeter-test">
+  	<attribute name="context"/>
+  	<sequential>
+  		<!-- We need the tomcat.host, tomcat.port, tomcat.protocol and 
+  			 jmeter.home properties -->
+  		<check-property prop="tomcat.host" />
+  		<check-property prop="tomcat.port" />
+  		<check-property prop="tomcat.protocol" />
+  		<check-property prop="@jmeter.home@" />
+  		
+  		<!-- Declare the JMeter execution test Task -->
+  		<taskdef classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask" name="jmeter">
+  			<classpath>
+  		  		<path>
+  		  			<pathelement location="lib/ant-jmeter_2.3.jar"/>
+  		  		</path>
+  		  	</classpath>
+  		</taskdef>
+  		  	
+  		<!-- Delete previous results file -->
+  		<delete file="${tests.reports}/JMeterResults_@{context}.jtl"/>
+  		
+  		<!-- Execute JMeter Test Plan -->
+  		<jmeter jmeterhome="${@jmeter.home@}" resultlog="${tests.reports}/JMeterResults_@{context}.jtl">
+  		  	<testplans dir="${tests.src}" includes="com/ecyrd/jspwiki/web/jmeter-tests.jmx" />
+  		  	<property name="jmeter.save.saveservice.output_format" value="xml"/> <!-- Allow pretty printing -->
+  		  	<property name="jmeter.save.saveservice.assertion_results" value="all"/>
+  		  	<property name="test.host" value="${tomcat.host}"/>
+  		  	<property name="test.port" value="${tomcat.port}"/>
+  			<property name="test.protocol" value="${tomcat.protocol}"/>
+  		  	<property name="test.context.path" value="@{context}"/>
+  		</jmeter>
+  		
+  		<!-- Convert the results file to a nice reading HTML document -->
+  		<xslt style="${tests.src}/etc/jmeter/jmeter-results-report_21.xsl"
+  		  	in="${tests.reports}/JMeterResults_@{context}.jtl"
+  		  	out="${tests.reports}/JMeterResultsReport_@{context}.html" />
+  		  	
+  		<xslt style="${tests.src}/etc/jmeter/jmeter-results-detail-report_21.xsl"
+  		  	in="${tests.reports}/JMeterResults_@{context}.jtl" 
+  		  	out="${tests.reports}/JMeterResultsDetailReport_@{context}.html" />
+  		
+  		<echo message="Tests results for @{context} are available at: "/>
+  		<echo message="--> ${tests.reports}/JMeterResultsReport_@{context}.html" />
+  		<echo message="--> ${tests.reports}/JMeterResultsDetailReport_@{context}.html" />
+  	</sequential>
   </macrodef>
   
 </project>

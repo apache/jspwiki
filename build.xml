@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.91 2007-09-18 21:59:47 jp Exp $
+    $Id: build.xml,v 1.92 2007-11-11 23:53:48 jp Exp $
 -->
 
 <!--
@@ -374,7 +374,7 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="*rhino.jar,servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar"/>
+       <lib dir="lib" includes="*.jar" excludes="*rhino.jar,servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar,ant-jmeter*.jar" />
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
@@ -631,9 +631,8 @@
 
   </target>
 
-  <!-- This target runs web unit tests using JWebUnit, which
-       extends JUnit. These tests assumes you have Tomcat
-       or higher installed **and** that it is running on
+  <!-- This target runs web unit tests using JMeter. These tests assumes you 
+       have Tomcat or higher installed **and** that it is running on
        ${tomcat.host}:${tomcat.port} when you execute this target. The Manager
        app must be configured. Also, the Tomcat server's toncat-users.xml
        file must contain a user named 'janne' with a password 'myP@5sw0rd'
@@ -671,7 +670,7 @@
         toFile="${tests.build}/jspwiki.properties.custom-absolute" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom-absolute">
       <entry key="jspwiki.referenceStyle" value="absolute" />
-      <entry key="jspwiki.baseURL" value="http://${tomcat.host}:${tomcat.port}/test-custom-absolute/" />
+      <entry key="jspwiki.baseURL" value="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/test-custom-absolute/" />
     </propertyfile>
     <webtest-setup context="test-custom-absolute"
       webxml="${tests.build}/web.xml.custom"
@@ -708,7 +707,7 @@
       props="${tests.build}/jspwiki.properties.container-jdbc" />
 
     <!-- Run the tests -->
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <!-- <junit printsummary="yes" haltonfailure="no" fork="yes">
       <classpath>
         <path refid="path.tests" />
       </classpath>
@@ -718,14 +717,21 @@
           <include name="com/ecyrd/jspwiki/web/*Test.java" />
         </fileset>
       </batchtest>
-    </junit>
-
+    </junit> -->
+  	
+  	<!-- Run the tests -->
+  	<webtest-jmeter context="test-custom" />
+  	<webtest-jmeter context="test-custom-absolute" />
+  	<webtest-jmeter context="test-custom-jdbc" />
+  	<webtest-jmeter context="test-container" />
+  	<webtest-jmeter context="test-container-jdbc" />
+  	
     <!-- Tear down the test contexts -->
     <webtest-teardown context="test-custom" />
     <webtest-teardown context="test-custom-absolute" />
     <webtest-teardown context="test-custom-jdbc" />
     <webtest-teardown context="test-container" />
-    <webtest-teardown context="test-custom-jdbc" />
+    <webtest-teardown context="test-container-jdbc" />
   </target>
 
   <macrodef name="webtest-setup">
@@ -750,6 +756,16 @@
         <property name="webtest.context" value="@{context}" />
       </ant>
     </sequential>
+  </macrodef>
+  
+  <macrodef name="webtest-jmeter">
+	<attribute name="context" />
+	<sequential>
+	  <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
+	    target="webtest-jmeter-exec" inheritRefs="true">
+	    <property name="webtest.context" value="@{context}" />
+	  </ant>
+	</sequential>
   </macrodef>
 
 

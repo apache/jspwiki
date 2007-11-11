@@ -1,3 +1,19 @@
+2007-11-12  Juan Pablo Santos (juanpablo.santos@gmail.com)
+
+        * 2.5.154
+        
+        * Added support for JMeter (v. 2.3) tests in build.xml & webtests.xml,
+        two new properties must be set up at your build.properties: tomcat.protocol
+        and @jmeter.home@.
+        
+        * Added jmeter-tests.jmx with simple login and logout web tests and
+        jmeter-init-workbench.jmx, which contains initial nodes to start recording
+        new tests.
+        
+        * JWebUnit tests are no longer running when executing the <webtests> target.
+        You can keep running them inside your IDE as normal JUnit test or uncomment
+        the appropiate section in the <webtests> target.
+
 2007-11-10  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.153
