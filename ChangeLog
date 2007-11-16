@@ -1,3 +1,18 @@
+
+2007-11-16  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.155 - IE6 wide images
+        
+        * Fix funny indenting of collapsable list when %%collapse are nested [JSPWiki-34]
+        
+        * (finally) Fixing wide image support for ie6 in fluid templates. [JSPWiki-15]
+        For IE6 browsers, a <div class="ieimage"> will be inserted around each image. This <div>
+        gets a specific overflow-x:auto style, activating proper scrolling for this famous browser.
+
+        * Added a correction to the fixed width template Vanilla-1024x768, to support wide images 
+        on ie6 here as well. [reported by Harry Metske]
+        
+        
 2007-11-12  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
         * 2.5.154

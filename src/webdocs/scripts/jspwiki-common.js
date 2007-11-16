@@ -248,6 +248,12 @@ var Wiki = {
 		});
 
 		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
+		
+		if(window.ie){
+		 	$$('#pagecontent img').each(function(el){
+				new Element('div',{'class':'ieimage'}).injectAfter(el).adopt(el);
+		 	});
+		}
 	},
 	savePrefs: function(){
 		/* why not move this serverside ?? */
@@ -1338,6 +1344,7 @@ var Collapsible =
 			'initial': (cookie ? Cookie.get(cookie) : "") 
 		});
 		$ES('.collapse', page).each(function(el){ 
+			if( $E('.collapseBullet',el) ) return; /* no nesting */
 			this.collapseNode(el); 
 		}, this);
 		$ES('.collapsebox,.collapsebox-closed', page).each(function(el){ 

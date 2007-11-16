@@ -282,6 +282,9 @@ img {
 	border:none;
 	/* max-width:99%; FIXME ff ok to fit in parent */
 }
+.ieimage {
+	overflow-x:auto;
+}
 img.inline {
 }
 img.outlink {
@@ -1282,7 +1285,7 @@ div.collapse ul, div.collapse ol {
 div.collapse li {
 	list-style-type:none;
 }
-.collapse .collapsebody {
+.collapsebody {
 	padding-left:1.5em;
 }
 /* ie6 hack */
