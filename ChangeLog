@@ -5,7 +5,7 @@
         * Removed the error prefix from the successfull LossPassword information message.  [JSPWIKI-26]
 
         * Small searchbox improvements: search icon now appears inside the search box; 
-        an empty search is really empty and does not searching for the string 'Quick Navigation' anymore.
+        an empty search is really empty and does not search for the string 'Quick Navigation' anymore.
 
         * Fixed the search Highlight to cooperate well with AJAX based searches. 
 
