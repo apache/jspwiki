@@ -22,7 +22,7 @@
     <input type="text"
            name="query" id="query2" 
           value="<c:out value='${query}'/>" 
-           size="40" />
+           size="32" />
 
     <input type="checkbox" name="details" id="details" <c:if test='${param.details == "on"}'>checked='checked'</c:if> />
     <fmt:message key="find.details" />

@@ -114,8 +114,7 @@
 
   <c:choose>
   <c:when test="${passwordreset == 'done' }">
-      <wiki:Messages div="information" topic="resetpw"
-                  prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+      <wiki:Messages div="information" topic="resetpw" prefix="" />
       <p>
         <fmt:message key="login.lostpw.reset.login">
           <fmt:param><a href="<wiki:Link jsp='Login.jsp' />"><fmt:message key="login.lostpw.reset.clickhere"/></a></fmt:param>

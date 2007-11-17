@@ -6,10 +6,9 @@
 
 <form action="<wiki:Link jsp='Search.jsp' format='url'/>"
         class="wikiform"
-           id="searchForm" 
-       method="post" accept-charset="<wiki:ContentEncoding />">
+           id="searchForm" accept-charset="<wiki:ContentEncoding />">
 
-  <div>
+  <div style="position:relative">
   <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
         onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
            type="text" value="<fmt:message key='sbox.search.submit'/>"

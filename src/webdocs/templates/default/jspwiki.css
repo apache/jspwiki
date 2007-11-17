@@ -874,10 +874,10 @@ a.action.quick2bottom {
 #pagecontent {
 	padding:0.5em 0;
 }
-html>body #info, html>body #pagecontent, html>body #attach {
+html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
 	overflow:auto;
 }
-* html #info, * html #pagecontent, * html #attach {
+* html #info, * html #pagecontent, * html #attach, * html #findcontent {
 	overflow-x:auto;
 }
  
@@ -899,9 +899,18 @@ html>body #info, html>body #pagecontent, html>body #attach {
 	margin:0 0.5em;
 }
 .searchbox {
-	margin:0.5em 0 0 0.5em;
+}
+#searchForm #query {
+	width:164px;
+	padding:2px 22px 2px 2px;	
+	vertical-align: middle;
+	color:#555;
 }
 #searchSubmit {
+	position:absolute;
+    top: 5px;
+	right: 3px;
+
 	margin:0; 
 	padding:0;
 	width:16px; 

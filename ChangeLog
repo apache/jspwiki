@@ -1,3 +1,13 @@
+2007-11-17  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.156 
+
+        * Removed the error prefix from the successfull LossPassword information message.  [JSPWIKI-26]
+
+        * Small searchbox improvements: search icon now appears inside the search box; 
+        an empty search is really empty and does not searching for the string 'Quick Navigation' anymore.
+
+        * Fixed the search Highlight to cooperate well with AJAX based searches. 
 
 2007-11-16  Dirk Frederickx (dirk.frederickx@gmail.com)
 

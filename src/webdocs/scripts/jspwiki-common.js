@@ -811,7 +811,6 @@ var TabbedSection = {
 				if( !tab.id || (tab.id=="") ) tab.id = tab.className;
 				var title = tab.className.substr(4).deCamelize(); //drop 'tab-' prefix
 
-				//use class to make tabs visible during printing !
 				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
 				new Element('div',{'styles':{'clear':'both'}}).inject(tab);
@@ -950,8 +949,6 @@ var SearchBox = {
 	onPageLoadFullSearch : function(){
 		var q2 = $("query2"); if( !q2 ) return;
 		this.query2 = q2;
-		//q2.form.addEvent('submit',this.submit.bind(this))
-		
 		
 		var changescope = function(){
 			var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
@@ -983,19 +980,19 @@ var SearchBox = {
 			postBody: $('searchform2').toQueryString(),
 			update: 'searchResult2', 
 			method: 'post',
-			onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); } 
+			onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); Wiki.prefs.set('PrevQuery', q2); } 
 		}).request();
 	},
 
 	submit: function(){ 
 		var v = this.query.value;
+		if( v == this.query.defaultValue) this.query.value = '';
 		if( !this.recent ) this.recent=[];
 		if( !this.recent.test(v) ){
 			if(this.recent.length > 9) this.recent.pop();
 			this.recent.unshift(v);
 			Wiki.prefs.set('RecentSearch', this.recent);
 		}
-		if(v.trim() != '') location.href = this.query.form.action + '?query=' + v;
 	},
 
 	clear: function(){		
@@ -2013,16 +2010,14 @@ var ZebraTable = {
  **/
 var HighlightWord =
 {
-	ClassName     : "searchword" ,
-	ClassNameMatch: "<span class='searchword' >$1</span>" ,
-	ReQuery: new RegExp( "(?:\\?|&)(?:q|query)=([^&]*)", "g" ) ,
+	ReQuery: new RegExp( "(?:\\?|&)(?:q|query)=([^&]*)", "g" ),
 
-	onPageLoad: function ()
-	{
-		//FIXME: AJAX find doesnt use the &query= parm - so need another way to check the referrer
-		if( !this.ReQuery.test( document.referrer ) ) return;
+	onPageLoad: function (){
+		var q = Wiki.prefs.get('PrevQuery'); Wiki.prefs.set('PrevQuery', '');
+		if( !q && this.ReQuery.test(document.referrer)) q = RegExp.$1; 
+		if( !q ) return;
 
-		var words = decodeURIComponent(RegExp.$1);
+		var words = decodeURIComponent(q);
 		words = words.replace( /\+/g, " " );
 		words = words.replace( /\s+-\S+/g, "" );
 		words = words.replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ); //escape metachars
@@ -2037,18 +2032,16 @@ var HighlightWord =
 	{
 		if( !node ) return; /* bugfix */
 		var nn = null;
-		for( var n = node.firstChild; n ; n = nn )
-		{
+		for( var n = node.firstChild; n ; n = nn ) {
 			nn = n. nextSibling; /* prefetch nextSibling cause the tree will be modified */
 			this.walkDomTree( n );
 		}
-
 		// continue on text-nodes, not yet highlighted, with a word match
 		if( node.nodeType != 3 ) return;
-		if( node.parentNode.className == this.ClassName ) return;
+		if( node.parentNode.className == "searchword" ) return;
 		var s = node.innerText || node.textContent || '';
 		if( !this.reMatch.test( s ) ) return;
-		var tmp = new Element('span').setHTML(s.replace(this.reMatch,this.ClassNameMatch));
+		var tmp = new Element('span').setHTML(s.replace(this.reMatch,"<span class='searchword'>$1</span>"));
 
 		var f = document.createDocumentFragment();
 		while( tmp.firstChild ) f.appendChild( tmp.firstChild );
