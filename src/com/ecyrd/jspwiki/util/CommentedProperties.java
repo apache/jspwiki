@@ -52,7 +52,7 @@ public class CommentedProperties extends Properties
 
     /**
      *  Creates new properties.
-     *  
+     *
      *  @param defaultValues A list of default values, which are used if in subsequent gets
      *                       a key is not found.
      */
@@ -97,7 +97,7 @@ public class CommentedProperties extends Properties
      */
     public synchronized void store( OutputStream out, String comments ) throws IOException
     {
-        byte[] bytes = m_propertyString.getBytes();
+        byte[] bytes = m_propertyString.getBytes("ISO-8859-1");
         FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
         out.flush();
     }
