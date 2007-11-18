@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -51,13 +51,13 @@ public class RSSGenerator
     public static final String RSS10 = "rss10";
     public static final String RSS20 = "rss20";
     public static final String ATOM  = "atom";
-    
+
     public static final String MODE_BLOG = "blog";
     public static final String MODE_WIKI = "wiki";
     public static final String MODE_FULL = "full";
-    
+
     /**
-     *  Defines the property name for the RSS channel description.  Default value for the 
+     *  Defines the property name for the RSS channel description.  Default value for the
      *  channel description is an empty string.
      *  @since 1.7.6.
      */
@@ -71,7 +71,7 @@ public class RSSGenerator
     public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
 
     public static final String PROP_CHANNEL_TITLE       = "jspwiki.rss.channelTitle";
-    
+
     /**
      *  Defines the property name for the RSS generator main switch.
      *  @since 1.7.6.
@@ -86,7 +86,7 @@ public class RSSGenerator
 
     public static final String PROP_RSSAUTHOR           = "jspwiki.rss.author";
     public static final String PROP_RSSAUTHOREMAIL      = "jspwiki.rss.author.email";
-    
+
     /**
      *  Defines the property name for the RSS generation interval in seconds.
      *  @since 1.7.6.
@@ -96,16 +96,16 @@ public class RSSGenerator
     public static final String PROP_RSS_AUTHOR          = "jspwiki.rss.author";
     public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
     public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
-    
+
     private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
-    
+
     /**
      *  Initialize the RSS generator.
      */
     public RSSGenerator( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException
     {
-        m_engine = engine;        
+        m_engine = engine;
 
         // FIXME: This assumes a bit too much.
         if( engine.getBaseURL() == null || engine.getBaseURL().length() == 0 )
@@ -114,7 +114,7 @@ public class RSSGenerator
                                                    WikiEngine.PROP_BASEURL );
         }
 
-        m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, 
+        m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION,
                                                        m_channelDescription );
         m_channelLanguage    = properties.getProperty( PROP_CHANNEL_LANGUAGE,
                                                        m_channelLanguage );
@@ -145,7 +145,7 @@ public class RSSGenerator
     {
         String author = getAuthor(att);
         StringBuffer sb = new StringBuffer();
-        
+
         if( att.getVersion() != 1 )
         {
             sb.append(author+" uploaded a new version of this attachment on "+att.getLastModified() );
@@ -154,7 +154,7 @@ public class RSSGenerator
         {
             sb.append(author+" created this attachment on "+att.getLastModified() );
         }
-        
+
         sb.append("<br /><hr /><br />");
         sb.append( "Parent page: <a href=\""+
                    m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) +
@@ -162,7 +162,7 @@ public class RSSGenerator
         sb.append( "Info page: <a href=\""+
                    m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) +
                    "\">"+att.getName()+"</a>" );
-        
+
         return sb.toString();
     }
 
@@ -194,7 +194,7 @@ public class RSSGenerator
     {
         String res;
 
-        if( page instanceof Attachment ) 
+        if( page instanceof Attachment )
         {
             res = getAttachmentDescription( (Attachment)page );
         }
@@ -221,11 +221,11 @@ public class RSSGenerator
         WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
         context.setRequestContext( WikiContext.RSS );
         Feed feed = new RSS10Feed( context );
-        
+
         String result = generateFullWikiRSS( context, feed );
-        
+
         result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + result;
-        
+
         return result;
     }
 
@@ -245,10 +245,10 @@ public class RSSGenerator
         {
             return "application/atom+xml";
         }
-       
+
         return "application/octet-stream"; // Unknown type
     }
-    
+
     /**
      *  Generates a feed based on a context and list of changes.
      * @param wikiContext The WikiContext
@@ -256,7 +256,7 @@ public class RSSGenerator
      * @param mode The mode (wiki/blog)
      * @param type The type (RSS10, RSS20, ATOM).  Default is RSS 1.0
      * @return Fully formed XML.
-     * 
+     *
      * @throws ProviderException If the underlying provider failed.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
@@ -265,7 +265,7 @@ public class RSSGenerator
     {
         Feed feed = null;
         String res = null;
-        
+
         if( ATOM.equals(type) )
         {
             feed = new AtomFeed( wikiContext );
@@ -278,9 +278,9 @@ public class RSSGenerator
         {
             feed = new RSS10Feed( wikiContext );
         }
-        
+
         feed.setMode( mode );
-        
+
         if( MODE_BLOG.equals( mode ) )
         {
             res = generateBlogRSS( wikiContext, changed, feed );
@@ -297,10 +297,10 @@ public class RSSGenerator
         {
             throw new IllegalArgumentException( "Invalid value for feed mode: "+mode );
         }
-        
+
         return res;
     }
-    
+
     /**
      * Returns <code>true</code> if RSS generation is enabled.
      * @return whether RSS generation is currently enabled
@@ -309,11 +309,11 @@ public class RSSGenerator
     {
         return m_enabled;
     }
-    
+
     /**
      * Turns RSS generation on or off. This setting is used to set
      * the "enabled" flag only for use by callers, and does not
-     * actually affect whether the {@link #generate()} or 
+     * actually affect whether the {@link #generate()} or
      * {@link #generateFeed(WikiContext, List, String, String)}
      * methods output anything.
      * @param enabled whether RSS generation is considered enabled.
@@ -322,7 +322,7 @@ public class RSSGenerator
     {
         m_enabled = enabled;
     }
-    
+
     /**
      *  Generates an RSS feed for the entire wiki.  Each item should be an instance of the RSSItem class.
      */
@@ -340,131 +340,154 @@ public class RSSGenerator
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
             WikiPage page = (WikiPage) i.next();
-            
+
             //
             //  Check if the anonymous user has view access to this page.
             //
-            
+
             if( !m_engine.getAuthorizationManager().checkPermission(session,
                                                                     new PagePermission(page,PagePermission.VIEW_ACTION) ) )
             {
                 // No permission, skip to the next one.
                 continue;
             }
-            
+
             Entry e = new Entry();
-            
+
             e.setPage( page );
 
             String url;
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH, 
+                url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),
                                        null,
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW, 
+                url = m_engine.getURL( WikiContext.VIEW,
                                        page.getName(),
                                        null,
                                        true );
             }
-            
+
             e.setURL( url );
             e.setTitle( page.getName() );
             e.setContent( getEntryDescription(page) );
             e.setAuthor( getAuthor(page) );
-            
+
             feed.addEntry( e );
         }
-        
+
         return feed.getString();
     }
 
+    /**
+     *  Create RSS/Atom as if this page was a wikipage (in contrast to Blog mode).
+     *
+     * @param wikiContext
+     * @param changed
+     * @param feed
+     * @return
+     */
     protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
-    {        
+    {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
         String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
-        
+
         if( language != null )
             feed.setChannelLanguage( language );
         else
             feed.setChannelLanguage( m_channelLanguage );
-        
+
         String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
-        
+
         if( channelDescription != null )
         {
             feed.setChannelDescription( channelDescription );
         }
 
         Collections.sort( changed, new PageTimeComparator() );
-                
+
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
             WikiPage page = (WikiPage) i.next();
-            
+
             Entry e = new Entry();
-            
+
             e.setPage( page );
 
             String url;
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH, 
+                url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),
                                        "version="+page.getVersion(),
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW, 
+                url = m_engine.getURL( WikiContext.VIEW,
                                        page.getName(),
                                        "version="+page.getVersion(),
                                        true );
             }
-            
+
+            // Unfortunately, this is needed because the code will again go through
+            // replacement conversion
+
+            url = TextUtil.replaceString( url, "&amp;", "&" );
+
             e.setURL( url );
             e.setTitle( getEntryTitle(page) );
             e.setContent( getEntryDescription(page) );
             e.setAuthor( getAuthor(page) );
-            
+
             feed.addEntry( e );
         }
-        
+
         return feed.getString();
     }
 
-    
+
+    /**
+     *  Creates RSS from modifications as if this page was a blog (using the WeblogPlugin).
+     *
+     *  @param wikiContext The WikiContext, as usual.
+     *  @param changed A list of the changed pages.
+     *  @param feed A valid Feed object.  The feed will be used to create the RSS/Atom, depending
+     *              on which kind of an object you want to put in it.
+     *  @return A String of valid RSS or Atom.
+     *  @throws ProviderException If reading of pages was not possible.
+     */
     protected String generateBlogRSS( WikiContext wikiContext, List changed, Feed feed )
         throws ProviderException
     {
         if( log.isDebugEnabled() ) log.debug("Generating RSS for blog, size="+changed.size());
-        
+
         String ctitle = m_engine.getVariable( wikiContext, PROP_CHANNEL_TITLE );
-        
+
         if( ctitle != null )
             feed.setChannelTitle( ctitle );
         else
             feed.setChannelTitle( m_engine.getApplicationName()+":"+wikiContext.getPage().getName() );
-        
+
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
-        
+
         String language = m_engine.getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
-        
+
         if( language != null )
             feed.setChannelLanguage( language );
         else
             feed.setChannelLanguage( m_channelLanguage );
-        
+
         String channelDescription = m_engine.getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
-        
+
         if( channelDescription != null )
         {
             feed.setChannelDescription( channelDescription );
@@ -476,34 +499,34 @@ public class RSSGenerator
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
             WikiPage page = (WikiPage) i.next();
-            
+
             Entry e = new Entry();
-            
+
             e.setPage( page );
 
             String url;
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH, 
+                url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),
                                        null,
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW, 
+                url = m_engine.getURL( WikiContext.VIEW,
                                        page.getName(),
                                        null,
                                        true );
             }
-            
+
             e.setURL( url );
-            
+
             //
             //  Title
             //
-            
+
             String pageText = m_engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION );
 
             String title = "";
@@ -513,18 +536,18 @@ public class RSSGenerator
             {
                 title = pageText.substring( 0, firstLine ).trim();
             }
-            
+
             if( title.length() == 0 ) title = page.getName();
 
             // Remove wiki formatting
             while( title.startsWith("!") ) title = title.substring(1);
-            
+
             e.setTitle( title );
-            
+
             //
             //  Description
             //
-            
+
             if( firstLine > 0 )
             {
                 int maxlen = pageText.length();
@@ -532,12 +555,12 @@ public class RSSGenerator
 
                 if( maxlen > 0 )
                 {
-                    pageText = m_engine.textToHTML( wikiContext, 
+                    pageText = m_engine.textToHTML( wikiContext,
                                                     pageText.substring( firstLine+1,
                                                                         maxlen ).trim() );
-                    
+
                     if( maxlen == MAX_CHARACTERS ) pageText += "...";
-                    
+
                     e.setContent( pageText );
                 }
                 else
@@ -551,10 +574,10 @@ public class RSSGenerator
             }
 
             e.setAuthor( getAuthor(page) );
-            
+
             feed.addEntry( e );
         }
-        
+
         return feed.getString();
     }
 
