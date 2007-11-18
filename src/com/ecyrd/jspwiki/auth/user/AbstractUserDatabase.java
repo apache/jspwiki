@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -239,7 +240,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         try
         {
             MessageDigest md = MessageDigest.getInstance( "SHA" );
-            md.update( text.getBytes() );
+            md.update( text.getBytes("UTF-8") );
             byte[] digestedBytes = md.digest();
             hash = HexUtils.convert( digestedBytes );
         }
@@ -247,6 +248,10 @@ public abstract class AbstractUserDatabase implements UserDatabase
         {
             log.error( "Error creating SHA password hash:" + e.getMessage() );
             hash = text;
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            log.fatal("UTF-8 not supported!?!");
         }
         return hash;
     }
