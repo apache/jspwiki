@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki.parser;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -33,16 +34,16 @@ import java.util.regex.Pattern;
 
 /**
  * Translates Creole markp to JSPWiki markup. Simple translator uses regular expressions.
- * See http://www.wikicreole.org for the WikiCreole spec. 
- * 
+ * See http://www.wikicreole.org for the WikiCreole spec.
+ *
  * This translator can be configured through properties defined in
- * jspwiki.properties starting with "creole.*". See the 
+ * jspwiki.properties starting with "creole.*". See the
  * jspwiki.properties file for an explanation of the properties
- * 
- * @author Steffen Schramm 
- * @author Hanno Eichelberger 
+ *
+ * @author Steffen Schramm
+ * @author Hanno Eichelberger
  * @author Christoph Sauer
- * 
+ *
  * @see <a href="http://www.wikicreole.org/">Wiki Creole Spec</a>
  */
 public class CreoleToJSPWikiTranslator
@@ -158,9 +159,9 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static final Map protectionMap = new HashMap();
+    private static Map          c_protectionMap = new HashMap();
 
-    public ArrayList hashList = new ArrayList();
+    private        ArrayList    m_hashList = new ArrayList();
 
     public String translateSignature(Properties wikiProps, final String content, String username)
     {
@@ -313,17 +314,17 @@ public class CreoleToJSPWikiTranslator
     /**
      * Undoes the protection. This is done by replacing the md5 hashes by the
      * original markup.
-     * 
+     *
      * @see #protectMarkup(String)
      */
     private String unprotectMarkup(String content)
     {
-        Object[] it = this.hashList.toArray();
+        Object[] it = this.m_hashList.toArray();
 
         for (int i = it.length - 1; i >= 0; i--)
         {
             String hash = (String) it[i];
-            String protectedMarkup = (String) protectionMap.get(hash);
+            String protectedMarkup = (String) c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
             if (protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 && !protectedMarkup.substring(0, 3).equals("{{{")))
                 content = translateElement(content, CREOLE_PLUGIN, JSPWIKI_PLUGIN);
@@ -343,14 +344,14 @@ public class CreoleToJSPWikiTranslator
      * This protection is a simple method to keep the regular expressions for
      * the other markup simple. Internally the protection is done by replacing
      * the protected markup with the the md5 hash of the markup.
-     * 
+     *
      * @param content
      * @return
      */
     private String protectMarkup(String content)
     {
-        protectionMap.clear();
-        this.hashList = new ArrayList();
+        c_protectionMap.clear();
+        this.m_hashList = new ArrayList();
         content = protectMarkup(content, PREFORMATTED_PROTECTED, "", "");
         content = protectMarkup(content, URL_PROTECTED, "", "");
         content = protectMarkup(content, ESCAPE_PROTECTED, "", "");
@@ -361,7 +362,7 @@ public class CreoleToJSPWikiTranslator
         return content;
     }
 
-    public ArrayList readPlaceholderProperties(Properties wikiProps)
+    private ArrayList readPlaceholderProperties(Properties wikiProps)
     {
         Set keySet = wikiProps.keySet();
         Object[] keys = keySet.toArray();
@@ -382,8 +383,8 @@ public class CreoleToJSPWikiTranslator
         return result;
     }
 
-    public String replaceImageArea(Properties wikiProps, String content, String markupRegex, String replaceContent, int groupPos,
-                                   String imagePlugin)
+    private String replaceImageArea(Properties wikiProps, String content, String markupRegex, String replaceContent, int groupPos,
+                                    String imagePlugin)
     {
         Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
@@ -447,7 +448,7 @@ public class CreoleToJSPWikiTranslator
         return contentCopy;
     }
 
-    public String replaceArea(String content, String markupRegex, String replaceSource, String replaceTarget)
+    private String replaceArea(String content, String markupRegex, String replaceSource, String replaceTarget)
     {
         Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
@@ -466,7 +467,7 @@ public class CreoleToJSPWikiTranslator
 
     /**
      * Protects a specific markup
-     * 
+     *
      * @see #protectMarkup(String)
      */
     private String protectMarkup(String content, String markupRegex, String replaceSource, String replaceTarget)
@@ -481,14 +482,20 @@ public class CreoleToJSPWikiTranslator
             {
                 MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
-                digest.update(protectedMarkup.getBytes());
+                digest.update(protectedMarkup.getBytes("UTF-8"));
                 String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
-                protectionMap.put(hash, protectedMarkup);
-                this.hashList.add(hash);
+                c_protectionMap.put(hash, protectedMarkup);
+                this.m_hashList.add(hash);
             }
             catch (NoSuchAlgorithmException e)
             {
+                // FIXME: Should log properly
+                e.printStackTrace();
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                // FIXME: Auto-generated catch block
                 e.printStackTrace();
             }
         }
