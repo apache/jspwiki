@@ -1,40 +1,55 @@
+2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.157
+
+        * [JSPWIKI-21]: Password hash now uses UTF-8 instead of platform default.
+
+        * Cleaned JSPWikiToCreoleTranslator to conform to coding rules
+
+        * CommentedProperties was also storing with platform default encoding.  In
+        most cases this would work, but it would create an unwelcome incompatibility
+        between regular property files and these property files.  It now explicitly
+        uses ISO-8859-1 encoding.
+
+        * Fixed a couple of wrong entities in Spanish and Finnish translations.
+
 2007-11-17  Dirk Frederickx (dirk.frederickx@gmail.com)
 
-        * 2.5.156 
+        * 2.5.156
 
         * Removed the error prefix from the successfull LossPassword information message.  [JSPWIKI-26]
 
-        * Small searchbox improvements: search icon now appears inside the search box; 
+        * Small searchbox improvements: search icon now appears inside the search box;
         an empty search is really empty and does not search for the string 'Quick Navigation' anymore.
 
-        * Fixed the search Highlight to cooperate well with AJAX based searches. 
+        * Fixed the search Highlight to cooperate well with AJAX based searches.
 
 2007-11-16  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.155 - IE6 wide images
-        
+
         * Fix funny indenting of collapsable list when %%collapse are nested [JSPWiki-34]
-        
+
         * (finally) Fixing wide image support for ie6 in fluid templates. [JSPWiki-15]
         For IE6 browsers, a <div class="ieimage"> will be inserted around each image. This <div>
         gets a specific overflow-x:auto style, activating proper scrolling for this famous browser.
 
-        * Added a correction to the fixed width template Vanilla-1024x768, to support wide images 
+        * Added a correction to the fixed width template Vanilla-1024x768, to support wide images
         on ie6 here as well. [reported by Harry Metske]
-        
-        
+
+
 2007-11-12  Juan Pablo Santos (juanpablo.santos@gmail.com)
 
         * 2.5.154
-        
+
         * Added support for JMeter (v. 2.3) tests in build.xml & webtests.xml,
         two new properties must be set up at your build.properties: tomcat.protocol
         and @jmeter.home@.
-        
+
         * Added jmeter-tests.jmx with simple login and logout web tests and
         jmeter-init-workbench.jmx, which contains initial nodes to start recording
         new tests.
-        
+
         * JWebUnit tests are no longer running when executing the <webtests> target.
         You can keep running them inside your IDE as normal JUnit test or uncomment
         the appropiate section in the <webtests> target.
@@ -42,88 +57,88 @@
 2007-11-10  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.153
-        
+
         * Form element focus was failing on preferences pages in IE [JSPWiki-24]
-        
+
         * Added TitleBox to the template. When creating a page 'TitleBox', it's contents
-        will be included at the top of the header of the wiki site. 
-        This allows you to put a title message or specific announcements or newsflashes 
+        will be included at the top of the header of the wiki site.
+        This allows you to put a title message or specific announcements or newsflashes
         on your site. [Suggested by Murray & Janne]
-        
+
         * Added a new skin PlainVanilla 1024x768, which has a fixed width layout iso
         the fluid layouts used in the default PlainVanilla skin.
         This new skin allows to better support IE browsers when showing wide images.
         (IE has terrible float support)
-        
-        
+
+
 2007-11-09  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.152
 
         * [JSPWIKI-19]: Fixed localization which was encoding HTML entities
         even though there was no need.
-        
+
         * [JSPWIKI-12]: Fixed localization.
-        
+
         * Added Murray's patch for WikiPageRenameEvent.
-        
+
         * [JSPWIKI-28]: LinkParser was failing dismally with interwiki links.
         Added a new unit test to catch these, and rewrote LinkParser interwiki
         link parsing.
-        
+
         * LuceneSearchProvider.getAttachmentContent() is now protected for
         subclassers.
-        
+
         * ClassUtil is now a bit more verbose.
 
 2007-11-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.151
-        
+
         * [JSPWIKI-11]: It's now possible to set mail.smtp.starttls.enable
         also from the property file.  Previously it would always default
         to true, making it fail when there was a self-signed certificate
         at the other end.
-        
+
         * Added an UTF-8 check to SpamFilter to catch bots which munge
         UTF-8 and cause major breakage...
-        
+
         * Fixed some issues with the password recovery email localizations.
 
 2007-11-3  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.150 - small template fixes
-        
-        * IE6 stuff: fixed the height of actionsTop 
+
+        * IE6 stuff: fixed the height of actionsTop
 
         * Smart skin: searchbox didn't show up, several style alignments with vanilla template
 
         * Finish, Spanish, German I18n : removed some obsolete <br /> tags [JSPWiki-17]
-        
+
 2007-11-1  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.149 - various ie6 fixes in css and javascript
-        
+
         * The Accordion style now support dynamic content. Iow, accordion sections
         will dynamically grow/shrink with dynamic content such as collapsible lists or boxes.
-        
+
         * The body of a page and the Info tab have gotten a css overflow:auto style. to support wide pages.
-        When contents becomes too wide (eg wide tables) the pagecontent will overflow horizontally 
+        When contents becomes too wide (eg wide tables) the pagecontent will overflow horizontally
         with scrollbars at the bottom of the page.
         Add small ie6 fix for wide preformatted {{{blocks}}}
         For ie6, specific proprietary overflow-x style is used.
-        
-        * Long values in table filter dropdowns are trimmed to maximum 32chars. This will reduce 
+
+        * Long values in table filter dropdowns are trimmed to maximum 32chars. This will reduce
         the occurance of wide tables in eg Page Info tab.
 
-        * Added slimbox icon gifs for ie only. 
+        * Added slimbox icon gifs for ie only.
 
         * IE6 Collapsible List is working again. (finally)
 
         * IE6 Layout of the Edit and More tabs is now properly aligned with the rest of the page border
-        
+
         * Fixed the mouse-selection bug on the edit textarea, for ie6.
-        
+
         * Improved editor toolbar handling for ie6, with better handling of selected text in the textarea.
         [BUGZILLA BUG 118]
 
@@ -131,15 +146,15 @@
 2007-10-30  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.148 - ie6 fixes cont'd
-        
-        * Replacing several .png icons by .gif variants, which are better supported 
+
+        * Replacing several .png icons by .gif variants, which are better supported
         across browsers. The warning and error icons were swapped. (reported by Murray)
-        
+
         * Added a small fix on wide pages with {{{blocks}}}
 
 2007-10-29  Dirk Frederickx (dirk.frederickx@gmail.com)
 
-        * 2.5.147 - more IE6 fixes 
+        * 2.5.147 - more IE6 fixes
 
          * Pages with wide preformatted {{{text blocks}}} where not overflowing correctly on ie6.
          [JSPWiki-2]
@@ -147,8 +162,8 @@
          * More updates on collapsible lists for ie6. More testing required.
 
          * Fixed the SearchBoxMenu to ensure proper width on ie6
-         
-   
+
+
  2007-10-27  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.146 - more IE6 fixes and small gui updates
@@ -156,7 +171,7 @@
          * Refactored collapsible lists in view of ie compatibility.
          * Improved layout consistentcy of the quick navigation action buttons
          * Resolved double loading of print.css. (commonheader.jsp)
-         
+
 
 2007-10-26  Dirk Frederickx (dirk.frederickx@gmail.com)
 
@@ -164,29 +179,29 @@
 
         * Heading rendered wrong in IE6, because IE doesn't like floats with margins.
         [JSPWIKI-4]
-        * By default, the more-menu is hidden by default, to avoid bumpy screen rendering 
+        * By default, the more-menu is hidden by default, to avoid bumpy screen rendering
         for slower page loads. [JSPWiki-9]
         * TabbedSections in IE6 had annoying additional spacing between tab and body
 
         * BUGZILLA 115: URL Constructor compatibility is fixed for Ajax enabled searches.
 
         * Align look n feel of collapsible lists, boxes and accordions.
-        All hovered actions now get a consistent, neutral color, instead of the previous orange tint. 
+        All hovered actions now get a consistent, neutral color, instead of the previous orange tint.
         (reported by Murray Altheim)
 
-        * CollapsibleBox update: you can now click anywhere on the title of a collabsible box 
+        * CollapsibleBox update: you can now click anywhere on the title of a collabsible box
         to open or close it. Previously, you had to hit the +/- collapse button.
 
-        * The %%category now supports any url constructor type. (was failing on jspwiki.org) 
-        The look 'n feel of the category popup has been aligned with Tip-Style. 
+        * The %%category now supports any url constructor type. (was failing on jspwiki.org)
+        The look 'n feel of the category popup has been aligned with Tip-Style.
         (no more orange, but transparent dark grey)
 
-        * The Redo/Undo buttons are moved to the top of the Edit.jsp form, because they function 
-        irrespective of the search functions. 
+        * The Redo/Undo buttons are moved to the top of the Edit.jsp form, because they function
+        irrespective of the search functions.
 
-        * TOC has become a floating element, such that commentboxes and toc's can nicely 
-        float next to each-other. Downside is that, when entering text right after a TOC, the text will 
-        float next to the toc. To prevent this, you can always enter a \\ (wiki linebreak) which 
+        * TOC has become a floating element, such that commentboxes and toc's can nicely
+        float next to each-other. Downside is that, when entering text right after a TOC, the text will
+        float next to the toc. To prevent this, you can always enter a \\ (wiki linebreak) which
         will nicely push the contents under any float. (clear:both)  [JSPWiki-1]
 
         * added 2 new i18n resources
@@ -196,7 +211,7 @@
 2007-10-24  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.144
-        
+
         * SpamFilter now has the ability to check against all the
         tests by setting <strategy>score</strategy>.
 
@@ -209,17 +224,17 @@
         (yes, I'm being a bit vague here on purpose).
 
         * 2.5.142
-        
+
         * Combined edittime and addr fields into one hash value.
-        
+
         * Also improved edit process slightly to catch bots.
-        
+
         * SpamFilter now also matches against the IP address.
 
 2007-09-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.141
-        
+
         * Added Murray's patch to allow better extensibility for
         LuceneSearchProvider.
 
