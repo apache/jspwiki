@@ -13,6 +13,8 @@
 
         * Fixed a couple of wrong entities in Spanish and Finnish translations.
 
+        * [JSPWIKI-29]: Per-page RSS links should now be correct again.
+
 2007-11-17  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.156
