@@ -1,4 +1,4 @@
-// $Id: jspwiki.jaas,v 1.4 2007-05-22 20:33:15 jalkanen Exp $
+// $Id: jspwiki.jaas,v 1.5 2007-11-23 22:54:06 jalkanen Exp $
 //
 // This file contains the JAAS login configuration for JSPWiki.
 // It provides the rules that govern how users log into
@@ -77,6 +77,14 @@
 // If you don't want users to be able to assert their identities in
 // this way (and in a security-conscious environment, you don't want
 // this) remove the line from the configuration entry below.
+//
+// IMPORTANT: The CookieAuthenticationLoginModule stores the cookies
+// in the $jspwiki.workDir directory, under "logincookies".  If an user
+// gains read access to this directory, he can fake any logged-in user.
+// It is imperative that if you enable the CookieAuthenticationLoginModule
+// that you make sure the logincookies directory is protected and readable
+// only by the web server process.  It is not recommended to enable this
+// module if you don't know what you are doing.
 //
 // Failure of the CookieAssertionLoginModule triggers the the
 // AnonymousLoginModule, which always succeeds; the user's name will
