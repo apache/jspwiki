@@ -1,4 +1,13 @@
-2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
+2007-11-22  Andrew Jaquith <andrew AT freshcookies DOT org>
+
+        * 2.5.158
+
+        * Ant build script for webtests is now much smarter. Web tests now perform a
+        "pre-flight" check to make sure preconditions are satisfied before launching.
+         If you've wanted to run web tests before but "couldn't get them working."
+         the new script should set things right.
+
+2007-11-18  Janne Jalk2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.157
 
