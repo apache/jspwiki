@@ -248,12 +248,16 @@ var Wiki = {
 		});
 
 		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
-		
-		if(window.ie){
+		/* not needed --
+		if(true || window.ie){
+			var maxw = 800;
 		 	$$('#pagecontent img').each(function(el){
-				new Element('div',{'class':'ieimage'}).injectAfter(el).adopt(el);
+				if(el.width > maxw) {
+					new Element('div',{'class':'ieimage'}).injectAfter(el).adopt(el);
+				}
 		 	});
 		}
+		*/
 	},
 	savePrefs: function(){
 		/* why not move this serverside ?? */

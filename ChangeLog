@@ -1,3 +1,11 @@
+2007-11-22  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.159
+
+        * IE fixes for fluid template with very wide images. (cont'd)
+        Also fixes a bug introduced in v2.5.155 wrt image formatting.  
+        [JSPWiki-15, JSPWiki-52]
+        
 2007-11-22  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.158

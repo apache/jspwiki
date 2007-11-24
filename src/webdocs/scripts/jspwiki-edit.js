@@ -436,13 +436,10 @@ function getCursorPos(textElement)
 	//save off the current value to restore it later,
 	var sOldText = textElement.value;
 
-	if(window.ie)
-	{
-		var objRange = document.selection.createRange();
-		var sOldRange = objRange.text;
-
-		//set this string to a small string that will not normally be encountered
-		var sWeirdString = '#%~';
+	if(window.ie){
+		var objRange = document.selection.createRange(),
+			sOldRange = objRange.text,
+			sWeirdString = '#%~'; //small string that will not normally be encountered
 
 		//insert the weirdstring where the cursor is at
 		objRange.text = sOldRange + sWeirdString; 
@@ -514,11 +511,12 @@ function callback(result, exception)
 {   
 	if(exception) { alert(exception.message); return; }
 	 
-	var menuNode = EditTools.getSuggestionMenu(), html = [];
+	var menuNode = EditTools.getSuggestionMenu(), 
+		html = [];
 
 	result.list.each(function(el) { html.push('<li>'+el+'</li>'); });
 
-	menuNode.show().setHTML('<ul>',html.join(''),'</ul>');
+	menuNode.setHTML('<ul>',html.join(''),'</ul>').show();
 }
 
 window.addEvent('load', EditTools.onPageLoad.bind(EditTools) ); //edit only

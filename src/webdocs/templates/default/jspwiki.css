@@ -5,11 +5,11 @@
 
 /* COLOR scheme   
 	normal font color
-	#eee code, comment, weblogentries, (light grey)
+	#f9f9f9 code, comment, weblogentries, (light grey)
 	#d7d7d7 table header(darker grey)
-	#bbb table borders,
+	#ddd table borders,
 	#d9e8ff edit background
-	#d7d7d7 hover color
+	#eee hover color
 	#f93 highlight color, searchbars, ...  (amber)
 	#e0e0ff information (light blue)
 	#ffff80 warning (light yellow)
@@ -58,7 +58,7 @@
 	width:18%;
 }
 #favorites .userbox {
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	margin-bottom:0.5em;
 	padding:0.25em 0.5em;
 	display:none; 
@@ -150,7 +150,7 @@ th, td {
 .hr { 
 	display:block;
 	clear:both;
-	border-bottom:1px solid #bbb; 
+	border-bottom:1px solid #ddd; 
 }
 .clearbox {
 	clear:both;
@@ -214,7 +214,7 @@ legend, label {
 fieldset {
 	margin:0.5em 0;
 	padding:0.5em;
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 }
 .wikiform input[type='submit'], .wikiform input[type='button'],.wikiform input[type='file'], .wikiform button {
 	cursor:pointer;
@@ -233,8 +233,8 @@ pre {
 	white-space:pre;
 	margin:1em 2.5%;
 	padding:0.5em;
-	background:#eee;
-	border:1px solid #bbb;
+	background:#f9f9f9;
+	border:1px solid #ddd;
 }
 /*ie6 hack*/
 * html pre {
@@ -282,9 +282,12 @@ img {
 	border:none;
 	/* max-width:99%; FIXME ff ok to fit in parent */
 }
+/*
 .ieimage {
+	width:99%;
 	overflow-x:auto;
 }
+*/
 img.inline {
 }
 img.outlink {
@@ -387,8 +390,8 @@ td .information, td .warning, td .error {
 	clear:right;
 	width:35%;
 	overflow:hidden;
-	border:1px solid #bbb;
-	background:#eee;
+	border:1px solid #ddd;
+	background:#f9f9f9;
 	padding:0.5em;
 	margin:0 0.5em;
 	font-size:90%;
@@ -400,19 +403,19 @@ td .information, td .warning, td .error {
 
 /* +++ 300 Wiki tables and zebra tables +++ */
 .wikitable {
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	margin:0.5em 0.25em;
 }
 .wikitable tr {
 	vertical-align:top;
 }
 .wikitable * th {
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	background-color:#d7d7d7;
 	vertical-align:top;
 }
 .wikitable * td {
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	vertical-align:top;
 	text-align:left;
 	/*word-wrap:break-word;*/
@@ -435,7 +438,7 @@ td .information, td .warning, td .error {
 	float:left;
 	margin-left:1em;
 	width:30em;
-	border:2px solid #bbb;
+	border:2px solid #ddd;
 	visibility:hidden;
 }
 #progressbar .ajaxprogress {
@@ -580,7 +583,7 @@ body.comment {
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
-    background:#d7d7d7 url(images/resize-horizontal.gif) top center;
+    background:#eee url(images/resize-horizontal.gif) top center;
 	cursor:s-resize; /* css3 row-resize */ 
     font-size:1px;
 	height:6px; 
@@ -599,14 +602,14 @@ body.comment {
 a.tool {
 	float:left;
 	display:block;
-	background:#eee;
-	border:1px solid #bbb;
+	background:#f9f9f9;
+	border:1px solid #ddd;
 	padding:0.25em;
 	margin-right:2px;
 	text-decoration: none;
 }
 a.tool:hover, .btn:hover {
-	background-color:#d7d7d7 !important;
+	background-color:#eee !important;
 }
 #editassist a.tool {
 	float:right;
@@ -637,7 +640,7 @@ a.tool:hover, .btn:hover {
 #findSuggestionMenu {
 	position:absolute;
 	background:white;
-	border:2px solid #bbb;
+	border:2px solid #ddd;
 	z-index:10;
 	opacity:0.85;
 	font-size:85%;
@@ -654,7 +657,7 @@ a.tool:hover, .btn:hover {
 /* +++ 440 Favorites +++ */
 .userbox {
 	overflow:hidden;
-	padding:0.25em 0;
+	padding:0.5em 0;
 }
 #favorites .userbox a.action, #favorites .userbox .username {
 	float:left;
@@ -704,7 +707,7 @@ a.tool:hover, .btn:hover {
    <span class="searchword">thingy</span>
  */
 .cursor {
-	background-color:#d7d7d7;
+	background-color:#eee;
 }
 .searchword, .searchmatch {
 	background-color:#f93;
@@ -742,13 +745,13 @@ a.tool:hover, .btn:hover {
 .pagination {
 	margin:.25em;
 	padding:.5em;
-	background:#e0e0ff;	 
+	background:#d7d7d7;	 
 }
 .pagination a, .pagination .cursor {
 	padding:0 0.2em;
 }
 .pagination a:hover {
-	background-color:#d7d7d7;
+	background-color:#eee;
 }
 td.changenote {
 	font-style:italic;
@@ -777,7 +780,7 @@ th.changenote, td.changenote {
 .pageactions li ul {
 	position:absolute;
 	background:white;
-	border:2px solid #bbb;
+	border:2px solid #ddd;
 	left:0; /*right:2.5em; */
 	z-index:10;
 }
@@ -791,7 +794,7 @@ th.changenote, td.changenote {
 	float:none;
 }
 .pageactions li ul li.separator { 
-	border-top:2px solid #bbb;
+	border-top:2px solid #ddd;
 }
 
 /* undo settings for nested information! */
@@ -816,7 +819,7 @@ th.changenote, td.changenote {
 }
 #moremenu a:hover, a.action:hover, 
 .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
-	background-color:#d7d7d7 !important;
+	background-color:#eee !important;
 }
 
 a.action.view,
@@ -841,8 +844,8 @@ a.action.logout {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	line-height:normal;
-	border:1px solid #bbb;		
-	background:#eee;
+	border:1px solid #ddd;		
+	background:#f9f9f9;
 	white-space:nowrap;
 }
 a.action.edit, a.action.more {
@@ -851,7 +854,7 @@ a.action.edit, a.action.more {
 }
 a.action.more {
 	padding-right:1.5em;
-	background: #eee url(images/arrdownsmall.gif) 95% center no-repeat;
+	background: #f9f9f9 url(images/arrdownsmall.gif) 95% center no-repeat;
 }
 a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
@@ -878,6 +881,7 @@ html>body #info, html>body #pagecontent, html>body #attach, html>body #findconte
 	overflow:auto;
 }
 * html #info, * html #pagecontent, * html #attach, * html #findcontent {
+	width:100%;
 	overflow-x:auto;
 }
  
@@ -924,7 +928,7 @@ html>body #info, html>body #pagecontent, html>body #attach, html>body #findconte
 #searchboxMenu {
 	position:absolute;
 	background:white;
-	border:2px solid #bbb;
+	border:2px solid #ddd;
 	padding:0.25em;
 	left:0;
 	z-index:15;
@@ -943,7 +947,7 @@ html>body #info, html>body #pagecontent, html>body #attach, html>body #findconte
 }
 
 #searchTools a:hover, #searchboxMenu li:hover { 
-	background:#d7d7d7;
+	background:#eee;
 }
 #searchboxMenu div {
 	margin:0.5em 0;
@@ -976,8 +980,8 @@ div.index {
 }
 div.index .header {
 	padding:4px;
-	background:#eee;
-	border:1px solid #bbb;
+	background:#f9f9f9;
+	border:1px solid #ddd;
 	text-align:center;
 	font-size:1.4em;
 }
@@ -1076,7 +1080,7 @@ div.index .section {
 	line-height:1.1;
 }
 .weblogcomments {
-	background:#eee;
+	background:#f9f9f9;
 	margin:0 0.5em 1em 0.5em;
 	padding:1em;
 }
@@ -1091,12 +1095,12 @@ table.recentchanges .changenote {
 }
 table.recentchanges td {
 	vertical-align:top;
-	border-bottom:1px solid #eee;
+	border-bottom:1px solid #f9f9f9;
 }
 table.recentchanges .date {
 	vertical-align:bottom;
 	border-top:1.5em solid white;
-	background-color:#eee !important;
+	background-color:#f9f9f9 !important;
 	border-bottom:none;
 }
 table.recentchanges tr.odd td {
@@ -1119,7 +1123,7 @@ table.calendar td.othermonth {
 	color:#707070;
 }
 table.calendar td.link {
-	background:#eee;
+	background:#f9f9f9;
 }
 table.calendar tr.month {
 }
@@ -1148,7 +1152,7 @@ table.calendar tr.weekdays {
 .tabs {
 	clear:both;
 	padding:0.5em;
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	margin-bottom:0.5em;
 }
 .tabmenu {
@@ -1168,17 +1172,17 @@ table.calendar tr.weekdays {
 	float:left;
 	margin:0 0 -1px -1px;
 	padding:0.25em 0.5em;
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	border-bottom:none;
 	color:gray;
-	background:#eee;
+	background:#f9f9f9;
 	text-decoration:none;
 	cursor:pointer;
 	white-space:nowrap;
 	line-height:normal;
 }
 .tabmenu a:hover {
-	background:#d7d7d7;
+	background:#eee;
 }
 .tabmenu a.activetab {
 	color:black;
@@ -1191,19 +1195,19 @@ table.calendar tr.weekdays {
 /* +++ 910 Accordion +++ */
 .accordion, .tabbedAccordion {
 	clear:both;
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	margin-bottom:0.5em;
 }
 .accordion .toggle {
-	border: 2px solid #eee;
-	background:#eee;
+	border: 2px solid #f9f9f9;
+	background:#f9f9f9;
 	cursor:pointer;
 	font-weight:bold;
 	line-height:1.4;
 	padding:0.25em 1em;
 }
 .accordion .toggle:hover, .togglemenu .toggle:hover {
-	background:#d7d7d7;
+	background:#eee;
 }
 .accordion .tab {
 	padding:0 1em;
@@ -1216,8 +1220,8 @@ table.calendar tr.weekdays {
 }
 .togglemenu .toggle {
 	float:left;
-	background:#eee;
-	border:1px solid #bbb;
+	background:#f9f9f9;
+	border:1px solid #ddd;
 	cursor:pointer;
 	display:inline;
 	margin:0 0 -1px -1px;
@@ -1317,13 +1321,13 @@ div.collapse li {
 	cursor:pointer;
 }
 .collapseHover {
-	background:#d7d7d7;
+	background:#eee;
 }
 
 /* +++ collapsebox +++ */
 .collapsebox {
     clear:right; /* avoid clash with intern floated bullet */
-	border:1px solid #bbb;
+	border:1px solid #ddd;
 	position:relative;
 	margin:0 0 0.5em 0;
 }  
@@ -1339,7 +1343,7 @@ div.collapse li {
 /* +++ 930 Sortable tables +++ */
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
 	background-repeat:no-repeat;
-	background-position:center left;
+	background-position:3px 3px;
 	cursor:pointer;
 	padding-left:11px;
 }
@@ -1365,7 +1369,7 @@ a.slimbox:visited, a.slimbox:active, a.slimbox:link {
 	border:none;
 }
 a.slimbox:hover {
-	background:#d7d7d7;
+	background:#eee;
 }
 
 #lbOverlay {
