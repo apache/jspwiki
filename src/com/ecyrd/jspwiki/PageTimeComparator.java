@@ -26,6 +26,9 @@ import org.apache.log4j.Logger;
 /**
  *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
  *  be WikiPage objects, or else you will receive a ClassCastException.
+ *  <p>
+ *  If the lastModified date is the same, then the next key is the page name.
+ *  If the page name is also equal, then returns 0 for equality.
  *  
  *  @author jalkanen
  */
@@ -46,26 +49,29 @@ public class PageTimeComparator
     {
         WikiPage w1 = (WikiPage)o1;
         WikiPage w2 = (WikiPage)o2;
-
+        
         if( w1 == null || w2 == null ) 
         {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
 
-        if( w1.getLastModified() == null )
+        Date w1LastMod = w1.getLastModified();
+        Date w2LastMod = w2.getLastModified();
+
+        if( w1LastMod == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w1.getName() );
             return 0;
         }
-        else if( w2.getLastModified() == null )
+        else if( w2LastMod == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w2.getName() );
             return 0;
         }
 
         // This gets most recent on top
-        int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
+        int timecomparison = w2LastMod.compareTo( w1LastMod );
 
         if( timecomparison == 0 )
         {
