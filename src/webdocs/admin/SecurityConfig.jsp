@@ -18,6 +18,38 @@
   if(!wikiContext.hasAccess( response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
+
+  //
+  //  This is a security feature, so we will turn it off unless the
+  //  user really wants to.
+  //
+  if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.securityconfig.enable")) )
+  {
+      %>
+      <html>
+      <head>
+        <base href="../"/>
+        <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
+        <wiki:IncludeResources type="stylesheet"/>
+      </head>
+      <body class="view"><div id="wikibody">
+         <h1>Disabled</h1>
+         <p>JSPWiki SecurityConfig UI has been disabled.  This page could reveal important security
+         details about your configuration to a potential attacker, so it has been turned off by
+         default.  However, it is very easy to enable it by setting the following value</p>
+         <pre>
+             jspwiki-x.securityconfig.enable=true
+         </pre>
+         <p>in your <tt>jspwiki.properties</tt> file.</p>
+         <p>Once you are done with debugging your security configuration, please turn this page
+         off again by removing the preceding line, so that your system is safe again.</p>
+         <p>Have a nice day.  May the Force be with you.</p>
+      </div></body>
+      </html>
+      <%
+      return;
+  }
+
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -43,8 +75,13 @@
 This diagnostic data presented on this page do not represent a security risk
 to your system <em>per se</em>, but they do provide a significant amount of
 contextual information that could be useful to an attacker. This page is
-unconstrained, which means that anyone can view it: nice people, mean people
-and everyone in between. You have been warned.</strong></p>
+currently unconstrained, which means that anyone can view it: nice people, mean people
+and everyone in between. You have been warned.  You can turn it off by setting
+<pre>
+ jspwiki-x.securityconfig.enable=false
+</pre>
+in your jspwiki.properties.
+</strong></p>
 
 <!-- 
   *********************************************
