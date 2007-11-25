@@ -1,3 +1,9 @@
+2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.5.160
+        
+        * Applied patch from Harry Metske to slightly speed up PageTimeComparator.
+
 2007-11-22  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.159
@@ -15,7 +21,7 @@
          If you've wanted to run web tests before but "couldn't get them working."
          the new script should set things right.
 
-2007-11-18  Janne Jalk2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
+2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.157
 
