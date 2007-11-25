@@ -405,10 +405,25 @@ public final class AuthorizationManager
         try
         {
             URL policyURL = AuthenticationManager.findConfigFile( engine, DEFAULT_POLICY );
-            File policyFile = new File( policyURL.getPath() );
-            m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
-            m_localPolicy.refresh();
-            log.info("Initialized local security policy: " + policyFile.getAbsolutePath());
+            
+            if (policyURL != null) 
+            {
+                File policyFile = new File( policyURL.getPath() );
+                m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
+                m_localPolicy.refresh();
+                log.info("Initialized default security policy: " + policyFile.getAbsolutePath());
+            }
+            else
+            {
+                StringBuffer sb = new StringBuffer("JSPWiki was unable to initialize the ");
+                sb.append("default security policy (WEB-INF/jspwiki.policy) file. ");
+                sb.append("Please ensure that the jspwiki.policy file exists in the default location. ");
+                sb.append("This file should exist regardless of the existance of a global policy file. ");
+                sb.append("The global policy file is identified by the java.security.policy variable. ");
+                WikiSecurityException wse = new WikiSecurityException(sb.toString());
+                log.fatal(sb.toString(), wse);
+                throw wse;
+            }
         }
         catch ( PolicyException e )
         {
