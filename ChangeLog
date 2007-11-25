@@ -1,4 +1,4 @@
-2007-11-22  Dirk Frederickx (dirk.frederickx@gmail.com)
+2007-11-25  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.161
 
@@ -6,11 +6,16 @@
  
         * Stack overflow on IE for login page fixed [JSPWiki-51]
  
-2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
+2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.160
         
         * Applied patch from Harry Metske to slightly speed up PageTimeComparator.
+        
+        * [JSPWIKI-47]: SecurityConfig.jsp now ships off by default, but can
+        be enabled by setting jspwiki-x.securityconfig.enable=true.  The page
+        also has instructions on how to accomplish that, when you try to access
+        it.
 
 2007-11-22  Dirk Frederickx (dirk.frederickx@gmail.com)
 
