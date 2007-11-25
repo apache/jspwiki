@@ -4,6 +4,9 @@
         
         * [JSPWIKI-46]: it's no longer possible to do redirection on 
         nextPage when uploading.  Thanks to Ounce for letting us know.
+        
+        * [JSPWIKI-53]: Added patch from Dave Wolf to turn a missing
+        policy file -NPE to a proper exception (with explanations).
 
 2007-11-25  Dirk Frederickx (dirk.frederickx@gmail.com)
 
