@@ -49,12 +49,14 @@ Element.extend({
 		el.appendChild( this ) ;
 		return this;
 	},
-	/* check if this element is visible - if needed check visibility of parent */
 	visible: function() {
-		if(this.getStyle('visibility') == 'hidden') return false;
-		if(this.getStyle('display') == 'none' ) return false;
-		if ([window, document].contains(this.parentNode)) return true;
-		return $(this.parentNode).visible();
+		var el = this;
+		while(el){
+			if(this.getStyle('visibility') == 'hidden') return false;
+			if(this.getStyle('display') == 'none' ) return false;
+			el = el.parentNode;
+		}
+		return true;
 	},
 	hide: function() {
 		this.style.display = 'none';
@@ -89,14 +91,6 @@ Element.extend({
 	}
 });
 
-
-/* Observable class: observe any form element for changes */
-Element.extend({
-	observe: function(fn, options){
-		return new Observer(this, fn, options);
-	}
-});
-
 var Observer = new Class({
 	initialize: function(el, fn, options){
 		this.options = Object.extend({
@@ -124,6 +118,13 @@ var Observer = new Class({
 		this.clear();
 	}
 });
+/* Observable class: observe any form element for changes */
+Element.extend({
+	observe: function(fn, options){
+		return new Observer(this, fn, options);
+	}
+});
+
 
 // see http://forum.mootools.net/topic.php?id=959 ...
 //FIXME
@@ -248,16 +249,6 @@ var Wiki = {
 		});
 
 		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
-		/* not needed --
-		if(true || window.ie){
-			var maxw = 800;
-		 	$$('#pagecontent img').each(function(el){
-				if(el.width > maxw) {
-					new Element('div',{'class':'ieimage'}).injectAfter(el).adopt(el);
-				}
-		 	});
-		}
-		*/
 	},
 	savePrefs: function(){
 		/* why not move this serverside ?? */

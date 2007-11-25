@@ -1,3 +1,11 @@
+2007-11-22  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.161
+
+        * IE wide images also fixed on PREVIEW mode;
+ 
+        * Stack overflow on IE for login page fixed [JSPWiki-51]
+ 
 2007-11-18  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.160

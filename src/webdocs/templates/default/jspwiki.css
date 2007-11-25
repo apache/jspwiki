@@ -206,6 +206,12 @@ dl dd {
 	font-style:italic;
 	margin:0.5em 0;
 }
+/*
+textarea, input[type=text] {
+	padding: 1px 0 1px 3px;
+	border: 1px solid #ddd;
+}
+*/
 legend, label {
 	font-weight:bold;
 	white-space:nowrap;
@@ -877,10 +883,10 @@ a.action.quick2bottom {
 #pagecontent {
 	padding:0.5em 0;
 }
-html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
+html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
 	overflow:auto;
 }
-* html #info, * html #pagecontent, * html #attach, * html #findcontent {
+* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
 	width:100%;
 	overflow-x:auto;
 }
