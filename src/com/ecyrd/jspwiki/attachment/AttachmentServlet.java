@@ -512,7 +512,28 @@ public class AttachmentServlet
         }
     }
 
-
+    /**
+     *  Validates the next page to be on the same server as this webapp.
+     *  Fixes [JSPWIKI-46].
+     */
+    
+    private String validateNextPage( String nextPage, String errorPage )
+    {
+         if( nextPage.contains("://") )
+         {
+             // It's an absolute link, so unless it starts with our address, we'll
+             // log an error.
+             
+             if( !nextPage.startsWith( m_engine.getBaseURL() ) )
+             {
+                 log.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
+                 nextPage = errorPage;
+             }
+         }
+         
+         return nextPage;
+    }
+    
     /**
      *  Uploads a specific mime multipart input set, intercepts exceptions.
      *
@@ -551,7 +572,7 @@ public class AttachmentServlet
                                                      "UTF-8",
                                                      pl );
 
-            nextPage        = multi.getParameter( "nextpage" );
+            nextPage        = validateNextPage( multi.getParameter( "nextpage" ), errorPage );
             String wikipage = multi.getParameter( "page" );
             String changeNote = multi.getParameter( "changenote" );
 
