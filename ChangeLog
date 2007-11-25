@@ -5,6 +5,12 @@
         * IE wide images also fixed on PREVIEW mode;
  
         * Stack overflow on IE for login page fixed [JSPWiki-51]
+        
+        * %%collapse rendering was incorrect with larger default font-sizes. 
+        Adapted to height of the colllapse bullets. [JSPWiki-34]
+        
+        * Minor adjustment of the smart skin: alignment of search-box and
+        header/footer widths.
  
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 

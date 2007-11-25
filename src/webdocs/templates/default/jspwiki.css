@@ -1321,7 +1321,7 @@ div.collapse li {
 	color:blue;
 	font:bold small Monaco, "Courier New", Courier, monospace;
 	width:1.2em;
-	height:1.2em;
+	height:1em;
 }
 .collapseOpen, .collapseClose {
 	cursor:pointer;
