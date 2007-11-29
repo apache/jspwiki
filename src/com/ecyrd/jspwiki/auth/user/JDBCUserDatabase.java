@@ -245,11 +245,12 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         findByLoginName( loginName );
-
+        Connection conn = null;
+        
         try
         {
             // Open the database connection
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             if ( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
@@ -273,11 +274,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.commit();
             }
-            conn.close();
         }
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
     }
 
@@ -323,9 +327,10 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
     public Principal[] getWikiNames() throws WikiSecurityException
     {
         Set principals = new HashSet();
+        Connection conn = null;
         try
         {
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
@@ -342,11 +347,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 }
             }
             ps.close();
-            conn.close();
         }
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
 
         return (Principal[])principals.toArray( new Principal[principals.size()] );
@@ -431,25 +439,29 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         }
 
         // Test connection by doing a quickie select
+        Connection conn = null;
         try
         {
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             PreparedStatement ps = conn.prepareStatement( m_findAll );
             ps.executeQuery();
             ps.close();
-            conn.close();
         }
         catch ( SQLException e )
         {
             log.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
+        }
         log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
 
         // Determine if the datasource supports commits
         try
         {
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             DatabaseMetaData dmd = conn.getMetaData();
             if ( dmd.supportsTransactions() )
             {
@@ -457,12 +469,15 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 conn.setAutoCommit( false );
                 log.info("JDBCUserDatabase supports transactions. Good; we will use them." );
             }
-            conn.close();
         }
         catch ( SQLException e )
         {
             log.warn("JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
     }
 
@@ -500,10 +515,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             // Good! That means it's safe to save using the new name
         }
 
+        Connection conn = null;
         try
         {
             // Open the database connection
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             if ( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
@@ -536,11 +552,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.commit();
             }
-            conn.close();
         }
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
     }
 
@@ -581,10 +600,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             password =  m_hashPrefix ? SHA_PREFIX + getHash( password ) : getHash( password );
         }
 
+        Connection conn = null;
         try
         {
             // Open the database connection
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             if ( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
@@ -652,11 +672,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
             {
                 conn.commit();
             }
-            conn.close();
         }
         catch ( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
     }
 
@@ -671,10 +694,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
         UserProfile profile = null;
         boolean found = false;
         boolean unique = true;
+        Connection conn = null;
         try
         {
             // Open the database connection
-            Connection conn = m_ds.getConnection();
+            conn = m_ds.getConnection();
             if ( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
@@ -700,13 +724,14 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
                 found = true;
             }
             ps.close();
-
-            // Close connection
-            conn.close();
         }
         catch ( SQLException e )
         {
             throw new NoSuchPrincipalException( e.getMessage() );
+        }
+        finally
+        {
+            try { conn.close(); } catch (Exception e) {}
         }
 
         if ( !found )
