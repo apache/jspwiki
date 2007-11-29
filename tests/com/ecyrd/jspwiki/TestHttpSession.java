@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.security.SecureRandom;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -21,7 +22,7 @@ public class TestHttpSession implements HttpSession
 
     protected final long          m_createTime;
 
-    protected static final Random RANDOM = new Random();
+    protected static final Random RANDOM = new SecureRandom();
 
     protected final String        m_id;
 
