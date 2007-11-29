@@ -1,3 +1,13 @@
+2007-11-22  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.5.62
+        
+        * Fixed [JSPWIKI-82]. We were failing to properly close JDBC connections
+        in JDBCUserManager and JDBCGroupManager. Credit: Ounce Labs.
+        
+        * Fixed [JSPWIKI-74]. SpamFilter now uses SecureRandom.
+        Credit: Ounce Labs.
+        
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * Same version, don't want to bump too many times in one day :)
