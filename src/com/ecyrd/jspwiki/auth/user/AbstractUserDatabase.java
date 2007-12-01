@@ -23,8 +23,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Random;
 
 import org.apache.catalina.util.HexUtils;
 import org.apache.log4j.Logger;
@@ -211,7 +214,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
      */
     public boolean validatePassword( String loginName, String password )
     {
-        String hashedPassword = getHash( password );
         try
         {
             UserProfile profile = findByLoginName( loginName );
@@ -220,7 +222,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
             }
-            return hashedPassword.equals( storedPassword );
+            return checkHash( password, storedPassword );
         }
         catch( NoSuchPrincipalException e )
         {
@@ -228,9 +230,21 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
     }
 
+    private byte[] generateSalt()
+    {
+        byte[] salt = new byte[16];
+        SecureRandom sr = new SecureRandom();
+        
+        sr.nextBytes(salt);
+        
+        return salt;
+    }
+    
     /**
      * Private method that calculates the SHA-1 hash of a given
-     * <code>String</code>
+     * <code>String</code>, adding a random salt to it.  The result looks
+     * like this: "[salt],[hash]".
+     * 
      * @param text the text to hash
      * @return the result hash
      */
@@ -239,21 +253,68 @@ public abstract class AbstractUserDatabase implements UserDatabase
         String hash = null;
         try
         {
-            MessageDigest md = MessageDigest.getInstance( "SHA" );
-            md.update( text.getBytes("UTF-8") );
-            byte[] digestedBytes = md.digest();
-            hash = HexUtils.convert( digestedBytes );
+            byte[] salt = generateSalt();
+            
+            byte[] digestedBytes = getHash( text.getBytes("UTF-8"), salt );
+            hash = HexUtils.convert(salt)+","+HexUtils.convert( digestedBytes );  
         }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.error( "Error creating SHA password hash:" + e.getMessage() );
-            hash = text;
-        }
-        catch (UnsupportedEncodingException e)
+        catch( UnsupportedEncodingException e )
         {
             log.fatal("UTF-8 not supported!?!");
         }
         return hash;
     }
+    
+    private static byte[] getHash( byte[] bytes, byte[] salt )
+    {
+        byte[] hash = null;
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance( "SHA" );
+            md.update( bytes );
+            if( salt != null ) md.update(salt);
+            hash = md.digest();
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error( "Error creating SHA password hash:" + e.getMessage() );
+            hash = bytes;
+        }
 
+        return hash;    
+    }
+
+    /**
+     *  Checks a generated, salted or unsalted hash against the given password.
+     *  
+     *  @param password
+     *  @param hash
+     *  @return
+     */
+    protected boolean checkHash( String password, String hash )
+    {
+        boolean result = false;
+        byte[] salt = null;
+        int idx = hash.indexOf(',');
+        
+        if( idx != -1 )
+        {
+            salt = HexUtils.convert( hash.substring(0,idx) );
+            hash = hash.substring(idx+1);
+        }
+        
+        try
+        {
+            byte[] hashedPassword = getHash( password.getBytes("UTF-8"), salt );
+            byte[] storedHash = HexUtils.convert(hash);
+        
+            result = Arrays.equals( hashedPassword, storedHash);
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal("UTF-8 not supported!?!?");
+        }
+        
+        return result;
+    }
 }

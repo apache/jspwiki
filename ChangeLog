@@ -1,6 +1,13 @@
-2007-11-22  Andrew Jaquith <andrew AT apache DOT org>
+2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
-        * 2.5.62
+        * 2.5.163
+        
+        * Rolled back fix to JSPWIKI-74, since a) it's not necessary,
+        and b) it kills the performance of the save process.
+
+2007-11-??  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.5.162
         
         * Fixed [JSPWIKI-82]. We were failing to properly close JDBC connections
         in JDBCUserManager and JDBCGroupManager. Credit: Ounce Labs.
