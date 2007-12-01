@@ -4,6 +4,8 @@
         
         * Rolled back fix to JSPWIKI-74, since a) it's not necessary,
         and b) it kills the performance of the save process.
+        
+        * [JSPWIKI-84]: Added note to the jspwiki.properties.
 
 2007-11-??  Andrew Jaquith <andrew AT apache DOT org>
 
