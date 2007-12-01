@@ -29,16 +29,16 @@
 
     if( wikiSession.isAnonymous() )
     {
-        storedUser  = request.getParameter( "author" );
+        storedUser  = TextUtil.replaceEntities( request.getParameter( "author" ) );
     }
 
     String ok      = request.getParameter("ok");
     String preview = request.getParameter("preview");
     String cancel  = request.getParameter("cancel");
-    String author  = request.getParameter("author");
-    String link    = request.getParameter("link");
+    String author  = TextUtil.replaceEntities( request.getParameter("author") );
+    String link    = TextUtil.replaceEntities( request.getParameter("link") );
     String remember = request.getParameter("remember");
-    String changenote = request.getParameter( "changenote" );
+    String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );

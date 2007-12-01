@@ -1,3 +1,19 @@
+2007-11-25  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.5.164  : various xss vulnerablilities
+        
+        * Wrong Password Error Message May increase Credential Guess [JSPWIKI-85]
+
+        * GROUP parameter validation [JSPWIKI-69]
+
+        * Input Validation of editors pararmeter [JSPWki-67]
+
+        * Resolve commonheader.jsp xss vulnerabilities wrt skins [JSPWIKI- 66]
+
+        * Various wiki tags improvements [JSPWiki-63] 
+
+        * Author Tag and Asserted Username [JSPWiki-60]        
+
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.163

@@ -40,7 +40,6 @@
       modified = group.getLastModified().toString();
     }
   }
-
   name = TextUtil.replaceEntities(name);
 %>
 

@@ -60,7 +60,7 @@
 %>
 
 <form accept-charset="<wiki:ContentEncoding/>" method="post" 
-      action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
+      action="<wiki:CheckRequestContext context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
       name="editform" id="editform"
       enctype="application/x-www-form-urlencoded">
     <p>

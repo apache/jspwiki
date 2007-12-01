@@ -288,12 +288,6 @@ img {
 	border:none;
 	/* max-width:99%; FIXME ff ok to fit in parent */
 }
-/*
-.ieimage {
-	width:99%;
-	overflow-x:auto;
-}
-*/
 img.inline {
 }
 img.outlink {
@@ -628,7 +622,7 @@ a.tool:hover, .btn:hover {
 }
 /* ie6 hack ensure moremenu remains properly alighned */
 * html #editorarea {
-	padding:4px auto;
+	padding:4px 0;
 }
 #submitbuttons input {
 	margin-right:2em;

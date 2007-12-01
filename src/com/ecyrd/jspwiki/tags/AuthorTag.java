@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.render.RenderingManager;
@@ -45,7 +46,7 @@ public class AuthorTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        String author = page.getAuthor();
+        String author = TextUtil.replaceEntities( page.getAuthor() );
 
         if( author != null && author.length() > 0 )
         {

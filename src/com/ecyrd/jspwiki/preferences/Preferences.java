@@ -98,7 +98,7 @@ public class Preferences
     
                 for( Iterator i = jo.keys(); i.hasNext(); )
                 {
-                    String key = (String)i.next();
+                    String key = TextUtil.replaceEntities( (String)i.next() );
                     prefs.put(key, jo.getString(key) );
                 }
             }

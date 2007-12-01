@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.*;
+import com.ecyrd.jspwiki.TextUtil;
 
 /**
  *  Generates single tabbed page layout.
@@ -71,7 +72,7 @@ public class TabTag extends WikiTagBase
      */
     public void setId(String aTabID)
     {
-        m_tabID = aTabID;
+        m_tabID = TextUtil.replaceEntities( aTabID );
     }
 
     /**
@@ -80,7 +81,7 @@ public class TabTag extends WikiTagBase
      */
     public void setTitle(String aTabTitle)
     {
-        m_tabTitle = aTabTitle;
+        m_tabTitle = TextUtil.replaceEntities( aTabTitle );
     }
 
     /**
@@ -89,7 +90,7 @@ public class TabTag extends WikiTagBase
      */
     public void setAccesskey(String anAccesskey)
     {
-        m_accesskey = anAccesskey; //take only the first char
+        m_accesskey = TextUtil.replaceEntities( anAccesskey ); //take only the first char
     }
 
     /**
@@ -98,7 +99,7 @@ public class TabTag extends WikiTagBase
      */
     public void setUrl( String url )
     {
-        m_url = url;
+        m_url = TextUtil.replaceEntities( url );
     }
 
     // insert <u> ..accesskey.. </u> in title

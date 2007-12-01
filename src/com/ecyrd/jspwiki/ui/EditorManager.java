@@ -34,6 +34,7 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
@@ -199,7 +200,7 @@ public class EditorManager extends ModuleManager
         // calls can make use of it. This parameter is set by the links created
         // through the EditorIteratorTag
 
-        editor = context.getHttpParameter( PARA_EDITOR );
+        editor = TextUtil.replaceEntities( context.getHttpParameter( PARA_EDITOR ) );
         if (editor != null)
         {
             context.getHttpRequest().getSession().setAttribute( PARA_EDITOR, editor );

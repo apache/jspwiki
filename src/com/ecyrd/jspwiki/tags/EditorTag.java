@@ -63,6 +63,7 @@ public class EditorTag
             
             if( page == null )
             {
+                //FIXME: should be I18N ...
                 pageContext.getOut().println("Unable to find editor '"+editorPath+"'");
             }
             else

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.TextUtil;
 
 /**
  *  Returns the current user name, or empty, if the user has not been
@@ -47,7 +48,7 @@ public class UserNameTag
 
         if( user != null )
         {
-            pageContext.getOut().print( user.getName() );
+            pageContext.getOut().print( TextUtil.replaceEntities( user.getName() ) );
         }
 
         return SKIP_BODY;

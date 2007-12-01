@@ -264,6 +264,7 @@ public final class CommandResolver
         if ( command instanceof GroupCommand )
         {
             String groupName = request.getParameter( "group" );
+            groupName = TextUtil.replaceEntities( groupName );
             if ( groupName != null && groupName.length() > 0 )
             {
                 GroupPrincipal group = new GroupPrincipal( groupName );
