@@ -20,7 +20,6 @@
 package com.ecyrd.jspwiki.filters;
 
 import java.io.*;
-import java.security.SecureRandom;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -917,7 +916,7 @@ public class SpamFilter
     private static String getUniqueID()
     {
         StringBuffer sb = new StringBuffer();
-        Random rand = new SecureRandom();
+        Random rand = new Random();
 
         for( int i = 0; i < 6; i++ )
         {
