@@ -37,7 +37,7 @@
 
 <form accept-charset="<wiki:ContentEncoding/>"
       method="post" 
-      action="<wiki:CheckRequestContext context="edit"><wiki:EditLink format="url"/></wiki:CheckRequestContext><wiki:CheckRequestContext context="comment"><wiki:CommentLink format="url"/></wiki:CheckRequestContext>" 
+      action="<wiki:CheckRequestContext context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
       name="editform" id="editform" 
       enctype="application/x-www-form-urlencoded">
 
@@ -94,6 +94,7 @@ if (mgr.attachmentsEnabled())
         e.printStackTrace();
     }
 }
+attString = TextUtil.replaceEntities( attString );
 
 // Create breadcrumb list
 String bcString = "";
@@ -133,7 +134,7 @@ int maxSize = TextUtil.getIntegerProperty( engine.getWikiProperties(),
 	<param name="encoding" value="<wiki:ContentEncoding />" />
 	<param name="page" value="<wiki:PageName />" />
 	<param name="pageexists" value="<wiki:PageExists>true</wiki:PageExists>" />
-	<param name="lang" value="<%=context.getHttpRequest().getHeader("Accept-Language")%>" />
+	<param name="lang" value='<%=TextUtil.replaceEntities( context.getHttpRequest().getHeader("Accept-Language") )%>' />
 	<fmt:message key="editor.wikiwizard.noapplet"/>
 </applet>
 

@@ -51,10 +51,10 @@ Element.extend({
 	},
 	visible: function() {
 		var el = this;
-		while(el){
-			if(this.getStyle('visibility') == 'hidden') return false;
-			if(this.getStyle('display') == 'none' ) return false;
-			el = el.parentNode;
+		while($type(el)=='element'){
+			if(el.getStyle('visibility') == 'hidden') return false;
+			if(el.getStyle('display') == 'none' ) return false;
+			el = el.getParent();
 		}
 		return true;
 	},

@@ -106,14 +106,7 @@
             else
             {
                 log.info( "Failed to authenticate user " + uid );
-                if ( passwd.length() > 0 && passwd.toUpperCase().equals(passwd) )
-                {
-                    wikiSession.addMessage( "login", rb.getString("login.error.capslock") );
-                }
-                else
-                {
-                    wikiSession.addMessage( "login", rb.getString("login.error.password") );
-                }
+                wikiSession.addMessage( "login", rb.getString("login.error.password") );
             }
         }
     }
