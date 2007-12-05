@@ -25,6 +25,9 @@
         try
         {
             UserProfile profile = null;
+/*
+// This is disabled because it would otherwise be possible to DOS JSPWiki instances
+// by requesting new passwords for all users.  See https://issues.apache.org/jira/browse/JSPWIKI-78
             try
             {
                 profile = userDatabase.find(name);
@@ -33,11 +36,12 @@
             {
                 // Try email as well
             }
-            if (profile == null)
+ */
+            if( profile == null )
             {
                 profile = userDatabase.findByEmail(name);
             }
-
+ 
 			String email = profile.getEmail();
 
 			String randomPassword = TextUtil.generateRandomPassword();
