@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -76,7 +77,7 @@ public class IncludeTag
             
             if( page == null )
             {
-                pageContext.getOut().println("No template file called '"+m_page+"'");
+                pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_page)+"'");
             }
             else
             {
