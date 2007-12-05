@@ -19,13 +19,32 @@
 
 export CATALINA_HOME=${HOME}/Java/tomcat-webtest
 
-${CATALINA_HOME}/bin/shutdown.sh
+BUILD_PROPERTIES=build.properties
+
+if [ "${JSPWIKI_BUILD}" ];
+then
+	BUILD_PROPERTIES=${JSPWIKI_BUILD}
+fi
+
+echo "Using property file ${BUILD_PROPERTIES}"
+
+if [ ! -f "${BUILD_PROPERTIES}" ];
+then
+	echo "Cannot find ${BUILD_PROPERTIES}"
+	exit 1
+fi
+
+# Shutdown tomcat
+
+echo "Restarting tomcat..."
+
+${CATALINA_HOME}/bin/shutdown.sh > /dev/null
 
 sleep 5
 
 rm -rf ${CATALINA_HOME}/webapps/test*
 rm -rf ${CATALINA_HOME}/conf/Catalina/localhost/test*
 
-${CATALINA_HOME}/bin/startup.sh
+${CATALINA_HOME}/bin/startup.sh > /dev/null
 
-ant -Dbuild.properties=build.properties -find build.xml webtests
+ant -Dbuild.properties=${BUILD_PROPERTIES} -find build.xml webtests
