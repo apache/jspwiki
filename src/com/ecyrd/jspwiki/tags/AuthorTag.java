@@ -46,10 +46,11 @@ public class AuthorTag
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        String author = TextUtil.replaceEntities( page.getAuthor() );
+        String author = page.getAuthor();
 
         if( author != null && author.length() > 0 )
         {
+            author = TextUtil.replaceEntities(author);
             if( engine.pageExists(author) )
             {
                 // FIXME: It's very boring to have to do this.
@@ -63,8 +64,8 @@ public class AuthorTag
                 
                 author = mgr.getHTML( m_wikiContext, d );
             }
-            pageContext.getOut().print( author );
 
+            pageContext.getOut().print( author );
         }
         else
         {
