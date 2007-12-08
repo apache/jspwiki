@@ -377,11 +377,15 @@ jspwiki.plugin.searchPath =
 #
 #  For either of the ShortURL constructors, you can also specify a
 #  prefix path to go in front of page names. By default, the
-#  prefix is '/wiki'.
+#  prefix is 'wiki/'.
+#
+#  Be warned that the ShortURLConstructor does not work well with any other editor
+#  except the built-in plaintext one.  Use ShortViewURLConstructor if you plan
+#  to enable any other ones.
 #
 #jspwiki.urlConstructor = DefaultURLConstructor
 #jspwiki.urlConstructor = ShortViewURLConstructor
-#jspwiki.shortURLConstructor.prefix = /wiki
+#jspwiki.shortURLConstructor.prefix = wiki/
 
 #############################################################################
 #
