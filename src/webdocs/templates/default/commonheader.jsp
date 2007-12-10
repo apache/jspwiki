@@ -49,7 +49,7 @@ Wiki.init({
 	'PageUrl': '<wiki:Link format="url" absolute="true" page="#$%"/>', /* unusual pagename */
 	'TemplateDir': '<wiki:Link format="url" templatefile=""/>',
 	'PageName': '<wiki:Variable var="pagename" />',/* pagename without blanks */
-	'UserName': '<wiki:UserName />',
+	'UserName': '<wiki:UserName />', 
 	'JsonUrl' : '<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>'
 	});
 <wiki:IncludeResources type="jsfunction"/>

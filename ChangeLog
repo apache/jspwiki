@@ -1,3 +1,14 @@
+2007-12-10  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * Added selenium-core (selenium.core.version=0.8.3, selenium.core.revision=1879)
+        with few patches for mootools compatibility.
+        (see http://forum.mootools.net/viewtopic.php?id=1639)
+
+        * Added first set of web unit tests based on Selenium.
+        Read the tests/selenium-tests/readme.txt for more instructions how to 
+        run them manually. Automated testruns from ant still need to be setup.
+        
+ 
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.166
