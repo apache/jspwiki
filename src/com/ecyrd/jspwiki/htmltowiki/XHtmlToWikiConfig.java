@@ -62,19 +62,14 @@ public class XHtmlToWikiConfig
         //  NB: The logic here will fail if you add something else after
         //      the Wiki page name in VIEW or ATTACH
         //
-        String page = wikiContext.getPage().getName();
         
-        String href = wikiContext.getURL( WikiContext.VIEW, page );
-        m_wikiJspPage = removeLast(href,page);
+        m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
         
-        href = wikiContext.getURL( WikiContext.EDIT, page );
-        m_editJspPage = removeLast( href, page );
+        m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
         
-        href = wikiContext.getURL( WikiContext.ATTACH, page );
-        m_attachPage = removeLast( href, page );
-        
-        href = wikiContext.getURL( WikiContext.INFO, page );
-        m_pageInfoJsp = removeLast( href, page );
+        m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
+
+        m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
     }
 
     private String removeLast(String str, String remove )
