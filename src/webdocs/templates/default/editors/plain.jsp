@@ -16,9 +16,11 @@
    WikiContext context = WikiContext.findContext( pageContext ); 
    WikiEngine engine = context.getEngine();
    JSONRPCManager.requestJSON( context );  //FIXME: to be replace by standard mootools lib
+   
+   String contextPath = request.getContextPath();
 
-  TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-edit.js" );
-  TemplateManager.addResourceRequest( context, "script", "scripts/posteditor.js" );
+  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
+  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">
