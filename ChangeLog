@@ -1,3 +1,23 @@
+2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.1 RC1
+        
+        * Ripped-and-replaced web unit tests and replaced with Selenium.
+        Selenium test directory structure replaced with a patched 
+        selenium-server-0.9.2.jar. Web tests are yet not at parity 
+        with old (failing) JWebUnit tests, they are pretty good for 
+        a start. Many thanks to Dirk to figuring out the minor patches
+        we needed to get Selenium to work nicely with Mootools.
+        
+        * Removed all traces of JMeter, HttpUnit and JWebUnit
+        (as much as I could find, anyway).
+        
+        * Re-based Selenium tests to tests/etc/selenium/tests.
+          
+        * If you want to try developing your own web tests, check out 
+        Selenium IDE, a FireFox plugin that records user actions
+        and generates tests scripts.
+
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0 RC1

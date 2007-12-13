@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.92 2007-11-11 23:53:48 jp Exp $
+    $Id: build.xml,v 1.93 2007-12-13 05:05:18 arj Exp $
 -->
 
 <!--
@@ -103,6 +103,12 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+  
+  <!-- Web unit test properties -->
+  <property name="webtests.browser" value="*firefox" />
+  <property name="webtests.container.user" value="janne" />
+  <property name="webtests.container.password" value="myP@5sw0rd" />
+  <property name="webtests.reports" value="${basedir}/tests/reports/selenium" />
 
   <!-- The place where the javadocs are created -->
 
@@ -384,7 +390,7 @@
 
   </target>
 
-  <!-- We compress the Javascript using Dojos Rhino system.  Very useful.
+  <!-- We compress the Javascript using Dojo's Rhino system.  Very useful.
        If you don't want to use the compressed stuff, just copy the default
        .js files from the distro on top of the compressed ones from the WAR.
    -->
@@ -631,10 +637,10 @@
 
   </target>
 
-  <!-- This target runs web unit tests using JMeter. These tests assumes you 
+  <!-- This target runs web unit tests using Selenium. These tests assumes you 
        have Tomcat or higher installed **and** that it is running on
        ${tomcat.host}:${tomcat.port} when you execute this target. The Manager
-       app must be configured. Also, the Tomcat server's toncat-users.xml
+       app must be configured. Also, the Tomcat server's tomcat-users.xml
        file must contain a user named 'janne' with a password 'myP@5sw0rd'
        and an assigned role of 'Authenticated'.
        These tests has been verified to deploy on Tomcat 5.5;
@@ -652,6 +658,10 @@
        should copy this file to Tomcat's common/lib directory.
   -->
   <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
+
+    <!-- Make sure Tomcat is set up the way we expect -->
+    <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
+      target="webtests-init" inheritRefs="true" />
 
     <!-- Build the custom auth WAR -->
     <copy file="etc/jspwiki.properties"
@@ -705,26 +715,13 @@
     <webtest-setup context="test-container-jdbc"
       webxml="${tests.build}/web.xml.container"
       props="${tests.build}/jspwiki.properties.container-jdbc" />
-
-    <!-- Run the tests -->
-    <!-- <junit printsummary="yes" haltonfailure="no" fork="yes">
-      <classpath>
-        <path refid="path.tests" />
-      </classpath>
-      <formatter type="plain" />
-      <batchtest todir="${tests.reports}">
-        <fileset dir="${tests.src}">
-          <include name="com/ecyrd/jspwiki/web/*Test.java" />
-        </fileset>
-      </batchtest>
-    </junit> -->
   	
   	<!-- Run the tests -->
-  	<webtest-jmeter context="test-custom" />
-  	<webtest-jmeter context="test-custom-absolute" />
-  	<webtest-jmeter context="test-custom-jdbc" />
-  	<webtest-jmeter context="test-container" />
-  	<webtest-jmeter context="test-container-jdbc" />
+  	<webtest-selenium context="test-custom" />
+  	<webtest-selenium context="test-custom-absolute" />
+  	<webtest-selenium context="test-custom-jdbc" />
+  	<webtest-selenium context="test-container" />
+  	<webtest-selenium context="test-container-jdbc" />
   	
     <!-- Tear down the test contexts -->
     <webtest-teardown context="test-custom" />
@@ -732,6 +729,11 @@
     <webtest-teardown context="test-custom-jdbc" />
     <webtest-teardown context="test-container" />
     <webtest-teardown context="test-container-jdbc" />
+
+    <echo>The web unit tests have finished. You can find the test reports in ${webtests.reports}.
+    
+If all of the tests ran successfully, the reports will all be "green." If all tests ran successfully except for the "test-container" suite, then your web container is likely not set up correctly. Check to make sure that the your Tomcat container's default realm contains the user '${webtests.container.user}' with password '${webtests.container.password}' and role 'Authenticated'. Usually, Tomcat uses the "memory realm"; the config file is at ${tomcat.home}/conf/tomcat-users.xml.</echo>
+    
   </target>
 
   <macrodef name="webtest-setup">
@@ -758,11 +760,11 @@
     </sequential>
   </macrodef>
   
-  <macrodef name="webtest-jmeter">
+  <macrodef name="webtest-selenium">
 	<attribute name="context" />
 	<sequential>
 	  <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-	    target="webtest-jmeter-exec" inheritRefs="true">
+	    target="webtest-selenium-exec" inheritRefs="true">
 	    <property name="webtest.context" value="@{context}" />
 	  </ant>
 	</sequential>

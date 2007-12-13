@@ -15,39 +15,33 @@
          webtest.props:    The jspwiki.properties file to use for the test.
          webtest.webxml:   The web.xml file to use for the test.
                        
-       The test scripts are written using JMeter, and reside
-       in tests/com/ecyrd/jspwiki/web.
+       The test scripts are written using Selenium, and reside
+       in tests/etc/selenium.
        
        For those of you following along at home, there are
        some fairly black-belt Ant tricks in here,
        notably the code that packages up the web contexts.  -->
        
-  <!-- The main target. Calls the init target and deploys webapp, 
-       tearing down previous version if needed -->
-  <target name="webtest-setup">
+  <!-- Pre-flight check that verifies Tomcat is set up the way we expect. -->
+  <target name="webtests-init">
     <echo message="===============================================================" />
-    <echo message=" Setting up web unit tests for '${webtest.context}'" />
+    <echo message=" Pre-flight check for web unit tests" />
     <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+    <echo message="" />
     <echo message="To run web tests, we assume:" />
-    <echo message="  1) JMeter is installed on your local machine at ${@jmeter.home@}" />
-    <echo message="  2) Tomcat is on ${tomcat.host} and listens for requests on port ${tomcat.port}." />
-    <echo message="  3) The Manager webapp is installed." />
-    <echo message="  4) User '${tomcat.admin}' possesses the 'manager' role (so it can install webapps)" />
-    <echo message="  5) The JDBC driver jar that you are using to test with is in Tomcat's " />
-    <echo message="     common/lib/directory on the server." />
-    <echo message="We will verify that conditions 1-4 hold, and will try to infer #5." />
+    <echo message="  1) Tomcat is on ${tomcat.host} and listens for requests on port ${tomcat.port}." />
+    <echo message="  2) The Manager webapp is installed." />
+    <echo message="  3) User '${tomcat.admin}' possesses the 'manager' role (so it" />
+    <echo message="     can install webapps)" />
+    <echo message="  4) Tomcat's conf/tomcat-users.xml file contains a user entry" />
+    <echo message="     for the test user '${webtests.container.user}' with role 'Authenticated'." />
+    <echo message="  5) The JDBC driver jar that you are using to test with is in" />
+    <echo message="     Tomcat's common/lib/directory on the server." />
+    <echo message="  6) You have Firefox installed in the default install location." />
+    <echo message="" />
+    <echo message="We will verify that conditions 1-4 hold. You are on your own for 3-5." />
     <echo message="Note: the defaults we use are stored in ${basedir}/build.properties." />
     <echo message="" />
-
-    <echo message="Verifying JMeter home directory..." />
-    <fail message="JMeter home directory property @jmeter.home@ isn't set!" unless="@jmeter.home@" />
-    <fail message="JMeter home directory ${@jmeter.home@} does not exist!" >
-      <condition>
-        <not>
-          <available file="${@jmeter.home@}" />
-        </not>
-      </condition>
-    </fail>
     
     <echo message="Checking to see if Tomcat is running..." />
     <fail message="Tomcat doesn't seem to be running. Start it first! (For example, run $CATALINA_HOME/bin/startup.sh)">
@@ -67,6 +61,35 @@
       </condition>
     </fail>
     
+    <echo message="Checking to see if container admin '${tomcat.admin}' possesses the 'manager' role." />
+    <tempfile property="webtests.manager.check" />
+    <get src="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager/html/list"
+       dest="${webtests.manager.check}" ignoreerrors="true"
+       username="${tomcat.admin}" password="${tomcat.password}" />
+    <available file="${webtests.manager.check}" property="webtests.manager.ok" />
+    <delete file="${webtests.manager.check}" />
+    <fail unless="webtests.manager.ok">
+      Check your conf/tomcat-users file! The user '${tomcat.admin}' isn't a manager.</fail>
+    
+  </target>
+       
+  <!-- The main target. Calls the init target and deploys webapp, 
+       tearing down previous version if needed -->
+  <target name="webtest-setup">
+    <echo message="===============================================================" />
+    <echo message=" Setting up web unit tests for '${webtest.context}'" />
+    <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+    <echo message="" />
+    <echo message="Creating Selenium test scripts..."/>
+    <delete dir="tests/build/selenium/${webtest.context}" />
+    <mkdir dir="tests/build/selenium/${webtest.context}" />
+    <copy flatten="true" toDir="tests/build/selenium/${webtest.context}">
+      <fileset dir="tests/etc/selenium/tests" />
+      <filterset>
+        <filter token="selenium.context" value="${webtest.context}" />
+      </filterset>
+    </copy>
+    
     <echo message="Undeploying old webapp... (might return an error, which is ok)"/>
     <tomcat-undeploy context="${webtest.context}" />
     <echo message="Deploying webapp..."/>
@@ -77,18 +100,31 @@
     <waitfor maxwait="30" maxwaitunit="second" timeoutproperty="webapp.not.installed">
       <http url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/${webtest.context}/Wiki.jsp" />
     </waitfor>
-    <fail if="webapp.not.installed" message="The webapp wasn't deployed for some reason. If [deploy] returned an HTTP 403 response, it usually means the manager user '${tomcat.admin}' isn't allowed to access the Manager app. Check $CATALINA_HOME/conf/tomcat-users.xml, and make sure the user '${tomcat.admin}' possesses the role 'manager'. If the 'test-custom-*' and 'test-absolute' webapps deployed ok, but the 'test-*-jdbc' webapps did not, then Tomcat probably can't find your JDBC jar file, so you should copy it (example: ${basedir}/lib/hsqldb.jar) to $CATALINA_HOME/common/lib and restart Tomcat.">
+    <fail if="webapp.not.installed">
+The webapp wasn't deployed for some reason. Here are some possible reasons why: 
+
+* If [deploy] returned an HTTP 403 response, it usually means the
+manager user '${tomcat.admin}' isn't allowed to access the Manager app.
+Check $CATALINA_HOME/conf/tomcat-users.xml, and make sure the user
+'${tomcat.admin}' possesses the role 'manager'.
+
+* If the 'test-custom-*' and 'test-absolute' webapps deployed ok, 
+but the 'test-*-jdbc' webapps did not, then Tomcat probably can't 
+find your JDBC jar file, so you should copy it (example: 
+${basedir}/lib/hsqldb.jar) to $CATALINA_HOME/common/lib and
+restart Tomcat.
     </fail>
     
+  </target>
+  
+  <!-- Execute the web tests -->
+  <target name="webtest-selenium-exec">
+  	<selenium-test context="${webtest.context}" />
   </target>
     
   <!-- Tears down the web tests -->
   <target name="webtest-teardown" if="webtest.teardown">
     <tomcat-undeploy context="${webtest.context}" />
-  </target>
-  
-  <target name="webtest-jmeter-exec">
-  	<jmeter-test context="${webtest.context}" />
   </target>
   
 	<!-- ============================================================== -->
@@ -168,7 +204,7 @@
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
          <lib dir="lib" includes="*.jar"
-           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,httpunit*.jar,jwebunit*.jar,ant-jmeter*.jar"/>
+           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,selenium-*.jar"/>
          <lib file="${jarfile}" />
          <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
@@ -215,61 +251,38 @@
 	
 	<!-- ============================================================== -->
   
-  <!-- JMeter execution test task -->
+  <!-- Selenium execution test task -->
 	
-  <!-- This macro executes the JMeter test plan located on 
-  	   com/ecyrd/jspwiki/web/jmeter-tests.jmx. It expects your favourite
-  	   server up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
+  <!-- This macro executes the Selenium test plans located in 
+  	   tests/build/selenium/@context@/, based on templates stored
+  	   in tests/etc/selenium/tests. It expects your favorite servlet
+  	   container up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
   	   For this reason, these properties must be set up in your 
-  	   build.properties file. Also, it is needed to set up in 
-  	   this file the 'jmeter.home' property.
+  	   build.properties file.
   -->
 	
-  <macrodef name="jmeter-test">
+  <macrodef name="selenium-test">
   	<attribute name="context"/>
   	<sequential>
-  		<!-- We need the tomcat.host, tomcat.port, tomcat.protocol and 
-  			 jmeter.home properties -->
+  		<!-- We need the tomcat.host, tomcat.port, tomcat.protocol properties -->
   		<check-property prop="tomcat.host" />
   		<check-property prop="tomcat.port" />
   		<check-property prop="tomcat.protocol" />
-  		<check-property prop="@jmeter.home@" />
   		
-  		<!-- Declare the JMeter execution test Task -->
-  		<taskdef classname="org.programmerplanet.ant.taskdefs.jmeter.JMeterTask" name="jmeter">
-  			<classpath>
-  		  		<path>
-  		  			<pathelement location="lib/ant-jmeter_2.3.jar"/>
-  		  		</path>
-  		  	</classpath>
-  		</taskdef>
-  		  	
-  		<!-- Delete previous results file -->
-  		<delete file="${tests.reports}/JMeterResults_@{context}.jtl"/>
-  		
-  		<!-- Execute JMeter Test Plan -->
-  		<jmeter jmeterhome="${@jmeter.home@}" resultlog="${tests.reports}/JMeterResults_@{context}.jtl">
-  		  	<testplans dir="${tests.src}" includes="com/ecyrd/jspwiki/web/jmeter-tests.jmx" />
-  		  	<property name="jmeter.save.saveservice.output_format" value="xml"/> <!-- Allow pretty printing -->
-  		  	<property name="jmeter.save.saveservice.assertion_results" value="all"/>
-  		  	<property name="test.host" value="${tomcat.host}"/>
-  		  	<property name="test.port" value="${tomcat.port}"/>
-  			<property name="test.protocol" value="${tomcat.protocol}"/>
-  		  	<property name="test.context.path" value="@{context}"/>
-  		</jmeter>
-  		
-  		<!-- Convert the results file to a nice reading HTML document -->
-  		<xslt style="${tests.src}/etc/jmeter/jmeter-results-report_21.xsl"
-  		  	in="${tests.reports}/JMeterResults_@{context}.jtl"
-  		  	out="${tests.reports}/JMeterResultsReport_@{context}.html" />
-  		  	
-  		<xslt style="${tests.src}/etc/jmeter/jmeter-results-detail-report_21.xsl"
-  		  	in="${tests.reports}/JMeterResults_@{context}.jtl" 
-  		  	out="${tests.reports}/JMeterResultsDetailReport_@{context}.html" />
-  		
-  		<echo message="Tests results for @{context} are available at: "/>
-  		<echo message="--> ${tests.reports}/JMeterResultsReport_@{context}.html" />
-  		<echo message="--> ${tests.reports}/JMeterResultsDetailReport_@{context}.html" />
+  		<!-- Execute Selenium Test Plan -->
+  		<echo message="Running web unit tests for context '@{context}'."/>
+  		<mkdir dir="${tests.reports}/selenium" />
+  		<java jar="lib/selenium-server.jar" fork="true"
+  		  output="${tests.reports}/selenium/@{context}.log">
+  		  <!--
+  		  <arg line="-browserSessionReuse" />
+  		  -->
+        <arg line="-htmlSuite" />
+        <arg line='"${webtests.browser}"' />
+        <arg line='"http://localhost:8080"' />
+        <arg line="${basedir}/tests/build/selenium/@{context}/JSPWikiTestSuite.html" />
+        <arg line="${basedir}/tests/reports/selenium/@{context}.html" />
+    	</java>
   	</sequential>
   </macrodef>
   
