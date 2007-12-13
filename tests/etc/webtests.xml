@@ -272,7 +272,7 @@ restart Tomcat.
   		<!-- Execute Selenium Test Plan -->
   		<echo message="Running web unit tests for context '@{context}'."/>
   		<mkdir dir="${tests.reports}/selenium" />
-  		<java jar="lib/selenium-server.jar" fork="true"
+  		<java jar="lib/selenium-server-0.9.2-patched.jar" fork="true"
   		  output="${tests.reports}/selenium/@{context}.log">
   		  <!--
   		  <arg line="-browserSessionReuse" />
