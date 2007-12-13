@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.93 2007-12-13 05:05:18 arj Exp $
+    $Id: build.xml,v 1.94 2007-12-13 18:35:57 jalkanen Exp $
 -->
 
 <!--
@@ -383,9 +383,13 @@
        <lib dir="lib" includes="*.jar" excludes="*rhino.jar,servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar,ant-jmeter*.jar" />
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
-       <fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
        <classes dir="etc" includes="oscache.properties" />
+    </war>
+
+    <war warfile="${warfile}"
+         webxml="etc/web.xml" update="true">
+     	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
     </war>
 
   </target>
