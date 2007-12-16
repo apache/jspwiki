@@ -1,3 +1,14 @@
+2007-12-16  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.6.2 RC1
+        
+        * [JSPWIKI-101]: Fixed, TOC plugin did not call filter
+        
+        * Improved MissingTranslations utility, now outputs sorted list
+          of diff properties.
+          
+        * Added missing german translations
+
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1 RC1

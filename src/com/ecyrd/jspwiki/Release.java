@@ -64,7 +64,7 @@ public final class Release
     public static final int        REVISION      = 6;
 
     /** The minor revision, or a "build number", if you wish. */
-    public static final int        MINORREVISION = 1;
+    public static final int        MINORREVISION = 2;
 
     /**
      *  This is the generic version string you should use
