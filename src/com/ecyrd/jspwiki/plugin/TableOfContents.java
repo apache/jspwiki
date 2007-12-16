@@ -187,7 +187,20 @@ public class TableOfContents
         try
         {
             String wikiText = engine.getPureText( page );
-
+            boolean runFilters = 
+                "true".equals(engine.getVariableManager().getValue(context,WikiEngine.PROP_RUNFILTERS,"true"));
+            
+            try
+            {
+                if( runFilters )
+                    wikiText = engine.getFilterManager().doPreTranslateFiltering( context, wikiText );
+            }
+            catch(Exception e) 
+            {
+                log.error("Could not construct table of contents: Filter Error", e);
+                throw new PluginException("Unable to construct table of contents (see logs)");
+            }
+            
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
             JSPWikiMarkupParser parser = new JSPWikiMarkupParser( context,
                                                                   new StringReader(wikiText) );
