@@ -1,41 +1,47 @@
+2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.0 RC2
+
+        * Changed versioning scheme
+
 2007-12-16  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.6.2 RC1
-        
+
         * [JSPWIKI-101]: Fixed, TOC plugin did not call filter
-        
+
         * Improved MissingTranslations utility, now outputs sorted list
           of diff properties.
-          
+
         * Added missing german translations
 
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1 RC1
-        
+
         * Ripped-and-replaced web unit tests and replaced with Selenium.
-        Selenium test directory structure replaced with a patched 
-        selenium-server-0.9.2.jar. Web tests are yet not at parity 
-        with old (failing) JWebUnit tests, they are pretty good for 
+        Selenium test directory structure replaced with a patched
+        selenium-server-0.9.2.jar. Web tests are yet not at parity
+        with old (failing) JWebUnit tests, they are pretty good for
         a start. Many thanks to Dirk to figuring out the minor patches
         we needed to get Selenium to work nicely with Mootools.
-        
+
         * Removed all traces of JMeter, HttpUnit and JWebUnit
         (as much as I could find, anyway).
-        
+
         * Re-based Selenium tests to tests/etc/selenium/tests.
-          
-        * If you want to try developing your own web tests, check out 
+
+        * If you want to try developing your own web tests, check out
         Selenium IDE, a FireFox plugin that records user actions
         and generates tests scripts.
 
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0 RC1
-        
+
         * [JSPWIKI-55]: Added patch from David Au to fix pages
         with spaces.
-        
+
         * [JSPWIKI-62]: Added patch from David Au to fix ShortURLConstructor
         and plain.jsp.
 
@@ -46,9 +52,9 @@
         (see http://forum.mootools.net/viewtopic.php?id=1639)
 
         * Added first set of web unit tests based on Selenium.
-        Read the tests/selenium-tests/readme.txt for more instructions how to 
-        run them manually. Automated testruns from ant still need to be setup.        
- 
+        Read the tests/selenium-tests/readme.txt for more instructions how to
+        run them manually. Automated testruns from ant still need to be setup.
+
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.166
@@ -56,24 +62,24 @@
         * [JSPWIKI-78]: It's no longer possible to recover password
         based on user account name - you need the email address.  Props
         to Ounce Labs.
-        
+
         * Contents of login.lostpw.help, login.lostpw.name have changed. Updated
         English and Finnish translations accordingly.
-        
+
         * [JSPWIKI-65]: InsertTag now protects against a problematic XSS injection.
         Thanks to Ounce Labs.
 
 2007-12-04  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.165
-        
+
         * [JSPWiki-88] Fixed js bug to tab to group or profile in IE6
 
- 
+
 2007-12-01  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.5.164  : various xss vulnerablilities
-        
+
         * Wrong Password Error Message May increase Credential Guess [JSPWIKI-85]
 
         * GROUP parameter validation [JSPWIKI-69]
@@ -82,36 +88,36 @@
 
         * Resolve commonheader.jsp xss vulnerabilities wrt skins [JSPWIKI- 66]
 
-        * Various wiki tags improvements [JSPWiki-63] 
+        * Various wiki tags improvements [JSPWiki-63]
 
-        * Author Tag and Asserted Username [JSPWiki-60]        
+        * Author Tag and Asserted Username [JSPWiki-60]
 
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.163
-        
+
         * Rolled back fix to JSPWIKI-74, since a) it's not necessary,
         and b) it kills the performance of the save process.
-        
+
         * [JSPWIKI-84]: Added note to the jspwiki.properties.
 
 2007-11-??  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.5.162
-        
+
         * Fixed [JSPWIKI-82]. We were failing to properly close JDBC connections
         in JDBCUserManager and JDBCGroupManager. Credit: Ounce Labs.
-        
+
         * Fixed [JSPWIKI-74]. SpamFilter now uses SecureRandom.
         Credit: Ounce Labs.
-        
+
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * Same version, don't want to bump too many times in one day :)
-        
-        * [JSPWIKI-46]: it's no longer possible to do redirection on 
+
+        * [JSPWIKI-46]: it's no longer possible to do redirection on
         nextPage when uploading.  Thanks to Ounce for letting us know.
-        
+
         * [JSPWIKI-53]: Added patch from Dave Wolf to turn a missing
         policy file -NPE to a proper exception (with explanations).
 
@@ -120,21 +126,21 @@
         * 2.5.161
 
         * IE wide images also fixed on PREVIEW mode;
- 
+
         * Stack overflow on IE for login page fixed [JSPWiki-51]
-        
-        * %%collapse rendering was incorrect with larger default font-sizes. 
+
+        * %%collapse rendering was incorrect with larger default font-sizes.
         Adapted to height of the colllapse bullets. [JSPWiki-34]
-        
+
         * Minor adjustment of the smart skin: alignment of search-box and
         header/footer widths.
- 
+
 2007-11-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.5.160
-        
+
         * Applied patch from Harry Metske to slightly speed up PageTimeComparator.
-        
+
         * [JSPWIKI-47]: SecurityConfig.jsp now ships off by default, but can
         be enabled by setting jspwiki-x.securityconfig.enable=true.  The page
         also has instructions on how to accomplish that, when you try to access
@@ -145,9 +151,9 @@
         * 2.5.159
 
         * IE fixes for fluid template with very wide images. (cont'd)
-        Also fixes a bug introduced in v2.5.155 wrt image formatting.  
+        Also fixes a bug introduced in v2.5.155 wrt image formatting.
         [JSPWiki-15, JSPWiki-52]
-        
+
 2007-11-22  Andrew Jaquith <andrew AT freshcookies DOT org>
 
         * 2.5.158
