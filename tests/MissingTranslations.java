@@ -2,21 +2,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 
 /**
- * Simple utility that shows you what properties
- * are missing in a i18n file from the default properties
+ * Simple utility that shows you a sorted list of properties
+ * that are missing in a i18n file 
+ * (as diff from the default en properties). 
  * 
  * @author Christoph Sauer
  *
  */
-public class MissingTranslations
+public class MissingTranslations 
 {
 
     // Change this to your settings...
-    static String base = "C:/workspace/JSPWiki"; 
+    static String base = "C:/workspace/JSPWiki HEAD"; 
     static String suffix = "de_DE";
     
     public static void main(String[] args) throws IOException
@@ -42,9 +42,10 @@ public class MissingTranslations
 
         System.out.println("Missing Properties in " + other + ":");
         System.out.println("------------------------------------");
-        Enumeration enm = p.propertyNames();        
-        while(enm.hasMoreElements()) {
-            String name = (String)enm.nextElement();
+        Iterator iter = sortedNames(p).iterator();
+        while(iter.hasNext()) 
+        {
+            String name = (String)iter.next();
             String value = p.getProperty(name);
             
             if (p2.get(name) == null) {
@@ -52,6 +53,18 @@ public class MissingTranslations
             }
         }
         System.out.println("");
-
+    }
+    
+    private static List sortedNames(Properties p)
+    {
+        List list = new ArrayList();
+        Enumeration iter = p.propertyNames();
+        while(iter.hasMoreElements()) 
+        {
+            list.add(iter.nextElement());
+        }        
+        
+        Collections.sort(list);
+        return list;
     }
 }
