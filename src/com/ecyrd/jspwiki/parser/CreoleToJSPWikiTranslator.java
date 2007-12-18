@@ -60,7 +60,7 @@ public class CreoleToJSPWikiTranslator
     // [{$creolepagefilter.creoleversion}]
     // [{$creolepagefilter.linebreak}] -> bloglike/wikilike
 
-    public static String VAR_VERSION = "1.0.2";
+    public static String VAR_VERSION = "1.0.3";
 
     public static String VAR_CREOLE_VERSION = "1.0";
 
@@ -191,7 +191,7 @@ public class CreoleToJSPWikiTranslator
         Calendar cal = Calendar.getInstance();
         result = translateElement(result, SIGNATURE_AND_DATE, "-- [[" + username + "]], " + df.format(cal.getTime()));
         result = translateElement(result, SIGNATURE, "-- [[" + username + "]]");
-        result = unprotectMarkup(result);
+        result = unprotectMarkup(result, false);
         return result;
     }
 
@@ -244,7 +244,7 @@ public class CreoleToJSPWikiTranslator
             result = translateElement(result, CREOLE_LINEBREAKS, JSPWIKI_LINEBREAKS);
         }
 
-        result = unprotectMarkup(result);
+        result = unprotectMarkup(result, true);
 
         result = translateVariables(result, blogLineBreaks);
         result = result.replace("\n", System.getProperty("line.separator"));
@@ -317,7 +317,7 @@ public class CreoleToJSPWikiTranslator
      *
      * @see #protectMarkup(String)
      */
-    private String unprotectMarkup(String content)
+    private String unprotectMarkup(String content,boolean replacePlugins)
     {
         Object[] it = this.m_hashList.toArray();
 
@@ -326,13 +326,14 @@ public class CreoleToJSPWikiTranslator
             String hash = (String) it[i];
             String protectedMarkup = (String) c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
-            if (protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 && !protectedMarkup.substring(0, 3).equals("{{{")))
+            if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 && 
+                !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
                 content = translateElement(content, CREOLE_PLUGIN, JSPWIKI_PLUGIN);
 
         }
         return content;
     }
-
+    
     /**
      * Protects markup that should not be processed. For now this includes:
      * <ul>
