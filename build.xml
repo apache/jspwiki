@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.94 2007-12-13 18:35:57 jalkanen Exp $
+    $Id: build.xml,v 1.95 2007-12-18 05:09:05 arj Exp $
 -->
 
 <!--
@@ -659,7 +659,8 @@
 
        Note: if the majority of JDBC tests fail but the non-JDBC tests do
        not, that likely means that Tomcat cannot find your JDBC jar. You
-       should copy this file to Tomcat's common/lib directory.
+       should copy this file to Tomcat's common/lib directory (for 5.5) or
+       lib (6.0).
   -->
   <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
 
@@ -845,14 +846,14 @@ If all of the tests ran successfully, the reports will all be "green." If all te
     <!-- Set classpath for pre-compilation and deployment tasks -->
     <path id="tomcat.classpath">
       <pathelement location="${java.home}/../lib/tools.jar" />
-      <fileset dir="${tomcat.home}/server/lib">
-        <include name="*.jar" />
-      </fileset>
-      <fileset dir="${tomcat.home}/common/lib">
-        <include name="*.jar" />
-      </fileset>
-      <fileset dir="${tomcat.home}/bin">
-        <include name="commons-logging-api.jar" />
+      <fileset dir="${tomcat.home}">
+        <!-- For Tomcat 5.5 -->
+        <include name="bin/commons-logging-api.jar" />
+        <include name="common/lib/*.jar" />
+        <include name="server/lib/*.jar" />
+        <!-- For Tomcat 6.0 -->
+        <include name="bin/tomcat-juli.jar" />
+        <include name="lib/*.jar" />
       </fileset>
     </path>
   </target>

@@ -1,3 +1,11 @@
+2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.1 RC3
+        
+        * Fixed Ant script compatibility issue reported in [JSPWIKI-109].
+        JSPWiki's 'war-tomcat'  and 'webtests' tasks now work correctly
+        when running under Tomcat 5.5 *and* 6.0. 
+        
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0 RC2

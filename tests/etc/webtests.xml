@@ -111,8 +111,8 @@ Check $CATALINA_HOME/conf/tomcat-users.xml, and make sure the user
 * If the 'test-custom-*' and 'test-absolute' webapps deployed ok, 
 but the 'test-*-jdbc' webapps did not, then Tomcat probably can't 
 find your JDBC jar file, so you should copy it (example: 
-${basedir}/lib/hsqldb.jar) to $CATALINA_HOME/common/lib and
-restart Tomcat.
+${basedir}/lib/hsqldb.jar) to $CATALINA_HOME/common/lib (5.5) 
+or $CATALINA_HOME/lib (6.0), then restart Tomcat.
     </fail>
     
   </target>
