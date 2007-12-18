@@ -1,3 +1,19 @@
+2007-12-10  Christoph Sauer <sauer@hs-heilbronn.de>
+
+        * 2.6.1 RC4 
+        
+        * (I am really not shure if I am numbering right here, since
+           I fixed a bug, should the revision number not be incremented 
+           as well, according to [JSPWIKI:VersioningProposal]?)
+        
+        * Fixed Bug in CreoleFilter: When you used the signature
+          markup from creole (--~~~~), plugin syntax did not get properly
+          translated back into creole markup, so even if you
+          typed in <<Plugin>>, it was later displayed in the source
+          as [{Plugin}] 
+          
+        * Added some missing linebreaks in translation
+
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1 RC3
