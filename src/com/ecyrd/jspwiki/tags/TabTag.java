@@ -49,7 +49,6 @@ public class TabTag extends WikiTagBase
 {
     private static final long serialVersionUID = -8534125226484616489L;
     private String m_accesskey;
-    private String m_tabID;
     private String m_tabTitle;
     private String m_url;
 
@@ -61,18 +60,8 @@ public class TabTag extends WikiTagBase
         super.doFinally();
 
         m_accesskey = null;
-        m_tabID     = null;
         m_tabTitle  = null;
         m_url       = null;
-    }
-
-    /**
-     * Sets the tab ID.
-     * @param aTabID the ID
-     */
-    public void setId(String aTabID)
-    {
-        m_tabID = TextUtil.replaceEntities( aTabID );
     }
 
     /**
@@ -126,7 +115,7 @@ public class TabTag extends WikiTagBase
         //
         //  Sanity checks
         //
-        if( m_tabID == null )
+        if( getId() == null )
         {
             throw new JspTagException("Tab Tag without \"id\" attribute");
         }
@@ -143,9 +132,9 @@ public class TabTag extends WikiTagBase
 
         StringBuffer sb = new StringBuffer(32);
 
-        sb.append( "<div id=\""+ m_tabID + "\"" );
+        sb.append( "<div id=\""+ getId() + "\"" );
 
-        if( !parent.validateDefaultTab( m_tabID) )
+        if( !parent.validateDefaultTab( getId()) )
         {
             sb.append( " class=\"hidetab\"" );
         }
@@ -175,7 +164,7 @@ public class TabTag extends WikiTagBase
         if( parent.isStateFindDefaultTab() )
         {
             //inform the parent of each tab
-            parent.validateDefaultTab( m_tabID );
+            parent.validateDefaultTab( getId() );
         }
         else if( parent.isStateGenerateTabBody() )
         {
@@ -185,12 +174,12 @@ public class TabTag extends WikiTagBase
         {
             sb.append( "<a" );
 
-            if( parent.validateDefaultTab( m_tabID ) )
+            if( parent.validateDefaultTab( getId() ) )
             {
                 sb.append( " class=\"activetab\"" );
             }
 
-            sb.append( " id=\"menu-" + m_tabID + "\"" );
+            sb.append( " id=\"menu-" + getId() + "\"" );
 
             if( m_url != null )
             {

@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 
 /**
@@ -113,6 +114,11 @@ public abstract class WikiTagBase
     public void doFinally()
     {
         m_wikiContext = null;
+    }
+
+    public void setId(String id)
+    {
+        super.setId( TextUtil.replaceEntities( id ) );
     }
 
 }

@@ -6,6 +6,17 @@
         JSPWiki's 'war-tomcat'  and 'webtests' tasks now work correctly
         when running under Tomcat 5.5 *and* 6.0. 
         
+        * Fixed a compatibility bug that was preventing JSPWiki from
+        starting in an older version of Resin [ JSPWIKI-92]. This issue surfaced
+        three bugs: web.xml's <description> and <display-name> elements
+        were in the wrong order; an unneeded SAX parser feature was being
+        set in WebContainerAuthorizer; and (most egregiously) TabTag
+        overrode a superclass method, setId(), when it should not have.
+        TabTag's implementation has been "pulled up" to WikiTagBase, and it
+        now delegates properly to the superclass. In addition, as a bonus, 
+        all "id" attributes for custom JSPWiki tags are now immunized from
+        cross-site scripting injection.
+        
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0 RC2

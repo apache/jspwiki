@@ -368,7 +368,6 @@ public class WebContainerAuthorizer implements WebAuthorizer
         SAXBuilder builder = new SAXBuilder();
         builder.setValidation( false );
         builder.setEntityResolver( new LocalEntityResolver() );
-        builder.setFeature("http://apache.org/xml/features/validation/schema", false);
         Document doc = null;
         if ( m_engine.getServletContext() == null )
         {
