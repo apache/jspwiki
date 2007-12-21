@@ -5,7 +5,6 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
         version="2.4">
 
-   <display-name>JSPWiki</display-name>
    <description>
        JSPWiki is a free JSP-based WikiClone.  It is licenced
        under the Lesser GNU General Public License.
@@ -13,6 +12,7 @@
        JSPWiki is maintained by Janne Jalkanen (+others),
        jalkanen+jspwiki@ecyrd.com
    </description>
+   <display-name>JSPWiki</display-name>
 
    <!--
       This is new in 2.4.  This defines a servlet filter which filters all requests. 
