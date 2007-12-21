@@ -11,19 +11,19 @@
 	<classpathentry kind="lib" path="lib/jsonrpc-1.0.jar" sourcepath="/Users/jalkanen/Java/json-rpc-java-1.0/src"/>
 	<classpathentry kind="lib" path="lib/xmlrpc.jar" sourcepath="/Users/jalkanen/Java/xmlrpc-2.0.1/xmlrpc-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
-	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
+	<classpathentry kind="lib" path="tests/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/oscache.jar" sourcepath="/Users/jalkanen/Java/oscache-2.2/src/java"/>
 	<classpathentry kind="lib" path="lib/oro.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
 	<classpathentry kind="lib" path="lib/multipartrequest.jar"/>
 	<classpathentry kind="lib" path="lib/lucene.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="tests/lib/junit.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
 	<classpathentry kind="lib" path="lib/jaxen.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis-1.0.b2.jar"/>
+	<classpathentry kind="lib" path="tests/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
-	<classpathentry kind="lib" path="lib/servlet.jar"/>
+	<classpathentry kind="lib" path="tests/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="etc/i18n"/>
@@ -31,7 +31,7 @@
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-taglibs-jstl-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-tablibs-standard-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jug-lgpl-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jug-asl-2.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5.0"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

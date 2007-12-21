@@ -111,7 +111,7 @@ Check $CATALINA_HOME/conf/tomcat-users.xml, and make sure the user
 * If the 'test-custom-*' and 'test-absolute' webapps deployed ok, 
 but the 'test-*-jdbc' webapps did not, then Tomcat probably can't 
 find your JDBC jar file, so you should copy it (example: 
-${basedir}/lib/hsqldb.jar) to $CATALINA_HOME/common/lib (5.5) 
+${basedir}/tests/lib/hsqldb.jar) to $CATALINA_HOME/common/lib (5.5) 
 or $CATALINA_HOME/lib (6.0), then restart Tomcat.
     </fail>
     
@@ -123,7 +123,7 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
   </target>
     
   <!-- Tears down the web tests -->
-  <target name="webtest-teardown" if="webtest.teardown">
+  <target name="webtest-teardown" unless="webtests.keepup">
     <tomcat-undeploy context="${webtest.context}" />
   </target>
   
@@ -203,8 +203,7 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
       <!-- Build the war -->
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
-         <lib dir="lib" includes="*.jar"
-           excludes="servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,selenium-*.jar"/>
+         <lib dir="lib" includes="*.jar" />
          <lib file="${jarfile}" />
          <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
@@ -272,7 +271,7 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
   		<!-- Execute Selenium Test Plan -->
   		<echo message="Running web unit tests for context '@{context}'."/>
   		<mkdir dir="${tests.reports}/selenium" />
-  		<java jar="lib/selenium-server-0.9.2-patched.jar" fork="true"
+  		<java jar="tests/lib/selenium-server-0.9.2-patched.jar" fork="true"
   		  output="${tests.reports}/selenium/@{context}.log">
   		  <!--
   		  <arg line="-browserSessionReuse" />

@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.95 2007-12-18 05:09:05 arj Exp $
+    $Id: build.xml,v 1.96 2007-12-21 04:41:31 arj Exp $
 -->
 
 <!--
@@ -152,6 +152,9 @@
      <fileset dir="lib">
         <include name="*.jar" />
      </fileset>
+     <fileset dir="tests/lib">
+        <include name="*.jar" />
+     </fileset>
      <pathelement path="${tests.src}/etc" />
   </path>
 
@@ -228,6 +231,7 @@
            target="1.4"
            >
       <classpath refid="path.base" />
+      <classpath refid="path.tests" />
     </javac>
   </target>
 
@@ -243,6 +247,7 @@
            target="1.4"
            >
       <classpath refid="path.base" />
+      <classpath refid="path.tests" />
     </javac>
   </target>
 
@@ -380,7 +385,7 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="*rhino.jar,servlet.jar,junit.jar,servlet-api.jar,jsp-api.jar,hsqldb.jar,xercesImpl-*.jar,xml-apis-*.jar,jwebunit-*.jar,js-*.jar,httpunit-*.jar,ant-jmeter*.jar" />
+       <lib dir="lib" includes="*.jar" />
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
@@ -400,17 +405,17 @@
    -->
   <target name="compressedjs">
 	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
-  	<java jar="lib/custom_rhino.jar"
+  	<java jar="tests/lib/custom_rhino.jar"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
   		  fork="true">
   	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-common.js" />
   	</java>
-  	<java jar="lib/custom_rhino.jar"
+  	<java jar="tests/lib/custom_rhino.jar"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
   		  fork="true">
 	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" />
 	</java>
-  	<java jar="lib/custom_rhino.jar"
+  	<java jar="tests/lib/custom_rhino.jar"
   		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
   		  fork="true">
 	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" />
@@ -1052,7 +1057,7 @@ To automate the JAR signing processs, you can add the property
        Step 2: set up your database properties in build.properties, for example:
 
          jdbc.driver.id=hsql
-         jdbc.driver.jar=lib/hsqldb.jar
+         jdbc.driver.jar=tests/lib/hsqldb.jar
          jdbc.driver.class=org.hsqldb.jdbcDriver
          jdbc.driver.url=jdbc:hsqldb:hsql://localhost/jspwiki
          jdbc.admin.id=SA
