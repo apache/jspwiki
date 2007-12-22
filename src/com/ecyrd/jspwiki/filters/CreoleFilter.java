@@ -28,14 +28,21 @@ import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.parser.CreoleToJSPWikiTranslator;
 
 /**
- * Provides the Implementation for mixed mode creole: If you activate
+ * <p>Provides the Implementation for mixed mode creole: If you activate
  * this filter, it will translate all markup that was saved as creole
  * markup to JSPWiki markup. Therefore the files will be saved 
  * with mixed markup.
- * 
- * WARNING: There's no turning back after insalling this
+ * <p>
+ * <b>WARNING</b>: There's no turning back after insalling this
  * filter. Since your wiki pages are saved in Creole markup you can
  * not deactivate it afterwards.
+ * <p>
+ * <b>WARNING</b>: This feature is completely experimental, and is known to be
+ * broken.  Use at your own risk.
+ * <p>
+ * <b>WARNING</b>: The CreoleFilter feature is deprecated.  JSPWiki is likely
+ * to implement a non-mixed mode Creole at some point, since turning on
+ * Creole will make new pages obsolete.
  * 
  * @author Steffen Schramm
  * @author Hanno Eichelberger
