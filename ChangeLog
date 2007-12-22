@@ -1,3 +1,20 @@
+2007-12-22  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.0!  Woot!
+
+        * Removed JSPWikiToCreoleTranslator (the class was empty and unused)
+        in an effort to clean the code base a bit for release.
+        
+        * Added some warnings to CreoleFilter & CreoleToJSPWikiTranslator
+        to make sure people understand they are experimental features.  Also
+        removed WikiCreole from "new features" list.
+        
+        * Fixed a number of failing unit tests for Creole by removing a lot of
+        line separator management code.  As far as I can tell, it was all
+        unnecessary and by accident didn't fail only on Windows.
+        
+        * Improved javadocs, removing a number of Checkstyle errors.
+
 2007-12-10  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.6.1 RC4 
