@@ -151,6 +151,8 @@ public final class PagePermission extends Permission
 
         // Parse wiki and page (which may include wiki name and page)
         // Strip out attachment separator; it is irrelevant.
+        
+        // FIXME3.0: Assumes attachment separator is "/".
         String[] pathParams = StringUtils.split( page, WIKI_SEPARATOR );
         String pageName;
         if ( pathParams.length >= 2 )
@@ -184,8 +186,8 @@ public final class PagePermission extends Permission
 
     /**
      * Creates a new PagePermission for a specified page and set of actions.
-     * @param page
-     * @param actions
+     * @param page The wikipage.
+     * @param actions A set of actions; a comma-separated list of actions.
      */
     public PagePermission( WikiPage page, String actions )
     {
