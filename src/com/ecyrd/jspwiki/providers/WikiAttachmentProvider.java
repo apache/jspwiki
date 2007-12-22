@@ -48,6 +48,11 @@ public interface WikiAttachmentProvider
 {
     /**
      *  Put new attachment data.
+     *  
+     *  @param att Attachment object to add new data to
+     *  @param data The stream from which the provider should read the data
+     *  @throws IOException If writing fails
+     *  @throws ProviderException If there are other errors.
      */
     public void putAttachmentData( Attachment att, InputStream data )
         throws ProviderException,
@@ -55,6 +60,12 @@ public interface WikiAttachmentProvider
 
     /**
      *  Get attachment data.
+     *  
+     *  @param att The attachment
+     *  @return An InputStream which you contains the raw data of the object. It's your
+     *          responsibility to close it.
+     *  @throws ProviderException If the attachment cannot be found
+     *  @throws IOException If the attachment cannot be opened
      */
 
     public InputStream getAttachmentData( Attachment att )
@@ -64,7 +75,9 @@ public interface WikiAttachmentProvider
     /**
      *  Lists all attachments attached to a page.
      *
+     *  @param page The page to list the attachments from.
      *  @return A collection of Attachment objects.  May be empty, but never null.
+     *  @throws ProviderException If something goes wrong when listing the attachments.
      */
 
     public Collection listAttachments( WikiPage page )
@@ -72,6 +85,8 @@ public interface WikiAttachmentProvider
 
     /**
      * Finds attachments based on the query.
+     * @param query An array of QueryItem objects to search for
+     * @return A Collection of Attachment objects.  May be empty, but never null.
      */
     public Collection findAttachments( QueryItem[] query );
 
@@ -89,12 +104,19 @@ public interface WikiAttachmentProvider
      *
      *  @param timestamp List all files from this date onward.
      *  @return A List of Attachment objects, in most-recently-changed first order.
+     *  @throws ProviderException If something goes wrong.
      */
     public List listAllChanged( Date timestamp )
         throws ProviderException;
 
     /**
      *  Returns info about an attachment.
+     *  
+     *  @param page The parent page
+     *  @param name The name of the attachment
+     *  @param version The version of the attachment (it's okay to use WikiPage.LATEST_VERSION to find the latest one)
+     *  @return An attachment object
+     *  @throws ProviderException If the attachment cannot be found or some other error occurs.
      */
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException;
@@ -102,6 +124,9 @@ public interface WikiAttachmentProvider
     /**
      *  Returns version history.  Each element should be
      *  an Attachment.
+     *  
+     *  @param att The attachment for which to find the version history for.
+     *  @return A List of Attachment objects.
      */
     public List getVersionHistory( Attachment att );
 
