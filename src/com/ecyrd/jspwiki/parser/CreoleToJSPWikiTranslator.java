@@ -33,13 +33,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Translates Creole markp to JSPWiki markup. Simple translator uses regular expressions.
- * See http://www.wikicreole.org for the WikiCreole spec.
+ * <p>Translates Creole markp to JSPWiki markup. Simple translator uses regular expressions.
+ * See http://www.wikicreole.org for the WikiCreole spec.</p>
  *
- * This translator can be configured through properties defined in
+ * <p>This translator can be configured through properties defined in
  * jspwiki.properties starting with "creole.*". See the
- * jspwiki.properties file for an explanation of the properties
+ * jspwiki.properties file for an explanation of the properties</p>
  *
+ * <p><b>WARNING</b>: This is an experimental feature, and known to be
+ * broken.  Use at your own risk.</o>
+ * 
  * @author Steffen Schramm
  * @author Hanno Eichelberger
  * @author Christoph Sauer
@@ -198,19 +201,24 @@ public class CreoleToJSPWikiTranslator
     /** Translates Creole markup to JSPWiki markup */
     public String translate(Properties wikiProps, final String content)
     {
-        String tmp = wikiProps.getProperty("creole.blogLineBreaks");
         boolean blogLineBreaks = false;
+        /*
+        // BROKEN, breaks on different platforms.
+        String tmp = wikiProps.getProperty("creole.blogLineBreaks");
         if (tmp != null)
         {
             if (tmp.trim().equals("true"))
                 blogLineBreaks = true;
         }
-
+        */
         String imagePlugin = wikiProps.getProperty("creole.imagePlugin.name");
 
         String result = content;
-        result = result.replace("\r\n", "\n");
-        result = result.replace("\r", "\n");
+        //
+        // Breaks on OSX.  It is never a good idea to tamper with the linebreaks.  JSPWiki always
+        // stores linebreaks as \r\n, regardless of the platform.
+        //result = result.replace("\r\n", "\n");
+        //result = result.replace("\r", "\n");
 
         /* Now protect the rest */
         result = protectMarkup(result);
@@ -239,15 +247,16 @@ public class CreoleToJSPWikiTranslator
         result = translateElement(result, CREOLE_TABLE, JSPWIKI_TABLE);
         result = replaceArea(result, TABLE_HEADER_PROTECTED, "\\|=([^\\|]*)=|\\|=([^\\|]*)", "||$1$2");
 
+        /*
         if (blogLineBreaks)
         {
             result = translateElement(result, CREOLE_LINEBREAKS, JSPWIKI_LINEBREAKS);
         }
-
+        */
         result = unprotectMarkup(result, true);
 
         result = translateVariables(result, blogLineBreaks);
-        result = result.replace("\n", System.getProperty("line.separator"));
+        //result = result.replace("\n", System.getProperty("line.separator"));
         return result;
     }
 
