@@ -21,7 +21,7 @@ public class AllTests extends TestCase
 
         suite.addTest( JSPWikiMarkupParserTest.suite() );
         suite.addTest( MarkupParserTest.suite() );
-
+        suite.addTest( CreoleToJSPWikiTranslatorTest.suite() );
         return suite;
     }
 }
