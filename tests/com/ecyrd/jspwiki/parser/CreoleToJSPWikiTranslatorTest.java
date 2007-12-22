@@ -5,7 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Properties;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class CreoleToJSPWikiTranslatorTest extends TestCase
 {
@@ -818,4 +820,8 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
         return translator.translate(new Properties(), src);
     }
 
+    public static Test suite()
+    {
+        return new TestSuite( JSPWikiMarkupParserTest.class );
+    }
 }
