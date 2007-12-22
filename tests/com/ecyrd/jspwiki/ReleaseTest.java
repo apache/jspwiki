@@ -35,7 +35,12 @@ public class ReleaseTest extends TestCase
 
     public void testNewer6()
     {
-        String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
+        String rel = null;
+        
+        if( Release.MINORREVISION != 0 )
+            rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
+        else
+            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";            
         
         assertTrue( Release.isNewerOrEqual(rel) );
     }
@@ -83,7 +88,12 @@ public class ReleaseTest extends TestCase
 
     public void testOlder6()
     {
-        String rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
+        String rel;
+        
+        if( Release.MINORREVISION != 0 )
+            rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
+        else
+            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";   
         
         assertFalse( Release.isOlderOrEqual(rel) );
     }
