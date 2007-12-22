@@ -48,7 +48,7 @@
         |___com
             |___[...and the rest of the test source code]
 
-    $Id: build.xml,v 1.96 2007-12-21 04:41:31 arj Exp $
+    $Id: build.xml,v 1.97 2007-12-22 22:00:31 jalkanen Exp $
 -->
 
 <!--
@@ -385,7 +385,7 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" />
+       <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
