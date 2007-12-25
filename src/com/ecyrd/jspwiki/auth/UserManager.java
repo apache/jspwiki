@@ -22,10 +22,7 @@ package com.ecyrd.jspwiki.auth;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -43,6 +40,8 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.filters.SpamFilter;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
@@ -478,6 +477,26 @@ public final class UserManager
         InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
         ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
+        //
+        //  Query the SpamFilter first
+        //
+        
+        List ls = m_engine.getFilterManager().getFilterList();
+        for( Iterator i = ls.iterator(); i.hasNext(); )
+        {
+            PageFilter pf = (PageFilter)i.next();
+            
+            if( pf instanceof SpamFilter )
+            {
+                if( ((SpamFilter)pf).isValidUserProfile( context, profile ) == false )
+                {
+                    session.addMessage( SESSION_MESSAGES, "Invalid userprofile" );
+                    return;
+                }
+                break;
+            }
+        }
+        
         // If container-managed auth and user not logged in, throw an error
         // unless we're allowed to add profiles to the container
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
