@@ -1,3 +1,10 @@
+2007-12-25  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-1
+        
+        * Added SpamFilter.isValidUserProfile() and corresponding checks
+        to allow also user registrations to be spam-checked.
+
 2007-12-22  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0!  Woot!
