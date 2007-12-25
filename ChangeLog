@@ -15,6 +15,26 @@
         
         * Improved javadocs, removing a number of Checkstyle errors.
 
+2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.0 RC5
+
+        * Checked a new version of web.xml that I inadvertently missed
+        in RC3. This resolves [JSPWIKI-92], for real this time. Sorry!
+
+        * Resolved [JSPWIKI-33] by removing all external class dependencies
+        in WikiBackgroundThread (other than JSPWiki.jar classes). Also
+        changed the default webtests-teardown task in Ant so that web unit
+        tests are taken down unless the 'webtests.keepup' property is set.
+
+        * Replaced jug-lgpl with the Apache-licensed version [JSPWIKI-41].
+
+        * The Ant war/test war tasks were not always properly excluding
+        test-related jars, such as Selenium. This was causing webapps to
+        fail to load in some cases. These jars have now been moved to tests/lib.
+
+        * Adjusted the README file in lib to reflect reality.
+
 2007-12-10  Christoph Sauer <sauer@hs-heilbronn.de>
 
         * 2.6.1 RC4 
