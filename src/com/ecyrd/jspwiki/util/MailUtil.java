@@ -411,7 +411,7 @@ public final class MailUtil
         }
         catch( NamingException e )
         {
-            log.error( "JavaMail initialization error: " + e.getMessage() );
+            log.warn( "JavaMail initialization error: " + e.getMessage() );
             throw e;
         }
         if ( log.isDebugEnabled() )
