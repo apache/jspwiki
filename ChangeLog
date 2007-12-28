@@ -1,6 +1,6 @@
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
-        * 2.6.2-cvs
+        * 2.6.1-cvs-2
         
         * [JSPWIKI-116] Under certain circumstances, calls to
         UserManager.getUserDatabase() are made before the user database is
