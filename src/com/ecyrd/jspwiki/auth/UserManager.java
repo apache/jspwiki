@@ -215,7 +215,7 @@ public final class UserManager
             user = session.getUserPrincipal();
             try
             {
-                profile = m_database.find( user.getName() );
+                profile = getUserDatabase().find( user.getName() );
                 newProfile = false;
             }
             catch( NoSuchPrincipalException e )
@@ -225,7 +225,7 @@ public final class UserManager
 
         if ( newProfile )
         {
-            profile = m_database.newProfile();
+            profile = getUserDatabase().newProfile();
             if ( user != null )
             {
                 profile.setLoginName( user.getName() );
@@ -299,7 +299,7 @@ public final class UserManager
         UserProfile otherProfile;
         try
         {
-            otherProfile = m_database.findByLoginName( profile.getLoginName() );
+            otherProfile = getUserDatabase().findByLoginName( profile.getLoginName() );
             if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
                 throw new DuplicateUserException( "The login name '" + profile.getLoginName() + "' is already taken." );
@@ -310,7 +310,7 @@ public final class UserManager
         }
         try
         {
-            otherProfile = m_database.findByFullName( profile.getFullname() );
+            otherProfile = getUserDatabase().findByFullName( profile.getFullname() );
             if ( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
                 throw new DuplicateUserException( "The full name '" + profile.getFullname() + "' is already taken." );
@@ -382,11 +382,11 @@ public final class UserManager
             // If login name changed, rename it first
             if ( nameChanged && oldProfile != null && !oldProfile.getLoginName().equals( profile.getLoginName() ) )
             {
-                m_database.rename( oldProfile.getLoginName(), profile.getLoginName() );
+                getUserDatabase().rename( oldProfile.getLoginName(), profile.getLoginName() );
             }
 
             // Now, save the profile (userdatabase will take care of timestamps for us)
-            m_database.save( profile );
+            getUserDatabase().save( profile );
 
             if ( nameChanged )
             {
@@ -501,7 +501,7 @@ public final class UserManager
         // unless we're allowed to add profiles to the container
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
              && !context.getWikiSession().isAuthenticated()
-             && !m_database.isSharedWithContainer() )
+             && !getUserDatabase().isSharedWithContainer() )
         {
             session.addMessage( SESSION_MESSAGES, rb.getString("security.error.createprofilebeforelogin") );
         }
@@ -539,7 +539,7 @@ public final class UserManager
         // It's illegal to use as a full name someone else's login name
         try
         {
-            otherProfile = m_database.find( fullName );
+            otherProfile = getUserDatabase().find( fullName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) )
             {
                 Object[] args = { fullName };
@@ -553,7 +553,7 @@ public final class UserManager
         // It's illegal to use as a login name someone else's full name
         try
         {
-            otherProfile = m_database.find( loginName );
+            otherProfile = getUserDatabase().find( loginName );
             if ( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) )
             {
                 Object[] args = { loginName };
@@ -568,7 +568,7 @@ public final class UserManager
     public Principal[] listWikiNames()
         throws WikiSecurityException
     {
-        return m_database.getWikiNames();
+        return getUserDatabase().getWikiNames();
     }
 
     /**
@@ -822,7 +822,7 @@ public final class UserManager
             throws NoSuchPrincipalException
         {
             log.info("request "+uid);
-            UserProfile prof = m_database.find( uid );
+            UserProfile prof = getUserDatabase().find( uid );
 
             log.info("answer "+prof);
 

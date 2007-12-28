@@ -1,3 +1,13 @@
+2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.1-cvs-2
+        
+        * [JSPWIKI-116] Under certain circumstances, calls to
+        UserManager.getUserDatabase() are made before the user database is
+        actually initialized, resulting in NPEs. To resolve, we simply replaced
+        internal references to m_userDatabase with getUserDatabase(),
+        which lazily initializes the database if it has not already happened.
+        
 2007-12-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-1

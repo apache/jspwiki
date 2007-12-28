@@ -66,7 +66,7 @@ public final class Release
     public static final int        REVISION      = 6;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 1;
+    public static final int        MINORREVISION = 2;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just
      *  so that people can add other identifiers to it.  The build number is incremented
