@@ -9,17 +9,17 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Name<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@/Wiki.jsp?page=Main</td>	<td>url</td></tr>
-	<tr><td>store</td>	<td>/@selenium.context@/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>../Wiki.jsp?page=Main</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>../UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
 	<tr><td>store</td>	<td>DonQuixote</td>						<td>TestUsername</td></tr>
 
-	<!-- Navigate to Prefs page; see the 'G'day message' for the anonymous user --!>
+	<!-- Navigate to Prefs page; see the 'G'day message' for the anonymous user -->
     <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
 
-    <!-- Go to the UserPreferences page; see the set-cookie form, plus welcome text that invites --!>
+    <!-- Go to the UserPreferences page; see the set-cookie form, plus welcome text that invites -->
     <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>			<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
@@ -30,7 +30,7 @@
     <tr><td>type</td>			<td>assertedName</td>	<td>${TestUsername}</td></tr>
     <tr><td>clickAndWait</td>	<td>css=form#setCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
 
-<!-- Now navigate back to the main page; see the 'G'day message' for the test user --!>
+    <!-- Now navigate back to the main page; see the 'G'day message' for the test user -->
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>		<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>		<td>&nbsp;</td></tr>
     <tr><td>verifyElementPresent</td>	<td>link=${TestUsername}</td>	<td>&nbsp;</td></tr>
@@ -38,7 +38,7 @@
 
     <tr><td>assertCookie</td>	<td>regex:JSPWikiAssertedName=${TestUsername}</td>	<td></td></tr>
 
-<!-- Clear user cookie --!>
+    <!-- Clear user cookie -->
     <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>			<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
@@ -47,7 +47,7 @@
 
     <tr><td>clickAndWait</td>	<td>css=form#clearCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
         
-<!-- Go back to the main page, and see the 'G'day message for the anonymous user again --!>
+    <!-- Go back to the main page, and see the 'G'day message for the anonymous user again -->
     <tr><td>verifyTitle</td><td>JSPWiki: Main</td><td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>		<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextNotPresent</td>	<td>${TextUsername}</td>	<td>&nbsp;</td></tr>

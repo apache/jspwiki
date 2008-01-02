@@ -126,63 +126,11 @@ Element.extend({
 });
 
 
-// see http://forum.mootools.net/topic.php?id=959 ...
-//FIXME
-var Color = new Class({
-
-	initialize: function(color){
-			if (color.blend && color.mix) return color;
-			var rgb = (color.push) ? color: color.hexToRgb(true);
-			return Object.extend(rgb, Color.prototype);
-	},
-
-	blend: function(alpha, color){
-			color = new Color(color);
-			var rgb = [];
-			for (var i = 0; i < 3; i++) rgb.push(Math.round((this[i] / 100 * alpha) + (color[i] / 100 * (100 - alpha))));
-			return new Color(rgb);
-	},
-
-	mix: function(){
-			var mixed;
-			$each(arguments, function(color){
-					mixed = this.blend(50, color);
-			}, this);
-			return mixed;
-	},
-
-	invert: function(){
-			var rgb = [];
-			for (var i = 0; i < 3; i++) rgb.push(255 - this[i]);
-			return new Color(rgb);
-	}
-});
-
-function $C(color){
-	return new Color(color);
-}
-
-//FIXME
-Color.implement({
-	HTMLColors :
-	{ black  :"000000", green :"008000", silver :"C0C0C0", lime  :"00FF00",
-	  gray   :"808080", olive :"808000", white  :"FFFFFF", yellow:"FFFF00",
-	  maroon :"800000", navy  :"000080", red    :"FF0000", blue  :"0000FF",
-	  purple :"800080", teal  :"008080", fuchsia:"FF00FF", aqua  :"00FFFF" },
-
-	initialize: function(color){
-			if (color.blend && color.mix) return color;
-			var rgb = (color.push) ? color : (this.HTMLColors[color] || color).hexToRgb(true);
-			return Object.extend(rgb, Color.prototype);
-	}
-});
-
-
 /* I18N Support
- * LocalizedStrings takes form { "some.resource.key":"localised resource key {0}" }
+ * LocalizedStrings takes form { "javascript.some.resource.key":"localised resource key {0}" }
  * Examples:
- * "moreInfo".localize();
- * "imageInfo".localize(2,4); => expects "Image {0} of {1}"
+ * "javascript.moreInfo".localize();
+ * "javascript.imageInfo".localize(2,4); => expects "Image {0} of {1}"
  */
 String.extend({
 	localize: function(){
@@ -205,13 +153,13 @@ function $T(el) {
 
 /* FIXME */
 // find first ancestor element with tagName
-function getAncestorByTagName( node, tagName )
-{
+function getAncestorByTagName( node, tagName ) {
 	if( !node) return null;
-	if( node.nodeType == 1 && (node.tagName.toLowerCase() == tagName.toLowerCase()))
-	{ return node; }
-	else
-	{ return getAncestorByTagName( node.parentNode, tagName ); }
+	if( node.nodeType == 1 && (node.tagName.toLowerCase() == tagName.toLowerCase())){ 
+		return node; 
+	} else { 
+		return getAncestorByTagName( node.parentNode, tagName ); 
+	}
 }
 
 
@@ -251,12 +199,11 @@ var Wiki = {
 		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
 	},
 	savePrefs: function(){
-		/* why not move this serverside ?? */
 		if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
 		if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
 		if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
 		if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
-		//if($('editor')) this.prefs.set('Editor', $('editor').getValue()); /* bug 117 */
+		if($('editor')) this.prefs.set('editor', $('editor').getValue()); 
 		this.prefs.set('FontSize',this.PrefFontSize);
 	},
 
@@ -306,24 +253,24 @@ var Wiki = {
 		if( h=="" ) return;
 		h = h.replace(/^#/,'');
 
-		var target = el = $(h);
+		var el = $(h);
 
-		//FIXME!  walk ancestor list to ensure visibility
 		while( $type(el) == 'element' ){
 			if( el.hasClass('hidetab') ){
-				TabbedSection.onclick( el ); 
+				TabbedSection.clickTab.apply(el);
 			} else if( el.hasClass('tab') ){
-				//fixme need to jump to the correct toggler
-				//alert(el.className+' '+el.getPrevious().className);
-				//el.getPrevious().fireEvent('onclick');
-			} else if( /*(node.style) &&*/ el.visible() ){
-				//alert('visible');
+				/* accordion -- need to find accordion object */
+			} else if( el.hasClass('collapsebody') ){
+				/* collapsible box */
+			} else if(!el.visible() ){
+				//alert('not visible'+el.id);
 				//fixme need to find the correct toggler
-				el.show(); //eg collapsedBoxes: fixme
+				//el.show(); //eg collapsedBoxes: fixme
 			}
 			el = el.getParent();
 		}
-		if(target) $(target).scrollTo();	
+
+		location = location.href; /* now jump to the #hash */
 	},
 
 	/* SubmitOnce: disable all buttons to avoid double submit */
@@ -918,8 +865,8 @@ var SearchBox = {
 			.effect('opacity', {wait:false}).set(0);
 	
 		$(q.form).addEvent('submit',this.submit.bind(this))
-			//FIXME .addEvent('blur',function(){ this.hasfocus=false; alert(this.hasfocus); this.hover.start(0) }.bind(this))
-			//FIXME .addEvent('focus',function(){ this.hasfocus=true; alert(this.hasfocus); this.hover.start(0.9) }.bind(this))
+			//FIXME .addEvent('blur',function(){ this.hasfocus=false; this.hover.start(0) }.bind(this))
+			//FIXME .addEvent('focus',function(){ this.hasfocus=true; this.hover.start(0.9) }.bind(this))
 			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))
 			  .addEvent('mouseover',function(){ Wiki.locatemenu(this.query, $('searchboxMenu') ); this.hover.start(0.9) }.bind(this));
 		
@@ -1053,238 +1000,174 @@ var SearchBox = {
  ** e.g. %%graphBars-progress ... %%  progress bars in 2 colors
  ** e.g. %%graphBars-gauge ... %%  gauge bars in gradient colors
  **/
-var WikiColors =
-{
-	HTMLColors :
-	{ black  :"000000", green :"008000", silver :"C0C0C0", lime  :"00FF00",
-	  gray   :"808080", olive :"808000", white  :"FFFFFF", yellow:"FFFF00",
-	  maroon :"800000", navy  :"000080", red    :"FF0000", blue  :"0000FF",
-	  purple :"800080", teal  :"008080", fuchsia:"FF00FF", aqua  :"00FFFF" },
 
+/* minimal variant of the Color class, inspired by mootools */
+var Color = new Class({
 
-	gradient: function( percent, from, to )
-	{
-		if( percent < 0 ) percent = 0;
-		if( percent > 1 ) percent = 1;
-
-		var r = to[0]-from[0], g = to[1]-from[1], b = to[2]-from[2];
-
-		return this.asHTML( [from[0]+r*percent, from[1]+g*percent, from[2]+b*percent] );
+	_HTMLColors: {
+		black  :"000000", green :"008000", silver :"c0c0c0", lime  :"00ff00",
+		gray   :"808080", olive :"808000", white  :"ffffff", yellow:"ffff00",
+		maroon :"800000", navy  :"000080", red    :"ff0000", blue  :"0000ff",
+		purple :"800080", teal  :"008080", fuchsia:"ff00ff", aqua  :"00ffff" 
+	},
+	
+	initialize: function(color, type){
+		type = type || (color.push ? 'rgb' : 'hex');
+		if(this._HTMLColors[color]) color = this._HTMLColors[color];
+		var rgb = (type=='rgb') ? color : color.toString().hexToRgb(true);
+		if(!rgb) return false;
+		rgb.hex = rgb.rgbToHex();
+		return $extend(rgb, Color.prototype);
 	},
 
-	invert: function( color )
-	{
-		color = this.parse( color );
-
-		return( [ 255-color[0], 255-color[1], 255-color[2] ] );
+	mix: function(){
+		var colors = $A(arguments),
+			rgb = this.copy(),
+			alpha = (($type(colors[colors.length - 1]) == 'number') ? colors.pop() : 50)/100,
+			alphaI = 1-alpha;
+		
+		colors.each(function(color){
+			color = new Color(color);
+			for (var i = 0; i < 3; i++) rgb[i] = Math.round((rgb[i] * alphaI) + (color[i] * alpha));
+		});
+		return new Color(rgb, 'rgb');
 	},
 
-	/* Convert html-code to Array(r,g,b)  EG: 00FFFF = Array(0,255,255) */
-	parse: function( c )
-	{
-		if(c instanceof Array) return( c ); //already done??
-		c = c.toLowerCase();
-		if( WikiColors.HTMLColors[c] ) c = WikiColors.HTMLColors[c];
-
-		return c.hexToRgb(true);
-	},
-
-	/* Convert Array(r,g,b) to string  EG: [0,255,255]    = #00FFFF */
-	/* Convert rgb(r,g,b)   to string  EG: rgb(0,255,255) = #00FFFF */
-	/* Convert ffff00       to string  EG: '00FFFF'       = #00FFFF */
-	REparseColor:  new RegExp( "^[0-9a-fA-F]+$" ),
-	RErgbFormat: new RegExp( "rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)","i"),
-	_array2hex: function( arr )
-	{
-		s=[];
-		for( i = 0; i<arr.length; i++ )
-		{
-			var v = Math.round( arr[i] ).toString( 16 );
-			if( v.length < 2)  s.push('0');
-			s.push(v);
-		}
-		return s.join('');
-	},
-	asHTML: function ( c )
-	{
-		var result = '';
-
-		if( c instanceof Array)
-		{
-			result = this._array2hex( c.slice(0,3) );
-		}
-		else if( this.RErgbFormat.test( c ) )
-		{
-			result = this._array2hex( [RegExp.$1, RegExp.$2, RegExp.$3] );
-		}
-		else
-		{
-			result = c;
-		}
-		if( this.REparseColor.test(result) ) { result = '#' + result; }
-		return result;
+	invert: function(){
+		return new Color(this.map(function(value){
+			return 255 - value;
+		}));
 	}
-}
+
+});
 
 var GraphBar =
 {
-	REclassName: new RegExp( "(?:^| )graphBars([^-]*)(-\\S+)?" ),
-
 	onPageLoad : function(){
 		$$('*[class^=graphBars]').each( function(g){
-			/* parse parameters */
 			var lbound = 20,	//max - lowerbound size of bar
 				ubound = 320,	//min - upperbound size of bar
+				vwidth = 20,	//vertical bar width
 				color1 = null,	// bar color
 				color2 = null,	// 2nd bar color used depending on bar-type
-				isHorizontal = true,	// orientation horizontal or vertical
-				isProgress   = false,	// progress bar
-				isGauge      = false;	// gauge bar
-
-			GraphBar.REclassName.test(g.className);
-			var barName = RegExp.$1;
-			var parms = RegExp.$2.toLowerCase().split('-');
+				isGauge = false,	// gauge bar
+				isProgress = false,	// progress bar
+				isHorizontal = true,// horizontal or vertical orientation
+				parms = g.className.substr(9).split('-'),
+				barName = parms.shift(); //first param is optional barName
 			
-			for(var pi=0; pi < parms.length; pi++){
-				p = parms[pi];
-				if(p == "vertical")	{ isHorizontal = false; }
+			parms.each(function(p){
+				p = p.toLowerCase();
+				if(p == "vertical") { isHorizontal = false; }
 				else if(p == "progress") { isProgress = true;  }
 				else if(p == "gauge") { isGauge = true; }
-				else if(p.indexOf("min") == 0) { lbound = parseInt( p.substr(3), 10 ); }
-				else if(p.indexOf("max") == 0) { ubound = parseInt( p.substr(3), 10 ); }
-				else {
-					p = WikiColors.parse( p );
+				else if(p.indexOf("min") == 0) { lbound = p.substr(3).toInt(); }
+				else if(p.indexOf("max") == 0) { ubound = p.substr(3).toInt(); }
+				else if(p != "") {
+					p = new Color(p,'hex'); if(!p.hex) return;
 					if(!color1) color1 = p; 
 					else if(!color2) color2 = p;
 				}
-			}
-			if( lbound > ubound ) { var m = ubound; ubound=lbound; ubound=m;  }
-			if( isProgress && !color1 ) color2 = "transparent";
-			if( (isGauge || isProgress)  && color1 && !color2 ) color2 = WikiColors.invert( color1 );
-			if( color1 && !color2 ) color2 = color1;
+			});
+			if( !color2 && color1) color2 = (isGauge || isProgress) ? color1.invert() : color1;
 
-			/* collect all gBar elements */
-			var bars = $ES('.gBar'+barName, g);
-			//alert(barName+' '+bars+' '+bars.length);
-			if( !bars && barName && (barName!="")){  // check for matching table columns or rows
-				bars = this.getTableValues( g, barName );
+			if( lbound > ubound ) { var m = ubound; ubound=lbound; ubound=m; }
+			var size = ubound-lbound;
+
+			var bars = $ES('.gBar'+barName, g); //collect all gBar elements
+			if( (bars.length==0) && barName && (barName!="")){  // check table data
+				bars = this.getTableValues(g, barName);
 			}
 			if( !bars ) return;
 
-			/* parse bar data and scale according to lbound an ubound */
-			var barData = this.parseBarData( bars, lbound, ubound );
+			var barData = this.parseBarData( bars, lbound, size ),
+				border = (isHorizontal ? 'borderLeft' : 'borderBottom');
 
-			/* modify DOM for each bar element */
-			var e = new Element('span',{'class':'graphBar'}).setHTML('&nbsp;');
-
-			//alert( color1+" " +color2);
 			bars.each(function(b,j){
-				//var b  = bars[j];     //gBar element
-				var pb = b.getParent(); //parent of gBar element
-				var n  = e.clone();     //principal bar to be inserted
-				var nn = null;          //2nd bar to be inserted ico progress
-				var c  = null;          //principal bar color
+				var bar1 = new Hash().set(border+'Width',barData[j]), 
+					bar2 = new Hash(), // 2nd bar only valid ico 'progress' 
+					barEL = new Element('span',{'class':'graphBar'}),
+					pb = b.getParent(); // parent of gBar element
 
-				if(color1){
-					var percent = ( j / (bars.length-1) );
-					if( isGauge ) percent = (barData[j]-lbound) / (ubound-lbound);
-					c = WikiColors.gradient( percent, color1, color2 ); //colorTable[gg]; //get color value
-				}
 				if(isHorizontal){
-					n.setStyles({'borderLeftStyle':'solid', 'borderLeftWidth':barData[j]+'px'});
+					barEL.setHTML('x');
+					if(isProgress){	
+						bar2.extend(bar1.obj);
+						bar1.set(border+'Width',ubound-barData[j]).set('marginLeft','-1ex'); 
+					}					
+				} else { // isVertical
+					if(pb.getTag()=='td') { pb = new Element('div').injectWrapper(pb); }
 
-					if(isProgress){
-						nn = n.clone();
-						n.setStyles({'paddingRight':'0', 'borderLeftWidth':(ubound-barData[j])+'px','marginLeft':'-1ex'});
-						if( color1 ) nn.setStyle('borderLeftColor', WikiColors.asHTML(color1));
-						if( color2 ) n.setStyle('borderLeftColor', WikiColors.asHTML(color2));
-					} else {
-						if( c ) n.setStyle('borderLeftColor',c);
-					}
-				}
-				else /* vertical bars */
-				{
-					n.setStyles({'borderBottomStyle':'solid', 'borderBottomWidth':barData[j]+'px'});
+					pb.setStyles({'height':ubound+b.getStyle('lineHeight').toInt(), 'position':'relative'});
 					b.setStyle('position', 'relative'); //needed for inserted spans ;-)) hehe
+					if( !isProgress ) { b.setStyle('top', (ubound-barData[j])); }
 
-					// behaviour of relative on a TD is undefined - so insert a help div block
-					// see http://www.w3.org/TR/CSS21/visuren.html#propdef-position ;-(
-					if( pb.nodeName == 'TD' ) { pb = new Element('div').injectWrapper( pb );  }
-
-					var fontsize = 20;  //can we read this info somewhere ? nono
-					pb.setStyles({'height':(ubound+fontsize)+'px', 'position':'relative'});
-
-					if( !isProgress ) { b.setStyle('top', (ubound - barData[j])+'px'); }
-
-					n.setStyles({'position':'absolute', 'width':'1em', 'bottom':'0'});
-
-					if(isProgress){
-						if( color1 ) n.style.borderBottomColor = WikiColors.asHTML( color1 );
-
-						nn = n.clone().setStyle('borderBottomWidth', ubound+'px'); //background bar with color
-						if( color2) nn.setStyle('borderBottomColor', WikiColors.asHTML(color2));
-					} else {
-						if( c ) n.setStyle('borderBottomColor', c);
+					bar1.extend({'position':'absolute', 'width':vwidth, 'bottom':'0'});
+					if(isProgress){ 
+						bar2.extend(bar1.obj).set(border+'Width', ubound); 
 					}
 				}
-				if( nn ) pb.insertBefore( nn, b );
-				pb.insertBefore( n, b );
-
+				if(isProgress){
+					if(color1){ bar1.set('borderColor', color1.hex); }
+					if(color2){ 
+						bar2.set('borderColor', color2.hex); 
+					} else { 
+						bar1.set('borderColor', 'transparent');
+					}
+				} else if(color1){
+					var percent = isGauge ? (barData[j]-lbound)/size : j/(bars.length-1);
+					bar1.set('borderColor', color1.mix(color2, 100 * percent).hex);
+				}
+				
+				if(bar2.length > 0){ barEL.clone().setStyles(bar2.obj).injectBefore(b); };
+				if(bar1.length > 0){ barEL.setStyles(bar1.obj).injectBefore(b); };
 			},this);
-			e = null;
+
 		},this);
 	},
 
-	parseBarData: function( nodes, lbound, ubound )
-	{
-		var barData = [], count = nodes.length, maxValue = Number.MIN_VALUE, minValue = Number.MAX_VALUE;
-		var span = ubound - lbound;
-
-		var isnum = true, isdate = true;
-
-		for(var j=0; j < count; j++){
-			var s = $getText( nodes[j] );
-			barData[j] = s;
-			if( isnum  ) isnum  = !isNaN( parseFloat( s.match( Number.REparsefloat ) ) );
-			if( isdate ) isdate = !isNaN( Date.parse( s ) );
-		}
-
-		for(var j=0; j < count; j++){
-			var k = barData[j];
-			if( isdate )     { k = new Date( Date.parse( k ) ).valueOf();  }
-			else if( isnum ) { k = parseFloat( k.match( Number.REparsefloat ) ); }
-
-			maxValue = Math.max( maxValue, k );
-			minValue = Math.min( minValue, k );
-			barData[j] = k;
-		}
+	// parse bar data types and scale according to lbound and size
+	parseBarData: function(nodes, lbound, size){
+		var barData=[], 
+			maxValue=Number.MIN_VALUE, 
+			minValue=Number.MAX_VALUE,
+			num=date=true;
+	
+		nodes.each(function(n,i){
+			var s = n.getText();
+			barData.push(s);
+			if(num) num = !isNaN(parseFloat( s.match(Number.REparsefloat) ) );
+			if(date) date = !isNaN(Date.parse(s));
+		});
+		barData = barData.map(function(b){
+			if(date)     { b = new Date(Date.parse(b) ).valueOf();  }
+			else if(num) { b = parseFloat( b.match(Number.REparsefloat) ); }
+			
+			maxValue = Math.max(maxValue, b);
+			minValue = Math.min(minValue, b);
+			return b;
+		});		
 
 		if(maxValue==minValue) maxValue=minValue+1; /* avoid div by 0 */
-		for( var j=0; j < count; j++ ){ /* scale values */
-			barData[j] = parseInt( (span * (barData[j]-minValue) / (maxValue-minValue) ) + lbound ) ;
-		}
-		return barData;
+		size = size/(maxValue-minValue);
+		return barData.map(function(b){
+			return ( (size*(b-minValue)) + lbound).toInt();
+		});
 	},
 
-	/*
-	 * Fetch set of gBar values from a table
+	/* Fetch set of gBar values from a table
 	 * Check first-row to match field-name: return array with col values
 	 * Check first-column to match field-name: return array with row values
-	 * insert SPANs qs place-holder of the missing gBars
+	 * insert SPANs as place-holder of the missing gBars
 	 */
-	getTableValues: function( node, fieldName )
-	{
-		//alert(node +' '+fieldName);
-		var table = $E('table', node); if(!table) return null;
+	getTableValues: function(node, fieldName){
+		var table = $E('table', node); if(!table) return false;
 		var tlen = table.rows.length;
 
-		if( tlen > 1 ) /* check for COLUMN based table */
-		{
+		if( tlen > 1 ){ /* check for COLUMN based table */
 			var r = table.rows[0];
-			for( var h=0; h < r.cells.length; h++ )
-			{
-				if( $getText( r.cells[h] ).trim() == fieldName )
-				{
+			for( var h=0; h < r.cells.length; h++ ){
+				if( $getText( r.cells[h] ).trim() == fieldName ){
 					var result = [];
 					for( var i=1; i< tlen; i++)
 						result.push( new Element('span').injectWrapper(table.rows[i].cells[h]) );
@@ -1292,19 +1175,16 @@ var GraphBar =
 				}
 			}
 		}
-
-		for( var h=0; h < tlen; h++ )  /* check for ROW based table */
-		{
+		for( var h=0; h < tlen; h++ ){  /* check for ROW based table */
 			var r = table.rows[h];
-			if( $getText( r.cells[0] ).trim() == fieldName )
-			{
+			if( $getText( r.cells[0] ).trim() == fieldName ){
 				var result = [];
 				for( var i=1; i< r.cells.length; i++)
 					result.push( new Element('span').injectWrapper(r.cells[i]) );
 				return result;
 			}
 		}
-		return null;
+		return false;
 	}
 }
 
@@ -1521,9 +1401,9 @@ var RoundedCorners =
 	exec: function( nodes, corners, color, borderColor, background )
 	{
 		corners = ( corners ? corners+"nnnn": "yyyy" );
-		color   = ( color ? WikiColors.asHTML(color): "transparent" );
-		if( borderColor ) borderColor = WikiColors.asHTML( borderColor );
-		if( background  ) background = WikiColors.asHTML( background );
+		color   = new Color(color,'hex') || 'transparent';
+		if(borderColor) borderColor = new Color(borderColor);
+		if(background)  background  = new Color(background);
 
 		var c = corners.split('');
 		/* [0]=top-left; [1]=top-right; [2]=bottom-left; [3]=bottom-right; */
@@ -1580,11 +1460,11 @@ var RoundedCorners =
 			n.style.height = arr[i].height;
 			n.style.overflow = "hidden";
 			n.style.borderWidth = "0";
-			n.style.backgroundColor = color;
+			n.style.backgroundColor = color.hex;
 
 			if( borderColor )
 			{
-				n.style.borderColor = borderColor;
+				n.style.borderColor = borderColor.hex;
 				n.style.borderStyle = "solid";
 				if(arr[i].borderTop)
 				{
@@ -1612,11 +1492,11 @@ var RoundedCorners =
 		var container = new Element('div').injectWrapper(node);
 
 		container.style.padding = "0 4px";
-		container.style.backgroundColor = color;
+		container.style.backgroundColor = color.hex;
 		if( borderColor )
 		{
-			container.style.borderLeft  = "1px solid " + borderColor;
-			container.style.borderRight = "1px solid " + borderColor;
+			container.style.borderLeft  = "1px solid " + borderColor.hex;
+			container.style.borderRight = "1px solid " + borderColor.hex;
 		}
 
 		node.passed=true;
@@ -1881,44 +1761,21 @@ var WikiTips =
 		$$('*[class^=tip]').each( function(t){
 			var parms = t.className.split('-');
 			if( parms.length<=0 || parms[0] != 'tip' ) return;
-			t.className="tip";
+			t.className = "tip";
 
-			var body = new Element('span').injectWrapper(t).hide();
-			var caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
-			var tt = new Element('span',{'class':'tip-anchor'}).setHTML(caption).inject(t);
-			tt.title  = caption+'::';
-			tt.$tmp = {myBody:body};
-			tips.push(tt);
+			var body = new Element('span').injectWrapper(t).hide(),
+				caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
+
+			tips.push( 
+				new Element('span',{
+					'class': 'tip-anchor',
+					'title': caption + '::' + body.innerHTML
+				}).setHTML(caption).inject(t)
+			);
 		});
 		if( tips.length>0 ) new Tips( tips , {'className':'tip'} );
 	}
 }
-
-/*overwrite Tips start funtion to support DOM bodies*/
-Tips.implement({
-	start: function(el){		
-		this.wrapper.empty();
-		if (el.$tmp.myTitle){
-			this.title = new Element('span').inject(
-				new Element('div', {'class': this.options.className + '-title'}).inject(this.wrapper)
-			).setHTML(el.$tmp.myTitle);
-		}
-		if (el.$tmp.myText){
-			this.text = new Element('span').inject(
-				new Element('div', {'class': this.options.className + '-text'}).inject(this.wrapper)
-			).setHTML(el.$tmp.myText);
-		}
-		/* BrushedTemplate extension */
-		if (el.$tmp.myBody){
-			el.$tmp.myBody.clone().inject(
-				new Element('div', {'class': this.options.className + '-text'}).inject(this.wrapper)
-			).show();
-		}
-
-		$clear(this.timer);
-		this.timer = this.show.delay(this.options.showDelay, this);
-	}
-});
 
 
 /**
@@ -1977,8 +1834,10 @@ var ZebraTable = {
 		$$('*[class^=zebra]').each(function(z){
 			var parms = z.className.split('-'), 
 				isDefault = parms[1].test('table'),
-				c1 = $C(parms[1]||''), 
-				c2 = $C(parms[2]||'');
+				c1 = '', 
+				c2 = '';
+			if(parms[1]) c1= new Color(parms[1],'hex');
+			if(parms[2]) c2= new Color(parms[2],'hex');
 			$ES('table',z).each(function(t){
 				t.zebra = this.zebrafy.pass([isDefault, c1,c2],t);
 				t.zebra();

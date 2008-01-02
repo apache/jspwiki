@@ -229,7 +229,7 @@ var EditTools =
 			t = "\n" + t;
 		}
 		if(s) t = t.replace( snippy.tab[0], s)
-		TextArea.setSelection(this.textarea, t);
+		TextArea.replaceSelection(this.textarea, t);
 		return false; /*don't propagate*/
 	} ,
 
@@ -263,7 +263,7 @@ var EditTools =
 		if(!sel || (sel=="")){
 			this.textarea.value = data;
 		} else {
-			TextArea.setSelection( this.textarea, data );
+			TextArea.replaceSelection( this.textarea, data );
 		}
 		if(this.textarea.onchange) this.textarea.onchange();
 	} ,
@@ -280,14 +280,14 @@ var EditTools =
 		if( s == ss ) return; //copy
 
 		this.storeTextarea(); //cut
-		TextArea.setSelection( this.textarea, ss );
+		TextArea.replaceSelection( this.textarea, ss );
 	} ,
 
 	paste : function()
 	{
 		if( !this.CLIPBOARD ) return;
 		this.storeTextarea();
-		TextArea.setSelection( this.textarea, this.CLIPBOARD );
+		TextArea.replaceSelection( this.textarea, this.CLIPBOARD );
 	} ,
 
 	/* UNDO functionality: use by all toolbar and find&replace functions */
@@ -339,71 +339,45 @@ var EditTools =
 
 
 /** TextArea support routines
- ** allowing to get and set the selected texted in a textarea
- ** These routines have browser specific code to support IE
- ** Also runs on Safari.
- **
- ** Inspired by JS QuickTags from http://www.alexking.org/
- ** but extended for JSPWiki -- DirkFrederickx Jun 06.
  **/
 var TextArea =
 {
 	getSelection: function(id){
-		var f = $(id); 
-		if(!f) return ''; 
+		var f = $(id); if(!f) return ''; 
 		
-		if(window.ie){
-			f.focus();
-			return document.selection.createRange().text;
-		}
-		else if(f.selectionStart || f.selectionStart == '0'){ //MOZILLA/NETSCAPE
-			f.focus();   
-			var start = f.selectionStart,
-				end = f.selectionEnd;
-			return f.value.substr( start, end-start );
-		}
-		return '';
+		if(window.ie) return document.selection.createRange().text;
+		return f.getValue().substring(f.selectionStart, f.selectionEnd);
 	},
-	
+
 	/* replaces the selection with aValue, and returns with aValue selected */
-	setSelection: function(id, aValue){
-		var f = $(id); 
-		if(!f) return ''; 
-		f.focus();
+	replaceSelection: function(id, newText){
+		var f = $(id); if(!f) return;
+		var scrollTop = this.scrollTop;
 		 
 		if(window.ie){
+			f.focus();
 			var r = document.selection.createRange();
-			r.text = aValue;
-			r.moveStart('character',-aValue.length);
+			r.text = newText;
+			r.moveStart('character',-newText.length); /***/
 			r.select();
+			f.range.select();
 		}
-		else if(f.selectionStart || f.selectionStart == '0'){ //MOZILLA/NETSCAPE
-			f.focus();   
-			var start = f.selectionStart,
-				end = f.selectionEnd,
-				top = f.scrollTop;
-			
-			f.value = f.value.substring(0, start)
-			         + aValue 
-			         + f.value.substring(end, f.value.length);
-			f.focus();
-			f.selectionStart = start;
-			f.selectionEnd = start + aValue.length;
-			f.scrollTop = top;
-		} else {
-			f.value += value;
-			f.focus();
+		else { 
+			var start = f.selectionStart, end = f.selectionEnd;
+			f.value = f.value.substring(0, start) + newText + f.value.substring(end);
+			f.replaceSelectionRange(start + newText.length, start + newText.length);
 		}
+		f.focus();
+		f.scrollTop = scrollTop;
 		if(f.onchange) f.onchange();
 	},
 	
-	/* check whether selection is preceeded by a \n (peek-ahead trick) */
+	/* check whether selection is preceeded by a \n (peek-ahead) */
 	isSelectionAtStartOfLine: function(id){
-		var f = $(id); 
-		if(!f) return ''; 
-		f.focus();
+		var f = $(id); if(!f) return false;
 
 		if(window.ie){
+			f.focus();
 			var r1 = document.selection.createRange(),
 				r2 = document.selection.createRange();
 			r2.moveStart( "character", -1);
@@ -411,7 +385,7 @@ var TextArea =
 			if(r1.compareEndPoints("StartToStart", r2) == 0) return true;
 			if(r2.text.charAt(0).match( /[\n\r]/ )) return true;
 		}
-		else if(f.selectionStart || f.selectionStart == '0'){ //MOZILLA/NETSCAPE
+		else {
 			if(f.selectionStart == 0) return true;
 			if(f.value.charAt(f.selectionStart-1) == '\n') return true;
 		} 

@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  *  Defines an editor manager.  An editor can be added by adding a
@@ -60,11 +61,13 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
  *  @author jalkanen
  *  @author Christoph Sauer
  *  @author Chuck Smith
+ *  @author Dirk Frederickx
  *  @since 2.4
  */
 public class EditorManager extends ModuleManager
 {
     /** The property name for setting the editor.  Current value is "jspwiki.editor" */
+    /* not used anymore -- replaced by defaultpref.template.editor */
     public static final String       PROP_EDITORTYPE = "jspwiki.editor";
 
     /** Parameter for changing editors at run-time */
@@ -178,9 +181,8 @@ public class EditorManager extends ModuleManager
      *  user preferences.
      *  <p>
      *  Determines the editor to use by the following order of conditions:
-     *  1. Attribute in HttpSession: used when an alternative editor has been chosen
-     *  2. Editor set in User Preferences (not yet implemented)
-     *  3. Default Editor set in jspwiki.properties
+     *  1. Editor set in User Preferences
+     *  2. Default Editor set in jspwiki.properties
      *  <p>
      *  For the PREVIEW context, this method returns the "preview" editor.
      *
@@ -188,7 +190,6 @@ public class EditorManager extends ModuleManager
      * @return The name of the chosen editor.  If no match could be found, will
      *         revert to the default "plain" editor.
      */
-    // FIXME: Look at user preferences
     public String getEditorName( WikiContext context )
     {
         if( context.getRequestContext().equals(WikiContext.PREVIEW) )
@@ -196,35 +197,22 @@ public class EditorManager extends ModuleManager
 
         String editor = null; 
 
-        // If a parameter "editor" is provided, then set it as session attribute, so that following
-        // calls can make use of it. This parameter is set by the links created
-        // through the EditorIteratorTag
-
-        editor = TextUtil.replaceEntities( context.getHttpParameter( PARA_EDITOR ) );
-        if (editor != null)
-        {
-            context.getHttpRequest().getSession().setAttribute( PARA_EDITOR, editor );
-        }
-
-        // First condition:
-        // an attribute in the Session is provided
-        editor = (String) context.getHttpRequest().getSession().getAttribute( PARA_EDITOR );
-        if (editor != null)
-        {
-            return editor;
-        }
-
-        // Second condition:
         // User has set an editor in preferences
-        // TODO...
+        editor = Preferences.getPreference( context, PARA_EDITOR );
 
-        // Third condition:
-        // use the default editor in jspwiki.properties
-        try
+        /* FIXME: actual default 'editor' property is read by the Preferences class */
+        if (editor == null)
         {
-
-            editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
-
+            // or use the default editor in jspwiki.properties
+            try
+            {
+                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );        
+            }
+            catch( NoSuchVariableException e ) {} // This is fine
+        }
+        
+        if (editor != null)
+        {
             String[] editorlist = getEditorList();
 
             editor = editor.trim();
@@ -237,7 +225,6 @@ public class EditorManager extends ModuleManager
                 }
             }
         }
-        catch( NoSuchVariableException e ) {} // This is fine
 
         return EDITOR_PLAIN;
     }

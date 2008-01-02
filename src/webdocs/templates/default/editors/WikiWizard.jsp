@@ -147,7 +147,7 @@ int maxSize = TextUtil.getIntegerProperty( engine.getWikiProperties(),
     <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
-	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
+	<%--FIXME: seems not to read the email of the user, but some session parameter --%>
     <p>
     <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
     <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />

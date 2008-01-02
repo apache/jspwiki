@@ -9,39 +9,35 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Create Page<br></td></tr>
 
-	<tr><td>store</td>	<td>javascript{'Create Page '+new Date().getTime()}</td>	<td>page</td></tr>
-	<tr><td>store</td>	<td>janne</td>		<td>TestUsername</td></tr>
+	<tr><td>store</td>	<td>javascript{'Createpage '+new Date().getTime()}</td>	<td>page</td></tr>
+	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
-	<tr><td>store</td>	<td>/@selenium.context@/Wiki.jsp?page=Main</td>		<td>url</td></tr>
-	<tr><td>store</td>	<td>/@selenium.context@/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
-	<tr><td>store</td>	<td>/@selenium.context@/Login.jsp</td>			<td>loginurl</td></tr>
-    <tr><td>store</td>	<td>This page was created by the web unit tests.</td>	<td>TestContent</td></tr>
 
-	<!-- Login --!>
+	<tr><td>store</td>	<td>../Wiki.jsp?page=Main</td>		<td>url</td></tr>
+	<tr><td>store</td>	<td>../Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
+	<tr><td>store</td>	<td>../Login.jsp</td>			<td>loginurl</td></tr>
+    <tr><td>store</td>	<td>This page was created by the web unit tests.</td>	<td>PageContent</td></tr>
+
+	<!-- Login -->
     <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
-
     <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
     <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
-
     <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
 
-	<!-- Create a new page --!>
-    <tr><td>verifyTitle</td><td>JSPWiki: Main</td><td>&nbsp;</td></tr>
-
-	<!-- create page --!>
+	<!-- create page -->
     <tr><td>open</td>	<td>${editurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyElementPresent</td>	<td>ok</td>	<td></td></tr>
     <tr><td>verifyElementPresent</td>	<td>id=editorarea</td>	<td></td></tr>
 
-    <tr><td>type</td>			<td>id=editorarea</td>		<td>${TestContent}</td></tr>
+    <tr><td>type</td>			<td>id=editorarea</td>		<td>${PageContent}</td></tr>
     <tr><td>clickAndWait</td>	<td>ok</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
-    <tr><td>verifyTextPresent</td>	<td>${TestContent}</td>	<td>&nbsp;</td></tr>	
+    <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>	
     
-    <!-- Log out --!>
+    <!-- Log out -->
     <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 
 	</tbody>

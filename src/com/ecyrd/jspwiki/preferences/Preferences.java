@@ -69,7 +69,8 @@ public class Preferences
         
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
         // disabling it until knowing why it's happening
-        // prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
+        // FIXME: editomanager reads jspwiki.editor -- which of both properties should continue
+        prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
                 
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
 

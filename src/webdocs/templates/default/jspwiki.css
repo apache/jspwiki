@@ -30,7 +30,6 @@
 	left:2em; 
 	right:auto;
 	width:18%;
-	text-align:center;
 }
 #footer .applicationlogo,
 #footer .companylogo,
@@ -297,12 +296,15 @@ img.attlink {
 .applicationlogo a {
 	display:block;
 	height:64px;
+	width:64px;
 	overflow:hidden;
+	margin-left:auto;
+	margin-right:auto;
 	text-indent:-1000px;
-	background:url(../../images/jspwiki_logo_s.png) no-repeat center;
+	background:url(../../images/jspwiki_logo.png) -64px 0 no-repeat;
 }
 .applicationlogo a:hover {
-	background:url(../../images/jspwiki_logo.png) no-repeat center;
+	background-position:0 0;
 }
 
 
@@ -393,7 +395,7 @@ td .information, td .warning, td .error {
 	border:1px solid #ddd;
 	background:#f9f9f9;
 	padding:0.5em;
-	margin:0 0.5em;
+	margin:0 0 1em 0.5em;
 	font-size:90%;
 }
 .commentbox li {
@@ -688,8 +690,11 @@ a.tool:hover, .btn:hover {
 .gBar {
 }
 .graphBar {
-	border-color:#f93;
 	padding:0;
+	color:white;
+	border-color:#f93;
+	border-left-style:solid;
+	border-bottom-style:solid;
 }
 .fragment {
 	margin:0.25em;
@@ -966,13 +971,17 @@ body.view {
 
 /* +++ 610 Image plugin +++ */
 .imageplugin {
-	margin:.5em;
+	margin:.5em 0;
 }
 .imageplugin img {
 	border:0;
 }
 .imageplugin caption {
 	font-size:90%;
+}
+.imageplugin * {
+	padding:0;
+	margin:0;
 }
 
 /* +++ 620 Index plugin +++ */
@@ -1298,7 +1307,7 @@ div.collapse ul, div.collapse ol {
 div.collapse li {
 	list-style-type:none;
 }
-.collapsebody {
+.collapse .collapsebody {
 	padding-left:1.5em;
 }
 /* ie6 hack */
@@ -1337,7 +1346,7 @@ div.collapse li {
 	border: 2px solid white;
 }
 .collapsebox .collapsebody {
-	margin:0 0.5em;
+	padding:0 0.5em;
 }
 
 /* +++ 930 Sortable tables +++ */
@@ -1467,7 +1476,7 @@ a.slimbox:hover {
 	z-index:10;
 }
 .categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
-	color:inherit;
+	color:white;
 	text-decoration:none;
 }
 .categoryTitle {

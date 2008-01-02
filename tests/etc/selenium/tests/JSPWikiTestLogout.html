@@ -9,13 +9,13 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Logout<br></td></tr>
 
-	<tr><td>store</td>	<td>/@selenium.context@/Wiki.jsp?page=Main</td>	<td>url</td></tr>
-	<tr><td>store</td>	<td>/@selenium.context@/Login.jsp</td>			<td>loginurl</td></tr>
-	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
-    <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
+	<tr><td>store</td>	<td>../Wiki.jsp?page=Main</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>../Login.jsp</td>			<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
+    <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
 	<tr><td>store</td>	<td>JanneJalkanen</td>	<td>wikiname</td></tr>
 
-	<!-- Start at front page: try to log in --!>
+	<!-- Start at front page: try to log in -->
     <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
@@ -29,7 +29,7 @@
 
     <tr><td>assertCookie</td>	<td>regex:JSPWikiAssertedName=${wikiname}</td>	<td></td></tr>
 
-    <!-- Log out; we should NOT see any asserted identities --!>
+    <!-- Log out; we should NOT see any asserted identities -->
     <tr><td>assertElementPresent</td>	<td>link=Log out</td>	<td></td></tr>
     <tr><td>clickAndWait</td>			<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 

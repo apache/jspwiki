@@ -1,3 +1,28 @@
+2008-01-02  Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-3
+        
+        * [JSPWIKI-49] Fixed handling of the Editor choice as part of the user preferences.
+        When restarting the browser, also the preferred editor setting is recovered.
+        Still 2 properties exist to set the default Editor choice (both are kept for bw compat)
+        You can choose either one.
+          jspwiki.editor=plain 
+          jspwiki.defaultprefs.template.editor =plain    (=> preferred)
+        
+        * All WEBTESTs are now converted to Selenium. They run manually -- still need to verify
+        the automatic run via ant.
+        
+        * The MORE dropdown is now also available during Login, UserPreferences and Find screens.
+        This makes all common links (stored in MoreMenu) more easily accessible.
+
+        * Minor JS refactorings on handling color for GraphBars and ZebraTables.
+ 
+        * Minor JS refactorings to better support Category styles for IE.
+
+        * Both JSPWiki logo's (shaded and not-shaded image) have been merged in a single .png
+        to resolve image flicker at mouse-hover. (especially on ie)
+
+
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1-cvs-2

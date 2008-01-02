@@ -64,10 +64,10 @@
           </td>
           <!-- Possible actions (outcomes) -->
           <td align="left">
-            <form id="<c:out value="decision.${decision.id}"/>" 
-              action="<wiki:Link jsp="Workflow.jsp" format="url"/>" method="POST" accept-charset="UTF-8">
+            <form id="<c:out value='decision.${decision.id}'/>" 
+              action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
               <input type="hidden" name="action" value="decide" />
-              <input type="hidden" name="id" value="<c:out value="${decision.id}" />" />
+              <input type="hidden" name="id" value="<c:out value='${decision.id}' />" />
               <select name="outcome" onchange="SubmitOutcomeIfSelected(this)">
                 <option value="-"><fmt:message key="select.one"/></option>
                 <c:forEach var="outcome" items="${decision.availableOutcomes}"><option value="${outcome.messageKey}"><fmt:message key="${outcome.messageKey}"/></option>
@@ -77,8 +77,10 @@
           </td>
           <!-- Requester -->
           <td align="left"><c:out value="${decision.owner.name}"/></td>
-        <!-- When did the actor start this step? -->
-        <td align="left"><c:out value="${decision.startTime}"/></td>
+          <!-- When did the actor start this step? -->
+          <td align="left">
+            <fmt:formatDate value="${decision.startTime}" pattern="${prefs['DateFormat']}" />
+		  </td>
         </tr>
         <!-- Hidden row with Decision details, if there are any -->
         <c:if test="${!empty decision.facts}">
@@ -88,7 +90,7 @@
               <a href="javascript:toggleHidden('<c:out value="decision.${decision.workflow.id}"/>');" title="Show or hide details">
                 details...
               </a>
-              <div class="hideDiv" id="<c:out value="decision.${decision.workflow.id}"/>">
+              <div class="hideDiv" id="<c:out value='decision.${decision.workflow.id}'/>">
                 <c:forEach var="fact" items="${decision.facts}">
                   <h5><fmt:message key="${fact.messageKey}" /></h5>
                   <p><c:out escapeXml="false" value="${fact.value}"/></p>
@@ -142,7 +144,7 @@
           </td >
           <!-- Actions -->
           <td align="left">
-            <form id="<c:out value="workflow.${workflow.id}"/>" action="<wiki:Link jsp="Workflow.jsp" format="url"/>" method="POST" accept-charset="UTF-8">
+            <form id="<c:out value='workflow.${workflow.id}'/>" action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
               <input type="submit" name="submit" value="<fmt:message key="outcome.step.abort" />" />
               <input type="hidden" name="action" value="abort" />
               <input type="hidden" name="id" value="<c:out value="${workflow.id}" />" />
@@ -151,7 +153,9 @@
           <!-- Current actor -->
           <td align="left"><c:out value="${workflow.currentActor.name}"/></td>
           <!-- When did the actor start this step? -->
-          <td align="left"><c:out value="${workflow.currentStep.startTime}"/></td>
+          <td align="left">
+            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs['DateFormat']}" />
+          </td>
         </tr>
         <% i++; %>
       </c:forEach>

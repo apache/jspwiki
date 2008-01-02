@@ -8,8 +8,6 @@
   //String frontpage = c.getEngine().getFrontPage(); 
 %>
 
-<%-- similar to PageActionsBottom, except for accesskeys, More... dropdown, quick2Bottom --%>
-<wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview|find|viewGroup|editGroup'>
 <div id="actionsTop" class="pageactions"> 
   <form class="wikiform" method="get" action="" >
   <ul>
@@ -80,7 +78,7 @@
     </wiki:PageExists>  
     </wiki:CheckRequestContext>
     
-    <wiki:CheckRequestContext context='!find'>
+    <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview' >
     <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
        title="<fmt:message key='actions.rawpage.title' />"><fmt:message key='actions.rawpage' />
     </option>
@@ -116,4 +114,3 @@
 
   </form>
 </div>
-</wiki:CheckRequestContext>

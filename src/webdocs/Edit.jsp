@@ -41,17 +41,17 @@
     String cancel  = request.getParameter("cancel");
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
-    String author  = findParam( pageContext, "author" );
-    String changenote = findParam( pageContext, "changenote" );
+    String author  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
+    String changenote = TextUtil.replaceEntities( findParam( pageContext, "changenote" ) );
     String text    = EditorManager.getEditedText( pageContext );
-    String link    = findParam( pageContext, "link");
+    String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
     String captcha = (String)session.getAttribute("captcha");
 
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous()
          && author != null )
     {
-        user  = findParam( pageContext, "author" );
+        user  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
     }
 
     //

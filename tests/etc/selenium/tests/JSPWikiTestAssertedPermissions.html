@@ -8,82 +8,120 @@
 <table cellpadding="1" cellspacing="1" border="1">
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Permissions<br></td></tr>
-<!--
-        // Create new group with 'janne' and 'FredFlintstone' as members
-        t.gotoPage( "/Wiki.jsp" );
-        login( TEST_LOGINNAME, TEST_PASSWORD );
-        String group = "AssertedPermissions" + String.valueOf( System.currentTimeMillis() );
-        String members = TEST_LOGINNAME + " \n FredFlintstone";
 
-        // First, create the group
-        t.gotoPage( "/NewGroup.jsp" );
-        t.assertTextPresent( "Create New Group" );
-        t.assertFormPresent( "createGroup" );
-        t.setWorkingForm( "createGroup" );
-        t.assertFormElementPresent("group" );
-        t.assertFormElementPresent("members" );
-        t.assertSubmitButtonPresent( "ok" );
-        t.setFormElement( "group", group );
-        t.setFormElement( "members", members );
-        t.submit( "ok" );
-        
-        // Verify the group was created 
-        t.assertTextNotPresent( "Could not create group" );
-        t.gotoPage("/Group.jsp?group=" + group );
-        t.assertTextPresent( "This is the wiki group called" );
-        
-        // Verifiy that anonymous users can't view the group
-        newSession();
-        t.gotoPage("/Group.jsp?group=" + group );
-        t.assertTextPresent( "Please sign in" );
-        
-        // Log in again and verify we can read it
-        login( TEST_LOGINNAME, TEST_PASSWORD );
-        t.gotoPage("/Group.jsp?group=" + group );
-        t.assertTextPresent( "This is the wiki group called" );
-        
-        // Verify that asserted user 'Fred' can view the group but not edit
-        newSession();
-        t.gotoPage( "/Wiki.jsp?page=Main" );
-        // brushed NOK -- link is hidden in dropdown
-        //t.clickLinkWithText( "My Prefs" );
-        t.gotoPage( "/UserPreferences.jsp" );
-        t.setWorkingForm( "setCookie" );
-        t.setFormElement( "assertedName", "FredFlintstone" );
-        t.submit( "ok" );
-        t.assertTextPresent( "G&#8217;day" );
-        t.assertTextPresent( "FredFlintstone" );
-        t.assertTextPresent( "(not logged in)" );
-        t.gotoPage("/Group.jsp?group=" + group );
-        t.assertTextPresent( "This is the wiki group called" );
-        
-        // Try to edit -- it should not be allowed
-        t.gotoPage("/EditGroup.jsp?group=" + group );
-        t.assertTextPresent( "Please sign in" );
---!>
-
-	<tr><td>store</td>	<td>/@selenium.context@/Wiki.jsp?page=Main</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>javascript{'Test-asserted-permissions-'+new Date().getTime()}</td>	<td>group</td></tr>
+	<tr><td>store</td>	<td>Janne Jalkanen<br />FredFlintstone</td>		<td>members</td></tr>
+	<tr><td>store</td>	<td>../Wiki.jsp</td>			<td>url</td></tr>
+	<tr><td>store</td>	<td>../UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>../Login.jsp</td>		<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>../Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>../NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>../EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
-    <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
 
-    <tr><td>verifyLocation</td>		<td>*/Wiki.jsp?page=Main</td>	<td>&nbsp;</td></tr>
-    <tr><td>verifyTextPresent</td>	<td>glob:G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
+    <tr><td rowspan="1" colspan="3"> Create new group with 'janne' and 'FredFlintstone' as members </td></tr>
+
+    <tr><td>open</td>				<td>${url}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
 
-    <!-- login --!>
-    <tr><td>clickAndWait</td>	<td>link=Log in</td> 	<td>&nbsp;</td></tr>
+    <tr><td rowspan="1" colspan="3"> login </td></tr>
+
+    <tr><td>open</td>			<td>${loginurl}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>	<td>JSPWiki: Login</td>	<td>&nbsp;</td></tr>
-    <tr><td>verifyValue</td>	<td>j_username</td>		<td>&nbsp;</td></tr>
-    <tr><td>verifyValue</td>	<td>j_password</td>		<td>&nbsp;</td></tr>
-    <tr><td>verifyElementPresent</td>	<td>submitlogin</td>	<td></td></tr>
+    <tr><td>type</td>			<td>j_username</td>		<td>${TestUsername}</td></tr>
+    <tr><td>type</td>			<td>j_password</td>		<td>${TestPassword}</td></tr>
+    <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTextNotPresent</td>	<td>Please sign in</td>	<td></td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>	<td></td></tr>
+    <tr><td>verifyTextPresent</td>	<td>(authenticated)</td>	<td></td></tr>
+        
+    <tr><td rowspan="1" colspan="3"> First, name the group </td></tr>
+
+    <tr><td>open</td>					<td>${newgroupurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>			<td>JSPWiki: New Group</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#createGroup input[name="ok"]</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>group</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>members</td>	<td></td></tr>
+
+    <tr><td>type</td>			<td>group</td>		<td>${group}</td></tr>
+    <tr><td>type</td>			<td>members</td>	<td>${members}</td></tr>
+    <tr><td>clickAndWait</td>	<td>css=form#createGroup input[name="ok"]</td>	<td>&nbsp;</td></tr>
+                
+    <tr><td rowspan="1" colspan="3"> Verify the group was created </td></tr>
+
+    <tr><td>verifyTextNotPresent</td>	<td>Could not create group</td>	<td></td></tr>
+
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>		<td>JSPWiki: ${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>This is the wiki group called</td>	<td></td></tr>
+        
+    <tr><td rowspan="1" colspan="3"> Log out </td></tr>
+
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+
+    <tr><td rowspan="1" colspan="3"> Verifiy that anonymous users can't view the group </td></tr>
+
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>Please sign in</td>	<td></td></tr>
+                
+    <tr><td rowspan="1" colspan="3"> Log in again and verify we can read it </td></tr>
+
+    <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
     <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
-
     <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
 
-    <tr><td>verifyTitle</td><td>JSPWiki: Main</td><td>&nbsp;</td></tr>
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>This is the wiki group called</td>	<td></td></tr>
+                
+    <tr><td rowspan="1" colspan="3"> Log out </td></tr>
+
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+
+    <tr><td rowspan="1" colspan="3"> Verify that asserted user 'Fred' can view the group but not edit </td></tr>
+
+    <tr><td>open</td>	<td>${url}</td>	<td>&nbsp;</td></tr>
+    
+    <tr><td>clickAndWait</td>	<td>link=My Prefs</td> 	<td>&nbsp;</td></tr>
+    <!--<tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>-->
+
+    <tr><td>verifyTitle</td>			<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>assertedName</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#setCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>type</td>			<td>assertedName</td>	<td>FredFlintstone</td></tr>
+    <tr><td>clickAndWait</td>	<td>css=form#setCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+
+    <tr><td rowspan="1" colspan="3"> Now navigate back to the main page; see the 'G'day message' for FredFlintstone </td></tr>
+
+    <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>link=FredFlintstone</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>(not logged in)</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>assertCookie</td>	<td>regex:JSPWikiAssertedName=FredFlintstone</td>	<td></td></tr>
+
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>		<td>JSPWiki: ${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>This is the wiki group called</td>	<td></td></tr>
+
+    <tr><td rowspan="1" colspan="3"> Try to edit it should not be allowed </td></tr>
+
+    <tr><td>open</td>	<td>${editgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>Please sign in</td>	<td></td></tr>
+        
+    <tr><td rowspan="1" colspan="3"> Clear user cookie </td></tr>
+
+    <tr><td>open</td>			<td>${prefsurl}</td>				<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>	<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyValue</td>	<td>assertedName</td>				<td>FredFlintstone</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#clearCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+    <tr><td>clickAndWait</td>			<td>css=form#clearCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+
     
 	</tbody>
 </table>

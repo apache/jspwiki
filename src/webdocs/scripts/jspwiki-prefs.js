@@ -22,7 +22,7 @@ var WikiGroup =
 	isCreateOn  : false,
 
 	putGroup: function(group, members, groupInfo, isSelected){
-		this.groups[ group ] = { members: members, groupInfo: groupInfo };
+		this.groups[group] = { members: members, groupInfo: groupInfo };
 
 		var g = $(this.GroupTltID);
 		var gg = g.clone().setHTML(group);
