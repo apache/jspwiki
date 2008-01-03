@@ -7,8 +7,8 @@
 <div id="footer">
 
   <div class="applicationlogo" > 
-    <%--FIXMIE<a href="<wiki:LinkTo page='SystemInfo' format='url'/>" title="JSPWiki System Info"><wiki:Variable var="ApplicationName" /></a>--%>
-    <wiki:Link page='SystemInfo' title='<%=LocaleSupport.getLocalizedMessage(pageContext, "header.systeminfo")%>'><wiki:Variable var="ApplicationName" /></wiki:Link>
+    <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
+       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
   </div>
 
   <div class="companylogo"></div>

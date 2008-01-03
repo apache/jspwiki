@@ -181,8 +181,9 @@ var Wiki = {
 	},	
 	/* retrieve pagename from any wikipage url format */
 	getPageName: function(url){
-		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, '(.+)');
-		return url.match(new RegExp(s))[1];
+		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, '(.+)'),
+			res = url.match(new RegExp(s));
+		return (res ? res[1] : false);
 	},
 	onPageLoad: function(){
 		this.PermissionEdit = ($E('a.edit') !== undefined); //deduct permission level
@@ -1726,8 +1727,8 @@ var Categories =
 		this.jsp = Wiki.TemplateDir + '/AJAXCategories.jsp';
 
 		$$('.category a.wikipage').each(function(link){
-			var page = Wiki.getPageName(link.href),
-				wrap = new Element('span').injectBefore(link).adopt(link),
+			var page = Wiki.getPageName(link.href); if(!page) return;
+			var wrap = new Element('span').injectBefore(link).adopt(link),
 				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap),
 				popfx = popup.effect('opacity',{wait:false}).set(0);
 

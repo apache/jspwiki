@@ -1,3 +1,10 @@
+2008-01-023 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-4
+        
+        * Improving robustness of Wiki.getPageName(url) which was dying on unexpected url formats.
+
+
 2008-01-02  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-3
