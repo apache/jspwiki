@@ -1,3 +1,16 @@
+2008-01-05  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-5
+        
+        * [JSPWIKI-108]: Fixed EditPageHelp.txt which had an extra pipe char.
+        
+        * [JSPWIKI-106]: Password recovery emails are now sent with UTF-8 encoding.
+        
+        * [JSPWIKI-113]: Patch from Harry Metske to make sure the JNDI factory is
+        only checked once when sending email.
+        
+        * [JSPWIKI-119]: URI detector now detects properly ~ and % characters.
+
 2008-01-03 Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-4
