@@ -198,6 +198,8 @@ public final class MailUtil
 
     private static final String TRUE = "true";
 
+    private static boolean useJndi = false;
+
     public static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
     protected static final Logger log = Logger.getLogger(MailUtil.class);
@@ -294,17 +296,19 @@ public final class MailUtil
         Properties props = engine.getWikiProperties();
         String jndiName = props.getProperty( PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME ).trim();
         Session session = null;
-        boolean useJndi = false;
 
-        // Try getting the Session from the JNDI factory first
-        try
+        if (useJndi)
         {
-            session = getJNDIMailSession( jndiName );
-            useJndi = true;
-        }
-        catch ( NamingException e )
-        {
-            // Oops! JNDI factory must not be set up
+            // Try getting the Session from the JNDI factory first
+            try
+            {
+                session = getJNDIMailSession(jndiName);
+                useJndi = true;
+            }
+            catch (NamingException e)
+            {
+                // Oops! JNDI factory must not be set up
+            }
         }
 
         // JNDI failed; so, get the Session from the standalone factory
@@ -316,11 +320,11 @@ public final class MailUtil
         try
         {
             // Create and address the message
-            Message msg = new MimeMessage( session );
+            MimeMessage msg = new MimeMessage( session );
             msg.setFrom( new InternetAddress( from ) );
             msg.setRecipients( Message.RecipientType.TO, InternetAddress.parse( to, false ) );
             msg.setSubject( subject );
-            msg.setText( content );
+            msg.setText( content, "UTF-8" );
             msg.setSentDate( new Date() );
 
             // Send and log it
