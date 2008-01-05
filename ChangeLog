@@ -1,3 +1,7 @@
+2008-01-05 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * No version bump - small fix of exception in Footer.jsp 
+        
 2008-01-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-5
