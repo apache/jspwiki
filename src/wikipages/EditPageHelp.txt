@@ -23,7 +23,7 @@ __text__         Makes text bold.
 {{text}}         Makes text in monospaced font.
 ;term:def        Defines 'term' with 'def'.  Use this with empty 'term' to make short comments.
 
-|text|more text| Makes a table. Double bars for a table heading.
+|text|more text  Makes a table. Double bars for a table heading.
 }}}
 
 Don't try to use HTML, since it just won't work.
