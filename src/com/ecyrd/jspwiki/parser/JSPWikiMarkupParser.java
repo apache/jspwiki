@@ -163,7 +163,7 @@ public class JSPWikiMarkupParser
 
     private PatternCompiler        m_compiler = new Perl5Compiler();
 
-    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+))";
+    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
 
     private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
