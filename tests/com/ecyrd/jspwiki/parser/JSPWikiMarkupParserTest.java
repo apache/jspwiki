@@ -397,6 +397,27 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo\">http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo</a>",
                       translate(src) );
     }
+
+    public void testHyperlinksCCURLs8()
+    throws Exception
+    {
+        String src = "http://www.foo.bar/~ANewHope/";
+
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/~ANewHope/\">http://www.foo.bar/~ANewHope/</a>",
+                      translate(src) );
+    }
+    
+    public void testHyperlinksCCURLs9()
+    throws Exception
+    {
+        String src = "http://www.foo.bar/%7EANewHope/";
+
+        // System.out.println( "EX:"+translate(src) );
+        assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/%7EANewHope/\">http://www.foo.bar/%7EANewHope/</a>",
+                      translate(src) );
+    }
+
     public void testHyperlinksCCNegated()
     throws Exception
     {
