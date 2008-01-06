@@ -133,16 +133,16 @@ public final class WikiSecurityEvent extends WikiEvent
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
      * constructed, the security logger {@link #log} is notified.
-     * @param source the source of the event, which can be any object: a wiki
+     * @param src the source of the event, which can be any object: a wiki
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
      * @param principal the subject of the event, which may be <code>null</code>
      * @param target the changed Object, which may be <code>null</code>
      */
-    public WikiSecurityEvent( Object source, int type, Principal principal, Object target )
+    public WikiSecurityEvent( Object src, int type, Principal principal, Object target )
     {
-        super( source, type );
-        if ( source == null )
+        super( src, type );
+        if ( src == null )
         {
             throw new IllegalArgumentException( "Argument(s) cannot be null." );
         }
@@ -168,14 +168,14 @@ public final class WikiSecurityEvent extends WikiEvent
      * event has occurred. The <code>source</code> parameter is required, and
      * may not be <code>null</code>. When the WikiSecurityEvent is
      * constructed, the security logger {@link #log} is notified.
-     * @param source the source of the event, which can be any object: a wiki
+     * @param src the source of the event, which can be any object: a wiki
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
      * @param target the changed Object, which may be <code>null</code>.
      */
-    public WikiSecurityEvent( Object source, int type, Object target )
+    public WikiSecurityEvent( Object src, int type, Object target )
     {
-        this( source, type, null, target );
+        this( src, type, null, target );
     }
 
     /**

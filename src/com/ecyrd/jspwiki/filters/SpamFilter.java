@@ -79,7 +79,7 @@ public class SpamFilter
     private static final String REASON_SIMILAR_MODIFICATIONS = "SimilarModifications";
     private static final String REASON_TOO_MANY_MODIFICATIONS = "TooManyModifications";
     private static final String REASON_UTF8_TRAP = "UTF8Trap";
-    
+
     private static final String LISTVAR = "spamwords";
     public static final String  PROP_WORDLIST              = "wordlist";
     public static final String  PROP_ERRORPAGE             = "errorpage";
@@ -92,10 +92,10 @@ public class SpamFilter
     public static final String  PROP_IGNORE_AUTHENTICATED  = "ignoreauthenticated";
     public static final String  PROP_CAPTCHA               = "captcha";
     public static final String  PROP_FILTERSTRATEGY        = "strategy";
-    
+
     public static final String  STRATEGY_EAGER             = "eager";
     public static final String  STRATEGY_SCORE             = "score";
-    
+
     private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
 
     private String          m_forbiddenWordsPage = "SpamFilterWordList";
@@ -140,17 +140,17 @@ public class SpamFilter
     private String          m_akismetAPIKey = null;
 
     private boolean         m_useCaptcha = false;
-    
+
     /** The limit at which we consider something to be spam. */
     private int             m_scoreLimit = 1;
-    
+
     /**
      * If set to true, will ignore anyone who is in Authenticated role.
      */
     private boolean         m_ignoreAuthenticated = false;
 
     private boolean         m_stopAtFirstMatch = true;
-    
+
     public void initialize( WikiEngine engine, Properties properties )
     {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST,
@@ -179,9 +179,9 @@ public class SpamFilter
         m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties,
                                                              PROP_IGNORE_AUTHENTICATED,
                                                              m_ignoreAuthenticated );
-        
+
         m_useCaptcha = properties.getProperty( PROP_CAPTCHA, "" ).equals("asirra");
-        
+
         try
         {
             m_urlPattern = m_compiler.compile( URL_REGEXP );
@@ -197,9 +197,9 @@ public class SpamFilter
                                                       m_akismetAPIKey );
 
         m_stopAtFirstMatch = TextUtil.getStringProperty( properties,
-                                                         PROP_FILTERSTRATEGY, 
+                                                         PROP_FILTERSTRATEGY,
                                                          STRATEGY_EAGER ).equals(STRATEGY_EAGER);
-        
+
         log.info("# Spam filter initialized.  Temporary ban time "+m_banTime+
                  " mins, max page changes/minute: "+m_limitSinglePageChanges );
 
@@ -220,7 +220,7 @@ public class SpamFilter
         String page   = ctx.getPage().getName();
         String reason = "UNKNOWN";
         String addr   = ctx.getHttpRequest() != null ? ctx.getHttpRequest().getRemoteAddr() : "-";
-        
+
         switch( type )
         {
             case REJECT:
@@ -237,7 +237,7 @@ public class SpamFilter
         }
 
         spamlog.info( reason+" "+source+" "+uid+" "+addr+" \""+page+"\" "+message );
-        
+
         return uid;
     }
 
@@ -260,14 +260,14 @@ public class SpamFilter
         if( !m_stopAtFirstMatch )
         {
             Integer score = (Integer)context.getVariable(ATTR_SPAMFILTER_SCORE);
-            
+
             if( score != null && score.intValue() >= m_scoreLimit )
             {
                 throw new RedirectException( "Herb says you got too many points",
                                              getRedirectPage(context) );
             }
         }
-        
+
         log( context, ACCEPT, "-", change );
         return content;
     }
@@ -279,14 +279,14 @@ public class SpamFilter
         {
             throw new RedirectException( message, getRedirectPage(context) );
         }
-        
+
         Integer score = (Integer)context.getVariable( ATTR_SPAMFILTER_SCORE );
-        
+
         if( score != null )
             score = new Integer( score.intValue()+1 );
         else
             score = new Integer( 1 );
-        
+
         context.setVariable( ATTR_SPAMFILTER_SCORE, score );
     }
     /**
@@ -488,15 +488,15 @@ public class SpamFilter
             //
             //  Check bot trap
             //
-            
+
             checkBotTrap( context, change );
-            
+
             //
             //  Check UTF-8 mangling
             //
-            
+
             checkUTF8( context, change );
-            
+
             //
             //  Do Akismet check.  This is good to be the last, because this is the most
             //  expensive operation.
@@ -587,33 +587,33 @@ public class SpamFilter
     /**
      *  Returns a static string which can be used to detect spambots which
      *  just wildly fill in all the fields.
-     *  
+     *
      *  @return A string
      */
     public static String getBotFieldName()
     {
         return "submit_auth";
     }
-    
+
     /**
      *  This checks whether an invisible field is available in the request, and
      *  whether it's contents are suspected spam.
-     *  
+     *
      *  @param context
      *  @param change
-     * @throws RedirectException 
+     * @throws RedirectException
      */
     private void checkBotTrap( WikiContext context, String change ) throws RedirectException
     {
         HttpServletRequest request = context.getHttpRequest();
-        
+
         if( request != null )
         {
             String unspam = request.getParameter( getBotFieldName() );
             if( unspam != null && unspam.length() > 0 )
             {
                 String uid = log( context, REJECT, REASON_BOT_TRAP, change );
-                
+
                 log.info("SPAM:BotTrap ("+uid+").  Wildly behaving bot detected.");
 
                 checkStrategy( context, REASON_BOT_TRAP, "Spamming attempt detected. (Incident code "+uid+")");
@@ -621,26 +621,26 @@ public class SpamFilter
             }
         }
     }
-    
+
     private void checkUTF8( WikiContext context, String change ) throws RedirectException
     {
         HttpServletRequest request = context.getHttpRequest();
-        
+
         if( request != null )
         {
             String utf8field = request.getParameter( "encodingcheck" );
-            
+
             if( utf8field != null && !utf8field.equals("\u3041") )
             {
                 String uid = log( context, REJECT, REASON_UTF8_TRAP, change );
-                
+
                 log.info("SPAM:UTF8Trap ("+uid+").  Wildly posting dumb bot detected.");
 
                 checkStrategy( context, REASON_UTF8_TRAP, "Spamming attempt detected. (Incident code "+uid+")");
             }
         }
     }
-    
+
     /**
      *  Goes through the ban list and cleans away any host which has expired from it.
      */
@@ -740,7 +740,7 @@ public class SpamFilter
                 m_lastRebuild = new Date();
 
                 m_spamPatterns = parseWordList( source,
-                                                (String)source.getAttribute( LISTVAR ) );
+                                                (source != null) ? (String)source.getAttribute( LISTVAR ) : null );
 
                 log.info("Spam filter reloaded - recognizing "+m_spamPatterns.size()+" patterns from page "+m_forbiddenWordsPage);
 
@@ -773,7 +773,7 @@ public class SpamFilter
 
     /**
      *  Does a check against a known pattern list.
-     *  
+     *
      *  @param context
      *  @param content
      *  @param change
@@ -792,7 +792,7 @@ public class SpamFilter
 
         if( context.getHttpRequest() != null )
             change += context.getHttpRequest().getRemoteAddr();
-        
+
         for( Iterator i = m_spamPatterns.iterator(); i.hasNext(); )
         {
             Pattern p = (Pattern) i.next();
@@ -879,13 +879,13 @@ public class SpamFilter
         {
             change.append("\r\n"+page.getAuthor());
         }
-            
+
         return change.toString();
     }
 
     /**
      *  Returns true, if this user should be ignored.
-     *  
+     *
      * @param context
      * @return
      */
@@ -911,7 +911,7 @@ public class SpamFilter
 
     /**
      *  Returns a random string of six uppercase characters.
-     *  
+     *
      *  @return A random string
      */
     private static String getUniqueID()
@@ -932,7 +932,7 @@ public class SpamFilter
     /**
      *  Returns a page to which we shall redirect, based on the current value
      *  of the "captcha" parameter.
-     *  
+     *
      *  @param ctx WikiContext
      *  @return An URL to redirect to
      */
@@ -940,13 +940,13 @@ public class SpamFilter
     {
         if( m_useCaptcha )
             return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName(ctx.getPage().getName()) );
-        
+
         return ctx.getURL( WikiContext.VIEW, m_errorPage );
     }
 
     /**
      *  Checks whether the UserProfile matches certain checks.
-     *  
+     *
      *  @param profile
      *  @return
      *  @since 2.6.1
@@ -964,7 +964,7 @@ public class SpamFilter
             log.info("Detected attempt to create a spammer user account (see above for rejection reason)");
             return false;
         }
-        
+
         return true;
     }
 
@@ -972,7 +972,7 @@ public class SpamFilter
      *  This method is used to calculate an unique code when submitting the page
      *  to detect edit conflicts.  It currently incorporates the last-modified
      *  date of the page, and the IP address of the submitter.
-     *  
+     *
      *  @param page The WikiPage under edit
      *  @param request The HTTP Request
      *  @since 2.6
@@ -981,62 +981,62 @@ public class SpamFilter
     public static final String getSpamHash( WikiPage page, HttpServletRequest request )
     {
         long lastModified = 0;
-        
+
         if( page.getLastModified() != null )
             lastModified = page.getLastModified().getTime();
-        
+
         long remote = request.getRemoteAddr().hashCode();
-        
+
         return Long.toString( lastModified ^ remote );
     }
-    
+
     /**
      *  Returns the name of the hash field to be used in this request.
      *  The value is unique per session, and once the session has expired,
      *  you cannot edit anymore.
-     *  
+     *
      *  @param request The page request
      *  @return The name to be used in the hash field
      *  @since  2.6
      */
-    
+
     private static String c_hashName;
     private static long   c_lastUpdate;
-    
+
     /** The HASH_DELAY value is a maximum amount of time that an user can keep
      *  a session open, because after the value has expired, we will invent a new
      *  hash field name.  By default this is {@value} hours, which should be ample
      *  time for someone.
      */
     private static final long HASH_DELAY = 24;
-    
+
     public static final String getHashFieldName( HttpServletRequest request )
     {
         String hash = null;
-        
+
         if( request.getSession() != null )
         {
             hash = (String)request.getSession().getAttribute("_hash");
-            
+
             if( hash == null )
             {
                 hash = c_hashName;
-        
+
                 request.getSession().setAttribute( "_hash", hash );
             }
         }
-        
+
         if( c_hashName == null || c_lastUpdate < (System.currentTimeMillis() - HASH_DELAY*60*60*1000) )
         {
             c_hashName = getUniqueID().toLowerCase();
-            
+
             c_lastUpdate = System.currentTimeMillis();
         }
-        
+
         return hash != null ? hash : c_hashName;
     }
-    
-    
+
+
     /**
      *  This method checks if the hash value is still valid, i.e. if it exists at all. This
      *  can occur in two cases: either this is a spam bot which is not adaptive, or it is
@@ -1045,7 +1045,7 @@ public class SpamFilter
      *  This method puts a redirect to the http response field to page "SessionExpired"
      *  and logs the incident in the spam log (it may or may not be spam, but it's rather likely
      *  that it is).
-     *  
+     *
      *  @param context
      *  @param pageContext
      *  @return True, if hash is okay.  False, if hash is not okay, and you need to redirect.
@@ -1055,37 +1055,37 @@ public class SpamFilter
     public static final boolean checkHash( WikiContext context, PageContext pageContext )
         throws IOException
     {
-        String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() ); 
-        
+        String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() );
+
         if( pageContext.getRequest().getParameter(hashName) == null )
         {
             if( pageContext.getAttribute( hashName ) == null )
             {
                 String change = getChange( context, EditorManager.getEditedText( pageContext ) );
-                
+
                 log( context, REJECT, "MissingHash", change );
-            
+
                 String redirect = context.getURL(WikiContext.VIEW,"SessionExpired");
                 ((HttpServletResponse)pageContext.getResponse()).sendRedirect( redirect );
-            
+
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public static final String insertInputFields( PageContext pageContext )
     {
         WikiContext ctx = WikiContext.findContext(pageContext);
         WikiEngine engine = ctx.getEngine();
-        
+
         StringBuffer sb = new StringBuffer();
         if (engine.getContentEncoding().equals("UTF-8"))
         {
-            sb.append("<input name='encodingcheck' type='hidden' value='\u3041' />\n");    
+            sb.append("<input name='encodingcheck' type='hidden' value='\u3041' />\n");
         }
-       
+
         return sb.toString();
     }
     /**

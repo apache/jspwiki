@@ -54,7 +54,6 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WatchDog;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
-import com.opensymphony.oscache.util.StringUtil;
 
 /**
  *  Interface for the search providers that handle searching the Wiki

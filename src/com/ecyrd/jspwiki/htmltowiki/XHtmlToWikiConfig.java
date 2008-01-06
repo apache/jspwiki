@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -19,14 +19,12 @@
  */
 package com.ecyrd.jspwiki.htmltowiki;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Defines a Wiki configuration to XHtmlToWikiTranslator, including things like
  *  URLs.
- * 
+ *
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class XHtmlToWikiConfig
@@ -49,41 +47,43 @@ public class XHtmlToWikiConfig
     /**
      *  The constructor initializes the different internal fields
      *  according to the current URLConstructor.
-     *  
+     *
      * @param wikiContext
      */
     public XHtmlToWikiConfig( WikiContext wikiContext )
     {
         setWikiContext( wikiContext );
-        
+
         //
         //  Figure out the actual URLs.
         //
         //  NB: The logic here will fail if you add something else after
         //      the Wiki page name in VIEW or ATTACH
         //
-        
+
         m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
-        
+
         m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
-        
+
         m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
 
         m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
     }
 
+    /*
+    // FIXME: Unused.
     private String removeLast(String str, String remove )
     {
         int idx = str.lastIndexOf( remove );
-        
+
         if( idx != -1 )
         {
             str = StringUtils.left( str, idx ) + StringUtils.substring( str, idx+remove.length() );
         }
-        
+
         return str;
     }
-
+    */
     private void setWikiContext( WikiContext wikiContext )
     {
         if( wikiContext.getPage() != null )
@@ -141,7 +141,7 @@ public class XHtmlToWikiConfig
     {
         m_wikiJspPage = wikiJspPage;
     }
-    
+
     public String getEditJspPage()
     {
         return m_editJspPage;

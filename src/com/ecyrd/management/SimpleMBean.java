@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -36,7 +36,7 @@ import org.apache.commons.lang.StringUtils;
  *  require the API interface to be declared, so it's simpler.  It's not as
  *  powerful, but it does not require you to declare two classes (and keep
  *  them in sync).
- *   
+ *
  *  @author Janne Jalkanen
  *  @since  2.6
  */
@@ -45,26 +45,26 @@ public abstract class SimpleMBean
     implements DynamicMBean
 {
     protected MBeanInfo m_beanInfo;
-    
+
     private static Method findGetterSetter( Class clazz, String name, Class parm )
     {
         try
         {
             Class[] params = { parm };
             Class[] emptyparms = {};
-            
+
             Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
-            
+
             return m;
         }
         catch( Exception e )
         {
             // There's nothing to do, really - we just return a null.
         }
-        
+
         return null;
     }
-    
+
     protected SimpleMBean() throws NotCompliantMBeanException
     {
         //
@@ -72,44 +72,44 @@ public abstract class SimpleMBean
         //
         String[] attlist = getAttributeNames();
         MBeanAttributeInfo[] attributes = null;
-        
+
         if( attlist != null )
         {
             attributes = new MBeanAttributeInfo[attlist.length];
-        
+
             for( int i = 0; i < attlist.length; i++ )
             {
                 String name = attlist[i];
                 name = StringUtils.capitalize( name );
                 Method getter = findGetterSetter( getClass(), "get"+name, null );
-                
+
                 if( getter == null ) getter = findGetterSetter( getClass(), "is"+name, null );
-                
+
                 Method setter = null;
-                
+
                 if( getter != null )
                 {
                     setter = findGetterSetter( getClass(), "set"+name, getter.getReturnType() );
                 }
-                
+
                 //
                 //  Check, if there's a description available
                 //
                 Method descriptor = findGetterSetter( getClass(), "get"+name+"Description", null );
                 String description = "";
-                
+
                 if( descriptor != null )
                 {
                     try
                     {
-                        description = (String) descriptor.invoke( this, null );
+                        description = (String) descriptor.invoke( this, (Object[])null );
                     }
-                    catch( Exception e ) 
+                    catch( Exception e )
                     {
                         description="Exception: "+e.getMessage();
                     }
                 }
-                
+
                 MBeanAttributeInfo info;
                 try
                 {
@@ -119,11 +119,11 @@ public abstract class SimpleMBean
                 {
                     throw new NotCompliantMBeanException( e.getMessage() );
                 }
-            
+
                 attributes[i] = info;
             }
         }
-        
+
         //
         //  Create operations.
         //
@@ -131,11 +131,11 @@ public abstract class SimpleMBean
         MBeanOperationInfo[] operations = new MBeanOperationInfo[oplist.length];
 
         Method[] methods = getClass().getMethods();
-        
+
         for( int i = 0; i < oplist.length; i++ )
         {
             Method method = null;
-            
+
             for( int m = 0; m < methods.length; m++ )
             {
                 if( methods[m].getName().equals( oplist[i] ) )
@@ -143,23 +143,23 @@ public abstract class SimpleMBean
                     method = methods[m];
                 }
             }
-            
+
             if( method == null )
             {
                 throw new NotCompliantMBeanException("Class declares method "+oplist[i]+", yet does not implement it!");
             }
-            
+
             MBeanOperationInfo info = new MBeanOperationInfo( method.getName(), method );
-            
+
             operations[i] = info;
         }
-        
+
         //
         //  Create the actual BeanInfo instance.
         //
         MBeanConstructorInfo[] constructors = null;
         MBeanNotificationInfo[] notifications = null;
-        
+
         m_beanInfo = new MBeanInfo( getClass().getName(),
                                     getDescription(),
                                     attributes,
@@ -171,14 +171,14 @@ public abstract class SimpleMBean
     /**
      *  Customization hook: Override this to get a description for your MBean.  By default,
      *  this is an empty string.
-     *  
+     *
      *  @return A description for the MBean.
      */
     protected String getDescription()
     {
         return "";
     }
-    
+
     public Object getAttribute(String name) throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         Method m;
@@ -189,7 +189,7 @@ public abstract class SimpleMBean
             m = findGetterSetter( getClass(), mname, null );
 
             if( m == null ) throw new AttributeNotFoundException( name );
-            res = m.invoke( this, null );
+            res = m.invoke( this, (Object[])null );
         }
         catch (SecurityException e)
         {
@@ -211,14 +211,14 @@ public abstract class SimpleMBean
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return res;
     }
 
     public AttributeList getAttributes(String[] arg0)
     {
         AttributeList list = new AttributeList();
-        
+
         for( int i = 0; i < arg0.length; i++ )
         {
             try
@@ -241,7 +241,7 @@ public abstract class SimpleMBean
                 e.printStackTrace();
             }
         }
-        
+
         return list;
     }
 
@@ -250,11 +250,11 @@ public abstract class SimpleMBean
         return m_beanInfo;
     }
 
-    public Object invoke(String arg0, Object[] arg1, String[] arg2) 
+    public Object invoke(String arg0, Object[] arg1, String[] arg2)
         throws MBeanException, ReflectionException
     {
         Method[] methods = getClass().getMethods();
-        
+
         for( int i = 0; i < methods.length; i++ )
         {
             if( methods[i].getName().equals(arg0) )
@@ -277,25 +277,25 @@ public abstract class SimpleMBean
                 }
             }
         }
-        
+
         throw new ReflectionException(null, "There is no such method "+arg0); // TODO: Can you put a null exception?
     }
 
-    public void setAttribute(Attribute attr) 
-        throws AttributeNotFoundException, 
-               InvalidAttributeValueException, 
-               MBeanException, 
+    public void setAttribute(Attribute attr)
+        throws AttributeNotFoundException,
+               InvalidAttributeValueException,
+               MBeanException,
                ReflectionException
     {
         Method m;
-        
+
         String mname = "set"+StringUtils.capitalize( attr.getName() );
         m = findGetterSetter( getClass(), mname, attr.getValue().getClass() );
-        
+
         if( m == null ) throw new AttributeNotFoundException( attr.getName() );
-        
+
         Object[] args = { attr.getValue() };
-        
+
         try
         {
             m.invoke( this, args );
@@ -320,7 +320,7 @@ public abstract class SimpleMBean
         for( Iterator i = arg0.iterator(); i.hasNext(); )
         {
             Attribute attr = (Attribute)i.next();
-           
+
             //
             //  Attempt to set the attribute.  If it succeeds (no exception),
             //  then we just add it to the list of successfull sets.
@@ -351,7 +351,7 @@ public abstract class SimpleMBean
                 e.printStackTrace();
             }
         }
-        
+
         return result;
     }
     /**
@@ -363,27 +363,27 @@ public abstract class SimpleMBean
      *  <pre>
      *     public void setFoo( String foo ) ...
      *     public String getFoo() ...
-     *     
+     *
      *     public String[] getAttributeNames()
      *     {
      *         String[] attrs = { "foo" };
-     *         
+     *
      *         return attrs;
      *     }
      *  </pre>
      *  Also, methods starting with "is" are also recognized as getters
      *  (e.g. <code>public boolean isFoo()</code>.)
-     *  
+     *
      *  @return An array of attribute names that can be get and optionally set.
      */
     public abstract String[] getAttributeNames();
-    
+
     /**
-     *  This method must return a list of operations which 
+     *  This method must return a list of operations which
      *  are to be exposed by the SimpleMBean.  Note that using overloaded
      *  method names is not supported - only one will be exposed as a JMX method
      *  at random.
-     *  
+     *
      *  @return An array of method names that should be exposed as
      *          JMX operations.
      */

@@ -74,16 +74,16 @@ public final class WorkflowEvent extends WikiEvent
      * may not be <code>null</code>. When the WikiSecurityEvent is
      * constructed, the security logger {@link WikiSecurityEvent#log} is notified.
      * 
-     * @param source
+     * @param src
      *            the source of the event, which can be any object: a wiki page,
      *            group or authentication/authentication/group manager.
      * @param type
      *            the type of event
      */
-    public WorkflowEvent(Object source, int type)
+    public WorkflowEvent(Object src, int type)
     {
-        super(source, type);
-        if (source == null)
+        super(src, type);
+        if (src == null)
         {
             throw new IllegalArgumentException("Argument(s) cannot be null.");
         }

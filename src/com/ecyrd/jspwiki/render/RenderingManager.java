@@ -25,7 +25,6 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -312,6 +311,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
      */
+    @SuppressWarnings("deprecation")
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )

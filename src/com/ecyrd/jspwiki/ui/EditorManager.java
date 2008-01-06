@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -34,7 +34,6 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
@@ -195,7 +194,7 @@ public class EditorManager extends ModuleManager
         if( context.getRequestContext().equals(WikiContext.PREVIEW) )
             return EDITOR_PREVIEW;
 
-        String editor = null; 
+        String editor = null;
 
         // User has set an editor in preferences
         editor = Preferences.getPreference( context, PARA_EDITOR );
@@ -206,11 +205,11 @@ public class EditorManager extends ModuleManager
             // or use the default editor in jspwiki.properties
             try
             {
-                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );        
+                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
             }
             catch( NoSuchVariableException e ) {} // This is fine
         }
-        
+
         if (editor != null)
         {
             String[] editorlist = getEditorList();

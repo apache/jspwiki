@@ -186,14 +186,14 @@ public class WikiPageEvent extends WikiEvent
 
     /**
       * Constructs an instance of this event.
-      * @param source    the Object that is the source of the event.
+      * @param src    the Object that is the source of the event.
       * @param type      the type of the event (see the enumerated int values defined
       *                  in {@link com.ecyrd.jspwiki.event.WikiEvent}).
       * @param pagename  the WikiPage being acted upon.
       */
-    public WikiPageEvent( Object source, int type, String pagename )
+    public WikiPageEvent( Object src, int type, String pagename )
     {
-        super( source, type );
+        super( src, type );
         m_pagename = pagename;
     }
 

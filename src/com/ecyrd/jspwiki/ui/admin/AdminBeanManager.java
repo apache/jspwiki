@@ -40,7 +40,6 @@ import com.ecyrd.jspwiki.ui.admin.beans.CoreBean;
 import com.ecyrd.jspwiki.ui.admin.beans.PluginBean;
 import com.ecyrd.jspwiki.ui.admin.beans.SearchManagerBean;
 import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
-import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
  *  Provides a manager class for all AdminBeans within JSPWiki.  This class

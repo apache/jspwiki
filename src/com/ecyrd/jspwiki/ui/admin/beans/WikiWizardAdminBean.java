@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2007 JSPWiki development group
@@ -20,18 +20,13 @@
 package com.ecyrd.jspwiki.ui.admin.beans;
 
 import javax.management.NotCompliantMBeanException;
-import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.ui.admin.AdminBean;
 import com.ecyrd.jspwiki.ui.admin.SimpleAdminBean;
-import com.ecyrd.management.SimpleMBean;
 
 /**
  *  This class is still experimental.
- *  
+ *
  * @author jalkanen
  *
  */
@@ -40,12 +35,12 @@ public class WikiWizardAdminBean
 {
     private static final String[] ATTRIBUTES = {};
     private static final String[] METHODS    = {};
-    
+
     public WikiWizardAdminBean() throws NotCompliantMBeanException
     {
     }
-    
-    
+
+
     public String getTitle()
     {
         return "WikiWizard";
@@ -65,7 +60,7 @@ public class WikiWizardAdminBean
     {
         return "editor.wikiwizard";
     }
-        
+
     public String[] getAttributeNames()
     {
         return ATTRIBUTES;
@@ -80,10 +75,10 @@ public class WikiWizardAdminBean
     {
         return "(C) i3G Institut Hochschule Heilbronn";
     }
-    
+
     public void initialize(WikiEngine engine)
     {
         // TODO Auto-generated method stub
-        
+
     }
 }

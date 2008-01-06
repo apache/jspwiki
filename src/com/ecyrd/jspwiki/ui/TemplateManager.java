@@ -26,7 +26,6 @@ import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -95,7 +94,7 @@ public class TemplateManager
 
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
-     *  
+     *
      *  @param engine The owning engine.
      *  @param properties The property list used to initialize this.
      */
@@ -195,7 +194,7 @@ public class TemplateManager
     /**
      *  An utility method for finding a JSP page.  It searches only under
      *  either current context or by the absolute name.
-     *  
+     *
      *  @param pageContext the JSP PageContext
      *  @param name The name of the JSP page to look for (e.g "Wiki.jsp")
      *  @return The context path to the resource
@@ -228,7 +227,7 @@ public class TemplateManager
 
     /**
      *  Returns the full name (/templates/foo/bar) for name=bar, template=foo.
-     *  
+     *
      * @param template
      * @param name
      * @return
@@ -444,32 +443,32 @@ public class TemplateManager
 
         sb.append( "var LocalizedStrings = {\n");
 
-        ResourceBundle rb = context.getBundle("templates.default");        
+        ResourceBundle rb = context.getBundle("templates.default");
 
         boolean first = true;
 
         for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
         {
             String key = (String)en.nextElement();
-        
+
             if( key.startsWith("javascript") )
             {
                 if( first )
                 {
-                    first = false; 
-                } 
-                else 
-                { 
-                    sb.append( ",\n" ); 
+                    first = false;
+                }
+                else
+                {
+                    sb.append( ",\n" );
                 }
                 sb.append( "\""+key+"\":\""+rb.getString(key)+"\"" );
-            }         
+            }
         }
         sb.append("\n};\n");
-        
+
         return( sb.toString() );
     }
-    
+
     /**
      *  Adds a resource request to the current request context.
      *  The content will be added at the resource-type marker
@@ -548,7 +547,7 @@ public class TemplateManager
     /**
      *  Returns resource requests for a particular type.  If there are no resources,
      *  returns an empty array.
-     *  
+     *
      *  @param ctx WikiContext
      *  @param type The resource request type
      *  @return a String array for the resource requests
@@ -597,7 +596,7 @@ public class TemplateManager
     /**
      *  Returns an empty collection, since at the moment the TemplateManager
      *  does not manage any modules.
-     *  
+     *
      *  @return {@inheritDoc}
      */
     public Collection modules()

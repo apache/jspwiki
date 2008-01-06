@@ -48,12 +48,12 @@ public abstract class WikiEvent extends EventObject
 
    /**
      * Constructs an instance of this event.
-     * @param source the Object that is the source of the event.
+     * @param src the Object that is the source of the event.
      * @param type   the event type.
      */
-    public WikiEvent( Object source, int type )
+    public WikiEvent( Object src, int type )
     {
-        super( source );
+        super( src );
         m_when = System.currentTimeMillis();
         setType( type );
     }

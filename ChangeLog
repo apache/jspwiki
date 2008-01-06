@@ -1,46 +1,51 @@
+2008-01-06  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * Fixed a number of Eclipse warnings.  No version bump, no
+        functionality change.
+
 2008-01-05 Dirk Frederickx (dirk.frederickx@gmail.com)
 
-        * No version bump - small fix of exception in Footer.jsp 
-        
+        * No version bump - small fix of exception in Footer.jsp
+
 2008-01-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-5
-        
+
         * [JSPWIKI-108]: Fixed EditPageHelp.txt which had an extra pipe char.
-        
+
         * [JSPWIKI-106]: Password recovery emails are now sent with UTF-8 encoding.
-        
+
         * [JSPWIKI-113]: Patch from Harry Metske to make sure the JNDI factory is
         only checked once when sending email.
-        
+
         * [JSPWIKI-119]: URI detector now detects properly ~ and % characters.
 
 2008-01-03 Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-4
-        
+
         * Improving robustness of Wiki.getPageName(url) which was dying on unexpected url formats.
 
 
 2008-01-02  Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-3
-        
+
         * [JSPWIKI-49] Fixed handling of the Editor choice as part of the user preferences.
         When restarting the browser, also the preferred editor setting is recovered.
         Still 2 properties exist to set the default Editor choice (both are kept for bw compat)
         You can choose either one.
-          jspwiki.editor=plain 
+          jspwiki.editor=plain
           jspwiki.defaultprefs.template.editor =plain    (=> preferred)
-        
+
         * All WEBTESTs are now converted to Selenium. They run manually -- still need to verify
         the automatic run via ant.
-        
+
         * The MORE dropdown is now also available during Login, UserPreferences and Find screens.
         This makes all common links (stored in MoreMenu) more easily accessible.
 
         * Minor JS refactorings on handling color for GraphBars and ZebraTables.
- 
+
         * Minor JS refactorings to better support Category styles for IE.
 
         * Both JSPWiki logo's (shaded and not-shaded image) have been merged in a single .png
@@ -50,17 +55,17 @@
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1-cvs-2
-        
+
         * [JSPWIKI-116] Under certain circumstances, calls to
         UserManager.getUserDatabase() are made before the user database is
         actually initialized, resulting in NPEs. To resolve, we simply replaced
         internal references to m_userDatabase with getUserDatabase(),
         which lazily initializes the database if it has not already happened.
-        
+
 2007-12-25  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-1
-        
+
         * Added SpamFilter.isValidUserProfile() and corresponding checks
         to allow also user registrations to be spam-checked.
 
@@ -70,15 +75,15 @@
 
         * Removed JSPWikiToCreoleTranslator (the class was empty and unused)
         in an effort to clean the code base a bit for release.
-        
+
         * Added some warnings to CreoleFilter & CreoleToJSPWikiTranslator
         to make sure people understand they are experimental features.  Also
         removed WikiCreole from "new features" list.
-        
+
         * Fixed a number of failing unit tests for Creole by removing a lot of
         line separator management code.  As far as I can tell, it was all
         unnecessary and by accident didn't fail only on Windows.
-        
+
         * Improved javadocs, removing a number of Checkstyle errors.
 
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
@@ -103,28 +108,28 @@
 
 2007-12-10  Christoph Sauer <sauer@hs-heilbronn.de>
 
-        * 2.6.1 RC4 
-        
+        * 2.6.1 RC4
+
         * (I am really not sure if I am numbering right here, since
-           I fixed a bug, should the revision number not be incremented 
+           I fixed a bug, should the revision number not be incremented
            as well, according to [JSPWIKI:VersioningProposal]?)
-        
+
         * Fixed Bug in CreoleFilter: When you used the signature
           markup from creole (--~~~~), plugin syntax did not get properly
           translated back into creole markup, so even if you
           typed in <<Plugin>>, it was later displayed in the source
-          as [{Plugin}] 
-          
+          as [{Plugin}]
+
         * Added some missing linebreaks in translation
 
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1 RC3
-        
+
         * Fixed Ant script compatibility issue reported in [JSPWIKI-109].
         JSPWiki's 'war-tomcat'  and 'webtests' tasks now work correctly
-        when running under Tomcat 5.5 *and* 6.0. 
-        
+        when running under Tomcat 5.5 *and* 6.0.
+
         * Fixed a compatibility bug that was preventing JSPWiki from
         starting in an older version of Resin [ JSPWIKI-92]. This issue surfaced
         three bugs: web.xml's <description> and <display-name> elements
@@ -132,10 +137,10 @@
         set in WebContainerAuthorizer; and (most egregiously) TabTag
         overrode a superclass method, setId(), when it should not have.
         TabTag's implementation has been "pulled up" to WikiTagBase, and it
-        now delegates properly to the superclass. In addition, as a bonus, 
+        now delegates properly to the superclass. In addition, as a bonus,
         all "id" attributes for custom JSPWiki tags are now immunized from
         cross-site scripting injection.
-        
+
 2007-12-05  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.0 RC2

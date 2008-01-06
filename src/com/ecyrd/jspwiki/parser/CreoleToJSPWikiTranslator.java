@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  *
  * <p><b>WARNING</b>: This is an experimental feature, and known to be
  * broken.  Use at your own risk.</o>
- * 
+ *
  * @author Steffen Schramm
  * @author Hanno Eichelberger
  * @author Christoph Sauer
@@ -125,9 +125,9 @@ public class CreoleToJSPWikiTranslator
 
     private static final String PREFORMATTED_PROTECTED = "\\Q{{{\\E.*?\\Q}}}\\E";
 
-    private static final String CREOLE_LINEBREAKS = "([^\\s\\\\])(\r\n|\r|\n)+(?=[^\\s\\*#])";
+    //private static final String CREOLE_LINEBREAKS = "([^\\s\\\\])(\r\n|\r|\n)+(?=[^\\s\\*#])";
 
-    private static final String JSPWIKI_LINEBREAKS = "$1\\\\\\\\$2";
+    //private static final String JSPWIKI_LINEBREAKS = "$1\\\\\\\\$2";
 
     private static final String CREOLE_TABLE = "(\n|\r|\r\n|^)(\\|[^\n\r]*)\\|(\\t| )*(\n|\r|\r\n|$)";
 
@@ -335,14 +335,14 @@ public class CreoleToJSPWikiTranslator
             String hash = (String) it[i];
             String protectedMarkup = (String) c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
-            if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 && 
+            if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
                 !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
                 content = translateElement(content, CREOLE_PLUGIN, JSPWIKI_PLUGIN);
 
         }
         return content;
     }
-    
+
     /**
      * Protects markup that should not be processed. For now this includes:
      * <ul>

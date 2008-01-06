@@ -260,7 +260,7 @@ public class CachingProvider
                 // Cache page miss
                 m_negCache.putInCache( name, name );
             }
-            else if( cached.getVersion() != refreshed.getVersion() )
+            else if( refreshed != null && cached.getVersion() != refreshed.getVersion() )
             {
                 //  The newest version has been deleted, but older versions still remain
                 log.debug("Page "+cached.getName()+" newest version deleted, reloading...");
@@ -275,7 +275,7 @@ public class CachingProvider
 
                 return refreshed;
             }
-            else if( Math.abs(refreshed.getLastModified().getTime()-cached.getLastModified().getTime()) > 1000L )
+            else if( refreshed != null && Math.abs(refreshed.getLastModified().getTime()-cached.getLastModified().getTime()) > 1000L )
             {
                 //  Yes, the page has been modified externally and nobody told us
 

@@ -34,8 +34,8 @@ public class UserBean extends SimpleAdminBean
         return new String[0];
     }
 
-    
-    
+
+
     public String doPost(WikiContext context)
     {
         HttpServletRequest request = context.getHttpRequest();
@@ -48,7 +48,7 @@ public class UserBean extends SimpleAdminBean
         String password  = request.getParameter("password");
         String password2 = request.getParameter("password2");
         String email     = request.getParameter("email");
-        
+
 
         if( request.getParameter("action").equalsIgnoreCase("remove") )
         {
@@ -67,8 +67,8 @@ public class UserBean extends SimpleAdminBean
             }
             return "";
         }
-        
-        
+
+
         if( password != null && password.length() > 0 && !password.equals(password2) )
         {
             session.addMessage("Passwords do not match!");
@@ -76,11 +76,11 @@ public class UserBean extends SimpleAdminBean
         }
 
         UserProfile p;
-        
+
         if( loginid.equals("--New--") )
         {
             // Create new user
-            
+
             p = mgr.getUserDatabase().newProfile();
             p.setCreated( new Date() );
         }
@@ -96,12 +96,12 @@ public class UserBean extends SimpleAdminBean
                 return "";
             }
         }
-        
+
         p.setEmail(email);
         p.setFullname(fullname);
-        if( password.length() > 0 ) p.setPassword(password);
+        if( password != null && password.length() > 0 ) p.setPassword(password);
         p.setLoginName(loginname);
-        
+
         try
         {
             mgr.getUserDatabase().save( p );
@@ -110,9 +110,9 @@ public class UserBean extends SimpleAdminBean
         {
             session.addMessage("Unable to save "+e.getMessage());
         }
-        
+
         session.addMessage("User profile has been updated");
-        
+
         return "";
     }
 

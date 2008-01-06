@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
@@ -19,12 +19,11 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import com.ecyrd.jspwiki.*;
 import java.io.IOException;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.*;
 
-import org.apache.log4j.Logger;
+import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+
+import com.ecyrd.jspwiki.TextUtil;
 
 
 /**
@@ -32,7 +31,7 @@ import org.apache.log4j.Logger;
  *
  *  <P><B>Attributes</B></P>
  *  <UL>
- *    <LI> start - start item of the page to be highlighted 
+ *    <LI> start - start item of the page to be highlighted
  *    <LI> total - total number of items
  *    <LI> pagesize - total number of items per page
  *    <LI> maxlinks - number of page links to be generated
@@ -52,7 +51,7 @@ public class SetPaginationTag
 {
     private static final long serialVersionUID = 0L;
     private static final int ALLITEMS = -1;
-    
+
         private int m_start;
     private int m_total;
     private int m_pagesize;
@@ -60,7 +59,7 @@ public class SetPaginationTag
     private String m_fmtkey;
     private String m_href;
     private String m_onclick;
-    
+
     public void initTag()
     {
         super.initTag();
@@ -72,7 +71,7 @@ public class SetPaginationTag
         m_href = null;
         m_onclick = null;
     }
-    
+
     public void setStart(int arg)
     {
         m_start = arg;
@@ -113,17 +112,17 @@ public class SetPaginationTag
     // 0 20 40 60
     // 0 20 40 60 80 next last
     // first previous 20 40 *60* 80 100 next last
-    // fist previous 40 60 80 100 120 
+    // fist previous 40 60 80 100 120
     public int doWikiStartTag()
         throws IOException
     {
-        if( m_total < m_pagesize ) return SKIP_BODY; 
+        if( m_total < m_pagesize ) return SKIP_BODY;
 
         StringBuffer pagination = new StringBuffer();
 
         if( m_start > m_total ) m_start = m_total;
         if( m_start < ALLITEMS ) m_start = 0;
-  
+
         int maxs = m_pagesize * m_maxlinks;
         int mids = m_pagesize * ( m_maxlinks / 2 );
 
@@ -133,24 +132,24 @@ public class SetPaginationTag
 
         int cursor = 0;
         int cursormax = m_total;
- 
+
         if( m_total > maxs )   //need to calculate real window ends
-        { 
+        {
           if( m_start > mids ) cursor = m_start - mids;
-          if( (cursor + maxs) > m_total ) 
-            cursor = ( ( 1 + m_total/m_pagesize ) * m_pagesize ) - maxs ; 
-          
+          if( (cursor + maxs) > m_total )
+            cursor = ( ( 1 + m_total/m_pagesize ) * m_pagesize ) - maxs ;
+
           cursormax = cursor + maxs;
         }
 
-                   
-        if( ( m_start == ALLITEMS ) || (cursor > 0) ) 
+
+        if( ( m_start == ALLITEMS ) || (cursor > 0) )
         {
             appendLink ( pagination, 0, m_fmtkey + ".first" );
         }
 
-        
-        if( (m_start != ALLITEMS ) && (m_start-m_pagesize >= 0) ) 
+
+        if( (m_start != ALLITEMS ) && (m_start-m_pagesize >= 0) )
         {
             appendLink( pagination, m_start-m_pagesize, m_fmtkey + ".previous" );
         }
@@ -159,49 +158,49 @@ public class SetPaginationTag
         {
           while( cursor < cursormax )
           {
-            if( cursor == m_start ) 
-            { 
+            if( cursor == m_start )
+            {
               pagination.append( "<span class='cursor'>" );
               pagination.append( 1 + cursor/m_pagesize );
-              pagination.append( "</span> " ); 
-            } 
-            else 
-            { 
+              pagination.append( "</span> " );
+            }
+            else
+            {
               appendLink( pagination, cursor, 1+cursor/m_pagesize );
             }
             cursor += m_pagesize;
-          }     
+          }
         }
 
 
-        if( (m_start != ALLITEMS ) && (m_start + m_pagesize < m_total) ) 
+        if( (m_start != ALLITEMS ) && (m_start + m_pagesize < m_total) )
         {
             appendLink( pagination, m_start+m_pagesize, m_fmtkey + ".next" );
 
-        if( (m_start == ALLITEMS ) || (cursormax < m_total) ) 
+        if( (m_start == ALLITEMS ) || (cursormax < m_total) )
           appendLink ( pagination, ( (m_total/m_pagesize) * m_pagesize ), m_fmtkey + ".last" );
         }
 
-        if( m_start == ALLITEMS ) 
-        { 
-          pagination.append( "<span class='cursor'>" ); 
+        if( m_start == ALLITEMS )
+        {
+          pagination.append( "<span class='cursor'>" );
           pagination.append( LocaleSupport.getLocalizedMessage(pageContext, m_fmtkey + ".all" ) );
-          pagination.append( "</span>&nbsp;&nbsp;" ); 
-        } 
+          pagination.append( "</span>&nbsp;&nbsp;" );
+        }
         else
         {
           appendLink ( pagination, ALLITEMS, m_fmtkey + ".all" );
         }
-        
+
         //(Total items: " + m_total + ")" );
-        pagination.append( LocaleSupport.getLocalizedMessage(pageContext, m_fmtkey + ".total", 
+        pagination.append( LocaleSupport.getLocalizedMessage(pageContext, m_fmtkey + ".total",
                            new Object[]{ new Integer( m_total ) } ) );
-        
+
         pagination.append( "</div>" );
-        
+
 
         /* +++ processing done +++ */
-        
+
 		String p = pagination.toString();
 
         pageContext.getOut().println( p );
@@ -213,7 +212,7 @@ public class SetPaginationTag
 
 
     /**
-     * Generate pagination links <a href='' title='' onclick=''>text</a> 
+     * Generate pagination links <a href='' title='' onclick=''>text</a>
      * for pagination blocks starting a page.
      * Uses m_href and m_onclick as attribute patterns
      * '%s' in the patterns are replaced with page offset
@@ -230,17 +229,17 @@ public class SetPaginationTag
     private void appendLink( StringBuffer sb, int page, int paginationblock )
     {
 		appendLink2( sb, page, Integer.toString( paginationblock ) );
-    }    
+    }
     private void appendLink2( StringBuffer sb, int page, String text )
     {
         sb.append( "<a title=\"" );
-        if( page == ALLITEMS ) 
+        if( page == ALLITEMS )
         {
             sb.append( LocaleSupport.getLocalizedMessage( pageContext, m_fmtkey + ".showall.title" ) );
         }
         else
         {
-            sb.append( LocaleSupport.getLocalizedMessage( pageContext, m_fmtkey + ".show.title", 
+            sb.append( LocaleSupport.getLocalizedMessage( pageContext, m_fmtkey + ".show.title",
                        new Object[]{ new Integer( page + 1 ), new Integer( page + m_pagesize ) } ) );
         }
         sb.append( "\" " );
@@ -262,6 +261,6 @@ public class SetPaginationTag
         sb.append( ">" );
         sb.append( text );
         sb.append( "</a> " );
-    } 
+    }
 
 }

@@ -22,17 +22,11 @@ package com.ecyrd.jspwiki.rss;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletContext;
-import javax.xml.transform.Result;
 
 import org.jdom.Element;
-import org.jdom.ProcessingInstruction;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
