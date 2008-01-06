@@ -311,7 +311,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
      */
-    @SuppressWarnings("deprecation")
+    // @SuppressWarnings("deprecation")
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )
