@@ -182,7 +182,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String src = "This should be a [here|HyperLink#heading]";
 
-        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-heading\">here</a>",
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
                       translate(src) );
     }
 
@@ -193,10 +193,21 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String src = "This should be a [HyperLink#heading]";
 
-        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-heading\">HyperLink#heading</a>",
+        assertEquals( "This should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>",
                       translate(src) );
     }
 
+    public void testHyperlinksNamed3()
+    throws Exception
+    {
+        newPage("HyperLink");
+
+        String src = "!Heading Too\r\nThis should be a [HyperLink#heading too]";
+
+        assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too</h4>\nThis should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
+                      translate(src) );
+    }
+    
     //
     //  Testing CamelCase hyperlinks
     //
