@@ -23,9 +23,8 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.File;
-import java.util.Properties;
-import java.util.Iterator;
-import java.util.List;
+import java.net.URL;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -39,6 +38,9 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.modules.WikiModuleInfo;
+import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
 
 import com.ecyrd.jspwiki.util.PriorityList;
 import com.ecyrd.jspwiki.util.ClassUtil;
@@ -91,9 +93,11 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *
  *  @author Janne Jalkanen
  */
-public final class FilterManager
+public final class FilterManager extends ModuleManager
 {
     private PriorityList     m_pageFilters = new PriorityList();
+
+    private HashMap          m_filterClassMap = new HashMap();
 
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
@@ -107,13 +111,11 @@ public final class FilterManager
     /** The standard user level filtering. */
     public static final int USER_FILTER_PRIORITY   = 0;
     
-    private WikiEngine m_engine = null;
-
-
     public FilterManager( WikiEngine engine, Properties props )
         throws WikiException
     {
-        initialize( engine, props );
+        super( engine );
+        initialize( props );
     }
 
     /**
@@ -143,6 +145,15 @@ public final class FilterManager
     {
         try
         {
+            PageFilterInfo info = (PageFilterInfo)m_filterClassMap.get( className );
+            
+            if( info != null && !checkCompatibility(info) )
+            {
+                String msg = "Filter '"+info.getName()+"' not compatible with this version of JSPWiki";
+                log.warn(msg);
+                return;
+            }
+            
             int priority = 0; // FIXME: Currently fixed.
 
             Class cl = ClassUtil.findClass( "com.ecyrd.jspwiki.filters",
@@ -181,21 +192,22 @@ public final class FilterManager
     /**
      *  Initializes the filters from an XML file.
      */
-    public void initialize( WikiEngine engine, Properties props )
+    protected void initialize( Properties props )
         throws WikiException
     {
-        m_engine = engine;
         InputStream xmlStream = null;
         String      xmlFile   = props.getProperty( PROP_FILTERXML );
 
         try
         {
+            registerFilters();
+            
             if( xmlFile == null )
             {
-                if( engine.getServletContext() != null )
+                if( m_engine.getServletContext() != null )
                 {
                     log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
-                    xmlStream = engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
                 }
                 
                 if( xmlStream == null )
@@ -251,10 +263,10 @@ public final class FilterManager
             Element f = (Element) i.next();
             
             String filterClass = f.getChildText("class");
+
+            Properties props = new Properties();
             
             List params = f.getChildren("param");
-            
-            Properties props = new Properties();
             
             for( Iterator par = params.iterator(); par.hasNext(); )
             {
@@ -262,7 +274,7 @@ public final class FilterManager
                 
                 props.setProperty( p.getChildText("name"), p.getChildText("value") );
             }
-            
+
             initPageFilter( filterClass, props );
         }
         
@@ -387,4 +399,97 @@ public final class FilterManager
         }
     }
 
+    public Collection modules()
+    {
+        ArrayList modules = new ArrayList();
+        
+        modules.addAll( m_pageFilters );
+        
+        return modules;
+    }
+
+    private void registerFilters()
+    {
+        log.info( "Registering filters" );
+
+        SAXBuilder builder = new SAXBuilder();
+
+        try
+        {
+            //
+            // Register all filters which have created a resource containing its properties.
+            //
+            // Get all resources of all plugins.
+            //
+
+            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+
+            while( resources.hasMoreElements() )
+            {
+                URL resource = (URL) resources.nextElement();
+
+                try
+                {
+                    log.debug( "Processing XML: " + resource );
+
+                    Document doc = builder.build( resource );
+
+                    List plugins = XPath.selectNodes( doc, "/modules/filter");
+
+                    for( Iterator i = plugins.iterator(); i.hasNext(); )
+                    {
+                        Element pluginEl = (Element) i.next();
+
+                        String className = pluginEl.getAttributeValue("class");
+
+                        PageFilterInfo pluginInfo = PageFilterInfo.newInstance( className, pluginEl );
+
+                        if( pluginInfo != null )
+                        {
+                            registerPlugin( pluginInfo );
+                        }
+                    }
+                }
+                catch( java.io.IOException e )
+                {
+                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
+                }
+                catch( JDOMException e )
+                {
+                    log.error( "Error parsing XML for filter: "+PLUGIN_RESOURCE_LOCATION );
+                }
+            }
+        }
+        catch( java.io.IOException e )
+        {
+            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
+        }
+    }
+
+    private void registerPlugin(PageFilterInfo pluginInfo)
+    {
+        m_filterClassMap.put( pluginInfo.getName(), pluginInfo );
+    }
+
+    /**
+     *  Stores information about the filters.
+     * 
+     *  @since 2.6.1
+     */
+    private static class PageFilterInfo extends WikiModuleInfo
+    {
+        private PageFilterInfo( String name )
+        {
+            super(name);
+        }
+        
+        protected static PageFilterInfo newInstance(String className, Element pluginEl)
+        {
+            if( className == null || className.length() == 0 ) return null;
+            PageFilterInfo info = new PageFilterInfo( className );
+
+            info.initializeFromXML( pluginEl );
+            return info;        
+        }
+    }
 }
