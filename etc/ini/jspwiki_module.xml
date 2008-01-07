@@ -38,4 +38,9 @@
       <minVersion>2.4</minVersion>
    </plugin>
 
+   <filter class="com.ecyrd.jspwiki.filters.SpamFilter">
+      <author>Janne Jalkanen</author>
+      <minVersion>2.6</minVersion>
+   </filter>
+   
 </modules>
