@@ -1,5 +1,21 @@
 2008-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
 
+        * 2.6.1-cvs-6
+        
+        * [JSPWIKI-95]: Links to anchors with blanks work now.  This introduces
+        a tiny, very tiny compatibility issue with links to headings changing
+        case in some cases.  Reported by Jürgen Weber.
+        
+        * [JSPWIKI-125]: FilterManager now checks for version compatibility 
+        of PageFilters by looking into the ini/jspwiki_module.xml.  This was a 
+        surprisingly big change.  I would very much like to move to annotations
+        in 3.0... Reported by Florian Holeczek.
+
+        * [JSPWIKI-124]: Turns out that using de_DE as the language name
+        is not a good idea, as it really works only when you define Deutsch (Deutschland)
+        as your language - all other German-speaking folks would see Englisch...
+        Reported by Goran Karlic.
+
         * added stress/MassiveRepositoryTest.
 
 2008-01-06  Janne Jalkanen <jalkanen@ecyrd.com>
