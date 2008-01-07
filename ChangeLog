@@ -1,3 +1,7 @@
+2008-01-07  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * added stress/MassiveRepositoryTest.
+
 2008-01-06  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * Fixed a number of Eclipse warnings.  No version bump, no
