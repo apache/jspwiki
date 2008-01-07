@@ -1552,7 +1552,7 @@ public class JSPWikiMarkupParser
                     String matchedLink;
                     if( (matchedLink = linkExists( linkref )) != null )
                     {
-                        String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+namedSection;
+                        String sectref = "section-"+m_engine.encodeName(matchedLink)+"-"+wikifyLink(namedSection);
                         sectref = sectref.replace('%', '_');
                         makeLink( READ, matchedLink, linktext, sectref, link.getAttributes() );
                     }
