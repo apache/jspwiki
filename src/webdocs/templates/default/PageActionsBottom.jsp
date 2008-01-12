@@ -39,7 +39,6 @@
              </fmt:message>" >
       <img src="<wiki:Link jsp='images/xml.png' format='url'/>" alt="[RSS]"/>
     </a>
-
   
   </wiki:PageExists>
 

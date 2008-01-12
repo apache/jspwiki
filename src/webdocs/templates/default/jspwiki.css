@@ -388,6 +388,7 @@ td .information, td .warning, td .error {
 
 /* +++ 290 Comment boxes (used on some pages) +++ */
 .commentbox {
+	display:block;
 	float:right;
 	clear:right;
 	width:35%;
@@ -454,67 +455,27 @@ td .information, td .warning, td .error {
 	font-size:11px;
 	padding-left:20px;
 	background-repeat:no-repeat;
-	background-position:left;
-	background-image:url(images/page_white.png);
+	background-position:0 0;
+	background-image:url(images/attach-icons.png);
 }
-#attach-gif {
-	background-image:url(images/page_white_magnify.png);
-}
-#attach-png {
-	background-image:url(images/page_white_magnify.png);
-}
-#attach-bmp {
-	background-image:url(images/page_white_magnify.png);
-}
-#attach-jpg {
-	background-image:url(images/page_white_magnify.png);
-}
-#attach-jpeg {
-	background-image:url(images/page_white_magnify.png);
-}
-
-#attach-text {
-	background-image:url(images/page_white_text.png);
-}
-#attach-txt {
-	background-image:url(images/page_white_text.png);
-}
-
-#attach-zip {
-	background-image:url(images/page_white_zip.png);
-}
-#attach-jar {
-	background-image:url(images/page_white_zip.png);
-}
-#attach-tar {
-	background-image:url(images/page_white_zip.png);
-}
-
-#attach-pdf {
-	background-image:url(images/page_white_acrobat.png);
-}
-#attach-doc {
-	background-image:url(images/page_white_word.png);
-}
-#attach-xls {
-	background-image:url(images/page_white_excel.png);
-}
-#attach-ppt {
-	background-image:url(images/page_white_powerpoint.png);
-}
-#attach-swf {
-	background-image:url(images/page_white_flash.png);
-}
-#attach-mov {
-	background-image:url(images/film.png);
-}
-#attach-mp3 {
-	background-image:url(images/ipod.png);
-}
-#attach-wav {
-	background-image:url(images/ipod.png);
-}
-
+#attach-gif { background-position:0 -112px; }
+#attach-png { background-position:0 -112px; }
+#attach-bmp { background-position:0 -112px; }
+#attach-jpg { background-position:0 -112px; }
+#attach-jpeg { background-position:0 -112px; }
+#attach-text { background-position:0 -16px; }
+#attach-txt { background-position:0 -16px; }
+#attach-zip { background-position:0 -128px; }
+#attach-jar { background-position:0 -128px; }
+#attach-tar { background-position:0 -128px; }
+#attach-pdf { background-position:0 -80px; }
+#attach-doc { background-position:0 -32px; }
+#attach-xls { background-position:0 -48px; }
+#attach-ppt { background-position:0 -64px; }
+#attach-swf { background-position:0 -96px; }
+#attach-mov { background-position:0 -160px; }
+#attach-mp3 { background-position:0 -144px; }
+#attach-wav { background-position:0 -144px; }
 
 /* +++ 400 Styles for specific JSPs +++ */
 

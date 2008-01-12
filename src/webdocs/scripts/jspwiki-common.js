@@ -1085,8 +1085,8 @@ var GraphBar =
 				border = (isHorizontal ? 'borderLeft' : 'borderBottom');
 
 			bars.each(function(b,j){
-				var bar1 = new Hash().set(border+'Width',barData[j]), 
-					bar2 = new Hash(), // 2nd bar only valid ico 'progress' 
+				var bar1 = $H().set(border+'Width',barData[j]), 
+					bar2 = $H(), // 2nd bar only valid ico 'progress' 
 					barEL = new Element('span',{'class':'graphBar'}),
 					pb = b.getParent(); // parent of gBar element
 
