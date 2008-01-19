@@ -403,7 +403,18 @@ public class VariableManager
                 if( metadata != null )
                     return metadata.toString();
             }
-
+            
+            // And the final straw part 2: see if the "real" current page has
+            // named metadata. This allows a parent page to control a inserted
+            // page through defining variables
+            WikiPage rpg = context.getRealPage();
+            if( rpg != null )
+            {
+                Object metadata = rpg.getAttribute( varName );
+                if( metadata != null )
+                    return metadata.toString();
+            }
+            
             // Next-to-final straw: attempt to fetch using property name
             // We don't allow fetching any other properties than those starting
             // with "jspwiki.".  I know my own code, but I can't vouch for bugs
