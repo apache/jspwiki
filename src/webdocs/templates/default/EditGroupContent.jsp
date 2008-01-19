@@ -58,11 +58,11 @@
 
     <table class="wikitable">
     <tr>
-      <th>Group Name</th>
+      <th><fmt:message key="group.name"/></th>
       <td><%=name%></td>
     </tr>
     <tr>
-      <th><label>Members</label></th>
+      <th><label><fmt:message key="group.members"/></label></th>
       <td>
       <textarea id="members" name="members" rows="10" cols="30"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp"><fmt:message key="editgroup.memberlist"/></div>
