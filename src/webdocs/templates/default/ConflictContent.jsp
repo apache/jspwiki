@@ -5,7 +5,7 @@
 
 <wiki:TabbedSection >
 
-<wiki:Tab id="conflict" title="Oops">
+<wiki:Tab id="conflict" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.oops.title")%>'>
   <div class="error"><fmt:message key="conflict.oops" /></div>
   <fmt:message key="conflict.goedit" >
     <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
