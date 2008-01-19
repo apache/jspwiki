@@ -90,7 +90,7 @@ function confirmDelete()
 %>
  <table class="wikitable">
     <tr>
-      <th>Group Name</th>
+      <th><fmt:message key="group.name"/></th>
       <td>
         <fmt:message key="group.groupintro">
           <fmt:param><em><%=name%></em></fmt:param>
