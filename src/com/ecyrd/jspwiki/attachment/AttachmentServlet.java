@@ -519,7 +519,7 @@ public class AttachmentServlet
     
     private String validateNextPage( String nextPage, String errorPage )
     {
-         if( nextPage.contains("://") )
+         if( nextPage.indexOf("://") != -1 )
          {
              // It's an absolute link, so unless it starts with our address, we'll
              // log an error.
