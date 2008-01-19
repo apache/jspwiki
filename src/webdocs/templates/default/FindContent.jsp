@@ -49,7 +49,7 @@
 </wiki:Tab>
 
 <wiki:PageExists page="SearchPageHelp">
-<wiki:Tab id="findhelp"  title="Help" accesskey="h">
+<wiki:Tab id="findhelp"  title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab.help")%>' accesskey="h">
   <wiki:InsertPage page="SearchPageHelp"/>
 </wiki:Tab>
 </wiki:PageExists>
