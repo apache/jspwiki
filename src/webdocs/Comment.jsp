@@ -3,6 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
@@ -14,6 +15,20 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
+
+	String findParam( PageContext ctx, String key )
+	{
+	    ServletRequest req = ctx.getRequest();
+	
+	    String val = req.getParameter( key );
+	
+	    if( val == null )
+	    {
+	        val = (String)ctx.findAttribute( key );
+	    }
+	
+	    return val;
+	}
 %>
 
 <%
@@ -136,8 +151,19 @@
         {
             pageText.append( "\n\n----\n\n" );
         }
-
-        pageText.append( EditorManager.getEditedText(pageContext) );
+        
+        String commentText = EditorManager.getEditedText(pageContext);
+        
+        //
+        //  WYSIWYG editor sends us its greetings
+        //
+        String htmlText = findParam( pageContext, "htmlPageText" );
+        if( htmlText != null && cancel == null )
+        {
+        	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
+        }
+        
+        pageText.append( commentText );
 
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )
