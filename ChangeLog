@@ -1,3 +1,42 @@
+2008-01-19  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-8
+
+        * Oops, there was a JDK 1.5 dependency in AttachmentServlet.  Fixed,
+        should again work on 1.4.
+        
+        * [JSPWIKI-136]: WorkflowContent.jsp had a couple of untranslated strings;
+        updated English and Finnish translations.  Reported by Tomasz Szymko.
+        
+        * [JSPWIKI-135]: ConflictContent had an untranslated string.  Reported by
+        Tomasz Szmyko (whose name I am *so* going to misspell one day).
+        
+        * [JSPWIKI-133]: GroupContent.jsp had an untranslated string.  Reported by
+        Tomasz Szmyko.
+        
+        * [JSPWIKI-134]: EditGroupContent.jsp had a couple of untranslated strings.
+        Reported by Tomasz Szmyko.
+        
+        * [JSPWIKI-132]: FindContent had an untranslated string.  Reported by
+        Tomasz Szmyko.
+        
+        * [JSPWIKI-131]: Changed "authenticated" to "authorized" in all built-in
+        localizations.  Thanks to Fabian Haupt for en, de and es.
+        
+        * [JSPWIKI-114]: Fixed issue with VariableManager not checking the parent
+        page for variables in case the InsertPage plugin was used.  Thanks to
+        Stephen Solka!
+        
+        * [JSPWIKI-118]: Fixed issue with FCK editor not saving all metadata.  Thanks
+        to David Au for the fix!
+        
+        New i18n keys in i18n/templates/default.properties:
+           * workflow.details
+           * workflow.details.title
+           * conflict.oops.title
+           * find.tab.help
+           
+
 2008-01-12 Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-7
