@@ -87,8 +87,8 @@
           <tr class="<%=evenOdd%>" class="hideDiv">
             <td>&nbsp;</td>
             <td colspan="4" class="split">
-              <a href="javascript:toggleHidden('<c:out value="decision.${decision.workflow.id}"/>');" title="Show or hide details">
-                details...
+              <a href="javascript:toggleHidden('<c:out value="decision.${decision.workflow.id}"/>');" title='<fmt:message key="workflow.details.title"/>'>
+                <fmt:message key="workflow.details"/>
               </a>
               <div class="hideDiv" id="<c:out value='decision.${decision.workflow.id}'/>">
                 <c:forEach var="fact" items="${decision.facts}">
