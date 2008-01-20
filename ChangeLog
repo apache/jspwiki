@@ -1,3 +1,13 @@
+2008-01-20  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-cvs-9
+        
+        * [JSPWIKI-142]: Typo in default.properties.  Thanks to Florian! (And
+        probably the fastest bug fix in JSPWiki history...)
+        
+        * [JSPWIKI-59]: ReferringPagesPlugin would create the wrong "more..."
+        link in fi and de localizations.  Fixed and upgraded en and es localizations.
+
 2008-01-19  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-8
