@@ -85,7 +85,8 @@ public class ReferringPagesPlugin
 
                 if( items < links.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( links.size() - items) };
+                    Object[] args = { "" + ( links.size() - items),
+                                      context.getURL( WikiContext.INFO, page.getName() ) };
                     extras = MessageFormat.format(extras, args); 
                     wikitext += extras;
                 }
