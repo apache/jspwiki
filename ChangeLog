@@ -19,16 +19,16 @@
         updated English and Finnish translations.  Reported by Tomasz Szymko.
         
         * [JSPWIKI-135]: ConflictContent had an untranslated string.  Reported by
-        Tomasz Szmyko (whose name I am *so* going to misspell one day).
+        Tomasz Szymko (whose name I am *so* going to misspell one day).
         
         * [JSPWIKI-133]: GroupContent.jsp had an untranslated string.  Reported by
-        Tomasz Szmyko.
+        Tomasz Szymko.
         
         * [JSPWIKI-134]: EditGroupContent.jsp had a couple of untranslated strings.
-        Reported by Tomasz Szmyko.
+        Reported by Tomasz Szymko.
         
         * [JSPWIKI-132]: FindContent had an untranslated string.  Reported by
-        Tomasz Szmyko.
+        Tomasz Szymko.
         
         * [JSPWIKI-131]: Changed "authenticated" to "authorized" in all built-in
         localizations.  Thanks to Fabian Haupt for en, de and es.
