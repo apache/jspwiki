@@ -1,3 +1,8 @@
+2008-01-24  Juan Pablo Santos (juanpablo.santos@gmail.com)
+        
+        * Updated spanish translation with missing entry keys. Switched HTML
+        entities to Latin1 equivalent.
+
 2008-01-20  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-cvs-9
