@@ -2314,12 +2314,26 @@ public class JSPWikiMarkupParser
             //
             //  Check if there is an attempt to do something nasty
             //
-            style = StringEscapeUtils.unescapeHtml(style);
-            if( style != null && style.indexOf("javascript:") != -1 )
+            
+            try
             {
-                log.debug("Attempt to output javascript within CSS:"+style);
+                style = StringEscapeUtils.unescapeHtml(style);
+                if( style != null && style.indexOf("javascript:") != -1 )
+                {
+                    log.debug("Attempt to output javascript within CSS:"+style);
+                    ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
+                    return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
+                }
+            }
+            catch( NumberFormatException e )
+            {
+                //
+                //  If there are unknown entities, we don't want the parser to stop.
+                //
                 ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
-                return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
+                Object[] args = { e.getMessage() };
+                String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), args );
+                return addElement( makeError( msg ) );
             }
 
             //
