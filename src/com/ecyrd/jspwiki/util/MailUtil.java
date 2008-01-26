@@ -198,7 +198,7 @@ public final class MailUtil
 
     private static final String TRUE = "true";
 
-    private static boolean useJndi = false;
+    private static boolean useJndi = true;
 
     public static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
@@ -303,7 +303,7 @@ public final class MailUtil
             try
             {
                 session = getJNDIMailSession(jndiName);
-                useJndi = true;
+                useJndi = false;
             }
             catch (NamingException e)
             {
