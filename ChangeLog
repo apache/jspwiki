@@ -3,6 +3,14 @@
         * [JSPWIKI-146]: We now properly catch the exceptions generated during
         download to avoid dumb error messages.
         
+        * [JSPWIKI-102]: Added patch from Harry Metske to fix JNDI mail sending.
+        
+        * [JSPWIKI-153]: German translation was still talking about usernames
+        upon password recovery.
+        
+        * [JSPWIKI-157]: CoreResources had strings which were not showing
+        up properly, but had HTML entities.  Fixed en, fi, de and es.
+        
         * Updated Finnish localization.
 
 2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
