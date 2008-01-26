@@ -1,7 +1,13 @@
+2008-01-26  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * [JSPWIKI-146]: We now properly catch the exceptions generated during
+        download to avoid dumb error messages.
+        
+        * Updated Finnish localization.
+
 2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
 
-        * 2.6.1-cvs-10  -- various small i18n issues
-        
+        * 2.6.1-cvs-10  -- various small i18n issues 
 
         * [JSPWiki-123]	: The set of user-preference timeformats moved to the 
         jspwiki.properties, such that the administrator can easily choose timeformats,
