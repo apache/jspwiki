@@ -38,7 +38,7 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 }
 /* ie to check */
 * html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
-	overflow:visible;
+	overflow-x:visible;
 }
 /* use !important to overwrite css style on following specified blocks */
 .pagename, #header, #footer, #page { 
@@ -68,4 +68,8 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 }
 a.slimbox {
 	display:none;
+}
+/* ff bug : avoid floats during printing */
+.commentbox {
+	float:none;
 }

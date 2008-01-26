@@ -6,6 +6,8 @@
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.*" %>
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
@@ -40,9 +42,12 @@
         try 
         {
             groupMgr.getGroup( group.getName() );
+
             // Oops! The group already exists. This is mischief!
-            wikiSession.addMessage( GroupManager.MESSAGES_KEY, "Group '" + 
-                group.getName() + "' already exists. Try another name." );
+            ResourceBundle rb = wikiContext.getBundle("CoreResources");
+            Object[] args = { group.getName() };
+            wikiSession.addMessage( GroupManager.MESSAGES_KEY,
+                                    MessageFormat.format(rb.getString("newgroup.exists"),args));
         }
         catch ( NoSuchPrincipalException e )
         {

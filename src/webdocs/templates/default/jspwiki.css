@@ -414,7 +414,7 @@ td .information, td .warning, td .error {
 }
 .wikitable * th {
 	border:1px solid #ddd;
-	background-color:#d7d7d7;
+	background-color:#eee;
 	vertical-align:top;
 }
 .wikitable * td {
@@ -1268,11 +1268,11 @@ div.collapse ul, div.collapse ol {
 div.collapse li {
 	list-style-type:none;
 }
-.collapse .collapsebody {
+.collapse .collapsebody, .collapsebox .collapse .collapsebody {
 	padding-left:1.5em;
 }
 /* ie6 hack */
-* html .collapse .collapsebody {
+* html .collapse .collapsebody, * html .collapsebox .collapse .collapsebody {
 	float:left;
 	padding-left:0.5em;
 }
@@ -1313,7 +1313,7 @@ div.collapse li {
 /* +++ 930 Sortable tables +++ */
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
 	background-repeat:no-repeat;
-	background-position:3px 3px;
+	background-position:2px 4px;
 	cursor:pointer;
 	padding-left:11px;
 }
@@ -1322,9 +1322,11 @@ div.collapse li {
 }
 .sortable .sortAscending {
 	background-image:url(images/sorted_down.gif);
+	background-position:2px 6px;
 }
 .sortable .sortDescending {
 	background-image:url(images/sorted_up.gif);
+	background-position:2px 0px;
 }
 
 

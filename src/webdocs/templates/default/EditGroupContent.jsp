@@ -14,6 +14,8 @@
 %>
 
 <%
+  WikiContext c = WikiContext.findContext( pageContext );
+
   // Extract the group name and members
   String name = request.getParameter( "group" );
   Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
@@ -28,8 +30,16 @@
   name = TextUtil.replaceEntities(name);
 %>
 
-<wiki:TabbedSection defaultTab="${param.tab}">
-  <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>'>
+<wiki:TabbedSection defaultTab="editgroup">
+
+  <wiki:Permission permission="viewGroup">
+  <wiki:Tab id="viewgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.viewgroup")%>'
+           url='<%=c.getURL(WikiContext.NONE, "Group.jsp", "group="+request.getParameter("group") ) %>'
+           accesskey="v" >
+  </wiki:Tab>
+  </wiki:Permission>
+
+  <wiki:Tab id="editgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>'>
 
   <h3><%=name%></h3>
 
@@ -69,14 +79,25 @@
       </td>
     </tr>
     </table>
+    <div class="formhelp">
+      <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
+    </div>
       <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
       <input type="hidden" name="group" value="<%=name%>" />
       <input type="hidden" name="action" value="save" />
-      <div class="formhelp">
-        <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
-      </div>
   </form>
 
+  <wiki:Permission permission="deleteGroup"> 
+  <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
+         class="wikiform"
+            id="deleteGroup"
+        onsubmit="return( confirm('<fmt:message key="group.areyousure"><fmt:param>${param.group}</fmt:param></fmt:message>') && Wiki.submitOnce(this) );"
+        method="POST" accept-charset="UTF-8">
+      <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
+      <input type="hidden" name="group" value="${param.group}" />
+  </form>
+  </wiki:Permission>
 
 </wiki:Tab>
+
 </wiki:TabbedSection>

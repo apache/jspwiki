@@ -1,4 +1,5 @@
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.preferences.*" %>
@@ -98,37 +99,38 @@
   <td>
   <select id="prefTimeFormat" name="prefTimeFormat" >
     <%
-      String[] arrTimeFormat = 
-      {"d/MM"
-      ,"d/MM/yy"
-      ,"d/MM/yyyy"
-      ,"dd/MM/yy"
-      ,"dd/MM/yyyy"
-      ,"EEE, dd/MM/yyyy"
-      ,"EEE, dd/MM/yyyy, Z"
-      ,"EEE, dd/MM/yyyy, zzzz"
-      ,"d/MM/yy HH:mm"
-      ,"d/MM/yy hh:mm a"
-      ,"d/MM/yy hh:mm a, Z"
-      ,"dd-MMM"
-      ,"dd-MMM-yy"
-      ,"dd-MMM-yyyy"
-      ,"EEE, dd-MMM-yyyy"
-      ,"EEE, dd-MMM-yyyy, Z"
-      ,"EEE, dd-MMM-yyyy, zzzz"
-      ,"dd-MMM-yyyy HH:mm"
-      ,"dd-MMM-yyyy hh:mm a"
-      ,"dd-MMM-yyyy hh:mm a, Z"
-      ,"MMMM dd, yyyy"
-      ,"MMMM dd, yyyy HH:mm"
-      ,"MMMM dd, yyyy hh:mm a"
-      ,"MMMM, EEE dd,yyyy hh:mm a"
-      ,"MMMM, EEEE dd,yyyy hh:mm a"
-      } ;
-      java.util.Date d = new java.util.Date() ;  // Now.
-      for( int i=0; i < arrTimeFormat.length; i++ )
+      Properties props = c.getEngine().getWikiProperties();
+      ArrayList tfArr = new ArrayList(40);
+
+     /* filter timeformat props */
+      for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
       {
-        String f = arrTimeFormat[i];
+          String name = (String) e.nextElement();
+          if( name.startsWith( "jspwiki.defaultprefs.timeformat." ) )
+          {
+			 tfArr.add(name);
+          }
+      }
+
+      /* fetch actual formats */
+      if( tfArr.size() == 0 )
+      {
+          tfArr.add( "dd-MMM-yy" );
+          tfArr.add( "d-MMM-yyyy" );
+          tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
+      } else {
+          Collections.sort( tfArr );
+          for( int i=0; i < tfArr.size(); i++ )
+          {
+            tfArr.set(i, props.getProperty( (String)tfArr.get(i) ) );
+          }
+      }
+
+      Date d = new Date() ;  // Now.
+
+      for( int i=0; i < tfArr.size(); i++ )
+      {
+        String f = (String)tfArr.get(i);
         String selected = ( prefDateFormat.equals( f ) ? " selected='selected'" : "" ) ;
         try
         {

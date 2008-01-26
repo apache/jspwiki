@@ -1733,7 +1733,7 @@ var Categories =
 				popfx = popup.effect('opacity',{wait:false}).set(0);
 
 			link.addClass('categoryLink')
-				.setProperties({ href:'#', title: 'Click to show category [' + page + '] ...' })
+				.setProperties({ href:'#', title: "category.title".localize(page) })
 				.addEvent('click', function(e){
 				new Event(e).stop();  //dont jump to top of page ;-)
 				new Ajax( Categories.jsp, { 

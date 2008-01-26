@@ -27,33 +27,6 @@
     </wiki:Permission>
   </wiki:CheckRequestContext>
 
-  <%-- FIXME : to be moved into tabs of UserPreferences --%>
-  <wiki:CheckRequestContext context='viewGroup'>
-    <wiki:Permission permission="editGroup">
-	<li>
-        <wiki:Link jsp="EditGroup.jsp"><%-- class="action editgroup"--%>
-          <wiki:Param name="group" value="${param.group}" />
-          <fmt:message key="actions.editgroup" />
-        </wiki:Link>
-    </li>
-    </wiki:Permission>
-    <wiki:Permission permission="deleteGroup"> 
-    <li>
-      <a onclick="return confirmDelete()" class="action deletegroup"
-              href="<wiki:Link jsp='DeleteGroup.jsp' format='url'><wiki:Param name='group'value="${param.group}" /></wiki:Link>"><fmt:message key="actions.deletegroup"/></a>
-    </li>
-    </wiki:Permission>
-  </wiki:CheckRequestContext>
-   
-  <wiki:CheckRequestContext context='editGroup'>
-    <li>
-      <wiki:Link jsp="Group.jsp"><%-- class="action viewgroup"--%>
-        <wiki:Param name="group" value="${param.group}" />
-        <fmt:message key="actions.viewgroup"/>
-      </wiki:Link>
-    </li>
-  </wiki:CheckRequestContext>
-
   <%-- more actions dropdown -- converted to popup by javascript 
        so all basic actions are accessible even if js is not avail --%>
   <li>
@@ -84,12 +57,13 @@
     </option>
     </wiki:CheckRequestContext>
   
+    <wiki:CheckRequestContext context='!workflow'>
     <wiki:UserCheck status="authenticated">
       <option class="action workflow" value="<wiki:Link jsp='Workflow.jsp' format='url' />" 
         title="<fmt:message key='actions.workflow.title' />"><fmt:message key='actions.workflow' />
       </option>
-
     </wiki:UserCheck>
+    </wiki:CheckRequestContext>
 
     <wiki:Permission permission="createGroups">
       <option class="action creategroup" value="<wiki:Link jsp='NewGroup.jsp' format='url' />" 

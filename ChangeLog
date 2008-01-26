@@ -1,3 +1,34 @@
+2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-10  -- various small i18n issues
+        
+
+        * [JSPWiki-123]	: The set of user-preference timeformats moved to the 
+        jspwiki.properties, such that the administrator can easily choose timeformats,
+        if needed even localize them.
+
+        * [JSPWiki-137] Toggle details button is now working and i18n'ized in Workflow page
+        Added a new item to default.properties:
+
+            workflow.creatUserProfile=New user profile <strong>{2}</strong>
+
+        * [JSPWiki-144] : LoginHelp links to LoginPageHelp in l10n variable
+        Added LoginPageHelp to Core wiki pages (copied from jspwiki.org)
+
+        * [JSPWiki-147] : Category title label was not i18N
+        Added a new item to default.properties:
+
+            javascript.category.title=Click to show category [{0}] ...
+
+        * [JSPWiki-149] : Edit Group and Delete Group did not fit well in the gui.
+        Refactored the EditGroupcontent.jsp and GroupContent.jsp to make the gui more consistent.
+  
+        * [JSPWIKI-163] Error message when creating a new group to be I18N
+        Added a new item to CoreResources.properties:
+
+            newgroup.exists=Group {0} already exists. Try another name.
+
+
 2008-01-24  Juan Pablo Santos (juanpablo.santos@gmail.com)
         
         * Updated spanish translation with missing entry keys. Switched HTML

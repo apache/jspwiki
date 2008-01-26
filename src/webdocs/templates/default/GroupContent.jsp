@@ -11,10 +11,12 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setBundle basename="templates.default"/>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+  Logger log = Logger.getLogger("JSPWiki");
 %>
 
 <%
+  WikiContext c = WikiContext.findContext( pageContext );
+
   // Extract the group name and members
   String name = request.getParameter( "group" );
   Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
@@ -43,25 +45,13 @@
   name = TextUtil.replaceEntities(name);
 %>
 
-
-<script language="javascript" type="text/javascript">
-function confirmDelete()
-{
-  var reallydelete = confirm("<fmt:message key="group.areyousure"><fmt:param><%=name%></fmt:param></fmt:message>");
-
-  return reallydelete;
-}
-</script>
-
 <wiki:TabbedSection defaultTab="${param.tab}">
-  <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>'>
+  <wiki:Tab id="viewgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>'>
   <h3><%=name%></h3>
 
 <%
   if ( group == null )
   {
-    WikiContext c = WikiContext.findContext( pageContext );
-
     if ( c.getWikiSession().getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
     {
 %>
@@ -133,5 +123,17 @@ function confirmDelete()
 <%
   }
 %>
+
+  <wiki:Permission permission="deleteGroup"> 
+  <form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
+         class="wikiform"
+            id="deleteGroup"
+        onsubmit="return( confirm('<fmt:message key="group.areyousure"><fmt:param>${param.group}</fmt:param></fmt:message>') && Wiki.submitOnce(this) );"
+        method="POST" accept-charset="UTF-8">
+      <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
+      <input type="hidden" name="group" value="${param.group}" />
+  </form>
+  </wiki:Permission>
+
 </wiki:Tab>
 </wiki:TabbedSection>
