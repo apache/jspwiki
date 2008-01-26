@@ -345,8 +345,18 @@ public class AttachmentServlet
         catch( ProviderException pe )
         {
             msg = "Provider error: "+pe.getMessage();
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           msg );
+            
+            log.debug("Provider failed while reading", pe);
+            //
+            //  This might fail, if the response is already committed.  So in that
+            //  case we just log it.
+            //
+            try
+            {
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                               msg );
+            }
+            catch( IllegalStateException e ) {}
             return;
         }
         catch( NumberFormatException nfe )
@@ -360,7 +370,7 @@ public class AttachmentServlet
         {
             //
             //  These are very common in download situations due to aggressive
-            //  clients.
+            //  clients.  No need to try and send an error.
             //
             log.debug("I/O exception during download",se);
             return;
@@ -368,12 +378,19 @@ public class AttachmentServlet
         catch( IOException ioe )
         {
             //
-            //  Client dropped the connection or something else happened
+            //  Client dropped the connection or something else happened.
+            //  We don't know where the error came from, so we'll at least
+            //  try to send an error and catch it quietly if it doesn't quite work.
             //
             msg = "Error: " + ioe.getMessage();
-            log.info("I/O exception during download",ioe);
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           msg );
+            log.debug("I/O exception during download",ioe);
+            
+            try
+            {
+                res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                               msg );
+            }
+            catch( IllegalStateException e ) {}
             return;
         }
         finally
