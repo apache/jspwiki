@@ -1,3 +1,12 @@
+2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * [JSPWiki-147] : Slimbox labels were forgotten. (credit Tomasz Szymko)
+        Added a new item to default.properties:
+
+            javascript.slimbox.close=Close &#215;
+            javascript.slimbox.close.title=Close [Esc]
+
+
 2008-01-26  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * [JSPWIKI-146]: We now properly catch the exceptions generated during

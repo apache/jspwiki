@@ -407,12 +407,12 @@ var Lightbox = {
 		this.overlay = new Element('div', {'id': 'lbOverlay'}).inject(document.body);
 
 		this.center = new Element('div', {'id': 'lbCenter', 'styles': {'width': this.options.initialWidth, 'height': this.options.initialHeight, 'marginLeft': -(this.options.initialWidth/2), 'display': 'none'}}).inject(document.body);
-		new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).inject(this.center).onclick = this.overlay.onclick = this.close.bind(this);
+		new Element('a', {'id': 'lbCloseLink', 'href':'#', 'title':'slimbox.close.title'.localize()}).inject(this.center).onclick = this.overlay.onclick = this.close.bind(this);
 		this.image = new Element('div', {'id': 'lbImage'}).inject(this.center);
 
 		this.bottomContainer = new Element('div', {'id': 'lbBottomContainer', 'styles': {'display': 'none'}}).inject(document.body);
 		this.bottom = new Element('div', {'id': 'lbBottom'}).inject(this.bottomContainer);
-		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title': 'Close [Esc]'}).setHTML('Close &#215;').inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
+		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title':'slimbox.close.title'.localize()}).setHTML('slimbox.close'.localize()).inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
 		this.caption = new Element('div', {'id': 'lbCaption'}).inject(this.bottom);
 
 		var info = new Element('div').inject(this.bottom);  

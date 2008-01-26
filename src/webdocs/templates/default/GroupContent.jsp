@@ -136,4 +136,12 @@
   </wiki:Permission>
 
 </wiki:Tab>
+
+<wiki:Permission permission="editGroup">
+  <wiki:Tab id="editgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.editgroup")%>'
+           url='<%=c.getURL(WikiContext.NONE, "EditGroup.jsp", "group="+request.getParameter("group") ) %>'
+           accesskey="e" >
+  </wiki:Tab>
+</wiki:Permission>
+
 </wiki:TabbedSection>
