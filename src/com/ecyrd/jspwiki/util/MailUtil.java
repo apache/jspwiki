@@ -198,7 +198,7 @@ public final class MailUtil
 
     private static final String TRUE = "true";
 
-    private static boolean useJndi = true;
+    private static boolean c_useJndi = true;
 
     public static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
@@ -211,6 +211,8 @@ public final class MailUtil
     protected static final String DEFAULT_MAIL_PORT            = "25";
 
     protected static final String DEFAULT_MAIL_TIMEOUT         = "5000";
+    
+    protected static final String DEFAULT_SENDER               = "jspwiki@localhost";
 
     protected static final String PROP_MAIL_JNDI_NAME          = "jspwiki.mail.jndiname";
 
@@ -263,7 +265,7 @@ public final class MailUtil
     public static void sendMessage( WikiEngine engine, String to, String subject, String content )
         throws AddressException, MessagingException
     {
-        String from = engine.getWikiProperties().getProperty( PROP_MAIL_SENDER ).trim();
+        String from = engine.getWikiProperties().getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
         sendMessage( engine, to, from, subject, content );
     }
 
@@ -297,13 +299,13 @@ public final class MailUtil
         String jndiName = props.getProperty( PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME ).trim();
         Session session = null;
 
-        if (useJndi)
+        if (c_useJndi)
         {
             // Try getting the Session from the JNDI factory first
             try
             {
                 session = getJNDIMailSession(jndiName);
-                useJndi = false;
+                c_useJndi = false;
             }
             catch (NamingException e)
             {
@@ -332,7 +334,7 @@ public final class MailUtil
             if ( log.isInfoEnabled() )
             {
                 log.info( "Sent e-mail to=" + to + ", subject=\"" + subject
-                    + "\", jndi=" + ( useJndi ? TRUE : FALSE ) );
+                    + "\", jndi=" + ( c_useJndi ? TRUE : FALSE ) );
             }
         }
         catch ( MessagingException e )
