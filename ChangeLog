@@ -1,3 +1,13 @@
+2008-01-27 Dirk Frederickx (dirk.frederickx@gmail.com)
+
+        * 2.6.1-cvs-11
+
+        * [JSPWiki-137] : Toggle workflow details now also works on FF
+        
+        * [JSPWiki-123]	: The set of user-preference timeformats added to 
+        jspwiki.properties.tmpl iso jspwiki.properties.
+
+        
 2008-01-26 Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * [JSPWiki-147] : Slimbox labels were forgotten. (credit Tomasz Szymko)
