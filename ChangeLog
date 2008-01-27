@@ -1,3 +1,11 @@
+2008-01-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-rc-1
+        
+        * [JSPWIKI-166]: Added a default mail sender to ward off an evil NPE.  
+        I have a suspicion that things still don't work as documented, but 
+        at least there is no NPE anymore.
+
 2008-01-27 Dirk Frederickx (dirk.frederickx@gmail.com)
 
         * 2.6.1-cvs-11
