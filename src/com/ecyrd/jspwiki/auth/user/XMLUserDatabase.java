@@ -271,6 +271,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         log.info("XML user database at "+c_file.getAbsolutePath());
         
         buildDOM();
+        sanitizeDOM();
     }
     
     private void buildDOM()
@@ -509,7 +510,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             log.info( "Creating new user " + index );
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
-            setAttribute( user, CREATED, c_format.format( modDate ) );
+            setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
         }
         setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
@@ -608,6 +609,52 @@ public class XMLUserDatabase extends AbstractUserDatabase
         }
         return null;
     }
+    
+    /**
+     * After loading the DOM, this method sanity-checks the dates in the DOM and makes
+     * sure they are formatted properly. This is sort-of hacky, but it should work.
+     */
+    private void sanitizeDOM()
+    {
+        if ( c_dom == null )
+        {
+            throw new IllegalStateException( "FATAL: database does not exist" );
+        }
+        
+        NodeList users = c_dom.getElementsByTagName( USER_TAG );
+        for( int i = 0; i < users.getLength(); i++ )
+        {
+            Element user = (Element) users.item( i );
+            String loginName = user.getAttribute( LOGIN_NAME );
+            String created = user.getAttribute( CREATED );
+            String modified = user.getAttribute( LAST_MODIFIED );
+            try
+            {
+                created = c_format.format( c_format.parse( created ) );
+                modified = c_format.format( c_format.parse( modified ) );
+                user.setAttribute( CREATED,  created );
+                user.setAttribute( LAST_MODIFIED,  modified );
+            }
+            catch( ParseException e )
+            {
+                try
+                {
+                    created = c_format.format( c_defaultFormat.parse( created ) );
+                    modified = c_format.format( c_defaultFormat.parse( modified ) );
+                    user.setAttribute( CREATED,  created );
+                    user.setAttribute( LAST_MODIFIED,  modified );
+                }
+                catch ( ParseException e2)
+                {
+                    log.warn("Could not parse 'created' or 'lastModified' "
+                        + "attribute for "
+                        + " profile '" + loginName + "'."
+                        + " It may have been tampered with." );
+                }            
+            }
+        }
+    }
+    
     /**
      * Private method that sets an attibute value for a supplied DOM element.
      * @param element the element whose attribute is to be set

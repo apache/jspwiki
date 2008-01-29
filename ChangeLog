@@ -1,3 +1,12 @@
+2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.1-rc-2
+
+        * Changed default tests/etc/groupdatabase.xml and tests/etc/userdatabase.xml
+        so that they use the platform-independent date formats for creation/modification
+        datestamps. Also, fixed a bug in XMLUserDatabase that caused "old" date formats
+        to not be converted on startup. Thanks to Harry Metske for reporting this issue.
+
 2008-01-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-rc-1
