@@ -7,6 +7,8 @@
         datestamps. Also, fixed a bug in XMLUserDatabase that caused "old" date formats
         to not be converted on startup. Thanks to Harry Metske for reporting this issue.
 
+        * Tiny tweak to Eclipse classpath so that class files are put in build/ and tests/build. 
+
 2008-01-27  Janne Jalkanen <jalkanen@ecyrd.com>
 
         * 2.6.1-rc-1
