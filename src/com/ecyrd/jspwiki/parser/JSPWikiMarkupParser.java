@@ -866,7 +866,7 @@ public class JSPWikiMarkupParser
                 // Sometimes it's possible that illegal XML chars is added to the data.
                 // Here we make sure it does not stop parsing.
                 //
-                m_currentElement.addContent( makeError(e.getMessage()) );
+                m_currentElement.addContent( makeError(cleanupSuspectData( e.getMessage() )) );
             }
         }
 
@@ -2568,8 +2568,22 @@ public class JSPWikiMarkupParser
                 m_istable = false;
             }
 
-            int skip = parseToken( ch );
-
+            int skip = IGNORE;
+            
+            //
+            //  Do the actual parsing and catch any errors.
+            //
+            try
+            {
+                skip = parseToken( ch );
+            }
+            catch( IllegalDataException e )
+            {
+                log.info("Page "+m_context.getPage().getName()+" contains data which cannot be added to DOM tree: "+e.getMessage());
+                
+                makeError("Error: "+cleanupSuspectData(e.getMessage()) );
+            }
+            
             //
             //   The idea is as follows:  If the handler method returns
             //   an element (el != null), it is assumed that it has been
@@ -2600,6 +2614,21 @@ public class JSPWikiMarkupParser
         popElement("domroot");
     }
 
+    private String cleanupSuspectData( String s )
+    {
+        StringBuffer sb = new StringBuffer( s.length() );
+        
+        for( int i = 0; i < s.length(); i++ )
+        {
+            char c = s.charAt(i);
+            
+            if( Verifier.isXMLCharacter( c ) ) sb.append( c );
+            else sb.append( "0x"+Integer.toString(c) );
+        }
+        
+        return sb.toString();
+    }
+    
     public static final int CHARACTER = 0;
     public static final int ELEMENT   = 1;
     public static final int IGNORE    = 2;
@@ -2787,18 +2816,10 @@ public class JSPWikiMarkupParser
         Element rootElement = new Element("domroot");
 
         d.setRootElement( rootElement );
-        try
-        {
-            fillBuffer( rootElement );
 
-            paragraphify(rootElement);
+        fillBuffer( rootElement );
 
-        }
-        catch( IllegalDataException e )
-        {
-            log.error("Page "+m_context.getName()+" contained something that cannot be added in the DOM tree",e);
-            throw new IOException("Illegal page data: "+e.getMessage());
-        }
+        paragraphify(rootElement);
 
         return d;
     }
