@@ -1,3 +1,14 @@
+2008-01-27  Janne Jalkanen <jalkanen@ecyrd.com>
+
+        * 2.6.1-rc-3
+        
+        * [JSPWIKI-123]: Added German date formats to jspwiki.properties, thanks
+        to Florian Holeczek
+        
+        * [JSPWIKI-173]: Oops, we had a detection routine for illegal XML chars,
+        but unfortunately it was outputting the same illegal chars to the as an
+        error...
+
 2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
 
         * 2.6.1-rc-2
