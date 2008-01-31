@@ -2408,6 +2408,15 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate(src) );
     }
+    
+    public void testIllegalXML() throws Exception
+    {
+        String src = "Test \u001d foo";
+        
+        String dst = translate(src);
+        
+        assertTrue( "No error", dst.indexOf("JDOM") != -1 );
+    }
 
     public void testXSS1() throws Exception
     {
