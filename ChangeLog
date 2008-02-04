@@ -1,5 +1,13 @@
 2008-02-03 Dirk Frederickx (dirk.frederickx@gmail.com)
 
+        * 2.6.1-rc-4
+
+        * Dozens of localization fixes for nl [JSPWiki-176] Excellent review by Harry Metske. 
+        Many Thanks!
+        
+        
+2008-02-03 Dirk Frederickx (dirk.frederickx@gmail.com)
+
         * Small fixes on Dutch localization (nl)  No version update
         
         
