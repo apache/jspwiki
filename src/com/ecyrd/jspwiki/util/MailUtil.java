@@ -234,6 +234,7 @@ public final class MailUtil
 
     protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
+	private static String fromAddress = null;
     /**
      *  Private constructor prevents instantiation.
      */
@@ -261,90 +262,98 @@ public final class MailUtil
      * @param to the receiver
      * @param subject the subject line of the message
      * @param content the contents of the mail message, as plain text
+     * @throws AddressException
+     * @throws MessagingException
      */
-    public static void sendMessage( WikiEngine engine, String to, String subject, String content )
-        throws AddressException, MessagingException
+    public static void sendMessage(WikiEngine engine, String to, String subject, String content)
+    throws AddressException, MessagingException
     {
-        String from = engine.getWikiProperties().getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
-        sendMessage( engine, to, from, subject, content );
+        Properties props = engine.getWikiProperties();
+        Session session = getMailSession(engine);
+        getSenderEmailAddress(session, props);
+
+        try
+        {
+            // Create and address the message
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(fromAddress));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject);
+            msg.setText(content, "UTF-8");
+            msg.setSentDate(new Date());
+
+            // Send and log it
+            Transport.send(msg);
+            if (log.isInfoEnabled())
+            {
+                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", jndi=" + (c_useJndi ? TRUE : FALSE));
+            }
+        }
+        catch (MessagingException e)
+        {
+            log.error(e);
+            throw e;
+        }
+    }
+    
+    // --------- JavaMail Session Helper methods  --------------------------------
+
+    /**
+     * Gets the Sender's email address from JNDI Session if available, otherwise
+     * from the jspwiki.properties or lastly the default value.
+     * @param pSession <code>Session</code>
+     * @param pProperties <code>Properties</code>
+     * @return <code>String</code>
+     */
+    protected static String getSenderEmailAddress(Session pSession, Properties pProperties)
+    {
+        if (fromAddress == null)
+        {
+            // First, attempt to get the email address from the JNDI Mail Session.
+            if (pSession != null && c_useJndi)
+            {
+                fromAddress = pSession.getProperty(MailUtil.PROP_MAIL_SENDER);
+            }
+            // If unsuccessful, get the email address from the properties or default.
+            if (fromAddress == null) { 
+                fromAddress = pProperties.getProperty(PROP_MAIL_SENDER, DEFAULT_SENDER).trim();
+            }
+        }
+        return fromAddress;
     }
 
     /**
-     * <p>Sends an e-mail to a specified receiver from a specified sender, using a
-     * JavaMail Session supplied by a JNDI mail session factory (preferred) or
-     * a locally initialized session based on properties in
-     * <code>jspwiki.properties</code>. See the top-level JavaDoc for this
-     * class for a description of required properties and their
-     * default values.</p>
-     * <p>The e-mail addresses used for the <code>to</code> and <code>from</code>
-     * parameters must be in RFC822 format, as described in the JavaDoc for
-     * {@link javax.mail.internet.InternetAddress} and more fully at
-     * <a href="http://www.freesoft.org/CIE/RFC/822/index.htm">http://www.freesoft.org/CIE/RFC/822/index.htm</a>.
-     * In other words, e-mail addresses should look like this:</p>
-     * <blockquote><code>Snoop Dog &lt;snoop.dog@shizzle.net&gt;<br/>
-     * snoop.dog@shizzle.net</code></blockquote>
-     * <p>Note that the first form allows a "friendly" user name to be supplied
-     * in addition to the actual e-mail address.</p>
-     *
-     * @param engine the WikiEngine for the current wiki
-     * @param to the receiver
-     * @param from the address the email will be from
-     * @param subject the subject line of the message
-     * @param content the contents of the mail message, as plain text
+     * Returns the Mail Session from either JNDI or creates a stand-alone.
+     * @param engine a <code>WikiEngine</code>
+     * @return <code>Session</code>
      */
-    public static void sendMessage(WikiEngine engine, String to, String from, String subject, String content)
-        throws MessagingException
+    private static Session getMailSession(WikiEngine engine)
     {
+        Session result = null;
         Properties props = engine.getWikiProperties();
-        String jndiName = props.getProperty( PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME ).trim();
-        Session session = null;
+        String jndiName = props.getProperty(PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME).trim();
 
         if (c_useJndi)
         {
             // Try getting the Session from the JNDI factory first
             try
             {
-                session = getJNDIMailSession(jndiName);
-                c_useJndi = false;
+                result = getJNDIMailSession(jndiName);
             }
             catch (NamingException e)
             {
                 // Oops! JNDI factory must not be set up
+                c_useJndi = false;
             }
         }
 
         // JNDI failed; so, get the Session from the standalone factory
-        if ( session == null )
+        if (result == null)
         {
-            session = getStandaloneMailSession( props );
+            result = getStandaloneMailSession(props);
         }
-
-        try
-        {
-            // Create and address the message
-            MimeMessage msg = new MimeMessage( session );
-            msg.setFrom( new InternetAddress( from ) );
-            msg.setRecipients( Message.RecipientType.TO, InternetAddress.parse( to, false ) );
-            msg.setSubject( subject );
-            msg.setText( content, "UTF-8" );
-            msg.setSentDate( new Date() );
-
-            // Send and log it
-            Transport.send( msg );
-            if ( log.isInfoEnabled() )
-            {
-                log.info( "Sent e-mail to=" + to + ", subject=\"" + subject
-                    + "\", jndi=" + ( c_useJndi ? TRUE : FALSE ) );
-            }
-        }
-        catch ( MessagingException e )
-        {
-            log.error( e );
-            throw e;
-        }
+        return result;
     }
-
-    // --------- JavaMail Session Helper methods ---------------------------------
 
     /**
      * Returns a stand-alone JavaMail Session by looking up the correct
@@ -453,6 +462,7 @@ public final class MailUtil
 
         /**
          * Returns the password used to authenticate to the SMTP server.
+         * @return <code>PasswordAuthentication</code>
          */
         public PasswordAuthentication getPasswordAuthentication()
         {
