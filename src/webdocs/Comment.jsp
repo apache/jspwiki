@@ -223,7 +223,19 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
+        
+        String commentText = EditorManager.getEditedText(pageContext);
+        
+        //
+        //  WYSIWYG editor sends us its greetings
+        //
+        String htmlText = findParam( pageContext, "htmlPageText" );
+        if( htmlText != null && cancel == null )
+        {
+        	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
+        }
+        
+        session.setAttribute(EditorManager.REQ_EDITEDTEXT, commentText);
         response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment", false),"&amp;","&") );
         return;
     }
