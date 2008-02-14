@@ -61,7 +61,7 @@
 <project name="JSPWiki" default="compile" basedir=".">
 
   <!-- This tells us which build.properties file lies.  By default, we
-       use the CVS version (which is tuned to my environment), but you
+       use the SVN version (which is tuned to my environment), but you
        will probably want to override this from the command line. -->
   <property name="build.properties" value="build.properties" />
 
@@ -118,15 +118,14 @@
        are collected, for example -->
   <property name="install.fulldir" value="${tmpdir}/install" />
 
-  <!-- The directory where the CVS sources are checked out. -->
-  <property name="install.src" value="${tmpdir}/cvssrc" />
+  <!-- The directory where the SVN sources are checked out. -->
+  <property name="install.src" value="${tmpdir}/svnsrc" />
 
-  <!-- Define the CVS properties.  These are used when building the
+  <!-- Define the SVN properties.  These are used when building the
        source distribution.  Normally, you shouldn't have to care about these.
    -->
-  <property name="cvs.root" value=":ext:cvs.jspwiki.org:/p/cvs" />
-  <property name="cvs.module" value="JSPWiki" />
-  <property name="cvs.tag" value="HEAD" />
+  <property name="svn.repository" value="http://svn.apache.org/repos/asf/incubator/jspwiki" />
+  <property name="svn.tag" value="trunk" />
 
   <!-- And finally, the directory where the final .zip-file is put -->
   <property name="release.dir" value="releases" />
@@ -434,25 +433,22 @@
 
   <!--
        Here goes some nice Ant magic...  We build the source
-       code archive by directly exporting all code from the CVS
+       code archive by directly exporting all code from the SVN
        repository, and then zipping it to the temporary installation
        directory.
 
-       Note that you must have your CVS set up so that it does
-       not ask for a password when you're checking it out.
-
-       If you don't have CVS access, you can't build a source
-       zip with this.  Sorry.
+       NB: You must have the svn command line client available in
+       your path before you attempt to run this task.
    -->
   <target name="srczip" depends="installinit"
           description="Builds source zip.">
 
-    <cvs cvsRoot="${cvs.root}"
-         dest="${install.src}"
-         package="${cvs.module}"
-         command="export"
-         tag="${cvs.tag}" />
-
+  	<delete dir="${install.src}" />
+  	
+  	<exec executable="svn">
+       <arg line="export ${svn.repository}/${svn.tag} ${install.src}"/>
+  	</exec>
+  	
     <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
         <zipfileset dir="${install.src}" />
     </zip>
@@ -484,9 +480,6 @@
        We build both the WAR-file and the source zip, then
        copy in some useful files and zip the whole thing
        into the release directory.
-
-       Note that if you don't have CVS access set up, you
-       probably can't run this.
     -->
   <target name="dist" depends="installinit,srczip,war,corepageszip,documentzip"
           description="Builds the entire distribution archive.">
