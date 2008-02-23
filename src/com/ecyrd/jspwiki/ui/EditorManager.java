@@ -34,6 +34,7 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.PreviewActionBean;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
@@ -191,7 +192,7 @@ public class EditorManager extends ModuleManager
      */
     public String getEditorName( WikiContext context )
     {
-        if( context.getRequestContext().equals(WikiContext.PREVIEW) )
+        if( context instanceof PreviewActionBean )
             return EDITOR_PREVIEW;
 
         String editor = null;

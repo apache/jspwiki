@@ -28,13 +28,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.tags.WikiTagBase;
+
+
 
 /**
- *  Provides basic filtering for JSPWiki.  This filter only makes sure
- *  JSPWiki is running, and also does a bunch of sanitychecks.
+ *  <p>Initial filter for JSPWiki that ensures that the WikiEngine is running, and
+ *  injects a reference to it into the request scope. The WikiEngine is subsequently
+ *  available, for example, as a JSP 2.0 Expression Language variable
+ *  <code>${wikiEngine}</code>. A reference to the WikiSession is also stashed
+ *  and is available as (logically enough) <code>${wikiSession}</code>.</p>
+ *  <p>This filter also does a bunch of sanity-checks. Note that this filter should
+ *  run before any other Filter, including
+ *  {@link net.sourceforge.stripes.controller.StripesFilter}.</p>
  *  
  *  @author Janne Jalkanen
  *
@@ -86,12 +92,8 @@ public class WikiServletFilter implements Filter
             return;
         }   
         
-        // Write the response to a dummy response because we want to 
-        //   replace markers with scripts/stylesheet. 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         
-        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
-
         try
         {
             NDC.push( m_engine.getApplicationName()+":"+httpRequest.getRequestURL() );
@@ -104,23 +106,6 @@ public class WikiServletFilter implements Filter
             NDC.remove();
         }
 
-    }
-
-
-    /**
-     *  Figures out the wiki context from the request.  This method does not create the
-     *  context if it does not exist.
-     *  
-     *  @param request The request to examine
-     *  @return A valid WikiContext value (or null, if the context could not be located).
-     */
-    protected WikiContext getWikiContext(ServletRequest  request)
-    {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-    
-        WikiContext ctx = (WikiContext) httpRequest.getAttribute( WikiTagBase.ATTR_CONTEXT );
-        
-        return ctx;
     }
 
 }

@@ -28,13 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.event.WikiEventManager;
-import com.ecyrd.jspwiki.event.WikiPageEvent;
-import com.ecyrd.jspwiki.url.DefaultURLConstructor;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
@@ -66,9 +67,28 @@ import com.ecyrd.jspwiki.util.WatchDog;
  * @see TemplateManager
  * @see com.ecyrd.jspwiki.tags.RequestResourceTag
  */
-public class WikiJSPFilter extends WikiServletFilter
+public class WikiJSPFilter implements Filter
 {
-    /** {@inheritDoc} */
+    protected static final Logger log = Logger.getLogger( WikiJSPFilter.class );
+    protected WikiEngine m_engine = null;
+
+    public WikiJSPFilter()
+    {
+        super();
+    }
+    
+    public void init(FilterConfig config) throws ServletException
+    {
+        ServletContext context = config.getServletContext();
+        m_engine = WikiEngine.getInstance( context, null );
+    }
+
+    public void destroy()
+    {
+        log.info("WikiJSPFilter destroyed; telling WikiEngine to stop..");
+        m_engine.shutdown();
+    }
+    
     public void doFilter( ServletRequest  request,
                           ServletResponse response,
                           FilterChain     chain )
@@ -84,22 +104,22 @@ public class WikiJSPFilter extends WikiServletFilter
             HttpServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
         
             // fire PAGE_REQUESTED event
-            String pagename = DefaultURLConstructor.parsePageFromURL(
-                    (HttpServletRequest)request, response.getCharacterEncoding() );
-            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+            WikiActionBean actionBean = getWikiActionBean( request );
+            boolean isWikiContext = ( actionBean instanceof WikiContext );
+            if ( isWikiContext )
+            {
+                String pageName = ((WikiContext)actionBean).getPage().getName();
+                fireEvent( WikiPageEvent.PAGE_REQUESTED, pageName );
+            }
 
-            super.doFilter( request, responseWrapper, chain );
+            chain.doFilter( request, responseWrapper );
 
             // The response is now complete. Lets replace the markers now.
         
-            // WikiContext is only available after doFilter! (That is after
-            //   interpreting the jsp)
-
             try
             {
                 w.enterState( "Delivering response", 30 );
-                WikiContext wikiContext = getWikiContext( request );
-                String r = filter( wikiContext, responseWrapper );
+                String r = filter( actionBean, responseWrapper );
         
                 //String encoding = "UTF-8";
                 //if( wikiContext != null ) encoding = wikiContext.getEngine().getContentEncoding();
@@ -111,13 +131,14 @@ public class WikiJSPFilter extends WikiServletFilter
                 response.getWriter().write(r);
             
                 // Clean up the UI messages and loggers
-                if( wikiContext != null )
-                {
-                    wikiContext.getWikiSession().clearMessages();
-                }
+                actionBean.getWikiSession().clearMessages();
 
                 // fire PAGE_DELIVERED event
-                fireEvent( WikiPageEvent.PAGE_DELIVERED, pagename );
+                if ( isWikiContext )
+                {
+                    String pageName = ((WikiContext)actionBean).getPage().getName();
+                    fireEvent( WikiPageEvent.PAGE_DELIVERED, pageName );
+                }
 
             }
             finally
@@ -136,27 +157,27 @@ public class WikiJSPFilter extends WikiServletFilter
     /**
      * Goes through all types and writes the appropriate response.
      * 
-     * @param wikiContext The usual processing context
+     * @param actionBean The action bean for the current context
      * @param string The source string
      * @return The modified string with all the insertions in place.
      */
-    private String filter(WikiContext wikiContext, HttpServletResponse response )
+    private String filter(WikiActionBean actionBean, HttpServletResponse response )
     {
         String string = response.toString();
 
-        if( wikiContext != null )
+        if( actionBean != null )
         {
-            String[] resourceTypes = TemplateManager.getResourceTypes( wikiContext );
+            String[] resourceTypes = TemplateManager.getResourceTypes( actionBean );
 
             for( int i = 0; i < resourceTypes.length; i++ )
             {
-                string = insertResources( wikiContext, string, resourceTypes[i] );
+                string = insertResources( actionBean, string, resourceTypes[i] );
             }
         
             //
             //  Add HTTP header Resource Requests
             //
-            String[] headers = TemplateManager.getResourceRequests( wikiContext,
+            String[] headers = TemplateManager.getResourceRequests( actionBean,
                                                                     TemplateManager.RESOURCE_HTTPHEADER );
         
             for( int i = 0; i < headers.length; i++ )
@@ -182,19 +203,19 @@ public class WikiJSPFilter extends WikiServletFilter
      *  were requested by any plugins or other components for this particular
      *  type.
      *  
-     *  @param wikiContext The usual processing context
+     *  @param actionBean The action bean for the current context
      *  @param string The source string
      *  @param type Type identifier for insertion
      *  @return The filtered string.
      */
-    private String insertResources(WikiContext wikiContext, String string, String type )
+    private String insertResources( WikiActionBean actionBean, String string, String type )
     {
-        if( wikiContext == null )
+        if( actionBean == null )
         {
             return string;
         }
 
-        String marker = TemplateManager.getMarker( wikiContext, type );
+        String marker = TemplateManager.getMarker( actionBean, type );
         int idx = string.indexOf( marker );
         
         if( idx == -1 )
@@ -204,7 +225,7 @@ public class WikiJSPFilter extends WikiServletFilter
         
         log.debug("...Inserting...");
         
-        String[] resources = TemplateManager.getResourceRequests( wikiContext, type );
+        String[] resources = TemplateManager.getResourceRequests( actionBean, type );
         
         StringBuffer concat = new StringBuffer( resources.length * 40 );
         
@@ -285,6 +306,21 @@ public class WikiJSPFilter extends WikiServletFilter
         }
     }
 
+    /**
+     *  Looks up the WikiActionBean stored in the request.  This method does not create the
+     *  action bean if it does not exist.
+     *  
+     *  @param request The request to examine
+     *  @return A valid WikiActionBean, or <code>null</code> if one could not be located
+     */
+    protected WikiContext getWikiActionBean(ServletRequest  request)
+    {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+    
+        WikiContext ctx = (WikiContext) httpRequest.getAttribute( WikiInterceptor.ATTR_ACTIONBEAN );
+        
+        return ctx;
+    }
 
     // events processing .......................................................
 
