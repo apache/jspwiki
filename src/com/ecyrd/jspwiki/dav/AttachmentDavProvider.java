@@ -26,9 +26,9 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.AttachActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.dav.items.AttachmentItem;
 import com.ecyrd.jspwiki.dav.items.DavItem;
@@ -172,7 +172,7 @@ public class AttachmentDavProvider implements DavProvider
 
         if( p.startsWith("/") ) p = p.substring( 1 );
 
-        return m_engine.getURL( WikiContext.ATTACH, p, null, true );
+        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "attach/"), path.getPath() );
     }
 
 }

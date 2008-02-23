@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.filters;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.ViewActionBean;
+
 import org.apache.xmlrpc.*;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -70,12 +72,12 @@ public class PingWeblogsComFilter
         try
         {
             XmlRpcClient xmlrpc = new XmlRpcClient(m_pingURL);
-            Vector params = new Vector();
+            Vector<String> params = new Vector<String>();
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
-            params.addElement( engine.getURL( WikiContext.VIEW, blogName, null, true ) );
+            params.addElement( context.getContext().getURL( ViewActionBean.class, blogName, null, true ) );
 
             if( log.isDebugEnabled() )
-                log.debug("Pinging weblogs.com with URL: "+engine.getURL( WikiContext.VIEW, blogName, null, true ));
+                log.debug("Pinging weblogs.com with URL: "+context.getContext().getURL( ViewActionBean.class, blogName, null, true ));
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() 

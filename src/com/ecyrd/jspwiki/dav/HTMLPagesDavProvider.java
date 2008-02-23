@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.NoneActionBean;
 import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.DirectoryItem;
 import com.ecyrd.jspwiki.dav.items.HTMLPageDavItem;
@@ -120,8 +120,7 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
     
     public String getURL( DavPath path )
     {
-        return m_engine.getURL( WikiContext.NONE, DavUtil.combineURL("dav/html",path.getPath()),
-                                null, true );
+        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "dav/html"), path.getPath() );
     }
 
 }

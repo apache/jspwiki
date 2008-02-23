@@ -24,7 +24,8 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.WikiPlugin;
@@ -91,7 +92,7 @@ public class FormOutput
         }
 
         String sourcePage = ctx.getPage().getName();
-        String submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
+        String submitServlet = ctx.getContext().getURL( ViewActionBean.class, sourcePage );
 
         // If there is previous FormInfo available - say, from a
         // FormSet plugin - use it.

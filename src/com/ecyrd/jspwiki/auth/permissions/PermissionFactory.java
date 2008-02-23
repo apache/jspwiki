@@ -19,6 +19,9 @@
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.security.Permission;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import com.ecyrd.jspwiki.WikiPage;
@@ -37,7 +40,32 @@ public class PermissionFactory
      *  This is a WeakHashMap<Integer,PagePermission>, which stores the
      *  cached page permissions.
      */
-    private static WeakHashMap c_cache = new WeakHashMap();
+    private static Map<Class<? extends Permission>,Map<Integer,Permission>> c_cache 
+         = new HashMap<Class<? extends Permission>,Map<Integer,Permission>>();
+    
+    /**
+     *  Get a permission object for a Group and a set of actions.
+     *  
+     *  @param group the fully-qualified name of the group
+     *  @param actions A list of actions.
+     *  @return A GroupPermission object, presenting this group+actions combination.
+     */
+    public static final GroupPermission getGroupPermission( String group, String actions )
+    {
+        Map<Integer,Permission> cachedPerms = getPermissionCache( GroupPermission.class );
+        Integer key = new Integer( group.hashCode() ^ actions.hashCode() );
+        GroupPermission perm;
+        synchronized( cachedPerms )
+        {
+            perm = (GroupPermission)cachedPerms.get( key );
+            if( perm == null )
+            {
+                perm = new GroupPermission( group, actions );
+                cachedPerms.put( key, perm );
+            }
+        }
+        return perm;
+    }
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -48,19 +76,43 @@ public class PermissionFactory
      */
     public static final PagePermission getPagePermission( WikiPage page, String actions )
     {
-        return getPagePermission( page.getWiki(), page.getName(), actions );
+        Map<Integer,Permission> cachedPerms = getPermissionCache( GroupPermission.class );
+        Integer key = new Integer( page.getWiki().hashCode() ^ page.getName().hashCode() ^ actions.hashCode() );
+        PagePermission perm;
+        synchronized( cachedPerms )
+        {
+            perm = (PagePermission)cachedPerms.get( key );
+            if( perm == null )
+            {
+                perm = new PagePermission( page, actions );
+                cachedPerms.put( key, perm );
+            }
+        }
+        return perm;
     }
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
      *  
-     *  @param page The name of the page.
+     *  @param page The name of the page, including the wiki prefix (e.g., MyWiki:Main)
      *  @param actions A list of actions.
      *  @return A PagePermission object, presenting this page+actions combination.
      */
     public static final PagePermission getPagePermission( String page, String actions )
     {
-        return getPagePermission( "", page, actions );
+        Map<Integer,Permission> cachedPerms = getPermissionCache( GroupPermission.class );
+        Integer key = new Integer( page.hashCode() ^ actions.hashCode() );
+        PagePermission perm;
+        synchronized( cachedPerms )
+        {
+            perm = (PagePermission)cachedPerms.get( key );
+            if( perm == null )
+            {
+                perm = new PagePermission( page, actions );
+                cachedPerms.put( key, perm );
+            }
+        }
+        return perm;
     }
 
     /**
@@ -71,41 +123,36 @@ public class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object.
      */
-    private static final PagePermission getPagePermission( String wiki, String page, String actions )
+    public static final WikiPermission getWikiPermission( String wiki, String actions )
     {
-        PagePermission perm;
-        //
-        //  Since this is pretty speed-critical, we try to avoid the StringBuffer creation
-        //  overhead by XORring the hashcodes.  However, if page name length > 32 characters,
-        //  this might result in two same hashCodes.
-        //  FIXME: Make this work for page-name lengths > 32 characters (use the alt implementation
-        //         if page.length() > 32?)
-        // Alternative implementation below, but it does create an extra StringBuffer.
-        //String         key = wiki+":"+page+":"+actions;
-        
-        Integer key = new Integer( wiki.hashCode() ^ page.hashCode() ^ actions.hashCode() );
-   
-        //
-        //  It's fine if two threads update the cache, since the objects mean the same
-        //  thing anyway.  And this avoids nasty blocking effects.
-        //
-        synchronized( c_cache )
+        Map<Integer,Permission> cachedPerms = getPermissionCache( GroupPermission.class );
+        Integer key = new Integer( wiki.hashCode() ^ actions.hashCode() );
+        WikiPermission perm;
+        synchronized( cachedPerms )
         {
-            perm = (PagePermission)c_cache.get( key );
-        }
-        
-        if( perm == null )
-        {
-            if( wiki.length() > 0 ) page = wiki+":"+page;
-            perm = new PagePermission( page, actions );
-            
-            synchronized( c_cache )
+            perm = (WikiPermission)cachedPerms.get( key );
+            if( perm == null )
             {
-                c_cache.put( key, perm );
+                perm = new WikiPermission( wiki, actions );
+                cachedPerms.put( key, perm );
             }
         }
-        
         return perm;
+    }
+    
+    private static Map<Integer,Permission>getPermissionCache( Class<? extends Permission> permClass )
+    {
+        // Get the HashMap for our permission type (creating it if needed)
+        Map<Integer,Permission> cachedPerms = c_cache.get(permClass);
+        if ( cachedPerms == null )
+        {
+            synchronized ( c_cache )
+            {
+                cachedPerms = new WeakHashMap<Integer,Permission>();
+                c_cache.put(permClass,cachedPerms);
+            }
+        }
+        return cachedPerms;
     }
 
 }

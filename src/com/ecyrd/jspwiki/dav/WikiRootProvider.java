@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.dav;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.dav.items.DavItem;
 import com.ecyrd.jspwiki.dav.items.TopLevelDavItem;
@@ -61,7 +60,7 @@ public class WikiRootProvider extends WikiDavProvider
 
     public String getURL( DavPath path )
     {
-        return m_engine.getURL( WikiContext.NONE, "dav/"+path.getPath(), null, false );
+        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "dav/"), path.getPath() );
     }
 
 }

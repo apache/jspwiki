@@ -35,10 +35,14 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.CommentActionBean;
+import com.ecyrd.jspwiki.action.NoneActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.EditorManager;
+import com.ecyrd.jspwiki.ui.WikiInterceptor;
 
 /**
  *  This is Herb, the JSPWiki spamfilter that can also do choke modifications.
@@ -548,7 +552,7 @@ public class SpamFilter
                 String userAgent     = req.getHeader("User-Agent");
                 String referrer      = req.getHeader( "Referer");
                 String permalink     = context.getViewURL( context.getPage().getName() );
-                String commentType   = context.getRequestContext().equals(WikiContext.COMMENT) ? "comment" : "edit";
+                String commentType   = context instanceof CommentActionBean ? "comment" : "edit";
                 String commentAuthor = context.getCurrentUser().getName();
                 String commentAuthorEmail = null;
                 String commentAuthorURL   = null;
@@ -938,10 +942,14 @@ public class SpamFilter
      */
     private String getRedirectPage( WikiContext ctx )
     {
+        Map<String,String> urlParams = new HashMap<String,String>();
         if( m_useCaptcha )
-            return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName(ctx.getPage().getName()) );
+        {
+            urlParams.put( "page", ctx.getEngine().encodeName( ctx.getPage().getName() ) );
+            return ctx.getContext().getURL( NoneActionBean.class, "Captcha.jsp", urlParams );
+        }
 
-        return ctx.getURL( WikiContext.VIEW, m_errorPage );
+        return ctx.getContext().getURL( ViewActionBean.class, m_errorPage);
     }
 
     /**
@@ -1065,7 +1073,7 @@ public class SpamFilter
 
                 log( context, REJECT, "MissingHash", change );
 
-                String redirect = context.getURL(WikiContext.VIEW,"SessionExpired");
+                String redirect = context.getContext().getURL( ViewActionBean.class, "SessionExpired");
                 ((HttpServletResponse)pageContext.getResponse()).sendRedirect( redirect );
 
                 return false;
@@ -1077,8 +1085,7 @@ public class SpamFilter
 
     public static final String insertInputFields( PageContext pageContext )
     {
-        WikiContext ctx = WikiContext.findContext(pageContext);
-        WikiEngine engine = ctx.getEngine();
+        WikiEngine engine = (WikiEngine)pageContext.getAttribute( WikiInterceptor.ATTR_WIKIENGINE, PageContext.REQUEST_SCOPE );
 
         StringBuffer sb = new StringBuffer();
         if (engine.getContentEncoding().equals("UTF-8"))

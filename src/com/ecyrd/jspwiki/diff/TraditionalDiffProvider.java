@@ -169,7 +169,7 @@ public class TraditionalDiffProvider implements DiffProvider
             double[] choiceLimits = { 1, 2 };
             
             MessageFormat fmt = new MessageFormat("");
-            fmt.setLocale( WikiContext.getLocale(m_context) );
+            fmt.setLocale( m_context.getContext().getLocale() );
             ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );
             Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };

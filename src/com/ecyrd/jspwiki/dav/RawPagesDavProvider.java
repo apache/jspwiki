@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.items.DavItem;
@@ -164,8 +163,7 @@ public class RawPagesDavProvider extends WikiDavProvider
     
     public String getURL( DavPath path )
     {
-        return m_engine.getURL( WikiContext.NONE, DavUtil.combineURL("dav/raw/",path.getPath()),
-                                null, true );
+        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "dav/raw"), path.getPath() );
     }
     
     public DavItem getItem( DavPath dp )

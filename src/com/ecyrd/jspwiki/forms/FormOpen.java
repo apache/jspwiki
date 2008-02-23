@@ -24,7 +24,8 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
@@ -89,7 +90,7 @@ public class FormOpen
         String sourcePage = ctx.getPage().getName();
         String submitServlet = (String)params.get( PARAM_SUBMITHANDLER );
         if( submitServlet == null )
-            submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
+            submitServlet = ctx.getContext().getURL( ViewActionBean.class, sourcePage );
 
         String method = (String)params.get( PARAM_METHOD );
         if( method == null ) method="post";
