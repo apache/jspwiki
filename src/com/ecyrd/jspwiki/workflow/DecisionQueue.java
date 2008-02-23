@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.workflow;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.ecyrd.jspwiki.WikiException;
@@ -38,7 +37,7 @@ import com.ecyrd.jspwiki.WikiSession;
 public class DecisionQueue
 {
 
-    private LinkedList m_queue = new LinkedList();
+    private LinkedList<Decision> m_queue = new LinkedList<Decision>();
 
     private volatile int m_next;
 
@@ -73,7 +72,7 @@ public class DecisionQueue
      */
     protected Decision[] decisions()
     {
-        return (Decision[]) m_queue.toArray(new Decision[m_queue.size()]);
+        return m_queue.toArray(new Decision[m_queue.size()]);
     }
 
     /**
@@ -96,17 +95,15 @@ public class DecisionQueue
      *            the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection getActorDecisions(WikiSession session)
+    public Collection<Decision> getActorDecisions(WikiSession session)
     {
-        ArrayList decisions = new ArrayList();
+        ArrayList<Decision> decisions = new ArrayList<Decision>();
         if (session.isAuthenticated())
         {
             Principal[] principals = session.getPrincipals();
             Principal[] rolePrincipals = session.getRoles();
-            for (Iterator it = m_queue.iterator(); it.hasNext();)
+            for ( Decision decision : m_queue )
             {
-                Decision decision = (Decision) it.next();
-
                 // Iterate through the Principal set
                 for (int i = 0; i < principals.length; i++)
                 {

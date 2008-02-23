@@ -26,6 +26,9 @@ import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.EditActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
@@ -43,6 +46,8 @@ public class RPCHandler
     extends AbstractRPCHandler
 {
     Logger log = Logger.getLogger( RPCHandler.class ); 
+    
+    private static final Map<String,String> NO_PARAMS = Collections.unmodifiableMap( new HashMap<String,String>() );
 
     public void initialize( WikiContext ctx )
     {
@@ -95,12 +100,11 @@ public class RPCHandler
     public Vector getAllPages()
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
-        Vector result = new Vector();
+        Collection<WikiPage> pages = m_engine.getRecentChanges();
+        Vector<String> result = new Vector<String>();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage p : pages )
         {
-            WikiPage p = (WikiPage) i.next();
             if( !(p instanceof Attachment) )
             {
                 result.add( toRPCString(p.getName()) );
@@ -113,9 +117,9 @@ public class RPCHandler
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    protected Hashtable encodeWikiPage( WikiPage page )
+    protected Hashtable<String,Object> encodeWikiPage( WikiPage page )
     {
-        Hashtable ht = new Hashtable();
+        Hashtable<String,Object> ht = new Hashtable<String,Object>();
 
         ht.put( "name", toRPCString(page.getName()) );
 
@@ -145,11 +149,11 @@ public class RPCHandler
         return ht;
     }
 
-    public Vector getRecentChanges( Date since )
+    public Vector<Hashtable<String,Object>> getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
-        Vector result = new Vector();
+        Collection<WikiPage> pages = m_engine.getRecentChanges();
+        Vector<Hashtable<String,Object>> result = new Vector<Hashtable<String,Object>>();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
@@ -162,10 +166,8 @@ public class RPCHandler
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
-
             if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
             {
                 result.add( encodeWikiPage( page ) );
@@ -261,7 +263,7 @@ public class RPCHandler
         LinkCollector extCollector   = new LinkCollector();
         LinkCollector attCollector   = new LinkCollector();
 
-        WikiContext context = new WikiContext( m_engine, page );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
         m_engine.textToHTML( context,
@@ -270,15 +272,14 @@ public class RPCHandler
                              extCollector,
                              attCollector );
 
-        Vector result = new Vector();
+        Vector<Hashtable<String,String>> result = new Vector<Hashtable<String,String>>();
 
         //
         //  Add local links.
         //
-        for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
+        for( String link : localCollector.getLinks() )
         {
-            String link = (String) i.next();
-            Hashtable ht = new Hashtable();
+            Hashtable<String,String> ht = new Hashtable<String,String>();
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
 
@@ -295,11 +296,11 @@ public class RPCHandler
 
             if( m_engine.pageExists(link) )
             {
-                ht.put( "href", context.getURL(WikiContext.VIEW,link) );
+                ht.put( "href", context.getContext().getURL( ViewActionBean.class, link, NO_PARAMS, true ) );
             }
             else
             {
-                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
+                ht.put( "href", context.getContext().getURL( EditActionBean.class, link, NO_PARAMS, true ) );
             }
 
             result.add( ht );
@@ -308,15 +309,13 @@ public class RPCHandler
         //
         // Add links to inline attachments
         //
-        for( Iterator i = attCollector.getLinks().iterator(); i.hasNext(); )
+        for( String link : attCollector.getLinks() )
         {
-            String link = (String) i.next();
-
-            Hashtable ht = new Hashtable();
+            Hashtable<String,String> ht = new Hashtable<String,String>();
 
             ht.put( "page", toRPCString( link ) );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
+            ht.put( "href", context.getContext().getURL( AttachActionBean.class, link, NO_PARAMS, true ) );
 
             result.add( ht );
         }
@@ -326,11 +325,9 @@ public class RPCHandler
         // simply because URLs are by definition ASCII.
         //
 
-        for( Iterator i = extCollector.getLinks().iterator(); i.hasNext(); )
+        for( String link : extCollector.getLinks() )
         {
-            String link = (String) i.next();
-
-            Hashtable ht = new Hashtable();
+            Hashtable<String,String> ht = new Hashtable<String,String>();
 
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );

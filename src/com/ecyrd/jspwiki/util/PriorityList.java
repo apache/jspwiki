@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.util;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  Builds a simple, priority-based List implementation.  The list
@@ -33,10 +34,10 @@ import java.util.ArrayList;
  *
  *  @author Janne Jalkanen
  */
-public class PriorityList
-    extends AbstractList
+public class PriorityList<T>
+    extends AbstractList<T>
 {
-    private ArrayList m_elements = new ArrayList();
+    private final List<Item<T>> m_elements = new ArrayList<Item<T>>();
 
     /**
      *  This is the default priority, which is used if no priority
@@ -51,13 +52,13 @@ public class PriorityList
      *  @param o Object to add.
      *  @param priority Priority.
      */
-    public void add( Object o, int priority )
+    public void add( T o, int priority )
     {
         int i = 0;
 
         for( ; i < m_elements.size(); i++ )
         {
-            Item item = (Item) m_elements.get(i);
+            Item item = m_elements.get(i);
 
             if( item.m_priority < priority )
             {
@@ -65,7 +66,7 @@ public class PriorityList
             }
         }
 
-        Item newItem = new Item();
+        Item<T> newItem = new Item<T>();
         newItem.m_priority = priority;
         newItem.m_object   = o;
 
@@ -78,7 +79,7 @@ public class PriorityList
      *  @param o Object to add.
      *  @return true, as per the general Collections.add contract.
      */
-    public boolean add( Object o )
+    public boolean add( T o )
     {
         add( o, DEFAULT_PRIORITY );
 
@@ -91,9 +92,9 @@ public class PriorityList
      *  @param index The index.
      *  @return The object at the list at the position "index".
      */
-    public Object get( int index )
+    public T get( int index )
     {
-        return ((Item)m_elements.get( index )).m_object;
+        return m_elements.get( index ).m_object;
     }
 
     /**
@@ -109,9 +110,9 @@ public class PriorityList
     /**
      *  Provides a holder for the priority-object 2-tuple.
      */
-    private static class Item
+    private static class Item<T>
     {
         public int     m_priority;
-        public Object  m_object;
+        public T m_object;
     }
 }

@@ -55,12 +55,12 @@ public final class FormUtil
     public static List getValues( Map params, String key )
     {
         if( params == null || key == null )
-            return new ArrayList(0);
+            return new ArrayList<Object>(0);
 
         Object entry = params.get( key );
         if( entry != null )
         {
-            ArrayList rval = new ArrayList(1);
+            List<Object> rval = new ArrayList<Object>(1);
             rval.add( entry );
             return rval;
         }
@@ -87,9 +87,9 @@ public final class FormUtil
      * @return ArrayList, containing the values corresponding to the
      *          keyPrefix, in order.
      */
-    public static ArrayList getNumberedValues( Map params, String keyPrefix )
+    public static List<Object> getNumberedValues( Map<String,Object> params, String keyPrefix )
     {
-        ArrayList rval = new ArrayList();
+        List<Object> rval = new ArrayList<Object>();
         if( params == null || 
             params.size() == 0 || 
             keyPrefix == null || 
@@ -136,10 +136,10 @@ public final class FormUtil
      * @param filterPrefix the prefix
      * @return the Map containing parsed key/value pairs
      */
-    public static Map requestToMap( HttpServletRequest req, 
+    public static Map<String,String> requestToMap( HttpServletRequest req, 
                                     String filterPrefix )
     {
-        HashMap params = new HashMap();
+        Map<String,String> params = new HashMap<String,String>();
         
         if( filterPrefix == null ) filterPrefix = "";
         

@@ -21,6 +21,8 @@ package com.ecyrd.jspwiki.xmlrpc;
 
 import java.io.*;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.plugin.WeblogEntryPlugin;
@@ -50,9 +52,11 @@ public class MetaWeblogHandler
     Logger log = Logger.getLogger( MetaWeblogHandler.class ); 
 
     private WikiEngine m_engine;
+    private WikiContext m_context;
     
     public void initialize( WikiContext context )
     {
+        m_context = context;
         m_engine = context.getEngine();
     }
 
@@ -127,7 +131,7 @@ public class MetaWeblogHandler
 
     private String getURL( String page )
     {
-        return m_engine.getURL( WikiContext.VIEW,
+        return m_context.getContext().getURL( ViewActionBean.class,
                                 page,
                                 null,
                                 true ); // Force absolute urls
@@ -139,9 +143,9 @@ public class MetaWeblogHandler
      *  @param page The actual entry page
      *  @return A metaWeblog entry struct.
      */
-    private Hashtable makeEntry( WikiPage page )
+    private Hashtable<String,Object> makeEntry( WikiPage page )
     {
-        Hashtable ht = new Hashtable();
+        Hashtable<String,Object> ht = new Hashtable<String,Object>();
 
         WikiPage firstVersion = m_engine.getPage( page.getName(), 1 );
 
@@ -184,7 +188,7 @@ public class MetaWeblogHandler
                                      int numberOfPosts)
         throws XmlRpcException
     {
-        Hashtable result = new Hashtable();
+        Hashtable<String,Object> result = new Hashtable<String,Object>();
 
         log.info( "metaWeblog.getRecentPosts() called");
 
@@ -196,7 +200,7 @@ public class MetaWeblogHandler
         {
             WeblogPlugin plugin = new WeblogPlugin();
 
-            List changed = plugin.findBlogEntries(m_engine.getPageManager(), 
+            List<WikiPage> changed = plugin.findBlogEntries(m_engine.getPageManager(), 
                                                   blogid,
                                                   new Date(0L),
                                                   new Date());
@@ -247,7 +251,7 @@ public class MetaWeblogHandler
             WikiPage entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( m_engine, entryPage );
+            WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+content.get("title") );
@@ -296,7 +300,7 @@ public class MetaWeblogHandler
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
-            url = m_engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
+            url = m_context.getContext().getURL( AttachActionBean.class, att.getName(), null, true );
         }
         catch( Exception e )
         {
@@ -304,7 +308,7 @@ public class MetaWeblogHandler
             throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );
         }
 
-        Hashtable result = new Hashtable();
+        Hashtable<String,String> result = new Hashtable<String,String>();
         result.put("url", url);
 
         return result;
@@ -334,7 +338,7 @@ public class MetaWeblogHandler
             WikiPage entryPage = (WikiPage)page.clone();
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( m_engine, entryPage );
+            WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+content.get("title") );

@@ -75,13 +75,13 @@ public abstract class AbstractRPCHandler
         m_engine  = context.getEngine();
     }
 
-    protected abstract Hashtable encodeWikiPage( WikiPage p );
+    protected abstract Hashtable<String,Object> encodeWikiPage( WikiPage p );
 
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
-        Vector result    = new Vector();
+        Collection<WikiPage> pages = m_engine.getRecentChanges();
+        Vector<Hashtable<String,Object>> result    = new Vector<Hashtable<String,Object>>();
 
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
@@ -90,9 +90,8 @@ public abstract class AbstractRPCHandler
                  (cal.get( Calendar.ZONE_OFFSET ) + 
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
 
             if( page.getLastModified().after( cal.getTime() ) )
             {

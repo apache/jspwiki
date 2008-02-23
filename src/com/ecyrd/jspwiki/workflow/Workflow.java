@@ -224,7 +224,7 @@ public class Workflow
     public static final int CREATED = -2;
 
     /** Lazily-initialized attribute map. */
-    private Map m_attributes;
+    private Map<String,Object> m_attributes;
 
     /** The initial Step for this Workflow. */
     private Step m_firstStep;
@@ -232,7 +232,7 @@ public class Workflow
     /** Flag indicating whether the Workflow has started yet. */
     private boolean m_started;
 
-    private final LinkedList m_history;
+    private final LinkedList<Step> m_history;
 
     private int m_id;
 
@@ -240,7 +240,7 @@ public class Workflow
 
     private final Principal m_owner;
 
-    private final List m_messageArgs;
+    private final List<Object> m_messageArgs;
 
     private int m_state;
 
@@ -267,11 +267,11 @@ public class Workflow
         super();
         m_attributes = null;
         m_currentStep = null;
-        m_history = new LinkedList();
+        m_history = new LinkedList<Step>();
         m_id = ID_NOT_SET;
         m_key = messageKey;
         m_manager = null;
-        m_messageArgs = new ArrayList();
+        m_messageArgs = new ArrayList<Object>();
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
@@ -400,7 +400,7 @@ public class Workflow
     {
         if (isCompleted())
         {
-            Step last = (Step) m_history.getLast();
+            Step last = m_history.getLast();
             if (last != null)
             {
                 return last.getEndTime();
@@ -441,7 +441,7 @@ public class Workflow
      */
     public final Object[] getMessageArguments()
     {
-        List args = new ArrayList();
+        List<Object> args = new ArrayList<Object>();
         args.add(m_owner.getName());
         Principal actor = getCurrentActor();
         args.add(actor == null ? "-" : actor.getName());
@@ -602,7 +602,7 @@ public class Workflow
     {
         if (m_attributes == null)
         {
-            m_attributes = new HashMap();
+            m_attributes = new HashMap<String,Object>();
         }
         m_attributes.put(attr, obj);
     }

@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.WikiException;
  */
 public final class WorkflowBuilder
 {
-    private static final Map BUILDERS = new HashMap();
+    private static final Map<WikiEngine,WorkflowBuilder> BUILDERS = new HashMap<WikiEngine,WorkflowBuilder>();
     private final WikiEngine m_engine;
 
     /**
@@ -52,7 +52,7 @@ public final class WorkflowBuilder
      */
     public static WorkflowBuilder getBuilder( WikiEngine engine )
     {
-        WorkflowBuilder builder = (WorkflowBuilder)BUILDERS.get( engine );
+        WorkflowBuilder builder = BUILDERS.get( engine );
         if ( builder == null )
         {
             builder = new WorkflowBuilder( engine );

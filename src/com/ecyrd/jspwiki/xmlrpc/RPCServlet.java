@@ -36,6 +36,8 @@ import org.apache.xmlrpc.*;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.
@@ -74,7 +76,7 @@ public class RPCServlet extends HttpServlet
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        Class handlerClass = Class.forName( handlerName );
+        Class<?> handlerClass = Class.forName( handlerName );
         m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
     }
 
@@ -120,8 +122,16 @@ public class RPCServlet extends HttpServlet
 
         try
         {
-            WikiContext ctx = m_engine.createContext( request, WikiContext.NONE );
-
+            WikiContext ctx;
+            try 
+            {
+                ctx = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( request, response, ViewActionBean.class );
+            }
+            catch ( WikiException e )
+            {
+                throw new ServletException( e.getMessage() );
+            }
+                        
             XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(),
                                                                  ctx );
 
@@ -178,9 +188,9 @@ public class RPCServlet extends HttpServlet
     private class LocalHandler
         implements ContextXmlRpcHandler
     {
-        private Class m_clazz;
+        private Class<?> m_clazz;
 
-        public LocalHandler( Class clazz )
+        public LocalHandler( Class<?> clazz )
         {
             m_clazz = clazz;
         }
