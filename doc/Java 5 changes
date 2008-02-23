@@ -353,3 +353,9 @@ WikiJSPFilter should not have the lookup bean method...
 
 The Stripes version has a qualfied name method in WikiPage, Group etc. Did these go away in 2.6?
 FeedDiscoveryTag probably needs a total re-compare.
+Groups looks like it generates URLs in a funny way...
+ContentTag looks quite screwed up! (shouldn't append the *Content.jsp suffix, should it?)
+FeedDiscoveryTeg generates URLs in a funny way...
+Not sure about ResolutionException and RedirectException... committed them anyway. 
+Do we really need to add in StripesResources if the contents are already in the i18n defaults file?
+
