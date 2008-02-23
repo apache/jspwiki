@@ -226,8 +226,8 @@
            debug="${debug}"
            optimize="${optimize}"
            deprecation="${deprecation}"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
            >
       <classpath refid="path.base" />
       <classpath refid="path.tests" />
@@ -242,8 +242,8 @@
            destdir="${tests.build}"
            debug="true"
            deprecation="${deprecation}"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
            >
       <classpath refid="path.base" />
       <classpath refid="path.tests" />
@@ -268,6 +268,7 @@
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
+      <link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
       <classpath refid="path.base" />
     </javadoc>
 
@@ -386,9 +387,13 @@
          webxml="etc/web.xml">
        <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
        <lib file="${jarfile}" />
-       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
+       <!-- TEMPORARY HACK: swap in the Stripes JSPs instead of the normal ones. -->
+       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/*.jsp" />
+       <fileset dir="${code.src}/webdocs-stripes" />
+       <webinf dir="${code.src}/webdocs-stripes/WEB-INF" />
        <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
-       <classes dir="etc" includes="oscache.properties" />
+       <!-- FIXME: Do we really need to add in StripesResources if the contents are already in the i18n defaults file? -->
+       <classes dir="etc" includes="oscache.properties,StripesResources.properties" />
     </war>
 
     <war warfile="${warfile}"
