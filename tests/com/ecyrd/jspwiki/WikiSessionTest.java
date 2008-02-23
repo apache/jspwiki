@@ -10,9 +10,14 @@ import javax.servlet.http.Cookie;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -22,7 +27,7 @@ import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 public class WikiSessionTest extends TestCase
 {
 
-    private WikiEngine m_engine = null;
+    private TestEngine m_engine = null;
     
     protected void setUp() throws Exception
     {
@@ -100,90 +105,59 @@ public class WikiSessionTest extends TestCase
     
     public void testIsContainerStatusChanged()
     {
-        TestHttpSession session = new TestHttpSession();
-        TestHttpServletRequest request;
+        MockRoundtrip trip;
+        MockHttpSession session;
+        MockHttpServletRequest request;
         WikiSession wikiSession;
+        String servletContext;
         
         // A naked HTTP request without userPrincipal/remoteUser shouldn't count as changed
-        request = new TestHttpServletRequest();
+        trip = m_engine.guestTrip( ViewActionBean.class );
+        request = trip.getRequest();
+        session = (MockHttpSession)request.getSession();
+        servletContext = "/" + m_engine.getServletContext().getServletContextName();
         request.setUserPrincipal( null );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
         wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
-        // Let's send another request from a different IP address but
-        // associated with the same HTTP session (improbable, I know...).
-        // This request should also not count as changed...
-        TestHttpServletRequest request2;
-        WikiSession wikiSession2;
-        request2 = new TestHttpServletRequest();
-        request2.setUserPrincipal( null );
-        request2.setRemoteUser( null );
-        request2.setRemoteAddr( "127.1.1.1" );
-        request2.m_session = session;
-        wikiSession2 = WikiSession.getWikiSession( m_engine, request2 );
-        assertFalse( wikiSession2.isContainerStatusChanged( request2 ) );
-        
-        // ...and the WikiSessions should be the same
-        assertEquals( wikiSession, wikiSession2 );
-        
         // Changing the UserPrincipal value should trigger a change...
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
+        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
         
         // ...but if the next request has the same UserPrincipal, it shouldn't.
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
+        request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
+        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // If we twiddle the remoteUser field, it should trigger a change again...
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
-        request.setRemoteUser( "fred" );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
+        request.setUserPrincipal( new WikiPrincipal( "Fred") );
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
         
         // ...but not if we follow up with a similar request again.
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
-        request.setRemoteUser( "fred" );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
+        request.setUserPrincipal( new WikiPrincipal( "Fred") );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
-        // And finally, if we null the UserPrincipal and remoteUser again, 
+        // And finally, if we null the UserPrincipal again, 
         // it should not trigger a change.
-        request = new TestHttpServletRequest();
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
         request.setUserPrincipal( null );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
         assertFalse( wikiSession.isContainerStatusChanged( request ) );
         
         // Adding the magic "assertion cookie" should trigger a change in status.
-        request = new TestHttpServletRequest();
+        request = new MockHttpServletRequest(servletContext, ViewActionBean.class.getAnnotation(UrlBinding.class).value());
+        request.setSession(session);
         request.setUserPrincipal( null );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
         String cookieName = CookieAssertionLoginModule.PREFS_COOKIE_NAME;
-        request.m_cookies = new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) };
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        request.setCookies( new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) });
         assertTrue( wikiSession.isContainerStatusChanged( request ) );
     }
 
@@ -197,11 +171,10 @@ public class WikiSessionTest extends TestCase
      * @return the new session
      * @throws Exception
      */
-    public static WikiSession anonymousSession( WikiEngine engine ) throws Exception
+    public static WikiSession anonymousSession( TestEngine engine ) throws Exception
     {
         // Build anon session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = engine.guestTrip( ViewActionBean.class ).getRequest();
         
         // Log in
         boolean loggedIn = engine.getAuthenticationManager().login( request );
@@ -220,12 +193,12 @@ public class WikiSessionTest extends TestCase
         return session;
     }
 
-    public static WikiSession assertedSession( WikiEngine engine, String name ) throws Exception
+    public static WikiSession assertedSession( TestEngine engine, String name ) throws Exception
     {
         return assertedSession( engine, name, new Principal[0] );
     }
     
-    public static WikiSession assertedSession( WikiEngine engine, String name, Principal[] roles ) throws Exception
+    public static WikiSession assertedSession( TestEngine engine, String name, Principal[] roles ) throws Exception
     {
         // We can use cookies right?
         if ( !AuthenticationManager.allowsCookieAssertions() )
@@ -234,14 +207,13 @@ public class WikiSessionTest extends TestCase
         }
         
         // Build anon session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        Set r = new HashSet();
+        MockHttpServletRequest request = engine.guestTrip( ViewActionBean.class ).getRequest();
+        Set<String> r = new HashSet<String>();
         for ( int i = 0; i < roles.length; i++ )
         {
             r.add( roles[i].getName() );
         }
-        request.setRoles( (String[])r.toArray( new String[r.size()]) );
-        request.setRemoteAddr( "53.33.128.9" );
+        request.setRoles( r );
         
         // Set cookie
         Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, name );
@@ -264,16 +236,15 @@ public class WikiSessionTest extends TestCase
         return session;
     }
     
-    public static WikiSession adminSession( WikiEngine engine ) throws Exception
+    public static WikiSession adminSession( TestEngine engine ) throws Exception
     {
         return authenticatedSession( engine, Users.ADMIN, Users.ADMIN_PASS );
     }
     
-    public static WikiSession authenticatedSession( WikiEngine engine, String id, String password ) throws Exception
+    public static WikiSession authenticatedSession( TestEngine engine, String id, String password ) throws Exception
     {
         // Build anon session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = engine.guestTrip( ViewActionBean.class ).getRequest();
         
         // Log in as anon
         boolean loggedIn = engine.getAuthenticationManager().login( request );
@@ -295,17 +266,16 @@ public class WikiSessionTest extends TestCase
         return session;
     }
     
-    public static WikiSession containerAuthenticatedSession( WikiEngine engine, String id, Principal[] roles ) throws Exception
+    public static WikiSession containerAuthenticatedSession( TestEngine engine, String id, Principal[] roles ) throws Exception
     {
         // Build container session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        Set r = new HashSet();
+        MockHttpServletRequest request = engine.guestTrip( ViewActionBean.class ).getRequest();
+        Set<String> r = new HashSet<String>();
         for ( int i = 0; i < roles.length; i++ )
         {
             r.add( roles[i].getName() );
         }
-        request.setRoles( (String[])r.toArray( new String[r.size()]) );
-        request.setRemoteAddr( "53.33.128.9" );
+        request.setRoles( r );
         request.setUserPrincipal( new WikiPrincipal( id ) );
         
         // Log in as anon

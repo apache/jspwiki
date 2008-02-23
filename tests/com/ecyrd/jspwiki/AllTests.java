@@ -53,6 +53,7 @@ public class AllTests extends TestCase
         // suite.addTest( TranslatorReaderTest.suite() );
         suite.addTest( WikiSessionTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
+        suite.addTest( com.ecyrd.jspwiki.action.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.dav.AllTests.suite() );
@@ -66,7 +67,6 @@ public class AllTests extends TestCase
         suite.addTest( com.ecyrd.jspwiki.rss.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.search.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.ui.AllTests.suite() );
-        suite.addTest( com.ecyrd.jspwiki.url.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.util.AllTests.suite() );
         // These are not runnable without a running tomcat
         //suite.addTest( com.ecyrd.jspwiki.web.AllTests.suite() );

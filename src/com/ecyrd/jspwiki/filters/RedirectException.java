@@ -24,6 +24,7 @@ package com.ecyrd.jspwiki.filters;
  *  redirect the user elsewhere.
  *
  *  @since 2.1.112
+ *  @deprecated use {@link ResolutionException instead}
  */
 public class RedirectException
     extends FilterException

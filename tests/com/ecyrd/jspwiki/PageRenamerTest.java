@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 public class PageRenamerTest extends TestCase
@@ -51,7 +52,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
         
         m_engine.renamePage(context, "TestPage", "FooTest", false);
         
@@ -76,7 +77,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
         
         m_engine.renamePage(context, "TestPage", "FooTest", true);
         
@@ -101,7 +102,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -125,7 +126,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -149,7 +150,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -176,7 +177,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
      
         m_engine.renamePage(context, "Test", "TestPage", true);
         
@@ -195,7 +196,7 @@ public class PageRenamerTest extends TestCase
         m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
         WikiPage p = m_engine.getPage("TestPage");
  
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
  
         m_engine.renamePage(context, "TestPage", "FooTest", true);
  
@@ -273,7 +274,7 @@ public class PageRenamerTest extends TestCase
     {
         WikiPage p = m_engine.getPage(src);
 
-        WikiContext context = new WikiContext(m_engine, p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( p );
         
         m_engine.renamePage(context, src, dst, true);
     }
