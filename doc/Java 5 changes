@@ -345,3 +345,11 @@ Replaced by
 	
 Wiki:Tab needs to be able to evaluate attribute contents... now it doesn't...
 
+
+Things that don't work
+----------------------
+RSSGenerator, probably...
+WikiJSPFilter should not have the lookup bean method...
+
+The Stripes version has a qualfied name method in WikiPage, Group etc. Did these go away in 2.6?
+FeedDiscoveryTag probably needs a total re-compare.
