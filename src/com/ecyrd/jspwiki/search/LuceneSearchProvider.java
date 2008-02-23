@@ -91,7 +91,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
-    protected Vector         m_updates = new Vector(); // Vector because multi-threaded.
+    protected Vector<Object[]> m_updates = new Vector<Object[]>(); // Vector because multi-threaded.
 
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
@@ -206,20 +206,18 @@ public class LuceneSearchProvider implements SearchProvider
                     writer = new IndexWriter( m_luceneDirectory,
                                               getLuceneAnalyzer(),
                                               true );
-                    Collection allPages = m_engine.getPageManager().getAllPages();
+                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
 
-                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                    for( WikiPage page : allPages )
                     {
-                        WikiPage page = (WikiPage) iterator.next();
                         String text = m_engine.getPageManager().getPageText( page.getName(),
                                                                              WikiProvider.LATEST_VERSION );
                         luceneIndexPage( page, text, writer );
                     }
 
-                    Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
-                    for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
+                    Collection<Attachment> allAttachments = m_engine.getAttachmentManager().getAllAttachments();
+                    for( Attachment att : allAttachments )
                     {
-                        Attachment att = (Attachment) iterator.next();
                         String text = getAttachmentContent( att.getName(),
                                                             WikiProvider.LATEST_VERSION );
                         luceneIndexPage( att, text, writer );
@@ -446,12 +444,11 @@ public class LuceneSearchProvider implements SearchProvider
         // Now add the names of the attachments of this page
         try
         {
-            Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
+            Collection<Attachment> attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
 
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( Attachment att : attachments )
             {
-                Attachment att = (Attachment) it.next();
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
@@ -525,7 +522,7 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages( String query )
+    public Collection<SearchResult> findPages( String query )
         throws ProviderException
     {
         return findPages( query, FLAG_CONTEXTS );
@@ -549,7 +546,7 @@ public class LuceneSearchProvider implements SearchProvider
         throws ProviderException
     {
         Searcher  searcher = null;
-        ArrayList list     = null;
+        ArrayList<SearchResult> list     = null;
         Highlighter highlighter = null;
 
         try
@@ -579,7 +576,7 @@ public class LuceneSearchProvider implements SearchProvider
 
             Hits hits = searcher.search(luceneQuery);
 
-            list = new ArrayList(hits.length());
+            list = new ArrayList<SearchResult>(hits.length());
             for ( int curr = 0; curr < hits.length(); curr++ )
             {
                 Document doc = hits.doc(curr);
@@ -714,7 +711,7 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 while( m_provider.m_updates.size() > 0 )
                 {
-                    Object[] pair = ( Object[] ) m_provider.m_updates.remove(0);
+                    Object[] pair = m_provider.m_updates.remove(0);
                     WikiPage page = ( WikiPage ) pair[0];
                     String text = ( String ) pair[1];
                     m_provider.updateLuceneIndex(page, text);

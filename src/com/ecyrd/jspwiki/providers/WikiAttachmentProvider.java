@@ -80,7 +80,7 @@ public interface WikiAttachmentProvider
      *  @throws ProviderException If something goes wrong when listing the attachments.
      */
 
-    public Collection listAttachments( WikiPage page )
+    public Collection<Attachment> listAttachments( WikiPage page )
         throws ProviderException;
 
     /**
@@ -106,7 +106,7 @@ public interface WikiAttachmentProvider
      *  @return A List of Attachment objects, in most-recently-changed first order.
      *  @throws ProviderException If something goes wrong.
      */
-    public List listAllChanged( Date timestamp )
+    public List<Attachment> listAllChanged( Date timestamp )
         throws ProviderException;
 
     /**

@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.AttachActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -93,7 +94,7 @@ public class RSS20Feed extends Feed
                         Attachment att = (Attachment) a.next();
 
                         Element attEl = new Element("enclosure");
-                        attEl.setAttribute( "url", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "url", m_wikiContext.getContext().getURL(AttachActionBean.class, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 

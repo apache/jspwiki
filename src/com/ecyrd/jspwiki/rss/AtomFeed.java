@@ -21,10 +21,7 @@ package com.ecyrd.jspwiki.rss;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 
@@ -38,6 +35,8 @@ import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.RSSActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -124,7 +123,7 @@ public class AtomFeed extends Feed
 
                         Element attEl = getElement("link");
                         attEl.setAttribute( "rel","enclosure" );
-                        attEl.setAttribute( "href", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );
+                        attEl.setAttribute( "href", m_wikiContext.getContext().getURL(AttachActionBean.class, att.getName(), null, true ) );
                         attEl.setAttribute( "length", Long.toString(att.getSize()) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 
@@ -174,10 +173,12 @@ public class AtomFeed extends Feed
         root.addContent( getElement("link").setAttribute("href",engine.getBaseURL()));
         root.addContent( getElement("generator").setText("JSPWiki "+Release.VERSTR));
 
-        String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
-                                           "page="+engine.encodeName(m_wikiContext.getPage().getName())+
-                                           "&mode="+m_mode+
-                                           "&type=atom",
+        Map<String,String> rssParams = new HashMap<String,String>();
+        rssParams.put("mode", m_mode);
+        rssParams.put("type", "atom");
+        String rssFeedURL  = m_wikiContext.getContext().getURL(RSSActionBean.class, 
+                                           "page="+engine.encodeName(m_wikiContext.getPage().getName()),
+                                           rssParams,
                                            true );
         Element self = getElement("link").setAttribute("rel","self");
         self.setAttribute("href",rssFeedURL);

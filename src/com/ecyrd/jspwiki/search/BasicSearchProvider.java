@@ -111,7 +111,7 @@ public class BasicSearchProvider implements SearchProvider
     {
         if(m_engine.getAttachmentManager().hasAttachments(page))
         {
-            Collection attachments;
+            Collection<Attachment> attachments;
             try
             {
                 attachments = m_engine.getAttachmentManager().listAttachments(page);
@@ -123,9 +123,9 @@ public class BasicSearchProvider implements SearchProvider
             }
 
             StringBuffer attachmentNames = new StringBuffer();
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( Iterator<Attachment> it = attachments.iterator(); it.hasNext(); )
             {
-                Attachment att = (Attachment) it.next();
+                Attachment att = it.next();
                 attachmentNames.append(att.getName());
                 if(it.hasNext())
                     attachmentNames.append(separator);
@@ -136,12 +136,12 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection findPages( QueryItem[] query )
+    private Collection<SearchResult> findPages( QueryItem[] query )
     {
-        TreeSet res = new TreeSet( new SearchResultComparator() );
+        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
-        Collection allPages = null;
+        Collection<WikiPage> allPages = null;
         try
         {
             allPages = m_engine.getPageManager().getAllPages();
@@ -152,12 +152,12 @@ public class BasicSearchProvider implements SearchProvider
             return null;
         }
 
-        Iterator it = allPages.iterator();
+        Iterator<WikiPage> it = allPages.iterator();
         while( it.hasNext() )
         {
             try
             {
-                WikiPage page = (WikiPage) it.next();
+                WikiPage page = it.next();
                 if (page != null)
                 {
                     String pageName = page.getName();
@@ -184,7 +184,7 @@ public class BasicSearchProvider implements SearchProvider
         return res;
     }
 
-    public Collection findPages(String query)
+    public Collection<SearchResult> findPages(String query) 
     {
         return findPages(parseQuery(query));
     }

@@ -24,6 +24,10 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.PageInfoActionBean;
+import com.ecyrd.jspwiki.action.RSSActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -140,7 +144,7 @@ public class RSSGenerator
         return author;
     }
 
-    private String getAttachmentDescription( Attachment att )
+    private String getAttachmentDescription( WikiContext wikiContext, Attachment att )
     {
         String author = getAuthor(att);
         StringBuffer sb = new StringBuffer();
@@ -156,10 +160,10 @@ public class RSSGenerator
 
         sb.append("<br /><hr /><br />");
         sb.append( "Parent page: <a href=\""+
-                   m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) +
+                   wikiContext.getContext().getURL( ViewActionBean.class, att.getParentName(), null, true ) +
                    "\">"+att.getParentName()+"</a><br />" );
         sb.append( "Info page: <a href=\""+
-                   m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) +
+                   wikiContext.getContext().getURL( PageInfoActionBean.class, att.getName(), null, true ) +
                    "\">"+att.getName()+"</a>" );
 
         return sb.toString();
@@ -170,7 +174,7 @@ public class RSSGenerator
         StringBuffer buf = new StringBuffer();
         String author = getAuthor(page);
 
-        WikiContext ctx = new WikiContext( m_engine, page );
+        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( page );
         if( page.getVersion() > 1 )
         {
             String diff = m_engine.getDiff( ctx,
@@ -189,13 +193,13 @@ public class RSSGenerator
         return buf.toString();
     }
 
-    private String getEntryDescription( WikiPage page )
+    private String getEntryDescription( WikiContext context, WikiPage page )
     {
         String res;
 
         if( page instanceof Attachment )
         {
-            res = getAttachmentDescription( (Attachment)page );
+            res = getAttachmentDescription( context, (Attachment)page );
         }
         else
         {
@@ -215,10 +219,11 @@ public class RSSGenerator
      *  Generates the RSS resource.  You probably want to output this
      *  result into a file or something, or serve as output from a servlet.
      */
-    public String generate()
+    public String generate() throws WikiException
     {
-        WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
-        context.setRequestContext( WikiContext.RSS );
+        // FIXME: This will absolutely, positively not work. We need to do something else
+        WikiContext context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean(null,null,RSSActionBean.class);
+        context.setPage( new WikiPage( m_engine, "__DUMMY" ) );
         Feed feed = new RSS10Feed( context );
 
         String result = generateFullWikiRSS( context, feed );
@@ -359,14 +364,14 @@ public class RSSGenerator
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH,
+                url = wikiContext.getContext().getURL( AttachActionBean.class, 
                                        page.getName(),
                                        null,
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW,
+                url = wikiContext.getContext().getURL( ViewActionBean.class, 
                                        page.getName(),
                                        null,
                                        true );
@@ -374,7 +379,7 @@ public class RSSGenerator
 
             e.setURL( url );
             e.setTitle( page.getName() );
-            e.setContent( getEntryDescription(page) );
+            e.setContent( getEntryDescription(wikiContext, page) );
             e.setAuthor( getAuthor(page) );
 
             feed.addEntry( e );
@@ -422,18 +427,20 @@ public class RSSGenerator
 
             String url;
 
+            Map<String,String> rssParams = new HashMap<String,String>();
+            rssParams.put("version", String.valueOf(page.getVersion()));
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH,
+                url = wikiContext.getContext().getURL( AttachActionBean.class, 
                                        page.getName(),
-                                       "version="+page.getVersion(),
+                                       rssParams,
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW,
+                url = wikiContext.getContext().getURL( ViewActionBean.class, 
                                        page.getName(),
-                                       "version="+page.getVersion(),
+                                       rssParams,
                                        true );
             }
 
@@ -444,7 +451,7 @@ public class RSSGenerator
 
             e.setURL( url );
             e.setTitle( getEntryTitle(page) );
-            e.setContent( getEntryDescription(page) );
+            e.setContent( getEntryDescription(wikiContext, page) );
             e.setAuthor( getAuthor(page) );
 
             feed.addEntry( e );
@@ -507,14 +514,14 @@ public class RSSGenerator
 
             if( page instanceof Attachment )
             {
-                url = m_engine.getURL( WikiContext.ATTACH,
+                url = wikiContext.getContext().getURL( AttachActionBean.class, 
                                        page.getName(),
                                        null,
                                        true );
             }
             else
             {
-                url = m_engine.getURL( WikiContext.VIEW,
+                url = wikiContext.getContext().getURL( ViewActionBean.class, 
                                        page.getName(),
                                        null,
                                        true );

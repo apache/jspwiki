@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.action.NoneActionBean;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
@@ -150,9 +151,9 @@ public final class JSONRPCManager extends RPCManager
     {
         TemplateManager.addResourceRequest(context, 
                                            TemplateManager.RESOURCE_SCRIPT, 
-                                           context.getURL(WikiContext.NONE,"scripts/json-rpc/jsonrpc.js"));        
+                                           context.getContext().getURL(NoneActionBean.class,"scripts/json-rpc/jsonrpc.js"));        
         
-        String jsonurl = context.getURL( WikiContext.NONE, "JSON-RPC" );
+        String jsonurl = context.getContext().getURL( NoneActionBean.class, "JSON-RPC" );
         TemplateManager.addResourceRequest(context, 
                                            TemplateManager.RESOURCE_JSFUNCTION, 
                                            "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");

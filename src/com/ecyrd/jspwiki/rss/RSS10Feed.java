@@ -21,13 +21,17 @@ package com.ecyrd.jspwiki.rss;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.ecs.xml.XML;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.DiffActionBean;
+import com.ecyrd.jspwiki.action.PageInfoActionBean;
 
 /**
  *  @author jalkanen
@@ -96,9 +100,11 @@ public class RSS10Feed extends Feed
 
             if( p.getVersion() > 1 )
             {
-                item.addElement( new XML("wiki:diff").addElement( engine.getURL( WikiContext.DIFF,
+                Map<String,String> rssParams = new HashMap<String,String>();
+                rssParams.put("r1", "-1");
+                item.addElement( new XML("wiki:diff").addElement( m_wikiContext.getContext().getURL( DiffActionBean.class,
                                                                                  p.getName(),
-                                                                                 "r1=-1",
+                                                                                 rssParams,
                                                                                  true) ) );
             }
 
@@ -144,7 +150,7 @@ public class RSS10Feed extends Feed
             
             //  PageHistory
 
-            item.addElement( new XML("wiki:history").addElement( engine.getURL( WikiContext.INFO,
+            item.addElement( new XML("wiki:history").addElement( m_wikiContext.getContext().getURL( PageInfoActionBean.class,
                                                                                 p.getName(),
                                                                                 null,
                                                                                 true ) ) );

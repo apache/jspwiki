@@ -90,7 +90,7 @@ public class SearchManager
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            List list = new ArrayList(maxLength);
+            List<String> list = new ArrayList<String>(maxLength);
 
             if( wikiName.length() > 0 )
             {
@@ -99,12 +99,12 @@ public class SearchManager
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase();
 
-                Set allPages = m_engine.getReferenceManager().findCreated();
+                Set<String> allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
-                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
+                for( Iterator<String> i = allPages.iterator(); i.hasNext() && counter < maxLength; )
                 {
-                    String p = (String) i.next();
+                    String p = i.next();
                     String pp = p.toLowerCase();
                     if( pp.startsWith( wikiName ) || pp.startsWith( oldStyleName ) )
                     {
@@ -126,18 +126,18 @@ public class SearchManager
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List findPages( String searchString, int maxLength )
+        public List<HashMap<String,Object>> findPages( String searchString, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List list = new ArrayList(maxLength);
+            List<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>(maxLength);
 
             if( searchString.length() > 0 )
             {
                 try
                 {
-                    Collection c;
+                    Collection<SearchResult> c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider )
                         c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
@@ -145,10 +145,10 @@ public class SearchManager
                         c = m_searchProvider.findPages( searchString );
 
                     int count = 0;
-                    for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
+                    for( Iterator<SearchResult> i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
-                        SearchResult sr = (SearchResult)i.next();
-                        HashMap hm = new HashMap();
+                        SearchResult sr = i.next();
+                        HashMap<String,Object> hm = new HashMap<String,Object>();
                         hm.put( "page", sr.getPage().getName() );
                         hm.put( "score", new Integer(sr.getScore()) );
                         list.add( hm );
