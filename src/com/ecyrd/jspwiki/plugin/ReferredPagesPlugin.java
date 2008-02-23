@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 
 public class ReferredPagesPlugin implements WikiPlugin
 {
@@ -218,7 +219,7 @@ public class ReferredPagesPlugin implements WikiPlugin
                     isUL = true; m_result.append("<ul>\n");
                 }
 
-                String href = context.getURL(WikiContext.VIEW,link);
+                String href = context.getContext().getURL(ViewActionBean.class,link);  
                 m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
 
                 m_exists.add( link );

@@ -20,6 +20,10 @@
 package com.ecyrd.jspwiki.htmltowiki;
 
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.EditActionBean;
+import com.ecyrd.jspwiki.action.PageInfoActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 
 /**
  *  Defines a Wiki configuration to XHtmlToWikiTranslator, including things like
@@ -61,13 +65,13 @@ public class XHtmlToWikiConfig
         //      the Wiki page name in VIEW or ATTACH
         //
 
-        m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
+        m_wikiJspPage = wikiContext.getContext().getURL( ViewActionBean.class, "" );
 
-        m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
+        m_editJspPage = wikiContext.getContext().getURL( EditActionBean.class, "" );
 
-        m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
+        m_attachPage = wikiContext.getContext().getURL( AttachActionBean.class, "" );
 
-        m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
+        m_pageInfoJsp = wikiContext.getContext().getURL( PageInfoActionBean.class, "" );
     }
 
     /*

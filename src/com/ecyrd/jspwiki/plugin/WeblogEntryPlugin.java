@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.NewBlogEntryActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Logger;
 
@@ -82,7 +83,9 @@ public class WeblogEntryPlugin implements WikiPlugin
         if( entryText == null ) 
             entryText = rb.getString("weblogentryplugin.newentry");
         
-        String url = context.getURL( WikiContext.NONE, "NewBlogEntry.jsp", "page="+engine.encodeName(weblogName) );
+        Map<String,String> blogParams = new HashMap<String,String>();
+        blogParams.put("page", engine.encodeName(weblogName));
+        String url = context.getContext().getURL( NewBlogEntryActionBean.class, null, blogParams );
             
         sb.append("<a href=\""+url+"\">"+entryText+"</a>");
 

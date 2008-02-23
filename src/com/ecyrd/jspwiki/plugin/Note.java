@@ -24,6 +24,7 @@ import java.util.Map;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.NoneActionBean;
 
 /**
  * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by
@@ -72,7 +73,7 @@ public class Note implements WikiPlugin
                                                                     engine.getTemplateDir(), 
                                                                     commentImage );
 
-        return ctx.getURL( WikiContext.NONE, resource );
+        return ctx.getContext().getURL( NoneActionBean.class, resource );
     }
 
 

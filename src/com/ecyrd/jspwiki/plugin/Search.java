@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -119,7 +120,7 @@ public class Search implements WikiPlugin
             
             td name = new td().setWidth("30%");
             name.addElement( "<a href=\""+
-                             context.getURL( WikiContext.VIEW, sr.getPage().getName() )+
+                             context.getContext().getURL( ViewActionBean.class, sr.getPage().getName() )+
                              "\">"+engine.beautifyTitle(sr.getPage().getName())+"</a>");
             row.addElement( name );
             

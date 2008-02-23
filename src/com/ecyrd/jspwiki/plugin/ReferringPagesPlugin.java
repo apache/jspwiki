@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.PageInfoActionBean;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -86,7 +87,7 @@ public class ReferringPagesPlugin
                 if( items < links.size() && items > 0 )
                 {
                     Object[] args = { "" + ( links.size() - items),
-                                      context.getURL( WikiContext.INFO, page.getName() ) };
+                                      context.getContext().getURL( PageInfoActionBean.class, page.getName() ) };
                     extras = MessageFormat.format(extras, args); 
                     wikitext += extras;
                 }

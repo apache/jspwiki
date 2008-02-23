@@ -20,6 +20,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Logger;
 
@@ -51,10 +52,12 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         if( weblogName == null ) weblogName = context.getPage().getName();
         
-
+        Map<String,String> dateParams = new HashMap<String,String>();
+        dateParams.put("weblog.startDate", "'ddMMyy'");
+        dateParams.put("weblog.days", "%d");
         m_monthUrlFormat = new SimpleDateFormat("'"+
-                                                context.getURL( WikiContext.VIEW, weblogName,
-                                                                "weblog.startDate='ddMMyy'&amp;weblog.days=%d")+"'");
+                                                context.getContext().getURL( ViewActionBean.class, weblogName,dateParams)+
+                                                "'");
 
         StringBuffer sb = new StringBuffer();
 

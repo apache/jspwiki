@@ -20,6 +20,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.EditActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 
@@ -132,7 +134,7 @@ public class InsertPage
                 if( pageData.length() > maxlen ) 
                 {
                     pageData = pageData.substring( 0, maxlen )+" ...";
-                    moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">More...</a></p>";
+                    moreLink = "<p><a href=\""+context.getContext().getURL(ViewActionBean.class,includedPage)+"\">More...</a></p>";
                 }
 
                 res.append("<div style=\""+style+"\""+(clazz != null ? " class=\""+clazz+"\"" : "")+">");
@@ -155,7 +157,7 @@ public class InsertPage
                 else
                 {
                     res.append("There is no page called '"+includedPage+"'.  Would you like to ");
-                    res.append("<a href=\""+context.getURL( WikiContext.EDIT, includedPage )+"\">create it?</a>");
+                    res.append("<a href=\""+context.getContext().getURL( EditActionBean.class, includedPage )+"\">create it?</a>");
                 }
             }
         }

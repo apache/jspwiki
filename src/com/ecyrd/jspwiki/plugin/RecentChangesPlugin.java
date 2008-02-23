@@ -30,6 +30,7 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -130,7 +131,7 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
-                String link = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
+                String link = context.getContext().getURL( pageref instanceof Attachment ? AttachActionBean.class : ViewActionBean.class, 
                                               pageref.getName() ) ;
                 
                 a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
@@ -144,8 +145,8 @@ public class RecentChangesPlugin
                 //
                 if( pageref instanceof Attachment )
                 {
-                    linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
-                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
+                    linkel = new a().setHref(context.getContext().getURL(PageInfoActionBean.class,pageref.getName()));
+                    linkel.addElement( new img().setBorder(0).setSrc(context.getContext().getURL(NoneActionBean.class, "images/attachment_small.png")));
 
                     col.addElement( linkel );
                 }
@@ -161,7 +162,9 @@ public class RecentChangesPlugin
                 else
                 {
                     td infocol = (td) new td().setClass("lastchange");
-                    infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
+                    Map<String,String> urlParams = new HashMap<String,String>();
+                    urlParams.put("r1", "-1");
+                    infocol.addElement( new a(context.getContext().getURL(DiffActionBean.class, pageref.getName(), urlParams),tfmt.format(lastmod)) );
                     row.addElement(infocol);
                 }
 
@@ -180,7 +183,7 @@ public class RecentChangesPlugin
                     {
                         if( engine.pageExists(author) )
                         {
-                            authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
+                            authorinfo.addElement( new a(context.getContext().getURL(ViewActionBean.class, author),author) );
                         }
                         else
                         {

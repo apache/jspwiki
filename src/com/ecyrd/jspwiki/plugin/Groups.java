@@ -24,8 +24,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
+import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.util.UrlBuilder;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.GroupActionBean;
 import com.ecyrd.jspwiki.auth.PrincipalComparator;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 
@@ -56,12 +60,18 @@ public class Groups
         {
             String name = groups[i].getName();
             
-            // Make URL
-            String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name, false, null );
+            // Make Stripes URL
+            String groupUrl = GroupActionBean.class.getAnnotation(UrlBinding.class).value();
+            UrlBuilder urlBuilder = new UrlBuilder(  groupUrl, true );
+            urlBuilder.addParameter("group", name);
+            String url = urlBuilder.toString();
+            
+            // Make re-written URL
+            String rewriteUrl = context.getContext().getResponse().encodeURL( url );
             
             // Create hyperlink
             s.append( "<a href=\"" );
-            s.append( url );
+            s.append( rewriteUrl );
             s.append( "\">" );
             s.append( name );
             s.append( "</a>" );

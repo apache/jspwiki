@@ -173,7 +173,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
-    private ArrayList  m_searchPath = new ArrayList();
+    private ArrayList<String> m_searchPath = new ArrayList<String>();
 
     private Pattern m_pluginPattern;
 
@@ -182,7 +182,7 @@ public class PluginManager extends ModuleManager
     /**
      *  Keeps a list of all known plugin classes.
      */
-    private Map m_pluginClassMap = new HashMap();
+    private Map<String,WikiPluginInfo> m_pluginClassMap = new HashMap<String,WikiPluginInfo>();
 
 
     /**
@@ -340,7 +340,7 @@ public class PluginManager extends ModuleManager
 
             boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
-            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get(classname);
+            WikiPluginInfo pluginInfo = m_pluginClassMap.get(classname);
 
             if(pluginInfo == null)
             {
@@ -435,10 +435,10 @@ public class PluginManager extends ModuleManager
      *
      * @throws IOException If the parsing fails.
      */
-    public Map parseArgs( String argstring )
+    public Map<String,Object> parseArgs( String argstring )
         throws IOException
     {
-        HashMap         arglist = new HashMap();
+        HashMap<String,Object>arglist = new HashMap<String,Object>();
 
         //
         //  Protection against funny users.
@@ -613,7 +613,7 @@ public class PluginManager extends ModuleManager
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map arglist     = parseArgs( args );
+                Map<String,Object> arglist = parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
                 if ( pos != -1 )
@@ -963,14 +963,12 @@ public class PluginManager extends ModuleManager
     /**
      *  {@inheritDoc}
      */
-    public Collection modules()
+    public Collection<WikiModuleInfo> modules()
     {
-        TreeSet ls = new TreeSet();
+        TreeSet<WikiModuleInfo> ls = new TreeSet<WikiModuleInfo>();
         
-        for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
+        for( WikiModuleInfo wmi : m_pluginClassMap.values() )
         {
-            WikiModuleInfo wmi = (WikiModuleInfo)i.next();
-            
             if( !ls.contains(wmi) ) ls.add(wmi);
         }
         
@@ -992,7 +990,7 @@ public class PluginManager extends ModuleManager
         {
             WikiPlugin plugin;
 
-            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get( content.getPluginName() );
+            WikiPluginInfo pluginInfo = m_pluginClassMap.get( content.getPluginName() );
 
             if(pluginInfo == null)
             {

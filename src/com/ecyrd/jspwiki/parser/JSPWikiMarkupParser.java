@@ -35,6 +35,7 @@ import org.apache.oro.text.regex.*;
 import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -140,6 +141,8 @@ public class JSPWikiMarkupParser
 
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
     public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
+
+    private static final Map<String,String> NO_PARAMS = Collections.unmodifiableMap( new HashMap<String,String>() );
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
@@ -512,15 +515,16 @@ public class JSPWikiMarkupParser
         }
         ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
         Object[] args = { link };
+        boolean makeAbsoluteLinks = "absolute".equals( m_context.getVariable( WikiEngine.PROP_REFSTYLE )  );
 
         switch(type)
         {
             case READ:
-                el = createAnchor( READ, m_context.getURL(WikiContext.VIEW, link), text, section );
+                el = createAnchor( READ, m_context.getContext().getURL(ViewActionBean.class, link), text, section );
                 break;
 
             case EDIT:
-                el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
+                el = createAnchor( EDIT, m_context.getContext().getURL( EditActionBean.class, link, NO_PARAMS, makeAbsoluteLinks ), text, "" ); 
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), args ) );
                 break;
 
@@ -565,7 +569,7 @@ public class JSPWikiMarkupParser
                 break;
 
             case IMAGEWIKILINK:
-                String pagelink = m_context.getURL(WikiContext.VIEW,text);
+                String pagelink = m_context.getContext().getURL(ViewActionBean.class,text);
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
@@ -582,14 +586,14 @@ public class JSPWikiMarkupParser
                 break;
 
             case ATTACHMENT:
-                String attlink = m_context.getURL( WikiContext.ATTACH,
-                                                   link );
+                String attlink = m_context.getContext().getURL( AttachActionBean.class,
+                                                   link, NO_PARAMS, makeAbsoluteLinks );
 
-                String infolink = m_context.getURL( WikiContext.INFO,
-                                                    link );
+                String infolink = m_context.getContext().getURL( PageInfoActionBean.class,
+                                                    link, NO_PARAMS, makeAbsoluteLinks );
 
-                String imglink = m_context.getURL( WikiContext.NONE,
-                                                   "images/attachment_small.png" );
+                String imglink = m_context.getContext().getURL( NoneActionBean.class,
+                                                   "images/attachment_small.png", NO_PARAMS, makeAbsoluteLinks );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
@@ -1065,9 +1069,10 @@ public class JSPWikiMarkupParser
     {
         if( m_cleanTranslator == null )
         {
-            WikiContext dummyContext = new WikiContext( m_engine,
-                                                        m_context.getHttpRequest(),
-                                                        m_context.getPage() );
+            WikiContext dummyContext = m_engine.getWikiActionBeanFactory().newViewActionBean(
+                                                           m_context.getContext().getRequest(),
+                                                           m_context.getContext().getResponse(),
+                                                           m_context.getPage() );            
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
 
             m_cleanTranslator.m_allowHTML = true;
@@ -1197,7 +1202,7 @@ public class JSPWikiMarkupParser
         {
             if( m_outlinkImageURL == null )
             {
-                m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
+                m_outlinkImageURL = m_context.getContext().getURL( NoneActionBean.class, OUTLINK_IMAGE );
             }
 
             el = new Element("img").setAttribute("class", "outlink");
@@ -1530,7 +1535,7 @@ public class JSPWikiMarkupParser
 
                     if( isImageLink( linkref ) )
                     {
-                        attachment = m_context.getURL( WikiContext.ATTACH, attachment );
+                        attachment = m_context.getContext().getURL( AttachActionBean.class, attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
                     }
                     else

@@ -27,6 +27,7 @@ import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -216,7 +217,7 @@ public class IndexPlugin implements WikiPlugin
         }
 
         m_bodyPart.write("<a href=\""+
-                         context.getURL(WikiContext.VIEW, curPage.getName())+"\">"+
+                         context.getContext().getURL(ViewActionBean.class, curPage.getName())+"\">"+
                          context.getEngine().beautifyTitleNoBreak(curPage.getName())+
                          "</a>");
     }
