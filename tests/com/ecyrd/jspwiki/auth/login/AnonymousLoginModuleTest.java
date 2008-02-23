@@ -9,12 +9,12 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import junit.framework.TestCase;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -32,12 +32,11 @@ public class AnonymousLoginModuleTest extends TestCase
 
     Subject      subject;
 
-    private WikiEngine m_engine;
+    private TestEngine m_engine;
 
     public final void testLogin()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
         try
         {
             // Test using IP address (AnonymousLoginModule succeeds)
@@ -46,7 +45,7 @@ public class AnonymousLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "53.33.128.9" ) ) );
+            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertTrue( principals.contains( Role.ANONYMOUS ) );
             assertTrue( principals.contains( Role.ALL ) );
         }
@@ -59,8 +58,7 @@ public class AnonymousLoginModuleTest extends TestCase
 
     public final void testLogout()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
         try
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
@@ -68,7 +66,7 @@ public class AnonymousLoginModuleTest extends TestCase
             context.login();
             Set principals = subject.getPrincipals();
             assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "53.33.128.9" ) ) );
+            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertTrue( principals.contains( Role.ANONYMOUS ) );
             assertTrue( principals.contains( Role.ALL ) );
             context.logout();

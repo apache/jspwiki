@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -10,12 +11,12 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import junit.framework.TestCase;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -33,13 +34,13 @@ public class WebContainerLoginModuleTest extends TestCase
 
     Subject      subject;
 
-    private WikiEngine m_engine;
+    private TestEngine m_engine;
 
     public final void testLogin()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
         Principal wrapper = new PrincipalWrapper( principal );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
         request.setUserPrincipal( principal );
         try
         {
@@ -57,8 +58,8 @@ public class WebContainerLoginModuleTest extends TestCase
 
             // Test using remote user (WebContainerLoginModule succeeds)
             subject = new Subject();
-            request = new TestHttpServletRequest();
-            request.setRemoteUser( "Andrew Jaquith" );
+            request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
+            request.setUserPrincipal( new WikiPrincipal( "Andrew Jaquith" ) );
             handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
@@ -72,8 +73,7 @@ public class WebContainerLoginModuleTest extends TestCase
 
             // Test using IP address (AnonymousLoginModule succeeds)
             subject = new Subject();
-            request = new TestHttpServletRequest();
-            request.setRemoteAddr( "53.33.128.9" );
+            request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
             handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             context = new LoginContext( "JSPWiki-container", subject, handler );
             context.login();
@@ -97,9 +97,12 @@ public class WebContainerLoginModuleTest extends TestCase
         // Create user with 2 container roles; TestAuthorizer knows about these
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
         Principal wrapper = new PrincipalWrapper( principal );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
         request.setUserPrincipal( principal );
-        request.setRoles( new String[] { "IT", "Engineering" } );
+        Set<String> roles = new HashSet<String>();
+        roles.add( "IT" );
+        roles.add( "Engineering" );
+        request.setRoles( roles );
 
         // Test using Principal (WebContainerLoginModule succeeds)
         CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
@@ -120,7 +123,7 @@ public class WebContainerLoginModuleTest extends TestCase
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
         Principal wrapper = new PrincipalWrapper( principal );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
         request.setUserPrincipal( principal );
         try
         {

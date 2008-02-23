@@ -48,7 +48,7 @@ public class CounterPluginTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean(
                                                new WikiPage(testEngine, "TestPage") );
         
         MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );

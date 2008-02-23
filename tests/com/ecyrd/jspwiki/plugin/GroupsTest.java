@@ -42,10 +42,10 @@ public class GroupsTest extends TestCase
         
         String res = testEngine.getHTML( "Test" );
         
-        assertEquals( "<a href=\"/Group.jsp?group=Admin\">Admin</a>, " 
-                + "<a href=\"/Group.jsp?group=Art\">Art</a>, "
-                + "<a href=\"/Group.jsp?group=Literature\">Literature</a>, "
-                + "<a href=\"/Group.jsp?group=TV\">TV</a>\n"
+        assertEquals( "<a href=\"/Group.action?group=Admin\">Admin</a>, " 
+                + "<a href=\"/Group.action?group=Art\">Art</a>, "
+                + "<a href=\"/Group.action?group=Literature\">Literature</a>, "
+                + "<a href=\"/Group.action?group=TV\">TV</a>\n"
                 , res );
     }
 

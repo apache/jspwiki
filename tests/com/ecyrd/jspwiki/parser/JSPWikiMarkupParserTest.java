@@ -101,8 +101,8 @@ public class JSPWikiMarkupParserTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( e, p );
-        JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context,
+        WikiContext context = e.getWikiActionBeanFactory().newViewActionBean( p );
+        JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context, 
                                                           new BufferedReader( new StringReader(src)) );
 
         XHTMLRenderer conv = new XHTMLRenderer( context, tr.parse() );
@@ -121,7 +121,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
         TestEngine testEngine2 = new TestEngine( props );
 
-        WikiContext context = new WikiContext( testEngine2,
+        WikiContext context = testEngine2.getWikiActionBeanFactory().newViewActionBean(
                                                new WikiPage(testEngine2, PAGE_NAME) );
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context,
                                                          new BufferedReader( new StringReader(src)) );
@@ -539,7 +539,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
 
-        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
+        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C3%84itiSy%C3%B6%C3%96ljy%C3%A4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
                       translate(src) );
     }
 
@@ -889,7 +889,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         newPage("\u00C5\u00E4Test"); // FIXME: Should be capital
 
-        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
+        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C3%85%C3%A4Test\">\u00c5\u00e4Test</a>",
                      translate(src));
     }
 
@@ -2115,7 +2115,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean(
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2138,7 +2138,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
 
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean(
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2171,7 +2171,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             LinkCollector coll_others = new LinkCollector();
 
             String src = "[TestAtt.txt]";
-            WikiContext context = new WikiContext( testEngine,
+            WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( 
                                                    new WikiPage(testEngine,PAGE_NAME) );
 
             MarkupParser p = new JSPWikiMarkupParser( context,

@@ -33,7 +33,7 @@ public class UndefinedPagesPluginTest extends TestCase
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
-        context = new WikiContext( engine, new WikiPage(engine, "TestPage") );
+        context = engine.getWikiActionBeanFactory().newViewActionBean( new WikiPage(engine, "TestPage") );
         manager = new PluginManager( engine, props );
     }
 
@@ -41,6 +41,7 @@ public class UndefinedPagesPluginTest extends TestCase
     {
         TestEngine.deleteTestPage( "TestPage" );
         TestEngine.deleteTestPage( "Foobar" );
+        TestEngine.emptyPageDir();
         TestEngine.emptyWorkDir();
     }
 
@@ -57,7 +58,7 @@ public class UndefinedPagesPluginTest extends TestCase
     public void testSimpleUndefined()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
+        WikiContext context2 = engine.getWikiActionBeanFactory().newViewActionBean( new WikiPage(engine, "Foobar") );
 
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin");

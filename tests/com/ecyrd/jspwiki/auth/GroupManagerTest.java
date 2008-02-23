@@ -81,12 +81,12 @@ public class GroupManagerTest extends TestCase
     {
         String members = "Biff";
         Group group = m_groupMgr.parseGroup( "Group1", members, true );
-        assertEquals( 1, group.members().length );
+        assertEquals( 1, group.getMembers().size() );
         assertTrue ( group.isMember( new WikiPrincipal( "Biff" ) ) );
 
         members = "Biff \n SteveAustin \n FredFlintstone";
         group = m_groupMgr.parseGroup( "Group2", members, true );
-        assertEquals( 3, group.members().length );
+        assertEquals( 3, group.getMembers().size() );
         assertTrue ( group.isMember( new WikiPrincipal( "Biff" ) ) );
         assertTrue ( group.isMember( new WikiPrincipal( "SteveAustin" ) ) );
         assertTrue ( group.isMember( new WikiPrincipal( "FredFlintstone" ) ) );
