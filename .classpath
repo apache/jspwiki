@@ -32,6 +32,8 @@
 	<classpathentry kind="lib" path="lib/jakarta-taglibs-jstl-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-tablibs-standard-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jug-asl-2.0.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5.0"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/stripes-1.4.3.jar" sourcepath="/stripes-1.4.3-src/stripes/src"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>
