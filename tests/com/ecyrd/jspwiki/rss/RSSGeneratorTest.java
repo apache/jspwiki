@@ -63,7 +63,7 @@ public class RSSGeneratorTest extends TestCase
 
         RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPage("TestBlog") );
+        WikiContext context = m_testEngine.getWikiActionBeanFactory().newViewActionBean( m_testEngine.getPage("TestBlog") );
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
@@ -93,7 +93,7 @@ public class RSSGeneratorTest extends TestCase
 
         RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPage("TestBlog") );
+        WikiContext context = m_testEngine.getWikiActionBeanFactory().newViewActionBean( m_testEngine.getPage("TestBlog") );
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 

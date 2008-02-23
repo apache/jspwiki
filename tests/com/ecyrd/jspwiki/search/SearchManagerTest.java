@@ -7,11 +7,15 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpServletResponse;
+import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.EditActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 
 public class SearchManagerTest extends TestCase
 {
@@ -96,10 +100,12 @@ public class SearchManagerTest extends TestCase
     {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
  
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setParameter("page","TestPage");
+        MockRoundtrip trip = m_engine.guestTrip( ViewActionBean.class );
+        MockHttpServletRequest request = trip.getRequest();
+        MockHttpServletResponse response = trip.getResponse();
+        request.getParameterMap().put("page",new String[]{ "TestPage" });
         
-        WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+        WikiContext ctx = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( request, response, EditActionBean.class );
         
         m_engine.saveText( ctx, txt );
 
