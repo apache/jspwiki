@@ -14,9 +14,7 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 
@@ -57,10 +55,10 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
 public class Group
 {
 
-    static final String[]  RESTRICTED_GROUPNAMES = new String[]
+    public static final String[]  RESTRICTED_GROUPNAMES = new String[]
                                                   { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final Vector    m_members             = new Vector();
+    private final List<Principal> m_members = new ArrayList<Principal>();
 
     private String          m_creator             = null;
 
@@ -76,6 +74,8 @@ public class Group
 
     private final String    m_wiki;
 
+    private final String    m_qualifiedName;
+
     /**
      * Protected constructor to prevent direct instantiation except by other
      * package members. Callers should use
@@ -90,6 +90,7 @@ public class Group
         m_name = name;
         m_wiki = wiki;
         m_principal = new GroupPrincipal( name );
+        m_qualifiedName = wiki + ":" + name;
     }
 
     /**
@@ -214,6 +215,16 @@ public class Group
     }
 
     /**
+     * The qualified name of the group, defined as the wiki plus the name,
+     * separated by a colon (<em>e.g.</em>, <code>MyWiki:MyGroup</code>).
+     * @return the qualified name of the Group
+     */
+    public String getQualifiedName()
+    {
+        return m_qualifiedName;
+    }
+
+    /**
      * Returns the GroupPrincipal that represents this Group.
      * @return the group principal
      */
@@ -245,12 +256,22 @@ public class Group
     }
 
     /**
+     * Returns the members of the group as an unmodifiable Set of Principal
+     * objects.
+     */
+    public List<Principal> getMembers()
+    {
+        return Collections.unmodifiableList(m_members);
+    }
+
+    /**
      * Returns the members of the group as an array of Principal objects.
      * @return the members
+     * @deprecated
      */
     public Principal[] members()
     {
-        return (Principal[]) m_members.toArray( new Principal[m_members.size()] );
+        return m_members.toArray(new Principal[m_members.size()]);
     }
 
     /**

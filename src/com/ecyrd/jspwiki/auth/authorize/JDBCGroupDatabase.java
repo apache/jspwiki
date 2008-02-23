@@ -262,7 +262,7 @@ public class JDBCGroupDatabase implements GroupDatabase
      */
     public Group[] groups() throws WikiSecurityException
     {
-        Set groups = new HashSet();
+        Set<Group> groups = new HashSet<Group>();
         Connection conn = null;
         try
         {
@@ -300,7 +300,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             try { conn.close(); } catch (Exception e) {}
         }
 
-        return (Group[])groups.toArray( new Group[groups.size()] );
+        return groups.toArray( new Group[groups.size()] );
     }
 
     /**
@@ -376,10 +376,8 @@ public class JDBCGroupDatabase implements GroupDatabase
             
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
-            Principal[] members = group.members();
-            for ( int i = 0; i < members.length; i++ )
+            for ( Principal member : group.getMembers() )
             {
-                Principal member = members[i];
                 ps.setString( 1, group.getName() );
                 ps.setString( 2, member.getName() );
                 ps.execute();

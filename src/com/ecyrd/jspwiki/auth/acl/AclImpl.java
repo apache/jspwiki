@@ -33,7 +33,7 @@ import java.util.Vector;
  */
 public class AclImpl implements Acl
 {
-    private final Vector m_entries = new Vector();
+    private final Vector<AclEntry> m_entries = new Vector<AclEntry>();
 
     /**
      * Constructs a new AclImpl instance.
@@ -52,7 +52,7 @@ public class AclImpl implements Acl
      */
     public Principal[] findPrincipals( Permission permission )
     {
-        Vector principals = new Vector();
+        Vector<Principal> principals = new Vector<Principal>();
         Enumeration entries = entries();
         
         while (entries.hasMoreElements()) 
@@ -68,7 +68,7 @@ public class AclImpl implements Acl
                 }
             }
         }
-        return (Principal[])principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[principals.size()] );
     }
   
     private boolean hasEntry( AclEntry entry )

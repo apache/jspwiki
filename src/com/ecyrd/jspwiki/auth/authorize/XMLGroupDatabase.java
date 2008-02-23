@@ -113,7 +113,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private WikiEngine            m_engine         = null;
 
-    private Map                   m_groups         = new HashMap();
+    private Map<String,Group>     m_groups         = new HashMap<String,Group>();
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -165,8 +165,8 @@ public class XMLGroupDatabase implements GroupDatabase
     public Group[] groups() throws WikiSecurityException
     {
         buildDOM();
-        Collection groups = m_groups.values();
-        return (Group[])groups.toArray( new Group[groups.size()] );
+        Collection<Group> groups = m_groups.values();
+        return groups.toArray( new Group[groups.size()] );
     }
 
     /**

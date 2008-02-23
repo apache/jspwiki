@@ -24,6 +24,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.mock.MockServletContext;
+
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -308,7 +310,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     public Principal[] getRoles()
     {
-        return (Principal[]) m_containerRoles.clone();
+        return m_containerRoles.clone();
     }
 
     /**
@@ -322,7 +324,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
-        Set roles = new HashSet();
+        Set<Role> roles = new HashSet<Role>();
         Element root = webxml.getRootElement();
 
         // Get roles referred to by constraints
@@ -347,7 +349,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
             roles.add( new Role( role ) );
         }
 
-        return (Role[]) roles.toArray( new Role[roles.size()] );
+        return roles.toArray( new Role[roles.size()] );
     }
 
     /**
@@ -379,6 +381,12 @@ public class WebContainerAuthorizer implements WebAuthorizer
         else
         {
             url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
+            // Hack in case we're using Stripes mock servlet context
+            // See bug [STS-376] at http://stripesframework.org/jira/browse/STS-376. Will be fixed in Stripes 1.5.
+            if ( url == null && m_engine.getServletContext() instanceof MockServletContext )
+            {
+                url = m_engine.getServletContext().getResource( "WEB-INF/web.xml" );
+            }
             if( url != null )
                 log.info( "Examining " + url.toExternalForm() );
         }

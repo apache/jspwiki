@@ -14,12 +14,7 @@
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,7 +67,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     private GroupDatabase       m_groupDatabase    = null;
 
     /** Map with GroupPrincipals as keys, and Groups as values */
-    private final Map           m_groups           = new HashMap();
+    private final Map<Principal,Group> m_groups    = new HashMap<Principal,Group>();
 
     /**
      * <p>
@@ -104,7 +99,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final Group getGroup( String name ) throws NoSuchPrincipalException
     {
-        Group group = (Group) m_groups.get( new GroupPrincipal( name ) );
+        Group group = m_groups.get( new GroupPrincipal( name ) );
         if ( group != null )
         {
             return group;
@@ -189,7 +184,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final Principal[] getRoles()
     {
-        return (Principal[]) m_groups.keySet().toArray( new Principal[m_groups.size()] );
+        return m_groups.keySet().toArray( new Principal[m_groups.size()] );
     }
 
     /**
@@ -267,7 +262,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Get the group we're examining
-        Group group = (Group) m_groups.get( role );
+        Group group = m_groups.get( role );
         if ( group == null )
         {
             return false;
@@ -354,10 +349,10 @@ public final class GroupManager implements Authorizer, WikiEventListener
             group.setCreated( existingGroup.getCreated() );
             group.setModifier( existingGroup.getModifier() );
             group.setLastModified( existingGroup.getLastModified() );
-            Principal[] existingMembers = existingGroup.members();
-            for( int i = 0; i < existingMembers.length; i++ )
+            List<Principal> existingMembers = existingGroup.getMembers();
+            for( Principal member : existingMembers )
             {
-                group.add( existingMembers[i] );
+                group.add( member );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -423,7 +418,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         Group group = parseGroup( name, memberLine, create );
 
         // If no members, add the current user by default
-        if ( group.members().length == 0 )
+        if ( group.getMembers().size() == 0 )
         {
             group.add( context.getWikiSession().getUserPrincipal() );
         }
@@ -451,7 +446,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
             throw new IllegalArgumentException( "Group cannot be null." );
         }
 
-        Group group = (Group) m_groups.get( new GroupPrincipal( index ) );
+        Group group = m_groups.get( new GroupPrincipal( index ) );
         if ( group == null )
         {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
@@ -512,7 +507,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         // TODO: check for appropriate permissions
 
         // If group already exists, delete it; fire GROUP_REMOVE event
-        Group oldGroup = (Group) m_groups.get( group.getPrincipal() );
+        Group oldGroup = m_groups.get( group.getPrincipal() );
         if ( oldGroup != null )
         {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
@@ -588,10 +583,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Member names must be "safe" strings
-        Principal[] members = group.members();
-        for( int i = 0; i < members.length; i++ )
+        for( Principal member: group.getMembers() )
         {
-            validator.validateNotNull( members[i].getName(), "Full name", InputValidator.ID );
+            validator.validateNotNull( member.getName(), "Full name", InputValidator.ID );
         }
     }
 
@@ -602,7 +596,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     protected final String[] extractMembers( String memberLine )
     {
-        Set members = new HashSet();
+        Set<String> members = new HashSet<String>();
         if ( memberLine != null )
         {
             StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
@@ -615,7 +609,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
                 }
             }
         }
-        return (String[]) members.toArray( new String[members.size()] );
+        return members.toArray( new String[members.size()] );
     }
 
     /**
