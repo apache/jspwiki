@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -56,21 +55,19 @@ public class PageTypeTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiPage   page   = m_wikiContext.getPage();
-
-        if( page != null )
+        if( m_page != null )
         {
-            if( m_type.equals("attachment") && page instanceof Attachment )
+            if( m_type.equals("attachment") && m_page instanceof Attachment )
             {
                 return EVAL_BODY_INCLUDE;
             }
             
-            if( m_type.equals("page") && !(page instanceof Attachment) )
+            if( m_type.equals("page") && !(m_page instanceof Attachment) )
             {
                 return EVAL_BODY_INCLUDE;
             }
 
-            if( m_type.equals("weblogentry") && !(page instanceof Attachment) && page.getName().indexOf("_blogentry_") != -1 )
+            if( m_type.equals("weblogentry") && !(m_page instanceof Attachment) && m_page.getName().indexOf("_blogentry_") != -1 )
             {
                 return EVAL_BODY_INCLUDE;
             }

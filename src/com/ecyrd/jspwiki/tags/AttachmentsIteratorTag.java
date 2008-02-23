@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +29,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
@@ -55,8 +55,7 @@ public class AttachmentsIteratorTag
 
     public final int doStartTag()
     {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+        m_wikiContext = (WikiContext)WikiActionBeanFactory.findActionBean( pageContext );
 
         WikiEngine        engine = m_wikiContext.getEngine();
         AttachmentManager mgr    = engine.getAttachmentManager();
@@ -90,9 +89,7 @@ public class AttachmentsIteratorTag
 
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
+                    WikiActionBeanFactory.saveActionBean( pageContext, context );
 
                     pageContext.setAttribute( getId(), att );
                 }
@@ -140,9 +137,7 @@ public class AttachmentsIteratorTag
 
             WikiContext context = (WikiContext)m_wikiContext.clone();
             context.setPage( att );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
+            WikiActionBeanFactory.saveActionBean( pageContext, context );
 
             pageContext.setAttribute( getId(), att );
 

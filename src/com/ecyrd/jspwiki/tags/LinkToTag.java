@@ -20,10 +20,14 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -86,13 +90,11 @@ public class LinkToTag
 
         if( m_pageName == null )
         {
-            WikiPage p = m_wikiContext.getPage();
-
-            if( p != null )
+            if( m_page != null )
             {
-                pageName = p.getName();
+                pageName = m_page.getName();
 
-                isattachment = p instanceof Attachment;
+                isattachment = (m_page instanceof Attachment);
             }
             else
             {
@@ -100,24 +102,29 @@ public class LinkToTag
             }
         }
 
+        WikiContext context = (WikiContext)m_actionBean;
         JspWriter out = pageContext.getOut();
         String url;
         String linkclass;
 
+        Map<String,String> urlParams = new HashMap<String,String>();
+        if ( getVersion() != null )
+        {
+            urlParams.put("version",getVersion());
+        }
+
         if( isattachment )
         {
-            url = m_wikiContext.getURL(WikiContext.ATTACH,pageName,
-                                       (getVersion() != null) ? "version="+getVersion() : null );
+            url = context.getContext().getURL(AttachActionBean.class, pageName, urlParams);
             linkclass = "attachment";
         }
         else
         {
-            StringBuffer params = new StringBuffer();
-            if( getVersion() != null ) params.append( "version="+getVersion() );
-            if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
-
-            url = m_wikiContext.getURL( WikiContext.VIEW, pageName,
-                                        params.toString() );
+            if( getTemplate() != null ) 
+            {
+                urlParams.put("skin", getTemplate());
+            }
+            url = context.getContext().getURL( ViewActionBean.class, pageName, urlParams );
             linkclass = "wikipage";
         }
 

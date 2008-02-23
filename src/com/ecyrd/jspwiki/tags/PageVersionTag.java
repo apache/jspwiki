@@ -21,8 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
-
 /**
  *  Writes the version of the current page.  If this is
  *  marked as the current version, then includes body as text instead of
@@ -39,11 +37,9 @@ public class PageVersionTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiPage   page   = m_wikiContext.getPage();
-
-        if( page != null )
+        if( m_page != null )
         {
-            int version = page.getVersion();
+            int version = m_page.getVersion();
 
             if( version > 0 )
             {

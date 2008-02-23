@@ -77,14 +77,14 @@ public class VariableTag
         throws JspException,
                IOException
     {
-        WikiEngine engine   = m_wikiContext.getEngine();
+        WikiEngine engine   = m_actionBean.getEngine();
         JspWriter out = pageContext.getOut();
         String msg = null;
         String value = null;
 
         try
         {
-            value = engine.getVariableManager().getValue( m_wikiContext,
+            value = engine.getVariableManager().getValue( m_actionBean,
                                                           getVar() );
         }
         catch( NoSuchVariableException e )

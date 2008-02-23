@@ -43,7 +43,7 @@ public class AdminBeanIteratorTag extends IteratorTag
 
         Collection beans = mgr.getAllBeans();
 
-        ArrayList typedBeans = new ArrayList();
+        ArrayList<AdminBean> typedBeans = new ArrayList<AdminBean>();
 
         for( Iterator i = beans.iterator(); i.hasNext(); )
         {

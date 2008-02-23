@@ -24,8 +24,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes difference between two pages using a HTML table.  If there is
@@ -81,17 +81,16 @@ public class InsertDiffTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiContext ctx;
+        WikiEngine engine = m_actionBean.getEngine();
+        WikiPage   page;
         
         if( m_pageName == null )
         {
-            ctx = m_wikiContext;
+            page = m_page;
         }
         else
         {
-            ctx = (WikiContext)m_wikiContext.clone();
-            ctx.setPage( engine.getPage(m_pageName) );
+            page = engine.getPage( m_pageName );
         }
 
         Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,
@@ -101,11 +100,11 @@ public class InsertDiffTag
 
         log.info("Request diff between version "+verold+" and "+vernew);
 
-        if( ctx.getPage() != null )
+        if( page != null )
         {
             JspWriter out = pageContext.getOut();
 
-            String diff = engine.getDiff( ctx, 
+            String diff = engine.getDiff( engine.getWikiActionBeanFactory().newViewActionBean( page ), 
                                           vernew.intValue(), 
                                           verold.intValue() );
 

@@ -19,16 +19,17 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import com.ecyrd.jspwiki.WikiContext;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.LinkedList;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 
 /**
  * Implement a "breadcrumb" (most recently visited) trail.  This tag can be added to any view jsp page.
@@ -88,28 +89,27 @@ public class BreadcrumbsTag extends WikiTagBase
         HttpSession session = pageContext.getSession();
         FixedQueue  trail   = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
 
-        String page = m_wikiContext.getPage().getName();
-
         if( trail == null )
         {
             trail = new FixedQueue(m_maxQueueSize);
         }
 
-        if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
+        if( m_actionBean instanceof ViewActionBean && m_page != null )
         {
+            String pageName = m_page.getName();
             if( trail.isEmpty() )
             {
-                trail.pushItem(page);
+                trail.pushItem( pageName );
             }
             else
             {
                 //
                 // Don't add the page to the queue if the page was just refreshed
                 //
-                if( !((String) trail.getLast()).equals(page) )
+                if( !((String) trail.getLast()).equals( pageName ) )
                 {
-                    trail.pushItem(page);
-                    log.debug("added page: " + page);
+                    trail.pushItem( pageName );
+                    log.debug( "added page: " + pageName );
                 }
                 log.debug("didn't add page because of refresh");
             }
@@ -135,10 +135,14 @@ public class BreadcrumbsTag extends WikiTagBase
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            out.print("<a class=\"" + linkclass + "\" href=\"" +
-                      m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
-
-            if( i < queueSize - 2 )
+            if ( m_actionBean instanceof WikiContext )
+            {
+                WikiContext context = (WikiContext)m_actionBean;
+                out.print("<a class=\"" + linkclass + "\" href=\"" + 
+                          context.getViewURL(curPage)+ "\">" + curPage + "</a>");
+            }
+            
+            if( i < queueSize - 2 ) 
             {
                 out.print(m_separator);
             }
@@ -151,7 +155,7 @@ public class BreadcrumbsTag extends WikiTagBase
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
     public static class FixedQueue
-        extends LinkedList
+        extends LinkedList<Object>
         implements Serializable
     {
         private int m_size;

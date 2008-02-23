@@ -36,7 +36,7 @@ public class TemplateDirTag
     public final int doWikiStartTag()
         throws IOException
     {
-        String template = m_wikiContext.getTemplate();
+        String template = m_actionBean.getTemplate();
 
         pageContext.getOut().print( template );
 

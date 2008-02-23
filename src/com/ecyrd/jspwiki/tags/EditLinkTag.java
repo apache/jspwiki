@@ -20,11 +20,15 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.EditActionBean;
 
 /**
  *  Writes an edit link.  Body of the link becomes the link text.
@@ -75,9 +79,8 @@ public class EditLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine   = m_wikiContext.getEngine();
+        WikiEngine engine   = m_actionBean.getEngine();
         WikiPage   page     = null;
-        String     versionString = "";
         String     pageName = null;
         
         //
@@ -85,14 +88,13 @@ public class EditLinkTag
         //
         if( m_pageName == null )
         {
-            page = m_wikiContext.getPage();
-            if( page == null )
+            if( m_page == null )
             {
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
 
-            pageName = page.getName();
+            pageName = m_page.getName();
         }
         else
         {
@@ -102,11 +104,12 @@ public class EditLinkTag
         //
         //  Determine the latest version, if the version attribute is "this".
         //
+        Map<String,String> urlParams = new HashMap<String,String>();
         if( m_version != null )
         {
             if( "this".equalsIgnoreCase(m_version) )
             {
-                if( page == null )
+                if( m_page == null )
                 {
                     // No page, so go fetch according to page name.
                     page = engine.getPage( m_pageName );
@@ -114,12 +117,12 @@ public class EditLinkTag
                 
                 if( page != null )
                 {
-                    versionString = "version="+page.getVersion();
+                    urlParams.put("version", String.valueOf(page.getVersion()));
                 }
             }
             else
             {
-                versionString = "version="+m_version;
+                urlParams.put("version", String.valueOf(m_version));
             }
         }
 
@@ -128,17 +131,19 @@ public class EditLinkTag
         //  user commanded.
         //
         JspWriter out = pageContext.getOut();
+        WikiContext context = (WikiContext)m_actionBean;
 
         switch( m_format )
         {
           case ANCHOR:
-            out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)
-                     +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
-            break;
+              urlParams.put("accesskey", m_accesskey);
+              urlParams.put("title", m_title);
+              out.print("<a href=\""+context.getContext().getURL(EditActionBean.class,pageName, urlParams) + "\">");
+              break;
 
           case URL:
-            out.print( m_wikiContext.getURL(WikiContext.EDIT,pageName,versionString) );
-            break;
+              out.print( context.getContext().getURL(EditActionBean.class,pageName,urlParams) );
+              break;
         }
 
         return EVAL_BODY_INCLUDE;

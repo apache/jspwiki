@@ -23,6 +23,8 @@ import java.io.IOException;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -30,9 +32,9 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 
@@ -102,11 +104,9 @@ public class CalendarTag
 
     private String format( String txt )
     {
-        WikiPage p = m_wikiContext.getPage();
-
-        if( p != null )
+        if( m_page != null )
         {
-            return TextUtil.replaceString( txt, "%p", p.getName() );
+            return TextUtil.replaceString( txt, "%p", m_page.getName() );
         }
 
         return txt;
@@ -117,7 +117,7 @@ public class CalendarTag
      */
     private String getDayLink( Calendar day )
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine = m_actionBean.getEngine();
         String result = "";
 
         if( m_pageFormat != null )
@@ -134,7 +134,8 @@ public class CalendarTag
                 }
                 else
                 {
-                    result = "<td class=\"link\"><a href=\""+m_wikiContext.getViewURL( pagename )+"\">"+
+                    WikiContext context = (WikiContext)m_actionBean;
+                    result = "<td class=\"link\"><a href=\""+context.getViewURL( pagename )+"\">"+
                              day.get( Calendar.DATE )+"</a></td>";
                 }
             }
@@ -192,14 +193,15 @@ public class CalendarTag
         nextMonth.add( Calendar.DATE, -1);
         nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
 
-        if ( day.before(nextMonth) )
+        if ( day.before(nextMonth) && m_page != null )
         {
-            WikiPage thePage = m_wikiContext.getPage();
-            String pageName = thePage.getName();
+            WikiContext context = (WikiContext)m_actionBean;
+            String pageName = m_page.getName();
 
             String calendarDate = m_dateFormat.format(day.getTime());
-            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName, 
-                                               "calendar.date="+calendarDate );
+            Map<String,String> urlParams = new HashMap<String,String>();
+            urlParams.put("calendar.date", calendarDate );
+            String url = context.getContext().getURL( ViewActionBean.class, pageName, urlParams );
 
             if ( (queryString != null) && (queryString.length() > 0) )
             {
@@ -245,7 +247,7 @@ public class CalendarTag
         throws IOException,
                ProviderException
     {
-        WikiEngine       engine   = m_wikiContext.getEngine();
+        WikiEngine       engine   = m_actionBean.getEngine();
         JspWriter        out      = pageContext.getOut();
         Calendar         cal      = Calendar.getInstance();
         Calendar         prevCal  = Calendar.getInstance();
@@ -284,7 +286,7 @@ public class CalendarTag
 
         out.write( "<table class=\"calendar\">\n" );
 
-        HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
+        HttpServletRequest httpServletRequest = m_actionBean.getContext().getRequest();
         String queryString = engine.safeGetQueryString( httpServletRequest );
         out.write( "<tr>"+
                    getMonthNaviLink(prevCal,"&lt;&lt;", queryString)+

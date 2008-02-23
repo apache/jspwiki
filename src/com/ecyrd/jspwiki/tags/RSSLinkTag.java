@@ -41,7 +41,7 @@ public class RSSLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine = m_actionBean.getEngine();
 
         String rssURL = engine.getGlobalRSSURL();
 

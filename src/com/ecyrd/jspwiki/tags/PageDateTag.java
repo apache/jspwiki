@@ -19,11 +19,9 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.io.IOException;
-
-import com.ecyrd.jspwiki.WikiPage;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *  Writes the modification date of the page, formatted
@@ -71,11 +69,9 @@ public class PageDateTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiPage   page   = m_wikiContext.getPage();
-
-        if( page != null )
+        if( m_page != null )
         {
-            Date d = page.getLastModified();
+            Date d = m_page.getLastModified();
 
             //
             //  Date may be null if the page does not exist.

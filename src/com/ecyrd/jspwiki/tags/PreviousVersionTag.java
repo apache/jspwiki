@@ -21,8 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
-
 /**
  *  Outputs the version number of the previous version of this page.
  *
@@ -37,14 +35,15 @@ public class PreviousVersionTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiPage   page   = m_wikiContext.getPage();
+        if ( m_page != null )
+        {
+            int version = m_page.getVersion();
 
-        int version = page.getVersion();
+            version--;
 
-        version--;
-
-        if( version > 0 )
-            pageContext.getOut().print( version );
+            if( version > 0 )
+                pageContext.getOut().print( version );
+        }
 
         return SKIP_BODY;
     }

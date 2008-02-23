@@ -20,9 +20,13 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspWriter;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.DiffActionBean;
 
 /**
  *  Writes a diff link.  Body of the link becomes the link text.
@@ -83,14 +87,14 @@ public class DiffLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine   = m_wikiContext.getEngine();
+        WikiEngine engine   = m_actionBean.getEngine();
         String     pageName = m_pageName;
 
-        if( m_pageName == null )
+        if( pageName == null )
         {
-            if( m_wikiContext.getPage() != null )
+            if( m_page != null )
             {
-                pageName = m_wikiContext.getPage().getName();
+                pageName = m_page.getName();
             }
             else
             {
@@ -125,12 +129,12 @@ public class DiffLinkTag
         }
         else if( VER_PREVIOUS.equals(getVersion()) )
         {
-            r1 = m_wikiContext.getPage().getVersion() - 1;
+            r1 = m_page.getVersion() - 1;
             r1 = (r1 < 1 ) ? 1 : r1;
         }
         else if( VER_CURRENT.equals(getVersion()) )
         {
-            r1 = m_wikiContext.getPage().getVersion();
+            r1 = m_page.getVersion();
         }
         else
         {
@@ -146,21 +150,24 @@ public class DiffLinkTag
         }
         else if( VER_PREVIOUS.equals(getNewVersion()) )
         {
-            r2 = m_wikiContext.getPage().getVersion() - 1;
+            r2 = m_page.getVersion() - 1;
             r2 = (r2 < 1 ) ? 1 : r2;
         }
         else if( VER_CURRENT.equals(getNewVersion()) )
         {
-            r2 = m_wikiContext.getPage().getVersion();
+            r2 = m_page.getVersion();
         }
         else
         {
             r2 = Integer.parseInt( getNewVersion() );
         }
 
-        String url = m_wikiContext.getURL( WikiContext.DIFF,
+        Map<String,String> urlParams = new HashMap<String,String>();
+        urlParams.put("r1", String.valueOf( r1 ));
+        urlParams.put("r2", String.valueOf( r2 ));
+        String url = m_actionBean.getContext().getURL( DiffActionBean.class,
                                            pageName,
-                                           "r1="+r1+"&amp;r2="+r2 );
+                                           urlParams );
         switch( m_format )
         {
           case ANCHOR:

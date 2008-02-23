@@ -81,7 +81,7 @@ public class PluginTag
 
         m_evaluated = true;
 
-        Map argmap = pm.parseArgs( args );
+        Map<String,Object> argmap = pm.parseArgs( args );
         
         if( body != null ) 
         {

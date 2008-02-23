@@ -110,7 +110,7 @@ public class TabTag extends WikiTagBase
      */
     public int doWikiStartTag() throws JspTagException
     {
-        TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
+        TabbedSectionTag parent=getParentTag(TabbedSectionTag.class );
 
         //
         //  Sanity checks
@@ -157,7 +157,7 @@ public class TabTag extends WikiTagBase
      */
     public int doEndTag() throws javax.servlet.jsp.JspTagException
     {
-        TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
+        TabbedSectionTag parent=getParentTag( TabbedSectionTag.class );
 
         StringBuffer sb = new StringBuffer();
 

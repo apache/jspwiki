@@ -22,8 +22,8 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.CommentActionBean;
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.
@@ -44,22 +44,20 @@ public class CommentLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiPage   page     = null;
-        String     pageName = null;
+        String pageName = null;
         
         //
         //  Determine the page and the link.
         //
         if( m_pageName == null )
         {
-            page = m_wikiContext.getPage();
-            if( page == null )
+            if( m_page == null )
             {
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
 
-            pageName = page.getName();
+            pageName = m_page.getName();
         }
         else
         {
@@ -88,7 +86,7 @@ public class CommentLinkTag
 
     private String getCommentURL( String pageName )
     {
-        return m_wikiContext.getURL(WikiContext.COMMENT, pageName);
+        return ((WikiContext)m_actionBean).getContext().getURL(CommentActionBean.class, pageName);
     }
 
 }

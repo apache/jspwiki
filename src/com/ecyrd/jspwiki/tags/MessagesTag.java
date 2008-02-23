@@ -84,7 +84,7 @@ public class MessagesTag extends WikiTagBase
 
     public final int doWikiStartTag() throws IOException
     {
-        WikiSession session = m_wikiContext.getWikiSession();
+        WikiSession session = m_actionBean.getWikiSession();
         if ( CLEAR.equals( m_action ) )
         {
             if ( m_topic == null )

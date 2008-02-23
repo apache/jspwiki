@@ -24,17 +24,14 @@ import java.security.Permission;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiProvider;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.GroupContext;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.ui.Command;
-import com.ecyrd.jspwiki.ui.GroupCommand;
 
 /**
  *  Tells whether the user in the current wiki context possesses a particular
@@ -109,44 +106,40 @@ public class PermissionTag
      */
     private boolean checkPermission( String permission )
     {
-        WikiSession session        = m_wikiContext.getWikiSession();
-        WikiPage    page           = m_wikiContext.getPage();
-        AuthorizationManager mgr   = m_wikiContext.getEngine().getAuthorizationManager();
+        WikiEngine  engine         = m_actionBean.getEngine();
+        WikiSession session        = m_actionBean.getWikiSession();
+        AuthorizationManager mgr   = engine.getAuthorizationManager();
         boolean gotPermission     = false;
         
         if ( CREATE_GROUPS.equals( permission ) || CREATE_PAGES.equals( permission )
             || EDIT_PREFERENCES.equals( permission ) || EDIT_PROFILE.equals( permission )
             || LOGIN.equals( permission ) )
         {
-            gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
+            gotPermission = mgr.checkPermission( session, new WikiPermission( engine.getApplicationName(), permission ) );
         }
-        else if ( VIEW_GROUP.equals( permission ) 
-            || EDIT_GROUP.equals( permission )
-            || DELETE_GROUP.equals( permission ) )
+        else if ( VIEW_GROUP.equals( permission ) )
         {
-            Command command = m_wikiContext.getCommand();
-            gotPermission = false;
-            if ( command instanceof GroupCommand && command.getTarget() != null )
-            {
-                GroupPrincipal group = (GroupPrincipal)command.getTarget();
-                String groupName = group.getName();
-                String action = "view";
-                if( EDIT_GROUP.equals( permission ) )
-                {
-                    action = "edit";
-                }
-                else if ( DELETE_GROUP.equals( permission ) )
-                {
-                    action = "delete";
-                }
-                gotPermission = mgr.checkPermission( session, new GroupPermission( groupName, action ) );
-            }
+            Group group = ((GroupContext)m_actionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            gotPermission = mgr.checkPermission( session, perm );
+        }
+        else if ( EDIT_GROUP.equals( permission ) )
+        {
+            Group group = ((GroupContext)m_actionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            gotPermission = mgr.checkPermission( session, perm );
+        }
+        else if ( DELETE_GROUP.equals( permission ) )
+        {
+            Group group = ((GroupContext)m_actionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            gotPermission = mgr.checkPermission( session, perm );
         }
         else if ( ALL_PERMISSION.equals( permission ) )
         {
-            gotPermission = mgr.checkPermission( session, new AllPermission( m_wikiContext.getEngine().getApplicationName() ) );
+            gotPermission = mgr.checkPermission( session, new AllPermission( engine.getApplicationName() ) );
         }
-        else if ( page != null )
+        else if ( m_actionBean instanceof WikiContext && m_page != null )
         {
             //
             //  Edit tag also checks that we're not trying to edit an
@@ -154,15 +147,15 @@ public class PermissionTag
             //
             if( EDIT.equals(permission) )
             {
-                WikiPage latest = m_wikiContext.getEngine().getPage( page.getName() );
-                if( page.getVersion() != WikiProvider.LATEST_VERSION &&
-                    latest.getVersion() != page.getVersion() )
+                WikiPage latest = engine.getPage( m_page.getName() );
+                if( m_page.getVersion() != WikiProvider.LATEST_VERSION &&
+                    latest.getVersion() != m_page.getVersion() )
                 {
                     return false;
                 }
             }
 
-            Permission p = PermissionFactory.getPagePermission( page, permission );
+            Permission p = PermissionFactory.getPagePermission( m_page, permission );
             gotPermission = mgr.checkPermission( session,
                                                   p );
         }

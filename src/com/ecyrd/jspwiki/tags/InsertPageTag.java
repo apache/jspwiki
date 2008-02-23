@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -92,8 +93,8 @@ public class InsertPageTag
         throws IOException,
                ProviderException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   insertedPage;
+        WikiEngine engine = m_actionBean.getEngine();
+        WikiPage   page;
 
         //
         //  NB: The page might not really exist if the user is currently
@@ -103,36 +104,37 @@ public class InsertPageTag
 
         if( m_pageName == null )
         {
-            insertedPage = m_wikiContext.getPage();
-            if( !engine.pageExists(insertedPage) ) return SKIP_BODY;
+            page = m_page;
+            if( !engine.pageExists( page ) ) return SKIP_BODY;
         }
         else
         {
-            insertedPage = engine.getPage( m_pageName );
+            page = engine.getPage( m_pageName );
         }
 
-        if( insertedPage != null )
+        if( page != null )
         {
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            log.debug("Inserting page "+insertedPage);
+            log.debug("Inserting page "+page);
 
             JspWriter out = pageContext.getOut();
 
-            WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
+            WikiContext context = (WikiContext)m_actionBean;
+            WikiPage oldPage = context.setRealPage( page );
             
             switch( m_mode )
             {
               case HTML:
-                out.print( engine.getHTML( m_wikiContext, insertedPage ) );
+                out.print( engine.getHTML(context, page) );
                 break;
               case PLAIN:
-                out.print( engine.getText( m_wikiContext, insertedPage ) );
+                out.print( engine.getText(context, page) );
                 break;
             }
             
-            m_wikiContext.setRealPage( oldPage );
+            context.setRealPage( oldPage );
         }
 
         return SKIP_BODY;

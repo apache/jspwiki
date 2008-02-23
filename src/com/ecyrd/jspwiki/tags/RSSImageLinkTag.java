@@ -23,8 +23,8 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.NoneActionBean;
 
 /**
  *  Writes an image link to the RSS file.
@@ -58,7 +58,7 @@ public class RSSImageLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine = m_actionBean.getEngine();
 
         String rssURL = engine.getGlobalRSSURL();
 
@@ -66,7 +66,7 @@ public class RSSImageLinkTag
         {
             JspWriter out = pageContext.getOut();
             out.print("<a href=\""+rssURL+"\">");
-            out.print("<img src=\""+m_wikiContext.getURL( WikiContext.NONE,"images/xml.png")+"\"");
+            out.print("<img src=\""+m_actionBean.getContext().getURL( NoneActionBean.class,"images/xml.png")+"\"");
             out.print(" alt=\"[RSS]\" title=\""+getTitle()+"\"/>");
             out.print("</a>");
         }

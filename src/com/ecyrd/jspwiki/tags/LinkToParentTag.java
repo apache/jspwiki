@@ -21,7 +21,6 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -44,19 +43,17 @@ public class LinkToParentTag
     public int doWikiStartTag()
         throws IOException
     {
-        WikiPage p = m_wikiContext.getPage();
-
         //
         //  We just simply set the page to be our parent page
         //  and call the superclass.
         //
-        if( p instanceof Attachment )
+        if( m_page != null && m_page instanceof Attachment )
         {
-            setPage( ((Attachment)p).getParentName() );
+            setPage( ((Attachment)m_page).getParentName() );
         }
         else
         {
-            String name = p.getName();
+            String name = m_page.getName();
 
             int entrystart = name.indexOf("_blogentry_");
 

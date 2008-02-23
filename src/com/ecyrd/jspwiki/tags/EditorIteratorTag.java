@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.ui.Editor;
 import com.ecyrd.jspwiki.ui.EditorManager;
 
@@ -45,14 +46,14 @@ public class EditorIteratorTag
 
     public final int doStartTag()
     {
-        m_wikiContext = WikiContext.findContext(pageContext);
+        m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
 
         WikiEngine engine = m_wikiContext.getEngine();
         EditorManager mgr    = engine.getEditorManager();
 
         String[] editorList = mgr.getEditorList();
 
-        Collection editors = new ArrayList();
+        Collection<Editor>editors = new ArrayList<Editor>();
 
         for ( int i = 0; i < editorList.length; i++ )
         {

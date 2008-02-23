@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**
@@ -40,18 +39,17 @@ public class ParentPageNameTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
-
-        if( page != null )
+        WikiEngine engine = m_actionBean.getEngine();
+        
+        if( m_page != null )
         {
-            if( page instanceof Attachment )
+            if( m_page instanceof Attachment )
             {
-                pageContext.getOut().print( engine.beautifyTitle( ((Attachment)page).getParentName()) );
+                pageContext.getOut().print( engine.beautifyTitle( ((Attachment)m_page).getParentName()) );
             }
             else
             {
-                String name = page.getName();
+                String name = m_page.getName();
 
                 int entrystart = name.indexOf("_blogentry_");
 

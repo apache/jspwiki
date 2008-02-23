@@ -65,7 +65,7 @@ public class CheckRequestContextTag
     {
         for(int i = 0; i < m_contextList.length; i++ )
         {
-            String ctx = m_wikiContext.getRequestContext();
+            String ctx = m_actionBean.getRequestContext();
             
             String checkedCtx = m_contextList[i];
 

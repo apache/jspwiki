@@ -21,6 +21,7 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.TextUtil;
@@ -43,8 +44,14 @@ public class AuthorTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+        if ( !( m_actionBean instanceof WikiContext ) )
+        {
+            return SKIP_BODY;
+        }
+        
+        WikiContext context = (WikiContext)m_actionBean;
+        WikiEngine engine = context.getEngine();
+        WikiPage   page   = context.getPage();
 
         String author = page.getAuthor();
 
@@ -58,11 +65,11 @@ public class AuthorTag
 
                 RenderingManager mgr = engine.getRenderingManager();
                 
-                MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
+                MarkupParser p = mgr.getParser( context, "["+author+"|"+author+"]" );
 
                 WikiDocument d = p.parse();
                 
-                author = mgr.getHTML( m_wikiContext, d );
+                author = mgr.getHTML( context, d );
             }
 
             pageContext.getOut().print( author );

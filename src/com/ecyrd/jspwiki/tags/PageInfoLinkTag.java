@@ -20,11 +20,11 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.PageInfoActionBean;
 
 /**
  *  Writes a link to the Wiki PageInfo.  Body of the link becomes the actual text.
@@ -60,16 +60,14 @@ public class PageInfoLinkTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine = m_actionBean.getEngine();
         String     pageName = m_pageName;
 
         if( m_pageName == null )
         {
-            WikiPage p = m_wikiContext.getPage();
-
-            if( p != null )
+            if( m_page != null )
             {
-                pageName = p.getName();
+                pageName = m_page.getName();
             }
             else
             {
@@ -81,7 +79,7 @@ public class PageInfoLinkTag
         {
             JspWriter out = pageContext.getOut();
 
-            String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
+            String url = m_actionBean.getContext().getURL( PageInfoActionBean.class, pageName );
 
             switch( m_format )
             {

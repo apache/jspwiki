@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
@@ -31,8 +30,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.ui.Command;
-import com.ecyrd.jspwiki.ui.PageCommand;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 
 /**
  *  Iterates through Search result results.
@@ -93,8 +91,7 @@ public class SearchResultIteratorTag
         }
 
         m_count       = 0;
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
+        m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
 
         return nextResult();
     }
@@ -107,14 +104,10 @@ public class SearchResultIteratorTag
             
             // Create a wiki context for the result
             WikiEngine engine = m_wikiContext.getEngine();
-            HttpServletRequest request = m_wikiContext.getHttpRequest();
-            Command command = PageCommand.VIEW.targetedCommand( r.getPage() );
-            WikiContext context = new WikiContext( engine, request, command );
+            WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean( r.getPage() );
             
             // Stash it in the page context
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
+            WikiActionBeanFactory.saveActionBean( pageContext, context );
             pageContext.setAttribute( getId(), r );
 
             return EVAL_BODY_BUFFERED;

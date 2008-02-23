@@ -26,12 +26,12 @@ import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 
 /**
  *  Iterates through tags.
@@ -110,7 +110,7 @@ public abstract class IteratorTag
      */
     public int doStartTag()
     {
-        m_wikiContext = WikiContext.findContext(pageContext);
+        m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
         
         resetIterator();
         
@@ -142,9 +142,7 @@ public abstract class IteratorTag
         //
         //  Push it to the iterator stack, and set the id.
         //
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  context,
-                                  PageContext.REQUEST_SCOPE );
+        WikiActionBeanFactory.saveActionBean( pageContext, context );
         pageContext.setAttribute( getId(),
                                   o );
     }
@@ -155,9 +153,7 @@ public abstract class IteratorTag
     public int doEndTag()
     {
         // Return back to the original.
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  m_wikiContext,
-                                  PageContext.REQUEST_SCOPE );
+        WikiActionBeanFactory.saveActionBean( pageContext, m_wikiContext );
 
         return EVAL_PAGE;
     }

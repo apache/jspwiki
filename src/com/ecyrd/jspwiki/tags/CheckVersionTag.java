@@ -78,15 +78,14 @@ public class CheckVersionTag
         throws IOException,
                ProviderException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+        WikiEngine engine = m_actionBean.getEngine();
 
-        if( page != null && engine.pageExists(page.getName()) )
+        if( m_page != null && engine.pageExists(m_page.getName()) )
         {
-            int version = page.getVersion();
+            int version = m_page.getVersion();
             boolean include = false;
 
-            WikiPage latest = engine.getPage( page.getName() );
+            WikiPage latest = engine.getPage( m_page.getName() );
 
             //log.debug("Doing version check: this="+page.getVersion()+
             //          ", latest="+latest.getVersion());

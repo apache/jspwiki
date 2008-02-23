@@ -37,7 +37,7 @@ public class ContentEncodingTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
+        WikiEngine engine = m_actionBean.getEngine();
 
         pageContext.getOut().print( engine.getContentEncoding() );
 

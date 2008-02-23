@@ -45,7 +45,7 @@ public class RequestResourceTag extends WikiTagBase
     {   
         if( m_type != null && m_resource != null )
         {
-            TemplateManager.addResourceRequest( m_wikiContext, m_type, m_resource );
+            TemplateManager.addResourceRequest( m_actionBean, m_type, m_resource );
         }
 
         return SKIP_BODY;

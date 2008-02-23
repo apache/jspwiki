@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -40,15 +39,14 @@ public class HasAttachmentsTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+        WikiEngine engine = m_actionBean.getEngine();
         AttachmentManager mgr = engine.getAttachmentManager();
 
         try
         {
-            if( page != null && engine.pageExists(page) && mgr.attachmentsEnabled() )
+            if( m_page != null && engine.pageExists(m_page) && mgr.attachmentsEnabled() )
             {
-                if( mgr.hasAttachments(page) )
+                if( mgr.hasAttachments(m_page) )
                 {
                     return EVAL_BODY_INCLUDE;
                 }

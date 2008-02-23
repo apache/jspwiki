@@ -124,9 +124,9 @@ public class UserCheckTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiSession session = m_wikiContext.getWikiSession();
+        WikiSession session = m_actionBean.getWikiSession();
         String status = session.getStatus();
-        AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+        AuthenticationManager mgr = m_actionBean.getEngine().getAuthenticationManager();
         boolean containerAuth = mgr.isContainerAuthenticated();
         boolean cookieAssertions = AuthenticationManager.allowsCookieAssertions();
 
