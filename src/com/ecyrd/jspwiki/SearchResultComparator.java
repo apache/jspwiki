@@ -28,7 +28,7 @@ import java.util.*;
  */
 // FIXME3.0: move to the search package
 public class SearchResultComparator
-    implements Comparator, Serializable
+    implements Comparator<SearchResult>, Serializable
 {
     private static final long serialVersionUID = 1L;
 
@@ -38,11 +38,8 @@ public class SearchResultComparator
      *  
      *  {@inheritDoc}
      */
-    public int compare( Object o1, Object o2 )
+    public int compare( SearchResult s1, SearchResult s2 )
     {
-        SearchResult s1 = (SearchResult)o1;
-        SearchResult s2 = (SearchResult)o2;
-
         // Bigger scores are first.
 
         int res = s2.getScore() - s1.getScore();

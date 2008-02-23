@@ -33,6 +33,7 @@ import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.WikiPlugin;
+import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -93,7 +94,7 @@ public class TranslatorReader extends Reader
     private boolean        m_isdefinition = false;
 
     /** Contains style information, in multiple forms. */
-    private Stack          m_styleStack   = new Stack();
+    private Stack<Boolean>          m_styleStack   = new Stack<Boolean>();
 
      // general list handling
     private int            m_genlistlevel = 0;
@@ -110,17 +111,17 @@ public class TranslatorReader extends Reader
     private WikiContext    m_context;
 
     /** Optionally stores internal wikilinks */
-    private ArrayList      m_localLinkMutatorChain    = new ArrayList();
-    private ArrayList      m_externalLinkMutatorChain = new ArrayList();
-    private ArrayList      m_attachmentLinkMutatorChain = new ArrayList();
-    private ArrayList      m_headingListenerChain     = new ArrayList();
+    private ArrayList<StringTransmutator>      m_localLinkMutatorChain    = new ArrayList<StringTransmutator>();
+    private ArrayList<StringTransmutator>      m_externalLinkMutatorChain = new ArrayList<StringTransmutator>();
+    private ArrayList<StringTransmutator>      m_attachmentLinkMutatorChain = new ArrayList<StringTransmutator>();
+    private ArrayList<HeadingListener>      m_headingListenerChain     = new ArrayList<HeadingListener>();
 
     /** Keeps image regexp Patterns */
     private ArrayList      m_inlineImagePatterns;
 
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
-    private ArrayList      m_linkMutators = new ArrayList();
+    private ArrayList<StringTransmutator>      m_linkMutators = new ArrayList<StringTransmutator>();
 
     /**
      *  This property defines the inline image pattern.  It's current value
@@ -444,7 +445,7 @@ public class TranslatorReader extends Reader
     protected static Collection getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
-        ArrayList  ptrnlist = new ArrayList();
+        ArrayList<String>  ptrnlist = new ArrayList<String>();
 
         for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
         {
@@ -1047,7 +1048,7 @@ public class TranslatorReader extends Reader
 
                 if( isImageLink( reallink ) )
                 {
-                    attachment = m_context.getURL( WikiContext.ATTACH, attachment );
+                    attachment = m_context.getContext().getURL( AttachActionBean.class, attachment );
                     sb.append( handleImageLink( attachment, link, (cutpoint != -1) ) );
                 }
                 else
@@ -2392,8 +2393,7 @@ public class TranslatorReader extends Reader
         {
             if( m_cleanTranslator == null )
             {
-                WikiContext dummyContext = new WikiContext( m_engine,
-                                                            m_context.getPage() );
+                WikiContext dummyContext = m_engine.getWikiActionBeanFactory().newViewActionBean( m_context.getPage() );
                 m_cleanTranslator = new TranslatorReader( dummyContext,
                                                           null,
                                                           new TextRenderer() );
@@ -2540,11 +2540,9 @@ public class TranslatorReader extends Reader
             return makeLink( type, link, text, null );
         }
 
-        private final String getURL( String context, String link )
+        private final String getURL( Class<? extends WikiActionBean> beanClass, String link )
         {
-            return m_context.getURL( context,
-                                     link,
-                                     null );
+            return m_context.getContext().getURL( beanClass, link );
         }
 
         /**
@@ -2577,13 +2575,13 @@ public class TranslatorReader extends Reader
             switch(type)
             {
               case READ:
-                result = "<a class=\"wikipage\" href=\""+getURL(WikiContext.VIEW,
+                result = "<a class=\"wikipage\" href=\""+getURL(ViewActionBean.class,
                                                                 link)+section+"\">"+text+"</a>";
                 break;
 
               case EDIT:
                 result = "<a class=\"createpage\" title=\"Create '"+link+"'\" href=\""+
-                         getURL(WikiContext.EDIT, link)+"\">"+
+                		  getURL(EditActionBean.class, link)+"\">"+
                          text+"</a>";
                 break;
 
@@ -2625,7 +2623,7 @@ public class TranslatorReader extends Reader
                 break;
 
               case IMAGEWIKILINK:
-                String pagelink = getURL(WikiContext.VIEW,text);
+                String pagelink = getURL(ViewActionBean.class,text);
                 result = "<a class=\"wikipage\" href=\""+pagelink+"\"><img class=\"inline\" src=\""+link+"\" alt=\""+text+"\" /></a>";
                 break;
 
@@ -2640,13 +2638,13 @@ public class TranslatorReader extends Reader
                 break;
 
               case ATTACHMENT:
-                String attlink = getURL( WikiContext.ATTACH,
+                String attlink = getURL( AttachActionBean.class,
                                          link );
 
-                String infolink = getURL( WikiContext.INFO,
+                String infolink = getURL( PageInfoActionBean.class,
                                           link );
 
-                String imglink = getURL( WikiContext.NONE,
+                String imglink = getURL( NoneActionBean.class,
                                          "images/attachment_small.png" );
 
                 result = "<a class=\"attachment\" href=\""+attlink+"\">"+text+"</a>"+
@@ -2877,7 +2875,7 @@ public class TranslatorReader extends Reader
             if( m_useOutlinkImage )
             {
                 return "<img class=\"outlink\" src=\""+
-                       getURL( WikiContext.NONE,"images/out.png" )+"\" alt=\"\" />";
+                       getURL( NoneActionBean.class,"images/out.png" )+"\" alt=\"\" />";
             }
 
             return "";

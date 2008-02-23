@@ -31,13 +31,13 @@ import java.util.Collection;
 public class LinkCollector
     implements StringTransmutator
 {
-    private ArrayList m_items = new ArrayList();
+    private ArrayList<String> m_items = new ArrayList<String>();
 
     /**
      * Returns a List of Strings representing links.
      * @return the link collection
      */
-    public Collection getLinks()
+    public Collection<String> getLinks()
     {
         return m_items;
     }

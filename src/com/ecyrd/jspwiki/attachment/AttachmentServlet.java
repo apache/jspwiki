@@ -43,6 +43,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.UploadActionBean;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
@@ -227,7 +229,15 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res )
         throws IOException, ServletException
     {
-        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+        WikiContext context;
+        try 
+        {
+            context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, AttachActionBean.class );
+        }
+        catch ( WikiException e )
+        {
+            throw new ServletException( e.getMessage() );
+        }
 
         String version  = req.getParameter( HDR_VERSION );
         String nextPage = req.getParameter( "nextpage" );
@@ -468,7 +478,7 @@ public class AttachmentServlet
     {
         try
         {
-            String nextPage = upload( req );
+            String nextPage = upload( req, res );
             req.getSession().removeAttribute("msg");
             res.sendRedirect( nextPage );
         }
@@ -488,8 +498,6 @@ public class AttachmentServlet
     public void doPut( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
-
         String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
         DavPath path = new DavPath( p );
 
@@ -497,11 +505,21 @@ public class AttachmentServlet
         {
             InputStream data = req.getInputStream();
 
-            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+            WikiContext context;
+            String errorPage; // If something bad happened, Upload should be able to take care of most stuff
+
+            try 
+            {
+                context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, UploadActionBean .class );
+            }
+            catch ( WikiException e )
+            {
+                throw new ServletException( e.getMessage() );
+            }
 
             String wikipage = path.get( 0 );
 
-            errorPage = context.getURL( WikiContext.UPLOAD,
+            errorPage = context.getContext().getURL( UploadActionBean.class,
                                         wikipage );
 
             String changeNote = null; // FIXME: Does not quite work
@@ -559,14 +577,13 @@ public class AttachmentServlet
      *  @throws RedirectException If there's an error and a redirection is needed
      *  @throws IOException If upload fails
      */
-    protected String upload( HttpServletRequest req )
+    protected String upload( HttpServletRequest req, HttpServletResponse res )
         throws RedirectException,
                IOException
     {
         String msg     = "";
         String attName = "(unknown)";
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
-        String nextPage = errorPage;
+        String nextPage;
 
         String progressId = req.getParameter( "progressid" );
 
@@ -576,7 +593,15 @@ public class AttachmentServlet
 
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
-            WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+            WikiContext context;
+            try 
+            {
+                context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, AttachActionBean.class );
+            }
+            catch ( WikiException e )
+            {
+                throw new IOException( e.getMessage() );
+            }
 
             UploadListener pl = new UploadListener();
 
@@ -589,6 +614,7 @@ public class AttachmentServlet
                                                      "UTF-8",
                                                      pl );
 
+            String errorPage = context.getContext().getURL( UploadActionBean.class, context.getPage().getName() );
             nextPage        = validateNextPage( multi.getParameter( "nextpage" ), errorPage );
             String wikipage = multi.getParameter( "page" );
             String changeNote = multi.getParameter( "changenote" );

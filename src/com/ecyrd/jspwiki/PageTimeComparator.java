@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 // FIXME3.0: move to util package
 
 public class PageTimeComparator
-    implements Comparator, Serializable
+    implements Comparator<WikiPage>, Serializable
 {
     private static final long serialVersionUID = 0L;
 
@@ -45,7 +45,7 @@ public class PageTimeComparator
     /**
      *  {@inheritDoc}
      */
-    public int compare( Object o1, Object o2 )
+    public int compare( WikiPage o1, WikiPage o2 )
     {
         WikiPage w1 = (WikiPage)o1;
         WikiPage w2 = (WikiPage)o2;
@@ -56,22 +56,19 @@ public class PageTimeComparator
             return 0; // FIXME: Is this correct?
         }
 
-        Date w1LastMod = w1.getLastModified();
-        Date w2LastMod = w2.getLastModified();
-
-        if( w1LastMod == null )
+        if( w1.getLastModified() == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w1.getName() );
             return 0;
         }
-        else if( w2LastMod == null )
+        else if( w2.getLastModified() == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w2.getName() );
             return 0;
         }
 
         // This gets most recent on top
-        int timecomparison = w2LastMod.compareTo( w1LastMod );
+        int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
 
         if( timecomparison == 0 )
         {

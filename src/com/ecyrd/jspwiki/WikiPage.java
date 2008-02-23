@@ -19,11 +19,14 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
@@ -49,6 +52,7 @@ public class WikiPage
     private int              m_version = WikiPageProvider.LATEST_VERSION;
     private String           m_author = null;
     private final HashMap    m_attributes = new HashMap();
+    private String           m_qualifiedName;
 
     /**
      *  "Summary" is a short summary of the page.  It is a String.
@@ -77,6 +81,7 @@ public class WikiPage
         m_engine = engine;
         m_name = name;
         m_wiki = engine.getApplicationName();
+        m_qualifiedName =m_wiki + ":" + m_name;
     }
 
     /**
@@ -88,7 +93,24 @@ public class WikiPage
     {
         return m_name;
     }
+    
+    public String getQualifiedName()
+    {
+        return m_qualifiedName;
+    }
 
+    /**
+     * Convenience method that returns the collection of 
+     * Attachment objects associated with this WikiPage.
+     * It simply delegates to
+     * {@link com.ecyrd.jspwiki.attachment.AttachmentManager#listAttachments(WikiPage)}.
+     * @return the collection
+     */
+    public Collection<Attachment> getAttachments() throws ProviderException
+    {
+        return m_engine.getAttachmentManager().listAttachments( this );
+    }
+    
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
      *  available.  Typically attributes are things that do not need to be stored

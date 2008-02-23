@@ -197,7 +197,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    public Collection getAllPages()
+    public Collection<WikiPage> getAllPages()
         throws ProviderException
     {
         return m_provider.getAllPages();

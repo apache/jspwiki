@@ -30,7 +30,7 @@ import java.util.Comparator;
  * @since 2.3
  */
 public class PrincipalComparator
-    implements Comparator, Serializable
+    implements Comparator<Principal>, Serializable 
 {
     private static final long serialVersionUID = 1L;
 
@@ -41,14 +41,10 @@ public class PrincipalComparator
      * @return the result of the comparison
      * @see java.util.Comparator#compare(Object, Object)
      */
-    public int compare( Object o1, Object o2 )
+    public int compare( Principal o1, Principal o2 )
     {
         Collator collator = Collator.getInstance();
-        if ( o1 instanceof Principal && o2 instanceof Principal )
-        {
-            return collator.compare( ((Principal)o1).getName(), ((Principal)o2).getName() );
-        }
-        throw new ClassCastException( "Objects must be of type Principal.");
+        return collator.compare( o1.getName(), o2.getName() );
     }
 
 }

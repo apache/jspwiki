@@ -28,9 +28,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.action.UrlBinding;
+
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.LoginActionBean;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
@@ -84,7 +87,7 @@ public final class UserManager
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associateds wiki sessions with profiles */
-    private final Map        m_profiles     = new WeakHashMap();
+    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>(); 
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database;
@@ -205,7 +208,7 @@ public final class UserManager
     public final UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
-        UserProfile profile = (UserProfile)m_profiles.get( session );
+        UserProfile profile = m_profiles.get( session );
         boolean newProfile = profile == null;
         Principal user = null;
 
@@ -428,7 +431,7 @@ public final class UserManager
     {
         // Retrieve the user's profile (may have been previously cached)
         UserProfile profile = getUserProfile( context.getWikiSession() );
-        HttpServletRequest request = context.getHttpRequest();
+        HttpServletRequest request = context.getContext().getRequest();
 
         // Extract values from request stream (cleanse whitespace as needed)
         String loginName = request.getParameter( PARAM_LOGINNAME );
@@ -469,6 +472,7 @@ public final class UserManager
      * (see {@link WikiSession#getMessages()}.
      * @param context the current wiki context
      * @param profile the supplied UserProfile
+     * @deprecated
      */
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
@@ -749,7 +753,7 @@ public final class UserManager
                         + "Your name : " + profile.getFullname() + "\n"
                         + "E-mail    : " + profile.getEmail() + "\n\n"
                         + "If you forget your password, you can reset it at "
-                        + m_engine.getURL(WikiContext.LOGIN, null, null, true);
+                        + m_engine.getBaseURL() + LoginActionBean.class.getAnnotation(UrlBinding.class).value();
                     MailUtil.sendMessage( m_engine, to, subject, content);
                 }
                 catch ( AddressException e)

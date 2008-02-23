@@ -121,15 +121,15 @@ public class ReferenceManager
      *  must contain Strings. The Collection may contain names of non-existing
      *  pages.
      */
-    private Map            m_refersTo;
-    private Map            m_unmutableRefersTo;
+    private Map<String,Set<String>> m_refersTo;
+    private Map<String,Set<String>> m_unmutableRefersTo;
 
     /** Maps page wikiname to a Set of referring pages. The Set must
      *  contain Strings. Non-existing pages (a reference exists, but not a file
      *  for the page contents) may have an empty Set in m_referredBy.
      */
-    private Map            m_referredBy;
-    private Map            m_unmutableReferredBy;
+    private Map<String,Set<String>> m_referredBy;
+    private Map<String,Set<String>> m_unmutableReferredBy;
 
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
@@ -151,8 +151,8 @@ public class ReferenceManager
      */
     public ReferenceManager( WikiEngine engine )
     {
-        m_refersTo   = new HashMap();
-        m_referredBy = new HashMap();
+        m_refersTo   = new HashMap<String,Set<String>>();
+        m_referredBy = new HashMap<String,Set<String>>();
         m_engine = engine;
 
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
@@ -175,15 +175,15 @@ public class ReferenceManager
         String content = m_engine.getPageManager().getPageText( page.getName(),
                                                                 WikiPageProvider.LATEST_VERSION );
 
-        TreeSet res = new TreeSet();
-        Collection links = m_engine.scanWikiLinks( page, content );
+        TreeSet<String> res = new TreeSet<String>();
+        Collection<String> links = m_engine.scanWikiLinks( page, content );
 
         res.addAll( links );
-        Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
+        Collection<Attachment> attachments = m_engine.getAttachmentManager().listAttachments( page );
 
-        for( Iterator atti = attachments.iterator(); atti.hasNext(); )
+        for( Attachment atti : attachments )
         {
-            res.add( ((Attachment)(atti.next())).getName() );
+            res.add( atti.getName() );
         }
 
         internalUpdateReferences( page.getName(), res );
@@ -197,7 +197,7 @@ public class ReferenceManager
      *               count.
      *  @since 2.2
      */
-    public void initialize( Collection pages )
+    public void initialize( Collection<WikiPage> pages )
         throws ProviderException
     {
         log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
@@ -222,10 +222,8 @@ public class ReferenceManager
             //
             long saved = unserializeFromDisk();
 
-            for( Iterator it = pages.iterator(); it.hasNext(); )
+            for( WikiPage page : pages )
             {
-                WikiPage page = (WikiPage) it.next();
-
                 unserializeAttrsFromDisk( page );
             }
 
@@ -235,11 +233,11 @@ public class ReferenceManager
             //  the references for them.
             //
 
-            Iterator it = pages.iterator();
+            Iterator<WikiPage> it = pages.iterator();
 
             while( it.hasNext() )
             {
-                WikiPage page = (WikiPage) it.next();
+                WikiPage page = it.next();
 
                 if( page instanceof Attachment )
                 {
@@ -269,10 +267,10 @@ public class ReferenceManager
             buildKeyLists( pages );
 
             // Scan the existing pages from disk and update references in the manager.
-            Iterator it = pages.iterator();
+            Iterator<WikiPage> it = pages.iterator();
             while( it.hasNext() )
             {
-                WikiPage page  = (WikiPage)it.next();
+                WikiPage page  = it.next();
 
                 if( page instanceof Attachment )
                 {
@@ -326,8 +324,8 @@ public class ReferenceManager
             }
 
             saved        = in.readLong();
-            m_refersTo   = (Map) in.readObject();
-            m_referredBy = (Map) in.readObject();
+            m_refersTo   = (Map<String,Set<String>>) in.readObject();
+            m_referredBy = (Map<String,Set<String>>) in.readObject();
 
             in.close();
 
@@ -590,7 +588,7 @@ public class ReferenceManager
 
     private void pageRemoved(String pageName)
     {
-        Collection refTo = (Collection)m_refersTo.get( pageName );
+        Collection<String> refTo = m_refersTo.get( pageName );
 
         if( refTo != null )
         {
@@ -598,7 +596,7 @@ public class ReferenceManager
             while( it_refTo.hasNext() )
             {
                 String referredPageName = (String)it_refTo.next();
-                Set refBy = (Set)m_referredBy.get( referredPageName );
+                Set<String> refBy = m_referredBy.get( referredPageName );
 
                 if( refBy == null )
                     throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
@@ -619,7 +617,7 @@ public class ReferenceManager
             m_refersTo.remove( pageName );
         }
 
-        Set refBy = (Set) m_referredBy.get( pageName );
+        Set<String> refBy = m_referredBy.get( pageName );
         if( refBy == null || refBy.isEmpty() )
         {
             m_referredBy.remove( pageName );
@@ -656,7 +654,7 @@ public class ReferenceManager
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    public synchronized void updateReferences( String page, Collection references )
+    public synchronized void updateReferences( String page, Collection<String> references )
     {
         internalUpdateReferences(page, references);
 
@@ -674,21 +672,19 @@ public class ReferenceManager
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
 
-    private void internalUpdateReferences(String page, Collection references)
+    private void internalUpdateReferences(String page, Collection<String> references)
     {
         page = getFinalPageName( page );
 
         //
         // Create a new entry in m_refersTo.
         //
-        Collection oldRefTo = (Collection)m_refersTo.get( page );
+        Collection<String> oldRefTo = m_refersTo.get( page );
         m_refersTo.remove( page );
 
-        TreeSet cleanedRefs = new TreeSet();
-        for( Iterator i = references.iterator(); i.hasNext(); )
+        TreeSet<String> cleanedRefs = new TreeSet<String>();
+        for( String ref : references )
         {
-            String ref = (String)i.next();
-
             ref = getFinalPageName( ref );
 
             cleanedRefs.add( ref );
@@ -703,7 +699,7 @@ public class ReferenceManager
         //
         if( !m_referredBy.containsKey( page ) )
         {
-            m_referredBy.put( page, new TreeSet() );
+            m_referredBy.put( page, new TreeSet<String>() );
         }
 
         //
@@ -716,10 +712,8 @@ public class ReferenceManager
         //
         //  Notify all referred pages of their referinesshoodicity.
         //
-        Iterator it = cleanedRefs.iterator();
-        while( it.hasNext() )
+        for( String referredPageName : cleanedRefs )
         {
-            String referredPageName = (String)it.next();
             updateReferredBy( getFinalPageName(referredPageName), page );
         }
     }
@@ -744,9 +738,9 @@ public class ReferenceManager
      * Cleans the 'referred by' list, removing references by 'referrer' to
      * any other page. Called after 'referrer' is removed.
      */
-    private void cleanReferredBy( String referrer,
-                                  Collection oldReferred,
-                                  Collection newReferred )
+    private void cleanReferredBy( String referrer, 
+                                  Collection<String> oldReferred,
+                                  Collection<String> newReferred )
     {
         // Two ways to go about this. One is to look up all pages previously
         // referred by referrer and remove referrer from their lists, and let
@@ -759,11 +753,9 @@ public class ReferenceManager
         if( oldReferred == null )
             return;
 
-        Iterator it = oldReferred.iterator();
-        while( it.hasNext() )
+        for( String referredPage : oldReferred )
         {
-            String referredPage = (String)it.next();
-            Set oldRefBy = (Set)m_referredBy.get( referredPage );
+            Set<String> oldRefBy = m_referredBy.get( referredPage );
             if( oldRefBy != null )
             {
                 oldRefBy.remove( referrer );
@@ -793,7 +785,7 @@ public class ReferenceManager
      *
      * @param pages   a Collection containing WikiPage objects.
      */
-    private synchronized void buildKeyLists( Collection pages )
+    private synchronized void buildKeyLists( Collection<WikiPage> pages )
     {
         m_refersTo.clear();
         m_referredBy.clear();
@@ -801,16 +793,14 @@ public class ReferenceManager
         if( pages == null )
             return;
 
-        Iterator it = pages.iterator();
         try
         {
-            while( it.hasNext() )
+            for( WikiPage page : pages )
             {
-                WikiPage page = (WikiPage)it.next();
                 // We add a non-null entry to referredBy to indicate the referred page exists
-                m_referredBy.put( page.getName(), new TreeSet() );
+                m_referredBy.put( page.getName(), new TreeSet<String>() );
                 // Just add a key to refersTo; the keys need to be in sync with referredBy.
-                m_refersTo.put( page.getName(), null );
+                m_refersTo.put( page.getName(), (TreeSet<String>)null );
             }
         }
         catch( ClassCastException e )
@@ -847,14 +837,14 @@ public class ReferenceManager
             }
         }
 
-        Set referrers = (Set)m_referredBy.get( page );
+        Set<String> referrers = m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
         // This requires we don't use m_referredBy keys when looking up missing
         // pages, of course.
         if(referrers == null)
         {
-            referrers = new TreeSet();
+            referrers = new TreeSet<String>();
             m_referredBy.put( page, referrers );
         }
         referrers.add( referrer );
@@ -874,13 +864,13 @@ public class ReferenceManager
         //  Remove this item from the referredBy list of any page
         //  which this item refers to.
         //
-        Collection c = (Collection)m_refersTo.get( pagename );
+        Collection<String> c = m_refersTo.get( pagename );
 
         if( c != null )
         {
-            for( Iterator i = c.iterator(); i.hasNext(); )
+            for( Iterator<String> i = c.iterator(); i.hasNext(); )
             {
-                Collection dref = (Collection) m_referredBy.get( i.next() );
+                Collection<String> dref = m_referredBy.get( i.next() );
 
                 dref.remove( pagename );
             }
@@ -898,16 +888,15 @@ public class ReferenceManager
      *  Finds all unreferenced pages. This requires a linear scan through
      *  m_referredBy to locate keys with null or empty values.
      */
-    public synchronized Collection findUnreferenced()
+    public synchronized Collection<String> findUnreferenced()
     {
-        ArrayList unref = new ArrayList();
+        List<String> unref = new ArrayList<String>();
 
-        Set keys = m_referredBy.keySet();
-        Iterator it = keys.iterator();
+        Iterator<String> it = m_referredBy.keySet().iterator();
 
         while( it.hasNext() )
         {
-            String key = (String) it.next();
+            String key = it.next();
             //Set refs = (Set) m_referredBy.get( key );
             Set refs = getReferenceList( m_referredBy, key );
             if( refs == null || refs.isEmpty() )
@@ -930,28 +919,19 @@ public class ReferenceManager
      * Each non-existant page name is shown only once - we don't return information
      * on who referred to it.
      */
-    public synchronized Collection findUncreated()
+    public synchronized Collection<String> findUncreated()
     {
-        TreeSet uncreated = new TreeSet();
+        Set<String> uncreated = new TreeSet<String>();
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
 
-        Collection allReferences = m_refersTo.values();
-        Iterator it = allReferences.iterator();
-
-        while( it.hasNext() )
+        for( Collection<String> refs : m_refersTo.values())
         {
-            Collection refs = (Collection)it.next();
-
             if( refs != null )
             {
-                Iterator rit = refs.iterator();
-
-                while( rit.hasNext() )
+                for ( String aReference : refs )
                 {
-                    String aReference = (String)rit.next();
-
                     if( m_engine.pageExists( aReference ) == false )
                     {
                         uncreated.add( aReference );
@@ -966,24 +946,24 @@ public class ReferenceManager
     /**
      *  Searches for the given page in the given Map.
      */
-    private Set getReferenceList( Map coll, String pagename )
+    private Set<String> getReferenceList( Map<String,Set<String>> coll, String pagename )
     {
-        Set refs = (Set)coll.get( pagename );
+        Set<String> refs = coll.get( pagename );
 
         if( m_matchEnglishPlurals )
         {
             //
             //  We'll add also matches from the "other" page.
             //
-            Set refs2;
+            Set<String> refs2;
 
             if( pagename.endsWith("s") )
             {
-                refs2 = (Set)coll.get( pagename.substring(0,pagename.length()-1) );
+                refs2 = coll.get( pagename.substring(0,pagename.length()-1) );
             }
             else
             {
-                refs2 = (Set)coll.get( pagename+"s" );
+                refs2 = coll.get( pagename+"s" );
             }
 
             if( refs2 != null )
@@ -1008,9 +988,9 @@ public class ReferenceManager
      *         does not exist, or if it has no references.
      */
     // FIXME: Return a Set instead of a Collection.
-    public synchronized Collection findReferrers( String pagename )
+    public synchronized Collection<String> findReferrers( String pagename )
     {
-        Set refs = getReferenceList( m_referredBy, pagename );
+        Set<String> refs = getReferenceList( m_referredBy, pagename );
 
         if( refs == null || refs.isEmpty() )
         {
@@ -1039,7 +1019,7 @@ public class ReferenceManager
      */
     public Set findReferredBy( String pageName )
     {
-        return (Set)m_unmutableReferredBy.get( getFinalPageName(pageName) );
+        return m_unmutableReferredBy.get( getFinalPageName(pageName) );
     }
 
     /**
@@ -1060,9 +1040,9 @@ public class ReferenceManager
      *         been indexed yet.
      * @since 2.2.33
      */
-    public Collection findRefersTo( String pageName )
+    public Collection<String> findRefersTo( String pageName )
     {
-        return (Collection)m_unmutableRefersTo.get( getFinalPageName(pageName) );
+        return m_unmutableRefersTo.get( getFinalPageName(pageName) );
     }
 
     /**
@@ -1115,9 +1095,9 @@ public class ReferenceManager
      *  @return A Set of all defined page names that ReferenceManager knows about.
      *  @since 2.3.24
      */
-    public Set findCreated()
+    public Set<String> findCreated()
     {
-        return new HashSet( m_refersTo.keySet() );
+        return new HashSet<String>( m_refersTo.keySet() );
     }
 
     private String getFinalPageName( String orig )

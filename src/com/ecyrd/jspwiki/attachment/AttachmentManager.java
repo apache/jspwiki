@@ -307,22 +307,22 @@ public class AttachmentManager
      */
 
     // FIXME: This API should be changed to return a List.
-    public Collection listAttachments( WikiPage wikipage )
+    public Collection<Attachment> listAttachments( WikiPage wikipage )
         throws ProviderException
     {
         if( m_provider == null )
         {
-            return new ArrayList();
+            return new ArrayList<Attachment>();
         }
 
-        Collection atts = m_provider.listAttachments( wikipage );
+        Collection<Attachment> atts = m_provider.listAttachments( wikipage );
 
         //
         //  This is just a sanity check; all of our providers return a Collection.
         //
         if( atts instanceof List )
         {
-            Collections.sort( (List) atts );
+            Collections.sort( (List<Attachment>)atts );
         }
 
         return atts;
@@ -525,7 +525,7 @@ public class AttachmentManager
      *          return an empty collection.
      *  @throws ProviderException If something went wrong with the backend
      */
-    public Collection getAllAttachments()
+    public Collection<Attachment> getAllAttachments()
         throws ProviderException
     {
         if( attachmentsEnabled() )
@@ -533,7 +533,7 @@ public class AttachmentManager
             return m_provider.listAllChanged( new Date(0L) );
         }
 
-        return new ArrayList();
+        return new ArrayList<Attachment>();
     }
 
     /**

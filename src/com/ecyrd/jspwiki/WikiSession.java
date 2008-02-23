@@ -110,11 +110,11 @@ public final class WikiSession implements WikiEventListener
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal  c_guestSession        = new ThreadLocal();
+    private static ThreadLocal<WikiSession> c_guestSession  = new ThreadLocal<WikiSession>();
 
     private final Subject       m_subject             = new Subject();
 
-    private final Map           m_messages            = new HashMap();
+    private final Map<String,Set<String>> m_messages = new HashMap<String,Set<String>>();
 
     private String              m_cachedCookieIdentity= null;
 
@@ -124,8 +124,6 @@ public final class WikiSession implements WikiEventListener
 
     /** The WikiEngine that created this session. */
     private WikiEngine          m_engine              = null;
-
-    private boolean             m_isNew               = true;
 
     private String              m_status              = ANONYMOUS;
 
@@ -153,25 +151,6 @@ public final class WikiSession implements WikiEventListener
           }
         }
         return false;
-    }
-
-    /**
-     * Returns <code>true</code> if the wiki session is newly initialized.
-     *
-     * @return True, if this is a new session.
-     */
-    protected final boolean isNew()
-    {
-        return m_isNew;
-    }
-
-    /**
-     * Sets the status of this wiki session.
-     * @param isNew whether this session should be considered "new".
-     */
-    protected final void setNew( boolean isNew )
-    {
-        m_isNew = isNew;
     }
 
     /**
@@ -347,10 +326,10 @@ public final class WikiSession implements WikiEventListener
         {
             message = "";
         }
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if (messages == null )
         {
-            messages = new LinkedHashSet();
+            messages = new LinkedHashSet<String>();
             m_messages.put( topic, messages );
         }
         messages.add( message );
@@ -370,7 +349,7 @@ public final class WikiSession implements WikiEventListener
      */
     public final void clearMessages( String topic )
     {
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if ( messages != null )
         {
             m_messages.clear();
@@ -397,12 +376,12 @@ public final class WikiSession implements WikiEventListener
      */
     public final String[] getMessages( String topic )
     {
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if ( messages == null || messages.size() == 0 )
         {
             return new String[0];
         }
-        return (String[])messages.toArray( new String[messages.size()] );
+        return messages.toArray( new String[messages.size()] );
     }
 
     /**
@@ -414,19 +393,18 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal[] getPrincipals()
     {
-        ArrayList principals = new ArrayList();
+        List<Principal> principals = new ArrayList<Principal>();
 
         // Take the first non Role as the main Principal
-        for( Iterator it = m_subject.getPrincipals().iterator(); it.hasNext(); )
+        for( Principal principal : m_subject.getPrincipals() )
         {
-            Principal principal = (Principal) it.next();
-            if ( AuthenticationManager.isUserPrincipal( principal ) )
+        	if ( AuthenticationManager.isUserPrincipal( principal ) )
             {
-                principals.add( principal );
-            }
-        }
+            	principals.add( principal );
+			}
+		}
 
-        return (Principal[]) principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[principals.size()] );
     }
 
     /**
@@ -444,7 +422,7 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal[] getRoles()
     {
-        Set roles = new HashSet();
+        Set<Principal> roles = new HashSet<Principal>();
 
         // Add all of the Roles possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( Role.class ) );
@@ -453,7 +431,7 @@ public final class WikiSession implements WikiEventListener
         roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
 
         // Return a defensive copy
-        Principal[] roleArray = ( Principal[] )roles.toArray( new Principal[roles.size()] );
+        Principal[] roleArray = roles.toArray( new Principal[roles.size()] );
         Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
         return roleArray;
     }
@@ -731,11 +709,10 @@ public final class WikiSession implements WikiEventListener
     protected final void injectUserProfilePrincipals()
     {
         // Copy all Role and GroupPrincipal principals into a temporary cache
-        Set oldPrincipals = m_subject.getPrincipals();
-        Set newPrincipals = new HashSet();
-        for (Iterator it = oldPrincipals.iterator(); it.hasNext();)
+        Set<Principal> oldPrincipals = m_subject.getPrincipals();
+        Set<Principal> newPrincipals = new HashSet<Principal>();
+        for ( Principal principal : oldPrincipals )
         {
-            Principal principal = (Principal)it.next();
             if ( AuthenticationManager.isRolePrincipal( principal ) )
             {
                 newPrincipals.add( principal );
@@ -784,16 +761,15 @@ public final class WikiSession implements WikiEventListener
      */
     protected final void updatePrincipals()
     {
-        Set principals = m_subject.getPrincipals();
+        Set<Principal> principals = m_subject.getPrincipals();
         m_loginPrincipal = null;
         m_userPrincipal = null;
         Principal wikinamePrincipal = null;
         Principal fullnamePrincipal = null;
         Principal otherPrincipal = null;
 
-        for( Iterator it = principals.iterator(); it.hasNext(); )
+        for( Principal currentPrincipal : principals )
         {
-            Principal currentPrincipal = (Principal) it.next();
             if ( !( currentPrincipal instanceof Role || currentPrincipal instanceof GroupPrincipal ) )
             {
                 // For login principal, take the first PrincipalWrapper or WikiPrincipal of type LOGIN_NAME
@@ -957,7 +933,7 @@ public final class WikiSession implements WikiEventListener
 
     private static WikiSession staticGuestSession( WikiEngine engine )
     {
-        WikiSession session = (WikiSession) c_guestSession.get();
+        WikiSession session = c_guestSession.get();
 
         if( session == null )
         {

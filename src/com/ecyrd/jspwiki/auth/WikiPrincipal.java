@@ -59,7 +59,7 @@ public final class WikiPrincipal implements Principal
     public static final String UNSPECIFIED  = "unspecified";
     
     /** Static instance of Comparator that allows Principals to be sorted. */
-    public static final Comparator COMPARATOR = new PrincipalComparator();
+    public static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
     private static final String[] VALID_TYPES;
     
@@ -95,6 +95,10 @@ public final class WikiPrincipal implements Principal
      */
     public WikiPrincipal( String name, String type )
     {
+        if ( name == null )
+        {
+            throw new IllegalArgumentException( "Name cannot be null" );
+        }
         m_name = name;
         if ( Arrays.binarySearch( VALID_TYPES, type ) < 0 )
         {

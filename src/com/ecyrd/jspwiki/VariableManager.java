@@ -28,6 +28,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
 
@@ -179,11 +180,11 @@ public class VariableManager
      *  @param defValue A default value.
      *  @return The variable value, or if not found, the default value.
      */
-    public String getValue( WikiContext context, String varName, String defValue )
+    public String getValue( WikiActionBean actionBean, String varName, String defValue )
     {
         try
         {
-            return getValue( context, varName );
+            return getValue( actionBean, varName );
         }
         catch( NoSuchVariableException e )
         {
@@ -217,7 +218,7 @@ public class VariableManager
      */
     // FIXME: Currently a bit complicated.  Perhaps should use reflection
     //        or something to make an easy way of doing stuff.
-    public String getValue( WikiContext context,
+    public String getValue( WikiActionBean actionBean,
                             String      varName )
         throws IllegalArgumentException,
                NoSuchVariableException
@@ -237,13 +238,14 @@ public class VariableManager
                 return ""; // FIXME: Should this be something different?
         }
         
-        if( name.equals("pagename") )
+        if( name.equals("pagename") && actionBean instanceof WikiContext )
         {
-            return context.getPage().getName();
+            WikiPage page = ((WikiContext)actionBean).getPage();
+            return ( page == null ? null : ((WikiContext)actionBean).getPage().getName() );
         }
         else if( name.equals("applicationname") )
         {
-            return context.getEngine().getApplicationName();
+            return actionBean.getEngine().getApplicationName();
         }
         else if( name.equals("jspwikiversion") )
         {
@@ -251,28 +253,28 @@ public class VariableManager
         }
         else if( name.equals("encoding") )
         {
-            return context.getEngine().getContentEncoding();
+            return actionBean.getEngine().getContentEncoding();
         }
         else if( name.equals("totalpages") )
         {
-            return Integer.toString(context.getEngine().getPageCount());
+            return Integer.toString(actionBean.getEngine().getPageCount());
         }
         else if( name.equals("pageprovider") )
         {
-            return context.getEngine().getCurrentProvider();
+            return actionBean.getEngine().getCurrentProvider();
         }
         else if( name.equals("pageproviderdescription") )
         {
-            return context.getEngine().getCurrentProviderInfo();
+            return actionBean.getEngine().getCurrentProviderInfo();
         }
         else if( name.equals("attachmentprovider") )
         {
-            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+            WikiProvider p = actionBean.getEngine().getAttachmentManager().getCurrentProvider();
             return (p != null) ? p.getClass().getName() : "-";
         }
         else if( name.equals("attachmentproviderdescription") )
         {
-            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
+            WikiProvider p = actionBean.getEngine().getAttachmentManager().getCurrentProvider();
 
             return (p != null) ? p.getProviderInfo() : "-";
         }
@@ -280,13 +282,13 @@ public class VariableManager
         {
             StringBuffer res = new StringBuffer();
 
-            for( Iterator i = context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
+            for( Iterator i = actionBean.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
                 String link = (String) i.next();
                 res.append( link );
                 res.append( " --> " );
-                res.append( context.getEngine().getInterWikiURL(link) );    
+                res.append( actionBean.getEngine().getInterWikiURL(link) );
             }
             return res.toString();
         }
@@ -294,7 +296,7 @@ public class VariableManager
         {
             StringBuffer res = new StringBuffer();
 
-            for( Iterator i = context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            for( Iterator i = actionBean.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
                 if( res.length() > 0 ) res.append(", ");
                 
@@ -306,18 +308,18 @@ public class VariableManager
         }
         else if( name.equals("pluginpath") )
         {
-            String s = context.getEngine().getPluginSearchPath();
+            String s = actionBean.getEngine().getPluginSearchPath();
 
             return (s == null) ? "-" : s;
         }
         else if( name.equals("baseurl") )
         {
-            return context.getEngine().getBaseURL();
+            return actionBean.getEngine().getBaseURL();
         }
         else if( name.equals("uptime") )
         {
             Date now = new Date();
-            long secondsRunning = (now.getTime() - context.getEngine().getStartTime().getTime())/1000L;
+            long secondsRunning = (now.getTime() - actionBean.getEngine().getStartTime().getTime())/1000L;
 
             long seconds = secondsRunning % 60;
             long minutes = (secondsRunning /= 60) % 60;
@@ -328,22 +330,22 @@ public class VariableManager
         }
         else if( name.equals("loginstatus") )
         {
-            WikiSession session = context.getWikiSession();
+            WikiSession session = actionBean.getWikiSession();
             return session.getStatus();
         }
         else if( name.equals("username") )
         {
-            Principal wup = context.getCurrentUser();
+            Principal wup = actionBean.getCurrentUser();
 
             return wup != null ? wup.getName() : "not logged in";
         }
         else if( name.equals("requestcontext") )
         {
-            return context.getRequestContext();
+            return actionBean.getRequestContext();
         }
         else if( name.equals("pagefilters") )
         {
-            List filters = context.getEngine().getFilterManager().getFilterList();
+            List filters = actionBean.getEngine().getFilterManager().getFilterList();
             StringBuffer sb = new StringBuffer();
 
             for( Iterator i = filters.iterator(); i.hasNext(); )
@@ -366,9 +368,9 @@ public class VariableManager
             // Check if such a context variable exists,
             // returning its string representation.
             //
-            if( (context.getVariable( varName )) != null )
+            if( (actionBean.getVariable( varName )) != null )
             {
-                return context.getVariable( varName ).toString();
+                return actionBean.getVariable( varName ).toString();
             }
 
             //
@@ -376,7 +378,7 @@ public class VariableManager
             //  variables from the session and the request (in this order).
             //
 
-            HttpServletRequest req = context.getHttpRequest();
+            HttpServletRequest req = actionBean.getContext().getRequest();
             if( req != null && req.getSession() != null )
             {
                 HttpSession session = req.getSession();
@@ -388,7 +390,7 @@ public class VariableManager
                     if( (s = (String)session.getAttribute( varName )) != null )
                         return s;
 
-                    if( (s = context.getHttpParameter( varName )) != null )
+                    if( (s = actionBean.getContext().getRequest().getParameter( varName )) != null )
                         return s;
                 }
                 catch( ClassCastException e ) {}
@@ -396,23 +398,26 @@ public class VariableManager
 
             // And the final straw: see if the current page has named metadata.
             
-            WikiPage pg = context.getPage();
-            if( pg != null )
+            if ( actionBean instanceof WikiContext )
             {
-                Object metadata = pg.getAttribute( varName );
-                if( metadata != null )
-                    return metadata.toString();
-            }
+                WikiPage pg = ((WikiContext)actionBean).getPage();
+                if( pg != null )
+                {
+                    Object metadata = pg.getAttribute( varName );
+                    if( metadata != null )
+                        return( metadata.toString() );
+                }
             
-            // And the final straw part 2: see if the "real" current page has
-            // named metadata. This allows a parent page to control a inserted
-            // page through defining variables
-            WikiPage rpg = context.getRealPage();
-            if( rpg != null )
-            {
-                Object metadata = rpg.getAttribute( varName );
-                if( metadata != null )
-                    return metadata.toString();
+	            // And the final straw part 2: see if the "real" current page has
+    	        // named metadata. This allows a parent page to control a inserted
+        	    // page through defining variables
+         	   WikiPage rpg = ((WikiContext)actionBean).getRealPage();
+   				if( rpg != null )
+            	{
+                	Object metadata = rpg.getAttribute( varName );
+                	if( metadata != null )
+                    	return metadata.toString();
+            	}
             }
             
             // Next-to-final straw: attempt to fetch using property name
@@ -422,7 +427,7 @@ public class VariableManager
             
             if( varName.startsWith("jspwiki.") )
             {
-                Properties props = context.getEngine().getWikiProperties();
+                Properties props = actionBean.getEngine().getWikiProperties();
 
                 String s = props.getProperty( varName );
                 if( s != null )

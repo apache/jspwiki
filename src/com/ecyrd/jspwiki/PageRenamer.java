@@ -108,7 +108,7 @@ public class PageRenamer
         newName = MarkupParser.cleanLink( newName.trim() );
 
         // Get the collection of pages that the refered to the old name (the From name)...
-        Collection referrers = getReferrersCollection( oldName );
+        Collection<String> referrers = getReferrersCollection( oldName );
 
         log.debug( "Rename request for page '"+ oldName +"' to '" + newName + "'" );
 
@@ -136,7 +136,7 @@ public class PageRenamer
             // Now we need to go and update.
             WikiPage p = m_wikiEngine.getPage(newName);
             String pagedata = m_wikiEngine.getPureText(p);
-            Collection refs = m_wikiEngine.scanWikiLinks(p,pagedata);
+            Collection<String> refs = m_wikiEngine.scanWikiLinks(p,pagedata);
             m_wikiEngine.getReferenceManager().updateReferences(newName,refs);
         }
 
@@ -145,26 +145,24 @@ public class PageRenamer
 
 
     // Go gather and return a collection of page names that refer to the old name...
-    private Collection getReferrersCollection( String oldName )
+    private Collection<String> getReferrersCollection( String oldName )
     {
-        TreeSet list = new TreeSet();
+        TreeSet<String> list = new TreeSet<String>();
 
         WikiPage p = m_wikiEngine.getPage(oldName);
 
         if( p != null )
         {
-            Collection c = m_wikiEngine.getReferenceManager().findReferrers(oldName);
+            Collection<String> c = m_wikiEngine.getReferenceManager().findReferrers(oldName);
 
             if( c != null ) list.addAll(c);
 
             try
             {
-                Collection attachments = m_wikiEngine.getAttachmentManager().listAttachments(p);
+                Collection<Attachment> attachments = m_wikiEngine.getAttachmentManager().listAttachments(p);
 
-                for( Iterator i = attachments.iterator(); i.hasNext(); )
+                for( Attachment att : attachments )
                 {
-                    Attachment att = (Attachment) i.next();
-
                     c = m_wikiEngine.getReferenceManager().findReferrers(att.getName());
 
                     if( c != null ) list.addAll(c);
@@ -186,16 +184,14 @@ public class PageRenamer
                                           String oldName,
                                           String newName,
                                           boolean changeReferrers,
-                                          Collection referrers)
+                                          Collection<String> referrers)
     {
         // Make a new list out of this, otherwise there is a ConcurrentModificationException
         // when the referrer is modifed at the end of this loop when it no longer refers to
         // the original page.
-        List referrersList = new ArrayList( referrers );
-        Iterator referrersIterator = referrersList.iterator();
-        while ( referrersIterator.hasNext() )
+        List<String> referrersList = new ArrayList<String>( referrers );
+        for ( String referrerName : referrersList )
         {
-            String referrerName = (String)referrersIterator.next();
             updateReferrerOnRename( context, oldName, newName, changeReferrers, referrerName );
         }
 
@@ -207,7 +203,7 @@ public class PageRenamer
 
         String text = m_wikiEngine.getText( newName );
 
-        Collection updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(newName),text );
+        Collection<String> updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(newName),text );
         m_wikiEngine.getReferenceManager().updateReferences( newName, updatedReferrers );
     }
 
@@ -229,17 +225,17 @@ public class PageRenamer
         try
         {
 
-            WikiContext tempCtx = new WikiContext( m_wikiEngine, m_wikiEngine.getPage(referrerName) );
+            WikiContext tempCtx = m_wikiEngine.getWikiActionBeanFactory().newViewActionBean( m_wikiEngine.getPage(referrerName) );
 
             if (context.getPage() != null)
             {
-                PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( context.getPage() );
+                PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( m_wikiEngine.getPage(referrerName) );
                 m_wikiEngine.getPageManager().unlockPage( lock );
 
                 tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );
                 m_wikiEngine.saveText( tempCtx, text );
 
-                Collection updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(referrerName),text );
+                Collection<String> updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(referrerName),text );
 
                 m_wikiEngine.getReferenceManager().updateReferences( referrerName, updatedReferrers );
              }
