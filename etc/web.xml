@@ -80,6 +80,11 @@
          <param-name>ExceptionHandler.Class</param-name>
          <param-value>net.sourceforge.stripes.exception.DefaultExceptionHandler</param-value>
       </init-param>
+      <!-- Library for parsing multi-part file uploads -->
+      <init-param>
+        <param-name>MultipartWrapper.Class</param-name>
+        <param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
+      </init-param>
    </filter>
 
    <!--
