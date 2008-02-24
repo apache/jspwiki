@@ -387,7 +387,17 @@
        <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
+       <webinf dir="etc">
+         <include name="dtd/**" />
+         <include name="jsp/**" />
+         <include name="commons-logging.properties" />
+         <include name="jspwiki.jaas" />
+         <include name="jspwiki.policy" />
+         <include name="jspwiki.properties" />
+         <include name="*.tld" />
+         <include name="userdatabase.xml" />
+         <include name="groupdatabase.xml" />
+       </webinf>
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
