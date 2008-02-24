@@ -203,13 +203,18 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
       <!-- Build the war -->
       <war warfile="${tests.build}/@{context}/@{context}.war"
            webxml="@{webxml}">
-         <lib dir="lib" includes="*.jar" />
+         <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
          <lib file="${jarfile}" />
          <lib file="${jdbc.driver.jar}" />
          <fileset dir="${code.src}/webdocs" includes="**" />
-         <webinf dir="etc" 
-           includes="**" 
-           excludes="jspwiki.properties userdatabase.xml db/** **.tmpl web.xml" />
+         <webinf dir="etc">
+           <include name="dtd/**" />
+           <include name="commons-logging.properties" />
+           <include name="jspwiki.jaas" />
+           <include name="jspwiki.policy" />
+           <include name="*.tld" />
+           <include name="groupdatabase.xml" />
+         </webinf>
          <webinf dir="${tests.build}/@{context}" 
            includes="jspwiki.properties userdatabase.xml" />
          <classes dir="etc" includes="oscache.properties" />

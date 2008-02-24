@@ -391,7 +391,16 @@
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/*.jsp" />
        <fileset dir="${code.src}/webdocs-stripes" />
        <webinf dir="${code.src}/webdocs-stripes/WEB-INF" />
-       <webinf dir="etc" includes="**" excludes="**.tmpl web.xml ini/** *.jks db/** lib/** classes/**/*.class jspwiki-container.policy" />
+       <webinf dir="etc">
+         <include name="dtd/**" />
+         <include name="commons-logging.properties" />
+         <include name="jspwiki.jaas" />
+         <include name="jspwiki.policy" />
+         <include name="jspwiki.properties" />
+         <include name="*.tld" />
+         <include name="userdatabase.xml" />
+         <include name="groupdatabase.xml" />
+       </webinf>
        <classes dir="etc" includes="oscache.properties" />
     </war>
 
