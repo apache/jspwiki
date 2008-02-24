@@ -14,6 +14,12 @@
    </description>
    <display-name>JSPWiki</display-name>
 
+   <!-- Resource bundle default location -->
+   <context-param>
+     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+     <param-value>templates.default</param-value>
+   </context-param>
+
    <!--
       This is new in 2.4.  This defines a servlet filter which filters all requests. 
    -->
