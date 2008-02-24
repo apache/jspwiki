@@ -2,7 +2,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="templates.default"/>
 <%
   //WikiContext c = WikiContext.findContext(pageContext);
   //String frontpage = c.getEngine().getFrontPage(); 
