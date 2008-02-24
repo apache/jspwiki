@@ -1,5 +1,11 @@
 2007-2-24  Andrew Jaquith
 
-        * Merged with trunk 2.6.2-svn-2
+        * Merged with trunk 2.6.2-svn-2 (revisions 630646:630650)
         
         * Added ChangeLog-Stripes to keep track of Stripes-related changes separately.
+        Note to self: when merging from trunk, each "Merged with trunk" entry
+        assumes merging from this branch:
+        
+        https://svn.apache.org/repos/asf/incubator/jspwiki/trunk
+        
+        ...and each entry will specify the revisions it merges from and to (from:to).
