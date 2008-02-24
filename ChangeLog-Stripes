@@ -1,0 +1,5 @@
+2007-2-24  Andrew Jaquith
+
+        * Merged with trunk 2.6.2-svn-2
+        
+        * Added ChangeLog-Stripes to keep track of Stripes-related changes separately.

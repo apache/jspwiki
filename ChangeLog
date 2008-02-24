@@ -1,3 +1,15 @@
+2007-2-24  Andrew Jaquith <andrew AT apache DOT org>
+
+        * 2.6.2-svn-2
+
+        * [JSPWIKI-195]: Superfluous WEB-INF/i18n directory created during war build.
+        Also, several unneeded JARs were also being included.
+
+        * Eliminated the need to hard-code <fmr:setBundle> tags in JSPs by setting
+        the web.xml <comtext-param> javax.servlet.jsp.jstl.fmt.localizationContext
+        so that it points to templates.default. Removed the setBundle tags from
+        all JSPs.
+
 2008-02-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2-svn-1

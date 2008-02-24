@@ -2,8 +2,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %><%--CHECK why is this needed --%>
-<fmt:setBundle basename="templates.default"/>
-
 <%
 	WikiContext c = WikiContext.findContext( pageContext );
    	WikiPage p = c.getPage();
