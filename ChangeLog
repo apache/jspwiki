@@ -1,4 +1,14 @@
-2007-2-24  Andrew Jaquith <andrew AT apache DOT org>
+2007-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-svn-3
+        
+        * Reverted the JSP changes from my last commit so that existing 2.6 deployments
+        don't need to reconfigure web.xml. That commit removed the fmt:setBundle tag
+        because of the addition of a servlet config parameter in web.xml. The web.xml
+        modifications remain, however, so that any new JSPs won't need to use setBundle.
+        For 2.8, we will remove the setBundle tags entirely.
+
+2007-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-2
 
@@ -55,7 +65,7 @@
         but unfortunately it was outputting the same illegal chars to the as an
         error...
 
-2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.1-rc-2
 
@@ -274,7 +284,7 @@
         to resolve image flicker at mouse-hover. (especially on ie)
 
 
-2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.1-cvs-2
 
@@ -308,7 +318,7 @@
 
         * Improved javadocs, removing a number of Checkstyle errors.
 
-2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.0 RC5
 
@@ -344,7 +354,7 @@
 
         * Added some missing linebreaks in translation
 
-2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.1 RC3
 
@@ -380,7 +390,7 @@
 
         * Added missing german translations
 
-2007-12-10  Andrew Jaquith <andrew AT apache DOT org>
+2007-12-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.1 RC1
 
@@ -466,7 +476,7 @@
 
         * [JSPWIKI-84]: Added note to the jspwiki.properties.
 
-2007-11-??  Andrew Jaquith <andrew AT apache DOT org>
+2007-11-??  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.5.162
 
