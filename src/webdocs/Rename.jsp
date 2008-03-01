@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
+<fmt:setBundle basename="CoreResources"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
