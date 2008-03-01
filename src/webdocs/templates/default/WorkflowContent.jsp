@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setBundle basename="templates.default"/>
 <script language="JavaScript">
   function SubmitOutcomeIfSelected(selectId) 
   {
