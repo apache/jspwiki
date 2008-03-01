@@ -1,3 +1,14 @@
+2007-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * Minor stylesheet updates (no version bump)
+        
+        * Leading digits for ordered lists were cut off because padding value was too small.
+        (detected by Florian Holeczek)
+ 
+        * Long headings which break into two or more lines had insufficient line-height, so
+        they were "squeezed into one another"  (detected by Florian Holeczek)
+               
+
 2007-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-3
