@@ -98,7 +98,7 @@ public class ProgressManager
      *  Get the progress in percents.
      *
      *  @param id The progress identifier.
-     *  @return A value between 0 to 100 indicating the progress.
+     *  @return a value between 0 to 100 indicating the progress
      *  @throws IllegalArgumentException If no such progress item exists.
      */
     public int getProgress( String id )
@@ -123,8 +123,8 @@ public class ProgressManager
     {
         /**
          *  Returns upload progress in percents so far.
-         *  @param uploadId
-         *  @return
+         *  @param progressId
+         *  @return a value between 0 to 100 indicating the progress
          */
         public int getProgress( String progressId )
         {

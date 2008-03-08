@@ -93,7 +93,7 @@ public final class InputValidator
      * {@link #validate(String, String, int)}.
      * @param input the string to validate
      * @param label the label for the string or field ("E-mail address")
-     * @param type the pattern type to use (<em>e.g.</em>, {@link #STANDARD, #EMAIL}.
+     * @param type the pattern type to use (<em>e.g.</em>, {@link #STANDARD}, {@link #EMAIL}.
      * @return returns <code>true</code> if valid, <code>false</code>
      * otherwise
      */

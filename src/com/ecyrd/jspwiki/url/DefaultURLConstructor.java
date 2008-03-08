@@ -298,8 +298,9 @@ public class DefaultURLConstructor
     /**
      *  This method is not needed for the DefaultURLConstructor.
      *  
-     *  @return {@inheritDoc}
-     *  @param {@inheritDoc}
+     * @param request The HTTP Request that was used to end up in this page.
+     * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
+     *         JSPWiki will figure out the page.
      */
     public String getForwardPage( HttpServletRequest request )
     {

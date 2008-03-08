@@ -74,7 +74,7 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     *  {@inheritDoc}
+     *  Loads properties from a file opened by a supplied Reader.
      */
     public synchronized void load( Reader in ) throws IOException
     {

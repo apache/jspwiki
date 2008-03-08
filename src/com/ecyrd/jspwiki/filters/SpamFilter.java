@@ -948,7 +948,7 @@ public class SpamFilter
      *  Checks whether the UserProfile matches certain checks.
      *
      *  @param profile
-     *  @return
+     *  @return the result of the check
      *  @since 2.6.1
      */
     public boolean isValidUserProfile( WikiContext context, UserProfile profile )

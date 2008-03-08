@@ -45,7 +45,7 @@ public class CoreBean
     /**
      *  Return the page count in the Wiki.
      *
-     *  @return
+     *  @return the page content
      */
     public int getPages()
     {

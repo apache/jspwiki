@@ -34,7 +34,7 @@ public interface GenericHTTPHandler
      *  Get an identifier for this particular AdminBean.  This id MUST
      *  conform to URI rules.  The ID must also be unique across all HTTPHandlers.
      *  
-     *  @return
+     *  @return the identifier for the bean
      */
     public String getId();
     
@@ -42,14 +42,14 @@ public interface GenericHTTPHandler
      *  Return basic HTML.
      *  
      *  @param context
-     *  @return
+     *  @return the HTML for the bean
      */
     public String doGet( WikiContext context );
     
     /**
      *  Handles a POST response.
      *  @param context
-     *  @return
+     *  @return the response string resulting from the POST
      */
     public String doPost( WikiContext context );
 }

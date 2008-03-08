@@ -115,7 +115,7 @@ public class Preferences
      *  
      *  @param wikiContext
      *  @param name
-     *  @return
+     *  @return the preference value
      */
     public static String getPreference( WikiContext wikiContext, String name )
     {
@@ -132,7 +132,7 @@ public class Preferences
      *  
      *  @param pageContext
      *  @param name
-     *  @return
+     *  @return the preference value
      */
     public static String getPreference( PageContext pageContext, String name )
     {

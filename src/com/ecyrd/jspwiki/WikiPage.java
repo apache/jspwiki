@@ -107,7 +107,7 @@ public class WikiPage
     /**
      *  Sets an metadata attribute.
      *  
-     *  @see #getAttribute()
+     *  @see #getAttribute(String)
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */

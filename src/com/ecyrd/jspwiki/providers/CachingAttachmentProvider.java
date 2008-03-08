@@ -356,7 +356,7 @@ public class CachingAttachmentProvider
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the WikiAttachmentProvider that this caching provider delegates to.
      */
     public WikiAttachmentProvider getRealProvider()
     {

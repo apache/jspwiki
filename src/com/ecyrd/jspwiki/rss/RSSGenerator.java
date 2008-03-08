@@ -389,7 +389,7 @@ public class RSSGenerator
      * @param wikiContext
      * @param changed
      * @param feed
-     * @return
+     * @return the RSS representation of the wiki context
      */
     protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
     {

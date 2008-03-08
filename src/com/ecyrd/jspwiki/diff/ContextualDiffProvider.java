@@ -124,8 +124,7 @@ public class ContextualDiffProvider implements DiffProvider
     /**
      * Do a colored diff of the two regions. This. is. serious. fun. ;-)
      *
-     * @see com.ecyrd.jspwiki.diff.DiffProvider#makeDiffHtml(java.lang.String,
-     *      java.lang.String)
+     * @see com.ecyrd.jspwiki.diff.DiffProvider#makeDiffHtml(WikiContext, String, String)
      */
     public synchronized String makeDiffHtml( WikiContext ctx, String wikiOld, String wikiNew )
     {

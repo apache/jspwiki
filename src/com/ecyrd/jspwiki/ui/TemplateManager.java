@@ -411,7 +411,7 @@ public class TemplateManager
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML or Javascript comment format.
      *
-     *  @param wiki context
+     *  @param context the wiki context
      *  @param type the marker
      *  @return the generated marker comment
      */
