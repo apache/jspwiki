@@ -40,7 +40,7 @@ public class OutcomeTest extends TestCase
         props.load(TestEngine.findTestProperties());
         WikiEngine engine = new TestEngine(props);
         InternationalizationManager i18n = engine.getInternationalizationManager();
-        String core = InternationalizationManager.CORE_BUNDLE;
+        String core = "templates.default";
         Locale english = Locale.ENGLISH;
         Outcome o;
 
