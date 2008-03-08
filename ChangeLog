@@ -1,3 +1,9 @@
+2007-03-08  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-svn-5
+        
+        * Tweaks to Javadoc so that they build cleanly. No functionality changes.
+
 2008-03-08  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2-svn-4
