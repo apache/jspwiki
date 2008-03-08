@@ -1,3 +1,15 @@
+2008-03-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-svn-4
+        
+        * [JSPWIKI-154].  Removed double entries from CoreResources and made
+        sure everyone uses it.
+        
+        * [JSPWIKI-201].  Added simplified Chinese from David Gao.  Thanks!
+        
+        * [JSPWIKI-161].  Added TranslationCheck from Florian Holeczek.  Removed
+        the MissingTranslations tool, as TranslationCheck does all it did.
+
 2007-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * Minor stylesheet updates (no version bump)
