@@ -120,6 +120,12 @@ public class PageRenamer
             throw new WikiException( "Page exists" );
         }
 
+        if( !m_wikiEngine.pageExists( oldName ) )
+        {
+            log.debug("Attempt to rename a page which does not exist anymore : "+newName );
+            throw new WikiException( "Page does not exist anymore" );
+        }
+        
         // Tell the providers to actually move the data around...
         movePageData( oldName, newName );
         moveAttachmentData( oldName, newName );
