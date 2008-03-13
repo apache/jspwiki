@@ -479,6 +479,15 @@ public class AttachmentManager
             return;
         }
 
+        //
+        //  Checks if the actual, real page exists without any modifications
+        //  or aliases.  We cannot store an attachment to a non-existant page.
+        //
+        if( !m_engine.getPageManager().pageExists( att.getParentName() ) )
+        {
+            throw new ProviderException("Parent page does not exist");
+        }
+        
         m_provider.putAttachmentData( att, in );
 
         m_engine.getReferenceManager().updateReferences( att.getName(),
