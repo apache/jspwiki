@@ -710,25 +710,33 @@ jspwiki.groupdatabase.modifier=modifier
 #  (recommended, and the default), or a stand-alone factory whose properties
 #  are configured with mail.* properties in this file (below).
 #
-#  A. JNDI Resource Factory Configuration. JSPWiki will try this first.
+
+#  A. Configure the address from which the email appears to come.
+#     If you're going to use a mail session obtained via JNDI, this setting
+#     will only be used if it hasn't already been configured in the obtained
+#     session itself. If you comment it out, JSPWiki will use its internal
+#     default value.
+#     If you're going to use a stand-alone mail session, you will surely want
+#     to configure it, otherwise the internal default value will be used.
+#
+mail.from = @mail.from@
+
+#  B. JNDI Resource Factory Configuration. JSPWiki will try this first.
 #     You will need to configure your container to provide a JavaMail
 #     resource factory. See your container documentation, or check our
 #     fairly complete documentation (with examples for Tomcat) in
 #     the JavaDocs for com.ecyrd.jspwiki.util.MailUtil.
 #
-#  JNDI resource name. The commented-out value is the default
+#  JNDI resource name. The commented-out value is the default.
 #jspwiki.mail.jndiname = mail/Session
 
-#  B. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
+#  C. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
 #
 #  Your SMTP host (i.e. the one which sends email)
 mail.smtp.host = @mail.smtp.host@
 
 # If for some reason the standard smtp port (25) is blocked, you can change it here
 #mail.smtp.port = @mail.smtp.port@
-
-#  The address from which the email appears to come
-mail.from = @mail.from@
 
 # If you are using a webserver that is publically accessible it usually
 # doesn't allow you to send mail anonymously
