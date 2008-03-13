@@ -1,11 +1,19 @@
 
 package com.ecyrd.jspwiki.attachment;
 
-import junit.framework.*;
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Properties;
 
-import com.ecyrd.jspwiki.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class AttachmentManagerTest extends TestCase
 {
@@ -318,6 +326,29 @@ public class AttachmentManagerTest extends TestCase
                     m_engine.pageExists( att.getName() ) );
     }
 
+    public void testNonexistantPage() throws Exception
+    {
+        try
+        {
+            m_engine.saveText( "TestPage", "xx" );
+        
+            Attachment att = new Attachment( m_engine, "TestPages", "foo.bin" );
+        
+            att.setAuthor("MonicaBellucci");
+            m_manager.storeAttachment( att, makeAttachmentFile() );
+        
+            fail("Attachment was stored even when the page does not exist");
+        }
+        catch( ProviderException ex )
+        {
+            // This is the intended exception
+        }
+        finally
+        {
+            m_engine.deletePage("TestPage");
+        }
+    }
+    
     public static Test suite()
     {
         return new TestSuite( AttachmentManagerTest.class );
