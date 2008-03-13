@@ -1,3 +1,19 @@
+2008-03-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.2-svn-6
+        
+        * [JSPWIKI-162].  Attachments can no longer created if the parent
+        page does not exist.
+        
+        * Fixes issue with renaming a non-existant page would destroy the Main
+        page.
+        
+        * [JSPWIKI-188].  Added patch from Florian Holeczek to improve
+        logging of MailUtil.
+        
+        * [JSPWIKI-189].  Added a patch from Florian to improve configurability
+        of MailUtil.
+
 2007-03-08  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-5
