@@ -6,6 +6,14 @@ import com.ecyrd.jspwiki.Release;
 /**
  * Simple utility that shows you a sorted list of property differences between
  * the 'default en' and a given i18n file. It also warns if there are any duplicates.
+ * <p>
+ * The first argument is the language, and it is mandatory.
+ * The second argument is the path.  If the path is not defined, uses current path (.)
+ * <p>
+ * For example (if you're compiling your classes to "classes"):
+ * <code>
+ * java -cp classes TranslationsCheck fi
+ * </code>
  * 
  * @author Christoph Sauer
  * @author Florian Holeczek
@@ -16,11 +24,24 @@ public class TranslationsCheck
     private static final TreeSet duplProps = new TreeSet();
     
     // Change these to your settings...
-    static String base = "C:/eclipse_workspace/JSPWiki 2.6.x";
-    static String suffix = "de";
-    
+    static String base = ".";
+    static String suffix = null;
+   
     public static void main(String[] args) throws IOException
     {
+        if( args.length == 0 )
+        {
+            System.out.println("Usage: java TranslationsCheck <language> [<path>]");
+            return;
+        }
+        
+        suffix = args[0];
+
+        if( args.length >= 2 )
+        {
+            base = args[1];
+        }
+        
         System.out.println("Using code base " + Release.VERSTR);
         System.out.println("Internationalization property file differences between 'default en' and '"
                            + suffix + "' following:\n");
