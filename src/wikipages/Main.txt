@@ -12,27 +12,21 @@ You have some pages set up for you:
 
 !Installation issues
 
-* If you run Microsoft Windows, then probably you want to take a look
-  at [WindowsInstall] for more tips.
+* If you run Microsoft Windows, or you are having trouble with UTF-8 then you probably want to take a look
+  at [InstallationTips] for further information.
 
-!Full documentation
+!Documentation
 
 * For all of the Wiki markup features, see [TextFormattingRules].
-* The [WikiRPCInterface] might interest you if you're into scripting.
-* [WikiAttachments] - very useful things.
-* [WikiVariables] - putting things on top of other things.
-* [JSPWikiPlugins] - The documentation on plugins.
-* [JSPWikiFAQ] - A list of some frequently asked questions.
-* [JSPWikiTags] - A list of tags for those who want to make their own [WikiTemplates].
-* [MultipleWikis] - If you want to run multiple Wikis using the least amount of effort.
-* [Page aliases] and redirecting.
-* [PageFilters] - for more complex processing.
-* [WikiForms] - for putting interactivity in your pages
-* [URLConstructors] - for constructing your URLs.
+* Entry point for full [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
+** [JSPWiki 2.6 New Features|http://www.jspwiki.org/wiki/NewIn2.6].
+** [JSPWiki 2.4.x|http://doc.jspwiki.org/2.4]. ([Security|http://doc.jspwiki.org/2.4/wiki/Security])
+** [Security2.3Howto|http://www.jspwiki.org/wiki/Security2.3Howto]
+** [JSPWiki 2.2.x|http://doc.jspwiki.org/2.2].
 
 !Miscellaneous
 
-* [JSPWikiTips] may help you a bit.
+* There are several ways you can get in touch with JSPWiki [Community]. Check them out!
 * To see what this particular wiki is about, click on the Wiki name
   on the top left corner of the browser window, or [click here|SystemInfo].
 

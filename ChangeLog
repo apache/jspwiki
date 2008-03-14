@@ -1,3 +1,12 @@
+2008-03-14  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * 2.6.2-svn-7
+        
+        * [JSPWIKI-93] and [JSPWIKI-160]. Cleaned up corepages.   
+        
+        * i18n of Captcha.jsp & Install.jsp, added 50 new items to 
+        CoreResources.properties. 
+        
 2008-03-13  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2-svn-6

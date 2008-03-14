@@ -16,7 +16,7 @@ forbidden and required keywords, it is not shown.
 
 !! Query syntax table
 
-For more info look at [Lucene's query syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html].
+For more info look at %%slimbox [Lucene's query syntax|http://lucene.apache.org/java/docs/queryparsersyntax.html]/%.
 
 || term  | find a single Term is easy   | {{hello}}
 || "..." | find a group of words | {{"hello dolly"}}
@@ -37,4 +37,3 @@ You can restrict the search domain by prefixing your query:
 || attachment:''term'' | find pages with certain attachment name  | {{attachment:brushed*}}
 || name:''term''       | find pages with certain page name        | {{name:Main}}
 || content:''term''     | find pages with certain content          | {{content:jspwiki}}
-

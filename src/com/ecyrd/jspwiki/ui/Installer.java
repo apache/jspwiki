@@ -19,28 +19,22 @@
  */
 package com.ecyrd.jspwiki.ui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.text.MessageFormat;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.auth.AuthenticationManager;
-import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
-import com.ecyrd.jspwiki.auth.UserManager;
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
 import com.ecyrd.jspwiki.util.CommentedProperties;
@@ -192,6 +186,8 @@ public class Installer
     
     public void parseProperties () throws Exception
     {
+        ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
+                                                      m_session.getLocale() );
         m_validated = false;
         
         // Set request encoding
@@ -216,13 +212,13 @@ public class Installer
         }
         catch( IOException e )
         {
-            m_session.addMessage( INSTALL_ERROR, 
-                "Unable to read properties: " +
-                e.getMessage() );
+            Object[] args = { e.getMessage() };
+            m_session.addMessage( INSTALL_ERROR, MessageFormat.format( 
+                                        rb.getString( "install.installer.unable.read.props" ), args ) );
         }
         
         // Get application name
-        String nullValue = m_props.getProperty( APP_NAME, "MyWiki" );
+        String nullValue = m_props.getProperty( APP_NAME, rb.getString( "install.installer.default.appname" ) );
         parseProperty( APP_NAME, nullValue );
         
         // Get/sanitize base URL
@@ -233,7 +229,7 @@ public class Installer
         sanitizeURL( BASE_URL );
         
         // Get/sanitize page directory
-        nullValue = m_props.getProperty( PAGE_DIR, "Please configure me!" );
+        nullValue = m_props.getProperty( PAGE_DIR, rb.getString( "install.installer.default.pagedir" ) );
         parseProperty( PAGE_DIR, nullValue );
         sanitizePath( PAGE_DIR );
         
@@ -259,6 +255,8 @@ public class Installer
     
     public void saveProperties()
     {
+        ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
+                                                      m_session.getLocale() );
         // Write the file back to disk
         try
         {
@@ -275,28 +273,28 @@ public class Installer
                     out.close();
                 }
             }
-            m_session.addMessage( INSTALL_INFO, 
-                "Your new properties have been saved.  Please restart your container (unless this was your first install).  Scroll down a bit to see your new jspwiki.properties." );
+            m_session.addMessage( INSTALL_INFO,
+                rb.getString( "install.installer.props.saved" ) );
         }
         catch( IOException e )
         {
+            Object[] args = { e.getMessage(), m_props.toString() };
             m_session.addMessage( INSTALL_ERROR, 
-                "Unable to write properties: " +
-                e.getMessage() +
-                ". Please copy the file below as your jspwiki.properties:\n" +
-                m_props.toString() );
+                                  MessageFormat.format( rb.getString( "install.installer.props.notsaved" ), args ) );
         }
     }
     
     public boolean validateProperties() throws Exception
     {
+        ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
+                                                      m_session.getLocale() );
         m_session.clearMessages( INSTALL_ERROR );
         parseProperties();
-        validateNotNull( BASE_URL, "You must define the base URL for this wiki." );
-        validateNotNull( PAGE_DIR, "You must define the location where the files are stored." );
-        validateNotNull( APP_NAME, "You must define the application name." );
-        validateNotNull( WORK_DIR, "You must define a work directory." );
-        validateNotNull( LOG_DIR, "You must define a log directory." );
+        validateNotNull( BASE_URL, rb.getString( "install.installer.validate.baseurl" ) );
+        validateNotNull( PAGE_DIR, rb.getString( "install.installer.validate.pagedir" ) );
+        validateNotNull( APP_NAME, rb.getString( "install.installer.validate.appname" ) );
+        validateNotNull( WORK_DIR, rb.getString( "install.installer.validate.workdir" ) );
+        validateNotNull( LOG_DIR, rb.getString( "install.installer.validate.logdir" ) );
         
         if ( m_session.getMessages( INSTALL_ERROR ).length == 0 )
         {

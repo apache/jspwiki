@@ -1,0 +1,38 @@
+[{TableOfContents}]
+
+!! Mailing Lists
+There's a JSPWiki mailing list for discussion that is occurring off this wiki.  It is very good for discussing things like patches, problems, development, etc.
+
+There are currently two email lists, ''jspwiki-users'' and ''jspwiki-dev''.
+
+!JSPWiki-user
+
+The jspwiki-user mailing list is hosted at Apache Incubator.  You can join it by sending an email to [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org]. The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+
+The [old list archives|http://www.ecyrd.com/pipermail/jspwiki-users/] are also available. There's also a [secondary archive|http://www.nabble.com/JspWiki---User-f2680.html] on Nabble.
+
+!JSPWiki-dev
+
+This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
+
+The old JSPWiki-dev archives are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
+
+!! Other resources
+
+! IrcChannel - chat live with the developers!
+
+There is a JSPWiki [IRC|http://www.mirc.com/irc.html] channel on [Freenode|http://www.freenode.net], called #jspwiki. Drop by if you have any questions, or just want to chat.
+
+Note that the channel is pretty quiet at certain times of the day, so don't be discouraged if you don't get an answer.  Just hang around for a while...
+
+Regulars on the channel:
+* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Lives on GMT+2.
+
+! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
+
+Just for fun, I create a JSPWiki Users group at Facebook.  If you're a regular Facebook user, drop by!
+
+(And no, we're not planning to replace any existing site with it.  But since everyone and their cousin seems to be on Facebook, I figured that it's probably not a bad idea to add an extra channel)
+-- Janne 17/09/07
+
+* [JSPWiki dev blog|http://blog.jspwiki.org/]
