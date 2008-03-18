@@ -1,3 +1,11 @@
+2008-03-18  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * 2.6.2-rc-3
+        
+        * [JSPWIKI-214].  Table with id asirra_KnobsTable had two unlocalized 
+        strings, added to CoreResources.properties. Detected by Florian Holeczek. 
+        
+        
 2008-03-16  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2-rc-2

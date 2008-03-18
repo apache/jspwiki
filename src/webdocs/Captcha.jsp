@@ -74,7 +74,10 @@
 	   for ( var i = 0; i < 12; i++) 
        {
           document.getElementById("asirra_AdoptMeDiv" + i).getElementsByTagName("a")[0].innerHTML= '<font size="-1">' + '<fmt:message key="captcha.asirra.adopt.me" />' + '</font>' ;
-       } 
+       }
+       document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[0].title="<fmt:message key="captcha.asirra.a.get.challenge" />";
+       document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[1].title="<fmt:message key="captcha.asirra.a.whatsthis" />";
+       document.getElementById("mainForm").style.display="block"; // show form when i18n is done 
     }
    </script>
 </head>
@@ -82,7 +85,7 @@
 <div style="margin:8px">
    <p><fmt:message key="captcha.description" /></p>
 
-   <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm">
+   <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
       <input type="hidden" value="foo" name="text" />
       <input type="hidden" value='<%=request.getParameter("page")%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>
