@@ -5,7 +5,7 @@
         * [JSPWIKI-214].  Table with id asirra_KnobsTable had two unlocalized 
         strings, added to CoreResources.properties. Detected by Florian Holeczek. 
         
-        * [JSPWIKI-215].  Added patches to en, nl and fi translations to fix
+        * [JSPWIKI-215].  Added patches to en, nl, fi and es translations to fix
         a case where HTML markup was being shown.   Detected by Florian Holeczek.
         
         * [JSPWIKI-210].  Updated German localization (still thanks to Florian!)
