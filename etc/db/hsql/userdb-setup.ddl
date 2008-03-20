@@ -57,12 +57,42 @@ insert into @jspwiki.userdatabase.table@ (
   'JanneJalkanen'
 );
   
+insert into @jspwiki.userdatabase.table@ (
+  @jspwiki.userdatabase.email@,
+  @jspwiki.userdatabase.fullName@,
+  @jspwiki.userdatabase.loginName@,
+  @jspwiki.userdatabase.password@,
+  @jspwiki.userdatabase.wikiName@
+) values (
+  'admin@locahost',
+  'Administrator',
+  'admin',
+  '457b08e825da547c3b77fbc1ff906a1d00a7daee',
+  'Administrator'
+);
+
 insert into @jspwiki.userdatabase.roleTable@ (
   @jspwiki.userdatabase.loginName@,
   @jspwiki.userdatabase.role@
 ) values (  
   'janne',
   'Authenticated'
+);
+
+insert into @jspwiki.userdatabase.roleTable@ (
+  @jspwiki.userdatabase.loginName@,
+  @jspwiki.userdatabase.role@
+) values (  
+  'admin',
+  'Authenticated'
+);
+
+insert into @jspwiki.userdatabase.roleTable@ (
+  @jspwiki.userdatabase.loginName@,
+  @jspwiki.userdatabase.role@
+) values (  
+  'admin',
+  'Admin'
 );
 
 insert into @jspwiki.groupdatabase.table@ (
