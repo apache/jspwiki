@@ -196,9 +196,11 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
              value="${basedir}/${tests.build}/@{context}/jspwiki.log" />
       </propertyfile>
       
-      <!-- Copy our sample user database -->
+      <!-- Copy our sample user and group databases -->
       <copy file="tests/etc/userdatabase.xml"
           toFile="${tests.build}/@{context}/userdatabase.xml" />
+      <copy file="tests/etc/groupdatabase.xml"
+          toFile="${tests.build}/@{context}/groupdatabase.xml" />
       
       <!-- Build the war -->
       <war warfile="${tests.build}/@{context}/@{context}.war"
@@ -213,10 +215,9 @@ or $CATALINA_HOME/lib (6.0), then restart Tomcat.
            <include name="jspwiki.jaas" />
            <include name="jspwiki.policy" />
            <include name="*.tld" />
-           <include name="groupdatabase.xml" />
          </webinf>
          <webinf dir="${tests.build}/@{context}" 
-           includes="jspwiki.properties userdatabase.xml" />
+           includes="jspwiki.properties userdatabase.xml groupdatabase.xml" />
          <classes dir="etc" includes="oscache.properties" />
          <metainf dir="${tests.build}/@{context}" includes="context.xml" />
       </war>
