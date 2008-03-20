@@ -32,19 +32,20 @@ C. Try to edit page 'TestRenameProfilePage'. It should still succeed. Verify tha
 This page was created with an ACL by TestRenameProfileUser
 -->
 	</td></tr>
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Test Rename Profile Page '+new Date().getTime()}</td>	<td>page</td></tr>
 	<tr><td>store</td>	<td>javascript{'TestRenameProfileUser'+new Date().getTime()}</td>	<td>user</td></tr>
 	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
-    <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
+	<tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
 
-	<tr><td>store</td>	<td>../Wiki.jsp?page=${page}</td>	<td>viewurl</td></tr>
-	<tr><td>store</td>	<td>../Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
-	<tr><td>store</td>	<td>../Group.jsp?</td>		<td>viewgroupurl</td></tr>
-	<tr><td>store</td>	<td>../NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
-	<tr><td>store</td>	<td>../UserPreferences.jsp?redirect=Main&tab=profile</td>	<td>prefsurl</td></tr>
-	<tr><td>store</td>	<td>../Login.jsp</td>			<td>loginurl</td></tr>
-	<tr><td>store</td>	<td>../Logout.jsp</td>			<td>logouturl</td></tr>
-    <tr><td>store</td>	<td>This page was created with an ACL by ${user}</td>	<td>PageContent</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=${page}</td>	<td>viewurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/UserPreferences.jsp?redirect=Main&tab=profile</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>			<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Logout.jsp</td>			<td>logouturl</td></tr>
+	<tr><td>store</td>	<td>This page was created with an ACL by ${user}</td>	<td>PageContent</td></tr>
 
 	<tr><td rowspan="1" colspan="3"> Create a new user and group (and log in)<br/></td></tr>
     <tr><td>open</td>	<td>${loginurl}?tab=profile</td>	<td>&nbsp;</td></tr>

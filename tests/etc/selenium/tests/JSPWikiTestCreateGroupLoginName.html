@@ -9,13 +9,14 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Create Group Login Name<br></td></tr>
 
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Test-group-'+new Date().getTime()}</td>	<td>group</td></tr>
 	<tr><td>store</td>	<td>janne</td>									<td>members</td></tr>
-	<tr><td>store</td>	<td>../Wiki.jsp</td>			<td>url</td></tr>
-	<tr><td>store</td>	<td>../Login.jsp</td>		<td>loginurl</td></tr>
-	<tr><td>store</td>	<td>../Group.jsp?</td>		<td>viewgroupurl</td></tr>
-	<tr><td>store</td>	<td>../NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
-	<tr><td>store</td>	<td>../EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp</td>			<td>url</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>		<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
 

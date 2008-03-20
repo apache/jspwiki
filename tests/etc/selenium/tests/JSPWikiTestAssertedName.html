@@ -9,8 +9,9 @@
 	<tbody>
 	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Name<br></td></tr>
 
-	<tr><td>store</td>	<td>../Wiki.jsp?page=Main</td>	<td>url</td></tr>
-	<tr><td>store</td>	<td>../UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=Main</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
 	<tr><td>store</td>	<td>DonQuixote</td>						<td>TestUsername</td></tr>
 
 	<!-- Navigate to Prefs page; see the 'G'day message' for the anonymous user -->
@@ -33,6 +34,7 @@
     <!-- Now navigate back to the main page; see the 'G'day message' for the test user -->
     <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>		<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>DonQuixote</td>		<td>&nbsp;</td></tr>
     <tr><td>verifyElementPresent</td>	<td>link=${TestUsername}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>(not logged in)</td>	<td>&nbsp;</td></tr>
 
