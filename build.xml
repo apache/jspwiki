@@ -676,7 +676,7 @@
     <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
       target="webtests-init" inheritRefs="true" />
 
-    <!-- Build the custom auth WAR -->
+    <!-- Build and test the custom auth WAR -->
     <copy file="etc/jspwiki.properties"
         toFile="${tests.build}/jspwiki.properties.custom" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom">
@@ -687,8 +687,10 @@
     <webtest-setup context="test-custom"
       webxml="${tests.build}/web.xml.custom"
       props="${tests.build}/jspwiki.properties.custom" />
+    <webtest-selenium context="test-custom" />
+    <webtest-teardown context="test-custom" />
 
-    <!-- Build the custom auth WAR (absolute URLs) -->
+    <!-- Build and test the custom auth WAR (absolute URLs) -->
     <copy file="${tests.build}/jspwiki.properties.custom"
         toFile="${tests.build}/jspwiki.properties.custom-absolute" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.custom-absolute">
@@ -698,11 +700,15 @@
     <webtest-setup context="test-custom-absolute"
       webxml="${tests.build}/web.xml.custom"
       props="${tests.build}/jspwiki.properties.custom-absolute" />
+    <webtest-selenium context="test-custom-absolute" />
+    <webtest-teardown context="test-custom-absolute" />
 
-    <!-- Build the container auth WAR -->
+    <!-- Build and test the container auth WAR -->
     <webtest-setup context="test-container"
       webxml="${tests.build}/web.xml.container"
       props="${tests.build}/jspwiki.properties.custom" />
+    <webtest-selenium context="test-container" />
+    <webtest-teardown context="test-container" />
 
     <!-- Build the custom auth WAR (JDBC database) -->
     <copy file="etc/jspwiki.properties"
@@ -715,8 +721,10 @@
     <webtest-setup context="test-custom-jdbc"
       webxml="${tests.build}/web.xml.custom"
       props="${tests.build}/jspwiki.properties.custom-jdbc" />
+    <webtest-selenium context="test-container-jdbc" />
+    <webtest-teardown context="test-container-jdbc" />
 
-    <!-- Build the container auth WAR (shared JDBC database) and test it -->
+    <!-- Build and test the container auth WAR (shared JDBC database) and test it -->
     <copy file="etc/jspwiki.properties"
         toFile="${tests.build}/jspwiki.properties.container-jdbc" flatten="true" />
     <propertyfile file="${tests.build}/jspwiki.properties.container-jdbc">
@@ -728,20 +736,8 @@
     <webtest-setup context="test-container-jdbc"
       webxml="${tests.build}/web.xml.container"
       props="${tests.build}/jspwiki.properties.container-jdbc" />
-  	
-  	<!-- Run the tests -->
-  	<webtest-selenium context="test-custom" />
-  	<webtest-selenium context="test-custom-absolute" />
-  	<webtest-selenium context="test-custom-jdbc" />
-  	<webtest-selenium context="test-container" />
-  	<webtest-selenium context="test-container-jdbc" />
-  	
-    <!-- Tear down the test contexts -->
-    <webtest-teardown context="test-custom" />
-    <webtest-teardown context="test-custom-absolute" />
+    <webtest-selenium context="test-custom-jdbc" />
     <webtest-teardown context="test-custom-jdbc" />
-    <webtest-teardown context="test-container" />
-    <webtest-teardown context="test-container-jdbc" />
 
     <echo>The web unit tests have finished. You can find the test reports in ${webtests.reports}.
     

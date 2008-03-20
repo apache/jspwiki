@@ -1,3 +1,12 @@
+2007-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.6.2-rc-4
+
+        * Fixed failing Selenium web unit tests so that they run correctly,
+        with two exceptions. See tests/etc/selenium/readme.txt; this file
+        includes a few notes on how to write Selenium tests so that they
+        will run automatically via the Ant "webtests" target.
+
 2008-03-18  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * 2.6.2-rc-3
