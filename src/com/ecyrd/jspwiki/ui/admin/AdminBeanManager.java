@@ -59,24 +59,9 @@ public class AdminBeanManager implements WikiEventListener
 
     public AdminBeanManager( WikiEngine engine )
     {
-        if( SystemUtils.isJavaVersionAtLeast(1.5f) )
-        {
-            log.info("Using JDK 1.5 Platform MBeanServer");
-            m_mbeanServer = MBeanServerFactory15.getServer();
-        }
-        else
-        {
-            log.info("Finding a JDK 1.4 -compatible MBeanServer.");
-            try
-            {
-                m_mbeanServer = MBeanServerFactory14.getServer();
-            }
-            catch( Exception e )
-            {
-                log.error("Unable to locate the JMX libraries from your classpath. "+
-                          "Please make sure that \"jmxri.jar\" can be found in your WEB-INF/lib directory.");
-            }
-        }
+        log.info("Using JDK 1.5 Platform MBeanServer");
+        m_mbeanServer = MBeanServerFactory15.getServer();
+
         m_engine = engine;
 
         if( m_mbeanServer != null )
@@ -260,37 +245,6 @@ public class AdminBeanManager implements WikiEventListener
         }
 
         return null;
-    }
-
-    /**
-     *  A JDK 1.4 version of something which gets us the MBeanServer.  It
-     *  binds to the first server it can find.
-     *
-     *  @author Janne Jalkanen
-     *
-     */
-    private static final class MBeanServerFactory14
-    {
-        private MBeanServerFactory14()
-        {}
-
-        public static MBeanServer getServer()
-        {
-            MBeanServer server;
-            ArrayList servers = MBeanServerFactory.findMBeanServer(null);
-
-            if( servers == null || servers.size() == 0 )
-            {
-                log.info("Creating a new MBeanServer...");
-                server = MBeanServerFactory.createMBeanServer(Release.APPNAME);
-            }
-            else
-            {
-                server = (MBeanServer)servers.get(0);
-            }
-
-            return server;
-        }
     }
 
     /**
