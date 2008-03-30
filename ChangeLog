@@ -1,3 +1,12 @@
+2008-03-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-1
+        
+        * Removed JDK 1.4 dependency in AdminBeanManager.
+        
+        * Switched copyright in Release.java to ASF.  Please use
+        this file as your reference when changing the boilerplate.
+
 2008-03-29  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2
