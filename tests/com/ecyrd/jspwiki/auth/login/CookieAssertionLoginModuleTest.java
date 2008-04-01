@@ -1,12 +1,33 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.auth.login;
 
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.Cookie;
 
 import junit.framework.TestCase;
@@ -16,7 +37,6 @@ import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.TestHttpServletRequest;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -43,21 +63,22 @@ public class CookieAssertionLoginModuleTest extends TestCase
         try
         {
             // We can use cookies right?
-            assertTrue( AuthenticationManager.allowsCookieAssertions() );
+            assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
 
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
-            request.setCookies( new Cookie[]
-            { cookie } );
+            request.setCookies( new Cookie[] { cookie } );
             subject = new Subject();
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
+            LoginModule module = new CookieAssertionLoginModule();
+            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
+            assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
-            assertTrue( principals.contains( Role.ASSERTED ) );
-            assertTrue( principals.contains( Role.ALL ) );
+            assertFalse( principals.contains( Role.ASSERTED ) );
+            assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
@@ -70,17 +91,21 @@ public class CookieAssertionLoginModuleTest extends TestCase
     {
         TestHttpServletRequest request = new TestHttpServletRequest();
         request.setRemoteAddr( "53.33.128.9" );
+        Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
+        request.setCookies( new Cookie[] { cookie } );
         try
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
+            LoginModule module = new CookieAssertionLoginModule();
+            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "53.33.128.9" ) ) );
-            assertTrue( principals.contains( Role.ANONYMOUS ) );
-            assertTrue( principals.contains( Role.ALL ) );
-            context.logout();
+            assertEquals( 1, principals.size() );
+            assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
+            assertFalse( principals.contains( Role.ANONYMOUS ) );
+            assertFalse( principals.contains( Role.ALL ) );
+            module.logout();
             assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
