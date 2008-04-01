@@ -194,15 +194,6 @@ public class WikiContext
      * request, and determine if a WikiSession object is present. If not, a new
      * one is created.
      * </p>
-     * <p>
-     * After the WikiSession object is obtained, the current authentication
-     * status is checked. If not authenticated, or if the login status reported
-     * by the container has changed, the constructor attempts to log in the user
-     * with
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}.
-     * If an login process throws an exception, this method logs the error but
-     * does not re-throw it.
-     * </p>
      * @param engine The WikiEngine that is handling the request
      * @param request The HttpServletRequest that should be associated with this
      *            context. This parameter may be <code>null</code>.
@@ -250,35 +241,12 @@ public class WikiContext
             m_command = command.targetedCommand( m_page );
         }
 
-        // Log in the user if new session or the container status changed
-        boolean doLogin = (request != null) && m_session.isNew();
-
         // Debugging...
         if( log.isDebugEnabled() )
         {
             HttpSession session = ( request == null ) ? null : request.getSession( false );
             String sid = ( session == null ) ? "(null)" : session.getId();
             log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
-            log.debug( "Do we need to log the user in? " + doLogin );
-        }
-
-        if( doLogin || m_session.isContainerStatusChanged( request ) )
-        {
-            try
-            {
-                engine.getAuthenticationManager().login( request );
-            }
-            catch ( WikiSecurityException e )
-            {
-                // Login failed because config was screwy
-                log.error( "Could not log in user: " + e.getMessage() );
-            }
-        }
-
-        // Mark the session as "not new"
-        if( m_session.isNew() )
-        {
-            m_session.setNew( false );
         }
 
         // Figure out what template to use
