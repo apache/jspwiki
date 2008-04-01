@@ -1,21 +1,22 @@
 /*
- JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
- Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth;
 
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -61,10 +61,6 @@ public final class SecurityVerifier
     private static final long     serialVersionUID             = -3859563355089169941L;
 
     private WikiEngine            m_engine;
-
-    private File                  m_jaasConfig                 = null;
-
-    private boolean               m_isJaasConfigured           = false;
 
     private boolean               m_isSecurityPolicyConfigured = false;
 
@@ -439,50 +435,6 @@ public final class SecurityVerifier
     }
 
     /**
-     * Returns <code>true</code> if JAAS is configured correctly.
-     * @return the result of the configuration check
-     */
-    public final boolean isJaasConfigured()
-    {
-        return m_isJaasConfigured;
-    }
-
-    /**
-     * Returns <code>true</code> if the JAAS login configuration was already
-     * set when JSPWiki started up. We determine this value by consulting a
-     * protected member field of {@link AuthenticationManager}, which was set
-     * at in initialization by {@link PolicyLoader}.
-     * @return <code>true</code> if {@link PolicyLoader} successfully set the
-     *         policy, or <code>false</code> for any other reason.
-     */
-    public final boolean isJaasConfiguredAtStartup()
-    {
-        return m_engine.getAuthenticationManager().m_isJaasConfiguredAtStartup;
-    }
-
-    /**
-     * Returns <code>true</code> if JSPWiki can locate a named JAAS login
-     * configuration.
-     * @param config the name of the application (e.g.,
-     *            <code>JSPWiki-container</code>).
-     * @return <code>true</code> if found; <code>false</code> otherwise
-     */
-    protected final boolean isJaasConfigurationAvailable( String config )
-    {
-        try
-        {
-            m_session.addMessage( INFO_JAAS, "We found the '" + config + "' login configuration." );
-            new LoginContext( config );
-            return true;
-        }
-        catch( Exception e )
-        {
-            m_session.addMessage( ERROR_JAAS, "We could not find the '" + config + "' login configuration.</p>" );
-            return false;
-        }
-    }
-
-    /**
      * Returns <code>true</code> if the Java security policy is configured
      * correctly, and it verifies as valid.
      * @return the result of the configuration check
@@ -657,17 +609,6 @@ public final class SecurityVerifier
                     "be reliable as a result. You should set this to 'jaas' " +
                     "so that security works properly." );
         }
-
-        // Validate the property is set correctly
-        m_jaasConfig = getFileFromProperty( "java.security.auth.login.config" );
-
-        // Look for the JSPWiki-container config
-        boolean foundJaasContainerConfig = isJaasConfigurationAvailable( "JSPWiki-container" );
-
-        // Look for the JSPWiki-custom config
-        boolean foundJaasCustomConfig = isJaasConfigurationAvailable( "JSPWiki-custom" );
-
-        m_isJaasConfigured = m_jaasConfig != null && foundJaasContainerConfig && foundJaasCustomConfig;
     }
 
     /**
@@ -935,17 +876,5 @@ public final class SecurityVerifier
         }
 
         m_session.addMessage( INFO_DB, "The user database configuration looks fine." );
-    }
-
-    /**
-     * Returns the location of the JAAS configuration file if and only if the
-     * <code>java.security.auth.login.config</code> is set <em>and</em> the
-     * file it points to exists in the file system; returns <code>null</code>
-     * in all other cases.
-     * @return the location of the JAAS configuration file
-     */
-    public final File jaasConfiguration()
-    {
-        return m_jaasConfig;
     }
 }
