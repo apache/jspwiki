@@ -21,7 +21,21 @@
    </context-param>
 
    <!--
-      This is new in 2.4.  This defines a servlet filter which filters all requests. 
+      WikiServletFilter defines a servlet filter which filters all requests. It was
+      introduced in JSPWiki 2.4.
+
+      In 2.7/2.8, the WikiServlet filter also performs an important security function:
+      it sets authentication status based on container credentials. It should generally
+      execute first. Note that if you configure a filter *before* this one that returns
+      non-null values for getUserPrincipal() or getRemoteUser(), WikiSecurityFilter
+      will pick the credentials up, and set the user's WikiSession state to
+      "authenticated." WikiServletFlter will also set the WikiSession's' state
+      to "authenticated" if jspwiki.properties property "jspwiki.cookieAuthentication"
+      is set to true, and the user possesses the correct authentication cookie.
+
+      Lastly, if jspwiki.properties property "jspwiki.cookieAssertions" is set to true,
+      WikiServletFilter will also set WikiSession state to "asserted" if the user
+      possesses the correct "assertion cookie."
    -->
 
    <filter>
