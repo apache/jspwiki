@@ -1,3 +1,28 @@
+2008-03-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-2
+
+        * Changed Ant build script to use 1.5 sources and targets.
+
+        * Re-factored the authentication subsystem to remove the need
+        for JAAS configuration files. WEB-INF/jspwiki.jaas goes away,
+        as does the need for PolicyLoader. Also, responsibilities for web
+        authentication move to WikiServletFilter. Authentication is now
+        configured via jspwiki.properties -- see that file for details.
+        WikiSession API change: getLoginContext() vanishes.
+
+        * The auth.login.*LoginModule classes are mildly re-factored to
+        remove any need to have knowledge of how to (or why) to inject
+        JSPWiki Role principals. Responsibility for injecting Roles moves
+        to WikiSession. JSPWiki can use ANY LoginModule for custom
+        authentication now.
+
+        * To support the auth refactoring, we introduce several *temporary*
+        new servlet mock objects for unit testing: TestFilterChain, TestFilterConfig,
+        TestHttpServletResponse, and TestServletContext. These are "temporary" 
+        because they will be replaced by Stripes mock objects later in the
+        2.7 release cycle.
+
 2008-03-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-1
@@ -11,7 +36,7 @@
 
         * 2.6.2
 
-2007-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-rc-4
 
@@ -67,7 +92,7 @@
         * [JSPWIKI-189].  Added a patch from Florian to improve configurability
         of MailUtil.
 
-2007-03-08  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-03-08  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-5
         
@@ -96,7 +121,7 @@
         they were "squeezed into one another"  (detected by Florian Holeczek)
                
 
-2007-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-3
         
@@ -106,7 +131,7 @@
         modifications remain, however, so that any new JSPs won't need to use setBundle.
         For 2.8, we will remove the setBundle tags entirely.
 
-2007-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-2-24  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.6.2-svn-2
 
