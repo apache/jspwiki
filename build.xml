@@ -226,8 +226,8 @@
            debug="${debug}"
            optimize="${optimize}"
            deprecation="${deprecation}"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
            >
       <classpath refid="path.base" />
       <classpath refid="path.tests" />
@@ -242,8 +242,8 @@
            destdir="${tests.build}"
            debug="true"
            deprecation="${deprecation}"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
            >
       <classpath refid="path.base" />
       <classpath refid="path.tests" />
@@ -264,7 +264,7 @@
       <packageset dir="${code.src}">
         <include name="com/ecyrd/**" />
       </packageset>
-      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
@@ -366,9 +366,9 @@
 
         We include the following things:
 
-        1) All .jar -files in the lib-directory (except servlet.jar, since
-           it's gonna be provided by the servlet container anyway.)
-           We also omit test-related jars like JUnit.
+        1) All .jar -files in the lib-directory (except servlet-api.jar
+           and jsp-api.jar, since these are provided by the servlet
+           container anyway.
         2) All .class-files from the build-directory
         3) Everything from the src/webdocs -directory
         4) Everything from the etc-directory go to the WEB-INF -directory
