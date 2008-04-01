@@ -1,3 +1,23 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.auth;
 import java.security.Principal;
 import java.util.Collection;
@@ -26,6 +46,7 @@ public class UserManagerTest extends TestCase
   private TestEngine m_engine;
   private UserManager m_mgr;
   private UserDatabase m_db;
+  private String m_groupName;
   
   /**
    * @see junit.framework.TestCase#setUp()
@@ -44,8 +65,18 @@ public class UserManagerTest extends TestCase
     m_engine  = new TestEngine( props );
     m_mgr = m_engine.getUserManager();
     m_db = m_mgr.getUserDatabase();
+    m_groupName = "Group" + System.currentTimeMillis();
   }
   
+  protected void tearDown() throws Exception
+  {
+    GroupManager groupManager = m_engine.getGroupManager();
+    if ( groupManager.findRole( m_groupName ) != null )
+    {
+        groupManager.removeGroup( m_groupName );
+    }
+  }
+
   /** Call this setup program to use the save-profile workflow. */
   protected void setUpWithWorkflow() throws Exception
   {
@@ -86,15 +117,15 @@ public class UserManagerTest extends TestCase
       profile.setPassword ( "password" );
       m_mgr.setUserProfile( session, profile );
       
-      // 1a. Make sure the profile saved successfully
+      // 1a. Make sure the profile saved successfully and that we're logged in
       profile = m_mgr.getUserProfile( session );
       assertEquals( oldLogin, profile.getLoginName() );
       assertEquals( oldName, profile.getFullname() );
       assertEquals( oldUserCount+1, m_db.getWikiNames().length );
+      assertTrue( session.isAuthenticated() );
       
       // Setup Step 2: create a new group with our test user in it
-      String groupName = "Group"+now;
-      Group group = groupManager.parseGroup( groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+      Group group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
       groupManager.setGroup( session, group );
       
       // 2a. Make sure the group is created with the user in it, and the role is added to the Subject
@@ -137,7 +168,7 @@ public class UserManagerTest extends TestCase
       
       // Test 2: our group should not contain the old name OR login name any more
       // (the full name is always used)
-      group = groupManager.getGroup( groupName );
+      group = groupManager.getGroup( m_groupName );
       assertFalse( group.isMember( new WikiPrincipal( oldLogin ) ) );
       assertFalse( group.isMember( new WikiPrincipal( oldName  ) ) );
       assertFalse( group.isMember( new WikiPrincipal( newLogin ) ) );
@@ -163,7 +194,7 @@ public class UserManagerTest extends TestCase
       m_engine.deletePage( pageName );
       
       // Setup Step 6: re-create the group with our old test user names in it
-      group = groupManager.parseGroup( groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+      group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
       groupManager.setGroup( session, group );
       
       // Setup Step 7: Save a new page with the old login/wiki names in the ACL again
@@ -196,7 +227,7 @@ public class UserManagerTest extends TestCase
       
       // Test 6: our group should not contain the old name OR login name any more
       // (the full name is always used)
-      group = groupManager.getGroup( groupName );
+      group = groupManager.getGroup( m_groupName );
       assertFalse( group.isMember( new WikiPrincipal( oldLogin ) ) );
       assertTrue ( group.isMember( new WikiPrincipal( oldName  ) ) );
       assertFalse( group.isMember( new WikiPrincipal( newLogin ) ) );
