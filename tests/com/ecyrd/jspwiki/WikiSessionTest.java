@@ -1,11 +1,16 @@
 package com.ecyrd.jspwiki;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -18,6 +23,8 @@ import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
+import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
+import com.ecyrd.jspwiki.ui.WikiServletFilter;
 
 public class WikiSessionTest extends TestCase
 {
@@ -98,84 +105,83 @@ public class WikiSessionTest extends TestCase
         assertFalse( WikiSession.isIPV4Address( "..." ) );
     }
     
-    public void testIsContainerStatusChanged()
+    public void testIPAddress() throws ServletException, IOException
     {
         TestHttpSession session = new TestHttpSession();
         TestHttpServletRequest request;
         WikiSession wikiSession;
         
-        // A naked HTTP request without userPrincipal/remoteUser shouldn't count as changed
+        // A naked HTTP request without userPrincipal/remoteUser should be anonymous
         request = new TestHttpServletRequest();
         request.setUserPrincipal( null );
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
+        runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertFalse( wikiSession.isContainerStatusChanged( request ) );
+        assertTrue( wikiSession.isAnonymous());
+    }
+    
+    public void testUserPrincipal() throws ServletException, IOException
+    {
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
         
-        // Let's send another request from a different IP address but
-        // associated with the same HTTP session (improbable, I know...).
-        // This request should also not count as changed...
-        TestHttpServletRequest request2;
-        WikiSession wikiSession2;
-        request2 = new TestHttpServletRequest();
-        request2.setUserPrincipal( null );
-        request2.setRemoteUser( null );
-        request2.setRemoteAddr( "127.1.1.1" );
-        request2.m_session = session;
-        wikiSession2 = WikiSession.getWikiSession( m_engine, request2 );
-        assertFalse( wikiSession2.isContainerStatusChanged( request2 ) );
-        
-        // ...and the WikiSessions should be the same
-        assertEquals( wikiSession, wikiSession2 );
-        
-        // Changing the UserPrincipal value should trigger a change...
+        // Changing the UserPrincipal value should cause the user to be authenticated...
         request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
+        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         request.setRemoteUser( null );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
+        runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isContainerStatusChanged( request ) );
+        assertTrue( wikiSession.isAuthenticated());
+        assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
+    }
         
-        // ...but if the next request has the same UserPrincipal, it shouldn't.
+    public void testRemoteUser() throws ServletException, IOException
+    {
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
+            
+        // If we set the remoteUser field is set, that's what will count as authenticated
         request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertFalse( wikiSession.isContainerStatusChanged( request ) );
-        
-        // If we twiddle the remoteUser field, it should trigger a change again...
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
         request.setRemoteUser( "fred" );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
+        runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isContainerStatusChanged( request ) );
+        assertTrue( wikiSession.isAuthenticated());
+        assertEquals( "fred", wikiSession.getUserPrincipal().getName() );
+    }
         
-        // ...but not if we follow up with a similar request again.
+    public void testUserPrincipalAndRemoteUser() throws ServletException, IOException
+    {
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
+        
+        // If we twiddle the remoteUser field too, it should still prefer the UserPrincipal value...
         request = new TestHttpServletRequest();
-        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone ") );
+        request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         request.setRemoteUser( "fred" );
         request.setRemoteAddr( "127.0.0.1" );
         request.m_session = session;
+        runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertFalse( wikiSession.isContainerStatusChanged( request ) );
+        assertTrue( wikiSession.isAuthenticated());
+        assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
+    }
         
-        // And finally, if we null the UserPrincipal and remoteUser again, 
-        // it should not trigger a change.
-        request = new TestHttpServletRequest();
-        request.setUserPrincipal( null );
-        request.setRemoteUser( null );
-        request.setRemoteAddr( "127.0.0.1" );
-        request.m_session = session;
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertFalse( wikiSession.isContainerStatusChanged( request ) );
+    public void testAssertionCookie() throws ServletException, IOException
+    {
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
         
-        // Adding the magic "assertion cookie" should trigger a change in status.
+        // Adding the magic "assertion cookie" should  set asserted status.
         request = new TestHttpServletRequest();
         request.setUserPrincipal( null );
         request.setRemoteUser( null );
@@ -183,12 +189,78 @@ public class WikiSessionTest extends TestCase
         request.m_session = session;
         String cookieName = CookieAssertionLoginModule.PREFS_COOKIE_NAME;
         request.m_cookies = new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) };
+        runSecurityFilter(m_engine, request);
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        assertTrue( wikiSession.isContainerStatusChanged( request ) );
+        assertTrue( wikiSession.isAsserted());
+        assertEquals( "FredFlintstone", wikiSession.getUserPrincipal().getName() );
     }
 
-    public void testGetStatus()
+    public void testAuthenticationCookieDefaults() throws ServletException, IOException
     {
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
+        
+        // Set the authentication cookie first
+        TestHttpServletResponse response = new TestHttpServletResponse();
+        CookieAuthenticationLoginModule.setLoginCookie( m_engine, response, "Fred Flintstone" );
+        Cookie[] cookies = response.getCookies();
+        assertEquals(1, cookies.length);
+        String uid = cookies[0].getValue();
+        
+        // Adding the magic "authentication cookie" should NOT count as authenticated in the default case
+        // (because cookie authentication is OFF).
+        request = new TestHttpServletRequest();
+        request.setUserPrincipal( null );
+        request.setRemoteUser( null );
+        request.setRemoteAddr( "127.0.0.1" );
+        request.m_session = session;
+        request.m_cookies = new Cookie[] { new Cookie( "JSPWikiUID", uid ) };
+        runSecurityFilter(m_engine, request);
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        assertTrue( wikiSession.isAnonymous());
+        assertFalse( wikiSession.isAuthenticated());
+        assertEquals( "127.0.0.1", wikiSession.getUserPrincipal().getName() );
+        
+        // Clear the authentication cookie
+        response = new TestHttpServletResponse();
+        CookieAuthenticationLoginModule.clearLoginCookie( m_engine, request, response );
+    }
+    
+    public void testAuthenticationCookieWhenOn() throws WikiException, ServletException, IOException
+    {
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        props.setProperty( AuthenticationManager.PROP_ALLOW_COOKIE_AUTH, "true");
+        m_engine = new TestEngine( props );
+        
+        TestHttpSession session = new TestHttpSession();
+        TestHttpServletRequest request;
+        WikiSession wikiSession;
+        
+        // Set the authentication cookie first
+        TestHttpServletResponse response = new TestHttpServletResponse();
+        CookieAuthenticationLoginModule.setLoginCookie( m_engine, response, "Fred Flintstone" );
+        Cookie[] cookies = response.getCookies();
+        assertEquals(1, cookies.length);
+        String uid = cookies[0].getValue();
+        
+        // Adding the magic "authentication cookie" should count as authenticated
+        request = new TestHttpServletRequest();
+        request.setUserPrincipal( null );
+        request.setRemoteUser( null );
+        request.setRemoteAddr( "127.0.0.1" );
+        request.m_session = session;
+        request.m_cookies = new Cookie[] { new Cookie( "JSPWikiUID", uid ) };
+        runSecurityFilter(m_engine, request);
+        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        assertFalse( wikiSession.isAnonymous());
+        assertTrue( wikiSession.isAuthenticated());
+        assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
+        
+        // Clear the authentication cookie
+        response = new TestHttpServletResponse();
+        CookieAuthenticationLoginModule.clearLoginCookie( m_engine, request, response );
     }
     
     /**
@@ -204,15 +276,10 @@ public class WikiSessionTest extends TestCase
         request.setRemoteAddr( "53.33.128.9" );
         
         // Log in
-        boolean loggedIn = engine.getAuthenticationManager().login( request );
-        if ( !loggedIn )
-        {
-            throw new IllegalStateException( "Couldn't set up anonymous user." );
-        }
-        
-        WikiSession session = WikiSession.getWikiSession( engine, request );
+        runSecurityFilter(engine, request);
         
         // Make sure the user is actually anonymous
+        WikiSession session = WikiSession.getWikiSession( engine, request );
         if ( !session.isAnonymous() )
         {
             throw new IllegalStateException( "Session is not anonymous." );
@@ -228,19 +295,19 @@ public class WikiSessionTest extends TestCase
     public static WikiSession assertedSession( WikiEngine engine, String name, Principal[] roles ) throws Exception
     {
         // We can use cookies right?
-        if ( !AuthenticationManager.allowsCookieAssertions() )
+        if ( !engine.getAuthenticationManager().allowsCookieAssertions() )
         {
             throw new IllegalStateException( "Couldn't set up asserted user: login config doesn't allow cookies." );
         }
         
         // Build anon session
         TestHttpServletRequest request = new TestHttpServletRequest();
-        Set r = new HashSet();
+        Set<String> r = new HashSet<String>();
         for ( int i = 0; i < roles.length; i++ )
         {
             r.add( roles[i].getName() );
         }
-        request.setRoles( (String[])r.toArray( new String[r.size()]) );
+        request.setRoles( r.toArray( new String[r.size()]) );
         request.setRemoteAddr( "53.33.128.9" );
         
         // Set cookie
@@ -248,19 +315,10 @@ public class WikiSessionTest extends TestCase
         request.setCookies( new Cookie[] { cookie } );
         
         // Log in
-        boolean loggedIn = engine.getAuthenticationManager().login( request );
-        if ( !loggedIn )
-        {
-            throw new IllegalStateException( "Couldn't log in asserted user." );
-        }
-        
-        WikiSession session = WikiSession.getWikiSession( engine, request );
+        runSecurityFilter(engine, request);
         
         // Make sure the user is actually asserted
-        if ( !session.hasPrincipal( Role.ASSERTED ) )
-        {
-            throw new IllegalStateException( "Didn't find Role.ASSERTED in session." );
-        }
+        WikiSession session = WikiSession.getWikiSession( engine, request );
         return session;
     }
     
@@ -276,15 +334,10 @@ public class WikiSessionTest extends TestCase
         request.setRemoteAddr( "53.33.128.9" );
         
         // Log in as anon
-        boolean loggedIn = engine.getAuthenticationManager().login( request );
-        if ( !loggedIn )
-        {
-            throw new IllegalStateException( "Couldn't log in anonymous user." );
-        }
-        
-        WikiSession session = WikiSession.getWikiSession( engine, request );
+        runSecurityFilter(engine, request);
         
         // Log in the user with credentials
+        WikiSession session = WikiSession.getWikiSession( engine, request );
         engine.getAuthenticationManager().login( session, id, password );
         
         // Make sure the user is actually authenticated
@@ -299,33 +352,33 @@ public class WikiSessionTest extends TestCase
     {
         // Build container session
         TestHttpServletRequest request = new TestHttpServletRequest();
-        Set r = new HashSet();
+        Set<String> r = new HashSet<String>();
         for ( int i = 0; i < roles.length; i++ )
         {
             r.add( roles[i].getName() );
         }
-        request.setRoles( (String[])r.toArray( new String[r.size()]) );
+        request.setRoles( r.toArray( new String[r.size()]) );
         request.setRemoteAddr( "53.33.128.9" );
         request.setUserPrincipal( new WikiPrincipal( id ) );
         
-        // Log in as anon
-        boolean loggedIn = engine.getAuthenticationManager().login( request );
-        if ( !loggedIn )
-        {
-            throw new IllegalStateException( "Couldn't log in anonymous user." );
-        }
-        
-        WikiSession session = WikiSession.getWikiSession( engine, request );
-        
-        // Log in the user with credentials
-        engine.getAuthenticationManager().login( request );
+        // Log in
+        runSecurityFilter(engine,request);
         
         // Make sure the user is actually authenticated
+        WikiSession session = WikiSession.getWikiSession( engine, request );
         if ( !session.isAuthenticated() )
         {
             throw new IllegalStateException( "Could not log in authenticated user '" + id + "'" );
         }
         return session;
+    }
+    
+    private static void runSecurityFilter(WikiEngine engine, HttpServletRequest request) throws ServletException, IOException
+    {
+        Filter filter = new WikiServletFilter();
+        FilterConfig filterConfig = new TestFilterConfig(new TestServletContext(engine));
+        filter.init(filterConfig);
+        filter.doFilter(request, null, new TestFilterChain());
     }
 
     public static Test suite() 
