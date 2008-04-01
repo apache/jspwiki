@@ -85,8 +85,8 @@
         <module name="UpperEll"/>
         <module name="j2ee.FinalStatic"/>
         <module name="RequiredRegexp">
-            <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="No ASF copyright"/>
-            <property name="format" value="^.*Copyright 20\d\d The Apache Software Foundation.*$"/>
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="No ASF preamble"/>
+            <property name="format" value="^.*Licensed to the Apache Software Foundation.*$"/>
         </module>
         <module name="JavadocType">
             <property name="scope" value="package"/>
