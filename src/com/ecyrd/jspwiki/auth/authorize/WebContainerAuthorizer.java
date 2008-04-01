@@ -1,15 +1,22 @@
 /*
- * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
- * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
- * it and/or modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version. This program is distributed
- * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details. You should have
- * received a copy of the GNU Lesser General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
@@ -160,9 +167,10 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * return <code>false</code>.
      * This method simply examines the WikiSession subject to see if it
      * possesses the desired Principal. We assume that the method
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(HttpServletRequest)}
-     * previously executed at user login time, and that it has injected
-     * the role Principals that were in force at login time.
+     * {@link com.ecyrd.jspwiki.ui.WikiServletFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
+     * previously executed, and that it has set the WikiSession
+     * subject correctly by logging in the user with the various login modules,
+     * in particular {@link com.ecyrd.jspwiki.auth.login.WebContainerLoginModule}}.
      * This is definitely a hack,
      * but it eliminates the need for WikiSession to keep dangling
      * references to the last WikiContext hanging around, just
@@ -308,7 +316,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     public Principal[] getRoles()
     {
-        return (Principal[]) m_containerRoles.clone();
+        return (Principal[])m_containerRoles.clone();
     }
 
     /**
