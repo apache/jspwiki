@@ -106,11 +106,11 @@ public final class WikiSession implements WikiEventListener
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal  c_guestSession        = new ThreadLocal();
+    private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
 
     private final Subject       m_subject             = new Subject();
 
-    private final Map           m_messages            = new HashMap();
+    private final Map<String,Set<String>> m_messages  = new HashMap<String,Set<String>>();
 
     /** The WikiEngine that created this session. */
     private WikiEngine          m_engine              = null;
@@ -294,10 +294,10 @@ public final class WikiSession implements WikiEventListener
         {
             message = "";
         }
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if (messages == null )
         {
-            messages = new LinkedHashSet();
+            messages = new LinkedHashSet<String>();
             m_messages.put( topic, messages );
         }
         messages.add( message );
@@ -317,7 +317,7 @@ public final class WikiSession implements WikiEventListener
      */
     public final void clearMessages( String topic )
     {
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if ( messages != null )
         {
             m_messages.clear();
@@ -328,7 +328,7 @@ public final class WikiSession implements WikiEventListener
      * Returns all generic messages associated with this session.
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages()}.
-     * @return the current messsages.
+     * @return the current messages.
      */
     public final String[] getMessages()
     {
@@ -339,12 +339,12 @@ public final class WikiSession implements WikiEventListener
      * Returns all messages associated with a session topic.
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages(String)}.
-     * @return the current messsages.
+     * @return the current messages.
      * @param topic The topic
      */
     public final String[] getMessages( String topic )
     {
-        Set messages = (Set)m_messages.get( topic );
+        Set<String> messages = m_messages.get( topic );
         if ( messages == null || messages.size() == 0 )
         {
             return new String[0];
@@ -361,12 +361,11 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal[] getPrincipals()
     {
-        ArrayList principals = new ArrayList();
+        ArrayList<Principal> principals = new ArrayList<Principal>();
 
         // Take the first non Role as the main Principal
-        for( Iterator it = m_subject.getPrincipals().iterator(); it.hasNext(); )
+        for( Principal principal : m_subject.getPrincipals() )
         {
-            Principal principal = (Principal) it.next();
             if ( AuthenticationManager.isUserPrincipal( principal ) )
             {
                 principals.add( principal );
@@ -391,7 +390,7 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal[] getRoles()
     {
-        Set roles = new HashSet();
+        Set<Principal> roles = new HashSet<Principal>();
 
         // Add all of the Roles possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( Role.class ) );
@@ -792,7 +791,7 @@ public final class WikiSession implements WikiEventListener
 
     private static WikiSession staticGuestSession( WikiEngine engine )
     {
-        WikiSession session = (WikiSession) c_guestSession.get();
+        WikiSession session = c_guestSession.get();
 
         if( session == null )
         {
