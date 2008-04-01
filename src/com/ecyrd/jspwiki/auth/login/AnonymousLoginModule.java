@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
@@ -30,7 +31,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Role;
 
 /**
  * <p>
@@ -48,9 +48,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
  * </ol>
  * <p>
  * After authentication, a generic WikiPrincipal based on the IP address will be
- * created and associated with the Subject. Principals
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS} will be added.
+ * created and associated with the Subject.
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
  * @author Andrew Jaquith
@@ -70,24 +68,12 @@ public class AnonymousLoginModule extends AbstractLoginModule
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
      * HTTP request as its response.
-     * @return the result of the login; this will always be <code>false</code>
-     * if the Subject's Principal set already contains either
-     * {@link Role#ASSERTED} or {@link Role#AUTHENTICATED}; otherwise,
-     * always returns <code>true</code>.
+     * @return the result of the login; this will always be <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#login()
      */
     public boolean login() throws LoginException
     {
-        // If already logged in or asserted, ignore this login module
-        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED )
-             || m_subject.getPrincipals().contains( Role.ASSERTED ) )
-        {
-            // If login ignored, remove anonymous role
-            m_principalsToRemove.add( Role.ANONYMOUS );
-            return false;
-        }
-
-        // Otherwise, let's go and make a Principal based on the IP address
+        // Let's go and make a Principal based on the IP address
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
         { hcb };
@@ -100,20 +86,10 @@ public class AnonymousLoginModule extends AbstractLoginModule
             {
                 HttpSession session = request.getSession( false );
                 String sid = (session == null) ? NULL : session.getId();
-                log.debug("Logged in session ID=" + sid);
-                log.debug("Added Principals " + ipAddr + ",Role.ANONYMOUS,Role.ALL" );
+                log.debug("Logged in session ID=" + sid + "; IP=" + ipAddr);
             }
             // If login succeeds, commit these principals/roles
             m_principals.add( ipAddr );
-            m_principals.add( Role.ANONYMOUS );
-            m_principals.add( Role.ALL );
-
-            // If login succeeds, overwrite these principals/roles
-            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-
-            // If login fails, remove these roles
-            m_principalsToRemove.add( Role.ANONYMOUS );
-
             return true;
         }
         catch( IOException e )

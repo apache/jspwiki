@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
@@ -60,10 +61,8 @@ import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
  * the value of getRemoteUser</li>
  * </ol>
  * <p>
- * After authentication, the Subject will contain principals
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL}
- * and {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED},
- * plus the Principal that represents the logged-in user.</p>
+ * After authentication, the Subject will contain the Principal that
+ * represents the logged-in user.</p>
  *
  * @author Andrew Jaquith
  * @since 2.3
@@ -118,24 +117,12 @@ public class WebContainerLoginModule extends AbstractLoginModule
             }
             if ( log.isDebugEnabled() )
             {
-                log.debug("Added Principal " + principal.getName() + ",Role.ANONYMOUS,Role.ALL" );
+                log.debug("Logged in container principal " + principal.getName() + "." );
             }
-            m_principals.add( new PrincipalWrapper( principal ) );
+            m_principals.add( principal );
 
             // Add any container roles
             injectWebAuthorizerRoles( acb.getAuthorizer(), request );
-
-            // If login succeeds, commit these roles
-            m_principals.add( Role.AUTHENTICATED );
-            m_principals.add( Role.ALL );
-
-            // If login succeeds, remove these principals/roles
-            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-            m_principalsToOverwrite.add( Role.ANONYMOUS );
-            m_principalsToOverwrite.add( Role.ASSERTED );
-
-            // If login fails, remove these roles
-            m_principalsToRemove.add( Role.AUTHENTICATED );
 
             return true;
         }
@@ -175,7 +162,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
                     foundRoles.add( roles[i] );
                     if ( log.isDebugEnabled() )
                     {
-                        log.debug("Added Principal " + roles[i].getName() + "." );
+                        log.debug("Added container role " + roles[i].getName() + "." );
                     }
                 }
             }
@@ -183,9 +170,6 @@ public class WebContainerLoginModule extends AbstractLoginModule
 
         // Add these container roles if login succeeds
         m_principals.addAll( foundRoles );
-
-        // Make sure the same ones are removed if login fails
-        m_principalsToRemove.addAll( foundRoles );
     }
 
 }

@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
@@ -34,7 +35,6 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
@@ -52,9 +52,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  * </ol>
  * <p>
  * After authentication, a generic WikiPrincipal based on the username will be
- * created and associated with the Subject. Principals
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#ASSERTED} will be added.
+ * created and associated with the Subject.
  * </p>
  * @see javax.security.auth.spi.LoginModule#commit()
  * @see CookieAuthenticationLoginModule
@@ -77,23 +75,13 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
      * Logs in the user by calling back to the registered CallbackHandler with
      * an HttpRequestCallback. The CallbackHandler must supply the current
      * servlet HTTP request as its response.
-     * @return the result of the login; if the subject Principal set already
-     * possesses {@link Role#AUTHENTICATED}, always returns <code>false</code>
-     * to indicate that this module should be ignored. Otherwise, if a cookie is
+     * @return the result of the login; if a cookie is
      * found, this method returns <code>true</code>. If not found, this
      * method throws a <code>FailedLoginException</code>.
      * @see javax.security.auth.spi.LoginModule#login()
      */
     public boolean login() throws LoginException
     {
-        // Ignore this module if already authenticated
-        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) )
-        {
-            // If login ignored, remove asserted role
-            m_principalsToRemove.add( Role.ASSERTED );
-            return false;
-        }
-
         // Otherwise, let's go and look for the cookie!
         HttpRequestCallback hcb = new HttpRequestCallback();
         Callback[] callbacks = new Callback[]
@@ -116,20 +104,10 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
 
             if ( log.isDebugEnabled() )
             {
-                log.debug( "Logged in session ID=" + sid );
-                log.debug( "Added Principals " + name + ",Role.ASSERTED,Role.ALL" );
+                log.debug( "Logged in session ID=" + sid + "; asserted=" + name );
             }
             // If login succeeds, commit these principals/roles
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
-            m_principals.add( Role.ASSERTED );
-            m_principals.add( Role.ALL );
-
-            // If login succeeds, overwrite these principals/roles
-            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-            m_principalsToOverwrite.add( Role.ANONYMOUS );
-
-            // If login fails, remove these roles
-            m_principalsToRemove.add( Role.ASSERTED );
             return true;
         }
         catch( IOException e )
