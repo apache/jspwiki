@@ -5,6 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContext.findContext(pageContext);

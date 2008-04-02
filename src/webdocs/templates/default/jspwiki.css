@@ -169,6 +169,7 @@ th, td {
 h2, h3, h4 {
 	clear:both;
 	margin:1em 0;
+	line-height:1.2;
 }
 b, i {
 	color:inherit;
@@ -181,7 +182,7 @@ ul ul, ol ol {
 	margin:0;
 }
 ul,ol {
-	padding-left:1.8em;
+	padding-left:3em;
 }
 dl dt {
 	font-weight:bold;

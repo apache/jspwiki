@@ -7,6 +7,9 @@
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setBundle basename="CoreResources"/>
+
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
@@ -61,18 +64,28 @@
        }
        else
        {
-          alert("Please correctly identify the cats.");
+          alert('<fmt:message key="captcha.js.humancheckcomplete.alert" />');
           return false;
        }
     }
+    
+    function i18nAsirra() {
+       document.getElementById("asirra_InstructionsTextId").innerHTML = "<fmt:message key="captcha.asirra.please.select" />";
+	   for ( var i = 0; i < 12; i++) 
+       {
+          document.getElementById("asirra_AdoptMeDiv" + i).getElementsByTagName("a")[0].innerHTML= '<font size="-1">' + '<fmt:message key="captcha.asirra.adopt.me" />' + '</font>' ;
+       }
+       document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[0].title="<fmt:message key="captcha.asirra.a.get.challenge" />";
+       document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[1].title="<fmt:message key="captcha.asirra.a.whatsthis" />";
+       document.getElementById("mainForm").style.display="block"; // show form when i18n is done 
+    }
    </script>
 </head>
-<body>
+<body onload="i18nAsirra()">
 <div style="margin:8px">
-   <p>We believe you may be a robot or a spammer.  Could you please pick out the kittens from the below
-   set of images, so we know you are a normal human being?</p>
+   <p><fmt:message key="captcha.description" /></p>
 
-   <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm">
+   <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
       <input type="hidden" value="foo" name="text" />
       <input type="hidden" value='<%=request.getParameter("page")%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>
@@ -81,8 +94,7 @@
          // asirraState.SetCellsPerRow(6);
       </script>
       <br />
-      <input type="button" value="Submit" onclick="javascript:Asirra_CheckIfHuman(HumanCheckComplete)" />
+      <input type="button" value="<fmt:message key="captcha.submit" />" onclick="javascript:Asirra_CheckIfHuman(HumanCheckComplete)" />
   </form>
-
 </div>
 </body>
