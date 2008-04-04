@@ -28,6 +28,8 @@ import java.util.*;
  *  <P>Parameters
  *  <UL>
  *    <LI>name - Name of the counter.  Optional.
+ *    <LI>increment - The amount to increment, may be a negative value, default is 1.  Optional.
+ *    <LI>showResult - Should the counter value be visible on the page, default is true.  Optional.
  *  </UL>
  *
  *  Stores a variable in the WikiContext called "counter", with the name of the
@@ -41,8 +43,17 @@ public class Counter
 {
     // private static Logger log = Logger.getLogger( Counter.class );
 
-    static final String VARIABLE_NAME = "counter";
+    private static final String  PARAM_NAME          = "name";
+    private static final String  PARAM_INCREMENT     = "increment";
+    private static final String  PARAM_SHOW_RESULT   = "showResult";
+    private static final String  PARAM_START         = "start";
+    private static final String  DEFAULT_NAME        = "counter";
+    private static final int     DEFAULT_INCREMENT   = 1;
+    private static final boolean DEFAULT_SHOW_RESULT = true;
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -50,19 +61,19 @@ public class Counter
         //  First, determine which kind of name we use to store in
         //  the WikiContext.
         //
-        String  countername = (String)params.get( "name" );
+        String  countername = (String)params.get(  PARAM_NAME);
 
         if( countername == null ) 
         {
-            countername = VARIABLE_NAME;
+            countername = DEFAULT_NAME;
         }
         else
         {
-            countername = VARIABLE_NAME+"-"+countername;
+            countername = DEFAULT_NAME+"-"+countername;
         }
 
         //
-        //  Fetch, increment, and store back.
+        //  Fetch the old value
         //
         Integer val = (Integer)context.getVariable( countername );
 
@@ -70,12 +81,54 @@ public class Counter
         {
             val = new Integer( 0 );
         }
+        
+        //
+        //  Check if we need to reset this
+        //
+        
+        String start = (String)params.get( PARAM_START );
+        
+        if( start != null )
+        {
+            val = Integer.parseInt( start );
+        }
+        else
+        {
+            //
+            //  Determine how much to increment
+            //
+            Object incrementObj = params.get( PARAM_INCREMENT );
+        
+            int increment = DEFAULT_INCREMENT;
+        
+            if (incrementObj != null) 
+            {
+                increment = (new Integer((String)incrementObj)).intValue();
+            }
 
-        val = new Integer( val.intValue() + 1 );
-
+            val = new Integer( val.intValue() + increment );
+        }
+        
         context.setVariable( countername, val );
 
-        return val.toString();
+        //
+        // check if we want to hide the result (just count, don't show result on the page
+        //
+        Object showObj = params.get(PARAM_SHOW_RESULT);
+        
+        boolean show = DEFAULT_SHOW_RESULT;
+        
+        if( showObj != null ) 
+        {
+            show = TextUtil.isPositive( (String) showObj );
+        }
+        
+        if( show )
+        {
+            return val.toString();
+        } 
+       
+        return "";
     }
 
 }
