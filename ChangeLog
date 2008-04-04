@@ -1,3 +1,17 @@
+2008-03-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-3
+        
+        * [JSPWIKI-225] Added patch from Harry Metske to fix a problem
+        with password not being shown during installation.
+        
+        * [JSPWIKI-227] Added patch from Harry Metske to fix problem
+        with installation translation in English and Dutch.
+        
+        * [JSPWIKI-203] Counter plugin now supports both hiding results
+        as well as "start" and "increment" options.  Patch mostly from
+        Harry Metske.
+        
 2008-03-31  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-svn-2
