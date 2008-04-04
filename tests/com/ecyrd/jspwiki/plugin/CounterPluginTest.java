@@ -87,6 +87,41 @@ public class CounterPluginTest extends TestCase
                       translate(src) );
     }
 
+    public void testIncrement()
+        throws Exception
+    {
+        String src = "[{Counter}], [{Counter increment=9}]";
+
+        assertEquals( "1, 10", translate(src) );
+
+        src = "[{Counter}],[{Counter}], [{Counter increment=-8}]";
+
+        assertEquals( "1,2, -6", translate(src) );
+    }
+
+    public void testIncrement2() throws Exception
+    {
+        String src = "[{Counter start=5}], [{Counter increment=-1}], [{Counter increment=-1}]";
+
+        assertEquals( "5, 4, 3", translate(src) );
+
+        src = "[{Counter}],[{Counter start=11}], [{Counter increment=-8}]";
+
+        assertEquals( "1,11, 3", translate(src) );
+    }
+
+    public void testShow()
+        throws Exception
+    {
+        String src = "[{Counter}],[{Counter showResult=false}],[{Counter}]";
+
+        assertEquals( "1,,3", translate(src) );
+
+        src = "[{Counter}],[{Counter showResult=true}],[{Counter}]";
+
+        assertEquals( "1,2,3", translate(src) );
+    }
+
     public static Test suite()
     {
         return new TestSuite( CounterPluginTest.class );
