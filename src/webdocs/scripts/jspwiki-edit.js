@@ -487,6 +487,7 @@ var EditTools =
 		this.addSelector("( all )",-1);
 	},
 	addSelector: function(text,offset,indent){
+		text = text.replace(/~([^~])/g, '$1'); /*remove wiki-markup escape char ~ */
 		this.selector.offsets.push(offset);
 		this.selector.adopt( 
 			new Element('li').adopt(

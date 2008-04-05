@@ -47,6 +47,7 @@
 
 <meta name="wikiBaseUrl" content='<wiki:BaseURL />' />
 <meta name="wikiPageUrl" content='<wiki:Link format="url" absolute="true" page="#$%"/>' />
+<meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
 <meta name="wikiJsonUrl" content='<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />

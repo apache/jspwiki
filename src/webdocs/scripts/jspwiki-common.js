@@ -216,7 +216,7 @@ var Wiki = {
 
 	onPageLoad: function(){
 
-		var meta = ['wikiPageName','wikiJsonUrl','wikiPageUrl','wikiBaseUrl','wikiUserName','wikiTemplateUrl']
+		var meta = ['wikiPageName','wikiJsonUrl','wikiPageUrl','wikiEditUrl','wikiBaseUrl','wikiUserName','wikiTemplateUrl']
 		$$('meta').each(function(el){
 			var n = el.getProperty('name');
 			if( meta.contains(n) ) this[n.substr(4)] = el.getProperty('content');
@@ -833,11 +833,14 @@ var QuickLinks = {
 	onPageLoad: function(){
 		if( $("previewcontent") || !Wiki.PermissionEdit ) return;	
 
+		var url = Wiki.EditUrl;
+		url = url + (url.contains('?') ? '&' : '?') + 'section=';
+
 		$$('#pagecontent *[id^=section]').each(function(el,i){
 			new Element('span',{
 				'class':'editsection'
 			}).adopt( new Element('a', {
-				'href' : 'Edit.jsp?page=' + Wiki.PageName + '&section=' + i,
+				'href' : url+i,
 				'title' : 'quick.edit.title'.localize(el.getText())
 				}).setHTML('quick.edit'.localize()) 
 			).inject(el);
