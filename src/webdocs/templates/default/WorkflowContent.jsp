@@ -80,7 +80,7 @@
           <td align="left"><c:out value="${decision.owner.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
-            <fmt:formatDate value="${decision.startTime}" pattern="${prefs['DateFormat']}" />
+            <fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 		  </td>
         </tr>
         <!-- Hidden row with Decision details, if there are any -->
@@ -157,7 +157,7 @@
           <td align="left"><c:out value="${workflow.currentActor.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
-            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs['DateFormat']}" />
+            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
           </td>
         </tr>
         <% i++; %>

@@ -117,14 +117,14 @@
        <td><label><fmt:message key="prefs.creationdate"/></label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
- 	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs['DateFormat']}" />
+ 	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      <tr class="additinfo">
        <td><label><fmt:message key="prefs.profile.lastmodified"/></label></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
- 	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs['DateFormat']}" />
+ 	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      </wiki:UserProfile>
