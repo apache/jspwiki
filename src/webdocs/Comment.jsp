@@ -6,6 +6,7 @@
 <%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -178,9 +179,12 @@
             }
 
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext );
 
             pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
+
+            //SimpleDateFormat fmt = new SimpleDateFormat( "YYYY-MM-DDThh:mm" ); //ISO-8601 format
+            //pageText.append("\n\n--"+signature+", [{Date value='"+fmt.format(cal.getTime())+"' }]");
         }
 
         if( TextUtil.isPositive(remember) )
@@ -223,19 +227,7 @@
     else if( preview != null )
     {
         log.debug("Previewing "+pagereq);
-        
-        String commentText = EditorManager.getEditedText(pageContext);
-        
-        //
-        //  WYSIWYG editor sends us its greetings
-        //
-        String htmlText = findParam( pageContext, "htmlPageText" );
-        if( htmlText != null && cancel == null )
-        {
-        	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
-        }
-        
-        session.setAttribute(EditorManager.REQ_EDITEDTEXT, commentText);
+        session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
         response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment", false),"&amp;","&") );
         return;
     }

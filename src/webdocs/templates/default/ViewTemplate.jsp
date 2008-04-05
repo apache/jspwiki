@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="com.ecyrd.jspwiki.*" %>
 <fmt:setBundle basename="templates.default"/>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -26,8 +27,8 @@
 
 <body class="view">
 
-<div id="wikibody" class="${prefs['orientation']}">
-
+<div id="wikibody" class="${prefs.Orientation}">
+ 
   <wiki:Include page="Header.jsp" />
 
   <div id="content">

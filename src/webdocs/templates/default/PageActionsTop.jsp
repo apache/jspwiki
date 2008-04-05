@@ -2,17 +2,12 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs['Language']}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  //WikiContext c = WikiContext.findContext(pageContext);
-  //String frontpage = c.getEngine().getFrontPage(); 
-%>
-
 <div id="actionsTop" class="pageactions"> 
-  <form class="wikiform" method="get" action="" >
   <ul>
 
-  <wiki:CheckRequestContext context='view|info|diff|upload'>
+    <wiki:CheckRequestContext context='view|info|diff|upload'>
     <wiki:Permission permission="edit">
 	<li>
         <wiki:PageType type="page">
@@ -25,66 +20,19 @@
         </wiki:PageType>
     </li>
     </wiki:Permission>
-  </wiki:CheckRequestContext>
-
-  <%-- more actions dropdown -- converted to popup by javascript 
-       so all basic actions are accessible even if js is not avail --%>
-  <li>
-  <select name="actionsMore" id="actionsMore"
-      onchange="if ((this.selectedIndex != 0) &amp;&amp; (!this.options[this.selectedIndex].disabled)) location.href=this.form.action=this.options[this.selectedIndex].value; this.selectedIndex = 0;">
-    <option class="actionsMore" value="" selected='selected'><fmt:message key="actions.more"/></option>
-
-    <wiki:CheckRequestContext context='view|info|diff|upload'>
-    <wiki:PageExists>  
-    <wiki:Permission permission="comment">
-      <wiki:PageType type="page">
-        <option class="action comment" value="<wiki:CommentLink format='url' />" 
-          title="<fmt:message key='actions.comment.title' />"><fmt:message key="actions.comment" />
-		</option>
-      </wiki:PageType>
-      <wiki:PageType type="attachment">
-         <option class="action comment" value="<wiki:BaseURL/>Comment.jsp?page=<wiki:ParentPageName />"
-           title="<fmt:message key='actions.comment.title' />"><fmt:message key="actions.comment" />
-		</option>
-      </wiki:PageType>
-    </wiki:Permission>
-    </wiki:PageExists>  
-    </wiki:CheckRequestContext>
-    
-    <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview' >
-    <option class="action rawpage" value="<wiki:Link format='url' ><wiki:Param name='skin' value='raw'/></wiki:Link>"
-       title="<fmt:message key='actions.rawpage.title' />"><fmt:message key='actions.rawpage' />
-    </option>
-    </wiki:CheckRequestContext>
-  
-    <wiki:CheckRequestContext context='!workflow'>
-    <wiki:UserCheck status="authenticated">
-      <option class="action workflow" value="<wiki:Link jsp='Workflow.jsp' format='url' />" 
-        title="<fmt:message key='actions.workflow.title' />"><fmt:message key='actions.workflow' />
-      </option>
-    </wiki:UserCheck>
     </wiki:CheckRequestContext>
 
-    <wiki:Permission permission="createGroups">
-      <option class="action creategroup" value="<wiki:Link jsp='NewGroup.jsp' format='url' />" 
-        title="<fmt:message key='actions.creategroup.title' />"><fmt:message key='actions.creategroup' />
-      </option>
-    </wiki:Permission>
+    <wiki:CheckRequestContext context='edit|comment'>
+    <%-- converted to popup menu by jspwiki-edit.js--%>
+    <li id="sectiontoc">
+      <a href="#" class="action sectiontoc"><fmt:message key="edit.sections"/></a>
+    </li>
+    </wiki:CheckRequestContext>
 
-  </select>
-  </li>
-  <li id="morebutton" style="display:none">
-    <a href="#" class="action more"><fmt:message key="actions.more"/></a>
-    <div id="moremenu" >
-      <wiki:InsertPage page="MoreMenu" />
-    </div>
-  </li>
-<%--
-  <li>
-    <a class="action quick2bottom" href="#footer" title="<fmt:message key='actions.gotobottom' />" >&raquo;</a>
-  </li>
---%>
+    <%-- converted to popup menu by jspwiki-common.js--%>
+    <li id="morebutton">
+      <a href="<wiki:Link format='url' page='MoreMenu' />" class="action more"><fmt:message key="actions.more"/></a>
+    </li>
+
   </ul>
-
-  </form>
 </div>

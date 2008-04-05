@@ -2,6 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs['Language']}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
@@ -34,11 +35,10 @@
                <wiki:Param name='page' value='<%=wikipage.getName()%>'/>
                <wiki:Param name='mode' value='wiki'/>
              </wiki:Link>"
+      class="feed"
       title="<fmt:message key='info.rsspagefeed.title'>
                <fmt:param><wiki:PageName /></fmt:param>
-             </fmt:message>" >
-      <img src="<wiki:Link jsp='images/xml.png' format='url'/>" alt="[RSS]"/>
-    </a>
+             </fmt:message>" >&nbsp;</a>
   
   </wiki:PageExists>
 

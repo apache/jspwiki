@@ -53,7 +53,7 @@
 }
 #favorites {
 	float:left;
-	margin-top:2em;
+	margin-top:1.75em;
 	width:18%;
 }
 #favorites .userbox {
@@ -68,19 +68,19 @@
 #footer .copyright { 
 }
 #content { 
-	margin-top:1em;
+	margin:1em 0;
 }
-#wikibody.fav-left #page, #wikibody.fav-right #favorites {
+/*#wikibody.fav-left*/ #page, #wikibody.fav-right #favorites {
 	float:right;
 }
-#wikibody.fav-right #page, #wikibody.fav-left #favorites {
+#wikibody.fav-right #page, /*#wikibody.fav-left*/ #favorites {
 	float:left;
 }
 /*ie6 hack*/
-* html #wikibody.fav-left #page, * html #wikibody.fav-right #favorites {
+* html /*#wikibody.fav-left*/ #page, * html #wikibody.fav-right #favorites {
 	margin-left:-3px; /*Three Pixel Text Jog*/
 }
-* html #wikibody.fav-right #page, * html #wikibody.fav-left #favorites {
+* html #wikibody.fav-right #page, * html /*#wikibody.fav-left*/ #favorites {
 	margin-right:-3px;/*Three Pixel Text Jog*/
 }
 #wikibody.fav-right #header, #wikibody.fav-right #footer {
@@ -93,6 +93,10 @@
 #page { 
 	width:80%;
 }
+#wikibody.fav-slide #page {
+	width:100%;
+}
+
 #actionsTop	{ 
 	float:right;
 	z-index:10;
@@ -168,8 +172,29 @@ th, td {
 }
 h2, h3, h4 {
 	clear:both;
-	margin:1em 0;
+	margin:1em 0 0.5em 0;
+	padding:0.25em 0;
 	line-height:1.2;
+}
+h2 { font-size: 150%; }
+h2 .editsection { font-size: 67%; }
+h3 { font-size: 132%; }
+h3 .editsection { font-size: 76%; }
+h4 { font-size: 116%; }
+h4 .editsection { font-size: 86%; }
+.editsection {
+	padding-left:1em;
+	font-weight:normal;
+	line-height:1.2;
+}
+.editsection a {
+	padding:0.25em;
+	text-decoration:none;
+	color:grey;
+}
+.editsection a:hover {
+	background:#eee;
+	color:blue;
 }
 b, i {
 	color:inherit;
@@ -276,10 +301,13 @@ a.external {
 a.interwiki {
 }
 a.feed {
-	background-image:url(images/xml.png);
+	background-image:url(../../images/jspwiki-icons.png);
 	background-repeat:no-repeat;
-	background-position:left;
-	padding:4px 0 0 20px;
+	background-position:0 0;
+	padding-left:14px;
+	font-size:14px;
+	text-decoration:none;
+	overflow:hidden;
 }
 
 
@@ -579,11 +607,21 @@ a.tool:hover, .btn:hover {
 	float:right;
 	margin:0 0 0 0.5em;
 }
-#editorarea {
+
+.editor {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px;
 	width:100%;
 }
+.edittoc {
+	background:yellow;
+	overflow:auto;
+	width:18%;
+	height:100%;
+	float:right;
+	margin-top:2.5em;
+}
+
 /* ie6 hack ensure moremenu remains properly alighned */
 * html #editorarea {
 	padding:4px 0;
@@ -606,8 +644,8 @@ a.tool:hover, .btn:hover {
 	background:white;
 	border:2px solid #ddd;
 	z-index:10;
-	opacity:0.85;
 	font-size:85%;
+	overflow:hidden;
 }
 #findSuggestionMenu ul {
 	list-style:none;
@@ -616,9 +654,73 @@ a.tool:hover, .btn:hover {
 }
 #findSuggestionMenu li { 
 	padding:0.25em;
+	cursor:pointer;
+}
+#findSuggestionMenu li:hover {
+	background:#eee;
 }
 
 /* +++ 440 Favorites +++ */
+#collapseFavs {
+	position:absolute; 
+	margin-left:-1px; /* compensate border of .tabs */
+	left:-0.5em; 
+	top:-1px; /* compensate border of .tabs */
+	width:0.5em;
+	height:100%;
+	background:#f9f9f9;
+	border-top:1px solid #f9f9f9;
+	border-bottom:1px solid #f9f9f9;
+	cursor:pointer;
+}
+#wikibody.fav-right #collapseFavs {
+	left:auto;
+	right:-0.5em;
+	margin-left:0;
+	margin-right:-1px;
+}
+#collapseFavs.hover {
+	background:#eee;
+	border-color:#eee;
+}
+#collapseFavsWrapper {
+	position:absolute;
+	padding-right:1em;
+	left:0.5em;
+	top:-2em;
+	cursor:auto;
+	overflow:hidden;
+}
+#wikibody.fav-right #collapseFavsWrapper {
+	left:auto;
+	right:0.5em;
+	padding-right:0;
+	padding-left:1em;
+}
+#collapseFavsWrapper #favorites {
+	background:white;
+	border:0.5em solid #eee;
+	border-left:none;
+}
+#wikibody.fav-right #collapseFavsWrapper #favorites {
+	border-right:none;
+	border-left:0.5em solid #eee;
+}
+#collapseFavsPointer {
+	position:absolute;
+	width:4px;
+	height:12px;
+	background:url(images/arrleft.gif) top left no-repeat;
+	margin-left:-15px;
+	z-index:5;
+}
+#wikibody.fav-right #collapseFavsPointer{
+	margin-left:15px;
+}
+.fav-slide #collapseFavsPointer {
+	background-image:url(images/arrright.gif);
+}
+
 .userbox {
 	overflow:hidden;
 	padding:0.5em 0;
@@ -684,8 +786,7 @@ a.tool:hover, .btn:hover {
 
 /* +++ 455 Footer +++ */
 .copyright {
-	margin:1em 0;
-	padding:0.25em;
+	padding:1em 0.25em;
 	font-size:90%;
 	text-align:center;
 	color:#555;
@@ -763,7 +864,6 @@ th.changenote, td.changenote {
 .pageactions li ul li.separator { 
 	border-top:2px solid #ddd;
 }
-
 /* undo settings for nested information! */
 .pageactions li ul li ul {
 	position:static;
@@ -773,41 +873,44 @@ th.changenote, td.changenote {
 .pageactions li ul li ul li {
 /* nothing to undo ?? */
 }
-#moremenu {
-	line-height:1.5;
-	padding:0.25em 0.5em;
+#hiddenmorepopup {
+	display:none;
+	border:1px solid #ddd;
 }
-#morebutton ul a.action {
+#hiddenmorepopup ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+
+}
+#sectiontoc ul a,
+#morebutton ul a {
 	padding:0.25em 0.5em;
 	text-decoration:none;
+	cursor:pointer;
+}
+#sectiontoc .cursor {
 }
 .pageactions a.action {
 	display:block;
 }
-#moremenu a:hover, a.action:hover, 
+#morebutton a:hover, a.action:hover, #sectiontoc a:hover
 .userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
 	background-color:#eee !important;
 }
 
 a.action.view,
-a.action.edit,
 a.action.comment,
 a.action.prefs,
 a.action.attach,
 a.action.info,
-a.action.index,
-a.action.more,
-a.action.recentChanges,
-a.action.systeminfo,
 a.action.viewgroup,
-a.action.editgroup,
-a.action.deletegroup,
 a.action.creategroup,
 a.action.workflow,
 a.action.login,
 a.action.logout {
 }
-#searchTools a.action, .userbox a.action, a.action.edit, a.action.more {
+#searchTools a.action, .userbox a.action, a.action.edit, a.action.more, a.action.sectiontoc {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	line-height:normal;
@@ -815,11 +918,11 @@ a.action.logout {
 	background:#f9f9f9;
 	white-space:nowrap;
 }
-a.action.edit, a.action.more {
+a.action.edit, a.action.more, a.action.sectiontoc {
 	margin-left:4px;
 	border-bottom:none;
 }
-a.action.more {
+a.action.more, a.action.sectiontoc {
 	padding-right:1.5em;
 	background: #f9f9f9 url(images/arrdownsmall.gif) 95% center no-repeat;
 }
@@ -851,7 +954,6 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 	width:100%;
 	overflow-x:auto;
 }
- 
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
 #previewcontent {
@@ -1135,7 +1237,7 @@ table.calendar tr.weekdays {
 	clear:both;
 }
 
-/* IE only:add 2px to fit size of '.tabmenu a' */
+/* IE only */
 * html .tabmenu {
 	border:1px solid white;
 }
@@ -1255,6 +1357,9 @@ table.calendar tr.weekdays {
 	padding:4px 8px 8px;
 	background:url(images/tip.png) bottom right;
 }
+.tip-tip a {
+	color: white !important;
+}
 
 
 /* +++ 920 Collapsible lists +++ */
@@ -1299,7 +1404,6 @@ div.collapse li {
 .collapsebox {
     clear:right; /* avoid clash with intern floated bullet */
 	border:1px solid #ddd;
-	position:relative;
 	margin:0 0 0.5em 0;
 }  
 .collapsetitle {
@@ -1493,4 +1597,35 @@ pre.prettyprint {
   .tag {color: #006; font-weight: bold; }
   .atn {color: #404; }
   .atv {color: #060; }
+}
+
+
+
+div.coverflow {
+	background-color:#000;
+	color:#fff;
+	visibility:hidden;
+	position:relative;
+	overflow:hidden;
+}
+div.coverflow * {
+	margin:0;
+	padding:0;
+}
+div.coverflow .imgcontainer {
+	position:relative;
+}
+div.coverflow img {
+	position:absolute;
+	border:none;
+}
+div.coverflow .slider {
+	position:relative;
+	border:1px solid #bbb;
+	z-index:10001;
+}
+div.coverflow .knob {
+	background:#fff;
+	width:100px;
+	height:15px;
 }

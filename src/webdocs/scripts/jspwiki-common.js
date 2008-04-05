@@ -1,54 +1,80 @@
-/**
- ** Javascript routines to support the BrushedTemplate
- ** Dirk Frederickx
- ** Nov 06-Mar 07: aligned with MooTools ##
- ** moo v1.1 selection needed:  
- **   Core, Class,  Native, Element(ex. Dimensions), Window,
- **   Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
- **
- ** 100 Wiki object (page parms, UserPrefs and setting focus) ##
- ** 110 WikiSlimbox : attachment viewer ##
- ** 114 Reflection (adds reflection to images) ##
- ** 120 QuickLinks object ##
- ** 130 TabbedSection object
- ** 132 Accordion object ##
- ** 140 SearchBox object: remember 10 most recent search topics
- ** 150 Colors, GraphBar object: e.g. used on the findpage
- ** 160 URL
- **
- ** 200 Collapsible list items
- ** 220 RoundedCorners ffs
- ** 230 Sortable (clever table-sort) ##
- ** 240 Table-filter (excel like table filters ##
- ** 250 Categories: turn wikipage link into AJAXed popup ##
- ** 260 WikiTips ##
- ** 270 WikiColumns ##
- ** 280 ZebraTable: color odd/even row of a table ##
- ** 290 HighlightWord: refactored
- ** 295 Typography
- ** 300 Prettify
- **/
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
+ 
+ /**
+  ** Javascript routines to support JSPWiki
+  ** since v.2.6.0
+  **
+  ** Use mootools v1.1, with following components:  
+  **   Core, Class,  Native, Element(ex. Dimensions), Window,
+  **   Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
+  **
+  ** 100 Wiki object (page parms, UserPrefs and setting focus) 
+  ** 105 WikiSlidingFavorites 
+  ** 110 WikiSlimbox : attachment viewer 
+  ** 114 Reflection (adds reflection to images) 
+  ** 120 QuickLinks object 
+  ** 130 TabbedSection object
+  ** 132 Accordion object 
+  ** 140 SearchBox object: remember 10 most recent search topics
+  ** 150 Colors, GraphBar object: e.g. used on the findpage
+  ** 
+  ** 200 Collapsible list items
+  ** 210 Collapsbile Trees
+  ** 220 RoundedCorners ffs
+  ** 230 Sortable (clever table-sort) 
+  ** 240 Table-filter (excel like table filters 
+  ** 250 Categories: turn wikipage link into AJAXed popup 
+  ** 260 WikiTips 
+  ** 270 WikiColumns 
+  ** 280 ZebraTable: color odd/even row of a table 
+  ** 290 HighlightWord: refactored
+  ** 295 Typography
+  ** 300 Prettify
+  **/
 
 /* extend mootools */
 String.extend({
 	deCamelize: function(){
 		return this.replace(/([a-z])([A-Z])/g,"$1 $2");
+	},
+	trunc: function(size,elips){
+		if( !elips ) elips="...";
+		return (this.length<size) ? this : this.substring(0,size)+elips;
 	}
-});
-
+})
 
 // get text of a dhtml node
 function $getText(el) {
 	return el.innerText || el.textContent || '';
 }
 Element.extend({
+
 	/* wrapper = new Element('div').injectWrapper(node); */
 	injectWrapper: function(el){
 		while( el.firstChild ) this.appendChild( el.firstChild );
 		el.appendChild( this ) ;
 		return this;
 	},
+
 	visible: function() {
 		var el = this;
 		while($type(el)=='element'){
@@ -58,22 +84,24 @@ Element.extend({
 		}
 		return true;
 	},
+
 	hide: function() {
-		this.style.display = 'none';
-		return this;
+		return this.setStyle('display','none');
 	},
+
 	show: function() {
-		this.style.display = '';
-		return this;
-	},	
-	toggle: function() {
-		this.visible() ? this.hide() : this.show();  
-		return this;
+		return this.setStyle('display','');
 	},
+
+	toggle: function() {
+		return this.visible() ? this.hide() : this.show();  
+	},
+
 	scrollTo: function(x, y){
 		this.scrollLeft = x;
 		this.scrollTop = y;
 	},
+
 	/* dimensions.js */
 	getPosition: function(overflown){
 		overflown = overflown || [];
@@ -88,7 +116,22 @@ Element.extend({
 			top -= element.scrollTop || 0;
 		});
 		return {'x': left, 'y': top};
+	},
+
+	getDefaultValue: function(){
+		switch(this.getTag()){
+			case 'select':
+				var values = [];
+				$each(this.options, function(option){
+					if (option.defaultSelected) values.push($pick(option.value, option.text));
+				});
+				return (this.multiple) ? values : values[0];
+			case 'input': if (!(this.defaultChecked && ['checkbox', 'radio'].contains(this.type)) && !['hidden', 'text', 'password'].contains(this.type)) break;
+			case 'textarea': return this.defaultValue;
+		}
+		return false;
 	}
+
 });
 
 var Observer = new Class({
@@ -118,6 +161,7 @@ var Observer = new Class({
 		this.clear();
 	}
 });
+
 /* Observable class: observe any form element for changes */
 Element.extend({
 	observe: function(fn, options){
@@ -129,13 +173,17 @@ Element.extend({
 /* I18N Support
  * LocalizedStrings takes form { "javascript.some.resource.key":"localised resource key {0}" }
  * Examples:
- * "javascript.moreInfo".localize();
- * "javascript.imageInfo".localize(2,4); => expects "Image {0} of {1}"
+ * "moreInfo".localize();
+ * "imageInfo".localize(2,4); => "Image {0} of {1}" becomes "Image 2 of 4 
  */
+var LocalizedStrings = LocalizedStrings || []; //defensive
 String.extend({
 	localize: function(){
-		var s = LocalizedStrings["javascript."+this], args = arguments;
+		var s = LocalizedStrings["javascript."+this], 
+			args = arguments;
+
 		if(!s) return("???" + this + "???");
+
 		return s.replace(/\{(\d)\}/g, function(m){ 
 			return args[m.charAt(1)] || "???"+m.charAt(1)+"???";
 		});
@@ -166,72 +214,80 @@ function getAncestorByTagName( node, tagName ) {
 /** 100 Wiki functions **/
 var Wiki = {
 
-	JSONid : 10000,
-	DELIM : '\u00A4',
-	init: function(props){
-		Object.extend(Wiki,props || {}); 
-		var h=location.host;
+	onPageLoad: function(){
+
+		var meta = ['wikiPageName','wikiJsonUrl','wikiPageUrl','wikiBaseUrl','wikiUserName','wikiTemplateUrl']
+		$$('meta').each(function(el){
+			var n = el.getProperty('name');
+			if( meta.contains(n) ) this[n.substr(4)] = el.getProperty('content');
+		},this);
+
+		var h = location.host;
 		this.BasePath = this.BaseUrl.slice(this.BaseUrl.indexOf(h)+h.length,-1);
 		//this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
 		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
-		this.prefs=new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
-	},
-	getUrl: function(pagename){
-		return this.PageUrl.replace(/%23%24%25/, pagename);
-	},	
-	/* retrieve pagename from any wikipage url format */
-	getPageName: function(url){
-		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, '(.+)'),
-			res = url.match(new RegExp(s));
-		return (res ? res[1] : false);
-	},
-	onPageLoad: function(){
-		this.PermissionEdit = ($E('a.edit') !== undefined); //deduct permission level
+
+		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
+		
+		this.PermissionEdit = !!$$('a.edit')[0]; //deduct permission level
 		this.url = null;
 		this.parseLocationHash.periodical(500);
 
+		this.makeMenuFx('morebutton', 'morepopup');
+	},
+
+	setFocus: function(){
 		/* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
 		['editorarea','j_username','loginname','assertedName','query2'].some(function(el){
 			el = $(el);
 			if(el && el.visible()) { el.focus(); return true; }
 			return false;
 		});
-
-		if($('morebutton')) this.replaceMoreBox(); /* visual sugar */		
 	},
+
+	getUrl: function(pagename){
+		return this.PageUrl.replace(/%23%24%25/, pagename);
+	},	
+
+	/* retrieve pagename from any wikipage url format */
+	getPageName: function(url){
+		var s = this.PageUrl.escapeRegExp().replace(/%23%24%25/, '(.+)'),
+			res = url.match(new RegExp(s));
+		return (res ? res[1] : false);
+	},
+
 	savePrefs: function(){
 		if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
 		if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
 		if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
-		if($('prefOrientation')) this.prefs.set('orientation', $('prefOrientation').getValue());
+		if($('prefOrientation')) this.prefs.set('Orientation', $('prefOrientation').getValue());
 		if($('editor')) this.prefs.set('editor', $('editor').getValue()); 
-		this.prefs.set('FontSize',this.PrefFontSize);
+		if($('prefLanguage')) this.prefs.set('Language', $('prefLanguage').getValue()); 
 	},
 
 	changeOrientation: function(){
-		$('wikibody').className = $('prefOrientation').getValue();
+		var fav = $('prefOrientation').getValue();
+		$('wikibody')
+			.removeClass('fav-left').removeClass('fav-right')
+			.addClass(fav);
+		//$('collapseFavs').fireEvent('click').fireEvent('click'); //refresh sliding favorites
 	},
-	replaceMoreBox: function(){
-		var more = $('morebutton'),
-			popup = new Element('ul').inject(more), 
-			hover = popup.effect('opacity', {wait:false}).set(0),
-			select = $('actionsMore'),
-			separator = '';
 
-		$A(select.options).each(function(o){
-			if(o.value == "") return;
-			separator='separator';
-			new Element('a',{'class':o.className,'href':o.value})
-				.setHTML(o.text).inject(new Element('li').inject(popup));
+	/* make hover menu with fade effect */
+	makeMenuFx: function(btn, menu){
+		var btn = $(btn), menu = $(menu);
+		if(!btn || !menu) return;
+
+		var	popfx = menu.effect('opacity', {wait:false}).set(0);
+		btn.adopt(menu).set({
+			'href':'#',
+			'events':{
+				'mouseout': function(){ popfx.start(0) },
+				'mouseover': function(){ Wiki.locatemenu(btn,menu); popfx.start(0.9) }
+			}
 		});
-		$('moremenu').inject(new Element('li',{'class':separator}).inject(popup));
-		
-		select.getParent().hide();
-		more.show()
-		 	.addEvent('mouseout',(function(){ hover.start(0) }).bind(this))
-			.addEvent('mouseover',(function(){ Wiki.locatemenu(more,popup); hover.start(0.9) }).bind(this));
 	},
-
+	
 	locatemenu: function(base,el){
 		var win = {'x': window.getWidth(), 'y': window.getHeight()},
 			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
@@ -310,6 +366,97 @@ var Wiki = {
 	}	
 }
 
+/** 105 WikiSlidingFavs
+ ** Support sliding favorites menu
+ ** Dirk Frederickx, Feb 2008
+ */
+var WikiSlidingFavs = 
+{
+	onPageLoad: function(){
+		var tabs = $E('#page .tabs'); if( !tabs ) return;
+
+		/* inject a wrapper div cause relative can not be set directly on the .tabs */
+		tabs = new Element('div', { 
+			'styles': { 
+				'position':'relative', 
+				'padding':'0.5em'
+			} 
+		}).injectWrapper(tabs.setStyle('padding','0'));	
+
+		var body = $('wikibody'),
+			page = $('page'),
+			favs = $('favorites'),
+			favsWidth = favs.offsetWidth,
+			pageWidth = page.offsetWidth;
+
+		var toggleFavs = function(){
+			if( body.hasClass('fav-slide') ){ 
+				toggler.set({'title': 'favs.show'.localize()});
+				favsFx.set(favsHide);
+				favsWrapper.setStyles({'width':favsWidth}).adopt(favs);
+			} else {
+				toggler.set({'title': 'favs.hide'.localize()});
+				favs.injectAfter(page);
+			}
+		}
+			
+		var toggler = new Element('div', {
+			'id':'collapseFavs',
+			'events': {
+				'click': function(){
+					body.toggleClass('fav-slide');
+					Wiki.prefs.set('slidingFav', body.hasClass('fav-slide') ? 'fav-slide' : '' );
+					toggleFavs();					
+				},
+				'mouseenter': function(e){
+					this.addClass('hover');
+					var ppx = toggler.getPosition().x+"px";
+					pointer.setStyles({ left: ppx, top: (e.pageY || e.clientY)+"px" }).show();
+					if( body.hasClass('fav-slide') ){
+						favsWrapper.inject(toggler).show();
+						favsFx.start(favsShow);
+					}
+				},
+				'mousemove': function(e){
+					var ppx = toggler.getPosition().x+"px";
+					pointer.setStyles({	left: ppx, top: (e.pageY || e.clientY)+"px" });
+				},
+				'mouseleave': function(){
+					this.removeClass('hover');
+					pointer.hide();
+					if( body.hasClass('fav-slide') ){
+						favsFx.start(favsHide).chain(function(){
+						 	favsWrapper.hide().inject(document.body);
+						});
+					}
+				}
+			}
+		}).injectTop(tabs);
+
+		var pointer = new Element('div', {
+			'id':'collapseFavsPointer'
+		}).hide().inject(body);
+			
+		var favsWrapper = new Element('div', {
+			'id':'collapseFavsWrapper',
+			'events': {
+				'click' : function(e){ e.stopPropagation();	},
+				'mouseenter' : function(e){ pointer.hide();	},
+				'mouseleave' : function(e){	pointer.show();	}
+			} 
+		}).hide().inject(document.body);
+
+		var	favsFx = new Fx.Styles(favs,{wait:false}),
+			favsHide = {'margin-left':-favsWidth, 'width':0, 'opacity':0},
+			favsShow = {'margin-left':0, 'width':favsWidth, 'opacity':0.9};
+
+		if( Wiki.prefs.get('slidingFav') == 'fav-slide') body.addClass('fav-slide');
+
+		toggleFavs();
+		//toggleFavs.delay(100);
+
+	} 
+}
 
 /** 110 WikiSlimbox
  ** Inspired http://www.digitalia.be/software/slimbox by Christophe Bleys
@@ -346,7 +493,7 @@ var WikiSlimbox = {
 			});
 		});
 		if(i) Lightbox.init();
-		//new Asset.javascript(Wiki.TemplateDir+'scripts/slimbox.js');
+		//new Asset.javascript(Wiki.TemplateUrl+'scripts/slimbox.js');
 	}
 }
 
@@ -684,33 +831,16 @@ var Reflection = {
 var QuickLinks = {
 
 	onPageLoad: function(){
-		if( $("previewcontent") || !Wiki.PrefShowQuickLinks ) return;
+		if( $("previewcontent") || !Wiki.PermissionEdit ) return;	
 
-		var sections = $$('#pagecontent *[id^=section]');
-		if(sections.length==0) return;
-		
-		var ql,qlPrev,qlEdit,qlNext;
-		function qql(clazz,title,text,href){
-			var a = new Element('a',{'title':title.localize()}).setHTML(text);
-			if(href) a.setProperty('href',href);
-			ql.adopt(new Element('span',{'class':clazz}).adopt(a));
-			return(a);
-		}
-		ql = new Element('div',{'class':'quicklinks'});
-		qql('quick2Top','quick.top','&laquo;','#wikibody');
-		qlPrev = qql('quick2Prev','quick.previous','&lsaquo;');
-
-		if(Wiki.PermissioneEdit) qlEdit = qql('quick2Edit','quick.edit','&bull;');
-
-		qlNext = qql('quick2Next','quick.next','&rsaquo;');
-		qql('quick2Bottom','quick.bottom','&raquo;','#footer');
-				
-		var last = sections.length-1;
-		sections.each(function(s,i){
-			qlNext.setProperty('href',(i==last) ? '#footer' : '#'+sections[i+1].id);
-			qlPrev.setProperty('href',(i==0) ? '#wikibody' : '#'+sections[i-1].id);
-			if(qlEdit) qlEdit.setProperty('href','Edit.jsp?page='+Wiki.PageName+'&section='+(i+1));
-			s.adopt(ql.clone());
+		$$('#pagecontent *[id^=section]').each(function(el,i){
+			new Element('span',{
+				'class':'editsection'
+			}).adopt( new Element('a', {
+				'href' : 'Edit.jsp?page=' + Wiki.PageName + '&section=' + i,
+				'title' : 'quick.edit.title'.localize(el.getText())
+				}).setHTML('quick.edit'.localize()) 
+			).inject(el);
 		});
 	}
 }
@@ -833,11 +963,13 @@ var WikiAccordion = {
 					if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
 				},
 				onActive: function(toggle,content){                          
-					toggle.addClass('active'); content.addClass('active'); 
+					toggle.addClass('active'); 
+					content.addClass('active').removeClass('xhidetab'); 
 				},
 				onBackground: function(toggle,content){ 
 					content.setStyle('height', content['offsetHeight']);
-					toggle.removeClass('active'); content.removeClass('active');
+					toggle.removeClass('active'); 
+					content.removeClass('active').addClass('xhidetab');
 				} 
 			});
 		});
@@ -919,11 +1051,15 @@ var SearchBox = {
 			if (option.value == match) option.selected = true;
 		});
 
-		new Ajax(Wiki.TemplateDir+'AJAXSearch.jsp', {
+		new Ajax(Wiki.TemplateUrl+'AJAXSearch.jsp', {
 			postBody: $('searchform2').toQueryString(),
 			update: 'searchResult2', 
 			method: 'post',
-			onComplete: function() { $('spin').hide(); GraphBar.onPageLoad(); Wiki.prefs.set('PrevQuery', q2); } 
+			onComplete: function() { 
+				$('spin').hide(); 
+				GraphBar.onPageLoad(); 
+				Wiki.prefs.set('PrevQuery', q2); 
+			} 
 		}).request();
 	},
 
@@ -968,7 +1104,6 @@ var SearchBox = {
 				Wiki.locatemenu( $('query'), $('searchboxMenu') );
 		});
 	} ,
-
 
 	/* navigate to url, after smart pagename handling */
 	navigate: function(url, promptText, clone, search){
@@ -1122,6 +1257,7 @@ var GraphBar =
 				
 				if(bar2.length > 0){ barEL.clone().setStyles(bar2.obj).injectBefore(b); };
 				if(bar1.length > 0){ barEL.setStyles(bar1.obj).injectBefore(b); };
+
 			},this);
 
 		},this);
@@ -1189,6 +1325,7 @@ var GraphBar =
 	}
 }
 
+
 /** 200 Collapsible list and boxes
  ** See also David Lindquist <first name><at><last name><dot><net>
  ** See: http://www.gazingus.org/html/DOM-Scripted_Lists_Revisited.html
@@ -1230,10 +1367,9 @@ var Collapsible =
 		var body = new Element('div', {'class':'collapsebody'}), 
 			bullet  = this.bullet.clone(),
 			isclosed = el.hasClass('collapsebox-closed');
-
 		while(title.nextSibling) body.appendChild(title.nextSibling); // wrap other siblings
 		el.appendChild(body);
-		
+
 		if(isclosed) el.removeClass('collapsebox-closed').addClass('collapsebox');
 		bullet.injectTop( title.addClass('collapsetitle') );
 		this.newBullet(bullet, body, !isclosed, title );
@@ -1676,8 +1812,9 @@ var TableFilter =
 			var v = $getText(r.cells[col]).clean().toLowerCase();
 			if(v == value) return;
 			value = v;
-			if(v.length > 32) v = v.substr(0,32)+ "...";
-			select.options[select.options.length] = new Option(v, value);
+			//if(v.length > 32) v = v.substr(0,32)+ "...";
+			//select.options[select.options.length] = new Option(v, value);
+			select.options[select.options.length] = new Option(v.trunc(32), value);
 		});
 		(select.options.length <= 2) ? select.hide() : select.show();
 		if(selectedValue != undefined) {
@@ -1724,7 +1861,7 @@ var TableFilter =
 var Categories =
 {
 	onPageLoad: function (){
-		this.jsp = Wiki.TemplateDir + '/AJAXCategories.jsp';
+		this.jsp = Wiki.TemplateUrl + '/AJAXCategories.jsp';
 
 		$$('.category a.wikipage').each(function(link){
 			var page = Wiki.getPageName(link.href); if(!page) return;
@@ -1929,8 +2066,11 @@ window.addEvent('load', function(){
 	TabbedSection.onPageLoad(); //after coordion or safari
 	QuickLinks.onPageLoad();
 	
+	//GoogleChart.onPageLoad();
+
 	//console.profile();
 	Collapsible.onPageLoad();
+	WikiSlidingFavs.onPageLoad();
 	//console.profileEnd();
 
 	SearchBox.onPageLoad();
@@ -1943,7 +2083,10 @@ window.addEvent('load', function(){
 	Categories.onPageLoad();
 
 	WikiSlimbox.onPageLoad();
+	//WikiCoverflow.onPageLoad();
 	WikiTips.onPageLoad();
 	WikiColumns.onPageLoad();
 	WikiPrettify.onPageLoad();
+
+	Wiki.setFocus();
 });

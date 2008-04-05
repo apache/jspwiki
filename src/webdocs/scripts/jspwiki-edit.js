@@ -1,12 +1,33 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
+ 
 /**
- ** jspwiki edit support routines
- ** Based on brushed template
- ** Needs jspwiki-common.js and mootools.js
+ ** Javascript routines to support JSPWiki Editing
+ ** since v.2.6.0
+ ** uses mootools v1.1
  **
+ ** Needs jspwiki-common.js and mootools.js
  ** EditTools object (main object)
  ** - find&replace functionality : with regexp support
- **
- ** - included popup-pagelinks routine from Janne // 
+ ** - included popup-pagelinks routines from Janne 
  **
  ** TextArea object
  **     Supports selections inside textarea, in ie and other browsers
@@ -18,12 +39,20 @@ var EditTools =
 
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
+
+		/* create table of contents dropdown,
+		   and duplicate the textarea into a main and work area
+		   The workarea is used for editing the selection section
+		   The mainarea reflects at all times the whole document
+		*/
+		this.onPageLoadSectionToc()
 		
 		window.onbeforeunload = (function(){
-			if(this.textarea.value != this.textarea.defaultValue) { 
-				return "edit.areyousure".localize();
-			};
+			var ta = $('editorarea');
+			if(ta.value != ta.defaultValue) return "edit.areyousure".localize();
 		}).bind(this);
+
+		//alert($('scroll').getValue());
 
 		/* make textarea more intelligent */
 		this.wikisnippets = this.getWikiSnippets();
@@ -31,8 +60,8 @@ var EditTools =
 		this.onPageLoadPostEditor();
 
 		/* activate editassist toolbar */
-		var toolbar = $('toolbar');
-		var fxToolbar = new Fx.Slide(toolbar,{
+		var toolbar = $('toolbar'),
+			fxToolbar = new Fx.Slide(toolbar,{
 			onStart:function(){
 				$('editassist').toggleClass('closed');
 			}
@@ -43,10 +72,9 @@ var EditTools =
 			e.stop();
 		}).getParent().show();
 
-
 		//FIXME: stop-event not yet working properly on eg UNDO
 		$('tbREDO').addEvent('click', function(e) { EditTools.redoTextarea(); new Event(e).stop(); });
-		$('tbUNDO').addEvent('click', function(e) { new Event(e).stop(); EditTools.undoTextarea();  });
+		$('tbUNDO').addEvent('click', function(e) { EditTools.undoTextarea(); new Event(e).stop();  });
 		$('replace').addEvent('click', function(e) { EditTools.doReplace(); new Event(e).stop(); })
 			.getParent().getParent().show();
 
@@ -57,14 +85,21 @@ var EditTools =
 		/* add textarea resize drag bar */
 		var hh=Wiki.prefs.get('EditorSize');
 		if(hh) this.textarea.setStyle('height',hh);
-		var h = new Element('div',{'class':'textarea-resizer', 'title':'edit.resize'.localize()})
-			.injectAfter(this.textarea);	
+		var h = new Element('div',{
+			'class':'textarea-resizer', 
+			'title':'edit.resize'.localize()
+		}).injectAfter(this.textarea);	
 		this.textarea.makeResizable({
 			handle:h, 
 			modifiers: {x:false, y:'height'}, 
 			onComplete: function(){	Wiki.prefs.set('EditorSize',this.value.now.y); }
 		});			
 		
+		/* add textarea suggestion events */
+		this.textarea
+			.addEvent('click',this.getSuggestions.bind(this))
+			.addEvent('keyup',this.getSuggestions.bind(this));
+			
 	},
 
 	onPageLoadPostEditor: function(){
@@ -91,6 +126,7 @@ var EditTools =
 				
 		this.initPostEditor();	
 	},	
+
 	initPostEditor: function(){
 		if(! this.posteditor) return;
 		this.posteditor.changeSmartTypingPairs( $('smartpairs').checked ? this.wikismartpairs : {} );
@@ -283,8 +319,7 @@ var EditTools =
 		TextArea.replaceSelection( this.textarea, ss );
 	} ,
 
-	paste : function()
-	{
+	paste : function(){
 		if( !this.CLIPBOARD ) return;
 		this.storeTextarea();
 		TextArea.replaceSelection( this.textarea, this.CLIPBOARD );
@@ -310,9 +345,9 @@ var EditTools =
 		}
 		if(this.UNDOstack.length == 0) $('tbUNDO').disabled = 'true';
 		if(!this.selector) return;
-		this.onSelectorLoad();
-		this.onSelectorChanged();
-
+		//this.onSelectorLoad();
+		//this.onSelectorChanged();
+		
 		this.textarea.focus();
 	},	
 	redoTextarea : function(){
@@ -323,23 +358,197 @@ var EditTools =
 		}
 		if(this.REDOstack.length == 0) $('tbREDO').disabled = 'true';
 		if(!this.selector) return;
-		this.onSelectorLoad();
-		this.onSelectorChanged();
+		//this.onSelectorLoad();
+		//this.onSelectorChanged();
 		this.textarea.focus();
 	},
-	getSuggestionMenu: function(){
-		var mID = 'findSuggestionMenu',
-			m = $(mID);
-		if( !m ) {
-			m = new Element('div',{'id':mID}).injectTop( $('favorites') );
+	
+	getSuggestions: function() {
+		//if(window.ie) return; NEED TO BE TESTED ON IE - SHOULD WORK FINE
+
+		var textarea = this.textarea,
+			pos = TextArea.getCursor(textarea);
+			val = textarea.value,
+			searchword = "";
+			
+		var	suggestID = 'findSuggestionMenu', fav = $('favorites'),
+			suggest = $(suggestID) || new Element('div',{
+				'id':suggestID, 
+			}).injectTop(fav);
+
+		/* find a partial jspwiki-link 'searchword' */
+		/* look backwards for the start of a wiki-link bracket */
+		for( i = pos-1; i > 0; i-- ){
+			if( val.charAt(i) == ']' ) break;
+			if( val.charAt(i) == '[' && i < val.length-1 ) { 
+				searchword = val.substring(i+1,pos); 
+				if(searchword.indexOf('|') != -1) searchword = searchword.split('|')[1];
+				break; 
+			}
 		}
-		return m;
-	}			  
+		if(searchword =="") return suggest.hide();
+
+		var searchlen = searchword.length;		
+
+		Wiki.jsonrpc('search.getSuggestions', [searchword,30], function(result,exception){
+			if(exception) { 
+				alert(exception.message); 
+			} else if(result.list.length == 0) { 
+				suggest.hide();
+			} else {
+				var ul = new Element('ul').inject( suggest.empty().show() );
+				result.list.each( function(rslt) { 
+					new Element('li',{
+						'title':rslt,
+						'events': {
+							'click':function(ev){ 
+								new Event(ev).stop(); 
+								EditTools.storeTextarea();
+								TextArea.replaceSelection(textarea, rslt.substr(searchlen));
+							}
+						}
+					}).setHTML( rslt.trunc(36) ).inject(ul);
+				}); /* each */
+			} /* endif */
+		});
+	},
+	
+	onPageLoadSectionToc : function(){
+		/* initialise a new sectionToc menu */
+		this.selector = new Element('ul');
+		Wiki.makeMenuFx( 'sectiontoc', this.selector);
+
+		// create new working textarea, to allow section edits
+		var m = this.mainarea = this.textarea;
+		this.textarea = m.clone()
+			.removeProperty('id')
+			.removeProperty('name')
+			.addEvent('change', this.onChangeTextarea.bind(this))
+			.injectBefore( m.hide() );
+
+		this.onSelectorLoad();
+    
+		var cursor = location.search.match(/[&?]section=(\d+)/);
+		cursor = (cursor && cursor[1]) ? 1+cursor[1].toInt() : 0;
+		if((cursor>1) && this.textarea.sop) cursor++;
+		this.onChangeSelector(cursor);
+	},	
+	
+	/* 
+	 * UPDATE/RFEFRESH the section selector dropdown
+	 * This function is called at startup, and everytime the section textarea changes
+	 * Postcondition: the sectiontoc dropdown contains following entries
+	 *   0. ( all )
+	 *   1. start-of-page (if applicable)
+	 *   2. text==<<header 1...n>> , <<selector.offset stores start-offset in main textarea>>
+	 */  
+	 onSelectorLoad : function(){
+		var mainarea = this.mainarea.value,
+			excursor = this.selector.cursor || 0; //remember previous cursor
+		var DELIM = "\u00a4",
+		 
+		/* mask all headers inside a {{{ ... }}} but keep length unchanged! */
+		mainarea = mainarea.replace(/\{\{\{([\s\S]*?)\}\}\}/g, function(match){
+			return match.replace( /^!/mg, DELIM );
+		});
+
+		var tt = mainarea.split( /^(!{1,3}.*?)/m);
+
+		this.newSelector();
+		this.textarea.sop = (tt.length>1) && (tt[0] != ''); //start of page section has no !!!header 
+		if(this.textarea.sop) this.addSelector("edit.startOfPage".localize(), 0, 0);
+		
+		var pos = tt.shift().length,
+			ttlen = tt.map(function(i){ return i.length });
+
+		for(var i=0; i<ttlen.length; i=i+2){
+			var hlen = ttlen[i],  //length of header markup !!!,!! or !
+				indent = (hlen==2) ? 1 : (hlen==1) ? 2 : 0,
+				title = tt[i+1].match(/.*?$/m)[0];
+
+			this.addSelector(title, pos, indent);
+			pos += hlen + ttlen[i+1];
+		}
+		//alert(this.selector.offsets);
+		//this.selector.cursor = (oldindex < cursor) ? oldindex, ; 
+		//if( oldIndex < cursor ) this.selector.options[oldIndex].selected = true;
+	},
+	setSelector: function( newcursor ){
+		var els = this.selector.getChildren();
+		
+		if(newcursor <0 || newcursor >= els.length) newcursor = 0;
+		els.removeClass('cursor');
+		els[newcursor].addClass('cursor');
+		this.selector.cursor = newcursor; //not used ????
+	},
+	newSelector: function(){
+		this.selector.empty();
+		this.selector.offsets = [];
+		this.addSelector("( all )",-1);
+	},
+	addSelector: function(text,offset,indent){
+		this.selector.offsets.push(offset);
+		this.selector.adopt( 
+			new Element('li').adopt(
+				new Element('a',{
+					'class':'action',
+					'styles': {
+						'padding-left':(indent+0.5)+'em'
+					},
+					'title':text,
+					'events':{
+						'click':this.onChangeSelector.pass([this.selector.offsets.length-1],this) 
+					}
+				}).setHTML(text.trunc(48))
+			) 
+		);	
+	},
+
+	/* the USER clicks a new item from the section selector dropdown
+	 * copy a part of the main textarea to the section textarea
+	 */
+	onChangeSelector: function(cursor){
+		var se = this.selector.offsets, ta = this.textarea, ma = this.mainarea.value;
+
+		this.setSelector(cursor);
+		ta.begin = (cursor==0) ? 0 : se[cursor];
+		ta.end = ((cursor==0) || (cursor+1 >= se.length)) ? ma.length : se[cursor+1]; 
+		ta.value = ma.substring(ta.begin,ta.end);		
+		//alert(cursor+' '+ma.length+' '+ta.begin+' '+ta.end+' '+se[cursor+1])
+	},
+
+	/*
+	 * Changes in the section textarea: 
+	 * happens when 
+	 *  (i)  textarea is changed and deselected (click outside the textarea) 
+	 *  (ii) user clicks a toolbar-button
+	 *  
+	 * 1) copy section textarea at the right offset of the main textarea
+	 * 2) refresh the sectiontoc menu
+	 */
+	onChangeTextarea : function(){
+		var	ta = this.textarea,	ma = this.mainarea;
+
+		//alert('change textarea');
+
+		var	s = ta.value;
+		if( s.lastIndexOf("\n") + 1 != s.length ) ta.value += '\n';
+		 
+		s = ma.value;
+		ma.value = s.substring(0, ta.begin) + ta.value + s.substring(ta.end);
+		ta.end = ta.begin + ta.value.length;
+		this.onSelectorLoad();  //refresh selectortoc menu
+	 }
 } 
 
 
-/** TextArea support routines
- **/
+/** 
+TextArea support routines 
+- getSelection(id) : return selected text (string)
+- getCursor(id) : returns char offset of cursor (integer)
+- replaceSelection(id,newtext): replaces selection with newtext, on return the new text is selected
+- isSelectionAtStartOfLine(id): returns boolean indicating whether cursor is at the start of newline
+**/
 var TextArea =
 {
 	getSelection: function(id){
@@ -349,10 +558,47 @@ var TextArea =
 		return f.getValue().substring(f.selectionStart, f.selectionEnd);
 	},
 
-	/* replaces the selection with aValue, and returns with aValue selected */
+	// return char offset of cursor
+	getCursor: function(id) {
+		var f = $(id); if(!f) return ''; 
+
+		if(window.ie){
+			var r1 = document.selection.createRange(),
+				r1text = r1.text,
+				XX = '#%~'; //small string that will not normally be encountered
+
+			//insert the weirdstring where the cursor is at
+			r1.text = r1text + XX; 
+			r1.moveStart('character', (0 - r1text.length - XX.length));
+
+			//save off the new string with the weirdstring in it
+			var modified = f.value;
+
+			//set the actual text value back to how it was
+			r1.text = r1text;
+
+			//look through the new string we saved off and find the location of
+			//the weirdstring that was inserted and return that value
+			/* just use index of ?? */
+			//return( modified.indexOf(XX) - r1text.length);
+			for (i=0; i <= modified.length; i++) {
+				var tmp = modified.substring(i, i + XX.length);
+				if (tmp == XX) {
+				  	return (i - r1text.length);
+				}
+			}
+		}
+		// Mozilla and the rest
+		else if( f.selectionStart || f.selectionStart == '0') {
+			return f.selectionStart;
+		} else {
+			return f.value.length;
+		}
+	},
+
 	replaceSelection: function(id, newText){
 		var f = $(id); if(!f) return;
-		var scrollTop = this.scrollTop;
+		var scrollTop = f.scrollTop; //cache top
 		 
 		if(window.ie){
 			f.focus();
@@ -361,14 +607,15 @@ var TextArea =
 			r.moveStart('character',-newText.length); /***/
 			r.select();
 			f.range.select();
-		}
-		else { 
+		} else { 
 			var start = f.selectionStart, end = f.selectionEnd;
 			f.value = f.value.substring(0, start) + newText + f.value.substring(end);
-			f.replaceSelectionRange(start + newText.length, start + newText.length);
+			f.selectionStart = start;
+			f.selectionEnd = start + newText.length;
 		}
 		f.focus();
 		f.scrollTop = scrollTop;
+		
 		if(f.onchange) f.onchange();
 	},
 	
@@ -392,105 +639,5 @@ var TextArea =
 		return false;
 	}	
 };
-
-//*************************
-// TODO
-// copied from default -- to be incorporated in EditTools
-var globalCursorPos; // global variabe to keep track of where the cursor was
-
-//sets the global variable to keep track of the cursor position
-function setCursorPos(id) 
-{
-	if(window.ie) return;
-	globalCursorPos = getCursorPos( $(id) );
-}
-
-function getCursorPos(textElement) 
-{
-	//save off the current value to restore it later,
-	var sOldText = textElement.value;
-
-	if(window.ie){
-		var objRange = document.selection.createRange(),
-			sOldRange = objRange.text,
-			sWeirdString = '#%~'; //small string that will not normally be encountered
-
-		//insert the weirdstring where the cursor is at
-		objRange.text = sOldRange + sWeirdString; 
-		objRange.moveStart('character', (0 - sOldRange.length - sWeirdString.length));
-
-		//save off the new string with the weirdstring in it
-		var sNewText = textElement.value;
-
-		//set the actual text value back to how it was
-		objRange.text = sOldRange;
-
-		//look through the new string we saved off and find the location of
-		//the weirdstring that was inserted and return that value
-		for (i=0; i <= sNewText.length; i++) {
-			var sTemp = sNewText.substring(i, i + sWeirdString.length);
-			if (sTemp == sWeirdString) {
-			  var cursorPos = (i - sOldRange.length);
-			  return cursorPos;
-			}
-		}
-	}
-	// Mozilla and the rest
-	else if( textElement.selectionStart || textElement.selectionStart == '0') 
-	{
-		return textElement.selectionStart;
-	}
-	else
-	{
-		return sOldText.length;
-	}
-}
-
-//this function inserts the input string into the textarea
-//where the cursor was at
-function insertString(stringToInsert) {
-	var firstPart = myForm.myTextArea.value.substring(0, globalCursorPos);
-	var secondPart = myForm.myTextArea.value.substring(globalCursorPos,
-			                                               myForm.myTextArea.value.length);
-	myForm.myTextArea.value = firstPart + stringToInsert + secondPart;
-} 
-
-/**
- ** JSON-RPC
- ** POST is
- ** {"id": 2, "method": "search.getSuggestions", "params": ["p", 10]}
- ** Response is
- ** {"result":{"list":["Pic\/ruby.jpg","Pic\/telenet-smile.gif","Pic\/spin-greyblocks.gif","Pic\/shadow_transparent2.png","Pic\/monkey-mam-child.jpg","Pic\/brushed-button.jpg","Pic\/resizecursorv.png","Pic\/UserKeychainIcon.tiff","PrototypeJavascriptLibrary","Pizza Margerita"],"javaClass":"java.util.ArrayList"},"id":2}
- **/
-function getSuggestions(id)
-{
-	if(window.ie) return;
-	var textNode = $(id),
-		val = textNode.value,
-		searchword;
-	
-	var pos = getCursorPos(textNode);
-	for( i = pos-1; i > 0; i-- ){
-		if( val.charAt(i) == ']' ) break;
-		if( val.charAt(i) == '[' && i < val.length-1 ) { searchword = val.substring(i+1,pos); break; }
-	}
-
-	if(searchword){
-		jsonrpc.search.getSuggestions(callback, searchword, 10);
-	} else {
-		EditTools.getSuggestionMenu().hide();
-	}
-}
-function callback(result, exception)
-{   
-	if(exception) { alert(exception.message); return; }
-	 
-	var menuNode = EditTools.getSuggestionMenu(), 
-		html = [];
-
-	result.list.each(function(el) { html.push('<li>'+el+'</li>'); });
-
-	menuNode.setHTML('<ul>',html.join(''),'</ul>').show();
-}
 
 window.addEvent('load', EditTools.onPageLoad.bind(EditTools) ); //edit only

@@ -1,3 +1,72 @@
+2007-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-4
+        
+        * Refactored JS to support the Edit Suggestion box, so it's now fully based on mootools.
+        The entries in the suggestion box are now clickable: the page or attachment link will be
+        inserted in the textarea. Also the handling of the | bar inside a link has been improved.
+
+        * [JSPWiki-200] The length of the entries in the Edit Suggestion are truncated to avoid
+        overlap with the main body of the edit area.
+
+        * The build script has been updated to use the YUI compressor. It now compresses both 
+        javascript and css files. (this replaces the Dojo compressor, which only handled js)
+ 
+        * In the UserPreferences you can now select the preferred language. 
+        The default language is based on the user's browsers setting, but a dropdown allows you to 
+        select any of the installed languages.
+        The PreferencesTab.jsp has been refactored, with help of Juan Pablo Santos Rodriguez.
+        All java handling has been moved to TemplateManager.java and Preferences.java.
+        
+        New i18n resources (already added for .en and .nl) 
+            prefs.user.language=Select Language
+            prefs.user.timezone.server=[SERVER]
+            prefs.user.language.default=[DEFAULT]
+
+        * Added an are-you-sure prompt to the UserPreferences.jsp when leaving the page without saving.
+
+            javascript.prefs.areyousure=Without clicking the Save User Preferences button, \
+                 your changes will be lost. Are you sure you want to exit this page?
+
+        * [JSPWIKI-226] "View Page Source" now also displays 'non-latest' page versions
+
+        * Suppress the 'ViewPageSource' in the more menu when the page doesn't exist yet.
+
+        Added missing i18n resource
+            actions.rawpage.title=View Page Source
+
+        * Improved the implementation of the 'more menu' to resolve the intermediate screen glitch. 
+        When javascript is off, the more menu will now be displayed at the top of the Favorites block,
+        when javascript is on, the more menu becomes a mouse-hovered drop-down.
+        
+
+        * In the user-preferences, you can position the favorites menu Left or Right.
+        Now it is also possible to make the Favorites menu hidden, allowing the body of the page
+        to fith the full with of the screen. This should benefit narrow (mobile) devices.
+        The favorites menu is still reachable via a mouse-hovered menu.
+
+        Added i18n resources:
+             javascript.favs.show="Click to show Favorites"
+             javascript.favs.hide="Click to hide Favorites"
+
+        * The javascript initialization parameters have been changed to XHTML META tabs 
+        to reduce xss vulnerability. (commonheader.jsp)
+        Now username's with embedded single quotes do not crash the js anymore.
+
+        * [JSPWIKI-209] Section editing has been added. (feature original in the BrushedTemplate)
+        When a page is editable, each section header gets an additional [edit] label.
+        In edit mode, a section drop-down has been added which allows to filter the text-area to the
+        section of interest.
+
+        Added i18n resources:
+              javascript.quick.edit=[Edit]
+              javascript.quick.edit.title=Edit section: {0}
+              edit.sections=Sections
+
+        * [JSPWIKI-193] Flawed login.loginhelpmissing text in en, de, nl locales. 
+        Fixed for .en, .nl, .de was already fixed. 
+
+
 2008-03-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-3
@@ -227,7 +296,7 @@
 
         * [JSPWiki-137] : Toggle workflow details now also works on FF
         
-        * [JSPWiki-123]	: The set of user-preference timeformats added to 
+        * [JSPWiki-123] : The set of user-preference timeformats added to 
         jspwiki.properties.tmpl iso jspwiki.properties.
 
         
@@ -259,7 +328,7 @@
 
         * 2.6.1-cvs-10  -- various small i18n issues 
 
-        * [JSPWiki-123]	: The set of user-preference timeformats moved to the 
+        * [JSPWiki-123] : The set of user-preference timeformats moved to the 
         jspwiki.properties, such that the administrator can easily choose timeformats,
         if needed even localize them.
 

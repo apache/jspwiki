@@ -23,10 +23,14 @@ package com.ecyrd.jspwiki.ui;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.jar.*;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,6 +39,7 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
@@ -63,33 +68,56 @@ public class TemplateManager
     public static final String RESOURCE_STYLESHEET = "stylesheet";
 
     /**
-     * Requests a script to be loaded.  Value is {@value}.
+     * Requests a script to be loaded. Value is {@value}.
      */
-    public static final String RESOURCE_SCRIPT     = "script";
+    public static final String RESOURCE_SCRIPT = "script";
 
     /**
-     *  Requests inlined CSS. Value is {@value}.
+     * Requests inlined CSS. Value is {@value}.
      */
-    public static final String RESOURCE_INLINECSS  = "inlinecss";
+    public static final String RESOURCE_INLINECSS = "inlinecss";
 
     /** The default directory for the properties. Value is {@value}. */
-    public static final String DIRECTORY           = "templates";
+    public static final String DIRECTORY = "templates";
 
-    /** The name of the default template.  Value is {@value}. */
-    public static final String DEFAULT_TEMPLATE    = "default";
+    /** The name of the default template. Value is {@value}. */
+    public static final String DEFAULT_TEMPLATE = "default";
 
-    /** Name of the file that contains the properties.*/
+    /** Name of the file that contains the properties. */
 
-    public static final String PROPERTYFILE        = "template.properties";
+    public static final String PROPERTYFILE = "template.properties";
 
-    /** The name under which the resource includes map is stored in the WikiContext. */
-    public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
+    /** Location of I18N Resource bundles, and path prefix and suffixes */
 
-    // private Cache              m_propertyCache;
+    public static final String I18NRESOURCE_PATH = "/WEB-INF/lib/JSPWiki.jar";
 
-    protected static final Logger log = Logger.getLogger( TemplateManager.class );
+    public static final String I18NRESOURCE_PREFIX = "templates/default_";
 
-    /** Requests a HTTP header.  Value is {@value}. */
+    public static final String I18NRESOURCE_SUFFIX = ".properties";
+
+    /** I18N string to mark the default locale */
+
+    public static final String I18NDEFAULT_LOCALE = "prefs.user.language.default";
+
+    /** I18N string to mark the server timezone */
+
+    public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
+
+    /** Prefix of the default timeformat properties. */
+
+    public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
+
+    /**
+     * The name under which the resource includes map is stored in the
+     * WikiContext.
+     */
+    public static final String RESOURCE_INCLUDES = "jspwiki.resourceincludes";
+
+    // private Cache m_propertyCache;
+
+    protected static final Logger log = Logger.getLogger(TemplateManager.class);
+
+    /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
 
     /**
@@ -124,7 +152,9 @@ public class TemplateManager
             {
                 in.close();
             }
-            catch( IOException e ) {}
+            catch (IOException e)
+            {
+            }
 
             return true;
         }
@@ -364,20 +394,209 @@ public class TemplateManager
 
             skins = (String[]) skinSet.toArray(skins);
 
-            for( int i = 0; i < skins.length; i++ )
+            for (int i = 0; i < skins.length; i++)
             {
-                String[] s = StringUtils.split(skins[i],"/");
+                String[] s = StringUtils.split(skins[i], "/");
 
-                if( s.length > 2 && skins[i].endsWith("/") )
+                if (s.length > 2 && skins[i].endsWith("/"))
                 {
-                    String skinName = s[s.length-1];
-                    resultSet.add( skinName );
-                    if( log.isDebugEnabled() ) log.debug("...adding skin '"+skinName+"'");
+                    String skinName = s[s.length - 1];
+                    resultSet.add(skinName);
+                    if (log.isDebugEnabled())
+                        log.debug("...adding skin '" + skinName + "'");
                 }
             }
         }
 
         return resultSet;
+    }
+
+    /**
+     * List all installed i18n language properties
+     * 
+     * @param pageContext
+     * @return map of installed Languages (with help of Juan Pablo Santos Rodr’guez)
+     * @since 2.7.x
+     */
+    public Map listLanguages(PageContext pageContext)
+    {
+        LinkedHashMap resultMap = new LinkedHashMap();
+
+        String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
+        
+        try
+        {
+            JarEntry entry;
+            InputStream inputStream = pageContext.getServletContext().getResourceAsStream(I18NRESOURCE_PATH);
+            JarInputStream jarStream = new JarInputStream(inputStream);
+
+            while ((entry = jarStream.getNextJarEntry()) != null)
+            {
+                String name = entry.getName();
+
+                if (!entry.isDirectory() && name.startsWith(I18NRESOURCE_PREFIX) && name.endsWith(I18NRESOURCE_SUFFIX))
+                {
+                    name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
+
+                    Locale locale = new Locale(name.substring(0, 2), ((name.indexOf("_") == -1) ? "" : name.substring(3, 5)));
+
+                    String defaultLanguage = "";
+
+                    if (clientLanguage.startsWith(name))
+                    {
+                        defaultLanguage = LocaleSupport.getLocalizedMessage(pageContext, I18NDEFAULT_LOCALE);
+                    }
+
+                    resultMap.put(name, locale.getDisplayName() + " " + defaultLanguage);
+                }
+            }
+        }
+        catch (IOException ioe)
+        {
+            if (log.isDebugEnabled())
+                log.debug("Could not search jar file '" + I18NRESOURCE_PATH + 
+                          "'for properties files due to an IOException: \n" + ioe.getMessage());
+        }
+
+        return resultMap;
+    }
+
+
+    /**
+     * List all available timeformats, read from the jspwiki.properties
+     * 
+     * @param pageContext
+     * @return map of TimeFormats
+     * @since 2.7.x
+     */
+    public Map listTimeFormats(PageContext pageContext)
+    {
+        WikiContext context = WikiContext.findContext( pageContext ); 
+        Properties props = m_engine.getWikiProperties();
+        ArrayList tfArr = new ArrayList(40);
+        LinkedHashMap resultMap = new LinkedHashMap();
+
+        /* filter timeformat properties */
+        for (Enumeration e = props.propertyNames(); e.hasMoreElements();)
+        {
+            String name = (String) e.nextElement();
+
+            if (name.startsWith(TIMEFORMATPROPERTIES))
+            {
+                tfArr.add(name);
+            }
+        }
+
+        /* fetch actual formats */
+        if (tfArr.size() == 0) /*
+                                 * no props found - make sure some default
+                                 * formats are avail
+                                 */
+        {
+            tfArr.add("dd-MMM-yy");
+            tfArr.add("d-MMM-yyyy");
+            tfArr.add("EEE, dd-MMM-yyyy, zzzz");
+        }
+        else
+        {
+            Collections.sort(tfArr);
+
+            for (int i = 0; i < tfArr.size(); i++)
+            {
+                tfArr.set(i, props.getProperty((String) tfArr.get(i)));
+            }
+        }
+
+        String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
+        TimeZone tz = TimeZone.getDefault();
+        try
+        {
+            tz.setRawOffset(Integer.parseInt(prefTimeZone));
+        }
+        catch (Exception e)
+        {
+            /* dont care */
+        }
+
+        Date d = new Date(); // current date
+        try
+        {
+            // dummy format pattern
+            SimpleDateFormat fmt = Preferences.getDateFormat( context );
+            fmt.setTimeZone(tz);
+
+            for (int i = 0; i < tfArr.size(); i++)
+            {
+                try
+                {
+                    String f = (String) tfArr.get(i);
+                    fmt.applyPattern(f);
+
+                    resultMap.put(f, fmt.format(d));
+                }
+                catch (IllegalArgumentException e)
+                {
+                } // skip parameter
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+        } // skip parameter
+
+        return resultMap;
+    }
+
+    /**
+     * List all timezones, with special marker for server timezone
+     * 
+     * @param pageContext
+     * @return map of TimeZones
+     * @since 2.7.x
+     */
+    public Map listTimeZones(PageContext pageContext)
+    {
+        LinkedHashMap resultMap = new LinkedHashMap();
+
+        String[][] tzs = { { "-43200000", "(UTC-12) Enitwetok, Kwajalien" },
+                          { "-39600000", "(UTC-11) Nome, Midway Island, Samoa" }, { "-36000000", "(UTC-10) Hawaii" },
+                          { "-32400000", "(UTC-9) Alaska" }, { "-28800000", "(UTC-8) Pacific Time" },
+                          { "-25200000", "(UTC-7) Mountain Time" }, { "-21600000", "(UTC-6) Central Time, Mexico City" },
+                          { "-18000000", "(UTC-5) Eastern Time, Bogota, Lima, Quito" },
+                          { "-14400000", "(UTC-4) Atlantic Time, Caracas, La Paz" }, { "-12600000", "(UTC-3:30) Newfoundland" },
+                          { "-10800000", "(UTC-3) Brazil, Buenos Aires, Georgetown, Falkland Is." },
+                          { "-7200000", "(UTC-2) Mid-Atlantic, Ascention Is., St Helena" },
+                          { "-3600000", "(UTC-1) Azores, Cape Verde Islands" },
+                          { "0", "(UTC) Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" },
+                          { "3600000", "(UTC+1) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" },
+                          { "7200000", "(UTC+2) Helsinki, Athens, Kaliningrad, South Africa, Warsaw" },
+                          { "10800000", "(UTC+3) Baghdad, Riyadh, Moscow, Nairobi" }, { "12600000", "(UTC+3.30) Tehran" },
+                          { "14400000", "(UTC+4) Adu Dhabi, Baku, Muscat, Tbilisi" }, { "16200000", "(UTC+4:30) Kabul" },
+                          { "18000000", "(UTC+5) Islamabad, Karachi, Tashkent" },
+                          { "19800000", "(UTC+5:30) Bombay, Calcutta, Madras, New Delhi" },
+                          { "21600000", "(UTC+6) Almaty, Colomba, Dhakra" }, { "25200000", "(UTC+7) Bangkok, Hanoi, Jakarta" },
+                          { "28800000", "(UTC+8) Beijing, Hong Kong, Perth, Singapore, Taipei" },
+                          { "32400000", "(UTC+9) Osaka, Sapporo, Seoul, Tokyo, Yakutsk" },
+                          { "34200000", "(UTC+9:30) Adelaide, Darwin" },
+                          { "36000000", "(UTC+10) Melbourne, Papua New Guinea, Sydney, Vladivostok" },
+                          { "39600000", "(UTC+11) Magadan, New Caledonia, Solomon Islands" },
+                          { "43200000", "(UTC+12) Auckland, Wellington, Fiji, Marshall Island" } };
+
+        String servertz = Integer.toString(java.util.TimeZone.getDefault().getRawOffset());
+
+        for (int i = 0; i < tzs.length; i++)
+        {
+            String serverTimeZone = "";
+
+            if (servertz.equals(tzs[i][0]))
+            {
+                serverTimeZone = LocaleSupport.getLocalizedMessage(pageContext, I18NSERVER_TIMEZONE);
+            }
+
+            resultMap.put(tzs[i][0], tzs[i][1] + " " + serverTimeZone);
+
+        }
+
+        return resultMap;
     }
 
     /**

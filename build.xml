@@ -403,34 +403,49 @@
     </war>
 
     <war warfile="${warfile}"
-         webxml="etc/web.xml" update="true">
-     	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
-    </war>
+          webxml="etc/web.xml" update="true">
+      	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
+      	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.css" />
+     </war>
 
-  </target>
+   </target>
 
-  <!-- We compress the Javascript using Dojo's Rhino system.  Very useful.
-       If you don't want to use the compressed stuff, just copy the default
-       .js files from the distro on top of the compressed ones from the WAR.
-   -->
-  <target name="compressedjs">
-	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
-  		  fork="true">
-  	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-common.js" />
-  	</java>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
-  		  fork="true">
-	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" />
-	</java>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
-  		  fork="true">
-	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" />
-	</java>
-  </target>
+   <!-- We compress the Javascript using yahoo's yui compressor, 
+        which compresses both javascript and css files.
+        If you don't want to use the compressed stuff, just copy the default
+        .js files from the distro on top of the compressed ones from the WAR.
+    -->
+   <target name="compressedjs">
+ 	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
+   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
+   		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
+   		  fork="true">
+   	  <arg line="${code.src}/webdocs/scripts/jspwiki-common.js" />
+   	</java>
+   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
+   		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
+   		  fork="true">
+ 	  <arg line="${code.src}/webdocs/scripts/jspwiki-edit.js" />
+ 	</java>
+   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
+   		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
+   		  fork="true">
+ 	  <arg line="${code.src}/webdocs/scripts/jspwiki-prefs.js" />
+ 	</java>
+
+   	<mkdir dir="${install.fulldir}/webdocs/templates/default"/>
+   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
+   		  output="${install.fulldir}/webdocs/templates/default/jspwiki.css"
+   		  fork="true">
+   	  <arg line="${code.src}/webdocs/templates/default/jspwiki.css --line-break 0" />
+   	</java>
+   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
+   		  output="${install.fulldir}/webdocs/templates/default/jspwiki_print.css"
+   		  fork="true">
+   	  <arg line="${code.src}/webdocs/templates/default/jspwiki_print.css --line-break 0" />
+   	</java>
+   	
+   </target>
 
   <target name="opened-war" depends="war"
    description="Creates an opened JSPWiki war hierarchy into the build dir.">

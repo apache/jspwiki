@@ -54,7 +54,8 @@ public class CurrentTimePlugin
         try
         {
             SimpleDateFormat fmt = new SimpleDateFormat( formatString );
-
+            //SimpleDateFormat fmt = Prefernces.getDateFormat( pageContext );
+            
             Date d = new Date();  // Now.
 
             return fmt.format( d );

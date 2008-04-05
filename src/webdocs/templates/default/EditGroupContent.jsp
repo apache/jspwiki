@@ -1,6 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="templates.default"/>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
@@ -9,6 +8,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setBundle basename="templates.default"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>

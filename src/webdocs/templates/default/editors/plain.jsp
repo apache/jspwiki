@@ -8,6 +8,7 @@
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<fmt:setLocale value="${prefs['Language']}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
         This is a plain editor for JSPWiki.
@@ -15,12 +16,11 @@
 <% 
    WikiContext context = WikiContext.findContext( pageContext ); 
    WikiEngine engine = context.getEngine();
-   JSONRPCManager.requestJSON( context );  //FIXME: to be replace by standard mootools lib
    
    String contextPath = request.getContextPath();
 
-  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
-  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
+   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
+   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">
@@ -82,9 +82,6 @@
   <div>
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
          class="editor" 
-       onkeyup="getSuggestions(this.id)"
-       onclick="setCursorPos(this.id)" 
-      onchange="setCursorPos(this.id)"
           rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
   </div>
   <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.

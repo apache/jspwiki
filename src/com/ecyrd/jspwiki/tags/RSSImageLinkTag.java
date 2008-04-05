@@ -65,10 +65,7 @@ public class RSSImageLinkTag
         if( rssURL != null )
         {
             JspWriter out = pageContext.getOut();
-            out.print("<a href=\""+rssURL+"\">");
-            out.print("<img src=\""+m_wikiContext.getURL( WikiContext.NONE,"images/xml.png")+"\"");
-            out.print(" alt=\"[RSS]\" title=\""+getTitle()+"\"/>");
-            out.print("</a>");
+            out.print("<a class=\"feed\" href=\""+rssURL+"\">&nbsp;</a>");
         }
 
         return SKIP_BODY;

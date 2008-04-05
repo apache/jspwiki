@@ -21,8 +21,11 @@
 package com.ecyrd.jspwiki.preferences;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TimeZone;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,12 +86,13 @@ public class Preferences
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", "dd-MMM-yyyy HH:mm" ) );
         prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
-                                                          java.util.TimeZone.getDefault().getID() ) );
-        prefs.put("orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
+                                                          Integer.toString( java.util.TimeZone.getDefault().getRawOffset() )
+                                                        ) );
+        prefs.put("Orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
         
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
         // disabling it until knowing why it's happening
-        // FIXME: editomanager reads jspwiki.editor -- which of both properties should continue
+        // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
                 
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
@@ -138,7 +142,10 @@ public class Preferences
      */
     public static String getPreference( WikiContext wikiContext, String name )
     {
-        Preferences prefs = (Preferences)wikiContext.getHttpRequest().getSession().getAttribute( SESSIONPREFS );
+        HttpServletRequest request = wikiContext.getHttpRequest();
+        if ( request == null ) return null;
+        
+        Preferences prefs = (Preferences)request.getSession().getAttribute( SESSIONPREFS );
         
         if( prefs != null )
             return (String)prefs.get( name );
@@ -162,4 +169,59 @@ public class Preferences
         
         return null;
     }
+
+    
+    /**
+     * Get Locale according to user-preference settings or the user browser locale
+     * 
+     * @param wikiContext
+     * @since 2.7.x
+     */
+    public static Locale getLocale(WikiContext context)
+    {
+        Locale loc = null;
+        
+        String language = Preferences.getPreference( context, "Language" );
+
+        if( language != null)
+            loc = new Locale(language);
+
+        if( loc == null) {
+            
+            HttpServletRequest request = context.getHttpRequest();
+            loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
+        }
+                
+        return loc;
+    }
+
+    /**
+     * Get SimpleTimeFormat according to user browser locale and preferred time formats
+     * 
+     * @param pageContext
+     * @return SimpleTimeFormat
+     * @since 2.7.x
+     */
+    public static SimpleDateFormat getDateFormat(WikiContext context)
+    {
+        Locale clientLocale = Preferences.getLocale( context );
+        String prefTimeZone = Preferences.getPreference( context, "TimeZone");
+        String prefDateFormat = Preferences.getPreference( context, "DateFormat");
+
+        try
+        {
+            TimeZone tz = TimeZone.getDefault();
+            tz.setRawOffset(Integer.parseInt(prefTimeZone));
+
+            SimpleDateFormat fmt = new SimpleDateFormat(prefDateFormat, clientLocale);
+            fmt.setTimeZone(tz);
+
+            return fmt;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
 }

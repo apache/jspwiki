@@ -1,22 +1,29 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.lang.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="java.io.*" %>
+<%@ page import="java.util.jar.*" %>
+
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.preferences.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
+
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  /* see commonheader.jsp */
-  String prefDateFormat = Preferences.getPreference(pageContext,"DateFormat");
-  String prefTimeZone   = Preferences.getPreference(pageContext,"TimeZone");
-
+  //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
   WikiContext c = WikiContext.findContext( pageContext );
-  pageContext.setAttribute( "skins", c.getEngine().getTemplateManager().listSkins(pageContext, c.getTemplate() ) );
+  TemplateManager t = c.getEngine().getTemplateManager();
+  pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
+  pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
+  pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
+  pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
 %>
-
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
 
 <c:if test="${param.tab eq 'prefs'}" >
@@ -69,6 +76,7 @@
   </select>
   </td>
   </tr>
+
   
   <tr>
   <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
@@ -81,15 +89,27 @@
   </td>
   </tr>
 
+
+  <c:if test='${not empty languages}'>
+  <c:set var="prefLanguage" ><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
+  <tr>
+  <td><label for="prefLanguage"><fmt:message key="prefs.user.language"/></label></td>
+  <td>
+  <select id="prefLanguage" name="prefLanguage">
+    <c:forEach items='${languages}' var='lg'>
+      <option value="<c:out value='${lg.key}'/>" <c:if test='${fn:startsWith(prefLanguage,lg.key)}'>selected="selected"</c:if> ><c:out value="${lg.value}"/></option>
+    </c:forEach>
+  </select>
+  </td>
+  </tr>
+  </c:if>
+
   <tr>
   <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label></td>
   <td>
-  <select id="prefOrientation" name="prefOrientation" onchange="Wiki.changeOrientation();">
-      <option value='fav-left' <c:if test='${"fav-left" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' <c:if test='${"fav-right" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
-      <%--
-      <option value='fav-hidden' <c:if test='${"fav-hidden" == prefs["orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.fav-hide"/></option>
-      --%>
+  <select id="prefOrientation" name="prefOrientation" onclick="Wiki.changeOrientation();">
+      <option value='fav-left' <c:if test='${"fav-left" == prefs["Orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
+      <option value='fav-right' <c:if test='${"fav-right" == prefs["Orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
   </select>
   </td>
   </tr>
@@ -98,57 +118,9 @@
   <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
   <td>
   <select id="prefTimeFormat" name="prefTimeFormat" >
-    <%
-      Properties props = c.getEngine().getWikiProperties();
-      ArrayList tfArr = new ArrayList(40);
-
-     /* filter timeformat props */
-      for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
-      {
-          String name = (String) e.nextElement();
-          if( name.startsWith( "jspwiki.defaultprefs.timeformat." ) )
-          {
-			 tfArr.add(name);
-          }
-      }
-
-      /* fetch actual formats */
-      if( tfArr.size() == 0 )
-      {
-          tfArr.add( "dd-MMM-yy" );
-          tfArr.add( "d-MMM-yyyy" );
-          tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
-      } else {
-          Collections.sort( tfArr );
-          for( int i=0; i < tfArr.size(); i++ )
-          {
-            tfArr.set(i, props.getProperty( (String)tfArr.get(i) ) );
-          }
-      }
-
-      Date d = new Date() ;  // Now.
-
-      for( int i=0; i < tfArr.size(); i++ )
-      {
-        String f = (String)tfArr.get(i);
-        String selected = ( prefDateFormat.equals( f ) ? " selected='selected'" : "" ) ;
-        try
-        {
-          java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat( f );
-          java.util.TimeZone tz = java.util.TimeZone.getDefault();
-          try 
-          {
-            tz.setRawOffset( Integer.parseInt( prefTimeZone ) );
-          }
-          catch( Exception e) { /* dont care */ } ;
-          fmt.setTimeZone( tz );
-    %>
-          <option value="<%= f %>" <%= selected%> ><%= fmt.format(d) %></option>
-   <%
-        }
-        catch( IllegalArgumentException e ) { } // skip parameter
-      }
-    %>
+    <c:forEach items='${timeformats}' var='tf' >
+      <option value='<c:out value="${tf.key}"/>' <c:if test='${tf.key == prefs["DateFormat"]}'>selected="selected"</c:if> ><c:out value="${tf.value}"/></option>
+    </c:forEach>
   </select>
   </td>
   </tr>
@@ -156,74 +128,20 @@
   <tr>
   <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label></td>
   <td>
-  <select id='prefTimeZone' name='prefTimeZone' class='select'>
-    <% 
-       String[][] tzs = 
-       { { "-43200000" , "(UTC-12) Enitwetok, Kwajalien" }
-       , { "-39600000" , "(UTC-11) Nome, Midway Island, Samoa" }
-       , { "-36000000" , "(UTC-10) Hawaii" }
-       , { "-32400000" , "(UTC-9) Alaska" }
-       , { "-28800000" , "(UTC-8) Pacific Time" }
-       , { "-25200000" , "(UTC-7) Mountain Time" }
-       , { "-21600000" , "(UTC-6) Central Time, Mexico City" }
-       , { "-18000000" , "(UTC-5) Eastern Time, Bogota, Lima, Quito" }
-       , { "-14400000" , "(UTC-4) Atlantic Time, Caracas, La Paz" }
-       , { "-12600000" , "(UTC-3:30) Newfoundland" }
-       , { "-10800000" , "(UTC-3) Brazil, Buenos Aires, Georgetown, Falkland Is." }
-       , {  "-7200000" , "(UTC-2) Mid-Atlantic, Ascention Is., St Helena" }
-       , {  "-3600000" , "(UTC-1) Azores, Cape Verde Islands" }
-       , {         "0" , "(UTC) Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" }
-       , {   "3600000" , "(UTC+1) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" }
-       , {   "7200000" , "(UTC+2) Helsinki, Athens, Kaliningrad, South Africa, Warsaw" }
-       , {  "10800000" , "(UTC+3) Baghdad, Riyadh, Moscow, Nairobi" }
-       , {  "12600000" , "(UTC+3.30) Tehran" }
-       , {  "14400000" , "(UTC+4) Adu Dhabi, Baku, Muscat, Tbilisi" }
-       , {  "16200000" , "(UTC+4:30) Kabul" }
-       , {  "18000000" , "(UTC+5) Islamabad, Karachi, Tashkent" }
-       , {  "19800000" , "(UTC+5:30) Bombay, Calcutta, Madras, New Delhi" }
-       , {  "21600000" , "(UTC+6) Almaty, Colomba, Dhakra" }
-       , {  "25200000" , "(UTC+7) Bangkok, Hanoi, Jakarta" }
-       , {  "28800000" , "(UTC+8) Beijing, Hong Kong, Perth, Singapore, Taipei" }
-       , {  "32400000" , "(UTC+9) Osaka, Sapporo, Seoul, Tokyo, Yakutsk" }
-       , {  "34200000" , "(UTC+9:30) Adelaide, Darwin" }
-       , {  "36000000" , "(UTC+10) Melbourne, Papua New Guinea, Sydney, Vladivostok" }
-       , {  "39600000" , "(UTC+11) Magadan, New Caledonia, Solomon Islands" }
-       , {  "43200000" , "(UTC+12) Auckland, Wellington, Fiji, Marshall Island" }
-       };
-       String servertz = Integer.toString( java.util.TimeZone.getDefault().getRawOffset() ) ;
-       String selectedtz = servertz;
-       for( int i=0; i < tzs.length; i++ )
-       {
-         if( prefTimeZone.equals( tzs[i][0] ) ) selectedtz = prefTimeZone;
-       }
-       for( int i=0; i < tzs.length; i++ )
-       {
-         String selected = ( selectedtz.equals( tzs[i][0] ) ? " selected='selected'" : "" ) ;
-         String server = ( servertz.equals( tzs[i][0] ) ? " [SERVER]" : "" ) ;
-    %>
-        <option value="<%= tzs[i][0] %>" <%= selected%> ><%= tzs[i][1]+server %></option>
-   <%
-       }
-    %>    
+  <select id='prefTimeZone' name='prefTimeZone'>
+    <c:forEach items='${timezones}' var='tz'>
+      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs["TimeZone"]}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
+    </c:forEach>
   </select>
   </td>
   </tr>
 
-  <%-- user browser language only ;  why not allow to choose from all installed server languages on jspwiki ??   
-  <tr>
-  <td><label for="prefLanguage">Select Language</label></td>
-  <td>
-  <select id="prefLanguage" name="prefLanguage" >
-    <option value="">English</option>
-  </select>
-  </td>
-  </tr>
-  
+  <%--
   <tr>
   <td><label for="prefShowQuickLinks">Show Quick Links</label></td>
   <td>
   <input class='checkbox' type='checkbox' id='prefShowQuickLinks' name='prefShowQuickLinks' 
-         <%= (prefShowQuickLinks.equals("yes") ? "checked='checked'" : "") %> />
+         <c:if test='${"on" == prefs["SectionEdit"]}'>selected="selected"</c:if> />
          <span class="quicklinks"><span 
                class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
                class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 

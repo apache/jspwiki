@@ -39,6 +39,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.ui.*;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -934,11 +935,13 @@ public class WikiContext
     // FIXME: This method should really cache the ResourceBundles or something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
-        Locale loc = null;
+        Locale loc = Preferences.getLocale( this );
 
-        if( m_request != null )
-            loc = m_request.getLocale();
-
+/*        if( loc == null) {
+            if( m_request != null )
+                loc = m_request.getLocale();
+        }
+*/       
         ResourceBundle b = m_engine.getInternationalizationManager().getBundle(bundle, loc);
 
         return b;
@@ -953,9 +956,12 @@ public class WikiContext
      */
     public static Locale getLocale( WikiContext context )
     {
+        return( Preferences.getLocale( context ) );
+/*
         HttpServletRequest request = context.getHttpRequest();
         return ( request != null )
                 ? request.getLocale() : Locale.getDefault();
+*/
     }
 
 }
