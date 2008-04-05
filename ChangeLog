@@ -1,5 +1,11 @@
 2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
+        * 2.7.0-svn-6
+        
+        * [JSPWIKI-233] Bugfix PreferencesTab.jsp
+        
+2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
         * 2.7.0-svn-5
         
         * [JSPWIKI-230] Make TimeZone configuration more user-friendly. Adjusted all jsp time-formatting

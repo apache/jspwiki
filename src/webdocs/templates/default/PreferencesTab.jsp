@@ -129,7 +129,8 @@
   <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label></td>
   <td>
   <select id='prefTimeZone' name='prefTimeZone'>
-    <c:forEach items='${timezones}' var='tz      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
+    <c:forEach items='${timezones}' var='tz'>
+      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
     </c:forEach>
   </select>
   </td>
