@@ -430,7 +430,7 @@ var EditTools =
     
 		var cursor = location.search.match(/[&?]section=(\d+)/);
 		cursor = (cursor && cursor[1]) ? 1+cursor[1].toInt() : 0;
-		if((cursor>1) && this.textarea.sop) cursor++;
+		if((cursor>0) && this.textarea.sop) cursor++;
 		this.onChangeSelector(cursor);
 	},	
 	
