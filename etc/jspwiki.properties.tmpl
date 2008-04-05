@@ -257,9 +257,7 @@ jspwiki.templateDir = default
 #
 jspwiki.defaultprefs.template.skinname =PlainVanilla
 jspwiki.defaultprefs.template.dateformat =dd-MMM-yyyy HH:mm
-# default timezone expressed in time in milliseconds added to UTC 
-# by default, the default timezone is read from the server
-# jspwiki.defaultprefs.template.timezone =3600000
+jspwiki.defaultprefs.template.timezone =GMT+01:00
 jspwiki.defaultprefs.template.orientation =fav-left
 jspwiki.defaultprefs.template.editor =plain
 
@@ -288,12 +286,6 @@ jspwiki.defaultprefs.timeformat.22=MMMM dd, yyyy HH:mm
 jspwiki.defaultprefs.timeformat.23=MMMM dd, yyyy hh:mm a
 jspwiki.defaultprefs.timeformat.24=MMMM, EEE dd,yyyy hh:mm a
 jspwiki.defaultprefs.timeformat.25=MMMM, EEEE dd,yyyy hh:mm a
-jspwiki.defaultprefs.timeformat.26=dd.MM.yyyy
-jspwiki.defaultprefs.timeformat.27=dd.MM.yyyy, HH:mm
-jspwiki.defaultprefs.timeformat.28=dd.MM.yyyy, HH:mm zz
-jspwiki.defaultprefs.timeformat.29=EEEE, dd.MM.yyyy
-jspwiki.defaultprefs.timeformat.30=EE, dd.MM.yyyy, HH:mm zz
-jspwiki.defaultprefs.timeformat.31=EEEE, d. MMMM yyyy, HH:mm zz
 
 #
 #  The name of the front page.  This is the page that gets loaded if no
@@ -446,66 +438,42 @@ jspwiki.plugin.searchPath =
 #
 #  For users looking to get started quickly, the default settings below
 #  should work fine. In addition to the properties below, you may also
-#  want to modify the security policy file WEB-INF/jspwiki.policy. See
-#  the policy file for more details.
+#  want to set the following JRE runtime properties when running JSPWiki
+#  or the servlet container it runs in:
 #
+#     java.security.auth.login.config==/path-to/jspwiki.jass
+#     java.security.policy=/path-to/jspwiki.policy
+#
+#  See the jspwiki.properties and jspwiki.jaas files for more details on
+#  how to do this. These files contain addition configuration options
+#  for the JSPWiki security policy and authentication, respectively, although
+#  the defaults should work fine. If you don't set the JRE properties,
+#  JSPWiki will use default versions from the WEB-INF directory.
+
 #  AUTHENTICATION
-#
 #  For authentication, JSPWiki uses JAAS (Java Authentication and Authorization
-#  Service) in combination with a servlet filter that picks up any credentials
-#  set by the servlet container. The Authentication system is configured below.
+#  Service). The Authentication system is configured in the jspwiki.jaas
+#  file; by default it will attempt to leverage your servlet container's
+#  authentication services, if present. JSPWiki also can use its own
+#  authentication system, which is separate from the container.
 #
-#  You must choose either (A) Container or (B) Custom authentication. (B) is the default.
+#  JSPWiki will try to detect whether you are using container authentication
+#  To use container authentication, you must uncomment
+#  the <security-constraint> elements in WEB-INF/web.xml.
 #
-#  A) CONTAINER AUTHENTICATION 
-#  JSPWiki will always (passively) collect credentials supplied by your servlet
-#  container, via HttpServletRequest.getUserPrincipal/getRemote user. You do not
-#  need to do anything to enable this. In addition, you can cause JSPWiki users
-#  to log in to the web container by uncommenting the the <security-constraint>
-#  elements in WEB-INF/web.xml.
-#
-#  B) CUSTOM AUTHENTICATION
-#  If you do not wish to use container-managed authentication, you can use JSPWiki's
-#  own custom authentication system. This uses a JAAS LoginModule (supplied below)
-#  to log in the user. You can use any JAAS LoginModule you want.
-#  The default class is com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule,
-#  which compares the supplied username and hashed password with the values stored
-#  in the configured UserDatabase (see USER DATABASE below).
-#
-#  Supply the JAAS LoginModule class used for custom authentication here.
-#  The implementation MUST have a zero-argument constructor (as noted in the
-#  javax.security.auth.spi.LoginModule Javadocs).
-jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
-#
-# JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
-#  etc. should be replaced with the actual parameter names. The parameter names and
-# values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
-# when its initialize() method is called. The default UserDatabaseLoginModule class does
-# not need any options.
-#jspwiki.loginModule.options.param1 = value1
-#jspwiki.loginModule.options.param2 = value2
-#
-#
-#  AUTHORIZATION
-#
+#  AUTHORIZATION (EXTERNAL)
 #  For authorization, JSPWiki has a two-tier system. When we want to
 #  determine whether a user has permission to perform a certain action,
-#  we first consult (A) an external "authorizer" to determine if the user
-#  is a member of the required role. In addition to checking its external
-#  authorizer, it also checks (B) its GroupManager for wiki-managed groups.
-#
-#  A) EXTERNAL AUTHORIZATION
-#  By default, JSPWiki uses the servlet container's authorization service
-#  for to check what roles the user belongs to (that is, it calls
-#  HttpServletRequest.isUserInRole(String)). After the user authenticates,
-#  the default Authorizer (WebContainerAuthorizer) checks to see if the user
-#  belongs to the roles listed in web.xml using <security-role>/<role-name> or
-#  <auth-constraint>/<role-name> elements. However, you can use another
-#  Authorizer if you wish; specify that class here.
+#  we first consult an external "authorizer" to determine if the user
+#  is a member of the required role. By default, JSPWiki uses the
+#  servlet container's authorization service for this (that is, it
+#  calls HttpServletRequest.isUserInRole(String) ).
+#  However, you can use another Authorizer if you wish; specify that
+#  class here.
 
 jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
 
-#  B) GROUPS
+#  AUTHORIZATION (GROUPS)
 #  As an additional source of authorization, users can belong to discretionary
 #  "wiki groups" that the users manage themselves. Wiki groups are stored in a
 #  GroupDatabase. The default group database uses an XML file for persistent
@@ -568,7 +536,7 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 #  markup. For example: "[{ALLOW edit Charlie}]". If using a custom
 #  ACL manager, specify the AclManager implementation class here:
 
-jspwiki.aclManager = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
+jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
 
 #############################################################################
 #
@@ -736,33 +704,25 @@ jspwiki.groupdatabase.modifier=modifier
 #  (recommended, and the default), or a stand-alone factory whose properties
 #  are configured with mail.* properties in this file (below).
 #
-
-#  A. Configure the address from which the email appears to come.
-#     If you're going to use a mail session obtained via JNDI, this setting
-#     will only be used if it hasn't already been configured in the obtained
-#     session itself. If you comment it out, JSPWiki will use its internal
-#     default value.
-#     If you're going to use a stand-alone mail session, you will surely want
-#     to configure it, otherwise the internal default value will be used.
-#
-mail.from = @mail.from@
-
-#  B. JNDI Resource Factory Configuration. JSPWiki will try this first.
+#  A. JNDI Resource Factory Configuration. JSPWiki will try this first.
 #     You will need to configure your container to provide a JavaMail
 #     resource factory. See your container documentation, or check our
 #     fairly complete documentation (with examples for Tomcat) in
 #     the JavaDocs for com.ecyrd.jspwiki.util.MailUtil.
 #
-#  JNDI resource name. The commented-out value is the default.
+#  JNDI resource name. The commented-out value is the default
 #jspwiki.mail.jndiname = mail/Session
 
-#  C. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
+#  B. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
 #
 #  Your SMTP host (i.e. the one which sends email)
 mail.smtp.host = @mail.smtp.host@
 
 # If for some reason the standard smtp port (25) is blocked, you can change it here
 #mail.smtp.port = @mail.smtp.port@
+
+#  The address from which the email appears to come
+mail.from = @mail.from@
 
 # If you are using a webserver that is publically accessible it usually
 # doesn't allow you to send mail anonymously

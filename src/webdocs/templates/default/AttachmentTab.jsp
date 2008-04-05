@@ -107,7 +107,7 @@
       <td style="text-align:center;">
         <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title'/>"><wiki:PageVersion /></a>
       </td>
-	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
+	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
       <td><wiki:Author /></td>
       <wiki:Permission permission="delete">
       <td>

@@ -508,15 +508,15 @@ public class TemplateManager
         }
 
         String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
-        TimeZone tz = TimeZone.getDefault();
-        try
+        //TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = TimeZone.getTimeZone(prefTimeZone);
+        /*try
         {
             tz.setRawOffset(Integer.parseInt(prefTimeZone));
         }
         catch (Exception e)
         {
-            /* dont care */
-        }
+        }*/
 
         Date d = new Date(); // current date
         try
@@ -557,43 +557,53 @@ public class TemplateManager
     {
         LinkedHashMap resultMap = new LinkedHashMap();
 
-        String[][] tzs = { { "-43200000", "(UTC-12) Enitwetok, Kwajalien" },
-                          { "-39600000", "(UTC-11) Nome, Midway Island, Samoa" }, { "-36000000", "(UTC-10) Hawaii" },
-                          { "-32400000", "(UTC-9) Alaska" }, { "-28800000", "(UTC-8) Pacific Time" },
-                          { "-25200000", "(UTC-7) Mountain Time" }, { "-21600000", "(UTC-6) Central Time, Mexico City" },
-                          { "-18000000", "(UTC-5) Eastern Time, Bogota, Lima, Quito" },
-                          { "-14400000", "(UTC-4) Atlantic Time, Caracas, La Paz" }, { "-12600000", "(UTC-3:30) Newfoundland" },
-                          { "-10800000", "(UTC-3) Brazil, Buenos Aires, Georgetown, Falkland Is." },
-                          { "-7200000", "(UTC-2) Mid-Atlantic, Ascention Is., St Helena" },
-                          { "-3600000", "(UTC-1) Azores, Cape Verde Islands" },
-                          { "0", "(UTC) Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" },
-                          { "3600000", "(UTC+1) Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" },
-                          { "7200000", "(UTC+2) Helsinki, Athens, Kaliningrad, South Africa, Warsaw" },
-                          { "10800000", "(UTC+3) Baghdad, Riyadh, Moscow, Nairobi" }, { "12600000", "(UTC+3.30) Tehran" },
-                          { "14400000", "(UTC+4) Adu Dhabi, Baku, Muscat, Tbilisi" }, { "16200000", "(UTC+4:30) Kabul" },
-                          { "18000000", "(UTC+5) Islamabad, Karachi, Tashkent" },
-                          { "19800000", "(UTC+5:30) Bombay, Calcutta, Madras, New Delhi" },
-                          { "21600000", "(UTC+6) Almaty, Colomba, Dhakra" }, { "25200000", "(UTC+7) Bangkok, Hanoi, Jakarta" },
-                          { "28800000", "(UTC+8) Beijing, Hong Kong, Perth, Singapore, Taipei" },
-                          { "32400000", "(UTC+9) Osaka, Sapporo, Seoul, Tokyo, Yakutsk" },
-                          { "34200000", "(UTC+9:30) Adelaide, Darwin" },
-                          { "36000000", "(UTC+10) Melbourne, Papua New Guinea, Sydney, Vladivostok" },
-                          { "39600000", "(UTC+11) Magadan, New Caledonia, Solomon Islands" },
-                          { "43200000", "(UTC+12) Auckland, Wellington, Fiji, Marshall Island" } };
+        String[][] tzs = { { "GMT-12", "Enitwetok, Kwajalien" },
+                          { "GMT-11", "Nome, Midway Island, Samoa" }, 
+                          { "GMT-10", "Hawaii" },
+                          { "GMT-9", "Alaska" }, 
+                          { "GMT-8", "Pacific Time" },
+                          { "GMT-7", "Mountain Time" }, 
+                          { "GMT-6", "Central Time, Mexico City" },
+                          { "GMT-5", "Eastern Time, Bogota, Lima, Quito" },
+                          { "GMT-4", "Atlantic Time, Caracas, La Paz" }, 
+                          { "GMT-3:30", "Newfoundland" },
+                          { "GMT-3", "Brazil, Buenos Aires, Georgetown, Falkland Is." },
+                          { "GMT-2", "Mid-Atlantic, Ascention Is., St Helena" },
+                          { "GMT-1", "Azores, Cape Verde Islands" },
+                          { "GMT", "Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" },
+                          { "GMT+1", "Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" },
+                          { "GMT+2", "Helsinki, Athens, Kaliningrad, South Africa, Warsaw" },
+                          { "GMT+3", "Baghdad, Riyadh, Moscow, Nairobi" }, 
+                          { "GMT+3:30", "Tehran" },
+                          { "GMT+4", "Adu Dhabi, Baku, Muscat, Tbilisi" }, 
+                          { "GMT+4:30", "Kabul" },
+                          { "GMT+5", "Islamabad, Karachi, Tashkent" },
+                          { "GMT+5:30", "Bombay, Calcutta, Madras, New Delhi" },
+                          { "GMT+6", "Almaty, Colomba, Dhakra" }, 
+                          { "GMT+7", "Bangkok, Hanoi, Jakarta" },
+                          { "GMT+8", "Beijing, Hong Kong, Perth, Singapore, Taipei" },
+                          { "GMT+9", "Osaka, Sapporo, Seoul, Tokyo, Yakutsk" },
+                          { "GMT+9:30", "Adelaide, Darwin" },
+                          { "GMT+10", "Melbourne, Papua New Guinea, Sydney, Vladivostok" },
+                          { "GMT+11", "Magadan, New Caledonia, Solomon Islands" },
+                          { "GMT+12", "Auckland, Wellington, Fiji, Marshall Island" } };
 
-        String servertz = Integer.toString(java.util.TimeZone.getDefault().getRawOffset());
+        java.util.TimeZone servertz = java.util.TimeZone.getDefault();
 
-        for (int i = 0; i < tzs.length; i++)
+        for( int i = 0; i < tzs.length; i++ )
         {
+            String tzID = tzs[i][0];
+            java.util.TimeZone tz = java.util.TimeZone.getTimeZone(tzID);
+            
             String serverTimeZone = "";
 
-            if (servertz.equals(tzs[i][0]))
+            if( servertz.getRawOffset() == tz.getRawOffset() )
             {
                 serverTimeZone = LocaleSupport.getLocalizedMessage(pageContext, I18NSERVER_TIMEZONE);
+                tzID = servertz.getID(); 
             }
 
-            resultMap.put(tzs[i][0], tzs[i][1] + " " + serverTimeZone);
-
+            resultMap.put(tzID, "(" + tzs[i][0] + ") "+tzs[i][1] + " " + serverTimeZone);            
         }
 
         return resultMap;

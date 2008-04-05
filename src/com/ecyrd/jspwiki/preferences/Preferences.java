@@ -85,9 +85,14 @@ public class Preferences
         
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", "dd-MMM-yyyy HH:mm" ) );
+
+        prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
+                                                          java.util.TimeZone.getDefault().getID() ) );
+  /*
         prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
                                                           Integer.toString( java.util.TimeZone.getDefault().getRawOffset() )
                                                         ) );
+  */
         prefs.put("Orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
         
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
@@ -210,8 +215,9 @@ public class Preferences
 
         try
         {
-            TimeZone tz = TimeZone.getDefault();
-            tz.setRawOffset(Integer.parseInt(prefTimeZone));
+            TimeZone tz = TimeZone.getTimeZone(prefTimeZone);
+            //TimeZone tz = TimeZone.getDefault();
+            //tz.setRawOffset(Integer.parseInt(prefTimeZone));
 
             SimpleDateFormat fmt = new SimpleDateFormat(prefDateFormat, clientLocale);
             fmt.setTimeZone(tz);

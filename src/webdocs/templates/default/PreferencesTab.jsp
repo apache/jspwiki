@@ -108,8 +108,8 @@
   <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label></td>
   <td>
   <select id="prefOrientation" name="prefOrientation" onclick="Wiki.changeOrientation();">
-      <option value='fav-left' <c:if test='${"fav-left" == prefs["Orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' <c:if test='${"fav-right" == prefs["Orientation"]}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
+      <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
+      <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
   </select>
   </td>
   </tr>
@@ -119,7 +119,7 @@
   <td>
   <select id="prefTimeFormat" name="prefTimeFormat" >
     <c:forEach items='${timeformats}' var='tf' >
-      <option value='<c:out value="${tf.key}"/>' <c:if test='${tf.key == prefs["DateFormat"]}'>selected="selected"</c:if> ><c:out value="${tf.value}"/></option>
+      <option value='<c:out value="${tf.key}"/>' <c:if test='${tf.key == prefs.DateFormat}'>selected="selected"</c:if> ><c:out value="${tf.value}"/></option>
     </c:forEach>
   </select>
   </td>
@@ -129,8 +129,7 @@
   <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label></td>
   <td>
   <select id='prefTimeZone' name='prefTimeZone'>
-    <c:forEach items='${timezones}' var='tz'>
-      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs["TimeZone"]}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
+    <c:forEach items='${timezones}' var='tz      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
     </c:forEach>
   </select>
   </td>
