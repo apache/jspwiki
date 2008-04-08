@@ -33,8 +33,6 @@ import java.util.StringTokenizer;
  *  <p>
  *  If the path ends in a slash, it is understood to be a directory.  If not,
  *  it represents a file.
- *  
- * @author jalkanen
  *
  */
 public class DavPath

@@ -10,7 +10,6 @@ import com.ecyrd.jspwiki.*;
  *  Tests the RCSFileProvider.  If you are getting strange errors, please check that you
  *  actually <i>have</i> RCS installed and in your path...
  * 
- *  @author jalkanen
  *
  *  @since forever
  */

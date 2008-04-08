@@ -57,7 +57,6 @@ import com.ecyrd.jspwiki.preferences.Preferences;
  *  </modules>
  *  </pre>
  *
- *  @author jalkanen
  *  @author Christoph Sauer
  *  @author Chuck Smith
  *  @author Dirk Frederickx
@@ -290,8 +289,6 @@ public class EditorManager extends ModuleManager
 
     /**
      *  Contains info about an editor.
-     *
-     *  @author jalkanen
      *
      */
     private static final class WikiEditorInfo

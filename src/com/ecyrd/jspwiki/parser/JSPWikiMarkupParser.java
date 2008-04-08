@@ -2889,8 +2889,6 @@ public class JSPWikiMarkupParser
      *  returns null.  Otherwise just like the normal Comparator
      *  for strings.
      *
-     *  @author jalkanen
-     *
      *  @since
      */
     private static class StartingComparator implements Comparator

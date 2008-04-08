@@ -226,8 +226,6 @@ public class WikiJSPFilter extends WikiServletFilter
     /**
      *  Simple response wrapper that just allows us to gobble through the entire
      *  response before it's output.
-     *  
-     *  @author jalkanen
      */
     private static class MyServletResponseWrapper
         extends HttpServletResponseWrapper

@@ -835,7 +835,6 @@ public class CachingProvider
      *  of all pages currently in cache, we'll have to check this
      *  ourselves.
      *
-     *  @author jalkanen
      *
      *  @since 2.4
      */

@@ -29,7 +29,6 @@ import com.ecyrd.jspwiki.parser.PluginContent;
  *  Implements a Plugin interface for the parser stage.  Please see PluginManager
  *  for further documentation.
  * 
- *  @author jalkanen
  *  @since 2.5.30
  */
 public interface ParserStagePlugin

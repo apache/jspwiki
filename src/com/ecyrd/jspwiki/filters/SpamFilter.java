@@ -1091,8 +1091,6 @@ public class SpamFilter
     /**
      *  A local class for storing host information.
      *
-     *  @author jalkanen
-     *
      *  @since
      */
     private class Host

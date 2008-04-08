@@ -340,8 +340,6 @@ public final class WatchDog
     /**
      *  This is the chief watchdog thread.
      *
-     *  @author jalkanen
-     *
      */
     private static class WatchDogThread extends WikiBackgroundThread
     {

@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- *  @author jalkanen
  *
  *  @since
  */

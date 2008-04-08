@@ -73,7 +73,6 @@ public class SearchManager
 
     /**
      *  Provides a JSON RPC API to the JSPWiki Search Engine.
-     *  @author jalkanen
      */
     public class JSONSearch implements RPCCallable
     {
