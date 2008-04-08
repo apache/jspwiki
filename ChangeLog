@@ -1,21 +1,28 @@
-2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-7
+        
+        * [JSPWIKI-56] Replaced MultiPartLibrary with Apache Commons
+        FileUpload library, as MultiPartLibrary was LGPL.
+
+2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-6
         
         * [JSPWIKI-233] Bugfix PreferencesTab.jsp
         
-2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-5
         
         * [JSPWIKI-230] Make TimeZone configuration more user-friendly. Adjusted all jsp time-formatting
         to take timezone setting into account. 
         
-2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * Commit related JIRA id's
         
-2007-3-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-4
         

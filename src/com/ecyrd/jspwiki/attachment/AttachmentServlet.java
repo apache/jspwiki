@@ -27,7 +27,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -36,10 +36,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.iamvegan.multipartrequest.HttpServletMultipartRequest;
-import net.iamvegan.multipartrequest.MultipartFile;
-import net.iamvegan.multipartrequest.ProgressListener;
-
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -558,6 +560,7 @@ public class AttachmentServlet
      *  @return The page to which we should go next.
      *  @throws RedirectException If there's an error and a redirection is needed
      *  @throws IOException If upload fails
+     * @throws FileUploadException 
      */
     protected String upload( HttpServletRequest req )
         throws RedirectException,
@@ -570,10 +573,16 @@ public class AttachmentServlet
 
         String progressId = req.getParameter( "progressid" );
 
+        // Check that we have a file upload request
+        if( !ServletFileUpload.isMultipartContent(req) )
+        {
+            throw new RedirectException( "Not a file upload", errorPage );
+        }
+        
         try
         {
-            HttpServletMultipartRequest multi;
-
+            FileItemFactory factory = new DiskFileItemFactory();
+            
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
             WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
@@ -582,45 +591,68 @@ public class AttachmentServlet
 
             m_engine.getProgressManager().startProgress( pl, progressId );
 
-            multi = new HttpServletMultipartRequest( req,
-                                                     Long.MAX_VALUE,
-                                                     HttpServletMultipartRequest.SAVE_TO_TMPDIR,
-                                                     HttpServletMultipartRequest.ABORT_ON_MAX_LENGTH,
-                                                     "UTF-8",
-                                                     pl );
-
-            nextPage        = validateNextPage( multi.getParameter( "nextpage" ), errorPage );
-            String wikipage = multi.getParameter( "page" );
-            String changeNote = multi.getParameter( "changenote" );
-
-            //
-            // FIXME: Kludge alert.  We must end up with the parent page name,
-            //        if this is an upload of a new revision
-            //
-
-            int x = wikipage.indexOf("/");
-
-            if( x != -1 ) wikipage = wikipage.substring(0,x);
-
-            //
-            //  Go through all files being uploaded.
-            //
-            Enumeration files = multi.getFileParameterNames();
-            long fileSize = 0L;
-            while( files.hasMoreElements() )
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+            upload.setFileSizeMax( m_maxSize );
+            upload.setProgressListener( pl );
+            List<FileItem> items = upload.parseRequest( req );
+            
+            String wikipage = null, changeNote = null;
+            FileItem actualFile = null;
+            
+            for( FileItem item : items )
             {
-                String part = (String) files.nextElement();
-                MultipartFile multiFile = multi.getFileParameter(part);
-                fileSize += multiFile.getSize();
-                InputStream in = multiFile.getInputStream();
+                if( item.isFormField() )
+                {
+                    if( item.getFieldName().equals("page") )
+                    {
+                        //
+                        // FIXME: Kludge alert.  We must end up with the parent page name,
+                        //        if this is an upload of a new revision
+                        //
 
-                String filename = multiFile.getName();
+                        wikipage = item.getString("UTF-8");
+                        int x = wikipage.indexOf("/");
 
-                executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
+                        if( x != -1 ) wikipage = wikipage.substring(0,x);
+                    }
+                    else if( item.getFieldName().equals("changenote") )
+                    {
+                        changeNote = item.getString("UTF-8");
+                    }
+                    else if( item.getFieldName().equals( "nextpage" ) )
+                    {
+                        nextPage = validateNextPage( item.getString("UTF-8"), errorPage );
+                    }
+                }
+                else
+                {
+                    actualFile = item;
+                }
             }
 
-            // Inform the JSP page of which file we are handling:
-            // req.setAttribute( ATTR_ATTACHMENT, wikiname );
+            //
+            // FIXME: Unfortunately, with Apache fileupload we will get the form fields in
+            //        order.  This means that we have to gather all the metadata from the
+            //        request prior to actually touching the uploaded file itself.  This
+            //        is because the changenote appears after the file upload box, and we
+            //        would not have this information when uploading.  This also means
+            //        that with current structure we can only support a single file upload
+            //        at a time.
+            //
+            String filename = actualFile.getName();
+            long   fileSize = actualFile.getSize();
+            InputStream in  = actualFile.getInputStream();
+            
+            try
+            {
+                executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
+            }
+            finally
+            {
+                in.close();
+            }
+
         }
         catch( ProviderException e )
         {
@@ -637,6 +669,15 @@ public class AttachmentServlet
             log.warn( msg + " (attachment: " + attName + ")", e );
 
             throw e;
+        }
+        catch (FileUploadException e)
+        {
+            // Show the submit page again, but with a bit more
+            // intimidating output.
+            msg = "Upload failure: " + e.getMessage();
+            log.warn( msg + " (attachment: " + attName + ")", e );
+
+            throw new IOException( msg );
         }
         finally
         {
