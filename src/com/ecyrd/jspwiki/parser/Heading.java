@@ -28,12 +28,38 @@ package com.ecyrd.jspwiki.parser;
  */
 public class Heading
 {
+    /**
+     *  Defines a small heading.
+     */
     public static final int HEADING_SMALL  = 1;
+    
+    /**
+     *  Defines a medium-size heading.
+     */
     public static final int HEADING_MEDIUM = 2;
+    
+    /**
+     *  Defines a large heading.
+     */
     public static final int HEADING_LARGE  = 3;
 
+    /**
+     *  Denotes the level of the heading. Either HEADING_SMALL, HEADING_MEDIUM, or HEADING_LARGE.
+     */
     public int    m_level;
+    
+    /**
+     *  Contains the text of the heading.
+     */
     public String m_titleText;
+    
+    /**
+     *  Contains the anchor to the heading
+     */
     public String m_titleAnchor;
+    
+    /**
+     *  Contains a section link.
+     */
     public String m_titleSection;
 }
