@@ -4,6 +4,8 @@
         
         * [JSPWIKI-115]: Refactored VariableManager to use Reflection.
         Thanks to Stephen Solka.
+        
+        * [JSPWIKI-219]: Building now works if your username has a space.
 
 2008-04-08  Janne Jalkanen <jalkanen@apache.org>
 

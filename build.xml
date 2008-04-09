@@ -472,7 +472,7 @@
   	<delete dir="${install.src}" />
   	
   	<exec executable="svn">
-       <arg line="export ${svn.repository}/${svn.tag} ${install.src}"/>
+       <arg line="export ${svn.repository}/${svn.tag} &quot;${install.src}&quot;"/>
   	</exec>
   	
     <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
