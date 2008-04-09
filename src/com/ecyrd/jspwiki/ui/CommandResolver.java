@@ -491,7 +491,16 @@ public final class CommandResolver
 
         if ( rev != null )
         {
-            version = Integer.parseInt( rev );
+            try
+            {
+                version = Integer.parseInt( rev );
+            }
+            catch( NumberFormatException e )
+            {
+                // This happens a lot with bots or other guys who are trying
+                // to test if we are vulnerable to e.g. XSS attacks.  We catch
+                // it here so that the admin does not get tons of mail.
+            }
         }
 
         wikipage = m_engine.getPage( page, version );
