@@ -475,6 +475,7 @@ jspwiki.plugin.searchPath =
 #  The implementation MUST have a zero-argument constructor (as noted in the
 #  javax.security.auth.spi.LoginModule Javadocs).
 jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
+
 #
 # JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
 #  etc. should be replaced with the actual parameter names. The parameter names and
@@ -483,6 +484,41 @@ jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
 # not need any options.
 #jspwiki.loginModule.options.param1 = value1
 #jspwiki.loginModule.options.param2 = value2
+
+# 
+#  Cookie authentication & assertion
+#
+#  If this value is set to "true", then JSPWiki will allow you to "assert" an
+#  identity using a cookie.  It's still considered to be unsafe, just like no
+#  login at all, but it is useful when you have no need to force everyone to login.
+#
+#  By default, this is on.
+#
+#jspwiki.cookieAssertions=true
+
+#
+#  If you would like to keep your users logged in for weeks at a time, you can
+#  turn on "cookie authentication" feature.  However, this comes with important
+#  security caveats:
+#  1) User will stay logged in into your system for weeks.  This means that if
+#     someone manages to nab the cookie during this time, they can pretend to
+#     be that user.
+#  2) The mappings between cookies and users are written in your filesystem,
+#     in $jspwiki.workDir/logincookies.  Access to this directory means that
+#     the ability to fake anyone in the wiki, so please make sure that only
+#     the proper admin has read access to this directory.
+#
+#  By default, cookie authentication is off.
+#
+#jspwiki.cookieAuthentication=false
+
+#
+#  Defines how many days the cookies are kept, and how often the people have to log in.  
+#  The default is two weeks, i.e. 14 days.  If you need a shorter period than one day,
+#  turn off cookie authorization, then tweak your web.xml to allow for longer sessions.
+#
+#jspwiki.cookieAuthorization.expiry=14
+
 #
 #
 #  AUTHORIZATION
