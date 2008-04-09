@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki;
 
+import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
@@ -40,7 +43,7 @@ import com.ecyrd.jspwiki.modules.InternalModule;
  */
 public class VariableManager
 {
-    //private static Logger log = Logger.getLogger( VariableManager.class );
+    private static Logger log = Logger.getLogger( VariableManager.class );
    
     // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";
@@ -215,8 +218,6 @@ public class VariableManager
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    // FIXME: Currently a bit complicated.  Perhaps should use reflection
-    //        or something to make an easy way of doing stuff.
     public String getValue( WikiContext context,
                             String      varName )
         throws IllegalArgumentException,
@@ -237,134 +238,29 @@ public class VariableManager
                 return ""; // FIXME: Should this be something different?
         }
         
-        if( name.equals("pagename") )
+        try
         {
-            return context.getPage().getName();
+            //
+            //  Using reflection to get system variables adding a new system variable
+            //  now only invloves creating a new method in the SystemVariables class
+            //  with a name starting with get and the first character of the name of
+            //  the variable capitalized. Example:
+            //    public String getMysysvar(){
+            //      return "Hello World";
+            //    }
+            //
+            SystemVariables sysvars = new SystemVariables(context);
+            String methodName = "get"+Character.toUpperCase(name.charAt(0))+name.substring(1);
+            Method method = sysvars.getClass().getMethod(methodName);
+            return (String)method.invoke(sysvars);
         }
-        else if( name.equals("applicationname") )
-        {
-            return context.getEngine().getApplicationName();
-        }
-        else if( name.equals("jspwikiversion") )
-        {
-            return Release.getVersionString();
-        }
-        else if( name.equals("encoding") )
-        {
-            return context.getEngine().getContentEncoding();
-        }
-        else if( name.equals("totalpages") )
-        {
-            return Integer.toString(context.getEngine().getPageCount());
-        }
-        else if( name.equals("pageprovider") )
-        {
-            return context.getEngine().getCurrentProvider();
-        }
-        else if( name.equals("pageproviderdescription") )
-        {
-            return context.getEngine().getCurrentProviderInfo();
-        }
-        else if( name.equals("attachmentprovider") )
-        {
-            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
-            return (p != null) ? p.getClass().getName() : "-";
-        }
-        else if( name.equals("attachmentproviderdescription") )
-        {
-            WikiProvider p = context.getEngine().getAttachmentManager().getCurrentProvider();
-
-            return (p != null) ? p.getProviderInfo() : "-";
-        }
-        else if( name.equals("interwikilinks") )
-        {
-            StringBuffer res = new StringBuffer();
-
-            for( Iterator i = context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
-            {
-                if( res.length() > 0 ) res.append(", ");
-                String link = (String) i.next();
-                res.append( link );
-                res.append( " --> " );
-                res.append( context.getEngine().getInterWikiURL(link) );    
-            }
-            return res.toString();
-        }
-        else if( name.equals("inlinedimages") )
-        {
-            StringBuffer res = new StringBuffer();
-
-            for( Iterator i = context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
-            {
-                if( res.length() > 0 ) res.append(", ");
-                
-                String ptrn = (String) i.next();
-                res.append(ptrn);
-            }
-            
-            return res.toString();
-        }
-        else if( name.equals("pluginpath") )
-        {
-            String s = context.getEngine().getPluginSearchPath();
-
-            return (s == null) ? "-" : s;
-        }
-        else if( name.equals("baseurl") )
-        {
-            return context.getEngine().getBaseURL();
-        }
-        else if( name.equals("uptime") )
-        {
-            Date now = new Date();
-            long secondsRunning = (now.getTime() - context.getEngine().getStartTime().getTime())/1000L;
-
-            long seconds = secondsRunning % 60;
-            long minutes = (secondsRunning /= 60) % 60;
-            long hours   = (secondsRunning /= 60) % 24;
-            long days    = secondsRunning /= 24;
-
-            return days+"d, "+hours+"h "+minutes+"m "+seconds+"s";
-        }
-        else if( name.equals("loginstatus") )
-        {
-            WikiSession session = context.getWikiSession();
-            return session.getStatus();
-        }
-        else if( name.equals("username") )
-        {
-            Principal wup = context.getCurrentUser();
-
-            return wup != null ? wup.getName() : "not logged in";
-        }
-        else if( name.equals("requestcontext") )
-        {
-            return context.getRequestContext();
-        }
-        else if( name.equals("pagefilters") )
-        {
-            List filters = context.getEngine().getFilterManager().getFilterList();
-            StringBuffer sb = new StringBuffer();
-
-            for( Iterator i = filters.iterator(); i.hasNext(); )
-            {
-                PageFilter pf = (PageFilter)i.next();
-                String f = pf.getClass().getName();
-
-                if( pf instanceof InternalModule )
-                    continue;
-
-                if( sb.length() > 0 ) sb.append(", ");
-                sb.append( f );
-            }
-
-            return sb.toString();
-        }
-        else
+        catch( NoSuchMethodException e1 )
         {
             // 
-            // Check if such a context variable exists,
-            // returning its string representation.
+            //  It is not a system var. Time to handle the other cases.
+            //
+            //  Check if such a context variable exists,
+            //  returning its string representation.
             //
             if( (context.getVariable( varName )) != null )
             {
@@ -394,7 +290,9 @@ public class VariableManager
                 catch( ClassCastException e ) {}
             }
 
+            //
             // And the final straw: see if the current page has named metadata.
+            //
             
             WikiPage pg = context.getPage();
             if( pg != null )
@@ -404,9 +302,11 @@ public class VariableManager
                     return metadata.toString();
             }
             
+            //
             // And the final straw part 2: see if the "real" current page has
             // named metadata. This allows a parent page to control a inserted
             // page through defining variables
+            //
             WikiPage rpg = context.getRealPage();
             if( rpg != null )
             {
@@ -415,10 +315,12 @@ public class VariableManager
                     return metadata.toString();
             }
             
+            //
             // Next-to-final straw: attempt to fetch using property name
             // We don't allow fetching any other properties than those starting
             // with "jspwiki.".  I know my own code, but I can't vouch for bugs
             // in other people's code... :-)
+            //
             
             if( varName.startsWith("jspwiki.") )
             {
@@ -440,5 +342,179 @@ public class VariableManager
   
             throw new NoSuchVariableException( "No variable "+varName+" defined." );
         }
+        catch( Exception e )
+        {
+            log.info("Interesting exception: cannot fetch variable value",e);
+        }
+        return "";
     }
+
+    /**
+     *  This class provides the implementation for the different system variables.
+     *  It is called via Reflection - any access to a variable called $xxx is mapped
+     *  to getXxx() on this class.
+     *  <p>
+     *  This is a lot neater than using a huge if-else if branching structure
+     *  that we used to have before.
+     *  <p>
+     *  Note that since we are case insensitive for variables, and VariableManager
+     *  calls var.toLowerCase(), the getters for the variables do not have
+     *  capitalization anywhere.  This may look a bit odd, but then again, this
+     *  is not meant to be a public class.
+     *  
+     *  @since 2.7.0
+     *
+     */
+    private class SystemVariables
+    {
+        private WikiContext m_context;
+
+        public SystemVariables(WikiContext context)
+        {
+            m_context=context;
+        }
+
+        public String getPagename()
+        {
+            return m_context.getPage().getName();
+        }
+
+        public String getApplicationname()
+        {
+            return m_context.getEngine().getApplicationName();
+        }
+
+        public String getJspwikiversion()
+        {
+            return Release.getVersionString();
+        }
+
+        public String getEncoding()
+        {
+            return m_context.getEngine().getContentEncoding();
+        }
+
+        public String getTotalpages()
+        {
+            return Integer.toString(m_context.getEngine().getPageCount());
+        }
+
+        public String getPageprovider()
+        {
+            return m_context.getEngine().getCurrentProvider();
+        }
+
+        public String getPageproviderdescription()
+        {
+            return m_context.getEngine().getCurrentProviderInfo();
+        }
+
+        public String getAttachmentprovider()
+        {
+            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
+            return (p != null) ? p.getClass().getName() : "-";
+        }
+
+        public String getAttachmentproviderdescription()
+        {
+            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
+
+            return (p != null) ? p.getProviderInfo() : "-";
+        }
+
+        public String getInterwikilinks()
+        {
+            StringBuffer res = new StringBuffer();
+
+            for( Iterator i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
+            {
+                if( res.length() > 0 ) res.append(", ");
+                String link = (String) i.next();
+                res.append( link );
+                res.append( " --> " );
+                res.append( m_context.getEngine().getInterWikiURL(link) );    
+            }
+            return res.toString();
+        }
+
+        public String getInlinedimages()
+        {
+            StringBuffer res = new StringBuffer();
+
+            for( Iterator i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            {
+                if( res.length() > 0 ) res.append(", ");
+
+                String ptrn = (String) i.next();
+                res.append(ptrn);
+            }
+
+            return res.toString();
+        }
+
+        public String getPluginpath()
+        {
+            String s = m_context.getEngine().getPluginSearchPath();
+
+            return (s == null) ? "-" : s;
+        }
+
+        public String getBaseurl()
+        {
+            return m_context.getEngine().getBaseURL();
+        }
+
+        public String getUptime()
+        {
+            Date now = new Date();
+            long secondsRunning = (now.getTime() - m_context.getEngine().getStartTime().getTime()) / 1000L;
+
+            long seconds = secondsRunning % 60;
+            long minutes = (secondsRunning /= 60) % 60;
+            long hours = (secondsRunning /= 60) % 24;
+            long days = secondsRunning /= 24;
+
+            return days + "d, " + hours + "h " + minutes + "m " + seconds + "s";
+        }
+
+        public String getLoginstatus()
+        {
+            WikiSession session = m_context.getWikiSession();
+            return session.getStatus();
+        }
+
+        public String getUsername()
+        {
+            Principal wup = m_context.getCurrentUser();
+
+            return wup != null ? wup.getName() : "not logged in";
+        }
+
+        public String getRequestcontext()
+        {
+            return m_context.getRequestContext();
+        }
+
+        public String getPagefilters()
+        {
+            List filters = m_context.getEngine().getFilterManager().getFilterList();
+            StringBuffer sb = new StringBuffer();
+
+            for (Iterator i = filters.iterator(); i.hasNext();)
+            {
+                PageFilter pf = (PageFilter) i.next();
+                String f = pf.getClass().getName();
+
+                if( pf instanceof InternalModule )
+                    continue;
+
+                if( sb.length() > 0 )
+                    sb.append(", ");
+                sb.append(f);
+            }
+
+            return sb.toString();
+        }
+    }
+
 }
