@@ -484,7 +484,7 @@ var EditTools =
 	newSelector: function(){
 		this.selector.empty();
 		this.selector.offsets = [];
-		this.addSelector("( all )",-1);
+		this.addSelector("edit.allsections".localize(),-1);
 	},
 	addSelector: function(text,offset,indent){
 		text = text.replace(/~([^~])/g, '$1'); /*remove wiki-markup escape char ~ */

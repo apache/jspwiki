@@ -1,3 +1,16 @@
+2007-04-09  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-9
+        
+        * [JSPWIKI-233] Bugfix PreferencesTab.jsp
+
+        * [JSPWIKI-232] Localization of (All) in the Edit Section dropdown.
+        Also added localization to the language dropdown
+
+        * [JSPWIKI-234] Added IS8601 date/time pattern to default prefs in JSPWiki.properties
+
+        * Bugfix IE javascript crash on mouse-over handler
+
 2008-04-09  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-8

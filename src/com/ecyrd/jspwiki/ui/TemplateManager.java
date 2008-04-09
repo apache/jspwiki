@@ -447,7 +447,7 @@ public class TemplateManager
                         defaultLanguage = LocaleSupport.getLocalizedMessage(pageContext, I18NDEFAULT_LOCALE);
                     }
 
-                    resultMap.put(name, locale.getDisplayName() + " " + defaultLanguage);
+                    resultMap.put(name, locale.getDisplayName(locale) + " " + defaultLanguage);
                 }
             }
         }

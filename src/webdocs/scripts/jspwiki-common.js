@@ -47,7 +47,6 @@
   ** 270 WikiColumns 
   ** 280 ZebraTable: color odd/even row of a table 
   ** 290 HighlightWord: refactored
-  ** 295 Typography
   ** 300 Prettify
   **/
 
@@ -368,7 +367,6 @@ var Wiki = {
 
 /** 105 WikiSlidingFavs
  ** Support sliding favorites menu
- ** Dirk Frederickx, Feb 2008
  */
 var WikiSlidingFavs = 
 {
@@ -411,7 +409,7 @@ var WikiSlidingFavs =
 				'mouseenter': function(e){
 					this.addClass('hover');
 					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({ left: ppx, top: (e.pageY || e.clientY)+"px" }).show();
+					pointer.setStyles({ left: ppx, top: e.client.y+"px" }).show();
 					if( body.hasClass('fav-slide') ){
 						favsWrapper.inject(toggler).show();
 						favsFx.start(favsShow);
@@ -419,7 +417,7 @@ var WikiSlidingFavs =
 				},
 				'mousemove': function(e){
 					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({	left: ppx, top: (e.pageY || e.clientY)+"px" });
+					pointer.setStyles({	left: ppx, top: e.client.y+"px" });
 				},
 				'mouseleave': function(){
 					this.removeClass('hover');
@@ -460,7 +458,6 @@ var WikiSlidingFavs =
 
 /** 110 WikiSlimbox
  ** Inspired http://www.digitalia.be/software/slimbox by Christophe Bleys
- ** Dirk Frederickx, Mar 2007
  ** 	%%slimbox [...] %%
  ** 	%%slimbox-img  [some-image.jpg] %%
  ** 	%%slimbox-ajax [some-page links] %%
@@ -837,11 +834,12 @@ var QuickLinks = {
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
 		$$('#pagecontent *[id^=section]').each(function(el,i){
+						
 			new Element('span',{
 				'class':'editsection'
 			}).adopt( new Element('a', {
-				'href' : url+i,
-				'title' : 'quick.edit.title'.localize(el.getText())
+				'href' : url+i /*,
+				'title' : 'quick.edit.title'.localize(el.getText()) */
 				}).setHTML('quick.edit'.localize()) 
 			).inject(el);
 		});
@@ -1330,11 +1328,6 @@ var GraphBar =
 
 
 /** 200 Collapsible list and boxes
- ** See also David Lindquist <first name><at><last name><dot><net>
- ** See: http://www.gazingus.org/html/DOM-Scripted_Lists_Revisited.html
- **
- ** Add support for collabsable boxes, Nov 05, D.Frederickx
- ** Refactored on mootools, including effects, May 07, D.Frederickx
  **/
 var Collapsible =
 {
@@ -2001,7 +1994,7 @@ var ZebraTable = {
  ** Modified 21006 to fix query string parsing and add case insensitivity
  ** Modified 20030227 by sgala@hisitech.com to skip words
  **                   with "-" and cut %2B (+) preceding pages
- ** Refactored for JSPWiki -- now based on regexp, by D.Frederickx. Nov 2005
+ ** Refactored for JSPWiki -- now based on regexp
  **/
 var HighlightWord =
 {
