@@ -22,6 +22,9 @@
         
         * [JSPWIKI-222]: Gone are the evil files which lurked into our
         distro file...  
+        
+        * Hacking attempts at manipulating the version parameter no longer 
+        cause a slew of email to the admin...
 
 2008-04-08  Janne Jalkanen <jalkanen@apache.org>
 
