@@ -403,48 +403,47 @@
     </war>
 
     <war warfile="${warfile}"
-          webxml="etc/web.xml" update="true">
-      	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
-      	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.css" />
-     </war>
+         webxml="etc/web.xml" update="true">
+      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
+      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
+    </war>
 
    </target>
 
+    <!-- Defines a compression macro for the JS/CSS bits we want to transform
+         into something that saves a bit of space. -->
+    
+    <macrodef name="compressjs">
+        <attribute name="src"/>
+        <attribute name="args" default=""/>   
+        <sequential>
+            <java jar="tests/lib/yuicompressor-2.3.3.jar"
+                  output="${tmpdir}/compress/@{src}"
+                  fork="true">
+                <arg line="${code.src}/@{src} @{args}" />
+            </java>
+        </sequential>
+    </macrodef>
+    
    <!-- We compress the Javascript using yahoo's yui compressor, 
         which compresses both javascript and css files.
         If you don't want to use the compressed stuff, just copy the default
         .js files from the distro on top of the compressed ones from the WAR.
     -->
    <target name="compressedjs">
- 	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
-   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
-   		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
-   		  fork="true">
-   	  <arg line="${code.src}/webdocs/scripts/jspwiki-common.js" />
-   	</java>
-   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
-   		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
-   		  fork="true">
- 	  <arg line="${code.src}/webdocs/scripts/jspwiki-edit.js" />
- 	</java>
-   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
-   		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
-   		  fork="true">
- 	  <arg line="${code.src}/webdocs/scripts/jspwiki-prefs.js" />
- 	</java>
+        <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
+    
+        <compressjs src="webdocs/scripts/jspwiki-common.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
 
-   	<mkdir dir="${install.fulldir}/webdocs/templates/default"/>
-   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
-   		  output="${install.fulldir}/webdocs/templates/default/jspwiki.css"
-   		  fork="true">
-   	  <arg line="${code.src}/webdocs/templates/default/jspwiki.css --line-break 0" />
-   	</java>
-   	<java jar="tests/lib/yuicompressor-2.3.3.jar"
-   		  output="${install.fulldir}/webdocs/templates/default/jspwiki_print.css"
-   		  fork="true">
-   	  <arg line="${code.src}/webdocs/templates/default/jspwiki_print.css --line-break 0" />
-   	</java>
-   	
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
+
+        <compressjs src="webdocs/templates/default/jspwiki.css"
+                    args="--line-break 0" />
+    
+        <compressjs src="webdocs/templates/default/jspwiki_print.css"
+                    args="--line-break 0" />   	
    </target>
 
   <target name="opened-war" depends="war"
@@ -512,7 +511,8 @@
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
-     <copy file="doc/LICENSE" todir="${install.fulldir}" />
+     <copy file="LICENSE" todir="${install.fulldir}" />
+     <copy file="NOTICE" todir="${install.fulldir}" />
 
      <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />

@@ -6,6 +6,9 @@
         Thanks to Stephen Solka.
         
         * [JSPWIKI-219]: Building now works if your username has a space.
+        
+        * [JSPWIKI-222]: Gone are the evil files which lurked into our
+        distro file...  
 
 2008-04-08  Janne Jalkanen <jalkanen@apache.org>
 
