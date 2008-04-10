@@ -214,7 +214,7 @@ function getAncestorByTagName( node, tagName ) {
 var Wiki = {
 
 	onPageLoad: function(){
-
+		if(this.prefs) return; //already initialised
 		var meta = ['wikiPageName','wikiJsonUrl','wikiPageUrl','wikiEditUrl','wikiBaseUrl','wikiUserName','wikiTemplateUrl']
 		$$('meta').each(function(el){
 			var n = el.getProperty('name');
@@ -407,17 +407,19 @@ var WikiSlidingFavs =
 					toggleFavs();					
 				},
 				'mouseenter': function(e){
+					e = new Event(e);
 					this.addClass('hover');
 					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({ left: ppx, top: e.client.y+"px" }).show();
+					pointer.setStyles({ left: ppx, top: e.page.y+"px" }).show();
 					if( body.hasClass('fav-slide') ){
 						favsWrapper.inject(toggler).show();
 						favsFx.start(favsShow);
 					}
 				},
 				'mousemove': function(e){
+					e = new Event(e);
 					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({	left: ppx, top: e.client.y+"px" });
+					pointer.setStyles({	left: ppx, top: e.page.y+"px" });
 				},
 				'mouseleave': function(){
 					this.removeClass('hover');

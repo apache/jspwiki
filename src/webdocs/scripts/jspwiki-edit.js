@@ -37,6 +37,7 @@ var EditTools =
 {
 	onPageLoad: function(){
 
+		Wiki.onPageLoad(); //should be run first, nog guaranteed on ie
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 
@@ -373,7 +374,7 @@ var EditTools =
 			
 		var	suggestID = 'findSuggestionMenu', fav = $('favorites'),
 			suggest = $(suggestID) || new Element('div',{
-				'id':suggestID, 
+				'id':suggestID 
 			}).injectTop(fav);
 
 		/* find a partial jspwiki-link 'searchword' */
@@ -444,16 +445,16 @@ var EditTools =
 	 */  
 	 onSelectorLoad : function(){
 		var mainarea = this.mainarea.value,
-			excursor = this.selector.cursor || 0; //remember previous cursor
-		var DELIM = "\u00a4",
+			excursor = this.selector.cursor || 0, //remember previous cursor
+			DELIM = "\u00a4";
 		 
 		/* mask all headers inside a {{{ ... }}} but keep length unchanged! */
 		mainarea = mainarea.replace(/\{\{\{([\s\S]*?)\}\}\}/g, function(match){
-			return match.replace( /^!/mg, DELIM );
+			return match.replace( /^!/mg, ' ' );
 		});
 
-		var tt = mainarea.split( /^(!{1,3}.*?)/m);
-
+		var tt = mainarea.replace( /^([!]{1,3})/mg, DELIM+"$1"+DELIM ).split(DELIM);
+		
 		this.newSelector();
 		this.textarea.sop = (tt.length>1) && (tt[0] != ''); //start of page section has no !!!header 
 		if(this.textarea.sop) this.addSelector("edit.startOfPage".localize(), 0, 0);
@@ -469,10 +470,8 @@ var EditTools =
 			this.addSelector(title, pos, indent);
 			pos += hlen + ttlen[i+1];
 		}
-		//alert(this.selector.offsets);
-		//this.selector.cursor = (oldindex < cursor) ? oldindex, ; 
-		//if( oldIndex < cursor ) this.selector.options[oldIndex].selected = true;
 	},
+
 	setSelector: function( newcursor ){
 		var els = this.selector.getChildren();
 		
@@ -484,7 +483,7 @@ var EditTools =
 	newSelector: function(){
 		this.selector.empty();
 		this.selector.offsets = [];
-		this.addSelector("edit.allsections".localize(),-1);
+		this.addSelector("edit.allsections".localize(),-1,0);
 	},
 	addSelector: function(text,offset,indent){
 		text = text.replace(/~([^~])/g, '$1'); /*remove wiki-markup escape char ~ */
