@@ -29,6 +29,8 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.auth.acl.AclImpl;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventUtils;
@@ -121,15 +123,15 @@ public class ReferenceManager
      *  must contain Strings. The Collection may contain names of non-existing
      *  pages.
      */
-    private Map            m_refersTo;
-    private Map            m_unmutableRefersTo;
+    private Map<String,Collection<String>> m_refersTo;
+    private Map<String,Collection<String>> m_unmutableRefersTo;
 
     /** Maps page wikiname to a Set of referring pages. The Set must
      *  contain Strings. Non-existing pages (a reference exists, but not a file
      *  for the page contents) may have an empty Set in m_referredBy.
      */
-    private Map            m_referredBy;
-    private Map            m_unmutableReferredBy;
+    private Map<String,Set<String>> m_referredBy;
+    private Map<String,Set<String>> m_unmutableReferredBy;
 
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
@@ -142,7 +144,7 @@ public class ReferenceManager
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
 
     /** We use this also a generic serialization id */
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 4L;
 
     /**
      *  Builds a new ReferenceManager.
@@ -151,8 +153,8 @@ public class ReferenceManager
      */
     public ReferenceManager( WikiEngine engine )
     {
-        m_refersTo   = new HashMap();
-        m_referredBy = new HashMap();
+        m_refersTo   = new HashMap<String,Collection<String>>();
+        m_referredBy = new HashMap<String,Set<String>>();
         m_engine = engine;
 
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
@@ -472,6 +474,7 @@ public class ReferenceManager
 
             sw.stop();
             log.debug("Read serialized data for "+name+" successfully in "+sw);
+            p.setHasMetadata();
         }
         catch( NoSuchAlgorithmException e )
         {
@@ -501,7 +504,7 @@ public class ReferenceManager
             // FIXME: There is a concurrency issue here...
             Set entries = p.getAttributes().entrySet();
 
-            if( entries.size() == 0 ) return;
+            // if( entries.size() == 0 ) return;
 
             StopWatch sw = new StopWatch();
             sw.start();
@@ -590,7 +593,7 @@ public class ReferenceManager
 
     private void pageRemoved(String pageName)
     {
-        Collection refTo = (Collection)m_refersTo.get( pageName );
+        Collection<String> refTo = m_refersTo.get( pageName );
 
         if( refTo != null )
         {
@@ -598,7 +601,7 @@ public class ReferenceManager
             while( it_refTo.hasNext() )
             {
                 String referredPageName = (String)it_refTo.next();
-                Set refBy = (Set)m_referredBy.get( referredPageName );
+                Set<String> refBy = m_referredBy.get( referredPageName );
 
                 if( refBy == null )
                     throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
@@ -619,7 +622,7 @@ public class ReferenceManager
             m_refersTo.remove( pageName );
         }
 
-        Set refBy = (Set) m_referredBy.get( pageName );
+        Set<String> refBy = m_referredBy.get( pageName );
         if( refBy == null || refBy.isEmpty() )
         {
             m_referredBy.remove( pageName );
@@ -681,10 +684,10 @@ public class ReferenceManager
         //
         // Create a new entry in m_refersTo.
         //
-        Collection oldRefTo = (Collection)m_refersTo.get( page );
+        Collection oldRefTo = m_refersTo.get( page );
         m_refersTo.remove( page );
 
-        TreeSet cleanedRefs = new TreeSet();
+        TreeSet<String> cleanedRefs = new TreeSet<String>();
         for( Iterator i = references.iterator(); i.hasNext(); )
         {
             String ref = (String)i.next();
@@ -703,7 +706,7 @@ public class ReferenceManager
         //
         if( !m_referredBy.containsKey( page ) )
         {
-            m_referredBy.put( page, new TreeSet() );
+            m_referredBy.put( page, new TreeSet<String>() );
         }
 
         //
@@ -716,10 +719,10 @@ public class ReferenceManager
         //
         //  Notify all referred pages of their referinesshoodicity.
         //
-        Iterator it = cleanedRefs.iterator();
+        Iterator<String> it = cleanedRefs.iterator();
         while( it.hasNext() )
         {
-            String referredPageName = (String)it.next();
+            String referredPageName = it.next();
             updateReferredBy( getFinalPageName(referredPageName), page );
         }
     }
@@ -746,7 +749,7 @@ public class ReferenceManager
      */
     private void cleanReferredBy( String referrer,
                                   Collection oldReferred,
-                                  Collection newReferred )
+                                  Collection<String> newReferred )
     {
         // Two ways to go about this. One is to look up all pages previously
         // referred by referrer and remove referrer from their lists, and let
@@ -763,7 +766,7 @@ public class ReferenceManager
         while( it.hasNext() )
         {
             String referredPage = (String)it.next();
-            Set oldRefBy = (Set)m_referredBy.get( referredPage );
+            Set oldRefBy = m_referredBy.get( referredPage );
             if( oldRefBy != null )
             {
                 oldRefBy.remove( referrer );
@@ -808,7 +811,7 @@ public class ReferenceManager
             {
                 WikiPage page = (WikiPage)it.next();
                 // We add a non-null entry to referredBy to indicate the referred page exists
-                m_referredBy.put( page.getName(), new TreeSet() );
+                m_referredBy.put( page.getName(), new TreeSet<String>() );
                 // Just add a key to refersTo; the keys need to be in sync with referredBy.
                 m_refersTo.put( page.getName(), null );
             }
@@ -847,14 +850,14 @@ public class ReferenceManager
             }
         }
 
-        Set referrers = (Set)m_referredBy.get( page );
+        Set<String> referrers = (Set<String>)m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
         // This requires we don't use m_referredBy keys when looking up missing
         // pages, of course.
         if(referrers == null)
         {
-            referrers = new TreeSet();
+            referrers = new TreeSet<String>();
             m_referredBy.put( page, referrers );
         }
         referrers.add( referrer );
@@ -874,13 +877,13 @@ public class ReferenceManager
         //  Remove this item from the referredBy list of any page
         //  which this item refers to.
         //
-        Collection c = (Collection)m_refersTo.get( pagename );
+        Collection<String> c = m_refersTo.get( pagename );
 
         if( c != null )
         {
-            for( Iterator i = c.iterator(); i.hasNext(); )
+            for( String key : c )
             {
-                Collection dref = (Collection) m_referredBy.get( i.next() );
+                Collection<?> dref = m_referredBy.get( key );
 
                 dref.remove( pagename );
             }
@@ -900,16 +903,12 @@ public class ReferenceManager
      */
     public synchronized Collection findUnreferenced()
     {
-        ArrayList unref = new ArrayList();
+        ArrayList<String> unref = new ArrayList<String>();
 
-        Set keys = m_referredBy.keySet();
-        Iterator it = keys.iterator();
-
-        while( it.hasNext() )
+        for( String key : m_referredBy.keySet() )
         {
-            String key = (String) it.next();
-            //Set refs = (Set) m_referredBy.get( key );
-            Set refs = getReferenceList( m_referredBy, key );
+            Set<?> refs = getReferenceList( m_referredBy, key );
+            
             if( refs == null || refs.isEmpty() )
             {
                 unref.add( key );
@@ -932,26 +931,19 @@ public class ReferenceManager
      */
     public synchronized Collection findUncreated()
     {
-        TreeSet uncreated = new TreeSet();
+        TreeSet<String> uncreated = new TreeSet<String>();
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
 
-        Collection allReferences = m_refersTo.values();
-        Iterator it = allReferences.iterator();
+        Collection<Collection<String>> allReferences = m_refersTo.values();
 
-        while( it.hasNext() )
+        for( Collection<String> refs : allReferences )
         {
-            Collection refs = (Collection)it.next();
-
             if( refs != null )
             {
-                Iterator rit = refs.iterator();
-
-                while( rit.hasNext() )
+                for( String aReference : refs )
                 {
-                    String aReference = (String)rit.next();
-
                     if( m_engine.pageExists( aReference ) == false )
                     {
                         uncreated.add( aReference );
@@ -964,26 +956,32 @@ public class ReferenceManager
     }
 
     /**
-     *  Searches for the given page in the given Map.
+     *  Searches for the given page in the given Map, and returns
+     *  the set of references.  This method also takes care of English plural
+     *  matching.
+     *  
+     *  @param coll The Map to search in
+     *  @param pagename The name to find.
+     *  @return The references list.
      */
-    private Set getReferenceList( Map coll, String pagename )
+    private <T> Set<T> getReferenceList( Map<String,Set<T>> coll, String pagename )
     {
-        Set refs = (Set)coll.get( pagename );
+        Set<T> refs = coll.get( pagename );
 
         if( m_matchEnglishPlurals )
         {
             //
             //  We'll add also matches from the "other" page.
             //
-            Set refs2;
+            Set<T> refs2;
 
             if( pagename.endsWith("s") )
             {
-                refs2 = (Set)coll.get( pagename.substring(0,pagename.length()-1) );
+                refs2 = coll.get( pagename.substring(0,pagename.length()-1) );
             }
             else
             {
-                refs2 = (Set)coll.get( pagename+"s" );
+                refs2 = coll.get( pagename+"s" );
             }
 
             if( refs2 != null )
@@ -1010,7 +1008,7 @@ public class ReferenceManager
     // FIXME: Return a Set instead of a Collection.
     public synchronized Collection findReferrers( String pagename )
     {
-        Set refs = getReferenceList( m_referredBy, pagename );
+        Set<String> refs = getReferenceList( m_referredBy, pagename );
 
         if( refs == null || refs.isEmpty() )
         {
@@ -1039,7 +1037,7 @@ public class ReferenceManager
      */
     public Set findReferredBy( String pageName )
     {
-        return (Set)m_unmutableReferredBy.get( getFinalPageName(pageName) );
+        return m_unmutableReferredBy.get( getFinalPageName(pageName) );
     }
 
     /**
@@ -1062,7 +1060,7 @@ public class ReferenceManager
      */
     public Collection findRefersTo( String pageName )
     {
-        return (Collection)m_unmutableRefersTo.get( getFinalPageName(pageName) );
+        return m_unmutableRefersTo.get( getFinalPageName(pageName) );
     }
 
     /**
