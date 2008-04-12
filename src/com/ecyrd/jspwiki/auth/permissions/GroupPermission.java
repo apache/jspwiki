@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.DomainCombiner;
@@ -81,7 +82,7 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * @author Andrew Jaquith
  * @since 2.4.17
  */
-public final class GroupPermission extends Permission
+public final class GroupPermission extends Permission implements Serializable
 {
     /** Special target token that denotes all groups that a Subject's Principals are members of. */
     public static final String         MEMBER_TOKEN     = "<groupmember>";
@@ -126,6 +127,12 @@ public final class GroupPermission extends Permission
 
     private final String                m_wiki;
 
+    /** For serialization purposes */
+    protected GroupPermission()
+    {
+        this("");
+    }
+    
     /**
      * Private convenience constructor that creates a new GroupPermission for
      * all wikis and groups (*:*) and set of actions.

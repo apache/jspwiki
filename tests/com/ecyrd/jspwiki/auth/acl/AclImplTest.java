@@ -19,6 +19,7 @@
  */
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.io.*;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -232,6 +233,25 @@ public class AclImplTest extends TestCase
         assertFalse( "Dave delete", inGroup( m_aclGroup.findPrincipals( PagePermission.DELETE ), wup ) );
     }
 
+    public void testSerialization() throws IOException, ClassNotFoundException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        ObjectOutputStream out2 = new ObjectOutputStream(out);
+        
+        out2.writeObject( m_acl );
+        
+        out2.close();
+        
+        byte[] stuff = out.toByteArray();
+        
+        ObjectInputStream in = new ObjectInputStream( new ByteArrayInputStream(stuff) );
+        
+        AclImpl newacl = (AclImpl) in.readObject();
+        
+        assert( newacl.equals(m_acl) );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( AclImplTest.class );

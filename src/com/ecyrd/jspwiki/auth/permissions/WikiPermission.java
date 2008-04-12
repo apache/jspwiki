@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import java.util.Arrays;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class WikiPermission extends Permission
+public final class WikiPermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID        = 1L;
 

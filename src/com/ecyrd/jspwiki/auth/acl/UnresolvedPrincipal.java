@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 /**
@@ -35,9 +36,9 @@ import java.security.Principal;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class UnresolvedPrincipal implements Principal
+public final class UnresolvedPrincipal implements Principal, Serializable
 {
-
+    private static final long serialVersionUID = 1L;
     private final String m_name;
 
     /**

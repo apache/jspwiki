@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
@@ -65,7 +66,7 @@ import com.ecyrd.jspwiki.WikiPage;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class PagePermission extends Permission
+public final class PagePermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID = 2L;
 
@@ -127,6 +128,12 @@ public final class PagePermission extends Permission
 
     private final String               m_wiki;
 
+    /** For serialization purposes. */
+    protected PagePermission()
+    {
+        this("");
+    }
+    
     /**
      * Private convenience constructor that creates a new PagePermission for all wikis and pages
      * (*:*) and set of actions.

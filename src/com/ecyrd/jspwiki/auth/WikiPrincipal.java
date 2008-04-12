@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,8 +37,9 @@ import java.util.Comparator;
  *  @author Andrew Jaquith
  *  @since  2.2
  */
-public final class WikiPrincipal implements Principal, Comparable
+public final class WikiPrincipal implements Principal, Comparable, Serializable
 {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Represents an anonymous user. WikiPrincipals may be
@@ -72,6 +74,12 @@ public final class WikiPrincipal implements Principal, Comparable
     private final String          m_name;
     private final String          m_type;
 
+    /** For serialization purposes */
+    protected WikiPrincipal()
+    {
+        this(null);
+    }
+    
     /**
      * Constructs a new WikiPrincipal with a given name and a type of
      * {@link #UNSPECIFIED}.

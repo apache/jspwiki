@@ -48,7 +48,7 @@ public class DefaultAclManager implements AclManager
     static Logger                log    = Logger.getLogger( DefaultAclManager.class );
 
     private AuthorizationManager m_auth = null;
-    private WikiEngine m_engine = null;
+    private WikiEngine           m_engine = null;
     private static final String PERM_REGEX = "(" +
         PagePermission.COMMENT_ACTION + "|" +
         PagePermission.DELETE_ACTION  + "|" +

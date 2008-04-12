@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 /**
@@ -30,8 +31,9 @@ import java.security.Principal;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class Role implements Principal
+public final class Role implements Principal, Serializable
 {
+    private static final long serialVersionUID = 1L;
 
     /** All users, regardless of authentication status */
     public static final Role ALL           = new Role( "All" );
@@ -47,6 +49,11 @@ public final class Role implements Principal
 
     private final String   m_name;
 
+    protected Role()
+    {
+        this(null);
+    }
+    
     /**
      * Constructs a new Role with a given name.
      * @param name the name of the Role

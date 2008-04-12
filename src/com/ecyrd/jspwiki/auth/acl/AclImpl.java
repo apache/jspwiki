@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
@@ -32,9 +33,10 @@ import java.util.Vector;
  *  @author Andrew Jaquith
  *  @since 2.3
  */
-public class AclImpl implements Acl
+public class AclImpl implements Acl, Serializable
 {
-    private final Vector m_entries = new Vector();
+    private static final long serialVersionUID = 1L;
+    private final Vector<AclEntry> m_entries = new Vector<AclEntry>();
 
     /**
      * Constructs a new AclImpl instance.
@@ -45,15 +47,15 @@ public class AclImpl implements Acl
     
     /**
      * Returns all Principal objects assigned a given Permission in the access
-     * control list. The Princiapls returned are those that have been granted
+     * control list. The Principals returned are those that have been granted
      * either the supplied permission, or a permission implied by the supplied
      * permission. Principals are not "expanded" if they are a role or group.
      * @param permission the permission to search for
-     * @return an array of Principals posessing the permission
+     * @return an array of Principals possessing the permission
      */
     public Principal[] findPrincipals( Permission permission )
     {
-        Vector principals = new Vector();
+        Vector<Principal> principals = new Vector<Principal>();
         Enumeration entries = entries();
         
         while (entries.hasMoreElements()) 
@@ -79,10 +81,8 @@ public class AclImpl implements Acl
             return false;
         }
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( AclEntry e : m_entries )
         {
-            AclEntry e = (AclEntry) i.next();
-
             Principal ep     = e.getPrincipal();
             Principal entryp = entry.getPrincipal();
 
@@ -155,10 +155,8 @@ public class AclImpl implements Acl
      */
     public AclEntry getEntry( Principal principal )
     {
-        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        for( AclEntry entry : m_entries )
         {
-            AclEntry entry = (AclEntry) e.nextElement();
-        
             if( entry.getPrincipal().getName().equals( principal.getName() ) )
             {
                 return entry;
@@ -176,10 +174,8 @@ public class AclImpl implements Acl
     {
         StringBuffer sb = new StringBuffer();
 
-        for( Enumeration myEnum = entries(); myEnum.hasMoreElements(); )
+        for( AclEntry entry : m_entries )
         {
-            AclEntry entry = (AclEntry) myEnum.nextElement();
-
             Principal pal = entry.getPrincipal();
 
             if( pal != null )

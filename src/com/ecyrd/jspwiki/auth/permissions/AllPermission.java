@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 
@@ -30,7 +31,7 @@ import java.security.PermissionCollection;
  * @author Andrew Jaquith
  * @since 2.3.80
  */
-public final class AllPermission extends Permission
+public final class AllPermission extends Permission implements Serializable
 {
     private static final long   serialVersionUID = 1L;
 
@@ -38,6 +39,12 @@ public final class AllPermission extends Permission
 
     private final String        m_wiki;
 
+    /** For serialization purposes. */
+    protected AllPermission()
+    {
+        this(null);
+    }
+    
     /**
      * Creates a new AllPermission for the given wikis.
      * 

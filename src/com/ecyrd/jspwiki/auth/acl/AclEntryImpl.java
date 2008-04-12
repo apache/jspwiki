@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
@@ -34,10 +35,10 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public class AclEntryImpl implements AclEntry
+public class AclEntryImpl implements AclEntry, Serializable
 {
-
-    private Vector    m_permissions = new Vector();
+    private static final long serialVersionUID = 1L;
+    private Vector<Permission>    m_permissions = new Vector<Permission>();
     private Principal m_principal;
 
     /**
@@ -151,10 +152,8 @@ public class AclEntryImpl implements AclEntry
         sb.append( "[AclEntry ALLOW " + ( p != null ? p.getName() : "null" ) );
         sb.append( " " );
 
-        for( Iterator i = m_permissions.iterator(); i.hasNext(); )
+        for( Permission pp : m_permissions )
         {
-            Permission pp = (Permission) i.next();
-
             sb.append( pp.toString() );
             sb.append( "," );
         }
@@ -170,10 +169,8 @@ public class AclEntryImpl implements AclEntry
      */
     private Permission findPermission( Permission p )
     {
-        for( Iterator i = m_permissions.iterator(); i.hasNext(); )
+        for( Permission pp : m_permissions )
         {
-            Permission pp = (Permission) i.next();
-
             if ( pp.implies( p ) )
             {
                 return pp;
