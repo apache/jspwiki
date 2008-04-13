@@ -84,12 +84,21 @@ public abstract class AbstractFileProvider
 
         if( !f.exists() )
         {
-            f.mkdirs();
+            if (!f.mkdirs()) 
+            {
+              throw new IOException("Failed to create page directory "+f.getAbsolutePath()+" , please check property "+PROP_PAGEDIR);  
+            }
         }
-        else if( !f.isDirectory() )
-        {
-            throw new IOException("Page directory is not a directory: "+m_pageDirectory);
-        }
+        else {
+            if( !f.isDirectory() )
+            {
+            throw new IOException("Page directory is not a directory: "+f.getAbsolutePath());
+            }
+            if (!f.canWrite()) 
+            {
+                throw new IOException("Page directory is not writable: "+f.getAbsolutePath());    
+            }
+            }
         
         m_engine = engine;
 
