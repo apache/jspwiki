@@ -4,6 +4,9 @@
         
         * [JSPWIKI-178] Patch from Jorge Ferrer to keep the order of search (WEB-INF
         then classpath then file system) of filters.xml
+        
+        * [JSPWIKI-231] Updated es translation and applied patches from Florian 
+        Holeczek (de translation) and Harry Metske (nl translation)
 
 2008-04-13  Janne Jalkanen <jalkanen@apache.org>
 
