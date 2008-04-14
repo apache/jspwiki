@@ -202,23 +202,36 @@ public final class FilterManager extends ModuleManager
         {
             registerFilters();
             
-            if( xmlFile == null )
-            {
-                if( m_engine.getServletContext() != null )
-                {
-                    log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
-                }
-                
-                if( xmlStream == null )
-                {
-                    //just a fallback element to the old behaviour prior to 2.5.8
-                    log.debug("Attempting to locate filters.xml from class path.");
-                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
-                }
-            }
-            else
-            {
+			if( m_engine.getServletContext() != null )
+			{
+				log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
+				if( xmlFile == null )
+				{
+					xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+				}
+				else
+				{
+					xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
+				}
+			}
+
+			if( xmlStream == null )
+			{
+				//just a fallback element to the old behaviour prior to 2.5.8
+				log.debug("Attempting to locate filters.xml from class path.");
+
+				if( xmlFile == null )
+				{
+					xmlStream = getClass().getResourceAsStream( "/filters.xml" );
+				}
+				else
+				{
+					xmlStream = getClass().getResourceAsStream( xmlFile );
+				}
+			}
+
+			if( (xmlStream == null) && (xmlFile != null) )
+			{
                 log.debug("Attempting to load property file "+xmlFile);
                 xmlStream = new FileInputStream( new File(xmlFile) );
             }
