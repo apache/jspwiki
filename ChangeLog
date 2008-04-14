@@ -3,10 +3,13 @@
         * 2.7.0-svn-13
         
         * [JSPWIKI-178] Patch from Jorge Ferrer to keep the order of search (WEB-INF
-        then classpath then file system) of filters.xml
+        then classpath then file system) of filters.xml.
         
         * [JSPWIKI-231] Updated es translation and applied patches from Florian 
-        Holeczek (de translation) and Harry Metske (nl translation)
+        Holeczek (de translation) and Harry Metske (nl translation).
+        
+        * ProfanityFilter minor improvement: profanities are read from a file 
+        instead of being hard-coded strings.
 
 2008-04-13  Janne Jalkanen <jalkanen@apache.org>
 

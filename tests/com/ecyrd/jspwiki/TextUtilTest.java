@@ -144,6 +144,41 @@ public class TextUtilTest extends TestCase
 
         assertEquals( "afafaf", TextUtil.replaceString( text, "b", "f" ) ); 
     }
+    
+    public void testReplaceStringCaseUnsensitive1()
+    {
+        String text = "aABcAa";
+
+        assertEquals( "ddBcdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) ); 
+    }
+
+    public void testReplaceStringCaseUnsensitive2()
+    {
+        String text = "Abcde";
+
+        assertEquals( "fbcde", TextUtil.replaceStringCaseUnsensitive( text, "a", "f" ) ); 
+    }
+
+    public void testReplaceStringCaseUnsensitive3()
+    {
+        String text = "aBAbab";
+
+        assertEquals( "afAfaf", TextUtil.replaceStringCaseUnsensitive( text, "b", "f" ) ); 
+    }
+    
+    public void testReplaceStringCaseUnsensitive4()
+    {
+        String text = "AaBAcAAfaa";
+
+        assertEquals( "ddBAcddfdd", TextUtil.replaceStringCaseUnsensitive( text, "aa", "dd" ) ); 
+    }
+
+    public void testReplaceStringCaseUnsensitive5()
+    {
+        String text = "aAaBaCAAafaa";
+
+        assertEquals( "dBaCdfaa", TextUtil.replaceStringCaseUnsensitive( text, "aaa", "d" ) );     
+    }
 
     // Pure UNIX.
     public void testNormalizePostdata1()

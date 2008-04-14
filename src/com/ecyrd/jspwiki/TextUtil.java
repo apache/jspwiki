@@ -345,6 +345,36 @@ public final class TextUtil
 
         return buf.toString();
     }
+    
+    /**
+     *  Replaces a string with an other string. Case unsensitive matching is used
+     *
+     *  @param orig Original string.  Null is safe.
+     *  @param src  The string to find.
+     *  @param dest The string to replace <I>src</I> with.
+     */
+    public static String replaceStringCaseUnsensitive( String orig, String src, String dest )
+    {
+        if( orig == null ) return null;
+
+        StringBuffer res = new StringBuffer();
+        int start, end = 0, last = 0;
+        
+        String origCaseUnsn = orig.toLowerCase();
+        String srcCaseUnsn = src.toLowerCase();
+
+        while( (start = origCaseUnsn.indexOf(srcCaseUnsn, end)) != -1 )
+        {
+            res.append( orig.substring( last, start ) );
+            res.append( dest );
+            end  = start+src.length();
+            last = start+src.length();
+        }
+
+        res.append( orig.substring( end ) );
+
+        return res.toString();
+    }
 
     /**
      *  Parses an integer parameter, returning a default value
