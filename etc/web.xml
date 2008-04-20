@@ -6,11 +6,10 @@
         version="2.4">
 
    <description>
-       JSPWiki is a free JSP-based WikiClone.  It is licenced
-       under the Lesser GNU General Public License.
+       JSPWiki is an open source JSP-based WikiClone.  It is licenced
+       under the Apache 2.0 license.
 
-       JSPWiki is maintained by Janne Jalkanen (+others),
-       jalkanen+jspwiki@ecyrd.com
+       For more information, please come to http://www.jspwiki.org/
    </description>
    <display-name>JSPWiki</display-name>
 
