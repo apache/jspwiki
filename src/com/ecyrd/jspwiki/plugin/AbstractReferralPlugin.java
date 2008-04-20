@@ -32,6 +32,8 @@ import org.apache.oro.text.regex.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
@@ -79,12 +81,12 @@ public abstract class AbstractReferralPlugin
     protected           boolean m_lastModified=false;
     // the last modified date of the page that has been last modified:
     protected           Date m_dateLastModified = new Date(0);
-    protected           SimpleDateFormat m_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected           SimpleDateFormat m_dateFormat;
 
     protected           WikiEngine m_engine;
 
     /**
-     *  Used to initialize some things.  All plugins must call this first.
+     *  Used to initialize some things.  All subclasses must call this first.
      *
      *  @since 1.6.4
      */
@@ -94,6 +96,7 @@ public abstract class AbstractReferralPlugin
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
+        m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;
