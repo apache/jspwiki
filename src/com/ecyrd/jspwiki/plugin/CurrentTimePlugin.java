@@ -22,6 +22,9 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
+
 import java.util.*;
 import java.text.SimpleDateFormat;
 
@@ -37,25 +40,20 @@ public class CurrentTimePlugin
 {
     private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
-    public static final String DEFAULT_FORMAT = "HH:mm:ss dd-MMM-yyyy zzzz";
-
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         String formatString = (String)params.get("format");
-
-        if( formatString == null )
-        {
-            formatString = DEFAULT_FORMAT;
-        }
-
-        log.debug("Date format string is: "+formatString);
-
+        
         try
         {
-            SimpleDateFormat fmt = new SimpleDateFormat( formatString );
-            //SimpleDateFormat fmt = Prefernces.getDateFormat( pageContext );
+            SimpleDateFormat fmt;
             
+            if( formatString != null )
+                fmt = new SimpleDateFormat( formatString );
+            else
+                fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+
             Date d = new Date();  // Now.
 
             return fmt.format( d );
