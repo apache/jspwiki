@@ -295,7 +295,7 @@
   	       used. FIXME: Figure out a better way to do this in the future. -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
-	  <copy file="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
+	  <copy file="${code.i18n}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.i18n}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
