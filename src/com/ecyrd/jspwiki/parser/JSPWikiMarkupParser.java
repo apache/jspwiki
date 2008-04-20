@@ -2048,7 +2048,7 @@ public class JSPWikiMarkupParser
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
                  popElement( getListType( m_genlistBulletBuffer.charAt(m_genlistlevel-1) ) );
-                 if( m_genlistlevel > 0 )
+                 if( m_genlistlevel > numBullets )
                  {
                      popElement("li");
                  }
