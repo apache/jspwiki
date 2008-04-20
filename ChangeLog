@@ -1,3 +1,11 @@
+2008-04-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-14
+        
+        * [JSPWIKI-165] Patch from Tomasz Szymko to help in nested bullet lists.
+        
+        * Also updated several files to the Apache license.
+
 2008-04-15 Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * 2.7.0-svn-13
