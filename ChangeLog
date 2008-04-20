@@ -1,4 +1,14 @@
-2008-04-13  Janne Jalkanen <jalkanen@apache.org>
+2008-04-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-15
+        
+        * [JSPWIKI-5] FileSystemProvider now properly mangles names of pages which
+        start with a dot.  This is done in a fully backwards compatible manner,
+        so no changes to the repo is needed.
+        
+        * [JSPWIKI-100] Added two new parameters to ReferringPagesPlugin,
+        UnusedPagesPlugin, ReferredPagesPlugin, and UndefinedPagesPlugin:
+        show and showLastModified.  Thanks to Harry Metske for the patch!
 
         * 2.7.0-svn-14
         

@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+
 import java.util.*;
 
 /**
@@ -44,11 +45,26 @@ public class UndefinedPagesPlugin
         super.initialize( context, params );
 
         TreeSet sortedSet = new TreeSet();
+
+        links = filterCollection( links );
+
         sortedSet.addAll( links );
         
-        filterCollection( links );
+        String wikitext = null;
         
-        String wikitext = wikitizeCollection( sortedSet, m_separator, ALL_ITEMS );
+        if (m_lastModified)
+        {
+            throw new PluginException("parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin");
+        }
+        
+        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
+        {
+            wikitext = "" + links.size();
+        }
+        else
+        {
+            wikitext = wikitizeCollection(sortedSet, m_separator, ALL_ITEMS);
+        }
         
         return makeHTML( context, wikitext );
     }

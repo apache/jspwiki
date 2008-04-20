@@ -67,6 +67,27 @@ public class UndefinedPagesPluginTest extends TestCase
         assertEquals( wikitize(exp), res );
     }
 
+    public void testCount() throws Exception
+    {
+        String result = null;
+        result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
+        assertEquals("1", result);
+
+        // test if the proper exception is thrown:
+        String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
+        String exceptionString = null;
+        try
+        {
+            result = manager.execute(context, "{UndefinedPagesPlugin,show=count,showLastModified=true}");
+        }
+        catch (PluginException pe)
+        {
+            exceptionString = pe.getMessage();
+        }
+
+        assertEquals(expectedExceptionString, exceptionString);
+    }
+
     public static Test suite()
     {
         return new TestSuite( UndefinedPagesPluginTest.class );

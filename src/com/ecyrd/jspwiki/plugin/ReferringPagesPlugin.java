@@ -93,13 +93,25 @@ public class ReferringPagesPlugin
             }
 
             //
-            //  If nothing was left after filtering or during search
+            // If nothing was left after filtering or during search
             //
-            if( links == null || links.size() == 0 )
+            if (links == null || links.size() == 0)
             {
                 wikitext = rb.getString("referringpagesplugin.nobody");
             }
+            else
+            {
 
+                if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
+                {
+                    wikitext = "" + links.size();
+                    if (m_lastModified)
+                    {
+                        wikitext = links.size() + " (" + m_dateFormat.format(m_dateLastModified) + ")";
+                    }
+                }
+            }
+            
             return makeHTML( context, wikitext );
         }
 

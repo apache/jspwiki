@@ -72,12 +72,25 @@ public class UnusedPagesPlugin
         super.initialize( context, params );
 
         TreeSet sortedSet = new TreeSet();
-
+        
+        links = filterCollection( links );
+        
         sortedSet.addAll( links );
 
-        filterCollection( links );
-        String wikitext = wikitizeCollection( sortedSet, m_separator, ALL_ITEMS );
+        String wikitext = null;
         
+        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
+        {
+            wikitext = "" + links.size();
+            if (m_lastModified & links.size()!=0)
+            {
+                wikitext = links.size() + " (" + m_dateFormat.format(m_dateLastModified) + ")";
+            }
+        }
+        else
+        {
+            wikitext = wikitizeCollection(sortedSet, m_separator, ALL_ITEMS);
+        }        
         return makeHTML( context, wikitext );
     }
 

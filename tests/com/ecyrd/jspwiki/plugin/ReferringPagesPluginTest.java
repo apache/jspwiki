@@ -1,6 +1,7 @@
 
 package com.ecyrd.jspwiki.plugin;
 
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -83,24 +84,28 @@ public class ReferringPagesPluginTest extends TestCase
     {
         String res = manager.execute( context,
                                       "{INSERT com.ecyrd.jspwiki.plugin.ReferringPagesPlugin WHERE max=5}");
-
+    
         int count = 0;
         int index = -1;
-
+    
         // Count the number of hyperlinks.  We could check their
         // correctness as well, though.
-
+    
         while( (index = res.indexOf("<a",index+1)) != -1 )
         {
             count++;
         }
-
-        assertEquals( 5, count );
-
-        String expected = "...and 2 more<br />";
-
-        assertEquals( "End", expected,
-                      res.substring( res.length()-expected.length() ) );
+    
+        // there are always 2 more "<a" 's in the result 
+        assertEquals( 5+2, count );
+    
+        String expected = ">2 more</a>";
+        count =0;
+        while( (index = res.indexOf(expected,index+1)) != -1 )
+        {
+            count++;
+        }
+        assertEquals("End", 1, count );
     }
 
     public void testReferenceWidth()
@@ -162,6 +167,38 @@ public class ReferringPagesPluginTest extends TestCase
         assertTrue( "2", res.indexOf("Foobar2") != -1 );
     }
 
+    public void testCount() throws Exception
+    {
+        String result = null;
+        result = manager.execute(context, "{ReferringPagesPlugin show=count}");
+        assertEquals("7",result);
+        
+        result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count}");
+        assertEquals("6",result);
+        
+        result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
+        String numberResult=result.substring(0,result.indexOf(" "));
+        assertEquals("6",numberResult);
+        
+        String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
+        // the date should be parseable:
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        df.parse(dateString);
+
+        // test if the proper exception is thrown:
+        String expectedExceptionString = "showLastModified=true is only valid if show=count is also specified";
+        String exceptionString = null;
+        try
+        {
+            result = manager.execute(context, "{ReferringPagesPlugin,showLastModified=true}");
+        }
+        catch (PluginException pe)
+        {
+            exceptionString = pe.getMessage();
+        }
+
+        assertEquals(expectedExceptionString, exceptionString);
+    }
 
     public static Test suite()
     {
