@@ -1355,6 +1355,190 @@ public class JSPWikiMarkupParserTest extends TestCase
                       result );
     }
 
+    /**
+     * <pre>
+     *   * bullet A
+     *   ** bullet A_1
+     *   *# number A_1
+     *   * bullet B
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     * <ul>
+     *   <li>bullet A
+     *     <ul>
+     *       <li>bullet A_1</li>
+     *     </ul>
+     *     <ol>
+     *       <li>number A_1</li>
+     *     </ol>
+     *   </li>
+     *   <li>bullet B</li>
+     * </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel()
+    throws Exception
+    {
+        String src="* bullet A\n** bullet A_1\n*# number A_1\n* bullet B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet A"+
+                      "<ul>"+
+                      "<li>bullet A_1</li>"+
+                      "</ul>"+
+                      "<ol>"+
+                      "<li>number A_1</li>"+
+                      "</ol>"+
+                      "</li>"+
+                      "<li>bullet B</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+    /**
+     * <pre>
+     *   * bullet A
+     *   ** bullet A_1
+     *   ## number A_1
+     *   * bullet B
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     * <ul>
+     *   <li>bullet A
+     *     <ul>
+     *       <li>bullet A_1</li>
+     *     </ul>
+     *     <ol>
+     *       <li>number A_1</li>
+     *     </ol>
+     *   </li>
+     *   <li>bullet B</li>
+     * </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel2()
+    throws Exception
+    {
+        String src="* bullet A\n** bullet A_1\n## number A_1\n* bullet B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet A"+
+                      "<ul>"+
+                      "<li>bullet A_1</li>"+
+                      "</ul>"+
+                      "<ol>"+
+                      "<li>number A_1</li>"+
+                      "</ol>"+
+                      "</li>"+
+                      "<li>bullet B</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+
+    /**
+     * <pre>
+     *   * bullet 1
+     *   ## number 2
+     *   ** bullet 3
+     *   ## number 4
+     *   * bullet 5 
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     *   <ul>
+     *       <li>bullet 1
+     *           <ol><li>number 2</li></ol>
+     *           <ul><li>bullet 3</li></ul>
+     *           <ol><li>number 4</li></ol>
+     *       </li>
+     *       <li>bullet 5</li>
+     *   </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel3()
+    throws Exception
+    {
+        String src="* bullet 1\n## number 2\n** bullet 3\n## number 4\n* bullet 5\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet 1"+
+                      "<ol><li>number 2</li></ol>"+
+                      "<ul><li>bullet 3</li></ul>"+
+                      "<ol><li>number 4</li></ol>"+
+                      "</li>"+
+                      "<li>bullet 5</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+    /**
+     * <pre>
+     *   # number 1
+     *   ** bullet 2
+     *   ## number 3
+     *   ** bullet 4
+     *   # number 5 
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     *   <ol>
+     *       <li>number 1
+     *           <ul><li>bullet 2</li></ul>
+     *           <ol><li>number 3</li></ol>
+     *           <ul><li>bullet 4</li></ul>
+     *       </li>
+     *       <li>number 5</li>
+     *   </ol>
+     *  
+     */
+
+    public void testMixedListOnSameLevel4()
+    throws Exception
+    {
+        String src="# number 1\n** bullet 2\n## number 3\n** bullet 4\n# number 5\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ol>"+
+                      "<li>number 1"+
+                      "<ul><li>bullet 2</li></ul>"+
+                      "<ol><li>number 3</li></ol>"+
+                      "<ul><li>bullet 4</li></ul>"+
+                      "</li>"+
+                      "<li>number 5</li>"+
+                      "</ol>"
+                      ,
+                      result );
+    }
+
     public void testNestedList()
     throws Exception
     {
@@ -2163,6 +2347,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         try
         {
+            testEngine.saveText( PAGE_NAME, "content" );
             Attachment att = new Attachment( testEngine, PAGE_NAME, "TestAtt.txt" );
             att.setAuthor( "FirstPost" );
             testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
