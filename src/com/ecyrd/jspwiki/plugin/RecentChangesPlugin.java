@@ -32,6 +32,8 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Returns the Recent Changes.
@@ -100,8 +102,8 @@ public class RecentChangesPlugin
         {
             Date olddate   = new Date(0);
 
-            DateFormat fmt = getDateFormat(params);
-            DateFormat tfmt = getTimeFormat(params);
+            DateFormat fmt = getDateFormat( context, params );
+            DateFormat tfmt = getTimeFormat( context, params );
 
             table rt = new table();
             rt.setCellPadding(spacing).setClass("recentchanges");
@@ -225,24 +227,24 @@ public class RecentChangesPlugin
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat(Map params)
+    private DateFormat getTimeFormat( WikiContext context, Map params )
     {
         String formatString = get(params, "HH:mm:ss", PARAM_TIME_FORMAT);
 
         if ("".equals(formatString.trim()))
-            return SimpleDateFormat.getTimeInstance();
+            return Preferences.getDateFormat( context, TimeFormat.TIME );
 
         return new SimpleDateFormat(formatString);
     }
 
 
 
-    private DateFormat getDateFormat(Map params)
+    private DateFormat getDateFormat( WikiContext context, Map params )
     {
         String formatString = get(params, "dd.MM.yyyy", PARAM_DATE_FORMAT);
 
         if ("".equals(formatString.trim()))
-            return SimpleDateFormat.getDateInstance();
+            return Preferences.getDateFormat( context, TimeFormat.DATE );
 
         return new SimpleDateFormat(formatString);
 
