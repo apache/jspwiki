@@ -137,6 +137,15 @@ public abstract class AbstractFileProvider
         
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
 
+        //
+        //  Names which start with a dot must be escaped to prevent problems.
+        //  Since we use URL encoding, this is invisible in our unescaping.
+        //
+        if( pagename.startsWith( "." ) )
+        {
+            pagename = "%2E" + pagename.substring( 1 );
+        }
+        
         if( m_windowsHackNeeded )
         {
             String pn = pagename.toLowerCase();
