@@ -125,6 +125,22 @@ public class FileSystemProviderTest extends TestCase
         assertEquals("Wrong contents", contents, "test");
     }
 
+    public void testDotsInBeginning()
+       throws Exception
+    {
+        WikiPage page = new WikiPage(m_engine, ".Test");
+
+        m_provider.putPageText( page, "test" );
+
+        File resultfile = new File( m_pagedir, "%2ETest.txt" );
+
+        assertTrue("No such file", resultfile.exists());
+
+        String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
+
+        assertEquals("Wrong contents", contents, "test");
+    }
+    
     public void testAuthor()
         throws Exception
     {
