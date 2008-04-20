@@ -41,6 +41,8 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.parser.PluginContent;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -76,8 +78,6 @@ public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
-    private static final DateFormat DEFAULT_ENTRYFORMAT
-                                = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
     private static final Pattern headingPattern;
 
     /** How many days are considered by default.  Default value is {@value} */
@@ -149,7 +149,7 @@ public class WeblogPlugin
 
         if( ( params.get(PARAM_ENTRYFORMAT)) == null )
         {
-            entryFormat = DEFAULT_ENTRYFORMAT;
+            entryFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         }
         else
         {
