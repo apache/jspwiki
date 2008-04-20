@@ -20,23 +20,23 @@
  */
 package com.ecyrd.jspwiki.preferences;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.Properties;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
@@ -44,7 +44,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  *  
  */
 public class Preferences
-    extends HashMap
+    extends HashMap<String,String>
 {
     private static final long serialVersionUID = 1L;
     
@@ -54,6 +54,8 @@ public class Preferences
      */
     public static final String SESSIONPREFS = "prefs";
      
+    private static Logger log = Logger.getLogger( Preferences.class );
+    
     /**
      *  This is an utility method which is called to make sure that the
      *  JSP pages do have proper access to any user preferences.  It should be
@@ -78,13 +80,24 @@ public class Preferences
         }
     }
     
+    // FIXME: The way that date preferences are chosen is currently a bit wacky: it all
+    //        gets saved to the cookie based on the browser state with which the user
+    //        happened to first arrive to the site with.  This, unfortunately, means that
+    //        even if the user changes e.g. language preferences (like in a web cafe),
+    //        the old preferences still remain in a site cookie.
     public static void reloadPreferences( PageContext pageContext )
     {
         Preferences prefs = new Preferences();
         Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
+        WikiContext ctx = WikiContext.findContext( pageContext );
         
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
-        prefs.put("DateFormat", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.dateformat", "dd-MMM-yyyy HH:mm" ) );
+        prefs.put("DateFormat", 
+                  TextUtil.getStringProperty( props, 
+                                              "jspwiki.defaultprefs.template.dateformat", 
+                                              ctx.getEngine().getInternationalizationManager().get( InternationalizationManager.CORE_BUNDLE, 
+                                                                                                    getLocale( ctx ), 
+                                                                                                    "common.datetimeformat" ) ) );
 
         prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
                                                           java.util.TimeZone.getDefault().getID() ) );
@@ -153,7 +166,7 @@ public class Preferences
         Preferences prefs = (Preferences)request.getSession().getAttribute( SESSIONPREFS );
         
         if( prefs != null )
-            return (String)prefs.get( name );
+            return prefs.get( name );
         
         return null;
     }
@@ -170,7 +183,7 @@ public class Preferences
         Preferences prefs = (Preferences)pageContext.getSession().getAttribute( SESSIONPREFS );
         
         if( prefs != null )
-            return (String)prefs.get( name );
+            return prefs.get( name );
         
         return null;
     }
@@ -180,7 +193,7 @@ public class Preferences
      * Get Locale according to user-preference settings or the user browser locale
      * 
      * @param wikiContext
-     * @since 2.7.x
+     * @since 2.8
      */
     public static Locale getLocale(WikiContext context)
     {
@@ -191,8 +204,8 @@ public class Preferences
         if( language != null)
             loc = new Locale(language);
 
-        if( loc == null) {
-            
+        if( loc == null) 
+        {    
             HttpServletRequest request = context.getHttpRequest();
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
@@ -201,33 +214,98 @@ public class Preferences
     }
 
     /**
-     * Get SimpleTimeFormat according to user browser locale and preferred time formats
+     *  Get SimpleTimeFormat according to user browser locale and preferred time
+     *  formats. If not found, it will revert to whichever format is set for the
+     *  default
      * 
-     * @param pageContext
-     * @return SimpleTimeFormat
-     * @since 2.7.x
+     *  @param context WikiContext to use for rendering.
+     *  @param tf Which version of the dateformat you are looking for?
+     *  @return A SimpleTimeFormat object which you can use to render
+     *  @since 2.8
      */
-    public static SimpleDateFormat getDateFormat(WikiContext context)
+    public static SimpleDateFormat getDateFormat( WikiContext context, TimeFormat tf )
     {
+        InternationalizationManager imgr = context.getEngine().getInternationalizationManager();
         Locale clientLocale = Preferences.getLocale( context );
-        String prefTimeZone = Preferences.getPreference( context, "TimeZone");
-        String prefDateFormat = Preferences.getPreference( context, "DateFormat");
+        String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
+        String prefDateFormat;
+        
+        log.debug("Checking for preferences...");
+        
+        switch( tf )
+        {
+            case DATETIME:
+                prefDateFormat = Preferences.getPreference( context, "DateFormat" );
+                log.debug("Preferences fmt = "+prefDateFormat);
+                if( prefDateFormat == null ) 
+                {
+                    prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE, 
+                                               clientLocale, 
+                                               "common.datetimeformat" );
+                    log.debug("Using locale-format = "+prefDateFormat);
+                }
+                break;
+                
+            case TIME:
+                prefDateFormat = imgr.get( "common.timeformat" );
+                break;
+                
+            case DATE:
+                prefDateFormat = imgr.get( "common.dateformat" );
+                break;
+                
+            default:
+                throw new InternalWikiException( "Got a TimeFormat for which we have no value!" );
+        }
 
         try
         {
-            TimeZone tz = TimeZone.getTimeZone(prefTimeZone);
-            //TimeZone tz = TimeZone.getDefault();
-            //tz.setRawOffset(Integer.parseInt(prefTimeZone));
+            TimeZone tz = TimeZone.getTimeZone( prefTimeZone );
+            // TimeZone tz = TimeZone.getDefault();
+            // tz.setRawOffset(Integer.parseInt(prefTimeZone));
 
-            SimpleDateFormat fmt = new SimpleDateFormat(prefDateFormat, clientLocale);
-            fmt.setTimeZone(tz);
+            SimpleDateFormat fmt = new SimpleDateFormat( prefDateFormat, clientLocale );
+            fmt.setTimeZone( tz );
 
             return fmt;
         }
-        catch (Exception e)
+        catch( Exception e )
         {
             return null;
         }
     }
 
+    /**
+     *  A simple helper function to render a date based on the user preferences.
+     *  This is useful for example for all plugins.
+     *  
+     *  @param context  The context which is used to get the preferences
+     *  @param date     The date to render.
+     *  @param tf       In which format the date should be rendered.
+     *  @return A ready-rendered date.
+     *  @since 2.8
+     */
+    public static String renderDate( WikiContext context, Date date, TimeFormat tf )
+    {
+        DateFormat df = getDateFormat( context, tf );
+        
+        return df.format( date );
+    }
+
+    /**
+     *  Is used to choose between the different date formats that JSPWiki supports.
+     *  <ul>
+     *   <li>TIME: A time format, without  date</li>
+     *   <li>DATE: A date format, without a time</li>
+     *   <li>DATETIME: A date format, with a time</li>
+     *  </ul>
+     *  
+     *  @since 2.8
+     */
+    public enum TimeFormat
+    {
+        TIME,
+        DATE,
+        DATETIME
+    }
 }

@@ -20,11 +20,14 @@
  */
 package com.ecyrd.jspwiki.i18n;
 
+import java.text.DateFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  *  Manages all internationalization in JSPWiki.
@@ -93,4 +96,5 @@ public class InternationalizationManager
     {
         return getBundle(bundle,locale).getString(key);
     }
+
 }

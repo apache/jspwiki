@@ -40,6 +40,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
@@ -522,7 +523,7 @@ public class TemplateManager
         try
         {
             // dummy format pattern
-            SimpleDateFormat fmt = Preferences.getDateFormat( context );
+            SimpleDateFormat fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
             fmt.setTimeZone(tz);
 
             for (int i = 0; i < tfArr.size(); i++)
