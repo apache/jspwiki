@@ -25,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Writes the modification date of the page, formatted
@@ -57,9 +59,6 @@ public class PageDateTag
 
     public String getFormat()
     {
-        if( m_format == null )
-            return DEFAULT_FORMAT;
-
         return m_format;
     }
 
@@ -82,7 +81,12 @@ public class PageDateTag
             //
             if( d != null )
             {
-                SimpleDateFormat fmt = new SimpleDateFormat( getFormat() );
+                SimpleDateFormat fmt;
+                
+                if( m_format == null )
+                    fmt = Preferences.getDateFormat( m_wikiContext, TimeFormat.DATETIME );
+                else
+                    fmt = new SimpleDateFormat( m_format );
 
                 pageContext.getOut().write( fmt.format( d ) );
             }
