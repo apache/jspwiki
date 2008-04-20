@@ -1,5 +1,20 @@
 2008-04-20  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-16
+        
+        * Moved the rest of the PluginResources class into etc/i18n, as
+        their old place was confusing people.
+        
+        * [JSPWIKI-243], [JSPWIKI-244], [JSPWIKI-242], [JSPWIKI-241] Fixed
+        a number of issues with plugins not using the proper date/time from
+        the locale/preferences.
+        
+        * [JSPWIKI-245] Removed PluginResources / common.dateformat, and
+        created three new time/date format resources in CoreResources:
+           * common.dateformat
+           * common.timeformat
+           * common.datetimeformat
+
         * 2.7.0-svn-15
         
         * [JSPWIKI-5] FileSystemProvider now properly mangles names of pages which
