@@ -201,7 +201,7 @@ public final class MailUtil
 
     private static boolean c_useJndi = true;
 
-    public static final String PROP_MAIL_AUTH = "mail.smtp.auth";
+    private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
     protected static final Logger log = Logger.getLogger(MailUtil.class);
 
@@ -237,7 +237,8 @@ public final class MailUtil
 
     protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
-	private static String fromAddress = null;
+    private static String c_fromAddress = null;
+    
     /**
      *  Private constructor prevents instantiation.
      */
@@ -265,11 +266,11 @@ public final class MailUtil
      * @param to the receiver
      * @param subject the subject line of the message
      * @param content the contents of the mail message, as plain text
-     * @throws AddressException
-     * @throws MessagingException
+     * @throws AddressException If the address is invalid
+     * @throws MessagingException If the message cannot be sent.
      */
     public static void sendMessage(WikiEngine engine, String to, String subject, String content)
-    throws AddressException, MessagingException
+        throws AddressException, MessagingException
     {
         Properties props = engine.getWikiProperties();
         Session session = getMailSession(engine);
@@ -279,7 +280,7 @@ public final class MailUtil
         {
             // Create and address the message
             MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(fromAddress));
+            msg.setFrom(new InternetAddress(c_fromAddress));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
             msg.setSubject(subject);
             msg.setText(content, "UTF-8");
@@ -311,25 +312,31 @@ public final class MailUtil
      */
     protected static String getSenderEmailAddress(Session pSession, Properties pProperties)
     {
-        if (fromAddress == null)
+        if( c_fromAddress == null )
         {
-            // First, attempt to get the email address from the JNDI Mail Session.
-            if (pSession != null && c_useJndi)
+            // First, attempt to get the email address from the JNDI Mail
+            // Session.
+            if( pSession != null && c_useJndi )
             {
-                fromAddress = pSession.getProperty(MailUtil.PROP_MAIL_SENDER);
+                c_fromAddress = pSession.getProperty( MailUtil.PROP_MAIL_SENDER );
             }
-            // If unsuccessful, get the email address from the properties or default.
-            if (fromAddress == null) {
-                fromAddress = pProperties.getProperty(PROP_MAIL_SENDER, DEFAULT_SENDER).trim();
-                if ( log.isDebugEnabled() )
-                    log.debug("Attempt to get the sender's mail address from the JNDI mail session failed, will use \"" + fromAddress
-                              + "\" (configured via jspwiki.properties or the internal default).");
-            } else {
-                if ( log.isDebugEnabled() )
-                    log.debug("Attempt to get the sender's mail address from the JNDI mail session was successful (" + fromAddress + ").");
+            // If unsuccessful, get the email address from the properties or
+            // default.
+            if( c_fromAddress == null )
+            {
+                c_fromAddress = pProperties.getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
+                if( log.isDebugEnabled() )
+                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \""
+                               + c_fromAddress + "\" (configured via jspwiki.properties or the internal default)." );
+            }
+            else
+            {
+                if( log.isDebugEnabled() )
+                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful (" + c_fromAddress
+                               + ")." );
             }
         }
-        return fromAddress;
+        return c_fromAddress;
     }
 
     /**
