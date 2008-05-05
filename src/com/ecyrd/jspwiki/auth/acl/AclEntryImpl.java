@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;

@@ -123,7 +123,9 @@ public class MassiveRepositoryTest extends TestCase
             String page = getName( random.nextInt( numPages ) );
             
             String content = engine.getHTML( page, WikiProvider.LATEST_VERSION );
-                        
+              
+            assertNotNull(content);
+            
             if( i % pm == 0 ) { System.out.print("."); System.out.flush(); }
         }
         

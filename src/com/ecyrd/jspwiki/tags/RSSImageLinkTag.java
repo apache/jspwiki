@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**

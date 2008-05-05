@@ -20,10 +20,10 @@
  */
 package com.ecyrd.jspwiki.filters;
 
-import java.io.InputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -41,10 +41,8 @@ import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
-import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
-
-import com.ecyrd.jspwiki.util.PriorityList;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.PriorityList;
 
 
 /**
@@ -489,7 +487,7 @@ public final class FilterManager extends ModuleManager
      * 
      *  @since 2.6.1
      */
-    private static class PageFilterInfo extends WikiModuleInfo
+    private static final class PageFilterInfo extends WikiModuleInfo
     {
         private PageFilterInfo( String name )
         {

@@ -20,13 +20,14 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
-import com.ecyrd.jspwiki.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
-
-import java.util.*;
-import java.text.SimpleDateFormat;
 
 /**
  *  Just displays the current date and time.
@@ -38,7 +39,7 @@ import java.text.SimpleDateFormat;
 public class CurrentTimePlugin
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
+    // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
     public String execute( WikiContext context, Map params )
         throws PluginException

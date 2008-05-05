@@ -348,18 +348,21 @@ public final class TextUtil
     }
     
     /**
-     *  Replaces a string with an other string. Case unsensitive matching is used
+     *  Replaces a string with an other string. Case insensitive matching is used
      *
      *  @param orig Original string.  Null is safe.
      *  @param src  The string to find.
      *  @param dest The string to replace <I>src</I> with.
+     *  @return A string with all instances of src replaced with dest.
      */
     public static String replaceStringCaseUnsensitive( String orig, String src, String dest )
     {
         if( orig == null ) return null;
 
         StringBuffer res = new StringBuffer();
-        int start, end = 0, last = 0;
+        int start        = 0;
+        int end          = 0;
+        int last         = 0;
         
         String origCaseUnsn = orig.toLowerCase();
         String srcCaseUnsn = src.toLowerCase();

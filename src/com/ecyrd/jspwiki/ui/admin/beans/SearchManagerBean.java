@@ -25,8 +25,6 @@ import java.util.Iterator;
 
 import javax.management.NotCompliantMBeanException;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -48,7 +46,7 @@ public class SearchManagerBean extends SimpleAdminBean
 
     public static final String[] METHODS = { "reload" };
 
-    private static Logger log = Logger.getLogger( SearchManagerBean.class );
+    // private static Logger log = Logger.getLogger( SearchManagerBean.class );
 
     private WikiBackgroundThread m_updater;
 

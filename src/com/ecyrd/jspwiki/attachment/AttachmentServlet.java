@@ -597,7 +597,8 @@ public class AttachmentServlet
             upload.setProgressListener( pl );
             List<FileItem> items = upload.parseRequest( req );
             
-            String wikipage = null, changeNote = null;
+            String   wikipage   = null;
+            String   changeNote = null;
             FileItem actualFile = null;
             
             for( FileItem item : items )

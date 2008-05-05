@@ -251,19 +251,22 @@ public abstract class AbstractReferralPlugin
                 //
                 //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
                 WikiPage page = null;
-                if (m_lastModified) {
-                    page = m_engine.getPage(pageName);
-                    if (page!= null)
+                if( m_lastModified )
+                {
+                    page = m_engine.getPage( pageName );
+                    if( page != null )
                     {
                         Date lastModPage = page.getLastModified();
-                        if (log.isDebugEnabled()) {
-                            log.debug("lastModified Date of page " + pageName + " : " + m_dateLastModified);
+                        if( log.isDebugEnabled() )
+                        {
+                            log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
                         }
-                        if (lastModPage.after(m_dateLastModified)){
-                            m_dateLastModified=lastModPage;
+                        if( lastModPage.after( m_dateLastModified ) )
+                        {
+                            m_dateLastModified = lastModPage;
                         }
                     }
-                        
+
                 }
             }
         }

@@ -60,6 +60,9 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * Two AllPermission objects are considered equal if their wikis are equal.
      * @see java.lang.Object#equals(java.lang.Object)
+     * 
+     * @return {@inheritDoc}
+     * @param obj {@inheritDoc}
      */
     public final boolean equals( Object obj )
     {
@@ -74,6 +77,8 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * No-op; always returns <code>null</code>
      * @see java.security.Permission#getActions()
+     *
+     * @return Always null.
      */
     public final String getActions()
     {
@@ -83,7 +88,7 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * Returns the name of the wiki containing the page represented by this
      * permission; may return the wildcard string.
-     * @return the wiki
+     * @return The wiki
      */
     public final String getWiki()
     {
@@ -93,6 +98,8 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * Returns the hash code for this WikiPermission.
      * @see java.lang.Object#hashCode()
+     * 
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -142,6 +149,8 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
+     * 
+     * @return {@inheritDoc}
      */
     public PermissionCollection newPermissionCollection()
     {
@@ -151,12 +160,19 @@ public final class AllPermission extends Permission implements Serializable
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
+     * @return {@inheritDoc}
      */
     public final String toString()
     {
         return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\")";
     }
 
+    /**
+     *  Checks if the given permission is one of ours.
+     *  
+     *  @param permission Permission to check
+     *  @return true, if the permission is a JSPWiki permission; false otherwise.
+     */
     protected static final boolean isJSPWikiPermission( Permission permission )
     {
         return   permission instanceof WikiPermission ||

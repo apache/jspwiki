@@ -64,9 +64,6 @@
         <module name="ParameterAssignment">
             <property name="severity" value="ignore"/>
         </module>
-        <module name="RedundantThrows">
-            <property name="allowUnchecked" value="true"/>
-        </module>
         <module name="StringLiteralEquality"/>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>

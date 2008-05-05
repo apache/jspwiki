@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.management.*;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.Release;

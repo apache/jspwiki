@@ -22,15 +22,15 @@ package com.ecyrd.jspwiki.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
-import java.util.jar.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.core.Config;
-import javax.servlet.jsp.jstl.fmt.*;
+import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

@@ -64,7 +64,8 @@ public class ProfanityFilter extends BasicPageFilter
             String str;
             while ( ( str = br.readLine() ) != null ) 
             {
-                if( str.length() > 0 && !str.startsWith( "#" ) ) { // allow comments on profanities file
+                if( str.length() > 0 && !str.startsWith( "#" ) )
+                { // allow comments on profanities file
                     l_profs.add( str );
                 }
             }
