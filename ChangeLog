@@ -1,5 +1,12 @@
 2008-04-20  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-17
+        
+        * Removed JUG UUID generation libraries to favour the Java
+        built-in ones.
+        
+2008-04-20  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.7.0-svn-16
         
         * Moved the rest of the PluginResources class into etc/i18n, as

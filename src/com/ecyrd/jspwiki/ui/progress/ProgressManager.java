@@ -22,9 +22,9 @@ package com.ecyrd.jspwiki.ui.progress;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
@@ -37,10 +37,10 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  *
  *  @since  2.6
  */
-// FIXME: Gotta synchronize
+// FIXME: Needs synchronization, I think
 public class ProgressManager
 {
-    private Map m_progressingTasks = new HashMap();
+    private Map<String,ProgressItem> m_progressingTasks = new HashMap<String,ProgressItem>();
 
     /**
      *  The name of the progress tracker JSON object.  The current value is "{@value}",
@@ -63,7 +63,7 @@ public class ProgressManager
      */
     public String getNewProgressIdentifier()
     {
-        return UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -116,14 +116,15 @@ public class ProgressManager
 
     /**
      *  Provides access to a progress indicator, assuming you know the ID.
-     *
-     *  @author Janne Jalkanen
+     *  Progress of zero (0) means that the progress has just started, and a progress of
+     *  100 means that it is complete.
      */
     public class JSONTracker implements RPCCallable
     {
         /**
          *  Returns upload progress in percents so far.
-         *  @param progressId
+         *  @param progressId The string representation of the progress ID that you want to know the
+         *                    progress of.
          *  @return a value between 0 to 100 indicating the progress
          */
         public int getProgress( String progressId )

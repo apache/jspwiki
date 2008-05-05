@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.*;
+import java.util.UUID;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -30,8 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TextUtil;
@@ -241,7 +240,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
     //           get rid of jug.jar
     public static void setLoginCookie( WikiEngine engine, HttpServletResponse response, String username )
     {
-        UUID uid = UUIDGenerator.getInstance().generateRandomBasedUUID();
+        UUID uid = UUID.randomUUID();
 
         int days = TextUtil.getIntegerProperty( engine.getWikiProperties(),
                                                 PROP_LOGIN_EXPIRY_DAYS,
