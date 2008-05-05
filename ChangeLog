@@ -1,4 +1,10 @@
-2008-04-20  Janne Jalkanen <jalkanen@apache.org>
+2008-05-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-18
+
+        * [JSPWIKI-239] jspwiki.cookieAuthorization.expiry is now called
+        jspwiki.cookieAuthentication.expiry, because that is correct.  Thanks
+        to Florian!
 
         * 2.7.0-svn-17
         

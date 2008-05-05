@@ -78,7 +78,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
      *  User property for setting how long the cookie is stored on the user's computer.
      *  The value is {@value}.  The default expiry time is 14 days.
      */
-    public static final  String PROP_LOGIN_EXPIRY_DAYS  = "jspwiki.cookieAuthorization.expiry";
+    public static final  String PROP_LOGIN_EXPIRY_DAYS  = "jspwiki.cookieAuthentication.expiry";
 
     /**
      *  Built-in value for storing the cookie.
