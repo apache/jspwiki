@@ -83,20 +83,34 @@ public class UserCheckTag
 
     private String m_status;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
         m_status = null;
     }
 
+    /**
+     *  Get the status as defined above.
+     *  
+     *  @return The status to be checked.
+     */
     public String getStatus()
     {
-        return( m_status );
+        return m_status;
     }
 
-    public void setStatus( String arg )
+    /**
+     *  Sets the status as defined above.
+     *  
+     *  @param status The status to be checked.
+     */
+    public void setStatus( String status )
     {
-        m_status = arg.toLowerCase();
+        m_status = status.toLowerCase();
     }
 
 
@@ -104,6 +118,8 @@ public class UserCheckTag
      *  Sets the "exists" attribute, which is converted on-the-fly into
      *  an equivalent "status" -attribute.  This is only for backwards compatibility.
      *
+     *  @param arg If true, works exactly as status = authenticated.  If false, works
+     *             as if status = anonymous.
      *  @deprecated
      */
     public void setExists( String arg )
@@ -120,8 +136,10 @@ public class UserCheckTag
 
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.tags.WikiTagBase#doWikiStartTag()
      */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
