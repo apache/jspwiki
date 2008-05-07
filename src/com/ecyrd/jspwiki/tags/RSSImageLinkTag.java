@@ -27,7 +27,8 @@ import javax.servlet.jsp.JspWriter;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**
- *  Writes an image link to the RSS file.
+ *  Writes an image link to the global JSPWiki RSS file.  If RSS generation has
+ *  been turned off in jspwiki.properties, returns an empty string.
  *
  *  @since 2.0
  */
@@ -38,22 +39,40 @@ public class RSSImageLinkTag
     
     protected String m_title;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
         m_title = null;
     }
 
+    /**
+     *  Sets the title for the link.  If not defined, no title is shown.
+     *  
+     *  @param title A string for the title.
+     */
     public void setTitle( String title )
     {
         m_title = title;
     }
 
+    /**
+     *  Returns the title.
+     *  
+     *  @return The title.
+     */
     public String getTitle()
     {
         return m_title;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {

@@ -51,6 +51,10 @@ public class PluginTag
 
     private boolean m_evaluated = false;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void release()
     {
         super.release();
@@ -58,16 +62,30 @@ public class PluginTag
         m_evaluated = false;
     }
     
+    /**
+     *  Set the name of the plugin to execute.
+     *  
+     *  @param p Name of the plugin.
+     */
     public void setPlugin( String p )
     {
         m_plugin = p;
     }
 
+    /**
+     *  Set the argument string to the plugin.
+     *  
+     *  @param a Arguments string.
+     */
     public void setArgs( String a )
     {
         m_args = a;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doWikiStartTag() throws JspException, IOException
     {
         m_evaluated = false;
@@ -94,6 +112,10 @@ public class PluginTag
         return result;        
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doEndTag()
         throws JspException
     {
@@ -112,6 +134,10 @@ public class PluginTag
         return EVAL_PAGE;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doAfterBody()
         throws JspException
     {

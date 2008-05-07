@@ -85,6 +85,7 @@ public class PermissionTag
     /**
      * Initializes the tag.
      */
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -175,6 +176,7 @@ public class PermissionTag
      * @return the result of the tag: SKIP_BODY or EVAL_BODY_CONTINUE
      * @throws IOException this exception will never be thrown
      */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
