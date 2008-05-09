@@ -45,6 +45,7 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.content.PageRenamer;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -1502,7 +1503,7 @@ public class WikiEngine
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    protected Collection scanWikiLinks( WikiPage page, String pagedata )
+    public Collection scanWikiLinks( WikiPage page, String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();
 

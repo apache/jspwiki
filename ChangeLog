@@ -1,3 +1,16 @@
+2008-05-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-20
+        
+        * [JSPWIKI-251]: Removed the old com.ecyrd.jspwiki.PageRenamer
+        and replaced it with com.ecyrd.jspwiki.content.PageRenamer, which
+        is fully Apache-licensed.
+        
+        Unfortunately, the new PageRenamer does not support changing
+        referring pages yet, error messages are not localized properly,
+        etc.  So this is a considerable functionality downgrade until
+        we can get a better version made.  Patches gladly accepted!
+
 2008-05-06  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-19
