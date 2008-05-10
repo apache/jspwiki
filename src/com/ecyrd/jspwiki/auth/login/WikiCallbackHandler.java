@@ -57,6 +57,8 @@ public class WikiCallbackHandler implements CallbackHandler
 
     /**
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
+     * 
+     * {@inheritDoc}
      */
     public void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
     {

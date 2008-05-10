@@ -75,6 +75,9 @@ public class WebContainerLoginModule extends AbstractLoginModule
     /**
      * Logs in the user.
      * @see javax.security.auth.spi.LoginModule#login()
+     * 
+     * @return {@inheritDoc}
+     * @throws {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
@@ -151,7 +154,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
     private final void injectWebAuthorizerRoles( Authorizer authorizer, HttpServletRequest request )
     {
         Principal[] roles = authorizer.getRoles();
-        Set foundRoles = new HashSet();
+        Set<Principal> foundRoles = new HashSet<Principal>();
         if ( authorizer instanceof WebAuthorizer )
         {
             WebAuthorizer wa = (WebAuthorizer)authorizer;

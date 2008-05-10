@@ -35,7 +35,7 @@ public final class PrincipalWrapper implements Principal
     /**
      * Constructs a new instance of this class by wrapping (decorating)
      * the supplied principal.
-     * @param principal
+     * @param principal The principal to wrap
      */
     public PrincipalWrapper( Principal principal )
     {
@@ -53,6 +53,8 @@ public final class PrincipalWrapper implements Principal
     
     /**
      * Returns the name of the wrapped principal.
+     * 
+     * @return The name of the wrapped principal.
      */
     public final String getName()
     {
@@ -60,9 +62,13 @@ public final class PrincipalWrapper implements Principal
     }
 
     /**
-     * Two PrincipalWrapper objects are equal if their internally-wrapped
-     * principals are also equal.
+     *  Two PrincipalWrapper objects are equal if their internally-wrapped
+     *  principals are also equal.
+     *  
+     *  @param obj {@inheritDoc}
+     *  @return True, if the wrapped object is also equal to our wrapped object.
      */
+    @Override
     public boolean equals( Object obj )
     {
         if ( ! ( obj instanceof PrincipalWrapper ) )
@@ -72,6 +78,12 @@ public final class PrincipalWrapper implements Principal
         return m_principal.equals( ( (PrincipalWrapper)obj ).getPrincipal() );
     }
 
+    /**
+     *  The hashcode is based on the hashcode of the wrapped principal.
+     *  
+     *  @return A hashcode.
+     */
+    @Override
     public int hashCode()
     {
         return m_principal.hashCode() * 13;

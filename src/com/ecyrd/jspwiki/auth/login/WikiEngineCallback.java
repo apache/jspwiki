@@ -54,5 +54,4 @@ public class WikiEngineCallback implements Callback
     {
         return m_engine;
     }
-
 }

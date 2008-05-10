@@ -53,6 +53,8 @@ public final class WebContainerCallbackHandler implements CallbackHandler
 
     /**
      * @see javax.security.auth.callback.CallbackHandler#handle(javax.security.auth.callback.Callback[])
+     * 
+     * {@inheritDoc}
      */
     public final void handle( Callback[] callbacks ) throws IOException, UnsupportedCallbackException
     {

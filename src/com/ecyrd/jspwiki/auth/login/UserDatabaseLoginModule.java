@@ -64,6 +64,8 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
+     * 
+     * {@inheritDoc}
      */
     public boolean login() throws LoginException
     {

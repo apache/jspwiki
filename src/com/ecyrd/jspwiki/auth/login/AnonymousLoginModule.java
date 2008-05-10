@@ -70,6 +70,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
      * HTTP request as its response.
      * @return the result of the login; this will always be <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#login()
+     * @throws {@inheritDoc}
      */
     public boolean login() throws LoginException
     {

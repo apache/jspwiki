@@ -79,6 +79,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
      * found, this method returns <code>true</code>. If not found, this
      * method throws a <code>FailedLoginException</code>.
      * @see javax.security.auth.spi.LoginModule#login()
+     * @throws {@inheritDoc}
      */
     public boolean login() throws LoginException
     {

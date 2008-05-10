@@ -1,3 +1,11 @@
+2008-05-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-21
+        
+        * Logincookies are now written with UTF-8 instead of platform
+        default encoding.  This should fix issues with users with non-ASCII
+        chars sometimes having the wrong UID when their session expires.
+
 2008-05-09  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-20

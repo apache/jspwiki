@@ -70,7 +70,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * These Principals will be added to the Subject
      * during the {@link #commit()} phase of login.
      */
-    protected Collection      m_principals;
+    protected Collection<Principal> m_principals;
 
     /**
      * Implementing classes should add Principals to this collection
@@ -113,6 +113,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * It always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#abort()
      * @throws LoginException if the abort itself fails
+     * @return True, always.
      */
     public final boolean abort() throws LoginException
     {
@@ -142,10 +143,7 @@ public abstract class AbstractLoginModule implements LoginModule
      *         failed
      * @see javax.security.auth.spi.LoginModule#commit()
      */
-    /**
-     * @see javax.security.auth.spi.LoginModule#commit()
-     */
-    public final boolean commit() throws LoginException
+    public final boolean commit()
     {
         if ( succeeded() )
         {
@@ -181,11 +179,16 @@ public abstract class AbstractLoginModule implements LoginModule
      * @see javax.security.auth.spi.LoginModule#initialize(javax.security.auth.Subject,
      *      javax.security.auth.callback.CallbackHandler, java.util.Map,
      *      java.util.Map)
+     *      
+     * @param subject {@inheritDoc}
+     * @param callbackHandler {@inheritDoc}
+     * @param sharedState {@inheritDoc}
+     * @param options {@inheritDoc}
      */
     public final void initialize( Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options )
     {
         m_previousWikiPrincipals = new HashSet();
-        m_principals = new HashSet();
+        m_principals = new HashSet<Principal>();
         m_principalsToRemove = new HashSet();
         m_principalsToOverwrite = new HashSet();
         m_subject = subject;

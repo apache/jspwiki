@@ -72,6 +72,10 @@ public final class AuthenticationManager
     /**
      *  This property determines whether we use JSPWiki authentication or not.
      *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
+     *  <p>
+     *  Setting this is now deprecated - we do not guarantee that it works.
+     *  
+     *  @deprecated
      */
     public  static final String                PROP_SECURITY       = "jspwiki.security";
 
