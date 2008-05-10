@@ -93,6 +93,8 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
+     * 
+     * {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
@@ -122,7 +124,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
                     try
                     {
-                        in = new FileReader( cookieFile );
+                        in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), "UTF-8" ) );
                         String username = FileUtil.readContents( in );
 
                         if ( log.isDebugEnabled() )
@@ -255,7 +257,10 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
         try
         {
-            out = new FileWriter(cf);
+            //
+            //  Write the cookie content to the cookie store file.
+            //
+            out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), "UTF-8" ) );
             FileUtil.copyContents( new StringReader(username), out );
 
             if( log.isDebugEnabled() )
