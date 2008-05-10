@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.content;
 
+import java.util.Collection;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 
@@ -60,17 +62,17 @@ public class PageRenamer
         {
             throw new WikiException( "To name may not be null or empty" );
         }
-        
-        if( renameTo.equals(renameFrom) )
-        {
-            throw new WikiException( "You cannot rename the page to itself" );
-        }
        
         //
         //  Clean up the "to" -name so that it does not contain anything illegal
         //
         
         renameTo = MarkupParser.cleanLink( renameTo.trim() );
+        
+        if( renameTo.equals(renameFrom) )
+        {
+            throw new WikiException( "You cannot rename the page to itself" );
+        }
         
         //
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
@@ -89,25 +91,42 @@ public class PageRenamer
         {
             throw new WikiException("Page already exists "+renameTo);
         }
-        
-        //  FIXME: Temporary
-        if( changeReferrers ) throw new WikiException("Referrer change not yet supported.");
-        
+                
         //
-        //  Do the actual rename by changing from the frompage to the topage
+        //  Do the actual rename by changing from the frompage to the topage, including
+        //  all of the attachments
         //
         
         engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
         
         engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
+
+        //
+        //  Add a comment to the page notifying what changed.  This adds a new revision
+        //  to the repo with no actual change.
+        //
         
         toPage = engine.getPage( renameTo );
         
         if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
+
+        toPage.setAttribute( WikiPage.CHANGENOTE, "Renamed from "+fromPage.getName() );
+        toPage.setAuthor( context.getCurrentUser().getName() );
+        
+        engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
+        
+        //
+        //  Update the references
+        //
         
         engine.getReferenceManager().pageRemoved( fromPage );
         engine.getReferenceManager().updateReferences( renameTo, 
                                                        engine.scanWikiLinks( toPage, engine.getPureText( toPage )) );
+        
+        if( changeReferrers )
+        {
+            updateReferrers( context, fromPage, toPage );
+        }
         
         //
         //  Done, return the new name.
@@ -115,4 +134,35 @@ public class PageRenamer
         return renameTo;
     }
 
+    /**
+     *  This method finds all the pages which have anything to do with the fromPage and
+     *  change any referrers it can figure out in that page.
+     *  
+     *  @param context WikiContext in which we operate
+     *  @param fromPage The old page
+     *  @param toPage The new page
+     */
+    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage )
+    {
+        WikiEngine engine = context.getEngine();
+        
+        Collection<String> referrers = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        
+        if( referrers == null ) return; // No referrers
+        
+        for( String pageName : referrers )
+        {
+            WikiPage p = engine.getPage( pageName );
+            
+            String sourceText = engine.getPureText( p );
+            
+            String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
+        }
+    }
+
+    // FIXME: Does not yet work.
+    private String replaceReferrerString( WikiContext context, String sourceText, String name, String name2 )
+    {
+        return sourceText;
+    }
 }
