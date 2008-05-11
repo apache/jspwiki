@@ -257,15 +257,19 @@ public class Preferences
             default:
                 throw new InternalWikiException( "Got a TimeFormat for which we have no value!" );
         }
-
+        
         try
         {
-            TimeZone tz = TimeZone.getTimeZone( prefTimeZone );
-            // TimeZone tz = TimeZone.getDefault();
-            // tz.setRawOffset(Integer.parseInt(prefTimeZone));
-
             SimpleDateFormat fmt = new SimpleDateFormat( prefDateFormat, clientLocale );
-            fmt.setTimeZone( tz );
+
+            if( prefTimeZone != null )
+            {
+                TimeZone tz = TimeZone.getTimeZone( prefTimeZone );
+                // TimeZone tz = TimeZone.getDefault();
+                // tz.setRawOffset(Integer.parseInt(prefTimeZone));
+
+                fmt.setTimeZone( tz );
+            }
 
             return fmt;
         }

@@ -96,10 +96,10 @@ public class ReferringPagesPluginTest extends TestCase
             count++;
         }
     
-        // there are always 2 more "<a" 's in the result 
-        assertEquals( 5+2, count );
+        // there is one extra "<a" in the result 
+        assertEquals( 5+1, count );
     
-        String expected = ">2 more</a>";
+        String expected = ">...and 2 more</a>";
         count =0;
         while( (index = res.indexOf(expected,index+1)) != -1 )
         {
@@ -182,7 +182,7 @@ public class ReferringPagesPluginTest extends TestCase
         
         String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz");
         df.parse(dateString);
 
         // test if the proper exception is thrown:

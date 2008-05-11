@@ -61,7 +61,7 @@ public class InternationalizationManager
     {
         return get( CORE_BUNDLE, Locale.ENGLISH, key );
     }
-
+    
     /**
      *  Finds a resource bundle.
      *

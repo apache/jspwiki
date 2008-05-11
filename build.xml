@@ -295,7 +295,7 @@
   	       used. FIXME: Figure out a better way to do this in the future. -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
-	  <copy file="${code.i18n}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.i18n}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
+	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
@@ -1297,8 +1297,8 @@ To automate the JAR signing processs, you can add the property
   	<copy file="etc/i18n/templates/default.properties"
   		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates/default_${i18n.template}.properties"
   		  overwrite="true"/>
-  	<copy file="src/com/ecyrd/jspwiki/plugin/PluginResources.properties"
-  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/src/com/ecyrd/jspwiki/plugin/PluginResources_${i18n.template}.properties"
+  	<copy file="etc/i18n/plugin/PluginResources.properties"
+  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin/PluginResources_${i18n.template}.properties"
   		  overwrite="true" />
 
   	<echo message="Now you can start translating at ${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}." />

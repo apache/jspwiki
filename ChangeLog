@@ -2,6 +2,16 @@
 
         * 2.7.0-svn-22
         
+        * [JSPWIKI-260] ReferringPagesPlugin now creates the "more"
+        link URL properly.  This also impacts the localization of
+        the "referringpagesplugin.more" in PluginResources.
+        
+        * Moved plugin resources from etc/i18n/com/ecyrd/jspwiki/plugin 
+        to etc/i18n/plugin.  Can't remember who suggested this.  Also
+        cleaned build.xml to make sure the plugin files are created
+        properly.  Can't remember who suggested this, neither can
+        I seem to find the JIRA issue...
+        
         * [JSPWIKI-224] TranslatorReader now is just a proxy to the
         JSPWikiMarkupParser.  It will be finally gone in 3.0.
         

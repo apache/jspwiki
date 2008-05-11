@@ -54,9 +54,9 @@ public class TranslationsCheck
              "/etc/i18n/templates/default_" + suffix + ".properties");
         detectDuplicates("/etc/i18n/templates/default_" + suffix + ".properties");
 
-        diff("/src/com/ecyrd/jspwiki/plugin/PluginResources.properties",
-             "/src/com/ecyrd/jspwiki/plugin/PluginResources_" + suffix + ".properties");
-        detectDuplicates("/src/com/ecyrd/jspwiki/plugin/PluginResources_" + suffix + ".properties");
+        diff("/etc/i18n/plugin/PluginResources.properties",
+             "/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+        detectDuplicates("/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
         
         System.out.println("Duplicates overall (two or more occurences):");
         System.out.println("--------------------------------------------");
