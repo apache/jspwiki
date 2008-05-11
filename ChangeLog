@@ -18,6 +18,8 @@
         * [JSPWIKI-183] PageRenamer no longer chokes if attachments
         are turned off.  Reported by Luca Gilardoni.
         
+        * [JSPWIKI-234] Added ISO8601 time formats to default patterns.
+        
 2008-05-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-21
