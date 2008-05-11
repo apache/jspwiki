@@ -1,3 +1,10 @@
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-22
+        
+        * [JSPWIKI-224] TranslatorReader now is just a proxy to the
+        JSPWikiMarkupParser.  It will be finally gone in 3.0.
+        
 2008-05-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-21
