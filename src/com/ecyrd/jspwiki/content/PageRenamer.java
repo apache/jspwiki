@@ -99,8 +99,11 @@ public class PageRenamer
         
         engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
         
-        engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
-
+        if( engine.getAttachmentManager().attachmentsEnabled() )
+        {
+            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
+        }
+        
         //
         //  Add a comment to the page notifying what changed.  This adds a new revision
         //  to the repo with no actual change.

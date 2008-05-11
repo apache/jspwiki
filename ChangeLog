@@ -15,6 +15,9 @@
         * [JSPWIKI-224] TranslatorReader now is just a proxy to the
         JSPWikiMarkupParser.  It will be finally gone in 3.0.
         
+        * [JSPWIKI-183] PageRenamer no longer chokes if attachments
+        are turned off.  Reported by Luca Gilardoni.
+        
 2008-05-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-21
