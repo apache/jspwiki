@@ -339,7 +339,7 @@ public class PageRenamerTest extends TestCase
             fail();
         }
     }
-    
+   
     public void testBug85_case2() throws Exception 
     {
         try
@@ -394,6 +394,30 @@ public class PageRenamerTest extends TestCase
         }
     }
     
+    public void testRenameOfEscapedLinks() throws Exception
+    {
+        String src = "[[Link to TestPage2|TestPage2|target='_new']";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "[[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+    }
+
+    public void testRenameOfEscapedLinks2() throws Exception
+    {
+        String src = "~[Link to TestPage2|TestPage2|target='_new']";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "~[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( PageRenamerTest.class );

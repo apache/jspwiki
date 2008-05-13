@@ -20,10 +20,17 @@
  */
 package com.ecyrd.jspwiki.content;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Provides page renaming functionality.  Note that there used to be
@@ -35,6 +42,8 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
 public class PageRenamer
 {
 
+    private static final Logger log = Logger.getLogger( PageRenamer.class );
+    
     /**
      *  Renames a page.
      *  
@@ -103,7 +112,7 @@ public class PageRenamer
         {
             engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
         }
-        
+
         //
         //  Add a comment to the page notifying what changed.  This adds a new revision
         //  to the repo with no actual change.
@@ -125,12 +134,16 @@ public class PageRenamer
         engine.getReferenceManager().pageRemoved( fromPage );
         engine.getReferenceManager().updateReferences( renameTo, 
                                                        engine.scanWikiLinks( toPage, engine.getPureText( toPage )) );
-        
+
+        //
+        //  Update referrers first
+        //
         if( changeReferrers )
         {
             updateReferrers( context, fromPage, toPage );
         }
-        
+
+
         //
         //  Done, return the new name.
         //
@@ -148,10 +161,30 @@ public class PageRenamer
     private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage )
     {
         WikiEngine engine = context.getEngine();
+        Collection<String> referrers = new ArrayList<String>();
         
-        Collection<String> referrers = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        if( r != null ) referrers.addAll( r );
         
-        if( referrers == null ) return; // No referrers
+        try
+        {
+            Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
+
+            for( Attachment att : attachments  )
+            {
+                Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
+
+                if( c != null ) referrers.addAll(c);
+            }
+        }
+        catch( ProviderException e )
+        {
+            // We will continue despite this error
+            log.error( "Provider error while fetching attachments for rename", e );
+        }
+
+        
+        if( referrers.isEmpty() ) return; // No referrers
         
         for( String pageName : referrers )
         {
@@ -160,12 +193,122 @@ public class PageRenamer
             String sourceText = engine.getPureText( p );
             
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
+            
+            if( !sourceText.equals( newText ) )
+            {
+                p.setAttribute( WikiPage.CHANGENOTE, "Renaming change "+fromPage.getName()+" to "+toPage.getName() );
+                p.setAuthor( context.getCurrentUser().getName() );
+         
+                try
+                {
+                    engine.getPageManager().putPageText( p, newText );
+                    engine.getReferenceManager().updateReferences( p.getName(), 
+                                                                   engine.scanWikiLinks( p, engine.getPureText( p )) );
+                }
+                catch( ProviderException e )
+                {
+                    //
+                    //  We fail with an error, but we will try to continue to rename
+                    //  other referrers as well.
+                    //
+                    log.error("Unable to perform rename.",e);
+                }
+            }
         }
     }
 
-    // FIXME: Does not yet work.
-    private String replaceReferrerString( WikiContext context, String sourceText, String name, String name2 )
+    private String replaceReferrerString( WikiContext context, String sourceText, String from, String to )
     {
-        return sourceText;
+        StringBuffer sb = new StringBuffer( sourceText.length() );
+        
+        Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
+        
+        Matcher matcher = linkPattern.matcher( sourceText );
+        
+        int start = 0;
+        
+        System.out.println("====");
+        System.out.println("SRC="+sourceText.trim());
+        while( matcher.find(start) )
+        {
+            if( matcher.group(1).length() > 0 ) 
+            {
+                //
+                //  Found an escape character, so I am escaping.
+                //
+                sb.append( sourceText.substring( start, matcher.end() ) );
+                start = matcher.end();
+                continue;
+            }
+
+            String text = matcher.group(2);
+            String link = matcher.group(4);
+            String attr = matcher.group(6);
+                        
+            System.out.println("MATCH="+matcher.group(0));
+            System.out.println("   text="+text);
+            System.out.println("   link="+link);
+            System.out.println("   attr="+attr);
+
+            if( link.length() == 0 )
+            {
+                text = replaceSingleLink( context, text, from, to );
+            }
+            else
+            {
+                link = replaceSingleLink( context, link, from, to );
+            }
+        
+            //
+            //  Construct the new string
+            //
+            sb.append( sourceText.substring( start, matcher.start() ) );
+            sb.append( "["+text );
+            if( link.length() > 0 ) sb.append( "|" + link );
+            if( attr.length() > 0 ) sb.append( "|" + attr );
+            sb.append( "]" );
+            
+            start = matcher.end();
+        }
+        
+        sb.append( sourceText.substring( start ) );
+        
+        return sb.toString();
+    }
+
+    /**
+     *  This method does a correct replacement of a single link, taking into
+     *  account anchors and attachments.
+     *  
+     *  @param link
+     *  @param to
+     *  @return
+     */
+    private String replaceSingleLink( WikiContext context, String original, String from, String newlink )
+    {
+        int hash = original.indexOf( '#' );
+        int slash = original.indexOf( '/' );
+        String reallink = original;
+        
+        if( hash != -1 ) reallink = original.substring( 0, hash );
+        if( slash != -1 ) reallink = original.substring( 0,slash );
+        
+        reallink = MarkupParser.cleanLink( reallink );
+        
+        // WikiPage p  = context.getEngine().getPage( reallink );
+        // WikiPage p2 = context.getEngine().getPage( from );
+        
+        System.out.println("   "+reallink+" :: "+ from);
+        // System.out.println("   "+p+" :: "+p2);
+        
+        //
+        //  Yes, these point to the same page.
+        //
+        if( reallink.equals(from) )
+        {
+            return newlink + ((hash > 0) ? original.substring( hash ) : "") + ((slash > 0) ? original.substring( slash ) : "") ;
+        }
+        
+        return original;
     }
 }

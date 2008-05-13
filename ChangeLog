@@ -1,5 +1,12 @@
 2008-05-11  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-23
+        
+        * [JSPWIKI-265] Referrers are now changed, though the
+        functionality is still a bit broken in places.
+        
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.7.0-svn-22
         
         * [JSPWIKI-260] ReferringPagesPlugin now creates the "more"
