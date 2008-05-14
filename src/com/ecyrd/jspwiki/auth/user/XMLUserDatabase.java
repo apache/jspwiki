@@ -215,7 +215,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         {
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
-        SortedSet principals = new TreeSet();
+        SortedSet<Principal> principals = new TreeSet<Principal>();
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         for( int i = 0; i < users.getLength(); i++ )
         {
@@ -410,16 +410,6 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
         }
     }
-    
-    /**
-     * Determines whether the user database shares user/password data with the
-     * web container; always returns <code>false</code>.
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#isSharedWithContainer()
-     */
-    public boolean isSharedWithContainer()
-    {
-        return false;
-    }
 
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#rename(String, String)
@@ -524,7 +514,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             String oldPassword = user.getAttribute( PASSWORD );
             if ( !oldPassword.equals( newPassword ) )
             {
-                setAttribute( user, PASSWORD, SHA_PREFIX + getHash( newPassword ) );
+                setAttribute( user, PASSWORD, getHash( newPassword ) );
             }
         }
 
