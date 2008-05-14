@@ -151,13 +151,6 @@ public interface UserDatabase
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
-     * Returns <code>true</code> if this user database shares user/password data with the
-     * web container; <code>false</false> otherwise.
-     * @return the result
-     */
-    public boolean isSharedWithContainer();
-
-    /**
      * Factory method that instantiates a new user profile.
      * The {@link UserProfile#isNew()} method of profiles created using
      * this method should return <code>true</code>.
