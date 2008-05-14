@@ -35,6 +35,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.CryptoUtil;
 
 /**
  * Abstract UserDatabase class that provides convenience methods for finding
@@ -47,8 +48,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
-    protected static final String  PROP_SHARED_WITH_CONTAINER = "jspwiki.userdatabase.isSharedWithContainer";
-
+    protected static final String SSHA_PREFIX = "{SSHA}";
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -156,7 +156,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         try
         {
             UserProfile profile = findByLoginName( identifier );
-            ArrayList principals = new ArrayList();
+            ArrayList<Principal> principals = new ArrayList<Principal>();
             if ( profile.getLoginName() != null && profile.getLoginName().length() > 0 )
             {
                 principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
@@ -169,7 +169,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             {
                 principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
             }
-            return (Principal[]) principals.toArray( new Principal[principals.size()] );
+            return principals.toArray( new Principal[principals.size()] );
         }
         catch( NoSuchPrincipalException e )
         {
@@ -207,26 +207,80 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param password the user's password (obtained from user input, e.g., a web form)
      * @return <code>true</code> if the supplied user password matches the
      * stored password
+     * @throws NoSuchAlgorithmException 
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#validatePassword(java.lang.String,
      *      java.lang.String)
      */
     public boolean validatePassword( String loginName, String password )
     {
-        String hashedPassword = getHash( password );
+        String hashedPassword;
         try
         {
             UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
+            
+            // Is the password stored as a salted hash (the new 2.8 format?)
+            boolean newPasswordFormat = storedPassword.startsWith( SSHA_PREFIX );
+            
+            // If new format, verify the hash
+            if ( newPasswordFormat )
+            {
+                hashedPassword = getHash( password );
+                return CryptoUtil.verifySaltedPassword( password.getBytes(), storedPassword );
+            }
+
+            // If old format, verify using the old SHA verification algorithm
             if ( storedPassword.startsWith( SHA_PREFIX ) )
             {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
             }
-            return hashedPassword.equals( storedPassword );
+            hashedPassword = getOldHash( password );
+            boolean verified = hashedPassword.equals( storedPassword ); 
+            
+            // If in the old format and password verified, upgrade the hash to SSHA
+            if ( verified )
+            {
+                profile.setPassword( password );
+                save( profile );
+            }
+            
+            return verified;
         }
         catch( NoSuchPrincipalException e )
         {
-            return false;
         }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error( "Unsupported algorithm: " + e.getMessage() );
+        }
+        catch( WikiSecurityException e )
+        {
+            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage() );
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Private method that calculates the salted SHA-1 hash of a given
+     * <code>String</code>. Note that as of JSPWiki 2.8, this method calculates
+     * a <em>salted</em> hash rather than a plain hash.
+     * @param text the text to hash
+     * @return the result hash
+     */
+    protected String getHash( String text )
+    {
+        String hash = null;
+        try
+        {
+            hash = CryptoUtil.getSaltedPassword( text.getBytes() );
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error( "Error creating salted SHA password hash:" + e.getMessage() );
+            hash = text;
+        }
+        return hash;
     }
 
     /**
@@ -234,8 +288,9 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * <code>String</code>
      * @param text the text to hash
      * @return the result hash
+     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
      */
-    protected String getHash( String text )
+    protected String getOldHash( String text )
     {
         String hash = null;
         try
