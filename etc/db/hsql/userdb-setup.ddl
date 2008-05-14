@@ -53,7 +53,7 @@ insert into @jspwiki.userdatabase.table@ (
   'janne@ecyrd.com',
   'Janne Jalkanen',
   'janne',
-  '457b08e825da547c3b77fbc1ff906a1d00a7daee',
+  '{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==',
   'JanneJalkanen'
 );
   
@@ -67,7 +67,7 @@ insert into @jspwiki.userdatabase.table@ (
   'admin@locahost',
   'Administrator',
   'admin',
-  '457b08e825da547c3b77fbc1ff906a1d00a7daee',
+  '{SSHA}6YNKYMwXICUf5pMvYUZumgbFCxZMT2njtUQtJw==',
   'Administrator'
 );
 
