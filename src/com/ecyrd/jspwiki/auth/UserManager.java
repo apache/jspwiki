@@ -83,8 +83,8 @@ public final class UserManager
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
-    /** Associateds wiki sessions with profiles */
-    private final Map        m_profiles     = new WeakHashMap();
+    /** Associates wiki sessions with profiles */
+    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>();
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database;
@@ -205,7 +205,7 @@ public final class UserManager
     public final UserProfile getUserProfile( WikiSession session )
     {
         // Look up cached user profile
-        UserProfile profile = (UserProfile)m_profiles.get( session );
+        UserProfile profile = m_profiles.get( session );
         boolean newProfile = profile == null;
         Principal user = null;
 
@@ -481,11 +481,9 @@ public final class UserManager
         //  Query the SpamFilter first
         //
         
-        List ls = m_engine.getFilterManager().getFilterList();
-        for( Iterator i = ls.iterator(); i.hasNext(); )
+        List<PageFilter> ls = (List<PageFilter>)m_engine.getFilterManager().getFilterList();
+        for( PageFilter pf : ls )
         {
-            PageFilter pf = (PageFilter)i.next();
-            
             if( pf instanceof SpamFilter )
             {
                 if( ((SpamFilter)pf).isValidUserProfile( context, profile ) == false )
@@ -498,10 +496,8 @@ public final class UserManager
         }
         
         // If container-managed auth and user not logged in, throw an error
-        // unless we're allowed to add profiles to the container
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
-             && !context.getWikiSession().isAuthenticated()
-             && !getUserDatabase().isSharedWithContainer() )
+             && !context.getWikiSession().isAuthenticated() )
         {
             session.addMessage( SESSION_MESSAGES, rb.getString("security.error.createprofilebeforelogin") );
         }
