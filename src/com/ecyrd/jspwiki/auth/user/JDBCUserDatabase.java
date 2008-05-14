@@ -33,7 +33,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -117,12 +116,6 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * <code>Authenticated</code>. Once created, JDBCUserDatabase does not use
  * this column again; it is provided strictly for the convenience of
  * container-managed authentication services.</td>
- * </tr>
- * <tr>
- * <td><code>jspwiki.userdatabase.hashPrefix</code></td>
- * <td><code>true</code></td>
- * <td>Whether or not to prepend a prefix for the hash algorithm, <em>e.g.</em>,
- * <code>{SHA}</code>.</td>
  * </tr>
  * </table>
  * <p>
@@ -254,8 +247,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private String m_fullName = null;
 
-    private boolean m_hashPrefix = true;
-
     private String m_loginName = null;
 
     private String m_password = null;
@@ -269,8 +260,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     private String m_created = null;
 
     private String m_modified = null;
-
-    private boolean m_sharedWithContainer = false;
 
     private boolean m_supportsCommits = false;
 
@@ -376,7 +365,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
      */
     public Principal[] getWikiNames() throws WikiSecurityException
     {
-        Set principals = new HashSet();
+        Set<Principal> principals = new HashSet<Principal>();
         Connection conn = null;
         try
         {
@@ -413,7 +402,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             }
         }
 
-        return (Principal[]) principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[principals.size()] );
     }
 
     /**
@@ -433,7 +422,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
             m_fullName = props.getProperty( PROP_DB_FULL_NAME, DEFAULT_DB_FULL_NAME );
-            m_hashPrefix = Boolean.valueOf( props.getProperty( PROP_DB_HASH_PREFIX, DEFAULT_DB_HASH_PREFIX ) ).booleanValue();
             m_loginName = props.getProperty( PROP_DB_LOGIN_NAME, DEFAULT_DB_LOGIN_NAME );
             m_password = props.getProperty( PROP_DB_PASSWORD, DEFAULT_DB_PASSWORD );
             m_wikiName = props.getProperty( PROP_DB_WIKI_NAME, DEFAULT_DB_WIKI_NAME );
@@ -468,9 +456,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_renameProfile = "UPDATE " + m_userTable + " SET " + m_loginName + "=?," + m_modified + "=? WHERE " + m_loginName
                               + "=?";
             m_renameRoles = "UPDATE " + m_roleTable + " SET " + m_loginName + "=? WHERE " + m_loginName + "=?";
-
-            // Set the "share users with container flag"
-            m_sharedWithContainer = TextUtil.isPositive( props.getProperty( PROP_SHARED_WITH_CONTAINER, "false" ) );
         }
         catch( NamingException e )
         {
@@ -531,19 +516,6 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
             }
         }
-    }
-
-    /**
-     * Determines whether the user database shares user/password data with the
-     * web container; returns <code>true</code> if the JSPWiki property
-     * <code>jspwiki.userdatabase.isSharedWithContainer</code> is
-     * <code>true</code>.
-     * 
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#isSharedWithContainer()
-     */
-    public boolean isSharedWithContainer()
-    {
-        return m_sharedWithContainer;
     }
 
     /**
@@ -660,7 +632,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         // If password changed, hash it before we save
         if( !password.equals( existingPassword ) )
         {
-            password = m_hashPrefix ? SHA_PREFIX + getHash( password ) : getHash( password );
+            password = getHash( password );
         }
 
         Connection conn = null;
@@ -689,26 +661,23 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 ps.execute();
                 ps.close();
 
-                // Insert role record if no roles yet
-                if( m_sharedWithContainer )
+                // Insert new role record
+                ps = conn.prepareStatement( m_findRoles );
+                ps.setString( 1, profile.getLoginName() );
+                ResultSet rs = ps.executeQuery();
+                int roles = 0;
+                while ( rs.next() )
                 {
-                    ps = conn.prepareStatement( m_findRoles );
+                    roles++;
+                }
+                ps.close();
+                if( roles == 0 )
+                {
+                    ps = conn.prepareStatement( m_insertRole );
                     ps.setString( 1, profile.getLoginName() );
-                    ResultSet rs = ps.executeQuery();
-                    int roles = 0;
-                    while ( rs.next() )
-                    {
-                        roles++;
-                    }
+                    ps.setString( 2, m_initialRole );
+                    ps.execute();
                     ps.close();
-                    if( roles == 0 )
-                    {
-                        ps = conn.prepareStatement( m_insertRole );
-                        ps.setString( 1, profile.getLoginName() );
-                        ps.setString( 2, m_initialRole );
-                        ps.execute();
-                        ps.close();
-                    }
                 }
 
                 // Set the profile creation time
