@@ -185,8 +185,7 @@ public class UserProfileTag extends WikiTagBase
         else if ( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
             AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
-            if ( !authMgr.isContainerAuthenticated() ||
-                 manager.getUserDatabase().isSharedWithContainer() )
+            if ( !authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;
             }
@@ -194,8 +193,7 @@ public class UserProfileTag extends WikiTagBase
         else if ( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
             AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
-            if ( authMgr.isContainerAuthenticated() &&
-                 !manager.getUserDatabase().isSharedWithContainer() )
+            if ( authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;
             }
@@ -223,14 +221,14 @@ public class UserProfileTag extends WikiTagBase
     public static String printGroups( WikiContext context )
     {
         Principal[] roles = context.getWikiSession().getRoles();
-        List tempRoles = new ArrayList();
+        List<String> tempRoles = new ArrayList<String>();
         ResourceBundle rb = context.getBundle(InternationalizationManager.CORE_BUNDLE);
         
-        for ( int i = 0; i < roles.length; i++ )
+        for ( Principal role : roles )
         {
-            if( roles[i] instanceof GroupPrincipal )
+            if( role instanceof GroupPrincipal )
             {
-                tempRoles.add( roles[i].getName() );
+                tempRoles.add( role.getName() );
             }
         }
         if ( tempRoles.size() == 0 )
@@ -241,7 +239,7 @@ public class UserProfileTag extends WikiTagBase
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
-            String name = (String)tempRoles.get( i );
+            String name = tempRoles.get( i );
 
             sb.append( name );
             if ( i < ( tempRoles.size() - 1 ) )
@@ -264,25 +262,25 @@ public class UserProfileTag extends WikiTagBase
     public static String printRoles( WikiContext context )
     {
         Principal[] roles = context.getWikiSession().getRoles();
-        List tempRoles = new ArrayList();
-        ResourceBundle rb = context.getBundle(InternationalizationManager.CORE_BUNDLE);
+        List<String> tempRoles = new ArrayList<String>();
+        ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
         
-        for ( int i = 0; i < roles.length; i++ )
+        for ( Principal role : roles )
         {
-            if ( roles[i] instanceof Role )
+            if ( role instanceof Role )
             {
-                tempRoles.add( roles[i].getName() );
+                tempRoles.add( role.getName() );
             }
         }
         if ( tempRoles.size() == 0 )
         {
-            return rb.getString("userprofile.noroles");
+            return rb.getString( "userprofile.noroles" );
         }
 
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
-            String name = (String)tempRoles.get( i );
+            String name = tempRoles.get( i );
 
             sb.append( name );
             if ( i < ( tempRoles.size() - 1 ) )
