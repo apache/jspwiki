@@ -12,6 +12,7 @@ import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.CryptoUtil;
 
 
 
@@ -69,7 +70,7 @@ public class XMLUserDatabaseTest extends TestCase
         assertEquals("janne",           profile.getLoginName());
         assertEquals("Janne Jalkanen",  profile.getFullname());
         assertEquals("JanneJalkanen",   profile.getWikiName());
-        assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+        assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
         assertEquals("janne@ecyrd.com", profile.getEmail());
     }
     catch (NoSuchPrincipalException e)
@@ -96,7 +97,7 @@ public class XMLUserDatabaseTest extends TestCase
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());
-          assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
           assertEquals("janne@ecyrd.com", profile.getEmail());
       }
       catch (NoSuchPrincipalException e)
@@ -123,7 +124,7 @@ public class XMLUserDatabaseTest extends TestCase
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());
-          assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
           assertEquals("janne@ecyrd.com", profile.getEmail());
       }
       catch (NoSuchPrincipalException e)
@@ -210,13 +211,13 @@ public class XMLUserDatabaseTest extends TestCase
       assertEquals( "renamed@example.com", profile.getEmail() );
       assertEquals( "Renamed User", profile.getFullname() );
       assertEquals( "renameduser", profile.getLoginName() );
-      assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+      assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
 
       // Delete the user
       m_db.deleteByLoginName( "renameduser" );
   }
 
-  public void testSave()
+  public void testSave() throws Exception
   {
       try
       {
@@ -227,7 +228,7 @@ public class XMLUserDatabaseTest extends TestCase
           m_db.save(profile);
           profile = m_db.findByEmail("user@example.com");
           assertEquals("user@example.com", profile.getEmail());
-          assertEquals("{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword());
+          assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
       }
       catch (NoSuchPrincipalException e)
       {

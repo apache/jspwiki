@@ -18,6 +18,7 @@ import com.ecyrd.jspwiki.TestJDBCDataSource;
 import com.ecyrd.jspwiki.TestJNDIContext;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.CryptoUtil;
 
 /**
  * @author Andrew Jaquith
@@ -294,13 +295,13 @@ public class JDBCUserDatabaseTest extends TestCase
         assertEquals( "renamed@example.com", profile.getEmail() );
         assertEquals( "Renamed User", profile.getFullname() );
         assertEquals( "renameduser", profile.getLoginName() );
-        assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+        assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
 
         // Delete the user
         m_db.deleteByLoginName( "renameduser" );
     }
 
-    public void testSave()
+    public void testSave() throws Exception
     {
         try
         {
@@ -315,7 +316,7 @@ public class JDBCUserDatabaseTest extends TestCase
             assertEquals( "user@example.com", profile.getEmail() );
             assertEquals( "Test User", profile.getFullname() );
             assertEquals( "user", profile.getLoginName() );
-            assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+            assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
             assertEquals( "TestUser", profile.getWikiName() );
             assertNotNull( profile.getCreated() );
             assertNotNull( profile.getLastModified() );
@@ -332,7 +333,7 @@ public class JDBCUserDatabaseTest extends TestCase
             assertEquals( "user2@example.com", profile.getEmail() );
             assertEquals( "Test User 2", profile.getFullname() );
             assertEquals( "user2", profile.getLoginName() );
-            assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+            assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
             assertEquals( "TestUser2", profile.getWikiName() );
             assertNotNull( profile.getCreated() );
             assertNotNull( profile.getLastModified() );
