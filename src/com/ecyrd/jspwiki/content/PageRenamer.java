@@ -227,8 +227,8 @@ public class PageRenamer
         
         int start = 0;
         
-        System.out.println("====");
-        System.out.println("SRC="+sourceText.trim());
+        //System.out.println("====");
+        //System.out.println("SRC="+sourceText.trim());
         while( matcher.find(start) )
         {
             if( matcher.group(1).length() > 0 ) 
@@ -244,12 +244,13 @@ public class PageRenamer
             String text = matcher.group(2);
             String link = matcher.group(4);
             String attr = matcher.group(6);
-                        
+             
+            /*
             System.out.println("MATCH="+matcher.group(0));
             System.out.println("   text="+text);
             System.out.println("   link="+link);
             System.out.println("   attr="+attr);
-
+             */
             if( link.length() == 0 )
             {
                 text = replaceSingleLink( context, text, from, to );
@@ -298,7 +299,7 @@ public class PageRenamer
         // WikiPage p  = context.getEngine().getPage( reallink );
         // WikiPage p2 = context.getEngine().getPage( from );
         
-        System.out.println("   "+reallink+" :: "+ from);
+        // System.out.println("   "+reallink+" :: "+ from);
         // System.out.println("   "+p+" :: "+p2);
         
         //
