@@ -36,7 +36,6 @@ import java.util.*;
  *             producing a vertical list.<BR>
  *  maxwidth: maximum width, in chars, of generated links.
  *
- *  @author Janne Jalkanen
  */
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
@@ -47,12 +46,17 @@ public class ReferringPagesPlugin
     public static final String PARAM_EXTRAS   = "extras";
     public static final String PARAM_PAGE     = "page";
     
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         String pageName = (String)params.get( PARAM_PAGE );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        
+        StringBuffer result = new StringBuffer( 256 );
         
         if( pageName == null )
         {
@@ -75,32 +79,39 @@ public class ReferringPagesPlugin
                 extras = rb.getString("referringpagesplugin.more");
             }
             
-            log.debug( "Fetching referring pages for "+page.getName()+
-                       " with a max of "+items);
+            if( log.isDebugEnabled() )
+                log.debug( "Fetching referring pages for "+page.getName()+
+                           " with a max of "+items);
         
             if( links != null && links.size() > 0 )
             {
                 links = filterCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
+                result.append( makeHTML( context, wikitext ) );
+                
                 if( items < links.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( links.size() - items),
-                                      context.getURL( WikiContext.INFO, page.getName() ) };
-                    extras = MessageFormat.format(extras, args); 
-                    wikitext += extras;
+                    Object[] args = { "" + ( links.size() - items) };
+                    extras = MessageFormat.format(extras, args);
+                    
+                    result.append( "<br />" );
+                    result.append( "<a class='morelink' href='"+context.getURL( WikiContext.INFO, page.getName() )+"' ");
+                    result.append( ">"+extras+"</a><br />");
                 }
             }
 
             //
-            //  If nothing was left after filtering or during search
+            // If nothing was left after filtering or during search
             //
-            if( links == null || links.size() == 0 )
+            if (links == null || links.size() == 0)
             {
                 wikitext = rb.getString("referringpagesplugin.nobody");
-            }
 
-            return makeHTML( context, wikitext );
+                result.append(makeHTML(context, wikitext));
+            }
+            
+            return result.toString();
         }
 
         return "";
