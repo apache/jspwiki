@@ -1,3 +1,17 @@
+2008-05-17  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.6.3-rc-1
+
+        * [JSPWIKI-225] Patch from Harry Metske to show the username/password
+        correctly after registration.
+        
+        * [JSPWIKI-260] More-link from the ReferringPagesPlugin is now fixed.
+        
+        * [JSPWIKI-271] Updated Chinese translation from David Gao.
+        
+        * [JSPWIKI-252] Rename page with attachment might kill the front page.
+        Patch from Harry Metske.
+
 2008-03-29  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.2
