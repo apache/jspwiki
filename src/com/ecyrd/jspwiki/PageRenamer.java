@@ -235,20 +235,23 @@ public class PageRenamer
         try
         {
 
-            WikiContext tempCtx = new WikiContext( m_wikiEngine, m_wikiEngine.getPage(referrerName) );
-
-            if (context.getPage() != null)
+            if( m_wikiEngine.getPage( referrerName ) != null )
             {
-                PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( context.getPage() );
-                m_wikiEngine.getPageManager().unlockPage( lock );
+                WikiContext tempCtx = new WikiContext( m_wikiEngine, m_wikiEngine.getPage( referrerName ) );
 
-                tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );
-                m_wikiEngine.saveText( tempCtx, text );
+                if( context.getPage() != null )
+                {
+                    PageLock lock = m_wikiEngine.getPageManager().getCurrentLock( context.getPage() );
+                    m_wikiEngine.getPageManager().unlockPage( lock );
 
-                Collection updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage(referrerName),text );
+                    tempCtx.getPage().setAuthor( context.getCurrentUser().getName() );
+                    m_wikiEngine.saveText( tempCtx, text );
 
-                m_wikiEngine.getReferenceManager().updateReferences( referrerName, updatedReferrers );
-             }
+                    Collection updatedReferrers = m_wikiEngine.scanWikiLinks( m_wikiEngine.getPage( referrerName ), text );
+
+                    m_wikiEngine.getReferenceManager().updateReferences( referrerName, updatedReferrers );
+                }
+            }
         }
         catch( WikiException e )
         {
