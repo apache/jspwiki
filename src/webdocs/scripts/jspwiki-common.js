@@ -371,6 +371,9 @@ var Wiki = {
 var WikiSlidingFavs = 
 {
 	onPageLoad: function(){
+
+		return; //not compatible with FCK editor => find a better less obtrusive solution
+
 		var tabs = $E('#page .tabs'); if( !tabs ) return;
 
 		/* inject a wrapper div cause relative can not be set directly on the .tabs */
@@ -1338,8 +1341,9 @@ var Collapsible =
 	onPageLoad: function(){
 		this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
 		this.initialise( "favorites",   "JSPWikiCollapseFavorites" );
-		this.initialise( "pagecontent", "JSPWikiCollapse" + Wiki.PageName );
-		this.initialise( "previewcontent", "JSPWikiCollapse" + Wiki.PageName );
+		this.initialise( "page", "JSPWikiCollapse" + Wiki.PageName );
+		//CHECKME
+		//this.initialise( "previewcontent", "JSPWikiCollapse" + Wiki.PageName );
 		this.initialise( "info" );
 	},
 

@@ -1,3 +1,15 @@
+2007-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-25
+        
+        * Temporary remove hideable favorites menu as it is incompatible with FCK.
+        Final fix to commit later.  The FCK-Editor is now again fully working.
+        (Reported by Florian Holeczek)  JSPWIKI-209
+        
+        * Fixing various IE7 incompatibilities (jspwiki.css)
+        Reported by Gavin Goldsmith. 
+        
+
 2008-05-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-svn-24

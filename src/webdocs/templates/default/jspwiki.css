@@ -622,7 +622,7 @@ a.tool:hover, .btn:hover {
 	margin-top:2.5em;
 }
 
-/* ie6 hack ensure moremenu remains properly alighned */
+/* ie6 hack ensure moremenu remains properly aligned */
 * html #editorarea {
 	padding:4px 0;
 }
@@ -1237,10 +1237,15 @@ table.calendar tr.weekdays {
 	clear:both;
 }
 
-/* IE only */
+/* ie6 and lower */
 * html .tabmenu {
 	border:1px solid white;
 }
+/*ie7 hack */
+*:first-child+html .tabmenu {
+	border:1px solid white;
+}
+
 .tabmenu a {
 	float:left;
 	margin:0 0 -1px -1px;
@@ -1327,8 +1332,12 @@ table.calendar tr.weekdays {
 */
 
 /* +++ 912 wiki columns +++ */
-/*ie hack */
+/*ie6 and lower hack */
 * html .columns {
+	width:100%;
+}
+/*ie7 hack */
+*:first-child+html .columns {
 	width:100%;
 }
 .columns .col {
@@ -1376,6 +1385,12 @@ div.collapse li {
 }
 .collapse .collapsebody, .collapsebox .collapse .collapsebody {
 	padding-left:1.5em;
+}
+/* ie7 hack */
+*:first-child+html .collapse .collapsebody, 
+*:first-child+html .collapsebox .collapse .collapsebody {
+	float:left;
+	padding-left:0.5em;
 }
 /* ie6 hack */
 * html .collapse .collapsebody, * html .collapsebox .collapse .collapsebody {
