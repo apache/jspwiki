@@ -369,7 +369,7 @@ public class RCSFileProvider
             String cmd = m_checkinCommand;
 
             String author = page.getAuthor();
-            if( author == null ) author = "unknown";
+            if( author == null ) author = "unknown"; // Should be localized but cannot due to missing WikiContext
 
             String changenote = (String)page.getAttribute(WikiPage.CHANGENOTE);
             if( changenote == null ) changenote = "";

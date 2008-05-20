@@ -25,6 +25,7 @@ import java.io.IOException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.render.RenderingManager;
@@ -69,7 +70,7 @@ public class AuthorTag
         }
         else
         {
-            pageContext.getOut().print( "unknown" );
+            pageContext.getOut().print( m_wikiContext.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" ));
         }
 
         return SKIP_BODY;

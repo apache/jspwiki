@@ -344,7 +344,7 @@ public class BasicAttachmentProvider
 
             if( author == null )
             {
-                author = "unknown";
+                author = "unknown"; // FIXME: Should be localized, but cannot due to missing WikiContext
             }
 
             props.setProperty( versionNumber+".author", author );

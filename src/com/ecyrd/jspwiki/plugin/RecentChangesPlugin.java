@@ -32,6 +32,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
@@ -191,7 +192,7 @@ public class RecentChangesPlugin
                     }
                     else
                     {
-                        authorinfo.addElement("unknown");
+                        authorinfo.addElement( context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "common.unknownauthor" ) );
                     }
 
                     row.addElement( authorinfo );
