@@ -1,3 +1,17 @@
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-26
+
+        * [JSPWIKI-236]: Fixed localization for the different login/edit
+        help pages missing.    
+        
+        * [JSPWIKI-170]: Fixed a few places where the author was appearing
+        as "unknown".
+        
+        Added new i18n key in CoreResources, updated English and Finnish:
+        
+           * common.unknownauthor
+        
 2007-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-25

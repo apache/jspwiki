@@ -187,7 +187,7 @@
   <wiki:NoSuchPage page="LoginHelp">
   <div class="error">
     <fmt:message key="login.loginhelpmissing">
-       <fmt:param><wiki:EditLink page="LoginPageHelp">LoginHelp</wiki:EditLink></fmt:param>
+       <fmt:param><wiki:EditLink page="LoginHelp">LoginHelp</wiki:EditLink></fmt:param>
     </fmt:message>
   </div>
   </wiki:NoSuchPage>
