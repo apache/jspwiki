@@ -11,6 +11,9 @@
         Added new i18n key in CoreResources, updated English and Finnish:
         
            * common.unknownauthor
+           
+        * [JSPWIKI-151]: If sending a password succeeds, it is no longer reported
+        as an error.
         
 2007-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
 

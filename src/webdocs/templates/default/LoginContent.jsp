@@ -131,6 +131,7 @@
       <td colspan="2" class="formhelp">
         <wiki:Messages div="error" topic="resetpw"
                     prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+        <wiki:Messages div="information" topic="resetpwok" />
       </td>
     </tr>
     </c:if>
