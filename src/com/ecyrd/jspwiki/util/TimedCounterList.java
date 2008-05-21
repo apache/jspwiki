@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *  reading is non-blocking (unless a write is ongoing).
  *  
  *  @param <T> The class you wish to store here
+ *  @since 2.8
  */
 public class TimedCounterList<T> extends AbstractList<T>
 {
