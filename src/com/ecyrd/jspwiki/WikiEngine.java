@@ -154,6 +154,9 @@ public class WikiEngine
     /** The name of the property containing the ACLManager implementing class.
      *  The value is {@value}. */
     public static final String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
+    
+    /** If this property is set to false, we don't allow the creation of empty pages */
+    public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
@@ -1679,6 +1682,15 @@ public class WikiEngine
             return;
         }
 
+        // Check if creation of empty pages is allowed; bail if not
+        boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, 
+                                                          PROP_ALLOW_CREATION_OF_EMPTY_PAGES, 
+                                                          false );
+        if ( !allowEmpty && !pageExists( page ) && text.trim().equals( "" ) )  
+        {
+            return;
+        }
+        
         // Create approval workflow for page save; add the diffed, proposed
         // and old text versions as Facts for the approver (if approval is required)
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.

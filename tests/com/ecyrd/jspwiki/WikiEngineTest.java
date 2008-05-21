@@ -927,5 +927,61 @@ public class WikiEngineTest extends TestCase
     
         assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
     }
+    
+    public void testCreatePage() throws Exception 
+    {
+        String text = "Foobar.\r\n";
+        String name = "mrmyxpltz";
+        
+        assertEquals( "page should not exist right now",
+                      false,
+                      m_engine.pageExists( name ) );
+
+        m_engine.saveText( name, text );
+
+        assertEquals( "page does not exist",
+                      true,
+                      m_engine.pageExists( name ) );
+    }
+    
+    public void testCreateEmptyPage() throws Exception 
+    {
+        String text = "";
+        String name = "mrmxyzptlk";
+        
+        assertEquals( "page should not exist right now",
+                      false,
+                      m_engine.pageExists( name ) );
+
+        m_engine.saveText( name, text );
+
+        assertEquals( "page should not exist right now neither",
+                      false,
+                      m_engine.pageExists( name ) );
+    }
+    
+    public void testSaveExistingPageWithEmptyContent() throws Exception 
+    {
+        String text = "Foobar.\r\n";
+        String name = NAME1;
+        
+        m_engine.saveText( name, text );
+
+        assertEquals( "page does not exist",
+                      true,
+                      m_engine.pageExists( name ) );
+        
+        // saveText uses normalizePostData to assure it conforms to certain rules
+        assertEquals( "wrong content",
+                      TextUtil.normalizePostData( text ),
+                      m_engine.getText( name ) );
+        
+        m_engine.saveText( name, "" );
+        
+        assertEquals( "wrong content",
+                      TextUtil.normalizePostData( "" ), 
+                      m_engine.getText( name ) );
+        
+    }
 
 }

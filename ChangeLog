@@ -1,3 +1,14 @@
+2008-05-22 Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * 2.7.0-svn-28
+        
+        * [JSPWIKI-25].  Creating empty pages should not be possible (default
+        behaviour). Can be changed by setting jspwiki.allowCreationOfEmptyPages
+        to true in jspwiki.properties.
+        
+        * <i18n-create-template> target in build.xml was creating a wrong i18n 
+        directory structure.
+
 2008-05-11  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-27
