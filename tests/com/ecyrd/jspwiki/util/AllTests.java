@@ -21,6 +21,7 @@ public class AllTests extends TestCase
         suite.addTest( MailUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
         suite.addTest( TextUtilTest.suite() );
+        suite.addTest( TimedCounterListTest.suite() );
         
         return suite;
     }

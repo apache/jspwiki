@@ -31,8 +31,6 @@ import java.util.ArrayList;
  *  <p>
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
- *
- *  @author Janne Jalkanen
  */
 public class PriorityList
     extends AbstractList

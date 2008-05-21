@@ -1,5 +1,12 @@
 2008-05-11  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-27
+        
+        * [JSPWIKI-44].  AuthenticationManager now remembers the last logins
+        and slows down repeated access attempts, to a maximum of 20 seconds.
+
+2008-05-11  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.7.0-svn-26
 
         * [JSPWIKI-236]: Fixed localization for the different login/edit

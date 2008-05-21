@@ -46,17 +46,30 @@ import com.ecyrd.jspwiki.auth.login.*;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.util.TimedCounterList;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and
  * credential refreshes. This class uses JAAS to determine how users log in.
+ * <p>
+ * The login procedure is protected in addition by a mechanism which prevents
+ * a hacker to try and force-guess passwords by slowing down attempts to log in
+ * into the same account.  Every login attempt is recorded, and stored for a while
+ * (currently ten minutes), and each login attempt during that time incurs a penalty
+ * of 2^login attempts milliseconds - that is, 10 login attempts incur a login penalty of 1.024 seconds.
+ * The delay is currently capped to 20 seconds.
+ * 
  * @author Andrew Jaquith
- * @author Janne Jalkanen
  * @author Erik Bunn
  * @since 2.3
  */
 public final class AuthenticationManager
 {
+    /** How many milliseconds the logins are stored before they're cleaned away. */
+    private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
+
+    private static final long MAX_LOGIN_DELAY         = 20*1000L; // 20 seconds
+    
     /** The name of the built-in cookie assertion module */
     public static final String                 COOKIE_MODULE       =  CookieAssertionLoginModule.class.getName();
 
@@ -132,6 +145,10 @@ public final class AuthenticationManager
 
     private boolean               m_useJAAS = true;
 
+    /** Keeps a list of the usernames who have attempted a login recently. */
+    
+    private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
+    
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -337,6 +354,8 @@ public final class AuthenticationManager
             return false;
         }
 
+        delayLogin(username);
+        
         UserManager userMgr = m_engine.getUserManager();
         CallbackHandler handler = new WikiCallbackHandler(
                 userMgr.getUserDatabase(),
@@ -355,6 +374,34 @@ public final class AuthenticationManager
             return true;
         }
         return false;
+    }
+    
+    /**
+     *  This method builds a database of login names that are being attempted, and will try to
+     *  delay if there are too many requests coming in for the same username.
+     *  <p>
+     *  The current algorithm uses 2^loginattempts as the delay in milliseconds, i.e.
+     *  at 10 login attempts it'll add 1.024 seconds to the login.
+     *  
+     *  @param username The username that is being logged in
+     */
+    private void delayLogin( String username )
+    {
+        try
+        {
+            m_lastLoginAttempts.cleanup( LASTLOGINS_CLEANUP_TIME );
+            int count = m_lastLoginAttempts.count( username );
+            
+            long delay = Math.min( 1<<count, MAX_LOGIN_DELAY );
+            log.debug( "Sleeping for "+delay+" ms to allow login." );
+            Thread.sleep( delay );
+            
+            m_lastLoginAttempts.add( username );
+        }
+        catch( InterruptedException e )
+        {
+            // FALLTHROUGH is fine
+        }
     }
 
     /**
