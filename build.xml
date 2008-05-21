@@ -1289,7 +1289,7 @@ To automate the JAR signing processs, you can add the property
 	<input message="i18n template code to generate (ie: es_ES):" addproperty="i18n.template" />
 
   	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates" />
-  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/src/com/ecyrd/jspwiki/plugin" />
+  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin" />
 
   	<copy file="etc/i18n/CoreResources.properties"
   		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/CoreResources_${i18n.template}.properties"
