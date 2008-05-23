@@ -20,7 +20,8 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
-.import java.util.Date;
+import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +57,26 @@ public class DefaultUserProfile implements UserProfile
     private long m_uid = -1;
 
     private String   m_wikiname  = null;
-.
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private DefaultUserProfile() { }
+
+    /**
+     * Static factory method that creates a new DefaultUserProfile
+     * and sets a unique identifier (uid) for the supplied UserDatabase.
+     * @param db the UserDatabase for which the uid should be
+     * created
+     * @return the new profile
+     */
+    protected static UserProfile newProfile( UserDatabase db )
+    {
+        UserProfile profile = new DefaultUserProfile();
+        profile.setUid( AbstractUserDatabase.generateUid( db ) );
+        return profile;
+    }
+
     /**
      * {@inheritDoc}
      */
