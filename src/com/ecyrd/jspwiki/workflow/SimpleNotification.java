@@ -50,9 +50,9 @@ public final class SimpleNotification extends Decision
      * @param actor
      *            the Principal who will acknowledge the message
      */
-    public SimpleNotification(Workflow workflow, String messageKey, Principal actor)
+    public SimpleNotification( Workflow workflow, String messageKey, Principal actor )
     {
-        super(workflow, messageKey, actor, Outcome.DECISION_ACKNOWLEDGE);
+        super( workflow, messageKey, actor, Outcome.DECISION_ACKNOWLEDGE );
     }
     
     /**
@@ -62,7 +62,7 @@ public final class SimpleNotification extends Decision
      */
     public void acknowledge() throws WikiException
     {
-        this.decide( Outcome.DECISION_ACKNOWLEDGE );
+        this.decide( Outcome.DECISION_ACKNOWLEDGE  );
     }
 
     /**

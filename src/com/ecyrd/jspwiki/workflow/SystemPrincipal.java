@@ -30,7 +30,7 @@ import java.security.Principal;
 public final class SystemPrincipal implements Principal
 {
     /** The JSPWiki system user */
-    public static final Principal SYSTEM_USER = new SystemPrincipal("System User");
+    public static final Principal SYSTEM_USER = new SystemPrincipal( "System User" );
 
     private final String m_name;
 
@@ -38,7 +38,7 @@ public final class SystemPrincipal implements Principal
      * Private constructor to prevent direct instantiation.
      * @param name the name of the Principal
      */
-    private SystemPrincipal(String name)
+    private SystemPrincipal( String name )
     {
         m_name = name;
     }

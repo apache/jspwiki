@@ -33,7 +33,7 @@ import com.ecyrd.jspwiki.WikiException;
  */
 public final class WorkflowBuilder
 {
-    private static final Map BUILDERS = new HashMap();
+    private static final Map<WikiEngine, WorkflowBuilder> BUILDERS = new HashMap<WikiEngine, WorkflowBuilder>();
     private final WikiEngine m_engine;
 
     /**
@@ -53,7 +53,7 @@ public final class WorkflowBuilder
      */
     public static WorkflowBuilder getBuilder( WikiEngine engine )
     {
-        WorkflowBuilder builder = (WorkflowBuilder)BUILDERS.get( engine );
+        WorkflowBuilder builder = BUILDERS.get( engine );
         if ( builder == null )
         {
             builder = new WorkflowBuilder( engine );
@@ -130,9 +130,9 @@ public final class WorkflowBuilder
             // Add facts to the Decision, if any were supplied
             if ( facts != null )
             {
-                for ( int i = 0; i < facts.length; i++ )
+                for ( Fact fact: facts )
                 {
-                    decision.addFact( facts[i] );
+                    decision.addFact( fact );
                 }
                 // Add the first one as a message key
                 if ( facts.length > 0 )

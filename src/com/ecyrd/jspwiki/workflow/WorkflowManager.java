@@ -45,11 +45,11 @@ public class WorkflowManager implements WikiEventListener
 
     private final DecisionQueue m_queue = new DecisionQueue();
 
-    private final Set m_workflows;
+    private final Set<Workflow> m_workflows;
 
-    private final Map m_approvers;
+    private final Map<String, Principal> m_approvers;
 
-    private final List m_completed;
+    private final List<Workflow> m_completed;
 
     /** The prefix to use for looking up <code>jspwiki.properties</code> approval roles. */
     protected static final String PROPERTY_APPROVER_PREFIX = "jspwiki.approver.";
@@ -61,9 +61,9 @@ public class WorkflowManager implements WikiEventListener
     public WorkflowManager()
     {
         m_next = 1;
-        m_workflows = new HashSet();
-        m_approvers = new HashMap();
-        m_completed = new ArrayList();
+        m_workflows = new HashSet<Workflow>();
+        m_approvers = new HashMap<String, Principal>();
+        m_completed = new ArrayList<Workflow>();
     }
 
     /**
@@ -89,7 +89,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public Collection getWorkflows()
     {
-        return new HashSet( m_workflows );
+        return new HashSet<Workflow>( m_workflows );
     }
 
     /**
@@ -98,7 +98,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public List getCompletedWorkflows()
     {
-        return new ArrayList( m_completed );
+        return new ArrayList<Workflow>( m_completed );
     }
 
     private WikiEngine m_engine = null;
@@ -123,7 +123,7 @@ public class WorkflowManager implements WikiEventListener
         m_engine = engine;
 
         // Identify the workflows requiring approvals
-        for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
+        for ( Iterator<?> it = props.keySet().iterator(); it.hasNext(); )
         {
             String prop = (String) it.next();
             if ( prop.startsWith( PROPERTY_APPROVER_PREFIX ) )
@@ -172,7 +172,7 @@ public class WorkflowManager implements WikiEventListener
      */
     public Principal getApprover( String messageKey ) throws WikiException
     {
-        Principal approver = (Principal) m_approvers.get( messageKey );
+        Principal approver = m_approvers.get( messageKey );
         if ( approver == null )
         {
             throw new WikiException( "Workflow '" + messageKey + "' does not require approval." );
@@ -243,19 +243,18 @@ public class WorkflowManager implements WikiEventListener
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection getOwnerWorkflows(WikiSession session)
+    public Collection getOwnerWorkflows( WikiSession session )
     {
-        List workflows = new ArrayList();
+        List<Workflow> workflows = new ArrayList<Workflow>();
         if ( session.isAuthenticated() )
         {
             Principal[] sessionPrincipals = session.getPrincipals();
-            for ( Iterator it = m_workflows.iterator(); it.hasNext(); )
+            for ( Workflow w : m_workflows )
             {
-                Workflow w = (Workflow)it.next();
                 Principal owner = w.getOwner();
-                for ( int i = 0; i < sessionPrincipals.length; i++ )
+                for ( Principal sessionPrincipal : sessionPrincipals )
                 {
-                    if ( sessionPrincipals[i].equals(owner) )
+                    if ( sessionPrincipal.equals( owner ) )
                     {
                         workflows.add( w );
                         break;

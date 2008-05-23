@@ -41,12 +41,12 @@ public class SimpleDecision extends Decision
      * @param actor the Principal (<em>e.g.</em>, WikiPrincipal,
      * GroupPrincipal, Role) who will decide
      */
-    public SimpleDecision(Workflow workflow, String messageKey, Principal actor)
+    public SimpleDecision( Workflow workflow, String messageKey, Principal actor )
     {
-        super(workflow, messageKey, actor, Outcome.DECISION_APPROVE);
+        super( workflow, messageKey, actor, Outcome.DECISION_APPROVE );
 
         // Add the other default outcomes
-        super.addSuccessor(Outcome.DECISION_DENY, null);
+        super.addSuccessor( Outcome.DECISION_DENY, null );
     }
 
 }

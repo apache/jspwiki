@@ -23,7 +23,6 @@ package com.ecyrd.jspwiki.workflow;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.ecyrd.jspwiki.WikiException;
@@ -39,7 +38,7 @@ import com.ecyrd.jspwiki.WikiSession;
 public class DecisionQueue
 {
 
-    private LinkedList m_queue = new LinkedList();
+    private LinkedList<Decision> m_queue = new LinkedList<Decision>();
 
     private volatile int m_next;
 
@@ -58,10 +57,10 @@ public class DecisionQueue
      * @param decision
      *            the Decision to add
      */
-    protected synchronized void add(Decision decision)
+    protected synchronized void add( Decision decision )
     {
-        m_queue.addLast(decision);
-        decision.setId(nextId());
+        m_queue.addLast( decision );
+        decision.setId( nextId() );
     }
 
     /**
@@ -74,7 +73,7 @@ public class DecisionQueue
      */
     protected Decision[] decisions()
     {
-        return (Decision[]) m_queue.toArray(new Decision[m_queue.size()]);
+        return m_queue.toArray( new Decision[m_queue.size()] );
     }
 
     /**
@@ -83,7 +82,7 @@ public class DecisionQueue
      */
     protected synchronized void remove(Decision decision)
     {
-        m_queue.remove(decision);
+        m_queue.remove( decision );
     }
 
     /**
@@ -99,29 +98,27 @@ public class DecisionQueue
      */
     public Collection getActorDecisions(WikiSession session)
     {
-        ArrayList decisions = new ArrayList();
-        if (session.isAuthenticated())
+        ArrayList<Decision> decisions = new ArrayList<Decision>();
+        if ( session.isAuthenticated() )
         {
             Principal[] principals = session.getPrincipals();
             Principal[] rolePrincipals = session.getRoles();
-            for (Iterator it = m_queue.iterator(); it.hasNext();)
+            for ( Decision decision : m_queue )
             {
-                Decision decision = (Decision) it.next();
-
                 // Iterate through the Principal set
-                for (int i = 0; i < principals.length; i++)
+                for ( Principal principal : principals )
                 {
-                    if (principals[i].equals(decision.getActor()))
+                    if ( principal.equals( decision.getActor() ) )
                     {
-                        decisions.add(decision);
+                        decisions.add( decision );
                     }
                 }
                 // Iterate through the Role set
-                for (int i = 0; i < rolePrincipals.length; i++)
+                for ( Principal principal : rolePrincipals )
                 {
-                    if (rolePrincipals[i].equals(decision.getActor()))
+                    if ( principal.equals( decision.getActor() ) )
                     {
-                        decisions.add(decision);
+                        decisions.add( decision );
                     }
                 }
             }
@@ -141,12 +138,12 @@ public class DecisionQueue
      * @throws WikiException if the succeeding Step cannot start
      * for any reason
      */
-    public void decide(Decision decision, Outcome outcome) throws WikiException
+    public void decide( Decision decision, Outcome outcome ) throws WikiException
     {
-        decision.decide(outcome);
-        if (decision.isCompleted())
+        decision.decide( outcome );
+        if ( decision.isCompleted() )
         {
-            remove(decision);
+            remove( decision );
         }
 
         // TODO: We should fire an event indicating the Outcome, and whether the
@@ -165,12 +162,12 @@ public class DecisionQueue
     {
         if (decision.isReassignable())
         {
-            decision.reassign(owner);
+            decision.reassign( owner );
 
             // TODO: We should fire an event indicating the reassignment
             return;
         }
-        throw new IllegalStateException("Reassignments not allowed for this decision.");
+        throw new IllegalStateException( "Reassignments not allowed for this decision." );
     }
 
     /**

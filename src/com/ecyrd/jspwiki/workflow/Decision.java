@@ -62,7 +62,7 @@ public abstract class Decision extends AbstractStep
 
     private final Outcome m_defaultOutcome;
 
-    private final List m_facts;
+    private final List<Fact> m_facts;
 
     /**
      * Constructs a new Decision for a required "actor" Principal, having a default Outcome.
@@ -78,7 +78,7 @@ public abstract class Decision extends AbstractStep
         super(workflow, messageKey);
         m_actor = actor;
         m_defaultOutcome = defaultOutcome;
-        m_facts = new ArrayList();
+        m_facts = new ArrayList<Fact>();
         addSuccessor(defaultOutcome, null);
     }
 

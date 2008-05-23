@@ -46,13 +46,13 @@ public abstract class AbstractStep implements Step
 
     private boolean m_completed;
 
-    private final Map m_successors;
+    private final Map<Outcome, Step> m_successors;
 
     private Workflow m_workflow;
 
     private Outcome m_outcome;
 
-    private final List m_errors;
+    private final List<String> m_errors;
 
     private boolean m_started;
 
@@ -74,10 +74,10 @@ public abstract class AbstractStep implements Step
         m_start = Workflow.TIME_NOT_SET;
         m_completed = false;
         m_end = Workflow.TIME_NOT_SET;
-        m_errors = new ArrayList();
+        m_errors = new ArrayList<String>();
         m_outcome = Outcome.STEP_CONTINUE;
         m_key = messageKey;
-        m_successors = new LinkedHashMap();
+        m_successors = new LinkedHashMap<Outcome, Step>();
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class AbstractStep implements Step
      */
     public final Collection getAvailableOutcomes()
     {
-        Set outcomes = m_successors.keySet();
+        Set<Outcome> outcomes = m_successors.keySet();
         return Collections.unmodifiableCollection( outcomes );
     }
 

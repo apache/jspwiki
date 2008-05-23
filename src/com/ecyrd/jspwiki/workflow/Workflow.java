@@ -201,7 +201,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
 public class Workflow
 {
     /** Time value: the start or end time has not been set. */
-    public static final Date TIME_NOT_SET = new Date(0);
+    public static final Date TIME_NOT_SET = new Date( 0 );
 
     /** ID value: the workflow ID has not been set. */
     public static final int ID_NOT_SET = 0;
@@ -225,7 +225,7 @@ public class Workflow
     public static final int CREATED = -2;
 
     /** Lazily-initialized attribute map. */
-    private Map m_attributes;
+    private Map<String, Object> m_attributes;
 
     /** The initial Step for this Workflow. */
     private Step m_firstStep;
@@ -233,7 +233,7 @@ public class Workflow
     /** Flag indicating whether the Workflow has started yet. */
     private boolean m_started;
 
-    private final LinkedList m_history;
+    private final LinkedList<Step> m_history;
 
     private int m_id;
 
@@ -241,7 +241,7 @@ public class Workflow
 
     private final Principal m_owner;
 
-    private final List m_messageArgs;
+    private final List<Object> m_messageArgs;
 
     private int m_state;
 
@@ -268,11 +268,11 @@ public class Workflow
         super();
         m_attributes = null;
         m_currentStep = null;
-        m_history = new LinkedList();
+        m_history = new LinkedList<Step>();
         m_id = ID_NOT_SET;
         m_key = messageKey;
         m_manager = null;
-        m_messageArgs = new ArrayList();
+        m_messageArgs = new ArrayList<Object>();
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
@@ -292,27 +292,27 @@ public class Workflow
     public final synchronized void abort()
     {
         // Check corner cases: previous abort or completion
-        if (m_state == ABORTED)
+        if ( m_state == ABORTED )
         {
-            throw new IllegalStateException("The workflow has already been aborted.");
+            throw new IllegalStateException( "The workflow has already been aborted." );
         }
-        if (m_state == COMPLETED)
+        if ( m_state == COMPLETED )
         {
-            throw new IllegalStateException("The workflow has already completed.");
+            throw new IllegalStateException( "The workflow has already completed." );
         }
 
-        if (m_currentStep != null)
+        if ( m_currentStep != null )
         {
-            if (m_manager != null && m_currentStep instanceof Decision)
+            if ( m_manager != null && m_currentStep instanceof Decision )
             {
                 Decision d = (Decision)m_currentStep;
-                m_manager.getDecisionQueue().remove(d);
+                m_manager.getDecisionQueue().remove( d );
             }
-            m_currentStep.setOutcome(Outcome.STEP_ABORT);
-            m_history.addLast(m_currentStep);
+            m_currentStep.setOutcome( Outcome.STEP_ABORT );
+            m_history.addLast( m_currentStep );
         }
         m_state = ABORTED;
-        fireEvent(WorkflowEvent.ABORTED);
+        fireEvent( WorkflowEvent.ABORTED );
         cleanup();
     }
 
@@ -325,14 +325,14 @@ public class Workflow
      * an IllegalArgumentException.
      * @param obj the object to add
      */
-    public final void addMessageArgument(Object obj)
+    public final void addMessageArgument( Object obj )
     {
-        if (obj instanceof String || obj instanceof Date || obj instanceof Number)
+        if ( obj instanceof String || obj instanceof Date || obj instanceof Number )
         {
-            m_messageArgs.add(obj);
+            m_messageArgs.add( obj );
             return;
         }
-        throw new IllegalArgumentException("Message arguments must be of type String, Date or Number.");
+        throw new IllegalArgumentException( "Message arguments must be of type String, Date or Number." );
     }
 
     /**
@@ -343,7 +343,7 @@ public class Workflow
      */
     public final synchronized Principal getCurrentActor()
     {
-        if (m_currentStep == null)
+        if ( m_currentStep == null )
         {
             return null;
         }
@@ -380,13 +380,13 @@ public class Workflow
      *            the name of the attribute
      * @return the value
      */
-    public final synchronized Object getAttribute(String attr)
+    public final synchronized Object getAttribute( String attr )
     {
-        if (m_attributes == null)
+        if ( m_attributes == null )
         {
             return null;
         }
-        return m_attributes.get(attr);
+        return m_attributes.get( attr );
     }
 
     /**
@@ -399,10 +399,10 @@ public class Workflow
      */
     public final Date getEndTime()
     {
-        if (isCompleted())
+        if ( isCompleted() )
         {
-            Step last = (Step) m_history.getLast();
-            if (last != null)
+            Step last = m_history.getLast();
+            if ( last != null )
             {
                 return last.getEndTime();
             }
@@ -442,12 +442,12 @@ public class Workflow
      */
     public final Object[] getMessageArguments()
     {
-        List args = new ArrayList();
-        args.add(m_owner.getName());
+        List<Object> args = new ArrayList<Object>();
+        args.add( m_owner.getName() );
         Principal actor = getCurrentActor();
-        args.add(actor == null ? "-" : actor.getName());
-        args.addAll(m_messageArgs);
-        return args.toArray(new Object[args.size()]);
+        args.add( actor == null ? "-" : actor.getName() );
+        args.addAll( m_messageArgs );
+        return args.toArray( new Object[args.size()] );
     }
 
     /**
@@ -506,7 +506,7 @@ public class Workflow
      */
     public final List getHistory()
     {
-        return Collections.unmodifiableList(m_history);
+        return Collections.unmodifiableList( m_history );
     }
 
     /**
@@ -555,7 +555,7 @@ public class Workflow
      */
     public final Step getPreviousStep()
     {
-        return previousStep(m_currentStep);
+        return previousStep( m_currentStep );
     }
 
     /**
@@ -569,12 +569,12 @@ public class Workflow
      */
     public final synchronized void restart() throws WikiException
     {
-        if (m_state != WAITING)
+        if ( m_state != WAITING )
         {
-            throw new IllegalStateException("Workflow is not paused; cannot restart.");
+            throw new IllegalStateException( "Workflow is not paused; cannot restart." );
         }
         m_state = RUNNING;
-        fireEvent(WorkflowEvent.RUNNING);
+        fireEvent( WorkflowEvent.RUNNING );
 
         // Process current step
         try
@@ -601,11 +601,11 @@ public class Workflow
      */
     public final synchronized void setAttribute(String attr, Object obj)
     {
-        if (m_attributes == null)
+        if ( m_attributes == null )
         {
-            m_attributes = new HashMap();
+            m_attributes = new HashMap<String, Object>();
         }
-        m_attributes.put(attr, obj);
+        m_attributes.put( attr, obj );
     }
 
     /**
@@ -628,7 +628,7 @@ public class Workflow
      * @param id
      *            the unique identifier
      */
-    public final synchronized void setId(int id)
+    public final synchronized void setId( int id )
     {
         this.m_id = id;
     }
@@ -639,10 +639,10 @@ public class Workflow
      * @param manager
      *            the workflow manager
      */
-    public final synchronized void setWorkflowManager(WorkflowManager manager)
+    public final synchronized void setWorkflowManager( WorkflowManager manager )
     {
         m_manager = manager;
-        addWikiEventListener(manager);
+        addWikiEventListener( manager );
     }
 
     /**
@@ -656,21 +656,21 @@ public class Workflow
      */
     public final synchronized void start() throws WikiException
     {
-        if (m_state == ABORTED)
+        if ( m_state == ABORTED )
         {
-            throw new IllegalStateException("Workflow cannot be started; it has already been aborted.");
+            throw new IllegalStateException( "Workflow cannot be started; it has already been aborted." );
         }
-        if (m_started)
+        if ( m_started )
         {
-            throw new IllegalStateException("Workflow has already started.");
+            throw new IllegalStateException( "Workflow has already started." );
         }
         m_started = true;
         m_state = RUNNING;
-        fireEvent(WorkflowEvent.RUNNING);
+        fireEvent( WorkflowEvent.RUNNING );
 
         // Mark the first step as the current one & add to history
         m_currentStep = m_firstStep;
-        m_history.add(m_currentStep);
+        m_history.add( m_currentStep );
 
         // Process current step
         try
@@ -692,12 +692,12 @@ public class Workflow
      */
     public final synchronized void waitstate()
     {
-        if (m_state != RUNNING)
+        if ( m_state != RUNNING )
         {
-            throw new IllegalStateException("Workflow is not running; cannot pause.");
+            throw new IllegalStateException( "Workflow is not running; cannot pause." );
         }
         m_state = WAITING;
-        fireEvent(WorkflowEvent.WAITING);
+        fireEvent( WorkflowEvent.WAITING );
     }
 
     /**
@@ -721,7 +721,7 @@ public class Workflow
         if ( !isCompleted() )
         {
             m_state = COMPLETED;
-            fireEvent(WorkflowEvent.COMPLETED);
+            fireEvent( WorkflowEvent.COMPLETED );
             cleanup();
         }
     }
@@ -736,8 +736,8 @@ public class Workflow
      */
     protected final Step previousStep(Step step)
     {
-        int index = m_history.indexOf(step);
-        return index < 1 ? null : (Step) m_history.get(index - 1);
+        int index = m_history.indexOf( step );
+        return index < 1 ? null : m_history.get( index - 1 );
     }
 
     /**
@@ -750,29 +750,29 @@ public class Workflow
      */
     protected final void processCurrentStep() throws WikiException
     {
-        while (m_currentStep != null)
+        while ( m_currentStep != null )
         {
 
             // Start and execute the current step
-            if (!m_currentStep.isStarted())
+            if ( !m_currentStep.isStarted() )
             {
                 m_currentStep.start();
             }
             try
             {
                 Outcome result = m_currentStep.execute();
-                if (Outcome.STEP_ABORT.equals(result))
+                if ( Outcome.STEP_ABORT.equals( result ) )
                 {
                     abort();
                     break;
                 }
 
-                if (!m_currentStep.isCompleted())
+                if ( !m_currentStep.isCompleted() )
                 {
-                    m_currentStep.setOutcome(result);
+                    m_currentStep.setOutcome( result );
                 }
             }
-            catch (WikiException e)
+            catch ( WikiException e )
             {
                 throw e;
             }
@@ -780,22 +780,22 @@ public class Workflow
             // Get the execution Outcome; if not complete, pause workflow and
             // exit
             Outcome outcome = m_currentStep.getOutcome();
-            if (!outcome.isCompletion())
+            if ( !outcome.isCompletion() )
             {
                 waitstate();
                 break;
             }
 
             // Get the next Step; if null, we're done
-            Step nextStep = m_currentStep.getSuccessor(outcome);
-            if (nextStep == null)
+            Step nextStep = m_currentStep.getSuccessor( outcome );
+            if ( nextStep == null )
             {
                 complete();
                 break;
             }
 
             // Add the next step to Workflow history, and mark as current
-            m_history.add(nextStep);
+            m_history.add( nextStep );
             m_currentStep = nextStep;
         }
 
@@ -810,9 +810,9 @@ public class Workflow
      * @param listener
      *            the event listener
      */
-    public final synchronized void addWikiEventListener(WikiEventListener listener)
+    public final synchronized void addWikiEventListener( WikiEventListener listener )
     {
-        WikiEventManager.addWikiEventListener(this, listener);
+        WikiEventManager.addWikiEventListener( this, listener );
     }
 
     /**
@@ -822,9 +822,9 @@ public class Workflow
      * @param listener
      *            the event listener
      */
-    public final synchronized void removeWikiEventListener(WikiEventListener listener)
+    public final synchronized void removeWikiEventListener( WikiEventListener listener )
     {
-        WikiEventManager.removeWikiEventListener(this, listener);
+        WikiEventManager.removeWikiEventListener( this, listener );
     }
 
     /**
@@ -834,11 +834,11 @@ public class Workflow
      * @param type
      *            the event type to be fired
      */
-    protected final void fireEvent(int type)
+    protected final void fireEvent( int type )
     {
-        if (WikiEventManager.isListening(this))
+        if ( WikiEventManager.isListening( this ) )
         {
-            WikiEventManager.fireEvent(this, new WorkflowEvent(this, type));
+            WikiEventManager.fireEvent( this, new WorkflowEvent( this, type ) );
         }
     }
 

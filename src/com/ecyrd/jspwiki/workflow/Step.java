@@ -76,7 +76,7 @@ public interface Step
      *            the Step to associated with this Outcomes (<code>null</code>
      *            denotes no Steps)
      */
-    public void addSuccessor(Outcome outcome, Step step);
+    public void addSuccessor( Outcome outcome, Step step );
 
     /**
      * Returns a Collection of available outcomes, such as "approve", "deny" or
@@ -224,7 +224,7 @@ public interface Step
      * 
      * @param outcome whether the step should be considered completed
      */
-    public void setOutcome(Outcome outcome);
+    public void setOutcome( Outcome outcome );
 
     /**
      * Convenience method that returns the owner of the Workflow by delegating
@@ -242,6 +242,6 @@ public interface Step
      *            the outcome
      * @return the next step
      */
-    public Step getSuccessor(Outcome outcome);
+    public Step getSuccessor( Outcome outcome );
 
 }

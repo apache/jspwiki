@@ -35,8 +35,8 @@ public class NoSuchOutcomeException extends Exception
      * Constructs a new exception.
      * @param message the message
      */
-    public NoSuchOutcomeException(String message)
+    public NoSuchOutcomeException( String message )
     {
-        super(message);
+        super( message );
     }
 }

@@ -55,8 +55,8 @@ public abstract class Task extends AbstractStep
     public Task( String messageKey )
     {
         super( messageKey );
-        super.addSuccessor(Outcome.STEP_COMPLETE, null);
-        super.addSuccessor(Outcome.STEP_ABORT, null);
+        super.addSuccessor( Outcome.STEP_COMPLETE, null );
+        super.addSuccessor( Outcome.STEP_ABORT, null );
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class Task extends AbstractStep
      * @param messageKey
      *            the i18n message key
      */
-    public Task(Workflow workflow, String messageKey)
+    public Task( Workflow workflow, String messageKey )
     {
         this( messageKey );
         setWorkflow( workflow );
@@ -93,7 +93,7 @@ public abstract class Task extends AbstractStep
      * @param step
      *            the successor
      */
-    public final synchronized void setSuccessor(Step step)
+    public final synchronized void setSuccessor( Step step )
     {
         m_successor = step;
     }
