@@ -189,7 +189,7 @@ public class CryptoUtil
      * Helper method that extracts the hashed password fragment from a supplied salted SHA digest
      * by taking all of the characters before position 20.
      * 
-     * @param challenge the salted digest, which is assumed to have been
+     * @param digest the salted digest, which is assumed to have been
      *            previously decoded from Base64.
      * @return the password hash
      * @throws IllegalArgumentException if the length of the supplied digest is
