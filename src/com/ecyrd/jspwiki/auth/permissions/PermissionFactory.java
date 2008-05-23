@@ -38,7 +38,7 @@ public class PermissionFactory
      *  This is a WeakHashMap<Integer,PagePermission>, which stores the
      *  cached page permissions.
      */
-    private static WeakHashMap c_cache = new WeakHashMap();
+    private static WeakHashMap<Integer, PagePermission> c_cache = new WeakHashMap<Integer, PagePermission>();
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -92,7 +92,7 @@ public class PermissionFactory
         //
         synchronized( c_cache )
         {
-            perm = (PagePermission)c_cache.get( key );
+            perm = c_cache.get( key );
         }
         
         if( perm == null )

@@ -247,7 +247,7 @@ public class DefaultAclManager implements AclManager
     protected static String printAcl( Acl acl )
     {
         // Extract the ACL entries into a Map with keys == permissions, values == principals
-        Map permissionPrincipals = new TreeMap();
+        Map<String, List<Principal>> permissionPrincipals = new TreeMap<String, List<Principal>>();
         Enumeration entries = acl.entries();
         while ( entries.hasMoreElements() )
         {
@@ -257,10 +257,10 @@ public class DefaultAclManager implements AclManager
             while ( permissions.hasMoreElements() )
             {
                 Permission permission = (Permission)permissions.nextElement();
-                List principals = (List)permissionPrincipals.get( permission.getActions() );
+                List<Principal> principals = permissionPrincipals.get( permission.getActions() );
                 if ( principals == null )
                 {
-                    principals = new ArrayList();
+                    principals = new ArrayList<Principal>();
                     String action = permission.getActions();
                     if ( action.indexOf(',') != -1 )
                     {
@@ -275,18 +275,17 @@ public class DefaultAclManager implements AclManager
         // Now, iterate through each permission in the map and generate an ACL string
 
         StringBuffer s = new StringBuffer();
-        for ( Iterator it = permissionPrincipals.entrySet().iterator(); it.hasNext(); )
+        for ( Map.Entry<String,List<Principal>>entry : permissionPrincipals.entrySet() )
         {
-            Map.Entry entry = (Map.Entry)it.next();
-            String action = (String)entry.getKey();
-            List principals = (List)entry.getValue();
+            String action = entry.getKey();
+            List<Principal> principals = entry.getValue();
             Collections.sort( principals, new PrincipalComparator() );
             s.append( "[{ALLOW ");
             s.append( action );
             s.append( " ");
             for ( int i = 0; i < principals.size(); i++ )
             {
-                Principal principal = (Principal)principals.get( i );
+                Principal principal = principals.get( i );
                 s.append( principal.getName() );
                 if ( i < ( principals.size() - 1 ) )
                 {

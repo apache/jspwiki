@@ -27,7 +27,6 @@ import java.security.DomainCombiner;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -357,9 +356,8 @@ public final class GroupPermission extends Permission implements Serializable
         }
         int mask = 0;
         String[] actionList = actions.split( ACTION_SEPARATOR );
-        for( int i = 0; i < actionList.length; i++ )
+        for( String action : actionList )
         {
-            String action = actionList[i];
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {
                 mask |= VIEW_MASK;
@@ -489,10 +487,9 @@ public final class GroupPermission extends Permission implements Serializable
             // <member> implies permission if subject possesses
             // GroupPrincipal with same name as target
             Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
-            Set principals = subject.getPrincipals( GroupPrincipal.class );
-            for( Iterator it = principals.iterator(); it.hasNext(); )
+            Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
+            for( Principal principal : principals )
             {
-                Principal principal = (Principal) it.next();
                 if ( principal.getName().equals( gp.m_group ) )
                 {
                     return true;

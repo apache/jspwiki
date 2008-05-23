@@ -79,7 +79,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     private GroupDatabase       m_groupDatabase    = null;
 
     /** Map with GroupPrincipals as keys, and Groups as values */
-    private final Map           m_groups           = new HashMap();
+    private final Map<Principal, Group>           m_groups           = new HashMap<Principal, Group>();
 
     /**
      * <p>
@@ -111,7 +111,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final Group getGroup( String name ) throws NoSuchPrincipalException
     {
-        Group group = (Group) m_groups.get( new GroupPrincipal( name ) );
+        Group group = m_groups.get( new GroupPrincipal( name ) );
         if ( group != null )
         {
             return group;
@@ -149,7 +149,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
                 dbClassName = XMLGroupDatabase.class.getName();
             }
             log.info( "Attempting to load group database class " + dbClassName );
-            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
+            Class<?> dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
             m_groupDatabase = (GroupDatabase) dbClass.newInstance();
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             log.info( "Group database initialized." );
@@ -196,7 +196,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final Principal[] getRoles()
     {
-        return (Principal[]) m_groups.keySet().toArray( new Principal[m_groups.size()] );
+        return m_groups.keySet().toArray( new Principal[m_groups.size()] );
     }
 
     /**
@@ -226,9 +226,8 @@ public final class GroupManager implements Authorizer, WikiEventListener
         Group[] groups = m_groupDatabase.groups();
         synchronized( m_groups )
         {
-            for( int i = 0; i < groups.length; i++ )
+            for( Group group : groups )
             {
-                Group group = groups[i];
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, group );
@@ -274,17 +273,16 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Get the group we're examining
-        Group group = (Group) m_groups.get( role );
+        Group group = m_groups.get( role );
         if ( group == null )
         {
             return false;
         }
 
         // Check each user principal to see if it belongs to the group
-        Principal[] principals = session.getPrincipals();
-        for ( int i = 0; i < principals.length; i++ )
+        for ( Principal principal : session.getPrincipals() )
         {
-            if ( AuthenticationManager.isUserPrincipal( principals[i] ) && group.isMember( principals[i] ) )
+            if ( AuthenticationManager.isUserPrincipal( principal ) && group.isMember( principal ) )
             {
                 return true;
             }
@@ -361,10 +359,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
             group.setCreated( existingGroup.getCreated() );
             group.setModifier( existingGroup.getModifier() );
             group.setLastModified( existingGroup.getLastModified() );
-            Principal[] existingMembers = existingGroup.members();
-            for( int i = 0; i < existingMembers.length; i++ )
+            for( Principal existingMember : existingGroup.members() )
             {
-                group.add( existingMembers[i] );
+                group.add( existingMember );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -381,9 +378,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
         if ( members.length > 0 )
         {
             group.clear();
-            for( int i = 0; i < members.length; i++ )
+            for( String member : members )
             {
-                group.add( new WikiPrincipal( members[i] ) );
+                group.add( new WikiPrincipal( member ) );
             }
         }
 
@@ -458,7 +455,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
             throw new IllegalArgumentException( "Group cannot be null." );
         }
 
-        Group group = (Group) m_groups.get( new GroupPrincipal( index ) );
+        Group group = m_groups.get( new GroupPrincipal( index ) );
         if ( group == null )
         {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
@@ -519,7 +516,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         // TODO: check for appropriate permissions
 
         // If group already exists, delete it; fire GROUP_REMOVE event
-        Group oldGroup = (Group) m_groups.get( group.getPrincipal() );
+        Group oldGroup = m_groups.get( group.getPrincipal() );
         if ( oldGroup != null )
         {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
@@ -609,7 +606,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     protected final String[] extractMembers( String memberLine )
     {
-        Set members = new HashSet();
+        Set<String> members = new HashSet<String>();
         if ( memberLine != null )
         {
             StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
@@ -622,7 +619,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
                 }
             }
         }
-        return (String[]) members.toArray( new String[members.size()] );
+        return members.toArray( new String[members.size()] );
     }
 
     /**
@@ -723,16 +720,14 @@ public final class GroupManager implements Authorizer, WikiEventListener
             int groupsChanged = 0;
             try
             {
-                Group[] groups = m_groupDatabase.groups();
-                for ( int i = 0; i < groups.length; i++ )
+                for ( Group group : m_groupDatabase.groups() )
                 {
                     boolean groupChanged = false;
-                    Group group = groups[i];
-                    for ( int j = 0; j < oldPrincipals.length; j++ )
+                    for ( Principal oldPrincipal : oldPrincipals )
                     {
-                        if ( group.isMember( oldPrincipals[j] ) )
+                        if ( group.isMember( oldPrincipal ) )
                         {
-                            group.remove( oldPrincipals[j] );
+                            group.remove( oldPrincipal );
                             group.add( newPrincipal );
                             groupChanged = true;
                         }

@@ -135,9 +135,9 @@ public class WebContainerAuthorizer implements WebAuthorizer
         if ( m_containerRoles.length > 0 )
         {
             String roles = "";
-            for( int i = 0; i < m_containerRoles.length; i++ )
+            for( Role containerRole : m_containerRoles )
             {
-                roles = roles + m_containerRoles[i] + " ";
+                roles = roles + containerRole + " ";
             }
             log.info( " JSPWiki determined the web container manages these roles: " + roles );
         }
@@ -201,11 +201,11 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     public Principal findRole( String role )
     {
-        for( int i = 0; i < m_containerRoles.length; i++ )
+        for( Role containerRole : m_containerRoles )
         {
-            if ( m_containerRoles[i].getName().equals( role ) )
+            if ( containerRole.getName().equals( role ) )
             {
-                return m_containerRoles[i];
+                return containerRole;
             }
         }
         return null;
@@ -244,13 +244,13 @@ public class WebContainerAuthorizer implements WebAuthorizer
         selector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
         xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
-        List constraints = xpath.selectNodes( root );
+        List<?> constraints = xpath.selectNodes( root );
 
         // Get all constraints that match our Role pattern
         selector = "//j:web-app/j:security-constraint[j:auth-constraint/j:role-name=\"" + role.getName() + "\"]";
         xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
-        List roles = xpath.selectNodes( root );
+        List<?> roles = xpath.selectNodes( root );
 
         // If we can't find either one, we must not be constrained
         if ( constraints.size() == 0 )
@@ -271,10 +271,10 @@ public class WebContainerAuthorizer implements WebAuthorizer
         }
 
         // If a constraint is contained in both lists, we must be constrained
-        for ( Iterator c = constraints.iterator(); c.hasNext(); )
+        for ( Iterator<?> c = constraints.iterator(); c.hasNext(); )
         {
             Element constraint = (Element)c.next();
-            for ( Iterator r = roles.iterator(); r.hasNext(); )
+            for ( Iterator<?> r = roles.iterator(); r.hasNext(); )
             {
                 Element roleConstraint = (Element)r.next();
                 if ( constraint.equals( roleConstraint ) )
@@ -316,7 +316,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     public Principal[] getRoles()
     {
-        return (Principal[])m_containerRoles.clone();
+        return m_containerRoles.clone();
     }
 
     /**
@@ -330,15 +330,15 @@ public class WebContainerAuthorizer implements WebAuthorizer
      */
     protected Role[] getRoles( Document webxml ) throws JDOMException
     {
-        Set roles = new HashSet();
+        Set<Role> roles = new HashSet<Role>();
         Element root = webxml.getRootElement();
 
         // Get roles referred to by constraints
         String selector = "//j:web-app/j:security-constraint/j:auth-constraint/j:role-name";
         XPath xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
-        List nodes = xpath.selectNodes( root );
-        for( Iterator it = nodes.iterator(); it.hasNext(); )
+        List<?> nodes = xpath.selectNodes( root );
+        for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
         {
             String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
@@ -349,13 +349,13 @@ public class WebContainerAuthorizer implements WebAuthorizer
         xpath = XPath.newInstance( selector );
         xpath.addNamespace( "j", J2EE_SCHEMA_24_NAMESPACE );
         nodes = xpath.selectNodes( root );
-        for( Iterator it = nodes.iterator(); it.hasNext(); )
+        for( Iterator<?> it = nodes.iterator(); it.hasNext(); )
         {
             String role = ( (Element) it.next() ).getTextTrim();
             roles.add( new Role( role ) );
         }
 
-        return (Role[]) roles.toArray( new Role[roles.size()] );
+        return roles.toArray( new Role[roles.size()] );
     }
 
     /**

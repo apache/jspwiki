@@ -23,7 +23,6 @@ package com.ecyrd.jspwiki.auth.login;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.security.auth.Subject;
@@ -51,7 +50,7 @@ public abstract class AbstractLoginModule implements LoginModule
 
     protected CallbackHandler m_handler;
 
-    protected Map             m_options;
+    protected Map<String,?>             m_options;
 
     /**
      * Collection of Principals set during login module initialization.
@@ -62,7 +61,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * if login succeeds.
      * @deprecated
      */
-    protected Collection      m_previousWikiPrincipals;
+    protected Collection<Principal>      m_previousWikiPrincipals;
 
     /**
      * Implementing classes should add Principals to this collection; these
@@ -80,7 +79,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * {@link com.ecyrd.jspwiki.auth.authorize.Role}.
      * @deprecated
      */
-    protected Collection      m_principalsToRemove;
+    protected Collection<Principal>      m_principalsToRemove;
 
     /**
      * Implementing classes should add Principals to this collection to specify
@@ -95,9 +94,9 @@ public abstract class AbstractLoginModule implements LoginModule
      * should over-write {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
      * @deprecated
      */
-    protected Collection      m_principalsToOverwrite;
+    protected Collection<Principal>      m_principalsToOverwrite;
 
-    protected Map             m_state;
+    protected Map<String,?>             m_state;
 
     protected Subject         m_subject;
 
@@ -148,9 +147,8 @@ public abstract class AbstractLoginModule implements LoginModule
         if ( succeeded() )
         {
             removePrincipals( m_previousWikiPrincipals );
-            for ( Iterator it = m_principals.iterator(); it.hasNext(); )
+            for ( Principal principal : m_principals )
             {
-                Principal principal = (Principal)it.next();
                 m_subject.getPrincipals().add( principal );
                 if ( log.isDebugEnabled() )
                 {
@@ -185,12 +183,12 @@ public abstract class AbstractLoginModule implements LoginModule
      * @param sharedState {@inheritDoc}
      * @param options {@inheritDoc}
      */
-    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options )
+    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
     {
-        m_previousWikiPrincipals = new HashSet();
+        m_previousWikiPrincipals = new HashSet<Principal>();
         m_principals = new HashSet<Principal>();
-        m_principalsToRemove = new HashSet();
-        m_principalsToOverwrite = new HashSet();
+        m_principalsToRemove = new HashSet<Principal>();
+        m_principalsToOverwrite = new HashSet<Principal>();
         m_subject = subject;
         m_handler = callbackHandler;
         m_state = sharedState;
@@ -254,11 +252,10 @@ public abstract class AbstractLoginModule implements LoginModule
      * Principal set.
      * @param principals the principals to remove
      */
-    private final void removePrincipals( Collection principals )
+    private final void removePrincipals( Collection<Principal> principals )
     {
-        for ( Iterator it = principals.iterator(); it.hasNext(); )
+        for ( Principal principal : principals )
         {
-            Principal principal = (Principal)it.next();
             if ( m_subject.getPrincipals().contains( principal ) )
             {
                 m_subject.getPrincipals().remove( principal );

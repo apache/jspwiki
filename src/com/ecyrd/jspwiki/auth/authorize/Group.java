@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Vector;
 
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
@@ -67,7 +66,7 @@ public class Group
     static final String[]  RESTRICTED_GROUPNAMES = new String[]
                                                   { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final Vector    m_members             = new Vector();
+    private final Vector<Principal>    m_members             = new Vector<Principal>();
 
     private String          m_creator             = null;
 
@@ -149,9 +148,9 @@ public class Group
             return false;
         }
 
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal principal : m_members )
         {
-            if ( !( g.isMember( (Principal) i.next() ) ) )
+            if ( !g.isMember( principal ) )
             {
                 return false;
             }
@@ -168,9 +167,9 @@ public class Group
     public int hashCode()
     {
         int hc = 0;
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal member : m_members )
         {
-            hc ^= i.next().hashCode();
+            hc ^= member.hashCode();
         }
         return hc;
     }
@@ -257,7 +256,7 @@ public class Group
      */
     public Principal[] members()
     {
-        return (Principal[]) m_members.toArray( new Principal[m_members.size()] );
+        return m_members.toArray( new Principal[m_members.size()] );
     }
 
     /**
@@ -328,10 +327,8 @@ public class Group
 
     private Principal findMember( String name )
     {
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal member : m_members )
         {
-            Principal member = (Principal) i.next();
-
             if ( member.getName().equals( name ) )
             {
                 return member;

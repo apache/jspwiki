@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -114,7 +113,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private WikiEngine            m_engine         = null;
 
-    private Map                   m_groups         = new HashMap();
+    private Map<String, Group>                   m_groups         = new HashMap<String, Group>();
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -166,8 +165,8 @@ public class XMLGroupDatabase implements GroupDatabase
     public Group[] groups() throws WikiSecurityException
     {
         buildDOM();
-        Collection groups = m_groups.values();
-        return (Group[])groups.toArray( new Group[groups.size()] );
+        Collection<Group> groups = m_groups.values();
+        return groups.toArray( new Group[groups.size()] );
     }
 
     /**
@@ -417,10 +416,8 @@ public class XMLGroupDatabase implements GroupDatabase
             io.write( "<groups>\n" );
 
             // Write each profile as a <group> node
-            Collection groups = m_groups.values();
-            for( Iterator it = groups.iterator(); it.hasNext(); )
+            for( Group group : m_groups.values() )
             {
-                Group group = (Group) it.next();
                 io.write( "  <" + GROUP_TAG + " " );
                 io.write( GROUP_NAME );
                 io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
@@ -435,10 +432,8 @@ public class XMLGroupDatabase implements GroupDatabase
                 io.write( ">\n" );
 
                 // Write each member as a <member> node
-                Principal[] members = group.members();
-                for( int j = 0; j < members.length; j++ )
+                for( Principal member : group.members() )
                 {
-                    Principal member = members[j];
                     io.write( "    <" + MEMBER_TAG + " " );
                     io.write( PRINCIPAL );
                     io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );

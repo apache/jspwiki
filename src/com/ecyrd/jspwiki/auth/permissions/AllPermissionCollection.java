@@ -38,7 +38,7 @@ public class AllPermissionCollection extends PermissionCollection
 
     private boolean           m_readOnly      = false;
 
-    protected final Hashtable m_permissions    = new Hashtable();
+    protected final Hashtable<Permission, Permission> m_permissions    = new Hashtable<Permission, Permission>();
 
     /**
      * Adds an AllPermission object to this AllPermissionCollection. If this
@@ -72,7 +72,7 @@ public class AllPermissionCollection extends PermissionCollection
      * collection.
      * @see java.security.PermissionCollection#elements()
      */
-    public Enumeration elements()
+    public Enumeration<Permission> elements()
     {
         return m_permissions.elements();
     }
@@ -106,10 +106,10 @@ public class AllPermissionCollection extends PermissionCollection
         }
 
         // Step through each AllPermission
-        Enumeration permEnum = m_permissions.elements();
+        Enumeration<Permission> permEnum = m_permissions.elements();
         while( permEnum.hasMoreElements() )
         {
-            Permission storedPermission = (Permission) permEnum.nextElement();
+            Permission storedPermission = permEnum.nextElement();
             if ( storedPermission.implies( permission ) )
             {
                 return true;

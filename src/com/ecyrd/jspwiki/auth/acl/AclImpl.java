@@ -70,7 +70,7 @@ public class AclImpl implements Acl, Serializable
                 }
             }
         }
-        return (Principal[])principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[principals.size()] );
     }
   
     private boolean hasEntry( AclEntry entry )

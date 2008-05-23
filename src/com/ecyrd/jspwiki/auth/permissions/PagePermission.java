@@ -421,9 +421,8 @@ public final class PagePermission extends Permission implements Serializable
         }
         int mask = 0;
         String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
-        for( int i = 0; i < actionList.length; i++ )
+        for( String action : actionList )
         {
-            String action = actionList[i];
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {
                 mask |= VIEW_MASK;

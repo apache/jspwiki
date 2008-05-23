@@ -320,7 +320,7 @@ public class JDBCGroupDatabase implements GroupDatabase
      */
     public Group[] groups() throws WikiSecurityException
     {
-        Set groups = new HashSet();
+        Set<Group> groups = new HashSet<Group>();
         Connection conn = null;
         try
         {
@@ -364,7 +364,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             }
         }
 
-        return (Group[]) groups.toArray( new Group[groups.size()] );
+        return groups.toArray( new Group[groups.size()] );
     }
 
     /**
