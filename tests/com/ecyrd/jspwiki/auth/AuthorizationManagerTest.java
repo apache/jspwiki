@@ -505,7 +505,7 @@ public class AuthorizationManagerTest extends TestCase
     public void testResolveUsers() throws WikiException
     {
         // We should be able to resolve a user by login, user, or wiki name
-        UserProfile profile = new DefaultUserProfile();
+        UserProfile profile = m_engine.getUserManager().getUserDatabase().newProfile();
         profile.setEmail( "authmanagertest@tester.net" );
         profile.setFullname( "AuthorizationManagerTest User" );
         profile.setLoginName( "authmanagertest" );

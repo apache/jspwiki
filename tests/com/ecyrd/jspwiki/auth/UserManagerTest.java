@@ -110,7 +110,7 @@ public class UserManagerTest extends TestCase
       String oldName      = "Test User " + now;
       String newLogin     = "RenamedLogin" + now;
       String newName      = "Renamed User " + now;
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( oldLogin );
       profile.setFullname ( oldName );
@@ -152,7 +152,7 @@ public class UserManagerTest extends TestCase
       assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Setup Step 4: change the user name in the profile and see what happens
-      profile = new DefaultUserProfile();
+      profile = m_db.newProfile();
       profile.setEmail    ( "testuser@testville.com" );
       profile.setLoginName( oldLogin );
       profile.setFullname ( newName );
@@ -211,7 +211,7 @@ public class UserManagerTest extends TestCase
       assertFalse  ( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Setup Step 8: re-save the profile with the new login name
-      profile = new DefaultUserProfile();
+      profile = m_db.newProfile();
       profile.setEmail    ( "testuser@testville.com" );
       profile.setLoginName( newLogin );
       profile.setFullname ( oldName );
@@ -268,7 +268,7 @@ public class UserManagerTest extends TestCase
       // Create a new user with random name
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
@@ -295,7 +295,7 @@ public class UserManagerTest extends TestCase
       // Create a new user with random name
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
@@ -349,7 +349,7 @@ public class UserManagerTest extends TestCase
       // Create a new user with random name
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
@@ -397,7 +397,7 @@ public class UserManagerTest extends TestCase
       // Create a new user with random name
       WikiSession session = m_engine.guestSession();
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "testuser@testville.com" );
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );

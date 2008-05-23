@@ -1,11 +1,13 @@
 package com.ecyrd.jspwiki.auth.user;
 
 import java.io.File;
+import java.io.Serializable;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -26,25 +28,31 @@ import com.ecyrd.jspwiki.util.CryptoUtil;
 public class JDBCUserDatabaseTest extends TestCase
 {
     private JDBCUserDatabase m_db   = null;
+    
+    private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
 
     private static final String INSERT_JANNE = "INSERT INTO users (" +
+          JDBCUserDatabase.DEFAULT_DB_UID + "," +
           JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
           JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
           JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
           JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
           JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," +
-          JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
-          "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
+          JDBCUserDatabase.DEFAULT_DB_CREATED + "," +
+          JDBCUserDatabase.DEFAULT_DB_ATTRIBUTES + ") VALUES (" +
+          "'-7739839977499061014'," + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
           "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," +
           "'JanneJalkanen'," +
-          "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
+          "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'," +
+          "'" + TEST_ATTRIBUTES +"'" + ");";
 
     private static final String INSERT_USER = "INSERT INTO users (" +
+        JDBCUserDatabase.DEFAULT_DB_UID + "," +
         JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
         JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
         JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
         JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
-        "'user@example.com'," + "'user'," +
+        "'-8629747547991531672'," + "'user@example.com'," + "'user'," +
         "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
         "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
 
@@ -103,7 +111,7 @@ public class JDBCUserDatabaseTest extends TestCase
 
         // Create a new user with random name
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-        UserProfile profile = new DefaultUserProfile();
+        UserProfile profile = m_db.newProfile();
         profile.setEmail("testuser@testville.com");
         profile.setLoginName( loginName );
         profile.setFullname( "FullName"+loginName );
@@ -120,11 +128,45 @@ public class JDBCUserDatabaseTest extends TestCase
         assertEquals( oldUserCount, m_db.getWikiNames().length );
     }
 
+    public void testAttributes() throws Exception
+    {
+        UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
+        
+        Map<Serializable,Serializable> attributes = profile.getAttributes();
+        assertEquals( 2, attributes.size() );
+        assertTrue( attributes.containsKey( "attribute1" ) );
+        assertTrue( attributes.containsKey( "attribute2" ) );
+        assertEquals( "some random value", attributes.get( "attribute1" ) );
+        assertEquals( "another value", attributes.get( "attribute2" ) );
+        
+        // Change attribute 1, and add another one
+        attributes.put( "attribute1", "replacement value" );
+        attributes.put( "attribute the third", "some value" );
+        m_db.save( profile );
+        
+        // Retrieve the profile again and make sure our values got saved
+        profile = m_db.findByEmail( "janne@ecyrd.com" );
+        attributes = profile.getAttributes();
+        assertEquals( 3, attributes.size() );
+        assertTrue( attributes.containsKey( "attribute1" ) );
+        assertTrue( attributes.containsKey( "attribute2" ) );
+        assertTrue( attributes.containsKey( "attribute the third" ) );
+        assertEquals( "replacement value", attributes.get( "attribute1" ) );
+        assertEquals( "another value", attributes.get( "attribute2" ) );
+        assertEquals( "some value", attributes.get( "attribute the third" ) );
+        
+        // Restore the original attributes and re-save
+        attributes.put( "attribute1", "some random value" );
+        attributes.remove( "attribute the third" );
+        m_db.save( profile );
+    }
+    
     public void testFindByEmail()
     {
         try
         {
             UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
+            assertEquals( -7739839977499061014L, profile.getUid() );
             assertEquals( "janne", profile.getLoginName() );
             assertEquals( "Janne Jalkanen", profile.getFullname() );
             assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -154,6 +196,7 @@ public class JDBCUserDatabaseTest extends TestCase
         try
         {
             UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
+            assertEquals( -7739839977499061014L, profile.getUid() );
             assertEquals( "janne", profile.getLoginName() );
             assertEquals( "Janne Jalkanen", profile.getFullname() );
             assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -178,11 +221,42 @@ public class JDBCUserDatabaseTest extends TestCase
         }
     }
 
+    public void testFindByUid()
+    {
+        try
+        {
+            UserProfile profile = m_db.findByUid( -7739839977499061014L );
+            assertEquals( -7739839977499061014L, profile.getUid() );
+            assertEquals( "janne", profile.getLoginName() );
+            assertEquals( "Janne Jalkanen", profile.getFullname() );
+            assertEquals( "JanneJalkanen", profile.getWikiName() );
+            assertEquals( "{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword() );
+            assertEquals( "janne@ecyrd.com", profile.getEmail() );
+            assertNotNull( profile.getCreated() );
+            assertNull( profile.getLastModified() );
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            assertTrue( false );
+        }
+        try
+        {
+            m_db.findByEmail( "foo@bar.org" );
+            // We should never get here
+            assertTrue( false );
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            assertTrue( true );
+        }
+    }
+    
     public void testFindByWikiName()
     {
         try
         {
             UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
+            assertEquals( -7739839977499061014L, profile.getUid() );
             assertEquals( "janne", profile.getLoginName() );
             assertEquals( "Janne Jalkanen", profile.getFullname() );
             assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -212,6 +286,7 @@ public class JDBCUserDatabaseTest extends TestCase
         try
         {
             UserProfile profile = m_db.findByLoginName( "janne" );
+            assertEquals( -7739839977499061014L, profile.getUid() );
             assertEquals( "janne", profile.getLoginName() );
             assertEquals( "Janne Jalkanen", profile.getFullname() );
             assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -256,7 +331,7 @@ public class JDBCUserDatabaseTest extends TestCase
         }
 
         // Create new user & verify it saved ok
-        UserProfile profile = new DefaultUserProfile();
+        UserProfile profile = m_db.newProfile();
         profile.setEmail( "renamed@example.com" );
         profile.setFullname( "Renamed User" );
         profile.setLoginName( "olduser" );
@@ -306,7 +381,7 @@ public class JDBCUserDatabaseTest extends TestCase
         try
         {
             // Overwrite existing user
-            UserProfile profile = new DefaultUserProfile();
+            UserProfile profile = m_db.newProfile();
             profile.setEmail( "user@example.com" );
             profile.setFullname( "Test User" );
             profile.setLoginName( "user" );
@@ -323,7 +398,7 @@ public class JDBCUserDatabaseTest extends TestCase
             assertNotSame( profile.getCreated(), profile.getLastModified() );
 
             // Create new user
-            profile = new DefaultUserProfile();
+            profile = m_db.newProfile();
             profile.setEmail( "user2@example.com" );
             profile.setFullname( "Test User 2" );
             profile.setLoginName( "user2" );
