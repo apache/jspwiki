@@ -1,7 +1,6 @@
 package com.ecyrd.jspwiki.util;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +13,8 @@ public class Serializer
      * Deserializes a Base64-encoded String into a HashMap. Both the keys and values
      * must implement {@link java.io.Serializable}.
      * @param rawString the String contents containing the map to be deserialized
-     * @return the attributes, parsed into a Properties object
-     * @throws SQLException if the contents cannot be parsed for any reason
+     * @return the attributes, parsed into a Map
+     * @throws IOException if the contents cannot be parsed for any reason
      */
     @SuppressWarnings("unchecked")
     public static Map<? extends Serializable,? extends Serializable> deserializeFromBase64( String rawString ) throws IOException
