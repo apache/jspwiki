@@ -260,7 +260,8 @@
     <javadoc destdir="${docs.javadoc}"
              use="yes"
              breakiterator="true"
-             windowtitle="${ant.project.name}">
+             windowtitle="${ant.project.name}"
+             maxmemory="256m">
       <packageset dir="${code.src}">
         <include name="com/ecyrd/**" />
       </packageset>
