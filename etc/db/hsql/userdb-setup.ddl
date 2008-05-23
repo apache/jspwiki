@@ -5,6 +5,7 @@ drop table @jspwiki.groupdatabase.membertable@ if exists;
 drop user @jdbc.user.id@;
 
 create table @jspwiki.userdatabase.table@ (
+  @jspwiki.userdatabase.uid@ bigint,
   @jspwiki.userdatabase.email@ varchar(100),
   @jspwiki.userdatabase.fullName@ varchar(100),
   @jspwiki.userdatabase.loginName@ varchar(100) not null,
@@ -12,7 +13,9 @@ create table @jspwiki.userdatabase.table@ (
   @jspwiki.userdatabase.wikiName@ varchar(100),
   @jspwiki.userdatabase.created@ timestamp,
   @jspwiki.userdatabase.modified@ timestamp,
-  constraint @jspwiki.userdatabase.table@ primary key (@jspwiki.userdatabase.loginName@)
+  @jspwiki.userdatabase.lockExpiry@ timestamp,
+  @jspwiki.userdatabase.attributes@ longvarchar,
+  constraint @jspwiki.userdatabase.table@ primary key (@jspwiki.userdatabase.uid@)
 );
 
 create table @jspwiki.userdatabase.roleTable@ (
@@ -44,26 +47,32 @@ grant select, insert, update, delete on @jspwiki.groupdatabase.table@ to @jdbc.u
 grant select, insert, update, delete on @jspwiki.groupdatabase.membertable@ to @jdbc.user.id@;
 
 insert into @jspwiki.userdatabase.table@ (
+  @jspwiki.userdatabase.uid@,
   @jspwiki.userdatabase.email@,
   @jspwiki.userdatabase.fullName@,
   @jspwiki.userdatabase.loginName@,
   @jspwiki.userdatabase.password@,
-  @jspwiki.userdatabase.wikiName@
+  @jspwiki.userdatabase.wikiName@,
+  @jspwiki.userdatabase.attributes@
 ) values (
+  '-7739839977499061014',
   'janne@ecyrd.com',
   'Janne Jalkanen',
   'janne',
   '{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==',
-  'JanneJalkanen'
+  'JanneJalkanen',
+  'attribute1=some random value\nattribute2=another value'
 );
   
 insert into @jspwiki.userdatabase.table@ (
+  @jspwiki.userdatabase.uid@,
   @jspwiki.userdatabase.email@,
   @jspwiki.userdatabase.fullName@,
   @jspwiki.userdatabase.loginName@,
   @jspwiki.userdatabase.password@,
   @jspwiki.userdatabase.wikiName@
 ) values (
+  '-6852820166199419346',
   'admin@locahost',
   'Administrator',
   'admin',
