@@ -20,17 +20,30 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Class for representing wiki user information, such as the login name, full
  * name, wiki name, and e-mail address. Note that since 2.6 the wiki name is
  * required to be automatically computed from the full name.
+ * As of 2.8, user profiles can store custom key/value String attributes, and store
+ * a unique ID. Locks are checked by {@link com.ecyrd.jspwiki.auth.AuthenticationManager};
+ * if a profile is locked, the user cannot log with that profile.
  * @author Andrew Jaquith
  * @since 2.3
  */
 public interface UserProfile
 {
+
+    /**
+     * Returns the attributes associated with this profile as a Map of key/value pairs.
+     * The Map should generally be a "live" Map; changes to the keys or values will be reflected
+     * in the UserProfile.
+     * @return the attributes
+     */
+    public Map<Serializable,Serializable> getAttributes();
 
     /**
      * Returns the creation date.
@@ -57,6 +70,18 @@ public interface UserProfile
     public Date getLastModified();
 
     /**
+     * Returns the date/time of expiration of the profile's lock, if it has been
+     * previously locked via {@link #setLockExpiry(Date)} and the lock is
+     * still active. If the profile is unlocked, this method returns <code>null</code>.
+     * Note that calling this method after the expiration date, <em>even if had previously
+     * been set explicitly by {@link #setLockExpiry(Date)}</em>, will always return
+     * <code>null</null>.
+     * 
+     * @return the lock expiration date
+     */
+    public Date getLockExpiry();
+
+    /**
      * Returns the user's login name.
      * @return the login name
      */
@@ -74,11 +99,27 @@ public interface UserProfile
     public String getPassword();
 
     /**
+     * Returns the unique identifier for the user profile. If not previously
+     * set, the value will be -1.
+     * @return the unique ID.
+     */
+    public long getUid();
+    
+    /**
      * Returns the user's wiki name, based on the full name with all
      * whitespace removed.
      * @return the wiki name.
      */
     public String getWikiName();
+
+    /**
+     * Returns
+     * <code>true</code> if the profile is currently locked (disabled); <code>false</code> otherwise.
+     * By default, profiles are created unlocked. Strictly speaking, calling this method is equivalent to calling {@link #getLockExpiry()}
+     * and, if it returns a non-<code>null</code> value, checking if the date returned is later than the current time.
+     * @return the result
+     */
+    public boolean isLocked();
 
     /**
      * Returns <code>true</code> if the profile has never been
@@ -113,6 +154,14 @@ public interface UserProfile
     public void setLastModified( Date date );
 
     /**
+     * Locks the profile until a specified lock expiration date.
+     * 
+     * @param expiry the date the lock expires; setting this value to <code>null</code>
+     * will cause the lock to be cleared.
+     */
+    public void setLockExpiry( Date expiry );
+    
+    /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
      * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)},
@@ -135,6 +184,12 @@ public interface UserProfile
      */
     public void setPassword( String arg );
 
+    /**
+     * Sets the unique identifier for the user profile. Note that UserDatabase implementations
+     * are required <em>not</em> to change the unique identifier after the initial save.
+     */
+    public void setUid( long uid );
+    
     /**
      * No-op method. In previous versions of JSPWiki, the method
      * set the user's wiki name directly. Now, the wiki name is automatically

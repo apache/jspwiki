@@ -30,9 +30,7 @@ import java.util.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
@@ -40,6 +38,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.Serializer;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence.
@@ -71,6 +70,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
     
     private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
 
+    private static final String ATTRIBUTES_TAG = "attributes";
+    
     private static final String CREATED           = "created";
     
     private static final String EMAIL             = "email";
@@ -81,7 +82,11 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
     private static final String LAST_MODIFIED     = "lastModified";
     
+    private static final String LOCK_EXPIRY    = "lockExpiry";
+
     private static final String PASSWORD          = "password";
+
+    private static final String UID = "uid";
 
     private static final String USER_TAG          = "user";
 
@@ -183,6 +188,19 @@ public class XMLUserDatabase extends AbstractUserDatabase
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+    {
+        UserProfile profile = findByAttribute( UID, Long.toString( uid ) );
+        if ( profile != null )
+        {
+            return profile;
+        }
+        throw new NoSuchPrincipalException( "Not in database: " + uid );
+    }
+
+    /**
      * Looks up and returns the first {@link UserProfile}in the user database
      * that matches a profile having a given wiki name. If the user database
      * does not contain a user with a matching attribute, throws a
@@ -231,7 +249,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 principals.add( principal );
             }
         }
-        return (Principal[])principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[principals.size()] );
     }
     
     /**
@@ -344,7 +362,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
             for( int i = 0; i < nodes.getLength(); i++ )
             {
                 Element user = (Element)nodes.item( i );
-                io.write( "<" + USER_TAG + " ");
+                io.write( "    <" + USER_TAG + " ");
+                io.write( UID );
+                io.write( "=\"" + user.getAttribute( UID ) + "\" " );
                 io.write( LOGIN_NAME );
                 io.write( "=\"" + user.getAttribute( LOGIN_NAME ) + "\" " );
                 io.write( WIKI_NAME );
@@ -359,7 +379,19 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 io.write( "=\"" + user.getAttribute( CREATED ) + "\" " );
                 io.write( LAST_MODIFIED );
                 io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
-                io.write(" />\n");
+                io.write( LOCK_EXPIRY );
+                io.write( "=\"" + user.getAttribute( LOCK_EXPIRY ) + "\" " );
+                io.write( ">" );
+                NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
+                for ( int j = 0; j < attributes.getLength(); j++ )
+                {
+                    Element attribute = (Element)attributes.item( j );
+                    String value = extractText( attribute );
+                    io.write( "\n        <" + ATTRIBUTES_TAG + ">" );
+                    io.write( value );
+                    io.write( "</" + ATTRIBUTES_TAG + ">" );
+                }
+                io.write("\n    </" +USER_TAG + ">\n");
             }
             io.write("</users>");
             io.close();
@@ -495,17 +527,29 @@ public class XMLUserDatabase extends AbstractUserDatabase
         Date modDate = new Date( System.currentTimeMillis() );
         if ( isNew )
         {
+            // Create new user node
             profile.setCreated( modDate );
             log.info( "Creating new user " + index );
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
             setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
         }
+        else
+        {
+            // To update existing user node, delete old attributes first...
+            NodeList artributes = user.getElementsByTagName( ATTRIBUTES_TAG );
+            for ( int i = 0; i < artributes.getLength(); i++ )
+            {
+                user.removeChild( artributes.item( i ) );
+            }
+        }
         setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
         setAttribute( user, WIKI_NAME, profile.getWikiName() );
         setAttribute( user, EMAIL, profile.getEmail() );
+        Date lockExpiry = profile.getLockExpiry();
+        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : c_format.format( lockExpiry ) );
 
         // Hash and save the new password if it's different from old one
         String newPassword = profile.getPassword();
@@ -515,6 +559,23 @@ public class XMLUserDatabase extends AbstractUserDatabase
             if ( !oldPassword.equals( newPassword ) )
             {
                 setAttribute( user, PASSWORD, getHash( newPassword ) );
+            }
+        }
+        
+        // Save the attributes as as Base64 string
+        if ( profile.getAttributes().size() > 0 )
+        {
+            try
+            {
+                String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
+                Element attributes = c_dom.createElement( ATTRIBUTES_TAG );
+                user.appendChild( attributes );
+                Text value = c_dom.createTextNode( encodedAttributes );
+                attributes.appendChild( value );
+            }
+            catch ( IOException e )
+            {
+                throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
             }
         }
 
@@ -531,7 +592,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
 
     /**
      * Private method that returns the first {@link UserProfile}matching a
-     * &lt;user&gt; element's supplied attribute.
+     * &lt;user&gt; element's supplied attribute. This method will also
+     * set the UID if it has not yet been set.
      * @param matchAttribute
      * @param index
      * @return the profile, or <code>null</code> if not found
@@ -551,21 +613,80 @@ public class XMLUserDatabase extends AbstractUserDatabase
             Element user = (Element) users.item( i );
             if ( user.getAttribute( matchAttribute ).equals( index ) )
             {
-                UserProfile profile = new DefaultUserProfile();
+                UserProfile profile = newProfile();
+                
+                // Parse basic attributes
+                profile.setUid( parseLong( user.getAttribute( UID ) ) );
+                if ( profile.getUid() == UID_NOT_SET )
+                {
+                    profile.setUid( generateUid( this ) );
+                }
                 profile.setLoginName( user.getAttribute( LOGIN_NAME ) );
                 profile.setFullname( user.getAttribute( FULL_NAME ) );
                 profile.setPassword( user.getAttribute( PASSWORD ) );
                 profile.setEmail( user.getAttribute( EMAIL ) );
+                
+                // Get created/modified timestamps
                 String created = user.getAttribute( CREATED );
                 String modified = user.getAttribute( LAST_MODIFIED );
-                
                 profile.setCreated( parseDate( profile, created ) );                  
                 profile.setLastModified( parseDate( profile, modified ) );                  
+                
+                // Is the profile locked?
+                String lockExpiry = user.getAttribute( LOCK_EXPIRY );
+                if ( lockExpiry == null || lockExpiry.length() == 0 )
+                {
+                    profile.setLockExpiry( null );
+                }
+                else
+                {
+                    profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
+                }
+                
+                // Extract all of the user's attributes (should only be one attributes tag, but you never know!)
+                NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
+                for ( int j = 0; j < attributes.getLength(); j++ )
+                {
+                    Element attribute = (Element)attributes.item( j );
+                    String serializedMap = extractText( attribute );
+                    try
+                    {
+                        Map<? extends Serializable,? extends Serializable> map = Serializer.deserializeFromBase64( serializedMap );
+                        profile.getAttributes().putAll( map );
+                    }
+                    catch ( IOException e )
+                    {
+                        log.error( "Could not parse user profile attributes!", e );
+                    }
+                }
 
                 return profile;
             }
         }
         return null;
+    }
+
+    /**
+     * Extracts all of the text nodes that are immediate children of an Element.
+     * @param element the base element
+     * @return the text nodes that are immediate children of the base element, concatenated together
+     */
+    private String extractText( Element element )
+    {
+        String text = "";
+        if ( element.getChildNodes().getLength() > 0 )
+        {
+            NodeList children = element.getChildNodes();
+            for ( int k = 0; k < children.getLength(); k++ )
+            {
+                Node child = children.item( k );
+                if ( child.getNodeType() == Node.TEXT_NODE )
+                {
+                    text = text + ((Text)child).getData();
+                }
+            }
+        }
+        return text;
     }
 
     /**
@@ -614,6 +735,16 @@ public class XMLUserDatabase extends AbstractUserDatabase
         for( int i = 0; i < users.getLength(); i++ )
         {
             Element user = (Element) users.item( i );
+            
+            // Sanitize UID (and generate a new one if one does not exist)
+            String uid = user.getAttribute( UID ).trim();
+            if ( uid == null || uid.length() == 0 || "-1".equals( uid ) )
+            {
+                uid = String.valueOf( generateUid( this ) );
+                user.setAttribute( UID, uid );
+            }
+            
+            // Sanitize dates
             String loginName = user.getAttribute( LOGIN_NAME );
             String created = user.getAttribute( CREATED );
             String modified = user.getAttribute( LAST_MODIFIED );
@@ -645,7 +776,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
     }
     
     /**
-     * Private method that sets an attibute value for a supplied DOM element.
+     * Private method that sets an attribute value for a supplied DOM element.
      * @param element the element whose attribute is to be set
      * @param attribute the name of the attribute to set
      * @param value the desired attribute value

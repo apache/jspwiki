@@ -20,12 +20,11 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
+import java.io.*;
 import java.security.Principal;
 import java.sql.*;
+import java.util.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -37,6 +36,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.Serializer;
 
 /**
  * <p>
@@ -64,6 +64,11 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * <td><code>jspwiki.userdatabase.table</code></td>
  * <td><code>users</code></td>
  * <td>The table that stores the user profiles</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.userdatabase.attributes</code></td>
+ * <td><code>attributes</code></td>
+ * <td>The CLOB column containing the profile's custom attributes, stored as key/value strings, each separated by newline.</td>
  * </tr>
  * <tr>
  * <td><code>jspwiki.userdatabase.created</code></td>
@@ -96,9 +101,19 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  * <td>The column containing the profile's last-modified timestamp</td>
  * </tr>
  * <tr>
+ * <td><code>jspwiki.userdatabase.uid</code></td>
+ * <td><code>uid</code></td>
+ * <td>The column containing the profile's unique identifier, as a long integer</td>
+ * </tr>
+ * <tr>
  * <td><code>jspwiki.userdatabase.wikiName</code></td>
  * <td><code>wiki_name</code></td>
  * <td>The column containing the user's wiki name</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.userdatabase.lockExpiry</code></td>
+ * <td><code>lock_expiry</code></td>
+ * <td>The column containing the date/time when the profile, if locked, should be unlocked.</td>
  * </tr>
  * <tr>
  * <td><code>jspwiki.userdatabase.roleTable</code></td>
@@ -163,15 +178,17 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private static final String NOTHING = "";
 
+    public static final String DEFAULT_DB_ATTRIBUTES = "attributes";
+
     public static final String DEFAULT_DB_CREATED = "created";
 
     public static final String DEFAULT_DB_EMAIL = "email";
 
     public static final String DEFAULT_DB_FULL_NAME = "full_name";
 
-    public static final String DEFAULT_DB_HASH_PREFIX = "true";
-
     public static final String DEFAULT_DB_JNDI_NAME = "jdbc/UserDatabase";
+
+    public static final String DEFAULT_DB_LOCK_EXPIRY = "lock_expiry";
 
     public static final String DEFAULT_DB_MODIFIED = "modified";
 
@@ -185,7 +202,11 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     public static final String DEFAULT_DB_PASSWORD = "password";
 
+    public static final String DEFAULT_DB_UID = "uid";
+
     public static final String DEFAULT_DB_WIKI_NAME = "wiki_name";
+
+    public static final String PROP_DB_ATTRIBUTES = "jspwiki.userdatabase.attributes";
 
     public static final String PROP_DB_CREATED = "jspwiki.userdatabase.created";
 
@@ -195,13 +216,15 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     public static final String PROP_DB_DATASOURCE = "jspwiki.userdatabase.datasource";
 
-    public static final String PROP_DB_HASH_PREFIX = "jspwiki.userdatabase.hashPrefix";
+    public static final String PROP_DB_LOCK_EXPIRY = "jspwiki.userdatabase.lockExpiry";
 
     public static final String PROP_DB_LOGIN_NAME = "jspwiki.userdatabase.loginName";
 
     public static final String PROP_DB_MODIFIED = "jspwiki.userdatabase.modified";
 
     public static final String PROP_DB_PASSWORD = "jspwiki.userdatabase.password";
+
+    public static final String PROP_DB_UID = "jspwiki.userdatabase.uid";
 
     public static final String PROP_DB_ROLE = "jspwiki.userdatabase.role";
 
@@ -223,6 +246,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private String m_findByLoginName = null;
 
+    private String m_findByUid = null;
+
     private String m_findByWikiName = null;
 
     private String m_renameProfile = null;
@@ -243,9 +268,13 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private String m_userTable = null;
 
+    private String m_attributes = null;
+
     private String m_email = null;
 
     private String m_fullName = null;
+
+    private String m_lockExpiry = null;
 
     private String m_loginName = null;
 
@@ -255,6 +284,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
     private String m_roleTable = null;
 
+    private String m_uid = null;
+    
     private String m_wikiName = null;
 
     private String m_created = null;
@@ -351,6 +382,14 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(String)
      */
+    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+    {
+        return findByPreparedStatement( m_findByUid, Long.valueOf( uid ) );
+    }
+
+    /**
+     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(String)
+     */
     public UserProfile findByWikiName( String index ) throws NoSuchPrincipalException
     {
         return findByPreparedStatement( m_findByWikiName, index );
@@ -422,23 +461,47 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             m_userTable = props.getProperty( PROP_DB_TABLE, DEFAULT_DB_TABLE );
             m_email = props.getProperty( PROP_DB_EMAIL, DEFAULT_DB_EMAIL );
             m_fullName = props.getProperty( PROP_DB_FULL_NAME, DEFAULT_DB_FULL_NAME );
+            m_lockExpiry = props.getProperty( PROP_DB_LOCK_EXPIRY, DEFAULT_DB_LOCK_EXPIRY );
             m_loginName = props.getProperty( PROP_DB_LOGIN_NAME, DEFAULT_DB_LOGIN_NAME );
             m_password = props.getProperty( PROP_DB_PASSWORD, DEFAULT_DB_PASSWORD );
+            m_uid = props.getProperty( PROP_DB_UID, DEFAULT_DB_UID );
             m_wikiName = props.getProperty( PROP_DB_WIKI_NAME, DEFAULT_DB_WIKI_NAME );
             m_created = props.getProperty( PROP_DB_CREATED, DEFAULT_DB_CREATED );
             m_modified = props.getProperty( PROP_DB_MODIFIED, DEFAULT_DB_MODIFIED );
+            m_attributes = props.getProperty( PROP_DB_ATTRIBUTES, DEFAULT_DB_ATTRIBUTES );
 
             m_findAll = "SELECT * FROM " + m_userTable;
             m_findByEmail = "SELECT * FROM " + m_userTable + " WHERE " + m_email + "=?";
             m_findByFullName = "SELECT * FROM " + m_userTable + " WHERE " + m_fullName + "=?";
             m_findByLoginName = "SELECT * FROM " + m_userTable + " WHERE " + m_loginName + "=?";
+            m_findByUid = "SELECT * FROM " + m_userTable + " WHERE " + m_uid + "=?";
             m_findByWikiName = "SELECT * FROM " + m_userTable + " WHERE " + m_wikiName + "=?";
 
-            // Prepare the user isert/update SQL
-            m_insertProfile = "INSERT INTO " + m_userTable + " (" + m_email + "," + m_fullName + "," + m_password + ","
-                              + m_wikiName + "," + m_modified + "," + m_loginName + "," + m_created + ") VALUES (?,?,?,?,?,?,?)";
-            m_updateProfile = "UPDATE " + m_userTable + " SET " + m_email + "=?," + m_fullName + "=?," + m_password + "=?,"
-                              + m_wikiName + "=?," + m_modified + "=? WHERE " + m_loginName + "=?";
+            // The user insert SQL prepared statement
+            m_insertProfile = "INSERT INTO " + m_userTable + " ("
+                              + m_uid + ","
+                              + m_email + ","
+                              + m_fullName + ","
+                              + m_password + ","
+                              + m_wikiName + ","
+                              + m_modified + ","
+                              + m_loginName + ","
+                              + m_attributes + ","
+                              + m_created
+                              + ") VALUES (?,?,?,?,?,?,?,?,?)";
+            
+            // The user update SQL prepared statement
+            m_updateProfile = "UPDATE " + m_userTable + " SET "
+                              + m_uid + "=?,"
+                              + m_email + "=?,"
+                              + m_fullName + "=?,"
+                              + m_password + "=?,"
+                              + m_wikiName + "=?,"
+                              + m_modified + "=?,"
+                              + m_loginName + "=?,"
+                              + m_attributes + "=?,"
+                              + m_lockExpiry + "=? "
+                              + "WHERE " + m_loginName + "=?";
 
             // Prepare the role insert SQL
             m_roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
@@ -647,17 +710,27 @@ public class JDBCUserDatabase extends AbstractUserDatabase
 
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
             Date modDate = new Date( ts.getTime() );
+            java.sql.Date lockExpiry = profile.getLockExpiry() == null ? null : new java.sql.Date( profile.getLockExpiry().getTime() );
             if( existingProfile == null )
             {
                 // User is new: insert new user record
                 ps = conn.prepareStatement( m_insertProfile );
-                ps.setString( 1, profile.getEmail() );
-                ps.setString( 2, profile.getFullname() );
-                ps.setString( 3, password );
-                ps.setString( 4, profile.getWikiName() );
-                ps.setTimestamp( 5, ts );
-                ps.setString( 6, profile.getLoginName() );
-                ps.setTimestamp( 7, ts );
+                ps.setLong( 1, profile.getUid() );
+                ps.setString( 2, profile.getEmail() );
+                ps.setString( 3, profile.getFullname() );
+                ps.setString( 4, password );
+                ps.setString( 5, profile.getWikiName() );
+                ps.setTimestamp( 6, ts );
+                ps.setString( 7, profile.getLoginName() );
+                try
+                {
+                    ps.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                }
+                catch ( IOException e )
+                {
+                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
+                }
+                ps.setTimestamp( 9, ts );
                 ps.execute();
                 ps.close();
 
@@ -687,12 +760,23 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
                 // User exists: modify existing record
                 ps = conn.prepareStatement( m_updateProfile );
-                ps.setString( 1, profile.getEmail() );
-                ps.setString( 2, profile.getFullname() );
-                ps.setString( 3, password );
-                ps.setString( 4, profile.getWikiName() );
-                ps.setTimestamp( 5, ts );
-                ps.setString( 6, profile.getLoginName() );
+                ps.setLong( 1, profile.getUid() );
+                ps.setString( 2, profile.getEmail() );
+                ps.setString( 3, profile.getFullname() );
+                ps.setString( 4, password );
+                ps.setString( 5, profile.getWikiName() );
+                ps.setTimestamp( 6, ts );
+                ps.setString( 7, profile.getLoginName() );
+                try
+                {
+                    ps.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                }
+                catch ( IOException e )
+                {
+                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
+                }
+                ps.setDate( 9, lockExpiry );
+                ps.setString( 10, profile.getLoginName() );
                 ps.execute();
                 ps.close();
             }
@@ -722,11 +806,15 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     }
 
     /**
-     * @param rs
-     * @return
+     * Private method that returns the first {@link UserProfile} matching a
+     * named column's value. This method will also set the UID if it has not yet been set.     
+     * @param sql the SQL statement that should be prepared; it must have one parameter
+     * to set (either a String or a Long)
+     * @param index the value to match
+     * @return the resolved UserProfile
      * @throws SQLException
      */
-    private UserProfile findByPreparedStatement( String sql, String index ) throws NoSuchPrincipalException
+    private UserProfile findByPreparedStatement( String sql, Object index ) throws NoSuchPrincipalException
     {
         UserProfile profile = null;
         boolean found = false;
@@ -742,7 +830,21 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             }
 
             PreparedStatement ps = conn.prepareStatement( sql );
-            ps.setString( 1, index );
+            
+            // Set the parameter to search by
+            if ( index instanceof String )
+            {
+                ps.setString( 1, (String)index );
+            }
+            else if ( index instanceof Long )
+            {
+                ps.setLong( 1, ( (Long)index).longValue() );
+            }
+            else {
+                throw new IllegalArgumentException( "Index type not recognized!" );
+            }
+            
+            // Go and get the record!
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
             {
@@ -751,13 +853,37 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                     unique = false;
                     break;
                 }
-                profile = new DefaultUserProfile();
+                profile = newProfile();
+                
+                // Fetch the basic user attributes
+                profile.setUid( rs.getLong( m_uid ) );
+                if ( profile.getUid() == UID_NOT_SET )
+                {
+                    profile.setUid( generateUid( this ) );
+                }
                 profile.setCreated( rs.getTimestamp( m_created ) );
                 profile.setEmail( rs.getString( m_email ) );
                 profile.setFullname( rs.getString( m_fullName ) );
                 profile.setLastModified( rs.getTimestamp( m_modified ) );
+                Date lockExpiry = rs.getDate( m_lockExpiry );
+                profile.setLockExpiry( rs.wasNull() ? null : lockExpiry );
                 profile.setLoginName( rs.getString( m_loginName ) );
                 profile.setPassword( rs.getString( m_password ) );
+                
+                // Fetch the user attributes
+                String rawAttributes = rs.getString( m_attributes );
+                if ( rawAttributes != null )
+                {
+                    try
+                    {
+                        Map<? extends Serializable,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
+                        profile.getAttributes().putAll( attributes );
+                    }
+                    catch ( IOException e )
+                    {
+                        log.error( "Could not parse user profile attributes!", e );
+                    }
+                }
                 found = true;
             }
             ps.close();

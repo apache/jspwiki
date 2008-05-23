@@ -20,12 +20,11 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.catalina.util.HexUtils;
 import org.apache.log4j.Logger;
@@ -49,6 +48,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
+    protected static final long UID_NOT_SET = 0;
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -183,12 +183,12 @@ public abstract class AbstractUserDatabase implements UserDatabase
     public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
-     * Factory method that instantiates a new DefaultUserProfile.
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#newProfile()
+     * Factory method that instantiates a new DefaultUserProfile with a new, distinct
+     * unique identifier.
      */
     public UserProfile newProfile()
     {
-        return new DefaultUserProfile();
+        return DefaultUserProfile.newProfile( this );
     }
 
     /**
@@ -262,6 +262,30 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * Generates a new random user identifier (uid) that is guaranteed to be unique.
+     * @return
+     */
+    protected static long generateUid( UserDatabase db )
+    {
+        // Keep generating UUIDs until we find one that doesn't collide
+        long uid;
+        boolean collision;
+        do {
+            uid = UUID.randomUUID().getLeastSignificantBits();
+            collision = true;
+            try
+            {
+                db.findByUid( uid );
+            }
+            catch ( NoSuchPrincipalException e )
+            {
+                collision = false;
+            }
+        } while ( collision || uid == UID_NOT_SET );
+        return uid;
+    }
+    
+    /**
      * Private method that calculates the salted SHA-1 hash of a given
      * <code>String</code>. Note that as of JSPWiki 2.8, this method calculates
      * a <em>salted</em> hash rather than a plain hash.
@@ -310,6 +334,27 @@ public abstract class AbstractUserDatabase implements UserDatabase
             log.fatal("UTF-8 not supported!?!");
         }
         return hash;
+    }
+
+    /**
+     * Parses a long integer from a supplied string, or returns 0 if not parsable.
+     * @param value the string to parse
+     * @return the value parsed
+     */
+    protected long parseLong( String value )
+    {
+        if ( value == null || value.length() == 0 )
+        {
+            return 0;
+        }
+        try
+        {
+            return Long.parseLong( value );
+        }
+        catch ( NumberFormatException e )
+        {
+            return 0;
+        }
     }
 
 }

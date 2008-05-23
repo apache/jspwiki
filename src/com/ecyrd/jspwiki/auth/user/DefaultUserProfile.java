@@ -20,7 +20,9 @@
  */
 package com.ecyrd.jspwiki.auth.user;
 
-import java.util.Date;
+.import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Default implementation for representing wiki user information, such as the
@@ -34,21 +36,30 @@ public class DefaultUserProfile implements UserProfile
     private static final String EMPTY_STRING = "";
 
     private static final String WHITESPACE = "\\s";
+    
+    private Map<Serializable,Serializable> m_attributes = new HashMap<Serializable,Serializable>();
 
     private Date     m_created   = null;
 
     private String   m_email     = null;
 
     private String   m_fullname  = null;
+    
+    private Date m_lockExpiry = null;
 
     private String   m_loginName = null;
 
     private Date     m_modified  = null;
 
     private String   m_password  = null;
+    
+    private long m_uid = -1;
 
     private String   m_wikiname  = null;
-
+.
+    /**
+     * {@inheritDoc}
+     */
     public boolean equals( Object o )
     {
         if ( ( o != null ) && ( o instanceof UserProfile ) )
@@ -262,5 +273,61 @@ public class DefaultUserProfile implements UserProfile
             return false;
         }
         return arg1.equals( arg2 );
+    }
+
+    //--------------------------- Attribute and lock interface implementations ---------------------------
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Map<Serializable,Serializable> getAttributes()
+    {
+        return m_attributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLockExpiry()
+    {
+        return isLocked() ? m_lockExpiry : null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public long getUid()
+    {
+        return m_uid;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isLocked()
+    {
+        boolean locked =  m_lockExpiry != null && System.currentTimeMillis() < m_lockExpiry.getTime();
+
+        // Clear the lock if it's expired already
+        if ( !locked && m_lockExpiry != null ){
+            m_lockExpiry = null;
+        }
+        return locked;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLockExpiry( Date expiry )
+    {
+        m_lockExpiry = expiry;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void setUid( long uid )
+    {
+        m_uid = uid;
     }
 }

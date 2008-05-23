@@ -127,6 +127,17 @@ public interface UserDatabase
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database
+     * that matches a profile having a given unique ID (uid). If the user database
+     * does not contain a user with a unique ID, it throws a
+     * {@link NoSuchPrincipalException}.
+     * @param uid the unique identifier of the desired user profile
+     * @return the user profile
+     * @since 2.8
+     */
+    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException;
+    
+    /**
+     * Looks up and returns the first {@link UserProfile} in the user database
      * that matches a profile having a given wiki name. If the user database
      * does not contain a user with a matching attribute, throws a
      * {@link NoSuchPrincipalException}.
