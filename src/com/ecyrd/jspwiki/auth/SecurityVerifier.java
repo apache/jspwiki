@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.*;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -223,47 +222,45 @@ public final class SecurityVerifier
         s.append( "  <tr>\n" );
         for( int i = 0; i < roles.length; i++ )
         {
-            for( int j = 0; j < pageActions.length; j++ )
+            for( String pageAction : pageActions )
             {
-                String action = pageActions[j].substring( 0, 1 );
-                s.append( "    <th title=\"" + pageActions[j] + "\">" + action + "</th>\n" );
+                String action = pageAction.substring( 0, 1 );
+                s.append( "    <th title=\"" + pageAction + "\">" + action + "</th>\n" );
             }
         }
         s.append( "  </tr>\n" );
 
         // Write page permission tests first
-        for( int i = 0; i < pages.length; i++ )
+        for( String page : pages )
         {
-            String page = pages[i];
             s.append( "  <tr>\n" );
             s.append( "    <td>PagePermission \"" + wiki + ":" + page + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            for( Principal role : roles )
             {
-                for( int k = 0; k < pageActions.length; k++ )
+                for( String pageAction : pageActions )
                 {
-                    Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageActions[k] );
-                    s.append( printPermissionTest( permission, roles[j], 1 ) );
+                    Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageAction );
+                    s.append( printPermissionTest( permission, role, 1 ) );
                 }
             }
             s.append( "  </tr>\n" );
         }
 
         // Now do the group tests
-        for( int i = 0; i < groups.length; i++ )
+        for( String group : groups )
         {
-            String group = groups[i];
             s.append( "  <tr>\n" );
             s.append( "    <td>GroupPermission \"" + wiki + ":" + group + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            for( Principal role : roles )
             {
-                for( int k = 0; k < groupActions.length; k++ )
+                for( String groupAction : groupActions )
                 {
                     Permission permission = null;
-                    if ( groupActions[k] != null)
+                    if ( groupAction != null)
                     {
-                        permission = new GroupPermission( wiki + ":" + group, groupActions[k] );
+                        permission = new GroupPermission( wiki + ":" + group, groupAction );
                     }
-                    s.append( printPermissionTest( permission, roles[j], 1 ) );
+                    s.append( printPermissionTest( permission, role, 1 ) );
                 }
             }
             s.append( "  </tr>\n" );
@@ -273,14 +270,14 @@ public final class SecurityVerifier
         // Now check the wiki-wide permissions
         String[] wikiPerms = new String[]
         { "createGroups", "createPages", "login", "editPreferences", "editProfile" };
-        for( int i = 0; i < wikiPerms.length; i++ )
+        for( String wikiPerm : wikiPerms )
         {
             s.append( "  <tr>\n" );
-            s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerms[i] + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerm + "\"</td>\n" );
+            for( Principal role : roles )
             {
-                Permission permission = new WikiPermission( wiki, wikiPerms[i] );
-                s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
+                Permission permission = new WikiPermission( wiki, wikiPerm );
+                s.append( printPermissionTest( permission, role, pageActions.length ) );
             }
             s.append( "  </tr>\n" );
         }
@@ -288,10 +285,10 @@ public final class SecurityVerifier
         // Lastly, check for AllPermission
         s.append( "  <tr>\n" );
         s.append( "    <td>AllPermission \"" + wiki + "\"</td>\n" );
-        for( int j = 0; j < roles.length; j++ )
+        for( Principal role : roles )
         {
             Permission permission = new AllPermission( wiki );
-            s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
+            s.append( printPermissionTest( permission, role, pageActions.length ) );
         }
         s.append( "  </tr>\n" );
 
@@ -374,9 +371,9 @@ public final class SecurityVerifier
         s.append( "  </tr>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th>Anonymous</th>\n" );
-        for( int i = 0; i < roles.length; i++ )
+        for( Principal role : roles )
         {
-            s.append( "    <th>" + roles[i].getName() + "</th>\n" );
+            s.append( "    <th>" + role.getName() + "</th>\n" );
         }
         s.append( "</tr>\n" );
         s.append( "</thead>\n" );
@@ -402,10 +399,9 @@ public final class SecurityVerifier
                 s.append( "\"" );
                 s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
                 s.append( "&nbsp;</td>\n" );
-                for( int j = 0; j < roles.length; j++ )
+                for( Principal role : roles )
                 {
-                    Role role = (Role) roles[j];
-                    boolean allowed = allowsAnonymous || wca.isConstrained( jsp, role );
+                    boolean allowed = allowsAnonymous || wca.isConstrained( jsp, (Role)role );
                     s.append( "    <td title=\"" );
                     s.append( allowed ? "ALLOW: " : "DENY: " );
                     s.append( jsp );
@@ -470,9 +466,8 @@ public final class SecurityVerifier
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         Principal[] containerRoles = authorizer.getRoles();
         boolean missing = false;
-        for( int i = 0; i < m_policyPrincipals.length; i++ )
+        for( Principal principal : m_policyPrincipals )
         {
-            Principal principal = m_policyPrincipals[i];
             if ( principal instanceof Role )
             {
                 Role role = (Role) principal;
@@ -713,12 +708,11 @@ public final class SecurityVerifier
 
             // Verify the file
             policy.read();
-            List errors = policy.getMessages();
+            List<Exception> errors = (List<Exception>)policy.getMessages();
             if ( errors.size() > 0 )
             {
-                for( Iterator it = errors.iterator(); it.hasNext(); )
+                for( Exception e : errors )
                 {
-                    Exception e = (Exception) it.next();
                     m_session.addMessage( ERROR_POLICY, e.getMessage() );
                 }
             }
@@ -730,21 +724,20 @@ public final class SecurityVerifier
 
             // Stash the unique principals mentioned in the file,
             // plus our standard roles.
-            Set principals = new LinkedHashSet();
+            Set<Principal> principals = new LinkedHashSet<Principal>();
             principals.add( Role.ALL );
             principals.add( Role.ANONYMOUS );
             principals.add( Role.ASSERTED );
             principals.add( Role.AUTHENTICATED );
             ProtectionDomain[] domains = policy.getProtectionDomains();
-            for ( int i = 0; i < domains.length; i++ )
+            for ( ProtectionDomain domain : domains )
             {
-                Principal[] domainPrincipals = domains[i].getPrincipals();
-                for( int j = 0; j < domainPrincipals.length; j++ )
+                for( Principal principal : domain.getPrincipals() )
                 {
-                    principals.add( domainPrincipals[j] );
+                    principals.add( principal );
                 }
             }
-            m_policyPrincipals = (Principal[]) principals.toArray( new Principal[principals.size()] );
+            m_policyPrincipals = principals.toArray( new Principal[principals.size()] );
         }
         catch( IOException e )
         {
@@ -765,7 +758,7 @@ public final class SecurityVerifier
         Subject subject = new Subject();
         subject.getPrincipals().add( principal );
         boolean allowedByGlobalPolicy = ((Boolean)
-            Subject.doAsPrivileged( subject, new PrivilegedAction()
+            Subject.doAsPrivileged( subject, new PrivilegedAction<Object>()
             {
                 public Object run()
                 {
@@ -837,11 +830,11 @@ public final class SecurityVerifier
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         try
         {
-            UserProfile profile = new DefaultUserProfile();
-            profile.setEmail("testuser@testville.com");
+            UserProfile profile = db.newProfile();
+            profile.setEmail( "testuser@testville.com" );
             profile.setLoginName( loginName );
             profile.setFullname( "FullName"+loginName );
-            profile.setPassword("password");
+            profile.setPassword( "password" );
             db.save(profile);
 
             // Make sure the profile saved successfully

@@ -103,7 +103,7 @@ public final class AuthorizationManager
     private Authorizer                        m_authorizer      = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map                               m_cachedPds       = new WeakHashMap();
+    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
 
     private WikiEngine                        m_engine          = null;
 
@@ -232,13 +232,11 @@ public final class AuthorizationManager
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + String.valueOf(aclPrincipals) );
+        log.debug( "Checking for principal: " + String.valueOf( aclPrincipals ) );
         log.debug( "Permission: " + permission );
 
-        for( int i = 0; i < aclPrincipals.length; i++ )
+        for( Principal aclPrincipal : aclPrincipals )
         {
-            Principal aclPrincipal = aclPrincipals[i];
-
             // If the ACL principal we're looking at is unresolved,
             // try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal )
@@ -368,9 +366,8 @@ public final class AuthorizationManager
         {
             String principalName = principal.getName();
             Principal[] userPrincipals = session.getPrincipals();
-            for( int i = 0; i < userPrincipals.length; i++ )
+            for( Principal userPrincipal : userPrincipals )
             {
-                Principal userPrincipal = userPrincipals[i];
                 if( userPrincipal.getName().equals( principalName ) )
                 {
                     return true;
@@ -388,6 +385,7 @@ public final class AuthorizationManager
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
+    @SuppressWarnings("deprecation")
     public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
@@ -412,17 +410,17 @@ public final class AuthorizationManager
                 File policyFile = new File( policyURL.getPath() );
                 m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
                 m_localPolicy.refresh();
-                log.info("Initialized default security policy: " + policyFile.getAbsolutePath());
+                log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );
             }
             else
             {
-                StringBuffer sb = new StringBuffer("JSPWiki was unable to initialize the ");
-                sb.append("default security policy (WEB-INF/jspwiki.policy) file. ");
-                sb.append("Please ensure that the jspwiki.policy file exists in the default location. ");
-                sb.append("This file should exist regardless of the existance of a global policy file. ");
-                sb.append("The global policy file is identified by the java.security.policy variable. ");
-                WikiSecurityException wse = new WikiSecurityException(sb.toString());
-                log.fatal(sb.toString(), wse);
+                StringBuffer sb = new StringBuffer( "JSPWiki was unable to initialize the " );
+                sb.append( "default security policy (WEB-INF/jspwiki.policy) file. " );
+                sb.append( "Please ensure that the jspwiki.policy file exists in the default location. " );
+                sb.append( "This file should exist regardless of the existance of a global policy file. " );
+                sb.append( "The global policy file is identified by the java.security.policy variable. " );
+                WikiSecurityException wse = new WikiSecurityException( sb.toString() );
+                log.fatal( sb.toString(), wse );
                 throw wse;
             }
         }
@@ -464,7 +462,7 @@ public final class AuthorizationManager
         {
             try
             {
-                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", clazz );
+                Class<?> authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", clazz );
                 Object impl = authClass.newInstance();
                 return impl;
             }
@@ -499,16 +497,16 @@ public final class AuthorizationManager
      */
     protected boolean allowedByLocalPolicy( Principal[] principals, Permission permission )
     {
-        for ( int i = 0; i < principals.length; i++ )
+        for ( Principal principal : principals )
         {
             // Get ProtectionDomain for this Principal from cache, or create new one
-            ProtectionDomain pd = (ProtectionDomain)m_cachedPds.get( principals[i] );
+            ProtectionDomain pd = m_cachedPds.get( principal );
             if ( pd == null )
             {
                 ClassLoader cl = this.getClass().getClassLoader();
                 CodeSource cs = new CodeSource( null, (Certificate[])null );
-                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principals[i] } );
-                m_cachedPds.put( principals[i], pd );
+                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
+                m_cachedPds.put( principal, pd );
             }
 
             // Consult the local policy and get the answer
@@ -542,9 +540,9 @@ public final class AuthorizationManager
     {
         if( !m_useJAAS ) return true;
 
-        Boolean allowed = (Boolean)WikiSession.doPrivileged( session, new PrivilegedAction()
+        Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
         {
-            public Object run()
+            public Boolean run()
             {
                 try
                 {

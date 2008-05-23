@@ -37,7 +37,7 @@ import java.util.Comparator;
  *  @author Andrew Jaquith
  *  @since  2.2
  */
-public final class WikiPrincipal implements Principal, Comparable, Serializable
+public final class WikiPrincipal implements Principal, Comparable<Principal>, Serializable
 {
     private static final long serialVersionUID = 1L;
 
@@ -61,7 +61,7 @@ public final class WikiPrincipal implements Principal, Comparable, Serializable
     public static final String UNSPECIFIED  = "unspecified";
     
     /** Static instance of Comparator that allows Principals to be sorted. */
-    public static final Comparator COMPARATOR = new PrincipalComparator();
+    public static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
     private static final String[] VALID_TYPES;
     
@@ -172,14 +172,9 @@ public final class WikiPrincipal implements Principal, Comparable, Serializable
      *  @return {@inheritDoc}
      *  @since 2.7.0
      */
-    public int compareTo(Object o)
+    public int compareTo(Principal o)
     {
-        if( o instanceof Principal )
-        {
-            return getName().compareTo( ((Principal)o).getName() );
-        }
-        
-        throw new ClassCastException( "WikiPrincipal can only be compared to other Principals" );
+        return getName().compareTo( o.getName() );
     }
     
 

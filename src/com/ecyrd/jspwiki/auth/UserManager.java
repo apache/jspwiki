@@ -103,6 +103,7 @@ public final class UserManager
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
+    @SuppressWarnings("deprecation")
     public final void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
@@ -146,7 +147,7 @@ public final class UserManager
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
-            Class dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
+            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
             m_database = (UserDatabase) dbClass.newInstance();
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
@@ -470,6 +471,7 @@ public final class UserManager
      * @param context the current wiki context
      * @param profile the supplied UserProfile
      */
+    @SuppressWarnings("unchecked")
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = profile.isNew();
@@ -481,7 +483,7 @@ public final class UserManager
         //  Query the SpamFilter first
         //
         
-        List<PageFilter> ls = (List<PageFilter>)m_engine.getFilterManager().getFilterList();
+        List<PageFilter> ls = m_engine.getFilterManager().getFilterList();
         for( PageFilter pf : ls )
         {
             if( pf instanceof SpamFilter )
@@ -630,6 +632,16 @@ public final class UserManager
 
         /**
          * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param uid the unique identifier to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
+        public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+        {
+            throw new NoSuchPrincipalException("No user profiles available");
+        }
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
          * @throws NoSuchPrincipalException never...
@@ -657,15 +669,6 @@ public final class UserManager
          */
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
-        }
-
-        /**
-         * No-op.
-         * @return <code>false</code>
-         */
-        public boolean isSharedWithContainer()
-        {
-            return false;
         }
 
         /**

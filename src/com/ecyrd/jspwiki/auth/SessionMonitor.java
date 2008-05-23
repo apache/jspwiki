@@ -49,10 +49,10 @@ public class SessionMonitor implements HttpSessionListener
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static Map          c_monitors   = new HashMap();
+    private static Map<WikiEngine, SessionMonitor>          c_monitors   = new HashMap<WikiEngine, SessionMonitor>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-    private final Map                 m_sessions   = new WeakHashMap();
+    private final Map<String, WikiSession>                 m_sessions   = new WeakHashMap<String, WikiSession>();
 
     private       WikiEngine          m_engine;
 
@@ -74,7 +74,7 @@ public class SessionMonitor implements HttpSessionListener
 
         synchronized( c_monitors )
         {
-            monitor = (SessionMonitor) c_monitors.get(engine);
+            monitor = c_monitors.get(engine);
             if( monitor == null )
             {
                 monitor = new SessionMonitor(engine);
@@ -109,7 +109,7 @@ public class SessionMonitor implements HttpSessionListener
     {
         WikiSession wikiSession = null;
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WikiSession storedSession = (WikiSession)m_sessions.get( sid );
+        WikiSession storedSession = m_sessions.get( sid );
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null )
@@ -198,14 +198,12 @@ public class SessionMonitor implements HttpSessionListener
      */
     public final Principal[] userPrincipals()
     {
-        Collection principals = new ArrayList();
-        for ( Iterator it = m_sessions.values().iterator(); it.hasNext(); )
+        Collection<Principal> principals = new ArrayList<Principal>();
+        for ( WikiSession session : m_sessions.values() )
         {
-            WikiSession session = (WikiSession)it.next();
-
             principals.add( session.getUserPrincipal() );
         }
-        Principal[] p = (Principal[])principals.toArray( new Principal[principals.size()] );
+        Principal[] p = principals.toArray( new Principal[principals.size()] );
         Arrays.sort( p, m_comparator );
         return p;
     }
@@ -265,10 +263,10 @@ public class SessionMonitor implements HttpSessionListener
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
-        Iterator it = c_monitors.values().iterator();
+        Iterator<SessionMonitor> it = c_monitors.values().iterator();
         while( it.hasNext() )
         {
-            SessionMonitor monitor = (SessionMonitor)it.next();
+            SessionMonitor monitor = it.next();
 
             WikiSession storedSession = monitor.findSession(session);
 
