@@ -41,7 +41,7 @@ import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 
 /**
- * This is the JSPWiki 'traditional' diff.
+ * This is the JSPWiki 'traditional' diff.  It uses an internal diff engine.
  * 
  * @author Erik Bunn
  * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
@@ -57,12 +57,16 @@ public class TraditionalDiffProvider implements DiffProvider
     private static final String CSS_DIFF_CLOSE = "</td></tr>" + Diff.NL;
 
 
+    /**
+     *  Constructs the provider.
+     */
     public TraditionalDiffProvider()
     {
     }
 
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.WikiProvider#getProviderInfo()
      */
     public String getProviderInfo()
@@ -71,6 +75,7 @@ public class TraditionalDiffProvider implements DiffProvider
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
      */
     public void initialize(WikiEngine engine, Properties properties)
@@ -81,6 +86,12 @@ public class TraditionalDiffProvider implements DiffProvider
     /**
      * Makes a diff using the BMSI utility package. We use our own diff printer,
      * which makes things easier.
+     * 
+     * @param ctx The WikiContext in which the diff should be made.
+     * @param p1 The first string
+     * @param p2 The second string.
+     * 
+     * @return Full HTML diff.
      */
     public String makeDiffHtml( WikiContext ctx, String p1, String p2 )
     {
@@ -117,7 +128,7 @@ public class TraditionalDiffProvider implements DiffProvider
     }
 
 
-    public static final class RevisionPrint
+    private static final class RevisionPrint
         implements RevisionVisitor
     {
         private StringBuffer m_result = null;

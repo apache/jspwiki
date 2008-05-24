@@ -158,6 +158,7 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
+    @SuppressWarnings("unchecked")
     private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage )
     {
         WikiEngine engine = context.getEngine();

@@ -23,12 +23,16 @@ package com.ecyrd.jspwiki.parser;
 import com.ecyrd.jspwiki.WikiContext;
 
 /**
- *  Provides a listener interface for headings
+ *  Provides a listener interface for headings.  This is used in parsing,
+ *  and e.g. the TableOfContents is built using this listener.
  */
 public interface HeadingListener
 {
     /**
      *  Is called whenever a heading is encountered in the stream.
+     *  
+     *  @param context The WikiContext
+     *  @param hd The heading which was just encountered.
      */
     public void headingAdded( WikiContext context, Heading hd );
 }

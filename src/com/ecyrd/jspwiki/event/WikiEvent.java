@@ -117,6 +117,9 @@ public abstract class WikiEvent extends EventObject
      * this method returns true if the event type is anything except
      * {@link #ERROR} or {@link #UNDEFINED}. This method is meant to
      * be subclassed as appropriate.
+     * 
+     * @param type The value to test.
+     * @return true, if the value is a valid WikiEvent type.
      */
     public static boolean isValidType( int type )
     {

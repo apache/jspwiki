@@ -48,11 +48,11 @@ public abstract class MarkupParser
     protected WikiContext    m_context;
 
     /** Optionally stores internal wikilinks */
-    protected ArrayList      m_localLinkMutatorChain    = new ArrayList();
-    protected ArrayList      m_externalLinkMutatorChain = new ArrayList();
-    protected ArrayList      m_attachmentLinkMutatorChain = new ArrayList();
-    protected ArrayList      m_headingListenerChain     = new ArrayList();
-    protected ArrayList      m_linkMutators             = new ArrayList();
+    protected ArrayList<StringTransmutator>      m_localLinkMutatorChain    = new ArrayList<StringTransmutator>();
+    protected ArrayList<StringTransmutator>      m_externalLinkMutatorChain = new ArrayList<StringTransmutator>();
+    protected ArrayList<StringTransmutator>      m_attachmentLinkMutatorChain = new ArrayList<StringTransmutator>();
+    protected ArrayList<HeadingListener>         m_headingListenerChain     = new ArrayList<HeadingListener>();
+    protected ArrayList<StringTransmutator>      m_linkMutators             = new ArrayList<StringTransmutator>();
 
     protected boolean        m_inlineImages             = true;
 
@@ -73,6 +73,13 @@ public abstract class MarkupParser
     /** Lists all punctuation characters allowed in page names. */
     public    static final String           PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
 
+    /**
+     *  Constructs a MarkupParser.  The subclass must call this constructor
+     *  to set up the necessary bits and pieces.
+     *  
+     *  @param context The WikiContext.
+     *  @param in The reader from which we are reading the bytes from.
+     */
     protected MarkupParser( WikiContext context, Reader in )
     {
         m_engine = context.getEngine();
@@ -155,6 +162,12 @@ public abstract class MarkupParser
         }
     }
 
+    /**
+     *  Adds a HeadingListener to the parser chain.  It will be called whenever
+     *  a parsed header is found.
+     *  
+     *  @param listener The listener to add.
+     */
     public void addHeadingListener( HeadingListener listener )
     {
         if( listener != null )
@@ -163,6 +176,9 @@ public abstract class MarkupParser
         }
     }
 
+    /**
+     *  Disables access rule parsing.
+     */
     public void disableAccessRules()
     {
         m_parseAccessRules = false;
@@ -183,7 +199,7 @@ public abstract class MarkupParser
     /**
      *  Parses the document.
      *  @return the parsed document, as a WikiDocument
-     *  @throws IOException
+     *  @throws IOException If something goes wrong.
      */
     public abstract WikiDocument parse()
          throws IOException;
@@ -207,7 +223,7 @@ public abstract class MarkupParser
      * @throws NullPointerException If you have not yet created an input document.
      */
     protected final int nextToken()
-        throws IOException
+        throws IOException, NullPointerException
     {
         // if( m_in == null ) return -1;
         m_pos++;
@@ -217,6 +233,9 @@ public abstract class MarkupParser
     /**
      *  Push back any character to the current input.  Does not
      *  push back a read EOF, though.
+     *  
+     *  @throws IOException In case the character cannot be pushed back.
+     *  @param c Character to push back.
      */
     protected void pushBack( int c )
         throws IOException

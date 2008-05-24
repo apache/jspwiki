@@ -51,6 +51,10 @@ public class ContextualDiffProvider implements DiffProvider
 
     private static final Logger log = Logger.getLogger( ContextualDiffProvider.class );
 
+    /**
+     *  A jspwiki.properties value to define how many characters are shown around the change context.
+     *  The current value is <tt>{@value}</tt>.
+     */
     public static final String PROP_UNCHANGED_CONTEXT_LIMIT = "jspwiki.contextualDiffProvider.unchangedContextLimit";
 
     //TODO all of these publics can become jspwiki.properties entries...
@@ -86,12 +90,16 @@ public class ContextualDiffProvider implements DiffProvider
     private int m_unchangedContextLimit = LIMIT_MAX_VALUE;
 
 
-
+    /**
+     *  Constructs this provider.
+     */
     public ContextualDiffProvider()
     {}
 
     /**
      * @see com.ecyrd.jspwiki.WikiProvider#getProviderInfo()
+     * 
+     * {@inheritDoc}
      */
     public String getProviderInfo()
     {
@@ -101,11 +109,13 @@ public class ContextualDiffProvider implements DiffProvider
     /**
      * @see com.ecyrd.jspwiki.WikiProvider#initialize(com.ecyrd.jspwiki.WikiEngine,
      *      java.util.Properties)
+     *      
+     * {@inheritDoc}
      */
     public void initialize(WikiEngine engine, Properties properties) throws NoRequiredPropertyException, IOException
     {
-        String configuredLimit = properties.getProperty(PROP_UNCHANGED_CONTEXT_LIMIT, Integer
-            .toString(LIMIT_MAX_VALUE));
+        String configuredLimit = properties.getProperty(PROP_UNCHANGED_CONTEXT_LIMIT, 
+                                                        Integer.toString(LIMIT_MAX_VALUE));
         int limit = LIMIT_MAX_VALUE;
         try
         {
@@ -125,6 +135,8 @@ public class ContextualDiffProvider implements DiffProvider
      * Do a colored diff of the two regions. This. is. serious. fun. ;-)
      *
      * @see com.ecyrd.jspwiki.diff.DiffProvider#makeDiffHtml(WikiContext, String, String)
+     * 
+     * {@inheritDoc}
      */
     public synchronized String makeDiffHtml( WikiContext ctx, String wikiOld, String wikiNew )
     {
@@ -178,7 +190,7 @@ public class ContextualDiffProvider implements DiffProvider
     {
         String[] linesArray = Diff.stringToArray( wikiText );
 
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
         for( int i = 0; i < linesArray.length; i++ )
         {
@@ -201,7 +213,7 @@ public class ContextualDiffProvider implements DiffProvider
             list.add(m_lineBreakHtml); // Line Break
         }
 
-        return (String[])list.toArray( new String[0] );
+        return list.toArray( new String[0] );
     }
 
     /**
