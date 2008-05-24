@@ -563,6 +563,12 @@ public final class UserManager
         { /* It's clean */ }
     }
 
+    /**
+     *  A helper method for returning all of the known WikiNames in this system.
+     *  
+     *  @return An Array of Principals
+     *  @throws WikiSecurityException If for reason the names cannot be fetched
+     */
     public Principal[] listWikiNames()
         throws WikiSecurityException
     {

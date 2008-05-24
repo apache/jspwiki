@@ -307,6 +307,7 @@ public class AttachmentManager
      */
 
     // FIXME: This API should be changed to return a List.
+    @SuppressWarnings("unchecked")
     public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {

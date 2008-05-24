@@ -45,7 +45,6 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
@@ -675,6 +674,7 @@ public final class SecurityVerifier
      * resolves to an existing file, and the policy file contained therein
      * represents a valid policy.
      */
+    @SuppressWarnings("unchecked")
     protected final void verifyPolicy()
     {
         // Look up the policy file and set the status text.
@@ -708,7 +708,7 @@ public final class SecurityVerifier
 
             // Verify the file
             policy.read();
-            List<Exception> errors = (List<Exception>)policy.getMessages();
+            List<Exception> errors = policy.getMessages();
             if ( errors.size() > 0 )
             {
                 for( Exception e : errors )

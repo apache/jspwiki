@@ -562,6 +562,7 @@ public class AttachmentServlet
      *  @throws IOException If upload fails
      * @throws FileUploadException 
      */
+    @SuppressWarnings("unchecked")
     protected String upload( HttpServletRequest req )
         throws RedirectException,
                IOException
@@ -632,6 +633,9 @@ public class AttachmentServlet
                 }
             }
 
+            if( actualFile == null )
+                throw new RedirectException( "Broken file upload", errorPage );
+            
             //
             // FIXME: Unfortunately, with Apache fileupload we will get the form fields in
             //        order.  This means that we have to gather all the metadata from the

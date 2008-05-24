@@ -30,7 +30,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -113,7 +112,7 @@ public final class AuthenticationManager
     protected static final Map<String,String> EMPTY_MAP = Collections.unmodifiableMap( new HashMap<String,String>() );
     
     /** Class (of type LoginModule) to use for custom authentication. */
-    protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;;
+    protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
     
     /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
      * initialized by {@link #initialize(WikiEngine, Properties)}. */
@@ -277,12 +276,8 @@ public final class AuthenticationManager
             {
                 e.printStackTrace();
                 throw new WikiSecurityException( e.getMessage() );
-             }
-            if ( handler == null )
-            {
-                throw new WikiSecurityException("Callback handler returned null for some reason... this is very unusual.");
             }
-
+            
             // Execute the container login module, then (if that fails) the cookie auth module
             Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
             if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
@@ -344,7 +339,6 @@ public final class AuthenticationManager
      * @param password the password
      * @return true, if the username/password is valid
      * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
-     * @throws ServletException if the specified LoginModule cannot be executed for any reason other than authentication failures
      */
     public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
     {
@@ -509,9 +503,8 @@ public final class AuthenticationManager
      * @param options
      *            a Map of key/value strings for initializing the LoginModule
      * @return the set of Principals returned by the JAAS method {@link Subject#getPrincipals()}
-     * @throws ServletException
+     * @throws WikiSecurityException
      *             if the LoginModule could not be instantiated for any reason
-     *             (the root cause exception is wrapped)
      */
     protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
     {
