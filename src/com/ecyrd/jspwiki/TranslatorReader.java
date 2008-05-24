@@ -20,29 +20,16 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.io.*;
-import java.text.MessageFormat;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Collection;
 
-import org.apache.log4j.Logger;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
-
-import com.ecyrd.jspwiki.i18n.InternationalizationManager;
-import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
-import com.ecyrd.jspwiki.plugin.PluginManager;
-import com.ecyrd.jspwiki.plugin.PluginException;
-import com.ecyrd.jspwiki.plugin.WikiPlugin;
-import com.ecyrd.jspwiki.attachment.AttachmentManager;
-import com.ecyrd.jspwiki.attachment.Attachment;
-import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.WikiRenderer;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
-import com.ecyrd.jspwiki.auth.acl.Acl;
-import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
  *  Handles conversion from Wiki format into fully featured HTML.
@@ -94,14 +81,21 @@ public class TranslatorReader extends Reader
     private WikiContext m_context;
     
     /**
-    /**
      *  Creates a TranslatorReader using the default HTML renderer.
+     *  @param context WikiContext
+     *  @param in The reader from which to read.
      */
     public TranslatorReader( WikiContext context, Reader in )
     {
         initialize( context, in );
     }
 
+    /**
+     * Creates a TranslatorReader.
+     * @param context WikiContext
+     * @param in Reader
+     * @param renderer Unused.
+     */
     public TranslatorReader( WikiContext context, Reader in, Object renderer )
     {
         initialize( context, in );
@@ -131,10 +125,8 @@ public class TranslatorReader extends Reader
     }
 
     /**
-     *  Sets the currently used renderer.  This method is protected because
-     *  we only want to use it internally for now.  The renderer interface
-     *  is not yet set to stone, so it's not expected that third parties
-     *  would use this.
+     *  Does not work, don't try to use it.
+     *  @param renderer Renderer.
      */
     protected void setRenderer( Object renderer )
     {
@@ -186,11 +178,13 @@ public class TranslatorReader extends Reader
         m_parser.addAttachmentLinkHook( mutator );
     }
 
+    /** Adds a listener to headings. */
     public void addHeadingListener( HeadingListener listener )
     {
         m_parser.addHeadingListener( listener );
     }
 
+    /** Disables access rules parsing. */
     public void disableAccessRules()
     {
         m_parser.disableAccessRules();
@@ -198,6 +192,7 @@ public class TranslatorReader extends Reader
 
     /**
      *  Can be used to turn on plugin execution on a translator-reader basis
+     *  @param toggle on or off
      */
     public void enablePlugins( boolean toggle )
     {
@@ -219,6 +214,7 @@ public class TranslatorReader extends Reader
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
+     *  @param engine WikiEngine
      */
 
     protected static Collection getImagePatterns( WikiEngine engine )
@@ -234,6 +230,7 @@ public class TranslatorReader extends Reader
      *  @param type Type of the link.
      *  @param link The actual link.
      *  @param text The user-visible text for the link.
+     *  @return link
      */
     public String makeLink( int type, String link, String text )
     {   
@@ -265,6 +262,7 @@ public class TranslatorReader extends Reader
 
     private StringReader m_data;
     
+    /** {@inheritDoc} */
     public int read()
         throws IOException
     {
@@ -280,18 +278,21 @@ public class TranslatorReader extends Reader
         return m_data.read();
     }
 
+    /** {@inheritDoc} */
     public int read( char[] buf, int off, int len )
         throws IOException
     {
         return m_data.read( buf, off, len );
     }
-
+    
+    /** {@inheritDoc} */
     public boolean ready()
         throws IOException
     {
         return m_data.ready();
     }
-
+    
+    /** {@inheritDoc} */
     public void close()
     {
     }

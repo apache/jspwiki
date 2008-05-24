@@ -25,6 +25,7 @@ package com.ecyrd.jspwiki;
  *  for searches.  It tells the word and whether it is requested or not.
  *
  */
+// FIXME3.0: This should be moved to the search-package, as well as properly rewritten as a bean.
 public class QueryItem
 {
     /** The word is required to be in the pages */

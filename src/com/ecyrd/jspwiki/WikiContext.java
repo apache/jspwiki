@@ -75,7 +75,7 @@ public class WikiContext
     private    WikiEngine m_engine;
     private    String     m_template = "default";
 
-    private    Map        m_variableMap = new HashMap();
+    private    Map<String,Object> m_variableMap = new HashMap<String,Object>();
 
     /**
      *  Stores the HttpServletRequest.  May be null, if the request did not

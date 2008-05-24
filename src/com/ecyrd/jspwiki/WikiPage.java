@@ -49,7 +49,7 @@ public class WikiPage
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
     private String           m_author = null;
-    private final HashMap    m_attributes = new HashMap();
+    private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
 
     /**
      *  "Summary" is a short summary of the page.  It is a String.

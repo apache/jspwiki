@@ -51,6 +51,9 @@ import com.ecyrd.jspwiki.workflow.Workflow;
  *  Manages the WikiPages.  This class functions as an unified interface towards
  *  the page providers.  It handles initialization and management of the providers,
  *  and provides utility methods for accessing the contents.
+ *  <p>
+ *  Saving a page is a two-stage Task; first the pre-save operations and then the
+ *  actual save.  See the descriptions of the tasks for further information.
  *
  *  @since 2.0
  */
@@ -72,12 +75,24 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
     
+    /** The message key for storing the text for the presave task.  Value is <tt>{@value}</tt>*/
     public static final String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
+    
+    /** The workflow attribute which stores the wikiContext. */
     public static final String PRESAVE_WIKI_CONTEXT = "wikiContext";
-    public static final String SAVE_APPROVER = "workflow.saveWikiPage";
+    
+    /** The name of the key from jspwiki.properties which defines who shall approve
+     *  the workflow of storing a wikipage.  Value is <tt>{@value}</tt>*/
+    public static final String SAVE_APPROVER             = "workflow.saveWikiPage";
+    
+    /** The message key for storing the Decision text for saving a page.  Value is {@value}. */
     public static final String SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
-    public static final String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
-    public static final String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
+    
+    /** The message key for rejecting the decision to save the page.  Value is {@value}. */
+    public static final String SAVE_REJECT_MESSAGE_KEY   = "notification.saveWikiPage.reject";
+    
+    /** The message key of the text to finally approve a page save.  Value is {@value}. */
+    public static final String SAVE_TASK_MESSAGE_KEY     = "task.saveWikiPage";
     
     /** Fact name for storing the page name.  Value is {@value}. */
     public static final String FACT_PAGE_NAME = "fact.pageName";
@@ -91,13 +106,14 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /** Fact name for storing the proposed (edited) text.  Value is {@value}. */
     public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
     
+    /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
     static Logger log = Logger.getLogger( PageManager.class );
 
     private WikiPageProvider m_provider;
 
-    protected HashMap m_pageLocks = new HashMap();
+    protected HashMap<String,PageLock> m_pageLocks = new HashMap<String,PageLock>();
 
     private WikiEngine m_engine;
 
@@ -319,7 +335,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
 
-            lock = (PageLock) m_pageLocks.get( page.getName() );
+            lock = m_pageLocks.get( page.getName() );
 
             if( lock == null )
             {
@@ -377,7 +393,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
         synchronized( m_pageLocks )
         {
-            lock = (PageLock)m_pageLocks.get( page.getName() );
+            lock = m_pageLocks.get( page.getName() );
         }
 
         return lock;
@@ -393,13 +409,13 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public List getActiveLocks()
     {
-        ArrayList result = new ArrayList();
+        ArrayList<PageLock> result = new ArrayList<PageLock>();
 
         synchronized( m_pageLocks )
         {
-            for( Iterator i = m_pageLocks.values().iterator(); i.hasNext(); )
+            for( PageLock lock : m_pageLocks.values() )
             {
-                result.add( i.next() );
+                result.add( lock );
             }
         }
 
@@ -639,6 +655,12 @@ public class PageManager extends ModuleManager implements WikiEventListener
         private final WikiContext m_context;
         private final String m_proposedText;
 
+        /**
+         *  Creates the task.
+         *  
+         *  @param context The WikiContext
+         *  @param proposedText The text that was just saved.
+         */
         public PreSaveWikiPageTask( WikiContext context, String proposedText )
         {
             super( PRESAVE_TASK_MESSAGE_KEY );
@@ -646,6 +668,10 @@ public class PageManager extends ModuleManager implements WikiEventListener
             m_proposedText = proposedText;
         }
 
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve attributes
@@ -694,11 +720,16 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class SaveWikiPageTask extends Task
     {
+        /**
+         *  Creates the Task.
+         */
         public SaveWikiPageTask()
         {
             super( SAVE_TASK_MESSAGE_KEY );
         }
 
+        /** {@inheritDoc} */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve attributes
@@ -741,6 +772,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection modules()
     {
         // TODO Auto-generated method stub
@@ -825,8 +857,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
         if ( acl != null )
         {
             Enumeration entries = acl.entries();
-            Collection entriesToAdd = new ArrayList();
-            Collection entriesToRemove = new ArrayList();
+            Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
+            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
             while ( entries.hasMoreElements() )
             {
                 AclEntry entry = (AclEntry)entries.nextElement();
