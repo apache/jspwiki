@@ -840,7 +840,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
                 ps.setLong( 1, ( (Long)index).longValue() );
             }
-            else {
+            else 
+            {
                 throw new IllegalArgumentException( "Index type not recognized!" );
             }
             

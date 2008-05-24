@@ -32,7 +32,7 @@ import java.util.Map;
  * @since 2.3
  */
 
-public class DefaultUserProfile implements UserProfile
+public final class DefaultUserProfile implements UserProfile
 {
     private static final String EMPTY_STRING = "";
 
@@ -61,7 +61,7 @@ public class DefaultUserProfile implements UserProfile
     /**
      * Private constructor to prevent direct instantiation.
      */
-    private DefaultUserProfile() { }
+    private DefaultUserProfile() {}
 
     /**
      * Static factory method that creates a new DefaultUserProfile
@@ -329,7 +329,8 @@ public class DefaultUserProfile implements UserProfile
         boolean locked =  m_lockExpiry != null && System.currentTimeMillis() < m_lockExpiry.getTime();
 
         // Clear the lock if it's expired already
-        if ( !locked && m_lockExpiry != null ){
+        if ( !locked && m_lockExpiry != null )
+        {
             m_lockExpiry = null;
         }
         return locked;

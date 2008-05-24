@@ -270,7 +270,9 @@ public abstract class AbstractUserDatabase implements UserDatabase
         // Keep generating UUIDs until we find one that doesn't collide
         long uid;
         boolean collision;
-        do {
+        
+        do 
+        {
             uid = UUID.randomUUID().getLeastSignificantBits();
             collision = true;
             try
@@ -281,7 +283,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
             {
                 collision = false;
             }
-        } while ( collision || uid == UID_NOT_SET );
+        } 
+        while ( collision || uid == UID_NOT_SET );
         return uid;
     }
     

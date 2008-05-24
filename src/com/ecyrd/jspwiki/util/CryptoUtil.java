@@ -12,7 +12,7 @@ import org.apache.commons.codec.binary.Base64;
  * Hashes and verifies salted SHA-1 passwords, which are compliant with RFC
  * 2307.
  */
-public class CryptoUtil
+public final class CryptoUtil
 {
 
     private static final String SSHA = "{SSHA}";
