@@ -27,17 +27,30 @@ import java.util.Iterator;
 import com.ecyrd.jspwiki.ui.admin.AdminBean;
 import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 
+/**
+ *  Provides an iterator for all AdminBeans of a given type.
+ *
+ */
 public class AdminBeanIteratorTag extends IteratorTag
 {
     private static final long serialVersionUID = 1L;
 
     private int m_type;
 
+    /**
+     *  Set the type of the bean.
+     *  
+     *  @param type Type to set
+     */
     public void setType(String type)
     {
         m_type = AdminBeanManager.getTypeFromString( type );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void resetIterator()
     {
         AdminBeanManager mgr = m_wikiContext.getEngine().getAdminBeanManager();
