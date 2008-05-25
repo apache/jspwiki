@@ -38,6 +38,8 @@ public class BasicPageFilter
   
     /**
      *  If you override this, you should call super.initialize() first.
+     *  
+     *  {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws FilterException
@@ -45,29 +47,44 @@ public class BasicPageFilter
         m_engine = engine;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String preTranslate( WikiContext wikiContext, String content )
         throws FilterException
     {
         return content;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String postTranslate( WikiContext wikiContext, String htmlContent )
         throws FilterException
     {
         return htmlContent;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String preSave( WikiContext wikiContext, String content )
         throws FilterException
     {
         return content;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void postSave( WikiContext wikiContext, String content )
         throws FilterException
     {
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public void destroy( WikiEngine engine ) 
     {
     }

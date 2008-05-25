@@ -63,6 +63,9 @@ import com.ecyrd.jspwiki.ui.EditorManager;
  *        and calculates a score for the spam, which is then compared to a filter level value.
  *  </ul>
  *
+ *  <p>Please see the default editors/plain.jsp for examples on how the SpamFilter integrates
+ *  with the editor system.</p>
+ *  
  *  <p>Changes by admin users are ignored in any case.</p>
  *
  *  @since 2.1.112
@@ -81,19 +84,51 @@ public class SpamFilter
     private static final String REASON_UTF8_TRAP = "UTF8Trap";
 
     private static final String LISTVAR = "spamwords";
+    
+    /** The filter property name for specifying the page which contains the list of spamwords.
+     *  Value is <tt>{@value}</tt>. */
     public static final String  PROP_WORDLIST              = "wordlist";
+    
+    /** The filter property name for the page to which you are directed if Herb rejects your
+     *  edit.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_ERRORPAGE             = "errorpage";
+    
+    /** The filter property name for specifying how many changes is any given IP address
+     *  allowed to do per minute.  Value is <tt>{@value}</tt>.
+     */
     public static final String  PROP_PAGECHANGES           = "pagechangesinminute";
+    
+    /** The filter property name for specifying how many similar changes are allowed
+     *  before a host is banned.  Value is <tt>{@value}</tt>.
+     */
     public static final String  PROP_SIMILARCHANGES        = "similarchanges";
+    
+    /** The filter property name for specifying how long a host is banned.  Value is <tt>{@value}</tt>.*/
     public static final String  PROP_BANTIME               = "bantime";
+    
+    /** The filter property name for the attachment containing the blacklist.  Value is <tt>{@value}</tt>.*/
     public static final String  PROP_BLACKLIST             = "blacklist";
+    
+    /** The filter property name for specifying how many URLs can any given edit contain.  
+     *  Value is <tt>{@value}</tt> */
     public static final String  PROP_MAXURLS               = "maxurls";
+    
+    /** The filter property name for specifying the Akismet API-key.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_AKISMET_API_KEY       = "akismet-apikey";
+    
+    /** The filter property name for specifying whether authenticated users should be ignored. Value is <tt>{@value}</tt>. */
     public static final String  PROP_IGNORE_AUTHENTICATED  = "ignoreauthenticated";
+    
+    /** The filter property name for specifying which captcha technology should be used. Value is <tt>{@value}</tt>. */
     public static final String  PROP_CAPTCHA               = "captcha";
+    
+    /** The filter property name for specifying which filter strategy should be used.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_FILTERSTRATEGY        = "strategy";
 
+    /** The string specifying the "eager" strategy. Value is <tt>{@value}</tt>. */
     public static final String  STRATEGY_EAGER             = "eager";
+    
+    /** The string specifying the "score" strategy. Value is <tt>{@value}</tt>. */
     public static final String  STRATEGY_SCORE             = "score";
 
     private static final String URL_REGEXP = "(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;]+)";
@@ -105,19 +140,19 @@ public class SpamFilter
     private PatternMatcher  m_matcher = new Perl5Matcher();
     private PatternCompiler m_compiler = new Perl5Compiler();
 
-    private Collection      m_spamPatterns = null;
+    private Collection<Pattern> m_spamPatterns = null;
 
     private Date            m_lastRebuild = new Date( 0L );
 
-    static  Logger          spamlog = Logger.getLogger( "SpamLog" );
-    static  Logger          log = Logger.getLogger( SpamFilter.class );
+    private static  Logger  c_spamlog = Logger.getLogger( "SpamLog" );
+    private static  Logger  log = Logger.getLogger( SpamFilter.class );
 
 
-    private Vector          m_temporaryBanList = new Vector();
+    private Vector<Host>    m_temporaryBanList = new Vector<Host>();
 
     private int             m_banTime = 60; // minutes
 
-    private Vector          m_lastModifications = new Vector();
+    private Vector<Host>    m_lastModifications = new Vector<Host>();
 
     /**
      *  How many times a single IP address can change a page per minute?
@@ -151,6 +186,21 @@ public class SpamFilter
 
     private boolean         m_stopAtFirstMatch = true;
 
+    private static String   c_hashName;
+    private static long     c_lastUpdate;
+
+    /** The HASH_DELAY value is a maximum amount of time that an user can keep
+     *  a session open, because after the value has expired, we will invent a new
+     *  hash field name.  By default this is {@value} hours, which should be ample
+     *  time for someone.
+     */
+    private static final long HASH_DELAY = 24;
+
+
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initialize( WikiEngine engine, Properties properties )
     {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST,
@@ -236,12 +286,12 @@ public class SpamFilter
                 throw new InternalWikiException("Illegal type "+type);
         }
 
-        spamlog.info( reason+" "+source+" "+uid+" "+addr+" \""+page+"\" "+message );
+        c_spamlog.info( reason+" "+source+" "+uid+" "+addr+" \""+page+"\" "+message );
 
         return uid;
     }
 
-
+    /** {@inheritDoc} */
     public String preSave( WikiContext context, String content )
         throws RedirectException
     {
@@ -297,9 +347,9 @@ public class SpamFilter
      * @param list
      * @return
      */
-    private Collection parseWordList( WikiPage source, String list )
+    private Collection<Pattern> parseWordList( WikiPage source, String list )
     {
-        ArrayList compiledpatterns = new ArrayList();
+        ArrayList<Pattern> compiledpatterns = new ArrayList<Pattern>();
 
         if( list != null )
         {
@@ -332,9 +382,9 @@ public class SpamFilter
      *  @param list
      *  @return
      */
-    private Collection parseBlacklist( String list )
+    private Collection<Pattern> parseBlacklist( String list )
     {
-        ArrayList compiledpatterns = new ArrayList();
+        ArrayList<Pattern> compiledpatterns = new ArrayList<Pattern>();
 
         if( list != null )
         {
@@ -752,7 +802,7 @@ public class SpamFilter
 
                     FileUtil.copyContents( new InputStreamReader(in,"UTF-8"), out );
 
-                    Collection blackList = parseBlacklist( out.toString() );
+                    Collection<Pattern> blackList = parseBlacklist( out.toString() );
 
                     log.info("...recognizing additional "+blackList.size()+" patterns from blacklist "+m_blacklist);
 
@@ -793,10 +843,8 @@ public class SpamFilter
         if( context.getHttpRequest() != null )
             change += context.getHttpRequest().getRemoteAddr();
 
-        for( Iterator i = m_spamPatterns.iterator(); i.hasNext(); )
+        for( Pattern p : m_spamPatterns )
         {
-            Pattern p = (Pattern) i.next();
-
             // log.debug("Attempting to match page contents with "+p.getPattern());
 
             if( m_matcher.contains( change, p ) )
@@ -947,8 +995,9 @@ public class SpamFilter
     /**
      *  Checks whether the UserProfile matches certain checks.
      *
-     *  @param profile
-     *  @return the result of the check
+     *  @param profile The profile to check
+     *  @param context The WikiContext
+     *  @return False, if this userprofile is suspect and should not be allowed to be added.
      *  @since 2.6.1
      */
     public boolean isValidUserProfile( WikiContext context, UserProfile profile )
@@ -1000,16 +1049,6 @@ public class SpamFilter
      *  @since  2.6
      */
 
-    private static String c_hashName;
-    private static long   c_lastUpdate;
-
-    /** The HASH_DELAY value is a maximum amount of time that an user can keep
-     *  a session open, because after the value has expired, we will invent a new
-     *  hash field name.  By default this is {@value} hours, which should be ample
-     *  time for someone.
-     */
-    private static final long HASH_DELAY = 24;
-
     public static final String getHashFieldName( HttpServletRequest request )
     {
         String hash = null;
@@ -1046,8 +1085,8 @@ public class SpamFilter
      *  and logs the incident in the spam log (it may or may not be spam, but it's rather likely
      *  that it is).
      *
-     *  @param context
-     *  @param pageContext
+     *  @param context The WikiContext
+     *  @param pageContext The JSP PageContext.
      *  @return True, if hash is okay.  False, if hash is not okay, and you need to redirect.
      *  @throws IOException If redirection fails
      *  @since 2.6
@@ -1075,6 +1114,14 @@ public class SpamFilter
         return true;
     }
 
+    /**
+     *  This helper method adds all the input fields to your editor that the SpamFilter requires
+     *  to check for spam.  This <i>must</i> be in your editor form if you intend to use
+     *  the SpamFilter.
+     *  
+     *  @param pageContext The PageContext
+     *  @return A HTML string which contains input fields for the SpamFilter.
+     */
     public static final String insertInputFields( PageContext pageContext )
     {
         WikiContext ctx = WikiContext.findContext(pageContext);

@@ -41,15 +41,24 @@ public class PingWeblogsComFilter
 {
     static Logger log = Logger.getLogger( PingWeblogsComFilter.class );
 
-    public String m_pingURL;
+    private String m_pingURL;
 
+    /**
+     *  The property name for the URL to ping.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_PINGURL = "pingurl";
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties props )
     {
         m_pingURL = props.getProperty( PROP_PINGURL, "http://rpc.weblogs.com/RPC2" );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void postSave( WikiContext context, String pagecontent )
     {
         String     blogName = context.getPage().getName();
@@ -71,7 +80,7 @@ public class PingWeblogsComFilter
         try
         {
             XmlRpcClient xmlrpc = new XmlRpcClient(m_pingURL);
-            Vector params = new Vector();
+            Vector<String> params = new Vector<String>();
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
             params.addElement( engine.getURL( WikiContext.VIEW, blogName, null, true ) );
 

@@ -93,14 +93,16 @@ import com.ecyrd.jspwiki.util.PriorityList;
  */
 public final class FilterManager extends ModuleManager
 {
-    private PriorityList     m_pageFilters = new PriorityList();
+    private PriorityList    m_pageFilters = new PriorityList();
 
-    private HashMap          m_filterClassMap = new HashMap();
+    private HashMap<String, PageFilterInfo>          m_filterClassMap = new HashMap<String,PageFilterInfo>();
 
     private static final Logger log = Logger.getLogger(WikiEngine.class);
 
+    /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
     public static final String PROP_FILTERXML = "jspwiki.filterConfig";
     
+    /** Default location for the filter XML property file.  Value is <tt>{@value}</tt>. */
     public static final String DEFAULT_XMLFILE = "/WEB-INF/filters.xml";
 
     /** JSPWiki system filters are all below this value. */
@@ -109,6 +111,13 @@ public final class FilterManager extends ModuleManager
     /** The standard user level filtering. */
     public static final int USER_FILTER_PRIORITY   = 0;
     
+    /**
+     *  Constructs a new FilterManager object.
+     *  
+     *  @param engine The WikiEngine which owns the FilterManager
+     *  @param props Properties to initialize the FilterManager with
+     *  @throws WikiException If something goes wrong.
+     */
     public FilterManager( WikiEngine engine, Properties props )
         throws WikiException
     {
@@ -129,7 +138,7 @@ public final class FilterManager extends ModuleManager
      *  @param priority The priority in which position to add it in.
      *  @throws IllegalArgumentException If the PageFilter is null or invalid.
      */
-    public void addPageFilter( PageFilter f, int priority )
+    public void addPageFilter( PageFilter f, int priority ) throws IllegalArgumentException
     {
         if( f == null )
         {
@@ -143,7 +152,7 @@ public final class FilterManager extends ModuleManager
     {
         try
         {
-            PageFilterInfo info = (PageFilterInfo)m_filterClassMap.get( className );
+            PageFilterInfo info = m_filterClassMap.get( className );
             
             if( info != null && !checkCompatibility(info) )
             {
@@ -189,6 +198,9 @@ public final class FilterManager extends ModuleManager
 
     /**
      *  Initializes the filters from an XML file.
+     *  
+     *  @param props The list of properties.  Typically jspwiki.properties
+     *  @throws WikiException If something goes wrong.
      */
     protected void initialize( Properties props )
         throws WikiException
@@ -200,36 +212,36 @@ public final class FilterManager extends ModuleManager
         {
             registerFilters();
             
-			if( m_engine.getServletContext() != null )
-			{
-				log.debug("Attempting to locate "+DEFAULT_XMLFILE+" from servlet context.");
-				if( xmlFile == null )
-				{
-					xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
-				}
-				else
-				{
-					xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
-				}
-			}
+            if( m_engine.getServletContext() != null )
+            {
+                log.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
+                if( xmlFile == null )
+                {
+                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
+                }
+                else
+                {
+                    xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
+                }
+            }
 
-			if( xmlStream == null )
-			{
-				//just a fallback element to the old behaviour prior to 2.5.8
-				log.debug("Attempting to locate filters.xml from class path.");
+            if( xmlStream == null )
+            {
+                // just a fallback element to the old behaviour prior to 2.5.8
+                log.debug( "Attempting to locate filters.xml from class path." );
 
-				if( xmlFile == null )
-				{
-					xmlStream = getClass().getResourceAsStream( "/filters.xml" );
-				}
-				else
-				{
-					xmlStream = getClass().getResourceAsStream( xmlFile );
-				}
-			}
+                if( xmlFile == null )
+                {
+                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
+                }
+                else
+                {
+                    xmlStream = getClass().getResourceAsStream( xmlFile );
+                }
+            }
 
-			if( (xmlStream == null) && (xmlFile != null) )
-			{
+            if( (xmlStream == null) && (xmlFile != null) )
+            {
                 log.debug("Attempting to load property file "+xmlFile);
                 xmlStream = new FileInputStream( new File(xmlFile) );
             }
@@ -294,6 +306,13 @@ public final class FilterManager extends ModuleManager
  
     /**
      *  Does the filtering before a translation.
+     *  
+     *  @param context The WikiContext
+     *  @param pageData WikiMarkup data to be passed through the preTranslate chain.
+     *  @throws FilterException If any of the filters throws a FilterException
+     *  @return The modified WikiMarkup
+     *  
+     *  @see PageFilter#preTranslate(WikiContext, String)
      */
     public String doPreTranslateFiltering( WikiContext context, String pageData )
         throws FilterException
@@ -314,8 +333,14 @@ public final class FilterManager extends ModuleManager
 
     /**
      *  Does the filtering after HTML translation.
+     *  
+     *  @param context The WikiContext
+     *  @param htmlData HTML data to be passed through the postTranslate
+     *  @throws FilterException If any of the filters throws a FilterException
+     *  @return The modified HTML
+     *  @see PageFilter#postTranslate(WikiContext, String)
      */
-    public String doPostTranslateFiltering( WikiContext context, String pageData )
+    public String doPostTranslateFiltering( WikiContext context, String htmlData )
         throws FilterException
     {
         fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
@@ -324,16 +349,22 @@ public final class FilterManager extends ModuleManager
         {
             PageFilter f = (PageFilter) i.next();
 
-            pageData = f.postTranslate( context, pageData );
+            htmlData = f.postTranslate( context, htmlData );
         }
 
         fireEvent( WikiPageEvent.POST_TRANSLATE_END, context );
 
-        return pageData;
+        return htmlData;
     }
 
     /**
      *  Does the filtering before a save to the page repository.
+     *  
+     *  @param context The WikiContext
+     *  @param pageData WikiMarkup data to be passed through the preSave chain.
+     *  @throws FilterException If any of the filters throws a FilterException
+     *  @return The modified WikiMarkup
+     *  @see PageFilter#preSave(WikiContext, String)
      */
     public String doPreSaveFiltering( WikiContext context, String pageData )
         throws FilterException
@@ -354,6 +385,12 @@ public final class FilterManager extends ModuleManager
 
     /**
      *  Does the page filtering after the page has been saved.
+     * 
+     *  @param context The WikiContext
+     *  @param pageData WikiMarkup data to be passed through the postSave chain.
+     *  @throws FilterException If any of the filters throws a FilterException
+     * 
+     *  @see PageFilter#postSave(WikiContext, String)
      */
     public void doPostSaveFiltering( WikiContext context, String pageData )
         throws FilterException
@@ -371,6 +408,12 @@ public final class FilterManager extends ModuleManager
         fireEvent( WikiPageEvent.POST_SAVE_END, context );
     }
 
+    /**
+     *  Returns the list of filters currently installed.  Note that this is not
+     *  a copy, but the actual list.  So be careful with it.
+     *  
+     *  @return A List of PageFilter objects
+     */
     public List getFilterList()
     {
         return m_pageFilters;
@@ -410,6 +453,10 @@ public final class FilterManager extends ModuleManager
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public Collection modules()
     {
         ArrayList modules = new ArrayList();

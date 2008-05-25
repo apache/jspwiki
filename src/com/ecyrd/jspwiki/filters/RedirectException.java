@@ -33,6 +33,12 @@ public class RedirectException
 
     private final String m_where;
 
+    /**
+     *  Constructs a new RedirectException.
+     *  
+     *  @param msg The message for the exception
+     *  @param redirect The redirect URI.
+     */
     public RedirectException( String msg, String redirect )
     {
         super( msg );
@@ -42,6 +48,8 @@ public class RedirectException
 
     /**
      *  Get the URI for redirection.
+     *  
+     *  @return The URI given in the constructor.
      */
     public String getRedirect()
     {

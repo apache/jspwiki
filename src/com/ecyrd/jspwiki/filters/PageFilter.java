@@ -40,7 +40,7 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  per each WikiEngine invocation.  If you need to store data persistently, use
  *  VariableManager, or WikiContext.
  *  <p>
- *  As of 2.5.30, initialize() gains accesso to the WikiEngine.
+ *  As of 2.5.30, initialize() gains access to the WikiEngine.
  *
  */
 public interface PageFilter
@@ -48,31 +48,52 @@ public interface PageFilter
     /**
      *  Is called whenever the a new PageFilter is instantiated and
      *  reset.
+     *  
+     *  @param engine The WikiEngine whic owns this PageFilter
+     *  @param properties The properties ripped from filters.xml.
+     *  @throws FilterException If the filter could not be initialized. If this is thrown,
+     *                          the filter is not added to the internal queues.
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws FilterException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider,
-     *  but not yet been sent through the TranslatorReader.  Note that you cannot
-     *  do HTML translation here, because TranslatorReader is likely to escape it.
+     *  but not yet been sent through the markup-translation process.  Note that you cannot
+     *  do HTML translation here, because it will be escaped.
      *
      *  @param wikiContext The current wikicontext.
      *  @param content     WikiMarkup.
+     *  @return The modified wikimarkup content.
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String preTranslate( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
-     *  This method is called after a page has been fed through the TranslatorReader,
+     *  This method is called after a page has been fed through the translation process,
      *  so anything you are seeing here is translated content.  If you want to
      *  do any of your own WikiMarkup2HTML translation, do it here.
+     *  
+     *  @param wikiContext The WikiContext.
+     *  @param htmlContent The translated HTML
+     *  @return The modified HTML
+     *  
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String postTranslate( WikiContext wikiContext, String htmlContent )
         throws FilterException;
 
     /**
      *  This method is called before the page has been saved to the PageProvider.
+     *  
+     *  @param wikiContext The WikiContext
+     *  @param content The wikimarkup that the user just wanted to save.
+     *  @return The modified wikimarkup
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String preSave( WikiContext wikiContext, String content )
         throws FilterException;
@@ -84,17 +105,22 @@ public interface PageFilter
      *  <p>
      *  Since the result is discarded from this method, this is only useful
      *  for things like counters, etc.
+     *  
+     *  @param wikiContext The WikiContext
+     *  @param content The content which was just stored.
+     *  @throws FilterException If something goes wrong.  As the page is already saved,
+     *                          This is just logged.
      */
     public void postSave( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
-     * Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
-     * clean up or close global resources you allocated in the initialize() method.
+     *  Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
+     *  clean up or close global resources you allocated in the initialize() method.
      * 
-     * @since 2.5.36
+     *  @param engine The WikiEngine which owns this filter.
+     *  @since 2.5.36
      */
     public void destroy( WikiEngine engine );
-
 
 }

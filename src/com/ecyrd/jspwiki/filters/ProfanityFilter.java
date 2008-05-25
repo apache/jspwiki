@@ -59,17 +59,17 @@ public class ProfanityFilter extends BasicPageFilter
             }
             
             BufferedReader br = new BufferedReader( new InputStreamReader( in ) );
-            List l_profs = new ArrayList();
+            List<String> profs = new ArrayList<String>();
             
             String str;
             while ( ( str = br.readLine() ) != null ) 
             {
                 if( str.length() > 0 && !str.startsWith( "#" ) )
                 { // allow comments on profanities file
-                    l_profs.add( str );
+                    profs.add( str );
                 }
             }
-            c_profanities = ( String[] )l_profs.toArray( new String[ l_profs.size() ] );
+            c_profanities = profs.toArray( new String[0] );
         }
         catch( IOException e )
         {
@@ -81,6 +81,9 @@ public class ProfanityFilter extends BasicPageFilter
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String preTranslate( WikiContext context, String content )
     {
         for( int i = 0; i < c_profanities.length; i++ )
