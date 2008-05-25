@@ -21,10 +21,12 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.
@@ -41,6 +43,10 @@ public class CommentLinkTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
@@ -74,13 +80,17 @@ public class CommentLinkTag
 
         switch( m_format )
         {
-          case ANCHOR:
-            out.print("<a href=\""+getCommentURL(pageName)+"\">");
-            break;
+            case ANCHOR:
+                out.print("<a href=\""+getCommentURL(pageName)+"\">");
+                break;
 
-          case URL:
-            out.print( getCommentURL(pageName) );
-            break;
+            case URL:
+                out.print( getCommentURL(pageName) );
+                break;
+                
+            default:
+                throw new InternalWikiException("Impossible format "+m_format);
+            
         }
 
         return EVAL_BODY_INCLUDE;

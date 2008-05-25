@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -29,8 +30,10 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 /**
  *  Does a version check on the page.  Mode is as follows:
  *  <UL>
- *   <LI>latest = Include page content, if the page is the latest version.
- *   <LI>notlatest = Include page content, if the page is NOT the latest version.
+ *   <LI><b>latest</b> - Include body, if the page is the latest version.</li>
+ *   <LI><b>notlatest</b> - Include body, if the page is NOT the latest version.</li>
+ *   <li><b>first</b> - Include body, if page is the first version (version 1)</li>
+ *   <li><b>notfirst</b> - Include bodt, if page is NOT the first version (version 1)</li> 
  *  </UL>
  *  If the page does not exist, body content is never included.
  *
@@ -41,39 +44,52 @@ public class CheckVersionTag
 {
     private static final long serialVersionUID = 0L;
     
-    public static final int LATEST    = 0;
-    public static final int NOTLATEST = 1;
-    public static final int FIRST     = 2;
-    public static final int NOTFIRST  = 3;
+    private static enum VersionMode
+    {
+        LATEST, NOTLATEST, FIRST, NOTFIRST
+    }
 
-    private int m_mode;
+    private VersionMode m_mode;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
-        m_mode = 0;
+        m_mode = VersionMode.LATEST;
     }
 
+    /**
+     *  Sets the mode.
+     *  
+     *  @param arg The mode to set.
+     */
     public void setMode( String arg )
     {
         if( "latest".equals(arg) )
         {
-            m_mode = LATEST;
+            m_mode = VersionMode.LATEST;
         }
         else if( "notfirst".equals(arg) )
         {
-            m_mode = NOTFIRST;
+            m_mode = VersionMode.NOTFIRST;
         }
         else if( "first".equals(arg) )
         {
-            m_mode = FIRST;
+            m_mode = VersionMode.FIRST;
         }
         else
         {
-            m_mode = NOTLATEST;
+            m_mode = VersionMode.NOTLATEST;
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
@@ -93,21 +109,24 @@ public class CheckVersionTag
 
             switch( m_mode )
             {
-              case LATEST:
-                include = (version < 0) || (latest.getVersion() == version);
-                break;
+                case LATEST:
+                    include = (version < 0) || (latest.getVersion() == version);
+                    break;
 
-              case NOTLATEST:
-                include = (version > 0) && (latest.getVersion() != version);
-                break;
+                case NOTLATEST:
+                    include = (version > 0) && (latest.getVersion() != version);
+                    break;
 
-              case FIRST:
-                include = (version == 1 ) || (version < 0 && latest.getVersion() == 1);
-                break;
+                case FIRST:
+                    include = (version == 1 ) || (version < 0 && latest.getVersion() == 1);
+                    break;
 
-              case NOTFIRST:
-                include = version > 1;
-                break;
+                case NOTFIRST:
+                    include = version > 1;
+                    break;
+                
+                default:
+                    throw new InternalWikiException("Mode which is not available!");
             }
 
             if( include )

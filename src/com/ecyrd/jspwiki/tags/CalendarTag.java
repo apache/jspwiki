@@ -66,6 +66,10 @@ public class CalendarTag
     private SimpleDateFormat m_monthUrlFormat = null;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -85,16 +89,42 @@ public class CalendarTag
     }
     */
 
+    /**
+     *  Sets the page format.  If a page corresponding to the format is found when
+     *  the calendar is being rendered, a link to that page is created.  E.g. if the
+     *  format is set to <tt>'Main_blogentry_'ddMMyy</tt>, it works nicely in
+     *  conjuction to the WeblogPlugin.
+     *  
+     *  @param format The format in the SimpleDateFormat fashion.
+     *  
+     *  @see SimpleDateFormat
+     *  @see com.ecyrd.jspwiki.plugin.WeblogPlugin
+     */
     public void setPageformat( String format )
     {
         m_pageFormat = new SimpleDateFormat(format);
     }
 
+    /**
+     *  Set the URL format.  If the pageformat is not set, all dates are
+     *  links to pages according to this format.  The pageformat
+     *  takes precedence.
+     *  
+     *  @param format The URL format in the SimpleDateFormat fashion.
+     *  @see SimpleDateFormat
+     */
     public void setUrlformat( String format )
     {
         m_urlFormat = new SimpleDateFormat(format);
     }
 
+    /**
+     *  Set the format to be used for links for the months.
+     *  
+     *  @param format The format to set in the SimpleDateFormat fashion.
+     *  
+     *  @see SimpleDateFormat
+     */
     public void setMonthurlformat( String format )
     {
         m_monthUrlFormat = new SimpleDateFormat( format );
@@ -241,6 +271,10 @@ public class CalendarTag
         return format(result);
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException,
                ProviderException

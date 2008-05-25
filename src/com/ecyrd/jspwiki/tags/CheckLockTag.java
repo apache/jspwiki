@@ -31,42 +31,64 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import javax.servlet.http.HttpSession;
 
 /**
- *
+ *  Checks whether the page is locked for editing.  If the mode matches,
+ *  the tag body is included.  The "mode" can be any of the following:
+ *  
+ *  <ul>
+ *  <li><b>locked</b> - The page is currently locked, but the lock is owned by someone else.</li>
+ *  <li><b>owned</b> - The page is currently locked and the current user is the owner of the lock.</li>
+ *  <li><b>unlocked</b> - Nobody has locked the page.</li>
+ *  </ul>
+ *  
  *  @since 2.0
  */
 public class CheckLockTag
     extends WikiTagBase
 {
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
     
-    public static final int LOCKED    = 0;
-    public static final int NOTLOCKED = 1;
-    public static final int OWNED     = 2;
+    private static enum LockState
+    {
+        LOCKED, NOTLOCKED, OWNED
+    }
 
-    private int m_mode;
+    private LockState m_mode;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
-        m_mode = 0;
+        m_mode = LockState.NOTLOCKED;
     }
 
+    /**
+     *  Sets the mode to check for.
+     *  
+     *  @param arg A String for the mode.
+     */
     public void setMode( String arg )
     {
         if( "locked".equals(arg) )
         {
-            m_mode = LOCKED;
+            m_mode = LockState.LOCKED;
         }
         else if("owned".equals(arg) )
         {
-            m_mode = OWNED;
+            m_mode = LockState.OWNED;
         }
         else
         {
-            m_mode = NOTLOCKED;
+            m_mode = LockState.NOTLOCKED;
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
@@ -84,9 +106,9 @@ public class CheckLockTag
 
             PageLock userLock = (PageLock) session.getAttribute("lock-"+page.getName());
 
-            if( (lock != null && m_mode == LOCKED && lock != userLock ) ||
-                (lock != null && m_mode == OWNED && lock == userLock ) ||
-                (lock == null && m_mode == NOTLOCKED) )
+            if( (lock != null && m_mode == LockState.LOCKED && lock != userLock ) ||
+                (lock != null && m_mode == LockState.OWNED && lock == userLock ) ||
+                (lock == null && m_mode == LockState.NOTLOCKED) )
             {
                 String tid = getId();
 

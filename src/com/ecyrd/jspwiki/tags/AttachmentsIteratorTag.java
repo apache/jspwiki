@@ -42,7 +42,6 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>
  *
- *  @author Janne Jalkanen
  *  @since 2.0
  */
 
@@ -54,6 +53,10 @@ public class AttachmentsIteratorTag
     
     static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doStartTag()
     {
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
@@ -118,6 +121,10 @@ public class AttachmentsIteratorTag
         return SKIP_BODY;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doAfterBody()
     {
         if( bodyContent != null )

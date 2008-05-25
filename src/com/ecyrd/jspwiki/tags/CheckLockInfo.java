@@ -24,9 +24,16 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+/**
+ *  A companion to CheckLogTag.
+ */
 public class CheckLockInfo
     extends TagExtraInfo
 {
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public VariableInfo[] getVariableInfo(TagData data)
     {
         VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
