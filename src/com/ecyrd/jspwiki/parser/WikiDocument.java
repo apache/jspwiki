@@ -39,12 +39,12 @@ import com.ecyrd.jspwiki.WikiPage;
  */
 public class WikiDocument extends Document
 {
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
     
-    private WikiPage m_page;
-    private String   m_wikiText;
+    private WikiPage                   m_page;
+    private String                     m_wikiText;
 
-    private WeakReference m_context;
+    private WeakReference<WikiContext> m_context;
     
     /**
      *  Creates a new WikiDocument for a specific page.
@@ -56,24 +56,48 @@ public class WikiDocument extends Document
         m_page     = page;
     }
     
+    /**
+     *  Set the WikiMarkup for this document.
+     *  
+     *  @param data The WikiMarkup
+     */
     public void setPageData( String data )
     {
         m_wikiText = data;
     }
     
+    /**
+     *  Returns the wikimarkup used to render this document.
+     *  
+     *  @return The WikiMarkup
+     */
     public String getPageData()
     {
         return m_wikiText;
     }
     
+    /**
+     *  Return the WikiPage for whom this WikiDocument exists.
+     *  
+     *  @return The WikiPage
+     */
     public WikiPage getPage()
     {
         return m_page;
     }
 
+    /**
+     *  Set the WikiContext in which the WikiDocument is rendered. The
+     *  WikiContext is stored in a WeakReference, which means that it 
+     *  can be garbagecollected away.  This is to allow for caching of
+     *  the WikiDocument without having to carry the WikiContext around
+     *  for a long time.
+     *  
+     *  @param ctx A WikiContext.
+     */
     public void setContext( WikiContext ctx )
     {
-        m_context = new WeakReference( ctx );
+        m_context = new WeakReference<WikiContext>( ctx );
     }
     
     /**
@@ -84,6 +108,6 @@ public class WikiDocument extends Document
      */
     public WikiContext getContext()
     {
-        return (WikiContext) m_context.get();
+        return m_context.get();
     }
 }

@@ -956,7 +956,7 @@ public class WikiContext
      */
     public static Locale getLocale( WikiContext context )
     {
-        return( Preferences.getLocale( context ) );
+        return Preferences.getLocale( context );
 /*
         HttpServletRequest request = context.getHttpRequest();
         return ( request != null )

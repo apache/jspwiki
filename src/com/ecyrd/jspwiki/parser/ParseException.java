@@ -31,6 +31,11 @@ public class ParseException extends WikiException
 {
     private static final long serialVersionUID = 1L;
 
+    /**
+     *  Constructs a new ParseException.
+     *  
+     *  @param msg {@inheritDoc}
+     */
     public ParseException(String msg)
     {
         super(msg);

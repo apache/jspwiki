@@ -344,10 +344,10 @@ public class LinkParser
      */
     public static class Link
     {
-        private String m_text;
-        private String m_ref = null;
-        private int    m_interwikiPoint = -1;
-        private List   m_attribs = null;
+        private String            m_text;
+        private String            m_ref = null;
+        private int               m_interwikiPoint = -1;
+        private List<Attribute>   m_attribs = null;
 
         /**
          *  Create a new Link with text but no reference.
@@ -508,7 +508,7 @@ public class LinkParser
         {
             if( m_attribs == null )
             {
-                m_attribs = new ArrayList();
+                m_attribs = new ArrayList<Attribute>();
             }
             m_attribs.add(attr);
         }
