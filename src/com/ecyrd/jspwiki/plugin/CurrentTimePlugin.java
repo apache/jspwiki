@@ -41,6 +41,9 @@ public class CurrentTimePlugin
 {
     // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

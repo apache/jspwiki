@@ -119,6 +119,9 @@ public class Denounce implements WikiPlugin
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

@@ -22,6 +22,10 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.WikiException;
 
+/**
+ *  Provides a generic PluginException.  This is the kind of
+ *  an exception that the plugins should throw.
+ */
 public class PluginException
     extends WikiException
 {
@@ -29,18 +33,34 @@ public class PluginException
 
     private final Throwable m_throwable;
 
+    /**
+     *  Create a PluginException.
+     *  
+     *  @param message {@inheritDoc}
+     */
     public PluginException( String message )
     {
         super( message );
         m_throwable = null;
     }
 
+    /**
+     *  Create a PluginException with the given original exception wrapped.
+     *  
+     *  @param message {@inheritDoc}
+     *  @param original The original exception.
+     */
     public PluginException( String message, Throwable original )
     {
         super( message );
         m_throwable = original;
     }
 
+    /**
+     *  Return the original exception.
+     *  
+     *  @return The original exception.
+     */
     public Throwable getRootThrowable()
     {
         return m_throwable;

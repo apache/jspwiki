@@ -40,8 +40,11 @@ import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 public class Groups
     implements WikiPlugin
 {
-    private static final Comparator COMPARATOR = new PrincipalComparator();
+    private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

@@ -56,17 +56,37 @@ public abstract class AbstractReferralPlugin
 {
     private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
 
+    /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
+    
+    /** Parameter name for setting the maximum width.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAXWIDTH         = "maxwidth";
+
+    /** Parameter name for the separator string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SEPARATOR        = "separator";
+    
+    /** Parameter name for the output after the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_AFTER            = "after";
+    
+    /** Parameter name for the output before the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_BEFORE           = "before";
 
+    /** Parameter name for setting the list of excluded patterns.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXCLUDE          = "exclude";
+    
+    /** Parameter name for setting the list of included patterns.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE          = "include";
+    
+    /** Parameter name for the show parameter.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW             = "show";
+    
+    /** Parameter name for setting show to "pages".  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW_VALUE_PAGES = "pages";
+    
+    /** Parameter name for setting show to "count".  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SHOW_VALUE_COUNT = "count";
+    
+    /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LASTMODIFIED     = "showLastModified";
 
     protected           int      m_maxwidth = Integer.MAX_VALUE;
@@ -86,13 +106,10 @@ public abstract class AbstractReferralPlugin
     protected           WikiEngine m_engine;
 
     /**
-     *  Used to initialize some things.  All subclasses must call this first.
-     *
-     *  @since 1.6.4
+     *  {@inheritDoc}
      */
 
     // FIXME: The compiled pattern strings should really be cached somehow.
-
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
@@ -202,10 +219,15 @@ public abstract class AbstractReferralPlugin
         }
     }
     
-
+    /**
+     *  Filters a collection according to the include and exclude -parameters.
+     *  
+     *  @param c The collection to filter.
+     *  @return A filtered collection.
+     */
     protected Collection filterCollection( Collection c )
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
 
         PatternMatcher pm = new Perl5Matcher();
 
@@ -280,6 +302,7 @@ public abstract class AbstractReferralPlugin
      *  @param links Collection to make into WikiText.
      *  @param separator Separator string to use.
      *  @param numItems How many items to show.
+     *  @return The WikiText
      */
     protected String wikitizeCollection( Collection links, String separator, int numItems )
     {
@@ -322,6 +345,9 @@ public abstract class AbstractReferralPlugin
     /**
      *  Makes HTML with common parameters.
      *
+     *  @param context The WikiContext
+     *  @param wikitext The wikitext to render
+     *  @return HTML
      *  @since 1.6.4
      */
     protected String makeHTML( WikiContext context, String wikitext )
