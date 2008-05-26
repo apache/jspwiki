@@ -96,7 +96,7 @@ public class JSPWikiMarkupParser
     private boolean        m_isPreBlock   = false;
 
     /** Contains style information, in multiple forms. */
-    private Stack          m_styleStack   = new Stack();
+    private Stack<Boolean> m_styleStack   = new Stack<Boolean>();
 
      // general list handling
     private int            m_genlistlevel = 0;
@@ -107,7 +107,7 @@ public class JSPWikiMarkupParser
     private boolean        m_isOpenParagraph = false;
 
     /** Keeps image regexp Patterns */
-    private List           m_inlineImagePatterns;
+    private List<Pattern>  m_inlineImagePatterns;
 
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
@@ -185,7 +185,7 @@ public class JSPWikiMarkupParser
      *  This array is sorted during class load, so you can just dump
      *  here whatever you want in whatever order you want.
      */
-    static final String[] c_externalLinks = {
+    static final String[] EXTERNAL_LINKS = {
         "http:", "ftp:", "https:", "mailto:",
         "news:", "file:", "rtsp:", "mms:", "ldap:",
         "gopher:", "nntp:", "telnet:", "wais:",
@@ -221,15 +221,18 @@ public class JSPWikiMarkupParser
      *  This Comparator is used to find an external link from c_externalLinks.  It
      *  checks if the link starts with the other arraythingie.
      */
-    private static Comparator c_startingComparator = new StartingComparator();
+    private static Comparator<String> c_startingComparator = new StartingComparator();
 
     static
     {
-        Arrays.sort( c_externalLinks );
+        Arrays.sort( EXTERNAL_LINKS );
     }
 
     /**
      *  Creates a markup parser.
+     *  
+     *  @param context The WikiContext which controls the parsing
+     *  @param in Where the data is read from.
      */
     public JSPWikiMarkupParser( WikiContext context, Reader in )
     {
@@ -243,20 +246,21 @@ public class JSPWikiMarkupParser
      */
 
     // FIXME: parsers should be pooled for better performance.
+    @SuppressWarnings("unchecked")
     private void initialize()
     {
         PatternCompiler compiler         = new GlobCompiler();
-        List            compiledpatterns;
+        List<Pattern>   compiledpatterns;
 
         //
         //  We cache compiled patterns in the engine, since their creation is
         //  really expensive
         //
-        compiledpatterns = (List)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+        compiledpatterns = (List<Pattern>)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
 
         if( compiledpatterns == null )
         {
-            compiledpatterns = new ArrayList(20);
+            compiledpatterns = new ArrayList<Pattern>(20);
             Collection ptrns = getImagePatterns( m_engine );
 
             //
@@ -381,13 +385,15 @@ public class JSPWikiMarkupParser
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
+     *  
+     *  @param engine The WikiEngine from which the patterns are read.
      */
 
     // FIXME: Does not belong here; should be elsewhere
     public static Collection getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
-        ArrayList  ptrnlist = new ArrayList();
+        ArrayList<String>  ptrnlist = new ArrayList<String>();
 
         for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
         {
@@ -639,19 +645,21 @@ public class JSPWikiMarkupParser
      *  Figures out if a link is an off-site link.  This recognizes
      *  the most common protocols by checking how it starts.
      *
+     *  @param link The link to check.
+     *  @return true, if this is a link outside of this wiki.
      *  @since 2.4
      */
 
     public static boolean isExternalLink( String link )
     {
-        int idx = Arrays.binarySearch( c_externalLinks, link,
+        int idx = Arrays.binarySearch( EXTERNAL_LINKS, link,
                                        c_startingComparator );
 
         //
         //  We need to check here once again; otherwise we might
         //  get a match for something like "h".
         //
-        if( idx >= 0 && link.startsWith(c_externalLinks[idx]) ) return true;
+        if( idx >= 0 && link.startsWith(EXTERNAL_LINKS[idx]) ) return true;
 
         return false;
     }
@@ -739,7 +747,11 @@ public class JSPWikiMarkupParser
 
 
     /**
-     *  Writes HTML for error message.
+     *  Writes HTML for error message.  Does not add it to the document, you
+     *  have to do it yourself.
+     *  
+     *  @param error The error string.
+     *  @return An Element containing the error.
      */
 
     public static Element makeError( String error )
@@ -1118,11 +1130,12 @@ public class JSPWikiMarkupParser
     }
 
     /**
-     *  Returns XHTML for the start of the heading.  Also sets the
-     *  line-end emitter.
-     *  @param level
+     *  Returns XHTML for the heading. 
+     *  
+     *  @param level The level of the heading.  @see Heading
      *  @param title the title for the heading
      *  @param hd a List to which heading should be added
+     *  @return An Element containing the heading
      */
     public Element makeHeading( int level, String title, Heading hd )
     {
@@ -2287,7 +2300,7 @@ public class JSPWikiMarkupParser
 
                 try
                 {
-                    Boolean isSpan = (Boolean)m_styleStack.pop();
+                    Boolean isSpan = m_styleStack.pop();
 
                     if( isSpan == null )
                     {
@@ -2629,18 +2642,28 @@ public class JSPWikiMarkupParser
         return sb.toString();
     }
     
-    public static final int CHARACTER = 0;
-    public static final int ELEMENT   = 1;
-    public static final int IGNORE    = 2;
+    /** The token is a plain character. */
+    protected static final int CHARACTER = 0;
+    
+    /** The token is a wikimarkup element. */
+    protected static final int ELEMENT   = 1;
+    
+    /** The token is to be ignored. */
+    protected static final int IGNORE    = 2;
 
     /**
      *  Return CHARACTER, if you think this was a plain character; ELEMENT, if
      *  you think this was a wiki markup element, and IGNORE, if you think
      *  we should ignore this altogether.
+     *  <p>
+     *  To add your own MarkupParser, you can override this method, but it
+     *  is recommended that you call super.parseToken() as well to gain advantage
+     *  of JSPWiki's own markup.  You can call it at the start of your own
+     *  parseToken() or end - it does not matter.
      *
-     * @param ch
+     * @param ch The character under investigation
      * @return {@link #ELEMENT}, {@link #CHARACTER} or {@link #IGNORE}.
-     * @throws IOException
+     * @throws IOException If parsing fails.
      */
     protected int parseToken( int ch )
         throws IOException
@@ -2807,6 +2830,13 @@ public class JSPWikiMarkupParser
         return el != null ? ELEMENT : CHARACTER;
     }
 
+    /**
+     *  Parses the entire document from the Reader given in the constructor or
+     *  set by {@link #setInputReader(Reader)}.
+     *  
+     *  @return A WikiDocument, ready to be passed to the renderer.
+     *  @throws IOException If parsing cannot be accomplished.
+     */
     public WikiDocument parse()
         throws IOException
     {
@@ -2838,7 +2868,7 @@ public class JSPWikiMarkupParser
 
         if( rootElement.getChild("p") != null )
         {
-            ArrayList ls = new ArrayList();
+            ArrayList<Content> ls = new ArrayList<Content>();
             int idxOfFirstContent = 0;
             int count = 0;
 
@@ -2891,13 +2921,10 @@ public class JSPWikiMarkupParser
      *
      *  @since
      */
-    private static class StartingComparator implements Comparator
+    private static class StartingComparator implements Comparator<String>
     {
-        public int compare( Object arg0, Object arg1 )
+        public int compare( String s1, String s2 )
         {
-            String s1 = (String)arg0;
-            String s2 = (String)arg1;
-
             if( s1.length() > s2.length() )
             {
                 if( s1.startsWith(s2) && s2.length() > 1 ) return 0;

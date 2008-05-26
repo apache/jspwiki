@@ -29,6 +29,10 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  Stores the contents of a WikiVariable in a WikiDocument DOM tree.
+ *  <p>
+ *  When the WikiDocument is rendered, if the {@link RenderingManager#WYSIWYG_EDITOR_MODE}
+ *  is set to {@link Boolean#TRUE}, the variable declaration is rendered instead
+ *  of the variable value.
  *
  *  @since  2.4
  */
@@ -38,13 +42,20 @@ public class VariableContent extends Text
 
     private String m_varName;
     
+    /**
+     *  Create a VariableContent for the given variable.
+     *  
+     *  @param varName The name of the variable.
+     */
     public VariableContent( String varName )
     {
         m_varName = varName;
     }
     
     /**
-     *   Evaluates the variable and returns the contents.
+     *   Evaluates the variable and returns the contents. 
+     *   
+     *   @return The rendered value of the variable.
      */
     public String getValue()
     {
@@ -83,11 +94,19 @@ public class VariableContent extends Text
         return StringEscapeUtils.escapeXml( result );
     }
     
+    /**
+     *  Returns exactly getValue().
+     *  @return Whatever getValue() returns.
+     */
     public String getText()
     {
         return getValue();
     }
 
+    /**
+     *  Returns a debug-suitable string.
+     *  @return Debug string
+     */
     public String toString()
     {
         return "VariableElement[\""+m_varName+"\"]";
