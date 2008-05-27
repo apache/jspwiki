@@ -1,0 +1,188 @@
+Web unit tests
+--------------
+Each of these tests needs to be tested for five scenarios (webapps):
+
+/test-custom
+/test-container
+/test-custom-absolute
+/test-custom-jdbc
+/test-container-jdbc
+
+
+I. Test Anonymous View & Anonymous View Image
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Verify the presence of text "You have successfully installed" and "This wiki is done using"
+2. Verify that you can see the JSPWiki logo in the upper left corner.
+
+
+II. Test Login
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Go to front page.
+2. Log in with test user name and password (janne/myP@5sw0rd); verify redirect to front page.
+3. Verify "G'Day JanneJalkanen" on front page.
+
+
+III. Test Logout
+0. Keep session from previous test alive...
+1. Log out; verify redirect to front page.
+2. Verify "G'Day anonymous guest" on front page
+3. Verify that the cookie "JSPWikiAssertedName" is cleared in the browser.
+
+
+IV. Test Asserted Name
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Go to the Main page. Verify the 'G'day anonymous guest' message.
+2. Navivate to the 'My Prefs' page. 
+3. Set the asserted-name cookies to "Don Quixote"
+4. Verify redirect to the Main page; verify the message "G'Day Don Quixote" (not logged in)"
+5. Verify that the browser's cookie JSPWikiAssertedName is "Don+Quixote"
+6. Go back to the "My Prefs" page and clear the asserted-name cookie.
+7. Verify redirect to the Main page; verify the message "G'Day anonymous guest"
+8. Verify that the cookie JSPWikiAssertedName is cleared.
+
+
+V. Test ACL: Asserted Permissions
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create a new group called "AssertedPermissions" with these menbers:
+
+JanneJalkanen
+Fred Flintstone
+
+3. After creation go to "/Group.jsp?group=AssertedPermissions"; verify that the group was created and that it contains janne and Fred Flintstone.
+4. Clear all session/assertion cookies using the browser options/preferences tools.
+5. Go to "/Group.jsp?group=AssertedPermissions"; verify that the anonymous user can't view the group.
+6. Log in with test user name and password (janne/myP@5sw0rd).
+7. Go to "/Group.jsp?group=AssertedPermissions"; verify that janne can still view the group.
+8. Clear all session/assertion cookies using the browser options/preferences tools.
+9. Set the asserted-name cookie to "Fred Flintstone"
+A. Go to "/Group.jsp?group=AssertedPermissions"; verify that Fred Flintstone can view the group.
+B. Go to "/EditGroup.jsp?group=AssertedPermissions"; verify that Fred Flintstone cannot edit; should be redirected to login page.
+
+
+VI. Test ACL: Authenticated
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create new page "ACLAuthenticated" with these contents:
+
+[{ALLOW view Authenticated}]
+We created this page to test redirects.
+
+3. Clear all session/assertion cookies using the browser options/preferences tools.
+4. Go to "/Wiki.jsp?page=ACLAuthenticated"; verify that anonymous can't view.
+5. Log in with test user name and password (janne/myP@5sw0rd).
+6. Verify that janne can see the page's text.
+
+
+VII. Test ACL: Janne Edit
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in as 'janne'
+2. Create new page via /Edit.jsp?page=AclEditOnly
+3. Add this text:
+
+[{ALLOW edit janne}]
+This page was created with an ACL by janne
+
+4. Click 'ok'
+5. Log out & clear cookies.
+6. Try to view page 'AclEditOnly'. It should NOT succeed; will be redirected to the login page.
+7. Try to edit page 'AclEditOnly'. It should NOT succeed; will be redirected to the login page.
+8. Login as 'janne' again.
+9. Try to view page 'AclEditOnly'. It should succeed.
+10. Try to edit page 'AclEditOnly'. It should succeed also.
+
+
+VIII. Test Acl: Janne Edit, All View
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create new page via /Edit.jsp?page=AclViewAndEdit
+3. Add this text:
+
+[{ALLOW edit janne}]
+[{ALLOW view All}]
+This page was created with an ACL by janne
+
+4. Click 'ok'
+5. Log out & clear cookies.
+6. Try to view page 'AclViewAndEdit'. It should succeed.
+7. Try to edit page 'AclViewAndEdit'. It should NOT succeed; will be redirected to the login page.
+8. Login as 'janne' again.
+9. Try to view page 'AclEditOnly'. It should succeed.
+10. Try to view page 'AclEditOnly'. It should succeed also.
+
+
+IX. Test Anonymous Create Group
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Try to create a new group by navigating to "/NewGroup.jsp"
+2. Verify redirect to login page.
+
+
+X. Test Create Group: Full Name
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create a new group called FullName with this member:
+
+Janne Jalkanen
+
+3. Go to "/Group.jsp?group=FullName"; verify that Janne Jalkanen is a member.
+4. Clear all session/assertion cookies using the browser options/preferences tools.
+5. Go to "/Group.jsp?group=FullName"; verify that anonymous can't view; should be redirected to login page.
+6. Go to "/EditGroup.jsp?group=FullName"; verify that anonymous can't view; should be redirected to login page.
+7. Log in with test user name and password (janne/myP@5sw0rd).
+8. Go to "/Group.jsp?group=FullName"; verify that janne can still view the group.
+9. Go to "/EditGroup.jsp?group=FullName"; verify that janne can still edit the group.
+
+
+XI. Test Create Group: Login Name
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create a new group called LoginName with this member:
+
+janne
+
+3. Go to "/Group.jsp?group=LoginName"; verify that janne is a member.
+4. Clear all session/assertion cookies using the browser options/preferences tools.
+5. Go to "/Group.jsp?group=LoginName"; verify that anonymous can't view; should be redirected to login page.
+6. Go to "/EditGroup.jsp?group=LoginName"; verify that anonymous can't view; should be redirected to login page.
+7. Log in with test user name and password (janne/myP@5sw0rd).
+8. Go to "/Group.jsp?group=LoginName"; verify that janne can still view the group.
+9. Go to "/EditGroup.jsp?group=LoginName"; verify that janne can still edit the group.
+
+        
+XII. Test Create Group: Wiki Name
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Log in with test user name and password (janne/myP@5sw0rd).
+2. Create a new group called WikiName with this member:
+
+JanneJalkanen
+
+3. Go to "/Group.jsp?group=WikiName"; verify that JanneJalkanen is a member.
+4. Clear all session/assertion cookies using the browser options/preferences tools.
+5. Go to "/Group.jsp?group=WikiName"; verify that anonymous can't view; should be redirected to login page.
+6. Go to "/EditGroup.jsp?group=WikiName"; verify that anonymous can't view; should be redirected to login page.
+7. Log in with test user name and password (janne/myP@5sw0rd).
+8. Go to "/Group.jsp?group=WikiName"; verify that janne can still view the group.
+9. Go to "/EditGroup.jsp?group=WikiName"; verify that janne can still edit the group.
+
+
+XIII. Test Rename Profile
+0. Clear all session/assertion cookies using the browser options/preferences tools.
+1. Create new user profile with login name "TestRenameProfileUser", name "TestRenameProfileUser" and password "password".
+2. Verify that it was created by looking for the text "G'Day TestRenameProfileUser".
+3. Clear all session/assertion cookies using the browser options/preferences tools.
+4. Log in with test user name and password (janne/myP@5sw0rd).
+5. Create a new page called "TestRenameProfilePage" with these contents:
+
+[{ALLOW edit TestRenameProfileUser}]
+This page was created with an ACL by TestRenameProfileUser
+
+6. Clear all session/assertion cookies using the browser options/preferences tools.
+7. Log in with renamed user name (TestRenameProfileUser/password).
+8. Try to view page 'TestRenameProfilePage'. It should succeed.
+9. Try to edit page 'TestRenameProfilePage'. It should succeed also.
+A. Go to the My Prefs page, the Profile tab. Change the login name and wiki name to "RenamedUser".
+B. Verify that the front page now shows "G'Day RenamedUser".
+C. Try to edit page 'TestRenameProfilePage'. It should still succeed. Verify that the ACL contains:
+
+[{ALLOW edit RenamedUser}]
+This page was created with an ACL by TestRenameProfileUser

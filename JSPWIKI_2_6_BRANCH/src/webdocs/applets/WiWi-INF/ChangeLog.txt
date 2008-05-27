@@ -1,0 +1,227 @@
+Please ignore entries starting with Ticket_blogentry_.  We are trying to make these tickets available to the public shortly.
+
+Version 1.1 vom 20.11.2006 (Chuck Smith)
+	
+	* added Chinese translation by Jacky Liu
+	* moved buttons on toolbar
+
+Version 1.0.32 vom 06.11.2006 (Chuck Smith)
+	
+	* Fixed bug with Mark Occurrences tooltip in en, de, eo, nl
+
+Version 1.0.31 vom 06.11.2006 (Hanno Eichelberger)
+	
+	* Remove highlighting bug at start
+	* Integrated Marker (Mark occurences)
+	* Drag 'n drop interface for extension bar
+	* New button look & feel for extension bar
+
+Version 1.0.30 vom 27.10.2006 (Chuck Smith)
+	
+	* added error messages on Attach button (fr, nl)
+	* fixed bug on viewing attachments so it can run on Java 1.4
+	* added version number to splash screen
+
+Version 1.0.29 vom 26.10.2006 (Chuck Smith)
+	
+	* added error messages on Attach button (de, en, eo)
+	* added pageexists parameter on applet tag in WikiWizard.jsp
+
+Version 1.0.29 vom 26.10.2006 (Chuck Smith)
+
+    * added error messages on Attach button (de, en, eo)
+    * added pageexists parameter on applet tag in WikiWizard.jsp
+
+Version 1.0.28 vom 26.10.2006 (Chuck Smith)
+
+    * Fixed all loading and viewing attachment bugs.
+
+Version 1.0.27 vom 23.10.2006 (Hanno Eichelberger)
+
+    * Speed up loading of extension by loading it in a thread
+
+Version 1.0.26 vom 23.10.2006 (Hanno Eichelberger)
+
+    * faster applet loading
+    * link tag in different colors
+    * #date tag now works correctly in templates
+    * Hotkeys are also shown as as tooltips on templates
+    * CDATA tags in templates in the extension xml files are now possible within CODE tags.
+    * Ctrl-Z on start no longer deletes all the text
+
+Version 1.0.25 vom 12.10.2006 (Chuck Smith)
+
+    * Fixed problem with spaces in filenames.
+
+Version 1.0.24 vom 11.10.2006 (Chuck Smith)
+
+    * Added progress bar to loading attachments.
+
+Version 1.0.23 vom 11.10.2006 (Chuck Smith)
+
+    * Reports correctly when files have been successfully uploaded.
+
+Version 1.0.22 vom 09.10.2006 (Chuck Smith)
+
+    * Saves attachment images as thumbnails to save memory.
+
+Version 1.0.21 vom 29.09.2006 (Chuck Smith)
+
+    * Does not attempt to upload a file if it is more than the max size allowed by JSPWiki
+
+Version 1.0.20 vom 20.09.2006 (Chuck Smith)
+
+    * Prints WikiWizard version to console when loaded
+    * Does not crash when new applet attachment parameters are not in WikiWizard.jsp
+
+Version 1.0.19 vom 19.09.2006 (Chuck Smith)
+
+    * Removed fileattach button and menu item when user does not have upload permission.
+
+Version 1.0.18 vom 07.09.2006 (Chuck Smith)
+
+    * Fixed fatal Replace All bug. Renamed method eingabe to input.
+
+Version 1.0.17 vom 29.08.2006 (Chuck Smith)
+
+    * Removed Firefox bookmark drop functionality to make Cut work again
+
+Version 1.0.16 vom 14.07.2006 (Chuck Smith)
+
+    * Can now drag and drop Firefox bookmarks into applet
+    * Unfortunately you can now no longer drag and drop within the applet, will fix later
+
+Version 1.0.15 vom 30.06.2006 (Chuck Smith)
+
+    * Drag and drop now possible within applet
+
+Version 1.0.14 vom 19.06.2006 (Chuck Smith)
+
+    * Fixed bug which did not allow old file upload system to work
+
+Version 1.0.13 vom 13.06.2006 (Chuck Smith)
+
+    * Updated French, German and Dutch translations
+
+Version 1.0.12 vom 09.06.2006 (Chuck Smith)
+
+    * Catch OutOfMemoryError for large files in multiple uploads.
+
+Version 1.0.11 vom 08.06.2006 (Chuck Smith)
+
+    * updated ImagePreviewPanel so multiple file upload can work in Java 1.4
+    * translated German variables (in PictureDialog.java) from hoehe, briete to height, width
+    * made tables "stay on top" and non-modal in Java 1.5, they remain modal in Java 1.4
+    * changed function calls in setJOutlookBar, so they will be Java 1.4 compatible
+
+Version 1.0.10 vom 07.06.2006 (Chuck Smith)
+
+    * fixed table modality to always on top, but not always holding focus
+
+Version 1.0.9 vom 07.06.2006 (Chuck Smith)
+
+    * added credit to Vlad Patryshev for ClientHttpRequest
+    * fixed Ticket_blogentry_100506_1 - WikiWizard - beim Überschreiben von ImagePlugin werden Parameter mit überschrieben
+
+Version 1.0.8 vom 31.05.2006 (Chuck Smith)
+
+    * added error-handling to multiple file upload
+
+Version 1.0.7 vom 26.05.2006 (Chuck Smith)
+
+    * corrected, i18n-ized and uncommented multiple file upload
+
+Version 1.0.6 vom 24.05.2006 (Chuck Smith)
+
+    * added commented code to allow multiple file uploads
+
+Version 1.0.5 vom 04.05.2006 (Chuck Smith)
+
+    * fixed Ticket_blogentry_030506_3 - WikiWizard - Steps to 1.0.5 (final stable 1.0)
+
+Version 1.0.4 vom 03.05.2006 (Chuck Smith)
+
+    * added bold line to header converter for formatted paste
+    * fixed Ticket_blogentry_190406_1 - WikiWizard - Improve Formatted Paste
+
+Version 1.0.3 vom 21.04.2006 (Chuck Smith)
+
+    * added Paste Formatted to Edit menu
+    * fixed formatted paste for headings right after a list
+
+Version 1.0.2 vom 13.04.2006 (Chuck Smith)
+
+    * added comments, general code cleanup in EditorDocument.java
+    * corrected variable spelling across multiple files: seperator -> separator
+
+Version 1.0.1 vom 05.04.2006 (Chuck Smith)
+
+    * added Dutch translation
+    * added translator credits to about screen
+    * fixed closeToolTip on attachments clipboard
+    * fixed ant file to work with JSPWiki 2.3
+
+Version 1.0 vom 21.03.2006 (Chuck Smith)
+
+    * fixed Action_Date() and Action_DateTime() functions
+    * fixed image insertion
+    * friendlier error messages when XML files are not found
+    * fixed Ticket_blogentry_220306_1 - WikiWizard - Bei Einfügen von Links wird erstes Zeichen nach Link überschrieben
+    * fixed Ticket_blogentry_240206_1 - WW (WikiIntegration) - Tastatureingaben werden ignoriert
+
+Version 0.9.110 vom 16.03.2006 (Chuck Smith)
+
+    * fixed Ticket_blogentry_110306_3 - WikiWizard - Ersetzen von Bildern durch klick in Attachment Sidebar
+    * general code cleanup
+
+Version 0.9.109 vom 14.03.2006 (Chuck Smith)
+
+    * moved code from wrong .js file (wikiwizard.js) to the correct one (wikiwizard-jspwiki.js)
+
+Version 0.9.108 vom 14.03.2006 (Chuck Smith)
+
+    * code cleanup (better formatting and translation from German to English)
+    * will only run changeTab JavaScript function when WikiWizard is active
+
+Version 0.9.107 vom 06.03.2006 (Chuck Smith)
+
+    * renamed highlighting.xml to highlighting-jspwiki.xml
+    * renamed css-formating.xml to css-formatting.xml
+    * changed show() to setVisible(true) in AboutDialog
+
+Version 0.9.106 vom 03.03.2006 (Chuck Smith)
+
+    * Added 2006 and proper copyright symbol to About Dialog.
+    * Changed colors to hex (3 or 6 chars) instead of decimal RGB in highlighting.xml.
+    * Converted all colors to websafe colors.
+    * Changed hinterlegt to background.
+
+Version 0.9.105 vom 02.03.2006 (Chuck Smith)
+
+    * Beautified About Dialog box.
+
+Version 0.9.104 vom 02.03.2006 (Chuck Smith)
+
+    * Removed error System.out.print statements from EditorDocument.java.
+    * Fixed regex expressions for highlighting.xml processing in WikiTag.java.
+    * Added commentbox highlighting in highlighting.xml.
+
+Version 0.9.103 vom 01.03.2006 (Chuck Smith)
+
+    * Fixed highlighting bug where cursor would jump to the end of the selection after full highlighting if someone selected from right to left.
+    * Changed constants in EditorDocument to CAPITALIZED letters.
+
+Version 0.9.102 vom ??.02.2006 (Chuck Smith)
+
+    * Made small JavaScript fixes to make WW work on Mac.
+    * Fixed Ticket_blogentry_140206_1 - WW (WikiIntegration) - Mac Safari - Preview funktioniert nicht
+
+Version 0.9.101 vom 02.02.2006 (Chuck Smith)
+
+    * Fixed Ticket_blogentry_130206_2 - WW (PluginDialog) - "Link einfügen"-Dialog Tabreihenfolge
+    * Fixed Ticket_blogentry_130206_3 - WW (TableEditor) - Fehler in "Formatiert Kopieren:Mailingliste"
+    * Neuer Autotext Ctrl+K für Plugin Klammern
+
+Version 0.9.100 vom 30.01.2006 (Chuck Smith)
+
+    * Fixed Ticket_blogentry_080206_1 - WW (CopyPaste) - Einfügen aus Clipboard Java Version 1.4

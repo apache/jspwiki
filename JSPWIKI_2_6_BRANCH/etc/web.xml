@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+        version="2.4">
+
+   <description>
+       JSPWiki is a free JSP-based WikiClone.  It is licenced
+       under the Lesser GNU General Public License.
+
+       JSPWiki is maintained by Janne Jalkanen (+others),
+       jalkanen+jspwiki@ecyrd.com
+   </description>
+   <display-name>JSPWiki</display-name>
+
+   <!-- Resource bundle default location -->
+   <context-param>
+     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+     <param-value>templates.default</param-value>
+   </context-param>
+
+   <!--
+      This is new in 2.4.  This defines a servlet filter which filters all requests. 
+   -->
+
+   <filter>
+      <filter-name>WikiServletFilter</filter-name>
+      <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
+   </filter>
+   <filter>
+      <filter-name>WikiJSPFilter</filter-name>
+      <filter-class>com.ecyrd.jspwiki.ui.WikiJSPFilter</filter-class>
+   </filter>
+
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/attach/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/atom/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/dav/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/RPCU/</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/RPC2/</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>/JSON-RPC</url-pattern>
+   </filter-mapping> 
+   <filter-mapping>
+       <filter-name>WikiJSPFilter</filter-name>
+       <url-pattern>/wiki/*</url-pattern>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiJSPFilter</filter-name>
+       <url-pattern>*.jsp</url-pattern>
+   </filter-mapping>
+   
+   <!--
+       HttpSessionListener used for managing WikiSession's.
+     -->
+   <listener>
+      <listener-class>com.ecyrd.jspwiki.auth.SessionMonitor</listener-class>
+   </listener>
+   
+   <!--
+       Now, let's define the XML-RPC interfaces.  You probably don't have to
+       touch these.
+
+       First, we'll define the standard XML-RPC interface.
+     -->
+   <servlet>
+       <servlet-name>XMLRPC</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.xmlrpc.RPCServlet</servlet-class>       
+       <init-param>
+           <param-name>handler</param-name>
+           <param-value>com.ecyrd.jspwiki.xmlrpc.RPCHandler</param-value>
+       </init-param>
+
+       <init-param>
+           <param-name>prefix</param-name>
+           <param-value>wiki</param-value>
+       </init-param>
+   </servlet>
+
+   <!--
+       OK, this then defines that our UTF-8 -capable server.
+     -->
+
+   <servlet>
+       <servlet-name>XMLRPC-UTF8</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.xmlrpc.RPCServlet</servlet-class>       
+       <init-param>
+           <param-name>handler</param-name>
+           <param-value>com.ecyrd.jspwiki.xmlrpc.RPCHandlerUTF8</param-value>
+       </init-param>
+
+       <init-param>
+           <param-name>prefix</param-name>
+           <param-value>wiki</param-value>
+       </init-param>
+   </servlet>
+
+   <!-- JSON AJAX API -->
+   <servlet>
+       <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
+       <servlet-class>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-class>
+   </servlet>
+
+   <!-- Atom Publishing Protocol -->
+   <servlet>
+       <servlet-name>ATOM</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.rpc.atom.AtomAPIServlet</servlet-class>       
+   </servlet>
+
+   <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
+   <servlet>
+       <servlet-name>WikiServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+       <load-on-startup>1</load-on-startup>
+   </servlet>
+
+   <servlet>
+       <servlet-name>DAVServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.dav.WikiDavServlet</servlet-class>
+   </servlet>
+
+   <!--
+       Attachment exchange handler.
+     -->
+
+   <servlet>
+       <servlet-name>AttachmentServlet</servlet-name>
+       <servlet-class>com.ecyrd.jspwiki.attachment.AttachmentServlet</servlet-class>
+   </servlet>
+
+   <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
+
+   <!--
+       And finally, let us tell the servlet container which
+       URLs should correspond to which XML RPC servlet.
+     -->
+
+   <!-- By default, this is disabled.  If you want to enabled it,
+        just uncomment the whole section. -->
+
+   <!--  REMOVE ME TO ENABLE XML-RPC
+
+   <servlet-mapping>
+       <servlet-name>XMLRPC</servlet-name>
+       <url-pattern>/RPC2/</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>XMLRPC-UTF8</servlet-name>
+       <url-pattern>/RPCU/</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>ATOM</servlet-name>
+       <url-pattern>/atom/*</url-pattern>
+   </servlet-mapping>
+
+   AND REMOVE ME TOO -->
+
+   <servlet-mapping>
+       <servlet-name>AttachmentServlet</servlet-name>
+       <url-pattern>/attach/*</url-pattern>
+   </servlet-mapping>
+
+   <servlet-mapping>
+       <servlet-name>WikiServlet</servlet-name>
+       <url-pattern>/wiki/*</url-pattern>
+   </servlet-mapping>
+
+   <!-- Remove to enable WebDav. EXPERIMENTAL FEATURE!
+   <servlet-mapping>
+       <servlet-name>DAVServlet</servlet-name>
+       <url-pattern>/dav/*</url-pattern>
+   </servlet-mapping>
+   -->
+   
+   <servlet-mapping>
+       <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
+       <url-pattern>/JSON-RPC</url-pattern>
+   </servlet-mapping>
+
+   <!-- This means that we don't have to use redirection
+        from index.html anymore.  Yay! -->
+   <welcome-file-list>
+       <welcome-file>Wiki.jsp</welcome-file>
+   </welcome-file-list>
+   
+   <!-- Error pages -->
+   <error-page>
+     <error-code>403</error-code>
+     <location>/error/Forbidden.html</location>
+   </error-page>
+
+   <!--  REMOVE ME TO ENABLE JDBC DATABASE
+   <resource-ref>
+       <description>
+           Resource reference to JNDI factory for the JDBCUserDatabase.
+       </description>
+       <res-ref-name>
+           jdbc/UserDatabase
+       </res-ref-name>
+       <res-type>
+           javax.sql.DataSource
+       </res-type>
+       <res-auth>
+           Container
+       </res-auth>
+   </resource-ref>
+   <resource-ref>
+       <description>
+           Resource reference to JNDI factory for the JDBCGroupDatabase.
+       </description>
+       <res-ref-name>
+           jdbc/GroupDatabase
+       </res-ref-name>
+       <res-type>
+           javax.sql.DataSource
+       </res-type>
+       <res-auth>
+           Container
+       </res-auth>
+   </resource-ref>
+   REMOVE ME TO ENABLE JDBC DATABASE  -->
+
+   <!--  REMOVE ME TO ENABLE JAVAMAIL
+   <resource-ref>
+     <description>Resource reference to a container-managed JNDI JavaMail factory for sending e-mails.</description>
+     <res-ref-name>mail/Session</res-ref-name>
+     <res-type>javax.mail.Session</res-type>
+     <res-auth>Container</res-auth>
+   </resource-ref>
+   REMOVE ME TO ENABLE JAVAMAIL  -->
+
+   <!--
+       CONTAINER-MANAGED AUTHENTICATION & AUTHORIZATION
+    
+       Here we define the users which are allowed to access JSPWiki.
+       These restrictions cause the web container to apply further 
+       contraints to the default security policy in jspwiki.policy,
+       and should be suitable for a corporate intranet or public wiki.
+
+       In particular, the restrictions below allow all users to
+       read documents, but only Authenticated users can comment
+       on or edit them (i.e., access the Edit.jsp page).
+       Users with the role Admin are the only persons who can 
+       delete pages. 
+
+       To implement this policy, the container enforces two web
+       resource constraints: one for the Administrator resources,
+       and one for  Authenticated users. Note that the "role-name" 
+       values are significant and should match the role names 
+       retrieved by your web container's security realm. The roles 
+       of "Admin" and "Authenticated" are assigned by the web 
+       container at login time.
+
+       For example, if you are using Tomcat's built-in "memory realm",
+       you should edit the $CATALINA_HOME/conf/tomcat-users.xml file 
+       and add the desired actual user accounts. Each user must possess
+       one or both of the Admin or Authenticated roles. For other realm
+       types, consult your web container's documentation.
+       
+       Alternatively, you could also replace all references to 
+       "Authenticated" and "Admin" with role names that match those 
+       returned by your container's security realm. We don't care
+       either way, as long as they match.
+       
+       Note that accessing protected resources will cause your
+       container to try to use SSL to secure the web session.
+       This, of course, assumes your web container (or web server) 
+       is configured with SSL support. If you do not wish to use SSL,
+       remove the "user-data-constraint" elements.
+   -->
+
+   <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
+   
+   <security-constraint>
+       <web-resource-collection>
+           <web-resource-name>Administrative Area</web-resource-name>
+           <url-pattern>/Delete.jsp</url-pattern>
+       </web-resource-collection>
+       <auth-constraint>
+           <role-name>Admin</role-name>
+       </auth-constraint>
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+   </security-constraint>
+      
+   <security-constraint>
+       <web-resource-collection>
+           <web-resource-name>Authenticated area</web-resource-name>
+           <url-pattern>/Edit.jsp</url-pattern>
+           <url-pattern>/Comment.jsp</url-pattern>
+           <url-pattern>/Login.jsp</url-pattern>
+           <url-pattern>/NewGroup.jsp</url-pattern>
+           <url-pattern>/Rename.jsp</url-pattern>
+           <url-pattern>/Upload.jsp</url-pattern>
+           <http-method>DELETE</http-method>
+           <http-method>GET</http-method>
+           <http-method>HEAD</http-method>
+           <http-method>POST</http-method>
+           <http-method>PUT</http-method>
+       </web-resource-collection>
+
+       <web-resource-collection>
+           <web-resource-name>Read-only Area</web-resource-name>
+           <url-pattern>/attach</url-pattern>
+           <http-method>DELETE</http-method>
+           <http-method>POST</http-method>
+           <http-method>PUT</http-method>
+       </web-resource-collection>
+
+       <auth-constraint>
+           <role-name>Admin</role-name>
+           <role-name>Authenticated</role-name>
+       </auth-constraint>
+
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+   </security-constraint>
+
+   <login-config>
+       <auth-method>FORM</auth-method>
+       <form-login-config>
+           <form-login-page>/LoginForm.jsp</form-login-page>
+           <form-error-page>/LoginForm.jsp</form-error-page>
+       </form-login-config>
+   </login-config>
+
+   <security-role>
+       <description>
+           This logical role includes all authenticated users
+       </description>
+       <role-name>Authenticated</role-name>
+   </security-role>
+
+   <security-role>
+       <description>
+           This logical role includes all administrative users
+       </description>
+       <role-name>Admin</role-name>
+   </security-role>
+   
+   REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  -->
+ 
+</web-app>

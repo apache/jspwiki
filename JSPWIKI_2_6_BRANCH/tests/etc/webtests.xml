@@ -1,0 +1,294 @@
+<project name="JSPWiki-webtests" basedir="tests">
+
+  <!-- This Ant build file is designed to be called by the
+       "webtest-setup" macro in the top-level build.xml file.
+       If executed by itself, it will fail horribly and make
+       many unpleasant noises. It runs tests against a Tomcat 
+       web application server running on port ${tomcat.port}.
+       
+       The tests require a few properties to be defined 
+       by the calling Ant script:
+       
+         webtest.context:  The webapp context that will be tested.
+                           This will be something like
+                           'test-custom' or 'test-container'.
+         webtest.props:    The jspwiki.properties file to use for the test.
+         webtest.webxml:   The web.xml file to use for the test.
+                       
+       The test scripts are written using Selenium, and reside
+       in tests/etc/selenium.
+       
+       For those of you following along at home, there are
+       some fairly black-belt Ant tricks in here,
+       notably the code that packages up the web contexts.  -->
+       
+  <!-- Pre-flight check that verifies Tomcat is set up the way we expect. -->
+  <target name="webtests-init">
+    <echo message="===============================================================" />
+    <echo message=" Pre-flight check for web unit tests" />
+    <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+    <echo message="" />
+    <echo message="To run web tests, we assume:" />
+    <echo message="  1) Tomcat is on ${tomcat.host} and listens for requests on port ${tomcat.port}." />
+    <echo message="  2) The Manager webapp is installed." />
+    <echo message="  3) User '${tomcat.admin}' possesses the 'manager' role (so it" />
+    <echo message="     can install webapps)" />
+    <echo message="  4) Tomcat's conf/tomcat-users.xml file contains a user entry" />
+    <echo message="     for the test user '${webtests.container.user}' with role 'Authenticated'." />
+    <echo message="  5) The JDBC driver jar that you are using to test with is in" />
+    <echo message="     Tomcat's common/lib/directory on the server." />
+    <echo message="  6) You have Firefox installed in the default install location." />
+    <echo message="" />
+    <echo message="We will verify that conditions 1-4 hold. You are on your own for 3-5." />
+    <echo message="Note: the defaults we use are stored in ${basedir}/build.properties." />
+    <echo message="" />
+    
+    <echo message="Checking to see if Tomcat is running..." />
+    <fail message="Tomcat doesn't seem to be running. Start it first! (For example, run $CATALINA_HOME/bin/startup.sh)">
+      <condition>
+        <not>
+          <http url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}" />
+        </not>
+      </condition>
+    </fail>
+    
+    <echo message="Checking to see if the Manager app is running..." />
+    <fail message="The manager app doesn't seem to be running! For Tomcat 5.5 and higher, it should be in $CATALINA_HOME/server/webapps/manager.">
+      <condition>
+        <not>
+          <http url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager/html" errorsBeginAt="404" />
+        </not>
+      </condition>
+    </fail>
+    
+    <echo message="Checking to see if container admin '${tomcat.admin}' possesses the 'manager' role." />
+    <tempfile property="webtests.manager.check" />
+    <get src="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager/html/list"
+       dest="${webtests.manager.check}" ignoreerrors="true"
+       username="${tomcat.admin}" password="${tomcat.password}" />
+    <available file="${webtests.manager.check}" property="webtests.manager.ok" />
+    <delete file="${webtests.manager.check}" />
+    <fail unless="webtests.manager.ok">
+      Check your conf/tomcat-users file! The user '${tomcat.admin}' isn't a manager.</fail>
+    
+  </target>
+       
+  <!-- The main target. Calls the init target and deploys webapp, 
+       tearing down previous version if needed -->
+  <target name="webtest-setup">
+    <echo message="===============================================================" />
+    <echo message=" Setting up web unit tests for '${webtest.context}'" />
+    <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+    <echo message="" />
+    <echo message="Creating Selenium test scripts..."/>
+    <delete dir="tests/build/selenium/${webtest.context}" />
+    <mkdir dir="tests/build/selenium/${webtest.context}" />
+    <copy flatten="true" toDir="tests/build/selenium/${webtest.context}">
+      <fileset dir="tests/etc/selenium/tests" />
+      <filterset>
+        <filter token="selenium.context" value="${webtest.context}" />
+      </filterset>
+    </copy>
+    
+    <echo message="Undeploying old webapp... (might return an error, which is ok)"/>
+    <tomcat-undeploy context="${webtest.context}" />
+    <echo message="Deploying webapp..."/>
+    <tomcat-deploy context="${webtest.context}"
+                    webxml="${webtest.webxml}"
+                     props="${webtest.props}" />
+                     
+    <waitfor maxwait="30" maxwaitunit="second" timeoutproperty="webapp.not.installed">
+      <http url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/${webtest.context}/Wiki.jsp" />
+    </waitfor>
+    <fail if="webapp.not.installed">
+The webapp wasn't deployed for some reason. Here are some possible reasons why: 
+
+* If [deploy] returned an HTTP 403 response, it usually means the
+manager user '${tomcat.admin}' isn't allowed to access the Manager app.
+Check $CATALINA_HOME/conf/tomcat-users.xml, and make sure the user
+'${tomcat.admin}' possesses the role 'manager'.
+
+* If the 'test-custom-*' and 'test-absolute' webapps deployed ok, 
+but the 'test-*-jdbc' webapps did not, then Tomcat probably can't 
+find your JDBC jar file, so you should copy it (example: 
+${basedir}/tests/lib/hsqldb.jar) to $CATALINA_HOME/common/lib (5.5) 
+or $CATALINA_HOME/lib (6.0), then restart Tomcat.
+    </fail>
+    
+  </target>
+  
+  <!-- Execute the web tests -->
+  <target name="webtest-selenium-exec">
+  	<selenium-test context="${webtest.context}" />
+  </target>
+    
+  <!-- Tears down the web tests -->
+  <target name="webtest-teardown" unless="webtests.keepup">
+    <tomcat-undeploy context="${webtest.context}" />
+  </target>
+  
+	<!-- ============================================================== -->
+  
+  <!-- Tomcat deployment tasks -->
+  
+  <!-- These macros deploy and undeploy WAR files to a Tomcat
+       server, assumed to be already running on ${tomcat.host} port 
+       ${tomcat.port}. The manager app MUST be installed and running in 
+       order for this to work properly. Also, the 'tomcat.admin',
+       'tomcat.password', 'tomcat.host', 'tomcat.protocol' and 
+       'tomcat.port' properties must be set in build.properties.
+       To run these macros, calling tasks must have already
+       run the task 'tomcat-init'.
+  -->
+  <macrodef name="tomcat-deploy">
+    <attribute name="context" />
+    <attribute name="webxml" />
+    <attribute name="props" />
+    <sequential>
+      <!-- We need the tomcat.admin and tomcat.password properties -->
+      <check-property prop="tomcat.admin" />
+      <check-property prop="tomcat.password" />
+      <check-property prop="tomcat.host" />
+      <check-property prop="tomcat.port" />
+      <check-property prop="tomcat.protocol" />
+    
+      <!-- Declare the Tomcat deploy task -->
+      <taskdef classname="org.apache.catalina.ant.DeployTask" name="deploy">
+        <classpath>
+          <path refid="tomcat.classpath" /> 
+        </classpath> 
+      </taskdef>
+      
+      <!-- Create a context file for Tomcat -->
+      <mkdir dir="${tests.build}/@{context}" />
+      <copy flatten="true" 
+        file="tests/etc/tomcat/context-@{context}.xml"
+        toFile="${tests.build}/@{context}/context.xml">
+        <filterset>
+          <filter token="docBase" 
+            value="${tests.build}/@{context}/@{context}.war" />
+          <filtersfile file="tests/etc/jspwiki.properties" />
+          <filtersfile file="build.properties" />
+        </filterset>
+      </copy>
+           
+      <!-- Create a page/log directory and point jspwiki.properties to it -->
+      <mkdir dir="${tests.build}/@{context}/wikipages" />
+      <copy toDir="${tests.build}/@{context}/wikipages" flatten="true" >
+        <fileset dir="src/wikipages">
+          <include name="Main.*" />
+          <include name="LeftMenu*.*" />
+          <include name="About.*" />
+          <include name="RecentChanges.*" />
+          <include name="WikiEtiquette.*" />
+          <include name="UnusedPages.*" />
+          <include name="UndefinedPages.*" />
+          <include name="PageIndex.*" />
+        </fileset>
+      </copy>
+      <copy file="@{props}" toFile="${tests.build}/@{context}/jspwiki.properties" flatten="true" />
+      <propertyfile file="${tests.build}/@{context}/jspwiki.properties">
+        <entry key="jspwiki.fileSystemProvider.pageDir" 
+             value="${basedir}/${tests.build}/@{context}/wikipages" />
+        <entry key="jspwiki.basicAttachmentProvider.storageDir" 
+             value="${basedir}/${tests.build}/@{context}/wikipages" />
+        <entry key="log4j.appender.FileLog.File" 
+             value="${basedir}/${tests.build}/@{context}/jspwiki.log" />
+      </propertyfile>
+      
+      <!-- Copy our sample user and group databases -->
+      <copy file="tests/etc/userdatabase.xml"
+          toFile="${tests.build}/@{context}/userdatabase.xml" />
+      <copy file="tests/etc/groupdatabase.xml"
+          toFile="${tests.build}/@{context}/groupdatabase.xml" />
+      
+      <!-- Build the war -->
+      <war warfile="${tests.build}/@{context}/@{context}.war"
+           webxml="@{webxml}">
+         <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+         <lib file="${jarfile}" />
+         <lib file="${jdbc.driver.jar}" />
+         <fileset dir="${code.src}/webdocs" includes="**" />
+         <webinf dir="etc">
+           <include name="dtd/**" />
+           <include name="commons-logging.properties" />
+           <include name="jspwiki.jaas" />
+           <include name="jspwiki.policy" />
+           <include name="*.tld" />
+         </webinf>
+         <webinf dir="${tests.build}/@{context}" 
+           includes="jspwiki.properties userdatabase.xml groupdatabase.xml" />
+         <classes dir="etc" includes="oscache.properties" />
+         <metainf dir="${tests.build}/@{context}" includes="context.xml" />
+      </war>
+      
+      <!-- Deploy the webapp -->
+      <deploy url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager" 
+        username="${tomcat.admin}" password="${tomcat.password}"
+        path="/@{context}" failonerror="false"
+        war="file:///${basedir}/${tests.build}/@{context}/@{context}.war" />
+    </sequential>
+  </macrodef>
+ 
+  <macrodef name="tomcat-undeploy">
+    <attribute name="context" />
+    <sequential>
+      <!-- We need the tomcat.admin and tomcat.password properties -->
+      <check-property prop="tomcat.admin" />
+      <check-property prop="tomcat.password" />
+      <check-property prop="tomcat.host" />
+      <check-property prop="tomcat.port" />
+      <check-property prop="tomcat.protocol" />
+    	
+      <!-- Declare the Tomcat deploy task -->
+      <taskdef classname="org.apache.catalina.ant.UndeployTask" name="undeploy">
+        <classpath>
+          <path refid="tomcat.classpath" /> 
+        </classpath> 
+      </taskdef>
+      
+      <!-- Undeploy the webapp -->
+      <undeploy url="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/manager" 
+        username="${tomcat.admin}" password="${tomcat.password}"
+        path="/@{context}" failonerror="false" />
+    </sequential>
+  </macrodef>
+	
+	<!-- ============================================================== -->
+  
+  <!-- Selenium execution test task -->
+	
+  <!-- This macro executes the Selenium test plans located in 
+  	   tests/build/selenium/@context@/, based on templates stored
+  	   in tests/etc/selenium/tests. It expects your favorite servlet
+  	   container up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
+  	   For this reason, these properties must be set up in your 
+  	   build.properties file.
+  -->
+	
+  <macrodef name="selenium-test">
+  	<attribute name="context"/>
+  	<sequential>
+  		<!-- We need the tomcat.host, tomcat.port, tomcat.protocol properties -->
+  		<check-property prop="tomcat.host" />
+  		<check-property prop="tomcat.port" />
+  		<check-property prop="tomcat.protocol" />
+  		
+  		<!-- Execute Selenium Test Plan -->
+  		<echo message="Running web unit tests for context '@{context}'."/>
+  		<mkdir dir="${tests.reports}/selenium" />
+  		<java jar="tests/lib/selenium-server-0.9.2-patched.jar" fork="true"
+  		  output="${tests.reports}/selenium/@{context}.log">
+  		  <!--
+  		  <arg line="-browserSessionReuse" />
+  		  -->
+        <arg line="-htmlSuite" />
+        <arg line='"${webtests.browser}"' />
+        <arg line='"http://localhost:8080"' />
+        <arg line="${basedir}/tests/build/selenium/@{context}/JSPWikiTestSuite.html" />
+        <arg line="${basedir}/tests/reports/selenium/@{context}.html" />
+    	</java>
+  	</sequential>
+  </macrodef>
+  
+</project>

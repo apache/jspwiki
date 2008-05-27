@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Styles>
+    <Style name="Monospace" element="tt" />
+    <Style name="Small" element="span" >
+        <Attribute name="class" value="small" />
+    </Style>
+    <Style name="Code" element="pre" />
+    <Style name="Info" element="div" >
+        <Attribute name="class" value="information" />
+    </Style>
+    <Style name="Warning" element="div" >
+        <Attribute name="class" value="warning" />
+    </Style>
+    <Style name="Error" element="div" >
+        <Attribute name="class" value="error" />
+    </Style>
+    <Style name="Comment Box" element="div" >
+        <Attribute name="class" value="commentbox" />
+    </Style>
+    <Style name="Left-to-right text" element="div" >
+        <Attribute name="class" value="ltr" />
+    </Style>
+    <Style name="Right-to-left text" element="div" >
+        <Attribute name="class" value="rtl" />
+    </Style>
+    <Style name="Strikethrough" element="span" >
+        <Attribute name="class" value="strike" />
+    </Style>
+    <Style name="Superscript" element="span" >
+        <Attribute name="class" value="sup" />
+    </Style>
+    <Style name="Subscript" element="span" >
+        <Attribute name="class" value="sub" />
+    </Style>
+    <Style name="Centered" element="div" >
+        <Attribute name="style" value="text-align:center" />
+    </Style>
+    <Style name="Align Left" element="div" >
+        <Attribute name="style" value="text-align:left" />
+    </Style>
+    <Style name="Align Right" element="div" >
+        <Attribute name="style" value="text-align:right" />
+    </Style>
+    <Style name="Justify" element="div" >
+        <Attribute name="style" value="text-align:justify" />
+    </Style>
+</Styles>

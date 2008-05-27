@@ -1,0 +1,75 @@
+/*
+ * CSS intended specificaly for print media
+ * 
+ */
+.applicationlogo, .companylogo, .titlebox, .userbox, 
+.searchbox, .breadcrumbs, .pageactions, .quicklinks,
+#actionsTop, #actionsBottom, #favorites,
+#addattachment, #findhelp,
+.collapsebox .collapseOpen, .collapsebox .collapseClose, 
+.table-filter .filterrow, 
+.tabmenu { 
+	display:none; 
+}
+#attachments, #addcomment,
+/*#pagelinks,*/ 
+#pagecontent, #editcontent, #previewcontent, #diffcontent, #infocontent,
+#findquery, #userPrefs, 
+#pagecontent .tabmenu { 
+	display:block;
+	visibility:visible; 
+}
+tt,pre {
+	overflow:visible; 
+}
+
+/* Show links as normal text (maybe show urls at the bottom of the page) */
+a { 
+	text-decoration:none; 
+}
+/*print href of each link
+a:after 		{ content:attr(href); color:grey;
+          		  font-family:"Courier New", Courier, mono; font-size:8pt; }
+*/
+
+/* Give the content what it deserves. */
+html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
+	overflow:visible;
+}
+/* ie to check */
+* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
+	overflow-x:visible;
+}
+/* use !important to overwrite css style on following specified blocks */
+.pagename, #header, #footer, #page { 
+	width:100% !important; 
+	margin:0 !important; 
+	padding:0 !important; 
+	float:none !important;
+	clear:both !important;
+	position:static !important;
+	overflow:visible !important;
+}
+.pagename {
+	font-size:250%;
+	margin-bottom:1.5em;
+	padding-bottom:0.5em;
+	border-bottom:3px solid #555;
+	color:#555;
+}
+/* hidden tabs are made visible during print
+ * e.g. when printing a page, also the attachment list gets printed
+ */
+.hidetab { 
+	display:block;
+}
+.tabs {
+	border:none;
+}
+a.slimbox {
+	display:none;
+}
+/* ff bug : avoid floats during printing */
+.commentbox {
+	float:none;
+}

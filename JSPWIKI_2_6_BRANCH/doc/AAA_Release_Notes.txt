@@ -1,0 +1,87 @@
+Hi everybody---
+
+An experimental JSPWiki branch with the new AAA subsystem is nearing alpha status.
+
+Background
+----------
+Less than 60 days ago, a bunch of us in this fine list bashed out a set of requirements for a new system for authenticating and authorizing users. Although there are too many requirements to list here, some of the primary features include:
+- Continued support for JSPWiki's custom authentication system
+- Full support for container-based authentication and authorization, including container-style roles
+- Flexible, ad hoc "groups" 
+- Wiki-based ACLs
+- Customizable security policies, with simple and sensible defaults
+- New user database for "persistent" user identities
+- Support for standard Java security technologies; notably, J2SE security policies and JAAS authentication
+
+Development needs
+-----------------
+I need help getting the preceding list of requirements implemented...
+2.7  Access restrictions on searches not implemented yet.
+2.9  Hard-coded "super user" needs to be re-implemented
+     and coded into AuthenticationManager.
+3.3  Groups names are checked at creation time to make
+     sure they aren't the same as a built-in role, but
+     there should be logic in the JSP pages that tells
+     the user they can't do that...
+3.8-3.11 Requirements not implemented yet (these are "nice
+     to have" features anyway)
+4.10 Page restore operation restores previous
+     ACL, not current ACL
+6.9  Password re-set not implemented yet (nice-to-have)
+7.1  Embedding permission checks within core wiki classes
+     (e.g., WikiEngine) NOT implemented yet. Examples:
+       - WikiPage.setAcl should check for 'edit'
+7.5  Need to sanity-check configuration files (e.g.,
+     jspwiki.policy) to ensure they implement a common
+     number of use cases that should "just work."
+7.6  No user-facing documentation at the moment...
+
+Deployment considerations
+-------------------------
+JSPWiki now installs default JAAS and J2SE security policies
+at startup. See the jspwiki.policy and jspwiki.jaas files 
+for more details on how to customize these configurations
+if you don't like the defaults.
+
+Bugs, limitations and errata
+----------------------------
+- Need a CreateGroup.jsp page **badly**
+- Ant build script (build.xml) now automatically signs
+  the jspwiki.jar file after it builds. It will attempt
+  to create a new .jks key file for you if it can't find
+  one where it expects (etc/). If will also copy this key
+  file to WEB-INF when building the WAR.
+- There are some funky cookie/user profile issues that persist
+  during logout operations. This could cause funnny
+  things to happen when editing preferences or registering.
+  This will get solved very soon... but not tonight.
+- Container-managed authentication has been tested
+  and debugged. It works.
+- User preferences has been split into the traditional
+  "master" JSP with the business logic, and a separate
+  *Content.jsp file.
+- User registration now lives in a JSP separate from
+  user preferences. The explanation for this is complex,
+  but it boils down to the impossibility of guaranteeing
+  session state (anonymous, asserted, authenticated).
+  Since the UI is subtly different in all of these cases,
+  it made sense to break the two functions apart.
+- UserCheck and UserProfile tags have significant
+  enhancements that should make template-writing much
+  easier, with a dramatic reduction in scriptlet code.
+- Changes to the AAA model ***will*** break your
+  custom template's scriptlet code unless you change
+  JSPs to use the new API calls, in particular
+  AuthorizationManager.checkPermission(). A migration guide 
+  for template developers would be great!
+- Container-based authentication has been unit-tested
+  but not system-tested, so it might not work.
+  But it should...
+- Requirement 1.10 might not be practical. I didn't
+  attempt to implement it.
+- Groups are implemented as wiki pages named Group*
+  rather than as subpages of GroupConfiguration
+- UserPreferences.jsp needs a decent stylesheet...
+
+Requirements
+------------

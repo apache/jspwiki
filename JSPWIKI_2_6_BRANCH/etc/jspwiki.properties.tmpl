@@ -1,0 +1,849 @@
+###########################################################################
+#
+#  This is the JSPWiki configuration file.  You'll need to edit this
+#  a bit.  The first few lines are the most important ones.
+#
+#  Wherever it is said that an option can be "true" or "false", you can
+#  also use "yes"/"no", or "on/off".  Just for some convenience.
+#
+#
+#  You can use this to override the default application name.  It affects
+#  the HTML titles and logging, for example.  It can be different from
+#  the actual web name (http://my.com/mywiki) of the application, but usually
+#  it is the same.
+#
+jspwiki.applicationName = @appname@
+
+#
+#  Which page provider class to use.  Possibilities are:
+#
+#    RCSFileProvider        - for simple RCS-based file storage
+#    FileSystemProvider     - for simple pure file storage with no version information
+#    VersioningFileProvider - for simple, non-RCS based versioning storage.
+#
+#  Note that if you're upgrading from JSPWiki 1.x, then you need to remove the
+#  "com.ecyrd.jspwiki." part from the beginning of the path.
+#
+jspwiki.pageProvider = FileSystemProvider
+
+#
+#  Set to true, if you want to cache page data into memory.  This is
+#  in general a good idea.
+#
+#  Default is false (no cache).
+#
+#  NB: This replaces the JSPWiki 1.x "CachingProvider" setting, since it
+#      probably was too confusing.
+#
+jspwiki.usePageCache = true
+
+#
+#  Determines where wiki files are kept for FileSystemProvider
+#  and RCSFileProvider
+#
+#  If you're using Windows, then you must duplicate the backslashes.
+#  For example, use:
+#
+#  jspwiki.fileSystemProvider.pageDir = C:\\Data\\jspwiki
+#
+jspwiki.fileSystemProvider.pageDir = @pagedir@
+
+#
+#  The JSPWiki working directory.  If not set, a temporary path will
+#  be used.  You can see the location of the workdir in the logs.
+#  It is HIGHLY recommended that you set this.
+#
+#  The working directory is used to cache things like Lucene search
+#  results.
+#
+#jspwiki.workDir =
+
+#
+#  ATTACHMENTS:
+#
+#  Use the following property to define which attachment provider
+#  you want to use.  You have basically two choices:
+#    * Set the value to BasicAttachmentProvider
+#      a simple, flat file versioning provider
+#    * Leave the value empty (or just comment the line out)
+#      the attachment functionality is disabled
+#
+jspwiki.attachmentProvider = BasicAttachmentProvider
+
+#
+#  The BasicAttachmentProvider needs to know where to store the files
+#  the user has uploaded.  It's okay to put these in the same directory
+#  as you put your text files (i.e. the pageDir setting above).
+#
+#  If you're using Windows, then you must duplicate the backslashes.
+#  For example, use:
+#
+#  jspwiki.basicAttachmentProvider.storageDir = C:\\Data\\jspwiki
+#
+jspwiki.basicAttachmentProvider.storageDir = @pagedir@
+
+#
+#  You can tell the BasicAttachmentProvider to add a flag
+#  so that browsers do not cache certain (or all) attachment
+#  types. This is useful in intranet environments. You should activate
+#  this if your users complain that their excel files are not uploaded
+#  correctly and they still do have an old version: Usually the
+#  file was uploaded correctly, but they get the locally cached version
+#  
+#  You can use regular expressions to disable the cache, e.g the
+#  following example will disable browser cache for all excel and word files
+#
+#  If you don't define this property, cache is enabled by default for
+#  all attachments
+#  
+#  jspwiki.basicAttachmentProvider.disableCache = .*\.xls|.*\.doc
+
+#
+#  You can limit the maximum size of an attachment by setting this
+#  value.  The value is in bytes, and by default all attachments
+#  are accepted.
+#
+#  The following line would limit the attachment size to 100,000 bytes
+#jspwiki.attachment.maxsize=100000
+
+#
+#  By default JSPWiki accepts all types of attachments.  However, you
+#  can allow some types only, or forbid some other types.  By default,
+#  all file types are allowed (if you do not specify the "allow" list
+#  at all or it is empty).
+#
+#  These both are space-separated lists of file suffixes
+#
+#  Example: Allow only PNG, JPG, ZIP and JAR file attachments
+#jspwiki.attachment.allow=.png .jpg .zip .jar
+
+#  Example: Forbid HTML, PHP, ASP and EXE
+#jspwiki.attachment.forbid=.html .htm .php .asp .exe
+
+#
+#  page Diff Representation
+#
+#  To show differences between page versions, you can define a
+# difference provider.
+#  The following choices are available:
+#    * TraditionalDiffProvider - Uses internal (java) diff
+#        to create a list of changes and shows it line by
+#        line colored. This is the default
+#    * ContextualDiffProvider - Uses internal (java) diff
+#        to create changes inline and shows it on a word by
+#        word basis using CSS. This is much superior to the
+#        traditional diff provider, however, it is still quite
+#        new and not much tested. YMMV.
+#    * ExternalDiffProvider - uses a system diff program (which
+#        can be configured using "jspwiki.diffCommand") to
+#        create an unified (!) diff.
+#
+#        Example for a diff command:
+#        jspwiki.diffCommand = /usr/bin/diff -u %s1 %s2
+#
+jspwiki.diffProvider = TraditionalDiffProvider
+
+#
+#  BaseURL can be used to rewrite all of JSPWiki's internal references.
+#  Sometimes, especially if you're behind a address-rewriting firewall,
+#  relative URLs don't work since the servlet container has no idea
+#  where it's actually located.
+#
+#  Leave undefined if you want to rely on what your servlet container
+#  thinks of where your application lives.
+#
+#  You MUST, however, define this one if you want to enable RSS (see below).  In
+#  general, this is a good idea to define it anyway.  Do not forget the
+#  trailing slash.
+#
+#  Example:
+#  jspwiki.baseURL = http://www.jspwiki.org/
+#
+#jspwiki.baseURL=
+
+#  Determines if you need to have relative urls or not.  If the baseURL
+#  is not set, then this has no effect, but if you set the baseURL (which
+#  is highly recommended), you can use this to set relative urls.
+#
+#  Possible values are "absolute" and "relative".
+#
+#jspwiki.referenceStyle=relative
+
+#
+#  Determines which character encoding JSPWiki should use.  If you want
+#  to support all languages in your Wiki, you probably want to enable
+#  this.  From JSPWiki 2.2, it is strongly suggested that you use UTF-8.
+#
+#  Note that you can't switch these in the mean time, since the way the
+#  files are encoded on disk is incompatible between ISO-Latin1 and UTF-8.
+#  Don't try.  You'll get all sorts of interesting problems, if you do.
+#
+#  Possible values are 'ISO-8859-1' (default, if none has been specified)
+#  and 'UTF-8'.
+
+jspwiki.encoding = UTF-8
+
+#
+#  Determines whether raw HTML is allowed as Wiki input.
+#
+#  THIS IS A DANGEROUS OPTION!
+#
+#  If you decide to allow raw HTML, understand that ANY person who has
+#  access to your Wiki site can embed ANY sort of malicious JavaScript,
+#  or plugin, or ActiveX, or whatever on your site.  They can even mess it
+#  up so royally it is impossible for you to replace the situation without
+#  the need of direct access to the repository.  So think twice before
+#  allowing raw HTML on your own site.
+#
+#  Most probably you want to use this on Intranets, or personal servers,
+#  where only a handful of people can access the wiki.
+#
+#  Text between {{{ and }}} -options is not affected by this setting, so
+#  it's always safe to quote HTML code with those.
+#
+#  The default for this option is "false".
+#
+jspwiki.translatorReader.allowHTML = false
+
+############################################################################
+#
+#  Usability niceties.
+#
+#
+#  If this property is set to "true", then page titles are rendered
+#  using an extra space between every capital letter.  It may make
+#  page titles readable on some occasions, but it does have the
+#  drawback of making the titles look a bit funny at times.
+#
+jspwiki.breakTitleWithSpaces = false
+
+#
+#  If set to true, this property means that "WikiName" and "WikiNames"
+#  are considered equal when linking between them.  Setting this to
+#  true does not prevent you from having both kinds of pages - we just
+#  fall back to the other one if the primary name does not exist.
+#
+#  For any other language, you'll probably want to turn this off.
+#
+jspwiki.translatorReader.matchEnglishPlurals = true
+
+#
+#  If you set this to true, the Wiki translator will then also consider
+#  "traditional" WikiNames (that is, names of pages JustSmashedTogether
+#  without square brackets) as hyperlinks.  This technique is also
+#  known as "CamelCase", or "BumpyCase", or "InterCapping".  I personally
+#  like CamelCase as a word, which is why this property is named as it is :-).
+#
+#  By default this is false, since traditional WikiLinks may confuse newbies.
+#
+#  This option can be overridden on a per-page basis using the SET directive.
+#
+jspwiki.translatorReader.camelCaseLinks = false
+
+#
+#  This sets the default template used by the Wiki engine.  The templates
+#  live in templates/<template name>.  JSPWiki will attempt to find three
+#  basic templates from that directory: "ViewTemplate," "EditTemplate"
+#  and "AdminTemplate"
+#
+#  By default this is called "default".
+#
+#  This option can be overridden on a per-page basis using the SET directive.
+#
+jspwiki.templateDir = default
+
+#
+#  Preferences for default template 
+#
+jspwiki.defaultprefs.template.skinname =PlainVanilla
+jspwiki.defaultprefs.template.dateformat =dd-MMM-yyyy HH:mm
+jspwiki.defaultprefs.template.timezone =GMT+01:00
+jspwiki.defaultprefs.template.orientation =fav-left
+jspwiki.defaultprefs.template.editor =plain
+
+jspwiki.defaultprefs.timeformat.01=d/MM
+jspwiki.defaultprefs.timeformat.02=d/MM/yy
+jspwiki.defaultprefs.timeformat.03=d/MM/yyyy
+jspwiki.defaultprefs.timeformat.04=dd/MM/yy
+jspwiki.defaultprefs.timeformat.05=dd/MM/yyyy
+jspwiki.defaultprefs.timeformat.06=EEE, dd/MM/yyyy
+jspwiki.defaultprefs.timeformat.07=EEE, dd/MM/yyyy, Z
+jspwiki.defaultprefs.timeformat.08=EEE, dd/MM/yyyy, zzzz
+jspwiki.defaultprefs.timeformat.09=d/MM/yy HH:mm
+jspwiki.defaultprefs.timeformat.10=d/MM/yy hh:mm a
+jspwiki.defaultprefs.timeformat.11=d/MM/yy hh:mm a, Z
+jspwiki.defaultprefs.timeformat.12=dd-MMM
+jspwiki.defaultprefs.timeformat.13=dd-MMM-yy
+jspwiki.defaultprefs.timeformat.14=dd-MMM-yyyy
+jspwiki.defaultprefs.timeformat.15=EEE, dd-MMM-yyyy
+jspwiki.defaultprefs.timeformat.16=EEE, dd-MMM-yyyy, Z
+jspwiki.defaultprefs.timeformat.17=EEE, dd-MMM-yyyy, zzzz
+jspwiki.defaultprefs.timeformat.18=dd-MMM-yyyy HH:mm
+jspwiki.defaultprefs.timeformat.19=dd-MMM-yyyy hh:mm a
+jspwiki.defaultprefs.timeformat.20=dd-MMM-yyyy hh:mm a, Z
+jspwiki.defaultprefs.timeformat.21=MMMM dd, yyyy
+jspwiki.defaultprefs.timeformat.22=MMMM dd, yyyy HH:mm
+jspwiki.defaultprefs.timeformat.23=MMMM dd, yyyy hh:mm a
+jspwiki.defaultprefs.timeformat.24=MMMM, EEE dd,yyyy hh:mm a
+jspwiki.defaultprefs.timeformat.25=MMMM, EEEE dd,yyyy hh:mm a
+jspwiki.defaultprefs.timeformat.26=dd.MM.yyyy
+jspwiki.defaultprefs.timeformat.27=dd.MM.yyyy, HH:mm
+jspwiki.defaultprefs.timeformat.28=dd.MM.yyyy, HH:mm zz
+jspwiki.defaultprefs.timeformat.29=EEEE, dd.MM.yyyy
+jspwiki.defaultprefs.timeformat.30=EE, dd.MM.yyyy, HH:mm zz
+jspwiki.defaultprefs.timeformat.31=EEEE, d. MMMM yyyy, HH:mm zz
+
+#
+#  The name of the front page.  This is the page that gets loaded if no
+#  other page is loaded.  Up until JSPWiki 1.9.28, it was always called
+#  "Main", but now you can easily change the default front page here.  If not
+#  defined, uses "Main".
+#
+#jspwiki.frontPage = Main
+
+#
+#  If set to true, all outward links have a small icon attached.  The icon
+#  can be found from images/out.png.  Default is true.
+#
+jspwiki.translatorReader.useOutlinkImage = true
+
+#
+#  Set this to the number of minutes a person can "lock" a page
+#  for while he is editing it.
+#
+jspwiki.lockExpiryTime = 60
+
+#
+#  Search provider used for searching pages and attachments.
+#  Default is LuceneSearchProvider, but you can fall back to BasicSearchProvider
+#
+jspwiki.searchProvider = LuceneSearchProvider
+
+#
+#  If your wiki's language is something else than English, you might
+#  want to visit jakarta.apache.org/lucene and download a proper Analyzer
+#  for your language.  Default is to use StandardAnalyzer.
+#
+#jspwiki.lucene.analyzer = org.apache.lucene.analysis.standard.StandardAnalyzer
+
+############################################################################
+#
+#  Special page references.
+#
+#  The URL is relative to Wiki.jsp.  However, if you use
+#  a full, absolute URL, you can also do that.
+#
+# Example to redirect all requests to a page called 'OriginalWiki'
+# to the original wikiwiki at http://c2.com/cgi/wiki
+#
+# jspwiki.specialPage.OriginalWiki = http://c2.com/cgi/wiki
+#
+#  Note that it is entirely possible to override any Wiki page, even
+#  an existing one by redefining it here.
+#
+jspwiki.specialPage.CreateGroup = NewGroup.jsp
+jspwiki.specialPage.FindPage = Search.jsp
+jspwiki.specialPage.Login = Login.jsp
+jspwiki.specialPage.NewGroup = NewGroup.jsp
+jspwiki.specialPage.UserPreferences = UserPreferences.jsp
+
+#############################################################################
+#
+#  Plugin search paths.
+#
+#  Define here the packages you want to use for searching plugins,
+#  separated with commas.
+#  For example, use the following command to add "org.myorganisation.jspwiki.myplugins"
+#  and "com.foobar.myplugins" to the search path.
+#
+#  jspwiki.plugin.searchPath = org.myorganisation.jspwiki.myplugins,com.foobar.myplugins
+#
+#  The default path is "com.ecyrd.jspwiki.plugin", and it will be always
+#  the last item on the path.  This allows you to override JSPWiki default
+#  plugins.  Note that you are only adding to the path, not replacing it (ie.
+#  the default path is never removed.)
+#
+#  If the path is not specified (and there is no jspwiki_module.xml with the
+#  plugin JAR), you need to either declare the search path by hand, or
+#  use a fully qualified name.
+#
+#  If you are a plugin developer, please consider deploying a jspwiki_module.xml
+#  file with your plugin JAR, so that the user does not have to set the searchPath.
+#
+#  jspwiki.plugin.searchPath = org.myorganisation.jspwiki.myplugins,com.foobar.myplugins
+#
+jspwiki.plugin.searchPath =
+
+#############################################################################
+#
+#  Page filters
+#
+#  Normally, the filter configuration is in your WEB-INF/ directory, so you
+#  do not need to go and specify this.  However, if your filters.xml live somewhere
+#  else, you'll have to specify it here.
+#
+#jspwiki.filterConfig = /some/path/to/your/filters.xml
+
+#############################################################################
+#
+#  URL Constructor
+#
+#  JSPWiki by default generates page and attachment links that use JSP
+#  pages and request parameters. It can also use alternative URL
+#  constructors so that URL pages resemble traditional website paths, too.
+#  You have three choices for generating URLs:
+#
+#     DefaultURLConstructor - uses JSPs for all references:
+#         http://mywiki.com/jspwiki/Wiki.jsp?page=Main
+#         http://mywiki.com/jspwiki/Edit.jsp?page=Main
+#
+#     ShortURLConstructor - uses path-like reference style:
+#         http://mywiki.com/jspwiki/wiki/Main
+#         http://mywiki.com/jspwiki/wiki/Main?do=Edit
+#
+#     ShortViewURLConstructor - uses path-like references for views; JSPs for everything else:
+#         http://mywiki.com/jspwiki/wiki/Main
+#         http://mywiki.com/jspwiki/Edit.jsp?page=Main
+#
+#  Of course, you can also write your own implementation if you wish.
+#
+#  For either of the ShortURL constructors, you can also specify a
+#  prefix path to go in front of page names. By default, the
+#  prefix is 'wiki/'.
+#
+#  Be warned that the ShortURLConstructor does not work well with any other editor
+#  except the built-in plaintext one.  Use ShortViewURLConstructor if you plan
+#  to enable any other ones.
+#
+#jspwiki.urlConstructor = DefaultURLConstructor
+#jspwiki.urlConstructor = ShortViewURLConstructor
+#jspwiki.shortURLConstructor.prefix = wiki/
+
+#############################################################################
+#
+# Rendering
+#
+# At this time, entries here are strictly for development and testing.
+#
+
+# Disable internal caching of pre-constructed document DOMs.
+# This may be necessary if you require custom rendering that must not be cached.
+#jspwiki.renderingManager.useCache = false
+
+
+#############################################################################
+#
+#  Security, authentication and authorization
+#
+
+#  JSPWiki supports a plugin-based interface for talking to different
+#  kinds of authentication and authorization systems. By "authentication,"
+#  we mean a system for logging in a user to establish their identity.
+#  By "authorization," we mean a system for figuring out what actions
+#  users can perform based on their authenticated identities.
+#
+#  For users looking to get started quickly, the default settings below
+#  should work fine. In addition to the properties below, you may also
+#  want to set the following JRE runtime properties when running JSPWiki
+#  or the servlet container it runs in:
+#
+#     java.security.auth.login.config==/path-to/jspwiki.jass
+#     java.security.policy=/path-to/jspwiki.policy
+#
+#  See the jspwiki.properties and jspwiki.jaas files for more details on
+#  how to do this. These files contain addition configuration options
+#  for the JSPWiki security policy and authentication, respectively, although
+#  the defaults should work fine. If you don't set the JRE properties,
+#  JSPWiki will use default versions from the WEB-INF directory.
+
+#  AUTHENTICATION
+#  For authentication, JSPWiki uses JAAS (Java Authentication and Authorization
+#  Service). The Authentication system is configured in the jspwiki.jaas
+#  file; by default it will attempt to leverage your servlet container's
+#  authentication services, if present. JSPWiki also can use its own
+#  authentication system, which is separate from the container.
+#
+#  JSPWiki will try to detect whether you are using container authentication
+#  To use container authentication, you must uncomment
+#  the <security-constraint> elements in WEB-INF/web.xml.
+#
+#  AUTHORIZATION (EXTERNAL)
+#  For authorization, JSPWiki has a two-tier system. When we want to
+#  determine whether a user has permission to perform a certain action,
+#  we first consult an external "authorizer" to determine if the user
+#  is a member of the required role. By default, JSPWiki uses the
+#  servlet container's authorization service for this (that is, it
+#  calls HttpServletRequest.isUserInRole(String) ).
+#  However, you can use another Authorizer if you wish; specify that
+#  class here.
+
+jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
+
+#  AUTHORIZATION (GROUPS)
+#  As an additional source of authorization, users can belong to discretionary
+#  "wiki groups" that the users manage themselves. Wiki groups are stored in a
+#  GroupDatabase. The default group database uses an XML file for persistent
+#  storage. Override with your own GroupDatabase implementation with this property:
+
+jspwiki.groupdatabase = com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase
+
+#  The default group database implementation stores member lists
+#  in an XML file. The location of this file should be in a secure directory
+#  in the filesystem; for example, in /etc or your servlet container's
+#  configuration directory If you do not supply a value for this property,
+#  a blank group database will be initialized in the WEB-INF/ directory of the
+#  deployed webapp. Since these directories are often overwritten when webapps
+#  are undeployed or redeployed, you should probably set this property to
+#  something useful as soon as you can. But for test wikis, it's probably
+#  ok to leave this un-set, as long as users know that their groups could
+#  "disappear" if the wiki app is ever redeployed.
+
+#jspwiki.xmlGroupDatabaseFile = /etc/tomcat/groupdatabase.xml
+
+#  USER DATABASE
+#  User's wiki profiles are stored in a UserDatabase. The default user database
+#  uses an XML file for persistent storage.
+#  Override with your own UserDatabase implementation with this property:
+
+jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
+
+#  The default user database implementation stores usernames and passwords
+#  in an XML file. Passwords are SHA-1 hashed. The location of this file
+#  should be in a secure directory in the filesystem; for example, in
+#  /etc or your servlet container's configuration directory.
+#  If you do not supply a value for this property, a blank user database
+#  will be initialized in the WEB-INF/ directory of the deployed webapp.
+#  Since these directories are often overwritten when webapps are
+#  undeployed or redeployed, you should probably set this property to
+#  something useful as soon as you can. But for test wikis, it's probably
+#  ok to leave this un-set, as long as users know that their profiles could
+#  "disappear" if the wiki app is ever redeployed.
+
+#jspwiki.xmlUserDatabaseFile = /etc/tomcat/userdatabase.xml
+
+# You can also use a JDBC database for storing user profiles.
+# See the online AuthenticationAndAuthorization2.3 docs for details on
+# how to configure it.
+
+#jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
+
+#  If your JSPWiki user database shares login information with your
+#  web container's authentication realm, you can configure JSPWiki to
+#  add container users. At present, this only works with JDBCUserDatabase,
+#  and only if you've configured your web container to use a database
+#  with compatible columns and tables. If you don't know what this means,
+#  then leave this property set to FALSE (the default).
+
+#jspwiki.userdatabase.isSharedWithContainer = false
+
+#  ACCESS CONTROL LISTS
+#  Last but not least, JSPWiki needs a way of reading and persisting page
+#  access control lists. The default implementation reads these from the page
+#  markup. For example: "[{ALLOW edit Charlie}]". If using a custom
+#  ACL manager, specify the AclManager implementation class here:
+
+jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
+
+#############################################################################
+#
+# InterWiki links
+#
+# The %s is replaced with the page reference (specify
+# multiple times to get multiple references).  Page references should
+# appear in format : [wiki:wikipage].
+#
+# This is the JSPWiki home.  In future, JSPWiki will probably rely on this
+# for error messages, so I don't recommend that you change it.
+jspwiki.interWikiRef.JSPWiki = http://www.jspwiki.org/wiki/%s
+
+# Here's how you can have directly links to the JSPWiki editor.
+# Now you can put a hyperlink for editing "MainPage" by making
+# a link [Edit:MainPage].
+jspwiki.interWikiRef.Edit = Edit.jsp?page=%s
+
+#  This is the original WikiWikiWeb
+jspwiki.interWikiRef.WikiWikiWeb = http://c2.com/cgi/wiki?%s
+
+#  TWiki, a very nice WikiClone.
+jspwiki.interWikiRef.TWiki = http://twiki.org/cgi-bin/view/TWiki/%s
+
+#  MeatballWiki, which seems to be quite popular.
+jspwiki.interWikiRef.MeatballWiki = http://usemod.com/cgi-bin/mb.pl?%s
+
+#  Wikipedia, a Wiki encyclopedia!
+jspwiki.interWikiRef.Wikipedia = http://www.wikipedia.com/wiki/%s
+
+#  Google, the ubiquitous search engine.
+jspwiki.interWikiRef.Google = http://www.google.com/search?q=%s
+
+#  JSPWiki documentation (for this release)
+jspwiki.interWikiRef.Doc = http://doc.jspwiki.org/2.6/wiki/%s
+
+############################################################################
+#
+# Define which image types are inlined.
+# These are your standard glob expressions (just like in your
+# Windows or UNIX shells).  Default pattern is to include all PNG
+# images.  If you specify something here, you will override the default.
+#
+# Don't forget to increase the number after the dot - duplicate entries
+# cause problems!
+#
+# For example:
+#   Inline all JPG files, PNG files and all files from images.com:
+#
+#      jspwiki.translatorReader.inlinePattern.1 = *.jpg
+#      jspwiki.translatorReader.inlinePattern.2 = *.png
+#      jspwiki.translatorReader.inlinePattern.3 = http://images.com/*
+
+
+###########################################################################
+#
+#  Determine how the RSS (Rich Site Summary) file generation should work.
+#  RSS is a standard pioneered by Netscape, which allows you to join your
+#  Wiki with a huge number of different news services around the world.
+#  Try a Google search on RSS and see what you can do with it.
+#
+#  All of these settings were added in JSPWiki 1.7.6.
+#
+#  Note that jspwiki.baseURL MUST BE DEFINED if you want to enable RSS!
+#
+#  Determine if the RSS file should be generated at all.  Allowed values
+#  are "true" and "false".  Default is "false".
+#
+jspwiki.rss.generate = false
+
+#
+#  Determine the name of the RSS file. This path is relative to your
+#  Wiki root.  Default is "rss.rdf"
+#
+jspwiki.rss.fileName = rss.rdf
+
+#
+#  Determine the refresh interval (ie. how often the RSS file is regenerated.
+#  It is not recommended to make this too often, or you'll choke your server.
+#  Anything above five minutes is probably okay.  The default value is one hour.
+#  The value should be in seconds.
+#
+jspwiki.rss.interval = 3600
+
+#
+#  The text you want to be shown as your "channel description" when someone
+#  subscribes to it.  You can be quite verbose here, up to 500 characters or
+#  so.  You can continue to a new line by adding a backslash to the end of the
+#  line.  Default is to have no description.
+#
+jspwiki.rss.channelDescription = Oh poor me, my owner has not set \
+                                 a channel description at all. \
+                                 Pity me.
+
+#
+#  The language of your Wiki.  This is a standard, two-letter language
+#  code, or in case of some languages, two letters for the country,
+#  a dash, and two letters for the dialect.
+#
+jspwiki.rss.channelLanguage = en-us
+
+###########################################################################
+#
+#  Determine how certain file commands are run.  They have been
+#  commented out, since most likely you want to use the defaults.
+#  Be warned, making mistakes with these may well ruin your entire
+#  Wiki collection!
+#
+#  The command to run diff:
+#     NOTE! If you do not specify this, an internal "diff" routine is used.
+#           In most cases, you really should not touch this.
+#
+#jspwiki.diffCommand = diff -u %s1 %s2
+
+#  The command for RCS checkin
+#jspwiki.rcsFileProvider.checkinCommand = ci -q -mx -l -t-none %s
+
+#  The command for RCS checkout of the newest version
+#jspwiki.rcsFileProvider.checkoutCommand = co -l %s
+
+#  The command for checking out a specific version (%v = version number)
+#jspwiki.rcsFileProvider.checkoutVersionCommand = co -p -r1.%v %s
+
+#  The command for RCS log headers
+#  If you have a version of RCS that does not support the "-z" flag, then
+#  you can try this one out without it.  It should work.
+#jspwiki.rcsFileProvider.logCommand = rlog -zLT -h %s
+
+#  The command for getting the entire modification history
+#jspwiki.rcsFileProvider.fullLogCommand = rlog -zLT %s
+
+###########################################################################
+#
+#  JDBC Configuration. Tells JSPWiki which tables and columns to map
+#  to for the JDBCUserDatabase and JDBCGroupDatabase. For more info, see the
+#  JavaDoc for classes com.ecyrd.jspwiki.auth.user.JDBCUserDatabase and
+#  com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase.
+#
+jspwiki.userdatabase.datasource=jdbc/UserDatabase
+jspwiki.userdatabase.table=users
+jspwiki.userdatabase.email=email
+jspwiki.userdatabase.fullName=full_name
+jspwiki.userdatabase.loginName=login_name
+jspwiki.userdatabase.password=password
+jspwiki.userdatabase.wikiName=wiki_name
+jspwiki.userdatabase.created=created
+jspwiki.userdatabase.modified=modified
+jspwiki.userdatabase.roleTable=roles
+jspwiki.userdatabase.role=role
+jspwiki.groupdatabase.datasource=jdbc/GroupDatabase
+jspwiki.groupdatabase.table=groups
+jspwiki.groupdatabase.membertable=group_members
+jspwiki.groupdatabase.created=created
+jspwiki.groupdatabase.creator=creator
+jspwiki.groupdatabase.name=name
+jspwiki.groupdatabase.member=member
+jspwiki.groupdatabase.modified=modified
+jspwiki.groupdatabase.modifier=modifier
+
+###########################################################################
+#
+#  JavaMail configuration. If you wish to allow your users to recover
+#  their passwords via email, you should configure these properties.
+#  JavaMail can use either a container-managed JNDI resource factory
+#  (recommended, and the default), or a stand-alone factory whose properties
+#  are configured with mail.* properties in this file (below).
+#
+
+#  A. Configure the address from which the email appears to come.
+#     If you're going to use a mail session obtained via JNDI, this setting
+#     will only be used if it hasn't already been configured in the obtained
+#     session itself. If you comment it out, JSPWiki will use its internal
+#     default value.
+#     If you're going to use a stand-alone mail session, you will surely want
+#     to configure it, otherwise the internal default value will be used.
+#
+mail.from = @mail.from@
+
+#  B. JNDI Resource Factory Configuration. JSPWiki will try this first.
+#     You will need to configure your container to provide a JavaMail
+#     resource factory. See your container documentation, or check our
+#     fairly complete documentation (with examples for Tomcat) in
+#     the JavaDocs for com.ecyrd.jspwiki.util.MailUtil.
+#
+#  JNDI resource name. The commented-out value is the default.
+#jspwiki.mail.jndiname = mail/Session
+
+#  C. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
+#
+#  Your SMTP host (i.e. the one which sends email)
+mail.smtp.host = @mail.smtp.host@
+
+# If for some reason the standard smtp port (25) is blocked, you can change it here
+#mail.smtp.port = @mail.smtp.port@
+
+# If you are using a webserver that is publically accessible it usually
+# doesn't allow you to send mail anonymously
+# (because then this mailserver would become an open relay).
+# Therefore you can indicate your account information here...
+#
+#mail.smtp.account = @mail.smtp.account@
+#mail.smtp.password = @mail.smtp.password@
+
+# The properties below control connection timeouts and TLS (encryption)
+# if the mailserver supports it. The commented-out values are the defaults.
+#mail.smtp.timeout = 5000
+#mail.smtp.connectiontimeout = 5000
+#mail.smtp.starttls.enable = true
+
+###########################################################################
+#
+#  Configure logs.  See log4j documentation for more information
+#  on how you can configure the logs.
+#
+#  Log4j is available at http://jakarta.apache.org/log4j
+#
+#  WARNING WARNING WILL ROBINSON: If you turn on DEBUG logging, be aware
+#  that some security-sensitive information will be logged (such as session IDs).
+#  Please be careful.
+#
+#  Send mail to root on all problems containing warnings.
+#
+#log4j.appender.mail = org.apache.log4j.net.SMTPAppender
+#log4j.appender.mail.Threshold = WARN
+#log4j.appender.mail.To = root@localhost
+#log4j.appender.mail.From = JSPWiki@localhost
+#log4j.appender.mail.Subject = Problem with JSPWiki!
+#log4j.appender.mail.SMTPHost = mail
+
+#log4j.appender.mail.layout = org.apache.log4j.PatternLayout
+#log4j.appender.mail.layout.ConversionPattern =%d [%t] %p %c %x - %m%n
+
+#
+#  Log everything into a file, roll it over every 10 MB, keep
+#  only 14 latest ones.
+#
+log4j.appender.FileLog = org.apache.log4j.RollingFileAppender
+log4j.appender.FileLog.MaxFileSize    = 10MB
+log4j.appender.FileLog.MaxBackupIndex = 14
+log4j.appender.FileLog.File = @logfile@
+log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
+log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
+
+#
+# If you want to use some other logging system (such as JBoss, which uses
+# log4j already, comment this line out.  If you just don't want any logs
+# at all, you can set it to be empty.  However, I suggest that you do
+# at least to a level of WARN.
+#
+log4j.rootCategory=INFO,FileLog
+
+# Enable if you're using mailing, above.
+#log4j.rootCategory=INFO,FileLog,mail
+
+#
+# Uncomment these lines if you want to see detailed security event logging.
+# The logging levels are as follows:
+#  ERROR: login errors (other than failed/expired logins)
+#  WARN:  access denied, failed login (account expired, password/credential expired)
+#  INFO:  login, logout
+#  DEBUG: add/remove group, add/remove group member, clear groups/group members, access allowed
+#
+#log4j.logger.SecurityLog=INFO, SecurityAppender
+#log4j.appender.SecurityAppender = org.apache.log4j.RollingFileAppender
+#log4j.appender.SecurityAppender.MaxFileSize    = 10MB
+#log4j.appender.SecurityAppender.MaxBackupIndex = 14
+#log4j.appender.SecurityAppender.File = @securitylog@
+#log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
+#log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
+
+#
+#  Uncomment these lines if you wish to receive detailed spam
+#  filter logging.
+#
+#log4j.logger.SpamLog=INFO,SpamAppender
+#log4j.appender.SpamAppender = org.apache.log4j.RollingFileAppender
+#log4j.appender.SpamAppender.MaxFileSize = 10MB
+#log4j.appender.SpamAppender.MaxBackupIndex = 14
+#log4j.appender.SpamAppender.File = @spamlog@
+#log4j.appender.SpamAppender.layout = org.apache.log4j.PatternLayout
+#log4j.appender.SpamAppender.layout.ConversionPattern=%d{ISO8601} %m%n
+
+###########################################################################
+#
+# Workflow configuration
+#
+# The following properties map specific workflow steps to their associated approvers
+# The name of the workflow or decision is the part of the key after "jspwiki.approver.".
+# This is a logical name JSPWiki uses to determine which Principal to consult for approval.
+# The Principal is identified up by AuthorizationManager at runtime; it looks for a Principal
+# match as follows: GroupPrincipals; Roles; WikiPrincipals/other principals. Thus, if a value
+# of "Admin" is supplied JSPWiki will first check the GroupManager to see if group Admin exits;
+# then the container roles, if any; then, user Principals. If the value is blank or the
+# property is commented out, it means that the workflow does not require approval.
+#
+# EXAMPLE:
+# Uncomment the next line to require the Admin group (or Admin user, if a group is not found)
+# to approve wiki pages after saving.
+#jspwiki.approver.workflow.saveWikiPage=Admin
+
+# Uncomment the next line to require the Admin group to approve new user profiles
+#jspwiki.approver.workflow.createUserProfile=Admin
+
+### End of configuration file.

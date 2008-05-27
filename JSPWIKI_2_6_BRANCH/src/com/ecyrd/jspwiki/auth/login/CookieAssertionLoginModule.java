@@ -1,0 +1,188 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+package com.ecyrd.jspwiki.auth.login;
+
+import java.io.IOException;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.util.HttpUtil;
+
+/**
+ * <p>
+ * Logs in a user based on assertion of a name supplied in a cookie. If the
+ * cookie is not found, authentication fails.
+ * </p>
+ * This module must be used with a CallbackHandler (such as
+ * {@link WebContainerCallbackHandler}) that supports the following Callback
+ * types:
+ * </p>
+ * <ol>
+ * <li>{@link HttpRequestCallback}- supplies the cookie, which should contain
+ * a user name.</li>
+ * </ol>
+ * <p>
+ * After authentication, a generic WikiPrincipal based on the username will be
+ * created and associated with the Subject. Principals
+ * {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
+ * {@link com.ecyrd.jspwiki.auth.authorize.Role#ASSERTED} will be added.
+ * </p>
+ * @see javax.security.auth.spi.LoginModule#commit()
+ * @see CookieAuthenticationLoginModule
+ * @author Andrew Jaquith
+ * @since 2.3
+ */
+public class CookieAssertionLoginModule extends AbstractLoginModule
+{
+
+    /** The name of the cookie that gets stored to the user browser. */
+    public static final String PREFS_COOKIE_NAME = "JSPWikiAssertedName";
+
+    /** Believed to be unused.
+     *  @deprecated */
+    public static final String PROMPT            = "User name";
+
+    protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
+
+    /**
+     * Logs in the user by calling back to the registered CallbackHandler with
+     * an HttpRequestCallback. The CallbackHandler must supply the current
+     * servlet HTTP request as its response.
+     * @return the result of the login; if the subject Principal set already
+     * possesses {@link Role#AUTHENTICATED}, always returns <code>false</code>
+     * to indicate that this module should be ignored. Otherwise, if a cookie is
+     * found, this method returns <code>true</code>. If not found, this
+     * method throws a <code>FailedLoginException</code>.
+     * @see javax.security.auth.spi.LoginModule#login()
+     */
+    public boolean login() throws LoginException
+    {
+        // Ignore this module if already authenticated
+        if ( m_subject.getPrincipals().contains( Role.AUTHENTICATED ) )
+        {
+            // If login ignored, remove asserted role
+            m_principalsToRemove.add( Role.ASSERTED );
+            return false;
+        }
+
+        // Otherwise, let's go and look for the cookie!
+        HttpRequestCallback hcb = new HttpRequestCallback();
+        Callback[] callbacks = new Callback[]
+        { hcb };
+        try
+        {
+            m_handler.handle( callbacks );
+            HttpServletRequest request = hcb.getRequest();
+            HttpSession session = ( request == null ) ? null : request.getSession( false );
+            String sid = ( session == null ) ? NULL : session.getId();
+            String name = getUserCookie( request );
+            if ( name == null )
+            {
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug( "No cookie " + PREFS_COOKIE_NAME + " present in session ID=:  " + sid );
+                }
+                throw new FailedLoginException( "The user cookie was not found." );
+            }
+
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "Logged in session ID=" + sid );
+                log.debug( "Added Principals " + name + ",Role.ASSERTED,Role.ALL" );
+            }
+            // If login succeeds, commit these principals/roles
+            m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
+            m_principals.add( Role.ASSERTED );
+            m_principals.add( Role.ALL );
+
+            // If login succeeds, overwrite these principals/roles
+            m_principalsToOverwrite.add( WikiPrincipal.GUEST );
+            m_principalsToOverwrite.add( Role.ANONYMOUS );
+
+            // If login fails, remove these roles
+            m_principalsToRemove.add( Role.ASSERTED );
+            return true;
+        }
+        catch( IOException e )
+        {
+            log.error( "IOException: " + e.getMessage() );
+            return false;
+        }
+        catch( UnsupportedCallbackException e )
+        {
+            String message = "Unable to handle callback, disallowing login.";
+            log.error( message, e );
+            throw new LoginException( message );
+        }
+
+    }
+
+    /**
+     *  Returns the username cookie value.
+     *
+     *  @param request The Servlet request, as usual.
+     *  @return the username, as retrieved from the cookie
+     */
+    public static String getUserCookie( HttpServletRequest request )
+    {
+        String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
+
+        return TextUtil.urlDecodeUTF8(cookie);
+    }
+
+    /**
+     *  Sets the username cookie.  The cookie value is URLEncoded in UTF-8.
+     *
+     *  @param response The Servlet response
+     *  @param name     The name to write into the cookie.
+     */
+    public static void setUserCookie( HttpServletResponse response, String name )
+    {
+        name = TextUtil.urlEncodeUTF8(name);
+        Cookie userId = new Cookie( PREFS_COOKIE_NAME, name );
+        userId.setMaxAge( 1001 * 24 * 60 * 60 ); // 1001 days is default.
+        response.addCookie( userId );
+    }
+
+    /**
+     *  Removes the user cookie from the response.  This makes the user appear
+     *  again as an anonymous coward.
+     *
+     *  @param response The servlet response.
+     */
+    public static void clearUserCookie( HttpServletResponse response )
+    {
+        Cookie userId = new Cookie( PREFS_COOKIE_NAME, "" );
+        userId.setMaxAge( 0 );
+        response.addCookie( userId );
+    }
+}

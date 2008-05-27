@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<WIKIWIZARD>
+<EXTENSIONS>
+	<GROUP>
+		<NAME>Templates</NAME>
+	    <NAME lang="de">Vorlagen</NAME>
+	    
+		<ITEM>		
+			<NAME>Reference</NAME>
+		        <NAME lang="de">Quellenangabe</NAME>
+		        <SHORTCUT>0</SHORTCUT>
+			<CODE>
+[Reference|#cursor]
+		        </CODE>
+		</ITEM>
+	    
+		<ITEM>		
+			<NAME>Signature</NAME>
+		        <NAME lang="de">Unterschrift</NAME>
+		        <SHORTCUT>1</SHORTCUT>
+			<CODE>
+--''[#user]''
+		        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Done</NAME>
+		        <NAME lang="de">Erledigt</NAME>
+		        <SHORTCUT>2</SHORTCUT>
+			<CODE>
+Done on #date, version #cursor --''[#user]''
+		        </CODE>
+		</ITEM>
+
+		<ITEM>		
+			<NAME>Timetable</NAME>
+		        <NAME lang="de">Stundenplan</NAME>
+			<CODE>
+||Block||Monday||Tuesday||Wednesday||Thursday||Friday
+| 1\\ \\08.00\\09.30| | | | | 
+| 2\\ \\09.45\\11.15| | | | | 
+| 3\\ \\11.30\\13.00| | | | | 
+| 4\\ \\14.00\\15.30| | | | | 
+| 5\\ \\15.45\\17.15| | | | | 
+| 6\\ \\17.30\\19.00| | | | |
+		        </CODE>
+		</ITEM>
+
+        </GROUP>
+</EXTENSIONS>
+</WIKIWIZARD>
+

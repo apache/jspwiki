@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes" ?>
+<WIKIWIZARD>
+<EXTENSIONS>
+<GROUP>
+		<NAME>CSS Formating</NAME>
+	 <NAME lang="de">CSS Formatierung</NAME>
+		<ITEM>
+			<NAME>CommentBox</NAME>
+			<SHORTCUT>6</SHORTCUT>
+			<CODE>
+%%commentbox
+#cursor
+%%			    
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Center</NAME>
+			<CODE>
+%%center
+#cursor
+%%
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Color</NAME>
+			<SHORTCUT>7</SHORTCUT>
+			<CODE>
+%%(color:red)
+#cursor
+%%
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+			<NAME>Enlagre Font</NAME>
+			<CODE>
+%%(font-size:115%)
+__First Line__\\ 
+__Second Line__\\
+%%
+	        </CODE>
+		</ITEM>
+
+<!-- no standard, but useful for formating forms with tables: 
+		<ITEM>
+			<NAME>No Border</NAME>
+			<CODE>
+%%noborder
+#cursor
+%%
+	        </CODE>
+		</ITEM>
+
+		<ITEM>
+
+			<NAME>Buttonlink</NAME>
+			<CODE>
+%%buttonlink
+#cursor
+%%
+	        </CODE>
+		</ITEM>
+
+
+-->
+
+	</GROUP>
+</EXTENSIONS>
+</WIKIWIZARD>

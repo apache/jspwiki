@@ -1,0 +1,176 @@
+/*
+    WikiForms - a WikiPage FORM handler for JSPWiki.
+ 
+    Copyright (C) 2003 BaseN. 
+
+    JSPWiki Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+ 
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program; if not, write to the Free Software
+*/
+package com.ecyrd.jspwiki.forms;
+
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.plugin.PluginException;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+
+import java.util.*;
+
+import org.apache.ecs.ConcreteElement;
+import org.apache.ecs.xhtml.option;
+import org.apache.ecs.xhtml.select;
+
+/**
+ *  @author ebu
+ */
+public class FormSelect
+    extends FormElement
+{
+    public String execute( WikiContext ctx, Map params )
+        throws PluginException
+    {
+        // Don't render if no error and error-only-rendering is on.
+        FormInfo info = getFormInfo( ctx );
+
+        ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        Map previousValues = null;
+        
+        if( info != null )
+        {
+            if( info.hide() )
+            {
+                return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
+            }
+            previousValues = info.getSubmission();
+        }
+
+        if( previousValues == null )
+        {
+            previousValues = new HashMap();
+        }
+
+        ConcreteElement field = null;
+        
+        field = buildSelect( params, previousValues, rb );
+
+        // We should look for extra params, e.g. width, ..., here.
+        if( field != null )
+            return field.toString(ctx.getEngine().getContentEncoding());
+        
+        return "";
+    }
+
+
+    /**
+     * Builds a Select element.
+     */
+    private select buildSelect( Map pluginParams, Map ctxValues, ResourceBundle rb )
+        throws PluginException
+    {
+        String inputName = (String)pluginParams.get( PARAM_INPUTNAME );
+        if( inputName == null )
+        {
+            throw new PluginException( rb.getString( "formselect.namemissing" ) );
+        }
+    
+        String inputValue = (String)pluginParams.get( PARAM_VALUE );
+        String previousValue = (String)ctxValues.get( inputName );
+        //
+        // We provide several ways to override the separator, in case
+        // some input application the default value.
+        //
+        String optionSeparator = (String)pluginParams.get( "separator" );
+        if( optionSeparator == null )
+            optionSeparator = (String)ctxValues.get( "separator." + inputName);
+        if( optionSeparator == null )
+            optionSeparator = (String)ctxValues.get( "select.separator" );
+        if( optionSeparator == null )
+            optionSeparator = ";";
+        
+        String optionSelector = (String)pluginParams.get( "selector" );
+        if( optionSelector == null )
+            optionSelector = (String)ctxValues.get( "selector." + inputName );
+        if( optionSelector == null )
+            optionSelector = (String)ctxValues.get( "select.selector" );
+        if( optionSelector == null )
+            optionSelector = "*";
+        if( optionSelector.equals( optionSeparator ) )
+            optionSelector = null;
+        if( inputValue == null )
+            inputValue = "";
+
+        // If values from the context contain the separator, we assume
+        // that the plugin or something else has given us a better
+        // list to display.
+        boolean contextValueOverride = false;
+        if( previousValue != null )
+        {
+            if( previousValue.indexOf( optionSeparator ) != -1 )
+            {
+                inputValue = previousValue;
+                previousValue = null;
+            }
+            else
+            {
+                // If a context value exists, but it's not a list,
+                // it'll just override any existing selector
+                // indications.
+                contextValueOverride = true;
+            }
+        }
+
+        String[] options = inputValue.split( optionSeparator );
+        if( options == null )
+            options = new String[0];
+        int previouslySelected = -1;
+        
+        option[] optionElements = new option[options.length];
+        
+        //
+        //  Figure out which one of the options to select: prefer the one
+        //  that was previously selected, otherwise try to find the one
+        //  with the "select" marker.
+        //
+        for( int i = 0; i < options.length; i++ )
+        {
+            int indicated = -1;
+            options[i] = options[i].trim();
+            
+            if( options[i].startsWith( optionSelector ) ) 
+            {
+                options[i] = options[i].substring( optionSelector.length() );
+                indicated = i;
+            }
+            if( previouslySelected == -1 )
+            {
+                if( !contextValueOverride && indicated > 0 )
+                {
+                    previouslySelected = indicated;
+                }
+                else if( previousValue != null && 
+                        options[i].equals( previousValue ) )
+                {
+                    previouslySelected = i;
+                }
+            }
+            
+            optionElements[i] = new option( options[i] );
+            optionElements[i].addElement( options[i] );
+        }
+
+        if( previouslySelected > -1 ) optionElements[previouslySelected].setSelected(true);
+        select field = new select( HANDLERPARAM_PREFIX + inputName, optionElements );
+
+        return( field );
+    }
+}

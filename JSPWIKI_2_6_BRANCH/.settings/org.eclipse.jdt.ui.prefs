@@ -1,0 +1,10 @@
+#Sat Mar 08 18:42:59 EET 2008
+eclipse.preferences.version=1
+formatter_profile=_Janne's coding conventions
+formatter_settings_version=11
+internal.default.compliance=default
+org.eclipse.jdt.ui.ignorelowercasenames=true
+org.eclipse.jdt.ui.importorder=java;javax;org;com;
+org.eclipse.jdt.ui.ondemandthreshold=5
+org.eclipse.jdt.ui.staticondemandthreshold=99
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>

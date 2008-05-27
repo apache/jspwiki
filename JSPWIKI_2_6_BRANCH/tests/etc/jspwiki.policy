@@ -1,0 +1,91 @@
+// $Id: jspwiki.policy,v 1.11 2007-05-29 05:18:53 arj Exp $
+//
+// This file contains the local security policy for JSPWiki.
+// It provides the permissions rules for the JSPWiki
+// environment, and should be suitable for most purposes.
+// JSPWiki will load this policy when the wiki webapp starts.
+//
+// As noted, this is the 'local' policy for this instance of JSPWiki.
+// You can also use the standard Java 2 security policy mechanisms
+// to create a consolidated 'global policy' (JVM-wide) that will be checked first,
+// before this local policy. This is ideal for situations in which you are
+// running multiple instances of JSPWiki in your web container. 
+// To set a global security policy for all running instances of JSPWiki, 
+// you will need to specify the location of the global policy by setting the
+// JVM system property 'java.security.policy' in the command line script
+// you use to start your web container. See the documentation 
+// pages at http://doc.jspwiki.org/2.4/wiki/InstallingJSPWiki. If you 
+// don't know what this means, don't worry about it.
+//
+// Also, if you are running JSPWiki with a security policy, you will probably
+// want to copy the contents of the file jspwiki-container.policy into your
+// container's policy. See that file for more details.
+//
+// ------ EVERYTHING THAT FOLLOWS IS THE 'LOCAL' POLICY FOR YOUR WIKI ------
+
+// The first policy block grants privileges that all users need, regardless of
+// the roles or groups they belong to. Everyone can register with the wiki and
+// log in. Everyone can edit their profile after they authenticate. 
+// Everyone can also view all wiki pages unless otherwise protected by an ACL.
+// If that seems too loose for your needs, you can restrict page-viewing
+// privileges by moving the PagePermission 'view' grant to one of the other blocks.
+
+grant principal com.ecyrd.jspwiki.auth.authorize.Role "All" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editPreferences";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "editProfile";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "login";
+};
+
+
+// The second policy block is extremely loose, and unsuited for public-facing wikis.
+// Anonymous users are allowed to create, edit and comment on all pages.
+//
+// Note: For Internet-facing wikis, you are strongly advised to remove the 
+// lines containing the "edit" and "createPages" permissions; this will make
+// the wiki read-only for anonymous users.
+
+grant principal com.ecyrd.jspwiki.auth.authorize.Role "Anonymous" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+};
+
+
+// This next policy block is also pretty loose. It allows users who claim to
+// be someone (via their cookie) to create, edit and comment on all pages.
+// They can also view the membership list of groups.
+
+grant principal com.ecyrd.jspwiki.auth.authorize.Role "Asserted" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
+};
+
+
+// Authenticated users can do most things: view, create, edit and 
+// comment on all pages; upload files to existing ones; create and edit
+// wiki groups; and rename existing pages. Authenticated users can also
+// edit groups they are members of.
+
+grant principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "modify,rename";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:*", "view";
+    permission com.ecyrd.jspwiki.auth.permissions.GroupPermission "*:<groupmember>", "edit";
+    permission com.ecyrd.jspwiki.auth.permissions.WikiPermission "*", "createPages,createGroups";
+};
+
+
+// Administrators (principals or roles possessing AllPermission) 
+// are allowed to delete any page, and can edit, rename and delete 
+// groups. You should match the permission target (here, 'JSPWiki') 
+// with the value of the 'jspwiki.applicationName' property in 
+// jspwiki.properties. Two administative groups are set up below:
+// the wiki group "Admin" (stored by default in wiki page GroupAdmin)
+// and the container role "Admin" (managed by the web container).
+
+grant principal com.ecyrd.jspwiki.auth.GroupPrincipal "Admin" {
+    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "*";
+};
+grant principal com.ecyrd.jspwiki.auth.authorize.Role "Admin" {
+    permission com.ecyrd.jspwiki.auth.permissions.AllPermission "*";
+};

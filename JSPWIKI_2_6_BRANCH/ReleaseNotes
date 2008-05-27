@@ -1,0 +1,115 @@
+
+This is a stable release of JSPWiki 2.6.  Welcome to the new, all-seeing,
+all-dancing, all-spanking JSPWiki!
+
+This is the final release of JSPWiki as LGPL software.  The development of
+JSPWiki moves to the Apache Incubation process, and in the future, you can
+find JSPWiki from the Apache website.  For more information, please see
+http://www.jspwiki.org/wiki/ApacheRelicensing.
+
+Please report any issues you can find at http://issues.apache.org/JIRA/
+
+Fixed issues since 2.6.0:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310732&styleName=Html&version=12312899
+
+NEW FEATURES
+============
+
+* JSPWiki source code requires JDK 1.5 to compile, though it should
+  still run under JDK 1.4.
+
+* Workflow packages (e.g. for moderating page edits or registrations)
+
+* Internationalization.  Included are English, Finnish, German and Spanish
+  translations.
+
+* Spaces in wikinames are now allowed for a more natural-looking page content.
+  However, this does not break existing links - but names with spaces are
+  preferred.
+
+* Support for new link target types, e.g. [cool link|http://google.com|target='_blank']
+  to open the link in a new window.
+
+* SisterSites support
+
+* Local security policies - no more need to use a global security policy
+  to configure JSPWiki security!
+
+* Improved SpamFilter, including Captcha support (currently only supports ASIRRA)
+
+* Far improved FCK WYSIWYG editor support
+
+* All new default template with all sorts of awesome goodies, such as upload
+  progress indicator, etc!  It is based on the ever-popular BrushedTemplate!
+
+* No more JAR signing!  Unfortunately, though, if you're running JSPWiki with
+  a global security policy, you will still need to sign the JAR yourself using
+  the "ant signjar" command.
+  
+This is just a quick overview.  The full list of what is new in 2.6 can be seen at
+
+http://www.jspwiki.org/wiki/NewIn2.6
+
+UPGRADE NOTES
+=============
+
+Upgrading from 2.4:
+
+* Reinstall in a new directory
+
+* You can copy old templates directly to the new templates
+  directory.  Templates should be for the most part be compatible
+  between 2.6 and 2.4 - though obviously most 2.4 templates do
+  not have localization.
+  
+* Copy old jspwiki.properties over the default jspwiki.properties
+  and everything should just work.
+
+* Copy old filters.xml to new WEB-INF/classes directory
+
+* Optional: check your jspwiki.policy file against the new one:
+  some definitions have changed.
+  
+
+Upgrading from earlier installations:
+
+* Please make a complete reinstall.  Your wiki pages will still be
+  compatible, and the configuration for the most part.
+
+Please visit http://doc.jspwiki.org/2.4/ for further instructions.
+
+
+
+EXPERIMENTAL FEATURES
+=====================
+
+There are some features in this release which could mostly be considered
+experimental at best.  The following ones are known to work only
+partially:
+
+* WebDAV support.  This is known to be broken on pretty many levels...
+
+
+KNOWN PROBLEMS
+==============
+
+* WebDav does not yet support the new
+  authentication/permissions scheme.  Therefore, if you have very
+  sensitive data in your wiki, you might not want to enable it.
+
+* Not all old plugins work.  Specifically, plugins from 2.2, which
+  1) use com.ecyrd.jspwiki package, will fail because they are not
+     signed with the same key as jspwiki.jar, and
+  2) any plugin, which constructs new WikiPages will fail because
+     of the constructor has been changed.
+
+* The default template does not work at all if you turn off
+  Javascript.  We are aware of this and working on a fix.
+
+* Our documentation simply sucks at this point.  Please forgive us,
+  and point where those fixes are needed.  We will improve upon
+  this during our progress towards a stable.
+
+* The ShortURLConstructor does not work reliably.  Please use
+  ShortViewURLConstructor, or Apache mod_rewrite.
