@@ -1,6 +1,11 @@
-2008-05-22  Janne Jalkanen <jalkanen@apache.org>
+2008-05-27  Janne Jalkanen <jalkanen@apache.org>
 
-        * 2.6.3
+        * 2.6.3-rc-2
+
+        * Fix for JSPWIKI-260 accidentally had old i18n files still.
+        
+        * Provisional fix for strange ACL issue detected by Florian;
+        fix provided by Steve.
 
 2008-05-17  Janne Jalkanen <jalkanen@apache.org>
 

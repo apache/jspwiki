@@ -1296,7 +1296,7 @@ public class JSPWikiMarkupParser
 
         if( !m_parseAccessRules ) return m_currentElement;
         Acl acl;
-        WikiPage          page = m_context.getPage();
+        WikiPage          page = m_context.getRealPage();
         // UserDatabase      db = m_context.getEngine().getUserDatabase();
 
         if( ruleLine.startsWith( "{" ) )
