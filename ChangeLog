@@ -1,3 +1,10 @@
+2008-05-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-30
+        
+        * AttachmentServlet now cleans the uploaded file name, since some
+        browsers send the full path as well.
+        
 2008-05-22  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-svn-29

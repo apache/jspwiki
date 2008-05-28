@@ -719,6 +719,27 @@ public class AttachmentServlet
     {
         boolean created = false;
 
+        if( filename == null || filename.trim().length() == 0 )
+        {
+            log.error("Empty file name given.");
+
+            throw new RedirectException("Empty file name given.",
+                                        errorPage);
+        }
+
+        //
+        //  Should help with IE 5.22 on OSX
+        //
+        filename = filename.trim();
+
+        //
+        //  Some browser send the full path info with the filename, so we need
+        //  to remove it here by simply splitting along slashes and then taking the path.
+        //
+        
+        String[] splitpath = filename.split( "/\\\\" );
+        filename = splitpath[splitpath.length-1];
+        
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
         //  contents.  But we can't figure out the page to redirect to
@@ -744,19 +765,6 @@ public class AttachmentServlet
         Principal user    = context.getCurrentUser();
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
-
-        if( filename == null || filename.trim().length() == 0 )
-        {
-            log.error("Empty file name given.");
-
-            throw new RedirectException("Empty file name given.",
-                                        errorPage);
-        }
-
-        //
-        //  Should help with IE 5.22 on OSX
-        //
-        filename = filename.trim();
 
         //
         //  Remove any characters that might be a problem. Most
