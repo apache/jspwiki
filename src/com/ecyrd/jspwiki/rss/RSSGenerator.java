@@ -30,14 +30,22 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Generates an RSS feed from the recent changes.
- *  <P>
- *  We use the 1.0 spec, including the wiki-specific extensions.  Wiki extensions
- *  have been defined in <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
+ *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).
+ *  <p>
+ *  This class can produce quite a few different styles of feeds.  The following modes are
+ *  available:
+ *  
+ *  <ul>
+ *  <li><b>wiki</b> - All the changes to the given page are enumerated and announced as diffs.</li>
+ *  <li><b>full</b> - Each page is only considered once.  This produces a very RecentChanges-style feed,
+ *                   where each page is only listed once, even if it has changed multiple times.</li>
+ *  <li><b>blog</b> - Each page change is assumed to be a blog entry, so no diffs are produced, but
+ *                    the page content is always completely in the entry in rendered HTML.</li>
  *
  *  @since  1.7.5.
  */
 // FIXME: Limit diff and page content size.
+// FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
 public class RSSGenerator
 {
     static Logger              log = Logger.getLogger( RSSGenerator.class );
@@ -47,12 +55,34 @@ public class RSSGenerator
     private String             m_channelLanguage    = "en-us";
     private boolean            m_enabled = true;
 
+    /**
+     *  Parameter value to represent RSS 1.0 feeds.  Value is <tt>{@value}</tt>. 
+     */
     public static final String RSS10 = "rss10";
+
+    /**
+     *  Parameter value to represent RSS 2.0 feeds.  Value is <tt>{@value}</tt>. 
+     */
     public static final String RSS20 = "rss20";
+    
+    /**
+     *  Parameter value to represent Atom feeds.  Value is <tt>{@value}</tt>. 
+     */
     public static final String ATOM  = "atom";
 
+    /**
+     *  Parameter value to represent a 'blog' style feed. Value is <tt>{@value}</tt>.
+     */
     public static final String MODE_BLOG = "blog";
+    
+    /**
+     *  Parameter value to represent a 'wiki' style feed. Value is <tt>{@value}</tt>.
+     */
     public static final String MODE_WIKI = "wiki";
+
+    /**
+     *  Parameter value to represent a 'full' style feed. Value is <tt>{@value}</tt>.
+     */
     public static final String MODE_FULL = "full";
 
     /**
@@ -69,6 +99,9 @@ public class RSSGenerator
      */
     public static final String PROP_CHANNEL_LANGUAGE    = "jspwiki.rss.channelLanguage";
 
+    /**
+     *  Defins the property name for the RSS channel title.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_CHANNEL_TITLE       = "jspwiki.rss.channelTitle";
 
     /**
@@ -83,23 +116,43 @@ public class RSSGenerator
      */
     public static final String PROP_RSSFILE             = "jspwiki.rss.fileName";
 
-    public static final String PROP_RSSAUTHOR           = "jspwiki.rss.author";
-    public static final String PROP_RSSAUTHOREMAIL      = "jspwiki.rss.author.email";
-
     /**
      *  Defines the property name for the RSS generation interval in seconds.
      *  @since 1.7.6.
      */
     public static final String PROP_INTERVAL            = "jspwiki.rss.interval";
 
+    /**
+     *  Defines the property name for the RSS author.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_RSS_AUTHOR          = "jspwiki.rss.author";
+
+    /**
+     *  Defines the property name for the RSS author email.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_RSS_AUTHOREMAIL     = "jspwiki.rss.author.email";
+
+    /**
+     *  Property name for the RSS copyright info.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
+
+    /** Just for compatibilty.  @deprecated */
+    public static final String PROP_RSSAUTHOR           = PROP_RSS_AUTHOR;
+
+    /** Just for compatibilty.  @deprecated */
+    public static final String PROP_RSSAUTHOREMAIL      = PROP_RSS_AUTHOREMAIL;
+
 
     private static final int MAX_CHARACTERS             = Integer.MAX_VALUE-1;
 
     /**
-     *  Initialize the RSS generator.
+     *  Initialize the RSS generator for a given WikiEngine.  Currently the only 
+     *  required property is <tt>{@value com.ecyrd.jspwiki.WikiEngine#PROP_BASEURL}</tt>.
+     *  
+     *  @param engine The WikiEngine.
+     *  @param properties The properties.
+     *  @throws NoRequiredPropertyException If something is missing from the given property set.
      */
     public RSSGenerator( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException
@@ -121,7 +174,11 @@ public class RSSGenerator
 
     /**
      *  Does the required formatting and entity replacement for XML.
+     *  
+     *  @param s String to format.
+     *  @return A formatted string.
      */
+    // FIXME: Replicates Feed.format().
     public static String format( String s )
     {
         s = TextUtil.replaceString( s, "&", "&amp;" );
@@ -214,6 +271,8 @@ public class RSSGenerator
     /**
      *  Generates the RSS resource.  You probably want to output this
      *  result into a file or something, or serve as output from a servlet.
+     *  
+     *  @return A RSS 1.0 feed in the "full" mode.
      */
     public String generate()
     {
@@ -260,7 +319,7 @@ public class RSSGenerator
      * @throws IllegalArgumentException If an illegal mode is given.
      */
     public String generateFeed( WikiContext wikiContext, List changed, String mode, String type )
-        throws ProviderException
+        throws ProviderException, IllegalArgumentException
     {
         Feed feed = null;
         String res = null;
@@ -324,6 +383,10 @@ public class RSSGenerator
 
     /**
      *  Generates an RSS feed for the entire wiki.  Each item should be an instance of the RSSItem class.
+     *  
+     *  @param wikiContext A WikiContext
+     *  @param feed A Feed to generate the feed to.
+     *  @return feed.getString().
      */
     protected String generateFullWikiRSS( WikiContext wikiContext, Feed feed )
     {
@@ -386,9 +449,9 @@ public class RSSGenerator
     /**
      *  Create RSS/Atom as if this page was a wikipage (in contrast to Blog mode).
      *
-     * @param wikiContext
-     * @param changed
-     * @param feed
+     * @param wikiContext The WikiContext
+     * @param changed A List of changed WikiPages.
+     * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
     protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )

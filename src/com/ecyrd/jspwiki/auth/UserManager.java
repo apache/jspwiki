@@ -579,7 +579,6 @@ public final class UserManager
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
      * someone tries to log in.
-     * @author Janne Jalkanen
      */
     public static class DummyUserDatabase extends AbstractUserDatabase
     {
@@ -811,8 +810,6 @@ public final class UserManager
 
     /**
      *  Implements the JSON API for usermanager.
-     *
-     *  @author Janne Jalkanen
      */
     public final class JSONUserModule implements RPCCallable
     {

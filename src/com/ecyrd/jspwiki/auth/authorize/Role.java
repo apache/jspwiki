@@ -49,6 +49,9 @@ public final class Role implements Principal, Serializable
 
     private final String   m_name;
 
+    /**
+     *  Create an empty Role.
+     */
     protected Role()
     {
         this(null);

@@ -39,14 +39,18 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Represents an RSS 2.0 feed (with enclosures).
- *
+ *  Represents an RSS 2.0 feed (with enclosures).  This feed provides no
+ *  fizz-bang features.
  *
  *  @since 2.2.27
  */
 public class RSS20Feed extends Feed
 {
-
+    /**
+     *  Creates an RSS 2.0 feed for the specified Context.
+     *  
+     *  @param context The WikiContext.
+     */
     public RSS20Feed( WikiContext context )
     {
         super( context );
@@ -54,7 +58,7 @@ public class RSS20Feed extends Feed
 
     private List getItems()
     {
-        ArrayList list = new ArrayList();
+        ArrayList<Element> list = new ArrayList<Element>();
         SimpleDateFormat fmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
 
         WikiEngine engine = m_wikiContext.getEngine();
@@ -123,6 +127,10 @@ public class RSS20Feed extends Feed
         return list;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public String getString()
     {
         WikiEngine engine = m_wikiContext.getEngine();

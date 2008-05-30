@@ -50,8 +50,16 @@ public class AtomFeed extends Feed
 {
     private Namespace m_atomNameSpace = Namespace.getNamespace("http://www.w3.org/2005/Atom");
 
+    /**
+     *  Defines a SimpleDateFormat string for RFC3339-formatted dates.
+     */
     public static final String RFC3339FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";
 
+    /**
+     *  Create a new AtomFeed for a given WikiContext.
+     *  
+     *  @param c A WikiContext.
+     */
     public AtomFeed( WikiContext c )
     {
         super(c);
@@ -75,7 +83,7 @@ public class AtomFeed extends Feed
 
     private Collection getItems()
     {
-        ArrayList list = new ArrayList();
+        ArrayList<Element> list = new ArrayList<Element>();
 
         WikiEngine engine = m_wikiContext.getEngine();
         ServletContext servletContext = null;
@@ -143,6 +151,10 @@ public class AtomFeed extends Feed
         return list;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public String getString()
     {
         Element root = getElement("feed");

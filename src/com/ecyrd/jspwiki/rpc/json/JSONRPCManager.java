@@ -59,7 +59,7 @@ import com.metaparadigm.jsonrpc.JSONRPCBridge;
 public final class JSONRPCManager extends RPCManager
 {
     private static final String JSONRPCBRIDGE = "JSONRPCBridge";
-    private static HashMap c_globalObjects = new HashMap();
+    private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();
     
     /** Prevent instantiation */
     private JSONRPCManager()

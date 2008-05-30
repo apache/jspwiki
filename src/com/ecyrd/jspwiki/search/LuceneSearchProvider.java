@@ -92,7 +92,7 @@ public class LuceneSearchProvider implements SearchProvider
 
     private String           m_luceneDirectory = null;
     private int              m_updateCount = 0;
-    protected Vector         m_updates = new Vector(); // Vector because multi-threaded.
+    protected Vector<Object[]> m_updates = new Vector<Object[]>(); // Vector because multi-threaded.
 
     /** Maximum number of fragments from search matches. */
     private static final int MAX_FRAGMENTS = 3;
@@ -273,6 +273,11 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  Fetches the attachment content from the repository.
      *  Content is flat text that can be used for indexing/searching or display
+     *  
+     *  @param attachmentName Name of the attachment.
+     *  @param version The version of the attachment.
+     *  
+     *  @return the content of the Attachment as a String.
      */
     protected String getAttachmentContent( String attachmentName, int version )
     {
@@ -550,7 +555,7 @@ public class LuceneSearchProvider implements SearchProvider
         throws ProviderException
     {
         Searcher  searcher = null;
-        ArrayList list     = null;
+        ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 
         try
@@ -580,7 +585,7 @@ public class LuceneSearchProvider implements SearchProvider
 
             Hits hits = searcher.search(luceneQuery);
 
-            list = new ArrayList(hits.length());
+            list = new ArrayList<SearchResult>(hits.length());
             for ( int curr = 0; curr < hits.length(); curr++ )
             {
                 Document doc = hits.doc(curr);
@@ -611,7 +616,8 @@ public class LuceneSearchProvider implements SearchProvider
 
                     }
 
-                    SearchResult result = new SearchResultImpl( page, score, fragments );                    list.add(result);
+                    SearchResult result = new SearchResultImpl( page, score, fragments );     
+                    list.add(result);
                 }
                 else
                 {
@@ -715,7 +721,7 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 while( m_provider.m_updates.size() > 0 )
                 {
-                    Object[] pair = ( Object[] ) m_provider.m_updates.remove(0);
+                    Object[] pair = m_provider.m_updates.remove(0);
                     WikiPage page = ( WikiPage ) pair[0];
                     String text = ( String ) pair[1];
                     m_provider.updateLuceneIndex(page, text);

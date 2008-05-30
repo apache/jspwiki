@@ -31,12 +31,17 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
 /**
- *  Provides an implementation of an RSS 1.0 feed.
- *
- *  @since 
+ *  Provides an implementation of an RSS 1.0 feed.  In addition, this class is
+ *  capable of adding RSS 1.0 Wiki Extensions to the Feed, as defined in
+ *  <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  */
 public class RSS10Feed extends Feed
 {
+    /**
+     *  Create an RSS 1.0 feed for a given context.
+     *  
+     *  @param context {@inheritDoc}
+     */
     public RSS10Feed( WikiContext context )
     {
         super(context);
@@ -182,9 +187,10 @@ public class RSS10Feed extends Feed
         return channel;
     }
     
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.rss.Feed#getString()
+    /**
+     *  {@inheritDoc}
      */
+    @Override
     public String getString()
     {
         XML root = new XML("rdf:RDF");

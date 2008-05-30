@@ -27,6 +27,10 @@ package com.ecyrd.jspwiki.rpc;
  */
 public class RPCManager
 {
+    /**
+     *  Private constructor to prevent initialization.
+     */
+    protected RPCManager() {}
     
     /**
      *  Gets an unique RPC ID for a callable object.  This is required because a plugin

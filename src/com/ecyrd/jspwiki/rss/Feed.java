@@ -30,11 +30,10 @@ import com.ecyrd.jspwiki.WikiContext;
 /**
  *  Represents an abstract feed.
  *
- *  @since
  */
 public abstract class Feed
 {
-    protected List m_entries = new ArrayList();
+    protected List<Entry> m_entries = new ArrayList<Entry>();
 
     protected String m_feedURL;
     protected String m_channelTitle;
@@ -45,22 +44,50 @@ public abstract class Feed
 
     protected String m_mode = RSSGenerator.MODE_WIKI;
 
+    /**
+     *  Create a new Feed for a particular WikiContext.
+     *  
+     *  @param context The WikiContext.
+     */
     public Feed( WikiContext context )
     {
         m_wikiContext = context;
     }
 
+    /**
+     *  Set the mode of the Feed.  It can be any of the following:
+     *  <ul>
+     *  <li>{@link RSSGenerator#MODE_WIKI} - to create a wiki diff list per page.</li>
+     *  <li>{@link RSSGenerator#MODE_BLOG} - to assume that the Entries are blog entries.</li>
+     *  <li>{@link RSSGenerator#MODE_FULL} - to create a wiki diff list for the entire blog.</li>
+     *  </ul>
+     *  As the Entry list itself is generated elsewhere, this mostly just affects the way
+     *  that the layout and metadata for each entry is generated.
+     * 
+     *  @param mode As defined in RSSGenerator.
+     */
     public void setMode( String mode )
     {
         m_mode = mode;
     }
 
+    /**
+     *  Adds a new Entry to the Feed, at the end of the list.
+     *  
+     *  @param e The Entry to add.
+     */
     public void addEntry( Entry e )
     {
         m_entries.add( e );
     }
 
+    /**
+     *  Returns the XML for the feed contents in a String format.  All subclasses must implement.
+     *  
+     *  @return valid XML, ready to be shoved out.
+     */
     public abstract String getString();
+    
     /**
      * @return Returns the m_channelDescription.
      */
@@ -119,6 +146,13 @@ public abstract class Feed
         m_feedURL = feedurl;
     }
 
+    /**
+     *  A helper method for figuring out the MIME type for an enclosure.
+     *  
+     *  @param c A ServletContext
+     *  @param name The filename
+     *  @return Something sane for a MIME type.
+     */
     protected String getMimeType(ServletContext c, String name)
     {
         String type = c.getMimeType(name);
@@ -130,7 +164,11 @@ public abstract class Feed
 
     /**
      *  Does the required formatting and entity replacement for XML.
+     *  
+     *  @param s The String to format. Null is safe.
+     *  @return A formatted string.
      */
+    // FIXME: Should probably be replaced by a library method.
     public static String format( String s )
     {
         if( s != null )

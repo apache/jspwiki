@@ -54,13 +54,29 @@ public class SearchManager
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
     private static final String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
-    public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
+    
+    /** Old option, now deprecated. */
+    private static final String PROP_USE_LUCENE        = "jspwiki.useLucene";
+    
+    /**
+     *  Property name for setting the search provider. Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider = null;
 
+    /**
+     *  The name of the JSON object that manages search.
+     */
     public static final String JSON_SEARCH = "search";
 
+    /**
+     *  Creates a new SearchManager.
+     *  
+     *  @param engine The WikiEngine that owns this SearchManager.
+     *  @param properties The list of Properties.
+     *  @throws WikiException If it cannot be instantiated.
+     */
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
@@ -90,7 +106,7 @@ public class SearchManager
         {
             StopWatch sw = new StopWatch();
             sw.start();
-            List list = new ArrayList(maxLength);
+            List<String> list = new ArrayList<String>(maxLength);
 
             if( wikiName.length() > 0 )
             {
@@ -131,7 +147,7 @@ public class SearchManager
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List list = new ArrayList(maxLength);
+            List<HashMap> list = new ArrayList<HashMap>(maxLength);
 
             if( searchString.length() > 0 )
             {
@@ -148,7 +164,7 @@ public class SearchManager
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
                         SearchResult sr = (SearchResult)i.next();
-                        HashMap hm = new HashMap();
+                        HashMap<String,Object> hm = new HashMap<String,Object>();
                         hm.put( "page", sr.getPage().getName() );
                         hm.put( "score", new Integer(sr.getScore()) );
                         list.add( hm );
@@ -251,6 +267,11 @@ public class SearchManager
         log.debug("Loaded search provider " + m_searchProvider);
     }
 
+    /**
+     *  Returns the SearchProvider used.
+     *  
+     *  @return The current SearchProvider.
+     */
     public SearchProvider getSearchEngine()
     {
         return m_searchProvider;
@@ -262,6 +283,8 @@ public class SearchManager
      *
      * @param query The query.  Null is safe, and is interpreted as an empty query.
      * @return A collection of WikiPages that matched.
+     * @throws ProviderException If the provider fails and a search cannot be completed.
+     * @throws IOException If something else goes wrong.
      */
     public Collection findPages( String query )
         throws ProviderException, IOException
@@ -281,6 +304,13 @@ public class SearchManager
         m_searchProvider.pageRemoved(page);
     }
 
+    /**
+     *  Reindexes the page.
+     *  
+     *  @param wikiContext {@inheritDoc}
+     *  @param content {@inheritDoc}
+     */
+    @Override
     public void postSave( WikiContext wikiContext, String content )
     {
         //
@@ -294,13 +324,18 @@ public class SearchManager
     /**
      *   Forces the reindex of the given page.
      *
-     *   @param page
+     *   @param page The page.
      */
     public void reindexPage(WikiPage page)
     {
         m_searchProvider.reindexPage(page);
     }
 
+    /**
+     *  If the page has been deleted, removes it from the index.
+     *  
+     *  @param event {@inheritDoc}
+     */
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )

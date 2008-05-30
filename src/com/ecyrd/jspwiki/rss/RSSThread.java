@@ -53,6 +53,13 @@ public class RSSThread extends WikiBackgroundThread
         
     private WatchDog m_watchdog;
     
+    /**
+     *  Create a new RSS thread.
+     *  
+     *  @param engine A WikiEngine to own this thread.
+     *  @param rssFile A File to write the RSS data to.
+     *  @param rssInterval How often the RSS should be generated.
+     */
     public RSSThread( WikiEngine engine, File rssFile, int rssInterval )
     {
         super( engine, rssInterval );
@@ -64,6 +71,10 @@ public class RSSThread extends WikiBackgroundThread
         log.debug( "RSS refresh interval (seconds): "+m_rssInterval );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void startupTask() throws Exception
     {
         m_watchdog = getEngine().getCurrentWatchDog();
@@ -75,7 +86,9 @@ public class RSSThread extends WikiBackgroundThread
      * file I/O or other error, this method will turn off generation.
      * <code>false</code>.
      * @see java.lang.Thread#run()
+     * @throws Exception All exceptions are thrown upwards.
      */
+    @Override
     public void backgroundTask() throws Exception
     {
         if ( m_generator.isEnabled() )
