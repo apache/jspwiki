@@ -32,6 +32,9 @@ import java.util.*;
 public class ListLocksPlugin
     implements WikiPlugin
 {
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

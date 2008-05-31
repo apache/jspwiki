@@ -29,22 +29,36 @@ import java.util.*;
 /**
  *  Displays the pages referring to the current page.
  *
- *  Parameters: <BR>
- *  max: How many items to show.<BR>
- *  extras: How to announce extras.<BR>
- *  From AbstractReferralPlugin:<BR>
- *  separator: How to separate generated links; default is a wikitext line break,
- *             producing a vertical list.<BR>
- *  maxwidth: maximum width, in chars, of generated links.
- *
+ *  Parameters:
+ *  <ul>
+ *  <li><b>max</b> - How many items to show.</li>
+ *  <li><b>extras</b> - How to announce extras.</li>
+ *  <li><b>page</b> - Which page to get the table of contents from.</li>
+ *  </ul>
+ *  
+ *  From AbstractReferralPlugin:
+ *  <ul>
+ *  <li><b>separator</b> - How to separate generated links; default is a wikitext line break,
+ *             producing a vertical list.</li>
+ *  <li><b>maxwidth</b> - maximum width, in chars, of generated links.</li>
+ *  </ul>
  */
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
     private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
 
+    /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";
+
+    /** Parameter name for setting the text to show when the maximum items is overruled.  
+     *  Value is <tt>{@value}</tt>. 
+     */
     public static final String PARAM_EXTRAS   = "extras";
+    
+    /**
+     *  Parameter name for choosing the page.  Value is <tt>{@value}</tt>.
+     */
     public static final String PARAM_PAGE     = "page";
     
     /**

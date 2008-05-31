@@ -47,8 +47,12 @@ import com.ecyrd.jspwiki.WikiSession;
 public class SessionsPlugin
     implements WikiPlugin
 {
+    /** The parameter name for setting the property value. */
     public static final String PARAM_PROP = "property";
     
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -75,7 +79,7 @@ public class SessionsPlugin
             Principal[] principals = WikiSession.userPrincipals(engine);
             // we do not assume that the principals are sorted, so first count
             // them :
-            HashMap distinctPrincipals = new HashMap();
+            HashMap<String,Integer> distinctPrincipals = new HashMap<String,Integer>();
             for (int i = 0; i < principals.length; i++)
             {
                 String principalName = principals[i].getName();
@@ -83,7 +87,7 @@ public class SessionsPlugin
                 if (distinctPrincipals.containsKey(principalName))
                 {
                     // we already have an entry, increase the counter:
-                    int numSessions = ((Integer) distinctPrincipals.get(principalName)).intValue();
+                    int numSessions = distinctPrincipals.get(principalName).intValue();
                     // store the new value:
                     distinctPrincipals.put(principalName, new Integer(++numSessions));
                 }
@@ -101,7 +105,7 @@ public class SessionsPlugin
             while (entries.hasNext())
             {
                 Map.Entry entry = (Map.Entry)entries.next();
-                s.append((entry.getKey().toString() + "(" + entry.getValue().toString() + "), "));
+                s.append( entry.getKey().toString() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :
             return s.substring(0, s.length() - 2);

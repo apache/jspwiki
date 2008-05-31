@@ -40,6 +40,9 @@ public interface InitializablePlugin
     /**
      *  Called whenever the plugin is being instantiated for
      *  the first time.
+     *  
+     *  @param engine The WikiEngine.
+     *  @throws PluginException If something goes wrong.
      */
 
     public void initialize( WikiEngine engine )

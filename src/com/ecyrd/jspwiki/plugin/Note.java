@@ -44,9 +44,19 @@ import com.ecyrd.jspwiki.WikiEngine;
  */
 public class Note implements WikiPlugin
 {
+    /**
+     *  Property name for setting the image for the note.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_NOTE_IMAGE    = "notePlugin.imageName";
+    
+    /**
+     *  The default name for the note.  Value is <tt>{@value}</tt>.
+     */
     public static final String DEFAULT_NOTE_IMAGE = "note.png";
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute(WikiContext context, Map params) throws PluginException
     {
         String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
