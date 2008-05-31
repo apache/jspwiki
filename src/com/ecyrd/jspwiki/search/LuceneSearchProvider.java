@@ -416,6 +416,8 @@ public class LuceneSearchProvider implements SearchProvider
     protected Document luceneIndexPage( WikiPage page, String text, IndexWriter writer )
         throws IOException
     {
+        if( log.isDebugEnabled() ) log.debug( "Indexing "+page.getName()+"..." );
+        
         // make a new, empty document
         Document doc = new Document();
 
