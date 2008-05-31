@@ -37,6 +37,8 @@ public class FormClose
     /**
      * Builds a Form close tag. Removes any information on the form from
      * the WikiContext.
+     * 
+     * {@inheritDoc}
      */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
@@ -52,7 +54,7 @@ public class FormClose
             if( info.hide() )
             {
                 ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-                return( "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>" );
+                return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
             }
         }
 

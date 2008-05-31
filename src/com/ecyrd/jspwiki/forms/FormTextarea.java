@@ -30,14 +30,24 @@ import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.textarea;
 
 /**
+ *  Creates a Form text area element.   You may specify the size of the textarea
+ *  by using the {@link #PARAM_COLS} and {@link #PARAM_ROWS} to signify the width
+ *  and height of the area.
+ *  
  *  @author ebu
  */
 public class FormTextarea
     extends FormElement
 {
+    /** Parameter name for setting the rows value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROWS = "rows";
+    
+    /** Parameter name for setting the columns value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_COLS = "cols";
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

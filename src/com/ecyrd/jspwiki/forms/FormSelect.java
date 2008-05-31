@@ -31,11 +31,16 @@ import org.apache.ecs.xhtml.option;
 import org.apache.ecs.xhtml.select;
 
 /**
+ *  Creates a Form select field.
+ *  
  *  @author ebu
  */
 public class FormSelect
     extends FormElement
 {
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {
@@ -146,7 +151,7 @@ public class FormSelect
             int indicated = -1;
             options[i] = options[i].trim();
             
-            if( options[i].startsWith( optionSelector ) ) 
+            if( optionSelector != null && options[i].startsWith( optionSelector ) ) 
             {
                 options[i] = options[i].substring( optionSelector.length() );
                 indicated = i;
@@ -171,6 +176,6 @@ public class FormSelect
         if( previouslySelected > -1 ) optionElements[previouslySelected].setSelected(true);
         select field = new select( HANDLERPARAM_PREFIX + inputName, optionElements );
 
-        return( field );
+        return field;
     }
 }

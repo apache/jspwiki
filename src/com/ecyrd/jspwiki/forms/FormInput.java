@@ -34,11 +34,16 @@ import org.apache.ecs.xhtml.input;
 public class FormInput
     extends FormElement
 {
+    /** Parameter name for setting the type.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TYPE  = "type";
+
+    /** Parameter name for setting the size of the input field.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SIZE  = "size";
 
     /**
      * Generates a dynamic form element on the WikiPage.
+     * 
+     * {@inheritDoc}
      */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
@@ -61,7 +66,7 @@ public class FormInput
         {
             if( info.hide() )
             {
-                return( "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>" );
+                return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }

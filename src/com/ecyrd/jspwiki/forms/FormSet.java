@@ -59,6 +59,9 @@ import java.util.*;
 public class FormSet
     implements WikiPlugin
 {    
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

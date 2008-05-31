@@ -45,7 +45,9 @@ public abstract class FormElement
      */
     public static final String FORM_VALUES_CARRIER = "nbpf_values";
 
-    // Show values:
+    /**
+     *   Show values.  Value is <tt>{@value}</tt>.
+     */
     public static final String HIDE_SUCCESS = "onsuccess";
 
     // Parameter names:
@@ -83,6 +85,9 @@ public abstract class FormElement
 
     /**
      * Utility method stores a FormInfo object into the WikiContext.
+     * 
+     * @param ctx The Context to store it in
+     * @param info The FormInfo to store.
      */
     protected void storeFormInfo( WikiContext ctx, FormInfo info )
     {
@@ -92,6 +97,9 @@ public abstract class FormElement
     /**
      * Attempts to retrieve information on the currently handled
      * form from the WikiContext.
+     * 
+     * @param ctx The Context
+     * @return The FormInfo from the context
      */
     protected FormInfo getFormInfo( WikiContext ctx )
     {

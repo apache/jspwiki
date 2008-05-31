@@ -35,90 +35,168 @@ public class FormInfo
 {
     private static final long serialVersionUID = 0L;
 
+    /** State: Form is executed. */
     public static final int EXECUTED =  1;
+    
+    /** State: Form is OK. */
     public static final int OK       =  0;
+    
+    /** State: There was an error. */
     public static final int ERROR    = -1;
 
-    public int    m_status;
-    public boolean m_hide;
-    public String m_action;
-    public String m_name;
-    public String m_handler;
-    public String m_result;
-    public String m_error;
-    //public PluginParameters submission;
-    public Map m_submission;
+    private int    m_status;
+    private boolean m_hide;
+    private String m_action;
+    private String m_name;
+    private String m_handler;
+    private String m_result;
+    private String m_error;
+    private Map<?, ?> m_submission;
 
+    /**
+     *  Creates a new FormInfo with status == OK.
+     *
+     */
     public FormInfo()
     {
         m_status = OK;
     }
 
+    /**
+     *  Set the status of the Form processing.
+     *  
+     *  @param val EXECUTED, OK or ERROR.
+     */
     public void setStatus( int val )
     {
         m_status = val;
     }
 
+    /**
+     *  Return the status.
+     *  
+     *  @return The status.
+     */
     public int getStatus()
     {
         return m_status;
     }
 
+    /**
+     *  Set the hide parameter.
+     *  
+     *  @param val True or false.
+     */
     public void setHide( boolean val )
     {
         m_hide = val;
     }
 
+    /**
+     *  Returns true, if the form is supposed to be hidden.
+     *  
+     *  @return True or false.
+     */
     public boolean hide()
     {
         return m_hide;
     }
 
+    /**
+     *  Set the value of the action parameter.
+     *  
+     *  @param val A value parameter.
+     */
     public void setAction( String val )
     {
         m_action = val;
     }
 
+    /**
+     *  Get the action set in {@link #setAction(String)}.
+     *  
+     *  @return An Action.
+     */
     public String getAction()
     {
         return m_action;
     }
 
+    /**
+     *  Sets the name of the form.
+     *  
+     *  @param val The name of the form.
+     */
     public void setName( String val )
     {
         m_name = val;
     }
 
+    /**
+     *  Return the name of the form.
+     *  
+     *  @return The name of the form.
+     */
     public String getName()
     {
         return m_name;
     }
 
+    /**
+     *  Set the name of the handler class.
+     *  
+     *  @param val The name of the class.
+     */
     public void setHandler( String val )
     {
         m_handler = val;
     }
 
+    /**
+     *  Return the name of the handler class.
+     *  
+     *  @return The name of the class.
+     */
     public String getHandler()
     {
         return m_handler;
     }
 
+    /**
+     *  Set the result.
+     *  
+     *  @param val The result.
+     */
     public void setResult( String val )
     {
         m_result = val;
     }
 
+    /**
+     *  Return the result.
+     *  
+     *  @return The result.
+     */
     public String getResult()
     {
         return m_result;
     }
 
+    /**
+     *  Set an error string.
+     *  
+     *  @param val An error string.
+     */
     public void setError( String val )
     {
         m_error = val;
     }
 
+    /**
+     *  Return the error.
+     *  
+     *  @return The error.
+     */
     public String getError()
     {
         return m_error;

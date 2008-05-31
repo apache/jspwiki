@@ -71,9 +71,11 @@ public class FormOpen
     private static org.apache.log4j.Logger log =
         org.apache.log4j.Logger.getLogger( FormOpen.class );
 
+    /** Parameter name for setting the method (GET or POST).  Value is <tt>{@value}</tt>. */
     public static final String PARAM_METHOD = "method";
 
     /**
+     *  {@inheritDoc}
      */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
@@ -115,7 +117,7 @@ public class FormOpen
                     info.getStatus() == FormInfo.EXECUTED )
                 {
                     info.setHide( true );
-                    return( "<p>" + rb.getString( "formopen.noneedtoshow" ) + "</p>" );
+                    return "<p>" + rb.getString( "formopen.noneedtoshow" ) + "</p>";
                 }
             }
             else
