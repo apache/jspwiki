@@ -1414,10 +1414,16 @@ public class JSPWikiMarkupParser
                 PluginContent pluginContent = m_engine.getPluginManager().parsePluginLine( m_context,
                                                                                            linktext,
                                                                                            pos );
+                //
+                //  This might sometimes fail, especially if there is something which looks
+                //  like a plugin invocation but is really not.
+                //
+                if( pluginContent != null )
+                {
+                    addElement( pluginContent );
 
-                addElement( pluginContent );
-
-                pluginContent.executeParse( m_context );
+                    pluginContent.executeParse( m_context );
+                }
             }
             catch( PluginException e )
             {
