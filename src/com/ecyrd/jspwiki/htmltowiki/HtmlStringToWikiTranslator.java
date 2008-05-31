@@ -42,18 +42,53 @@ public class HtmlStringToWikiTranslator
 
     private static final String CYBERNEKO_PARSER = "org.cyberneko.html.parsers.SAXParser";
 
+    /**
+     *  Create a new translator.
+     */
     public HtmlStringToWikiTranslator()
     {}
 
+    /**
+     *  Translates text from HTML into WikiMarkup without a WikiContext (meaning
+     *  some things perhaps cannot be translated).  Uses the default configuration.
+     *  
+     *  @param html HTML text to translate
+     *  @return WikiMarkup
+     *  
+     *  @throws JDOMException If parsing fails
+     *  @throws IOException For other kinds of errors.
+     */
     public String translate( String html ) throws JDOMException, IOException
     {
         return translate( html, new XHtmlToWikiConfig() );
     }
 
+    /**
+     *  Translates text from HTML into WikiMarkup with a WikiContext.  The translation
+     *  accuracy is better.  Uses the default configuration.
+     *  
+     *  @param html HTML text to translate
+     *  @param wikiContext The WikiContext to use.
+     *  @return WikiMarkup
+     *  
+     *  @throws JDOMException If parsing fails
+     *  @throws IOException For other kinds of errors.
+     */
     public String translate( String html, WikiContext wikiContext ) throws JDOMException, IOException
     {
         return translate( html, new XHtmlToWikiConfig( wikiContext ) );
     }
+
+    /**
+     *  Translates text from HTML into WikiMarkup using a specified configuration.
+     *  
+     *  @param html HTML text to translate
+     *  @param config The configuration to use.
+     *  @return WikiMarkup
+     *  
+     *  @throws JDOMException If parsing fails
+     *  @throws IOException For other kinds of errors.
+     */
 
     public String translate( String html, XHtmlToWikiConfig config ) throws JDOMException, IOException
     {
@@ -64,7 +99,7 @@ public class HtmlStringToWikiTranslator
     }
 
     /**
-     * use NekoHtml to parse HTML like well formed XHTML
+     * Use NekoHtml to parse HTML like well formed XHTML
      * 
      * @param html
      * @return xhtml jdom root element (node "HTML")
@@ -79,6 +114,12 @@ public class HtmlStringToWikiTranslator
         return element;
     }
 
+    /**
+     *  A static helper method to create HTML from an Element.
+     *  
+     *  @param element The element to get HTML from.
+     *  @return HTML
+     */
     public static String element2String( Element element )
     {
         Document document = new Document( element );

@@ -25,13 +25,19 @@ import java.util.LinkedHashMap;
 /**
  * A LinkedHashMap that does not put null values into the map.
  * 
+ * @param <K> {@inheritDoc}
+ * @param <V> {@inheritDoc}
+ * 
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
-public class ForgetNullValuesLinkedHashMap extends LinkedHashMap
+public class ForgetNullValuesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
 {
     private static final long serialVersionUID = 0L;
     
-    public Object put( Object key, Object value )
+    /**
+     *  {@inheritDoc}
+     */
+    public V put( K key, V value )
     {
         if( value != null )
         {

@@ -26,10 +26,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Part of the XHtmlToWikiTranslator
+ * Part of the XHtmlToWikiTranslator.
  * 
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
+// FIXME: Needs a better description as to how it works.
 public class WhitespaceTrimWriter extends Writer
 {
 
@@ -43,6 +44,10 @@ public class WhitespaceTrimWriter extends Writer
 
     private boolean m_currentlyOnLineBegin = true;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void flush()
     {
         if( m_buffer.length() > 0 )
@@ -85,11 +90,21 @@ public class WhitespaceTrimWriter extends Writer
         return s;
     }
 
+    /**
+     *  Returns true, if this Writer is currently trimming any whitespaces.
+     *  
+     *  @return True, if trimming.
+     */
     public boolean isWhitespaceTrimMode()
     {
         return m_trimMode;
     }
 
+    /**
+     *  Set the trimming mode on/off.
+     *  
+     *  @param trimMode True, if you want trimming to be turned on.  False otherwise.
+     */
     public void setWhitespaceTrimMode( boolean trimMode )
     {
         if( m_trimMode != trimMode )
@@ -99,21 +114,38 @@ public class WhitespaceTrimWriter extends Writer
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void write( char[] arg0, int arg1, int arg2 ) throws IOException
     {
         m_buffer.append( arg0, arg1, arg2 );
         m_currentlyOnLineBegin = ONLINE_PATTERN.matcher( m_buffer ).matches();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void close() throws IOException
     {}
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public String toString()
     {
         flush();
         return m_result.toString();
     }
 
+    /**
+     *  Returns true, if the writer is currently writing a line start.
+     *  
+     *  @return True or false.
+     */
     public boolean isCurrentlyOnLineBegin()
     {
         return m_currentlyOnLineBegin;

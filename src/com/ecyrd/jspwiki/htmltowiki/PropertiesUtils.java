@@ -31,6 +31,7 @@ import java.util.TreeMap;
  * @author Sebastian Baltes (sbaltes@gmx.com)
  * @version 1.0
  */
+// FIXME3.0 move to utils package
 public final class PropertiesUtils
 {
     private static final String OTHER_WHITESPACE = "\t\r\n\014";

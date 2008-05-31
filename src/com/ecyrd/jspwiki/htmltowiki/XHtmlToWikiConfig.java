@@ -42,6 +42,9 @@ public class XHtmlToWikiConfig
 
     private String m_pageName;
 
+    /**
+     *  Creates a new, empty config object.
+     */
     public XHtmlToWikiConfig()
     {}
 
@@ -49,7 +52,7 @@ public class XHtmlToWikiConfig
      *  The constructor initializes the different internal fields
      *  according to the current URLConstructor.
      *
-     * @param wikiContext
+     * @param wikiContext A WikiContext
      */
     public XHtmlToWikiConfig( WikiContext wikiContext )
     {
@@ -71,20 +74,6 @@ public class XHtmlToWikiConfig
         m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
     }
 
-    /*
-    // FIXME: Unused.
-    private String removeLast(String str, String remove )
-    {
-        int idx = str.lastIndexOf( remove );
-
-        if( idx != -1 )
-        {
-            str = StringUtils.left( str, idx ) + StringUtils.substring( str, idx+remove.length() );
-        }
-
-        return str;
-    }
-    */
     private void setWikiContext( WikiContext wikiContext )
     {
         if( wikiContext.getPage() != null )
@@ -93,61 +82,122 @@ public class XHtmlToWikiConfig
         }
     }
 
+    /**
+     *  Return the URL for the attachments.
+     *  
+     *  @return URL for attachments.
+     */
     public String getAttachPage()
     {
         return m_attachPage;
     }
 
+    /**
+     *  Set the URL for attachments.
+     *  
+     *  @param attachPage The attachment URL.
+     */
     public void setAttachPage( String attachPage )
     {
         m_attachPage = attachPage;
     }
 
+    /**
+     *  Gets the URL of the outlink image.
+     *  
+     *  @return The URL of the outlink image.
+     */
     public String getOutlink()
     {
         return m_outlink;
     }
 
+    /**
+     *  Set the outlink URL.
+     *  
+     *  @param outlink The outlink URL.
+     */
     public void setOutlink( String outlink )
     {
         m_outlink = outlink;
     }
 
+    /**
+     *  Get the PageInfo.jsp URI.
+     *  
+     *  @return The URI for the page info display.
+     */
     public String getPageInfoJsp()
     {
         return m_pageInfoJsp;
     }
 
+    /**
+     *  Set the URI for the page info display.
+     *  
+     *  @param pageInfoJsp URI for the page info.
+     */
     public void setPageInfoJsp( String pageInfoJsp )
     {
         m_pageInfoJsp = pageInfoJsp;
     }
 
+    /**
+     *  Get the page name.
+     *  
+     *  @return The Page Name.
+     */
     public String getPageName()
     {
         return m_pageName;
     }
 
+    
+    /**
+     *  Set the page name.
+     *  
+     *  @param pageName The name of the page.
+     */
     public void setPageName( String pageName )
     {
         m_pageName = pageName;
     }
 
+    /**
+     *  Get the URI to the Wiki.jsp view.
+     *  
+     *  @return The URI to the Wiki.jsp.
+     */
     public String getWikiJspPage()
     {
         return m_wikiJspPage;
     }
 
+    /**
+     *  Set the URI to the Wiki.jsp.
+     *  
+     *  @param wikiJspPage The URI to the Wiki.jsp.
+     */
     public void setWikiJspPage( String wikiJspPage )
     {
         m_wikiJspPage = wikiJspPage;
     }
 
+    /**
+     *  Return the URI to the Edit.jsp page.
+     *  
+     *  @return The URI to the Edit.jsp page.
+     */
     public String getEditJspPage()
     {
         return m_editJspPage;
     }
 
+    /**
+     *  Set the URI to the Edit.jsp page.
+     *  
+     *  @param editJspPage The Edit.jsp URI.
+     */
     public void setEditJspPage( String editJspPage )
     {
         m_editJspPage = editJspPage;

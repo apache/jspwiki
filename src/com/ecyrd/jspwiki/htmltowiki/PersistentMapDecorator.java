@@ -37,81 +37,146 @@ public class PersistentMapDecorator extends Properties
     
     private Map m_delegate;
 
+    /**
+     *  Creates a new decorator for a given map.
+     *  
+     *  @param delegate The map to create a decorator for.
+     */
     public PersistentMapDecorator( Map delegate )
     {
-        this.m_delegate = delegate;
+        m_delegate = delegate;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void clear()
     {
         m_delegate.clear();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public boolean containsKey( Object key )
     {
         return m_delegate.containsKey( key );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public boolean containsValue( Object value )
     {
         return m_delegate.containsValue( value );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Set entrySet()
     {
         return m_delegate.entrySet();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public boolean equals( Object obj )
     {
         return m_delegate.equals( obj );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Object get( Object key )
     {
         return m_delegate.get( key );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int hashCode()
     {
         return m_delegate.hashCode();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public boolean isEmpty()
     {
         return m_delegate.isEmpty();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Set keySet()
     {
         return m_delegate.keySet();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Object put( Object arg0, Object arg1 )
     {
         return m_delegate.put( arg0, arg1 );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void putAll( Map arg0 )
     {
         m_delegate.putAll( arg0 );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Object remove( Object key )
     {
         return m_delegate.remove( key );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int size()
     {
         return m_delegate.size();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public String toString()
     {
         return m_delegate.toString();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public Collection values()
     {
         return m_delegate.values();
