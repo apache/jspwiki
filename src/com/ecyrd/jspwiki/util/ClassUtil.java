@@ -48,7 +48,7 @@ public final class ClassUtil
      */
     public  static final String MAPPINGS = "/ini/classmappings.xml";
     
-    private static Map c_classMappings = new Hashtable();
+    private static Map<String, String> c_classMappings = new Hashtable<String, String>();
 
     /**
      *  Initialize the class mappings document.
@@ -153,7 +153,7 @@ public final class ClassUtil
     public static Class findClass( String packageName, String className )
         throws ClassNotFoundException
     {
-        ArrayList list = new ArrayList();
+        ArrayList<String> list = new ArrayList<String>();
         list.add( packageName );
 
         return findClass( list, className );
@@ -324,7 +324,7 @@ public final class ClassUtil
     private static Class getMappedClass( String requestedClass )
         throws WikiException
     {
-        String mappedClass = (String)c_classMappings.get( requestedClass );
+        String mappedClass = c_classMappings.get( requestedClass );
         
         if( mappedClass == null )
         {
