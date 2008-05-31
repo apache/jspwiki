@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -587,5 +588,45 @@ public class AttachmentManager
 
         m_engine.getReferenceManager().clearPageEntries( att.getName() );
 
+    }
+
+    /**
+     *  Validates the filename and makes sure it is legal.
+     *  
+     *  @param filename
+     *  @return
+     *  @throws WikiException If the filename is not legal.
+     */
+    static String validateFileName( String filename )
+        throws WikiException
+    {
+        if( filename == null || filename.trim().length() == 0 )
+        {
+            AttachmentServlet.log.error("Empty file name given.");
+    
+            throw new WikiException("Empty file name given.");
+        }
+    
+        //
+        //  Should help with IE 5.22 on OSX
+        //
+        filename = filename.trim();
+    
+        //
+        //  Some browser send the full path info with the filename, so we need
+        //  to remove it here by simply splitting along slashes and then taking the path.
+        //
+        
+        String[] splitpath = filename.split( "[/\\\\]" );
+        filename = splitpath[splitpath.length-1];
+        
+        //
+        //  Remove any characters that might be a problem. Most
+        //  importantly - characters that might stop processing
+        //  of the URL.
+        //
+        filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
+    
+        return filename;
     }
 }
