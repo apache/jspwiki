@@ -42,7 +42,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -694,7 +693,6 @@ public class AttachmentServlet
         return nextPage;
     }
 
-
     /**
      *
      * @param context the wiki context
@@ -719,26 +717,15 @@ public class AttachmentServlet
     {
         boolean created = false;
 
-        if( filename == null || filename.trim().length() == 0 )
+        try
         {
-            log.error("Empty file name given.");
-
-            throw new RedirectException("Empty file name given.",
-                                        errorPage);
+            filename = AttachmentManager.validateFileName( filename );
         }
-
-        //
-        //  Should help with IE 5.22 on OSX
-        //
-        filename = filename.trim();
-
-        //
-        //  Some browser send the full path info with the filename, so we need
-        //  to remove it here by simply splitting along slashes and then taking the path.
-        //
-        
-        String[] splitpath = filename.split( "/\\\\" );
-        filename = splitpath[splitpath.length-1];
+        catch( WikiException e )
+        {
+            log.error( "Illegal filename given: "+e.getMessage() );
+            throw new RedirectException( e.getMessage(), errorPage );
+        }
         
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
@@ -765,13 +752,6 @@ public class AttachmentServlet
         Principal user    = context.getCurrentUser();
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
-
-        //
-        //  Remove any characters that might be a problem. Most
-        //  importantly - characters that might stop processing
-        //  of the URL.
-        //
-        filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
 
         log.debug("file="+filename);
 
