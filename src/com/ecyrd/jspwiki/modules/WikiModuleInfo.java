@@ -36,7 +36,7 @@ import com.ecyrd.jspwiki.FileUtil;
  *  @since 2.4
  */
 public class WikiModuleInfo
-    implements Comparable
+    implements Comparable<WikiModuleInfo>
 {
     protected String m_name;
     protected String m_scriptLocation;
@@ -49,6 +49,11 @@ public class WikiModuleInfo
     protected String m_maxVersion;
     protected String m_adminBeanClass;
     
+    /**
+     *  Create a new info container.
+     *  
+     *  @param name The name of the module.
+     */
     public WikiModuleInfo( String name )
     {
         m_name = name;
@@ -57,7 +62,11 @@ public class WikiModuleInfo
     /**
      *  The WikiModuleInfo is equal to another WikiModuleInfo, if the name is equal.  All
      *  objects are unique across JSPWiki.
+     *  
+     *  @param obj {@inheritDoc}
+     *  @return {@inheritDoc}
      */
+    @Override
     public boolean equals(Object obj)
     {
         if( obj instanceof WikiModuleInfo )
@@ -68,13 +77,21 @@ public class WikiModuleInfo
         return false;
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int hashCode()
     {
         return m_name.hashCode();
     }
 
-
+    /**
+     *  Initializes the ModuleInfo from some standard XML elements
+     *  which are under the given element.
+     *  
+     *  @param el The element to parse.
+     */
     protected void initializeFromXML( Element el )
     {
         m_scriptLocation     = el.getChildText("script");
@@ -85,6 +102,11 @@ public class WikiModuleInfo
         m_adminBeanClass     = el.getChildText("adminBean");
     }
 
+    /**
+     *  Returns the AdminBean class which is supposed to manage this module.
+     *  
+     *  @return A class name.
+     */
     public String getAdminBeanClass()
     {
         return m_adminBeanClass;
@@ -104,11 +126,21 @@ public class WikiModuleInfo
         return m_name;
     }
 
+    /**
+     *  Returns the style sheet location for this module.
+     *  
+     *  @return The path to the location.
+     */
     public String getStylesheetLocation()
     {
         return m_stylesheetLocation;
     }
 
+    /**
+     *  Return the location of the script for this module.
+     *  
+     *  @return The path to the location.
+     */
     public String getScriptLocation()
     {
         return m_scriptLocation;
@@ -123,17 +155,34 @@ public class WikiModuleInfo
         return m_author;
     }
 
-
+    /**
+     *  Returns the minimum version of JSPWiki that this module supports.
+     *  
+     *  @return The minimum version.
+     */
     public String getMinVersion()
     {
         return m_minVersion;
     }
     
+    /**
+     *  Returns the maximum version of JSPWiki that this module supports.
+     *  
+     *  @return The maximum version.
+     */
     public String getMaxVersion()
     {
         return m_maxVersion;
     }
 
+    /**
+     *  Attempts to locate a resource from a JAR file and returns it as a string.
+     *  
+     *  @param resourceLocation an URI of the resource
+     *  @return The content of the file
+     *  
+     *  @throws IOException if the JAR file or the resource cannot be read
+     */
     protected String getTextResource(String resourceLocation) 
         throws IOException
     {
@@ -169,14 +218,12 @@ public class WikiModuleInfo
         return text;
     }
 
-    public int compareTo(Object arg0)
+    /**
+     *  {@inheritDoc}
+     */
+    public int compareTo(WikiModuleInfo arg0)
     {
-        if( arg0 instanceof WikiModuleInfo )
-        {
-            return m_name.compareTo( ((WikiModuleInfo)arg0).getName() );
-        }
-        
-        throw new ClassCastException(arg0.getClass().getName());
+        return m_name.compareTo( arg0.getName() );
     }
 
 }

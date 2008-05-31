@@ -36,18 +36,27 @@ public abstract class ModuleManager
      *  (Each plugin should include this property-file in its jar-file)
      */
     public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
-    
-    public static final String LOAD_INCOMPATIBLE_MODULES = "jspwiki.loadIncompatibleModules";
-    
+        
     protected WikiEngine m_engine;
     
     private boolean m_loadIncompatibleModules = false;
     
+    /**
+     *  Constructs the ModuleManager.
+     *  
+     *  @param engine The WikiEngine which owns this manager.
+     */
     public ModuleManager( WikiEngine engine )
     {
         m_engine = engine;
     }
     
+    /**
+     *  Returns true, if the given module is compatible with this version of JSPWiki.
+     *  
+     *  @param info The module to check
+     *  @return True, if the module is compatible.
+     */
     public boolean checkCompatibility( WikiModuleInfo info )
     {
         if( !m_loadIncompatibleModules )
