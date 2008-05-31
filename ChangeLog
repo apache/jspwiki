@@ -1,3 +1,13 @@
+2008-05-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-31
+        
+        * Oops, wrong regexp: AttachmentServlet now *really* cleans up
+        the filename.
+        
+        * Added some sanity checks to hopefully address an issue that
+        Jim Willeke was having with the parser crashing at odd places. 
+
 2008-05-29  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-30
