@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.util;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -56,6 +57,7 @@ public final class CryptoUtil
      * <blockquote><code>java -cp JSPWiki.jar:../lib/commons-codec-1.3.jar com.ecyrd.jspwiki.util.CryptoUtil --hash mynewpassword</code></blockquote>
      * 
      * @param args arguments for this method as described above
+     * @throws Exception Catches nothing; throws everything up.
      */
     public static void main( String[] args ) throws Exception
     {
@@ -76,7 +78,7 @@ public final class CryptoUtil
                 throw new IllegalArgumentException( "Error: --hash requires a 'password' argument." );
             }
             String password = args[1].trim();
-            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes() ) );
+            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes("UTF-8") ) );
         }
 
         // User wants to verify an existing password
@@ -88,7 +90,7 @@ public final class CryptoUtil
             }
             String password = args[1].trim();
             String digest = args[2].trim();
-            System.out.println( CryptoUtil.verifySaltedPassword( password.getBytes(), digest ) );
+            System.out.println( CryptoUtil.verifySaltedPassword( password.getBytes("UTF-8"), digest ) );
         }
 
         else
@@ -118,6 +120,7 @@ public final class CryptoUtil
      * @param password the password to be digested
      * @return the Base64-encoded password hash, prepended by
      *         <code>{SSHA}</code>.
+     * @throws NoSuchAlgorithmException If your JVM is completely b0rked and does not have SHA.
      */
     public static String getSaltedPassword( byte[] password ) throws NoSuchAlgorithmException
     {
@@ -142,6 +145,7 @@ public final class CryptoUtil
      * @param password the password to be digested
      * @param salt the random salt
      * @return the Base64-encoded password hash, prepended by <code>{SSHA}</code>.
+     * @throws NoSuchAlgorithmException If your JVM is totally b0rked and does not have SHA1.
      */
     protected static String getSaltedPassword( byte[] password, byte[] salt ) throws NoSuchAlgorithmException
     {
@@ -163,14 +167,24 @@ public final class CryptoUtil
         return SSHA + new String( base64 );
     }
 
-    public static boolean verifySaltedPassword( byte[] password, String entry ) throws NoSuchAlgorithmException
+    /**
+     *  Compares a password to a given entry and returns true, if it matches.
+     *  
+     *  @param password The password in bytes.
+     *  @param entry The password entry, typically starting with {SSHA}.
+     *  @return True, if the password matches.
+     *  @throws NoSuchAlgorithmException If there is no SHA available.
+     *  @throws UnsupportedEncodingException If no UTF-8 encoding is available 
+     */
+    public static boolean verifySaltedPassword( byte[] password, String entry ) 
+        throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         // First, extract everything after {SSHA} and decode from Base64
         if( !entry.startsWith( SSHA ) )
         {
             throw new IllegalArgumentException( "Hash not prefixed by {SSHA}; is it really a salted hash?" );
         }
-        byte[] challenge = Base64.decodeBase64( entry.substring( 6 ).getBytes() );
+        byte[] challenge = Base64.decodeBase64( entry.substring( 6 ).getBytes("UTF-8") );
 
         // Extract the password hash and salt
         byte[] passwordHash = extractPasswordHash( challenge );
@@ -195,7 +209,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractPasswordHash( byte[] digest )
+    protected static byte[] extractPasswordHash( byte[] digest ) throws IllegalArgumentException
     {
         if( digest.length < 20 )
         {
@@ -222,7 +236,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractSalt( byte[] digest )
+    protected static byte[] extractSalt( byte[] digest ) throws IllegalArgumentException
     {
         if( digest.length <= 20 )
         {

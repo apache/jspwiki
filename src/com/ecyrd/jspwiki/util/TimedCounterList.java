@@ -41,6 +41,9 @@ public class TimedCounterList<T> extends AbstractList<T>
     private ArrayList<CounterItem<T>> m_list = new ArrayList<CounterItem<T>>();
     private ReadWriteLock             m_lock = new ReentrantReadWriteLock();
     
+    /**
+     *  {@inheritDoc}
+     */
     @Override
     public T set( int index, T element )
     {
@@ -60,6 +63,9 @@ public class TimedCounterList<T> extends AbstractList<T>
         return t;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     @Override
     public T get( int index )
     {
@@ -79,6 +85,9 @@ public class TimedCounterList<T> extends AbstractList<T>
         return t;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     @Override
     public int size()
     {
@@ -97,7 +106,9 @@ public class TimedCounterList<T> extends AbstractList<T>
         return size;
     }
     
-   
+    /**
+     *  {@inheritDoc}
+     */
     @Override
     public void add( int index, T element )
     {
@@ -112,7 +123,10 @@ public class TimedCounterList<T> extends AbstractList<T>
             m_lock.writeLock().unlock();
         }
     }
-
+    
+    /**
+     *  {@inheritDoc}
+     */
     @Override
     public T remove( int index )
     {
@@ -135,8 +149,8 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  Returns the count how many times this object is available in
      *  this list, using equals().
      *  
-     *  @param obj
-     *  @return
+     *  @param obj The object to count.
+     *  @return The count of the objects.
      */
     public int count( T obj )
     {

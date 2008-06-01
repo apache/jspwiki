@@ -139,7 +139,7 @@ public class CryptoUtilTest extends TestCase
         byte[] password;
 
         // Verify with a known digest
-        password = "testing123".getBytes();
+        password = "testing123".getBytes("UTF-8");
         assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" ) );
 
         // Verify with two more known digests

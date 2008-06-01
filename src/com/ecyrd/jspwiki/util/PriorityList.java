@@ -32,10 +32,11 @@ import java.util.ArrayList;
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
  */
+@SuppressWarnings("unchecked")
 public class PriorityList
     extends AbstractList
 {
-    private ArrayList m_elements = new ArrayList();
+    private ArrayList<Object> m_elements = new ArrayList<Object>();
 
     /**
      *  This is the default priority, which is used if no priority

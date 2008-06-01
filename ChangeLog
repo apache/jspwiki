@@ -1,3 +1,12 @@
+2008-06-01  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-32
+
+        * Password hashes were generated in platform native encoding
+        instead of UTF-8.  Oops.
+        
+        * In general, there have been massive upgrades of Javadocs.
+
 2008-05-31  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-31

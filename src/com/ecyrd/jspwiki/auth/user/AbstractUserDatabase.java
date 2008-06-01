@@ -226,7 +226,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             if ( newPasswordFormat )
             {
                 hashedPassword = getHash( password );
-                return CryptoUtil.verifySaltedPassword( password.getBytes(), storedPassword );
+                return CryptoUtil.verifySaltedPassword( password.getBytes("UTF-8"), storedPassword );
             }
 
             // If old format, verify using the old SHA verification algorithm
@@ -252,6 +252,10 @@ public abstract class AbstractUserDatabase implements UserDatabase
         catch( NoSuchAlgorithmException e )
         {
             log.error( "Unsupported algorithm: " + e.getMessage() );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal( "You do not have UTF-8!?!" );
         }
         catch( WikiSecurityException e )
         {
@@ -300,12 +304,16 @@ public abstract class AbstractUserDatabase implements UserDatabase
         String hash = null;
         try
         {
-            hash = CryptoUtil.getSaltedPassword( text.getBytes() );
+            hash = CryptoUtil.getSaltedPassword( text.getBytes("UTF-8") );
         }
         catch( NoSuchAlgorithmException e )
         {
             log.error( "Error creating salted SHA password hash:" + e.getMessage() );
             hash = text;
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal("You do not have UTF-8!?!");
         }
         return hash;
     }

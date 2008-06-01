@@ -50,13 +50,15 @@ import com.ecyrd.jspwiki.WikiEngine;
 public final class WatchDog
 {
     private Watchable m_watchable;
-    private Stack     m_stateStack = new Stack();
+    private Stack<State> m_stateStack = new Stack<State>();
     private boolean   m_enabled    = true;
     private WikiEngine m_engine;
 
     private static Logger log = Logger.getLogger(WatchDog.class.getName());
 
-    private static HashMap              c_kennel = new HashMap();
+    private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = 
+        new HashMap<Integer,WeakReference<WatchDog>>();
+    
     private static WikiBackgroundThread c_watcherThread;
 
     /**
@@ -74,14 +76,14 @@ public final class WatchDog
         Thread t = Thread.currentThread();
         WatchDog wd = null;
 
-        WeakReference w = (WeakReference)c_kennel.get( new Integer(t.hashCode()) );
+        WeakReference<WatchDog> w = c_kennel.get( new Integer(t.hashCode()) );
 
-        if( w != null ) wd = (WatchDog)w.get();
+        if( w != null ) wd = w.get();
 
         if( w == null || wd == null )
         {
             wd = new WatchDog( engine, t );
-            w = new WeakReference(wd);
+            w = new WeakReference<WatchDog>(wd);
 
             synchronized( c_kennel )
             {
@@ -263,7 +265,7 @@ public final class WatchDog
         {
             synchronized( m_stateStack )
             {
-                State st = (State)m_stateStack.peek();
+                State st = m_stateStack.peek();
 
                 if( state == null || st.getState().equals(state) )
                 {
@@ -294,7 +296,7 @@ public final class WatchDog
         {
             try
             {
-                WatchDog.State st = (WatchDog.State)m_stateStack.peek();
+                WatchDog.State st = m_stateStack.peek();
 
                 long now = System.currentTimeMillis();
 
@@ -329,7 +331,7 @@ public final class WatchDog
 
             try
             {
-                State st = (State) m_stateStack.peek();
+                State st = m_stateStack.peek();
                 state = st.getState();
             }
             catch( EmptyStackException e ) {}
@@ -401,8 +403,6 @@ public final class WatchDog
 
     /**
      *  A class which just stores the state in our State stack.
-     *
-     *  @author Janne Jalkanen
      */
     private static class State
     {
@@ -430,9 +430,6 @@ public final class WatchDog
 
     /**
      *  This class wraps a Thread so that it can become Watchable.
-     *
-     *  @author Janne Jalkanen
-     *
      */
     private static class ThreadWrapper implements Watchable
     {

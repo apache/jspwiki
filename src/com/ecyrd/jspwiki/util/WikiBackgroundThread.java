@@ -64,6 +64,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     /**
      * Listens for {@link com.ecyrd.jspwiki.event.WikiEngineEvent#SHUTDOWN}
      * and, if detected, marks the thread for death.
+     * 
+     * @param event {@inheritDoc}
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
      */
     public final void actionPerformed( WikiEvent event )
@@ -81,6 +83,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     /**
      * Abstract method that performs the actual work for this
      * background thread; subclasses must implement this method.
+     * 
+     * @throws Exception Any exception can be thrown
      */
     public abstract void backgroundTask() throws Exception;
     
@@ -177,6 +181,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * Executes a task after shutdown signal was detected.
      * By default, this method does nothing; override it 
      * to implement custom functionality.
+     * 
+     * @throws Exception Any exception can be thrown.
      */
     public void shutdownTask() throws Exception
     {
@@ -187,6 +193,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * method starts, but before the {@link #backgroundTask()}
      * task executes. By default, this method does nothing; 
      * override it to implement custom functionality.
+     * 
+     * @throws Exception Any exception can be thrown.
      */
     public void startupTask() throws Exception
     {
