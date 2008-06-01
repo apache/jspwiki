@@ -178,7 +178,9 @@ public class TranslatorReader extends Reader
         m_parser.addAttachmentLinkHook( mutator );
     }
 
-    /** Adds a listener to headings. */
+    /** Adds a listener to headings.
+     *  @param listener Listener to add.
+     */
     public void addHeadingListener( HeadingListener listener )
     {
         m_parser.addHeadingListener( listener );

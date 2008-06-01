@@ -48,6 +48,13 @@ public class WikiCallbackHandler implements CallbackHandler
 
     private final String       m_username;
 
+    /**
+     *  Create a new callback handler.
+     *  
+     *  @param database The Userdatabase to use
+     *  @param username The username
+     *  @param password The password
+     */
     public WikiCallbackHandler( UserDatabase database, String username, String password )
     {
         m_database = database;

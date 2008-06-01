@@ -169,14 +169,15 @@ public class ReferenceManager
     /**
      *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
      */
+    @SuppressWarnings("unchecked")
     private void updatePageReferences( WikiPage page )
         throws ProviderException
     {
         String content = m_engine.getPageManager().getPageText( page.getName(),
                                                                 WikiPageProvider.LATEST_VERSION );
 
-        TreeSet res = new TreeSet();
-        Collection links = m_engine.scanWikiLinks( page, content );
+        TreeSet<String> res = new TreeSet<String>();
+        Collection<String> links = m_engine.scanWikiLinks( page, content );
 
         res.addAll( links );
         Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
@@ -196,6 +197,7 @@ public class ReferenceManager
      *  @param pages A collection of all pages you want to be included in the reference
      *               count.
      *  @since 2.2
+     *  @throws ProviderException If reading of pages fail.
      */
     public void initialize( Collection pages )
         throws ProviderException
@@ -302,6 +304,7 @@ public class ReferenceManager
      *  Reads the serialized data from the disk back to memory.
      *  Returns the date when the data was last written on disk
      */
+    @SuppressWarnings("unchecked")
     private synchronized long unserializeFromDisk()
         throws IOException,
                ClassNotFoundException
@@ -559,6 +562,9 @@ public class ReferenceManager
 
     /**
      *  After the page has been saved, updates the reference lists.
+     *  
+     *  @param context {@inheritDoc}
+     *  @param content {@inheritDoc}
      */
     public void postSave( WikiContext context, String content )
     {
@@ -595,10 +601,10 @@ public class ReferenceManager
 
         if( refTo != null )
         {
-            Iterator it_refTo = refTo.iterator();
-            while( it_refTo.hasNext() )
+            Iterator itRefTo = refTo.iterator();
+            while( itRefTo.hasNext() )
             {
-                String referredPageName = (String)it_refTo.next();
+                String referredPageName = (String)itRefTo.next();
                 Set<String> refBy = m_referredBy.get( referredPageName );
 
                 if( refBy == null )
@@ -727,6 +733,8 @@ public class ReferenceManager
 
     /**
      * Returns the refers-to list. For debugging.
+     * 
+     * @return The refers-to list.
      */
     protected Map getRefersTo()
     {
@@ -735,6 +743,8 @@ public class ReferenceManager
 
     /**
      * Returns the referred-by list. For debugging.
+     * 
+     * @return Referred-by lists.
      */
     protected Map getReferredBy()
     {
@@ -848,7 +858,7 @@ public class ReferenceManager
             }
         }
 
-        Set<String> referrers = (Set<String>)m_referredBy.get( page );
+        Set<String> referrers = m_referredBy.get( page );
 
         // Even if 'page' has not been created yet, it can still be referenced.
         // This requires we don't use m_referredBy keys when looking up missing
@@ -898,6 +908,8 @@ public class ReferenceManager
     /**
      *  Finds all unreferenced pages. This requires a linear scan through
      *  m_referredBy to locate keys with null or empty values.
+     *  
+     *  @return The Collection of Strings
      */
     public synchronized Collection findUnreferenced()
     {
@@ -926,6 +938,8 @@ public class ReferenceManager
      * Returns a Collection containing Strings of unreferenced page names.
      * Each non-existant page name is shown only once - we don't return information
      * on who referred to it.
+     * 
+     * @return A Collection of Strings
      */
     public synchronized Collection findUncreated()
     {
@@ -1072,12 +1086,12 @@ public class ReferenceManager
      *         ReferenceManager
      * @since 2.3.24
      */
-    /*
-       This method traps and retries if a concurrent
-       modifcaition occurs.
-       TODO: It is unnecessary to calculate the hashcode; it should be calculated only
-             when the hashmaps are changed.  This is slow.
-    */
+    //
+    //   This method traps and retries if a concurrent
+    //   modifcaition occurs.
+    //   TODO: It is unnecessary to calculate the hashcode; it should be calculated only
+    //         when the hashmaps are changed.  This is slow.
+    //
     public int deepHashCode()
     {
         boolean failed = true;
@@ -1113,7 +1127,7 @@ public class ReferenceManager
      */
     public Set findCreated()
     {
-        return new HashSet( m_refersTo.keySet() );
+        return new HashSet<String>( m_refersTo.keySet() );
     }
 
     private String getFinalPageName( String orig )
@@ -1134,6 +1148,9 @@ public class ReferenceManager
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )

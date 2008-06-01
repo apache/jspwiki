@@ -70,18 +70,25 @@ public final class PagePermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID = 2L;
 
+    /** Action name for the comment permission. */
     public static final String         COMMENT_ACTION = "comment";
 
+    /** Action name for the delete permission. */
     public static final String         DELETE_ACTION  = "delete";
 
+    /** Action name for the edit permission. */
     public static final String         EDIT_ACTION    = "edit";
 
+    /** Action name for the modify permission. */
     public static final String         MODIFY_ACTION  = "modify";
 
+    /** Action name for the rename permission. */
     public static final String         RENAME_ACTION  = "rename";
 
+    /** Action name for the upload permission. */
     public static final String         UPLOAD_ACTION  = "upload";
 
+    /** Action name for the view permission. */
     public static final String         VIEW_ACTION    = "view";
 
     protected static final int         COMMENT_MASK   = 0x4;
@@ -98,18 +105,25 @@ public final class PagePermission extends Permission implements Serializable
 
     protected static final int         VIEW_MASK      = 0x1;
 
+    /** A static instance of the comment permission. */
     public static final PagePermission COMMENT        = new PagePermission( COMMENT_ACTION );
 
+    /** A static instance of the delete permission. */
     public static final PagePermission DELETE         = new PagePermission( DELETE_ACTION );
 
+    /** A static instance of the edit permission. */
     public static final PagePermission EDIT           = new PagePermission( EDIT_ACTION );
 
+    /** A static instance of the rename permission. */
     public static final PagePermission RENAME         = new PagePermission( RENAME_ACTION );
 
+    /** A static instance of the modify permission. */
     public static final PagePermission MODIFY         = new PagePermission( MODIFY_ACTION );
 
+    /** A static instance of the upload permission. */
     public static final PagePermission UPLOAD         = new PagePermission( UPLOAD_ACTION );
 
+    /** A static instance of the view permission. */
     public static final PagePermission VIEW           = new PagePermission( VIEW_ACTION );
 
     private static final String        ACTION_SEPARATOR = ",";
@@ -205,7 +219,8 @@ public final class PagePermission extends Permission implements Serializable
     /**
      * Two PagePermission objects are considered equal if their actions (after
      * normalization), wiki and target are equal.
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
      */
     public final boolean equals( Object obj )
     {
@@ -222,7 +237,8 @@ public final class PagePermission extends Permission implements Serializable
      * Returns the actions for this permission: "view", "edit", "comment",
      * "modify", "upload" or "delete". The actions will always be sorted in alphabetic
      * order, and will always appear in lower case.
-     * @see java.security.Permission#getActions()
+     *
+     * @return {@inheritDoc}
      */
     public final String getActions()
     {
@@ -250,7 +266,7 @@ public final class PagePermission extends Permission implements Serializable
 
     /**
      * Returns the hash code for this PagePermission.
-     * @see java.lang.Object#hashCode()
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -280,6 +296,9 @@ public final class PagePermission extends Permission implements Serializable
      * those of this permission</li>
      * </ol>
      * @see java.security.Permission#implies(java.security.Permission)
+     * 
+     * @param permission {@inheritDoc}
+     * @return {@inheritDoc}
      */
     public final boolean implies( Permission permission )
     {
@@ -312,7 +331,9 @@ public final class PagePermission extends Permission implements Serializable
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
+     * @return {@inheritDoc}
      */
+    @Override
     public PermissionCollection newPermissionCollection()
     {
         return new AllPermissionCollection();
@@ -321,6 +342,8 @@ public final class PagePermission extends Permission implements Serializable
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
+     * 
+     * @return Something human-readable
      */
     public final String toString()
     {

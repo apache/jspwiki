@@ -42,16 +42,22 @@ public final class WikiPermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID        = 1L;
 
+    /** Name of the action for createGroups permission. */
     public static final String         CREATE_GROUPS_ACTION    = "createGroups";
 
+    /** Name of the action for createPages permission. */   
     public static final String         CREATE_PAGES_ACTION     = "createPages";
 
+    /** Name of the action for login permission. */
     public static final String         LOGIN_ACTION            = "login";
 
+    /** Name of the action for editPreferences permission. */
     public static final String         EDIT_PREFERENCES_ACTION = "editPreferences";
 
+    /** Name of the action for editProfile permission. */
     public static final String         EDIT_PROFILE_ACTION     = "editProfile";
 
+    /** Value for a generic wildcard. */
     public static final String         WILDCARD                = "*";
 
     protected static final int         CREATE_GROUPS_MASK      = 0x1;
@@ -64,14 +70,19 @@ public final class WikiPermission extends Permission implements Serializable
 
     protected static final int         LOGIN_MASK              = 0x10;
 
+    /** A static instance of the createGroups permission. */
     public static final WikiPermission CREATE_GROUPS           = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
 
+    /** A static instance of the createPages permission. */
     public static final WikiPermission CREATE_PAGES            = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
 
+    /** A static instance of the login permission. */
     public static final WikiPermission LOGIN                   = new WikiPermission( WILDCARD, LOGIN_ACTION );
 
+    /** A static instance of the editPreferences permission. */
     public static final WikiPermission EDIT_PREFERENCES        = new WikiPermission( WILDCARD, EDIT_PREFERENCES_ACTION );
 
+    /** A static instance of the editProfile permission. */
     public static final WikiPermission EDIT_PROFILE            = new WikiPermission( WILDCARD, EDIT_PROFILE_ACTION );
 
     private final String               m_actionString;
@@ -83,6 +94,7 @@ public final class WikiPermission extends Permission implements Serializable
     /**
      * Creates a new WikiPermission for a specified set of actions.
      * @param actions the actions for this permission
+     * @param wiki The name of the wiki the permission belongs to.
      */
     public WikiPermission( String wiki, String actions )
     {
@@ -145,7 +157,7 @@ public final class WikiPermission extends Permission implements Serializable
 
     /**
      * Returns the hash code for this WikiPermission.
-     * @see java.lang.Object#hashCode()
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -184,7 +196,7 @@ public final class WikiPermission extends Permission implements Serializable
 
     /**
      * Returns a new {@link AllPermissionCollection}.
-     * @see java.security.Permission#newPermissionCollection()
+     * @return {@inheritDoc}
      */
     public PermissionCollection newPermissionCollection()
     {
@@ -193,7 +205,7 @@ public final class WikiPermission extends Permission implements Serializable
 
     /**
      * Prints a human-readable representation of this permission.
-     * @see java.lang.Object#toString()
+     * @return {@inheritDoc}
      */
     public final String toString()
     {

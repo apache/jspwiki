@@ -29,11 +29,15 @@ import com.ecyrd.jspwiki.WikiPage;
  *  and creating them takes a bit of time, caching them makes sense.
  *  <p>
  *  This class stores the permissions in a static HashMap.
- *  @author Janne Jalkanen
  *  @since 2.5.54
  */
-public class PermissionFactory
+public final class PermissionFactory
 {
+    /**
+     *  Prevent instantiation.
+     */
+    private PermissionFactory() {}
+    
     /**
      *  This is a WeakHashMap<Integer,PagePermission>, which stores the
      *  cached page permissions.

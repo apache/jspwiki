@@ -44,6 +44,13 @@ public final class WebContainerCallbackHandler implements CallbackHandler
 
     private final WikiEngine         m_engine;
 
+    /**
+     *  Create a new handler.
+     *  
+     *  @param engine The WikiEngine
+     *  @param request The request to look into
+     *  @param authorizer The authorizer which does all these things.
+     */
     public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request, Authorizer authorizer )
     {
         m_engine  = engine;

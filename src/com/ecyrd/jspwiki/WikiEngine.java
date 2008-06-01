@@ -262,6 +262,9 @@ public class WikiEngine
 
     private AdminBeanManager m_adminBeanManager;
 
+    /** Stores wikiengine attributes. */
+    private Map<String,Object> m_attributes = Collections.synchronizedMap(new HashMap<String,Object>());
+
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method
      *  is only called from JSP pages (and JspInit()) to be specific,
@@ -654,11 +657,12 @@ public class WikiEngine
      *
      *  @throws WikiException If the reference manager initialization fails.
      */
+    @SuppressWarnings("unchecked")
     public void initReferenceManager() throws WikiException
     {
         try
         {
-            ArrayList pages = new ArrayList();
+            ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
             pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
 
@@ -733,6 +737,7 @@ public class WikiEngine
      *  Don't use.
      *  @since 1.8.0
      *  @deprecated
+     *  @return Something magical.
      */
     public String getPluginSearchPath()
     {
@@ -814,6 +819,9 @@ public class WikiEngine
      *  @see #getURL(String, String, String, boolean)
      *  @see WikiContext#getURL(String, String)
      *  @deprecated
+     *  
+     *  @param pageName The name of the page.
+     *  @return An URI.
      *
      *  @since 2.0.3
      */
@@ -831,6 +839,7 @@ public class WikiEngine
      *  @since 2.0.42.
      *  @param attName Attachment name
      *  @deprecated
+     *  @return An URI.
      */
     public String getAttachmentURL( String attName )
     {
@@ -890,6 +899,9 @@ public class WikiEngine
      *  Incidentally, this is almost the same as encodeName(), below.
      *  I am not yet entirely sure if it's safe to merge the code.
      *
+     *  @param request The servlet request
+     *  @param name    The parameter name to get.
+     *  @return The parameter value or null
      *  @since 1.5.3
      *  @deprecated JSPWiki now requires servlet API 2.3, which has a better
      *              way of dealing with this stuff.  This will be removed in
@@ -986,7 +998,7 @@ public class WikiEngine
      */
     public Collection getAllInterWikiLinks()
     {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
 
         for( Enumeration i = m_properties.propertyNames(); i.hasMoreElements(); )
         {
@@ -1767,14 +1779,15 @@ public class WikiEngine
 
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
+    @SuppressWarnings("unchecked")
     public Collection getRecentChanges()
     {
         try
         {
-            Collection pages = m_pageManager.getAllPages();
-            Collection  atts = m_attachmentManager.getAllAttachments();
+            Collection<WikiPage>   pages = m_pageManager.getAllPages();
+            Collection<Attachment>  atts = m_attachmentManager.getAllAttachments();
 
-            TreeSet sortedPages = new TreeSet( new PageTimeComparator() );
+            TreeSet<WikiPage> sortedPages = new TreeSet<WikiPage>( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
             sortedPages.addAll( atts );
@@ -2362,8 +2375,6 @@ public class WikiEngine
             WikiEventManager.fireEvent(this,new WikiEngineEvent(this,type));
         }
     }
-
-    private Map m_attributes = Collections.synchronizedMap(new HashMap());
 
     /**
      * Adds an attribute to the engine for the duration of this engine.  The

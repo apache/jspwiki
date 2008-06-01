@@ -46,7 +46,10 @@ public class AllPermissionCollection extends PermissionCollection
      * is not of type {@link AllPermission}, a {@link SecurityException} is
      * thrown.
      * @see java.security.PermissionCollection#add(java.security.Permission)
+     * 
+     * @param permission {@inheritDoc}
      */
+    @Override
     public void add( Permission permission )
     {
         if ( !AllPermission.isJSPWikiPermission( permission ) )
@@ -71,7 +74,10 @@ public class AllPermissionCollection extends PermissionCollection
      * Returns an enumeration of all AllPermission objects stored in this
      * collection.
      * @see java.security.PermissionCollection#elements()
+     * 
+     * @return {@inheritDoc}
      */
+    @Override
     public Enumeration<Permission> elements()
     {
         return m_permissions.elements();
@@ -90,6 +96,8 @@ public class AllPermissionCollection extends PermissionCollection
      * but only the AllPermission, PagePermission or WikiPermission types are
      * actually evaluated.
      * @see java.security.PermissionCollection#implies(java.security.Permission)
+     * 
+     * @return {@inheritDoc}
      */
     public boolean implies( Permission permission )
     {
@@ -119,7 +127,7 @@ public class AllPermissionCollection extends PermissionCollection
     }
 
     /**
-     * @see java.security.PermissionCollection#isReadOnly()
+     * {@inheritDoc}
      */
     public boolean isReadOnly()
     {
