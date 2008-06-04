@@ -144,7 +144,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
 
-    public static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
+    private static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
 
     /**
      *  The property name defining which packages will be searched for properties.
@@ -173,7 +173,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
-    private ArrayList  m_searchPath = new ArrayList();
+    private ArrayList<String>  m_searchPath = new ArrayList<String>();
 
     private Pattern m_pluginPattern;
 
@@ -182,12 +182,13 @@ public class PluginManager extends ModuleManager
     /**
      *  Keeps a list of all known plugin classes.
      */
-    private Map m_pluginClassMap = new HashMap();
+    private Map<String, WikiPluginInfo> m_pluginClassMap = new HashMap<String, WikiPluginInfo>();
 
 
     /**
      *  Create a new PluginManager.
      *
+     *  @param engine WikiEngine which owns this manager.
      *  @param props Contents of a "jspwiki.properties" file.
      */
     public PluginManager( WikiEngine engine, Properties props )
@@ -229,6 +230,8 @@ public class PluginManager extends ModuleManager
 
     /**
      * Enables or disables plugin execution.
+     * 
+     * @param enabled True, if plugins should be globally enabled; false, if disabled.
      */
     public void enablePlugins( boolean enabled )
     {
@@ -239,6 +242,8 @@ public class PluginManager extends ModuleManager
      * Returns plugin execution status. If false, plugins are not
      * executed when they are encountered on a WikiPage, and an
      * empty string is returned in their place.
+     * 
+     * @return True, if plugins are enabled; false otherwise.
      */
     public boolean pluginsEnabled()
     {
@@ -340,7 +345,7 @@ public class PluginManager extends ModuleManager
 
             boolean debug = TextUtil.isPositive( (String) params.get( PARAM_DEBUG ) );
 
-            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get(classname);
+            WikiPluginInfo pluginInfo = m_pluginClassMap.get(classname);
 
             if(pluginInfo == null)
             {
@@ -438,7 +443,7 @@ public class PluginManager extends ModuleManager
     public Map parseArgs( String argstring )
         throws IOException
     {
-        HashMap         arglist = new HashMap();
+        HashMap<String, Object> arglist = new HashMap<String, Object>();
 
         //
         //  Protection against funny users.
@@ -552,6 +557,8 @@ public class PluginManager extends ModuleManager
      *
      *  @return HTML as returned by the plugin, or possibly an error
      *  message.
+     *  
+     *  @throws PluginException From the plugin itself, it propagates, waah!
      */
     public String execute( WikiContext context,
                            String commandline )
@@ -598,6 +605,15 @@ public class PluginManager extends ModuleManager
         return commandline;
     }
 
+    /**
+     *  Parses a plugin invocation and returns a DOM element.
+     *  
+     *  @param context The WikiContext
+     *  @param commandline The line to parse
+     *  @param pos The position in the stream parsing.
+     *  @return A DOM element
+     *  @throws PluginException If plugin invocation is faulty
+     */
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
@@ -613,7 +629,7 @@ public class PluginManager extends ModuleManager
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map arglist     = parseArgs( args );
+                Map<String, Object> arglist = parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
                 if ( pos != -1 )
@@ -780,7 +796,7 @@ public class PluginManager extends ModuleManager
         /**
          *  Initializes a plugin, if it has not yet been initialized.
          *
-         *  @param engine
+         *  @param engine The WikiEngine
          */
         protected void initializePlugin( WikiEngine engine )
         {
@@ -804,12 +820,22 @@ public class PluginManager extends ModuleManager
             }
         }
 
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
         protected void initializeFromXML( Element el )
         {
             super.initializeFromXML( el );
             m_alias = el.getChildText("alias");
         }
 
+        /**
+         *  Create a new WikiPluginInfo based on the Class information.
+         *  
+         *  @param clazz The class to check
+         *  @return A WikiPluginInfo instance
+         */
         protected static WikiPluginInfo newInstance( Class clazz )
         {
             WikiPluginInfo info = new WikiPluginInfo( clazz.getName() );
@@ -953,6 +979,8 @@ public class PluginManager extends ModuleManager
         /**
          *  Returns a string suitable for debugging.  Don't assume that the format
          *  would stay the same.
+         *  
+         *  @return Something human-readable
          */
         public String toString()
         {
@@ -965,7 +993,7 @@ public class PluginManager extends ModuleManager
      */
     public Collection modules()
     {
-        TreeSet ls = new TreeSet();
+        TreeSet<WikiModuleInfo> ls = new TreeSet<WikiModuleInfo>();
         
         for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
         {
@@ -992,7 +1020,7 @@ public class PluginManager extends ModuleManager
         {
             WikiPlugin plugin;
 
-            WikiPluginInfo pluginInfo = (WikiPluginInfo) m_pluginClassMap.get( content.getPluginName() );
+            WikiPluginInfo pluginInfo = m_pluginClassMap.get( content.getPluginName() );
 
             if(pluginInfo == null)
             {
