@@ -64,8 +64,9 @@ public class PageRenamerTest extends TestCase
         
         Collection refs = m_engine.getReferenceManager().findCreated();
         
+        assertTrue( "FooTest does not exist", refs.contains("FooTest") );
+        assertFalse( "TestPage exists", refs.contains("TestPage") );
         assertEquals( "wrong list size", refCount+1, refs.size() );
-        assertTrue( refs.contains("FooTest") );
     }
     
     public void testReferrerChange()
@@ -337,6 +338,10 @@ public class PageRenamerTest extends TestCase
             npe.printStackTrace();
             System.out.println("NPE: Bug 85 caught?");
             fail();
+        }
+        catch( WikiException e )
+        {
+            // Expected
         }
     }
    
