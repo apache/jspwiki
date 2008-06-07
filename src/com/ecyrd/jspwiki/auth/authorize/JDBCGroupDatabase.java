@@ -299,7 +299,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -357,7 +357,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -466,7 +466,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -546,7 +546,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -576,7 +576,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -652,7 +652,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -706,7 +706,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
