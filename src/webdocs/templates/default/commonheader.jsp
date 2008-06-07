@@ -45,13 +45,14 @@
    Preferences.setupPreferences(pageContext);
  %>
 
+<meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
 <meta name="wikiBaseUrl" content='<wiki:BaseURL />' />
-<meta name="wikiPageUrl" content='<wiki:Link format="url" absolute="true" page="#$%"/>' />
+<meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
 <meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
 <meta name="wikiJsonUrl" content='<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
-<meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile=""/>' />
+<meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
 
 <script type="text/javascript">//<![CDATA[
 /* Localized javascript strings: LocalizedStrings[] */
@@ -75,6 +76,8 @@
 <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css'/>"
     title="Standard" />
 <link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+<%-- ie6 needs next line --%>
+<link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
 
 <wiki:FeedDiscovery />
 
