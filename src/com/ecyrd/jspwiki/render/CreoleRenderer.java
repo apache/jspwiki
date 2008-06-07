@@ -79,8 +79,14 @@ public class CreoleRenderer extends WikiRenderer
     private int m_listCount = 0;
     private char m_listChar = 'x';
 
-    private List m_plugins = new ArrayList();
+    private List<PluginContent> m_plugins = new ArrayList<PluginContent>();
 
+    /**
+     *  Creates a new Creole Renderer.
+     *  
+     *  @param ctx {@inheritDoc}
+     *  @param doc {@inheritDoc}
+     */
     public CreoleRenderer( WikiContext ctx, WikiDocument doc )
     {
         super( ctx, doc );
@@ -186,6 +192,9 @@ public class CreoleRenderer extends WikiRenderer
         sb.append(endEl);
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public String getString() throws IOException
     {
         StringBuffer sb = new StringBuffer(1000);

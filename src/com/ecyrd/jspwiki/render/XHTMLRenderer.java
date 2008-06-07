@@ -41,11 +41,20 @@ public class XHTMLRenderer
 {
     private static final String LINEBREAK = "\n";
 
+    /**
+     *  Creates an XHTML 1.0 renderer.
+     *  
+     *  @param context {@inheritDoc}
+     *  @param doc {@inheritDoc}
+     */
     public XHTMLRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public String getString()
         throws IOException
     {

@@ -55,6 +55,12 @@ public class WysiwygEditingRenderer
     private static final String LINKS_TRANSLATION = "$1#$2";
     private static final String LINKS_SOURCE = "(.+)#section-.+-(.+)";
 
+    /**
+     *  Creates a WYSIWYG editing renderer.
+     *  
+     *  @param context {@inheritDoc}
+     *  @param doc {@inheritDoc}
+     */
     public WysiwygEditingRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
@@ -105,8 +111,8 @@ public class WysiwygEditingRenderer
                             // to this wiki string: "TargetPage#Heading2".
                             hrefAttr.setValue( newHref.replaceFirst( LINKS_SOURCE, LINKS_TRANSLATION ) );
                         }
-                        else if ( classValue.equals( EDITPAGE )
-                            || ( hrefAttr != null && hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
+                        else if( hrefAttr != null && (classValue.equals( EDITPAGE ) ||
+                                                      hrefAttr.getValue().startsWith( editPageLinkUrl ) ) )
                         {
                             Attribute titleAttr = element.getAttribute( TITLE_ATTRIBUTE );
                             if( titleAttr != null )
@@ -136,6 +142,9 @@ public class WysiwygEditingRenderer
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getString()
         throws IOException
     {

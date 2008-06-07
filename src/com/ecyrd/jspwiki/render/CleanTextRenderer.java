@@ -46,11 +46,20 @@ public class CleanTextRenderer
     
     protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
     
+    /**
+     *  Create a renderer.
+     *  
+     *  @param context {@inheritDoc}
+     *  @param doc {@inheritDoc}
+     */
     public CleanTextRenderer( WikiContext context, WikiDocument doc )
     {
         super( context, doc );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public String getString()
         throws IOException
     {

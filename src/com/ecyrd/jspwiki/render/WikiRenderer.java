@@ -43,6 +43,12 @@ public abstract class WikiRenderer
     protected WikiDocument    m_document;
     protected boolean         m_enablePlugins = true;
     
+    /**
+     *  Create a WikiRenderer.
+     *  
+     *  @param context A WikiContext in which the rendering will take place.
+     *  @param doc The WikiDocument which shall be rendered. 
+     */
     protected WikiRenderer( WikiContext context, WikiDocument doc )
     {
         m_context = context;
@@ -58,13 +64,21 @@ public abstract class WikiRenderer
     }
 
     /**
-     *  Can be used to turn on plugin execution on a translator-reader basis
+     *  Can be used to turn on plugin execution on a translator-reader basis.
+     *  
+     *  @param toggle True, if plugins are to be enabled.  False, if disabled.
      */
     public void enablePlugins( boolean toggle )
     {
         m_enablePlugins = toggle;
     }
 
+    /**
+     *  Renders and returns the end result.
+     *  
+     *  @return A rendered string.
+     *  @throws IOException If rendering fails.
+     */
     public abstract String getString()
         throws IOException;
 

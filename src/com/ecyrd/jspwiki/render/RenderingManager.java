@@ -69,11 +69,16 @@ public class RenderingManager implements WikiEventListener, InternalModule
 
     private          WikiEngine m_engine;
 
+    /**
+     *  Parameter value for setting the cache size.
+     */
     public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String VERSION_DELIMITER = "::";
     private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
+    
+    /** The name of the default renderer. */
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
 
     /**
@@ -86,8 +91,16 @@ public class RenderingManager implements WikiEventListener, InternalModule
      */
     private         Constructor m_rendererConstructor;
 
+    /**
+     *  Name of the WikiContext variable which is set to Boolean.TRUE or Boolean.FALSE
+     *  depending on whether WYSIWYG is currently in effect.
+     */
     public static final String WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
+    /**
+     *  Variable name which tells whether plugins should be executed or not.  Value
+     *  can be either Boolean.TRUE or Boolean.FALSE.
+     */
     public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
 
     /**
@@ -98,9 +111,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
      *
      *  @param engine A WikiEngine instance.
      *  @param properties A list of properties to get parameters from.
+     *  @throws WikiException If the manager could not be initialized.
      */
     public void initialize( WikiEngine engine, Properties properties )
-    throws WikiException
+        throws WikiException
     {
         m_engine = engine;
         int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
@@ -175,7 +189,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @param context the wiki context
      * @param pagedata the page data
      * @return the rendered wiki document
-     * @throws IOException
+     * @throws IOException If rendering cannot be accomplished
      */
     // FIXME: The cache management policy is not very good: deleted/changed pages
     //        should be detected better.
@@ -262,6 +276,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * Returns a WikiRenderer instance, initialized with the given
      * context and doc. The object is an XHTMLRenderer, unless overridden
      * in jspwiki.properties with PROP_RENDERER.
+     * 
+     * @param context The WikiContext
+     * @param doc The document to render
+     * @return A WikiRenderer for this document, or null, if no such renderer could be instantiated.
      */
     public WikiRenderer getRenderer( WikiContext context, WikiDocument doc )
     {
@@ -310,8 +328,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * Flushes the document cache in response to a POST_SAVE_BEGIN event.
      *
      * @see com.ecyrd.jspwiki.event.WikiEventListener#actionPerformed(com.ecyrd.jspwiki.event.WikiEvent)
+     * @param event {@inheritDoc}
      */
-    // @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )
