@@ -100,7 +100,7 @@ public class JSPWikiMarkupParser
 
      // general list handling
     private int            m_genlistlevel = 0;
-    private StringBuffer   m_genlistBulletBuffer = new StringBuffer(10);  // stores the # and * pattern
+    private StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
     private boolean        m_allowPHPWikiStyleLists = true;
 
 
@@ -115,7 +115,7 @@ public class JSPWikiMarkupParser
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
-    private StringBuffer   m_plainTextBuf = new StringBuffer(20);
+    private StringBuilder  m_plainTextBuf = new StringBuilder(20);
 
     private Element        m_currentElement;
 
@@ -163,7 +163,7 @@ public class JSPWikiMarkupParser
 
     private PatternCompiler        m_compiler = new Perl5Compiler();
 
-    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
+    static final String WIKIWORD_REGEX = "(^|<|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
 
     private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
@@ -780,7 +780,7 @@ public class JSPWikiMarkupParser
             //  calling makeCamelCaseLink() is to call this routine.
             //
 
-            m_plainTextBuf = new StringBuffer(20);
+            m_plainTextBuf = new StringBuilder(20);
 
             try
             {
@@ -894,7 +894,7 @@ public class JSPWikiMarkupParser
      */
     private String escapeHTMLEntities(String buf)
     {
-        StringBuffer tmpBuf = new StringBuffer( buf.length() + 20 );
+        StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
 
         for( int i = 0; i < buf.length(); i++ )
         {
@@ -1013,7 +1013,7 @@ public class JSPWikiMarkupParser
     private String readUntil( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer( 80 );
+        StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -1048,7 +1048,7 @@ public class JSPWikiMarkupParser
     private String readWhile( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer( 80 );
+        StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -1395,7 +1395,7 @@ public class JSPWikiMarkupParser
     {
         ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
         
-        StringBuffer sb = new StringBuffer(linktext.length()+80);
+        StringBuilder sb = new StringBuilder(linktext.length()+80);
 
         if( isAccessRule( linktext ) )
         {
@@ -1894,11 +1894,11 @@ public class JSPWikiMarkupParser
      *  Reads the stream until the next EOL or EOF.  Note that it will also read the
      *  EOL from the stream.
      */
-    private StringBuffer readUntilEOL()
+    private StringBuilder readUntilEOL()
         throws IOException
     {
         int ch;
-        StringBuffer buf = new StringBuffer( 256 );
+        StringBuilder buf = new StringBuilder( 256 );
 
         while( true )
         {
@@ -2131,7 +2131,7 @@ public class JSPWikiMarkupParser
     private Element handleOpenbracket()
         throws IOException
     {
-        StringBuffer sb = new StringBuffer(40);
+        StringBuilder sb = new StringBuilder(40);
         int pos = getPosition();
         int ch = nextToken();
         boolean isPlugin = false;
@@ -2228,7 +2228,7 @@ public class JSPWikiMarkupParser
     private String readBraceContent( char opening, char closing )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer(40);
+        StringBuilder sb = new StringBuilder(40);
         int braceLevel = 1;
         int ch;
         while(( ch = nextToken() ) != -1 )
@@ -2635,7 +2635,7 @@ public class JSPWikiMarkupParser
 
     private String cleanupSuspectData( String s )
     {
-        StringBuffer sb = new StringBuffer( s.length() );
+        StringBuilder sb = new StringBuilder( s.length() );
         
         for( int i = 0; i < s.length(); i++ )
         {
