@@ -452,11 +452,16 @@ public class PageManager extends ModuleManager implements WikiEventListener
             //
             log.info("Repository has been modified externally while fetching info for "+pageName );
 
-            WikiPage p = new WikiPage( m_engine, pageName );
-
-            m_engine.updateReferences( p );
-
             page = m_provider.getPageInfo( pageName, version );
+
+            if( page != null )
+            {
+                m_engine.updateReferences( page );
+            }
+            else
+            {
+                m_engine.getReferenceManager().pageRemoved( new WikiPage(m_engine,pageName) );
+            }
         }
 
         //

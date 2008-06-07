@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -43,6 +44,8 @@ public class PageRenamer
 {
 
     private static final Logger log = Logger.getLogger( PageRenamer.class );
+    
+    private boolean m_camelCase = false;
     
     /**
      *  Renames a page.
@@ -100,7 +103,15 @@ public class PageRenamer
         {
             throw new WikiException("Page already exists "+renameTo);
         }
-                
+        
+        //
+        //  Options
+        //
+        
+        m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), 
+                                                   JSPWikiMarkupParser.PROP_CAMELCASELINKS, 
+                                                   m_camelCase );
+        
         //
         //  Do the actual rename by changing from the frompage to the topage, including
         //  all of the attachments
@@ -195,6 +206,9 @@ public class PageRenamer
             
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
             
+            if( m_camelCase )
+                newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
+            
             if( !sourceText.equals( newText ) )
             {
                 p.setAttribute( WikiPage.CHANGENOTE, "Renaming change "+fromPage.getName()+" to "+toPage.getName() );
@@ -218,9 +232,53 @@ public class PageRenamer
         }
     }
 
+    /**
+     *  Replaces camelcase links.
+     * @param context
+     * @param sourceText
+     * @param from
+     * @param to
+     * @return
+     */
+    private String replaceCCReferrerString( WikiContext context, String sourceText, String from, String to )
+    {
+        StringBuilder sb = new StringBuilder( sourceText.length()+32 );
+        
+        Pattern linkPattern = Pattern.compile( "\\p{Lu}+\\p{Ll}+\\p{Lu}+[\\p{L}\\p{Digit}]*" );
+        
+        Matcher matcher = linkPattern.matcher( sourceText );
+        
+        int start = 0;
+        
+        while( matcher.find(start) )
+        {
+            String match = matcher.group();
+
+            sb.append( sourceText.substring( start, matcher.start() ) );
+
+            int lastOpenBrace = sourceText.lastIndexOf( '[', matcher.start() );
+            int lastCloseBrace = sourceText.lastIndexOf( ']', matcher.start() );
+            
+            if( match.equals( from ) && lastCloseBrace >= lastOpenBrace )
+            {
+                sb.append( to );
+            }
+            else
+            {
+                sb.append( match );
+            }
+            
+            start = matcher.end();
+        }
+        
+        sb.append( sourceText.substring( start ) );
+        
+        return sb.toString();
+    }
+
     private String replaceReferrerString( WikiContext context, String sourceText, String from, String to )
     {
-        StringBuffer sb = new StringBuffer( sourceText.length() );
+        StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         
         Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
         
@@ -232,7 +290,12 @@ public class PageRenamer
         //System.out.println("SRC="+sourceText.trim());
         while( matcher.find(start) )
         {
-            if( matcher.group(1).length() > 0 ) 
+            char charBefore = (char)-1;
+            
+            if( matcher.start() > 0 ) 
+                charBefore = sourceText.charAt( matcher.start()-1 );
+            
+            if( matcher.group(1).length() > 0 || charBefore == '~' || charBefore == '[' ) 
             {
                 //
                 //  Found an escape character, so I am escaping.
@@ -259,6 +322,11 @@ public class PageRenamer
             else
             {
                 link = replaceSingleLink( context, link, from, to );
+                
+                //
+                //  A very simple substitution, but should work for quite a few cases.
+                //
+                text = TextUtil.replaceString( text, from, to );
             }
         
             //
