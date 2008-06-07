@@ -27,18 +27,36 @@ package com.ecyrd.jspwiki.ui.progress;
  */
 public abstract class ProgressItem
 {
+    /**
+     *  Status: The PI is created.
+     */
     public static final int CREATED  = 0;
+    
+    /** Status: The PI is started. */
     public static final int STARTED  = 1;
+    
+    /** Status: The PI is stopped. */
     public static final int STOPPED  = 2;
+    
+    /** Status: The PI is finished. */
     public static final int FINISHED = 3;
 
     protected int m_state = CREATED;
 
+    /**
+     *  Get the state of the ProgressItem.
+     *  @return CREATED, STARTED, STOPPED or FINISHED.
+     */
     public int getState()
     {
         return m_state;
     }
 
+    /**
+     *  Sets the state of the ProgressItem.
+     *  
+     *  @param state One of the CREATED, STARTED, STOPPED or FINISHED.
+     */
     public void setState( int state )
     {
         m_state = state;

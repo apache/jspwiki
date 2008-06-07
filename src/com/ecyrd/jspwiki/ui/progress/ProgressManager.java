@@ -90,7 +90,7 @@ public class ProgressManager
     public void stopProgress( String id )
     {
         log.debug("Removed "+id+" from progress queue");
-        ProgressItem pi = (ProgressItem) m_progressingTasks.remove( id );
+        ProgressItem pi = m_progressingTasks.remove( id );
         if( pi != null ) pi.setState( ProgressItem.STOPPED );
     }
 
@@ -104,7 +104,7 @@ public class ProgressManager
     public int getProgress( String id )
         throws IllegalArgumentException
     {
-        ProgressItem pi = (ProgressItem)m_progressingTasks.get( id );
+        ProgressItem pi = m_progressingTasks.get( id );
 
         if( pi != null )
         {

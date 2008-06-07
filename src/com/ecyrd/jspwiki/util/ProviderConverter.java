@@ -147,7 +147,7 @@ public class ProviderConverter
     }
     
     /**
-     * @param args
+     * @param args Normal arguments.
      */
     public static void main( String[] args )
         throws Exception

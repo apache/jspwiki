@@ -260,7 +260,7 @@ public abstract class AbstractStep implements Step
      */
     public final Step getSuccessor( Outcome outcome )
     {
-        return (Step) m_successors.get( outcome );
+        return m_successors.get( outcome );
     }
 
     // --------------------------Helper methods--------------------------
