@@ -49,6 +49,7 @@ public final class PropertiesUtils
      * @param properties the properties object
      * @return String the properties, nicely formatted 
      */
+    @SuppressWarnings("unchecked")
     public static String toSortedString( Properties properties )
     {
         TreeMap treemap = new TreeMap( properties );

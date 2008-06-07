@@ -55,6 +55,7 @@ public class FormOutput
      * @return {@inheritDoc}
      * @throws {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

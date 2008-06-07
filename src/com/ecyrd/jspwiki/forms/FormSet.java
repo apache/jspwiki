@@ -62,6 +62,7 @@ public class FormSet
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

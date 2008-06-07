@@ -206,6 +206,7 @@ public class FormInfo
      * Copies the given values into the handler parameter map using Map.putAll().
      * @param val parameter name-value pairs for a Form handler WikiPlugin
      */
+    @SuppressWarnings("unchecked")
     public void setSubmission( Map val )
     {
         m_submission = new HashMap();
@@ -216,6 +217,7 @@ public class FormInfo
      * Adds the given values into the handler parameter map.
      * @param val parameter name-value pairs for a Form handler WikiPlugin
      */
+    @SuppressWarnings("unchecked")
     public void addSubmission( Map val )
     {
         if( m_submission == null )
