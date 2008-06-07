@@ -43,6 +43,9 @@ public class FileSystemProvider
      */
     public static final String PROP_EXT = ".properties";
 
+    /**
+     *  {@inheritDoc}
+     */
     public void putPageText( WikiPage page, String text )        
         throws ProviderException
     {
@@ -129,6 +132,9 @@ public class FileSystemProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
     {
@@ -150,6 +156,9 @@ public class FileSystemProvider
         return p;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deletePage(String pageName) throws ProviderException
     {
         super.deletePage(pageName);
@@ -160,6 +169,9 @@ public class FileSystemProvider
         if( file.exists() ) file.delete();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException

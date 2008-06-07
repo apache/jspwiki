@@ -41,7 +41,7 @@ public class RepositoryModifiedException
     /**
      * Constructs the exception.
      *
-     * @param msg
+     * @param msg The message
      * @param pageName  The name of the page which was modified
      */
     public RepositoryModifiedException( String msg, String pageName )
@@ -51,6 +51,11 @@ public class RepositoryModifiedException
         m_page = pageName;
     }
 
+    /**
+     *  Return the page name given in the constructor.
+     *  
+     *  @return The page name.
+     */
     public String getPageName()
     {
         return m_page;

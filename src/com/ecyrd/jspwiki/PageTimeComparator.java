@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 // FIXME3.0: move to util package
 
 public class PageTimeComparator
-    implements Comparator, Serializable
+    implements Comparator<WikiPage>, Serializable
 {
     private static final long serialVersionUID = 0L;
 
@@ -44,11 +44,8 @@ public class PageTimeComparator
     /**
      *  {@inheritDoc}
      */
-    public int compare( Object o1, Object o2 )
+    public int compare( WikiPage w1, WikiPage w2 )
     {
-        WikiPage w1 = (WikiPage)o1;
-        WikiPage w2 = (WikiPage)o2;
-        
         if( w1 == null || w2 == null ) 
         {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");

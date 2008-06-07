@@ -33,6 +33,11 @@ public class ProviderException
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  Creates a ProviderException.
+     *  
+     *  @param msg {@inheritDoc}
+     */
     public ProviderException( String msg )
     {
         super( msg );

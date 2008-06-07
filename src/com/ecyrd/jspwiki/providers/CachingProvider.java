@@ -95,13 +95,19 @@ public class CachingProvider
      */
 
     public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
+    
+    /**
+     *  The capacity of the cache.
+     */
     public static final String PROP_CACHECAPACITY      = "jspwiki.cachingProvider.capacity";
 
     private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
 
     private static final String OSCACHE_ALGORITHM      = "com.opensymphony.oscache.base.algorithm.LRUCache";
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -308,6 +314,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String pageName, int version )
     {
         if( pageName == null ) return false;
@@ -378,6 +387,9 @@ public class CachingProvider
         return false;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String pageName )
     {
         if( pageName == null ) return false;
@@ -460,6 +472,7 @@ public class CachingProvider
     }
 
     /**
+     *  {@inheritDoc}
      *  @throws RepositoryModifiedException If the page has been externally modified.
      */
     public String getPageText( String pageName, int version )
@@ -562,6 +575,9 @@ public class CachingProvider
         return text;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
@@ -587,7 +603,9 @@ public class CachingProvider
         }
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public Collection getAllPages()
         throws ProviderException
     {
@@ -621,17 +639,26 @@ public class CachingProvider
         return all;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection getAllChangedSince( Date date )
     {
         return m_provider.getAllChangedSince( date );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public int getPageCount()
         throws ProviderException
     {
         return m_provider.getPageCount();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection findPages( QueryItem[] query )
     {
         //
@@ -670,6 +697,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException,
                RepositoryModifiedException
@@ -711,6 +741,9 @@ public class CachingProvider
         return page;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public List getVersionHistory( String pageName )
         throws ProviderException
     {
@@ -745,6 +778,9 @@ public class CachingProvider
         return history;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public synchronized String getProviderInfo()
     {
         return "Real provider: "+m_provider.getClass().getName()+
@@ -755,6 +791,9 @@ public class CachingProvider
                ". Cache consistency checks: "+m_expiryPeriod+"s";
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
@@ -783,6 +822,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deletePage( String pageName )
         throws ProviderException
     {
@@ -799,6 +841,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException
@@ -823,6 +868,7 @@ public class CachingProvider
     /**
      *  Returns the actual used provider.
      *  @since 2.0
+     *  @return The real provider.
      */
     public WikiPageProvider getRealProvider()
     {
@@ -841,7 +887,7 @@ public class CachingProvider
     private static class CacheItemCollector
         implements CacheEntryEventListener
     {
-        private Map m_allItems = new HashMap();
+        private Map<String, WikiPage> m_allItems = new HashMap<String, WikiPage>();
 
         /**
          * Returns a clone of the set - you cannot manipulate this.
@@ -850,7 +896,7 @@ public class CachingProvider
          */
         public Set getAllItems()
         {
-            Set ret = new TreeSet();
+            Set<WikiPage> ret = new TreeSet<WikiPage>();
             ret.addAll(m_allItems.values());
 
             return ret;

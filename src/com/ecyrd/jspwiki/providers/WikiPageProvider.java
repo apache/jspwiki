@@ -45,24 +45,45 @@ public interface WikiPageProvider
     extends WikiProvider
 {
     /**
-     *  Attempts to save the page text for page "page".
+     *  Attempts to save the page text for page "page".  Note that the
+     *  provider creates a new version regardless of what the version
+     *  parameter of the WikiPage is.
+     *  
+     *  @param page The WikiPage to save
+     *  @param text The text to save.
+     *  @throws ProviderException If something goes wrong.
      */
     public void putPageText( WikiPage page, String text )
         throws ProviderException;
 
     /**
      *  Return true, if page exists.
+     *  
+     *  @param page The page name.
+     *  @return true, if the page exists; false otherwise.
      */
 
     public boolean pageExists( String page );
 
     /**
-     *  Finds pages based on the query.
+     *  Finds pages based on the query.   Only applicable to providers
+     *  which implement the FastSearch interface.  Otherwise JSPWiki
+     *  will use its internal cache.
+     *  <p>
+     *  This method should really be a part of the FastSearch IF.
+     *  
+     *  @param query An array of QueryItems to match
+     *  @return A Collection of WikiPages.
      */
     public Collection findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
+     *  
+     *  @return A filled WikiPage.
+     *  @param page The page name
+     *  @param version The version number
+     *  @throws ProviderException If something goes wrong.
      */
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException;
@@ -70,6 +91,9 @@ public interface WikiPageProvider
     /**
      *  Returns all pages.  Each element in the returned
      *  Collection should be a WikiPage.
+     *  
+     *  @return A collection of WikiPages
+     *  @throws ProviderException If something goes wrong.
      */
 
     public Collection getAllPages()
@@ -77,6 +101,9 @@ public interface WikiPageProvider
 
     /**
      *  Gets a list of recent changes.
+     *  
+     *  @param date The date to check from
+     *  @return A Collection of WikiPages
      *  @since 1.6.4
      */
 
@@ -84,6 +111,9 @@ public interface WikiPageProvider
 
     /**
      *  Gets the number of pages.
+     *  
+     *  @return The number of pages in the repository
+     *  @throws ProviderException If something goes wrong
      *  @since 1.6.4
      */
 
@@ -94,7 +124,9 @@ public interface WikiPageProvider
      *  Returns version history.  Each element should be
      *  a WikiPage.
      *
-     *  @return A collection of wiki pages.
+     *  @param page The name of the page to get the history from.
+     *  @return A collection of WikiPages.
+     *  @throws ProviderException If something goes wrong.
      */
 
     public List getVersionHistory( String page )
@@ -107,6 +139,7 @@ public interface WikiPageProvider
      *  @param version Version of the page to fetch.
      *
      *  @return The content of the page, or null, if the page does not exist.
+     *  @throws ProviderException If something goes wrong.
      */
 
     public String getPageText( String page, int version )

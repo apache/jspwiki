@@ -28,6 +28,11 @@ public class NoSuchVersionException
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  Creates a ProviderException.
+     *  
+     *  @param msg {@inheritDoc}
+     */
     public NoSuchVersionException( String msg )
     {
         super( msg );

@@ -63,11 +63,17 @@ public class VersioningFileProvider
 {
     private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
    
+    /** Name of the directory where the old versions are stored. */
     public static final String      PAGEDIR      = "OLD";
+    
+    /** Name of the property file which stores the metadata. */
     public static final String      PROPERTYFILE = "page.properties";
 
     private CachedProperties        m_cachedProperties;
     
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -215,7 +221,7 @@ public class VersioningFileProvider
             //
             //   The profiler showed that when calling the history of a page the propertyfile
             //   was read just as much times as there were versions of that file. The loading
-            //   of a propertyfile is a cpu-intensive jobs. So now hold on to the last propertyfile
+            //   of a propertyfile is a cpu-intensive job. So now hold on to the last propertyfile
             //   read because the next method will with a high probability ask for the same propertyfile.
             //   The time it took to show a historypage with 267 versions dropped with 300%. 
             //
@@ -312,6 +318,9 @@ public class VersioningFileProvider
         return requestedVersion;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public synchronized String getPageText( String page, int version )
         throws ProviderException
     {
@@ -394,6 +403,9 @@ public class VersioningFileProvider
            2         Main.txt (2)  1.txt
            3         Main.txt (3)  1.txt, 2.txt
     */
+    /**
+     *  {@inheritDoc}
+     */
     public synchronized void putPageText( WikiPage page, String text )
         throws ProviderException
     {
@@ -486,6 +498,9 @@ public class VersioningFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
     {
@@ -569,6 +584,9 @@ public class VersioningFileProvider
         return p;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String pageName, int version )
     {
         File dir = findOldPageDir( pageName );
@@ -589,12 +607,13 @@ public class VersioningFileProvider
     }
 
     /**
-     *  FIXME: Does not get user information.
+     *  {@inheritDoc}
      */
+     // FIXME: Does not get user information.
     public List getVersionHistory( String page )
     throws ProviderException
     {
-        ArrayList list = new ArrayList();
+        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
 
         int latest = findLatestVersion( page );
 
@@ -617,6 +636,9 @@ public class VersioningFileProvider
      *  Removes the relevant page directory under "OLD" -directory as well,
      *  but does not remove any extra subdirectories from it.  It will only
      *  touch those files that it thinks to be WikiPages.
+     *  
+     *  @param page {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     // FIXME: Should log errors.
     public void deletePage( String page )
@@ -646,6 +668,9 @@ public class VersioningFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String page, int version )
         throws ProviderException
     {
@@ -738,11 +763,14 @@ public class VersioningFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // FIXME: This is kinda slow, we should need to do this only once.
     public Collection getAllPages() throws ProviderException
     {
         Collection pages = super.getAllPages();
-        Collection returnedPages = new ArrayList();
+        Collection<WikiPage> returnedPages = new ArrayList<WikiPage>();
         
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
@@ -756,11 +784,17 @@ public class VersioningFileProvider
         return returnedPages;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public String getProviderInfo()
     {
         return "";
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException

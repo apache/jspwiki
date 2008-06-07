@@ -65,10 +65,19 @@ public class RCSFileProvider
 
     private static final Logger   log = Logger.getLogger(RCSFileProvider.class);
 
+    /** Property name for the checkin command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
+    
+    /** Property name for the checkout command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKOUT = "jspwiki.rcsFileProvider.checkoutCommand";
+    
+    /** Property name for the log command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_LOG      = "jspwiki.rcsFileProvider.logCommand";
+    
+    /** Property name for the full log command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_FULLLOG  = "jspwiki.rcsFileProvider.fullLogCommand";
+    
+    /** Property name for the checkout version command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
 
     private static final String   PATTERN_DATE      = "^date:\\s*(.*\\d);";
@@ -81,8 +90,11 @@ public class RCSFileProvider
 
     // Date format parsers, placed here to save on object creation
     private SimpleDateFormat m_rcsdatefmt     = new SimpleDateFormat( RCSFMT_DATE );
-    private SimpleDateFormat m_rcsdatefmt_utc = new SimpleDateFormat( RCSFMT_DATE_UTC );
+    private SimpleDateFormat m_rcsdatefmtUTC = new SimpleDateFormat( RCSFMT_DATE_UTC );
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties props )
         throws NoRequiredPropertyException,
                IOException
@@ -110,6 +122,9 @@ public class RCSFileProvider
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // NB: This is a very slow method.
 
     public WikiPage getPageInfo( String page, int version )
@@ -237,6 +252,9 @@ public class RCSFileProvider
         return info;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getPageText( String page, int version )
         throws ProviderException
     {
@@ -353,6 +371,10 @@ public class RCSFileProvider
     /**
      *  Puts the page into RCS and makes sure there is a fresh copy in
      *  the directory as well.
+     *  
+     *  @param page {@inheritDoc}
+     *  @param text {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public void putPageText( WikiPage page, String text )
         throws ProviderException
@@ -433,6 +455,9 @@ public class RCSFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // FIXME: Put the rcs date formats into properties as well.
     public List getVersionHistory( String page )
     {
@@ -442,7 +467,7 @@ public class RCSFileProvider
 
         log.debug("Getting RCS version history");
 
-        ArrayList list = new ArrayList();
+        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
 
         try
         {
@@ -481,7 +506,7 @@ public class RCSFileProvider
                     list.add( info );
                 }
 
-                if( matcher.contains( line, datepattern ) )
+                if( matcher.contains( line, datepattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
@@ -490,14 +515,14 @@ public class RCSFileProvider
                     info.setLastModified( d );
                 }
 
-                if( matcher.contains( line, userpattern ) )
+                if( matcher.contains( line, userpattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
 
-                if( matcher.contains( line, notepattern ) )
+                if( matcher.contains( line, notepattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
@@ -543,6 +568,9 @@ public class RCSFileProvider
     /**
      *  Removes the page file and the RCS archive from the repository.
      *  This method assumes that the page archive ends with ",v".
+     *  
+     *  @param page {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public void deletePage( String page )
         throws ProviderException
@@ -574,6 +602,9 @@ public class RCSFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String page, int version )
     {
         String         line = "<rcs not run>";
@@ -657,7 +688,7 @@ public class RCSFileProvider
 
         try
         {
-            d = m_rcsdatefmt_utc.parse( str );
+            d = m_rcsdatefmtUTC.parse( str );
             return d;
         }
         catch ( ParseException pe )
@@ -666,6 +697,9 @@ public class RCSFileProvider
         return d;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException

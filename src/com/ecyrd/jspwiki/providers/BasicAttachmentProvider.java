@@ -79,6 +79,8 @@ public class BasicAttachmentProvider
 {
     private WikiEngine         m_engine;
     private String             m_storageDir;
+    
+    /** The property name for where the attachments should be stored.  Value is <tt>{@value}</tt>. */
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
     
     /*
@@ -86,15 +88,24 @@ public class BasicAttachmentProvider
      * since 2.5.96
      */
     private Pattern            m_disableCache = null;
+    
+    /** The property name for specifying which attachments are not cached.  Value is <tt>{@value}</tt>. */
     public static final String PROP_DISABLECACHE = "jspwiki.basicAttachmentProvider.disableCache";
 
+    /** The name of the property file. */
     public static final String PROPERTY_FILE   = "attachment.properties";
 
+    /** The default extension for the page attachment directory name. */
     public static final String DIR_EXTENSION   = "-att";
+    
+    /** The default extension for the attachment directory. */
     public static final String ATTDIR_EXTENSION = "-dir";
     
     static final Logger log = Logger.getLogger( BasicAttachmentProvider.class );
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,
                IOException
@@ -249,6 +260,9 @@ public class BasicAttachmentProvider
      *  Returns the file extension.  For example "test.png" returns "png".
      *  <p>
      *  If file has no extension, will return "bin"
+     *  
+     *  @param filename The file name to check
+     *  @return The extension.  If no extension is found, returns "bin".
      */
     protected static String getFileExtension( String filename )
     {
@@ -307,6 +321,9 @@ public class BasicAttachmentProvider
         return props;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void putAttachmentData( Attachment att, InputStream data )
         throws ProviderException,
                IOException
@@ -368,6 +385,9 @@ public class BasicAttachmentProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getProviderInfo()
     {
         return "";
@@ -404,6 +424,9 @@ public class BasicAttachmentProvider
         return f;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public InputStream getAttachmentData( Attachment att )
         throws IOException,
                ProviderException
@@ -423,10 +446,13 @@ public class BasicAttachmentProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection listAttachments( WikiPage page )
         throws ProviderException
     {
-        Collection result = new ArrayList();
+        Collection<Attachment> result = new ArrayList<Attachment>();
 
         File dir = findPageDir( page.getName() );
 
@@ -496,11 +522,17 @@ public class BasicAttachmentProvider
         return result;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection findAttachments( QueryItem[] query )
     {
         return null;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // FIXME: Very unoptimized.
     public List listAllChanged( Date timestamp )
         throws ProviderException
@@ -512,7 +544,7 @@ public class BasicAttachmentProvider
             throw new ProviderException("Specified attachment directory "+m_storageDir+" does not exist!");
         }
 
-        ArrayList list = new ArrayList();
+        ArrayList<Attachment> list = new ArrayList<Attachment>();
 
         String[] pagesWithAttachments = attDir.list( new AttachmentFilter() );
 
@@ -539,6 +571,9 @@ public class BasicAttachmentProvider
         return list;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Attachment getAttachmentInfo( WikiPage page, String name, int version )
         throws ProviderException
     {
@@ -601,9 +636,12 @@ public class BasicAttachmentProvider
         return att;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public List getVersionHistory( Attachment att )
     {
-        ArrayList list = new ArrayList();
+        ArrayList<Attachment> list = new ArrayList<Attachment>();
 
         try
         {
@@ -629,13 +667,18 @@ public class BasicAttachmentProvider
         return list;
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( Attachment att )
         throws ProviderException
     {
         // FIXME: Does nothing yet.
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
@@ -657,6 +700,9 @@ public class BasicAttachmentProvider
     public static class AttachmentFilter
         implements FilenameFilter
     {
+        /**
+         *  {@inheritDoc}
+         */
         public boolean accept( File dir, String name )
         {
             return name.endsWith( DIR_EXTENSION );
@@ -669,11 +715,18 @@ public class BasicAttachmentProvider
     public static class AttachmentVersionFilter
         implements FilenameFilter
     {
+        /**
+         *  {@inheritDoc}
+         */
         public boolean accept( File dir, String name )
         {
             return !name.equals( PROPERTY_FILE );
         }
     }
+
+    /**
+     *  {@inheritDoc}
+     */
 
     public void moveAttachmentsForPage( String oldParent, String newParent )
         throws ProviderException

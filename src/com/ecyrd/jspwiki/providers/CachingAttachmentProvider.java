@@ -164,13 +164,14 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Collection listAttachments( WikiPage page )
         throws ProviderException
     {
         log.debug("Listing attachments for "+page);
         try
         {
-            Collection c = (Collection)m_cache.getFromCache( page.getName(), m_refreshPeriod );
+            Collection<Attachment> c = (Collection<Attachment>)m_cache.getFromCache( page.getName(), m_refreshPeriod );
 
             if( c != null )
             {
@@ -187,7 +188,7 @@ public class CachingAttachmentProvider
         {
             try
             {
-                Collection c = refresh( page );
+                Collection<Attachment> c = refresh( page );
 
                 return cloneCollection(c);
             }
@@ -282,11 +283,12 @@ public class CachingAttachmentProvider
      *
      *  @return The newly fetched object from the provider.
      */
-    private final Collection refresh( WikiPage page )
+    @SuppressWarnings("unchecked")
+    private final Collection<Attachment> refresh( WikiPage page )
         throws ProviderException
     {
         m_cacheMisses++;
-        Collection c = m_provider.listAttachments( page );
+        Collection<Attachment> c = m_provider.listAttachments( page );
         m_cache.putInCache( page.getName(), c );
 
         return c;
@@ -399,7 +401,9 @@ public class CachingAttachmentProvider
     }
 
     /**
-     * Returns the WikiAttachmentProvider that this caching provider delegates to.
+     *  Returns the WikiAttachmentProvider that this caching provider delegates to.
+     * 
+     *  @return The real provider underneath this one.
      */
     public WikiAttachmentProvider getRealProvider()
     {

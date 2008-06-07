@@ -80,6 +80,11 @@ public class Preferences
         }
     }
     
+    /**
+     *  Reloads the preferences from the PageContext into the WikiContext.
+     *  
+     *  @param pageContext The page context.
+     */
     // FIXME: The way that date preferences are chosen is currently a bit wacky: it all
     //        gets saved to the cookie based on the browser state with which the user
     //        happened to first arrive to the site with.  This, unfortunately, means that
@@ -192,7 +197,8 @@ public class Preferences
     /**
      * Get Locale according to user-preference settings or the user browser locale
      * 
-     * @param wikiContext
+     * @param context The context to examine.
+     * @return a Locale object.
      * @since 2.8
      */
     public static Locale getLocale(WikiContext context)
@@ -308,8 +314,13 @@ public class Preferences
      */
     public enum TimeFormat
     {
+        /** A time format, no date. */
         TIME,
+        
+        /** A date format, no time. */
         DATE,
+        
+        /** A date+time format. */
         DATETIME
     }
 }
