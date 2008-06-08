@@ -1,4 +1,10 @@
-2008-06-01  Janne Jalkanen <jalkanen@apache.org>
+2008-06-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-35
+        
+        * JSPWIKI-283: Ooops.  Copy != Cut.
+        
+2008-06-07  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-34
         
