@@ -379,6 +379,10 @@ public class PageRenamerTest extends TestCase
             System.out.println("NPE: Bug 85 caught?");
             fail();
         }
+        catch( WikiException e )
+        {
+            // Expected
+        }
     }
     
     public void testBug85_case4() throws Exception 
