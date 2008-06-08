@@ -1,9 +1,9 @@
 
 package com.ecyrd.jspwiki.auth;
 
-import com.ecyrd.jspwiki.TextUtil;
-
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class AllTests extends TestCase
 {
@@ -16,20 +16,15 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("AAA package tests");
 
-        String runTests = System.getProperty( "jspwiki.tests.auth", "false" );
-        
-        if( TextUtil.isPositive(runTests) )
-        {
-            suite.addTest( AuthenticationManagerTest.suite() );
-            suite.addTest( AuthorizationManagerTest.suite() );
-            suite.addTest( GroupManagerTest.suite() );
-            suite.addTest( com.ecyrd.jspwiki.auth.acl.AllTests.suite() );
-            suite.addTest( com.ecyrd.jspwiki.auth.authorize.AllTests.suite() );
-            suite.addTest( com.ecyrd.jspwiki.auth.login.AllTests.suite() );
-            suite.addTest( com.ecyrd.jspwiki.auth.permissions.AllTests.suite() );
-            suite.addTest( com.ecyrd.jspwiki.auth.user.AllTests.suite() );
-            suite.addTestSuite( com.ecyrd.jspwiki.auth.UserManagerTest.class );
-        }
+        suite.addTest( AuthenticationManagerTest.suite() );
+        suite.addTest( AuthorizationManagerTest.suite() );
+        suite.addTest( GroupManagerTest.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.acl.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.authorize.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.login.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.permissions.AllTests.suite() );
+        suite.addTest( com.ecyrd.jspwiki.auth.user.AllTests.suite() );
+        suite.addTestSuite( com.ecyrd.jspwiki.auth.UserManagerTest.class );
         
         return suite;
     }
