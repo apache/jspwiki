@@ -20,8 +20,9 @@
  */
 package com.ecyrd.jspwiki.content;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -173,7 +174,7 @@ public class PageRenamer
     private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage )
     {
         WikiEngine engine = context.getEngine();
-        Collection<String> referrers = new ArrayList<String>();
+        Set<String> referrers = new TreeSet<String>();
         
         Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
         if( r != null ) referrers.addAll( r );
