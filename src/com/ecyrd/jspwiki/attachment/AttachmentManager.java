@@ -122,8 +122,8 @@ public class AttachmentManager
         //
         try
         {
-            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
-                                                       classname );
+            Class<?> providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
+                                                          classname );
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -544,7 +544,7 @@ public class AttachmentManager
             return m_provider.listAllChanged( new Date(0L) );
         }
 
-        return new ArrayList();
+        return new ArrayList<Attachment>();
     }
 
     /**

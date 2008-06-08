@@ -46,6 +46,11 @@ public class AttachmentDavProvider implements DavProvider
         m_engine = engine;
     }
 
+    /**
+     *  Returns the engine used by this provider.
+     *  
+     *  @return The engine
+     */
     public WikiEngine getEngine()
     {
         return m_engine;
@@ -53,7 +58,7 @@ public class AttachmentDavProvider implements DavProvider
 
     private Collection listAllPagesWithAttachments()
     {
-        ArrayList pageNames = new ArrayList();
+        ArrayList<String> pageNames = new ArrayList<String>();
 
         try
         {
@@ -76,7 +81,7 @@ public class AttachmentDavProvider implements DavProvider
 
         Collections.sort( pageNames );
 
-        ArrayList result = new ArrayList();
+        ArrayList<DirectoryItem> result = new ArrayList<DirectoryItem>();
 
         for( Iterator i = pageNames.iterator(); i.hasNext(); )
         {
@@ -93,7 +98,7 @@ public class AttachmentDavProvider implements DavProvider
 
         log.debug("Listing attachments for page "+pageName);
 
-        ArrayList result = new ArrayList();
+        ArrayList<DavItem> result = new ArrayList<DavItem>();
         try
         {
             WikiPage page = m_engine.getPage( pageName );

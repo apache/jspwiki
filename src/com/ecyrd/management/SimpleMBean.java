@@ -46,12 +46,12 @@ public abstract class SimpleMBean
 {
     protected MBeanInfo m_beanInfo;
 
-    private static Method findGetterSetter( Class clazz, String name, Class parm )
+    private static Method findGetterSetter( Class<?> clazz, String name, Class<?> parm )
     {
         try
         {
-            Class[] params = { parm };
-            Class[] emptyparms = {};
+            Class<?>[] params = { parm };
+            Class<?>[] emptyparms = {};
 
             Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
 
@@ -65,6 +65,11 @@ public abstract class SimpleMBean
         return null;
     }
 
+    /**
+     *  Create a new SimpleMBean
+     *  
+     *  @throws NotCompliantMBeanException {@inheritDoc}
+     */
     protected SimpleMBean() throws NotCompliantMBeanException
     {
         //
@@ -179,7 +184,17 @@ public abstract class SimpleMBean
         return "";
     }
 
-    public Object getAttribute(String name) throws AttributeNotFoundException, MBeanException, ReflectionException
+    /**
+     *  Gets an attribute using reflection from the MBean.
+     *  
+     *  @param name Name of the attribute to find.
+     *  @return The value returned by the corresponding getXXX() call
+     *  @throws AttributeNotFoundException If there is not such attribute
+     *  @throws MBeanException 
+     *  @throws ReflectionException
+     */
+    public Object getAttribute(String name) 
+        throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         Method m;
         Object res = null;
@@ -215,6 +230,12 @@ public abstract class SimpleMBean
         return res;
     }
 
+    /**
+     *  Gets multiple attributes at the same time.
+     *  
+     *  @param arg0 The attribute names to get
+     *  @return A list of attributes 
+     */
     public AttributeList getAttributes(String[] arg0)
     {
         AttributeList list = new AttributeList();
@@ -245,11 +266,22 @@ public abstract class SimpleMBean
         return list;
     }
 
+    /**
+     *  Return the MBeanInfo structure.
+     *  
+     *  @return the MBeanInfo
+     */
     public MBeanInfo getMBeanInfo()
     {
         return m_beanInfo;
     }
 
+    /**
+     *  Invokes a particular method.
+     *  
+     *  @param arg0 Method name
+     *  @param arg1 A list of arguments for the invocation
+     */
     public Object invoke(String arg0, Object[] arg1, String[] arg2)
         throws MBeanException, ReflectionException
     {

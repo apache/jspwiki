@@ -347,7 +347,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -434,7 +434,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -544,7 +544,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -573,7 +573,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -652,7 +652,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -797,7 +797,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {
@@ -897,7 +897,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         {
             try
             {
-                conn.close();
+                if( conn != null ) conn.close();
             }
             catch( Exception e )
             {

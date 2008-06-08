@@ -33,7 +33,7 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  *  Manages progressing items.  In general this class is used whenever JSPWiki
  *  is doing something which may require a long time.  In addition, this manager
  *  provides a JSON interface for finding remotely what the progress is.  The
- *  JSON object name is JSON_PROGRESSTRACKER = "{@value JSON_PROGRESSTRACKER}".
+ *  JSON object name is JSON_PROGRESSTRACKER = "{@value #JSON_PROGRESSTRACKER}".
  *
  *  @since  2.6
  */
