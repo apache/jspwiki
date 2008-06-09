@@ -1,3 +1,21 @@
+2008-06-09  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-36
+        
+        * JSPWIKI-14: checkPermissions code in MetaWeblogHandler is now
+        functional.
+        
+        * JSPWIKI-228: Added patch from Alexander Chow to fix a problem
+        where multiple headings with the same text were producing illegal
+        XML through duplicated ID attributes.
+        
+        * JSPWIKI-274: Was fixed already in svn-31.
+        
+        * JSPWIKI-286: Fixed a couple of typos in Finnish localization.
+        
+        * JSPWIKI-285: Group.jsp had a wrong quote char in English,
+        Dutch and German translations.
+
 2008-06-08  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-35
