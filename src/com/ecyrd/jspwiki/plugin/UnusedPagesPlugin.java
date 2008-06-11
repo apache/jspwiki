@@ -82,7 +82,7 @@ public class UnusedPagesPlugin
         if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
         {
             wikitext = "" + links.size();
-            if (m_lastModified & links.size()!=0)
+            if (m_lastModified && links.size()!=0)
             {
                 wikitext = links.size() + " (" + m_dateFormat.format(m_dateLastModified) + ")";
             }

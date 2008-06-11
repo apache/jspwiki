@@ -612,6 +612,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     private class LockReaper extends WikiBackgroundThread
     {
+        /**
+         *  Create a LockReaper for a given engine.
+         *  
+         *  @param engine WikiEngine to own this thread.
+         */
         public LockReaper( WikiEngine engine )
         {
             super( engine, 60 );

@@ -479,7 +479,7 @@ public final class WikiSession implements WikiEventListener
                     case WikiSecurityEvent.PRINCIPAL_ADD:
                     {
                         WikiSession target = (WikiSession)e.getTarget();
-                        if ( this.equals( target ) & m_status == AUTHENTICATED )
+                        if ( this.equals( target ) && m_status == AUTHENTICATED )
                         {
                             Set<Principal> principals = m_subject.getPrincipals();
                             principals.add( (Principal)e.getPrincipal());

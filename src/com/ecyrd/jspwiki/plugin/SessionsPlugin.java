@@ -89,13 +89,13 @@ public class SessionsPlugin
                     // we already have an entry, increase the counter:
                     int numSessions = distinctPrincipals.get(principalName).intValue();
                     // store the new value:
-                    distinctPrincipals.put(principalName, new Integer(++numSessions));
+                    distinctPrincipals.put(principalName, ++numSessions);
                 }
                 else
                 {
                     // first time we see this entry, add entry to HashMap with
                     // value 1
-                    distinctPrincipals.put(principalName, new Integer(1));
+                    distinctPrincipals.put(principalName, 1);
                 }
             }
             //

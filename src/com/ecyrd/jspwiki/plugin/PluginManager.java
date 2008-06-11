@@ -490,7 +490,7 @@ public class PluginManager extends ModuleManager
                 break;
 
               case StreamTokenizer.TT_NUMBER:
-                s = Integer.toString( new Double(tok.nval).intValue() );
+                s = Integer.toString( (int) tok.nval );
                 potentialEmptyLine = false;
                 break;
 

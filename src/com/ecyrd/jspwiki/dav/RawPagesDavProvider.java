@@ -69,7 +69,7 @@ public class RawPagesDavProvider extends WikiDavProvider
             {
                 String pageName = ((WikiPage)i.next()).getName();
                 
-                Character firstChar = new Character(Character.toLowerCase(pageName.charAt(0)));
+                Character firstChar = Character.valueOf(Character.toLowerCase(pageName.charAt(0)));
                 
                 if( !charList.contains( firstChar ) )
                 {

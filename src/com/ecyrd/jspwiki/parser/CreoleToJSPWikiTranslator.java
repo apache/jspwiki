@@ -64,13 +64,13 @@ public class CreoleToJSPWikiTranslator
     // [{$creolepagefilter.creoleversion}]
     // [{$creolepagefilter.linebreak}] -> bloglike/wikilike
 
-    public static String VAR_VERSION = "1.0.3";
+    public static final String VAR_VERSION = "1.0.3";
 
-    public static String VAR_CREOLE_VERSION = "1.0";
+    public static final String VAR_CREOLE_VERSION = "1.0";
 
-    public static String VAR_LINEBREAK_BLOGLIKE = "bloglike";
+    public static final String VAR_LINEBREAK_BLOGLIKE = "bloglike";
 
-    public static String VAR_LINEBREAK_C2LIKE = "c2like";
+    public static final String VAR_LINEBREAK_C2LIKE = "c2like";
 
     private static final String CREOLE_BOLD = "\\*\\*((?s:.)*?)(\\*\\*|(\n\n|\r\r|\r\n\r\n))";
 

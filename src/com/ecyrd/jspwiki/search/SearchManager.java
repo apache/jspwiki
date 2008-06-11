@@ -166,7 +166,7 @@ public class SearchManager
                         SearchResult sr = (SearchResult)i.next();
                         HashMap<String,Object> hm = new HashMap<String,Object>();
                         hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", new Integer(sr.getScore()) );
+                        hm.put( "score", sr.getScore() );
                         list.add( hm );
                     }
                 }

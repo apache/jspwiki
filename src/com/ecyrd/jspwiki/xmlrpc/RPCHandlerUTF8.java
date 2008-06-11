@@ -94,7 +94,7 @@ public class RPCHandlerUTF8
                     (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
         ht.put( "lastModified", cal.getTime() );
-        ht.put( "version", new Integer(page.getVersion()) );
+        ht.put( "version", page.getVersion() );
 
         if( page.getAuthor() != null )
         {

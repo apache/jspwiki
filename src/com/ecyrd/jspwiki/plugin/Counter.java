@@ -79,7 +79,7 @@ public class Counter
 
         if( val == null )
         {
-            val = new Integer( 0 );
+            val = 0;
         }
         
         //
@@ -106,7 +106,7 @@ public class Counter
                 increment = (new Integer((String)incrementObj)).intValue();
             }
 
-            val = new Integer( val.intValue() + increment );
+            val = val + increment;
         }
         
         context.setVariable( countername, val );

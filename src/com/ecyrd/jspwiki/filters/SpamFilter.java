@@ -333,9 +333,9 @@ public class SpamFilter
         Integer score = (Integer)context.getVariable( ATTR_SPAMFILTER_SCORE );
 
         if( score != null )
-            score = new Integer( score.intValue()+1 );
+            score = score+1;
         else
-            score = new Integer( 1 );
+            score = 1;
 
         context.setVariable( ATTR_SPAMFILTER_SCORE, score );
     }

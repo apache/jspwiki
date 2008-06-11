@@ -76,7 +76,7 @@ public final class WatchDog
         Thread t = Thread.currentThread();
         WatchDog wd = null;
 
-        WeakReference<WatchDog> w = c_kennel.get( new Integer(t.hashCode()) );
+        WeakReference<WatchDog> w = c_kennel.get( t.hashCode() );
 
         if( w != null ) wd = w.get();
 
@@ -87,7 +87,7 @@ public final class WatchDog
 
             synchronized( c_kennel )
             {
-                c_kennel.put( new Integer(t.hashCode()), w );
+                c_kennel.put( t.hashCode(), w );
             }
         }
 

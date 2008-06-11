@@ -187,9 +187,9 @@ public class TraditionalDiffProvider implements DiffProvider
             Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };
             fmt.setFormats( formats );
             
-            Object[] params = { new Integer(changed.first() + 1), 
-                                new Integer(changed.size()),
-                                new Integer(changed.size()) };
+            Object[] params = { changed.first() + 1, 
+                                changed.size(),
+                                changed.size() };
             m_result.append( fmt.format(params) );
             m_result.append(CSS_DIFF_CLOSE);
         }
