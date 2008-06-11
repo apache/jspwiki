@@ -1,5 +1,12 @@
 2008-06-09  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-37
+        
+        * JSPWIKI-290: ReferenceManager was not updating the page
+        references correctly after a rename.  Fix by Harry Metske.
+
+2008-06-09  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.7.0-svn-36
         
         * JSPWIKI-14: checkPermissions code in MetaWeblogHandler is now

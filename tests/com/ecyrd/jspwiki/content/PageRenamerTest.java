@@ -1,4 +1,4 @@
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.content;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -7,6 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 public class PageRenamerTest extends TestCase

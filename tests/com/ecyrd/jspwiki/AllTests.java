@@ -1,12 +1,17 @@
 
 package com.ecyrd.jspwiki;
 
-import java.util.Properties;
-import org.apache.log4j.PropertyConfigurator;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.log4j.PropertyConfigurator;
+
+import com.ecyrd.jspwiki.content.PageRenamerTest;
 
 public class AllTests extends TestCase
 {
@@ -43,7 +48,6 @@ public class AllTests extends TestCase
 
         suite.addTest( FileUtilTest.suite() );
         suite.addTest( PageManagerTest.suite() );
-        suite.addTest( PageRenamerTest.suite() );
         suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( ReleaseTest.suite() );
@@ -53,6 +57,7 @@ public class AllTests extends TestCase
         // suite.addTest( TranslatorReaderTest.suite() );
         suite.addTest( WikiSessionTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
+        suite.addTest( com.ecyrd.jspwiki.content.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.dav.AllTests.suite() );

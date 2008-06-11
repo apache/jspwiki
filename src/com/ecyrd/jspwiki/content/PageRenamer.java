@@ -144,8 +144,7 @@ public class PageRenamer
         //
         
         engine.getReferenceManager().pageRemoved( fromPage );
-        engine.getReferenceManager().updateReferences( renameTo, 
-                                                       engine.scanWikiLinks( toPage, engine.getPureText( toPage )) );
+        engine.updateReferences( toPage );
 
         //
         //  Update referrers first
@@ -218,8 +217,7 @@ public class PageRenamer
                 try
                 {
                     engine.getPageManager().putPageText( p, newText );
-                    engine.getReferenceManager().updateReferences( p.getName(), 
-                                                                   engine.scanWikiLinks( p, engine.getPureText( p )) );
+                    engine.updateReferences( p );
                 }
                 catch( ProviderException e )
                 {
