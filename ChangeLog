@@ -4,6 +4,8 @@
         
         * JSPWIKI-290: ReferenceManager was not updating the page
         references correctly after a rename.  Fix by Harry Metske.
+        
+        * Fixed also a number of miscallaneous FindBugs issues.
 
 2008-06-09  Janne Jalkanen <jalkanen@apache.org>
 

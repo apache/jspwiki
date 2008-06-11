@@ -258,7 +258,7 @@ public class WikiJSPFilter extends WikiServletFilter
             return new MyServletOutputStream( m_output );
         }
 
-        class MyServletOutputStream extends ServletOutputStream
+        static class MyServletOutputStream extends ServletOutputStream
         {
             CharArrayWriter m_buffer;
 

@@ -93,7 +93,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
             HttpServletRequest request = hcb.getRequest();
             HttpSession session = ( request == null ) ? null : request.getSession( false );
             String sid = ( session == null ) ? NULL : session.getId();
-            String name = getUserCookie( request );
+            String name = (request != null) ? getUserCookie( request ) : null;
             if ( name == null )
             {
                 if ( log.isDebugEnabled() )

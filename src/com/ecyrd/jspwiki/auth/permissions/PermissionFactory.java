@@ -88,7 +88,7 @@ public final class PermissionFactory
         // Alternative implementation below, but it does create an extra StringBuffer.
         //String         key = wiki+":"+page+":"+actions;
         
-        Integer key = new Integer( wiki.hashCode() ^ page.hashCode() ^ actions.hashCode() );
+        Integer key = wiki.hashCode() ^ page.hashCode() ^ actions.hashCode();
    
         //
         //  It's fine if two threads update the cache, since the objects mean the same

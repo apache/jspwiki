@@ -175,7 +175,7 @@ public class RPCServlet extends HttpServlet
         }
     }
 
-    private class LocalHandler
+    private static class LocalHandler
         implements ContextXmlRpcHandler
     {
         private Class m_clazz;

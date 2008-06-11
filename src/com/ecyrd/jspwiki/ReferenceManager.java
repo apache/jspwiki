@@ -342,11 +342,7 @@ public class ReferenceManager
         }
         finally
         {
-            try
-            {
-                if( in != null ) in.close();
-            }
-            catch( IOException ex ) {}
+            if( in != null ) in.close();
         }
 
         return saved;
@@ -483,11 +479,7 @@ public class ReferenceManager
         }
         finally
         {
-            try
-            {
-                if( in != null ) in.close();
-            }
-            catch( IOException ex ) {}
+            if( in != null ) in.close();
         }
 
         return saved;

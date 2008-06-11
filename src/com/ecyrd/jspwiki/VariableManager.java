@@ -365,7 +365,7 @@ public class VariableManager
      *  @since 2.7.0
      *
      */
-    private class SystemVariables
+    private static class SystemVariables
     {
         private WikiContext m_context;
 

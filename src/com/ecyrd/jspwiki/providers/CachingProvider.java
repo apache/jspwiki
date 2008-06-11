@@ -892,7 +892,7 @@ public class CachingProvider
         /**
          * Returns a clone of the set - you cannot manipulate this.
          *
-         * @return
+         * @return A Set of WikiPage objects.
          */
         public Set getAllItems()
         {
@@ -930,7 +930,7 @@ public class CachingProvider
 
             if( item != null )
             {
-                m_allItems.remove( item );
+                m_allItems.remove( item.getName() );
             }
         }
 

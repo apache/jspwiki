@@ -820,7 +820,7 @@ public class AttachmentServlet
      *  
      *  @author Janne Jalkanen
      */
-    private class UploadListener
+    private static class UploadListener
        extends    ProgressItem
        implements ProgressListener
     {

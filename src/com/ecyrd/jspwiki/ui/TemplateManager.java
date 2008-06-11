@@ -424,12 +424,13 @@ public class TemplateManager
         LinkedHashMap resultMap = new LinkedHashMap();
 
         String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
+        JarInputStream jarStream = null;
         
         try
         {
             JarEntry entry;
             InputStream inputStream = pageContext.getServletContext().getResourceAsStream(I18NRESOURCE_PATH);
-            JarInputStream jarStream = new JarInputStream(inputStream);
+            jarStream = new JarInputStream(inputStream);
 
             while ((entry = jarStream.getNextJarEntry()) != null)
             {
@@ -458,7 +459,18 @@ public class TemplateManager
                 log.debug("Could not search jar file '" + I18NRESOURCE_PATH + 
                           "'for properties files due to an IOException: \n" + ioe.getMessage());
         }
-
+        finally
+        {
+            if( jarStream != null ) 
+            {
+                try 
+                { 
+                    jarStream.close(); 
+                } 
+                catch(IOException e) {}
+            }
+        }
+        
         return resultMap;
     }
 
