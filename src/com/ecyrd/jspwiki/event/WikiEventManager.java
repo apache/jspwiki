@@ -154,10 +154,10 @@ public final class WikiEventManager
     private static WikiEventListener c_monitor = null;
 
     /* The Map of client object to WikiEventDelegate. */
-    private final Map m_delegates = new HashMap();
+    private final Map<Object, WikiEventDelegate> m_delegates = new HashMap<Object, WikiEventDelegate>();
 
     /* The Vector containing any preloaded WikiEventDelegates. */
-    private final Vector m_preloadCache = new Vector();
+    private final Vector<WikiEventDelegate> m_preloadCache = new Vector<WikiEventDelegate>();
 
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance = null;
@@ -391,7 +391,7 @@ public final class WikiEventManager
                 // then see if any of the cached delegates match the class of the incoming client
                 for( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) // start with most-recently added
                 {
-                    WikiEventDelegate delegate = (WikiEventDelegate)m_preloadCache.elementAt(i);
+                    WikiEventDelegate delegate = m_preloadCache.elementAt(i);
                     if( delegate.getClientClass() == null
                         || delegate.getClientClass().equals(client.getClass()) )
                     {
@@ -406,7 +406,7 @@ public final class WikiEventManager
                 }
             }
             // otherwise treat normally...
-            WikiEventDelegate delegate = (WikiEventDelegate)m_delegates.get( client );
+            WikiEventDelegate delegate = m_delegates.get( client );
             if( delegate == null )
             {
                 delegate = new WikiEventDelegate( client );
@@ -434,7 +434,7 @@ public final class WikiEventManager
     {
         /* A list of event listeners for this instance. */
 
-        private ArrayList m_listenerList = new ArrayList();
+        private ArrayList<WeakReference<WikiEventListener>> m_listenerList = new ArrayList<WeakReference<WikiEventListener>>();
 
         private Class  m_class  = null;
 
@@ -474,7 +474,7 @@ public final class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                TreeSet set = new TreeSet( new WikiEventListenerComparator() );
+                TreeSet<WikiEventListener> set = new TreeSet<WikiEventListener>( new WikiEventListenerComparator() );
 
                 for( Iterator i = m_listenerList.iterator(); i.hasNext(); )
                 {
@@ -501,7 +501,7 @@ public final class WikiEventManager
         {
             synchronized( m_listenerList )
             {
-                return m_listenerList.add( new WeakReference(listener) );
+                return m_listenerList.add( new WeakReference<WikiEventListener>(listener) );
             }
         }
 
@@ -578,7 +578,7 @@ public final class WikiEventManager
                     {
                         for( int i = 0; i < m_listenerList.size(); i++ )
                         {
-                            WeakReference w = (WeakReference)m_listenerList.get(i);
+                            WeakReference w = m_listenerList.get(i);
 
                             if( w.get() == null ) m_listenerList.remove(i--);
                         }
@@ -598,22 +598,14 @@ public final class WikiEventManager
 
     } // end inner class WikiEventDelegate
 
-    private static class WikiEventListenerComparator implements Comparator
+    private static class WikiEventListenerComparator implements Comparator<WikiEventListener>
     {
         // TODO: This method is a critical performance bottleneck
-        public int compare(Object arg0, Object arg1)
+        public int compare(WikiEventListener w0, WikiEventListener w1)
         {
-            if( arg0 instanceof WikiEventListener && arg1 instanceof WikiEventListener )
-            {
-                WikiEventListener w0 = (WikiEventListener) arg0;
-                WikiEventListener w1 = (WikiEventListener) arg1;
+            if( w1 == w0 || w0.equals(w1) ) return 0;
 
-                if( w1 == w0 || w0.equals(w1) ) return 0;
-
-                return w1.hashCode() - w0.hashCode();
-            }
-
-            throw new ClassCastException( arg1.getClass().getName() + " != " + arg0.getClass().getName() );
+            return w1.hashCode() - w0.hashCode();
         }
     }
 } // end com.ecyrd.jspwiki.event.WikiEventManager

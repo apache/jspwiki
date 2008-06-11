@@ -44,7 +44,7 @@ public class HTMLPagesDavProvider extends RawPagesDavProvider
         String st = path.getName();
         
         log.info("Listing contents for dir "+st);
-        ArrayList davItems = new ArrayList();
+        ArrayList<DavItem> davItems = new ArrayList<DavItem>();
         
         try
         {

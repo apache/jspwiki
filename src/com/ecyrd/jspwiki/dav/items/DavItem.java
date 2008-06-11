@@ -35,7 +35,7 @@ import com.ecyrd.jspwiki.dav.DavProvider;
 public abstract class DavItem
 {
     protected DavProvider m_provider;
-    protected ArrayList  m_items = new ArrayList();
+    protected ArrayList<DavItem> m_items = new ArrayList<DavItem>();
     protected DavPath     m_path;
     
     protected DavItem( DavProvider provider, DavPath path )
@@ -61,7 +61,7 @@ public abstract class DavItem
     
     public Iterator iterator( int depth )
     {
-        ArrayList list = new ArrayList();
+        ArrayList<DavItem> list = new ArrayList<DavItem>();
         
         if( depth == 0 )
         {
@@ -82,7 +82,7 @@ public abstract class DavItem
                                 
                 for( Iterator j = di.iterator(-1); i.hasNext(); )
                 {
-                    list.add( j.next() );
+                    list.add( (DavItem)j.next() );
                 }
             }
         }

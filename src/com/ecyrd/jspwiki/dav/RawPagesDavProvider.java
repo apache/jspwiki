@@ -59,7 +59,7 @@ public class RawPagesDavProvider extends WikiDavProvider
 
     protected Collection listAlphabeticals( DavPath path )
     {
-        ArrayList charList = new ArrayList();
+        ArrayList<Character> charList = new ArrayList<Character>();
         
         try
         {
@@ -84,7 +84,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         
         Collections.sort( charList );
         
-        ArrayList result = new ArrayList();
+        ArrayList<DavItem> result = new ArrayList<DavItem>();
         
         for( Iterator i = charList.iterator(); i.hasNext(); )
         {
@@ -104,7 +104,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         String st = path.getName();
         
         log.info("Listing contents for dir "+st);
-        ArrayList davItems = new ArrayList();
+        ArrayList<DavItem> davItems = new ArrayList<DavItem>();
         
         try
         {

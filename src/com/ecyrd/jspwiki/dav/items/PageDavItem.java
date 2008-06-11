@@ -59,9 +59,9 @@ public class PageDavItem extends DavItem
         return m_page;
     }
     
-    protected Collection getCommonProperties()
+    protected Collection<Element> getCommonProperties()
     {
-        ArrayList set = new ArrayList();
+        ArrayList<Element> set = new ArrayList<Element>();
         
         set.add( new Element("resourcetype",m_davns) );
         set.add( new Element("creator",m_dcns).setText(m_page.getAuthor()) );
@@ -76,7 +76,7 @@ public class PageDavItem extends DavItem
      */
     public Collection getPropertySet()
     {
-        Collection set = getCommonProperties();
+        Collection<Element> set = getCommonProperties();
         
         set.add( new Element("getcontentlength",m_davns).setText( Long.toString(getLength())) );
         set.add( new Element("getcontenttype",m_davns).setText( getContentType() ));

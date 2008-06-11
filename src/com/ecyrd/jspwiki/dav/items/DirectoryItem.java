@@ -55,7 +55,7 @@ public class DirectoryItem extends DavItem
 
     public Collection getPropertySet()
     {
-        ArrayList ts = new ArrayList();
+        ArrayList<Element> ts = new ArrayList<Element>();
         Namespace davns = Namespace.getNamespace( "DAV:" );
         
         ts.add( new Element("resourcetype",davns).addContent(new Element("collection",davns)) );

@@ -117,7 +117,7 @@ public class HTMLPageDavItem extends PageDavItem
 
     public Collection getPropertySet()
     {
-        Collection set = getCommonProperties();
+        Collection<Element> set = getCommonProperties();
 
         //
         //  Rendering the page for every single time is not really a very good idea.

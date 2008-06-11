@@ -37,7 +37,7 @@ import java.util.StringTokenizer;
  */
 public class DavPath
 {
-    private ArrayList m_parts = new ArrayList();
+    private ArrayList<String> m_parts = new ArrayList<String>();
     
     private boolean   m_isAbsolute  = false;
     private boolean   m_isDirectory = false;
@@ -153,7 +153,7 @@ public class DavPath
    
         for( int i = 0; i < m_parts.size()-(m_isDirectory ? 0 : 1); i++ )
         {
-            result.append( (String)m_parts.get(i) );
+            result.append( m_parts.get(i) );
             result.append( "/" );
         }
         
@@ -170,7 +170,7 @@ public class DavPath
     public String filePart()
     {
         if( m_parts.size() > 0 && !m_isDirectory )
-            return (String) m_parts.get( m_parts.size()-1 );
+            return m_parts.get( m_parts.size()-1 );
        
         return "";
     }
@@ -186,7 +186,7 @@ public class DavPath
         if( isRoot() ) return "/";
         if( !isDirectory() ) return filePart();
         
-        return (String) m_parts.get( m_parts.size()-1 );
+        return m_parts.get( m_parts.size()-1 );
     }
     
     /**
@@ -235,7 +235,7 @@ public class DavPath
         if( idx > size() )
             return null;
         
-        return (String)m_parts.get(idx);
+        return m_parts.get(idx);
     }
     
     /**

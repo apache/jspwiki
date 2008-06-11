@@ -37,7 +37,7 @@ public class WikiRootProvider extends WikiDavProvider
 
     public Collection listItems( DavPath path )
     {
-        ArrayList list = new ArrayList();
+        ArrayList<DavItem> list = new ArrayList<DavItem>();
         
         list.add( new TopLevelDavItem(this) );
         

@@ -57,7 +57,7 @@ public class AttachmentItem extends PageDavItem
      */
     public Collection getPropertySet()
     {
-        Collection set = getCommonProperties();
+        Collection<Element> set = getCommonProperties();
 
         set.add( new Element("getcontentlength",m_davns).setText( Long.toString(getLength())) );
         set.add( new Element("getcontenttype",m_davns).setText( getContentType() ));
