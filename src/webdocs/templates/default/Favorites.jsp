@@ -82,6 +82,8 @@
   </wiki:Translate>
   </wiki:UserCheck>
 
+  <wiki:Permission permission="view">
+
   <%-- LeftMenu is automatically generated from a Wiki page called "LeftMenu" --%>
   <div class="leftmenu">
     <wiki:InsertPage page="LeftMenu" />
@@ -104,6 +106,8 @@
       </div>
     </wiki:NoSuchPage>
   </div>
+
+  </wiki:Permission>
 
   </wiki:CheckRequestContext>
   
