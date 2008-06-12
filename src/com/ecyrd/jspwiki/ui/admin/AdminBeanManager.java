@@ -50,7 +50,7 @@ import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
 public class AdminBeanManager implements WikiEventListener
 {
     private WikiEngine m_engine;
-    private ArrayList  m_allBeans;
+    private ArrayList<AdminBean>  m_allBeans;
 
     private MBeanServer m_mbeanServer = null;
 
@@ -195,7 +195,7 @@ public class AdminBeanManager implements WikiEventListener
     // FIXME: Should unload the beans first.
     private void reload()
     {
-        m_allBeans = new ArrayList();
+        m_allBeans = new ArrayList<AdminBean>();
 
         try
         {
@@ -249,9 +249,6 @@ public class AdminBeanManager implements WikiEventListener
     /**
      *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This
      *  will simply bind to the platform MBeanServer.
-     *
-     *  @author Janne Jalkanen
-     *
      */
     private static final class MBeanServerFactory15
     {

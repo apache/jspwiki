@@ -83,7 +83,7 @@ public class EditorManager extends ModuleManager
     /** Known attribute name for storing the user edited text inside a session or a page context */
     public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
 
-    private             Map          m_editors;
+    private             Map<String, WikiEditorInfo>  m_editors;
 
     private static      Logger       log             = Logger.getLogger( EditorManager.class );
 
@@ -111,7 +111,7 @@ public class EditorManager extends ModuleManager
     {
         log.info( "Registering editor modules" );
 
-        m_editors = new HashMap();
+        m_editors = new HashMap<String, WikiEditorInfo>();
         SAXBuilder builder = new SAXBuilder();
 
         try
@@ -236,9 +236,9 @@ public class EditorManager extends ModuleManager
     {
         String[] editors = new String[m_editors.size()];
 
-        Set keys = m_editors.keySet();
+        Set<String> keys = m_editors.keySet();
 
-        return (String[]) keys.toArray( editors );
+        return keys.toArray( editors );
     }
 
     /**
@@ -253,7 +253,7 @@ public class EditorManager extends ModuleManager
 
         String editor = getEditorName( context );
 
-        WikiEditorInfo ed = (WikiEditorInfo)m_editors.get( editor );
+        WikiEditorInfo ed = m_editors.get( editor );
 
         if( ed != null )
         {
@@ -324,7 +324,7 @@ public class EditorManager extends ModuleManager
 
     public Collection modules()
     {
-        ArrayList ls = new ArrayList();
+        ArrayList<WikiModuleInfo> ls = new ArrayList<WikiModuleInfo>();
 
         ls.addAll( m_editors.values() );
 

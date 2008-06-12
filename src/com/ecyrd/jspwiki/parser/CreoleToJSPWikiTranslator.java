@@ -163,9 +163,9 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static Map          c_protectionMap = new HashMap();
+    private static Map<String, String> c_protectionMap = new HashMap<String, String>();
 
-    private        ArrayList    m_hashList = new ArrayList();
+    private        ArrayList<String> m_hashList = new ArrayList<String>();
 
     public String translateSignature(Properties wikiProps, final String content, String username)
     {
@@ -334,7 +334,7 @@ public class CreoleToJSPWikiTranslator
         for (int i = it.length - 1; i >= 0; i--)
         {
             String hash = (String) it[i];
-            String protectedMarkup = (String) c_protectionMap.get(hash);
+            String protectedMarkup = c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
             if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
                 !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
@@ -362,7 +362,7 @@ public class CreoleToJSPWikiTranslator
     private String protectMarkup(String content)
     {
         c_protectionMap.clear();
-        this.m_hashList = new ArrayList();
+        m_hashList = new ArrayList<String>();
         content = protectMarkup(content, PREFORMATTED_PROTECTED, "", "");
         content = protectMarkup(content, URL_PROTECTED, "", "");
         content = protectMarkup(content, ESCAPE_PROTECTED, "", "");
@@ -377,18 +377,18 @@ public class CreoleToJSPWikiTranslator
     {
         Set keySet = wikiProps.keySet();
         Object[] keys = keySet.toArray();
-        ArrayList result = new ArrayList();
+        ArrayList<String[]> result = new ArrayList<String[]>();
 
-        for (int i = 0; i < keys.length; i++)
+        for( int i = 0; i < keys.length; i++ )
         {
             String key = keys[i] + "";
-            String value = wikiProps.getProperty(keys[i] + "");
-            if ((key).indexOf("creole.imagePlugin.para.%") > -1)
+            String value = wikiProps.getProperty( keys[i] + "" );
+            if( key.indexOf( "creole.imagePlugin.para.%" ) > -1 )
             {
                 String[] pair = new String[2];
-                pair[0] = key.replaceAll("creole.imagePlugin.para.%", "");
+                pair[0] = key.replaceAll( "creole.imagePlugin.para.%", "" );
                 pair[1] = value;
-                result.add(pair);
+                result.add( pair );
             }
         }
         return result;
@@ -497,7 +497,7 @@ public class CreoleToJSPWikiTranslator
                 String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
-                this.m_hashList.add(hash);
+                m_hashList.add(hash);
             }
             catch (NoSuchAlgorithmException e)
             {

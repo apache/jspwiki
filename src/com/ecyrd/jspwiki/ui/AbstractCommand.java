@@ -169,7 +169,7 @@ public abstract class AbstractCommand implements Command
      */
     public static final Command[] allCommands()
     {
-        return (Command[])ALL_COMMANDS.clone();
+        return ALL_COMMANDS.clone();
     }
 
     /**

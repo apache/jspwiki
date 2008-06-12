@@ -378,14 +378,15 @@ public class TemplateManager
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
      */
+    @SuppressWarnings("unchecked")
     public Set listSkins( PageContext pageContext, String template )
     {
         String place = makeFullJSPName( template, SKIN_DIRECTORY );
 
         ServletContext sContext = pageContext.getServletContext();
 
-        Set skinSet = sContext.getResourcePaths( place );
-        TreeSet resultSet = new TreeSet();
+        Set<String> skinSet = sContext.getResourcePaths( place );
+        TreeSet<String> resultSet = new TreeSet<String>();
 
         if( log.isDebugEnabled() ) log.debug( "Listings skins from "+place );
 
@@ -393,7 +394,7 @@ public class TemplateManager
         {
             String[] skins = {};
 
-            skins = (String[]) skinSet.toArray(skins);
+            skins = skinSet.toArray(skins);
 
             for (int i = 0; i < skins.length; i++)
             {
@@ -421,7 +422,7 @@ public class TemplateManager
      */
     public Map listLanguages(PageContext pageContext)
     {
-        LinkedHashMap resultMap = new LinkedHashMap();
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
 
         String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
         JarInputStream jarStream = null;
@@ -486,8 +487,8 @@ public class TemplateManager
     {
         WikiContext context = WikiContext.findContext( pageContext ); 
         Properties props = m_engine.getWikiProperties();
-        ArrayList tfArr = new ArrayList(40);
-        LinkedHashMap resultMap = new LinkedHashMap();
+        ArrayList<String> tfArr = new ArrayList<String>(40);
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
 
         /* filter timeformat properties */
         for (Enumeration e = props.propertyNames(); e.hasMoreElements();)
@@ -516,7 +517,7 @@ public class TemplateManager
 
             for (int i = 0; i < tfArr.size(); i++)
             {
-                tfArr.set(i, props.getProperty((String) tfArr.get(i)));
+                tfArr.set(i, props.getProperty(tfArr.get(i)));
             }
         }
 
@@ -542,7 +543,7 @@ public class TemplateManager
             {
                 try
                 {
-                    String f = (String) tfArr.get(i);
+                    String f = tfArr.get(i);
                     fmt.applyPattern(f);
 
                     resultMap.put(f, fmt.format(d));
@@ -568,7 +569,7 @@ public class TemplateManager
      */
     public Map listTimeZones(PageContext pageContext)
     {
-        LinkedHashMap resultMap = new LinkedHashMap();
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
 
         String[][] tzs = { { "GMT-12", "Enitwetok, Kwajalien" },
                           { "GMT-11", "Nome, Midway Island, Samoa" }, 
@@ -736,20 +737,21 @@ public class TemplateManager
      *  @param type What kind of a request should be added?
      *  @param resource The resource to add.
      */
+    @SuppressWarnings("unchecked")
     public static void addResourceRequest( WikiContext ctx, String type, String resource )
     {
-        HashMap resourcemap = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+        HashMap<String,Vector<String>> resourcemap = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
         if( resourcemap == null )
         {
-            resourcemap = new HashMap();
+            resourcemap = new HashMap<String,Vector<String>>();
         }
 
-        Vector resources = (Vector) resourcemap.get( type );
+        Vector<String> resources = resourcemap.get( type );
 
         if( resources == null )
         {
-            resources = new Vector();
+            resources = new Vector<String>();
         }
 
         String resourceString = null;
@@ -795,19 +797,20 @@ public class TemplateManager
      *  @return a String array for the resource requests
      */
 
+    @SuppressWarnings("unchecked")
     public static String[] getResourceRequests( WikiContext ctx, String type )
     {
-        HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+        HashMap<String,Vector<String>> hm = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
         if( hm == null ) return new String[0];
 
-        Vector resources = (Vector) hm.get( type );
+        Vector<String> resources = hm.get( type );
 
         if( resources == null ) return new String[0];
 
         String[] res = new String[resources.size()];
 
-        return (String[]) resources.toArray( res );
+        return resources.toArray( res );
     }
 
     /**
@@ -816,19 +819,20 @@ public class TemplateManager
      * @param ctx the wiki context
      * @return the array of types requested
      */
+    @SuppressWarnings("unchecked")
     public static String[] getResourceTypes( WikiContext ctx )
     {
         String[] res = new String[0];
 
         if( ctx != null )
         {
-            HashMap hm = (HashMap) ctx.getVariable( RESOURCE_INCLUDES );
+            HashMap<String,String> hm = (HashMap<String,String>) ctx.getVariable( RESOURCE_INCLUDES );
 
             if( hm != null )
             {
-                Set keys = hm.keySet();
+                Set<String> keys = hm.keySet();
 
-                res = (String[]) keys.toArray( res );
+                res = keys.toArray( res );
             }
         }
 

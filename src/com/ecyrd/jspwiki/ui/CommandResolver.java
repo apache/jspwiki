@@ -77,16 +77,16 @@ public final class CommandResolver
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
     /** Private map with request contexts as keys, Commands as values */
-    private static final Map    CONTEXTS;
+    private static final Map<String, Command>    CONTEXTS;
 
     /** Private map with JSPs as keys, Commands as values */
-    private static final Map    JSPS;
+    private static final Map<String, Command>    JSPS;
 
     /** Store the JSP-to-Command and context-to-Command mappings */
     static
     {
-        CONTEXTS = new HashMap();
-        JSPS = new HashMap();
+        CONTEXTS = new HashMap<String, Command>();
+        JSPS = new HashMap<String, Command>();
         Command[] commands = AbstractCommand.allCommands();
         for( int i = 0; i < commands.length; i++ )
         {
@@ -103,7 +103,7 @@ public final class CommandResolver
     private final boolean       m_matchEnglishPlurals;
 
     /** Stores special page names as keys, and Commands as values. */
-    private final Map           m_specialPages;
+    private final Map<String, Command> m_specialPages;
 
     /**
      * Constructs a CommandResolver for a given WikiEngine. This constructor
@@ -115,7 +115,7 @@ public final class CommandResolver
     public CommandResolver( WikiEngine engine, Properties properties )
     {
         m_engine = engine;
-        m_specialPages = new HashMap();
+        m_specialPages = new HashMap<String, Command>();
 
         // Skim through the properties and look for anything with
         // the "special page" prefix. Create maps that allow us
@@ -133,7 +133,7 @@ public final class CommandResolver
                 {
                     specialPage = specialPage.trim();
                     jsp = jsp.trim();
-                    Command command = (Command) JSPS.get( jsp );
+                    Command command = JSPS.get( jsp );
                     if ( command == null )
                     {
                         Command redirect = RedirectCommand.REDIRECT;
@@ -160,7 +160,7 @@ public final class CommandResolver
      */
     public static Command findCommand( String context )
     {
-        Command command = (Command) CONTEXTS.get( context );
+        Command command = CONTEXTS.get( context );
         if ( command == null )
         {
             throw new IllegalArgumentException( "Unsupported wiki context: " + context + "." );
@@ -215,7 +215,7 @@ public final class CommandResolver
         // Can we find a special-page command matching the extracted page?
         if ( pageName != null )
         {
-            command = (AbstractCommand) m_specialPages.get( pageName );
+            command = m_specialPages.get( pageName );
         }
 
         // If we haven't found a matching command yet, extract the JSP path
@@ -227,7 +227,7 @@ public final class CommandResolver
             // Otherwise: use the default context
             if ( command == null )
             {
-                command = (AbstractCommand) CONTEXTS.get( defaultContext );
+                command = CONTEXTS.get( defaultContext );
                 if ( command == null )
                 {
                     throw new IllegalArgumentException( "Wiki context " + defaultContext + " is illegal." );
@@ -357,7 +357,7 @@ public final class CommandResolver
      */
     public final String getSpecialPageReference( String page )
     {
-        Command command = (Command) m_specialPages.get( page );
+        Command command = m_specialPages.get( page );
 
         if ( command != null )
         {
@@ -410,7 +410,7 @@ public final class CommandResolver
         // Ok, see if we match against our standard list of JSPs
         if ( jsp.length() > 0 && JSPS.containsKey( jsp ) )
         {
-            return (Command)JSPS.get( jsp );
+            return JSPS.get( jsp );
         }
 
         return null;
