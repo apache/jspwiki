@@ -345,7 +345,7 @@ public class SpamFilter
      *
      * @param source
      * @param list
-     * @return
+     * @return A Collection of the Patterns that were found from the lists.
      */
     private Collection<Pattern> parseWordList( WikiPage source, String list )
     {
@@ -380,7 +380,7 @@ public class SpamFilter
      *  Pattern objects.
      *
      *  @param list
-     *  @return
+     *  @return The parsed blacklist patterns.
      */
     private Collection<Pattern> parseBlacklist( String list )
     {
@@ -932,10 +932,10 @@ public class SpamFilter
     }
 
     /**
-     *  Returns true, if this user should be ignored.
+     *  Returns true, if this user should be ignored.  For example, admin users.
      *
      * @param context
-     * @return
+     * @return True, if this users should be ignored.
      */
     private boolean ignoreThisUser(WikiContext context)
     {

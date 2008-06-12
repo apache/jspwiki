@@ -45,6 +45,7 @@ public class UnusedPagesPlugin
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -71,7 +72,7 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet sortedSet = new TreeSet();
+        TreeSet<?> sortedSet = new TreeSet<Object>();
         
         links = filterCollection( links );
         

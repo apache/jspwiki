@@ -31,6 +31,9 @@ import com.ecyrd.jspwiki.WikiContext;
  */
 public interface WikiPlugin
 {
+    /**
+     *  Name of the default plugin resource bundle.
+     */
     static final String CORE_PLUGINS_RESOURCEBUNDLE = "plugin.PluginResources";
 
     /**

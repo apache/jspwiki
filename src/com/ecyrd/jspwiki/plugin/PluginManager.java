@@ -614,6 +614,7 @@ public class PluginManager extends ModuleManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
+   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
@@ -1005,6 +1006,13 @@ public class PluginManager extends ModuleManager
         return ls;
     }
 
+    /**
+     *  Executes parse stage, unless plugins are disabled.
+     *  
+     *  @param content The content item.
+     *  @param context A WikiContext
+     *  @throws PluginException If something goes wrong.
+     */
     // FIXME: This method needs to be reintegrated with execute() above, since they
     //        share plenty of code.
     public void executeParse(PluginContent content, WikiContext context)

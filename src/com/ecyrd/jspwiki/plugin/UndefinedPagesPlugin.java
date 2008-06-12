@@ -36,6 +36,10 @@ import java.util.*;
 public class UndefinedPagesPlugin
     extends AbstractReferralPlugin
 {
+    /**
+     *  {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -44,7 +48,7 @@ public class UndefinedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet sortedSet = new TreeSet();
+        TreeSet<String> sortedSet = new TreeSet<String>();
 
         links = filterCollection( links );
 

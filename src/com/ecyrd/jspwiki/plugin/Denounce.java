@@ -53,9 +53,9 @@ public class Denounce implements WikiPlugin
 
     public static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
-    private static ArrayList c_refererPatterns = new ArrayList();
-    private static ArrayList c_agentPatterns   = new ArrayList();
-    private static ArrayList c_hostPatterns    = new ArrayList();
+    private static ArrayList<Pattern> c_refererPatterns = new ArrayList<Pattern>();
+    private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<Pattern>();
+    private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<Pattern>();
 
     private static String    c_denounceText    = "";
 

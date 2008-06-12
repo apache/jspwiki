@@ -118,6 +118,7 @@ public class WeblogPlugin
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
     }
 
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -226,10 +227,10 @@ public class WeblogPlugin
 
         try
         {
-            List blogEntries = findBlogEntries( engine.getPageManager(),
-                                                weblogName,
-                                                startTime.getTime(),
-                                                stopTime.getTime() );
+            List<WikiPage> blogEntries = findBlogEntries( engine.getPageManager(),
+                                                          weblogName,
+                                                          startTime.getTime(),
+                                                          stopTime.getTime() );
 
             Collections.sort( blogEntries, new PageDateComparator() );
 
@@ -393,7 +394,7 @@ public class WeblogPlugin
         throws ProviderException
     {
         Collection everyone = mgr.getAllPages();
-        ArrayList  result = new ArrayList();
+        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
@@ -452,17 +453,14 @@ public class WeblogPlugin
     /**
      *  Reverse comparison.
      */
-    private static class PageDateComparator implements Comparator
+    private static class PageDateComparator implements Comparator<WikiPage>
     {
-        public int compare( Object o1, Object o2 )
+        public int compare( WikiPage page1, WikiPage page2 )
         {
-            if( o1 == null || o2 == null )
+            if( page1 == null || page2 == null )
             {
                 return 0;
             }
-
-            WikiPage page1 = (WikiPage)o1;
-            WikiPage page2 = (WikiPage)o2;
 
             return page2.getLastModified().compareTo( page1.getLastModified() );
         }

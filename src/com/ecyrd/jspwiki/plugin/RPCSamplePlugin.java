@@ -36,7 +36,7 @@ public class RPCSamplePlugin implements WikiPlugin, RPCCallable
     /**
      *  This method is called when the Javascript is encountered by
      *  the browser.
-     *  @param echo
+     *  @param echo The parameter
      *  @return the string <code>JSON says:</code>, plus the value 
      *  supplied by the <code>echo</code> parameter
      */
@@ -46,7 +46,9 @@ public class RPCSamplePlugin implements WikiPlugin, RPCCallable
     }
     
 
-    
+    /**
+     *  {@inheritDoc}
+     */
     public String execute(WikiContext context, Map params) throws PluginException
     {
         JSONRPCManager.registerJSONObject( context, this );
