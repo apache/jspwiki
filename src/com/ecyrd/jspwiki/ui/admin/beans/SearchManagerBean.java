@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.ui.admin.beans;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.management.NotCompliantMBeanException;
 
@@ -92,9 +91,10 @@ public class SearchManagerBean extends SimpleAdminBean
                     setName("Reindexer started");
                 }
 
+                @SuppressWarnings("unchecked")
                 public void backgroundTask() throws Exception
                 {
-                    Collection allPages = m_engine.getPageManager().getAllPages();
+                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
 
                     SearchManager mgr = m_engine.getSearchManager();
                     m_max = allPages.size();
@@ -108,10 +108,8 @@ public class SearchManagerBean extends SimpleAdminBean
 
                     m_engine.getProgressManager().startProgress( pi, PROGRESS_ID );
 
-                    for( Iterator i = allPages.iterator(); i.hasNext(); )
+                    for( WikiPage page : allPages )
                     {
-                        WikiPage page = (WikiPage) i.next();
-
                         mgr.reindexPage(page);
                         m_count++;
                     }

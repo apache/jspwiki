@@ -62,9 +62,10 @@ public class PluginBean extends SimpleAdminBean
         return CORE;
     }
 
+    @SuppressWarnings("unchecked")
     public String doGet(WikiContext context)
     {
-        Collection plugins = m_engine.getPluginManager().modules();
+        Collection<WikiPluginInfo> plugins = m_engine.getPluginManager().modules();
 
         div root = new div();
 
@@ -81,12 +82,12 @@ public class PluginBean extends SimpleAdminBean
 
         tb.addElement(head);
 
-        for( Iterator i = plugins.iterator(); i.hasNext(); )
+        for( Iterator<WikiPluginInfo> i = plugins.iterator(); i.hasNext(); )
         {
             tr  row = new tr();
             tb.addElement( row );
 
-            WikiPluginInfo info = (WikiPluginInfo)i.next();
+            WikiPluginInfo info = i.next();
 
             row.addElement( new td(info.getName()) );
             row.addElement( new td(info.getAlias()) );
