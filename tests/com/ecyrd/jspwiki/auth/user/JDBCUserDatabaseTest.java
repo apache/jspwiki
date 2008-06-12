@@ -132,7 +132,7 @@ public class JDBCUserDatabaseTest extends TestCase
     {
         UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
         
-        Map<Serializable,Serializable> attributes = profile.getAttributes();
+        Map<String,Serializable> attributes = profile.getAttributes();
         assertEquals( 2, attributes.size() );
         assertTrue( attributes.containsKey( "attribute1" ) );
         assertTrue( attributes.containsKey( "attribute2" ) );
