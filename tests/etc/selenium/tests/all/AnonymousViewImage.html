@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>JSPWiki Test Anonymous View Image</title>
+</head>
+<body> 
+<table cellpadding="1" cellspacing="1" border="1">
+	<tbody>
+	<tr><td rowspan="1" colspan="3">
+	JSPWiki Test Anonymous View Image<br>See if we can view the JSPWiki logo
+	</td></tr>
+
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/images/jspwiki_logo_s.png</td>	<td>imgurl</td></tr>
+
+	<tr><td>open</td>	<td>${imgurl}</td>	<td>&nbsp;</td></tr>
+	<tr><td>assertBodyText</td>	<td></td>			<td>&nbsp;</td></tr>
+
+	<tr><td>store</td>	<td>../images/jspwiki_logo_ss.png</td>	<td>imgurl</td></tr>
+
+	<tr><td>open</td>			<td>${imgurl}</td>	<td>&nbsp;</td></tr>
+	<tr><td>assertNotBodyText</td>	<td></td>			<td>&nbsp;</td></tr>
+
+	</tbody>
+</table>
+
+</body>
+</html>
