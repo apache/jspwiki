@@ -519,16 +519,16 @@ public final class AuthorizationManager
     }
 
     /**
-     * Determines whether a Subject posesses a given "static" Permission as
+     * Determines whether a Subject possesses a given "static" Permission as
      * defined in the security policy file. This method uses standard Java 2
      * security calls to do its work. Note that the current access control
      * context's <code>codeBase</code> is effectively <em>this class</em>,
      * not that of the caller. Therefore, this method will work best when what
      * matters in the policy is <em>who</em> makes the permission check, not
      * what the caller's code source is. Internally, this method works by
-     * excuting <code>Subject.doAsPrivileged</code> with a privileged action
+     * executing <code>Subject.doAsPrivileged</code> with a privileged action
      * that simply calls {@link java.security.AccessController#checkPermission(Permission)}.
-     * @link AccessController#checkPermission(java.security.Permission). A
+     * @see AccessController#checkPermission(java.security.Permission) . A
      *       caught exception (or lack thereof) determines whether the privilege
      *       is absent (or present).
      * @param session the WikiSession whose permission status is being queried

@@ -587,6 +587,7 @@ public final class UserManager
          * No-op.
          * @throws WikiSecurityException never...
          */
+        @SuppressWarnings("deprecation")
         public void commit() throws WikiSecurityException
         {
             // No operation
