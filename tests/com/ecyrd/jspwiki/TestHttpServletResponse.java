@@ -38,10 +38,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class TestHttpServletResponse implements HttpServletResponse
 {
-    private Set m_cookies = new HashSet();
+    private Set<Cookie> m_cookies = new HashSet<Cookie>();
     
     public Cookie[] getCookies() {
-        return (Cookie[])m_cookies.toArray(new Cookie[m_cookies.size()]);
+        return m_cookies.toArray(new Cookie[m_cookies.size()]);
     }
     
     public void addCookie(Cookie arg0)

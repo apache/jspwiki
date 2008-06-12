@@ -150,8 +150,8 @@ public class TestJDBCDataSource implements DataSource
 
         // Load the driver using the sytem class loader
         final ClassLoader parent = ClassLoader.getSystemClassLoader();
-        URLClassLoader loader = (URLClassLoader)AccessController.doPrivileged( new PrivilegedAction() {
-            public Object run() {
+        URLClassLoader loader = AccessController.doPrivileged( new PrivilegedAction<URLClassLoader>() {
+            public URLClassLoader run() {
                 return new URLClassLoader( new URL[] { driverURL }, parent );
             }
         });

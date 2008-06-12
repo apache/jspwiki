@@ -20,8 +20,8 @@ import com.ecyrd.jspwiki.Release;
  */
 public class TranslationsCheck
 {
-    private static final TreeSet allProps = new TreeSet();  // sorted, no duplicates
-    private static final TreeSet duplProps = new TreeSet();
+    private static final TreeSet<String> allProps = new TreeSet<String>();  // sorted, no duplicates
+    private static final TreeSet<String> duplProps = new TreeSet<String>();
     
     // Change these to your settings...
     static String base = ".";
@@ -122,11 +122,11 @@ public class TranslationsCheck
 
     private static List sortedNames(Properties p)
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         Enumeration iter = p.propertyNames();
         while (iter.hasMoreElements())
         {
-            list.add(iter.nextElement());
+            list.add( (String)iter.nextElement() );
         }
 
         Collections.sort(list);

@@ -28,7 +28,7 @@ public class TestHttpSession implements HttpSession
 
     protected final long          m_lastAccessTime;
 
-    protected final Map           m_attributes;
+    protected final Map<String, Object> m_attributes;
     
     protected int                 m_inactiveInterval;
 
@@ -42,7 +42,7 @@ public class TestHttpSession implements HttpSession
         m_createTime = System.currentTimeMillis();
         m_lastAccessTime = m_createTime;
         m_id = String.valueOf( RANDOM.nextLong() );
-        m_attributes = new HashMap();
+        m_attributes = new HashMap<String, Object>();
         m_invalidated = false;
         m_inactiveInterval = 1800;
     }
@@ -134,10 +134,10 @@ public class TestHttpSession implements HttpSession
      */
     public Enumeration getAttributeNames()
     {
-        Vector items = new Vector();
+        Vector<String> items = new Vector<String>();
         for( Iterator it = m_attributes.keySet().iterator(); it.hasNext(); )
         {
-            items.add( it.next() );
+            items.add( (String)it.next() );
         }
         return items.elements();
     }
@@ -148,12 +148,12 @@ public class TestHttpSession implements HttpSession
      */
     public String[] getValueNames()
     {
-        Vector items = new Vector();
+        Vector<String> items = new Vector<String>();
         for( Iterator it = m_attributes.keySet().iterator(); it.hasNext(); )
         {
-            items.add( it.next() );
+            items.add( (String)it.next() );
         }
-        return (String[]) items.toArray( new String[items.size()] );
+        return items.toArray( new String[items.size()] );
     }
 
     /**

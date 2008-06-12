@@ -4,11 +4,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.*;
 import javax.naming.spi.InitialContextFactory;
 
 /**
@@ -37,7 +33,7 @@ import javax.naming.spi.InitialContextFactory;
 public class TestJNDIContext implements Context
 {
 
-    private final Map      m_bindings  = new HashMap();
+    private final Map<String, Object> m_bindings  = new HashMap<String, Object>();
 
     private static boolean initialized = false;
 
@@ -171,6 +167,7 @@ public class TestJNDIContext implements Context
      * No-op; always returns <code>null</code>.
      * @see javax.naming.Context#getEnvironment()
      */
+    @SuppressWarnings("unchecked")
     public Hashtable getEnvironment() throws NamingException
     {
         // TODO Auto-generated method stub
@@ -208,7 +205,7 @@ public class TestJNDIContext implements Context
      * No-op; always returns <code>null</code>.
      * @see javax.naming.Context#list(javax.naming.Name)
      */
-    public NamingEnumeration list( Name name ) throws NamingException
+    public NamingEnumeration<NameClassPair> list( Name name ) throws NamingException
     {
         return null;
     }
@@ -217,7 +214,7 @@ public class TestJNDIContext implements Context
      * No-op; always returns <code>null</code>.
      * @see javax.naming.Context#list(java.lang.String)
      */
-    public NamingEnumeration list( String name ) throws NamingException
+    public NamingEnumeration<NameClassPair> list( String name ) throws NamingException
     {
         return null;
     }
@@ -226,7 +223,7 @@ public class TestJNDIContext implements Context
      * No-op; always returns <code>null</code>.
      * @see javax.naming.Context#listBindings(javax.naming.Name)
      */
-    public NamingEnumeration listBindings( Name name ) throws NamingException
+    public NamingEnumeration<Binding> listBindings( Name name ) throws NamingException
     {
         return null;
     }
@@ -235,7 +232,7 @@ public class TestJNDIContext implements Context
      * No-op; always returns <code>null</code>.
      * @see javax.naming.Context#listBindings(java.lang.String)
      */
-    public NamingEnumeration listBindings( String name ) throws NamingException
+    public NamingEnumeration<Binding> listBindings( String name ) throws NamingException
     {
         return null;
     }

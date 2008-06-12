@@ -66,7 +66,9 @@ public class WebContainerLoginModuleTest extends TestCase
             // Test using Principal (WebContainerLoginModule succeeds)
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             Set principals = subject.getPrincipals();
@@ -83,7 +85,9 @@ public class WebContainerLoginModuleTest extends TestCase
             request.setRemoteUser( "Andrew Jaquith" );
             handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             module = new WebContainerLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             principals = subject.getPrincipals();
@@ -100,7 +104,9 @@ public class WebContainerLoginModuleTest extends TestCase
             request.setRemoteAddr( "53.33.128.9" );
             handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             module = new WebContainerLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             try
             {
                 module.login();
@@ -131,7 +137,9 @@ public class WebContainerLoginModuleTest extends TestCase
         // Test using Principal (WebContainerLoginModule succeeds)
         CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
         LoginModule module = new WebContainerLoginModule();
-        module.initialize(subject, handler, new HashMap(), new HashMap());
+        module.initialize(subject, handler, 
+                          new HashMap<String, Object>(), 
+                          new HashMap<String, Object>());
         module.login();
         module.commit();
         Set principals = subject.getPrincipals();
@@ -154,7 +162,9 @@ public class WebContainerLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             Set principals = subject.getPrincipals();

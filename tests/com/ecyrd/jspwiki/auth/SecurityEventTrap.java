@@ -15,7 +15,7 @@ import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 public class SecurityEventTrap implements WikiEventListener
 {
     private WikiSecurityEvent m_lastEvent = null;
-    private List              m_events    = new ArrayList();
+    private List<WikiEvent>              m_events    = new ArrayList<WikiEvent>();
 
     public void actionPerformed( WikiEvent event )
     {
@@ -42,7 +42,7 @@ public class SecurityEventTrap implements WikiEventListener
     
     public WikiSecurityEvent[] events() 
     {
-        return (WikiSecurityEvent[])m_events.toArray(new WikiSecurityEvent[m_events.size()]);
+        return m_events.toArray(new WikiSecurityEvent[m_events.size()]);
     }
 
 }

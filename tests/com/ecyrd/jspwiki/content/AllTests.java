@@ -1,8 +1,6 @@
 
 package com.ecyrd.jspwiki.content;
 
-import com.ecyrd.jspwiki.PageManagerTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

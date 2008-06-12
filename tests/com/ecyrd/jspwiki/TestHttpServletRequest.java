@@ -31,13 +31,13 @@ public class TestHttpServletRequest implements HttpServletRequest
 
     protected Cookie[]    m_cookies       = new Cookie[0];
 
-    protected Map         m_params        = new Hashtable();
+    protected Map<String, String> m_params        = new Hashtable<String, String>();
     
     protected String      m_remoteAddr    = "127.0.0.1";
 
     protected String      m_remoteUser    = null;
 
-    protected Set         m_roles         = new HashSet();
+    protected Set<String> m_roles         = new HashSet<String>();
 
     protected Principal   m_userPrincipal = null;
     
@@ -187,7 +187,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public String getParameter( String arg0 )
     {
-        return (String)m_params.get( arg0 );
+        return m_params.get( arg0 );
     }
 
     /**
@@ -211,7 +211,7 @@ public class TestHttpServletRequest implements HttpServletRequest
      */
     public String[] getParameterValues( String arg0 )
     {
-        return (String[])m_params.entrySet().toArray( new String[m_params.size()] );
+        return m_params.entrySet().toArray( new String[m_params.size()] );
     }
 
     /**

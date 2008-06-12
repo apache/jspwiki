@@ -11,8 +11,6 @@ import junit.framework.TestSuite;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import com.ecyrd.jspwiki.content.PageRenamerTest;
-
 public class AllTests extends TestCase
 {
     //

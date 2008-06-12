@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.render.XHTMLRenderer;
 public class JSPWikiMarkupParserTest extends TestCase
 {
     Properties props = new Properties();
-    Vector     created = new Vector();
+    Vector<String>     created = new Vector<String>();
 
     static final String PAGE_NAME = "testpage";
 

@@ -55,7 +55,9 @@ public class UserDatabaseLoginModuleTest extends TestCase
             // Log in with a user that isn't in the database
             CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             Set principals = subject.getPrincipals();
@@ -68,7 +70,9 @@ public class UserDatabaseLoginModuleTest extends TestCase
             subject = new Subject();
             handler = new WikiCallbackHandler( db, "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             principals = subject.getPrincipals();
@@ -90,7 +94,9 @@ public class UserDatabaseLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, new HashMap(), new HashMap());
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
             module.login();
             module.commit();
             Set principals = subject.getPrincipals();

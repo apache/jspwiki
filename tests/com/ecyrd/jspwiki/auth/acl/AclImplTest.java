@@ -49,7 +49,7 @@ public class AclImplTest extends TestCase
 
     private AclImpl      m_aclGroup;
 
-    private Map          m_groups;
+    private Map<String, Group>          m_groups;
 
     private GroupManager m_groupMgr;
 
@@ -76,7 +76,7 @@ public class AclImplTest extends TestCase
 
         m_acl = new AclImpl();
         m_aclGroup = new AclImpl();
-        m_groups = new HashMap();
+        m_groups = new HashMap<String, Group>();
         Principal uAlice = new WikiPrincipal( "Alice" );
         Principal uBob = new WikiPrincipal( "Bob" );
         Principal uCharlie = new WikiPrincipal( "Charlie" );
@@ -158,7 +158,7 @@ public class AclImplTest extends TestCase
             if ( array[i] instanceof GroupPrincipal )
             {
                 String groupName = ((GroupPrincipal)array[i]).getName();
-                Group group = (Group)m_groups.get( groupName );
+                Group group = m_groups.get( groupName );
                 if ( group != null && group.isMember( key ) )
                 {
                     return true;

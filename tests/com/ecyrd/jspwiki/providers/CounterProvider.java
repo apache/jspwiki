@@ -115,7 +115,7 @@ public class CounterProvider
     {
         m_getAllPagesCalls++;
 
-        Vector v = new Vector();
+        Vector<WikiPage> v = new Vector<WikiPage>();
 
         for( int i = 0; i < m_pages.length; i++ )
         {
