@@ -18,12 +18,12 @@ public class SerializerTest extends TestCase
 
     public void testSerializeMap() throws Exception
     {
-        Map<Serializable, Serializable> map = new HashMap<Serializable, Serializable>();
+        Map<String, Serializable> map = new HashMap<String, Serializable>();
         map.put( "attribute1", "some random value" );
         map.put( "attribute2", "another value" );
         String serializedForm = Serializer.serializeToBase64( map );
 
-        Map<? extends Serializable, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
+        Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
         assertEquals( 2, newMap.size() );
         assertTrue( newMap.containsKey( "attribute1" ) );
         assertTrue( newMap.containsKey( "attribute2" ) );
