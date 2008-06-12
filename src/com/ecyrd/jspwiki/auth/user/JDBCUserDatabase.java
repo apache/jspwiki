@@ -877,7 +877,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 {
                     try
                     {
-                        Map<? extends Serializable,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
+                        Map<String,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
                         profile.getAttributes().putAll( attributes );
                     }
                     catch ( IOException e )

@@ -28,7 +28,7 @@ import java.util.Map;
  * Class for representing wiki user information, such as the login name, full
  * name, wiki name, and e-mail address. Note that since 2.6 the wiki name is
  * required to be automatically computed from the full name.
- * As of 2.8, user profiles can store custom key/value String attributes, and store
+ * As of 2.8, user profiles can store custom key/value String/Serializable attributes, and store
  * a unique ID. Locks are checked by {@link com.ecyrd.jspwiki.auth.AuthenticationManager};
  * if a profile is locked, the user cannot log with that profile.
  * @author Andrew Jaquith
@@ -43,7 +43,7 @@ public interface UserProfile
      * in the UserProfile.
      * @return the attributes
      */
-    public Map<Serializable,Serializable> getAttributes();
+    public Map<String,Serializable> getAttributes();
 
     /**
      * Returns the creation date.
@@ -187,6 +187,7 @@ public interface UserProfile
     /**
      * Sets the unique identifier for the user profile. Note that UserDatabase implementations
      * are required <em>not</em> to change the unique identifier after the initial save.
+     * @param uid the unique identifier to set
      */
     public void setUid( long uid );
     

@@ -38,7 +38,7 @@ public final class DefaultUserProfile implements UserProfile
 
     private static final String WHITESPACE = "\\s";
     
-    private Map<Serializable,Serializable> m_attributes = new HashMap<Serializable,Serializable>();
+    private Map<String,Serializable> m_attributes = new HashMap<String,Serializable>();
 
     private Date     m_created   = null;
 
@@ -262,6 +262,7 @@ public final class DefaultUserProfile implements UserProfile
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.
      */
+    @SuppressWarnings("deprecation")
     public void setWikiName( String name )
     {
     }
@@ -300,7 +301,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
-    public Map<Serializable,Serializable> getAttributes()
+    public Map<String,Serializable> getAttributes()
     {
         return m_attributes;
     }

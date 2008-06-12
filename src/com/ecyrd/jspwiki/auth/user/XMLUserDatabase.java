@@ -651,7 +651,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
                     String serializedMap = extractText( attribute );
                     try
                     {
-                        Map<? extends Serializable,? extends Serializable> map = Serializer.deserializeFromBase64( serializedMap );
+                        Map<String,? extends Serializable> map = Serializer.deserializeFromBase64( serializedMap );
                         profile.getAttributes().putAll( map );
                     }
                     catch ( IOException e )
