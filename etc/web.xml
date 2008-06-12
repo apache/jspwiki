@@ -294,10 +294,11 @@
        either way, as long as they match.
        
        Note that accessing protected resources will cause your
-       container to try to use SSL to secure the web session.
-       This, of course, assumes your web container (or web server) 
-       is configured with SSL support. If you do not wish to use SSL,
-       remove the "user-data-constraint" elements.
+       container to try to use SSL (default port for Tomcat is 8443)
+       to secure the web session. This, of course, assumes your
+       web container (or web server) is configured with SSL support.
+       If you do not wish to use SSL, remove the "user-data-constraint"
+       elements.
    -->
 
    <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
