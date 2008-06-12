@@ -1,3 +1,25 @@
+2008-06-11  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-38
+        
+        * Web unit tests refactored (yet again) to use an embedded
+        Jetty server. This replaces the need to use a separate Tomcat
+        server, and *should* always work without any configuration of
+        any kind. Please tests this via the Ant 'webtests' target!
+        Note that this checkin introduces the TestContainer class, which
+        with a little modification (later, please!) could easily be
+        used as a stand-alone server. Refactorings are welcome; in
+        the meantime, TestContainer should be considered volatile.
+        Note also that the Rename Profile web unit tests for the
+        container scenarios currently fails; all others run successfully.
+        
+        * Minor tightening of Map API for Serializer methods; the
+        keys are now Strings rather than Serializable. This is a
+        dev branch, remember!
+        
+        * Added Stripes jar in preparation for replacement of
+        TestRequest/Response mock objects.
+
 2008-06-09  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-37
