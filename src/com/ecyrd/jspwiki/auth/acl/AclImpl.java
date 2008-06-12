@@ -52,18 +52,19 @@ public class AclImpl implements Acl, Serializable
      * @param permission the permission to search for
      * @return an array of Principals possessing the permission
      */
+    @SuppressWarnings("unchecked")
     public Principal[] findPrincipals( Permission permission )
     {
         Vector<Principal> principals = new Vector<Principal>();
-        Enumeration entries = entries();
+        Enumeration<AclEntry> entries = entries();
         
         while (entries.hasMoreElements()) 
         {
-            AclEntry entry = (AclEntry)entries.nextElement();
-            Enumeration permissions = entry.permissions();
+            AclEntry entry = entries.nextElement();
+            Enumeration<Permission> permissions = entry.permissions();
             while ( permissions.hasMoreElements() ) 
             {
-                Permission perm = (Permission)permissions.nextElement();
+                Permission perm = permissions.nextElement();
                 if ( perm.implies( permission ) ) 
                 {
                     principals.add( entry.getPrincipal() );
@@ -141,6 +142,7 @@ public class AclImpl implements Acl, Serializable
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
+    @SuppressWarnings("unchecked")
     public Enumeration entries()
     {
         return m_entries.elements();
@@ -169,6 +171,7 @@ public class AclImpl implements Acl, Serializable
      * Returns a string representation of the contents of this Acl.
      * @return the string representation
      */
+    @SuppressWarnings("unchecked")
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -183,9 +186,9 @@ public class AclImpl implements Acl, Serializable
                 sb.append( "  user = null: " );
 
             sb.append( "(" );
-            for( Enumeration perms = entry.permissions(); perms.hasMoreElements(); )
+            for( Enumeration<Permission> perms = entry.permissions(); perms.hasMoreElements(); )
             {
-                Permission perm = (Permission) perms.nextElement();
+                Permission perm = perms.nextElement();
                 sb.append( perm.toString() );
             }
             sb.append( ")\n" );

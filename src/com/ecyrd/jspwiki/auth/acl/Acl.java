@@ -74,6 +74,7 @@ public interface Acl
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
+    @SuppressWarnings("unchecked")
     public Enumeration entries();
 
     /**

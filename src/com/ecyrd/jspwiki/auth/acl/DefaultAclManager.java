@@ -244,19 +244,20 @@ public class DefaultAclManager implements AclManager
      * @param acl the ACL
      * @return the ACL string
      */
+    @SuppressWarnings("unchecked")
     protected static String printAcl( Acl acl )
     {
         // Extract the ACL entries into a Map with keys == permissions, values == principals
         Map<String, List<Principal>> permissionPrincipals = new TreeMap<String, List<Principal>>();
-        Enumeration entries = acl.entries();
+        Enumeration<AclEntry> entries = acl.entries();
         while ( entries.hasMoreElements() )
         {
-            AclEntry entry = (AclEntry)entries.nextElement();
+            AclEntry entry = entries.nextElement();
             Principal principal = entry.getPrincipal();
-            Enumeration permissions = entry.permissions();
+            Enumeration<Permission> permissions = entry.permissions();
             while ( permissions.hasMoreElements() )
             {
-                Permission permission = (Permission)permissions.nextElement();
+                Permission permission = permissions.nextElement();
                 List<Principal> principals = permissionPrincipals.get( permission.getActions() );
                 if ( principals == null )
                 {
