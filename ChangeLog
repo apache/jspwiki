@@ -1,3 +1,18 @@
+2008-06-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-39
+        
+        * JSPWIKI-191: Favorites.jsp no longer leaks LeftMenu contents
+        to unauthorized viewers in UserPreferences.jsp.  Thanks to
+        Sergio Gelato.
+        
+        * JSPWIKI-253: VotePlugin and Vote.jsp are now gone, as they
+        were pretty much useless.
+        
+        * JSPWIKI-206: A no-results search could also fail due to 
+        missing permissions.  Updated default.properties / find.noresult
+        i18n key to explain better.  Finnish and English updated.
+        
 2008-06-11  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-svn-38
