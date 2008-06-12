@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="webdocs/|wikipages/|images/" kind="src" path="src"/>
-	<classpathentry excluding="etc/|build/|reports/" kind="src" path="tests"/>
+	<classpathentry excluding="webdocs/|wikipages/|images/" kind="src" output="build" path="src"/>
+	<classpathentry excluding="etc/|build/|reports/" kind="src" output="tests/build" path="tests"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="lib" path="lib/ecs.jar"/>
@@ -22,7 +22,6 @@
 	<classpathentry kind="lib" path="lib/jaxen.jar"/>
 	<classpathentry kind="lib" path="tests/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
-	<classpathentry kind="lib" path="tests/lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="etc/i18n"/>
@@ -32,6 +31,15 @@
 	<classpathentry kind="lib" path="lib/jakarta-tablibs-standard-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="tests/lib/commons-el-1.0.jar"/>
+	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="tests/lib/jasper-compiler-5.5.25.jar"/>
+	<classpathentry kind="lib" path="tests/lib/jasper-runtime-5.5.25.jar"/>
+	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
+	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar" sourcepath="/Users/arj/workspace/lib/jetty-5.1.14/extra/plus/src"/>
+	<classpathentry kind="lib" path="tests/lib/jetty-servlet-5.1.14.jar"/>
+	<classpathentry kind="lib" path="tests/lib/selenium-server-0.9.2-patched.jar" sourcepath="/Users/arj/workspace/lib/jetty-5.1.14/src"/>
+	<classpathentry kind="lib" path="tests/lib/stripes-1.4.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5.0"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
