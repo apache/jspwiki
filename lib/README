@@ -111,28 +111,61 @@ BUILD REQUIREMENTS
 
 The following jar files are required to build and/or test JSPWiki (in addition to the previously listed ones), but are not necessary for deployment. These are stored in tests/lib.
 
+commons-el-1.0
+      JSP 2.0 expression language Apache implementation; used by Jetty, version 1.0.
+      http://commons.apache.org/el/
+
 custom_rhino.jar
       Rhino JavaScript library; used to compress JSPWiki's JavaScript files.
 
 hsqldb.jar
       Hypersonic embedded DB, version 1.8.0. 
-			http://www.hsqldb.org/
+      http://www.hsqldb.org/
+
+jasper-compiler-5.5.25
+      Apache Tomcat 5.5 JSP compiler; used by Jetty.
+      http://tomcat.apache.org
+
+jasper-runtime-5.5.25
+      Apache Tomcat 5.5 JSP runtime support classes; used by Jetty.
+      http://tomcat.apache.org
 
 junit.jar
       Java Unit testing framework, version 3.8.1.
-			http://www.junit.org/index.htm
+      http://www.junit.org/index.htm
 
-servlet.jar
-      Sun servlet library implementation, version 2.3.1.
-			http://java.sun.com/products/servlet/
+jetty-jmx-5.1.14.jar
+      Jetty implementation of JMX classes, version 5.1.14.
+      Renamed from: org.mortbay.jmx.jar
+      http://dist.codehaus.org/jetty/jetty-5.1.x/
+
+jetty-plus-5.1.14.jar
+      Jetty additional classes that support JNDI and Datasources;
+      used for web unit testing. Built by changing to jetty-src/extra/plus
+      and executing 'ant jars'. Renamed from: org.mortbay.jetty.plus.jar
+
+jetty-servlet-5.1.14.jar
+      Jetty implementation of J2EE servlet classes, version 5.1.14.
+      Renamed from: javax.servlet.jar
+      http://dist.codehaus.org/jetty/jetty-5.1.x/
+
+selenium-java-client-driver-0.9.2
+      Selenium Remote Control web unit testing client
+      for driving Firefox, Safari, and Internet Explorer.
+      http://selenium-rc.openqa.org/
+
+selenium-server-0.9.2-patched.jar
+      Selenium Remote Control server for web unit testing. Includes
+      bundled Jetty 5.1.14 server inside JAR. We applied patches to the
+      Selenium JavaScript files to make them compatible with Mootools
+      (see  tests/etc/selenium/selenium-core-0.8.3-patches).
+      http://selenium-rc.openqa.org/
 
 xercesImpl-2.6.2.jar
       Apache Xerces2 XML parser, version 2.6.2.
-			http://xerces.apache.org/xerces2-j/index.html
+      http://xerces.apache.org/xerces2-j/index.html
 
 xml-apis-1.0.b2.jar
       Collection of XML API implementations.
-			(Source unknown.)
-
-
+      (Source unknown.)
 
