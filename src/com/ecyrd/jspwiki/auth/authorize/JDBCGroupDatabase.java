@@ -242,6 +242,7 @@ public class JDBCGroupDatabase implements GroupDatabase
      * @deprecated there is no need to call this method because the save and
      *             delete methods contain their own commit logic
      */
+    @SuppressWarnings("deprecation")
     public void commit() throws WikiSecurityException
     {
     }
