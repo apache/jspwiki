@@ -34,6 +34,11 @@ import org.apache.commons.codec.binary.Base64;
 public final class Serializer
 {
     /**
+     * Prefix used to indicated that a serialized item was encoded with Base64.
+     */
+    protected static final String BASE64_PREFIX = "base64 ";
+
+    /**
      *  Prevent instantiation.
      */
     private Serializer()
@@ -47,7 +52,7 @@ public final class Serializer
      * @throws IOException if the contents cannot be parsed for any reason
      */
     @SuppressWarnings("unchecked")
-    public static Map<? extends Serializable,? extends Serializable> deserializeFromBase64( String rawString ) throws IOException
+    public static Map<String,? extends Serializable> deserializeFromBase64( String rawString ) throws IOException
     {
         // Decode from Base64-encoded String to byte array
         byte[] decodedBytes = Base64.decodeBase64( rawString.getBytes("UTF-8") );
@@ -55,10 +60,10 @@ public final class Serializer
         // Deserialize from the input stream to the Map
         InputStream bytesIn = new ByteArrayInputStream( decodedBytes );
         ObjectInputStream in = new ObjectInputStream( bytesIn );
-        HashMap<Serializable,Serializable> attributes;
+        HashMap<String,Serializable> attributes;
         try
         {
-            attributes = (HashMap<Serializable,Serializable>)in.readObject();
+            attributes = (HashMap<String,Serializable>)in.readObject();
         }
         catch ( ClassNotFoundException e )
         {
@@ -78,10 +83,10 @@ public final class Serializer
      * @return a String representing the serialized form of the Map
      * @throws IOException If serialization cannot be done
      */
-    public static String serializeToBase64( Map<Serializable,Serializable> map ) throws IOException
+    public static String serializeToBase64( Map<String,Serializable> map ) throws IOException
     {
         // Load the Map contents into a defensive HashMap
-        HashMap<Serializable,Serializable> serialMap = new HashMap<Serializable,Serializable>();
+        HashMap<String,Serializable> serialMap = new HashMap<String,Serializable>();
         serialMap.putAll( map );
         
         // Serialize the Map to an output stream
