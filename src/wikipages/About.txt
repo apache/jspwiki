@@ -3,7 +3,8 @@ which hopefully makes it very easy to keep up to date and looking better than mo
 
 Most of the [editing markers|TextFormattingRules] have been styled according to the [Sensei's Library|http://senseis.xmp.net], the best Go sites in the Internet.  I find their markup very easy, yet clear.
 
-This wiki is authored by [Janne Jalkanen|http://www.ecyrd.com/ButtUgly/], and is available under the [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0].
+This wiki is available under the [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]. Please
+see [http://incubator.apache.org/jspwiki] for further information.
 
 If you are interested in the JSPWiki development, the home page for JSPWiki is at [http://www.jspwiki.org].  Some quick links:
 
