@@ -6,12 +6,13 @@ package com.ecyrd.jspwiki.ui;
 
 import java.util.Properties;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -19,7 +20,7 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
 
 public class CommandResolverTest extends TestCase
 {
-    TestEngine testEngine;
+    TestEngine m_engine;
     CommandResolver resolver;
 
     protected void setUp() throws Exception
@@ -27,17 +28,17 @@ public class CommandResolverTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put( WikiEngine.PROP_MATCHPLURALS, "yes" );
-        testEngine = new TestEngine( props );
-        resolver = testEngine.getCommandResolver();
-        testEngine.saveText( "SinglePage", "This is a test." );
-        testEngine.saveText( "PluralPages", "This is a test." );
+        m_engine = new TestEngine( props );
+        resolver = m_engine.getCommandResolver();
+        m_engine.saveText( "SinglePage", "This is a test." );
+        m_engine.saveText( "PluralPages", "This is a test." );
     }
     
     protected void tearDown() throws Exception
     {
-        testEngine.deletePage( "TestPage" );
-        testEngine.deletePage( "SinglePage" );
-        testEngine.deletePage( "PluralPage" );
+        m_engine.deletePage( "TestPage" );
+        m_engine.deletePage( "SinglePage" );
+        m_engine.deletePage( "PluralPage" );
     }
     
     public void testFindStaticWikiAction()
@@ -74,7 +75,7 @@ public class CommandResolverTest extends TestCase
     public void testFindWikiActionNoParams()
     {
         Command a;
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest( "" );
         
         // Passing an EDIT request with no explicit page params means the EDIT action
         a = resolver.findCommand( request, WikiContext.EDIT );
@@ -106,21 +107,21 @@ public class CommandResolverTest extends TestCase
         }
         
         // Request for "UserPreference.jsp" should resolve to PREFS action
-        request.setServletPath( "/UserPreferences.jsp" );
+        request = m_engine.newHttpRequest( "/UserPreferences.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( WikiCommand.PREFS, a );
         assertNull( a.getTarget() );
         
         // Request for "NewGroup.jsp" should resolve to CREATE_GROUP action
         // but targeted at the wiki
-        request.setServletPath( "/NewGroup.jsp" );
+        request = m_engine.newHttpRequest( "/NewGroup.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertNotSame( WikiCommand.CREATE_GROUP, a );
         assertEquals( WikiCommand.CREATE_GROUP.getRequestContext(), a.getRequestContext() );
-        assertEquals( testEngine.getApplicationName(), a.getTarget() );
+        assertEquals( m_engine.getApplicationName(), a.getTarget() );
         
         // But request for JSP not mapped to action should get default
-        request.setServletPath( "/NonExistent.jsp" );
+        request = m_engine.newHttpRequest( "/NonExistent.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( PageCommand.EDIT, a );
         assertNull( a.getTarget() );
@@ -129,12 +130,11 @@ public class CommandResolverTest extends TestCase
     public void testFindWikiActionWithParams() throws Exception
     {
         Command a;
-        WikiPage page = testEngine.getPage( "SinglePage" );
+        WikiPage page = m_engine.getPage( "SinglePage" );
         
         // Passing an EDIT request with page param yields a wrapped action
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setParameter( "page", "SinglePage" );
-        request.setServletPath( "/Edit.jsp?page=SinglePage" );
+        MockHttpServletRequest request = m_engine.newHttpRequest( "/Edit.jsp?page=SinglePage" );
+        request.getParameterMap().put( "page", new String[]{ "SinglePage" } );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertNotSame( PageCommand.EDIT, a );
         assertEquals( "EditContent.jsp", a.getContentTemplate() );
@@ -143,8 +143,8 @@ public class CommandResolverTest extends TestCase
         assertEquals( page, a.getTarget() );
         
         // Passing an EDIT request with page=FindPage yields FIND action, *not* edit
-        request.setParameter( "page", "FindPage" );
-        request.setServletPath( "/Edit.jsp?page=FindPage" );
+        request.setContextPath( "/Edit.jsp?page=FindPage" );
+        request.getParameterMap().put( "page", new String[]{ "FindPage" } );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( WikiCommand.FIND, a );
         assertEquals( "FindContent.jsp", a.getContentTemplate() );
@@ -153,9 +153,8 @@ public class CommandResolverTest extends TestCase
         assertNull( a.getTarget() );
         
         // Passing an EDIT request with group="Foo" yields wrapped VIEW_GROUP
-        request = new TestHttpServletRequest();
-        request.setParameter( "group", "Foo" );
-        request.setServletPath( "/Group.jsp?group=Foo" );
+        request = m_engine.newHttpRequest( "/Group.jsp?group=Foo" );
+        request.getParameterMap().put( "group", new String[]{ "Foo" } );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertNotSame( GroupCommand.VIEW_GROUP, a );
         assertEquals( "GroupContent.jsp", a.getContentTemplate() );
@@ -166,24 +165,23 @@ public class CommandResolverTest extends TestCase
     
     public void testFindWikiActionWithPath()
     {
-        TestHttpServletRequest request;
+        MockHttpServletRequest request;
         Command a;
         
         // Passing an EDIT request with View JSP yields EDIT of the Front page
-        request = new TestHttpServletRequest();
-        request.setServletPath( "/Wiki.jsp" );
+        request = m_engine.newHttpRequest( "/Wiki.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertNotNull( a.getTarget() );
-        assertEquals( ((WikiPage)a.getTarget()).getName(), testEngine.getFrontPage() );
+        assertEquals( ((WikiPage)a.getTarget()).getName(), m_engine.getFrontPage() );
         
         // Passing an EDIT request with Group JSP yields VIEW_GROUP
-        request.setServletPath( "/Group.jsp" );
+        request = m_engine.newHttpRequest( "/Group.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( GroupCommand.VIEW_GROUP, a );
         assertNull( a.getTarget() );
         
         // Passing an EDIT request with UserPreferences JSP yields PREFS
-        request.setServletPath( "/UserPreferences.jsp" );
+        request = m_engine.newHttpRequest( "/UserPreferences.jsp" );
         a = resolver.findCommand( request, WikiContext.EDIT );
         assertEquals( WikiCommand.PREFS, a );
         assertNull( a.getTarget() );

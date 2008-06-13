@@ -12,7 +12,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
 import com.ecyrd.jspwiki.WikiSession;
 
 public class InputValidatorTest extends TestCase
@@ -28,7 +27,7 @@ public class InputValidatorTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         testEngine = new TestEngine( props );
-        WikiSession session = WikiSession.getWikiSession( testEngine, new TestHttpServletRequest() );
+        WikiSession session = WikiSession.getWikiSession( testEngine, testEngine.newHttpRequest() );
         val = new InputValidator( TEST, session );
     }
 
