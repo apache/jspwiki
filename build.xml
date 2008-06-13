@@ -112,6 +112,7 @@
   <property name="webtests.port"     value="10024" />
   <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
+  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-1.0-beta1.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -851,7 +852,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Start Selenium tests -->
       <echo message="Running web unit tests for context '@{context}'."/>
-      <java jar="tests/lib/selenium-server-0.9.2-patched.jar" fork="true"
+      <java jar="${selenium-rc.jar}" fork="true"
         output="${webtests.build}/@{context}/selenium/selenium.log">
         <!--
         <arg line="-browserSessionReuse" />
