@@ -3,7 +3,13 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.io.*;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.log4j.Logger;
 
@@ -57,11 +63,14 @@ public class TestEngine extends WikiEngine
     public TestEngine( Properties props )
         throws WikiException
     {
-        super( props );
+        super( new MockServletContext( "test" ), "test", props );
+        
+        // Stash the WikiEngine in the servlet context
+        ServletContext servletContext = this.getServletContext();
+        servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
 
         // Set up long-running admin session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        HttpServletRequest request = newHttpRequest();
         m_adminWikiSession = WikiSession.getWikiSession( this, request );
         this.getAuthenticationManager().login( m_adminWikiSession,
                 Users.ADMIN,
@@ -69,8 +78,7 @@ public class TestEngine extends WikiEngine
         m_adminSession = request.getSession();
 
         // Set up a test Janne session
-        request = new TestHttpServletRequest();
-        request.setRemoteAddr( "42.22.17.8" );
+        request = newHttpRequest();
         m_janneWikiSession = WikiSession.getWikiSession( this, request );
         this.getAuthenticationManager().login( m_janneWikiSession,
                 Users.JANNE,
@@ -78,11 +86,33 @@ public class TestEngine extends WikiEngine
         m_janneSession = request.getSession();
 
         // Set up guest session
-        request = new TestHttpServletRequest();
-        request.setRemoteAddr( "42.22.17.8" );
+        request = newHttpRequest();
         m_guestWikiSession = WikiSession.getWikiSession( this, request );
     }
+    
+    /**
+     * Creates a correctly-instantiated mock HttpServletRequest with an associated
+     * HttpSession.
+     * @return the new request
+     */
+    public MockHttpServletRequest newHttpRequest()
+    {
+        return newHttpRequest( "/Wiki.jsp" );
+    }
 
+    /**
+     * Creates a correctly-instantiated mock HttpServletRequest with an associated
+     * HttpSession and path.
+     * @param path the path relative to the wiki context, for example "/Wiki.jsp"
+     * @return the new request
+     */
+    public MockHttpServletRequest newHttpRequest( String path )
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
+        request.setSession( new MockHttpSession( this.getServletContext() ) );
+        return request;
+    }
+    
     public static void emptyWorkDir()
     {
         Properties properties = new Properties();
@@ -255,8 +285,8 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our admin session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.m_session = m_adminSession;
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
+        request.setSession( m_adminSession );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
@@ -268,8 +298,8 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our Janne session
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.m_session = m_janneSession;
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
+        request.setSession( m_janneSession );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
