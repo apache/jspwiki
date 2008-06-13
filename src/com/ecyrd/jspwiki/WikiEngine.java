@@ -380,22 +380,32 @@ public class WikiEngine
     protected WikiEngine( ServletContext context, String appid, Properties props )
         throws WikiException
     {
+        super();
         m_servletContext = context;
         m_appid          = appid;
 
+        // Stash the WikiEngine in the servlet context
+        if ( context != null )
+        {
+            context.setAttribute( ATTR_WIKIENGINE,  this );
+            m_rootPath = context.getRealPath("/");
+        }
+        
         try
         {
             //
             //  Note: May be null, if JSPWiki has been deployed in a WAR file.
             //
-            m_rootPath = context.getRealPath("/");
             initialize( props );
             log.info("Root path for this Wiki is: '"+m_rootPath+"'");
         }
         catch( Exception e )
         {
             String msg = Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage();
-            context.log( msg );
+            if ( context != null )
+            {
+                context.log( msg );
+            }
             throw new WikiException( msg );
         }
     }
