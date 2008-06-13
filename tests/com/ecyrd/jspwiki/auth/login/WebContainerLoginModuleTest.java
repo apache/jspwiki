@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki.auth.login;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -30,13 +31,13 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -54,12 +55,12 @@ public class WebContainerLoginModuleTest extends TestCase
 
     Subject      subject;
 
-    private WikiEngine m_engine;
+    private TestEngine m_engine;
 
     public final void testLogin()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
@@ -78,46 +79,6 @@ public class WebContainerLoginModuleTest extends TestCase
             assertFalse( principals.contains( Role.ASSERTED ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
             assertFalse( principals.contains( Role.ALL ) );
-
-            // Test using remote user (WebContainerLoginModule succeeds)
-            subject = new Subject();
-            request = new TestHttpServletRequest();
-            request.setRemoteUser( "Andrew Jaquith" );
-            handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            module = new WebContainerLoginModule();
-            module.initialize(subject, handler, 
-                              new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
-            module.login();
-            module.commit();
-            principals = subject.getPrincipals();
-            assertEquals( 1, principals.size() );
-            assertTrue(  principals.contains( principal ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ASSERTED ) );
-            assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertFalse( principals.contains( Role.ALL ) );
-
-            // Test using IP address (AnonymousLoginModule succeeds)
-            subject = new Subject();
-            request = new TestHttpServletRequest();
-            request.setRemoteAddr( "53.33.128.9" );
-            handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            module = new WebContainerLoginModule();
-            module.initialize(subject, handler, 
-                              new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
-            try
-            {
-                module.login();
-                fail("Session with IP address successfully logged in; it should not have!");
-            }
-            catch (LoginException e)
-            {
-                // Good! This is what we expect.
-            }
-            principals = subject.getPrincipals();
-            assertEquals( 0, principals.size() );
         }
         catch( LoginException e )
         {
@@ -130,9 +91,12 @@ public class WebContainerLoginModuleTest extends TestCase
     {
         // Create user with 2 container roles; TestAuthorizer knows about these
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
-        request.setRoles( new String[] { "IT", "Engineering" } );
+        Set<String> roles = new HashSet<String>();
+        roles.add( "IT" );
+        roles.add( "Engineering" );
+        request.setRoles( roles );
 
         // Test using Principal (WebContainerLoginModule succeeds)
         CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
@@ -156,7 +120,7 @@ public class WebContainerLoginModuleTest extends TestCase
     public final void testLogout()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {

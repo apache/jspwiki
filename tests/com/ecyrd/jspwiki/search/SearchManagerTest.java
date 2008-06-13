@@ -4,13 +4,14 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
 import com.ecyrd.jspwiki.WikiContext;
 
 public class SearchManagerTest extends TestCase
@@ -96,8 +97,8 @@ public class SearchManagerTest extends TestCase
     {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
  
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setParameter("page","TestPage");
+        MockHttpServletRequest request = m_engine.newHttpRequest();
+        request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         
         WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
         

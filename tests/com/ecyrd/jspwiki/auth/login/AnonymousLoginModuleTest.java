@@ -28,14 +28,13 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -53,12 +52,11 @@ public class AnonymousLoginModuleTest extends TestCase
 
     Subject      subject;
 
-    private WikiEngine m_engine;
+    private TestEngine m_engine;
 
     public final void testLogin()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        HttpServletRequest request = m_engine.newHttpRequest();
         try
         {
             // Test using IP address (AnonymousLoginModule succeeds)
@@ -69,7 +67,7 @@ public class AnonymousLoginModuleTest extends TestCase
             module.commit();
             Set principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "53.33.128.9" ) ) );
+            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
             assertFalse( principals.contains( Role.ALL ) );
         }
@@ -82,8 +80,7 @@ public class AnonymousLoginModuleTest extends TestCase
 
     public final void testLogout()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        HttpServletRequest request = m_engine.newHttpRequest();
         try
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
@@ -95,7 +92,7 @@ public class AnonymousLoginModuleTest extends TestCase
             module.commit();
             Set principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
-            assertTrue( principals.contains( new WikiPrincipal( "53.33.128.9" ) ) );
+            assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
             assertFalse( principals.contains( Role.ALL ) );
             module.logout();

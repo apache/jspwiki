@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
@@ -70,7 +69,7 @@ public class AclImplTest extends TestCase
         super.setUp();
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        WikiEngine engine  = new TestEngine( props );
+        TestEngine engine  = new TestEngine( props );
         m_groupMgr = engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( engine );
 

@@ -30,13 +30,13 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.Cookie;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TestHttpServletRequest;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -54,12 +54,11 @@ public class CookieAssertionLoginModuleTest extends TestCase
 
     Subject      subject;
 
-    private WikiEngine m_engine;
+    private TestEngine m_engine;
 
     public final void testLogin()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         try
         {
             // We can use cookies right?
@@ -91,8 +90,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
 
     public final void testLogout()
     {
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        request.setRemoteAddr( "53.33.128.9" );
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
         request.setCookies( new Cookie[] { cookie } );
         try
