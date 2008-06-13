@@ -238,7 +238,7 @@ public class TestContainer
         listener.setHost( "localhost" );
         listener.setMaxThreads( jettyThreads );
         listener.setPort( SHUTDOWN_PORT );
-        listener.setHttpHandler( new ShutdownHandler( server ) );
+        listener.setHttpHandler( new ShutdownHandler() );
         server.addListener( listener );
         log.info( "...added shutdown listener for port " + SHUTDOWN_PORT );
         
@@ -304,20 +304,7 @@ public class TestContainer
     {
         private static final long serialVersionUID = -7785141243907081919L;
 
-        private Server m_server;
-
         private HttpContext m_context;
-
-        /**
-         * Sets a reference to the HttpContext so that it can be shut down
-         * later.
-         * 
-         * @param server the test container
-         */
-        public ShutdownHandler( Server server )
-        {
-            m_server = server;
-        }
 
         /**
          * Returns the HttpContext used to initialize this handler.
