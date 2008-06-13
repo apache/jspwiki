@@ -46,6 +46,7 @@ public class InsertPage
 
     public static final String ATTR_RECURSE    = "com.ecyrd.jspwiki.plugin.InsertPage.recurseCheck";
     
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -77,7 +78,7 @@ public class InsertPage
                 //  Check for recursivity
                 //
                 
-                List previousIncludes = (List)context.getVariable( ATTR_RECURSE );
+                List<String> previousIncludes = (List)context.getVariable( ATTR_RECURSE );
                 
                 if( previousIncludes != null )
                 {
@@ -88,7 +89,7 @@ public class InsertPage
                 }
                 else
                 {
-                    previousIncludes = new ArrayList();
+                    previousIncludes = new ArrayList<String>();
                 }
                
                 previousIncludes.add( page.getName() );

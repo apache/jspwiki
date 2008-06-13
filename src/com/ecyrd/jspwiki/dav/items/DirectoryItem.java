@@ -81,6 +81,7 @@ public class DirectoryItem extends DavItem
         m_items.add( di );
     }
 
+    @SuppressWarnings("unchecked")
     public void addDavItems( Collection c )
     {
         m_items.addAll( c );

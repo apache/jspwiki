@@ -139,7 +139,7 @@ public class BasicSearchProvider implements SearchProvider
 
     private Collection findPages( QueryItem[] query )
     {
-        TreeSet res = new TreeSet( new SearchResultComparator() );
+        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         Collection allPages = null;
@@ -185,13 +185,16 @@ public class BasicSearchProvider implements SearchProvider
         return res;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection findPages(String query)
     {
         return findPages(parseQuery(query));
     }
 
     /**
-     * @see com.ecyrd.jspwiki.WikiProvider#getProviderInfo()
+     *  {@inheritDoc}
      */
     public String getProviderInfo()
     {

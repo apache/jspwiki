@@ -81,7 +81,7 @@ public abstract class AbstractRPCHandler
     {
         checkPermission( PagePermission.VIEW );
         Collection pages = m_engine.getRecentChanges();
-        Vector result    = new Vector();
+        Vector<Hashtable<?, ?>> result    = new Vector<Hashtable<?, ?>>();
 
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
@@ -107,7 +107,6 @@ public abstract class AbstractRPCHandler
      *  Checks whether the current user has permission to perform the RPC action; 
      *  throws an exception if not allowed by {@link com.ecyrd.jspwiki.auth.AuthorizationManager}.
      *  
-     *  @throws AuthenticationFailed A RuntimeException, if the authentication fails and the user has no permission.
      *  @param perm the Permission to check
      */
     protected void checkPermission( Permission perm )

@@ -40,7 +40,7 @@ public class ContentTag
 {
     private static final long serialVersionUID = 0L;
     
-    private Map m_mappings = new HashMap();
+    private Map<String, String> m_mappings = new HashMap<String, String>();
 
     public void setView( String s )
     {
@@ -106,7 +106,7 @@ public class ContentTag
         {
             // Check the overridden templates first
             String requestContext = m_wikiContext.getRequestContext();
-            String contentTemplate = (String)m_mappings.get( requestContext );
+            String contentTemplate = m_mappings.get( requestContext );
 
             // If not found, use the defaults
             if ( contentTemplate == null )

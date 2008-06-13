@@ -54,7 +54,7 @@ public class RPCHandlerUTF8
         checkPermission( PagePermission.VIEW );
         
         Collection pages = m_engine.getRecentChanges();
-        Vector result = new Vector();
+        Vector<String> result = new Vector<String>();
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
@@ -72,9 +72,9 @@ public class RPCHandlerUTF8
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    protected Hashtable encodeWikiPage( WikiPage page )
+    protected Hashtable<String, Object> encodeWikiPage( WikiPage page )
     {
-        Hashtable ht = new Hashtable();
+        Hashtable<String, Object> ht = new Hashtable<String, Object>();
 
         ht.put( "name", page.getName() );
 
@@ -109,7 +109,7 @@ public class RPCHandlerUTF8
         checkPermission( PagePermission.VIEW );
         
         Collection pages = m_engine.getRecentChanges();
-        Vector result = new Vector();
+        Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
@@ -228,7 +228,7 @@ public class RPCHandlerUTF8
                              extCollector,
                              attCollector );
 
-        Vector result = new Vector();
+        Vector<Hashtable<String, String>> result = new Vector<Hashtable<String, String>>();
 
         // FIXME: Contains far too much common with RPCHandler.  Refactor!
 
@@ -238,7 +238,7 @@ public class RPCHandlerUTF8
         for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
         {
             String link = (String) i.next();
-            Hashtable ht = new Hashtable();
+            Hashtable<String, String> ht = new Hashtable<String, String>();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 
@@ -261,7 +261,7 @@ public class RPCHandlerUTF8
         {
             String link = (String) i.next();
 
-            Hashtable ht = new Hashtable();
+            Hashtable<String, String> ht = new Hashtable<String, String>();
 
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
@@ -279,7 +279,7 @@ public class RPCHandlerUTF8
         {
             String link = (String) i.next();
 
-            Hashtable ht = new Hashtable();
+            Hashtable<String, String> ht = new Hashtable<String, String>();
 
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );

@@ -52,7 +52,7 @@ public class EditorIteratorTag
 
         String[] editorList = mgr.getEditorList();
 
-        Collection editors = new ArrayList();
+        Collection<Editor> editors = new ArrayList<Editor>();
 
         for ( int i = 0; i < editorList.length; i++ )
         {

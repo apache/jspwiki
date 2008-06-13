@@ -252,7 +252,7 @@ public final class ClassUtil
     {
         try
         {
-            Class cl = getMappedClass( requestedClass );
+            Class<?> cl = getMappedClass( requestedClass );
          
             Constructor[] ctors = cl.getConstructors();
             
@@ -262,7 +262,7 @@ public final class ClassUtil
             //
             for( int c = 0; c < ctors.length; c++ )
             {
-                Class[] params = ctors[c].getParameterTypes();
+                Class<?>[] params = ctors[c].getParameterTypes();
                 
                 if( params.length == initargs.length )
                 {

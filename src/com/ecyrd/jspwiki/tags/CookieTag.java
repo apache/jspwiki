@@ -267,7 +267,7 @@ public class CookieTag
             return;
         }
         String in = c.getValue();
-        Map values = parseCookieValues( in );
+        Map<String, String> values = parseCookieValues( in );
         values.put( item, value );
         String cv = encodeValues( values );
         c.setValue( cv );
@@ -292,9 +292,9 @@ public class CookieTag
      * Parses a cookie value, of format name1%3Fvalue1&name2%3Fvalue2...,
      * into a Map<String,String>.
      */
-    private Map parseCookieValues( String s )
+    private Map<String, String> parseCookieValues( String s )
     {
-        Map rval = new HashMap();
+        Map<String, String> rval = new HashMap<String, String>();
         if( s == null )
         {
             return rval;

@@ -68,7 +68,7 @@ public class LinkTag
     private boolean m_absolute = false;
     private boolean m_overrideAbsolute = false;
 
-    private Map m_containedParams;
+    private Map<String, String> m_containedParams;
 
     private BodyContent m_bodyContent;
 
@@ -160,7 +160,7 @@ public class LinkTag
         {
             if( m_containedParams == null )
             {
-                m_containedParams = new HashMap();
+                m_containedParams = new HashMap<String, String>();
             }
             m_containedParams.put( name, value );
         }

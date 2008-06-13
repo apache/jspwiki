@@ -92,6 +92,7 @@ public class PluginTag
         return EVAL_BODY_BUFFERED;
     }
 
+    @SuppressWarnings("unchecked")
     private String executePlugin( String plugin, String args, String body )
         throws PluginException, IOException
     {
@@ -100,7 +101,7 @@ public class PluginTag
 
         m_evaluated = true;
 
-        Map argmap = pm.parseArgs( args );
+        Map<String, String> argmap = pm.parseArgs( args );
         
         if( body != null ) 
         {
@@ -145,7 +146,7 @@ public class PluginTag
         {
             BodyContent bc = getBodyContent();
             
-            getPreviousOut().write( executePlugin( m_plugin, m_args, ((bc != null) ? bc.getString() : null) ) );
+            getPreviousOut().write( executePlugin( m_plugin, m_args, (bc != null) ? bc.getString() : null) );
         }
         catch( Exception e )
         {

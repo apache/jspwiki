@@ -150,6 +150,7 @@ public class IndexPlugin implements WikiPlugin
     /**
      *  Gets all pages, then sorts them.
      */
+    @SuppressWarnings("unchecked")
     static Collection getAllPagesSortedByName( WikiContext wikiContext )
     {
         final WikiEngine engine = wikiContext.getEngine();
@@ -158,13 +159,10 @@ public class IndexPlugin implements WikiPlugin
         if( pageManager == null )
             return null;
 
-        Collection result = new TreeSet( new Comparator() {
-            public int compare( Object o1, Object o2 )
+        Collection<WikiPage> result = new TreeSet<WikiPage>( new Comparator<WikiPage>() {
+            public int compare( WikiPage page1, WikiPage page2 )
             {
-                if( o1 == null || o2 == null ) return 0;
-
-                WikiPage page1 = (WikiPage)o1;
-                WikiPage page2 = (WikiPage)o2;
+                if( page1 == null || page2 == null ) return 0;
 
                 return page1.getName().compareTo( page2.getName() );
             }
@@ -172,7 +170,7 @@ public class IndexPlugin implements WikiPlugin
 
         try
         {
-            Collection allPages = pageManager.getAllPages();
+            Collection<WikiPage> allPages = pageManager.getAllPages();
             result.addAll( allPages );
         }
         catch( ProviderException e )

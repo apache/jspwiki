@@ -454,6 +454,7 @@ public class RSSGenerator
      * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
+    @SuppressWarnings("unchecked")
     protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
     {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
@@ -527,6 +528,7 @@ public class RSSGenerator
      *  @return A String of valid RSS or Atom.
      *  @throws ProviderException If reading of pages was not possible.
      */
+    @SuppressWarnings("unchecked")
     protected String generateBlogRSS( WikiContext wikiContext, List changed, Feed feed )
         throws ProviderException
     {

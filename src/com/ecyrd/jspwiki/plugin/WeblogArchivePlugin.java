@@ -114,11 +114,12 @@ public class WeblogArchivePlugin implements WikiPlugin
         return sb.toString();
     }
 
+    @SuppressWarnings("unchecked")
     private SortedSet collectMonths( WikiEngine engine, String page )
         throws ProviderException
     {
         Comparator comp = new ArchiveComparator();
-        TreeSet res = new TreeSet( comp );
+        TreeSet<Calendar> res = new TreeSet<Calendar>( comp );
 
         WeblogPlugin pl = new WeblogPlugin();
 

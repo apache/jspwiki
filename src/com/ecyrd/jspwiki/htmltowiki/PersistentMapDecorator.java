@@ -77,6 +77,7 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Set entrySet()
     {
@@ -122,6 +123,7 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Set keySet()
     {
@@ -131,6 +133,7 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Object put( Object arg0, Object arg1 )
     {
@@ -140,6 +143,7 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void putAll( Map arg0 )
     {
@@ -176,6 +180,7 @@ public class PersistentMapDecorator extends Properties
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Collection values()
     {
