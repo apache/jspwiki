@@ -1,3 +1,21 @@
+2008-06-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-svn-40
+        
+        * Removed TestHttpServletRequest, TestHttpServletResponse,
+        TestHttpSession, TestFilterChain, TestFilterConfig,
+        TestServletContext in favor of the much-superior Stripes
+        mock objects. TestEngine was retrofitted with the Stripes
+        mocks and all unit tests were also changed. In particular,
+        take note of the TestEngine.newHttpRequest() factory method,
+        which should be used to create test request objects.
+        
+        * Trimmed some unncessary web unit test classes that were
+        left behind as crutches in case Selenium didn't work out. 
+        
+        * Upgraded Selenium-RC jars to 1.0-beta1. Selenium still
+        does not work with FireFox 3, unfortunately. :(
+        
 2008-06-12  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-39
