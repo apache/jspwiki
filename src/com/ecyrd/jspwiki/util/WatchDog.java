@@ -54,7 +54,7 @@ public final class WatchDog
     private boolean   m_enabled    = true;
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(WatchDog.class.getName());
+    private Logger log = Logger.getLogger(WatchDog.class.getName());
 
     private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = 
         new HashMap<Integer,WeakReference<WatchDog>>();
@@ -372,6 +372,8 @@ public final class WatchDog
          */
         public void backgroundTask() throws Exception
         {
+            if( c_kennel == null ) return;
+            
             synchronized( c_kennel )
             {
                 for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
