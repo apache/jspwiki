@@ -9,6 +9,7 @@
 <%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
 <%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.Preferences.TimeFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -179,7 +180,7 @@
             }
 
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext );
+            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
 
             pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
 
