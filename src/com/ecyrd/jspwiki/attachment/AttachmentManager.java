@@ -591,11 +591,12 @@ public class AttachmentManager
     }
 
     /**
-     *  Validates the filename and makes sure it is legal.
+     *  Validates the filename and makes sure it is legal.  It trims and splits
+     *  and replaces bad characters.
      *  
      *  @param filename
-     *  @return
-     *  @throws WikiException If the filename is not legal.
+     *  @return A validated name with annoying characters replaced.
+     *  @throws WikiException If the filename is not legal (e.g. empty)
      */
     static String validateFileName( String filename )
         throws WikiException
