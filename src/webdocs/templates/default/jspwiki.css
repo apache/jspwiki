@@ -1178,10 +1178,14 @@ body.view {
 	font-size:1.4em;
 }
 .index .body {
+    margin-top: 0.5ex;
 }
 .index .section {
 	color:red;
 	font-size:1.4em;
+	display: block;
+	border-bottom: 2px solid silver;
+	margin-top: 1.5ex;
 }
 
 /* +++ 625 Table of contents plugin +++ */

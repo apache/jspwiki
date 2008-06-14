@@ -1,3 +1,20 @@
+2008-06-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-42
+        
+        * JSPWIKI-185: There should be no more NPEs upon startup.  Improved
+        logging as well as added a few null checks.
+        
+        * Fix: It was impossible to add new users due to an overzealous null check
+        in XMLUserDatabase.
+        
+        * Improved our notification in case you have not yet installed JSPWiki.  Incidentally,
+        we're using baseURL to check whether the install process is done, and because of this,
+        setting baseURL becomes mandatory.
+        
+        * JSPWIKI-246: All new (and faster) IndexPlugin as the old one couldn't be
+        converted to Apache.
+        
 2007-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
