@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
  * targeted Commands.</p>
  * <p>This class is not <code>final</code>; it may be extended in
  * the future.</p>
- * @see com.ecyrd.jspwiki.WikiEngine#getApplicationName().
+ * @see com.ecyrd.jspwiki.WikiEngine#getApplicationName()
  * @author Andrew Jaquith
  * @since 2.4.22
  */
@@ -82,7 +82,7 @@ public final class WikiCommand extends AbstractCommand
      * @param type the type
      * @param contentTemplate the content template; may be <code>null</code>
      * @param action The action
-     * @return IllegalArgumentException if the request content, URL pattern, or
+     * @throws IllegalArgumentException if the request content, URL pattern, or
      *         type is <code>null</code>
      */
     private WikiCommand( String requestContext, 

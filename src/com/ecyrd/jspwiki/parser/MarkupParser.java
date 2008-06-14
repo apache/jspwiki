@@ -234,8 +234,8 @@ public abstract class MarkupParser
      *  Push back any character to the current input.  Does not
      *  push back a read EOF, though.
      *  
-     *  @throws IOException In case the character cannot be pushed back.
      *  @param c Character to push back.
+     *  @throws IOException In case the character cannot be pushed back.
      */
     protected void pushBack( int c )
         throws IOException

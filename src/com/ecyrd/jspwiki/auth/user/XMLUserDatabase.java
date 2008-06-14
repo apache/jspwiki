@@ -524,6 +524,13 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 break;
             }
         }
+        
+        // If user not found, somebody's been deleting/modifying users behind our back
+        if ( user == null )
+        {
+            throw new IllegalStateException( "UserDatabase did not contain user with loginName=" + profile.getLoginName() + "!" );
+        }
+        
         Date modDate = new Date( System.currentTimeMillis() );
         if ( isNew )
         {

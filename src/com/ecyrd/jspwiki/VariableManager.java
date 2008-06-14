@@ -452,6 +452,7 @@ public class VariableManager
             return res.toString();
         }
 
+        @SuppressWarnings("deprecation")
         public String getPluginpath()
         {
             String s = m_context.getEngine().getPluginSearchPath();

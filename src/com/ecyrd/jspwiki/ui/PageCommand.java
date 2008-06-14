@@ -92,7 +92,7 @@ public final class PageCommand extends AbstractCommand
      * @param target the target of the command (a WikiPage); may be <code>null</code>
      * @param action the action used to construct a suitable PagePermission
      * @param contentTemplate the content template; may be <code>null</code>
-     * @return IllegalArgumentException if the request content, URL pattern, or
+     * @throws IllegalArgumentException if the request content, URL pattern, or
      *         type is <code>null</code>
      */
     private PageCommand( String requestContext, String urlPattern, String contentTemplate, WikiPage target, String action )

@@ -185,6 +185,7 @@ public class Installer
         return m_props.getProperty( key );
     }
     
+    @SuppressWarnings("deprecation")
     public void parseProperties () throws Exception
     {
         ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,

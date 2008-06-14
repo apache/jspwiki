@@ -106,9 +106,10 @@ public abstract class AbstractReferralPlugin
     protected           WikiEngine m_engine;
 
     /**
-     *  {@inheritDoc}
+     * @param context the wiki context
+     * @param params parameters for initializing the plugin
+     * @throws PluginException if any of the plugin parameters are malformed
      */
-
     // FIXME: The compiled pattern strings should really be cached somehow.
     public void initialize( WikiContext context, Map params )
         throws PluginException

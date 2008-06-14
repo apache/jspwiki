@@ -32,7 +32,7 @@ import com.ecyrd.jspwiki.auth.Authorizer;
 
 /**
  * Handles logins made from within JSPWiki.
- * @link AuthenticationManager#getWikiSession(HttpServletRequest).
+ * @see AuthenticationManager#getWikiSession(HttpServletRequest)
  * @author Andrew Jaquith
  * @since 2.3
  */

@@ -49,7 +49,7 @@ public final class RedirectCommand extends AbstractCommand
      * @param urlPattern the URL pattern
      * @param contentTemplate the content template; may be <code>null</code>
      * @param target the target of the command
-     * @return IllegalArgumentException if the request content, URL pattern, or
+     * @throws IllegalArgumentException if the request content, URL pattern, or
      *         type is <code>null</code>
      */
     private RedirectCommand( String requestContext, String urlPattern, String contentTemplate, String target )
