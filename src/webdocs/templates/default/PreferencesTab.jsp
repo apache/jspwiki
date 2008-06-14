@@ -24,6 +24,7 @@
   pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
   pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
 %>
+
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
 
 <c:if test="${param.tab eq 'prefs'}" >
@@ -178,7 +179,7 @@
 
 <h3><fmt:message key='prefs.clear.heading'/></h3>
 
-<form action="<wiki:Link format='url' jsp='UserPreferences.jsp'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
+<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="clearCookie"
     onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
       method="post" accept-charset="<wiki:ContentEncoding />" >

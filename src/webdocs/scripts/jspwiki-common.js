@@ -19,36 +19,42 @@
     under the License.  
  */
  
- /**
-  ** Javascript routines to support JSPWiki
-  ** since v.2.6.0
-  **
-  ** Use mootools v1.1, with following components:  
-  **   Core, Class,  Native, Element(ex. Dimensions), Window,
-  **   Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
-  **
-  ** 100 Wiki object (page parms, UserPrefs and setting focus) 
-  ** 105 WikiSlidingFavorites 
-  ** 110 WikiSlimbox : attachment viewer 
-  ** 114 Reflection (adds reflection to images) 
-  ** 120 QuickLinks object 
-  ** 130 TabbedSection object
-  ** 132 Accordion object 
-  ** 140 SearchBox object: remember 10 most recent search topics
-  ** 150 Colors, GraphBar object: e.g. used on the findpage
-  ** 
-  ** 200 Collapsible list items
-  ** 210 Collapsbile Trees
-  ** 220 RoundedCorners ffs
-  ** 230 Sortable (clever table-sort) 
-  ** 240 Table-filter (excel like table filters 
-  ** 250 Categories: turn wikipage link into AJAXed popup 
-  ** 260 WikiTips 
-  ** 270 WikiColumns 
-  ** 280 ZebraTable: color odd/even row of a table 
-  ** 290 HighlightWord: refactored
-  ** 300 Prettify
-  **/
+/*
+Javascript routines to support JSPWiki
+Since v.2.6.0
+
+Uses mootools v1.1, with following components:  
+*	Core, Class,  Native, Element(ex. Dimensions), Window,
+*	Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
+
+Core JS Routine
+*	100 Wiki object (page parms, UserPrefs and setting focus) 
+*	140 SearchBox object: remember 10 most recent search topics
+*	290 HighlightWords in the page-content
+
+Core Dynamic Styles
+	Wiki.addPageRender( XYZ )
+	Wiki.renderPage(page-element, page-name)
+
+*	110 WikiSlimbox (attachment viewer): dynamic style 
+*	130 TabbedSection object: dynamic style
+*	150 Colors, GraphBar object: dynamic style
+*	200 Collapsible list items: dynamic style
+*	230 Sortable: dynamic style 
+*	240 Table-filter (excel like column filters): dynamic style
+*	280 ZebraTable (color odd/even rows): dynmaic style
+
+Complementary Dynamic Styles (see jspwiki-commonstyles.js)
+*	114 Reflection (adds reflection to images): dynamic style 
+*	116 WikiCoverflow (based on MooFlow) : dynamic style
+*	118 Google Chart: dynamic style
+*	132 Accordion object: dynamic style
+*	220 RoundedCorners: dynamic style
+*	260 WikiTips: dynamic style 
+*	270 WikiColumns: dynamic style
+*	300 Prettify: dynamic style
+
+*/
 
 /* extend mootools */
 String.extend({
@@ -68,7 +74,7 @@ function $getText(el) {
 Element.extend({
 
 	/* wrapper = new Element('div').injectWrapper(node); */
-	injectWrapper: function(el){
+	wrapChildren: function(el){
 		while( el.firstChild ) this.appendChild( el.firstChild );
 		el.appendChild( this ) ;
 		return this;
@@ -215,16 +221,14 @@ var Wiki = {
 
 	onPageLoad: function(){
 		if(this.prefs) return; //already initialised
-		var meta = ['wikiPageName','wikiJsonUrl','wikiPageUrl','wikiEditUrl','wikiBaseUrl','wikiUserName','wikiTemplateUrl']
+		//read all meta elements starting with wiki
 		$$('meta').each(function(el){
-			var n = el.getProperty('name');
-			if( meta.contains(n) ) this[n.substr(4)] = el.getProperty('content');
+			var n = el.getProperty('name') || '';
+			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.getProperty('content');
 		},this);
 
 		var h = location.host;
 		this.BasePath = this.BaseUrl.slice(this.BaseUrl.indexOf(h)+h.length,-1);
-		//this.ClientLanguage = navigator.language ? navigator.language : navigator.userLanguage;
-		//this.ClientTimezone = new Date().getTimezoneOffset()/60;
 
 		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 		
@@ -233,6 +237,20 @@ var Wiki = {
 		this.parseLocationHash.periodical(500);
 
 		this.makeMenuFx('morebutton', 'morepopup');
+		this.addEditLinks();
+
+		var p = $('page'); if(p) this.renderPage(p, Wiki.PageName);
+		var f = $('favorites'); if(f) this.renderPage(f, "Favorites");
+	},
+
+	renderPage: function(page, name){
+		this.$pageHandlers.each(function(obj){
+			obj.render(page, name)
+		});
+	},
+	addPageRender: function(fn){
+		if(!this.$pageHandlers) this.$pageHandlers = [];
+		this.$pageHandlers.push(fn);
 	},
 
 	setFocus: function(){
@@ -287,6 +305,7 @@ var Wiki = {
 		});
 	},
 	
+	//FIXME
 	locatemenu: function(base,el){
 		var win = {'x': window.getWidth(), 'y': window.getHeight()},
 			scroll = {'x': window.getScrollLeft(), 'y': window.getScrollTop()},
@@ -328,12 +347,22 @@ var Wiki = {
 
 		location = location.href; /* now jump to the #hash */
 	},
+	
+	alert: function(msg){
+		/* TODO: create popup alert, which allowed any html msg to be displayed */
+		alert(msg);
+	},
+
+	prompt: function(title, msg){
+		/* TODO: create popup prompt */
+		return prompt(title,msg);
+	},
 
 	/* SubmitOnce: disable all buttons to avoid double submit */
 	submitOnce: function(form){
 		window.onbeforeunload = null; /* regular exit of this page -- see jspwiki-edit.js */
 		(function(){ 
-		$A(form.elements).each(function(e){
+			$A(form.elements).each(function(e){
 				if( (/submit|button/i).test(e.type)) e.disabled = true;
 			});
 		}).delay(10);
@@ -350,10 +379,28 @@ var Wiki = {
 		return Wiki.submitOnce(form);
 	},
 
-	JSONid : 10000,
+	addEditLinks: function(){
+		if( $("previewcontent") || !this.PermissionEdit ) return;	
+
+		var url = this.EditUrl;
+		url = url + (url.contains('?') ? '&' : '?') + 'section=';
+
+		$$('#pagecontent *[id^=section]').each(function(el,i){
+						
+			new Element('span',{
+				'class':'editsection'
+			}).adopt( new Element('a', {
+				'href' : url+i /*,
+				'title' : 'quick.edit.title'.localize(el.getText()) */
+				}).setHTML('quick.edit'.localize()) 
+			).inject(el);
+		});
+	},
+
+	$jsonid : 10000,
 	jsonrpc: function(method, params, fn) {	
 		new Ajax( Wiki.JsonUrl, {
-			postBody: Json.toString({"id":Wiki.JSONid++, "method":method, "params":params}), 
+			postBody: Json.toString({"id":Wiki.$jsonid++, "method":method, "params":params}), 
 			method: 'post', 
 			onComplete: function(result){ 
 				var r = Json.evaluate(result,true);
@@ -365,101 +412,6 @@ var Wiki = {
 	}	
 }
 
-/** 105 WikiSlidingFavs
- ** Support sliding favorites menu
- */
-var WikiSlidingFavs = 
-{
-	onPageLoad: function(){
-
-		return; //not compatible with FCK editor => find a better less obtrusive solution
-
-		var tabs = $E('#page .tabs'); if( !tabs ) return;
-
-		/* inject a wrapper div cause relative can not be set directly on the .tabs */
-		tabs = new Element('div', { 
-			'styles': { 
-				'position':'relative', 
-				'padding':'0.5em'
-			} 
-		}).injectWrapper(tabs.setStyle('padding','0'));	
-
-		var body = $('wikibody'),
-			page = $('page'),
-			favs = $('favorites'),
-			favsWidth = favs.offsetWidth,
-			pageWidth = page.offsetWidth;
-
-		var toggleFavs = function(){
-			if( body.hasClass('fav-slide') ){ 
-				toggler.set({'title': 'favs.show'.localize()});
-				favsFx.set(favsHide);
-				favsWrapper.setStyles({'width':favsWidth}).adopt(favs);
-			} else {
-				toggler.set({'title': 'favs.hide'.localize()});
-				favs.injectAfter(page);
-			}
-		}
-			
-		var toggler = new Element('div', {
-			'id':'collapseFavs',
-			'events': {
-				'click': function(){
-					body.toggleClass('fav-slide');
-					Wiki.prefs.set('slidingFav', body.hasClass('fav-slide') ? 'fav-slide' : '' );
-					toggleFavs();					
-				},
-				'mouseenter': function(e){
-					e = new Event(e);
-					this.addClass('hover');
-					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({ left: ppx, top: e.page.y+"px" }).show();
-					if( body.hasClass('fav-slide') ){
-						favsWrapper.inject(toggler).show();
-						favsFx.start(favsShow);
-					}
-				},
-				'mousemove': function(e){
-					e = new Event(e);
-					var ppx = toggler.getPosition().x+"px";
-					pointer.setStyles({	left: ppx, top: e.page.y+"px" });
-				},
-				'mouseleave': function(){
-					this.removeClass('hover');
-					pointer.hide();
-					if( body.hasClass('fav-slide') ){
-						favsFx.start(favsHide).chain(function(){
-						 	favsWrapper.hide().inject(document.body);
-						});
-					}
-				}
-			}
-		}).injectTop(tabs);
-
-		var pointer = new Element('div', {
-			'id':'collapseFavsPointer'
-		}).hide().inject(body);
-			
-		var favsWrapper = new Element('div', {
-			'id':'collapseFavsWrapper',
-			'events': {
-				'click' : function(e){ e.stopPropagation();	},
-				'mouseenter' : function(e){ pointer.hide();	},
-				'mouseleave' : function(e){	pointer.show();	}
-			} 
-		}).hide().inject(document.body);
-
-		var	favsFx = new Fx.Styles(favs,{wait:false}),
-			favsHide = {'margin-left':-favsWidth, 'width':0, 'opacity':0},
-			favsShow = {'margin-left':0, 'width':favsWidth, 'opacity':0.9};
-
-		if( Wiki.prefs.get('slidingFav') == 'fav-slide') body.addClass('fav-slide');
-
-		toggleFavs();
-		//toggleFavs.delay(100);
-
-	} 
-}
 
 /** 110 WikiSlimbox
  ** Inspired http://www.digitalia.be/software/slimbox by Christophe Bleys
@@ -469,25 +421,30 @@ var WikiSlidingFavs =
  **/
 var WikiSlimbox = {
 
-	onPageLoad: function(){
+//	onPageLoad: function(){
+	render: function(page, name){
 		var i = 0,
 			lnk = new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
 			
-		$$('*[class^=slimbox]').each(function(slim){
+		$ES('*[class^=slimbox]',page).each(function(slim){
 			var group = 'lightbox'+ i++,
 				parm = slim.className.split('-')[1] || 'img ajax',
 				filter = [];
 			if(parm.test('img')) filter.extend(['img.inline', 'a.attachment']); 
 			if(parm.test('ajax')) filter.extend(['a.wikipage', 'a.external']); 
+
 			$ES(filter.join(','),slim).each(function(el){
-				var href = el.src||el.href;
-				var rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
+				var href = el.src||el.href,
+					rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
+
 				if((rel=='img') && !href.test('(.bmp|.gif|.png|.jpg|.jpeg)(\\?.*)?$','i')) return;
+
 				lnk.clone().setProperties({
 					'href':href, 
 					'rel':group+' '+rel,
 					'title':el.alt||el.getText()
 				}).injectBefore(el);
+
 				if(el.src) el.replaceWith(new Element('a',{
 					'class':'attachment',
 					'href':el.src
@@ -498,6 +455,7 @@ var WikiSlimbox = {
 		//new Asset.javascript(Wiki.TemplateUrl+'scripts/slimbox.js');
 	}
 }
+Wiki.addPageRender(WikiSlimbox);
 
 /*
 	Slimbox v1.31 - The ultimate lightweight Lightbox clone
@@ -756,100 +714,11 @@ var Lightbox = {
 		for (var f in this.fx) this.fx[f].stop();
 		this.center.style.display = this.bottomContainer.style.display = 'none';
 		this.fx.overlay.chain(this.setup.pass(false, this)).start(0);
+		this.image.empty();
 		return false;
 	}
 };
 
-
-/** 114 Reflection
- ** Inspired by Reflection.js at http://cow.neondragon.net/stuff/reflection/
- ** Freely distributable under MIT-style license.
- ** Adapted for JSPWiki/BrushedTemplate, D.Frederickx, Sep 06
- ** Use:
- ** 	%%reflection-height-opacity  [some-image.jpg] %%
- **/
-var WikiReflection = {
-
-	onPageLoad: function(){
-		$$('*[class^=reflection]').each( function(w){
-			var parms = w.className.split('-');
-			$ES('img',w).each(function(img){
-				Reflection.add(img, parms[1], parms[2]);
-			}); 
-		});
-	}
-}
-/* FIXME : add delayed loading of reflection library */
-var Reflection = {
-
-	options: { height: 0.33, opacity: 0.5 },
-
-	add: function(img, height, opacity) {
-		//TODO Reflection.remove(image); --is this still needed?
-		height  = (height ) ? height/100 : this.options.height;
-		opacity = (opacity) ? opacity/100: this.options.opacity;
-
-		var div = new Element('div').injectAfter(img).adopt(img),
-			imgW = img.width,
-			imgH = img.height,
-			rH   = Math.floor(imgH * height); //reflection height
-
-		div.className = img.className.replace(/\breflection\b/, "");
-		div.style.cssText = img.backupStyle = img.style.cssText;
-		//div.setStyles({'width':img.width, 'height':imgH +rH, "maxWidth": imgW });
-		div.setStyles({'width':img.width, 'height':imgH +rH });
-		img.style.cssText = 'vertical-align: bottom';
-		//img.className = 'inline reflected';  //FIXME: is this still needed ??
-
-		if( window.ie ){ 
-			new Element('img', {'src': img.src, 'styles': {
-				'width': imgW,
-				'marginBottom': "-" + (imgH - rH) + 'px',
-				'filter': 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity='+(opacity*100)+', style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy='+(height*100)+')'
-			}}).inject(div);
-		} else {
-			var r = new Element('canvas', {'width':imgW, 'height':rH, 'styles': {'width':imgW, 'height': rH}}).inject(div);
-			if( !r.getContext ) return;
-
-			var ctx = r.getContext("2d");
-			ctx.save();
-			ctx.translate(0, imgH-1);
-			ctx.scale(1, -1);
-			ctx.drawImage(img, 0, 0, imgW, imgH);
-			ctx.restore();
-			ctx.globalCompositeOperation = "destination-out";
-
-			var g = ctx.createLinearGradient(0, 0, 0, rH);
-			g.addColorStop( 0, "rgba(255, 255, 255, " + (1 - opacity) + ")" );
-			g.addColorStop( 1, "rgba(255, 255, 255, 1.0)" );
-			ctx.fillStyle = g;
-			ctx.rect( 0, 0, imgW, rH );
-			ctx.fill(); 
-		}
-	}
-}
- 
-/** 120 brushed quick links **/
-var QuickLinks = {
-
-	onPageLoad: function(){
-		if( $("previewcontent") || !Wiki.PermissionEdit ) return;	
-
-		var url = Wiki.EditUrl;
-		url = url + (url.contains('?') ? '&' : '?') + 'section=';
-
-		$$('#pagecontent *[id^=section]').each(function(el,i){
-						
-			new Element('span',{
-				'class':'editsection'
-			}).adopt( new Element('a', {
-				'href' : url+i /*,
-				'title' : 'quick.edit.title'.localize(el.getText()) */
-				}).setHTML('quick.edit'.localize()) 
-			).inject(el);
-		});
-	}
-}
 
 /** Class: Tabbed Section (130)
 	Creates tabs, based on some css-class information
@@ -870,117 +739,55 @@ var QuickLinks = {
  **/
 var TabbedSection = {
 
-	onPageLoad: function(){
-
-		// charge existing tabmenu's with click handlers
-		$$('.tabmenu a').each(function(el){
-			if(el.href) return;
-			var tab = $(el.id.substr(5)); //drop 'menu-' prefix
-			el.addEvent('click', this.clickTab.bind(tab) );
+	render: function(page, name){
+		// add click handlers to existing tabmenu's, generated by <wiki:tabbedSection>
+		$ES('.tabmenu a',page).each(function(el){
+			if(!el.href) el.addEvent('click', this.click);
 		},this);	
 	
 		// convert tabbedSections into tabmenu's with click handlers
-		$$('.tabbedSection').each( function(tt){
-			tt.addClass('tabs'); //css styling is on tabs
-			var tabmenu = new Element('div',{'class':'tabmenu'}).injectBefore(tt);
+		$ES('.tabbedSection',page).each( function(tt){
+			if(tt.hasClass('tabs')) return;
+			tt.addClass('tabs'); //css styling on tabs
+			
+			var menu = new Element('div',{'class':'tabmenu'}).injectBefore(tt);
 
 			tt.getChildren().each(function(tab,i) {
-				if( !tab.className.test('^tab-') ) return;
+				//find nested %%tab-XXX
+				var clazz = tab.className;
+				if( !clazz.test('^tab-') ) return; 
 
-				if( !tab.id || (tab.id=="") ) tab.id = tab.className;
-				var title = tab.className.substr(4).deCamelize(); //drop 'tab-' prefix
+				if( !tab.id || (tab.id=="") ) tab.id = clazz; //unique id
 
 				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
-				new Element('div',{'styles':{'clear':'both'}}).inject(tab);
+				new Element('div',{'class':'clearbox'}).inject(tab);
 
-				var menu = new Element('a', {
+				var title = clazz.substr(4).deCamelize(); //drop 'tab-' prefix
+				new Element('a', {
 					'id':'menu-'+tab.id, 
-					'events':{ 'click': this.clickTab.bind(tab)  }
-				}).appendText(title).inject(tabmenu);
-				if( i==0 ) menu.addClass('activetab');        
+					'class':(i==0) ? 'activetab' : '',
+					'events':{ 'click': this.click }
+				}).appendText(title).inject(menu);
+
 			},this);
 		}, this);
 	},
 
-	clickTab: function(){
-		var menu = $('menu-'+this.id);
-		this.getParent().getChildren().some( function(el){
-			if(el.id){
-				var m = $('menu-'+el.id);
-				if( m && m.hasClass('activetab') ) {
-					if( el.id != this.id ) {
-						m.removeClass('activetab');      
-						menu.addClass('activetab');
-						el.addClass('hidetab');
-						this.removeClass('hidetab'); //.show();
-					}
-					return true;
-				}
-			}
-			return false;
-		},this);		
+	click: function(){
+		var menu = $(this).getParent(),
+			tabs = menu.getNext();
+
+		menu.getChildren().removeClass('activetab');
+		this.addClass('activetab');
+
+		tabs.getChildren().addClass('hidetab');
+		$E('#'+this.id.substr(5),tabs).removeClass('hidetab');		
 	}
 	
 }
+Wiki.addPageRender(TabbedSection);
 
-/** 132 Accordion for Tabs, Accordeons, CollapseBoxes
- **
- ** Following markup:
- ** <div class="accordion">
- **		<div class="tab-FirstTab">...<div>
- **		<div class="tab-SecondTab">...<div>
- ** </div>
- **
- **	is changed into
- **	<div class="accordion">
- **		<div class="toggle active">First Tab</div>
- **		<div class="tab-FirstTab tab active">...</div>
- **		<div class="toggle">Second Tab</div>
- **		<div class="tab-SecondTab">...</div>
- **	</div>
- **/
-var WikiAccordion = {
-
-	onPageLoad: function(){
-		$$('.accordion, .tabbedAccordion').each( function(tt){
-			
-			var toggles=[], contents=[], togglemenu=false;
-			if(tt.hasClass('tabbedAccordion')) togglemenu = new Element('div',{'class':'togglemenu'}).injectBefore(tt);
-			
-			tt.getChildren().each(function(tab) {
-				if( !tab.className.test('^tab-') ) return;
-
-				//FIXME use class to make tabs visible during printing 
-				//(i==0) ? tab.removeClass('hidetab'): tab.addClass('hidetab');
-
-				var title = tab.className.substr(4).deCamelize();
-				if(togglemenu) {
-					toggles.push(new Element('div',{'class':'toggle'}).inject(togglemenu).appendText(title));
-				} else {
-					toggles.push(new Element('div',{'class':'toggle'}).injectBefore(tab).appendText(title));
-				}        
-				contents.push(tab.addClass('tab'));
-			});
-			new Accordion(toggles, contents, {     
-				alwaysHide: !togglemenu,
-				onComplete: function(){
-					var el = $(this.elements[this.previous]);
-					if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
-				},
-				onActive: function(toggle,content){                          
-					toggle.addClass('active'); 
-					content.addClass('active').removeClass('xhidetab'); 
-				},
-				onBackground: function(toggle,content){ 
-					content.setStyle('height', content['offsetHeight']);
-					toggle.removeClass('active'); 
-					content.removeClass('active').addClass('xhidetab');
-				} 
-			});
-		});
-	}
-}
 
 
 /* 140 SearchBox
@@ -1185,8 +992,8 @@ var Color = new Class({
 
 var GraphBar =
 {
-	onPageLoad : function(){
-		$$('*[class^=graphBars]').each( function(g){
+	render: function(page, name){
+		$ES('*[class^=graphBars]',page).each( function(g){
 			var lbound = 20,	//max - lowerbound size of bar
 				ubound = 320,	//min - upperbound size of bar
 				vwidth = 20,	//vertical bar width
@@ -1238,7 +1045,7 @@ var GraphBar =
 						bar1.set(border+'Width',ubound-barData[j]).set('marginLeft','-1ex'); 
 					}					
 				} else { // isVertical
-					if(pb.getTag()=='td') { pb = new Element('div').injectWrapper(pb); }
+					if(pb.getTag()=='td') { pb = new Element('div').wrapChildren(pb); }
 
 					pb.setStyles({'height':ubound+b.getStyle('lineHeight').toInt(), 'position':'relative'});
 					b.setStyle('position', 'relative'); //needed for inserted spans ;-)) hehe
@@ -1313,7 +1120,7 @@ var GraphBar =
 				if( $getText( r.cells[h] ).trim() == fieldName ){
 					var result = [];
 					for( var i=1; i< tlen; i++)
-						result.push( new Element('span').injectWrapper(table.rows[i].cells[h]) );
+						result.push( new Element('span').wrapChildren(table.rows[i].cells[h]) );
 					return result;
 				}
 			}
@@ -1323,32 +1130,29 @@ var GraphBar =
 			if( $getText( r.cells[0] ).trim() == fieldName ){
 				var result = [];
 				for( var i=1; i< r.cells.length; i++)
-					result.push( new Element('span').injectWrapper(r.cells[i]) );
+					result.push( new Element('span').wrapChildren(r.cells[i]) );
 				return result;
 			}
 		}
 		return false;
 	}
 }
+Wiki.addPageRender(GraphBar);
 
 
-/** 200 Collapsible list and boxes
- **/
+/** 200 Collapsible list and boxes **/
 var Collapsible =
 {
 	pims : [], // all me cookies
 
-	onPageLoad: function(){
-		this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
-		this.initialise( "favorites",   "JSPWikiCollapseFavorites" );
-		this.initialise( "page", "JSPWikiCollapse" + Wiki.PageName );
-		//CHECKME
-		//this.initialise( "previewcontent", "JSPWikiCollapse" + Wiki.PageName );
-		this.initialise( "info" );
-	},
-
-	initialise: function( page, cookie){
+	render: function(page, name){
 		page = $(page); if(!page) return;
+
+		var cookie = Wiki.Context.test(/view|edit|comment/) ? "JSPWikiCollapse"+ name: "";
+
+		if(!this.bullet) {
+			this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');		
+		}
 
 		this.pims.push({
 			'name':cookie,
@@ -1356,8 +1160,7 @@ var Collapsible =
 			'initial': (cookie ? Cookie.get(cookie) : "") 
 		});
 		$ES('.collapse', page).each(function(el){ 
-			if( $E('.collapseBullet',el) ) return; /* no nesting */
-			this.collapseNode(el); 
+			if(!$E('.collapseBullet',el)) this.collapseNode(el); // no nesting
 		}, this);
 		$ES('.collapsebox,.collapsebox-closed', page).each(function(el){ 
 			this.collapseBox(el); 
@@ -1365,10 +1168,13 @@ var Collapsible =
 	},
 
 	collapseBox: function(el){
+		if($E('.collapsetitle',el)) return; //been here before
 		var title = el.getFirst(); if( !title ) return;
+		
 		var body = new Element('div', {'class':'collapsebody'}), 
 			bullet  = this.bullet.clone(),
 			isclosed = el.hasClass('collapsebox-closed');
+
 		while(title.nextSibling) body.appendChild(title.nextSibling); // wrap other siblings
 		el.appendChild(body);
 
@@ -1394,7 +1200,7 @@ var Collapsible =
 			}
 			if( emptyLI ) return;
 			
-			new Element('div',{'class':'collapsebody'}).injectWrapper(li);
+			new Element('div',{'class':'collapsebody'}).wrapChildren(li);
 			var bullet = this.bullet.clone().injectTop(li);
 			if(ulol) this.newBullet(bullet, ulol, (ulol.getTag()=='ul'));
 		},this);
@@ -1414,11 +1220,11 @@ var Collapsible =
 
 		bullet.className = (isopen ? 'collapseClose' : 'collapseOpen'); //ready for rendering
 		clicktarget.addEvent('click', this.clickBullet.bind(bullet, [ck, ck.value.length-1, bodyfx]))
-			.addEvent('mouseenter', function(){ clicktarget.addClass('collapseHover')} )
-			.addEvent('mouseleave', function(){ clicktarget.removeClass('collapseHover')} );
+			.addEvent('mouseenter', function(){ clicktarget.addClass('hover')} )
+			.addEvent('mouseleave', function(){ clicktarget.removeClass('hover')} );
 			  
 		bodyfx.fireEvent('onStart');
-		if(!isopen) bodyfx.set(0); //.set( isopen ? body.scrollHeight : 0 );	
+		if(!isopen) bodyfx.set(0);	
 	},
 
 	renderBullet: function(){
@@ -1458,210 +1264,30 @@ var Collapsible =
 
 		return(token == 'o');
 	}
-}
-
-
-/** 220 RoundedCorners --experimental
- ** based on Nifty corners by Allesandro Fulciniti
- ** www.pro.html.it
- ** Refactored for JSPWiki
- **
- ** JSPWiki syntax:
- **
- **  %%roundedCorners-<corners>-<color>-<borderColor>
- **  %%
- **
- **  roundedCorners-yyyy-ffc5ff-c0c0c0
- **
- **  corners: "yyyy" where first y: top-left,    2nd y: top-right,
- **                           3rd y: bottom-left; 4th y: bottom-right
- **     value can be: "y": Normal rounded corner (lowercase y)
- **                    "s": Small rounded corner (lowercase s)
- **                    "n": Normal square corner
- **
- **/
-var RoundedCorners =
-{
-	/** Definition of CORNER dimensions
-	 ** Normal    Normal+Border  Small  Small+Border
-	 ** .....+++  .....BBB       ..+++  ..BBB
-	 ** ...+++++  ...BB+++       .++++  .B+++
-	 ** ..++++++  ..B+++++       +++++  B++++
-	 ** .+++++++  .B++++++
-	 ** .+++++++  .B++++++
-	 ** ++++++++  B+++++++
-	 **
-	 ** legend: . background, B border, + forground color
-	 **/
-	NormalTop :
-		 [ { margin: "5px", height: "1px", borderSide: "0", borderTop: "1px" }
-		 , { margin: "3px", height: "1px", borderSide: "2px" }
-		 , { margin: "2px", height: "1px", borderSide: "1px" }
-		 , { margin: "1px", height: "2px", borderSide: "1px" }
-		 ] ,
-	SmallTop :
-		 [ { margin: "2px", height: "1px", borderSide: "0", borderTop: "1px" }
-		 , { margin: "1px", height: "1px", borderSide: "1px" }
-		 ] ,
-	//NormalBottom: see onPageLoad()
-	//SmallBottom: see onPageLoad()
-
-	/**
-	 ** Usage:
-	 ** RoundedCorners.register( "#header", ['yyyy', '00f000', '32cd32'] );
-	 **/
-	registry: {},
-	register: function( selector, parameters )
-	{
-		this.registry[selector] = parameters;
-		return this;
-	},
-
-	onPageLoad: function()
-	{
-		/* make reverse copies for bottom definitions */
-		this.NormalBottom = this.NormalTop.slice(0).reverse();
-		this.SmallBottom  = this.SmallTop.slice(0).reverse();
-
-		for( selector in this.registry )  // CHECK NEEDED
-		{
-			var n = $$(selector); 
-			var parms = this.registry[selector];
-			this.exec( n, parms[0], parms[1], parms[2], parms[3] );
-		}
-
-		$$('#pagecontent *[class^=roundedCorners]').each(function(el){ 
-			var parms = el.className.split('-');
-			if( parms.length < 2 ) return;
-			this.exec( [el], parms[1], parms[2], parms[3], parms[4] );
-		},this);
-	},
-
-	exec: function( nodes, corners, color, borderColor, background )
-	{
-		corners = ( corners ? corners+"nnnn": "yyyy" );
-		color   = new Color(color,'hex') || 'transparent';
-		if(borderColor) borderColor = new Color(borderColor);
-		if(background)  background  = new Color(background);
-
-		var c = corners.split('');
-		/* [0]=top-left; [1]=top-right; [2]=bottom-left; [3]=bottom-right; */
-
-		var nodeTop = null;
-		var nodeBottom = null;
-
-		if( c[0]+c[1] != "nn" )  //add top rounded corners
-		{
-			nodeTop = document.createElement("b") ;
-			nodeTop.className = "roundedCorners" ;
-
-			if( (c[0] == "y") || (c[1] == "y") )
-			{
-				this.addCorner( nodeTop, this.NormalTop, c[0], c[1], color, borderColor );
-			}
-			else if( (c[0] == "s") || (c[1] == "s") )
-			{
-				this.addCorner( nodeTop, this.SmallTop, c[0], c[1], color, borderColor );
-			}
-		}
-
-		if( c[2]+c[3] != "nn" ) //add bottom rounded corners
-		{
-			nodeBottom = document.createElement("b");
-			nodeBottom.className = "roundedCorners";
-
-			if( (c[2] == "y") || (c[3] == "y") )
-			{
-				this.addCorner( nodeBottom, this.NormalBottom, c[2], c[3], color, borderColor );
-			}
-			else if( (c[2] == "s") || (c[3] == "s") )
-			{
-				this.addCorner( nodeBottom, this.SmallBottom, c[2], c[3], color, borderColor );
-			}
-		}
-
-		if( (!nodeTop) && (!borderColor) && (!nodeBottom) ) return;
-
-		for( var i=0; i<nodes.length; i++)
-		{
-			if( !nodes[i] ) continue;
-			this.addBody( nodes[i], color, borderColor );
-			if( nodeTop     )  nodes[i].insertBefore( nodeTop.cloneNode(true), nodes[i].firstChild );
-			if( nodeBottom  )  nodes[i].appendChild( nodeBottom.cloneNode(true) );
-		}
-	},
-
-	addCorner: function( node, arr, left, right, color, borderColor )
-	{
-		for( var i=0; i< arr.length; i++ )
-		{
-			var n =  document.createElement("div");
-			n.style.height = arr[i].height;
-			n.style.overflow = "hidden";
-			n.style.borderWidth = "0";
-			n.style.backgroundColor = color.hex;
-
-			if( borderColor )
-			{
-				n.style.borderColor = borderColor.hex;
-				n.style.borderStyle = "solid";
-				if(arr[i].borderTop)
-				{
-					n.style.borderTopWidth = arr[i].borderTop;
-					n.style.height = "0";
-				}
-			}
-
-			if( left != 'n' ) n.style.marginLeft = arr[i].margin;
-			if( right != 'n' ) n.style.marginRight = arr[i].margin;
-			if( borderColor )
-			{
-				n.style.borderLeftWidth  = ( left  == 'n' ) ? "1px": arr[i].borderSide;
-				n.style.borderRightWidth = ( right == 'n' ) ? "1px": arr[i].borderSide;
-			}
-			node.appendChild( n );
-		}
-	},
-
-	// move all children of the node inside a DIV and set color and bordercolor
-	addBody: function( node, color, borderColor)
-	{
-		if( node.passed ) return;
-
-		var container = new Element('div').injectWrapper(node);
-
-		container.style.padding = "0 4px";
-		container.style.backgroundColor = color.hex;
-		if( borderColor )
-		{
-			container.style.borderLeft  = "1px solid " + borderColor.hex;
-			container.style.borderRight = "1px solid " + borderColor.hex;
-		}
-
-		node.passed=true;
-	}
-}
+};
+Wiki.addPageRender(Collapsible);
 
 
 /** 230 Sortable -- Sort tables **/
 //TODO cache table ok, cache datatype for each column
 var Sortable =
 {
-	onPageLoad: function(){
+	render: function(page,name){
 		this.DefaultTitle = "sort.click".localize();
 		this.AscendingTitle = "sort.ascending".localize();
 		this.DescendingTitle = "sort.descending".localize();
 		
-		$$('.sortable table').each(function(table){
+		$ES('.sortable table',page).each(function(table){
 			if( table.rows.length < 2 ) return;
 
 			$A(table.rows[0].cells).each(function(th){
 				th=$(th);
-				if( th.getTag() != 'th' ) return;
-				th.addEvent('click', function(){ Sortable.sort(th); })
-					.addClass('sort')
-					.title=Sortable.DefaultTitle;
-			});
+				if(th.getTag()=='th'){
+					th.addEvent('click', this.sort.bind(this,[th]) )
+						.addClass('sort')
+						.title=this.DefaultTitle;
+				}
+			},this);
 		},this);
 	},
 
@@ -1741,17 +1367,18 @@ var Sortable =
 		}
 	}
 }
+Wiki.addPageRender(Sortable);
 
 /** 240 table-filters 
  ** inspired by http://www.codeproject.com/jscript/filter.asp
  **/
 var TableFilter =
 {
-	onPageLoad: function(){
+	render: function(page,name){
 		this.All = "filter.all".localize();
 		this.FilterRow = 1; //row number of filter dropdowns
 		
-		$$('.table-filter table').each( function(table){
+		$ES('.table-filter table',page).each( function(table){
 			if( table.rows.length < 2 ) return;
 
 			/*
@@ -1857,16 +1484,17 @@ var TableFilter =
 		TableFilter.buildEmptyFilters(table); //fill remaining dropdowns
 	}
 }
+Wiki.addPageRender(TableFilter);
 
 
 /** 250 Categories: turn wikipage link into AJAXed popup **/
 var Categories =
 {
-	onPageLoad: function (){
-		this.jsp = Wiki.TemplateUrl + '/AJAXCategories.jsp';
+	render: function (page,name){
 
-		$$('.category a.wikipage').each(function(link){
-			var page = Wiki.getPageName(link.href); if(!page) return;
+		$ES('.category a.wikipage',page).each(function(link){
+			var page = Wiki.getPageName(link.href); 
+			if(!page) return;
 			var wrap = new Element('span').injectBefore(link).adopt(link),
 				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap),
 				popfx = popup.effect('opacity',{wait:false}).set(0);
@@ -1875,85 +1503,33 @@ var Categories =
 				.setProperties({ href:'#', title: "category.title".localize(page) })
 				.addEvent('click', function(e){
 				new Event(e).stop();  //dont jump to top of page ;-)
-				new Ajax( Categories.jsp, { 
+
+				new Ajax( Wiki.TemplateUrl + 'AJAXCategories.jsp', { 
 					postBody: '&page=' + page,
 					update: popup,
 					onComplete: function(){
+//alert(Wiki.TemplateUrl + 'AJAXCategories.jsp');
 						link.setProperty('title', '').removeEvent('click');
 						wrap.addEvent('mouseover', function(e){ popfx.start(0.9); })
 							.addEvent('mouseout', function(e){ popfx.start(0); });
 						popup.setStyle('left', link.getPosition().x);
+						popup.setStyle('top', link.getPosition().y+16);
 						popfx.start(0.9); 
+						
+						$ES('li,div.categoryTitle',popup).each(function(el){
+							el.addEvent('mouseout',function(){ this.removeClass('hover')})
+							  .addEvent('mouseover',function(){ this.addClass('hover')});
+						});
+
+						
 					}
 				}).request();
 			});
 		});
 	} 
 }
+Wiki.addPageRender(Categories);
 
-/**
- ** 260 Wiki Tips: 
- **/
-var WikiTips =
-{
-	onPageLoad: function() {    
-		var tips = [];
-		$$('*[class^=tip]').each( function(t){
-			var parms = t.className.split('-');
-			if( parms.length<=0 || parms[0] != 'tip' ) return;
-			t.className = "tip";
-
-			var body = new Element('span').injectWrapper(t).hide(),
-				caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
-
-			tips.push( 
-				new Element('span',{
-					'class': 'tip-anchor',
-					'title': caption + '::' + body.innerHTML
-				}).setHTML(caption).inject(t)
-			);
-		});
-		if( tips.length>0 ) new Tips( tips , {'className':'tip'} );
-	}
-}
-
-
-/**
- ** 270 Wiki Columns
- ** Dirk Frederickx, Mar 07
- **/
-var WikiColumns =
-{
-	onPageLoad: function() {    
-		var tips = [];
-		$$('*[class^=columns]').each( function(t){
-			var parms = t.className.split('-');
-			t.className='columns';
-			WikiColumns.buildColumns(t, parms[1] || 'auto');
-		});
-	},
-
-	buildColumns: function( el, width){
-		var breaks = $ES('hr',el);
-		if(!breaks || breaks.length==0) return;
-
-		var colCount = breaks.length+1;
-		width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
-
-		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
-			col = colDef.clone().injectBefore(el.getFirst()),
-			n;
-		while(n = col.nextSibling){
-			if(n.tagName && n.tagName.toLowerCase() == 'hr'){
-				col = colDef.clone();
-				$(n).replaceWith(col);
-				continue;
-			}
-			col.appendChild(n);
-		}
-		new Element('div',{'styles':{'clear':'both'}}).inject(el);
-	}
-}
 
 /** 280 ZebraTable
  ** Color odd/even rows of table differently
@@ -1969,9 +1545,8 @@ var WikiColumns =
  ** colors are specified in HEX (without #) format or html color names (red, lime, ...)
  **/
 var ZebraTable = {
-
-	onPageLoad: function(){
-		$$('*[class^=zebra]').each(function(z){
+	render: function(page,name){
+		$ES('*[class^=zebra]',page).each(function(z){
 			var parms = z.className.split('-'), 
 				isDefault = parms[1].test('table'),
 				c1 = '', 
@@ -1984,16 +1559,16 @@ var ZebraTable = {
 			},this);
 		},this);
 	},
-	zebrafy: function(isDefault, c1,c2){
+	zebrafy: function(isDefault, c1, c2){
 		var j=0;
 		$A($T(this).rows).each(function(r,i){
 			if(i==0 || (r.style.display=='none')) return;
-			if(isDefault) (j++ % 2 == 0) ? $(r).addClass('odd') : $(r).removeClass('odd');
-			else $(r).setStyle('background-color', (j++ % 2 == 0) ? c1 : c2 );
+			if(isDefault) (j++ % 2) ? $(r).addClass('odd') : $(r).removeClass('odd');
+			else $(r).setStyle('background-color', (j++ % 2) ? c1 : c2 );
 		});
 	}
 }
-
+Wiki.addPageRender(ZebraTable);
 
 /** Highlight Word
  ** Inspired by http://www.kryogenix.org/code/browser/searchhi/
@@ -2022,18 +1597,19 @@ var HighlightWord =
 	},
 
 	// recursive tree walk matching all text nodes
-	walkDomTree: function( node )
-	{
+	walkDomTree: function(node){
 		if( !node ) return; /* bugfix */
-		var nn = null;
-		for( var n = node.firstChild; n ; n = nn ) {
+		for(var nn=null, n = node.firstChild; n ; n = nn) {
 			nn = n. nextSibling; /* prefetch nextSibling cause the tree will be modified */
-			this.walkDomTree( n );
+			this.walkDomTree(n);
 		}
 		// continue on text-nodes, not yet highlighted, with a word match
 		if( node.nodeType != 3 ) return;
 		if( node.parentNode.className == "searchword" ) return;
 		var s = node.innerText || node.textContent || '';
+
+		s = s.replace(/</g,'&lt;'); /* pre text elements may contain <xml> element */
+
 		if( !this.reMatch.test( s ) ) return;
 		var tmp = new Element('span').setHTML(s.replace(this.reMatch,"<span class='searchword'>$1</span>"));
 
@@ -2044,51 +1620,12 @@ var HighlightWord =
 	}
 }
 
-
-/* 300 Javascript Code Prettifier
- * based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
- */
-var WikiPrettify = {
-	onPageLoad: function(){
-		var els = $$('.prettify pre, .prettify code'); if(!els) return;
-
-		//TODO: load assets .css and .js
-		els.addClass('prettyprint');
-		prettyPrint();
-	}
-}
-
-
 window.addEvent('load', function(){
-
 	Wiki.onPageLoad();
-	WikiReflection.onPageLoad(); //before accordion cause impacts height!
-	WikiAccordion.onPageLoad();
-
-	TabbedSection.onPageLoad(); //after coordion or safari
-	QuickLinks.onPageLoad();
-	
-	//GoogleChart.onPageLoad();
-
-	//console.profile();
-	Collapsible.onPageLoad();
-	WikiSlidingFavs.onPageLoad();
-	//console.profileEnd();
 
 	SearchBox.onPageLoad();
-	Sortable.onPageLoad();
-	TableFilter.onPageLoad();
-	RoundedCorners.onPageLoad();
-	ZebraTable.onPageLoad();
 	HighlightWord.onPageLoad();
-	GraphBar.onPageLoad();
-	Categories.onPageLoad();
-
-	WikiSlimbox.onPageLoad();
-	//WikiCoverflow.onPageLoad();
-	WikiTips.onPageLoad();
-	WikiColumns.onPageLoad();
-	WikiPrettify.onPageLoad();
-
 	Wiki.setFocus();
+	//console.profile();
+	//console.profileEnd();
 });

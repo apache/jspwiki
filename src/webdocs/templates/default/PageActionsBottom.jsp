@@ -31,6 +31,12 @@
       </fmt:message>
     </wiki:CheckVersion>
 
+<%--
+	<wiki:RSSImageLink title="<fmt:message key='info.rsspagefeed.title'>
+               <fmt:param><wiki:PageName /></fmt:param>
+             </fmt:message>"/>
+--%>
+
     <a href="<wiki:Link format='url' jsp='rss.jsp'>
                <wiki:Param name='page' value='<%=wikipage.getName()%>'/>
                <wiki:Param name='mode' value='wiki'/>
@@ -38,7 +44,7 @@
       class="feed"
       title="<fmt:message key='info.rsspagefeed.title'>
                <fmt:param><wiki:PageName /></fmt:param>
-             </fmt:message>" >&nbsp;</a>
+             </fmt:message>" >RSS-feed</a>
   
   </wiki:PageExists>
 

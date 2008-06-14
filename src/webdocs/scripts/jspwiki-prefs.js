@@ -45,7 +45,7 @@ window.addEvent('load', WikiPreferences.onPageLoad.bind(WikiPreferences) );
 var WikiGroup =
 {
 	MembersID   : "membersfield",
-	GroupTltID  : "grouptemplate",
+	//GroupTltID  : "grouptemplate",
 	GroupID     : "groupfield",
 	NewGroupID  : "newgroup",
 	GroupInfoID : "groupinfo",
@@ -61,11 +61,8 @@ var WikiGroup =
 	putGroup: function(group, members, groupInfo, isSelected){
 		this.groups[group] = { members: members, groupInfo: groupInfo };
 
-		var g = $(this.GroupTltID);
-		var gg = g.clone().setHTML(group);
-		gg.id = '';
-		g.parentNode.appendChild(gg);
-		$(gg).show();
+		var g = $("grouptemplate");
+			gg = g.clone().removeProperty('id').setHTML(group).inject(g.getParent()).show();
 
 		if(isSelected || !this.cursor) this.onMouseOverGroup(gg);
 	} ,

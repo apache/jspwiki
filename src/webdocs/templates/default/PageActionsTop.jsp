@@ -22,13 +22,6 @@
     </wiki:Permission>
     </wiki:CheckRequestContext>
 
-    <wiki:CheckRequestContext context='edit|comment'>
-    <%-- converted to popup menu by jspwiki-edit.js--%>
-    <li id="sectiontoc">
-      <a href="#" class="action sectiontoc"><fmt:message key="edit.sections"/></a>
-    </li>
-    </wiki:CheckRequestContext>
-
     <%-- converted to popup menu by jspwiki-common.js--%>
     <li id="morebutton">
       <a href="<wiki:Link format='url' page='MoreMenu' />" class="action more"><fmt:message key="actions.more"/></a>

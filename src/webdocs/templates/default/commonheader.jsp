@@ -38,6 +38,7 @@
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js'/>"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js'/>"></script>
+<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-commonstyles.js'/>"></script>
 <wiki:IncludeResources type="script"/>
 
 <%-- COOKIE read client preferences --%>

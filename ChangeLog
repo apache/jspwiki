@@ -1,3 +1,53 @@
+2007-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
+        
+        * Fixed [JSPWIKI-275] Incoming and Outgoing link box doesn't work properly anymore. 
+        
+        * Several fixes of section edit: [JSPWIKI-235], [JSPWIKI-209]
+
+        * [JSPWIKI-278] highlight search queries was handled badly when PRE sections 
+        contained HTML elements.
+
+        * [JSPWIKI-280] IE7 had the same scroll bar problem as previously with IE6.  
+        Added IE7 specific CSS selector to support IE7. 
+
+        * Fixed [JSPWIKI-259] IE rendering bug for nested collapsable boxes in IE7
+        
+        * [JSPWIKI-269] Improved handling of collapsible lists, even when a template 
+        would not use TabbedSections. The handling of dynamic styles was refactored 
+        to make them less intrusive.
+
+        * Fixed [JSPWIKi-285]  Groups.jsp has unterminated string constant.
+        Delete resource (not used anymore):
+        #group.areyousure=....
+
+
+        * An AJAX driven sneak-preview has been added to the plain editor. (by default off)
+        The user can have immediate feedback of how the wiki-markup is rendered by means of 
+        a preview box just below the editor textarea. The preview section is refreshed whenever 
+        the user clicks outside the textarea.
+        
+        * The handling of the plain editor suggestion popup is now also working on IE. 
+        Put the mouse inside a [wiki-link] to see the automatic expansion; 
+        select a item of the suggestion list and click to insert the link in the editor textarea.
+        This also works for attachement links. See [JSPWIKI-289] 
+
+        Update i18n resources:
+        #editor.plain.editassist=Edit Assist
+        #editor.plain.editassist.title=Toggle Edit Assist buttons
+        editor.plain.sneakpreview=Sneak Preview
+
+        * The rendering of popup boxes for e.g. link-suggestion-box, %%tips, %%category. has been improved.
+
+        * Frequently used icons merged in single 'strip' gifs to improve download speed.
+
+        * Refactored 'jspwiki-common.js', which now only contains the core javascript. (8K compressed)
+        The additional dynamic styles have been moved to 'jspwiki-commonstyles.js'. (12K compressed) 
+
+        * Clean up of OrderList and Smart skin.        
+
+
 2008-06-13  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-svn-40
