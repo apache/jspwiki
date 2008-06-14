@@ -50,7 +50,7 @@ public class UnusedPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection links = refmgr.findUnreferenced();
+        Collection<String> links = refmgr.findUnreferenced();
         //
         // filter out attachments if "excludeattachments" was requested:
         //
@@ -72,7 +72,7 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet<?> sortedSet = new TreeSet<Object>();
+        TreeSet<String> sortedSet = new TreeSet<String>();
         
         links = filterCollection( links );
         
