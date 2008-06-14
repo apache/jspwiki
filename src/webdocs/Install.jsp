@@ -165,7 +165,8 @@ if ( !installer.adminExists() )
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />
     </div>
   </div>
-    
+  
+  <br /><br />
   <div class="block">
     <div class="instructions">
       <fmt:message key="install.jsp.instr.desc" >
