@@ -240,7 +240,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * Returns <code>true</code> if the number of principals
      * contained in {@link #m_principals} is non-zero;
      * <code>false</code> otherwise.
-     * @return
+     * @return True, if a login has succeeded.
      */
     private final boolean succeeded()
     {

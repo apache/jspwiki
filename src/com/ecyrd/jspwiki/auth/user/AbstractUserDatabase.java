@@ -119,21 +119,25 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
     public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByFullName(java.lang.String)
      */
     public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByLoginName(java.lang.String)
      */
     public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(java.lang.String)
      */
     public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
@@ -151,6 +155,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
      *            {@link UserProfile#getLoginName()}method.
      * @return the array of Principals representing the user
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
+     * @throws {@inheritDoc}
      */
     public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException
     {
@@ -179,6 +184,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
      */
     public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
@@ -186,6 +192,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
     /**
      * Factory method that instantiates a new DefaultUserProfile with a new, distinct
      * unique identifier.
+     * 
+     * @return A new, empty profile.
      */
     public UserProfile newProfile()
     {
@@ -193,6 +201,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
      */
     public abstract void save( UserProfile profile ) throws WikiSecurityException;
@@ -268,7 +277,9 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     /**
      * Generates a new random user identifier (uid) that is guaranteed to be unique.
-     * @return
+     * 
+     * @param db The database for which the UID should be generated.
+     * @return A random, unique UID.
      */
     protected static long generateUid( UserDatabase db )
     {

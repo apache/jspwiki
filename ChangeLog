@@ -24,6 +24,9 @@
         * JSPWIKI-57: Should resolve NotSerializableExceptions when container
         goes up or down.
         
+        * JSPWIKI-292: Comment.jsp didn't compile.  Oops!  Thanks to Harry Metske
+        for the patch.
+        
 2007-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
