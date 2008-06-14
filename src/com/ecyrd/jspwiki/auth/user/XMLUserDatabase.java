@@ -513,26 +513,20 @@ public class XMLUserDatabase extends AbstractUserDatabase
         String index = profile.getLoginName();
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
         Element user = null;
-        boolean isNew = true;
         for( int i = 0; i < users.getLength(); i++ )
         {
             Element currentUser = (Element) users.item( i );
             if ( currentUser.getAttribute( LOGIN_NAME ).equals( index ) )
             {
                 user = currentUser;
-                isNew = false;
                 break;
             }
         }
         
-        // If user not found, somebody's been deleting/modifying users behind our back
-        if ( user == null )
-        {
-            throw new IllegalStateException( "UserDatabase did not contain user with loginName=" + profile.getLoginName() + "!" );
-        }
+        boolean isNew = false;
         
         Date modDate = new Date( System.currentTimeMillis() );
-        if ( isNew )
+        if( user == null )
         {
             // Create new user node
             profile.setCreated( modDate );
@@ -540,16 +534,18 @@ public class XMLUserDatabase extends AbstractUserDatabase
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
             setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
+            isNew = true;
         }
         else
         {
             // To update existing user node, delete old attributes first...
-            NodeList artributes = user.getElementsByTagName( ATTRIBUTES_TAG );
-            for ( int i = 0; i < artributes.getLength(); i++ )
+            NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
+            for ( int i = 0; i < attributes.getLength(); i++ )
             {
-                user.removeChild( artributes.item( i ) );
+                user.removeChild( attributes.item( i ) );
             }
         }
+        
         setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
