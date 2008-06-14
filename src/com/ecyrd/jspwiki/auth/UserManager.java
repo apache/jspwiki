@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -114,7 +115,7 @@ public final class UserManager
         // TODO: it would be better if we did this in PageManager directly
         addWikiEventListener( engine.getPageManager() );
 
-        JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(), new AllPermission(null) );
+        JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
     }
 
     /**
@@ -811,9 +812,25 @@ public final class UserManager
 
     /**
      *  Implements the JSON API for usermanager.
+     *  <p>
+     *  Even though this gets serialized whenever container shuts down/restarts,
+     *  this gets reinstalled to the session when JSPWiki starts.  This means
+     *  that it's not actually necessary to save anything.
      */
-    public final class JSONUserModule implements RPCCallable
+    public static final class JSONUserModule implements RPCCallable, Serializable
     {
+        private static final long serialVersionUID = 1L;
+        private volatile UserManager m_manager;
+        
+        /**
+         *  Create a new JSONUserModule.
+         *  @param mgr Manager
+         */
+        public JSONUserModule( UserManager mgr )
+        {
+            m_manager = mgr;
+        }
+        
         /**
          *  Directly returns the UserProfile object attached to an uid.
          *
@@ -824,12 +841,14 @@ public final class UserManager
         public UserProfile getUserInfo( String uid )
             throws NoSuchPrincipalException
         {
-            log.info("request "+uid);
-            UserProfile prof = getUserDatabase().find( uid );
+            if( m_manager != null )
+            {
+                UserProfile prof = m_manager.getUserDatabase().find( uid );
 
-            log.info("answer "+prof);
-
-            return prof;
+                return prof;
+            }
+            
+            throw new IllegalStateException("The manager is offline.");
         }
     }
 }
