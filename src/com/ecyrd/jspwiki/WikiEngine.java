@@ -612,7 +612,14 @@ public class WikiEngine
             log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
             throw new WikiException(e.getMessage());
         }
-
+        catch( Exception e )
+        {
+            // Final catch-all for everything
+            
+            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
+            throw new WikiException("Failed to start; please check log files for better information.");
+        }
+        
         //
         //  Initialize the good-to-have-but-not-fatal modules.
         //
