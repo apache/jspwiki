@@ -93,7 +93,7 @@
     <%
       String name = att.getFileName();
       int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "";
+      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
 
       String sname = name;
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";

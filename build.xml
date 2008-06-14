@@ -438,6 +438,8 @@
         <compressjs src="webdocs/scripts/jspwiki-common.js"/>
         <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
         <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
+        <compressjs src="webdocs/scripts/prettify.js"/>
 
         <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
 
@@ -446,6 +448,22 @@
     
         <compressjs src="webdocs/templates/default/jspwiki_print.css"
                     args="--line-break 0" />   	
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
+   	    <compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
+                args="--line-break 0" />
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
+   	    <compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
+                args="--line-break 0" />
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
+        <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
+                args="--line-break 0" />
+
+   	    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
+        <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
+                args="--line-break 0" />
    </target>
 
   <target name="opened-war" depends="war"

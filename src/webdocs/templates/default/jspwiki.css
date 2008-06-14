@@ -23,7 +23,6 @@
 }
 #header, #footer {
 	padding:0 0 0 20%;
-	width:80%;
 }
 #header .applicationlogo {
 	position:absolute;
@@ -152,10 +151,9 @@ th, td {
 }
 .hr { 
 	display:block;
-	clear:both;
 	border-bottom:1px solid #ddd; 
 }
-.clearbox {
+hr, .hr, .clearbox {
 	clear:both;
 }
 
@@ -274,6 +272,13 @@ pre {
 	margin:1em auto;  /* otherwise funny effect on more menu ugh */
 	padding-bottom:1.5em; /*take scrollbar into account on ie*/
 }
+/*ie7 hack */
+*:first-child+html pre {
+	overflow:visible; overflow-x:auto; /*proprieatary ie*/
+	width:95%;  /* hasLayout=true */
+	margin:1em auto;  /* otherwise funny effect on more menu ugh */
+	padding-bottom:1.5em; /*take scrollbar into account on ie*/
+}
                            
 /* +++ 250 Hyperlinks +++ */
 a {
@@ -284,6 +289,9 @@ a:link {
 a:visited {
 }
 a:active {
+}
+.hover {
+	background-color:#eee;
 }
 a:hover {
 }
@@ -306,6 +314,7 @@ a.feed {
 	background-position:0 0;
 	padding-left:14px;
 	font-size:14px;
+	width:14px;
 	text-decoration:none;
 	overflow:hidden;
 }
@@ -369,8 +378,9 @@ a.footnote {
 	text-align:left;
 }
 .quote {
-	border-left:4px solid silver;
-	padding-left:1.5em;
+	border-left:4px solid #bbb;
+	padding-left:3em;
+	margin:0 0.5em;
 }
 .ltr {
 	direction:ltr;
@@ -389,8 +399,9 @@ a.footnote {
 }
 .diffnote, .information, .warning, .error {
 	display:block;
+	clear:both;
 	margin:1em .5em;
-	padding:1em 1em 1em 2.5em;
+	padding:1em 1em 1em 3em;
 	background-position:.8em .9em;
 	background-repeat:no-repeat;
 }
@@ -424,7 +435,7 @@ td .information, td .warning, td .error {
 	overflow:hidden;
 	border:1px solid #ddd;
 	background:#f9f9f9;
-	padding:0.5em;
+	padding:0 0.5em;
 	margin:0 0 1em 0.5em;
 	font-size:90%;
 }
@@ -435,7 +446,6 @@ td .information, td .warning, td .error {
 
 /* +++ 300 Wiki tables and zebra tables +++ */
 .wikitable {
-	border:1px solid #ddd;
 	margin:0.5em 0.25em;
 }
 .wikitable tr {
@@ -485,7 +495,7 @@ td .information, td .warning, td .error {
 	padding-left:20px;
 	background-repeat:no-repeat;
 	background-position:0 0;
-	background-image:url(images/attach-icons.png);
+	background-image:url(images/attach-strip.png);
 }
 #attach-gif { background-position:0 -112px; }
 #attach-png { background-position:0 -112px; }
@@ -582,36 +592,88 @@ body.comment {
     line-height:6px;
     overflow:hidden;
 }
-#toolbar, #editassist {
-	margin:0.5em 0;
+
+#toolbuttons, #toolextra, #searchbar {
+	margin-left:1em;
+	clear:both;
 }
-#toolbar span {
+#tools span {
 	float:left;
 	display:block;
 	padding:0.25em 0;
-	margin-right:0.5em;
+	margin-right:1em;
+}
+#toolbuttons span {
+	border:1px solid #ddd;
 }
 a.tool {
 	float:left;
 	display:block;
-	background:#f9f9f9;
-	border:1px solid #ddd;
-	padding:0.25em;
-	margin-right:2px;
+	background:transparent;
+	margin:2px;
 	text-decoration: none;
 }
 a.tool:hover, .btn:hover {
-	background-color:#eee !important;
+	background-color:#ddd !important;
 }
-#editassist a.tool {
-	float:right;
-	margin:0 0 0 0.5em;
+#tools a.tool { 
+	border:none; 
+	background-repeat:no-repeat;
+	background-image:url("images/editor-strip.gif");
+	background-color:transparent;
+	height:16px; 
+	width:16px;
+	text-indent:20px; 
+	overflow:hidden;
 }
+
+#tbREDO		{ background-position:0 0; width:auto !important;}
+#tbUNDO		{ background-position:0 -16px; width:auto !important;}
+
+/*#tbOUTLINE	{ background-position:0 0; width:auto !important;}*/
+#tbOUTLINE	{ 
+	width:auto !important;
+	background-image:url("images/book_open.png") !important; 
+}
+
+#tbH1 		{ background-position:0 -192px; }
+#tbH2 		{ background-position:0 -208px; }
+#tbH3 		{ background-position:0 -224px; }
+#tbB  		{ background-position:0 -176px; }
+#tbI  		{ background-position:0 -256px; }
+#tbLink   	{ background-position:0 -48px; }
+#tbMONO   	{ background-position:0 -160px; }
+/*
+#tbColor  	{ background-image:url("images/paintbrush.png");  }
+#tbBackground { background-image:url("images/paintcan.png");  }
+*/
+#tbPRE   	{ background-position:0 -64px; }
+#tbCODE   	{ background-position:0 -80px; }
+#tbHR 		{ background-position:0 -240px; }
+#tbBR 		{ background-position:0 -112px; }
+#tbDL 		{ background-position:0 -272px; }
+#tbSUP		{ background-position:0 -336px; }
+#tbSUB		{ background-position:0 -320px; }
+#tbSTRIKE 	{ background-position:0 -304px; }
+#tbUL 		{ background-position:0 -256px; }
+#tbOL 		{ background-position:0 -272px; }
+#tbLEFT   	{ background-position:0 -288px; }
+#tbCENTER 	{ background-position:0 -304px; }
+#tbRIGHT  	{ background-position:0 -320px; }
+#tbJUST   	{ background-position:0 -336px; }
+#tbQUOTE  	{ background-position:0 -272px; }
+#tbIMG		{ background-position:0 -96px; }
+#tbTABLE  	{ background-position:0 -144px; }
+#tbTOC		{ background-position:0 -32px; }
+#tbTAB		{ background-position:0 -128px; }
+#tbSIGN		{ background-position:0 -288px; }
+
+#tbDOREPLACE { background-image:url("images/doreplace.png") !important;  }
 
 .editor {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px;
-	width:100%;
+	width:99%;
 }
 .edittoc {
 	background:yellow;
@@ -626,46 +688,66 @@ a.tool:hover, .btn:hover {
 * html #editorarea {
 	padding:4px 0;
 }
+/*ie7 hack */
+*:first-child+html #editorarea {
+	padding:4px 0;
+}
 #submitbuttons input {
 	margin-right:2em;
 }
 #commentcontent, #editcontent {
-	width:99%;
+	width:100%;
 }
-#edithelp {
-}
+
 #searchbar {
-	margin:1em 0;
+	display:block !important;
+}
+#searchbar span {
+	white-space:nowrap;
 }
 #searchbarhelp {
 }
 #findSuggestionMenu {
 	position:absolute;
-	background:white;
-	border:2px solid #ddd;
+	color:white;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 	z-index:10;
 	font-size:85%;
 	overflow:hidden;
 }
+* html #findSuggestionMenu {
+	background:url(images/tip.png) top left;
+}
+
 #findSuggestionMenu ul {
 	list-style:none;
 	margin:0;
 	padding:0;
 }
 #findSuggestionMenu li { 
-	padding:0.25em;
+	padding:0.25em 0.5em;
 	cursor:pointer;
 }
-#findSuggestionMenu li:hover {
-	background:#eee;
+#findSuggestionMenu .hover { 
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
+}
+* html #findSuggestionMenu .hover { 
+	background-color:black;
 }
 
+
 /* +++ 440 Favorites +++ */
+/* fixme
 #collapseFavs {
 	position:absolute; 
-	margin-left:-1px; /* compensate border of .tabs */
+	margin-left:-1px; 
 	left:-0.5em; 
-	top:-1px; /* compensate border of .tabs */
+	top:-1px;
 	width:0.5em;
 	height:100%;
 	background:#f9f9f9;
@@ -680,7 +762,7 @@ a.tool:hover, .btn:hover {
 	margin-right:-1px;
 }
 #collapseFavs.hover {
-	background:#eee;
+	background-color:#eee;
 	border-color:#eee;
 }
 #collapseFavsWrapper {
@@ -720,6 +802,7 @@ a.tool:hover, .btn:hover {
 .fav-slide #collapseFavsPointer {
 	background-image:url(images/arrright.gif);
 }
+*/
 
 .userbox {
 	overflow:hidden;
@@ -883,13 +966,10 @@ th.changenote, td.changenote {
 	padding:0;
 
 }
-#sectiontoc ul a,
 #morebutton ul a {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	cursor:pointer;
-}
-#sectiontoc .cursor {
 }
 .pageactions a.action {
 	display:block;
@@ -910,7 +990,7 @@ a.action.workflow,
 a.action.login,
 a.action.logout {
 }
-#searchTools a.action, .userbox a.action, a.action.edit, a.action.more, a.action.sectiontoc {
+#searchTools a.action, .userbox a.action, a.action.edit, a.action.more {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	line-height:normal;
@@ -918,11 +998,11 @@ a.action.logout {
 	background:#f9f9f9;
 	white-space:nowrap;
 }
-a.action.edit, a.action.more, a.action.sectiontoc {
+a.action.edit, a.action.more {
 	margin-left:4px;
 	border-bottom:none;
 }
-a.action.more, a.action.sectiontoc {
+a.action.more {
 	padding-right:1.5em;
 	background: #f9f9f9 url(images/arrdownsmall.gif) 95% center no-repeat;
 }
@@ -937,11 +1017,33 @@ a.action.quick2top {
 	float:right;
  	background:url(images/arrup.gif) no-repeat 3px 3px;
 }
+/* obsolete
 a.action.quick2bottom {
  	background:url(images/arrdown.png) no-repeat 3px 3px;
  	height:16px;
 }
+*/
 
+/*********/
+.popup ul {
+	position:absolute; 
+	background:white;
+	border:2px solid #ddd;
+	padding:0.25em;
+	margin:0;
+	left:0;
+	z-index:15;
+	list-style:none;
+}
+.popup li a {
+	display:block;
+	line-height:1.5;
+	white-space:nowrap;
+	cursor:pointer;
+}
+.popup a:hover {
+	background-color:#eee !important;
+} 
 
 /* +++ 472 PageContent.jsp +++ */
 #pagecontent {
@@ -954,12 +1056,26 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 	width:100%;
 	overflow-x:auto;
 }
+/*ie7 hack */
+*:first-child+html #previewcontent, *:first-child+html #info, *:first-child+html #pagecontent, *:first-child+html #attach, *:first-child+html #findcontent {
+	width:100%;
+	overflow-x:auto;
+}
+
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
+#sneakpreviewheader {
+	font-size:110%;
+	background-color:#ddd;
+	padding:0.5em;
+	margin:0.5em 0;
+}  
+#sneakpreview {
+}  
 #previewcontent {
 }  
 .previewcontent {
-	background:url(images/preview.gif);
+	background-image:url(images/preview.gif);
 }  
 
 /* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
@@ -1049,18 +1165,18 @@ body.view {
 }
 
 /* +++ 620 Index plugin +++ */
-div.index {
+.index {
 }
-div.index .header {
+.index .header {
 	padding:4px;
 	background:#f9f9f9;
 	border:1px solid #ddd;
 	text-align:center;
 	font-size:1.4em;
 }
-div.index .body {
+.index .body {
 }
-div.index .section {
+.index .section {
 	color:red;
 	font-size:1.4em;
 }
@@ -1160,23 +1276,23 @@ div.index .section {
 
 
 /* +++ 640 RecentChangesPlugin +++ */
-table.recentchanges {
+.recentchanges {
 	table-layout:fixed;
 } /*faster renderer */
-table.recentchanges .changenote { 
+.recentchanges .changenote { 
 	font-style:italic;
 }
-table.recentchanges td {
+.recentchanges td {
 	vertical-align:top;
 	border-bottom:1px solid #f9f9f9;
 }
-table.recentchanges .date {
+.recentchanges .date {
 	vertical-align:bottom;
 	border-top:1.5em solid white;
 	background-color:#f9f9f9 !important;
 	border-bottom:none;
 }
-table.recentchanges tr.odd td {
+.recentchanges tr.odd td {
 	background-color:transparent;
 } 
 
@@ -1352,18 +1468,36 @@ table.calendar tr.weekdays {
 }
 .tip-tip {
 	color:white;
-	width:172px;
+	width:auto; /*240px;*/ 
 	z-index:100;
 	font-size:90%;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 }
 .tip-title {
 	font-weight:bold;
-	margin:0 0 1px 0;
 	padding:8px 8px 4px;
+}
+* html .tip-title {
+	background:url(images/tip.png) top left;
+}
+/*ie7 hack */
+*:first-child+html .tip-title {
 	background:url(images/tip.png) top left;
 }
 .tip-text {
 	padding:4px 8px 8px;
+}
+.tip-text th {
+	background:grey !important;
+}
+* html .tip-text {
+	background:url(images/tip.png) bottom right;
+}
+/*ie7 hack */
+*:first-child+html .tip-text {
 	background:url(images/tip.png) bottom right;
 }
 .tip-tip a {
@@ -1397,6 +1531,8 @@ div.collapse li {
 	float:left;
 	padding-left:0.5em;
 }
+
+
 /* collapse icons */   
 .collapseBullet, .collapseOpen, .collapseClose {
 	clear:left;
@@ -1410,9 +1546,6 @@ div.collapse li {
 }
 .collapseOpen, .collapseClose {
 	cursor:pointer;
-}
-.collapseHover {
-	background:#eee;
 }
 
 /* +++ collapsebox +++ */
@@ -1551,25 +1684,34 @@ a.slimbox:hover {
 } 
 .categoryPopup {
 	color:white;
-	width:172px;
 	z-index:100;
 	font-size:90%;
 	margin-top:2px;
 	position:absolute;
 	z-index:10;
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+}
+* html .categoryPopup {
+	width:240px;
 }
 .categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
 	color:white;
 	text-decoration:none;
 }
 .categoryTitle {
-	margin:0 0 1px 0;
 	padding:4px;
-	background:url(images/tip.png) top left;
 	font-weight:bold;
+}
+* html .categoryTitle {
+	background:url(images/tip.png) top left;
 }
 .categoryText {
 	padding:4px 0;
+}
+* html .categoryText {
 	background:url(images/tip.png) bottom right;
 }
 .categoryText ul {
@@ -1578,12 +1720,17 @@ a.slimbox:hover {
 	padding:0 !important;
 }
 .categoryText li {
+	display:block;
 	padding:0 8px;
 }
-.categoryTitle:hover, .categoryText li:hover { 
-	background:black;
+.categoryPopup .hover { 
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
 }
-
+* html .categoryPopup .hover {
+	background-color:black;
+}
 
 /* Pretty printing styles. Used with prettify.js. */
 pre.prettyprint {   
