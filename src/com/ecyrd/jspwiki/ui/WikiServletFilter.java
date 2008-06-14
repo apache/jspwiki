@@ -113,9 +113,27 @@ public class WikiServletFilter implements Filter
             out.print("<p>We apologize for the inconvenience.  No, really, we do.  We're trying to ");
             out.print("JSPWiki as easy as we can, but there is only so much we have time to test ");
             out.print("platforms.</p>");
-            out.print("</body>");
+            out.print( "<p>Please go to the <a href='Install.jsp'>installer</a> to continue.</p>" );
+            out.print("</body></html>");
             return;
         }   
+        
+        if( m_engine.getBaseURL().length() == 0 && !((HttpServletRequest)request).getRequestURI().endsWith("Install.jsp") )
+        {
+            PrintWriter out = response.getWriter();
+            
+            out.print( "<html><head><title>JSPWiki installation start</title></head>" );
+            out.print( "<body>" );
+            out.print( "<h1>JSPWiki installation</h1>" );
+            out.print( "<p>Hello!  It appears that this is your first jspwiki installation." );
+            out.print( "(Or, you have removed jspwiki.baseURL from your property file.) " );
+            out.print( "Therefore, you will need to start the installation process. " );
+            out.print( "Please <a href='Install.jsp'>continue to the installer</a>." );
+            out.print( "</p>");
+            out.print( "<p>If you just used the installer, then please restart your servlet container to get rid of this message.</p>" );
+            out.print("</body></html>");            
+            return;
+        }
         
         // If we haven't done so, wrap the request and run the security filter
         HttpServletRequest httpRequest = (HttpServletRequest) request;
