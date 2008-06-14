@@ -45,7 +45,9 @@
         * Refactored 'jspwiki-common.js', which now only contains the core javascript. (8K compressed)
         The additional dynamic styles have been moved to 'jspwiki-commonstyles.js'. (12K compressed) 
 
-        * Clean up of OrderList and Smart skin.        
+        * Clean up of OrderList and Smart skin.   
+        
+        * Added a few default.nl.properties updates (eg [JSPWIKI-206])
 
 
 2008-06-13  Andrew Jaquith <ajaquith AT apache DOT org>
