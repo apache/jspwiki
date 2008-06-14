@@ -312,11 +312,14 @@ a.feed {
 	background-image:url(../../images/jspwiki-icons.png);
 	background-repeat:no-repeat;
 	background-position:0 0;
-	padding-left:14px;
-	font-size:14px;
-	width:14px;
+	text-indent:16px;
+	margin:0 0.5em;
+	width:16px;
+	height:16px; 
 	text-decoration:none;
 	overflow:hidden;
+	display:block;
+	float:right;
 }
 
 
