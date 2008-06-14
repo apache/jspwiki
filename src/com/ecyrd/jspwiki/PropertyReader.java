@@ -41,6 +41,8 @@ import javax.servlet.ServletContext;
 public final class PropertyReader
 {
 
+    private static final String DEFAULT_JSPWIKI_PROPERTIES = "/ini/default_jspwiki.properties";
+
     /** The web.xml parameter that defines where the config file is to be found.
      *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE.
      *  {@value #DEFAULT_PROPERTYFILE}
@@ -181,7 +183,23 @@ public final class PropertyReader
      */
     public static final Properties getDefaultProperties()
     {
-        return new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+        Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+        
+        InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_PROPERTIES );
+        
+        if( in != null )
+        {
+            try
+            {
+                props.load( in );
+            }
+            catch( IOException e )
+            {
+                System.err.println("Unable to load default propertyfile '"+DEFAULT_JSPWIKI_PROPERTIES+"'"+e.getMessage());
+            }
+        }
+        
+        return props;
     }
 
 

@@ -304,7 +304,7 @@
          <fileset dir="${code.src}" includes="com/**/*.properties" />
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
-         <fileset dir="etc" includes="ini/*.xml" />
+         <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
       </jar>
   </target>
 

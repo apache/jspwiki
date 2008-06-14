@@ -15,6 +15,12 @@
         * JSPWIKI-246: All new (and faster) IndexPlugin as the old one couldn't be
         converted to Apache.
         
+        * Updated Finnish translation.
+        
+        * Added etc/ini/default_jspwiki.properties to hold all sorts of stuff that
+        you normally want to enable in jspwiki.properties, but most people don't
+        really want to touch.
+        
 2007-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
