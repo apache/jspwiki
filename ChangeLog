@@ -7,6 +7,8 @@
         * Moved "info.rsspagefeed.title" key from default.properties
         to CoreResources and renamed to "rss.title".
 
+        * Updated Finnish translation.
+
 2007-06-15 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-44 
