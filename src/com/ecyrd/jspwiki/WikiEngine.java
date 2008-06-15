@@ -1072,7 +1072,7 @@ public class WikiEngine
     {
         String appName = TextUtil.getStringProperty(m_properties,PROP_APPNAME,Release.APPNAME);
 
-        return appName;
+        return MarkupParser.cleanLink( appName );
     }
 
     /**

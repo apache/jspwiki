@@ -1,5 +1,12 @@
 2008-06-14  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.7.0-svn-43
+        
+        * JSPWIKI-145: jspwiki.applicationName is now cleaned to be a
+        proper WikiName.  This is probably a good idea...
+        
+2008-06-14  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.7.0-svn-42
         
         * JSPWIKI-185: There should be no more NPEs upon startup.  Improved
