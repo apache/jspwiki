@@ -78,9 +78,10 @@
        Normal user should never see this field, nor type anything in it. --%>
   <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
   <table>
+<%--FIXME
     <wiki:Permission permission="rename">
     <tr>
-    <td><label for="renameto">Page name<%--fmt:message key='editor.renameto'/--%></label></td>
+    <td><label for="renameto"><fmt:message key='editor.renameto'/></label></td>
     <td><input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
     &nbsp;&nbsp;
     <input type="checkbox" name="references" checked="checked" />
@@ -88,7 +89,7 @@
     FIXME</td>
     </tr>
     </wiki:Permission>
-  
+--%>  
     <tr>
     <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
     <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/></td>
@@ -96,7 +97,7 @@
   </table>
   
   <div id="tools">
-  <h4>Toolbar</h4>
+      <h4><fmt:message key='editor.plain.toolbar'/></h4>
       <div id="toolbuttons">
       <span>
 	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
@@ -146,7 +147,7 @@
 --%>
 	  </div>
 
-	  <div id="toolextra" class="clearbox">
+	  <div id="toolextra" class="clearbox" style="display:none;">
       <span>
       <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
       <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
@@ -178,6 +179,7 @@
   		<label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
   		</span>
 	  </div>
+	  <div class="clearbox" ></div>
   </div>
   <div>
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 

@@ -148,7 +148,8 @@ public class RecentChangesPlugin
                 if( pageref instanceof Attachment )
                 {
                     linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
-                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
+                    linkel.setClass("infolink");
+                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.gif")));
 
                     col.addElement( linkel );
                 }

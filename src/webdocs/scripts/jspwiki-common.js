@@ -329,14 +329,13 @@ var Wiki = {
 		h = h.replace(/^#/,'');
 
 		var el = $(h);
-
 		while( $type(el) == 'element' ){
 			if( el.hasClass('hidetab') ){
-				TabbedSection.clickTab.apply(el);
+				TabbedSection.click.apply($('menu-'+el.id));
 			} else if( el.hasClass('tab') ){
-				/* accordion -- need to find accordion object */
+				/* accordion -- need to find accordion toggle object */
 			} else if( el.hasClass('collapsebody') ){
-				/* collapsible box */
+				/* collapsible box -- need to find the toggle button */
 			} else if(!el.visible() ){
 				//alert('not visible'+el.id);
 				//fixme need to find the correct toggler

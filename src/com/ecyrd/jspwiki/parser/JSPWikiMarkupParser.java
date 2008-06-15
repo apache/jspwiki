@@ -598,7 +598,7 @@ public class JSPWikiMarkupParser
                                                     link );
 
                 String imglink = m_context.getURL( WikiContext.NONE,
-                                                   "images/attachment_small.png" );
+                                                   "images/attachment_small.gif" );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
@@ -612,6 +612,7 @@ public class JSPWikiMarkupParser
                     el.setAttribute("alt","(info)");
 
                     el = new Element("a").setAttribute("href",infolink).addContent(el);
+                    el.setAttribute("class","infolink");
                 }
                 else
                 {

@@ -293,6 +293,15 @@ a:active {
 .hover {
 	background-color:#eee;
 }
+/* ie6 hack */
+* html .hover { 
+	background-color:#eee;
+}
+/* ie7 hack */
+*:first-child+html .hover { 
+	background-color:#eee;
+}
+
 a:hover {
 }
 a:focus {
@@ -309,7 +318,7 @@ a.external {
 a.interwiki {
 }
 a.feed {
-	background-image:url(../../images/jspwiki-icons.png);
+	background-image:url(../../images/jspwiki-strip.gif);
 	background-repeat:no-repeat;
 	background-position:0 0;
 	text-indent:16px;
@@ -321,7 +330,19 @@ a.feed {
 	display:block;
 	float:right;
 }
-
+/* switch to gif for better ie rendering, but selectors nok in ie6 (fine in ie7) */
+/*a.infolink {
+	background-image:url("../../images/jspwiki-strip.gif");
+	background-repeat:no-repeat;
+	background-position:right -16px;
+	padding-right:16px;
+	line-height:16px !important;
+	height:16px;
+	overflow:hidden;
+}
+a.infolink img {
+	display:none;
+}*/
 
 /* +++ 260 Image styles +++ */
 img {
@@ -724,6 +745,9 @@ a.tool:hover, .btn:hover {
 * html #findSuggestionMenu {
 	background:url(images/tip.png) top left;
 }
+*:first-child+html #findSuggestionMenu {
+	background:url(images/tip.png) top left;
+}
 
 #findSuggestionMenu ul {
 	list-style:none;
@@ -740,6 +764,9 @@ a.tool:hover, .btn:hover {
 	-webkit-border-radius:5px;
 }
 * html #findSuggestionMenu .hover { 
+	background-color:black;
+}
+*:first-child+html #findSuggestionMenu .hover { 
 	background-color:black;
 }
 
@@ -1185,7 +1212,7 @@ body.view {
 	font-size:1.4em;
 	display: block;
 	border-bottom: 2px solid silver;
-	margin-top: 1.5ex;
+	margin-top:1.5ex;
 }
 
 /* +++ 625 Table of contents plugin +++ */
@@ -1701,7 +1728,12 @@ a.slimbox:hover {
 	-webkit-border-radius:5px;
 	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 }
+/* ie6 hack */
 * html .categoryPopup {
+	width:240px;
+}
+/* ie7 hack */
+*:first-child+html .categoryPopup {
 	width:240px;
 }
 .categoryPopup a:link, .categoryPopup a:active,.categoryPopup a:visited {
@@ -1712,13 +1744,23 @@ a.slimbox:hover {
 	padding:4px;
 	font-weight:bold;
 }
+/* ie6 hack */
 * html .categoryTitle {
+	background:url(images/tip.png) top left;
+}
+/* ie7 hack */
+*:first-child+html .categoryTitle {
 	background:url(images/tip.png) top left;
 }
 .categoryText {
 	padding:4px 0;
 }
+/* ie6 hack */
 * html .categoryText {
+	background:url(images/tip.png) bottom right;
+}
+/* ie7 hack */
+*:first-child+html .categoryText {
 	background:url(images/tip.png) bottom right;
 }
 .categoryText ul {
@@ -1735,9 +1777,15 @@ a.slimbox:hover {
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
 }
+/* ie6 hack */
 * html .categoryPopup .hover {
 	background-color:black;
 }
+/* ie7 hack */
+*:first-child+html .categoryPopup .hover {
+	background-color:black;
+}
+
 
 /* Pretty printing styles. Used with prettify.js. */
 pre.prettyprint {   

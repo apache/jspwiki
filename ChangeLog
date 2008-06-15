@@ -1,3 +1,19 @@
+2007-06-15 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-44 
+        
+        * Small fixes to plain.jsp to increase ie6 compatibilty.
+        Hide the 'tab-completion' and 'smart typing pairs' from IE browsers.
+
+        Added the i18n resource 
+           editor.plain.toobar=Toolbar
+
+        * Several IE7 fixes of the category and suggestion popup css.
+
+        * Change the attachement icon to .gif (iso png), so it gets properly rendered on ie6.
+        Added a transparent .ico file. (thanks Harry)
+
+
 2008-06-14  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-43

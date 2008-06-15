@@ -329,6 +329,8 @@ var EditTools =
 */			
 	onPageLoadPostEditor: function(){
 		if(window.ie) return;
+		
+		$('toolextra').show();
 		this.posteditor = new postEditor.create(this.textarea,'changenote');
 		
 		/* patch posteditor DF Jul 07 */
