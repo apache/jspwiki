@@ -31,21 +31,8 @@
       </fmt:message>
     </wiki:CheckVersion>
 
-<%--
-	<wiki:RSSImageLink title="<fmt:message key='info.rsspagefeed.title'>
-               <fmt:param><wiki:PageName /></fmt:param>
-             </fmt:message>"/>
---%>
+   <wiki:RSSImageLink mode="wiki" />
 
-    <a href="<wiki:Link format='url' jsp='rss.jsp'>
-               <wiki:Param name='page' value='<%=wikipage.getName()%>'/>
-               <wiki:Param name='mode' value='wiki'/>
-             </wiki:Link>"
-      class="feed"
-      title="<fmt:message key='info.rsspagefeed.title'>
-               <fmt:param><wiki:PageName /></fmt:param>
-             </fmt:message>" >RSS-feed</a>
-  
   </wiki:PageExists>
 
   <wiki:NoSuchPage><fmt:message key="actions.notcreated"/></wiki:NoSuchPage> 

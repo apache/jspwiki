@@ -614,6 +614,10 @@
        <name>title</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+       <name>mode</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
 
   <tag>

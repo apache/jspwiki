@@ -72,14 +72,7 @@
     <fmt:param><wiki:Author /></fmt:param>
   </fmt:message>
 
-  <a href="<wiki:Link format='url' jsp='rss.jsp'>
-             <wiki:Param name='page' value='<%=wikiPage.getName()%>'/>
-             <wiki:Param name='mode' value='wiki'/>
-           </wiki:Link>"
-    class="feed"
-    title="<fmt:message key='info.rsspagefeed.title'>
-             <fmt:param><wiki:PageName /></fmt:param>
-           </fmt:message>" >&nbsp;</a>
+  <wiki:RSSImageLink mode="wiki"/>
   </p>
 
   <wiki:CheckVersion mode="notfirst">
