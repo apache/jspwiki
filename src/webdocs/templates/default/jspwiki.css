@@ -267,15 +267,16 @@ pre {
 }
 /*ie6 hack*/
 * html pre {
-	overflow:visible; overflow-x:auto; /*proprieatary ie*/
+	overflow:visible; 
+	overflow-x:auto; /*proprieatary ie*/
 	width:95%;  /* hasLayout=true */
 	margin:1em auto;  /* otherwise funny effect on more menu ugh */
 	padding-bottom:1.5em; /*take scrollbar into account on ie*/
 }
 /*ie7 hack */
 *:first-child+html pre {
-	overflow:visible; overflow-x:auto; /*proprieatary ie*/
-	width:95%;  /* hasLayout=true */
+	overflow:visible; 
+	overflow-x:auto; /*proprieatary ie*/
 	margin:1em auto;  /* otherwise funny effect on more menu ugh */
 	padding-bottom:1.5em; /*take scrollbar into account on ie*/
 }
@@ -742,9 +743,11 @@ a.tool:hover, .btn:hover {
 	font-size:85%;
 	overflow:hidden;
 }
+/* ie6 hack */
 * html #findSuggestionMenu {
 	background:url(images/tip.png) top left;
 }
+/* ie7 hack */
 *:first-child+html #findSuggestionMenu {
 	background:url(images/tip.png) top left;
 }
@@ -763,9 +766,11 @@ a.tool:hover, .btn:hover {
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
 }
+/* ie6 hack */
 * html #findSuggestionMenu .hover { 
 	background-color:black;
 }
+/* ie7 hack */
 *:first-child+html #findSuggestionMenu .hover { 
 	background-color:black;
 }
@@ -1088,7 +1093,6 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 }
 /*ie7 hack */
 *:first-child+html #previewcontent, *:first-child+html #info, *:first-child+html #pagecontent, *:first-child+html #attach, *:first-child+html #findcontent {
-	width:100%;
 	overflow-x:auto;
 }
 
