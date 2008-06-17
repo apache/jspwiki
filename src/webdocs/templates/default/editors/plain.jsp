@@ -129,10 +129,9 @@
 	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
       </span>
       <span>
-	  <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>">undo</a>
-	  </span>
+      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a></span>
       <span>
-	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>">redo</a>
+	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
       </span>
       <%-- converted to popup menu by jspwiki-edit.js--%>
 	  <span>
@@ -164,8 +163,8 @@
   		<input type="text"   name="tbFIND" id="tbFIND" size="16" />
 		<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/></label>
 		<input type="text"   name="tbREPLACE" id="tbREPLACE" size="16" />
-		<input type="button" name="doreplace" id="doreplace" value="<fmt:message key='editor.plain.replace' />" />
-  		</span>
+        <input type="button" name="doreplace" id="doreplace" value="<fmt:message key='editor.plain.find.submit' />" />
+        </span>
   		<span>
   		<input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
   		<label for="tbMatchCASE"><fmt:message key="editor.plain.matchcase"/></label>
