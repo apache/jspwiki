@@ -1,3 +1,9 @@
+2007-06-17 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * No version bump
+
+        * [JSPWIKI-295] Fixed Tabs in Admin.jsp
+
 2008-06-15  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-47
