@@ -155,7 +155,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
      *            {@link UserProfile#getLoginName()}method.
      * @return the array of Principals representing the user
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
-     * @throws {@inheritDoc}
+     * @throws NoSuchPrincipalException {@inheritDoc}
      */
     public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException
     {
