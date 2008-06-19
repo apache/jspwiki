@@ -80,6 +80,17 @@
 <%-- ie6 needs next line --%>
 <link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
 
+<%-- Support for the universal edit button (www.universaleditbutton.org) --%>
+<wiki:CheckRequestContext context='view|info|diff|upload'>
+  <wiki:Permission permission="edit">
+    <wiki:PageType type="page">
+    <link rel="alternate" type="application/x-wiki" 
+          href="<wiki:EditLink format='url' />"
+          title="<fmt:message key='actions.edit.title'/>" />
+    </wiki:PageType>
+  </wiki:Permission>
+</wiki:CheckRequestContext>
+
 <wiki:FeedDiscovery />
 
 <%-- SKINS : extra stylesheets, extra javascript --%>
