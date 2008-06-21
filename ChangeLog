@@ -1,3 +1,17 @@
+2008-06-19  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-48
+        
+        * WikiWizard removed due to it being LGPL.  The following files
+        were removed
+           * webdocs/applets/wikiwizard.jar
+           * webdocs/applets/WiWi-INF/
+           * webdocs/scripts/jspwiki-wikiwizard.js
+           * src/com/ecyrd/jspwiki/ui/admin/beans/WikiWizardAdminBean  
+           
+        * [JSPWIKI-231]: Updated de, zh_CN and nl.  Thanks to Florian
+        Holeczek, Harry Metske and David Gao!
+        
 2007-06-19 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * No version bump
