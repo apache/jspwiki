@@ -1,3 +1,11 @@
+2008-06-22 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-svn-49
+
+        * [JSPWIKI-141] I18 properties also fixed in EditGroupContent.jsp
+        
+        * Included latest favicon.ico of Florian and Harry
+
 2008-06-19  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-48
@@ -12,7 +20,7 @@
         * [JSPWIKI-231]: Updated de, zh_CN and nl.  Thanks to Florian
         Holeczek, Harry Metske and David Gao!
         
-2007-06-19 Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-06-19 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * No version bump
 
@@ -25,7 +33,7 @@
         * Added support for the Universal Edit Button - 
         universaleditbutton.org.  About 3 mins before launch, even...
 
-2007-06-17 Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-06-17 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-46 
 
@@ -48,7 +56,7 @@
         
         * JSPWIKI-231: Updated Dutch and German translations.
 
-2007-06-15 Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-06-15 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-44 
         
@@ -99,7 +107,7 @@
         * JSPWIKI-292: Comment.jsp didn't compile.  Oops!  Thanks to Harry Metske
         for the patch.
         
-2007-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-06-14 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-41  Many template fixes, added ajaxed edit preview, improved IE6/IE7 compat.
         
@@ -255,7 +263,7 @@
         * Some JSPWikiMarkupParser speed optimizations by changing all
         StringBuffers to StringBuilders.
 
-2007-06-07 Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-06-07 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-33
         
@@ -344,7 +352,7 @@
         * [JSPWIKI-151]: If sending a password succeeds, it is no longer reported
         as an error.
         
-2007-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-05-18  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-25
         
@@ -511,7 +519,7 @@
         implement Serializable.  It could be used to improve startup
         time even further, but it will be useful for the future.
         
-2007-04-10  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-10  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-10 - Javascript fixes for IE
         
@@ -520,7 +528,7 @@
         * Bugfixes for hide/show Favorites menu on mouse-click/hover.
         
 
-2007-04-09  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-09  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-9
         
@@ -555,24 +563,24 @@
         * [JSPWIKI-56] Replaced MultiPartLibrary with Apache Commons
         FileUpload library, as MultiPartLibrary was LGPL.
 
-2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-6
         
         * [JSPWIKI-233] Bugfix PreferencesTab.jsp
         
-2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-5
         
         * [JSPWIKI-230] Make TimeZone configuration more user-friendly. Adjusted all jsp time-formatting
         to take timezone setting into account. 
         
-2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * Commit related JIRA id's
         
-2007-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-04-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-svn-4
         
@@ -767,7 +775,7 @@
         * [JSPWIKI-161].  Added TranslationCheck from Florian Holeczek.  Removed
         the MissingTranslations tool, as TranslationCheck does all it did.
 
-2007-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+2008-3-01  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * Minor stylesheet updates (no version bump)
         
