@@ -887,7 +887,7 @@ public class CachingProvider
     private static class CacheItemCollector
         implements CacheEntryEventListener
     {
-        private Map<String, WikiPage> m_allItems = new HashMap<String, WikiPage>();
+        private Map<String, WikiPage> m_allItems = new Hashtable<String, WikiPage>();
 
         /**
          * Returns a clone of the set - you cannot manipulate this.
