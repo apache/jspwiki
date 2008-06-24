@@ -438,9 +438,9 @@ public class CachingAttachmentProvider
         /**
          * Returns a clone of the set - you cannot manipulate this.
          * 
-         * @return
+         * @return A list of all items.
          */
-        public List getAllItems()
+        public List<Attachment> getAllItems()
         {
             List<Attachment> ret = new LinkedList<Attachment>();
             ret.addAll( m_allItems.values() );

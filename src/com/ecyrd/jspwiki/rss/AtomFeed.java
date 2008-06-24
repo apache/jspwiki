@@ -69,7 +69,7 @@ public class AtomFeed extends Feed
      *   This is a bit complicated right now, as there is no proper metadata
      *   store in JSPWiki.
      *
-     *   @return
+     *   @return An unique feed ID.
      */
     private String getFeedID()
     {

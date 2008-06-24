@@ -42,56 +42,109 @@ public class ContentTag
     
     private Map<String, String> m_mappings = new HashMap<String, String>();
 
+    /**
+     *  Set the template for the VIEW context.
+     *  
+     *  @param s The template name.
+     */
     public void setView( String s )
     {
         m_mappings.put( WikiContext.VIEW, s );
     }
 
+    /**
+     *  Set the template for the DIFF context.
+     *  
+     *  @param s The template name.
+     */
     public void setDiff( String s )
     {
         m_mappings.put( WikiContext.DIFF, s );
     }
 
+    /**
+     *  Set the template for the INFO context.
+     *  
+     *  @param s The template name.
+     */
     public void setInfo( String s )
     {
         m_mappings.put( WikiContext.INFO, s );
     }
 
+    /**
+     *  Set the template for the PREVIEW context.
+     *  
+     *  @param s The template name.
+     */
     public void setPreview( String s )
     {
         m_mappings.put( WikiContext.PREVIEW, s );
     }
 
+    /**
+     *  Set the template for the CONFLICT context.
+     *  
+     *  @param s The template name.
+     */
     public void setConflict( String s )
     {
         m_mappings.put( WikiContext.CONFLICT, s );
     }
 
+    /**
+     *  Set the template for the FIND context.
+     *  
+     *  @param s The template name.
+     */
     public void setFind( String s )
     {
         m_mappings.put( WikiContext.FIND, s );
     }
 
+    /**
+     *  Set the template for the PREFS context.
+     *  
+     *  @param s The template name.
+     */
     public void setPrefs( String s )
     {
         m_mappings.put( WikiContext.PREFS, s );
     }
 
+    /**
+     *  Set the template for the ERROR context.
+     *  
+     *  @param s The template name.
+     */
     public void setError( String s )
     {
         m_mappings.put( WikiContext.ERROR, s );
     }
 
+    /**
+     *  Set the template for the EDIT context.
+     *  
+     *  @param s The template name.
+     */
     public void setEdit( String s )
     {
         m_mappings.put( WikiContext.EDIT, s );
     }
 
+    /**
+     *  Set the template for the COMMENT context.
+     *  
+     *  @param s The template name.
+     */
     public void setComment( String s )
     {
         m_mappings.put( WikiContext.COMMENT, s );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
@@ -99,6 +152,9 @@ public class ContentTag
         return SKIP_BODY;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public final int doEndTag()
         throws JspException
     {

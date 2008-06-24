@@ -34,6 +34,9 @@ public class ContentEncodingTag
 {
     private static final long serialVersionUID = 0L;
 
+    /**
+     *  {@inheritDoc}
+     */
     public final int doWikiStartTag()
         throws IOException
     {

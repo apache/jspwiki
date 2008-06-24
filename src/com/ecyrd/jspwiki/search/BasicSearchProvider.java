@@ -52,16 +52,31 @@ public class BasicSearchProvider implements SearchProvider
 
     private WikiEngine m_engine;
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException
     {
         m_engine = engine;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void pageRemoved(WikiPage page) {}
 
+    /**
+     *  {@inheritDoc}
+     */
     public void reindexPage(WikiPage page) {}
 
+    /**
+     *  Parses a query into something that we can use.
+     *  
+     *  @param query A query string.
+     *  @return A parsed array.
+     */
     public  QueryItem[] parseQuery(String query)
     {
         StringTokenizer st = new StringTokenizer( query, " \t," );
