@@ -43,15 +43,15 @@ public class Denounce implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(Denounce.class);
 
-    public static final String PARAM_LINK = "link";
-    public static final String PARAM_TEXT = "text";
+    private static final String PARAM_LINK = "link";
+    private static final String PARAM_TEXT = "text";
 
-    public static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";
-    public static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";
-    public static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
-    public static final String PROP_REFERERPATTERN = "denounce.refererpattern.";
+    private static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";
+    private static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";
+    private static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
+    private static final String PROP_REFERERPATTERN = "denounce.refererpattern.";
 
-    public static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
+    private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
     private static ArrayList<Pattern> c_refererPatterns = new ArrayList<Pattern>();
     private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<Pattern>();

@@ -894,7 +894,7 @@ public class JSPWikiMarkupParser
      *  entities that are already escaped).
      *
      *  @param buf
-     *  @return
+     *  @return An escaped string.
      */
     private String escapeHTMLEntities(String buf)
     {
@@ -1250,7 +1250,7 @@ public class JSPWikiMarkupParser
      *  What a crappy problem.
      *
      * @param url
-     * @return
+     * @return An anchor Element containing the link.
      */
     private Element makeDirectURILink( String url )
     {
@@ -2278,7 +2278,7 @@ public class JSPWikiMarkupParser
     /**
      *  Handles constructs of type %%(style) and %%class
      * @param newLine
-     * @return
+     * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
     private Element handleDiv( boolean newLine )

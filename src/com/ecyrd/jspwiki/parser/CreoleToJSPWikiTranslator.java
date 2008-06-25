@@ -64,12 +64,16 @@ public class CreoleToJSPWikiTranslator
     // [{$creolepagefilter.creoleversion}]
     // [{$creolepagefilter.linebreak}] -> bloglike/wikilike
 
+    /** The version of the filter. */
     public static final String VAR_VERSION = "1.0.3";
 
+    /** The version of Creole that this filter supports. */
     public static final String VAR_CREOLE_VERSION = "1.0";
 
+    /** The linebreak style "bloglike". */
     public static final String VAR_LINEBREAK_BLOGLIKE = "bloglike";
 
+    /** The linebreak style "c2like". */
     public static final String VAR_LINEBREAK_C2LIKE = "c2like";
 
     private static final String CREOLE_BOLD = "\\*\\*((?s:.)*?)(\\*\\*|(\n\n|\r\r|\r\n\r\n))";
@@ -167,6 +171,14 @@ public class CreoleToJSPWikiTranslator
 
     private        ArrayList<String> m_hashList = new ArrayList<String>();
 
+    /**
+     *  I have no idea what this method does.  Could someone please tell me?
+     *  
+     * @param wikiProps A property set
+     * @param content The content to translate?
+     * @param username The username in the signature?
+     * @return Probably some translated content.
+     */
     public String translateSignature(Properties wikiProps, final String content, String username)
     {
 
@@ -199,7 +211,13 @@ public class CreoleToJSPWikiTranslator
         return result;
     }
 
-    /** Translates Creole markup to JSPWiki markup */
+    /** 
+     *  Translates Creole markup to JSPWiki markup 
+     *  
+     *  @param wikiProps A set of Wiki Properties
+     *  @param content Creole markup
+     *  @return Wiki markup
+     */
     public String translate(Properties wikiProps, final String content)
     {
         boolean blogLineBreaks = false;
@@ -357,7 +375,7 @@ public class CreoleToJSPWikiTranslator
      * the protected markup with the the md5 hash of the markup.
      *
      * @param content
-     * @return
+     * @return The content with protection
      */
     private String protectMarkup(String content)
     {

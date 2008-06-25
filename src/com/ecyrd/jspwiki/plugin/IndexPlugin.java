@@ -114,7 +114,7 @@ public class IndexPlugin implements WikiPlugin
     /**
      *  Create the DOM for a heading
      * @param initialChar
-     * @return
+     * @return A span element.
      */
     private Element makeHeader( char initialChar )
     {
@@ -131,7 +131,7 @@ public class IndexPlugin implements WikiPlugin
      * @param context
      * @param include
      * @param exclude
-     * @return
+     * @return A list containing page names which matched the filters.
      * @throws ProviderException
      */
     private List<String> listPages( WikiContext context, String include, String exclude )

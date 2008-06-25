@@ -36,10 +36,13 @@ public class WeblogArchivePlugin implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
 
-    public static final String PARAM_PAGE = "page";
+    private static final String PARAM_PAGE = "page";
 
     private SimpleDateFormat m_monthUrlFormat;
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

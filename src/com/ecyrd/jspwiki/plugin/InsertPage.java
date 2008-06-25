@@ -35,17 +35,23 @@ import java.util.*;
 public class InsertPage
     implements WikiPlugin
 {
-    public static final String PARAM_PAGENAME  = "page";
-    public static final String PARAM_STYLE     = "style";
-    public static final String PARAM_MAXLENGTH = "maxlength";
-    public static final String PARAM_CLASS     = "class";
-    public static final String PARAM_SECTION   = "section";
-    public static final String PARAM_DEFAULT   = "default";
+    private static final String PARAM_PAGENAME  = "page";
+    private static final String PARAM_STYLE     = "style";
+    private static final String PARAM_MAXLENGTH = "maxlength";
+    private static final String PARAM_CLASS     = "class";
+    private static final String PARAM_SECTION   = "section";
+    private static final String PARAM_DEFAULT   = "default";
 
     private static final String DEFAULT_STYLE = "";
 
+    /** This attribute is stashed in the WikiContext to make sure that we don't
+     *  have circular references.
+     */
     public static final String ATTR_RECURSE    = "com.ecyrd.jspwiki.plugin.InsertPage.recurseCheck";
     
+    /**
+     *  {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException

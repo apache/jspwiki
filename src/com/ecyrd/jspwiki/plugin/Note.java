@@ -93,7 +93,6 @@ public class Note implements WikiPlugin
      *  Cleans the side.
      * 
      * @param commandline
-     * @return
      */
     private String clean(String commandline)
     {

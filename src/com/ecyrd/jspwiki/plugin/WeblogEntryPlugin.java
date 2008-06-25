@@ -36,9 +36,9 @@ public class WeblogEntryPlugin implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(WeblogEntryPlugin.class);
 
-    public static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
+    private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 
-    public static final String PARAM_ENTRYTEXT = "entrytext";
+    private static final String PARAM_ENTRYTEXT = "entrytext";
     /** 
      * Optional parameter: page that actually contains the blog.
      * This lets us provide a "new entry" link for a blog page 
@@ -47,6 +47,15 @@ public class WeblogEntryPlugin implements WikiPlugin
     // "page" for uniform naming with WeblogPlugin...
     public static final String PARAM_BLOGNAME = "page"; 
 
+    /**
+     *  Returns a new page name for entries.  It goes through the list of
+     *  all blog pages, and finds out the next in line.
+     *  
+     *  @param engine A WikiEngine
+     *  @param blogName The page (or blog) name.
+     *  @return A new name.
+     *  @throws ProviderException If something goes wrong.
+     */
     public String getNewEntryPage( WikiEngine engine, String blogName )
         throws ProviderException
     {
@@ -65,6 +74,9 @@ public class WeblogEntryPlugin implements WikiPlugin
         return blogPage;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

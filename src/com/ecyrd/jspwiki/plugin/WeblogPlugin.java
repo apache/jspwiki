@@ -78,29 +78,41 @@ public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
-    private static final Pattern headingPattern;
+    private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */
-    public static final int     DEFAULT_DAYS = 7;
-    public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
+    private static final int     DEFAULT_DAYS = 7;
+    private static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
 
-    public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
+    /** The default date format used in the blog entry page names. */
+    public static final String   DEFAULT_DATEFORMAT = "ddMMyy";
 
-    public static final String  PARAM_STARTDATE    = "startDate";
-    public static final String  PARAM_ENTRYFORMAT  = "entryFormat";
-    public static final String  PARAM_DAYS         = "days";
-    public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
-    public static final String  PARAM_MAXENTRIES   = "maxEntries";
-    public static final String  PARAM_PAGE         = "page";
+    private static final String  PARAM_STARTDATE    = "startDate";
+    private static final String  PARAM_ENTRYFORMAT  = "entryFormat";
+    private static final String  PARAM_DAYS         = "days";
+    private static final String  PARAM_ALLOWCOMMENTS = "allowComments";
+    private static final String  PARAM_MAXENTRIES   = "maxEntries";
+    private static final String  PARAM_PAGE         = "page";
 
+    /** The attribute which is stashed to the WikiPage attributes to check if a page
+     *  is a weblog or not. You may check for its presence.
+     */
     public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
 
     static
     {
         // This is a pretty ugly, brute-force regex. But it will do for now...
-        headingPattern = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
+        HEADINGPATTERN = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
     }
 
+    /**
+     *  Create an entry name based on the blogname, a date, and an entry number.
+     *  
+     *  @param pageName Name of the blog
+     *  @param date The date (in ddMMyy format)
+     *  @param entryNum The entry number.
+     *  @return A formatted page name.
+     */
     public static String makeEntryPage( String pageName,
                                         String date,
                                         String entryNum )
@@ -108,16 +120,32 @@ public class WeblogPlugin
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date+"_"+entryNum;
     }
 
+    /**
+     *  Return just the basename for entires without date and entry numebr.
+     *  
+     *  @param pageName The name of the blog.
+     *  @return A formatted name.
+     */
     public static String makeEntryPage( String pageName )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName);
     }
 
+    /**
+     *  Returns the entry page without the entry number.
+     *  
+     *  @param pageName Blog name.
+     *  @param date The date.
+     *  @return A base name for the blog entries.
+     */
     public static String makeEntryPage( String pageName, String date )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
@@ -296,7 +324,7 @@ public class WeblogPlugin
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");
-        Matcher matcher = headingPattern.matcher( html );
+        Matcher matcher = HEADINGPATTERN.matcher( html );
         if ( matcher.find() )
         {
             String title = matcher.group(2);
