@@ -776,12 +776,12 @@ var TabbedSection = {
 	click: function(){
 		var menu = $(this).getParent(),
 			tabs = menu.getNext();
-
+			
 		menu.getChildren().removeClass('activetab');
 		this.addClass('activetab');
 
 		tabs.getChildren().addClass('hidetab');
-		$E('#'+this.id.substr(5),tabs).removeClass('hidetab');		
+		tabs.getElementById(this.id.substr(5)).removeClass('hidetab');		
 	}
 	
 }
