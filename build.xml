@@ -531,7 +531,7 @@
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
-     <copy file="doc/LICENSE" todir="${install.fulldir}" />
+     <copy file="LICENSE" todir="${install.fulldir}" />
 
      <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
