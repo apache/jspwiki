@@ -233,11 +233,6 @@ public class PageRenamer
 
     /**
      *  Replaces camelcase links.
-     * @param context
-     * @param sourceText
-     * @param from
-     * @param to
-     * @return
      */
     private String replaceCCReferrerString( WikiContext context, String sourceText, String from, String to )
     {
@@ -348,10 +343,6 @@ public class PageRenamer
     /**
      *  This method does a correct replacement of a single link, taking into
      *  account anchors and attachments.
-     *  
-     *  @param link
-     *  @param to
-     *  @return
      */
     private String replaceSingleLink( WikiContext context, String original, String from, String newlink )
     {
