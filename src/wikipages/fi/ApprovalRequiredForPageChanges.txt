@@ -1,0 +1,5 @@
+Muokkauksesi vaatii hyväksynnän.  Pyyntö on välitetty eteenpäin sivujen ylläpitäjälle, ja he
+joko hylkäävät tai hyväksyvät muokkauksesi.
+
+Voit tarkistaa pyyntösi tilan kirjautumalla sisään (jos et jo ole) ja klikkaamalla "Työsarjat"
+-linkkiä.

@@ -504,19 +504,27 @@
        whether a page is a core page or not is found in src/wikipages/.corepages -->
 
   <target name="corepageszip" depends="installinit">
-    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages.zip"
-         basedir="src/wikipages" includesfile="src/wikipages/.corepages">
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_en.zip"
+         basedir="src/wikipages/en" includesfile="src/wikipages/.corepages">
     </zip>
+  
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fi.zip"
+         basedir="src/wikipages/fi" includesfile="src/wikipages/.corepages">
+    </zip>
+
+    <!-- Add other languages here -->
+    
   </target>
 
-  <!-- Creates a full ZIP file of all document files -->
+  <!-- Creates a full ZIP file of all document files, ignoring any resources
+       which start with a dot. -->
 
   <target name="documentzip" depends="installinit,javadoc"
           description="Creates JSPWiki documentation zipfile">
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
         <zipfileset dir="doc" prefix="doc" />
-        <zipfileset dir="src/wikipages" prefix="doc/wikipages" />
+        <zipfileset dir="src/wikipages" prefix="doc/wikipages" excludes="**/.??*"/>
     </zip>
   </target>
 
@@ -770,7 +778,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Create a wiki page directory and point jspwiki.properties to it -->
       <mkdir dir="@{context.dir}/wikipages" />
       <copy toDir="@{context.dir}/wikipages" flatten="true" >
-        <fileset dir="src/wikipages">
+        <fileset dir="src/wikipages/en">
           <include name="Main.*" />
           <include name="LeftMenu*.*" />
           <include name="About.*" />

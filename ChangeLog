@@ -1,3 +1,10 @@
+2008-06-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * Moved all pages from wikipages under wikipages/en, and
+        tweaked the build process accordingly.  Also created a basic
+        Finnish translation of the CorePages.  The build process
+        now creates jspwiki_corepages_en.zip and _fi.zip.
+
 2008-06-19  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-svn-51
