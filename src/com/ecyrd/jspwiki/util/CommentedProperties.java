@@ -62,8 +62,9 @@ public class CommentedProperties extends Properties
     }
 
     /**
-     *{@inheritDoc}
+     *  {@inheritDoc}
      */
+    @Override
     public synchronized void load( InputStream inStream ) throws IOException
     {
         // Load the file itself into a string
@@ -76,8 +77,8 @@ public class CommentedProperties extends Properties
     /**
      *  Loads properties from a file opened by a supplied Reader.
      *  
-     *  @param in {@inheritDoc}
-     *  @throws {@inheritDoc}
+     *  @param in The reader to read properties from
+     *  @throws IOException in case something goes wrong.
      */
     public synchronized void load( Reader in ) throws IOException
     {
@@ -90,6 +91,7 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized Object setProperty( String key, String value )
     {
         return put(key, value);
@@ -98,6 +100,7 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void store( OutputStream out, String comments ) throws IOException
     {
         byte[] bytes = m_propertyString.getBytes("ISO-8859-1");
@@ -108,6 +111,7 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized Object put( Object arg0, Object arg1 )
     {
         // Write the property to the stored string
@@ -121,6 +125,7 @@ public class CommentedProperties extends Properties
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @Override
     public synchronized void putAll( Map arg0 )
     {
         // Shove all of the entries into the property string
@@ -137,6 +142,7 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized Object remove( Object key )
     {
         // Remove from the property string
@@ -149,6 +155,7 @@ public class CommentedProperties extends Properties
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized String toString()
     {
         return m_propertyString;

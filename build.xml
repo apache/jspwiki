@@ -273,6 +273,7 @@
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
       <classpath refid="path.base" />
+      <classpath refid="path.tests" />   
     </javadoc>
 
   </target>
