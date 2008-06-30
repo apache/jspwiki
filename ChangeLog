@@ -1,3 +1,11 @@
+2008-06-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-svn-52
+        
+        * JSPWIKI-299: Deleting an attachment from a page which
+        had been recently renamed caused an NPE.  Reported by Harry
+        Metske.
+
 2008-06-29  Janne Jalkanen <jalkanen@apache.org>
 
         * Moved all pages from wikipages under wikipages/en, and

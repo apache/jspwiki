@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.base.events.*;
 
@@ -419,6 +420,21 @@ public class CachingAttachmentProvider
         m_provider.moveAttachmentsForPage(oldParent, newParent);
         m_cache.removeEntry( newParent ); 
         m_cache.removeEntry( oldParent );
+        
+        //
+        //  This is a kludge to make sure that the pages are removed
+        //  from the other cache as well.
+        //
+        String checkName = oldParent + "/";
+        
+        Collection<String> names = cloneCollection( m_allCollector.m_allItems.keySet() );
+        for( String name : names )
+        {
+            if( name.startsWith( checkName ) )
+            {
+                m_attCache.removeEntry( name );
+            }
+        }
     }
 
     /**
@@ -456,11 +472,17 @@ public class CachingAttachmentProvider
                 {
                     log.debug( "attachment cache entry removed: " + aEvent.getKey() );
                 }
-                Attachment item = (Attachment) aEvent.getEntry().getContent();
-
-                if( item != null )
+                
+                CacheEntry e = aEvent.getEntry();
+                
+                if( e != null )
                 {
-                    m_allItems.remove( item.getName() );
+                    Attachment item = (Attachment) e.getContent();
+
+                    if( item != null )
+                    {
+                        m_allItems.remove( item.getName() );
+                    }
                 }
             }
         }
