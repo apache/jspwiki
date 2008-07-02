@@ -63,7 +63,7 @@ public final class Release
     public static final int        VERSION       = 2;
 
     /** The JSPWiki revision. */
-    public static final int        REVISION      = 8;
+    public static final int        REVISION      = 7;
 
     /** The minor revision.  */
     public static final int        MINORREVISION = 0;
@@ -77,7 +77,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "1";
+    public static final String     BUILD         = "2";
     
     /**
      *  This is the generic version string you should use

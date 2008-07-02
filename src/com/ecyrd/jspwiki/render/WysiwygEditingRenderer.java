@@ -128,15 +128,7 @@ public class WysiwygEditingRenderer
                         }
                     }
                 } // end of check for "a" element
-                else if( elementName.equals( PRE_ELEMENT ) )
-                {
-                    // We need to trim the surrounding whitespace to accomodate a FCK bug: when the first line
-                    // of a <pre> tag contains only whitespace, then all the linebreaks in the <pre>
-                    // tag will be lost due to FCK's html tidying.
-                    String text = element.getTextTrim();
-                    element.setText( text );
-                }
-
+                
                 processChildren( element );
             }
         }

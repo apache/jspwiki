@@ -1,3 +1,13 @@
+2008-07-02  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-2.  Yes, the last version number was an 
+        anxious mistake.  It's really 2.7 alpha, not 2.8 alpha.
+        
+        * JSPWIKI-61: Added patch from David Au to add FCK 2.6.1
+        support.  Please see the following page to enable it:
+        
+        http://www.jspwiki.org/wiki/HowToManuallyIntegrateFCKEditor
+
 2008-06-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-alpha-1
