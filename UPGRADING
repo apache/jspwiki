@@ -20,8 +20,12 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
 1. Required Steps
    --------------
    
+   A. Preparing the web container
+
    -> If you are using Tomcat, delete the $CATALINA_HOME/temp and
       $CATALINA_HOME/work directories before upgrading.
+
+   B. Replacing JSPs and web resources
    
    -> If you are upgrading from 2.4, you should replace all of the top-level
       JSPs (relative to the webroot) with the new ones from 2.6. You
@@ -32,6 +36,8 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
        the /scripts, /templates and /images directories. You do not need
        to copy the top-level JSPs (relative to the webroot), because these
        are identical to those in 2.6.
+
+   C. Upgrading jspwiki.properties
 
    -> You must upgrade jspwiki.properties. JSPWiki 2.8 adds several
       new properties to it. We recommend you use the 2.8 version of
@@ -57,15 +63,33 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
           
       Note that the trailing slash is REQUIRED.
       
-   -> Replace the old WEB-INF/jspwiki.tld and JSPWiki.jar with the
-      new versions.
-   
-   -> Add the following WEB-INF/ files from the new version to your existing WEB-INF:
-          commons-fileupload-1.2.1.jar, commons-io-1.4.jar
+   D. Upgrading WEB-INF resources and libraries
 
-   -> Remove the following files from yoru existing WEB-INF/:
+   -> If you are upgrading from JSPWiki 2.4, we recommend that you use the 2.8
+      version of WEB-INF/web.xml as a base, and copy any customizations into
+      it line by line. JSPWiki 2.6 added JSON/AJAX features and JavaMail resource
+      declarations, which you will get if you use the new web.xml file.
+
+   -> Replace the old WEB-INF/jspwiki.tld and WEB-INF/lib/JSPWiki.jar with the
+      new versions. If you are upgrading from 2.4, you must also add
+      WEB-INF/jstl.fmt.tld.
+   
+   -> If you are upgrading from 2.4 or 2.6, add the following WEB-INF/lib files
+      from the new version to your existing WEB-INF:
+          commons-fileupload-1.2.1.jar, commons-io-1.4.jar
+          
+   -> If you are upgrading from 2.4, you should upgrade the following WEB-INF/lib
+      files from the new version to your existing WEB-INF: 
+          commons-lang-2.0.jar, freshcookies-security-0.54.jar,
+          log4j-1.2.14.jar, xmlrpc.jar
+          
+      (You should remove any older versions of these jars from WEB-INF/lib.)
+
+   -> Remove the following files from yoru existing WEB-INF/lib:
           jug-asl-2.0.0.jar, multipartrequest.jar
-         
+    
+   E. Upgrading security features
+
    -> JSPWiki now wires up its own JAAS login process, and no longer
       interferes with existing JAAS login stacks. The JAAS configuration
       options that were previously set in WEB-INF/jwpwiki.jaas are now
@@ -73,7 +97,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       jspwiki.properties in accordance with your preferred container
       login configuration (package names omitted for brevity):
       
-      Old jspwiki.jaas values                      Equivalent jspwiki.properties values
+      Old jspwiki.jaas values (2.4/2.6)            Equivalent jspwiki.properties values
       --------------------------------------------------------------------------------
       CookieAuthenticationLoginModule SUFFICIENT   jspwiki.cookieAuthentication = true
       CookieAuthenticationLoginModule (omitted)    jspwiki.cookieAuthentication = false
@@ -84,27 +108,37 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       For cookie authentication, you might also want to change the 
       jspwiki.cookieAuthentication.expiry value, which defaults to 14 days.
     
-    -> If you specified a third-party JAAS LoginModule for custom authentication,
-       (for example: com.foo.login.MyLoginModule REQUIRED), you must specify this
-       in jspwiki.properties as follows:
-           jspwiki.loginModule.class = com.foo.login.MyLoginModule
+   -> If you specified a third-party JAAS LoginModule for custom authentication,
+      (for example: com.foo.login.MyLoginModule REQUIRED), you must specify this
+      in jspwiki.properties as follows:
+          jspwiki.loginModule.class = com.foo.login.MyLoginModule
            
-       If this property is not set, JSPWiki will default (as before) to the
-       UserDatabaseLoginModule implementation.
+      If this property is not set, JSPWiki will default (as before) to the
+      UserDatabaseLoginModule implementation.
            
-       Note that parameters passed to your custom LoginModule is now expressed in
-       jspwiki.properties also, as key/value pairs, rather than in the JAAS config
-       file. The parameter names and values will be loaded to a Map and passed to
-       the LoginModule as the 'options' parameter when its initialize() method
-       is called. The default UserDatabaseLoginModule class does not need any options.
-           jspwiki.loginModule.options.param1 = value1
-           jspwiki.loginModule.options.param2 = value2
+      Note that parameters passed to your custom LoginModule is now expressed in
+      jspwiki.properties also, as key/value pairs, rather than in the JAAS config
+      file. The parameter names and values will be loaded to a Map and passed to
+      the LoginModule as the 'options' parameter when its initialize() method
+      is called. The default UserDatabaseLoginModule class does not need any options.
+          jspwiki.loginModule.options.param1 = value1
+          jspwiki.loginModule.options.param2 = value2
            
-       If you have developed a custom LoginModule, you should also read the
-       DEVELOPERS section of this document for additional information.
+      If you have developed a custom LoginModule, you should also read the
+      DEVELOPERS section of this document for additional information.
+   
+   -> If you are upgrading from JSPWiki 2.4, you should consider basing your
+      security policy (WEB-INF/jspwiki.policy) on the version supplied in 2.8,
+      because of the fact that JAR-signing is no longer required. The overall granting
+      structure is also more compact and readable. We recommend you use the 2.8
+      version of jspwiki.policy as a base, and copy your existing policy into it
+      line-by-line. Note: If you would prefer to retain your existing policy
+      (but upgrade it), you should remove the 'keystore jspwiki' line, the initial
+      'grant signedby "jspwiki"' block that grants Java permissions to JSPWiki,
+      and all 'signedBy "jspwiki"' references.
        
-    -> If you use the JDBCUserDatabase for storage of user profiles, you must
-       add the following columns to your users table:
+   -> If you use the JDBCUserDatabase for storage of user profiles, you must
+      add the following columns to your users table:
        
           column name         type
           ----------------------------
@@ -112,9 +146,9 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
           lockExpiry          timestamp
           attributes          longvarchar (or other large text/memo field)
   
-       The primary key should also be changed to the 'uid' column. The column names
-       can be re-mapped in jspwiki.properties similar to other JDBC columns.
-       We do not yet have an upgrade DDL script for these new columns.
+      The primary key should also be changed to the 'uid' column. The column names
+      can be re-mapped in jspwiki.properties similar to other JDBC columns.
+      We do not yet have an upgrade DDL script for these new columns.
 
 2. Suggested Steps
    ---------------
@@ -127,6 +161,12 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
    -> If you are running Tomcat and have configured JAAS, you may safely remove
       the following system property from CATALINA_OPTS:
           java.security.auth.login.config
+          
+   -> If you are upgrading from JSPWiki 2.4, you may safely delete the Java keystore
+      file (stored at WEB-INF/jspwki.jks). JSPWiki JARs do not need to be signed in 2.6
+      and higher.
+   
+   -> If you are upgrading from JSPWiki 2.4, you may safely delete WEB-INF/oscache.properties.
 
 3. Backwards Incompatibilities
    ---------------------------
@@ -140,9 +180,16 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       use salted SHA-1 hashes. These are transparently upgraded on the fly
       as users log in.
 
+   -> User profiles now have a unique identifier associated with them. These
+      are stored by the XML and JDBC UserDatabase implementations. UIDs are
+      long integers. They are transparently added to any profiles that do
+      not have them, on the fly, as users log in. The UID property is not
+      widely used yet, but we expect it to be useful for security logging
+      in future releases of JSPWiki. 
 
-UPGRADE INSTRUCTIONS FOR DEPLOYERS
-----------------------------------
+
+UPGRADE INSTRUCTIONS FOR DEVELOPERS
+-----------------------------------
 
 1. Required Steps
 2. Suggested Steps
