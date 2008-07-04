@@ -1414,5 +1414,38 @@ To automate the JAR signing processs, you can add the property
   <target name="i18n-clean-templates" description="Deletes all i18n directory structures">
 	<delete dir="${tmplt.i18n.dir}" />
   </target>
+  
+  <target name="api-diff" description="Compares API in JSPWiki.jar with previous version"
+    depends="jar">
+     <check-property prop="jarfile.old" />
+     <mkdir dir="${tests.reports}" />
+     <!--
+     <java classname="com.jeantessier.dependencyfinder.cli.JarJarDiff"
+       output="${tests.reports}/API-changes.xml">
+       <classpath refid="path.tests" />
+        <arg value="-new" />
+        <arg value="${jarfile}" />
+        <arg value="-old" />
+        <arg value="${jarfile.old}" />
+        <arg value="-name" />
+        <arg value="JSPWiki Public API Changes" />
+     </java>
+     -->
+        <!--
+        <arg value="-level" />
+        <arg value="incompatible" />
+        -->
+     <!-- Filthy hack that suppresses DTD resolution -->
+     <replace file="${tests.reports}/API-changes.xml"
+       token='&lt;!DOCTYPE differences SYSTEM "http://depfind.sourceforge.net/dtd/differences.dtd"&gt;'
+       value=""/>
+     <!-- Just to be safe, replace raw ampersands with something bogus -->
+     <replace file="${tests.reports}/API-changes.xml"
+       token="&amp;" value="(ampersand)"/>
+     <xslt in="${tests.reports}/API-changes.xml"
+       out="${tests.reports}/API-changes.html"
+       style="${tests.src}/etc/DiffToHTML.xsl">
+     </xslt>
+  </target>
 
 </project>
