@@ -33,6 +33,8 @@ import java.security.Principal;
 public class SimpleDecision extends Decision
 {
 
+    private static final long serialVersionUID = 8192213077644617341L;
+
     /**
      * Constructs a new SimpleDecision assigned to a specified actor.
      * @param workflow the parent Workflow

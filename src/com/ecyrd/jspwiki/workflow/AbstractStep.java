@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
 
@@ -145,11 +146,11 @@ public abstract class AbstractStep implements Step
     /**
      * {@inheritDoc}
      */
-    public final Object[] getMessageArguments()
+    public final Serializable[] getMessageArguments()
     {
         if ( m_workflow == null )
         {
-            return new Object[0];
+            return new Serializable[0];
         }
         return m_workflow.getMessageArguments();
     }

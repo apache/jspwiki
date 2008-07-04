@@ -34,6 +34,8 @@ import java.util.Map;
 
 public final class DefaultUserProfile implements UserProfile
 {
+    private static final long serialVersionUID = -5600466893735300647L;
+
     private static final String EMPTY_STRING = "";
 
     private static final String WHITESPACE = "\\s";

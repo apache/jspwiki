@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Date;
@@ -61,7 +62,7 @@ import com.ecyrd.jspwiki.WikiException;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public interface Step
+public interface Step extends Serializable
 {
 
     /**
@@ -117,8 +118,7 @@ public interface Step
      * multiple times.
      * </p>
      * 
-     * @return the result of the Step, where <code>true</code> means success,
-     *         and <code>false</code> means abort
+     * @return the result of the Step, expressed as an Outcome
      * @throws WikiException
      *             if the step encounters errors while executing
      */
@@ -156,7 +156,7 @@ public interface Step
      * 
      * @return the message arguments.
      */
-    public Object[] getMessageArguments();
+    public Serializable[] getMessageArguments();
 
     /**
      * Returns the Outcome of this Step's processing; by default,

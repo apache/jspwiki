@@ -35,6 +35,8 @@ import com.ecyrd.jspwiki.WikiException;
 public final class SimpleNotification extends Decision
 {
 
+    private static final long serialVersionUID = -3392947495169819527L;
+
     /**
      * Constructs a new SimpleNotification object with a supplied message key,
      * associated Workflow, and named actor who must acknowledge the message.

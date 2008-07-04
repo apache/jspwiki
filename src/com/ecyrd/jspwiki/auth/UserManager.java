@@ -713,6 +713,7 @@ public final class UserManager
      */
     public static class SaveUserProfileTask extends Task
     {
+        private static final long serialVersionUID = 6994297086560480285L;
         private final UserDatabase m_db;
         private final WikiEngine m_engine;
 

@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
 
@@ -198,8 +199,10 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  *
  * @author Andrew Jaquith
  */
-public class Workflow
+public class Workflow implements Serializable
 {
+    private static final long serialVersionUID = 5228149040690660032L;
+
     /** Time value: the start or end time has not been set. */
     public static final Date TIME_NOT_SET = new Date( 0 );
 
@@ -241,7 +244,7 @@ public class Workflow
 
     private final Principal m_owner;
 
-    private final List<Object> m_messageArgs;
+    private final List<Serializable> m_messageArgs;
 
     private int m_state;
 
@@ -272,7 +275,7 @@ public class Workflow
         m_id = ID_NOT_SET;
         m_key = messageKey;
         m_manager = null;
-        m_messageArgs = new ArrayList<Object>();
+        m_messageArgs = new ArrayList<Serializable>();
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
@@ -325,7 +328,7 @@ public class Workflow
      * an IllegalArgumentException.
      * @param obj the object to add
      */
-    public final void addMessageArgument( Object obj )
+    public final void addMessageArgument( Serializable obj )
     {
         if ( obj instanceof String || obj instanceof Date || obj instanceof Number )
         {
@@ -435,19 +438,19 @@ public class Workflow
      * </ul>
      * <p>
      * Workflow and Step subclasses are free to append items to this collection
-     * with {@link #addMessageArgument(Object)}.
+     * with {@link #addMessageArgument(Serializable)}.
      * </p>
      *
      * @return the array of message arguments
      */
-    public final Object[] getMessageArguments()
+    public final Serializable[] getMessageArguments()
     {
-        List<Object> args = new ArrayList<Object>();
+        List<Serializable> args = new ArrayList<Serializable>();
         args.add( m_owner.getName() );
         Principal actor = getCurrentActor();
         args.add( actor == null ? "-" : actor.getName() );
         args.addAll( m_messageArgs );
-        return args.toArray( new Object[args.size()] );
+        return args.toArray( new Serializable[args.size()] );
     }
 
     /**
@@ -589,17 +592,17 @@ public class Workflow
     }
 
     /**
-     * Temporarily associates an Object with this Workflow, as a named attribute, for the
-     * duration of workflow execution. The passed Object can be anything required by
-     * an executing Step. Note that when the workflow completes or aborts, all
-     * attributes will be cleared.
+     * Temporarily associates an object with this Workflow, as a named attribute, for the
+     * duration of workflow execution. The passed object can be anything required by
+     * an executing Step, although it <em>should</em> be serializable. Note that when the workflow
+     * completes or aborts, all attributes will be cleared.
      *
      * @param attr
      *            the attribute name
      * @param obj
      *            the value
      */
-    public final synchronized void setAttribute(String attr, Object obj)
+    public final synchronized void setAttribute(String attr, Object obj )
     {
         if ( m_attributes == null )
         {

@@ -258,6 +258,7 @@ public class ApprovalWorkflowTest extends TestCase
      */
     public static class TestPrepTask extends Task
     {
+        private static final long serialVersionUID = 1L;
 
         public TestPrepTask( String messageKey )
         {

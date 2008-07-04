@@ -20,21 +20,25 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
+
 /**
- * Represents a contextual artifact, which can be any Object, useful for making
+ * Represents a contextual artifact, which can be any serializable object, useful for making
  * a Decision. Facts are key-value pairs, where the key is a String (message
- * key) and the value is an arbitrary Object. Generally, the supplied object's
+ * key) and the value is an arbitrary object. Generally, the supplied object's
  * {@link #toString()} method should return a human-readable String. Facts are
  * immutable objects.
  * 
  * @author Andrew Jaquith
  * @since 2.5
  */
-public final class Fact
+public final class Fact implements Serializable
 {
+    private static final long serialVersionUID = -7459432935402796978L;
+
     private final String m_key;
 
-    private final Object m_obj;
+    private final Serializable m_obj;
 
     /**
      * Constructs a new Fact with a supplied message key and value.
@@ -44,7 +48,7 @@ public final class Fact
      * @param value
      *            the object to associate with the name
      */
-    public Fact(String messageKey, Object value)
+    public Fact(String messageKey, Serializable value)
     {
         if ( messageKey == null || value == null )
         {
@@ -67,7 +71,7 @@ public final class Fact
      * Returns this Fact's value.
      * @return the value object
      */
-    public Object getValue()
+    public Serializable getValue()
     {
         return m_obj;
     }

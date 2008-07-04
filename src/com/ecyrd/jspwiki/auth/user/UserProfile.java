@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public interface UserProfile
+public interface UserProfile extends Serializable
 {
 
     /**

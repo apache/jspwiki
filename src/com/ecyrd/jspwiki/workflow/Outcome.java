@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
+
 /**
  * Resolution of a workflow Step, such as "approve," "deny," "hold," "task
  * error," or other potential resolutions.
@@ -27,8 +29,10 @@ package com.ecyrd.jspwiki.workflow;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public final class Outcome
+public final class Outcome implements Serializable
 {
+
+    private static final long serialVersionUID = -338361947886288073L;
 
     /** Complete workflow step (without errors) */
     public static final Outcome STEP_COMPLETE = new Outcome( "outcome.step.complete", true );

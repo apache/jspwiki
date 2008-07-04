@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +36,9 @@ import com.ecyrd.jspwiki.WikiSession;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public class DecisionQueue
+public class DecisionQueue implements Serializable
 {
+    private static final long serialVersionUID = -7172912793410302533L;
 
     private LinkedList<Decision> m_queue = new LinkedList<Decision>();
 
