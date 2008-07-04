@@ -1,3 +1,22 @@
+2008-07-03  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-3
+
+        * Added top-level text document UPGRADING which summarizes
+        considerations for upgrading from 2.4 and 2.6. This needs more
+        work, especially from the web-tier crew (Dirk et al).
+        
+        * Made most of the workflow package, except for the
+        set/getAttributes methods in the Workflow class, serializable. In the 3.0
+        timeframe, the rest of the package will be made serializable, too.
+        
+        * Added Ant target 'api-diff' which allows arbitrary diffing against
+        previous JSPWiki.jar artifacts. It prints a nicely formatted HTML page
+        describing public API differences. The report file is
+        tests/reports/API-changes.html.
+        
+        * Upgraded Stripes jar (used in test cases) to 1.5-RC1.
+
 2008-07-02  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-alpha-2.  Yes, the last version number was an 
