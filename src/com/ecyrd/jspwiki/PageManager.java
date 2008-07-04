@@ -662,6 +662,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class PreSaveWikiPageTask extends Task
     {
+        private static final long serialVersionUID = 6304715570092804615L;
         private final WikiContext m_context;
         private final String m_proposedText;
 
@@ -730,6 +731,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class SaveWikiPageTask extends Task
     {
+        private static final long serialVersionUID = 3190559953484411420L;
+
         /**
          *  Creates the Task.
          */
