@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="lib/mail.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="etc/i18n"/>
-	<classpathentry kind="lib" path="lib/freshcookies-security-0.54.jar" sourcepath="/freshcookies-security/src/java"/>
+	<classpathentry kind="lib" path="lib/freshcookies-security-0.54.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-taglibs-jstl-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-tablibs-standard-1.1.2.jar"/>
@@ -36,9 +36,9 @@
 	<classpathentry kind="lib" path="tests/lib/jasper-compiler-5.5.25.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jasper-runtime-5.5.25.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar" sourcepath="/Users/arj/workspace/lib/jetty-5.1.14/extra/plus/src"/>
+	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-servlet-5.1.14.jar"/>
-	<classpathentry kind="lib" path="/Users/arj/workspace/JSPWiki-SVN-2.8/tests/lib/stripes-1.5-RC1.jar" sourcepath="/stripes-1.4.3-src"/>
+	<classpathentry kind="lib" path="tests/lib/stripes-1.5-RC1.jar"/>
 	<classpathentry kind="lib" path="tests/lib/selenium-server-1.0-beta1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5.0"/>
 	<classpathentry kind="output" path="classes"/>
