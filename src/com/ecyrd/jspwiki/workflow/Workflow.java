@@ -136,7 +136,7 @@ import com.ecyrd.jspwiki.event.WorkflowEvent;
  * array is retrieved via {@link #getMessageArguments()}; the first two array
  * elements will always be these: a String representing work flow owner's name,
  * and a String representing the current actor's name. Workflow participants
- * can add to this array by invoking {@link #addMessageArgument(Object)}.</li>
+ * can add to this array by invoking {@link #addMessageArgument(Serializable)}.</li>
  * </ul>
  * <h2>Example</h2>
  * <p>
