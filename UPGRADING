@@ -208,6 +208,15 @@ UPGRADE INSTRUCTIONS FOR DEVELOPERS
 3. Backwards Incompatibilities
    ---------------------------
 
+   This section describes the changes to JSPWiki's API in version 2.8 compared to the previous
+   release (2.6). Only public API changes are documented here. For a complete list of changes,
+   including those to protected and private methods and fields, see doc/API Changes from 2.4.
+
+   These changes are derived from the output of JarJarDiff, a component of the 
+   "DependencyFinder" package (not bundled with JSPWiki). If you have it installed, you
+   can generate a full API diff report against any version of JSPWiki by running the Ant
+   target "api-diff". 
+
    -> The following interfaces have changed slightly, and may introduce
       compatibility problems if you do not fix them in your custom classes.
       These interfaces are NOT generally implemented by third parties, so
