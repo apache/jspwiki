@@ -38,18 +38,18 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class Image
     implements WikiPlugin
 {
-    private static final String PARAM_SRC      = "src";
-    private static final String PARAM_ALIGN    = "align";
-    private static final String PARAM_HEIGHT   = "height";
-    private static final String PARAM_WIDTH    = "width";
-    private static final String PARAM_ALT      = "alt";
-    private static final String PARAM_CAPTION  = "caption";
-    private static final String PARAM_LINK     = "link";
-    private static final String PARAM_TARGET   = "target";
-    private static final String PARAM_STYLE    = "style";
-    private static final String PARAM_CLASS    = "class";
+    public static final String PARAM_SRC      = "src";
+    public static final String PARAM_ALIGN    = "align";
+    public static final String PARAM_HEIGHT   = "height";
+    public static final String PARAM_WIDTH    = "width";
+    public static final String PARAM_ALT      = "alt";
+    public static final String PARAM_CAPTION  = "caption";
+    public static final String PARAM_LINK     = "link";
+    public static final String PARAM_TARGET   = "target";
+    public static final String PARAM_STYLE    = "style";
+    public static final String PARAM_CLASS    = "class";
     //    public static final String PARAM_MAP      = "map";
-    private static final String PARAM_BORDER   = "border";
+    public static final String PARAM_BORDER   = "border";
 
     /**
      *  This method is used to clean away things like quotation marks which

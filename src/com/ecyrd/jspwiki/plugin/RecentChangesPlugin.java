@@ -46,9 +46,9 @@ import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 public class RecentChangesPlugin
     implements WikiPlugin
 {
-    private static final String PARAM_FORMAT = "format";
-    private static final String PARAM_TIME_FORMAT = "timeFormat";
-    private static final String PARAM_DATE_FORMAT = "dateFormat";
+    public static final String PARAM_FORMAT = "format";
+    public static final String PARAM_TIME_FORMAT = "timeFormat";
+    public static final String PARAM_DATE_FORMAT = "dateFormat";
 
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;

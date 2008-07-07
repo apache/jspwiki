@@ -43,8 +43,8 @@ public class Denounce implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(Denounce.class);
 
-    private static final String PARAM_LINK = "link";
-    private static final String PARAM_TEXT = "text";
+    public static final String PARAM_LINK = "link";
+    public static final String PARAM_TEXT = "text";
 
     private static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";
     private static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";

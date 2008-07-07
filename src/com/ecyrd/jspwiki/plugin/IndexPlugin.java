@@ -46,8 +46,8 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class IndexPlugin implements WikiPlugin
 {
-    private static final String PARAM_INCLUDE = "include";
-    private static final String PARAM_EXCLUDE = "exclude";
+    public static final String PARAM_INCLUDE = "include";
+    public static final String PARAM_EXCLUDE = "exclude";
     private static Logger log = Logger.getLogger( IndexPlugin.class );
     
     /**

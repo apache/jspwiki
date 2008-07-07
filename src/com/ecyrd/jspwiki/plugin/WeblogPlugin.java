@@ -87,12 +87,12 @@ public class WeblogPlugin
     /** The default date format used in the blog entry page names. */
     public static final String   DEFAULT_DATEFORMAT = "ddMMyy";
 
-    private static final String  PARAM_STARTDATE    = "startDate";
-    private static final String  PARAM_ENTRYFORMAT  = "entryFormat";
-    private static final String  PARAM_DAYS         = "days";
-    private static final String  PARAM_ALLOWCOMMENTS = "allowComments";
-    private static final String  PARAM_MAXENTRIES   = "maxEntries";
-    private static final String  PARAM_PAGE         = "page";
+    public static final String  PARAM_STARTDATE    = "startDate";
+    public static final String  PARAM_ENTRYFORMAT  = "entryFormat";
+    public static final String  PARAM_DAYS         = "days";
+    public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
+    public static final String  PARAM_MAXENTRIES   = "maxEntries";
+    public static final String  PARAM_PAGE         = "page";
 
     /** The attribute which is stashed to the WikiPage attributes to check if a page
      *  is a weblog or not. You may check for its presence.

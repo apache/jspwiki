@@ -43,11 +43,11 @@ public class Counter
 {
     // private static Logger log = Logger.getLogger( Counter.class );
 
-    private static final String  PARAM_NAME          = "name";
-    private static final String  PARAM_INCREMENT     = "increment";
-    private static final String  PARAM_SHOW_RESULT   = "showResult";
-    private static final String  PARAM_START         = "start";
-    private static final String  DEFAULT_NAME        = "counter";
+    public static final String  PARAM_NAME          = "name";
+    public static final String  PARAM_INCREMENT     = "increment";
+    public static final String  PARAM_SHOW_RESULT   = "showResult";
+    public static final String  PARAM_START         = "start";
+    public static final String  DEFAULT_NAME        = "counter";
     private static final int     DEFAULT_INCREMENT   = 1;
     private static final boolean DEFAULT_SHOW_RESULT = true;
 

@@ -36,7 +36,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
 
-    private static final String PARAM_PAGE = "page";
+    public static final String PARAM_PAGE = "page";
 
     private SimpleDateFormat m_monthUrlFormat;
 

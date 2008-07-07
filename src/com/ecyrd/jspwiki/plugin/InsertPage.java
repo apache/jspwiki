@@ -35,12 +35,12 @@ import java.util.*;
 public class InsertPage
     implements WikiPlugin
 {
-    private static final String PARAM_PAGENAME  = "page";
-    private static final String PARAM_STYLE     = "style";
-    private static final String PARAM_MAXLENGTH = "maxlength";
-    private static final String PARAM_CLASS     = "class";
-    private static final String PARAM_SECTION   = "section";
-    private static final String PARAM_DEFAULT   = "default";
+    public static final String PARAM_PAGENAME  = "page";
+    public static final String PARAM_STYLE     = "style";
+    public static final String PARAM_MAXLENGTH = "maxlength";
+    public static final String PARAM_CLASS     = "class";
+    public static final String PARAM_SECTION   = "section";
+    public static final String PARAM_DEFAULT   = "default";
 
     private static final String DEFAULT_STYLE = "";
 

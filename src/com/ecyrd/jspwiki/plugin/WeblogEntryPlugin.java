@@ -38,7 +38,7 @@ public class WeblogEntryPlugin implements WikiPlugin
 
     private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 
-    private static final String PARAM_ENTRYTEXT = "entrytext";
+    public static final String PARAM_ENTRYTEXT = "entrytext";
     /** 
      * Optional parameter: page that actually contains the blog.
      * This lets us provide a "new entry" link for a blog page 
