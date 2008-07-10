@@ -149,7 +149,7 @@ public class RecentChangesPlugin
                 {
                     linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
                     linkel.setClass("infolink");
-                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.gif")));
+                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
 
                     col.addElement( linkel );
                 }

@@ -1,3 +1,10 @@
+2008-07-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-4
+        
+        * Fixed a number of failing unit tests, and also included
+        Creole tests.
+
 2008-07-03  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-3

@@ -500,10 +500,10 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
             "//Comment\r\n" +
             "}]\r\n" +
             "\r\n" +
-            "[http://www.xyz.com/]";
+            "[http://www.xyz.com/]\r\n";
         
-        System.out.println(src);
-        System.out.println(translate(src));
+        //System.out.println(src);
+        //System.out.println(translate(src));
         
         assertEquals(target, translate(src));
     }
@@ -842,6 +842,6 @@ public class CreoleToJSPWikiTranslatorTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( JSPWikiMarkupParserTest.class );
+        return new TestSuite( CreoleToJSPWikiTranslatorTest.class );
     }
 }

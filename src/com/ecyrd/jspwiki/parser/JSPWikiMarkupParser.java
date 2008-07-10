@@ -598,7 +598,7 @@ public class JSPWikiMarkupParser
                                                     link );
 
                 String imglink = m_context.getURL( WikiContext.NONE,
-                                                   "images/attachment_small.gif" );
+                                                   "images/attachment_small.png" );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 

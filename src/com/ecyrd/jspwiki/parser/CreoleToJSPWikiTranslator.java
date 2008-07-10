@@ -327,6 +327,13 @@ public class CreoleToJSPWikiTranslator
             }
             counter = 0;
         }
+        
+        // Fixes testExtensions5
+        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' ) 
+        {
+            result.append( '\n' );
+        }
+        
         return result.toString();
     }
 

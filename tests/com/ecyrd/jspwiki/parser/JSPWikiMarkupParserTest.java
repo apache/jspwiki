@@ -657,7 +657,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
         assertEquals( "This should be an <a class=\"attachment\" href=\"/attach/Test/TestAtt.txt\">attachment link</a>"+
-                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(src));
     }
 
@@ -680,7 +680,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
         assertEquals( "This should be an <a class=\"attachment\" href=\"/attach/Test/TestAtt.txt\">attachment link</a>"+
-                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
@@ -703,7 +703,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "[Test page/TestAtt.txt]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
-                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
@@ -723,7 +723,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
-                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
