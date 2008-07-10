@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
  *
  *  @since  2.6
  */
+// FIXME: This class should really use Annotations instead of a method call.
 // FIXME: Exception handling is not probably according to spec...
 public abstract class SimpleMBean
     implements DynamicMBean
