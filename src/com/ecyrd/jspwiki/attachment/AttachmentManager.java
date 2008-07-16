@@ -612,6 +612,14 @@ public class AttachmentManager
         //  Should help with IE 5.22 on OSX
         //
         filename = filename.trim();
+
+        // If file name ends with .jsp, the user is being naughty!
+        if ( filename.endsWith( ".jsp" ) || filename.endsWith( ".JSP" ) )
+        {
+            AttachmentServlet.log.error( "Illegal file name." );
+            
+            throw new WikiException( "Illegal file name." );
+        }
     
         //
         //  Some browser send the full path info with the filename, so we need
