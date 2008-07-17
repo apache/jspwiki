@@ -1,3 +1,9 @@
+2008-07-16  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.5.3-build-3
+        
+        * JSPWIKI-315: added extra checks to AttachmentServlet.
+        
 2008-05-27  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.6.3-rc-2

@@ -673,6 +673,15 @@ public class AttachmentServlet
     {
         boolean created = false;
 
+        try
+        {
+            filename = AttachmentManager.validateFileName( filename );
+        }
+        catch( WikiException e )
+        {
+            log.error( "Illegal filename given: "+e.getMessage() );
+            throw new RedirectException( e.getMessage(), errorPage );
+        }
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
         //  contents.  But we can't figure out the page to redirect to
