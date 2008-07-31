@@ -1,3 +1,9 @@
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-6
+
+        * JSPWIKI-326: Fixed NPE in ProfanityFilter.
+
 2008-07-16  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-5
