@@ -44,7 +44,7 @@ public class ProfanityFilter extends BasicPageFilter
     private static Logger     log = Logger.getLogger(ProfanityFilter.class);
     
     private static final String PROPERTYFILE = "com/ecyrd/jspwiki/filters/profanity.properties";
-    private static String[] c_profanities;
+    private static String[] c_profanities = new String[0];
     
     static 
     {
