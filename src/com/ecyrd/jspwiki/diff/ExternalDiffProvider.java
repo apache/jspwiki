@@ -122,7 +122,7 @@ public class ExternalDiffProvider implements DiffProvider
             String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 
             if (m_traditionalColorization) //FIXME, see comment near declaration...
-                diff = colorizeDiff(diff);
+                diff = colorizeDiff(htmlWikiDiff);
             else
                 diff = htmlWikiDiff;
 
