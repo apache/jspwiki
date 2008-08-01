@@ -1097,7 +1097,7 @@
         
         * [JSPWIKI-95]: Links to anchors with blanks work now.  This introduces
         a tiny, very tiny compatibility issue with links to headings changing
-        case in some cases.  Reported by J�gen Weber.
+        case in some cases.  Reported by Jügen Weber.
         
         * [JSPWIKI-125]: FilterManager now checks for version compatibility 
         of PageFilters by looking into the ini/jspwiki_module.xml.  This was a 
