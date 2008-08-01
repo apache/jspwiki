@@ -137,10 +137,10 @@ public class RSSGenerator
      */
     public static final String PROP_RSS_COPYRIGHT       = "jspwiki.rss.copyright";
 
-    /** Just for compatibilty.  @deprecated */
+    /** Just for compatibilty.  @deprecated */
     public static final String PROP_RSSAUTHOR           = PROP_RSS_AUTHOR;
 
-    /** Just for compatibilty.  @deprecated */
+    /** Just for compatibilty.  @deprecated */
     public static final String PROP_RSSAUTHOREMAIL      = PROP_RSS_AUTHOREMAIL;
 
 

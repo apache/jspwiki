@@ -39,7 +39,7 @@ public class FormSelect
     extends FormElement
 {
     /**
-     *  {@inheritDoc}
+     *  {@inheritDoc}
      */
     public String execute( WikiContext ctx, Map params )
         throws PluginException

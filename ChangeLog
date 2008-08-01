@@ -2,6 +2,8 @@
 
 		* no version bump
         
+        * JSPWIKI-321: remove unmappable chars from 4 sources (causing warnings during build)
+
         * JSPWIKI-312: small patch to build.xml, quotes around arguments of compressjs,
           reported by Florian Holeczek.
 
@@ -1095,7 +1097,7 @@
         
         * [JSPWIKI-95]: Links to anchors with blanks work now.  This introduces
         a tiny, very tiny compatibility issue with links to headings changing
-        case in some cases.  Reported by Jügen Weber.
+        case in some cases.  Reported by Jï¿½gen Weber.
         
         * [JSPWIKI-125]: FilterManager now checks for version compatibility 
         of PageFilters by looking into the ini/jspwiki_module.xml.  This was a 
