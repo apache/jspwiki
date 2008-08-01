@@ -423,7 +423,7 @@
             <java jar="tests/lib/yuicompressor-2.3.3.jar"
                   output="${tmpdir}/compress/@{src}"
                   fork="true">
-                <arg line="${code.src}/@{src} @{args}" />
+                <arg line="'${code.src}/@{src}' @{args}" />
             </java>
         </sequential>
     </macrodef>

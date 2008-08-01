@@ -1,3 +1,10 @@
+2008-08-01  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-312: small patch to build.xml, quotes around arguments of compressjs,
+          reported by Florian Holeczek.
+
 2008-07-31  Harry Metske <harry.metske@gmail.com>
 
 		* no version bump
