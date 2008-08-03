@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.      
  */
 package com.ecyrd.jspwiki;
 
@@ -50,8 +51,10 @@ import com.ecyrd.jspwiki.workflow.Workflow;
  *  Manages the WikiPages.  This class functions as an unified interface towards
  *  the page providers.  It handles initialization and management of the providers,
  *  and provides utility methods for accessing the contents.
+ *  <p>
+ *  Saving a page is a two-stage Task; first the pre-save operations and then the
+ *  actual save.  See the descriptions of the tasks for further information.
  *
- *  @author Janne Jalkanen
  *  @since 2.0
  */
 // FIXME: This class currently only functions just as an extra layer over providers,
@@ -72,12 +75,24 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static final String PROP_LOCKEXPIRY   = "jspwiki.lockExpiryTime";
     
+    /** The message key for storing the text for the presave task.  Value is <tt>{@value}</tt>*/
     public static final String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
+    
+    /** The workflow attribute which stores the wikiContext. */
     public static final String PRESAVE_WIKI_CONTEXT = "wikiContext";
-    public static final String SAVE_APPROVER = "workflow.saveWikiPage";
+    
+    /** The name of the key from jspwiki.properties which defines who shall approve
+     *  the workflow of storing a wikipage.  Value is <tt>{@value}</tt>*/
+    public static final String SAVE_APPROVER             = "workflow.saveWikiPage";
+    
+    /** The message key for storing the Decision text for saving a page.  Value is {@value}. */
     public static final String SAVE_DECISION_MESSAGE_KEY = "decision.saveWikiPage";
-    public static final String SAVE_REJECT_MESSAGE_KEY = "notification.saveWikiPage.reject";
-    public static final String SAVE_TASK_MESSAGE_KEY = "task.saveWikiPage";
+    
+    /** The message key for rejecting the decision to save the page.  Value is {@value}. */
+    public static final String SAVE_REJECT_MESSAGE_KEY   = "notification.saveWikiPage.reject";
+    
+    /** The message key of the text to finally approve a page save.  Value is {@value}. */
+    public static final String SAVE_TASK_MESSAGE_KEY     = "task.saveWikiPage";
     
     /** Fact name for storing the page name.  Value is {@value}. */
     public static final String FACT_PAGE_NAME = "fact.pageName";
@@ -91,13 +106,14 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /** Fact name for storing the proposed (edited) text.  Value is {@value}. */
     public static final String FACT_PROPOSED_TEXT = "fact.proposedText";
     
+    /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
     static Logger log = Logger.getLogger( PageManager.class );
 
     private WikiPageProvider m_provider;
 
-    protected HashMap m_pageLocks = new HashMap();
+    protected HashMap<String,PageLock> m_pageLocks = new HashMap<String,PageLock>();
 
     private WikiEngine m_engine;
 
@@ -197,7 +213,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    public Collection<WikiPage> getAllPages()
+    public Collection getAllPages()
         throws ProviderException
     {
         return m_provider.getAllPages();
@@ -319,7 +335,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
 
-            lock = (PageLock) m_pageLocks.get( page.getName() );
+            lock = m_pageLocks.get( page.getName() );
 
             if( lock == null )
             {
@@ -377,7 +393,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
         synchronized( m_pageLocks )
         {
-            lock = (PageLock)m_pageLocks.get( page.getName() );
+            lock = m_pageLocks.get( page.getName() );
         }
 
         return lock;
@@ -393,13 +409,13 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public List getActiveLocks()
     {
-        ArrayList result = new ArrayList();
+        ArrayList<PageLock> result = new ArrayList<PageLock>();
 
         synchronized( m_pageLocks )
         {
-            for( Iterator i = m_pageLocks.values().iterator(); i.hasNext(); )
+            for( PageLock lock : m_pageLocks.values() )
             {
-                result.add( i.next() );
+                result.add( lock );
             }
         }
 
@@ -436,11 +452,16 @@ public class PageManager extends ModuleManager implements WikiEventListener
             //
             log.info("Repository has been modified externally while fetching info for "+pageName );
 
-            WikiPage p = new WikiPage( m_engine, pageName );
-
-            m_engine.updateReferences( p );
-
             page = m_provider.getPageInfo( pageName, version );
+
+            if( page != null )
+            {
+                m_engine.updateReferences( page );
+            }
+            else
+            {
+                m_engine.getReferenceManager().pageRemoved( new WikiPage(m_engine,pageName) );
+            }
         }
 
         //
@@ -591,6 +612,11 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     private class LockReaper extends WikiBackgroundThread
     {
+        /**
+         *  Create a LockReaper for a given engine.
+         *  
+         *  @param engine WikiEngine to own this thread.
+         */
         public LockReaper( WikiEngine engine )
         {
             super( engine, 60 );
@@ -636,9 +662,16 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class PreSaveWikiPageTask extends Task
     {
+        private static final long serialVersionUID = 6304715570092804615L;
         private final WikiContext m_context;
         private final String m_proposedText;
 
+        /**
+         *  Creates the task.
+         *  
+         *  @param context The WikiContext
+         *  @param proposedText The text that was just saved.
+         */
         public PreSaveWikiPageTask( WikiContext context, String proposedText )
         {
             super( PRESAVE_TASK_MESSAGE_KEY );
@@ -646,6 +679,10 @@ public class PageManager extends ModuleManager implements WikiEventListener
             m_proposedText = proposedText;
         }
 
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve attributes
@@ -694,11 +731,18 @@ public class PageManager extends ModuleManager implements WikiEventListener
      */
     public static class SaveWikiPageTask extends Task
     {
+        private static final long serialVersionUID = 3190559953484411420L;
+
+        /**
+         *  Creates the Task.
+         */
         public SaveWikiPageTask()
         {
             super( SAVE_TASK_MESSAGE_KEY );
         }
 
+        /** {@inheritDoc} */
+        @Override
         public Outcome execute() throws WikiException
         {
             // Retrieve attributes
@@ -741,6 +785,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /**
      *  {@inheritDoc}
      */
+    @Override
     public Collection modules()
     {
         // TODO Auto-generated method stub
@@ -825,8 +870,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
         if ( acl != null )
         {
             Enumeration entries = acl.entries();
-            Collection entriesToAdd = new ArrayList();
-            Collection entriesToRemove = new ArrayList();
+            Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
+            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
             while ( entries.hasMoreElements() )
             {
                 AclEntry entry = (AclEntry)entries.nextElement();

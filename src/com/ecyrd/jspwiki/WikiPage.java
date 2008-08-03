@@ -1,32 +1,30 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.acl.Acl;
-import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
@@ -51,8 +49,7 @@ public class WikiPage
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
     private String           m_author = null;
-    private final HashMap    m_attributes = new HashMap();
-    private String           m_qualifiedName;
+    private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
 
     /**
      *  "Summary" is a short summary of the page.  It is a String.
@@ -81,7 +78,6 @@ public class WikiPage
         m_engine = engine;
         m_name = name;
         m_wiki = engine.getApplicationName();
-        m_qualifiedName =m_wiki + ":" + m_name;
     }
 
     /**
@@ -93,24 +89,7 @@ public class WikiPage
     {
         return m_name;
     }
-    
-    public String getQualifiedName()
-    {
-        return m_qualifiedName;
-    }
 
-    /**
-     * Convenience method that returns the collection of 
-     * Attachment objects associated with this WikiPage.
-     * It simply delegates to
-     * {@link com.ecyrd.jspwiki.attachment.AttachmentManager#listAttachments(WikiPage)}.
-     * @return the collection
-     */
-    public Collection<Attachment> getAttachments() throws ProviderException
-    {
-        return m_engine.getAttachmentManager().listAttachments( this );
-    }
-    
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
      *  available.  Typically attributes are things that do not need to be stored
@@ -129,7 +108,7 @@ public class WikiPage
     /**
      *  Sets an metadata attribute.
      *  
-     *  @see #getAttribute()
+     *  @see #getAttribute(String)
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */
@@ -386,6 +365,9 @@ public class WikiPage
      *  
      *  {@inheritDoc}
      */
+    // TODO: I have a suspicion that defining this method causes some problems
+    //       with page attributes and caching.  So as of 2.7.32, it's disabled.
+    /*
     public boolean equals( Object o )
     {
         if( o != null && o instanceof WikiPage )
@@ -403,7 +385,7 @@ public class WikiPage
         
         return false;
     }
-    
+    */
     /**
      *  {@inheritDoc}
      */

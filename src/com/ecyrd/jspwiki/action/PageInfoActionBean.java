@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.action;
 
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
@@ -7,12 +8,13 @@ import net.sourceforge.stripes.action.UrlBinding;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
-@WikiRequestContext("info")
-@UrlBinding("/PageInfo.action")
+@UrlBinding("/PageInfo.jsp")
 public class PageInfoActionBean extends WikiContext
 {
+    @DefaultHandler
     @HandlesEvent("info")
-    @EventPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
+    @WikiRequestContext("info")
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.VIEW_ACTION)
     public Resolution info()
     {
         return null;

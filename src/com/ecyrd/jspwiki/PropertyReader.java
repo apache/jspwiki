@@ -41,12 +41,19 @@ import javax.servlet.ServletContext;
 public final class PropertyReader
 {
 
+    private static final String DEFAULT_JSPWIKI_PROPERTIES = "/ini/default_jspwiki.properties";
+
     /** The web.xml parameter that defines where the config file is to be found.
      *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE.
      *  {@value #DEFAULT_PROPERTYFILE}
      */
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
 
+    /**
+     *  The prefix when you are cascading properties.  
+     *  
+     *  @see #loadWebAppProps(ServletContext)
+     */
     public static final String PARAM_PROPERTYFILE_CASCADEPREFIX = "jspwiki.propertyfile.cascade.";
 
     /** Path to the default property file.
@@ -54,8 +61,8 @@ public final class PropertyReader
      */
     public static final String  DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
-    public static final String PARAM_VAR_DECLARATION = "var.";
-    public static final String PARAM_VAR_IDENTIFIER = "$";
+    private static final String PARAM_VAR_DECLARATION = "var.";
+    private static final String PARAM_VAR_IDENTIFIER  = "$";
 
 
     /**
@@ -102,6 +109,9 @@ public final class PropertyReader
      *  and so on. You have to number your cascade in a descending way starting
      *  with "1". This means you cannot leave out numbers in your cascade. This
      *  method is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis].
+     *  
+     *  @param context A Servlet Context which is used to find the properties
+     *  @return A filled Properties object with all the cascaded properties in place
      */
     public static Properties loadWebAppProps( ServletContext context )
     {
@@ -168,10 +178,28 @@ public final class PropertyReader
 
     /**
      *  Returns the default property set as a Properties object.
+     *  
+     *  @return The default property set.
      */
     public static final Properties getDefaultProperties()
     {
-        return new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+        Properties props = new Properties( TextUtil.createProperties( DEFAULT_PROPERTIES ) );
+        
+        InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_PROPERTIES );
+        
+        if( in != null )
+        {
+            try
+            {
+                props.load( in );
+            }
+            catch( IOException e )
+            {
+                System.err.println("Unable to load default propertyfile '"+DEFAULT_JSPWIKI_PROPERTIES+"'"+e.getMessage());
+            }
+        }
+        
+        return props;
     }
 
 
@@ -275,7 +303,7 @@ public final class PropertyReader
     public static void expandVars(Properties properties)
     {
         //get variable name/values from properties...
-        Map vars = new HashMap();
+        Map<String,String> vars = new HashMap<String,String>();
         Enumeration propertyList = properties.propertyNames();
         while( propertyList.hasMoreElements() )
         {

@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2005 The JSPWiki Development Group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki;
 
@@ -25,9 +26,6 @@ import java.security.PrivilegedAction;
 import java.util.*;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -37,8 +35,6 @@ import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.auth.authorize.Role;
-import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
-import com.ecyrd.jspwiki.auth.login.PrincipalWrapper;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -110,17 +106,11 @@ public final class WikiSession implements WikiEventListener
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal<WikiSession> c_guestSession  = new ThreadLocal<WikiSession>();
+    private static ThreadLocal<WikiSession> c_guestSession = new ThreadLocal<WikiSession>();
 
     private final Subject       m_subject             = new Subject();
 
-    private final Map<String,Set<String>> m_messages = new HashMap<String,Set<String>>();
-
-    private String              m_cachedCookieIdentity= null;
-
-    private String              m_cachedRemoteUser    = null;
-
-    private Principal           m_cachedUserPrincipal = null;
+    private final Map<String,Set<String>> m_messages  = new HashMap<String,Set<String>>();
 
     /** The WikiEngine that created this session. */
     private WikiEngine          m_engine              = null;
@@ -142,10 +132,9 @@ public final class WikiSession implements WikiEventListener
      */
     protected final boolean isInGroup( Group group )
     {
-        Principal[] principals = getPrincipals();
-        for ( int i = 0; i < principals.length; i++ )
+        for ( Principal principal : getPrincipals() )
         {
-          if ( isAuthenticated() && group.isMember( principals[i] ) )
+          if ( isAuthenticated() && group.isMember( principal ) )
           {
               return true;
           }
@@ -218,24 +207,10 @@ public final class WikiSession implements WikiEventListener
      */
     public final boolean isAnonymous()
     {
-        Set principals = m_subject.getPrincipals();
+        Set<Principal> principals = m_subject.getPrincipals();
         return principals.contains( Role.ANONYMOUS ) ||
                  principals.contains( WikiPrincipal.GUEST ) ||
                  isIPV4Address( getUserPrincipal().getName() );
-    }
-
-    /**
-     * Creates and returns a new login context for this wiki session.
-     * This method is called by
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager}.
-     * @param application the name of the application
-     * @param handler the callback handler
-     * @return A new login context
-     * @throws LoginException If the login context cannot be created
-     */
-    public final LoginContext getLoginContext( String application, CallbackHandler handler ) throws LoginException
-    {
-        return new LoginContext( application, m_subject, handler );
     }
 
     /**
@@ -252,10 +227,6 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal getLoginPrincipal()
     {
-        if ( m_loginPrincipal instanceof PrincipalWrapper )
-        {
-            return ((PrincipalWrapper)m_loginPrincipal).getPrincipal();
-        }
         return m_loginPrincipal;
     }
 
@@ -274,10 +245,6 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal getUserPrincipal()
     {
-        if ( m_loginPrincipal instanceof PrincipalWrapper )
-        {
-            return ((PrincipalWrapper)m_userPrincipal).getPrincipal();
-        }
         return m_userPrincipal;
     }
 
@@ -360,7 +327,7 @@ public final class WikiSession implements WikiEventListener
      * Returns all generic messages associated with this session.
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages()}.
-     * @return the current messsages.
+     * @return the current messages.
      */
     public final String[] getMessages()
     {
@@ -371,7 +338,7 @@ public final class WikiSession implements WikiEventListener
      * Returns all messages associated with a session topic.
      * The messages stored with the session persist throughout the
      * session unless they have been reset with {@link #clearMessages(String)}.
-     * @return the current messsages.
+     * @return the current messages.
      * @param topic The topic
      */
     public final String[] getMessages( String topic )
@@ -393,16 +360,16 @@ public final class WikiSession implements WikiEventListener
      */
     public final Principal[] getPrincipals()
     {
-        List<Principal> principals = new ArrayList<Principal>();
+        ArrayList<Principal> principals = new ArrayList<Principal>();
 
         // Take the first non Role as the main Principal
         for( Principal principal : m_subject.getPrincipals() )
         {
-        	if ( AuthenticationManager.isUserPrincipal( principal ) )
+            if ( AuthenticationManager.isUserPrincipal( principal ) )
             {
-            	principals.add( principal );
-			}
-		}
+                principals.add( principal );
+            }
+        }
 
         return principals.toArray( new Principal[principals.size()] );
     }
@@ -507,10 +474,35 @@ public final class WikiSession implements WikiEventListener
                     }
                     case WikiSecurityEvent.LOGIN_INITIATED:
                     {
+                        // Do nothing
+                    }
+                    case WikiSecurityEvent.PRINCIPAL_ADD:
+                    {
+                        WikiSession target = (WikiSession)e.getTarget();
+                        if ( this.equals( target ) && m_status == AUTHENTICATED )
+                        {
+                            Set<Principal> principals = m_subject.getPrincipals();
+                            principals.add( (Principal)e.getPrincipal());
+                        }
+                        break;
+                    }
+                    case WikiSecurityEvent.LOGIN_ANONYMOUS:
+                    {
                         WikiSession target = (WikiSession)e.getTarget();
                         if ( this.equals( target ) )
                         {
-                            updatePrincipals();
+                            m_status = ANONYMOUS;
+                            
+                            // Set the login/user principals and login status
+                            Set<Principal> principals = m_subject.getPrincipals();
+                            m_loginPrincipal = (Principal)e.getPrincipal();
+                            m_userPrincipal = m_loginPrincipal;
+                            
+                            // Add the login principal to the Subject, and set the built-in roles
+                            principals.clear();
+                            principals.add( m_loginPrincipal );
+                            principals.add( Role.ALL );
+                            principals.add( Role.ANONYMOUS );
                         }
                         break;
                     }
@@ -520,6 +512,17 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( target ) )
                         {
                             m_status = ASSERTED;
+                            
+                            // Set the login/user principals and login status
+                            Set<Principal> principals = m_subject.getPrincipals();
+                            m_loginPrincipal = (Principal)e.getPrincipal();
+                            m_userPrincipal = m_loginPrincipal;
+                            
+                            // Add the login principal to the Subject, and set the built-in roles
+                            principals.clear();
+                            principals.add( m_loginPrincipal );
+                            principals.add( Role.ALL );
+                            principals.add( Role.ASSERTED );
                         }
                         break;
                     }
@@ -529,9 +532,21 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( target ) )
                         {
                             m_status = AUTHENTICATED;
+                            
+                            // Set the login/user principals and login status
+                            Set<Principal> principals = m_subject.getPrincipals();
+                            m_loginPrincipal = (Principal)e.getPrincipal();
+                            m_userPrincipal = m_loginPrincipal;
+                            
+                            // Add the login principal to the Subject, and set the built-in roles
+                            principals.clear();
+                            principals.add( m_loginPrincipal );
+                            principals.add( Role.ALL );
+                            principals.add( Role.AUTHENTICATED );
+                            
+                            // Add the user and group principals
                             injectUserProfilePrincipals();  // Add principals for the user profile
-                            injectRolePrincipals();  // Inject role and group principals
-                            updatePrincipals();
+                            injectGroupPrincipals();  // Inject group principals
                         }
                         break;
                     }
@@ -541,7 +556,7 @@ public final class WikiSession implements WikiEventListener
                         if ( this.equals( source ) )
                         {
                             injectUserProfilePrincipals();  // Add principals for the user profile
-                            updatePrincipals();
+                            injectGroupPrincipals();  // Inject group principals
                         }
                         break;
                     }
@@ -549,7 +564,7 @@ public final class WikiSession implements WikiEventListener
                     {
                         // Refresh user principals based on new user profile
                         WikiSession source = (WikiSession)e.getSource();
-                        if ( this.equals( source ) )
+                        if ( this.equals( source ) && m_status == AUTHENTICATED )
                         {
                             // To prepare for refresh, set the new full name as the primary principal
                             UserProfile[] profiles = (UserProfile[])e.getTarget();
@@ -558,11 +573,19 @@ public final class WikiSession implements WikiEventListener
                             {
                                 throw new IllegalStateException( "User profile FullName cannot be null." );
                             }
-                            m_userPrincipal = new WikiPrincipal( newProfile.getFullname() );
-
-                            // Refresh principals for the user profile
-                            injectUserProfilePrincipals();
-                            updatePrincipals();
+                            
+                            Set<Principal> principals = m_subject.getPrincipals();
+                            m_loginPrincipal = new WikiPrincipal( newProfile.getLoginName() );
+                            
+                            // Add the login principal to the Subject, and set the built-in roles
+                            principals.clear();
+                            principals.add( m_loginPrincipal );
+                            principals.add( Role.ALL );
+                            principals.add( Role.AUTHENTICATED );
+                            
+                            // Add the user and group principals
+                            injectUserProfilePrincipals();  // Add principals for the user profile
+                            injectGroupPrincipals();  // Inject group principals
                         }
                         break;
                     }
@@ -587,115 +610,34 @@ public final class WikiSession implements WikiEventListener
         m_subject.getPrincipals().add( WikiPrincipal.GUEST );
         m_subject.getPrincipals().add( Role.ANONYMOUS );
         m_subject.getPrincipals().add( Role.ALL );
-        m_cachedCookieIdentity = null;
-        m_cachedRemoteUser = null;
-        m_cachedUserPrincipal = null;
     }
 
     /**
-     * Returns whether the HTTP servlet container's authentication status has
-     * changed. Used to detect whether the container has logged in a user since
-     * the last call to this function. This method is stateful. After calling
-     * this function, the cached values are set to those in the current request.
-     * If the servlet request is <code>null</code>, this method always returns
-     * <code>false</code>. Note that once a user authenticates, the container
-     * status for the session will <em>never</em> change again, unless the
-     * session is invalidated by timeout or logout.
-     * @param request the servlet request
-     * @return <code>true</code> if the status has changed, <code>false</code>
-     * otherwise
+     * Injects GroupPrincipal objects into the user's Principal set based on the
+     * groups the user belongs to. For Groups, the algorithm first calls the
+     * {@link GroupManager#getRoles()} to obtain the array of GroupPrincipals
+     * the authorizer knows about. Then, the method
+     * {@link GroupManager#isUserInRole(WikiSession, Principal)} is called for
+     * each Principal. If the user is a member of the group, an equivalent
+     * GroupPrincipal is injected into the user's principal set. Existing
+     * GroupPrincipals are flushed and replaced. This method should generally be
+     * called after a user's {@link com.ecyrd.jspwiki.auth.user.UserProfile} is
+     * saved. If the wiki session is null, or there is no matching user profile,
+     * the method returns silently.
      */
-    protected final boolean isContainerStatusChanged( HttpServletRequest request )
+    protected final void injectGroupPrincipals()
     {
-        if ( request == null || m_status.equals( AUTHENTICATED ) )
-        {
-            return false;
-        }
-
-        String remoteUser = request.getRemoteUser();
-        Principal userPrincipal = request.getUserPrincipal();
-        String cookieIdentity = CookieAssertionLoginModule.getUserCookie( request );
-        boolean changed = false;
-
-        // If request contains non-null remote user, update cached value if changed
-        if ( remoteUser != null && !remoteUser.equals( m_cachedRemoteUser) )
-        {
-            m_cachedRemoteUser = remoteUser;
-            log.info( "Remote user changed to " + remoteUser );
-            changed = true;
-        }
-
-        // If request contains non-null user principal, updated cached value if changed
-        if ( userPrincipal != null && !userPrincipal.equals( m_cachedUserPrincipal ) )
-        {
-            m_cachedUserPrincipal = userPrincipal;
-            log.info( "User principal changed to " + userPrincipal.getName() );
-            changed = true;
-        }
-
-        // If cookie identity changed (to a different value or back to null), update cache
-        if ( ( cookieIdentity != null && !cookieIdentity.equals( m_cachedCookieIdentity ) )
-               || ( cookieIdentity == null && m_cachedCookieIdentity != null ) )
-        {
-            m_cachedCookieIdentity = cookieIdentity;
-            log.info( "Cookie changed to " + cookieIdentity );
-            changed = true;
-        }
-        return changed;
-    }
-
-    /**
-     * Injects GroupPrincipal and Role objects into the user's Principal set
-     * based on the groups and roles the user belongs to.
-     * For Roles, the algorithm first calls the
-     * {@link Authorizer#getRoles()} to obtain the array of
-     * Principals the authorizer knows about. Then, the method
-     * {@link Authorizer#isUserInRole(WikiSession, Principal)} is
-     * called for each Principal. If the user possesses the role,
-     * an equivalent role Principal is injected into the user's
-     * principal set.
-     * Reloads user Principals into the suppplied WikiSession's Subject.
-     * Existing Role principals are preserved; all other Principal
-     * types are flushed and replaced by those returned by
-     * {@link com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(String)}.
-     * This method should generally be called after a user's {@link com.ecyrd.jspwiki.auth.user.UserProfile}
-     * is saved. If the wiki session is null, or there is no matching user profile, the
-     * method returns silently.
-     */
-    protected final void injectRolePrincipals()
-    {
+        // Flush the existing GroupPrincipals
+        m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
+        
         // Get the GroupManager and test for each Group
         GroupManager manager = m_engine.getGroupManager();
-        Principal[] groups = manager.getRoles();
-        for ( int i = 0; i < groups.length; i++ )
+        for ( Principal group : manager.getRoles() )
         {
-            if ( manager.isUserInRole( this, groups[i] ) )
+            if ( manager.isUserInRole( this, group ) )
             {
-                m_subject.getPrincipals().add( groups[i] );
+                m_subject.getPrincipals().add( group );
             }
-        }
-
-        // Get the authorizer's known roles, then test for each
-        try
-        {
-            Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
-            Principal[] roles = authorizer.getRoles();
-            for ( int i = 0; i < roles.length; i++ )
-            {
-                Principal role = roles[i];
-                if ( authorizer.isUserInRole( this, role ) )
-                {
-                    String roleName = role.getName();
-                    if ( !Role.isReservedName( roleName ) )
-                    {
-                        m_subject.getPrincipals().add( new Role( roleName ) );
-                    }
-                }
-            }
-        }
-        catch ( WikiException e )
-        {
-            log.error( "Could not refresh role principals: " + e.getMessage() );
         }
     }
 
@@ -708,17 +650,8 @@ public final class WikiSession implements WikiEventListener
      */
     protected final void injectUserProfilePrincipals()
     {
-        // Copy all Role and GroupPrincipal principals into a temporary cache
-        Set<Principal> oldPrincipals = m_subject.getPrincipals();
-        Set<Principal> newPrincipals = new HashSet<Principal>();
-        for ( Principal principal : oldPrincipals )
-        {
-            if ( AuthenticationManager.isRolePrincipal( principal ) )
-            {
-                newPrincipals.add( principal );
-            }
-        }
-        String searchId = getUserPrincipal().getName();
+        // Search for the user profile
+        String searchId = m_loginPrincipal.getName();
         if ( searchId == null )
         {
             // Oh dear, this wasn't an authenticated user after all
@@ -736,106 +669,28 @@ public final class WikiSession implements WikiEventListener
         {
             UserProfile profile = database.find( searchId );
             Principal[] principals = database.getPrincipals( profile.getLoginName() );
-            for (int i = 0; i < principals.length; i++)
+            for ( Principal principal : principals )
             {
-                Principal principal = principals[i];
-                newPrincipals.add( principal );
+                // Add the Principal to the Subject
+                m_subject.getPrincipals().add( principal );
+                
+                // Set the user principal if needed; we prefer FullName, but the WikiName will also work
+                boolean isFullNamePrincipal = ( principal instanceof WikiPrincipal && ((WikiPrincipal)principal).getType() == WikiPrincipal.FULL_NAME );
+                if ( isFullNamePrincipal )
+                {
+                   m_userPrincipal = principal; 
+                }
+                else if ( !( m_userPrincipal instanceof WikiPrincipal ) )
+                {
+                    m_userPrincipal = principal; 
+                }
             }
-
-            // Replace the Subject's old Principals with the new ones
-            oldPrincipals.clear();
-            oldPrincipals.addAll( newPrincipals );
         }
         catch ( NoSuchPrincipalException e )
         {
             // We will get here if the user has a principal but not a profile
             // For example, it's a container-managed user who hasn't set up a profile yet
             log.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
-        }
-    }
-
-    /**
-     * Updates the internally cached principals returned by {@link #getUserPrincipal()} and
-     * {@link #getLoginPrincipal()}. This method is called when the WikiSession receives
-     * the {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#LOGIN_INITIATED} message.
-     */
-    protected final void updatePrincipals()
-    {
-        Set<Principal> principals = m_subject.getPrincipals();
-        m_loginPrincipal = null;
-        m_userPrincipal = null;
-        Principal wikinamePrincipal = null;
-        Principal fullnamePrincipal = null;
-        Principal otherPrincipal = null;
-
-        for( Principal currentPrincipal : principals )
-        {
-            if ( !( currentPrincipal instanceof Role || currentPrincipal instanceof GroupPrincipal ) )
-            {
-                // For login principal, take the first PrincipalWrapper or WikiPrincipal of type LOGIN_NAME
-                // For user principal take the  first WikiPrincipal of type WIKI_NAME
-                if ( currentPrincipal instanceof PrincipalWrapper )
-                {
-                    m_loginPrincipal = currentPrincipal;
-                }
-                else if ( currentPrincipal instanceof WikiPrincipal )
-                {
-                    WikiPrincipal wp = (WikiPrincipal) currentPrincipal;
-                    if ( wp.getType().equals( WikiPrincipal.LOGIN_NAME ) )
-                    {
-                        m_loginPrincipal = wp;
-                    }
-                    else if ( wp.getType().equals( WikiPrincipal.WIKI_NAME ) )
-                    {
-                        wikinamePrincipal = currentPrincipal;
-                        m_userPrincipal = wp;
-                    }
-                    else if ( wp.getType().equals( WikiPrincipal.FULL_NAME ) )
-                    {
-                        fullnamePrincipal = currentPrincipal;
-                    }
-                    else
-                    {
-                        otherPrincipal = currentPrincipal;
-                    }
-                }
-                else if ( otherPrincipal == null )
-                {
-                    otherPrincipal = currentPrincipal;
-                }
-            }
-        }
-        if ( otherPrincipal == null )
-        {
-            otherPrincipal = WikiPrincipal.GUEST;
-        }
-
-        // If no login principal, use wiki name, full name or other principal (in that order)
-        if ( m_loginPrincipal == null )
-        {
-            m_loginPrincipal = wikinamePrincipal;
-            if ( m_loginPrincipal == null )
-            {
-                m_loginPrincipal = fullnamePrincipal;
-                if ( m_loginPrincipal == null )
-                {
-                    m_loginPrincipal = otherPrincipal;
-                }
-            }
-        }
-
-        // If no user principal, use wiki name, full name or login principal (in that order)
-        if ( m_userPrincipal == null )
-        {
-            m_userPrincipal = wikinamePrincipal;
-            if ( m_userPrincipal == null )
-            {
-                m_userPrincipal = fullnamePrincipal;
-                if ( m_userPrincipal == null )
-                {
-                    m_userPrincipal = m_loginPrincipal;
-                }
-            }
         }
     }
 
@@ -985,7 +840,7 @@ public final class WikiSession implements WikiEventListener
      * @throws java.security.AccessControlException if the action is not permitted
      * by the security policy
      */
-    public static final Object doPrivileged( WikiSession session, PrivilegedAction action ) throws AccessControlException
+    public static final Object doPrivileged( WikiSession session, PrivilegedAction<?> action ) throws AccessControlException
     {
         return Subject.doAsPrivileged( session.m_subject, action, null );
     }

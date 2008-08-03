@@ -7,12 +7,12 @@ import net.sourceforge.stripes.action.UrlBinding;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
-@WikiRequestContext("newPage")
-@UrlBinding("/NewPage.action")
+@UrlBinding("/NewPage.jsp")
 public class NewPageActionBean extends WikiContext
 {
+    @WikiRequestContext("newPage")
     @HandlesEvent("create")
-    @EventPermission(permissionClass=WikiPermission.class, target="${engine.applicationName}", actions=WikiPermission.CREATE_PAGES_ACTION)
+    @HandlerPermission(permissionClass=WikiPermission.class, target="${engine.applicationName}", actions=WikiPermission.CREATE_PAGES_ACTION)
     public Resolution create()
     {
         return null;

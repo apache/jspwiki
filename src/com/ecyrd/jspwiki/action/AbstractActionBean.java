@@ -9,6 +9,8 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  * <p>Abstract ActionBean superclass for all wiki actions, such as page actions ({@link com.ecyrd.jspwiki.WikiContext} and subclasses),
@@ -17,7 +19,6 @@ import com.ecyrd.jspwiki.WikiSession;
  * 
  * @author Andrew Jaquith
  */
-@WikiRequestContext("none")
 public abstract class AbstractActionBean implements WikiActionBean
 {
     protected  Map<String,Object> m_variableMap = new HashMap<String,Object>();
@@ -33,8 +34,6 @@ public abstract class AbstractActionBean implements WikiActionBean
     
     private static final String DEFAULT_TEMPLATE = "default";
     
-    private final String m_requestContext;
-    
     /**
      * Creates a new instance of this class, without a WikiEngine, Request or
      * WikiPage.
@@ -42,29 +41,26 @@ public abstract class AbstractActionBean implements WikiActionBean
     protected AbstractActionBean()
     {
         super();
-        m_requestContext = getClass().getAnnotation( WikiRequestContext.class ).value();
     }
 
     /**
      * Returns the content template for this ActionBean.
+     * TODO: make final at some point
      */
-    public final String getContentTemplate()
+    public String getContentTemplate()
     {
         return this.getClass().getAnnotation(WikiRequestContext.class).value();
     }
 
     /**
-     * Returns the Stripes ActionBeanContext associated this WikiContext, lazily
-     * creating one if necessary.
+     * Returns the Stripes ActionBeanContext associated this WikiContext. This
+     * method may return <code>null</code>, and callers should check for
+     * this condition.
      * 
      * @throws IllegalStateException
      */
     public WikiActionBeanContext getContext()
     {
-        if (m_actionBeanContext == null)
-        {
-            setContext(new WikiActionBeanContext());
-        }
         return m_actionBeanContext;
     }
 
@@ -77,6 +73,11 @@ public abstract class AbstractActionBean implements WikiActionBean
      */
     public Principal getCurrentUser()
     {
+        if ( getWikiSession() == null )
+        {
+            // This shouldn't happen, really...
+            return WikiPrincipal.GUEST;
+        }
         return getWikiSession().getUserPrincipal();
     }
 
@@ -93,12 +94,26 @@ public abstract class AbstractActionBean implements WikiActionBean
 
     /**
      * Returns the request context for this ActionBean by looking up the 
-     * value of the annotation {@link WikiRequestContext}. Note that if the
-     * annotation is not present, this method will return {@link ecyrd.jspwiki.WikiContext#NONE}.
+     * value of the annotation {@link WikiRequestContext} associated with the current event handler
+     * method for this ActionBean. The current event handler is obtained from {@link WikiActionBeanContext#getEventName()}.
+     * Note that if this ActionBean does not have a a current event handler assigned, or if the event handler method
+     * does not contain the WikiRequestContext annotation, this method will return {@link ecyrd.jspwiki.WikiContext#NONE}.
      */
     public String getRequestContext()
     {
-        return m_requestContext;
+        WikiActionBeanContext wac = getContext();
+        if ( wac == null )
+        {
+            return "none";
+        }
+
+        String eventName = wac.getEventName();
+        if ( eventName == null )
+        {
+            return "none";
+        }
+        
+        return HandlerInfo.getHandlerInfo( this.getClass(), eventName ).getRequestContext();
     }
     
     /**
@@ -225,14 +240,89 @@ public abstract class AbstractActionBean implements WikiActionBean
     // FIXME: This method should really cache the ResourceBundles or something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
-        Locale loc = null;
+        Locale loc = Preferences.getLocale( this );
 
         if( m_actionBeanContext != null && m_actionBeanContext.getRequest() != null )
         {
             loc = m_actionBeanContext.getRequest().getLocale();
         }
         ResourceBundle b = getEngine().getInternationalizationManager().getBundle(bundle, loc);
-
+                
         return b;
     }
+    
+    // ------------------------------------ Deprecated methods we are reluctantly pulling up from WikiContext
+    
+    /**
+     *  If the request did originate from a HTTP request,
+     *  then the HTTP request can be fetched here.  However, it the request
+     *  did NOT originate from a HTTP request, then this method will
+     *  return null, and YOU SHOULD CHECK FOR IT!
+     *
+     *  @return Null, if no HTTP request was done.
+     *  @deprecated use the method {@link #getContext()} to obtain the ActionBeanContext,
+     *  and call {@link com.ecyrd.jspwiki.action.WikiActionBeanContext#getRequest()} method.
+     *  @since 2.0.13.
+     */
+    public HttpServletRequest getHttpRequest()
+    {
+        return getContext().getRequest();
+    }
+
+    /**
+     *  This method will safely return any HTTP parameters that 
+     *  might have been defined.  You should use this method instead
+     *  of peeking directly into the result of getHttpRequest(), since
+     *  this method is smart enough to do all of the right things,
+     *  figure out UTF-8 encoded parameters, etc.
+     *
+     *  @since 2.0.13.
+     *  @param paramName Parameter name to look for.
+     *  @return HTTP parameter, or null, if no such parameter existed.
+     */
+    public String getHttpParameter( String paramName )
+    {
+        String result = null;
+
+        if( getContext() != null )
+        {
+            result = getContext().getRequest().getParameter( paramName );
+        }
+
+        return result;
+    }
+
+    public String getJSP()
+    {
+        // TODO: should calculate the JSP based on the WikiURLPattern annotation
+        return null;
+    }
+
+    /**
+     * Sets the request context. See above for the different request contexts
+     * (VIEW, EDIT, etc.) This argument must correspond exactly to the value of
+     * a Stripes event handler method's
+     * {@link com.ecyrd.jspwiki.action.WikiRequestContext} annotation for the
+     * bean class. For event handlers that do not have an
+     * {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext} annotation,
+     * callers can supply a request context value based on the bean class and
+     * the event name; see the
+     * {@link com.ecyrd.jspwiki.action.HandlerInfo#getRequestContext()}
+     * documentation for more details.
+     * 
+     * @param arg The request context (one of the predefined contexts.)
+     * @throws IllegalArgumentException if the supplied request context does not correspond
+     * to a {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext}
+     * annotation, or the automatically request context name
+     */
+    public void setRequestContext( String arg )
+    {
+        HandlerInfo handler = HandlerInfo.getHandlerInfo( this.getClass(), arg );
+        if ( getContext() == null )
+        {
+            throw new IllegalStateException( "WikiActionBean did not set a WikiActionBeanContext!" );
+        }
+        getContext().setEventName( handler.getEventName() );
+    }
+
 }

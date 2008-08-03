@@ -2,7 +2,7 @@ package com.ecyrd.jspwiki.action;
 
 import java.security.Permission;
 
-import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.action.*;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
@@ -11,8 +11,7 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.ui.Installer;
 
-@WikiRequestContext("install")
-@UrlBinding("/Install.action")
+@UrlBinding( "/Install.jsp" )
 public class InstallActionBean extends AbstractActionBean
 {
     public Permission requiredPermission()
@@ -27,11 +26,19 @@ public class InstallActionBean extends AbstractActionBean
             userDb.findByLoginName( Installer.ADMIN_ID );
             perm = new AllPermission( engine.getApplicationName() );
         }
-        catch ( NoSuchPrincipalException e )
+        catch( NoSuchPrincipalException e )
         {
             // No admin user; thus, no permission required
         }
-            
+
         return perm;
+    }
+
+    @DefaultHandler
+    @HandlesEvent( "install" )
+    @WikiRequestContext( "install" )
+    public Resolution view()
+    {
+        return new ForwardResolution( "/Install.jsp" );
     }
 }

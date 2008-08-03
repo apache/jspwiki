@@ -48,11 +48,10 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * 
  * @author Andrew Jaquith
  */
-@WikiRequestContext("rename")
-@UrlBinding("/Rename.action")
+@UrlBinding( "/Rename.jsp" )
 public class RenameActionBean extends WikiContext
 {
-    private static final Logger log = Logger.getLogger(RenameActionBean.class);
+    private static final Logger log = Logger.getLogger( RenameActionBean.class );
 
     private boolean m_changeReferences = false;
 
@@ -86,22 +85,22 @@ public class RenameActionBean extends WikiContext
      * {@link com.ecyrd.jspwiki.WikiException}.
      * 
      * @return a redirection to the renamed wiki page
-     * @throws WikiException
-     *             if the page cannot be renamed
+     * @throws WikiException if the page cannot be renamed
      */
-    @HandlesEvent("rename")
-    @EventPermission(permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.RENAME_ACTION)
+    @HandlesEvent( "rename" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.RENAME_ACTION )
+    @WikiRequestContext( "rename" )
     public Resolution rename() throws WikiException
     {
         WikiEngine engine = this.getEngine();
         String renameFrom = getPage().getName();
         HttpServletRequest request = getContext().getRequest();
-        log.info("Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
-                 + request.getRemoteAddr() + " by " + request.getRemoteUser());
-        String renamedTo = engine.renamePage(this, renameFrom, m_renameTo, m_changeReferences);
-        log.info("Page successfully renamed to '" + renamedTo + "'");
-        RedirectResolution r = new RedirectResolution(ViewActionBean.class);
-        r.addParameter("page", renamedTo);
+        log.info( "Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
+                  + request.getRemoteAddr() + " by " + request.getRemoteUser() );
+        String renamedTo = engine.renamePage( this, renameFrom, m_renameTo, m_changeReferences );
+        log.info( "Page successfully renamed to '" + renamedTo + "'" );
+        RedirectResolution r = new RedirectResolution( ViewActionBean.class );
+        r.addParameter( "page", renamedTo );
         return r;
     }
 
@@ -110,11 +109,10 @@ public class RenameActionBean extends WikiContext
      * {@link #rename()} handler is executed. If not supplied, defaults to
      * <code>false</code>.
      * 
-     * @param changeReferences
-     *            the decision
+     * @param changeReferences the decision
      */
-    @Validate(required = false)
-    public void setChangeReferences(boolean changeReferences)
+    @Validate( required = false )
+    public void setChangeReferences( boolean changeReferences )
     {
         m_changeReferences = changeReferences;
     }
@@ -123,11 +121,10 @@ public class RenameActionBean extends WikiContext
      * Sets the new name for the page, which will be set when the
      * {@link #rename()} handler is executed.
      * 
-     * @param pageName
-     *            the new page name
+     * @param pageName the new page name
      */
-    @Validate(required = true, minlength = 1, maxlength = 100, expression = "page.name != renameTo")
-    public void setRenameTo(String pageName)
+    @Validate( required = true, minlength = 1, maxlength = 100, expression = "page.name != renameTo" )
+    public void setRenameTo( String pageName )
     {
         m_renameTo = pageName;
     }
@@ -137,15 +134,14 @@ public class RenameActionBean extends WikiContext
      * validates that the proposed new name does not collide with an existing
      * page.
      * 
-     * @param errors
-     *            the current set of validation errors for this ActionBean
+     * @param errors the current set of validation errors for this ActionBean
      */
-    @ValidationMethod(on = "rename")
-    public void validateBeforeRename(ValidationErrors errors)
+    @ValidationMethod( on = "rename" )
+    public void validateBeforeRename( ValidationErrors errors )
     {
-        if (getContext().getWikiEngine().pageExists(m_renameTo))
+        if( getContext().getWikiEngine().pageExists( m_renameTo ) )
         {
-            errors.add("renameTo", new SimpleError("The page name '" + m_renameTo + "' already exists. Choose another."));
+            errors.add( "renameTo", new SimpleError( "The page name '" + m_renameTo + "' already exists. Choose another." ) );
         }
     }
 

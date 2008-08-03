@@ -16,14 +16,13 @@ import com.ecyrd.jspwiki.ui.EditorManager;
 /**
  * @author Andrew Jaquith
  */
-@WikiRequestContext("prefs")
-@UrlBinding("/UserPreferences.action")
+@UrlBinding( "/UserPreferences.jsp" )
 public class UserPreferencesActionBean extends AbstractActionBean
 {
     private String m_assertedName = null;
 
     private String m_editor = null;
-    
+
     private String m_redirect = null;
 
     /**
@@ -32,13 +31,13 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @return a redirection to the logout page
      */
-    @HandlesEvent("clearAssertedName")
-    @EventPermission(permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION)
+    @HandlesEvent( "clearAssertedName" )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
     public Resolution clearAssertedName()
     {
         HttpServletResponse response = getContext().getResponse();
-        CookieAssertionLoginModule.clearUserCookie(response);
-        return new RedirectResolution("/Logout.jsp");
+        CookieAssertionLoginModule.clearUserCookie( response );
+        return new RedirectResolution( "/Logout.jsp" );
     }
 
     /**
@@ -46,11 +45,12 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @return a redirection to the favorites page
      */
-    @HandlesEvent("editFavorites")
+    @HandlesEvent( "editFavorites" )
+    @WikiRequestContext( "favorites" )
     public Resolution editFavorites()
     {
         Principal principal = this.getCurrentUser();
-        return new RedirectResolution("/Edit.jsp?" + principal.getName() + "Favorites");
+        return new RedirectResolution( "/Edit.jsp?" + principal.getName() + "Favorites" );
     }
 
     /**
@@ -61,18 +61,19 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * @return a redirection to the front page
      */
     @DefaultHandler
-    @HandlesEvent("createAssertedName")
-    @EventPermission(permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION)
+    @HandlesEvent( "createAssertedName" )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
+    @WikiRequestContext( "prefs" )
     public Resolution createAssertedName()
     {
-        if (!getWikiSession().isAuthenticated())
+        if( !getWikiSession().isAuthenticated() )
         {
             HttpServletRequest request = getContext().getRequest();
             HttpServletResponse response = getContext().getResponse();
-            String assertedName = request.getParameter("assertedName");
-            CookieAssertionLoginModule.setUserCookie(response, assertedName);
+            String assertedName = request.getParameter( "assertedName" );
+            CookieAssertionLoginModule.setUserCookie( response, assertedName );
         }
-        return new RedirectResolution("/");
+        return new RedirectResolution( "/" );
     }
 
     /**
@@ -88,11 +89,10 @@ public class UserPreferencesActionBean extends AbstractActionBean
     /**
      * Sets the asserted name for the user prefererences.
      * 
-     * @param name
-     *            the asserted name
+     * @param name the asserted name
      */
-    @Validate(required = true, on = "createAssertedName")
-    public void setAssertedName(String name)
+    @Validate( required = true, on = "createAssertedName" )
+    public void setAssertedName( String name )
     {
         m_assertedName = name;
     }
@@ -114,32 +114,33 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * the editor as an HTTP session attribute.
      * <em>Note: this functionality was taken directly from the 2.6 UserPreferences.jsp.</em>
      * 
-     * @param editor
-     *            the editor
+     * @param editor the editor
      */
-    @Validate(required = false)
-    public void setEditor(String editor)
+    @Validate( required = false )
+    public void setEditor( String editor )
     {
         m_editor = editor;
-        if (this.getContext() != null && getContext().getRequest() != null)
+        if( getContext().getRequest() != null )
         {
             HttpSession session = getContext().getRequest().getSession();
-            session.setAttribute(EditorManager.PARA_EDITOR, editor);
+            session.setAttribute( EditorManager.PARA_EDITOR, editor );
         }
     }
-    
+
     /**
      * Sets the URL to redirect to after the event handler methods fire.
+     * 
      * @param url the URL to redirect to
      */
-    @Validate(required=false)
-    public void setRedirect(String url)
+    @Validate( required = false )
+    public void setRedirect( String url )
     {
         m_redirect = url;
     }
 
     /**
      * Returns the URL to redirect to after the event handler methods fire.
+     * 
      * @return the URL to redirect to
      */
     public String getRedirect()

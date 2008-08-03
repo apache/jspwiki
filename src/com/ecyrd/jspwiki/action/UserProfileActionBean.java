@@ -17,8 +17,7 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
 /**
  * @author Andrew Jaquith
  */
-@WikiRequestContext("profile")
-@UrlBinding("/UserProfile.action")
+@UrlBinding("/UserProfile.jsp")
 public class UserProfileActionBean extends AbstractActionBean
 {
     private UserProfile m_profile = null;
@@ -39,7 +38,7 @@ public class UserProfileActionBean extends AbstractActionBean
      * UserProfile.
      * @return <code>null</code>, always
      */
-    @Before(LifecycleStage.BindingAndValidation)
+    @Before(stages=LifecycleStage.BindingAndValidation)
     public Resolution init()
     {
         // Retrieve the user profile
@@ -61,7 +60,7 @@ public class UserProfileActionBean extends AbstractActionBean
      *         <code>null</code> otherwise
      */
     @HandlesEvent("save")
-    @EventPermission(permissionClass=WikiPermission.class, target="${engine.applicationName}", actions=WikiPermission.EDIT_PROFILE_ACTION)
+    @HandlerPermission(permissionClass=WikiPermission.class, target="${engine.applicationName}", actions=WikiPermission.EDIT_PROFILE_ACTION)
     public Resolution save()
     {
         Resolution r = null;
@@ -165,10 +164,10 @@ public class UserProfileActionBean extends AbstractActionBean
         // Locate the old user profile
         UserProfile oldProfile = manager.getUserProfile( session );
 
-        // If container authenticated, and accounts not shared, override the login name and password
+        // If container authenticated, override the login name and password
         // The login name should always be the one provided by the container
         AuthenticationManager authMgr = engine.getAuthenticationManager();
-        if ( authMgr.isContainerAuthenticated() && !manager.getUserDatabase().isSharedWithContainer() )
+        if ( authMgr.isContainerAuthenticated() )
         {
             m_profile.setLoginName( oldProfile.getLoginName() );
             m_profile.setPassword( null );
@@ -206,6 +205,7 @@ public class UserProfileActionBean extends AbstractActionBean
      */
     @HandlesEvent("view")
     @DefaultHandler
+    @WikiRequestContext("profile")
     public Resolution view()
     {
         return new ForwardResolution(ViewActionBean.class);

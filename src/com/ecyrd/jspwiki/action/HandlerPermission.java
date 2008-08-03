@@ -8,11 +8,11 @@ import java.security.Permission;
 
 /**
  * <p>Permission annotation that specifies the the class, target and actions of a
- * Permission required to execute a Stripes event method. Annotations are
+ * Permission required to execute a Stripes event handler method. Annotations are
  * specified as follows:</p>
  * <blockquote>
  * <code>
- * &#64;EventPermission(permissionClass="<var>className</var>",target="<var>target</var>",actions="<var>actions</var>")
+ * &#64;HandlerPermission(permissionClass="<var>className</var>",target="<var>target</var>",actions="<var>actions</var>")
  * </code>
  * </blockquote>
  * </p>
@@ -31,11 +31,11 @@ import java.security.Permission;
  * <p>For example, the following are all valid annotations:</p>
  * <blockquote>
  * <code>
- * &#64;EventPermission(permissionClass="java.io.FilePermission", target="/tmp/-", actions="read,write")
+ * &#64;HandlerPermission(permissionClass="java.io.FilePermission", target="/tmp/-", actions="read,write")
  * <br/><br/>
- * &#64;EventPermission(permissionClass="com.ecyrd.jspwiki.auth.permissions.PagePermission", target="${page.name}", actions = "edit")
+ * &#64;HandlerPermission(permissionClass="com.ecyrd.jspwiki.auth.permissions.PagePermission", target="${page.name}", actions = "edit")
  * <br/><br/>
- * &#64;EventPermission(permissionClass="com.ecyrd.jspwiki.auth.permissions.GroupPermission", target="${context.request.parameterMap['group'][0]}",actions="view")
+ * &#64;HandlerPermission(permissionClass="com.ecyrd.jspwiki.auth.permissions.GroupPermission", target="${context.request.parameterMap['group'][0]}",actions="view")
  * </code>
  * </blockquote>
  * <p>These examples assume that the ActionBeans they annotate contain the appropriate properties;
@@ -43,7 +43,7 @@ import java.security.Permission;
  * and <code>context</code> is assumed to be a {@link com.ecyrd.jspwiki.action.WikiActionBeanContext}
  * property.</p>
  * <p>This Annotation class does not parse, process or instantiate Permissions; it merely specifies
- * the syntax for annotating event handler methods. The collaborating class {@link EventPermissionInfo}
+ * the syntax for annotating event handler methods. The collaborating class {@link HandlerInfo}
  * actually does the heavy lifting.</p>
  * @author Andrew Jaquith
  */
@@ -51,8 +51,10 @@ import java.security.Permission;
 @Target( { ElementType.METHOD })
 @Documented
 @Inherited
-public @interface EventPermission
+public @interface HandlerPermission
 {
+    public static final String BLANK = "";
+    
     /**
      * The class of the Permission.
      */
@@ -64,7 +66,7 @@ public @interface EventPermission
      * 
      * @return the target
      */
-    String target();
+    String target() default BLANK;
 
     /**
      * The Permission actions, supplied as a static String or as an EL
@@ -72,5 +74,5 @@ public @interface EventPermission
      * 
      * @return the actions
      */
-    String actions();
+    String actions() default BLANK;
 }

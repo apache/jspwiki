@@ -7,12 +7,12 @@ import net.sourceforge.stripes.action.UrlBinding;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
-@WikiRequestContext("del")
-@UrlBinding("/Delete.action")
+@UrlBinding("/Delete.jsp")
 public class DeleteActionBean extends WikiContext
 {
     @HandlesEvent("delete")
-    @EventPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.DELETE_ACTION)
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.DELETE_ACTION)
+    @WikiRequestContext("del")
     public Resolution delete()
     {
         return null;

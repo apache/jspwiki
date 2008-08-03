@@ -7,12 +7,12 @@ import net.sourceforge.stripes.action.UrlBinding;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
-@WikiRequestContext("upload")
-@UrlBinding("/Upload.action")
+@UrlBinding( "/Upload.jsp" )
 public class UploadActionBean extends WikiContext
 {
-    @HandlesEvent("diff")
-    @EventPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.UPLOAD_ACTION)
+    @HandlesEvent( "upload" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.UPLOAD_ACTION )
+    @WikiRequestContext( "upload" )
     public Resolution upload()
     {
         return null;

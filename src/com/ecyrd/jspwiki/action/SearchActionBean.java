@@ -1,9 +1,15 @@
 package com.ecyrd.jspwiki.action;
 
-import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.action.*;
 
-@WikiRequestContext("find")
-@UrlBinding("/Search.action")
+@UrlBinding( "/Search.jsp" )
 public class SearchActionBean extends AbstractActionBean
 {
+    @DefaultHandler
+    @HandlesEvent( "find" )
+    @WikiRequestContext( "find" )
+    public Resolution view()
+    {
+        return new ForwardResolution( "/Search.jsp" );
+    }
 }

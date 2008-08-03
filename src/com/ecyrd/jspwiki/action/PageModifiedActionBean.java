@@ -7,12 +7,12 @@ import net.sourceforge.stripes.action.UrlBinding;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
-@WikiRequestContext("conflict")
-@UrlBinding("/PageModified.action")
+@UrlBinding( "/PageModified.jsp" )
 public class PageModifiedActionBean extends WikiContext
 {
-    @HandlesEvent("conflict")
-    @EventPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
+    @HandlesEvent( "conflict" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.VIEW_ACTION )
+    @WikiRequestContext( "conflict" )
     public Resolution conflict()
     {
         return null;

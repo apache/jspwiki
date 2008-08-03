@@ -1,21 +1,22 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.   
  */
 package com.ecyrd.jspwiki;
 
@@ -29,8 +30,6 @@ import org.apache.log4j.Logger;
  *  <p>
  *  If the lastModified date is the same, then the next key is the page name.
  *  If the page name is also equal, then returns 0 for equality.
- *  
- *  @author jalkanen
  */
 // FIXME: Does not implement equals().
 // FIXME3.0: move to util package
@@ -45,30 +44,30 @@ public class PageTimeComparator
     /**
      *  {@inheritDoc}
      */
-    public int compare( WikiPage o1, WikiPage o2 )
+    public int compare( WikiPage w1, WikiPage w2 )
     {
-        WikiPage w1 = (WikiPage)o1;
-        WikiPage w2 = (WikiPage)o2;
-        
         if( w1 == null || w2 == null ) 
         {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
 
-        if( w1.getLastModified() == null )
+        Date w1LastMod = w1.getLastModified();
+        Date w2LastMod = w2.getLastModified();
+
+        if( w1LastMod == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w1.getName() );
             return 0;
         }
-        else if( w2.getLastModified() == null )
+        else if( w2LastMod == null )
         {
             log.error( "NULL MODIFY DATE WITH "+w2.getName() );
             return 0;
         }
 
         // This gets most recent on top
-        int timecomparison = w2.getLastModified().compareTo( w1.getLastModified() );
+        int timecomparison = w2LastMod.compareTo( w1LastMod );
 
         if( timecomparison == 0 )
         {

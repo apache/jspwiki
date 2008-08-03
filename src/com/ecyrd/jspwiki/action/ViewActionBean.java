@@ -20,8 +20,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * @author Andrew Jaquith
  *
  */
-@WikiRequestContext("view")
-@UrlBinding("/Wiki.action")
+@UrlBinding("/Wiki.jsp")
 public class ViewActionBean extends WikiContext
 {
     private Logger log = Logger.getLogger(ViewActionBean.class);
@@ -46,7 +45,7 @@ public class ViewActionBean extends WikiContext
      *  @return a {@link net.sourceforge.stripes.action.RedirectResolution} to the special
      *  page's real URL, if a special page was specified, or <code>null</code> otherwise
      */
-    @After(LifecycleStage.BindingAndValidation)
+    @After(stages=LifecycleStage.BindingAndValidation)
     public Resolution resolvePage() throws WikiException
     {
         WikiPage page = getPage();
@@ -135,7 +134,8 @@ public class ViewActionBean extends WikiContext
      */
     @DefaultHandler
     @HandlesEvent("view")
-    @EventPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.VIEW_ACTION)
+    @WikiRequestContext("view")
     public Resolution view()
     {
         return new ForwardResolution(ViewActionBean.class);
