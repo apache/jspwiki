@@ -1,25 +1,27 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.*;
+import java.util.UUID;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -29,14 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
 /**
@@ -60,13 +59,10 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  *   </ol>
  *  <p>
  *  After authentication, a generic WikiPrincipal based on the username will be
- *  created and associated with the Subject. Principals
- *  {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
- *  {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added.
+ *  created and associated with the Subject.
  *  </p>
  *  @see javax.security.auth.spi.LoginModule#commit()
  *  @see CookieAssertionLoginModule
- *  @author Janne Jalkanen
  *  @since  2.5.62
  */
 public class CookieAuthenticationLoginModule extends AbstractLoginModule
@@ -82,7 +78,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
      *  User property for setting how long the cookie is stored on the user's computer.
      *  The value is {@value}.  The default expiry time is 14 days.
      */
-    public static final  String PROP_LOGIN_EXPIRY_DAYS  = "jspwiki.cookieAuthorization.expiry";
+    public static final  String PROP_LOGIN_EXPIRY_DAYS  = "jspwiki.cookieAuthentication.expiry";
 
     /**
      *  Built-in value for storing the cookie.
@@ -97,6 +93,8 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
+     * 
+     * {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
@@ -126,24 +124,16 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
                     try
                     {
-                        in = new FileReader( cookieFile );
+                        in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), "UTF-8" ) );
                         String username = FileUtil.readContents( in );
 
                         if ( log.isDebugEnabled() )
                         {
-                            log.debug( "Logged in loginName=" + username );
-                            log.debug( "Added Principals Role.AUTHENTICATED,Role.ALL" );
+                            log.debug( "Logged in cookie authenticated name=" + username );
                         }
 
                         // If login succeeds, commit these principals/roles
-                        m_principals.add( new PrincipalWrapper( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) ) );
-                        m_principals.add( Role.AUTHENTICATED );
-                        m_principals.add( Role.ALL );
-
-                        // If login succeeds, overwrite these principals/roles
-                        m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-                        m_principalsToOverwrite.add( Role.ANONYMOUS );
-                        m_principalsToOverwrite.add( Role.ASSERTED );
+                        m_principals.add( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) );
 
                         //
                         //  Tag the file so that we know that it has been accessed recently.
@@ -252,7 +242,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
     //           get rid of jug.jar
     public static void setLoginCookie( WikiEngine engine, HttpServletResponse response, String username )
     {
-        UUID uid = UUIDGenerator.getInstance().generateRandomBasedUUID();
+        UUID uid = UUID.randomUUID();
 
         int days = TextUtil.getIntegerProperty( engine.getWikiProperties(),
                                                 PROP_LOGIN_EXPIRY_DAYS,
@@ -267,7 +257,10 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
         try
         {
-            out = new FileWriter(cf);
+            //
+            //  Write the cookie content to the cookie store file.
+            //
+            out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(cf), "UTF-8" ) );
             FileUtil.copyContents( new StringReader(username), out );
 
             if( log.isDebugEnabled() )
@@ -336,7 +329,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule
 
         File[] files = cookieDir.listFiles();
 
-        long obsoleteDateLimit = System.currentTimeMillis() - (days+1) * 24 * 60 * 60 * 1000L;
+        long obsoleteDateLimit = System.currentTimeMillis() - ((long)days+1) * 24 * 60 * 60 * 1000L;
 
         int  deleteCount = 0;
 

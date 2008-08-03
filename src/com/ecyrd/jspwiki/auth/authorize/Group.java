@@ -1,20 +1,28 @@
-/*
- * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
- * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
- * it and/or modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version. This program is distributed
- * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details. You should have
- * received a copy of the GNU Lesser General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Date;
+import java.util.Vector;
 
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 
@@ -48,17 +56,17 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * lightweight and immutable. That's why we use them in Subjects rather than the
  * Groups themselves.
  * </p>
- * @author Janne Jalkanen
+ *
  * @author Andrew Jaquith
  * @since 2.3
  */
 public class Group
 {
 
-    public static final String[]  RESTRICTED_GROUPNAMES = new String[]
+    static final String[]  RESTRICTED_GROUPNAMES = new String[]
                                                   { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final List<Principal> m_members = new ArrayList<Principal>();
+    private final Vector<Principal>    m_members             = new Vector<Principal>();
 
     private String          m_creator             = null;
 
@@ -74,8 +82,6 @@ public class Group
 
     private final String    m_wiki;
 
-    private final String    m_qualifiedName;
-
     /**
      * Protected constructor to prevent direct instantiation except by other
      * package members. Callers should use
@@ -90,7 +96,6 @@ public class Group
         m_name = name;
         m_wiki = wiki;
         m_principal = new GroupPrincipal( name );
-        m_qualifiedName = wiki + ":" + name;
     }
 
     /**
@@ -143,9 +148,9 @@ public class Group
             return false;
         }
 
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal principal : m_members )
         {
-            if ( !( g.isMember( (Principal) i.next() ) ) )
+            if ( !g.isMember( principal ) )
             {
                 return false;
             }
@@ -162,9 +167,9 @@ public class Group
     public int hashCode()
     {
         int hc = 0;
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal member : m_members )
         {
-            hc ^= i.next().hashCode();
+            hc ^= member.hashCode();
         }
         return hc;
     }
@@ -215,16 +220,6 @@ public class Group
     }
 
     /**
-     * The qualified name of the group, defined as the wiki plus the name,
-     * separated by a colon (<em>e.g.</em>, <code>MyWiki:MyGroup</code>).
-     * @return the qualified name of the Group
-     */
-    public String getQualifiedName()
-    {
-        return m_qualifiedName;
-    }
-
-    /**
      * Returns the GroupPrincipal that represents this Group.
      * @return the group principal
      */
@@ -256,22 +251,12 @@ public class Group
     }
 
     /**
-     * Returns the members of the group as an unmodifiable Set of Principal
-     * objects.
-     */
-    public List<Principal> getMembers()
-    {
-        return Collections.unmodifiableList(m_members);
-    }
-
-    /**
      * Returns the members of the group as an array of Principal objects.
      * @return the members
-     * @deprecated
      */
     public Principal[] members()
     {
-        return m_members.toArray(new Principal[m_members.size()]);
+        return m_members.toArray( new Principal[m_members.size()] );
     }
 
     /**
@@ -342,10 +327,8 @@ public class Group
 
     private Principal findMember( String name )
     {
-        for( Iterator i = m_members.iterator(); i.hasNext(); )
+        for( Principal member : m_members )
         {
-            Principal member = (Principal) i.next();
-
             if ( member.getName().equals( name ) )
             {
                 return member;

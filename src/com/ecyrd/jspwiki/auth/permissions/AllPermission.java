@@ -1,24 +1,26 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 
@@ -29,7 +31,7 @@ import java.security.PermissionCollection;
  * @author Andrew Jaquith
  * @since 2.3.80
  */
-public final class AllPermission extends Permission
+public final class AllPermission extends Permission implements Serializable
 {
     private static final long   serialVersionUID = 1L;
 
@@ -37,6 +39,12 @@ public final class AllPermission extends Permission
 
     private final String        m_wiki;
 
+    /** For serialization purposes. */
+    protected AllPermission()
+    {
+        this(null);
+    }
+    
     /**
      * Creates a new AllPermission for the given wikis.
      * 
@@ -52,6 +60,9 @@ public final class AllPermission extends Permission
     /**
      * Two AllPermission objects are considered equal if their wikis are equal.
      * @see java.lang.Object#equals(java.lang.Object)
+     * 
+     * @return {@inheritDoc}
+     * @param obj {@inheritDoc}
      */
     public final boolean equals( Object obj )
     {
@@ -66,6 +77,8 @@ public final class AllPermission extends Permission
     /**
      * No-op; always returns <code>null</code>
      * @see java.security.Permission#getActions()
+     *
+     * @return Always null.
      */
     public final String getActions()
     {
@@ -75,7 +88,7 @@ public final class AllPermission extends Permission
     /**
      * Returns the name of the wiki containing the page represented by this
      * permission; may return the wildcard string.
-     * @return the wiki
+     * @return The wiki
      */
     public final String getWiki()
     {
@@ -85,6 +98,8 @@ public final class AllPermission extends Permission
     /**
      * Returns the hash code for this WikiPermission.
      * @see java.lang.Object#hashCode()
+     * 
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -134,6 +149,8 @@ public final class AllPermission extends Permission
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
+     * 
+     * @return {@inheritDoc}
      */
     public PermissionCollection newPermissionCollection()
     {
@@ -143,12 +160,19 @@ public final class AllPermission extends Permission
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
+     * @return {@inheritDoc}
      */
     public final String toString()
     {
         return "(\"" + this.getClass().getName() + "\",\"" + m_wiki + "\")";
     }
 
+    /**
+     *  Checks if the given permission is one of ours.
+     *  
+     *  @param permission Permission to check
+     *  @return true, if the permission is a JSPWiki permission; false otherwise.
+     */
     protected static final boolean isJSPWikiPermission( Permission permission )
     {
         return   permission instanceof WikiPermission ||

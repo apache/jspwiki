@@ -1,20 +1,32 @@
-/*
- * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
- * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
- * it and/or modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version. This program is distributed
- * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details. You should have
- * received a copy of the GNU Lesser General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,7 +79,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     private GroupDatabase       m_groupDatabase    = null;
 
     /** Map with GroupPrincipals as keys, and Groups as values */
-    private final Map<Principal,Group> m_groups    = new HashMap<Principal,Group>();
+    private final Map<Principal, Group>           m_groups           = new HashMap<Principal, Group>();
 
     /**
      * <p>
@@ -137,7 +149,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
                 dbClassName = XMLGroupDatabase.class.getName();
             }
             log.info( "Attempting to load group database class " + dbClassName );
-            Class dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
+            Class<?> dbClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", dbClassName );
             m_groupDatabase = (GroupDatabase) dbClass.newInstance();
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             log.info( "Group database initialized." );
@@ -214,9 +226,8 @@ public final class GroupManager implements Authorizer, WikiEventListener
         Group[] groups = m_groupDatabase.groups();
         synchronized( m_groups )
         {
-            for( int i = 0; i < groups.length; i++ )
+            for( Group group : groups )
             {
-                Group group = groups[i];
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, group );
@@ -269,10 +280,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Check each user principal to see if it belongs to the group
-        Principal[] principals = session.getPrincipals();
-        for ( int i = 0; i < principals.length; i++ )
+        for ( Principal principal : session.getPrincipals() )
         {
-            if ( AuthenticationManager.isUserPrincipal( principals[i] ) && group.isMember( principals[i] ) )
+            if ( AuthenticationManager.isUserPrincipal( principal ) && group.isMember( principal ) )
             {
                 return true;
             }
@@ -349,10 +359,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
             group.setCreated( existingGroup.getCreated() );
             group.setModifier( existingGroup.getModifier() );
             group.setLastModified( existingGroup.getLastModified() );
-            List<Principal> existingMembers = existingGroup.getMembers();
-            for( Principal member : existingMembers )
+            for( Principal existingMember : existingGroup.members() )
             {
-                group.add( member );
+                group.add( existingMember );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -369,9 +378,9 @@ public final class GroupManager implements Authorizer, WikiEventListener
         if ( members.length > 0 )
         {
             group.clear();
-            for( int i = 0; i < members.length; i++ )
+            for( String member : members )
             {
-                group.add( new WikiPrincipal( members[i] ) );
+                group.add( new WikiPrincipal( member ) );
             }
         }
 
@@ -418,7 +427,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         Group group = parseGroup( name, memberLine, create );
 
         // If no members, add the current user by default
-        if ( group.getMembers().size() == 0 )
+        if ( group.members().length == 0 )
         {
             group.add( context.getWikiSession().getUserPrincipal() );
         }
@@ -583,9 +592,10 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
 
         // Member names must be "safe" strings
-        for( Principal member: group.getMembers() )
+        Principal[] members = group.members();
+        for( int i = 0; i < members.length; i++ )
         {
-            validator.validateNotNull( member.getName(), "Full name", InputValidator.ID );
+            validator.validateNotNull( members[i].getName(), "Full name", InputValidator.ID );
         }
     }
 
@@ -710,16 +720,14 @@ public final class GroupManager implements Authorizer, WikiEventListener
             int groupsChanged = 0;
             try
             {
-                Group[] groups = m_groupDatabase.groups();
-                for ( int i = 0; i < groups.length; i++ )
+                for ( Group group : m_groupDatabase.groups() )
                 {
                     boolean groupChanged = false;
-                    Group group = groups[i];
-                    for ( int j = 0; j < oldPrincipals.length; j++ )
+                    for ( Principal oldPrincipal : oldPrincipals )
                     {
-                        if ( group.isMember( oldPrincipals[j] ) )
+                        if ( group.isMember( oldPrincipal ) )
                         {
-                            group.remove( oldPrincipals[j] );
+                            group.remove( oldPrincipal );
                             group.add( newPrincipal );
                             groupChanged = true;
                         }

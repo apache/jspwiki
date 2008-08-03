@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
@@ -37,7 +38,7 @@ public class AllPermissionCollection extends PermissionCollection
 
     private boolean           m_readOnly      = false;
 
-    protected final Hashtable m_permissions    = new Hashtable();
+    protected final Hashtable<Permission, Permission> m_permissions    = new Hashtable<Permission, Permission>();
 
     /**
      * Adds an AllPermission object to this AllPermissionCollection. If this
@@ -45,7 +46,10 @@ public class AllPermissionCollection extends PermissionCollection
      * is not of type {@link AllPermission}, a {@link SecurityException} is
      * thrown.
      * @see java.security.PermissionCollection#add(java.security.Permission)
+     * 
+     * @param permission {@inheritDoc}
      */
+    @Override
     public void add( Permission permission )
     {
         if ( !AllPermission.isJSPWikiPermission( permission ) )
@@ -70,8 +74,11 @@ public class AllPermissionCollection extends PermissionCollection
      * Returns an enumeration of all AllPermission objects stored in this
      * collection.
      * @see java.security.PermissionCollection#elements()
+     * 
+     * @return {@inheritDoc}
      */
-    public Enumeration elements()
+    @Override
+    public Enumeration<Permission> elements()
     {
         return m_permissions.elements();
     }
@@ -89,6 +96,8 @@ public class AllPermissionCollection extends PermissionCollection
      * but only the AllPermission, PagePermission or WikiPermission types are
      * actually evaluated.
      * @see java.security.PermissionCollection#implies(java.security.Permission)
+     * 
+     * @return {@inheritDoc}
      */
     public boolean implies( Permission permission )
     {
@@ -105,10 +114,10 @@ public class AllPermissionCollection extends PermissionCollection
         }
 
         // Step through each AllPermission
-        Enumeration permEnum = m_permissions.elements();
+        Enumeration<Permission> permEnum = m_permissions.elements();
         while( permEnum.hasMoreElements() )
         {
-            Permission storedPermission = (Permission) permEnum.nextElement();
+            Permission storedPermission = permEnum.nextElement();
             if ( storedPermission.implies( permission ) )
             {
                 return true;
@@ -118,7 +127,7 @@ public class AllPermissionCollection extends PermissionCollection
     }
 
     /**
-     * @see java.security.PermissionCollection#isReadOnly()
+     * {@inheritDoc}
      */
     public boolean isReadOnly()
     {

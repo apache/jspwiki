@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
@@ -32,7 +33,6 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
@@ -53,9 +53,6 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * <p>
  * After authentication, a Principals based on the login name will be created
  * and associated with the Subject.
- * Also, principals {@link com.ecyrd.jspwiki.auth.authorize.Role#ALL} and
- * {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED} will be added to
- * the Subject's principal set.
  * </p>
  * @author Andrew Jaquith
  * @since 2.3
@@ -67,6 +64,8 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
+     * 
+     * {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
@@ -93,22 +92,11 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             {
                 if ( log.isDebugEnabled() )
                 {
-                    log.debug( "Logged in loginName=" + username );
-                    log.debug( "Added Principals Role.AUTHENTICATED,Role.ALL" );
+                    log.debug( "Logged in user database user " + username );
                 }
 
                 // If login succeeds, commit these principals/roles
-                m_principals.add( new PrincipalWrapper( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) ) );
-                m_principals.add( Role.AUTHENTICATED );
-                m_principals.add( Role.ALL );
-
-                // If login succeeds, overwrite these principals/roles
-                m_principalsToOverwrite.add( WikiPrincipal.GUEST );
-                m_principalsToOverwrite.add( Role.ANONYMOUS );
-                m_principalsToOverwrite.add( Role.ASSERTED );
-
-                // If login fails, remove these roles
-                m_principalsToRemove.add( Role.AUTHENTICATED );
+                m_principals.add( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) );
 
                 return true;
             }

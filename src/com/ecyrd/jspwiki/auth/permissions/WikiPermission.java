@@ -1,24 +1,26 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 JSPWiki development group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
@@ -36,20 +38,26 @@ import java.util.Arrays;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class WikiPermission extends Permission
+public final class WikiPermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID        = 1L;
 
+    /** Name of the action for createGroups permission. */
     public static final String         CREATE_GROUPS_ACTION    = "createGroups";
 
+    /** Name of the action for createPages permission. */   
     public static final String         CREATE_PAGES_ACTION     = "createPages";
 
+    /** Name of the action for login permission. */
     public static final String         LOGIN_ACTION            = "login";
 
+    /** Name of the action for editPreferences permission. */
     public static final String         EDIT_PREFERENCES_ACTION = "editPreferences";
 
+    /** Name of the action for editProfile permission. */
     public static final String         EDIT_PROFILE_ACTION     = "editProfile";
 
+    /** Value for a generic wildcard. */
     public static final String         WILDCARD                = "*";
 
     protected static final int         CREATE_GROUPS_MASK      = 0x1;
@@ -62,14 +70,19 @@ public final class WikiPermission extends Permission
 
     protected static final int         LOGIN_MASK              = 0x10;
 
+    /** A static instance of the createGroups permission. */
     public static final WikiPermission CREATE_GROUPS           = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
 
+    /** A static instance of the createPages permission. */
     public static final WikiPermission CREATE_PAGES            = new WikiPermission( WILDCARD, CREATE_PAGES_ACTION );
 
+    /** A static instance of the login permission. */
     public static final WikiPermission LOGIN                   = new WikiPermission( WILDCARD, LOGIN_ACTION );
 
+    /** A static instance of the editPreferences permission. */
     public static final WikiPermission EDIT_PREFERENCES        = new WikiPermission( WILDCARD, EDIT_PREFERENCES_ACTION );
 
+    /** A static instance of the editProfile permission. */
     public static final WikiPermission EDIT_PROFILE            = new WikiPermission( WILDCARD, EDIT_PROFILE_ACTION );
 
     private final String               m_actionString;
@@ -81,6 +94,7 @@ public final class WikiPermission extends Permission
     /**
      * Creates a new WikiPermission for a specified set of actions.
      * @param actions the actions for this permission
+     * @param wiki The name of the wiki the permission belongs to.
      */
     public WikiPermission( String wiki, String actions )
     {
@@ -143,7 +157,7 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns the hash code for this WikiPermission.
-     * @see java.lang.Object#hashCode()
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -182,7 +196,7 @@ public final class WikiPermission extends Permission
 
     /**
      * Returns a new {@link AllPermissionCollection}.
-     * @see java.security.Permission#newPermissionCollection()
+     * @return {@inheritDoc}
      */
     public PermissionCollection newPermissionCollection()
     {
@@ -191,7 +205,7 @@ public final class WikiPermission extends Permission
 
     /**
      * Prints a human-readable representation of this permission.
-     * @see java.lang.Object#toString()
+     * @return {@inheritDoc}
      */
     public final String toString()
     {

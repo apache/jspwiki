@@ -1,24 +1,26 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 JSPWiki development group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Arrays;
@@ -64,22 +66,29 @@ import com.ecyrd.jspwiki.WikiPage;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public final class PagePermission extends Permission
+public final class PagePermission extends Permission implements Serializable
 {
     private static final long          serialVersionUID = 2L;
 
+    /** Action name for the comment permission. */
     public static final String         COMMENT_ACTION = "comment";
 
+    /** Action name for the delete permission. */
     public static final String         DELETE_ACTION  = "delete";
 
+    /** Action name for the edit permission. */
     public static final String         EDIT_ACTION    = "edit";
 
+    /** Action name for the modify permission. */
     public static final String         MODIFY_ACTION  = "modify";
 
+    /** Action name for the rename permission. */
     public static final String         RENAME_ACTION  = "rename";
 
+    /** Action name for the upload permission. */
     public static final String         UPLOAD_ACTION  = "upload";
 
+    /** Action name for the view permission. */
     public static final String         VIEW_ACTION    = "view";
 
     protected static final int         COMMENT_MASK   = 0x4;
@@ -96,18 +105,25 @@ public final class PagePermission extends Permission
 
     protected static final int         VIEW_MASK      = 0x1;
 
+    /** A static instance of the comment permission. */
     public static final PagePermission COMMENT        = new PagePermission( COMMENT_ACTION );
 
+    /** A static instance of the delete permission. */
     public static final PagePermission DELETE         = new PagePermission( DELETE_ACTION );
 
+    /** A static instance of the edit permission. */
     public static final PagePermission EDIT           = new PagePermission( EDIT_ACTION );
 
+    /** A static instance of the rename permission. */
     public static final PagePermission RENAME         = new PagePermission( RENAME_ACTION );
 
+    /** A static instance of the modify permission. */
     public static final PagePermission MODIFY         = new PagePermission( MODIFY_ACTION );
 
+    /** A static instance of the upload permission. */
     public static final PagePermission UPLOAD         = new PagePermission( UPLOAD_ACTION );
 
+    /** A static instance of the view permission. */
     public static final PagePermission VIEW           = new PagePermission( VIEW_ACTION );
 
     private static final String        ACTION_SEPARATOR = ",";
@@ -126,6 +142,12 @@ public final class PagePermission extends Permission
 
     private final String               m_wiki;
 
+    /** For serialization purposes. */
+    protected PagePermission()
+    {
+        this("");
+    }
+    
     /**
      * Private convenience constructor that creates a new PagePermission for all wikis and pages
      * (*:*) and set of actions.
@@ -197,7 +219,8 @@ public final class PagePermission extends Permission
     /**
      * Two PagePermission objects are considered equal if their actions (after
      * normalization), wiki and target are equal.
-     * @see java.lang.Object#equals(java.lang.Object)
+     * @param obj {@inheritDoc}
+     * @return {@inheritDoc}
      */
     public final boolean equals( Object obj )
     {
@@ -214,7 +237,8 @@ public final class PagePermission extends Permission
      * Returns the actions for this permission: "view", "edit", "comment",
      * "modify", "upload" or "delete". The actions will always be sorted in alphabetic
      * order, and will always appear in lower case.
-     * @see java.security.Permission#getActions()
+     *
+     * @return {@inheritDoc}
      */
     public final String getActions()
     {
@@ -242,7 +266,7 @@ public final class PagePermission extends Permission
 
     /**
      * Returns the hash code for this PagePermission.
-     * @see java.lang.Object#hashCode()
+     * @return {@inheritDoc}
      */
     public final int hashCode()
     {
@@ -272,6 +296,9 @@ public final class PagePermission extends Permission
      * those of this permission</li>
      * </ol>
      * @see java.security.Permission#implies(java.security.Permission)
+     * 
+     * @param permission {@inheritDoc}
+     * @return {@inheritDoc}
      */
     public final boolean implies( Permission permission )
     {
@@ -304,7 +331,9 @@ public final class PagePermission extends Permission
     /**
      * Returns a new {@link AllPermissionCollection}.
      * @see java.security.Permission#newPermissionCollection()
+     * @return {@inheritDoc}
      */
+    @Override
     public PermissionCollection newPermissionCollection()
     {
         return new AllPermissionCollection();
@@ -313,6 +342,8 @@ public final class PagePermission extends Permission
     /**
      * Prints a human-readable representation of this permission.
      * @see java.lang.Object#toString()
+     * 
+     * @return Something human-readable
      */
     public final String toString()
     {
@@ -413,9 +444,8 @@ public final class PagePermission extends Permission
         }
         int mask = 0;
         String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
-        for( int i = 0; i < actionList.length; i++ )
+        for( String action : actionList )
         {
-            String action = actionList[i];
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {
                 mask |= VIEW_MASK;

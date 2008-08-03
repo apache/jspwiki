@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
@@ -32,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -113,7 +113,7 @@ public class XMLGroupDatabase implements GroupDatabase
 
     private WikiEngine            m_engine         = null;
 
-    private Map<String,Group>     m_groups         = new HashMap<String,Group>();
+    private Map<String, Group>                   m_groups         = new HashMap<String, Group>();
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -124,6 +124,7 @@ public class XMLGroupDatabase implements GroupDatabase
      * @deprecated there is no need to call this method because the save and
      * delete methods contain their own commit logic
      */
+    @SuppressWarnings("deprecation")
     public void commit() throws WikiSecurityException
     { }
 
@@ -416,10 +417,8 @@ public class XMLGroupDatabase implements GroupDatabase
             io.write( "<groups>\n" );
 
             // Write each profile as a <group> node
-            Collection groups = m_groups.values();
-            for( Iterator it = groups.iterator(); it.hasNext(); )
+            for( Group group : m_groups.values() )
             {
-                Group group = (Group) it.next();
                 io.write( "  <" + GROUP_TAG + " " );
                 io.write( GROUP_NAME );
                 io.write( "=\"" + StringEscapeUtils.escapeXml( group.getName() )+ "\" " );
@@ -434,10 +433,8 @@ public class XMLGroupDatabase implements GroupDatabase
                 io.write( ">\n" );
 
                 // Write each member as a <member> node
-                Principal[] members = group.members();
-                for( int j = 0; j < members.length; j++ )
+                for( Principal member : group.members() )
                 {
-                    Principal member = members[j];
                     io.write( "    <" + MEMBER_TAG + " " );
                     io.write( PRINCIPAL );
                     io.write( "=\"" + StringEscapeUtils.escapeXml(member.getName()) + "\" " );

@@ -1,28 +1,28 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.security.auth.Subject;
@@ -50,7 +50,7 @@ public abstract class AbstractLoginModule implements LoginModule
 
     protected CallbackHandler m_handler;
 
-    protected Map             m_options;
+    protected Map<String,?>             m_options;
 
     /**
      * Collection of Principals set during login module initialization.
@@ -59,8 +59,9 @@ public abstract class AbstractLoginModule implements LoginModule
      * like a WikiPrincipal for the user cookie, or an IP address.
      * These Principals are forcibly removed during the commit phase
      * if login succeeds.
+     * @deprecated
      */
-    protected Collection      m_previousWikiPrincipals;
+    protected Collection<Principal>      m_previousWikiPrincipals;
 
     /**
      * Implementing classes should add Principals to this collection; these
@@ -68,7 +69,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * These Principals will be added to the Subject
      * during the {@link #commit()} phase of login.
      */
-    protected Collection      m_principals;
+    protected Collection<Principal> m_principals;
 
     /**
      * Implementing classes should add Principals to this collection
@@ -76,8 +77,9 @@ public abstract class AbstractLoginModule implements LoginModule
      * this module, or for the entire login configuration overall, fails.
      * Generally, these will be Principals of type
      * {@link com.ecyrd.jspwiki.auth.authorize.Role}.
+     * @deprecated
      */
-    protected Collection      m_principalsToRemove;
+    protected Collection<Principal>      m_principalsToRemove;
 
     /**
      * Implementing classes should add Principals to this collection to specify
@@ -90,10 +92,11 @@ public abstract class AbstractLoginModule implements LoginModule
      * <code>m_principalsToOverwrite</code> collection because when it
      * succeeds, its own {@link com.ecyrd.jspwiki.auth.authorize.Role#AUTHENTICATED}
      * should over-write {@link com.ecyrd.jspwiki.auth.authorize.Role#ANONYMOUS}.
+     * @deprecated
      */
-    protected Collection      m_principalsToOverwrite;
+    protected Collection<Principal>      m_principalsToOverwrite;
 
-    protected Map             m_state;
+    protected Map<String,?>             m_state;
 
     protected Subject         m_subject;
 
@@ -109,6 +112,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * It always returns <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#abort()
      * @throws LoginException if the abort itself fails
+     * @return True, always.
      */
     public final boolean abort() throws LoginException
     {
@@ -138,17 +142,13 @@ public abstract class AbstractLoginModule implements LoginModule
      *         failed
      * @see javax.security.auth.spi.LoginModule#commit()
      */
-    /**
-     * @see javax.security.auth.spi.LoginModule#commit()
-     */
-    public final boolean commit() throws LoginException
+    public final boolean commit()
     {
         if ( succeeded() )
         {
             removePrincipals( m_previousWikiPrincipals );
-            for ( Iterator it = m_principals.iterator(); it.hasNext(); )
+            for ( Principal principal : m_principals )
             {
-                Principal principal = (Principal)it.next();
                 m_subject.getPrincipals().add( principal );
                 if ( log.isDebugEnabled() )
                 {
@@ -177,13 +177,18 @@ public abstract class AbstractLoginModule implements LoginModule
      * @see javax.security.auth.spi.LoginModule#initialize(javax.security.auth.Subject,
      *      javax.security.auth.callback.CallbackHandler, java.util.Map,
      *      java.util.Map)
+     *      
+     * @param subject {@inheritDoc}
+     * @param callbackHandler {@inheritDoc}
+     * @param sharedState {@inheritDoc}
+     * @param options {@inheritDoc}
      */
-    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options )
+    public final void initialize( Subject subject, CallbackHandler callbackHandler, Map<String,?> sharedState, Map<String,?> options )
     {
-        m_previousWikiPrincipals = new HashSet();
-        m_principals = new HashSet();
-        m_principalsToRemove = new HashSet();
-        m_principalsToOverwrite = new HashSet();
+        m_previousWikiPrincipals = new HashSet<Principal>();
+        m_principals = new HashSet<Principal>();
+        m_principalsToRemove = new HashSet<Principal>();
+        m_principalsToOverwrite = new HashSet<Principal>();
         m_subject = subject;
         m_handler = callbackHandler;
         m_state = sharedState;
@@ -235,7 +240,7 @@ public abstract class AbstractLoginModule implements LoginModule
      * Returns <code>true</code> if the number of principals
      * contained in {@link #m_principals} is non-zero;
      * <code>false</code> otherwise.
-     * @return
+     * @return True, if a login has succeeded.
      */
     private final boolean succeeded()
     {
@@ -247,11 +252,10 @@ public abstract class AbstractLoginModule implements LoginModule
      * Principal set.
      * @param principals the principals to remove
      */
-    private final void removePrincipals( Collection principals )
+    private final void removePrincipals( Collection<Principal> principals )
     {
-        for ( Iterator it = principals.iterator(); it.hasNext(); )
+        for ( Principal principal : principals )
         {
-            Principal principal = (Principal)it.next();
             if ( m_subject.getPrincipals().contains( principal ) )
             {
                 m_subject.getPrincipals().remove( principal );

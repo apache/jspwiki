@@ -1,31 +1,32 @@
-/*
-  JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-  Copyright (C) 2001-2006 JSPWiki Development Team
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation; either version 2.1 of the License, or
-  (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.auth.permissions;
 
+import java.io.Serializable;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.DomainCombiner;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -80,7 +81,7 @@ import com.ecyrd.jspwiki.auth.GroupPrincipal;
  * @author Andrew Jaquith
  * @since 2.4.17
  */
-public final class GroupPermission extends Permission
+public final class GroupPermission extends Permission implements Serializable
 {
     /** Special target token that denotes all groups that a Subject's Principals are members of. */
     public static final String         MEMBER_TOKEN     = "<groupmember>";
@@ -125,6 +126,12 @@ public final class GroupPermission extends Permission
 
     private final String                m_wiki;
 
+    /** For serialization purposes */
+    protected GroupPermission()
+    {
+        this("");
+    }
+    
     /**
      * Private convenience constructor that creates a new GroupPermission for
      * all wikis and groups (*:*) and set of actions.
@@ -349,9 +356,8 @@ public final class GroupPermission extends Permission
         }
         int mask = 0;
         String[] actionList = actions.split( ACTION_SEPARATOR );
-        for( int i = 0; i < actionList.length; i++ )
+        for( String action : actionList )
         {
-            String action = actionList[i];
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {
                 mask |= VIEW_MASK;
@@ -481,10 +487,9 @@ public final class GroupPermission extends Permission
             // <member> implies permission if subject possesses
             // GroupPrincipal with same name as target
             Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
-            Set principals = subject.getPrincipals( GroupPrincipal.class );
-            for( Iterator it = principals.iterator(); it.hasNext(); )
+            Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
+            for( Principal principal : principals )
             {
-                Principal principal = (Principal) it.next();
                 if ( principal.getName().equals( gp.m_group ) )
                 {
                     return true;

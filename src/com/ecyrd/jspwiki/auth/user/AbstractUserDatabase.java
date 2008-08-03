@@ -1,30 +1,30 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.user;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.catalina.util.HexUtils;
 import org.apache.log4j.Logger;
@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.CryptoUtil;
 
 /**
  * Abstract UserDatabase class that provides convenience methods for finding
@@ -46,8 +47,8 @@ public abstract class AbstractUserDatabase implements UserDatabase
 
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
-    protected static final String  PROP_SHARED_WITH_CONTAINER = "jspwiki.userdatabase.isSharedWithContainer";
-
+    protected static final String SSHA_PREFIX = "{SSHA}";
+    protected static final long UID_NOT_SET = 0;
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -58,6 +59,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @deprecated there is no need to call this method because the save, rename and
      * delete methods contain their own commit logic
      */
+    @SuppressWarnings("deprecation")
     public synchronized void commit() throws WikiSecurityException
     { }
 
@@ -117,21 +119,25 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
     public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByFullName(java.lang.String)
      */
     public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByLoginName(java.lang.String)
      */
     public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(java.lang.String)
      */
     public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
@@ -149,13 +155,14 @@ public abstract class AbstractUserDatabase implements UserDatabase
      *            {@link UserProfile#getLoginName()}method.
      * @return the array of Principals representing the user
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
+     * @throws NoSuchPrincipalException {@inheritDoc}
      */
     public Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException
     {
         try
         {
             UserProfile profile = findByLoginName( identifier );
-            ArrayList principals = new ArrayList();
+            ArrayList<Principal> principals = new ArrayList<Principal>();
             if ( profile.getLoginName() != null && profile.getLoginName().length() > 0 )
             {
                 principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
@@ -168,7 +175,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
             {
                 principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
             }
-            return (Principal[]) principals.toArray( new Principal[principals.size()] );
+            return principals.toArray( new Principal[principals.size()] );
         }
         catch( NoSuchPrincipalException e )
         {
@@ -177,20 +184,24 @@ public abstract class AbstractUserDatabase implements UserDatabase
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#initialize(com.ecyrd.jspwiki.WikiEngine, java.util.Properties)
      */
     public abstract void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException;
 
     /**
-     * Factory method that instantiates a new DefaultUserProfile.
-     * @see com.ecyrd.jspwiki.auth.user.UserDatabase#newProfile()
+     * Factory method that instantiates a new DefaultUserProfile with a new, distinct
+     * unique identifier.
+     * 
+     * @return A new, empty profile.
      */
     public UserProfile newProfile()
     {
-        return new DefaultUserProfile();
+        return DefaultUserProfile.newProfile( this );
     }
 
     /**
+     * {@inheritDoc}
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#save(com.ecyrd.jspwiki.auth.user.UserProfile)
      */
     public abstract void save( UserProfile profile ) throws WikiSecurityException;
@@ -206,26 +217,117 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param password the user's password (obtained from user input, e.g., a web form)
      * @return <code>true</code> if the supplied user password matches the
      * stored password
+     * @throws NoSuchAlgorithmException 
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#validatePassword(java.lang.String,
      *      java.lang.String)
      */
     public boolean validatePassword( String loginName, String password )
     {
-        String hashedPassword = getHash( password );
+        String hashedPassword;
         try
         {
             UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
+            
+            // Is the password stored as a salted hash (the new 2.8 format?)
+            boolean newPasswordFormat = storedPassword.startsWith( SSHA_PREFIX );
+            
+            // If new format, verify the hash
+            if ( newPasswordFormat )
+            {
+                hashedPassword = getHash( password );
+                return CryptoUtil.verifySaltedPassword( password.getBytes("UTF-8"), storedPassword );
+            }
+
+            // If old format, verify using the old SHA verification algorithm
             if ( storedPassword.startsWith( SHA_PREFIX ) )
             {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
             }
-            return hashedPassword.equals( storedPassword );
+            hashedPassword = getOldHash( password );
+            boolean verified = hashedPassword.equals( storedPassword ); 
+            
+            // If in the old format and password verified, upgrade the hash to SSHA
+            if ( verified )
+            {
+                profile.setPassword( password );
+                save( profile );
+            }
+            
+            return verified;
         }
         catch( NoSuchPrincipalException e )
         {
-            return false;
         }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error( "Unsupported algorithm: " + e.getMessage() );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal( "You do not have UTF-8!?!" );
+        }
+        catch( WikiSecurityException e )
+        {
+            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage() );
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Generates a new random user identifier (uid) that is guaranteed to be unique.
+     * 
+     * @param db The database for which the UID should be generated.
+     * @return A random, unique UID.
+     */
+    protected static long generateUid( UserDatabase db )
+    {
+        // Keep generating UUIDs until we find one that doesn't collide
+        long uid;
+        boolean collision;
+        
+        do 
+        {
+            uid = UUID.randomUUID().getLeastSignificantBits();
+            collision = true;
+            try
+            {
+                db.findByUid( uid );
+            }
+            catch ( NoSuchPrincipalException e )
+            {
+                collision = false;
+            }
+        } 
+        while ( collision || uid == UID_NOT_SET );
+        return uid;
+    }
+    
+    /**
+     * Private method that calculates the salted SHA-1 hash of a given
+     * <code>String</code>. Note that as of JSPWiki 2.8, this method calculates
+     * a <em>salted</em> hash rather than a plain hash.
+     * @param text the text to hash
+     * @return the result hash
+     */
+    protected String getHash( String text )
+    {
+        String hash = null;
+        try
+        {
+            hash = CryptoUtil.getSaltedPassword( text.getBytes("UTF-8") );
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            log.error( "Error creating salted SHA password hash:" + e.getMessage() );
+            hash = text;
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal("You do not have UTF-8!?!");
+        }
+        return hash;
     }
 
     /**
@@ -233,8 +335,9 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * <code>String</code>
      * @param text the text to hash
      * @return the result hash
+     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
      */
-    protected String getHash( String text )
+    protected String getOldHash( String text )
     {
         String hash = null;
         try
@@ -254,6 +357,27 @@ public abstract class AbstractUserDatabase implements UserDatabase
             log.fatal("UTF-8 not supported!?!");
         }
         return hash;
+    }
+
+    /**
+     * Parses a long integer from a supplied string, or returns 0 if not parsable.
+     * @param value the string to parse
+     * @return the value parsed
+     */
+    protected long parseLong( String value )
+    {
+        if ( value == null || value.length() == 0 )
+        {
+            return 0;
+        }
+        try
+        {
+            return Long.parseLong( value );
+        }
+        catch ( NumberFormatException e )
+        {
+            return 0;
+        }
     }
 
 }

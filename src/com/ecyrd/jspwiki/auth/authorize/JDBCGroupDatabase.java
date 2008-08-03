@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 JSPWiki Development Group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.authorize;
 
@@ -38,70 +39,75 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**
- * <p>Implementation of GroupDatabase that persists {@link Group}
- * objects to a JDBC DataSource, as might typically be provided by a web
- * container. This implementation looks up the JDBC DataSource using JNDI.
- * The JNDI name of the datasource, backing table and mapped columns used
- * by this class are configured via settings in <code>jspwiki.properties</code>.</p>
- * <p>Configurable properties are these:</p>
+ * <p>
+ * Implementation of GroupDatabase that persists {@link Group} objects to a JDBC
+ * DataSource, as might typically be provided by a web container. This
+ * implementation looks up the JDBC DataSource using JNDI. The JNDI name of the
+ * datasource, backing table and mapped columns used by this class are
+ * configured via settings in <code>jspwiki.properties</code>.
+ * </p>
+ * <p>
+ * Configurable properties are these:
+ * </p>
  * <table>
- *   <tr>
- *   <thead>
- *     <th>Property</th>
- *     <th>Default</th>
- *     <th>Definition</th>
- *   <thead>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.datasource</code></td>
- *     <td><code>jdbc/GroupDatabase</code></td>
- *     <td>The JNDI name of the DataSource</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.table</code></td>
- *     <td><code>groups</code></td>
- *     <td>The table that stores the groups</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.membertable</code></td>
- *     <td><code>group_members</code></td>
- *     <td>The table that stores the names of group members</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.created</code></td>
- *     <td><code>created</code></td>
- *     <td>The column containing the group's creation timestamp</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.creator</code></td>
- *     <td><code>creator</code></td>
- *     <td>The column containing the group creator's name</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.name</code></td>
- *     <td><code>name</code></td>
- *     <td>The column containing the group's name</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.member</code></td>
- *     <td><code>member</code></td>
- *     <td>The column containing the group member's name</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.modified</code></td>
- *     <td><code>modified</code></td>
- *     <td>The column containing the group's last-modified timestamp</td>
- *   </tr>
- *   <tr>
- *     <td><code>jspwiki.groupdatabase.modifier</code></td>
- *     <td><code>modifier</code></td>
- *     <td>The column containing the name of the user who last modified the group</td>
- *   </tr>
+ * <tr> <thead>
+ * <th>Property</th>
+ * <th>Default</th>
+ * <th>Definition</th>
+ * <thead> </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.datasource</code></td>
+ * <td><code>jdbc/GroupDatabase</code></td>
+ * <td>The JNDI name of the DataSource</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.table</code></td>
+ * <td><code>groups</code></td>
+ * <td>The table that stores the groups</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.membertable</code></td>
+ * <td><code>group_members</code></td>
+ * <td>The table that stores the names of group members</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.created</code></td>
+ * <td><code>created</code></td>
+ * <td>The column containing the group's creation timestamp</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.creator</code></td>
+ * <td><code>creator</code></td>
+ * <td>The column containing the group creator's name</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.name</code></td>
+ * <td><code>name</code></td>
+ * <td>The column containing the group's name</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.member</code></td>
+ * <td><code>member</code></td>
+ * <td>The column containing the group member's name</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.modified</code></td>
+ * <td><code>modified</code></td>
+ * <td>The column containing the group's last-modified timestamp</td>
+ * </tr>
+ * <tr>
+ * <td><code>jspwiki.groupdatabase.modifier</code></td>
+ * <td><code>modifier</code></td>
+ * <td>The column containing the name of the user who last modified the group</td>
+ * </tr>
  * </table>
- * <p>This class is typically used in conjunction with a web container's JNDI resource
- * factory. For example, Tomcat versions 4 and higher provide a basic JNDI factory
- * for registering DataSources. To give JSPWiki access to the JNDI resource named
- * by <code>jdbc/GroupDatabase</code>, you would declare the datasource resource similar to this:</p>
+ * <p>
+ * This class is typically used in conjunction with a web container's JNDI
+ * resource factory. For example, Tomcat versions 4 and higher provide a basic
+ * JNDI factory for registering DataSources. To give JSPWiki access to the JNDI
+ * resource named by <code>jdbc/GroupDatabase</code>, you would declare the
+ * datasource resource similar to this:
+ * </p>
  * <blockquote><code>&lt;Context ...&gt;<br/>
  *  &nbsp;&nbsp;...<br/>
  *  &nbsp;&nbsp;&lt;Resource name="jdbc/GroupDatabase" auth="Container"<br/>
@@ -110,106 +116,151 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  *  &nbsp;&nbsp;&nbsp;&nbsp;maxActive="8" maxIdle="4"/&gt;<br/>
  *  &nbsp;...<br/>
  * &lt;/Context&gt;</code></blockquote>
- * <p>JDBC driver JARs should be added to Tomcat's <code>common/lib</code> directory.
- * For more Tomcat 5.5 JNDI configuration examples,
- * see <a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
- * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.</p>
- * <p>JDBCGroupDatabase commits changes as transactions if the back-end database supports them.
- * If the database supports transactions, group changes are saved
- * to permanent storage only when the {@link #commit()} method is called. If the database does <em>not</em>
- * support transactions, then changes are made immediately (during the {@link #save(Group, Principal)}
- * method), and the {@linkplain #commit()} method no-ops. Thus, callers should always call the
- * {@linkplain #commit()} method after saving a profile to guarantee that changes are applied.</p>
+ * <p>
+ * JDBC driver JARs should be added to Tomcat's <code>common/lib</code>
+ * directory. For more Tomcat 5.5 JNDI configuration examples, see <a
+ * href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html">
+ * http://tomcat.apache.org/tomcat-5.5-doc/jndi-resources-howto.html</a>.
+ * </p>
+ * <p>
+ * JDBCGroupDatabase commits changes as transactions if the back-end database
+ * supports them. If the database supports transactions, group changes are saved
+ * to permanent storage only when the {@link #commit()} method is called. If the
+ * database does <em>not</em> support transactions, then changes are made
+ * immediately (during the {@link #save(Group, Principal)} method), and the
+ * {@linkplain #commit()} method no-ops. Thus, callers should always call the
+ * {@linkplain #commit()} method after saving a profile to guarantee that
+ * changes are applied.
+ * </p>
+ * 
  * @author Andrew R. Jaquith
  * @since 2.3
  */
 public class JDBCGroupDatabase implements GroupDatabase
 {
-     /** Default column name that stores the JNDI name of the DataSource. */
-    public static final String DEFAULT_GROUPDB_DATASOURCE   = "jdbc/GroupDatabase";
+    /** Default column name that stores the JNDI name of the DataSource. */
+    public static final String DEFAULT_GROUPDB_DATASOURCE = "jdbc/GroupDatabase";
+
     /** Default table name for the table that stores groups. */
-    public static final String DEFAULT_GROUPDB_TABLE        = "groups";
+    public static final String DEFAULT_GROUPDB_TABLE = "groups";
+
     /** Default column name that stores the names of group members. */
     public static final String DEFAULT_GROUPDB_MEMBER_TABLE = "group_members";
+
     /** Default column name that stores the the group creation timestamps. */
-    public static final String DEFAULT_GROUPDB_CREATED      = "created";
+    public static final String DEFAULT_GROUPDB_CREATED = "created";
+
     /** Default column name that stores group creator names. */
-    public static final String DEFAULT_GROUPDB_CREATOR      = "creator";
+    public static final String DEFAULT_GROUPDB_CREATOR = "creator";
+
     /** Default column name that stores the group names. */
-    public static final String DEFAULT_GROUPDB_NAME         = "name";
+    public static final String DEFAULT_GROUPDB_NAME = "name";
+
     /** Default column name that stores group member names. */
-    public static final String DEFAULT_GROUPDB_MEMBER       = "member";
+    public static final String DEFAULT_GROUPDB_MEMBER = "member";
+
     /** Default column name that stores group last-modified timestamps. */
-    public static final String DEFAULT_GROUPDB_MODIFIED     = "modified";
+    public static final String DEFAULT_GROUPDB_MODIFIED = "modified";
+
     /** Default column name that stores names of users who last modified groups. */
-    public static final String DEFAULT_GROUPDB_MODIFIER     = "modifier";
+    public static final String DEFAULT_GROUPDB_MODIFIER = "modifier";
 
     /** The JNDI name of the DataSource. */
-    public static final String PROP_GROUPDB_DATASOURCE   = "jspwiki.groupdatabase.datasource";
+    public static final String PROP_GROUPDB_DATASOURCE = "jspwiki.groupdatabase.datasource";
+
     /** The table that stores the groups. */
-    public static final String PROP_GROUPDB_TABLE        = "jspwiki.groupdatabase.table";
+    public static final String PROP_GROUPDB_TABLE = "jspwiki.groupdatabase.table";
+
     /** The table that stores the names of group members. */
     public static final String PROP_GROUPDB_MEMBER_TABLE = "jspwiki.groupdatabase.membertable";
-    /** The column containing the group's creation timestamp. */
-    public static final String PROP_GROUPDB_CREATED      = "jspwiki.groupdatabase.created";
-    /** The column containing the group creator's name. */
-    public static final String PROP_GROUPDB_CREATOR      = "jspwiki.groupdatabase.creator";
-    /** The column containing the group's name. */
-    public static final String PROP_GROUPDB_NAME         = "jspwiki.groupdatabase.name";
-    /** The column containing the group member's name. */
-    public static final String PROP_GROUPDB_MEMBER       = "jspwiki.groupdatabase.member";
-    /** The column containing the group's last-modified timestamp. */
-    public static final String PROP_GROUPDB_MODIFIED     = "jspwiki.groupdatabase.modified";
-    /** The column containing the name of the user who last modified the group. */
-    public static final String PROP_GROUPDB_MODIFIER     = "jspwiki.groupdatabase.modifier";
 
-    protected static final Logger log                     = Logger.getLogger( JDBCGroupDatabase.class );
+    /** The column containing the group's creation timestamp. */
+    public static final String PROP_GROUPDB_CREATED = "jspwiki.groupdatabase.created";
+
+    /** The column containing the group creator's name. */
+    public static final String PROP_GROUPDB_CREATOR = "jspwiki.groupdatabase.creator";
+
+    /** The column containing the group's name. */
+    public static final String PROP_GROUPDB_NAME = "jspwiki.groupdatabase.name";
+
+    /** The column containing the group member's name. */
+    public static final String PROP_GROUPDB_MEMBER = "jspwiki.groupdatabase.member";
+
+    /** The column containing the group's last-modified timestamp. */
+    public static final String PROP_GROUPDB_MODIFIED = "jspwiki.groupdatabase.modified";
+
+    /** The column containing the name of the user who last modified the group. */
+    public static final String PROP_GROUPDB_MODIFIER = "jspwiki.groupdatabase.modifier";
+
+    protected static final Logger log = Logger.getLogger( JDBCGroupDatabase.class );
 
     private DataSource m_ds = null;
+
     private String m_table = null;
+
     private String m_memberTable = null;
+
     private String m_created = null;
+
     private String m_creator = null;
+
     private String m_name = null;
+
     private String m_member = null;
+
     private String m_modified = null;
+
     private String m_modifier = null;
+
     private String m_findAll = null;
+
     private String m_findGroup = null;
+
     private String m_findMembers = null;
+
     private String m_insertGroup = null;
+
     private String m_insertGroupMembers = null;
+
     private String m_updateGroup = null;
+
     private String m_deleteGroup = null;
+
     private String m_deleteGroupMembers = null;
+
     private boolean m_supportsCommits = false;
+
     private WikiEngine m_engine = null;
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
      * atomically commit changes to the user database. Now, the
-     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods
-     * are atomic themselves.
+     * {@link #save(Group, Principal)} and {@link #delete(Group)} methods are
+     * atomic themselves.
+     * 
      * @throws WikiSecurityException never...
      * @deprecated there is no need to call this method because the save and
-     * delete methods contain their own commit logic
+     *             delete methods contain their own commit logic
      */
+    @SuppressWarnings("deprecation")
     public void commit() throws WikiSecurityException
-    { }
+    {
+    }
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the
      * group database does not contain the supplied Group. this method throws a
-     * {@link NoSuchPrincipalException}. The method commits the results
-     * of the delete to persistent storage.
+     * {@link NoSuchPrincipalException}. The method commits the results of the
+     * delete to persistent storage.
+     * 
      * @param group the group to remove
      * @throws WikiSecurityException if the database does not contain the
-     * supplied group (thrown as {@link NoSuchPrincipalException}) or if
-     * the commit did not succeed
+     *             supplied group (thrown as {@link NoSuchPrincipalException})
+     *             or if the commit did not succeed
      */
     public void delete( Group group ) throws WikiSecurityException
     {
-        if ( !exists( group ) )
+        if( !exists( group ) )
         {
             throw new NoSuchPrincipalException( "Not in database: " + group.getName() );
         }
@@ -220,34 +271,40 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             // Open the database connection
             conn = m_ds.getConnection();
-            if ( m_supportsCommits )
+            if( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
             }
 
             PreparedStatement ps = conn.prepareStatement( m_deleteGroup );
-            ps.setString( 1, groupName);
+            ps.setString( 1, groupName );
             ps.execute();
             ps.close();
-            
+
             ps = conn.prepareStatement( m_deleteGroupMembers );
-            ps.setString( 1, groupName);
+            ps.setString( 1, groupName );
             ps.execute();
             ps.close();
 
             // Commit and close connection
-            if ( m_supportsCommits )
+            if( m_supportsCommits )
             {
                 conn.commit();
             }
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             throw new WikiSecurityException( "Could not delete group " + groupName + ": " + e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
     }
 
@@ -257,8 +314,10 @@ public class JDBCGroupDatabase implements GroupDatabase
      * method will return a zero-length array. This method causes back-end
      * storage to load the entire set of group; thus, it should be called
      * infrequently (e.g., at initialization time).
+     * 
      * @return the wiki groups
-     * @throws WikiSecurityException if the groups cannot be returned by the back-end
+     * @throws WikiSecurityException if the groups cannot be returned by the
+     *             back-end
      */
     public Group[] groups() throws WikiSecurityException
     {
@@ -274,7 +333,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             while ( rs.next() )
             {
                 String groupName = rs.getString( m_name );
-                if ( groupName == null )
+                if( groupName == null )
                 {
                     log.warn( "Detected null group name in JDBCGroupDataBase. Check your group database." );
                 }
@@ -291,13 +350,19 @@ public class JDBCGroupDatabase implements GroupDatabase
             }
             ps.close();
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
 
         return groups.toArray( new Group[groups.size()] );
@@ -308,15 +373,17 @@ public class JDBCGroupDatabase implements GroupDatabase
      * fail, and throw an <code>IllegalArgumentException</code>, if the
      * proposed group is the same name as one of the built-in Roles: e.g.,
      * Admin, Authenticated, etc. The database is responsible for setting
-     * create/modify timestamps, upon a successful save, to the Group.
-     * The method commits the results of the delete to persistent storage.
+     * create/modify timestamps, upon a successful save, to the Group. The
+     * method commits the results of the delete to persistent storage.
+     * 
      * @param group the Group to save
      * @param modifier the user who saved the Group
-     * @throws WikiSecurityException if the Group could not be saved successfully
+     * @throws WikiSecurityException if the Group could not be saved
+     *             successfully
      */
     public void save( Group group, Principal modifier ) throws WikiSecurityException
     {
-        if ( group == null || modifier == null )
+        if( group == null || modifier == null )
         {
             throw new IllegalArgumentException( "Group or modifier cannot be null." );
         }
@@ -328,7 +395,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             // Open the database connection
             conn = m_ds.getConnection();
-            if ( m_supportsCommits )
+            if( m_supportsCommits )
             {
                 conn.setAutoCommit( false );
             }
@@ -336,7 +403,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             PreparedStatement ps;
             Timestamp ts = new Timestamp( System.currentTimeMillis() );
             Date modDate = new Date( ts.getTime() );
-            if ( !exists )
+            if( !exists )
             {
                 // Group is new: insert new group record
                 ps = conn.prepareStatement( m_insertGroup );
@@ -356,7 +423,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             {
                 // Modify existing group record
                 ps = conn.prepareStatement( m_updateGroup );
-                ps.setTimestamp( 1, ts);
+                ps.setTimestamp( 1, ts );
                 ps.setString( 2, modifier.getName() );
                 ps.setString( 3, group.getName() );
                 ps.execute();
@@ -373,11 +440,13 @@ public class JDBCGroupDatabase implements GroupDatabase
             ps.setString( 1, group.getName() );
             ps.execute();
             ps.close();
-            
+
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
-            for ( Principal member : group.getMembers() )
+            Principal[] members = group.members();
+            for( int i = 0; i < members.length; i++ )
             {
+                Principal member = members[i];
                 ps.setString( 1, group.getName() );
                 ps.setString( 2, member.getName() );
                 ps.execute();
@@ -385,26 +454,34 @@ public class JDBCGroupDatabase implements GroupDatabase
             ps.close();
 
             // Commit and close connection
-            if ( m_supportsCommits )
+            if( m_supportsCommits )
             {
                 conn.commit();
             }
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             throw new WikiSecurityException( e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
     }
 
     /**
      * Initializes the group database based on values from a Properties object.
+     * 
      * @param engine the wiki engine
      * @param props the properties used to initialize the group database
-     * @throws WikiSecurityException if the database could not be initialized successfully
+     * @throws WikiSecurityException if the database could not be initialized
+     *             successfully
      * @throws NoRequiredPropertyException if a required property is not present
      */
     public void initialize( WikiEngine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException
@@ -415,40 +492,30 @@ public class JDBCGroupDatabase implements GroupDatabase
         try
         {
             Context initCtx = new InitialContext();
-            Context ctx = (Context) initCtx.lookup("java:comp/env");
+            Context ctx = (Context) initCtx.lookup( "java:comp/env" );
             m_ds = (DataSource) ctx.lookup( jndiName );
 
             // Prepare the SQL selectors
-            m_table       = props.getProperty( PROP_GROUPDB_TABLE, DEFAULT_GROUPDB_TABLE );
+            m_table = props.getProperty( PROP_GROUPDB_TABLE, DEFAULT_GROUPDB_TABLE );
             m_memberTable = props.getProperty( PROP_GROUPDB_MEMBER_TABLE, DEFAULT_GROUPDB_MEMBER_TABLE );
-            m_name        = props.getProperty( PROP_GROUPDB_NAME, DEFAULT_GROUPDB_NAME );
-            m_created     = props.getProperty( PROP_GROUPDB_CREATED, DEFAULT_GROUPDB_CREATED );
-            m_creator     = props.getProperty( PROP_GROUPDB_CREATOR, DEFAULT_GROUPDB_CREATOR );
-            m_modifier    = props.getProperty( PROP_GROUPDB_MODIFIER, DEFAULT_GROUPDB_MODIFIER );
-            m_modified    = props.getProperty( PROP_GROUPDB_MODIFIED, DEFAULT_GROUPDB_MODIFIED );
-            m_member      = props.getProperty( PROP_GROUPDB_MEMBER, DEFAULT_GROUPDB_MEMBER );
+            m_name = props.getProperty( PROP_GROUPDB_NAME, DEFAULT_GROUPDB_NAME );
+            m_created = props.getProperty( PROP_GROUPDB_CREATED, DEFAULT_GROUPDB_CREATED );
+            m_creator = props.getProperty( PROP_GROUPDB_CREATOR, DEFAULT_GROUPDB_CREATOR );
+            m_modifier = props.getProperty( PROP_GROUPDB_MODIFIER, DEFAULT_GROUPDB_MODIFIER );
+            m_modified = props.getProperty( PROP_GROUPDB_MODIFIED, DEFAULT_GROUPDB_MODIFIED );
+            m_member = props.getProperty( PROP_GROUPDB_MEMBER, DEFAULT_GROUPDB_MEMBER );
 
-            m_findAll     = "SELECT DISTINCT * FROM " + m_table;
-            m_findGroup   = "SELECT DISTINCT * FROM " + m_table + " WHERE " + m_name + "=?";
+            m_findAll = "SELECT DISTINCT * FROM " + m_table;
+            m_findGroup = "SELECT DISTINCT * FROM " + m_table + " WHERE " + m_name + "=?";
             m_findMembers = "SELECT * FROM " + m_memberTable + " WHERE " + m_name + "=?";
 
             // Prepare the group insert/update SQL
-            m_insertGroup = "INSERT INTO " + m_table + " ("
-                              + m_name + ","
-                              + m_modified + ","
-                              + m_modifier + ","
-                              + m_created + ","
-                              + m_creator
-                              + ") VALUES (?,?,?,?,?)";
-            m_updateGroup = "UPDATE " + m_table + " SET "
-                              + m_modified + "=?,"
-                              + m_modifier + "=? WHERE " + m_name + "=?";
+            m_insertGroup = "INSERT INTO " + m_table + " (" + m_name + "," + m_modified + "," + m_modifier + "," + m_created + ","
+                            + m_creator + ") VALUES (?,?,?,?,?)";
+            m_updateGroup = "UPDATE " + m_table + " SET " + m_modified + "=?," + m_modifier + "=? WHERE " + m_name + "=?";
 
             // Prepare the group member insert SQL
-            m_insertGroupMembers = "INSERT INTO " + m_memberTable + " ("
-                              + m_name + ","
-                              + m_member
-                              + ") VALUES (?,?)";
+            m_insertGroupMembers = "INSERT INTO " + m_memberTable + " (" + m_name + "," + m_member + ") VALUES (?,?)";
 
             // Prepare the group delete SQL
             m_deleteGroup = "DELETE FROM " + m_table + " WHERE " + m_name + "=?";
@@ -457,7 +524,8 @@ public class JDBCGroupDatabase implements GroupDatabase
         catch( NamingException e )
         {
             log.error( "JDBCGroupDatabase initialization error: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e.getMessage() );
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
+                                                                            + e.getMessage() );
         }
 
         // Test connection by doing a quickie select
@@ -469,14 +537,21 @@ public class JDBCGroupDatabase implements GroupDatabase
             ps.executeQuery();
             ps.close();
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             log.error( "JDBCGroupDatabase initialization error: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e.getMessage() );
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
+                                                                            + e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
         log.info( "JDBCGroupDatabase initialized from JNDI DataSource: " + jndiName );
 
@@ -485,26 +560,34 @@ public class JDBCGroupDatabase implements GroupDatabase
         {
             conn = m_ds.getConnection();
             DatabaseMetaData dmd = conn.getMetaData();
-            if ( dmd.supportsTransactions() )
+            if( dmd.supportsTransactions() )
             {
                 m_supportsCommits = true;
                 conn.setAutoCommit( false );
-                log.info("JDBCGroupDatabase supports transactions. Good; we will use them." );
+                log.info( "JDBCGroupDatabase supports transactions. Good; we will use them." );
             }
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
-            log.warn("JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
-            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e.getMessage() );
+            log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
+            throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: "
+                                                                            + e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
     }
 
     /**
      * Returns <code>true</code> if the Group exists in back-end storage.
+     * 
      * @param group the Group to look for
      * @return the result of the search
      */
@@ -516,14 +599,16 @@ public class JDBCGroupDatabase implements GroupDatabase
             findGroup( index );
             return true;
         }
-        catch ( NoSuchPrincipalException e )
+        catch( NoSuchPrincipalException e )
         {
             return false;
         }
     }
 
     /**
-     * Loads and returns a Group from the back-end database matching a supplied name.
+     * Loads and returns a Group from the back-end database matching a supplied
+     * name.
+     * 
      * @param index the name of the Group to find
      * @return the populated Group
      * @throws NoSuchPrincipalException if the Group cannot be found
@@ -545,7 +630,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             ResultSet rs = ps.executeQuery();
             while ( rs.next() )
             {
-                if ( group != null )
+                if( group != null )
                 {
                     unique = false;
                     break;
@@ -560,28 +645,35 @@ public class JDBCGroupDatabase implements GroupDatabase
             }
             ps.close();
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             throw new NoSuchPrincipalException( e.getMessage() );
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
 
-        if ( !found )
+        if( !found )
         {
-            throw new NoSuchPrincipalException("Could not find group in database!");
+            throw new NoSuchPrincipalException( "Could not find group in database!" );
         }
-        if ( !unique )
+        if( !unique )
         {
-            throw new NoSuchPrincipalException("More than one group in database!");
+            throw new NoSuchPrincipalException( "More than one group in database!" );
         }
         return group;
     }
 
     /**
      * Fills a Group with members.
+     * 
      * @param group the group to populate
      * @return the populated Group
      */
@@ -599,7 +691,7 @@ public class JDBCGroupDatabase implements GroupDatabase
             while ( rs.next() )
             {
                 String memberName = rs.getString( m_member );
-                if ( memberName != null )
+                if( memberName != null )
                 {
                     WikiPrincipal principal = new WikiPrincipal( memberName, WikiPrincipal.UNSPECIFIED );
                     group.add( principal );
@@ -607,13 +699,19 @@ public class JDBCGroupDatabase implements GroupDatabase
             }
             ps.close();
         }
-        catch ( SQLException e )
+        catch( SQLException e )
         {
             // I guess that means there aren't any principals...
         }
         finally
         {
-            try { conn.close(); } catch (Exception e) {}
+            try
+            {
+                if( conn != null ) conn.close();
+            }
+            catch( Exception e )
+            {
+            }
         }
         return group;
     }
