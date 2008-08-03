@@ -28,9 +28,6 @@ jspwiki.basicAttachmentProvider.storageDir = @tests.pagedir@
 
 jspwiki.encoding = ISO-8859-1
 
-jspwiki.authenticator = FileAuthenticator
-jspwiki.fileAuthenticator.fileName = @tests.auth.filename@
-
 jspwiki.filterConfig = @tests.filter@
 
 jspwiki.baseURL = http://localhost/
@@ -84,6 +81,7 @@ jspwiki.admin.user = admin
 
 jspwiki.userdatabase.datasource=jdbc/UserDatabase
 jspwiki.userdatabase.table=users
+jspwiki.userdatabase.uid=uid
 jspwiki.userdatabase.email=email
 jspwiki.userdatabase.fullName=full_name
 jspwiki.userdatabase.loginName=login_name
@@ -91,6 +89,8 @@ jspwiki.userdatabase.password=password
 jspwiki.userdatabase.wikiName=wiki_name
 jspwiki.userdatabase.created=created
 jspwiki.userdatabase.modified=modified
+jspwiki.userdatabase.lockExpiry=lock_expiry
+jspwiki.userdatabase.attributes=attributes
 jspwiki.userdatabase.roleTable=roles
 jspwiki.userdatabase.role=role
 jspwiki.groupdatabase.datasource=jdbc/GroupDatabase
@@ -119,14 +119,17 @@ jspwiki.groupdatabase.modifier=modifier
 
 #
 #  Log everything into a file.
-#
+log4j.rootCategory=INFO,FileLog
+log4j.logger.com.ecyrd.jspwiki=INFO, FileLog
+log4j.logger.org.mortbay=INFO, TestContainerLog
+log4j.logger.SecurityLog=INFO, SecurityAppender
+
 log4j.appender.FileLog = org.apache.log4j.RollingFileAppender
 log4j.appender.FileLog.MaxFileSize    = 10MB
 log4j.appender.FileLog.MaxBackupIndex = 14
 log4j.appender.FileLog.File = @tests.logfile@
 log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
 log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
-log4j.rootCategory=DEBUG,FileLog
 
 log4j.appender.SecurityAppender = org.apache.log4j.RollingFileAppender
 log4j.appender.SecurityAppender.MaxFileSize    = 10MB
@@ -134,7 +137,12 @@ log4j.appender.SecurityAppender.MaxBackupIndex = 14
 log4j.appender.SecurityAppender.File = @securitylog@
 log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
 log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
-log4j.logger.SecurityLog=INFO, SecurityAppender
+
+log4j.appender.TestContainerLog = org.apache.log4j.RollingFileAppender
+log4j.appender.TestContainerLog.MaxFileSize    = 10MB
+log4j.appender.TestContainerLog.MaxBackupIndex = 14
+log4j.appender.TestContainerLog.layout = org.apache.log4j.PatternLayout
+log4j.appender.TestContainerLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
 
 # JavaMail properties
 mail.smtp.host = 127.0.0.1
@@ -147,3 +155,6 @@ mail.from = JSPWiki <JSPWiki@localhost>
 jspwiki.approver.workflow.saveWikiPage=
 jspwiki.approver.workflow.foo=janne
 jspwiki.approver.workflow.bar=Admin
+
+# URL Constructor
+jspwiki.urlConstructor = StripesURLConstructor

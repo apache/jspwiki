@@ -128,7 +128,8 @@ __A word of warning:__ If you use the Back button of your browser to go into the
 
 !Deleting pages
 
-This is not possible. You can, of course, remove all the links to that page, which makes it inaccesible. Or you can [email me|mailto:jalkanen+jspwiki@regex.fi], and I'll remove the page.
+Deleting pages is possible from the "Info" page.  However, only authorized users can access
+this functionality - for example, administrators.
 
 !Adding new pages
 
