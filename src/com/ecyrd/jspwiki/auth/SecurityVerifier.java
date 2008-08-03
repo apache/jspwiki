@@ -1,21 +1,22 @@
 /*
- JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
- Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth;
 
@@ -24,13 +25,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.*;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -46,7 +45,6 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 
@@ -61,10 +59,6 @@ public final class SecurityVerifier
     private static final long     serialVersionUID             = -3859563355089169941L;
 
     private WikiEngine            m_engine;
-
-    private File                  m_jaasConfig                 = null;
-
-    private boolean               m_isJaasConfigured           = false;
 
     private boolean               m_isSecurityPolicyConfigured = false;
 
@@ -227,47 +221,45 @@ public final class SecurityVerifier
         s.append( "  <tr>\n" );
         for( int i = 0; i < roles.length; i++ )
         {
-            for( int j = 0; j < pageActions.length; j++ )
+            for( String pageAction : pageActions )
             {
-                String action = pageActions[j].substring( 0, 1 );
-                s.append( "    <th title=\"" + pageActions[j] + "\">" + action + "</th>\n" );
+                String action = pageAction.substring( 0, 1 );
+                s.append( "    <th title=\"" + pageAction + "\">" + action + "</th>\n" );
             }
         }
         s.append( "  </tr>\n" );
 
         // Write page permission tests first
-        for( int i = 0; i < pages.length; i++ )
+        for( String page : pages )
         {
-            String page = pages[i];
             s.append( "  <tr>\n" );
             s.append( "    <td>PagePermission \"" + wiki + ":" + page + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            for( Principal role : roles )
             {
-                for( int k = 0; k < pageActions.length; k++ )
+                for( String pageAction : pageActions )
                 {
-                    Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageActions[k] );
-                    s.append( printPermissionTest( permission, roles[j], 1 ) );
+                    Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageAction );
+                    s.append( printPermissionTest( permission, role, 1 ) );
                 }
             }
             s.append( "  </tr>\n" );
         }
 
         // Now do the group tests
-        for( int i = 0; i < groups.length; i++ )
+        for( String group : groups )
         {
-            String group = groups[i];
             s.append( "  <tr>\n" );
             s.append( "    <td>GroupPermission \"" + wiki + ":" + group + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            for( Principal role : roles )
             {
-                for( int k = 0; k < groupActions.length; k++ )
+                for( String groupAction : groupActions )
                 {
                     Permission permission = null;
-                    if ( groupActions[k] != null)
+                    if ( groupAction != null)
                     {
-                        permission = new GroupPermission( wiki + ":" + group, groupActions[k] );
+                        permission = new GroupPermission( wiki + ":" + group, groupAction );
                     }
-                    s.append( printPermissionTest( permission, roles[j], 1 ) );
+                    s.append( printPermissionTest( permission, role, 1 ) );
                 }
             }
             s.append( "  </tr>\n" );
@@ -277,14 +269,14 @@ public final class SecurityVerifier
         // Now check the wiki-wide permissions
         String[] wikiPerms = new String[]
         { "createGroups", "createPages", "login", "editPreferences", "editProfile" };
-        for( int i = 0; i < wikiPerms.length; i++ )
+        for( String wikiPerm : wikiPerms )
         {
             s.append( "  <tr>\n" );
-            s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerms[i] + "\"</td>\n" );
-            for( int j = 0; j < roles.length; j++ )
+            s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerm + "\"</td>\n" );
+            for( Principal role : roles )
             {
-                Permission permission = new WikiPermission( wiki, wikiPerms[i] );
-                s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
+                Permission permission = new WikiPermission( wiki, wikiPerm );
+                s.append( printPermissionTest( permission, role, pageActions.length ) );
             }
             s.append( "  </tr>\n" );
         }
@@ -292,10 +284,10 @@ public final class SecurityVerifier
         // Lastly, check for AllPermission
         s.append( "  <tr>\n" );
         s.append( "    <td>AllPermission \"" + wiki + "\"</td>\n" );
-        for( int j = 0; j < roles.length; j++ )
+        for( Principal role : roles )
         {
             Permission permission = new AllPermission( wiki );
-            s.append( printPermissionTest( permission, roles[j], pageActions.length ) );
+            s.append( printPermissionTest( permission, role, pageActions.length ) );
         }
         s.append( "  </tr>\n" );
 
@@ -378,9 +370,9 @@ public final class SecurityVerifier
         s.append( "  </tr>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th>Anonymous</th>\n" );
-        for( int i = 0; i < roles.length; i++ )
+        for( Principal role : roles )
         {
-            s.append( "    <th>" + roles[i].getName() + "</th>\n" );
+            s.append( "    <th>" + role.getName() + "</th>\n" );
         }
         s.append( "</tr>\n" );
         s.append( "</thead>\n" );
@@ -406,10 +398,9 @@ public final class SecurityVerifier
                 s.append( "\"" );
                 s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
                 s.append( "&nbsp;</td>\n" );
-                for( int j = 0; j < roles.length; j++ )
+                for( Principal role : roles )
                 {
-                    Role role = (Role) roles[j];
-                    boolean allowed = allowsAnonymous || wca.isConstrained( jsp, role );
+                    boolean allowed = allowsAnonymous || wca.isConstrained( jsp, (Role)role );
                     s.append( "    <td title=\"" );
                     s.append( allowed ? "ALLOW: " : "DENY: " );
                     s.append( jsp );
@@ -436,50 +427,6 @@ public final class SecurityVerifier
         s.append( "</tbody>\n" );
         s.append( "</table>\n" );
         return s.toString();
-    }
-
-    /**
-     * Returns <code>true</code> if JAAS is configured correctly.
-     * @return the result of the configuration check
-     */
-    public final boolean isJaasConfigured()
-    {
-        return m_isJaasConfigured;
-    }
-
-    /**
-     * Returns <code>true</code> if the JAAS login configuration was already
-     * set when JSPWiki started up. We determine this value by consulting a
-     * protected member field of {@link AuthenticationManager}, which was set
-     * at in initialization by {@link PolicyLoader}.
-     * @return <code>true</code> if {@link PolicyLoader} successfully set the
-     *         policy, or <code>false</code> for any other reason.
-     */
-    public final boolean isJaasConfiguredAtStartup()
-    {
-        return m_engine.getAuthenticationManager().m_isJaasConfiguredAtStartup;
-    }
-
-    /**
-     * Returns <code>true</code> if JSPWiki can locate a named JAAS login
-     * configuration.
-     * @param config the name of the application (e.g.,
-     *            <code>JSPWiki-container</code>).
-     * @return <code>true</code> if found; <code>false</code> otherwise
-     */
-    protected final boolean isJaasConfigurationAvailable( String config )
-    {
-        try
-        {
-            m_session.addMessage( INFO_JAAS, "We found the '" + config + "' login configuration." );
-            new LoginContext( config );
-            return true;
-        }
-        catch( Exception e )
-        {
-            m_session.addMessage( ERROR_JAAS, "We could not find the '" + config + "' login configuration.</p>" );
-            return false;
-        }
     }
 
     /**
@@ -518,9 +465,8 @@ public final class SecurityVerifier
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         Principal[] containerRoles = authorizer.getRoles();
         boolean missing = false;
-        for( int i = 0; i < m_policyPrincipals.length; i++ )
+        for( Principal principal : m_policyPrincipals )
         {
-            Principal principal = m_policyPrincipals[i];
             if ( principal instanceof Role )
             {
                 Role role = (Role) principal;
@@ -657,17 +603,6 @@ public final class SecurityVerifier
                     "be reliable as a result. You should set this to 'jaas' " +
                     "so that security works properly." );
         }
-
-        // Validate the property is set correctly
-        m_jaasConfig = getFileFromProperty( "java.security.auth.login.config" );
-
-        // Look for the JSPWiki-container config
-        boolean foundJaasContainerConfig = isJaasConfigurationAvailable( "JSPWiki-container" );
-
-        // Look for the JSPWiki-custom config
-        boolean foundJaasCustomConfig = isJaasConfigurationAvailable( "JSPWiki-custom" );
-
-        m_isJaasConfigured = m_jaasConfig != null && foundJaasContainerConfig && foundJaasCustomConfig;
     }
 
     /**
@@ -739,6 +674,7 @@ public final class SecurityVerifier
      * resolves to an existing file, and the policy file contained therein
      * represents a valid policy.
      */
+    @SuppressWarnings("unchecked")
     protected final void verifyPolicy()
     {
         // Look up the policy file and set the status text.
@@ -772,12 +708,11 @@ public final class SecurityVerifier
 
             // Verify the file
             policy.read();
-            List errors = policy.getMessages();
+            List<Exception> errors = policy.getMessages();
             if ( errors.size() > 0 )
             {
-                for( Iterator it = errors.iterator(); it.hasNext(); )
+                for( Exception e : errors )
                 {
-                    Exception e = (Exception) it.next();
                     m_session.addMessage( ERROR_POLICY, e.getMessage() );
                 }
             }
@@ -789,21 +724,20 @@ public final class SecurityVerifier
 
             // Stash the unique principals mentioned in the file,
             // plus our standard roles.
-            Set principals = new LinkedHashSet();
+            Set<Principal> principals = new LinkedHashSet<Principal>();
             principals.add( Role.ALL );
             principals.add( Role.ANONYMOUS );
             principals.add( Role.ASSERTED );
             principals.add( Role.AUTHENTICATED );
             ProtectionDomain[] domains = policy.getProtectionDomains();
-            for ( int i = 0; i < domains.length; i++ )
+            for ( ProtectionDomain domain : domains )
             {
-                Principal[] domainPrincipals = domains[i].getPrincipals();
-                for( int j = 0; j < domainPrincipals.length; j++ )
+                for( Principal principal : domain.getPrincipals() )
                 {
-                    principals.add( domainPrincipals[j] );
+                    principals.add( principal );
                 }
             }
-            m_policyPrincipals = (Principal[]) principals.toArray( new Principal[principals.size()] );
+            m_policyPrincipals = principals.toArray( new Principal[principals.size()] );
         }
         catch( IOException e )
         {
@@ -824,7 +758,7 @@ public final class SecurityVerifier
         Subject subject = new Subject();
         subject.getPrincipals().add( principal );
         boolean allowedByGlobalPolicy = ((Boolean)
-            Subject.doAsPrivileged( subject, new PrivilegedAction()
+            Subject.doAsPrivileged( subject, new PrivilegedAction<Object>()
             {
                 public Object run()
                 {
@@ -896,11 +830,11 @@ public final class SecurityVerifier
         String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         try
         {
-            UserProfile profile = new DefaultUserProfile();
-            profile.setEmail("testuser@testville.com");
+            UserProfile profile = db.newProfile();
+            profile.setEmail( "testuser@testville.com" );
             profile.setLoginName( loginName );
             profile.setFullname( "FullName"+loginName );
-            profile.setPassword("password");
+            profile.setPassword( "password" );
             db.save(profile);
 
             // Make sure the profile saved successfully
@@ -935,17 +869,5 @@ public final class SecurityVerifier
         }
 
         m_session.addMessage( INFO_DB, "The user database configuration looks fine." );
-    }
-
-    /**
-     * Returns the location of the JAAS configuration file if and only if the
-     * <code>java.security.auth.login.config</code> is set <em>and</em> the
-     * file it points to exists in the file system; returns <code>null</code>
-     * in all other cases.
-     * @return the location of the JAAS configuration file
-     */
-    public final File jaasConfiguration()
-    {
-        return m_jaasConfig;
     }
 }

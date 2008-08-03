@@ -1,24 +1,26 @@
-/*
-  JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-  Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation; either version 2.1 of the License, or
-  (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.auth;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
@@ -28,12 +30,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
-import net.sourceforge.stripes.action.UrlBinding;
-
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.LoginActionBean;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.AbstractUserDatabase;
@@ -55,7 +54,6 @@ import com.ecyrd.jspwiki.workflow.*;
 
 /**
  * Provides a facade for obtaining user information.
- * @author Janne Jalkanen
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -86,8 +84,8 @@ public final class UserManager
 
     // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
-    /** Associateds wiki sessions with profiles */
-    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>(); 
+    /** Associates wiki sessions with profiles */
+    private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>();
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase     m_database;
@@ -106,6 +104,7 @@ public final class UserManager
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      */
+    @SuppressWarnings("deprecation")
     public final void initialize( WikiEngine engine, Properties props )
     {
         m_engine = engine;
@@ -116,7 +115,7 @@ public final class UserManager
         // TODO: it would be better if we did this in PageManager directly
         addWikiEventListener( engine.getPageManager() );
 
-        JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(), new AllPermission(null) );
+        JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
     }
 
     /**
@@ -149,7 +148,7 @@ public final class UserManager
                                                           PROP_DATABASE );
 
             log.info("Attempting to load user database class "+dbClassName);
-            Class dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
+            Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
             m_database = (UserDatabase) dbClass.newInstance();
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
             log.info("UserDatabase initialized.");
@@ -431,7 +430,7 @@ public final class UserManager
     {
         // Retrieve the user's profile (may have been previously cached)
         UserProfile profile = getUserProfile( context.getWikiSession() );
-        HttpServletRequest request = context.getContext().getRequest();
+        HttpServletRequest request = context.getHttpRequest();
 
         // Extract values from request stream (cleanse whitespace as needed)
         String loginName = request.getParameter( PARAM_LOGINNAME );
@@ -472,8 +471,8 @@ public final class UserManager
      * (see {@link WikiSession#getMessages()}.
      * @param context the current wiki context
      * @param profile the supplied UserProfile
-     * @deprecated
      */
+    @SuppressWarnings("unchecked")
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = profile.isNew();
@@ -485,11 +484,9 @@ public final class UserManager
         //  Query the SpamFilter first
         //
         
-        List ls = m_engine.getFilterManager().getFilterList();
-        for( Iterator i = ls.iterator(); i.hasNext(); )
+        List<PageFilter> ls = m_engine.getFilterManager().getFilterList();
+        for( PageFilter pf : ls )
         {
-            PageFilter pf = (PageFilter)i.next();
-            
             if( pf instanceof SpamFilter )
             {
                 if( ((SpamFilter)pf).isValidUserProfile( context, profile ) == false )
@@ -502,10 +499,8 @@ public final class UserManager
         }
         
         // If container-managed auth and user not logged in, throw an error
-        // unless we're allowed to add profiles to the container
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
-             && !context.getWikiSession().isAuthenticated()
-             && !getUserDatabase().isSharedWithContainer() )
+             && !context.getWikiSession().isAuthenticated() )
         {
             session.addMessage( SESSION_MESSAGES, rb.getString("security.error.createprofilebeforelogin") );
         }
@@ -569,6 +564,12 @@ public final class UserManager
         { /* It's clean */ }
     }
 
+    /**
+     *  A helper method for returning all of the known WikiNames in this system.
+     *  
+     *  @return An Array of Principals
+     *  @throws WikiSecurityException If for reason the names cannot be fetched
+     */
     public Principal[] listWikiNames()
         throws WikiSecurityException
     {
@@ -579,7 +580,6 @@ public final class UserManager
      * This is a database that gets used if nothing else is available. It does
      * nothing of note - it just mostly thorws NoSuchPrincipalExceptions if
      * someone tries to log in.
-     * @author Janne Jalkanen
      */
     public static class DummyUserDatabase extends AbstractUserDatabase
     {
@@ -588,6 +588,7 @@ public final class UserManager
          * No-op.
          * @throws WikiSecurityException never...
          */
+        @SuppressWarnings("deprecation")
         public void commit() throws WikiSecurityException
         {
             // No operation
@@ -638,6 +639,16 @@ public final class UserManager
 
         /**
          * No-op; always throws <code>NoSuchPrincipalException</code>.
+         * @param uid the unique identifier to search for
+         * @return the user profile
+         * @throws NoSuchPrincipalException never...
+         */
+        public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+        {
+            throw new NoSuchPrincipalException("No user profiles available");
+        }
+        /**
+         * No-op; always throws <code>NoSuchPrincipalException</code>.
          * @param index the name to search for
          * @return the user profile
          * @throws NoSuchPrincipalException never...
@@ -665,15 +676,6 @@ public final class UserManager
          */
         public void initialize(WikiEngine engine, Properties props) throws NoRequiredPropertyException
         {
-        }
-
-        /**
-         * No-op.
-         * @return <code>false</code>
-         */
-        public boolean isSharedWithContainer()
-        {
-            return false;
         }
 
         /**
@@ -711,6 +713,7 @@ public final class UserManager
      */
     public static class SaveUserProfileTask extends Task
     {
+        private static final long serialVersionUID = 6994297086560480285L;
         private final UserDatabase m_db;
         private final WikiEngine m_engine;
 
@@ -753,7 +756,7 @@ public final class UserManager
                         + "Your name : " + profile.getFullname() + "\n"
                         + "E-mail    : " + profile.getEmail() + "\n\n"
                         + "If you forget your password, you can reset it at "
-                        + m_engine.getBaseURL() + LoginActionBean.class.getAnnotation(UrlBinding.class).value();
+                        + m_engine.getURL(WikiContext.LOGIN, null, null, true);
                     MailUtil.sendMessage( m_engine, to, subject, content);
                 }
                 catch ( AddressException e)
@@ -810,11 +813,25 @@ public final class UserManager
 
     /**
      *  Implements the JSON API for usermanager.
-     *
-     *  @author Janne Jalkanen
+     *  <p>
+     *  Even though this gets serialized whenever container shuts down/restarts,
+     *  this gets reinstalled to the session when JSPWiki starts.  This means
+     *  that it's not actually necessary to save anything.
      */
-    public final class JSONUserModule implements RPCCallable
+    public static final class JSONUserModule implements RPCCallable, Serializable
     {
+        private static final long serialVersionUID = 1L;
+        private volatile UserManager m_manager;
+        
+        /**
+         *  Create a new JSONUserModule.
+         *  @param mgr Manager
+         */
+        public JSONUserModule( UserManager mgr )
+        {
+            m_manager = mgr;
+        }
+        
         /**
          *  Directly returns the UserProfile object attached to an uid.
          *
@@ -825,12 +842,14 @@ public final class UserManager
         public UserProfile getUserInfo( String uid )
             throws NoSuchPrincipalException
         {
-            log.info("request "+uid);
-            UserProfile prof = getUserDatabase().find( uid );
+            if( m_manager != null )
+            {
+                UserProfile prof = m_manager.getUserDatabase().find( uid );
 
-            log.info("answer "+prof);
-
-            return prof;
+                return prof;
+            }
+            
+            throw new IllegalStateException("The manager is offline.");
         }
     }
 }

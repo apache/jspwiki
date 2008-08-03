@@ -1,34 +1,35 @@
 /*
- * JSPWiki - a JSP-based WikiWiki clone. Copyright (C) 2001-2003 Janne Jalkanen
- * (Janne.Jalkanen@iki.fi) This program is free software; you can redistribute
- * it and/or modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version. This program is distributed
- * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details. You should have
- * received a copy of the GNU Lesser General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
  */
 package com.ecyrd.jspwiki.auth;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessController;
 import java.security.Principal;
-import java.security.PrivilegedAction;
-import java.util.Properties;
+import java.util.*;
 
+import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -40,83 +41,113 @@ import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
-import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
-import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
-import com.ecyrd.jspwiki.auth.login.WebContainerCallbackHandler;
-import com.ecyrd.jspwiki.auth.login.WikiCallbackHandler;
+import com.ecyrd.jspwiki.auth.login.*;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.util.TimedCounterList;
 
 /**
  * Manages authentication activities for a WikiEngine: user login, logout, and
  * credential refreshes. This class uses JAAS to determine how users log in.
+ * <p>
+ * The login procedure is protected in addition by a mechanism which prevents
+ * a hacker to try and force-guess passwords by slowing down attempts to log in
+ * into the same account.  Every login attempt is recorded, and stored for a while
+ * (currently ten minutes), and each login attempt during that time incurs a penalty
+ * of 2^login attempts milliseconds - that is, 10 login attempts incur a login penalty of 1.024 seconds.
+ * The delay is currently capped to 20 seconds.
+ * 
  * @author Andrew Jaquith
- * @author Janne Jalkanen
  * @author Erik Bunn
  * @since 2.3
  */
 public final class AuthenticationManager
 {
+    /** How many milliseconds the logins are stored before they're cleaned away. */
+    private static final long LASTLOGINS_CLEANUP_TIME = 10*60*1000L; // Ten minutes
 
+    private static final long MAX_LOGIN_DELAY         = 20*1000L; // 20 seconds
+    
     /** The name of the built-in cookie assertion module */
     public static final String                 COOKIE_MODULE       =  CookieAssertionLoginModule.class.getName();
 
     /** The name of the built-in cookie authentication module */
     public static final String                 COOKIE_AUTHENTICATION_MODULE =  CookieAuthenticationLoginModule.class.getName();
 
-    /** The JAAS application name for the web container authentication stack. */
-    public static final String                 LOGIN_CONTAINER     = "JSPWiki-container";
-
-    /** The JAAS application name for the JSPWiki custom authentication stack. */
-    public static final String                 LOGIN_CUSTOM        = "JSPWiki-custom";
-
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     public static final String                 PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
-
-    protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
-
-    /** Was JAAS login config already set before we startd up? */
-    protected boolean m_isJaasConfiguredAtStartup = false;
-
-    /** Static Boolean for lazily-initializing the "allows assertions" flag */
-    private static Boolean                     c_allowsAssertions  = null;
-
-    /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
-    private static Boolean                     c_allowsAuthentication = null;
-
-    private WikiEngine                         m_engine            = null;
-
-    /** If true, logs the IP address of the editor */
-    private boolean                            m_storeIPAddress    = true;
-
-    /** Value specifying that the user wants to use the container-managed security, just like
-     *  in JSPWiki 2.2.
-     */
-    public static final String                SECURITY_OFF      = "off";
-
-    /** Just to provide compatibility with the old versions.  The same
-     *  as SECURITY_OFF.
-     *
+    
+    /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used for authentication. */
+    public static final String                 PROP_ALLOW_COOKIE_AUTH = "jspwiki.cookieAuthentication";
+    
+    /**
+     *  This property determines whether we use JSPWiki authentication or not.
+     *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
+     *  <p>
+     *  Setting this is now deprecated - we do not guarantee that it works.
+     *  
      *  @deprecated
      */
-    protected static final String             SECURITY_CONTAINER = "container";
+    public  static final String                PROP_SECURITY       = "jspwiki.security";
+
+    /** Value specifying that the user wants to use the container-managed security, just like in JSPWiki 2.2. */
+    public static final String                SECURITY_OFF      = "off";
 
     /** Value specifying that the user wants to use the built-in JAAS-based system */
     public static final String                SECURITY_JAAS     = "jaas";
 
-    /**
-     *  This property determines whether we use JSPWiki authentication or not.
-     *  Possible values are AUTH_JAAS or AUTH_CONTAINER.
+    protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
+
+    /** Prefix for LoginModule options key/value pairs. */
+    protected static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
+
+    /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used to assert identities. */
+    protected static final String                 PROP_ALLOW_COOKIE_ASSERTIONS = "jspwiki.cookieAssertions";
+
+    /** The {@link javax.security.auth.spi.LoginModule} to use for custom authentication. */
+    protected static final String                 PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
+    
+    /** Empty Map passed to JAAS {@link #doJAASLogin(Class, CallbackHandler, Map)} method. */
+    protected static final Map<String,String> EMPTY_MAP = Collections.unmodifiableMap( new HashMap<String,String>() );
+    
+    /** Class (of type LoginModule) to use for custom authentication. */
+    protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
+    
+    /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
+     * initialized by {@link #initialize(WikiEngine, Properties)}. */
+    protected Map<String,String> m_loginModuleOptions = new HashMap<String,String>();
+
+    /** Just to provide compatibility with the old versions.  The same
+     *  as SECURITY_OFF.
      *
+     *  @deprecated use {@link #SECURITY_OFF} instead
      */
+    protected static final String             SECURITY_CONTAINER = "container";
 
-    public  static final String                PROP_SECURITY       = "jspwiki.security";
-    private static final String                PROP_JAAS_CONFIG    = "java.security.auth.login.config";
-    private static final String                DEFAULT_JAAS_CONFIG = "jspwiki.jaas";
+    /** The default {@link javax.security.auth.spi.LoginModule} class name to use for custom authentication. */
+    private static final String                 DEFAULT_LOGIN_MODULE = "com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule";
+    
+    /** Empty principal set. */
+    private static final Set<Principal> NO_PRINCIPALS = new HashSet<Principal>();
 
-    private static       boolean               c_useJAAS = true;
+    /** Static Boolean for lazily-initializing the "allows assertions" flag */
+    private boolean                     m_allowsCookieAssertions  = true;
 
+    /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
+    private boolean                     m_allowsCookieAuthentication = false;
+
+    private WikiEngine                         m_engine            = null;
+    
+    /** If true, logs the IP address of the editor */
+    private boolean                            m_storeIPAddress    = true;
+
+    private boolean               m_useJAAS = true;
+
+    /** Keeps a list of the usernames who have attempted a login recently. */
+    
+    private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
+    
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
      * the specified set of properties. All initialization for the modules is
@@ -125,43 +156,39 @@ public final class AuthenticationManager
      * @param props the properties used to initialize the wiki engine
      * @throws WikiException if the AuthenticationManager cannot be initialized
      */
+    @SuppressWarnings("unchecked")
     public final void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
-        m_isJaasConfiguredAtStartup = PolicyLoader.isJaasConfigured();
 
-        // Yes, writing to a static field is done here on purpose.
-        c_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
-
-        if( !c_useJAAS ) return;
-
-        //
-        //  The rest is JAAS implementation
-        //
-
-        log.info( "Checking JAAS configuration..." );
-
-        if (! m_isJaasConfiguredAtStartup )
+        // Should J2SE policies be used for authorization?
+        m_useJAAS = SECURITY_JAAS.equals(props.getProperty( PROP_SECURITY, SECURITY_JAAS ));
+        
+        // Should we allow cookies for assertions? (default: yes)
+        m_allowsCookieAssertions = TextUtil.getBooleanProperty( props,
+                                                              PROP_ALLOW_COOKIE_ASSERTIONS,
+                                                              true );
+        
+        // Should we allow cookies for authentication? (default: no)
+        m_allowsCookieAuthentication = TextUtil.getBooleanProperty( props,
+                                                                    PROP_ALLOW_COOKIE_AUTH,
+                                                                    false );
+        
+        // Look up the LoginModule class
+        String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
+        try
         {
-            URL config = findConfigFile( engine, DEFAULT_JAAS_CONFIG );
-            log.info("JAAS not configured. Installing default configuration: " + config
-                + ". You can set the "+PROP_JAAS_CONFIG+" system property to point to your "
-                + "jspwiki.jaas file, or add the entries from jspwiki.jaas to your own "
-                + "JAAS configuration file.");
-            try
-            {
-                PolicyLoader.setJaasConfiguration( config );
-            }
-            catch ( SecurityException e)
-            {
-                log.error("Could not configure JAAS: " + e.getMessage());
-            }
+            m_loginModuleClass = (Class<? extends LoginModule>) Class.forName( loginModuleClassName );
         }
-        else
+        catch (ClassNotFoundException e)
         {
-            log.info("JAAS already configured by some other application (leaving it alone...)");
+            e.printStackTrace();
+            throw new WikiException(e.getMessage());
         }
+        
+        // Initialize the LoginModule options
+        initLoginModuleOptions( props );
     }
 
     /**
@@ -175,7 +202,7 @@ public final class AuthenticationManager
      */
     public final boolean isContainerAuthenticated()
     {
-        if( !c_useJAAS ) return true;
+        if( !m_useJAAS ) return true;
 
         try
         {
@@ -194,56 +221,122 @@ public final class AuthenticationManager
 
     /**
      * <p>Logs in the user by attempting to populate a WikiSession Subject from
-     * a web servlet request. This method leverages container-managed authentication.
-     * This method logs in the user if the user's status is "unknown" to the
-     * WikiSession, or if the Http servlet container's authentication status has
-     * changed. This method assumes that the HttpServletRequest is not null; otherwise,
-     * an IllegalStateException is thrown. This method is a <em>privileged</em> action;
-     * the caller must posess the (name here) permission.</p>
-     * <p>If <code>request</code> is <code>null</code>, or the WikiSession
-     * cannot be located for this request, this method throws an {@link IllegalStateException}.</p>
-     *             methods return null
+     * a web servlet request by examining the request
+     *  for the presence of container credentials and user cookies. The processing
+     * logic is as follows:
+     * </p>
+     * <ul>
+     * <li>If the WikiSession had previously been unauthenticated, check to see if
+     * user has subsequently authenticated. To be considered "authenticated,"
+     * the request must supply one of the following (in order of preference):
+     * the container <code>userPrincipal</code>, container <code>remoteUser</code>,
+     * or authentication cookie. If the user is authenticated, this method fires event
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#LOGIN_AUTHENTICATED}
+     * with two parameters: a Principal representing the login principal,
+     * and the current WikiSession. In addition, if the authorizer is of type
+     * WebContainerAuthorizer, this method iterates through the container roles returned by
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer#getRoles()},
+     * tests for membership in each one, and adds those that pass to the Subject's principal set.</li>
+     * <li>If, after checking for authentication, the WikiSession is still Anonymous,
+     * this method next checks to see if the user has "asserted" an identity
+     * by supplying an assertion cookie. If the user is found to be asserted,
+     * this method fires event {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#LOGIN_ASSERTED}
+     * with two parameters: <code>WikiPrincipal(<em>cookievalue</em>)</code>, and
+     * the current WikiSession.</li>
+     * <li>If, after checking for authenticated and asserted status, the  WikiSession is
+     * <em>still</em> anonymous, this method fires event
+     * {@link com.ecyrd.jspwiki.event.WikiSecurityEvent#LOGIN_ANONYMOUS} with
+     * two parameters: <code>WikiPrincipal(<em>remoteAddress</em>)</code>,
+     * and the current WikiSession </li>
+     * </ul>
      * @param request servlet request for this user
-     * @return the result of the login operation: <code>true</code> if the user logged in
-     * successfully; <code>false</code> otherwise
-     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
+     * @return always returns <code>true</code> (because anonymous login, at least, will always succeed)
+     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the user cannot be logged in for any reason
      * @since 2.3
      */
     public final boolean login( HttpServletRequest request ) throws WikiSecurityException
     {
-        if ( request == null )
+        HttpSession httpSession = request.getSession();
+        WikiSession session = SessionMonitor.getInstance(m_engine).find( httpSession );
+        AuthenticationManager authenticationMgr = m_engine.getAuthenticationManager();
+        AuthorizationManager authorizationMgr = m_engine.getAuthorizationManager();
+        CallbackHandler handler = null;
+        Map<String,String> options = EMPTY_MAP;
+
+        // If user not authenticated, check if container logged them in, or if
+        // there's an authentication cookie
+        if ( !session.isAuthenticated() )
         {
-            throw new IllegalStateException( "Wiki context's HttpRequest may not be null" );
+            // Create a callback handler
+            try
+            {
+                handler = new WebContainerCallbackHandler( m_engine, request, authorizationMgr.getAuthorizer() );
+            }
+            catch ( WikiSecurityException e )
+            {
+                e.printStackTrace();
+                throw new WikiSecurityException( e.getMessage() );
+            }
+            
+            // Execute the container login module, then (if that fails) the cookie auth module
+            Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
+            if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
+            {
+                principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
+            }
+            
+            // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
+            if ( principals.size() > 0 )
+            {
+                fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
+                for ( Principal principal : principals )
+                {
+                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
+                }
+            }
         }
 
-        WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
-        if ( wikiSession == null )
+        // If user still not authenticated, check if assertion cookie was supplied
+        if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() )
         {
-            throw new IllegalStateException( "Wiki context's WikiSession may not be null" );
+            // Execute the cookie assertion login module
+            Set<Principal> principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
+            if ( principals.size() > 0 )
+            {
+                fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
+            }
         }
 
-        // If using JAAS, try to log in; otherwise logins "always" succeed
-        boolean login = true;
-        if( c_useJAAS )
+        // If user still anonymous, use the remote address
+        if (session.isAnonymous() )
         {
-            AuthorizationManager authMgr = m_engine.getAuthorizationManager();
-            CallbackHandler handler = new WebContainerCallbackHandler(
-                    m_engine,
-                    request,
-                    authMgr.getAuthorizer() );
-            login = doLogin( wikiSession, handler, LOGIN_CONTAINER );
+            Set<Principal> principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
+            if ( principals.size() > 0 )
+            {
+                fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
+                return true;
+            }
         }
-        return login;
+        
+        // If by some unusual turn of events the Anonymous login module doesn't work, login failed!
+        return false;
     }
-
+    
     /**
      * Attempts to perform a WikiSession login for the given username/password
-     * combination. This is custom authentication.
+     * combination using JSPWiki's custom authentication mode. In order to log in,
+     * the JAAS LoginModule supplied by the WikiEngine property {@link #PROP_LOGIN_MODULE}
+     * will be instantiated, and its
+     * {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}
+     * method will be invoked. By default, the {@link com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule}
+     * class will be used. When the LoginModule's <code>initialize</code> method is invoked,
+     * an options Map populated by properties keys prefixed by {@link #PREFIX_LOGIN_MODULE_OPTIONS}
+     * will be passed as a parameter.
      * @param session the current wiki session; may not be null.
      * @param username The user name. This is a login name, not a WikiName. In
      *            most cases they are the same, but in some cases, they might
      *            not be.
-     * @param password The password
+     * @param password the password
      * @return true, if the username/password is valid
      * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      */
@@ -255,12 +348,54 @@ public final class AuthenticationManager
             return false;
         }
 
+        delayLogin(username);
+        
         UserManager userMgr = m_engine.getUserManager();
         CallbackHandler handler = new WikiCallbackHandler(
                 userMgr.getUserDatabase(),
                 username,
                 password );
-        return doLogin( session, handler, LOGIN_CUSTOM );
+        
+        // Execute the user's specified login module
+        Set<Principal> principals = doJAASLogin( UserDatabaseLoginModule.class, handler, m_loginModuleOptions );
+        if (principals.size() > 0)
+        {
+            fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
+            for ( Principal principal : principals )
+            {
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     *  This method builds a database of login names that are being attempted, and will try to
+     *  delay if there are too many requests coming in for the same username.
+     *  <p>
+     *  The current algorithm uses 2^loginattempts as the delay in milliseconds, i.e.
+     *  at 10 login attempts it'll add 1.024 seconds to the login.
+     *  
+     *  @param username The username that is being logged in
+     */
+    private void delayLogin( String username )
+    {
+        try
+        {
+            m_lastLoginAttempts.cleanup( LASTLOGINS_CLEANUP_TIME );
+            int count = m_lastLoginAttempts.count( username );
+            
+            long delay = Math.min( 1<<count, MAX_LOGIN_DELAY );
+            log.debug( "Sleeping for "+delay+" ms to allow login." );
+            Thread.sleep( delay );
+            
+            m_lastLoginAttempts.add( username );
+        }
+        catch( InterruptedException e )
+        {
+            // FALLTHROUGH is fine
+        }
     }
 
     /**
@@ -307,92 +442,26 @@ public final class AuthenticationManager
     /**
      * Determines whether this WikiEngine allows users to assert identities using
      * cookies instead of passwords. This is determined by inspecting
-     * the LoginConfiguration for application <code>JSPWiki-container</code>.
+     * the WikiEngine property {@link #PROP_ALLOW_COOKIE_ASSERTIONS}.
      * @return <code>true</code> if cookies are allowed
      */
-    public static final boolean allowsCookieAssertions()
+    public final boolean allowsCookieAssertions()
     {
-        if( !c_useJAAS ) return true;
-
-        // Lazily initialize
-        if( c_allowsAssertions == null )
-        {
-            c_allowsAssertions = Boolean.FALSE;
-
-            // Figure out whether cookie assertions are allowed
-            Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
-              {
-                  public Object run()
-                  {
-                      return Configuration.getConfiguration();
-                  }
-              });
-
-            if (loginConfig != null)
-            {
-                AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-                if( configs != null )
-                {
-                    for ( int i = 0; i < configs.length; i++ )
-                    {
-                        AppConfigurationEntry config = configs[i];
-                        if ( COOKIE_MODULE.equals( config.getLoginModuleName() ) )
-                        {
-                            c_allowsAssertions = Boolean.TRUE;
-                        }
-                    }
-                }
-            }
-        }
-
-        return c_allowsAssertions.booleanValue();
+        return m_allowsCookieAssertions;
     }
 
     /**
      *  Determines whether this WikiEngine allows users to authenticate using
      *  cookies instead of passwords. This is determined by inspecting
-     *  the LoginConfiguration for application <code>JSPWiki-container</code>.
+     * the WikiEngine property {@link #PROP_ALLOW_COOKIE_AUTH}.
      *  @return <code>true</code> if cookies are allowed for authentication
      *  @since 2.5.62
      */
-    public static final boolean allowsCookieAuthentication()
+    public final boolean allowsCookieAuthentication()
     {
-        if( !c_useJAAS ) return true;
-
-        // Lazily initialize
-        if( c_allowsAuthentication == null )
-        {
-            c_allowsAuthentication = Boolean.FALSE;
-
-            // Figure out whether cookie assertions are allowed
-            Configuration loginConfig = (Configuration)AccessController.doPrivileged(new PrivilegedAction()
-              {
-                  public Object run()
-                  {
-                      return Configuration.getConfiguration();
-                  }
-              });
-
-            if (loginConfig != null)
-            {
-                AppConfigurationEntry[] configs = loginConfig.getAppConfigurationEntry( LOGIN_CONTAINER );
-
-                if( configs != null )
-                {
-                    for ( int i = 0; i < configs.length; i++ )
-                    {
-                        AppConfigurationEntry config = configs[i];
-                        if ( COOKIE_AUTHENTICATION_MODULE.equals( config.getLoginModuleName() ) )
-                        {
-                            c_allowsAuthentication = Boolean.TRUE;
-                        }
-                    }
-                }
-            }
-        }
-
-        return c_allowsAuthentication.booleanValue();
+        return m_allowsCookieAuthentication;
     }
+    
     /**
      * Determines whether the supplied Principal is a "role principal".
      * @param principal the principal to test
@@ -420,99 +489,66 @@ public final class AuthenticationManager
     }
 
     /**
-     * Log in to the application using a given JAAS LoginConfiguration. Any
-     * configuration error
-     * @param wikiSession the current wiki session, to which the Subject will be associated
-     * @param handler handles callbacks sent by the LoginModules in the configuration
-     * @param application the name of the application whose LoginConfiguration should be used
-     * @return the result of the login
+     * Instantiates and executes a single JAAS
+     * {@link javax.security.auth.spi.LoginModule}, and returns a Set of
+     * Principals that results from a successful login. The LoginModule is instantiated,
+     * then its {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}
+     * method is called. The parameters passed to <code>initialize</code> is a 
+     * dummy Subject, an empty shared-state Map, and an options Map the caller supplies.
+     * 
+     * @param clazz
+     *            the LoginModule class to instantiate
+     * @param handler
+     *            the callback handler to supply to the LoginModule
+     * @param options
+     *            a Map of key/value strings for initializing the LoginModule
+     * @return the set of Principals returned by the JAAS method {@link Subject#getPrincipals()}
      * @throws WikiSecurityException
+     *             if the LoginModule could not be instantiated for any reason
      */
-    private final boolean doLogin( final WikiSession wikiSession, final CallbackHandler handler, final String application ) throws WikiSecurityException
+    protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
     {
+        // Instantiate the login module
+        LoginModule loginModule = null;
         try
         {
-            LoginContext loginContext  = (LoginContext)AccessController.doPrivileged(new PrivilegedAction()
-            {
-                public Object run()
-                {
-                    try
-                    {
-                        return wikiSession.getLoginContext( application, handler );
-                    }
-                    catch( LoginException e )
-                    {
-                        log.error( "Couldn't retrieve login configuration.\nMessage="
-                                   + e.getLocalizedMessage() );
-                        return null;
-                    }
-                }
-            });
+            loginModule = clazz.newInstance();
+        }
+        catch (InstantiationException e)
+        {
+            throw new WikiSecurityException(e.getMessage());
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new WikiSecurityException(e.getMessage());
+        }
 
-            if( loginContext != null )
-            {
-                loginContext.login();
-                fireEvent( WikiSecurityEvent.LOGIN_INITIATED, null, wikiSession );
-            }
-            else
-            {
-                log.error("No login context.  Please double-check that JSPWiki found your 'jspwiki.jaas' file or the contents have been appended to your regular JAAS file.");
-                return false;
-            }
+        // Initialize the LoginModule
+        Subject subject = new Subject();
+        loginModule.initialize( subject, handler, EMPTY_MAP, options );
 
-            // Fire event for the correct authentication event
-            if ( wikiSession.isAnonymous() )
+        // Try to log in:
+        boolean loginSucceeded = false;
+        boolean commitSucceeded = false;
+        try
+        {
+            loginSucceeded = loginModule.login();
+            if (loginSucceeded)
             {
-                fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, wikiSession.getLoginPrincipal(), wikiSession );
+                commitSucceeded = loginModule.commit();
             }
-            else if ( wikiSession.isAsserted() )
-            {
-                fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, wikiSession.getLoginPrincipal(), wikiSession );
-            }
-            else if ( wikiSession.isAuthenticated() )
-            {
-                fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, wikiSession.getLoginPrincipal(), wikiSession );
-            }
+        }
+        catch (LoginException e)
+        {
+            // Login or commit failed! No principal for you!
+        }
 
-            return true;
-        }
-        catch( FailedLoginException e )
+        // If we successfully logged in & committed, return all the principals
+        if (loginSucceeded && commitSucceeded)
         {
-            //
-            //  Just a mistyped password or a cracking attempt.  No need to worry
-            //  and alert the admin
-            //
-            log.info("Failed login: "+e.getLocalizedMessage());
-            fireEvent( WikiSecurityEvent.LOGIN_FAILED, wikiSession.getLoginPrincipal(), wikiSession );
-            return false;
+            return subject.getPrincipals();
         }
-        catch( AccountExpiredException e )
-        {
-            log.info("Expired account: "+e.getLocalizedMessage());
-            fireEvent( WikiSecurityEvent.LOGIN_ACCOUNT_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
-            return false;
-        }
-        catch( CredentialExpiredException e )
-        {
-            log.info("Credentials expired: "+e.getLocalizedMessage());
-            fireEvent( WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED, wikiSession.getLoginPrincipal(), wikiSession );
-            return false;
-        }
-        catch( LoginException e )
-        {
-            //
-            //  This should only be caught if something unforeseen happens,
-            //  so therefore we can log it as an error.
-            //
-            log.error( "Couldn't log in.\nMessage="
-                       + e.getLocalizedMessage() );
-            return false;
-        }
-        catch( SecurityException e )
-        {
-            log.error( "Could not log in.  Please check that your jaas.config file is found.", e );
-            return false;
-        }
+        return NO_PRINCIPALS;
     }
 
     /**
@@ -571,6 +607,23 @@ public final class AuthenticationManager
         return path;
     }
 
+    /**
+     * Returns the first Principal in a set that isn't a {@link com.ecyrd.jspwiki.auth.authorize.Role} or
+     * {@link com.ecyrd.jspwiki.auth.GroupPrincipal}.
+     * @param principals the principal set
+     * @return the login principal
+     */
+    protected Principal getLoginPrincipal(Set<Principal> principals)
+    {
+        for (Principal principal: principals )
+        {
+            if ( isUserPrincipal( principal ) )
+            {
+                return principal;
+            }
+        }
+        return null;
+    }
 
     // events processing .......................................................
 
@@ -608,6 +661,39 @@ public final class AuthenticationManager
         if ( WikiEventManager.isListening(this) )
         {
             WikiEventManager.fireEvent(this,new WikiSecurityEvent(this,type,principal,target));
+        }
+    }
+    
+    /**
+     * Initializes the options Map supplied to the configured LoginModule every time it is invoked by
+     * {@link #doLoginModule(Class, CallbackHandler)}. The properties and values extracted from
+     * <code>jspwiki.properties</code> are of the form
+     * <code>jspwiki.loginModule.options.<var>param</var> = <var>value</var>, where
+     * <var>param</var> is the key name, and <var>value</var> is the value.
+     * @param props the properties used to initialize JSPWiki
+     * @throws IllegalArgumentException if any of the keys are duplicated
+     */
+    private void initLoginModuleOptions(Properties props)
+    {
+        for ( Object key : props.keySet() )
+        {
+            String propName = key.toString();
+            if ( propName.startsWith( PREFIX_LOGIN_MODULE_OPTIONS ) )
+            {
+                // Extract the option name and value
+                String optionKey = propName.substring( PREFIX_LOGIN_MODULE_OPTIONS.length() ).trim();
+                if ( optionKey.length() > 0 )
+                {
+                    String optionValue = props.getProperty( propName );
+                    
+                    // Make sure the key is unique before stashing the key/value pair
+                    if ( m_loginModuleOptions.containsKey( optionKey ) )
+                    {
+                        throw new IllegalArgumentException( "JAAS LoginModule key " + propName + " cannot be specified twice!" );
+                    }
+                    m_loginModuleOptions.put( optionKey, optionValue );
+                }
+            }
         }
     }
 

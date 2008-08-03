@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
@@ -121,8 +122,8 @@ public class AttachmentManager
         //
         try
         {
-            Class providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
-                                                       classname );
+            Class<?> providerclass = ClassUtil.findClass( "com.ecyrd.jspwiki.providers",
+                                                          classname );
 
             m_provider = (WikiAttachmentProvider)providerclass.newInstance();
 
@@ -307,22 +308,23 @@ public class AttachmentManager
      */
 
     // FIXME: This API should be changed to return a List.
-    public Collection<Attachment> listAttachments( WikiPage wikipage )
+    @SuppressWarnings("unchecked")
+    public Collection listAttachments( WikiPage wikipage )
         throws ProviderException
     {
         if( m_provider == null )
         {
-            return new ArrayList<Attachment>();
+            return new ArrayList();
         }
 
-        Collection<Attachment> atts = m_provider.listAttachments( wikipage );
+        Collection atts = m_provider.listAttachments( wikipage );
 
         //
         //  This is just a sanity check; all of our providers return a Collection.
         //
         if( atts instanceof List )
         {
-            Collections.sort( (List<Attachment>)atts );
+            Collections.sort( (List) atts );
         }
 
         return atts;
@@ -534,7 +536,7 @@ public class AttachmentManager
      *          return an empty collection.
      *  @throws ProviderException If something went wrong with the backend
      */
-    public Collection<Attachment> getAllAttachments()
+    public Collection getAllAttachments()
         throws ProviderException
     {
         if( attachmentsEnabled() )
@@ -586,5 +588,54 @@ public class AttachmentManager
 
         m_engine.getReferenceManager().clearPageEntries( att.getName() );
 
+    }
+
+    /**
+     *  Validates the filename and makes sure it is legal.  It trims and splits
+     *  and replaces bad characters.
+     *  
+     *  @param filename
+     *  @return A validated name with annoying characters replaced.
+     *  @throws WikiException If the filename is not legal (e.g. empty)
+     */
+    static String validateFileName( String filename )
+        throws WikiException
+    {
+        if( filename == null || filename.trim().length() == 0 )
+        {
+            AttachmentServlet.log.error("Empty file name given.");
+    
+            throw new WikiException("Empty file name given.");
+        }
+    
+        //
+        //  Should help with IE 5.22 on OSX
+        //
+        filename = filename.trim();
+
+        // If file name ends with .jsp, the user is being naughty!
+        if ( filename.endsWith( ".jsp" ) || filename.endsWith( ".JSP" ) )
+        {
+            AttachmentServlet.log.error( "Illegal file name." );
+            
+            throw new WikiException( "Illegal file name." );
+        }
+    
+        //
+        //  Some browser send the full path info with the filename, so we need
+        //  to remove it here by simply splitting along slashes and then taking the path.
+        //
+        
+        String[] splitpath = filename.split( "[/\\\\]" );
+        filename = splitpath[splitpath.length-1];
+        
+        //
+        //  Remove any characters that might be a problem. Most
+        //  importantly - characters that might stop processing
+        //  of the URL.
+        //
+        filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
+    
+        return filename;
     }
 }

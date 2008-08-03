@@ -1,21 +1,22 @@
-/*
- JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
- Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation; either version 2.1 of the License, or
- (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth;
 
@@ -102,7 +103,7 @@ public final class AuthorizationManager
     private Authorizer                        m_authorizer      = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map                               m_cachedPds       = new WeakHashMap();
+    private Map<Principal, ProtectionDomain>                               m_cachedPds       = new WeakHashMap<Principal, ProtectionDomain>();
 
     private WikiEngine                        m_engine          = null;
 
@@ -231,13 +232,11 @@ public final class AuthorizationManager
 
         log.debug( "Checking ACL entries..." );
         log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + String.valueOf(aclPrincipals) );
+        log.debug( "Checking for principal: " + String.valueOf( aclPrincipals ) );
         log.debug( "Permission: " + permission );
 
-        for( int i = 0; i < aclPrincipals.length; i++ )
+        for( Principal aclPrincipal : aclPrincipals )
         {
-            Principal aclPrincipal = aclPrincipals[i];
-
             // If the ACL principal we're looking at is unresolved,
             // try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal )
@@ -367,9 +366,8 @@ public final class AuthorizationManager
         {
             String principalName = principal.getName();
             Principal[] userPrincipals = session.getPrincipals();
-            for( int i = 0; i < userPrincipals.length; i++ )
+            for( Principal userPrincipal : userPrincipals )
             {
-                Principal userPrincipal = userPrincipals[i];
                 if( userPrincipal.getName().equals( principalName ) )
                 {
                     return true;
@@ -387,6 +385,7 @@ public final class AuthorizationManager
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
+    @SuppressWarnings("deprecation")
     public final void initialize( WikiEngine engine, Properties properties ) throws WikiException
     {
         m_engine = engine;
@@ -411,17 +410,17 @@ public final class AuthorizationManager
                 File policyFile = new File( policyURL.getPath() );
                 m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding() );
                 m_localPolicy.refresh();
-                log.info("Initialized default security policy: " + policyFile.getAbsolutePath());
+                log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );
             }
             else
             {
-                StringBuffer sb = new StringBuffer("JSPWiki was unable to initialize the ");
-                sb.append("default security policy (WEB-INF/jspwiki.policy) file. ");
-                sb.append("Please ensure that the jspwiki.policy file exists in the default location. ");
-                sb.append("This file should exist regardless of the existance of a global policy file. ");
-                sb.append("The global policy file is identified by the java.security.policy variable. ");
-                WikiSecurityException wse = new WikiSecurityException(sb.toString());
-                log.fatal(sb.toString(), wse);
+                StringBuffer sb = new StringBuffer( "JSPWiki was unable to initialize the " );
+                sb.append( "default security policy (WEB-INF/jspwiki.policy) file. " );
+                sb.append( "Please ensure that the jspwiki.policy file exists in the default location. " );
+                sb.append( "This file should exist regardless of the existance of a global policy file. " );
+                sb.append( "The global policy file is identified by the java.security.policy variable. " );
+                WikiSecurityException wse = new WikiSecurityException( sb.toString() );
+                log.fatal( sb.toString(), wse );
                 throw wse;
             }
         }
@@ -463,7 +462,7 @@ public final class AuthorizationManager
         {
             try
             {
-                Class authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", clazz );
+                Class<?> authClass = ClassUtil.findClass( "com.ecyrd.jspwiki.auth.authorize", clazz );
                 Object impl = authClass.newInstance();
                 return impl;
             }
@@ -498,16 +497,16 @@ public final class AuthorizationManager
      */
     protected boolean allowedByLocalPolicy( Principal[] principals, Permission permission )
     {
-        for ( int i = 0; i < principals.length; i++ )
+        for ( Principal principal : principals )
         {
             // Get ProtectionDomain for this Principal from cache, or create new one
-            ProtectionDomain pd = (ProtectionDomain)m_cachedPds.get( principals[i] );
+            ProtectionDomain pd = m_cachedPds.get( principal );
             if ( pd == null )
             {
                 ClassLoader cl = this.getClass().getClassLoader();
                 CodeSource cs = new CodeSource( null, (Certificate[])null );
-                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principals[i] } );
-                m_cachedPds.put( principals[i], pd );
+                pd = new ProtectionDomain( cs, null, cl, new Principal[]{ principal } );
+                m_cachedPds.put( principal, pd );
             }
 
             // Consult the local policy and get the answer
@@ -520,16 +519,16 @@ public final class AuthorizationManager
     }
 
     /**
-     * Determines whether a Subject posesses a given "static" Permission as
+     * Determines whether a Subject possesses a given "static" Permission as
      * defined in the security policy file. This method uses standard Java 2
      * security calls to do its work. Note that the current access control
      * context's <code>codeBase</code> is effectively <em>this class</em>,
      * not that of the caller. Therefore, this method will work best when what
      * matters in the policy is <em>who</em> makes the permission check, not
      * what the caller's code source is. Internally, this method works by
-     * excuting <code>Subject.doAsPrivileged</code> with a privileged action
+     * executing <code>Subject.doAsPrivileged</code> with a privileged action
      * that simply calls {@link java.security.AccessController#checkPermission(Permission)}.
-     * @link AccessController#checkPermission(java.security.Permission). A
+     * @see AccessController#checkPermission(java.security.Permission) . A
      *       caught exception (or lack thereof) determines whether the privilege
      *       is absent (or present).
      * @param session the WikiSession whose permission status is being queried
@@ -541,9 +540,9 @@ public final class AuthorizationManager
     {
         if( !m_useJAAS ) return true;
 
-        Boolean allowed = (Boolean)WikiSession.doPrivileged( session, new PrivilegedAction()
+        Boolean allowed = (Boolean) WikiSession.doPrivileged( session, new PrivilegedAction<Boolean>()
         {
-            public Object run()
+            public Boolean run()
             {
                 try
                 {

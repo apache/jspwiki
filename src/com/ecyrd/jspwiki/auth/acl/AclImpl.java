@@ -1,38 +1,40 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.auth.acl;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 
 /**
  *  JSPWiki implementation of an Access Control List.
- *  @author Janne Jalkanen
+ *
  *  @author Andrew Jaquith
  *  @since 2.3
  */
-public class AclImpl implements Acl
+public class AclImpl implements Acl, Serializable
 {
+    private static final long serialVersionUID = 1L;
     private final Vector<AclEntry> m_entries = new Vector<AclEntry>();
 
     /**
@@ -44,24 +46,25 @@ public class AclImpl implements Acl
     
     /**
      * Returns all Principal objects assigned a given Permission in the access
-     * control list. The Princiapls returned are those that have been granted
+     * control list. The Principals returned are those that have been granted
      * either the supplied permission, or a permission implied by the supplied
      * permission. Principals are not "expanded" if they are a role or group.
      * @param permission the permission to search for
-     * @return an array of Principals posessing the permission
+     * @return an array of Principals possessing the permission
      */
+    @SuppressWarnings("unchecked")
     public Principal[] findPrincipals( Permission permission )
     {
         Vector<Principal> principals = new Vector<Principal>();
-        Enumeration entries = entries();
+        Enumeration<AclEntry> entries = entries();
         
         while (entries.hasMoreElements()) 
         {
-            AclEntry entry = (AclEntry)entries.nextElement();
-            Enumeration permissions = entry.permissions();
+            AclEntry entry = entries.nextElement();
+            Enumeration<Permission> permissions = entry.permissions();
             while ( permissions.hasMoreElements() ) 
             {
-                Permission perm = (Permission)permissions.nextElement();
+                Permission perm = permissions.nextElement();
                 if ( perm.implies( permission ) ) 
                 {
                     principals.add( entry.getPrincipal() );
@@ -78,10 +81,8 @@ public class AclImpl implements Acl
             return false;
         }
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( AclEntry e : m_entries )
         {
-            AclEntry e = (AclEntry) i.next();
-
             Principal ep     = e.getPrincipal();
             Principal entryp = entry.getPrincipal();
 
@@ -141,6 +142,7 @@ public class AclImpl implements Acl
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
+    @SuppressWarnings("unchecked")
     public Enumeration entries()
     {
         return m_entries.elements();
@@ -154,10 +156,8 @@ public class AclImpl implements Acl
      */
     public AclEntry getEntry( Principal principal )
     {
-        for( Enumeration e = m_entries.elements(); e.hasMoreElements(); )
+        for( AclEntry entry : m_entries )
         {
-            AclEntry entry = (AclEntry) e.nextElement();
-        
             if( entry.getPrincipal().getName().equals( principal.getName() ) )
             {
                 return entry;
@@ -171,14 +171,13 @@ public class AclImpl implements Acl
      * Returns a string representation of the contents of this Acl.
      * @return the string representation
      */
+    @SuppressWarnings("unchecked")
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
 
-        for( Enumeration myEnum = entries(); myEnum.hasMoreElements(); )
+        for( AclEntry entry : m_entries )
         {
-            AclEntry entry = (AclEntry) myEnum.nextElement();
-
             Principal pal = entry.getPrincipal();
 
             if( pal != null )
@@ -187,9 +186,9 @@ public class AclImpl implements Acl
                 sb.append( "  user = null: " );
 
             sb.append( "(" );
-            for( Enumeration perms = entry.permissions(); perms.hasMoreElements(); )
+            for( Enumeration<Permission> perms = entry.permissions(); perms.hasMoreElements(); )
             {
-                Permission perm = (Permission) perms.nextElement();
+                Permission perm = perms.nextElement();
                 sb.append( perm.toString() );
             }
             sb.append( ")\n" );

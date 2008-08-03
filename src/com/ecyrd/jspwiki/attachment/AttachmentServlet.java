@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.     
  */
 package com.ecyrd.jspwiki.attachment;
 
@@ -26,7 +27,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletConfig;
@@ -35,16 +36,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.iamvegan.multipartrequest.HttpServletMultipartRequest;
-import net.iamvegan.multipartrequest.MultipartFile;
-import net.iamvegan.multipartrequest.ProgressListener;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.AttachActionBean;
-import com.ecyrd.jspwiki.action.UploadActionBean;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.dav.AttachmentDavProvider;
@@ -69,7 +69,6 @@ import com.ecyrd.jspwiki.util.HttpUtil;
  *  This servlet is also capable of managing dynamically created attachments.
  *
  *  @author Erik Bunn
- *  @author Janne Jalkanen
  *
  *  @since 1.9.45.
  */
@@ -229,15 +228,7 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res )
         throws IOException, ServletException
     {
-        WikiContext context;
-        try 
-        {
-            context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, AttachActionBean.class );
-        }
-        catch ( WikiException e )
-        {
-            throw new ServletException( e.getMessage() );
-        }
+        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
 
         String version  = req.getParameter( HDR_VERSION );
         String nextPage = req.getParameter( "nextpage" );
@@ -478,7 +469,7 @@ public class AttachmentServlet
     {
         try
         {
-            String nextPage = upload( req, res );
+            String nextPage = upload( req );
             req.getSession().removeAttribute("msg");
             res.sendRedirect( nextPage );
         }
@@ -498,6 +489,8 @@ public class AttachmentServlet
     public void doPut( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException
     {
+        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
+
         String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
         DavPath path = new DavPath( p );
 
@@ -505,21 +498,11 @@ public class AttachmentServlet
         {
             InputStream data = req.getInputStream();
 
-            WikiContext context;
-            String errorPage; // If something bad happened, Upload should be able to take care of most stuff
-
-            try 
-            {
-                context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, UploadActionBean .class );
-            }
-            catch ( WikiException e )
-            {
-                throw new ServletException( e.getMessage() );
-            }
+            WikiContext context = (WikiContext)m_engine.createContext( req, WikiContext.UPLOAD );
 
             String wikipage = path.get( 0 );
 
-            errorPage = context.getContext().getURL( UploadActionBean.class,
+            errorPage = context.getURL( WikiContext.UPLOAD,
                                         wikipage );
 
             String changeNote = null; // FIXME: Does not quite work
@@ -576,77 +559,104 @@ public class AttachmentServlet
      *  @return The page to which we should go next.
      *  @throws RedirectException If there's an error and a redirection is needed
      *  @throws IOException If upload fails
+     * @throws FileUploadException 
      */
-    protected String upload( HttpServletRequest req, HttpServletResponse res )
+    @SuppressWarnings("unchecked")
+    protected String upload( HttpServletRequest req )
         throws RedirectException,
                IOException
     {
         String msg     = "";
         String attName = "(unknown)";
-        String nextPage;
+        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
+        String nextPage = errorPage;
 
         String progressId = req.getParameter( "progressid" );
 
+        // Check that we have a file upload request
+        if( !ServletFileUpload.isMultipartContent(req) )
+        {
+            throw new RedirectException( "Not a file upload", errorPage );
+        }
+        
         try
         {
-            HttpServletMultipartRequest multi;
-
+            FileItemFactory factory = new DiskFileItemFactory();
+            
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
-            WikiContext context;
-            try 
-            {
-                context = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( req, res, AttachActionBean.class );
-            }
-            catch ( WikiException e )
-            {
-                throw new IOException( e.getMessage() );
-            }
+            WikiContext context = (WikiContext)m_engine.createContext( req, WikiContext.ATTACH );
 
             UploadListener pl = new UploadListener();
 
             m_engine.getProgressManager().startProgress( pl, progressId );
 
-            multi = new HttpServletMultipartRequest( req,
-                                                     Long.MAX_VALUE,
-                                                     HttpServletMultipartRequest.SAVE_TO_TMPDIR,
-                                                     HttpServletMultipartRequest.ABORT_ON_MAX_LENGTH,
-                                                     "UTF-8",
-                                                     pl );
-
-            String errorPage = context.getContext().getURL( UploadActionBean.class, context.getPage().getName() );
-            nextPage        = validateNextPage( multi.getParameter( "nextpage" ), errorPage );
-            String wikipage = multi.getParameter( "page" );
-            String changeNote = multi.getParameter( "changenote" );
-
-            //
-            // FIXME: Kludge alert.  We must end up with the parent page name,
-            //        if this is an upload of a new revision
-            //
-
-            int x = wikipage.indexOf("/");
-
-            if( x != -1 ) wikipage = wikipage.substring(0,x);
-
-            //
-            //  Go through all files being uploaded.
-            //
-            Enumeration files = multi.getFileParameterNames();
-            long fileSize = 0L;
-            while( files.hasMoreElements() )
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+            upload.setFileSizeMax( m_maxSize );
+            upload.setProgressListener( pl );
+            List<FileItem> items = upload.parseRequest( req );
+            
+            String   wikipage   = null;
+            String   changeNote = null;
+            FileItem actualFile = null;
+            
+            for( FileItem item : items )
             {
-                String part = (String) files.nextElement();
-                MultipartFile multiFile = multi.getFileParameter(part);
-                fileSize += multiFile.getSize();
-                InputStream in = multiFile.getInputStream();
+                if( item.isFormField() )
+                {
+                    if( item.getFieldName().equals("page") )
+                    {
+                        //
+                        // FIXME: Kludge alert.  We must end up with the parent page name,
+                        //        if this is an upload of a new revision
+                        //
 
-                String filename = multiFile.getName();
+                        wikipage = item.getString("UTF-8");
+                        int x = wikipage.indexOf("/");
 
-                executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
+                        if( x != -1 ) wikipage = wikipage.substring(0,x);
+                    }
+                    else if( item.getFieldName().equals("changenote") )
+                    {
+                        changeNote = item.getString("UTF-8");
+                    }
+                    else if( item.getFieldName().equals( "nextpage" ) )
+                    {
+                        nextPage = validateNextPage( item.getString("UTF-8"), errorPage );
+                    }
+                }
+                else
+                {
+                    actualFile = item;
+                }
             }
 
-            // Inform the JSP page of which file we are handling:
-            // req.setAttribute( ATTR_ATTACHMENT, wikiname );
+            if( actualFile == null )
+                throw new RedirectException( "Broken file upload", errorPage );
+            
+            //
+            // FIXME: Unfortunately, with Apache fileupload we will get the form fields in
+            //        order.  This means that we have to gather all the metadata from the
+            //        request prior to actually touching the uploaded file itself.  This
+            //        is because the changenote appears after the file upload box, and we
+            //        would not have this information when uploading.  This also means
+            //        that with current structure we can only support a single file upload
+            //        at a time.
+            //
+            String filename = actualFile.getName();
+            long   fileSize = actualFile.getSize();
+            InputStream in  = actualFile.getInputStream();
+            
+            try
+            {
+                executeUpload( context, in, filename, nextPage, wikipage, changeNote, fileSize );
+            }
+            finally
+            {
+                in.close();
+            }
+
         }
         catch( ProviderException e )
         {
@@ -664,6 +674,15 @@ public class AttachmentServlet
 
             throw e;
         }
+        catch (FileUploadException e)
+        {
+            // Show the submit page again, but with a bit more
+            // intimidating output.
+            msg = "Upload failure: " + e.getMessage();
+            log.warn( msg + " (attachment: " + attName + ")", e );
+
+            throw new IOException( msg );
+        }
         finally
         {
             m_engine.getProgressManager().stopProgress( progressId );
@@ -673,7 +692,6 @@ public class AttachmentServlet
 
         return nextPage;
     }
-
 
     /**
      *
@@ -699,6 +717,16 @@ public class AttachmentServlet
     {
         boolean created = false;
 
+        try
+        {
+            filename = AttachmentManager.validateFileName( filename );
+        }
+        catch( WikiException e )
+        {
+            log.error( "Illegal filename given: "+e.getMessage() );
+            throw new RedirectException( e.getMessage(), errorPage );
+        }
+        
         //
         //  FIXME: This has the unfortunate side effect that it will receive the
         //  contents.  But we can't figure out the page to redirect to
@@ -724,26 +752,6 @@ public class AttachmentServlet
         Principal user    = context.getCurrentUser();
 
         AttachmentManager mgr = m_engine.getAttachmentManager();
-
-        if( filename == null || filename.trim().length() == 0 )
-        {
-            log.error("Empty file name given.");
-
-            throw new RedirectException("Empty file name given.",
-                                        errorPage);
-        }
-
-        //
-        //  Should help with IE 5.22 on OSX
-        //
-        filename = filename.trim();
-
-        //
-        //  Remove any characters that might be a problem. Most
-        //  importantly - characters that might stop processing
-        //  of the URL.
-        //
-        filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
 
         log.debug("file="+filename);
 
@@ -812,7 +820,7 @@ public class AttachmentServlet
      *  
      *  @author Janne Jalkanen
      */
-    private class UploadListener
+    private static class UploadListener
        extends    ProgressItem
        implements ProgressListener
     {

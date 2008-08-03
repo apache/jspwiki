@@ -1,22 +1,23 @@
-/*
-  JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-  Copyright (C) 2001-2006 JSPWiki Development Team
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation; either version 2.1 of the License, or
-  (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.auth;
 
 import java.security.Principal;
@@ -48,10 +49,10 @@ public class SessionMonitor implements HttpSessionListener
     private static Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
-    private static Map          c_monitors   = new HashMap();
+    private static Map<WikiEngine, SessionMonitor>          c_monitors   = new HashMap<WikiEngine, SessionMonitor>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
-    private final Map                 m_sessions   = new WeakHashMap();
+    private final Map<String, WikiSession>                 m_sessions   = new WeakHashMap<String, WikiSession>();
 
     private       WikiEngine          m_engine;
 
@@ -73,7 +74,7 @@ public class SessionMonitor implements HttpSessionListener
 
         synchronized( c_monitors )
         {
-            monitor = (SessionMonitor) c_monitors.get(engine);
+            monitor = c_monitors.get(engine);
             if( monitor == null )
             {
                 monitor = new SessionMonitor(engine);
@@ -108,7 +109,7 @@ public class SessionMonitor implements HttpSessionListener
     {
         WikiSession wikiSession = null;
         String sid = ( session == null ) ? "(null)" : session.getId();
-        WikiSession storedSession = (WikiSession)m_sessions.get( sid );
+        WikiSession storedSession = m_sessions.get( sid );
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null )
@@ -197,14 +198,12 @@ public class SessionMonitor implements HttpSessionListener
      */
     public final Principal[] userPrincipals()
     {
-        Collection principals = new ArrayList();
-        for ( Iterator it = m_sessions.values().iterator(); it.hasNext(); )
+        Collection<Principal> principals = new ArrayList<Principal>();
+        for ( WikiSession session : m_sessions.values() )
         {
-            WikiSession session = (WikiSession)it.next();
-
             principals.add( session.getUserPrincipal() );
         }
-        Principal[] p = (Principal[])principals.toArray( new Principal[principals.size()] );
+        Principal[] p = principals.toArray( new Principal[principals.size()] );
         Arrays.sort( p, m_comparator );
         return p;
     }
@@ -264,10 +263,10 @@ public class SessionMonitor implements HttpSessionListener
     public void sessionDestroyed( HttpSessionEvent se )
     {
         HttpSession session = se.getSession();
-        Iterator it = c_monitors.values().iterator();
+        Iterator<SessionMonitor> it = c_monitors.values().iterator();
         while( it.hasNext() )
         {
-            SessionMonitor monitor = (SessionMonitor)it.next();
+            SessionMonitor monitor = it.next();
 
             WikiSession storedSession = monitor.findSession(session);
 
