@@ -1,24 +1,26 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Date;
@@ -60,7 +62,7 @@ import com.ecyrd.jspwiki.WikiException;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public interface Step
+public interface Step extends Serializable
 {
 
     /**
@@ -75,7 +77,7 @@ public interface Step
      *            the Step to associated with this Outcomes (<code>null</code>
      *            denotes no Steps)
      */
-    public void addSuccessor(Outcome outcome, Step step);
+    public void addSuccessor( Outcome outcome, Step step );
 
     /**
      * Returns a Collection of available outcomes, such as "approve", "deny" or
@@ -116,8 +118,7 @@ public interface Step
      * multiple times.
      * </p>
      * 
-     * @return the result of the Step, where <code>true</code> means success,
-     *         and <code>false</code> means abort
+     * @return the result of the Step, expressed as an Outcome
      * @throws WikiException
      *             if the step encounters errors while executing
      */
@@ -155,7 +156,7 @@ public interface Step
      * 
      * @return the message arguments.
      */
-    public Object[] getMessageArguments();
+    public Serializable[] getMessageArguments();
 
     /**
      * Returns the Outcome of this Step's processing; by default,
@@ -223,7 +224,7 @@ public interface Step
      * 
      * @param outcome whether the step should be considered completed
      */
-    public void setOutcome(Outcome outcome);
+    public void setOutcome( Outcome outcome );
 
     /**
      * Convenience method that returns the owner of the Workflow by delegating
@@ -241,6 +242,6 @@ public interface Step
      *            the outcome
      * @return the next step
      */
-    public Step getSuccessor(Outcome outcome);
+    public Step getSuccessor( Outcome outcome );
 
 }

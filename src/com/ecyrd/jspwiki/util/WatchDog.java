@@ -1,22 +1,23 @@
-/*
-  JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-  Copyright (C) 2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation; either version 2.1 of the License, or
-  (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.util;
 
 import java.lang.ref.WeakReference;
@@ -44,7 +45,6 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  the Thread is dead, and will stop itself accordingly.  However, this object
  *  is not automatically released, so you might want to check it out after a while.
  *
- *  @author Janne Jalkanen
  *  @since  2.4.92
  */
 public final class WatchDog
@@ -54,9 +54,11 @@ public final class WatchDog
     private boolean   m_enabled    = true;
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(WatchDog.class.getName());
+    private Logger log = Logger.getLogger(WatchDog.class.getName());
 
-    private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = new HashMap<Integer,WeakReference<WatchDog>>();
+    private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = 
+        new HashMap<Integer,WeakReference<WatchDog>>();
+    
     private static WikiBackgroundThread c_watcherThread;
 
     /**
@@ -74,7 +76,7 @@ public final class WatchDog
         Thread t = Thread.currentThread();
         WatchDog wd = null;
 
-        WeakReference<WatchDog> w = c_kennel.get( new Integer(t.hashCode()) );
+        WeakReference<WatchDog> w = c_kennel.get( t.hashCode() );
 
         if( w != null ) wd = w.get();
 
@@ -85,7 +87,7 @@ public final class WatchDog
 
             synchronized( c_kennel )
             {
-                c_kennel.put( new Integer(t.hashCode()), w );
+                c_kennel.put( t.hashCode(), w );
             }
         }
 
@@ -142,9 +144,11 @@ public final class WatchDog
 
         synchronized( c_kennel )
         {
-            for( Map.Entry<Integer,WeakReference<WatchDog>> e : c_kennel.entrySet() )
+            for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
             {
-                WeakReference w = e.getValue();
+                Map.Entry e = (Map.Entry) i.next();
+
+                WeakReference w = (WeakReference) e.getValue();
 
                 //
                 //  Remove expired as well
@@ -338,8 +342,6 @@ public final class WatchDog
     /**
      *  This is the chief watchdog thread.
      *
-     *  @author jalkanen
-     *
      */
     private static class WatchDogThread extends WikiBackgroundThread
     {
@@ -370,13 +372,17 @@ public final class WatchDog
          */
         public void backgroundTask() throws Exception
         {
+            if( c_kennel == null ) return;
+            
             synchronized( c_kennel )
             {
-                for( Map.Entry<Integer,WeakReference<WatchDog>> entry : c_kennel.entrySet() )
+                for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
                 {
-                    WeakReference<WatchDog> wr = entry.getValue();
+                    Map.Entry entry = (Map.Entry) i.next();
 
-                    WatchDog w = wr.get();
+                    WeakReference wr = (WeakReference) entry.getValue();
+
+                    WatchDog w = (WatchDog) wr.get();
 
                     if( w != null )
                     {
@@ -399,8 +405,6 @@ public final class WatchDog
 
     /**
      *  A class which just stores the state in our State stack.
-     *
-     *  @author Janne Jalkanen
      */
     private static class State
     {
@@ -428,9 +432,6 @@ public final class WatchDog
 
     /**
      *  This class wraps a Thread so that it can become Watchable.
-     *
-     *  @author Janne Jalkanen
-     *
      */
     private static class ThreadWrapper implements Watchable
     {

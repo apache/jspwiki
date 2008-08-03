@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.workflow;
 
@@ -46,7 +47,7 @@ public class WorkflowManager implements WikiEventListener
 
     private final Set<Workflow> m_workflows;
 
-    private final Map<String,Principal> m_approvers;
+    private final Map<String, Principal> m_approvers;
 
     private final List<Workflow> m_completed;
 
@@ -61,7 +62,7 @@ public class WorkflowManager implements WikiEventListener
     {
         m_next = 1;
         m_workflows = new HashSet<Workflow>();
-        m_approvers = new HashMap<String,Principal>();
+        m_approvers = new HashMap<String, Principal>();
         m_completed = new ArrayList<Workflow>();
     }
 
@@ -86,7 +87,7 @@ public class WorkflowManager implements WikiEventListener
      *
      * @return the current workflows
      */
-    public Collection<Workflow> getWorkflows()
+    public Collection getWorkflows()
     {
         return new HashSet<Workflow>( m_workflows );
     }
@@ -95,7 +96,7 @@ public class WorkflowManager implements WikiEventListener
      * Returns a collection of finished workflows; that is, those that have aborted or completed.
      * @return the finished workflows
      */
-    public List<Workflow> getCompletedWorkflows()
+    public List getCompletedWorkflows()
     {
         return new ArrayList<Workflow>( m_completed );
     }
@@ -122,7 +123,7 @@ public class WorkflowManager implements WikiEventListener
         m_engine = engine;
 
         // Identify the workflows requiring approvals
-        for ( Iterator it = props.keySet().iterator(); it.hasNext(); )
+        for ( Iterator<?> it = props.keySet().iterator(); it.hasNext(); )
         {
             String prop = (String) it.next();
             if ( prop.startsWith( PROPERTY_APPROVER_PREFIX ) )
@@ -242,7 +243,7 @@ public class WorkflowManager implements WikiEventListener
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection<Workflow> getOwnerWorkflows(WikiSession session)
+    public Collection getOwnerWorkflows( WikiSession session )
     {
         List<Workflow> workflows = new ArrayList<Workflow>();
         if ( session.isAuthenticated() )
@@ -251,9 +252,9 @@ public class WorkflowManager implements WikiEventListener
             for ( Workflow w : m_workflows )
             {
                 Principal owner = w.getOwner();
-                for ( int i = 0; i < sessionPrincipals.length; i++ )
+                for ( Principal sessionPrincipal : sessionPrincipals )
                 {
-                    if ( sessionPrincipals[i].equals(owner) )
+                    if ( sessionPrincipal.equals( owner ) )
                     {
                         workflows.add( w );
                         break;

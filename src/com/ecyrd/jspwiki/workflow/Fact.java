@@ -1,39 +1,44 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
+
 /**
- * Represents a contextual artifact, which can be any Object, useful for making
+ * Represents a contextual artifact, which can be any serializable object, useful for making
  * a Decision. Facts are key-value pairs, where the key is a String (message
- * key) and the value is an arbitrary Object. Generally, the supplied object's
+ * key) and the value is an arbitrary object. Generally, the supplied object's
  * {@link #toString()} method should return a human-readable String. Facts are
  * immutable objects.
  * 
  * @author Andrew Jaquith
  * @since 2.5
  */
-public final class Fact
+public final class Fact implements Serializable
 {
+    private static final long serialVersionUID = -7459432935402796978L;
+
     private final String m_key;
 
-    private final Object m_obj;
+    private final Serializable m_obj;
 
     /**
      * Constructs a new Fact with a supplied message key and value.
@@ -43,7 +48,7 @@ public final class Fact
      * @param value
      *            the object to associate with the name
      */
-    public Fact(String messageKey, Object value)
+    public Fact(String messageKey, Serializable value)
     {
         if ( messageKey == null || value == null )
         {
@@ -66,7 +71,7 @@ public final class Fact
      * Returns this Fact's value.
      * @return the value object
      */
-    public Object getValue()
+    public Serializable getValue()
     {
         return m_obj;
     }

@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.management;
 
@@ -37,21 +38,21 @@ import org.apache.commons.lang.StringUtils;
  *  powerful, but it does not require you to declare two classes (and keep
  *  them in sync).
  *
- *  @author Janne Jalkanen
  *  @since  2.6
  */
+// FIXME: This class should really use Annotations instead of a method call.
 // FIXME: Exception handling is not probably according to spec...
 public abstract class SimpleMBean
     implements DynamicMBean
 {
     protected MBeanInfo m_beanInfo;
 
-    private static Method findGetterSetter( Class clazz, String name, Class parm )
+    private static Method findGetterSetter( Class<?> clazz, String name, Class<?> parm )
     {
         try
         {
-            Class[] params = { parm };
-            Class[] emptyparms = {};
+            Class<?>[] params = { parm };
+            Class<?>[] emptyparms = {};
 
             Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
 
@@ -65,6 +66,11 @@ public abstract class SimpleMBean
         return null;
     }
 
+    /**
+     *  Create a new SimpleMBean
+     *  
+     *  @throws NotCompliantMBeanException {@inheritDoc}
+     */
     protected SimpleMBean() throws NotCompliantMBeanException
     {
         //
@@ -179,7 +185,17 @@ public abstract class SimpleMBean
         return "";
     }
 
-    public Object getAttribute(String name) throws AttributeNotFoundException, MBeanException, ReflectionException
+    /**
+     *  Gets an attribute using reflection from the MBean.
+     *  
+     *  @param name Name of the attribute to find.
+     *  @return The value returned by the corresponding getXXX() call
+     *  @throws AttributeNotFoundException If there is not such attribute
+     *  @throws MBeanException 
+     *  @throws ReflectionException
+     */
+    public Object getAttribute(String name) 
+        throws AttributeNotFoundException, MBeanException, ReflectionException
     {
         Method m;
         Object res = null;
@@ -215,6 +231,12 @@ public abstract class SimpleMBean
         return res;
     }
 
+    /**
+     *  Gets multiple attributes at the same time.
+     *  
+     *  @param arg0 The attribute names to get
+     *  @return A list of attributes 
+     */
     public AttributeList getAttributes(String[] arg0)
     {
         AttributeList list = new AttributeList();
@@ -245,11 +267,22 @@ public abstract class SimpleMBean
         return list;
     }
 
+    /**
+     *  Return the MBeanInfo structure.
+     *  
+     *  @return the MBeanInfo
+     */
     public MBeanInfo getMBeanInfo()
     {
         return m_beanInfo;
     }
 
+    /**
+     *  Invokes a particular method.
+     *  
+     *  @param arg0 Method name
+     *  @param arg1 A list of arguments for the invocation
+     */
     public Object invoke(String arg0, Object[] arg1, String[] arg2)
         throws MBeanException, ReflectionException
     {

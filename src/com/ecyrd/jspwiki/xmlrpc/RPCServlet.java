@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
@@ -36,8 +37,6 @@ import org.apache.xmlrpc.*;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 
 /**
  *  Handles all incoming servlet requests for XML-RPC calls.
@@ -48,7 +47,6 @@ import com.ecyrd.jspwiki.action.ViewActionBean;
  *  <LI><B>prefix</B> : The command prefix for that particular handler.
  *  </UL>
  *
- *  @author Janne Jalkanen
  *  @since 1.6.6
  */
 public class RPCServlet extends HttpServlet
@@ -76,7 +74,7 @@ public class RPCServlet extends HttpServlet
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        Class<?> handlerClass = Class.forName( handlerName );
+        Class handlerClass = Class.forName( handlerName );
         m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
     }
 
@@ -122,16 +120,8 @@ public class RPCServlet extends HttpServlet
 
         try
         {
-            WikiContext ctx;
-            try 
-            {
-                ctx = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( request, response, ViewActionBean.class );
-            }
-            catch ( WikiException e )
-            {
-                throw new ServletException( e.getMessage() );
-            }
-                        
+            WikiContext ctx = m_engine.createContext( request, WikiContext.NONE );
+
             XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(),
                                                                  ctx );
 
@@ -185,12 +175,12 @@ public class RPCServlet extends HttpServlet
         }
     }
 
-    private class LocalHandler
+    private static class LocalHandler
         implements ContextXmlRpcHandler
     {
-        private Class<?> m_clazz;
+        private Class m_clazz;
 
-        public LocalHandler( Class<?> clazz )
+        public LocalHandler( Class clazz )
         {
             m_clazz = clazz;
         }

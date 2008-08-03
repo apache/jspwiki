@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
@@ -27,8 +28,6 @@ import com.ecyrd.jspwiki.LinkCollector;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.action.AttachActionBean;
-import com.ecyrd.jspwiki.action.EditActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
@@ -37,7 +36,6 @@ import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
  *  Provides handlers for all RPC routines.  These routines are used by
  *  the UTF-8 interface.
  *
- *  @author Janne Jalkanen
  *  @since 1.6.13
  */
 
@@ -55,11 +53,13 @@ public class RPCHandlerUTF8
     {
         checkPermission( PagePermission.VIEW );
         
-        Collection<WikiPage> pages = m_engine.getRecentChanges();
+        Collection pages = m_engine.getRecentChanges();
         Vector<String> result = new Vector<String>();
 
-        for( WikiPage p : pages )
+        for( Iterator i = pages.iterator(); i.hasNext(); )
         {
+            WikiPage p = (WikiPage) i.next();
+
             if( !(p instanceof Attachment) )
             {
                 result.add( p.getName() );
@@ -72,9 +72,9 @@ public class RPCHandlerUTF8
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    protected Hashtable<String,Object> encodeWikiPage( WikiPage page )
+    protected Hashtable<String, Object> encodeWikiPage( WikiPage page )
     {
-        Hashtable<String,Object> ht = new Hashtable<String,Object>();
+        Hashtable<String, Object> ht = new Hashtable<String, Object>();
 
         ht.put( "name", page.getName() );
 
@@ -94,7 +94,7 @@ public class RPCHandlerUTF8
                     (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
         ht.put( "lastModified", cal.getTime() );
-        ht.put( "version", new Integer(page.getVersion()) );
+        ht.put( "version", page.getVersion() );
 
         if( page.getAuthor() != null )
         {
@@ -104,12 +104,12 @@ public class RPCHandlerUTF8
         return ht;
     }
 
-    public Vector<Hashtable<String,Object>> getRecentChanges( Date since )
+    public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
         
-        Collection<WikiPage> pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String,Object>> result = new Vector<Hashtable<String,Object>>();
+        Collection pages = m_engine.getRecentChanges();
+        Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime( since );
@@ -122,8 +122,10 @@ public class RPCHandlerUTF8
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( WikiPage page : pages )
+        for( Iterator i = pages.iterator(); i.hasNext(); )
         {
+            WikiPage page = (WikiPage)i.next();
+
             if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
             {
                 result.add( encodeWikiPage( page ) );
@@ -217,7 +219,7 @@ public class RPCHandlerUTF8
         LinkCollector extCollector   = new LinkCollector();
         LinkCollector attCollector   = new LinkCollector();
 
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( page );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
         m_engine.textToHTML( context,
@@ -226,16 +228,17 @@ public class RPCHandlerUTF8
                              extCollector,
                              attCollector );
 
-        Vector<Hashtable<String,String>> result = new Vector<Hashtable<String,String>>();
+        Vector<Hashtable<String, String>> result = new Vector<Hashtable<String, String>>();
 
         // FIXME: Contains far too much common with RPCHandler.  Refactor!
 
         //
         //  Add local links.
         //
-        for( String link : localCollector.getLinks() )
+        for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
         {
-            Hashtable<String,String> ht = new Hashtable<String,String>();
+            String link = (String) i.next();
+            Hashtable<String, String> ht = new Hashtable<String, String>();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 
@@ -245,7 +248,7 @@ public class RPCHandlerUTF8
             }
             else
             {
-                ht.put( "href", context.getContext().getURL(EditActionBean.class,link) );
+                ht.put( "href", context.getURL(WikiContext.EDIT,link) );
             }
 
             result.add( ht );
@@ -254,13 +257,15 @@ public class RPCHandlerUTF8
         //
         // Add links to inline attachments
         //
-        for( String link :  attCollector.getLinks() )
+        for( Iterator i = attCollector.getLinks().iterator(); i.hasNext(); )
         {
-            Hashtable<String,String> ht = new Hashtable<String,String>();
+            String link = (String) i.next();
+
+            Hashtable<String, String> ht = new Hashtable<String, String>();
 
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", context.getContext().getURL(AttachActionBean.class,link) );
+            ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
 
             result.add( ht );
         }
@@ -270,9 +275,11 @@ public class RPCHandlerUTF8
         // simply because URLs are by definition ASCII.
         //
 
-        for( String link : extCollector.getLinks() )
+        for( Iterator i = extCollector.getLinks().iterator(); i.hasNext(); )
         {
-            Hashtable<String,String> ht = new Hashtable<String,String>();
+            String link = (String) i.next();
+
+            Hashtable<String, String> ht = new Hashtable<String, String>();
 
             ht.put( "page", link );
             ht.put( "type", LINK_EXTERNAL );

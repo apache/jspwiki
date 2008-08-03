@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.xmlrpc;
 
@@ -34,7 +35,6 @@ import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 /**
  *  Provides definitions for RPC handler routines.
  *
- *  @author Janne Jalkanen
  *  @since 1.6.13
  */
 
@@ -75,13 +75,13 @@ public abstract class AbstractRPCHandler
         m_engine  = context.getEngine();
     }
 
-    protected abstract Hashtable<String,Object> encodeWikiPage( WikiPage p );
+    protected abstract Hashtable encodeWikiPage( WikiPage p );
 
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection<WikiPage> pages = m_engine.getRecentChanges();
-        Vector<Hashtable<String,Object>> result    = new Vector<Hashtable<String,Object>>();
+        Collection pages = m_engine.getRecentChanges();
+        Vector<Hashtable<?, ?>> result    = new Vector<Hashtable<?, ?>>();
 
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
@@ -90,8 +90,9 @@ public abstract class AbstractRPCHandler
                  (cal.get( Calendar.ZONE_OFFSET ) + 
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
-        for( WikiPage page : pages )
+        for( Iterator i = pages.iterator(); i.hasNext(); )
         {
+            WikiPage page = (WikiPage)i.next();
 
             if( page.getLastModified().after( cal.getTime() ) )
             {
@@ -106,7 +107,6 @@ public abstract class AbstractRPCHandler
      *  Checks whether the current user has permission to perform the RPC action; 
      *  throws an exception if not allowed by {@link com.ecyrd.jspwiki.auth.AuthorizationManager}.
      *  
-     *  @throws AuthenticationFailed A RuntimeException, if the authentication fails and the user has no permission.
      *  @param perm the Permission to check
      */
     protected void checkPermission( Permission perm )

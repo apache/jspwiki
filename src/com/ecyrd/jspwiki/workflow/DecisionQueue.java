@@ -1,24 +1,26 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +36,9 @@ import com.ecyrd.jspwiki.WikiSession;
  * @author Andrew Jaquith
  * @since 2.5
  */
-public class DecisionQueue
+public class DecisionQueue implements Serializable
 {
+    private static final long serialVersionUID = -7172912793410302533L;
 
     private LinkedList<Decision> m_queue = new LinkedList<Decision>();
 
@@ -56,10 +59,10 @@ public class DecisionQueue
      * @param decision
      *            the Decision to add
      */
-    protected synchronized void add(Decision decision)
+    protected synchronized void add( Decision decision )
     {
-        m_queue.addLast(decision);
-        decision.setId(nextId());
+        m_queue.addLast( decision );
+        decision.setId( nextId() );
     }
 
     /**
@@ -72,7 +75,7 @@ public class DecisionQueue
      */
     protected Decision[] decisions()
     {
-        return m_queue.toArray(new Decision[m_queue.size()]);
+        return m_queue.toArray( new Decision[m_queue.size()] );
     }
 
     /**
@@ -81,7 +84,7 @@ public class DecisionQueue
      */
     protected synchronized void remove(Decision decision)
     {
-        m_queue.remove(decision);
+        m_queue.remove( decision );
     }
 
     /**
@@ -95,29 +98,29 @@ public class DecisionQueue
      *            the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection<Decision> getActorDecisions(WikiSession session)
+    public Collection getActorDecisions(WikiSession session)
     {
         ArrayList<Decision> decisions = new ArrayList<Decision>();
-        if (session.isAuthenticated())
+        if ( session.isAuthenticated() )
         {
             Principal[] principals = session.getPrincipals();
             Principal[] rolePrincipals = session.getRoles();
             for ( Decision decision : m_queue )
             {
                 // Iterate through the Principal set
-                for (int i = 0; i < principals.length; i++)
+                for ( Principal principal : principals )
                 {
-                    if (principals[i].equals(decision.getActor()))
+                    if ( principal.equals( decision.getActor() ) )
                     {
-                        decisions.add(decision);
+                        decisions.add( decision );
                     }
                 }
                 // Iterate through the Role set
-                for (int i = 0; i < rolePrincipals.length; i++)
+                for ( Principal principal : rolePrincipals )
                 {
-                    if (rolePrincipals[i].equals(decision.getActor()))
+                    if ( principal.equals( decision.getActor() ) )
                     {
-                        decisions.add(decision);
+                        decisions.add( decision );
                     }
                 }
             }
@@ -137,12 +140,12 @@ public class DecisionQueue
      * @throws WikiException if the succeeding Step cannot start
      * for any reason
      */
-    public void decide(Decision decision, Outcome outcome) throws WikiException
+    public void decide( Decision decision, Outcome outcome ) throws WikiException
     {
-        decision.decide(outcome);
-        if (decision.isCompleted())
+        decision.decide( outcome );
+        if ( decision.isCompleted() )
         {
-            remove(decision);
+            remove( decision );
         }
 
         // TODO: We should fire an event indicating the Outcome, and whether the
@@ -161,12 +164,12 @@ public class DecisionQueue
     {
         if (decision.isReassignable())
         {
-            decision.reassign(owner);
+            decision.reassign( owner );
 
             // TODO: We should fire an event indicating the reassignment
             return;
         }
-        throw new IllegalStateException("Reassignments not allowed for this decision.");
+        throw new IllegalStateException( "Reassignments not allowed for this decision." );
     }
 
     /**

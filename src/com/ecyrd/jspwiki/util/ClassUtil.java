@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.util;
 
@@ -36,7 +37,6 @@ import com.ecyrd.jspwiki.WikiException;
  *  Contains useful utilities for class file manipulation.  This is a static class,
  *  so there is no need to instantiate it.
  *
- *  @author Janne Jalkanen
  *  @since 2.1.29.
  */
 public final class ClassUtil
@@ -48,7 +48,7 @@ public final class ClassUtil
      */
     public  static final String MAPPINGS = "/ini/classmappings.xml";
     
-    private static Map<String,String> c_classMappings = new Hashtable<String,String>();
+    private static Map<String, String> c_classMappings = new Hashtable<String, String>();
 
     /**
      *  Initialize the class mappings document.
@@ -65,9 +65,9 @@ public final class ClassUtil
         
                 XPath xpath = XPath.newInstance("/classmappings/mapping");
     
-                List<?> nodes = xpath.selectNodes( doc );
+                List nodes = xpath.selectNodes( doc );
             
-                for( Iterator<?> i = nodes.iterator(); i.hasNext(); )
+                for( Iterator i = nodes.iterator(); i.hasNext(); )
                 {
                     Element f = (Element) i.next();
                 
@@ -110,7 +110,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found
      *          from the list.
      */
-    public static Class<?> findClass( List<String> packages, String className )
+    public static Class findClass( List packages, String className )
         throws ClassNotFoundException
     {
         ClassLoader loader = ClassUtil.class.getClassLoader();
@@ -121,8 +121,10 @@ public final class ClassUtil
         }
         catch( ClassNotFoundException e )
         {
-            for( String packageName : packages )
+            for( Iterator i = packages.iterator(); i.hasNext(); )
             {
+                String packageName = (String)i.next();
+
                 try
                 {
                     return loader.loadClass( packageName + "." + className );
@@ -148,7 +150,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found.
      */
 
-    public static Class<?> findClass( String packageName, String className )
+    public static Class findClass( String packageName, String className )
         throws ClassNotFoundException
     {
         ArrayList<String> list = new ArrayList<String>();
@@ -260,7 +262,7 @@ public final class ClassUtil
             //
             for( int c = 0; c < ctors.length; c++ )
             {
-                Class[] params = ctors[c].getParameterTypes();
+                Class<?>[] params = ctors[c].getParameterTypes();
                 
                 if( params.length == initargs.length )
                 {
@@ -319,7 +321,7 @@ public final class ClassUtil
      *  @return A Class object which you can then instantiate.
      *  @throws WikiException
      */
-    private static Class<?> getMappedClass( String requestedClass )
+    private static Class getMappedClass( String requestedClass )
         throws WikiException
     {
         String mappedClass = c_classMappings.get( requestedClass );
@@ -331,7 +333,7 @@ public final class ClassUtil
         
         try
         {
-            Class<?> cl = Class.forName(mappedClass);
+            Class cl = Class.forName(mappedClass);
             
             return cl;
         }

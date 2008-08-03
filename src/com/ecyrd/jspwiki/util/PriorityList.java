@@ -1,27 +1,27 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.util;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *  Builds a simple, priority-based List implementation.  The list
@@ -31,13 +31,12 @@ import java.util.List;
  *  <p>
  *  Priority is an integer, and the list is sorted in descending order
  *  (that is, 100 is before 10 is before 0 is before -40).
- *
- *  @author Janne Jalkanen
  */
-public class PriorityList<T>
-    extends AbstractList<T>
+@SuppressWarnings("unchecked")
+public class PriorityList
+    extends AbstractList
 {
-    private final List<Item<T>> m_elements = new ArrayList<Item<T>>();
+    private ArrayList<Object> m_elements = new ArrayList<Object>();
 
     /**
      *  This is the default priority, which is used if no priority
@@ -52,13 +51,13 @@ public class PriorityList<T>
      *  @param o Object to add.
      *  @param priority Priority.
      */
-    public void add( T o, int priority )
+    public void add( Object o, int priority )
     {
         int i = 0;
 
         for( ; i < m_elements.size(); i++ )
         {
-            Item item = m_elements.get(i);
+            Item item = (Item) m_elements.get(i);
 
             if( item.m_priority < priority )
             {
@@ -66,7 +65,7 @@ public class PriorityList<T>
             }
         }
 
-        Item<T> newItem = new Item<T>();
+        Item newItem = new Item();
         newItem.m_priority = priority;
         newItem.m_object   = o;
 
@@ -79,7 +78,7 @@ public class PriorityList<T>
      *  @param o Object to add.
      *  @return true, as per the general Collections.add contract.
      */
-    public boolean add( T o )
+    public boolean add( Object o )
     {
         add( o, DEFAULT_PRIORITY );
 
@@ -92,9 +91,9 @@ public class PriorityList<T>
      *  @param index The index.
      *  @return The object at the list at the position "index".
      */
-    public T get( int index )
+    public Object get( int index )
     {
-        return m_elements.get( index ).m_object;
+        return ((Item)m_elements.get( index )).m_object;
     }
 
     /**
@@ -110,9 +109,9 @@ public class PriorityList<T>
     /**
      *  Provides a holder for the priority-object 2-tuple.
      */
-    private static class Item<T>
+    private static class Item
     {
         public int     m_priority;
-        public T m_object;
+        public Object  m_object;
     }
 }
