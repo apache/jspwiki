@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
@@ -91,7 +92,8 @@ public class SearchResultIteratorTag
         }
 
         m_count       = 0;
-        m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
+                                                                PageContext.REQUEST_SCOPE );
 
         return nextResult();
     }
@@ -104,10 +106,12 @@ public class SearchResultIteratorTag
             
             // Create a wiki context for the result
             WikiEngine engine = m_wikiContext.getEngine();
-            WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean( r.getPage() );
+            WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean( null, null, r.getPage() );
             
             // Stash it in the page context
-            WikiActionBeanFactory.saveActionBean( pageContext, context );
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                      context,
+                                      PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), r );
 
             return EVAL_BODY_BUFFERED;

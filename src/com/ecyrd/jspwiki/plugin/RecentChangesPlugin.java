@@ -31,8 +31,10 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Returns the Recent Changes.
@@ -44,9 +46,9 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 public class RecentChangesPlugin
     implements WikiPlugin
 {
-    private static final String PARAM_FORMAT = "format";
-    private static final String PARAM_TIME_FORMAT = "timeFormat";
-    private static final String PARAM_DATE_FORMAT = "dateFormat";
+    public static final String PARAM_FORMAT = "format";
+    public static final String PARAM_TIME_FORMAT = "timeFormat";
+    public static final String PARAM_DATE_FORMAT = "dateFormat";
 
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;
@@ -101,8 +103,8 @@ public class RecentChangesPlugin
         {
             Date olddate   = new Date(0);
 
-            DateFormat fmt = getDateFormat(params);
-            DateFormat tfmt = getTimeFormat(params);
+            DateFormat fmt = getDateFormat( context, params );
+            DateFormat tfmt = getTimeFormat( context, params );
 
             table rt = new table();
             rt.setCellPadding(spacing).setClass("recentchanges");
@@ -131,7 +133,7 @@ public class RecentChangesPlugin
                     olddate = lastmod;
                 }
 
-                String link = context.getContext().getURL( pageref instanceof Attachment ? AttachActionBean.class : ViewActionBean.class, 
+                String link = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, 
                                               pageref.getName() ) ;
                 
                 a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
@@ -145,8 +147,9 @@ public class RecentChangesPlugin
                 //
                 if( pageref instanceof Attachment )
                 {
-                    linkel = new a().setHref(context.getContext().getURL(PageInfoActionBean.class,pageref.getName()));
-                    linkel.addElement( new img().setBorder(0).setSrc(context.getContext().getURL(NoneActionBean.class, "images/attachment_small.png")));
+                    linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
+                    linkel.setClass("infolink");
+                    linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
 
                     col.addElement( linkel );
                 }
@@ -162,9 +165,7 @@ public class RecentChangesPlugin
                 else
                 {
                     td infocol = (td) new td().setClass("lastchange");
-                    Map<String,String> urlParams = new HashMap<String,String>();
-                    urlParams.put("r1", "-1");
-                    infocol.addElement( new a(context.getContext().getURL(DiffActionBean.class, pageref.getName(), urlParams),tfmt.format(lastmod)) );
+                    infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
                     row.addElement(infocol);
                 }
 
@@ -183,7 +184,7 @@ public class RecentChangesPlugin
                     {
                         if( engine.pageExists(author) )
                         {
-                            authorinfo.addElement( new a(context.getContext().getURL(ViewActionBean.class, author),author) );
+                            authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
                         }
                         else
                         {
@@ -192,7 +193,7 @@ public class RecentChangesPlugin
                     }
                     else
                     {
-                        authorinfo.addElement("unknown");
+                        authorinfo.addElement( context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "common.unknownauthor" ) );
                     }
 
                     row.addElement( authorinfo );
@@ -228,24 +229,24 @@ public class RecentChangesPlugin
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat(Map params)
+    private DateFormat getTimeFormat( WikiContext context, Map params )
     {
         String formatString = get(params, "HH:mm:ss", PARAM_TIME_FORMAT);
 
         if ("".equals(formatString.trim()))
-            return SimpleDateFormat.getTimeInstance();
+            return Preferences.getDateFormat( context, TimeFormat.TIME );
 
         return new SimpleDateFormat(formatString);
     }
 
 
 
-    private DateFormat getDateFormat(Map params)
+    private DateFormat getDateFormat( WikiContext context, Map params )
     {
         String formatString = get(params, "dd.MM.yyyy", PARAM_DATE_FORMAT);
 
         if ("".equals(formatString.trim()))
-            return SimpleDateFormat.getDateInstance();
+            return Preferences.getDateFormat( context, TimeFormat.DATE );
 
         return new SimpleDateFormat(formatString);
 

@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.rss;
 
@@ -27,13 +28,12 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 
 /**
- *  @author jalkanen
+ *  Represents an abstract feed.
  *
- *  @since
  */
 public abstract class Feed
 {
-    protected List m_entries = new ArrayList();
+    protected List<Entry> m_entries = new ArrayList<Entry>();
 
     protected String m_feedURL;
     protected String m_channelTitle;
@@ -44,22 +44,50 @@ public abstract class Feed
 
     protected String m_mode = RSSGenerator.MODE_WIKI;
 
+    /**
+     *  Create a new Feed for a particular WikiContext.
+     *  
+     *  @param context The WikiContext.
+     */
     public Feed( WikiContext context )
     {
         m_wikiContext = context;
     }
 
+    /**
+     *  Set the mode of the Feed.  It can be any of the following:
+     *  <ul>
+     *  <li>{@link RSSGenerator#MODE_WIKI} - to create a wiki diff list per page.</li>
+     *  <li>{@link RSSGenerator#MODE_BLOG} - to assume that the Entries are blog entries.</li>
+     *  <li>{@link RSSGenerator#MODE_FULL} - to create a wiki diff list for the entire blog.</li>
+     *  </ul>
+     *  As the Entry list itself is generated elsewhere, this mostly just affects the way
+     *  that the layout and metadata for each entry is generated.
+     * 
+     *  @param mode As defined in RSSGenerator.
+     */
     public void setMode( String mode )
     {
         m_mode = mode;
     }
 
+    /**
+     *  Adds a new Entry to the Feed, at the end of the list.
+     *  
+     *  @param e The Entry to add.
+     */
     public void addEntry( Entry e )
     {
         m_entries.add( e );
     }
 
+    /**
+     *  Returns the XML for the feed contents in a String format.  All subclasses must implement.
+     *  
+     *  @return valid XML, ready to be shoved out.
+     */
     public abstract String getString();
+    
     /**
      * @return Returns the m_channelDescription.
      */
@@ -118,6 +146,13 @@ public abstract class Feed
         m_feedURL = feedurl;
     }
 
+    /**
+     *  A helper method for figuring out the MIME type for an enclosure.
+     *  
+     *  @param c A ServletContext
+     *  @param name The filename
+     *  @return Something sane for a MIME type.
+     */
     protected String getMimeType(ServletContext c, String name)
     {
         String type = c.getMimeType(name);
@@ -129,7 +164,11 @@ public abstract class Feed
 
     /**
      *  Does the required formatting and entity replacement for XML.
+     *  
+     *  @param s The String to format. Null is safe.
+     *  @return A formatted string.
      */
+    // FIXME: Should probably be replaced by a library method.
     public static String format( String s )
     {
         if( s != null )

@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.PageInfoActionBean;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -30,30 +29,49 @@ import java.util.*;
 /**
  *  Displays the pages referring to the current page.
  *
- *  Parameters: <BR>
- *  max: How many items to show.<BR>
- *  extras: How to announce extras.<BR>
- *  From AbstractReferralPlugin:<BR>
- *  separator: How to separate generated links; default is a wikitext line break,
- *             producing a vertical list.<BR>
- *  maxwidth: maximum width, in chars, of generated links.
- *
+ *  Parameters:
+ *  <ul>
+ *  <li><b>max</b> - How many items to show.</li>
+ *  <li><b>extras</b> - How to announce extras.</li>
+ *  <li><b>page</b> - Which page to get the table of contents from.</li>
+ *  </ul>
+ *  
+ *  From AbstractReferralPlugin:
+ *  <ul>
+ *  <li><b>separator</b> - How to separate generated links; default is a wikitext line break,
+ *             producing a vertical list.</li>
+ *  <li><b>maxwidth</b> - maximum width, in chars, of generated links.</li>
+ *  </ul>
  */
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
     private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
 
+    /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";
+
+    /** Parameter name for setting the text to show when the maximum items is overruled.  
+     *  Value is <tt>{@value}</tt>. 
+     */
     public static final String PARAM_EXTRAS   = "extras";
+    
+    /**
+     *  Parameter name for choosing the page.  Value is <tt>{@value}</tt>.
+     */
     public static final String PARAM_PAGE     = "page";
     
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
         String pageName = (String)params.get( PARAM_PAGE );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        
+        StringBuffer result = new StringBuffer( 256 );
         
         if( pageName == null )
         {
@@ -76,32 +94,51 @@ public class ReferringPagesPlugin
                 extras = rb.getString("referringpagesplugin.more");
             }
             
-            log.debug( "Fetching referring pages for "+page.getName()+
-                       " with a max of "+items);
+            if( log.isDebugEnabled() )
+                log.debug( "Fetching referring pages for "+page.getName()+
+                           " with a max of "+items);
         
             if( links != null && links.size() > 0 )
             {
                 links = filterCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
+                result.append( makeHTML( context, wikitext ) );
+                
                 if( items < links.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( links.size() - items),
-                                      context.getContext().getURL( PageInfoActionBean.class, page.getName() ) };
-                    extras = MessageFormat.format(extras, args); 
-                    wikitext += extras;
+                    Object[] args = { "" + ( links.size() - items) };
+                    extras = MessageFormat.format(extras, args);
+                    
+                    result.append( "<br />" );
+                    result.append( "<a class='morelink' href='"+context.getURL( WikiContext.INFO, page.getName() )+"' ");
+                    result.append( ">"+extras+"</a><br />");
                 }
             }
 
             //
-            //  If nothing was left after filtering or during search
+            // If nothing was left after filtering or during search
             //
-            if( links == null || links.size() == 0 )
+            if (links == null || links.size() == 0)
             {
                 wikitext = rb.getString("referringpagesplugin.nobody");
+                
+                result.append( makeHTML( context, wikitext ) );
             }
-
-            return makeHTML( context, wikitext );
+            else
+            {
+                if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) )
+                {
+                    result = new StringBuffer();
+                    result.append( links.size() );
+                    if( m_lastModified )
+                    {
+                        result.append( " (" + m_dateFormat.format( m_dateLastModified ) + ")" );
+                    }
+                }
+            }
+            
+            return result.toString();
         }
 
         return "";

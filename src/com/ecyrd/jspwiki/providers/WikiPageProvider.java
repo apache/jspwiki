@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.providers;
 
@@ -39,30 +40,50 @@ import com.ecyrd.jspwiki.*;
  *  FIXME: In reality we should have an AbstractWikiPageProvider,
  *  which would provide intelligent backups for subclasses.
  *
- *  @author Janne Jalkanen
  */
 public interface WikiPageProvider
     extends WikiProvider
 {
     /**
-     *  Attempts to save the page text for page "page".
+     *  Attempts to save the page text for page "page".  Note that the
+     *  provider creates a new version regardless of what the version
+     *  parameter of the WikiPage is.
+     *  
+     *  @param page The WikiPage to save
+     *  @param text The text to save.
+     *  @throws ProviderException If something goes wrong.
      */
     public void putPageText( WikiPage page, String text )
         throws ProviderException;
 
     /**
      *  Return true, if page exists.
+     *  
+     *  @param page The page name.
+     *  @return true, if the page exists; false otherwise.
      */
 
     public boolean pageExists( String page );
 
     /**
-     *  Finds pages based on the query.
+     *  Finds pages based on the query.   Only applicable to providers
+     *  which implement the FastSearch interface.  Otherwise JSPWiki
+     *  will use its internal cache.
+     *  <p>
+     *  This method should really be a part of the FastSearch IF.
+     *  
+     *  @param query An array of QueryItems to match
+     *  @return A Collection of WikiPages.
      */
     public Collection findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
+     *  
+     *  @return A filled WikiPage.
+     *  @param page The page name
+     *  @param version The version number
+     *  @throws ProviderException If something goes wrong.
      */
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException;
@@ -70,6 +91,9 @@ public interface WikiPageProvider
     /**
      *  Returns all pages.  Each element in the returned
      *  Collection should be a WikiPage.
+     *  
+     *  @return A collection of WikiPages
+     *  @throws ProviderException If something goes wrong.
      */
 
     public Collection getAllPages()
@@ -77,6 +101,9 @@ public interface WikiPageProvider
 
     /**
      *  Gets a list of recent changes.
+     *  
+     *  @param date The date to check from
+     *  @return A Collection of WikiPages
      *  @since 1.6.4
      */
 
@@ -84,6 +111,9 @@ public interface WikiPageProvider
 
     /**
      *  Gets the number of pages.
+     *  
+     *  @return The number of pages in the repository
+     *  @throws ProviderException If something goes wrong
      *  @since 1.6.4
      */
 
@@ -94,7 +124,9 @@ public interface WikiPageProvider
      *  Returns version history.  Each element should be
      *  a WikiPage.
      *
-     *  @return A collection of wiki pages.
+     *  @param page The name of the page to get the history from.
+     *  @return A collection of WikiPages.
+     *  @throws ProviderException If something goes wrong.
      */
 
     public List getVersionHistory( String page )
@@ -107,6 +139,7 @@ public interface WikiPageProvider
      *  @param version Version of the page to fetch.
      *
      *  @return The content of the page, or null, if the page does not exist.
+     *  @throws ProviderException If something goes wrong.
      */
 
     public String getPageText( String page, int version )

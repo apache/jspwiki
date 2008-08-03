@@ -22,14 +22,10 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
-
-import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.util.UrlBuilder;
-
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.RSSActionBean;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.util.BlogUtil;
 
@@ -46,56 +42,40 @@ public class FeedDiscoveryTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_actionBean.getEngine();
+        WikiEngine engine = m_wikiContext.getEngine();
+        WikiPage   page   = m_wikiContext.getPage();
 
-        String rssSiteURL      = engine.getGlobalRSSURL();
+        String encodedName = engine.encodeName( page.getName() );
+
+        String rssURL      = engine.getGlobalRSSURL();
+        String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp", 
+                                           "page="+encodedName+"&amp;mode=wiki",
+                                           true );
         
-        if( rssSiteURL != null )
+        if( rssURL != null )
         {
-            // Write the feed URL for the site
-            String siteName = BlogUtil.getSiteName(m_actionBean);
+            String siteName = BlogUtil.getSiteName(m_wikiContext);
             siteName = TextUtil.replaceEntities( siteName );
-            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for the entire site.\" href=\""+rssSiteURL+"\" />\n");
+            
+            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for the entire site.\" href=\""+rssURL+"\" />\n");
+            pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for page "+siteName+".\" href=\""+rssFeedURL+"\" />\n");
 
-            // Write the feed URL for this page
-            if ( m_page != null )
+            // TODO: Enable this
+            /*
+            pageContext.getOut().print("<link rel=\"service.post\" type=\"application/atom+xml\" title=\""+
+                                       siteName+"\" href=\""+atomPostURL+"\" />\n");
+            */
+            // FIXME: This does not work always, as plugins are not initialized until the first fetch
+            if( "true".equals(page.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) )
             {
-                HttpServletResponse httpResponse = (HttpServletResponse)pageContext.getResponse();
-                String encodedPageName = engine.encodeName( m_page.getName() );
-                String url = RSSActionBean.class.getAnnotation(UrlBinding.class).value();
-                
-                // Create the feed
-                UrlBuilder urlBuilder = new UrlBuilder( url, true );
-                urlBuilder.addParameter("page", encodedPageName);
-                urlBuilder.addParameter("mode", "wiki");
-                String rssPageURL  =  httpResponse.encodeURL( urlBuilder.toString() );
-                if( rssPageURL != null )
-                {
-                    pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS wiki feed for page "+siteName+".\" href=\""+rssPageURL+"\" />\n");
+                String blogFeedURL = engine.getURL(WikiContext.NONE,"rss.jsp","page="+encodedName,true);
+                String atomFeedURL = engine.getURL(WikiContext.NONE,"rss.jsp","page="+encodedName+"&amp;type=atom",true);
+        
+                pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
+                                           siteName+".\" href=\""+blogFeedURL+"\" />\n");
 
-                    // TODO: Enable this
-                    /*
-                    pageContext.getOut().print("<link rel=\"service.post\" type=\"application/atom+xml\" title=\""+
-                                               siteName+"\" href=\""+atomPostURL+"\" />\n");
-                    */
-                    // FIXME: This does not work always, as plugins are not initialized until the first fetch
-                    if( "true".equals(m_page.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) )
-                    {
-                        // Create blog feed URL
-                        urlBuilder = new UrlBuilder( url, true );
-                        urlBuilder.addParameter("page", encodedPageName);
-                        String blogPageFeedURL = httpResponse.encodeURL( urlBuilder.toString() );
-                        pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
-                                                   siteName+".\" href=\""+blogPageFeedURL+"\" />\n");
-                        
-                        // Create atom feed URL
-                        urlBuilder.addParameter("type", "atom");
-                        String atomPageFeedURL = httpResponse.encodeURL( urlBuilder.toString() );
-
-                        pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\"Atom 1.0 weblog feed for "+
-                                                   siteName+"\" href=\""+atomPageFeedURL+"\" />\n");
-                    }
-                }
+                pageContext.getOut().print("<link rel=\"service.feed\" type=\"application/atom+xml\" title=\"Atom 1.0 weblog feed for "+
+                                           siteName+"\" href=\""+atomFeedURL+"\" />\n");
             }
         }
 

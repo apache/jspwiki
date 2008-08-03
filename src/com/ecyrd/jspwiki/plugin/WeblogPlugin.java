@@ -1,28 +1,37 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.plugin;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +40,9 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
-import com.ecyrd.jspwiki.action.CommentActionBean;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.parser.PluginContent;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -69,15 +78,14 @@ public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
     private static Logger     log = Logger.getLogger(WeblogPlugin.class);
-    private static final DateFormat DEFAULT_ENTRYFORMAT
-                                = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
-    private static final Pattern headingPattern;
+    private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */
-    public static final int     DEFAULT_DAYS = 7;
-    public static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
+    private static final int     DEFAULT_DAYS = 7;
+    private static final String  DEFAULT_PAGEFORMAT = "%p_blogentry_";
 
-    public static final String  DEFAULT_DATEFORMAT = "ddMMyy";
+    /** The default date format used in the blog entry page names. */
+    public static final String   DEFAULT_DATEFORMAT = "ddMMyy";
 
     public static final String  PARAM_STARTDATE    = "startDate";
     public static final String  PARAM_ENTRYFORMAT  = "entryFormat";
@@ -86,14 +94,25 @@ public class WeblogPlugin
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
     public static final String  PARAM_PAGE         = "page";
 
+    /** The attribute which is stashed to the WikiPage attributes to check if a page
+     *  is a weblog or not. You may check for its presence.
+     */
     public static final String  ATTR_ISWEBLOG      = "weblogplugin.isweblog";
 
     static
     {
         // This is a pretty ugly, brute-force regex. But it will do for now...
-        headingPattern = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
+        HEADINGPATTERN = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
     }
 
+    /**
+     *  Create an entry name based on the blogname, a date, and an entry number.
+     *  
+     *  @param pageName Name of the blog
+     *  @param date The date (in ddMMyy format)
+     *  @param entryNum The entry number.
+     *  @return A formatted page name.
+     */
     public static String makeEntryPage( String pageName,
                                         String date,
                                         String entryNum )
@@ -101,16 +120,33 @@ public class WeblogPlugin
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date+"_"+entryNum;
     }
 
+    /**
+     *  Return just the basename for entires without date and entry numebr.
+     *  
+     *  @param pageName The name of the blog.
+     *  @return A formatted name.
+     */
     public static String makeEntryPage( String pageName )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName);
     }
 
+    /**
+     *  Returns the entry page without the entry number.
+     *  
+     *  @param pageName Blog name.
+     *  @param date The date.
+     *  @return A base name for the blog entries.
+     */
     public static String makeEntryPage( String pageName, String date )
     {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -142,7 +178,7 @@ public class WeblogPlugin
 
         if( ( params.get(PARAM_ENTRYFORMAT)) == null )
         {
-            entryFormat = DEFAULT_ENTRYFORMAT;
+            entryFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         }
         else
         {
@@ -220,9 +256,9 @@ public class WeblogPlugin
         try
         {
             List<WikiPage> blogEntries = findBlogEntries( engine.getPageManager(),
-                                                weblogName,
-                                                startTime.getTime(),
-                                                stopTime.getTime() );
+                                                          weblogName,
+                                                          startTime.getTime(),
+                                                          stopTime.getTime() );
 
             Collections.sort( blogEntries, new PageDateComparator() );
 
@@ -288,7 +324,7 @@ public class WeblogPlugin
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");
-        Matcher matcher = headingPattern.matcher( html );
+        Matcher matcher = HEADINGPATTERN.matcher( html );
         if ( matcher.find() )
         {
             String title = matcher.group(2);
@@ -316,7 +352,7 @@ public class WeblogPlugin
         {
             if( engine.pageExists(author) )
             {
-                author = "<a href=\""+entryCtx.getContext().getURL( ViewActionBean.class, author )+"\">"+engine.beautifyTitle(author)+"</a>";
+                author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.beautifyTitle(author)+"</a>";
             }
         }
         else
@@ -325,7 +361,7 @@ public class WeblogPlugin
         }
 
         buffer.append("By "+author+"&nbsp;&nbsp;");
-        buffer.append( "<a href=\""+entryCtx.getContext().getURL( ViewActionBean.class, entry.getName())+"\">Permalink</a>" );
+        buffer.append( "<a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">Permalink</a>" );
         String commentPageName = TextUtil.replaceString( entry.getName(),
                                                          "blogentry",
                                                          "comments" );
@@ -340,10 +376,10 @@ public class WeblogPlugin
             //  has changed.
             //
             buffer.append( "&nbsp;&nbsp;" );
-            Map<String,String> urlParams = new HashMap<String,String>();
-            urlParams.put("nc",String.valueOf(numComments));
             buffer.append( "<a target=\"_blank\" href=\""+
-                       entryCtx.getContext().getURL(CommentActionBean.class, commentPageName, urlParams) +
+                       entryCtx.getURL(WikiContext.COMMENT,
+                                       commentPageName,
+                                       "nc="+numComments)+
                        "\">Comments? ("+
                        numComments+
                        ")</a>" );
@@ -381,18 +417,20 @@ public class WeblogPlugin
      *  @return a list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
-    public List<WikiPage> findBlogEntries( PageManager mgr,
+    public List findBlogEntries( PageManager mgr,
                                  String baseName, Date start, Date end )
         throws ProviderException
     {
-        Collection<WikiPage> everyone = mgr.getAllPages();
-        List<WikiPage>  result = new ArrayList<WikiPage>();
+        Collection everyone = mgr.getAllPages();
+        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
 
-        for( WikiPage p : everyone )
+        for( Iterator i = everyone.iterator(); i.hasNext(); )
         {
+            WikiPage p = (WikiPage)i.next();
+
             String pageName = p.getName();
 
             if( pageName.startsWith( baseName ) )
@@ -445,14 +483,14 @@ public class WeblogPlugin
      */
     private static class PageDateComparator implements Comparator<WikiPage>
     {
-        public int compare( WikiPage o1, WikiPage o2 )
+        public int compare( WikiPage page1, WikiPage page2 )
         {
-            if( o1 == null || o2 == null )
+            if( page1 == null || page2 == null )
             {
                 return 0;
             }
 
-            return o2.getLastModified().compareTo( o1.getLastModified() );
+            return page2.getLastModified().compareTo( page1.getLastModified() );
         }
     }
 

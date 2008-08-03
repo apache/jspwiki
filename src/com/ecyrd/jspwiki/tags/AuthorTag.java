@@ -22,10 +22,10 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.render.RenderingManager;
@@ -41,17 +41,15 @@ public class AuthorTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
-        if ( !( m_actionBean instanceof WikiContext ) )
-        {
-            return SKIP_BODY;
-        }
-        
-        WikiContext context = (WikiContext)m_actionBean;
-        WikiEngine engine = context.getEngine();
-        WikiPage   page   = context.getPage();
+        WikiEngine engine = m_wikiContext.getEngine();
+        WikiPage   page   = m_wikiContext.getPage();
 
         String author = page.getAuthor();
 
@@ -65,18 +63,18 @@ public class AuthorTag
 
                 RenderingManager mgr = engine.getRenderingManager();
                 
-                MarkupParser p = mgr.getParser( context, "["+author+"|"+author+"]" );
+                MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
 
                 WikiDocument d = p.parse();
                 
-                author = mgr.getHTML( context, d );
+                author = mgr.getHTML( m_wikiContext, d );
             }
 
             pageContext.getOut().print( author );
         }
         else
         {
-            pageContext.getOut().print( "unknown" );
+            pageContext.getOut().print( m_wikiContext.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" ));
         }
 
         return SKIP_BODY;

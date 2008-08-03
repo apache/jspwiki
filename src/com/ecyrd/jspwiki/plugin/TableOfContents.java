@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 
 import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
@@ -32,7 +31,13 @@ import java.io.StringReader;
 import java.io.IOException;
 
 /**
- *  Provides a table of contents.
+ *  Provides a table of contents.  Possible parameters are:
+ *  <ul>
+ *  <li><b>title</b> - The title of the table of contents.</li>
+ *  <li><b>numbered</b> - if true, generates automatically numbers for the headings.</li>
+ *  <li><b>start</b> - If using a numbered list, sets the start number.</li>
+ *  <li><b>prefix</b> - If using a numbered list, sets the prefix used for the list.</li>
+ *  </ul>
  *
  *  @since 2.2
  */
@@ -41,9 +46,16 @@ public class TableOfContents
 {
     private static Logger log = Logger.getLogger( TableOfContents.class );
 
+    /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";
+    
+    /** Parameter name for setting whether the headings should be numbered. */
     public static final String PARAM_NUMBERED = "numbered";
+    
+    /** Parameter name for setting where the numbering should start. */
     public static final String PARAM_START = "start";
+    
+    /** Parameter name for setting what the prefix for the heading is. */
     public static final String PARAM_PREFIX = "prefix";
 
     private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
@@ -57,6 +69,9 @@ public class TableOfContents
     private int m_level3Index = 0;
     private int m_lastLevel = 0;
 
+    /**
+     *  {@inheritDoc}
+     */
     public void headingAdded( WikiContext context, Heading hd )
     {
         log.debug("HD: "+hd.m_level+", "+hd.m_titleText+", "+hd.m_titleAnchor);
@@ -98,7 +113,7 @@ public class TableOfContents
         String titleSection = hd.m_titleSection.replace( '%', '_' );
         String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
 
-        String url = context.getContext().getURL( ViewActionBean.class, context.getPage().getName() );
+        String url = context.getURL( WikiContext.VIEW, context.getPage().getName() );
         String sectref = "#section-"+pageName+"-"+titleSection;
 
         m_buf.append( "<a class=\"wikipage\" href=\""+url+sectref+"\">");
@@ -124,6 +139,9 @@ public class TableOfContents
         m_lastLevel = hd.m_level;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

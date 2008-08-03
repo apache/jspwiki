@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.parser;
 
@@ -53,7 +54,6 @@ import com.ecyrd.jspwiki.render.RenderingManager;
  *  heart and soul of JSPWiki : make sure you test properly anything that is added,
  *  or else it breaks down horribly.
  *
- *  @author Janne Jalkanen
  *  @since  2.4
  */
 public class JSPWikiMarkupParser
@@ -97,18 +97,18 @@ public class JSPWikiMarkupParser
     private boolean        m_isPreBlock   = false;
 
     /** Contains style information, in multiple forms. */
-    private Stack          m_styleStack   = new Stack();
+    private Stack<Boolean> m_styleStack   = new Stack<Boolean>();
 
      // general list handling
     private int            m_genlistlevel = 0;
-    private StringBuffer   m_genlistBulletBuffer = new StringBuffer(10);  // stores the # and * pattern
+    private StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
     private boolean        m_allowPHPWikiStyleLists = true;
 
 
     private boolean        m_isOpenParagraph = false;
 
     /** Keeps image regexp Patterns */
-    private List           m_inlineImagePatterns;
+    private List<Pattern>  m_inlineImagePatterns;
 
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
@@ -116,9 +116,12 @@ public class JSPWikiMarkupParser
     private PatternMatcher m_inlineMatcher = new Perl5Matcher();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
-    private StringBuffer   m_plainTextBuf = new StringBuffer(20);
+    private StringBuilder  m_plainTextBuf = new StringBuilder(20);
 
     private Element        m_currentElement;
+
+    /** Keep track of duplicate header names.  */
+    private Map<String, Integer>   m_titleSectionCounter = new HashMap<String, Integer>();
 
     /**
      *  This property defines the inline image pattern.  It's current value
@@ -141,8 +144,6 @@ public class JSPWikiMarkupParser
 
     /** If set to "true", all external links are tagged with 'rel="nofollow"' */
     public static final String     PROP_USERELNOFOLLOW   = "jspwiki.translatorReader.useRelNofollow";
-
-    private static final Map<String,String> NO_PARAMS = Collections.unmodifiableMap( new HashMap<String,String>() );
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
@@ -188,7 +189,7 @@ public class JSPWikiMarkupParser
      *  This array is sorted during class load, so you can just dump
      *  here whatever you want in whatever order you want.
      */
-    static final String[] c_externalLinks = {
+    static final String[] EXTERNAL_LINKS = {
         "http:", "ftp:", "https:", "mailto:",
         "news:", "file:", "rtsp:", "mms:", "ldap:",
         "gopher:", "nntp:", "telnet:", "wais:",
@@ -224,15 +225,18 @@ public class JSPWikiMarkupParser
      *  This Comparator is used to find an external link from c_externalLinks.  It
      *  checks if the link starts with the other arraythingie.
      */
-    private static Comparator c_startingComparator = new StartingComparator();
+    private static Comparator<String> c_startingComparator = new StartingComparator();
 
     static
     {
-        Arrays.sort( c_externalLinks );
+        Arrays.sort( EXTERNAL_LINKS );
     }
 
     /**
      *  Creates a markup parser.
+     *  
+     *  @param context The WikiContext which controls the parsing
+     *  @param in Where the data is read from.
      */
     public JSPWikiMarkupParser( WikiContext context, Reader in )
     {
@@ -246,20 +250,21 @@ public class JSPWikiMarkupParser
      */
 
     // FIXME: parsers should be pooled for better performance.
+    @SuppressWarnings("unchecked")
     private void initialize()
     {
         PatternCompiler compiler         = new GlobCompiler();
-        List            compiledpatterns;
+        List<Pattern>   compiledpatterns;
 
         //
         //  We cache compiled patterns in the engine, since their creation is
         //  really expensive
         //
-        compiledpatterns = (List)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
+        compiledpatterns = (List<Pattern>)m_engine.getAttribute( INLINE_IMAGE_PATTERNS );
 
         if( compiledpatterns == null )
         {
-            compiledpatterns = new ArrayList(20);
+            compiledpatterns = new ArrayList<Pattern>(20);
             Collection ptrns = getImagePatterns( m_engine );
 
             //
@@ -384,13 +389,15 @@ public class JSPWikiMarkupParser
     /**
      *  Figure out which image suffixes should be inlined.
      *  @return Collection of Strings with patterns.
+     *  
+     *  @param engine The WikiEngine from which the patterns are read.
      */
 
     // FIXME: Does not belong here; should be elsewhere
     public static Collection getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
-        ArrayList  ptrnlist = new ArrayList();
+        ArrayList<String>  ptrnlist = new ArrayList<String>();
 
         for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
         {
@@ -515,16 +522,15 @@ public class JSPWikiMarkupParser
         }
         ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
         Object[] args = { link };
-        boolean makeAbsoluteLinks = "absolute".equals( m_context.getVariable( WikiEngine.PROP_REFSTYLE )  );
 
         switch(type)
         {
             case READ:
-                el = createAnchor( READ, m_context.getContext().getURL(ViewActionBean.class, link), text, section );
+                el = createAnchor( READ, m_context.getURL(WikiContext.VIEW, link), text, section );
                 break;
 
             case EDIT:
-                el = createAnchor( EDIT, m_context.getContext().getURL( EditActionBean.class, link, NO_PARAMS, makeAbsoluteLinks ), text, "" ); 
+                el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), args ) );
                 break;
 
@@ -569,7 +575,7 @@ public class JSPWikiMarkupParser
                 break;
 
             case IMAGEWIKILINK:
-                String pagelink = m_context.getContext().getURL(ViewActionBean.class,text);
+                String pagelink = m_context.getURL(WikiContext.VIEW,text);
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
@@ -586,14 +592,14 @@ public class JSPWikiMarkupParser
                 break;
 
             case ATTACHMENT:
-                String attlink = m_context.getContext().getURL( AttachActionBean.class,
-                                                   link, NO_PARAMS, makeAbsoluteLinks );
+                String attlink = m_context.getURL( WikiContext.ATTACH,
+                                                   link );
 
-                String infolink = m_context.getContext().getURL( PageInfoActionBean.class,
-                                                    link, NO_PARAMS, makeAbsoluteLinks );
+                String infolink = m_context.getURL( WikiContext.INFO,
+                                                    link );
 
-                String imglink = m_context.getContext().getURL( NoneActionBean.class,
-                                                   "images/attachment_small.png", NO_PARAMS, makeAbsoluteLinks );
+                String imglink = m_context.getURL( WikiContext.NONE,
+                                                   "images/attachment_small.png" );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
@@ -607,6 +613,7 @@ public class JSPWikiMarkupParser
                     el.setAttribute("alt","(info)");
 
                     el = new Element("a").setAttribute("href",infolink).addContent(el);
+                    el.setAttribute("class","infolink");
                 }
                 else
                 {
@@ -643,19 +650,21 @@ public class JSPWikiMarkupParser
      *  Figures out if a link is an off-site link.  This recognizes
      *  the most common protocols by checking how it starts.
      *
+     *  @param link The link to check.
+     *  @return true, if this is a link outside of this wiki.
      *  @since 2.4
      */
 
     public static boolean isExternalLink( String link )
     {
-        int idx = Arrays.binarySearch( c_externalLinks, link,
+        int idx = Arrays.binarySearch( EXTERNAL_LINKS, link,
                                        c_startingComparator );
 
         //
         //  We need to check here once again; otherwise we might
         //  get a match for something like "h".
         //
-        if( idx >= 0 && link.startsWith(c_externalLinks[idx]) ) return true;
+        if( idx >= 0 && link.startsWith(EXTERNAL_LINKS[idx]) ) return true;
 
         return false;
     }
@@ -743,7 +752,11 @@ public class JSPWikiMarkupParser
 
 
     /**
-     *  Writes HTML for error message.
+     *  Writes HTML for error message.  Does not add it to the document, you
+     *  have to do it yourself.
+     *  
+     *  @param error The error string.
+     *  @return An Element containing the error.
      */
 
     public static Element makeError( String error )
@@ -772,7 +785,7 @@ public class JSPWikiMarkupParser
             //  calling makeCamelCaseLink() is to call this routine.
             //
 
-            m_plainTextBuf = new StringBuffer(20);
+            m_plainTextBuf = new StringBuilder(20);
 
             try
             {
@@ -882,11 +895,11 @@ public class JSPWikiMarkupParser
      *  entities that are already escaped).
      *
      *  @param buf
-     *  @return
+     *  @return An escaped string.
      */
     private String escapeHTMLEntities(String buf)
     {
-        StringBuffer tmpBuf = new StringBuffer( buf.length() + 20 );
+        StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
 
         for( int i = 0; i < buf.length(); i++ )
         {
@@ -1005,7 +1018,7 @@ public class JSPWikiMarkupParser
     private String readUntil( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer( 80 );
+        StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -1040,7 +1053,7 @@ public class JSPWikiMarkupParser
     private String readWhile( String endChars )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer( 80 );
+        StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -1084,18 +1097,34 @@ public class JSPWikiMarkupParser
      *  Modifies the "hd" parameter to contain proper values.  Because
      *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
      *  % after url encoding with '_'.
+     *  <p>
+     *  Counts also duplicate headings (= headings with similar name), and
+     *  attaches a counter.
      */
-    // FIXME: This method should probably be public and in an util class somewhere
     private String makeHeadingAnchor( String baseName, String title, Heading hd )
     {
         hd.m_titleText = title;
         title = MarkupParser.wikifyLink( title );
+
         hd.m_titleSection = m_engine.encodeName(title);
+        
+        if( m_titleSectionCounter.containsKey( hd.m_titleSection ) )
+        {
+            Integer count = m_titleSectionCounter.get( hd.m_titleSection );
+            count = count + 1;
+            m_titleSectionCounter.put( hd.m_titleSection, count );
+            hd.m_titleSection += "-" + count;
+        }
+        else
+        {
+            m_titleSectionCounter.put( hd.m_titleSection, 1 );
+        }
+
         hd.m_titleAnchor = "section-"+m_engine.encodeName(baseName)+
                            "-"+hd.m_titleSection;
-
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '%', '_' );
         hd.m_titleAnchor = hd.m_titleAnchor.replace( '/', '_' );
+        
         return hd.m_titleAnchor;
     }
 
@@ -1123,11 +1152,12 @@ public class JSPWikiMarkupParser
     }
 
     /**
-     *  Returns XHTML for the start of the heading.  Also sets the
-     *  line-end emitter.
-     *  @param level
+     *  Returns XHTML for the heading. 
+     *  
+     *  @param level The level of the heading.  @see Heading
      *  @param title the title for the heading
      *  @param hd a List to which heading should be added
+     *  @return An Element containing the heading
      */
     public Element makeHeading( int level, String title, Heading hd )
     {
@@ -1202,7 +1232,7 @@ public class JSPWikiMarkupParser
         {
             if( m_outlinkImageURL == null )
             {
-                m_outlinkImageURL = m_context.getContext().getURL( NoneActionBean.class, OUTLINK_IMAGE );
+                m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
             }
 
             el = new Element("img").setAttribute("class", "outlink");
@@ -1222,7 +1252,7 @@ public class JSPWikiMarkupParser
      *  What a crappy problem.
      *
      * @param url
-     * @return
+     * @return An anchor Element containing the link.
      */
     private Element makeDirectURILink( String url )
     {
@@ -1387,7 +1417,7 @@ public class JSPWikiMarkupParser
     {
         ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
         
-        StringBuffer sb = new StringBuffer(linktext.length()+80);
+        StringBuilder sb = new StringBuilder(linktext.length()+80);
 
         if( isAccessRule( linktext ) )
         {
@@ -1406,10 +1436,16 @@ public class JSPWikiMarkupParser
                 PluginContent pluginContent = m_engine.getPluginManager().parsePluginLine( m_context,
                                                                                            linktext,
                                                                                            pos );
+                //
+                //  This might sometimes fail, especially if there is something which looks
+                //  like a plugin invocation but is really not.
+                //
+                if( pluginContent != null )
+                {
+                    addElement( pluginContent );
 
-                addElement( pluginContent );
-
-                pluginContent.executeParse( m_context );
+                    pluginContent.executeParse( m_context );
+                }
             }
             catch( PluginException e )
             {
@@ -1535,7 +1571,7 @@ public class JSPWikiMarkupParser
 
                     if( isImageLink( linkref ) )
                     {
-                        attachment = m_context.getContext().getURL( AttachActionBean.class, attachment );
+                        attachment = m_context.getURL( WikiContext.ATTACH, attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
                     }
                     else
@@ -1880,11 +1916,11 @@ public class JSPWikiMarkupParser
      *  Reads the stream until the next EOL or EOF.  Note that it will also read the
      *  EOL from the stream.
      */
-    private StringBuffer readUntilEOL()
+    private StringBuilder readUntilEOL()
         throws IOException
     {
         int ch;
-        StringBuffer buf = new StringBuffer( 256 );
+        StringBuilder buf = new StringBuilder( 256 );
 
         while( true )
         {
@@ -2053,7 +2089,7 @@ public class JSPWikiMarkupParser
              for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
              {
                  popElement( getListType( m_genlistBulletBuffer.charAt(m_genlistlevel-1) ) );
-                 if( m_genlistlevel > 0 )
+                 if( m_genlistlevel > numBullets )
                  {
                      popElement("li");
                  }
@@ -2117,7 +2153,7 @@ public class JSPWikiMarkupParser
     private Element handleOpenbracket()
         throws IOException
     {
-        StringBuffer sb = new StringBuffer(40);
+        StringBuilder sb = new StringBuilder(40);
         int pos = getPosition();
         int ch = nextToken();
         boolean isPlugin = false;
@@ -2214,7 +2250,7 @@ public class JSPWikiMarkupParser
     private String readBraceContent( char opening, char closing )
         throws IOException
     {
-        StringBuffer sb = new StringBuffer(40);
+        StringBuilder sb = new StringBuilder(40);
         int braceLevel = 1;
         int ch;
         while(( ch = nextToken() ) != -1 )
@@ -2244,7 +2280,7 @@ public class JSPWikiMarkupParser
     /**
      *  Handles constructs of type %%(style) and %%class
      * @param newLine
-     * @return
+     * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
     private Element handleDiv( boolean newLine )
@@ -2292,7 +2328,7 @@ public class JSPWikiMarkupParser
 
                 try
                 {
-                    Boolean isSpan = (Boolean)m_styleStack.pop();
+                    Boolean isSpan = m_styleStack.pop();
 
                     if( isSpan == null )
                     {
@@ -2621,7 +2657,7 @@ public class JSPWikiMarkupParser
 
     private String cleanupSuspectData( String s )
     {
-        StringBuffer sb = new StringBuffer( s.length() );
+        StringBuilder sb = new StringBuilder( s.length() );
         
         for( int i = 0; i < s.length(); i++ )
         {
@@ -2634,18 +2670,28 @@ public class JSPWikiMarkupParser
         return sb.toString();
     }
     
-    public static final int CHARACTER = 0;
-    public static final int ELEMENT   = 1;
-    public static final int IGNORE    = 2;
+    /** The token is a plain character. */
+    protected static final int CHARACTER = 0;
+    
+    /** The token is a wikimarkup element. */
+    protected static final int ELEMENT   = 1;
+    
+    /** The token is to be ignored. */
+    protected static final int IGNORE    = 2;
 
     /**
      *  Return CHARACTER, if you think this was a plain character; ELEMENT, if
      *  you think this was a wiki markup element, and IGNORE, if you think
      *  we should ignore this altogether.
+     *  <p>
+     *  To add your own MarkupParser, you can override this method, but it
+     *  is recommended that you call super.parseToken() as well to gain advantage
+     *  of JSPWiki's own markup.  You can call it at the start of your own
+     *  parseToken() or end - it does not matter.
      *
-     * @param ch
+     * @param ch The character under investigation
      * @return {@link #ELEMENT}, {@link #CHARACTER} or {@link #IGNORE}.
-     * @throws IOException
+     * @throws IOException If parsing fails.
      */
     protected int parseToken( int ch )
         throws IOException
@@ -2812,6 +2858,13 @@ public class JSPWikiMarkupParser
         return el != null ? ELEMENT : CHARACTER;
     }
 
+    /**
+     *  Parses the entire document from the Reader given in the constructor or
+     *  set by {@link #setInputReader(Reader)}.
+     *  
+     *  @return A WikiDocument, ready to be passed to the renderer.
+     *  @throws IOException If parsing cannot be accomplished.
+     */
     public WikiDocument parse()
         throws IOException
     {
@@ -2843,7 +2896,7 @@ public class JSPWikiMarkupParser
 
         if( rootElement.getChild("p") != null )
         {
-            ArrayList ls = new ArrayList();
+            ArrayList<Content> ls = new ArrayList<Content>();
             int idxOfFirstContent = 0;
             int count = 0;
 
@@ -2894,17 +2947,12 @@ public class JSPWikiMarkupParser
      *  returns null.  Otherwise just like the normal Comparator
      *  for strings.
      *
-     *  @author jalkanen
-     *
      *  @since
      */
-    private static class StartingComparator implements Comparator
+    private static class StartingComparator implements Comparator<String>
     {
-        public int compare( Object arg0, Object arg1 )
+        public int compare( String s1, String s2 )
         {
-            String s1 = (String)arg0;
-            String s2 = (String)arg1;
-
             if( s1.length() > s2.length() )
             {
                 if( s1.startsWith(s2) && s2.length() > 1 ) return 0;

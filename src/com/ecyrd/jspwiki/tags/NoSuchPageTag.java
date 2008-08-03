@@ -58,12 +58,12 @@ public class NoSuchPageTag
         throws IOException,
                ProviderException
     {
-        WikiEngine engine = m_actionBean.getEngine();
+        WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
 
         if( m_pageName == null )
         {
-            page = m_page;
+            page = m_wikiContext.getPage();
         }
         else
         {

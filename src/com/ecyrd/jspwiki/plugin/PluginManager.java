@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.plugin;
 
@@ -129,7 +130,6 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *      new page load is guaranteed to invoke the plugin, unlike with the ParserStagePlugins.</li>
  *  </ul>
  *
- *  @author Janne Jalkanen
  *  @since 1.6.1
  */
 public class PluginManager extends ModuleManager
@@ -144,7 +144,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String DEFAULT_PACKAGE = "com.ecyrd.jspwiki.plugin";
 
-    public static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
+    private static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
 
     /**
      *  The property name defining which packages will be searched for properties.
@@ -173,7 +173,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
-    private ArrayList<String> m_searchPath = new ArrayList<String>();
+    private ArrayList<String>  m_searchPath = new ArrayList<String>();
 
     private Pattern m_pluginPattern;
 
@@ -182,12 +182,13 @@ public class PluginManager extends ModuleManager
     /**
      *  Keeps a list of all known plugin classes.
      */
-    private Map<String,WikiPluginInfo> m_pluginClassMap = new HashMap<String,WikiPluginInfo>();
+    private Map<String, WikiPluginInfo> m_pluginClassMap = new HashMap<String, WikiPluginInfo>();
 
 
     /**
      *  Create a new PluginManager.
      *
+     *  @param engine WikiEngine which owns this manager.
      *  @param props Contents of a "jspwiki.properties" file.
      */
     public PluginManager( WikiEngine engine, Properties props )
@@ -229,6 +230,8 @@ public class PluginManager extends ModuleManager
 
     /**
      * Enables or disables plugin execution.
+     * 
+     * @param enabled True, if plugins should be globally enabled; false, if disabled.
      */
     public void enablePlugins( boolean enabled )
     {
@@ -239,6 +242,8 @@ public class PluginManager extends ModuleManager
      * Returns plugin execution status. If false, plugins are not
      * executed when they are encountered on a WikiPage, and an
      * empty string is returned in their place.
+     * 
+     * @return True, if plugins are enabled; false otherwise.
      */
     public boolean pluginsEnabled()
     {
@@ -435,10 +440,10 @@ public class PluginManager extends ModuleManager
      *
      * @throws IOException If the parsing fails.
      */
-    public Map<String,Object> parseArgs( String argstring )
+    public Map parseArgs( String argstring )
         throws IOException
     {
-        HashMap<String,Object>arglist = new HashMap<String,Object>();
+        HashMap<String, Object> arglist = new HashMap<String, Object>();
 
         //
         //  Protection against funny users.
@@ -485,7 +490,7 @@ public class PluginManager extends ModuleManager
                 break;
 
               case StreamTokenizer.TT_NUMBER:
-                s = Integer.toString( new Double(tok.nval).intValue() );
+                s = Integer.toString( (int) tok.nval );
                 potentialEmptyLine = false;
                 break;
 
@@ -552,6 +557,8 @@ public class PluginManager extends ModuleManager
      *
      *  @return HTML as returned by the plugin, or possibly an error
      *  message.
+     *  
+     *  @throws PluginException From the plugin itself, it propagates, waah!
      */
     public String execute( WikiContext context,
                            String commandline )
@@ -598,6 +605,16 @@ public class PluginManager extends ModuleManager
         return commandline;
     }
 
+    /**
+     *  Parses a plugin invocation and returns a DOM element.
+     *  
+     *  @param context The WikiContext
+     *  @param commandline The line to parse
+     *  @param pos The position in the stream parsing.
+     *  @return A DOM element
+     *  @throws PluginException If plugin invocation is faulty
+     */
+   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
@@ -613,7 +630,7 @@ public class PluginManager extends ModuleManager
                 String args     = commandline.substring(res.endOffset(0),
                                                         commandline.length() -
                                                         (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map<String,Object> arglist = parseArgs( args );
+                Map<String, Object> arglist = parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]
                 if ( pos != -1 )
@@ -780,7 +797,7 @@ public class PluginManager extends ModuleManager
         /**
          *  Initializes a plugin, if it has not yet been initialized.
          *
-         *  @param engine
+         *  @param engine The WikiEngine
          */
         protected void initializePlugin( WikiEngine engine )
         {
@@ -804,12 +821,22 @@ public class PluginManager extends ModuleManager
             }
         }
 
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
         protected void initializeFromXML( Element el )
         {
             super.initializeFromXML( el );
             m_alias = el.getChildText("alias");
         }
 
+        /**
+         *  Create a new WikiPluginInfo based on the Class information.
+         *  
+         *  @param clazz The class to check
+         *  @return A WikiPluginInfo instance
+         */
         protected static WikiPluginInfo newInstance( Class clazz )
         {
             WikiPluginInfo info = new WikiPluginInfo( clazz.getName() );
@@ -953,6 +980,8 @@ public class PluginManager extends ModuleManager
         /**
          *  Returns a string suitable for debugging.  Don't assume that the format
          *  would stay the same.
+         *  
+         *  @return Something human-readable
          */
         public String toString()
         {
@@ -963,18 +992,27 @@ public class PluginManager extends ModuleManager
     /**
      *  {@inheritDoc}
      */
-    public Collection<WikiModuleInfo> modules()
+    public Collection modules()
     {
         TreeSet<WikiModuleInfo> ls = new TreeSet<WikiModuleInfo>();
         
-        for( WikiModuleInfo wmi : m_pluginClassMap.values() )
+        for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
         {
+            WikiModuleInfo wmi = (WikiModuleInfo)i.next();
+            
             if( !ls.contains(wmi) ) ls.add(wmi);
         }
         
         return ls;
     }
 
+    /**
+     *  Executes parse stage, unless plugins are disabled.
+     *  
+     *  @param content The content item.
+     *  @param context A WikiContext
+     *  @throws PluginException If something goes wrong.
+     */
     // FIXME: This method needs to be reintegrated with execute() above, since they
     //        share plenty of code.
     public void executeParse(PluginContent content, WikiContext context)

@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
@@ -30,7 +31,6 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
@@ -42,7 +42,6 @@ import com.ecyrd.jspwiki.attachment.Attachment;
  *    <LI>page - Page name to refer to.  Default is the current page.
  *  </UL>
  *
- *  @author Janne Jalkanen
  *  @since 2.0
  */
 
@@ -54,9 +53,14 @@ public class AttachmentsIteratorTag
     
     static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doStartTag()
     {
-        m_wikiContext = (WikiContext)WikiActionBeanFactory.findActionBean( pageContext );
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
+                                                                PageContext.REQUEST_SCOPE );
 
         WikiEngine        engine = m_wikiContext.getEngine();
         AttachmentManager mgr    = engine.getAttachmentManager();
@@ -90,7 +94,9 @@ public class AttachmentsIteratorTag
 
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );
-                    WikiActionBeanFactory.saveActionBean( pageContext, context );
+                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                              context,
+                                              PageContext.REQUEST_SCOPE );
 
                     pageContext.setAttribute( getId(), att );
                 }
@@ -115,6 +121,10 @@ public class AttachmentsIteratorTag
         return SKIP_BODY;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doAfterBody()
     {
         if( bodyContent != null )
@@ -138,7 +148,9 @@ public class AttachmentsIteratorTag
 
             WikiContext context = (WikiContext)m_wikiContext.clone();
             context.setPage( att );
-            WikiActionBeanFactory.saveActionBean( pageContext, context );
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                      context,
+                                      PageContext.REQUEST_SCOPE );
 
             pageContext.setAttribute( getId(), att );
 

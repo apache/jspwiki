@@ -48,6 +48,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *
  *  @since 2.1.97
  */
+// FIXME: Rewrite using some other library
 public class AtomAPIServlet extends HttpServlet
 {
     static final Logger log = Logger.getLogger( AtomAPIServlet.class );
@@ -57,7 +58,7 @@ public class AtomAPIServlet extends HttpServlet
     private WikiEngine       m_engine;
 
     /**
-     *  Initializes the servlet.
+     *  {@inheritDoc}
      */
     public void init( ServletConfig config )
         throws ServletException
@@ -96,6 +97,10 @@ public class AtomAPIServlet extends HttpServlet
      *   <li>Only fetches the first content.  All other contents are ignored.
      *   <li>Assumes that incoming code is plain text or WikiMarkup, not html.
      *  </ul>
+     *  
+     *  @param request {@inheritDoc}
+     *  @param response {@inheritDoc}
+     *  @throws ServletException {@inheritDoc}
      */
     public void doPost( HttpServletRequest request, HttpServletResponse response )
         throws ServletException
@@ -169,6 +174,8 @@ public class AtomAPIServlet extends HttpServlet
     /**
      *  Handles HTTP GET.  However, we do not respond to GET requests,
      *  other than to show an explanatory text.
+     *  
+     *  {@inheritDoc}
      */
     public void doGet( HttpServletRequest request, HttpServletResponse response )
         throws ServletException
@@ -273,7 +280,7 @@ public class AtomAPIServlet extends HttpServlet
 
             String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
 
-            WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( p );
+            WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
 
             String title = TextUtil.replaceEntities(BlogUtil.getSiteName(context));
 
@@ -313,7 +320,7 @@ public class AtomAPIServlet extends HttpServlet
     }
 
     /**
-     *
+     *  {@inheritDoc}
      */
     public void doDelete( HttpServletRequest request, HttpServletResponse response )
         throws ServletException
@@ -322,7 +329,7 @@ public class AtomAPIServlet extends HttpServlet
     }
 
     /**
-     *
+     *  {@inheritDoc}
      */
     public void doPut( HttpServletRequest request, HttpServletResponse response )
         throws ServletException

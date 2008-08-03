@@ -32,7 +32,6 @@ import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.UserManager;
@@ -123,8 +122,8 @@ public class UserProfileTag extends WikiTagBase
 
     public final int doWikiStartTag() throws IOException, WikiSecurityException
     {
-        UserManager manager = m_actionBean.getEngine().getUserManager();
-        UserProfile profile = manager.getUserProfile( m_actionBean.getWikiSession() );
+        UserManager manager = m_wikiContext.getEngine().getUserManager();
+        UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
 
         if ( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) )
@@ -150,7 +149,7 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( GROUPS.equals( m_prop ) )
         {
-            result = printGroups( m_actionBean );
+            result = printGroups( m_wikiContext );
         }
         else if ( LOGINNAME.equals( m_prop ) )
         {
@@ -162,7 +161,7 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( ROLES.equals( m_prop ) )
         {
-            result = printRoles( m_actionBean );
+            result = printRoles( m_wikiContext );
         }
         else if ( WIKINAME.equals( m_prop ) )
         {
@@ -173,7 +172,7 @@ public class UserProfileTag extends WikiTagBase
                 //
                 //  Default back to the declared user name
                 //
-                WikiEngine engine = this.m_actionBean.getEngine();
+                WikiEngine engine = this.m_wikiContext.getEngine();
                 WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
                 Principal user = wikiSession.getUserPrincipal();
 
@@ -185,18 +184,16 @@ public class UserProfileTag extends WikiTagBase
         }
         else if ( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
-            AuthenticationManager authMgr = m_actionBean.getEngine().getAuthenticationManager();
-            if ( !authMgr.isContainerAuthenticated() ||
-                 manager.getUserDatabase().isSharedWithContainer() )
+            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+            if ( !authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;
             }
         }
         else if ( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) )
         {
-            AuthenticationManager authMgr = m_actionBean.getEngine().getAuthenticationManager();
-            if ( authMgr.isContainerAuthenticated() &&
-                 !manager.getUserDatabase().isSharedWithContainer() )
+            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
+            if ( authMgr.isContainerAuthenticated() )
             {
                 return EVAL_BODY_INCLUDE;
             }
@@ -221,17 +218,17 @@ public class UserProfileTag extends WikiTagBase
      * and extracting those that are of type Group.
      * @return the list of groups, sorted by name
      */
-    public static String printGroups( WikiActionBean actionBean )
+    public static String printGroups( WikiContext context )
     {
-        Principal[] roles = actionBean.getWikiSession().getRoles();
+        Principal[] roles = context.getWikiSession().getRoles();
         List<String> tempRoles = new ArrayList<String>();
-        ResourceBundle rb = actionBean.getBundle(InternationalizationManager.CORE_BUNDLE);
+        ResourceBundle rb = context.getBundle(InternationalizationManager.CORE_BUNDLE);
         
-        for ( int i = 0; i < roles.length; i++ )
+        for ( Principal role : roles )
         {
-            if( roles[i] instanceof GroupPrincipal )
+            if( role instanceof GroupPrincipal )
             {
-                tempRoles.add( roles[i].getName() );
+                tempRoles.add( role.getName() );
             }
         }
         if ( tempRoles.size() == 0 )
@@ -262,35 +259,34 @@ public class UserProfileTag extends WikiTagBase
      * and extracting those that are of type Role.
      * @return the list of roles, sorted by name
      */
-    public static String printRoles( WikiActionBean actionBean )
+    public static String printRoles( WikiContext context )
     {
-        Principal[] roles = actionBean.getWikiSession().getRoles();
+        Principal[] roles = context.getWikiSession().getRoles();
         List<String> tempRoles = new ArrayList<String>();
-        ResourceBundle rb = actionBean.getBundle(InternationalizationManager.CORE_BUNDLE);
+        ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
         
-        for ( int i = 0; i < roles.length; i++ )
+        for ( Principal role : roles )
         {
-            if ( roles[i] instanceof Role )
+            if ( role instanceof Role )
             {
-                tempRoles.add( roles[i].getName() );
+                tempRoles.add( role.getName() );
             }
         }
         if ( tempRoles.size() == 0 )
         {
-            return rb.getString("userprofile.noroles");
+            return rb.getString( "userprofile.noroles" );
         }
 
         StringBuffer sb = new StringBuffer();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = tempRoles.get( i );
+
+            sb.append( name );
+            if ( i < ( tempRoles.size() - 1 ) )
             {
-                sb.append( name );
-                if ( i < ( tempRoles.size() - 1 ) ) 
-                {
-                    sb.append(',');
-                    sb.append(' ');
-                }
+                sb.append(',');
+                sb.append(' ');
             }
 
         }

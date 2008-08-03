@@ -56,8 +56,11 @@ public class BugReportHandler
     public static final String MAPPINGS       = "map";
     public static final String PAGE           = "page";
 
-    public static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
+    private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

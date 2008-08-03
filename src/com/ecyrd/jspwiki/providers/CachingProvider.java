@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.providers;
 
@@ -46,7 +47,6 @@ import com.opensymphony.oscache.base.events.*;
  *  <p>
  *  Since 2.1.52 uses the OSCache library from OpenSymphony.
  *
- *  @author Janne Jalkanen
  *  @since 1.6.4
  *  @see RepositoryModifiedException
  */
@@ -95,13 +95,19 @@ public class CachingProvider
      */
 
     public static final String PROP_CACHECHECKINTERVAL = "jspwiki.cachingProvider.cacheCheckInterval";
+    
+    /**
+     *  The capacity of the cache.
+     */
     public static final String PROP_CACHECAPACITY      = "jspwiki.cachingProvider.capacity";
 
     private static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
 
     private static final String OSCACHE_ALGORITHM      = "com.opensymphony.oscache.base.algorithm.LRUCache";
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
@@ -308,6 +314,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String pageName, int version )
     {
         if( pageName == null ) return false;
@@ -378,6 +387,9 @@ public class CachingProvider
         return false;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String pageName )
     {
         if( pageName == null ) return false;
@@ -460,6 +472,7 @@ public class CachingProvider
     }
 
     /**
+     *  {@inheritDoc}
      *  @throws RepositoryModifiedException If the page has been externally modified.
      */
     public String getPageText( String pageName, int version )
@@ -562,6 +575,9 @@ public class CachingProvider
         return text;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void putPageText( WikiPage page, String text )
         throws ProviderException
     {
@@ -587,7 +603,9 @@ public class CachingProvider
         }
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public Collection getAllPages()
         throws ProviderException
     {
@@ -621,17 +639,26 @@ public class CachingProvider
         return all;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection getAllChangedSince( Date date )
     {
         return m_provider.getAllChangedSince( date );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public int getPageCount()
         throws ProviderException
     {
         return m_provider.getPageCount();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection findPages( QueryItem[] query )
     {
         //
@@ -658,7 +685,7 @@ public class CachingProvider
             {
                 String data = m_provider.getPageText(page.getName(), page.getVersion());
 
-                WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( page );
+                WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, page );
                 MarkupParser parser = mgr.getParser( ctx, data );
 
                 parser.parse();
@@ -670,6 +697,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException,
                RepositoryModifiedException
@@ -711,6 +741,9 @@ public class CachingProvider
         return page;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public List getVersionHistory( String pageName )
         throws ProviderException
     {
@@ -745,6 +778,9 @@ public class CachingProvider
         return history;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public synchronized String getProviderInfo()
     {
         return "Real provider: "+m_provider.getClass().getName()+
@@ -755,6 +791,9 @@ public class CachingProvider
                ". Cache consistency checks: "+m_expiryPeriod+"s";
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
@@ -783,6 +822,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deletePage( String pageName )
         throws ProviderException
     {
@@ -799,6 +841,9 @@ public class CachingProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException
@@ -823,6 +868,7 @@ public class CachingProvider
     /**
      *  Returns the actual used provider.
      *  @since 2.0
+     *  @return The real provider.
      */
     public WikiPageProvider getRealProvider()
     {
@@ -835,23 +881,22 @@ public class CachingProvider
      *  of all pages currently in cache, we'll have to check this
      *  ourselves.
      *
-     *  @author jalkanen
      *
      *  @since 2.4
      */
     private static class CacheItemCollector
         implements CacheEntryEventListener
     {
-        private Map m_allItems = new HashMap();
+        private Map<String, WikiPage> m_allItems = new Hashtable<String, WikiPage>();
 
         /**
          * Returns a clone of the set - you cannot manipulate this.
          *
-         * @return
+         * @return A Set of WikiPage objects.
          */
         public Set getAllItems()
         {
-            Set ret = new TreeSet();
+            Set<WikiPage> ret = new TreeSet<WikiPage>();
             ret.addAll(m_allItems.values());
 
             return ret;
@@ -885,7 +930,7 @@ public class CachingProvider
 
             if( item != null )
             {
-                m_allItems.remove( item );
+                m_allItems.remove( item.getName() );
             }
         }
 

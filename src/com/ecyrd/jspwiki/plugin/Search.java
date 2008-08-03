@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -42,13 +41,24 @@ public class Search implements WikiPlugin
 {
     static Logger log = Logger.getLogger(Search.class);
     
+    /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";
+
+    /** Parameter name for setting the name of the set where the results are stored.  
+     *  Value is <tt>{@value}</tt>. 
+     */
     public static final String PARAM_SET   = "set";
+    
+    /** The default name of the result set. */
     public static final String DEFAULT_SETNAME = "_defaultSet";
+    
+    /** The parameter name for setting the how many results will be fetched.
+     *  Value is <tt>{@value}</tt>.
+     */
     public static final String PARAM_MAX   = "max";
     
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.plugin.WikiPlugin#execute(com.ecyrd.jspwiki.WikiContext, java.util.Map)
+    /**
+     * {@inheritDoc}
      */
     public String execute( WikiContext context, Map params ) throws PluginException
     {
@@ -120,7 +130,7 @@ public class Search implements WikiPlugin
             
             td name = new td().setWidth("30%");
             name.addElement( "<a href=\""+
-                             context.getContext().getURL( ViewActionBean.class, sr.getPage().getName() )+
+                             context.getURL( WikiContext.VIEW, sr.getPage().getName() )+
                              "\">"+engine.beautifyTitle(sr.getPage().getName())+"</a>");
             row.addElement( name );
             

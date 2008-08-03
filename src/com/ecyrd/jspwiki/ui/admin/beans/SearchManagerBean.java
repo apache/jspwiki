@@ -1,11 +1,28 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.ui.admin.beans;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.management.NotCompliantMBeanException;
-
-import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -26,9 +43,9 @@ public class SearchManagerBean extends SimpleAdminBean
 {
     private static final String PROGRESS_ID = "searchmanagerbean.reindexer";
 
-    public static final String[] METHODS = { "reload" };
+    private static final String[] METHODS = { "reload" };
 
-    private static Logger log = Logger.getLogger( SearchManagerBean.class );
+    // private static Logger log = Logger.getLogger( SearchManagerBean.class );
 
     private WikiBackgroundThread m_updater;
 
@@ -74,9 +91,10 @@ public class SearchManagerBean extends SimpleAdminBean
                     setName("Reindexer started");
                 }
 
+                @SuppressWarnings("unchecked")
                 public void backgroundTask() throws Exception
                 {
-                    Collection allPages = m_engine.getPageManager().getAllPages();
+                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
 
                     SearchManager mgr = m_engine.getSearchManager();
                     m_max = allPages.size();
@@ -90,10 +108,8 @@ public class SearchManagerBean extends SimpleAdminBean
 
                     m_engine.getProgressManager().startProgress( pi, PROGRESS_ID );
 
-                    for( Iterator i = allPages.iterator(); i.hasNext(); )
+                    for( WikiPage page : allPages )
                     {
-                        WikiPage page = (WikiPage) i.next();
-
                         mgr.reindexPage(page);
                         m_count++;
                     }

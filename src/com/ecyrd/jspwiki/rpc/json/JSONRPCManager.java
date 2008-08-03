@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.action.NoneActionBean;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
@@ -60,7 +59,7 @@ import com.metaparadigm.jsonrpc.JSONRPCBridge;
 public final class JSONRPCManager extends RPCManager
 {
     private static final String JSONRPCBRIDGE = "JSONRPCBridge";
-    private static HashMap c_globalObjects = new HashMap();
+    private static HashMap<String, CallbackContainer> c_globalObjects = new HashMap<String, CallbackContainer>();
     
     /** Prevent instantiation */
     private JSONRPCManager()
@@ -151,9 +150,9 @@ public final class JSONRPCManager extends RPCManager
     {
         TemplateManager.addResourceRequest(context, 
                                            TemplateManager.RESOURCE_SCRIPT, 
-                                           context.getContext().getURL(NoneActionBean.class,"scripts/json-rpc/jsonrpc.js"));        
+                                           context.getURL(WikiContext.NONE,"scripts/json-rpc/jsonrpc.js"));        
         
-        String jsonurl = context.getContext().getURL( NoneActionBean.class, "JSON-RPC" );
+        String jsonurl = context.getURL( WikiContext.NONE, "JSON-RPC" );
         TemplateManager.addResourceRequest(context, 
                                            TemplateManager.RESOURCE_JSFUNCTION, 
                                            "jsonrpc = new JSONRpcClient(\""+jsonurl+"\");");

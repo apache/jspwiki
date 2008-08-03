@@ -22,7 +22,6 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.util.*;
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.AttachActionBean;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -61,6 +60,9 @@ public class Image
         return TextUtil.replaceEntities( (String) params.get( paramId ) );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -97,7 +99,7 @@ public class Image
 
             if( att != null )
             {
-                src = context.getContext().getURL( AttachActionBean.class, att.getName() );
+                src = context.getURL( WikiContext.ATTACH, att.getName() );
             }
         }
         catch( ProviderException e )

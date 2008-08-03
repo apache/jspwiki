@@ -1,31 +1,36 @@
-/*
- JSPWiki - a JSP-based WikiWiki clone.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2003-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,13 +40,14 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.modules.ModuleManager;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
  *  the ResourceRequest mechanism.
  *
  *  @since 2.1.62
- *  @author Janne Jalkanen
  */
 public class TemplateManager
     extends ModuleManager
@@ -64,33 +70,56 @@ public class TemplateManager
     public static final String RESOURCE_STYLESHEET = "stylesheet";
 
     /**
-     * Requests a script to be loaded.  Value is {@value}.
+     * Requests a script to be loaded. Value is {@value}.
      */
-    public static final String RESOURCE_SCRIPT     = "script";
+    public static final String RESOURCE_SCRIPT = "script";
 
     /**
-     *  Requests inlined CSS. Value is {@value}.
+     * Requests inlined CSS. Value is {@value}.
      */
-    public static final String RESOURCE_INLINECSS  = "inlinecss";
+    public static final String RESOURCE_INLINECSS = "inlinecss";
 
     /** The default directory for the properties. Value is {@value}. */
-    public static final String DIRECTORY           = "templates";
+    public static final String DIRECTORY = "templates";
 
-    /** The name of the default template.  Value is {@value}. */
-    public static final String DEFAULT_TEMPLATE    = "default";
+    /** The name of the default template. Value is {@value}. */
+    public static final String DEFAULT_TEMPLATE = "default";
 
-    /** Name of the file that contains the properties.*/
+    /** Name of the file that contains the properties. */
 
-    public static final String PROPERTYFILE        = "template.properties";
+    public static final String PROPERTYFILE = "template.properties";
 
-    /** The name under which the resource includes map is stored in the WikiContext. */
-    public static final String RESOURCE_INCLUDES   = "jspwiki.resourceincludes";
+    /** Location of I18N Resource bundles, and path prefix and suffixes */
 
-    // private Cache              m_propertyCache;
+    public static final String I18NRESOURCE_PATH = "/WEB-INF/lib/JSPWiki.jar";
 
-    protected static final Logger log = Logger.getLogger( TemplateManager.class );
+    public static final String I18NRESOURCE_PREFIX = "templates/default_";
 
-    /** Requests a HTTP header.  Value is {@value}. */
+    public static final String I18NRESOURCE_SUFFIX = ".properties";
+
+    /** I18N string to mark the default locale */
+
+    public static final String I18NDEFAULT_LOCALE = "prefs.user.language.default";
+
+    /** I18N string to mark the server timezone */
+
+    public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
+
+    /** Prefix of the default timeformat properties. */
+
+    public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
+
+    /**
+     * The name under which the resource includes map is stored in the
+     * WikiContext.
+     */
+    public static final String RESOURCE_INCLUDES = "jspwiki.resourceincludes";
+
+    // private Cache m_propertyCache;
+
+    protected static final Logger log = Logger.getLogger(TemplateManager.class);
+
+    /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
 
     /**
@@ -125,7 +154,9 @@ public class TemplateManager
             {
                 in.close();
             }
-            catch( IOException e ) {}
+            catch (IOException e)
+            {
+            }
 
             return true;
         }
@@ -348,14 +379,15 @@ public class TemplateManager
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
      */
+    @SuppressWarnings("unchecked")
     public Set listSkins( PageContext pageContext, String template )
     {
         String place = makeFullJSPName( template, SKIN_DIRECTORY );
 
         ServletContext sContext = pageContext.getServletContext();
 
-        Set skinSet = sContext.getResourcePaths( place );
-        TreeSet resultSet = new TreeSet();
+        Set<String> skinSet = sContext.getResourcePaths( place );
+        TreeSet<String> resultSet = new TreeSet<String>();
 
         if( log.isDebugEnabled() ) log.debug( "Listings skins from "+place );
 
@@ -363,22 +395,233 @@ public class TemplateManager
         {
             String[] skins = {};
 
-            skins = (String[]) skinSet.toArray(skins);
+            skins = skinSet.toArray(skins);
 
-            for( int i = 0; i < skins.length; i++ )
+            for (int i = 0; i < skins.length; i++)
             {
-                String[] s = StringUtils.split(skins[i],"/");
+                String[] s = StringUtils.split(skins[i], "/");
 
-                if( s.length > 2 && skins[i].endsWith("/") )
+                if (s.length > 2 && skins[i].endsWith("/"))
                 {
-                    String skinName = s[s.length-1];
-                    resultSet.add( skinName );
-                    if( log.isDebugEnabled() ) log.debug("...adding skin '"+skinName+"'");
+                    String skinName = s[s.length - 1];
+                    resultSet.add(skinName);
+                    if (log.isDebugEnabled())
+                        log.debug("...adding skin '" + skinName + "'");
                 }
             }
         }
 
         return resultSet;
+    }
+
+    /**
+     * List all installed i18n language properties
+     * 
+     * @param pageContext
+     * @return map of installed Languages (with help of Juan Pablo Santos Rodr’guez)
+     * @since 2.7.x
+     */
+    public Map listLanguages(PageContext pageContext)
+    {
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
+
+        String clientLanguage = ((HttpServletRequest) pageContext.getRequest()).getLocale().toString();
+        JarInputStream jarStream = null;
+        
+        try
+        {
+            JarEntry entry;
+            InputStream inputStream = pageContext.getServletContext().getResourceAsStream(I18NRESOURCE_PATH);
+            jarStream = new JarInputStream(inputStream);
+
+            while ((entry = jarStream.getNextJarEntry()) != null)
+            {
+                String name = entry.getName();
+
+                if (!entry.isDirectory() && name.startsWith(I18NRESOURCE_PREFIX) && name.endsWith(I18NRESOURCE_SUFFIX))
+                {
+                    name = name.substring(I18NRESOURCE_PREFIX.length(), name.lastIndexOf(I18NRESOURCE_SUFFIX));
+
+                    Locale locale = new Locale(name.substring(0, 2), ((name.indexOf("_") == -1) ? "" : name.substring(3, 5)));
+
+                    String defaultLanguage = "";
+
+                    if (clientLanguage.startsWith(name))
+                    {
+                        defaultLanguage = LocaleSupport.getLocalizedMessage(pageContext, I18NDEFAULT_LOCALE);
+                    }
+
+                    resultMap.put(name, locale.getDisplayName(locale) + " " + defaultLanguage);
+                }
+            }
+        }
+        catch (IOException ioe)
+        {
+            if (log.isDebugEnabled())
+                log.debug("Could not search jar file '" + I18NRESOURCE_PATH + 
+                          "'for properties files due to an IOException: \n" + ioe.getMessage());
+        }
+        finally
+        {
+            if( jarStream != null ) 
+            {
+                try 
+                { 
+                    jarStream.close(); 
+                } 
+                catch(IOException e) {}
+            }
+        }
+        
+        return resultMap;
+    }
+
+
+    /**
+     * List all available timeformats, read from the jspwiki.properties
+     * 
+     * @param pageContext
+     * @return map of TimeFormats
+     * @since 2.7.x
+     */
+    public Map listTimeFormats(PageContext pageContext)
+    {
+        WikiContext context = WikiContext.findContext( pageContext ); 
+        Properties props = m_engine.getWikiProperties();
+        ArrayList<String> tfArr = new ArrayList<String>(40);
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
+
+        /* filter timeformat properties */
+        for (Enumeration e = props.propertyNames(); e.hasMoreElements();)
+        {
+            String name = (String) e.nextElement();
+
+            if (name.startsWith(TIMEFORMATPROPERTIES))
+            {
+                tfArr.add(name);
+            }
+        }
+
+        /* fetch actual formats */
+        if (tfArr.size() == 0) /*
+                                 * no props found - make sure some default
+                                 * formats are avail
+                                 */
+        {
+            tfArr.add("dd-MMM-yy");
+            tfArr.add("d-MMM-yyyy");
+            tfArr.add("EEE, dd-MMM-yyyy, zzzz");
+        }
+        else
+        {
+            Collections.sort(tfArr);
+
+            for (int i = 0; i < tfArr.size(); i++)
+            {
+                tfArr.set(i, props.getProperty(tfArr.get(i)));
+            }
+        }
+
+        String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
+        //TimeZone tz = TimeZone.getDefault();
+        TimeZone tz = TimeZone.getTimeZone(prefTimeZone);
+        /*try
+        {
+            tz.setRawOffset(Integer.parseInt(prefTimeZone));
+        }
+        catch (Exception e)
+        {
+        }*/
+
+        Date d = new Date(); // current date
+        try
+        {
+            // dummy format pattern
+            SimpleDateFormat fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+            fmt.setTimeZone(tz);
+
+            for (int i = 0; i < tfArr.size(); i++)
+            {
+                try
+                {
+                    String f = tfArr.get(i);
+                    fmt.applyPattern(f);
+
+                    resultMap.put(f, fmt.format(d));
+                }
+                catch (IllegalArgumentException e)
+                {
+                } // skip parameter
+            }
+        }
+        catch (IllegalArgumentException e)
+        {
+        } // skip parameter
+
+        return resultMap;
+    }
+
+    /**
+     * List all timezones, with special marker for server timezone
+     * 
+     * @param pageContext
+     * @return map of TimeZones
+     * @since 2.7.x
+     */
+    public Map listTimeZones(PageContext pageContext)
+    {
+        LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
+
+        String[][] tzs = { { "GMT-12", "Enitwetok, Kwajalien" },
+                          { "GMT-11", "Nome, Midway Island, Samoa" }, 
+                          { "GMT-10", "Hawaii" },
+                          { "GMT-9", "Alaska" }, 
+                          { "GMT-8", "Pacific Time" },
+                          { "GMT-7", "Mountain Time" }, 
+                          { "GMT-6", "Central Time, Mexico City" },
+                          { "GMT-5", "Eastern Time, Bogota, Lima, Quito" },
+                          { "GMT-4", "Atlantic Time, Caracas, La Paz" }, 
+                          { "GMT-3:30", "Newfoundland" },
+                          { "GMT-3", "Brazil, Buenos Aires, Georgetown, Falkland Is." },
+                          { "GMT-2", "Mid-Atlantic, Ascention Is., St Helena" },
+                          { "GMT-1", "Azores, Cape Verde Islands" },
+                          { "GMT", "Casablanca, Dublin, Edinburgh, London, Lisbon, Monrovia" },
+                          { "GMT+1", "Berlin, Brussels, Copenhagen, Madrid, Paris, Rome" },
+                          { "GMT+2", "Helsinki, Athens, Kaliningrad, South Africa, Warsaw" },
+                          { "GMT+3", "Baghdad, Riyadh, Moscow, Nairobi" }, 
+                          { "GMT+3:30", "Tehran" },
+                          { "GMT+4", "Adu Dhabi, Baku, Muscat, Tbilisi" }, 
+                          { "GMT+4:30", "Kabul" },
+                          { "GMT+5", "Islamabad, Karachi, Tashkent" },
+                          { "GMT+5:30", "Bombay, Calcutta, Madras, New Delhi" },
+                          { "GMT+6", "Almaty, Colomba, Dhakra" }, 
+                          { "GMT+7", "Bangkok, Hanoi, Jakarta" },
+                          { "GMT+8", "Beijing, Hong Kong, Perth, Singapore, Taipei" },
+                          { "GMT+9", "Osaka, Sapporo, Seoul, Tokyo, Yakutsk" },
+                          { "GMT+9:30", "Adelaide, Darwin" },
+                          { "GMT+10", "Melbourne, Papua New Guinea, Sydney, Vladivostok" },
+                          { "GMT+11", "Magadan, New Caledonia, Solomon Islands" },
+                          { "GMT+12", "Auckland, Wellington, Fiji, Marshall Island" } };
+
+        java.util.TimeZone servertz = java.util.TimeZone.getDefault();
+
+        for( int i = 0; i < tzs.length; i++ )
+        {
+            String tzID = tzs[i][0];
+            java.util.TimeZone tz = java.util.TimeZone.getTimeZone(tzID);
+            
+            String serverTimeZone = "";
+
+            if( servertz.getRawOffset() == tz.getRawOffset() )
+            {
+                serverTimeZone = LocaleSupport.getLocalizedMessage(pageContext, I18NSERVER_TIMEZONE);
+                tzID = servertz.getID(); 
+            }
+
+            resultMap.put(tzID, "(" + tzs[i][0] + ") "+tzs[i][1] + " " + serverTimeZone);            
+        }
+
+        return resultMap;
     }
 
     /**
@@ -412,15 +655,15 @@ public class TemplateManager
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML or Javascript comment format.
      *
-     *  @param wiki context
+     *  @param context the wiki context
      *  @param type the marker
      *  @return the generated marker comment
      */
-    public static String getMarker(WikiActionBean actionBean, String type )
+    public static String getMarker( WikiActionBean context, String type )
     {
         if( type.equals(RESOURCE_JSLOCALIZEDSTRINGS) )
         {
-            return getJSLocalizedStrings( actionBean );
+            return getJSLocalizedStrings( context );
         }
         else if( type.equals(RESOURCE_JSFUNCTION) )
         {
@@ -438,13 +681,13 @@ public class TemplateManager
      *  @author Dirk Frederickx
      *  @since 2.5.108
      */
-    private static String getJSLocalizedStrings( WikiActionBean actionBean )
+    private static String getJSLocalizedStrings( WikiActionBean context )
     {
         StringBuffer sb = new StringBuffer();
 
         sb.append( "var LocalizedStrings = {\n");
 
-        ResourceBundle rb = actionBean.getBundle("templates.default");
+        ResourceBundle rb = context.getBundle("templates.default");
 
         boolean first = true;
 
@@ -495,20 +738,21 @@ public class TemplateManager
      *  @param type What kind of a request should be added?
      *  @param resource The resource to add.
      */
-    public static void addResourceRequest( WikiActionBean actionBean, String type, String resource )
+    @SuppressWarnings("unchecked")
+    public static void addResourceRequest( WikiActionBean ctx, String type, String resource )
     {
-        HashMap resourcemap = (HashMap) actionBean.getVariable( RESOURCE_INCLUDES );
+        HashMap<String,Vector<String>> resourcemap = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
         if( resourcemap == null )
         {
-            resourcemap = new HashMap();
+            resourcemap = new HashMap<String,Vector<String>>();
         }
 
-        Vector resources = (Vector) resourcemap.get( type );
+        Vector<String> resources = resourcemap.get( type );
 
         if( resources == null )
         {
-            resources = new Vector();
+            resources = new Vector<String>();
         }
 
         String resourceString = null;
@@ -542,7 +786,7 @@ public class TemplateManager
         log.debug("Request to add a resource: "+resourceString);
 
         resourcemap.put( type, resources );
-        actionBean.setVariable( RESOURCE_INCLUDES, resourcemap );
+        ctx.setVariable( RESOURCE_INCLUDES, resourcemap );
     }
 
     /**
@@ -554,19 +798,20 @@ public class TemplateManager
      *  @return a String array for the resource requests
      */
 
-    public static String[] getResourceRequests( WikiActionBean actionBean, String type )
+    @SuppressWarnings("unchecked")
+    public static String[] getResourceRequests( WikiActionBean ctx, String type )
     {
-        HashMap hm = (HashMap) actionBean.getVariable( RESOURCE_INCLUDES );
+        HashMap<String,Vector<String>> hm = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
         if( hm == null ) return new String[0];
 
-        Vector resources = (Vector) hm.get( type );
+        Vector<String> resources = hm.get( type );
 
         if( resources == null ) return new String[0];
 
         String[] res = new String[resources.size()];
 
-        return (String[]) resources.toArray( res );
+        return resources.toArray( res );
     }
 
     /**
@@ -575,19 +820,20 @@ public class TemplateManager
      * @param ctx the wiki context
      * @return the array of types requested
      */
-    public static String[] getResourceTypes( WikiActionBean actionBean )
+    @SuppressWarnings("unchecked")
+    public static String[] getResourceTypes( WikiActionBean ctx )
     {
         String[] res = new String[0];
 
-        if( actionBean != null )
+        if( ctx != null )
         {
-            HashMap hm = (HashMap) actionBean.getVariable( RESOURCE_INCLUDES );
+            HashMap<String,String> hm = (HashMap<String,String>) ctx.getVariable( RESOURCE_INCLUDES );
 
             if( hm != null )
             {
-                Set keys = hm.keySet();
+                Set<String> keys = hm.keySet();
 
-                res = (String[]) keys.toArray( res );
+                res = keys.toArray( res );
             }
         }
 

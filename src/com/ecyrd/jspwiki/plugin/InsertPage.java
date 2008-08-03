@@ -21,8 +21,6 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.EditActionBean;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 
@@ -46,8 +44,15 @@ public class InsertPage
 
     private static final String DEFAULT_STYLE = "";
 
+    /** This attribute is stashed in the WikiContext to make sure that we don't
+     *  have circular references.
+     */
     public static final String ATTR_RECURSE    = "com.ecyrd.jspwiki.plugin.InsertPage.recurseCheck";
     
+    /**
+     *  {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -79,7 +84,7 @@ public class InsertPage
                 //  Check for recursivity
                 //
                 
-                List previousIncludes = (List)context.getVariable( ATTR_RECURSE );
+                List<String> previousIncludes = (List)context.getVariable( ATTR_RECURSE );
                 
                 if( previousIncludes != null )
                 {
@@ -90,7 +95,7 @@ public class InsertPage
                 }
                 else
                 {
-                    previousIncludes = new ArrayList();
+                    previousIncludes = new ArrayList<String>();
                 }
                
                 previousIncludes.add( page.getName() );
@@ -134,7 +139,7 @@ public class InsertPage
                 if( pageData.length() > maxlen ) 
                 {
                     pageData = pageData.substring( 0, maxlen )+" ...";
-                    moreLink = "<p><a href=\""+context.getContext().getURL(ViewActionBean.class,includedPage)+"\">More...</a></p>";
+                    moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">More...</a></p>";
                 }
 
                 res.append("<div style=\""+style+"\""+(clazz != null ? " class=\""+clazz+"\"" : "")+">");
@@ -157,7 +162,7 @@ public class InsertPage
                 else
                 {
                     res.append("There is no page called '"+includedPage+"'.  Would you like to ");
-                    res.append("<a href=\""+context.getContext().getURL( EditActionBean.class, includedPage )+"\">create it?</a>");
+                    res.append("<a href=\""+context.getURL( WikiContext.EDIT, includedPage )+"\">create it?</a>");
                 }
             }
         }

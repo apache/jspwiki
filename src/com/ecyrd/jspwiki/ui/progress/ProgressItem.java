@@ -1,44 +1,62 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.ui.progress;
 
 /**
  *  Provides access to an progress item.
  *
- *  @author Janne Jalkanen
  *  @since  2.6
  */
 public abstract class ProgressItem
 {
+    /**
+     *  Status: The PI is created.
+     */
     public static final int CREATED  = 0;
+    
+    /** Status: The PI is started. */
     public static final int STARTED  = 1;
+    
+    /** Status: The PI is stopped. */
     public static final int STOPPED  = 2;
+    
+    /** Status: The PI is finished. */
     public static final int FINISHED = 3;
 
     protected int m_state = CREATED;
 
+    /**
+     *  Get the state of the ProgressItem.
+     *  @return CREATED, STARTED, STOPPED or FINISHED.
+     */
     public int getState()
     {
         return m_state;
     }
 
+    /**
+     *  Sets the state of the ProgressItem.
+     *  
+     *  @param state One of the CREATED, STARTED, STOPPED or FINISHED.
+     */
     public void setState( int state )
     {
         m_state = state;

@@ -1,22 +1,23 @@
 /*
-JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
-Copyright (C) 2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or
-(at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.search;
 
 import java.io.*;
@@ -206,18 +207,20 @@ public class LuceneSearchProvider implements SearchProvider
                     writer = new IndexWriter( m_luceneDirectory,
                                               getLuceneAnalyzer(),
                                               true );
-                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
+                    Collection allPages = m_engine.getPageManager().getAllPages();
 
-                    for( WikiPage page : allPages )
+                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
                     {
+                        WikiPage page = (WikiPage) iterator.next();
                         String text = m_engine.getPageManager().getPageText( page.getName(),
                                                                              WikiProvider.LATEST_VERSION );
                         luceneIndexPage( page, text, writer );
                     }
 
-                    Collection<Attachment> allAttachments = m_engine.getAttachmentManager().getAllAttachments();
-                    for( Attachment att : allAttachments )
+                    Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
+                    for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
                     {
+                        Attachment att = (Attachment) iterator.next();
                         String text = getAttachmentContent( att.getName(),
                                                             WikiProvider.LATEST_VERSION );
                         luceneIndexPage( att, text, writer );
@@ -270,6 +273,11 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  Fetches the attachment content from the repository.
      *  Content is flat text that can be used for indexing/searching or display
+     *  
+     *  @param attachmentName Name of the attachment.
+     *  @param version The version of the attachment.
+     *  
+     *  @return the content of the Attachment as a String.
      */
     protected String getAttachmentContent( String attachmentName, int version )
     {
@@ -408,6 +416,8 @@ public class LuceneSearchProvider implements SearchProvider
     protected Document luceneIndexPage( WikiPage page, String text, IndexWriter writer )
         throws IOException
     {
+        if( log.isDebugEnabled() ) log.debug( "Indexing "+page.getName()+"..." );
+        
         // make a new, empty document
         Document doc = new Document();
 
@@ -444,11 +454,12 @@ public class LuceneSearchProvider implements SearchProvider
         // Now add the names of the attachments of this page
         try
         {
-            Collection<Attachment> attachments = m_engine.getAttachmentManager().listAttachments(page);
+            Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
 
-            for( Attachment att : attachments )
+            for( Iterator it = attachments.iterator(); it.hasNext(); )
             {
+                Attachment att = (Attachment) it.next();
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
@@ -522,7 +533,7 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection<SearchResult> findPages( String query )
+    public Collection findPages( String query )
         throws ProviderException
     {
         return findPages( query, FLAG_CONTEXTS );
@@ -546,7 +557,7 @@ public class LuceneSearchProvider implements SearchProvider
         throws ProviderException
     {
         Searcher  searcher = null;
-        ArrayList<SearchResult> list     = null;
+        ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 
         try
@@ -607,7 +618,8 @@ public class LuceneSearchProvider implements SearchProvider
 
                     }
 
-                    SearchResult result = new SearchResultImpl( page, score, fragments );                    list.add(result);
+                    SearchResult result = new SearchResultImpl( page, score, fragments );     
+                    list.add(result);
                 }
                 else
                 {

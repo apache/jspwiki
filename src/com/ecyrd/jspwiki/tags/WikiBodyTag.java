@@ -23,13 +23,13 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 
 /**
  *  This is a class that provides the same services as the WikiTagBase, but this time it
@@ -47,7 +47,8 @@ public abstract class WikiBodyTag extends BodyTagSupport
     {
         try
         {
-            m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
+            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
+                                                                    PageContext.REQUEST_SCOPE );
 
             if( m_wikiContext == null )
             {

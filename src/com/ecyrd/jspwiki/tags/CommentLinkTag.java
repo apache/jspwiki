@@ -21,10 +21,12 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
+import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.CommentActionBean;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.
@@ -41,23 +43,29 @@ public class CommentLinkTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
-        String pageName = null;
+        WikiPage   page     = null;
+        String     pageName = null;
         
         //
         //  Determine the page and the link.
         //
         if( m_pageName == null )
         {
-            if( m_page == null )
+            page = m_wikiContext.getPage();
+            if( page == null )
             {
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
 
-            pageName = m_page.getName();
+            pageName = page.getName();
         }
         else
         {
@@ -72,13 +80,17 @@ public class CommentLinkTag
 
         switch( m_format )
         {
-          case ANCHOR:
-            out.print("<a href=\""+getCommentURL(pageName)+"\">");
-            break;
+            case ANCHOR:
+                out.print("<a href=\""+getCommentURL(pageName)+"\">");
+                break;
 
-          case URL:
-            out.print( getCommentURL(pageName) );
-            break;
+            case URL:
+                out.print( getCommentURL(pageName) );
+                break;
+                
+            default:
+                throw new InternalWikiException("Impossible format "+m_format);
+            
         }
 
         return EVAL_BODY_INCLUDE;
@@ -86,7 +98,7 @@ public class CommentLinkTag
 
     private String getCommentURL( String pageName )
     {
-        return ((WikiContext)m_actionBean).getContext().getURL(CommentActionBean.class, pageName);
+        return m_wikiContext.getURL(WikiContext.COMMENT, pageName);
     }
 
 }

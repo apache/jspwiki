@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import com.ecyrd.jspwiki.WikiPage;
+
 /**
  *  Writes the version number of the next version of the page.
  *
@@ -35,17 +37,16 @@ public class NextVersionTag
     public final int doWikiStartTag()
         throws IOException
     {
-        if ( m_page != null )
-        {
-            int version = m_page.getVersion();
+        WikiPage   page   = m_wikiContext.getPage();
 
-            if( version == -1 )
-                version = -1;
-            else
-                version++;
+        int version = page.getVersion();
 
-            pageContext.getOut().print( version );
-        }
+        if( version == -1 )
+            version = -1;
+        else
+            version++;
+
+        pageContext.getOut().print( version );
 
         return SKIP_BODY;
     }

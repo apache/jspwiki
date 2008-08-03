@@ -20,10 +20,14 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
-import com.ecyrd.jspwiki.*;
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Just displays the current date and time.
@@ -35,25 +39,24 @@ import java.text.SimpleDateFormat;
 public class CurrentTimePlugin
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
+    // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
-    public static final String DEFAULT_FORMAT = "HH:mm:ss dd-MMM-yyyy zzzz";
-
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         String formatString = (String)params.get("format");
-
-        if( formatString == null )
-        {
-            formatString = DEFAULT_FORMAT;
-        }
-
-        log.debug("Date format string is: "+formatString);
-
+        
         try
         {
-            SimpleDateFormat fmt = new SimpleDateFormat( formatString );
+            SimpleDateFormat fmt;
+            
+            if( formatString != null )
+                fmt = new SimpleDateFormat( formatString );
+            else
+                fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
 
             Date d = new Date();  // Now.
 

@@ -27,7 +27,6 @@ import java.util.Map;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.NoneActionBean;
 
 /**
  * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by
@@ -45,9 +44,19 @@ import com.ecyrd.jspwiki.action.NoneActionBean;
  */
 public class Note implements WikiPlugin
 {
+    /**
+     *  Property name for setting the image for the note.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_NOTE_IMAGE    = "notePlugin.imageName";
+    
+    /**
+     *  The default name for the note.  Value is <tt>{@value}</tt>.
+     */
     public static final String DEFAULT_NOTE_IMAGE = "note.png";
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute(WikiContext context, Map params) throws PluginException
     {
         String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
@@ -76,7 +85,7 @@ public class Note implements WikiPlugin
                                                                     engine.getTemplateDir(), 
                                                                     commentImage );
 
-        return ctx.getContext().getURL( NoneActionBean.class, resource );
+        return ctx.getURL( WikiContext.NONE, resource );
     }
 
 
@@ -84,7 +93,6 @@ public class Note implements WikiPlugin
      *  Cleans the side.
      * 
      * @param commandline
-     * @return
      */
     private String clean(String commandline)
     {

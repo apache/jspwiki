@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.providers;
 
@@ -30,7 +31,9 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.base.events.*;
 
 /**
  *  Provides a caching attachment provider.  This class rests on top of a
@@ -38,7 +41,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  Attachment objects are cached; the actual attachment contents are 
  *  fetched always from the provider.
  *
- *  @author Janne Jalkanen
  *  @since 2.1.64.
  */
 
@@ -61,16 +63,25 @@ public class CachingAttachmentProvider
     private Cache m_cache;
 
     private long m_cacheMisses = 0;
-    private long m_cacheHits   = 0;
+    private long m_cacheHits = 0;
+
+    /**
+     * This cache contains Attachment objects and is keyed by attachment name.
+     * This provides for quickly giving recently changed attachments (for the RecentChanges plugin)
+     */
+    private Cache m_attCache;
 
     /** The extension to append to directory names to denote an attachment directory. */
     public static final String DIR_EXTENSION   = "-att";
-    
+
     /** Property that supplies the directory used to store attachments. */
     public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
 
     // FIXME: Make settable.
     private int  m_refreshPeriod = 60*10; // 10 minutes at the moment
+    
+    private boolean m_gotall = false;
+    private CachedAttachmentCollector m_allCollector = new CachedAttachmentCollector();
 
     /**
      * {@inheritDoc}
@@ -79,12 +90,19 @@ public class CachingAttachmentProvider
         throws NoRequiredPropertyException,
                IOException
     {
-        log.debug("Initing CachingAttachmentProvider");
+        log.info("Initing CachingAttachmentProvider");
 
         //
-        //  Construct an unlimited cache.
+        // Construct an unlimited cache of Collection objects
         //
         m_cache = new Cache( true, false, true );
+
+        //
+        // Construct an unlimited cache for the individual Attachment objects. 
+        // Attachment name is key, the Attachment object is the cached object
+        //
+        m_attCache = new Cache(true, false, true);
+        m_attCache.addCacheEventListener(m_allCollector,CacheEntryEventListener.class);
 
         //
         //  Find and initialize real provider.
@@ -130,6 +148,8 @@ public class CachingAttachmentProvider
         m_provider.putAttachmentData( att, data );
 
         m_cache.flushEntry( att.getParentName() );
+        att.setLastModified(new Date());
+        m_attCache.putInCache(att.getName(), att);
     }
 
     /**
@@ -145,13 +165,14 @@ public class CachingAttachmentProvider
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Collection listAttachments( WikiPage page )
         throws ProviderException
     {
         log.debug("Listing attachments for "+page);
         try
         {
-            Collection c = (Collection)m_cache.getFromCache( page.getName(), m_refreshPeriod );
+            Collection<Attachment> c = (Collection<Attachment>)m_cache.getFromCache( page.getName(), m_refreshPeriod );
 
             if( c != null )
             {
@@ -168,7 +189,7 @@ public class CachingAttachmentProvider
         {
             try
             {
-                Collection c = refresh( page );
+                Collection<Attachment> c = refresh( page );
 
                 return cloneCollection(c);
             }
@@ -187,9 +208,9 @@ public class CachingAttachmentProvider
         return new ArrayList();
     }
 
-    private Collection cloneCollection( Collection c )
+    private <T> Collection<T> cloneCollection( Collection<T> c )
     {
-        ArrayList list = new ArrayList();
+        ArrayList<T> list = new ArrayList<T>();
         
         list.addAll( c );
         
@@ -210,8 +231,31 @@ public class CachingAttachmentProvider
     public List listAllChanged( Date timestamp )
         throws ProviderException
     {
-        // FIXME: Should cache
-        return m_provider.listAllChanged( timestamp );
+        List all = null;
+        //
+        // we do a one-time build up of the cache, after this the cache is updated for every attachment add/delete
+        if (m_gotall == false)
+        {
+            all = m_provider.listAllChanged(timestamp);
+
+            // Put all pages in the cache :
+
+            synchronized (this)
+            {
+                for (Iterator i = all.iterator(); i.hasNext();)
+                {
+                    Attachment att = (Attachment) i.next();
+                    m_attCache.putInCache(att.getName(), att);
+                }
+                m_gotall = true;
+            }
+        }
+        else
+        {
+            all = m_allCollector.getAllItems();
+        }
+
+        return all;
     }
 
     /**
@@ -240,11 +284,12 @@ public class CachingAttachmentProvider
      *
      *  @return The newly fetched object from the provider.
      */
-    private final Collection refresh( WikiPage page )
+    @SuppressWarnings("unchecked")
+    private final Collection<Attachment> refresh( WikiPage page )
         throws ProviderException
     {
         m_cacheMisses++;
-        Collection c = m_provider.listAttachments( page );
+        Collection<Attachment> c = m_provider.listAttachments( page );
         m_cache.putInCache( page.getName(), c );
 
         return c;
@@ -331,7 +376,7 @@ public class CachingAttachmentProvider
         throws ProviderException
     {
         // This isn't strictly speaking correct, but it does not really matter
-        m_cache.putInCache( att.getParentName(), null );
+        m_cache.removeEntry( att.getParentName() );
         m_provider.deleteVersion( att );
     }
 
@@ -341,7 +386,8 @@ public class CachingAttachmentProvider
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
-        m_cache.putInCache( att.getParentName(), null );
+        m_cache.removeEntry( att.getParentName() );
+        m_attCache.removeEntry( att.getName() );
         m_provider.deleteAttachment( att );
     }
 
@@ -356,7 +402,9 @@ public class CachingAttachmentProvider
     }
 
     /**
-     * {@inheritDoc}
+     *  Returns the WikiAttachmentProvider that this caching provider delegates to.
+     * 
+     *  @return The real provider underneath this one.
      */
     public WikiAttachmentProvider getRealProvider()
     {
@@ -370,7 +418,119 @@ public class CachingAttachmentProvider
         throws ProviderException
     {
         m_provider.moveAttachmentsForPage(oldParent, newParent);
-        m_cache.putInCache( newParent, null ); // FIXME
-        m_cache.putInCache( oldParent, null );
+        m_cache.removeEntry( newParent ); 
+        m_cache.removeEntry( oldParent );
+        
+        //
+        //  This is a kludge to make sure that the pages are removed
+        //  from the other cache as well.
+        //
+        String checkName = oldParent + "/";
+        
+        Collection<String> names = cloneCollection( m_allCollector.m_allItems.keySet() );
+        for( String name : names )
+        {
+            if( name.startsWith( checkName ) )
+            {
+                m_attCache.removeEntry( name );
+            }
+        }
     }
+
+    /**
+     * Keep a list of all Attachments in the OSCache (OSCache does not provide
+     * something like that) Idea copied from CacheItemCollector The cache is used to
+     * speed up the getRecentChanges function
+     * 
+     * @author Harry Metske
+     * @since 2.5
+     */
+    private static class CachedAttachmentCollector implements CacheEntryEventListener
+    {
+        private static final Logger log = Logger.getLogger( CachedAttachmentCollector.class );
+
+        private Map<String, Attachment> m_allItems = new HashMap<String, Attachment>();
+
+        /**
+         * Returns a clone of the set - you cannot manipulate this.
+         * 
+         * @return A list of all items.
+         */
+        public List<Attachment> getAllItems()
+        {
+            List<Attachment> ret = new LinkedList<Attachment>();
+            ret.addAll( m_allItems.values() );
+            log.info( "returning " + ret.size() + " attachments" );
+            return ret;
+        }
+
+        public void cacheEntryRemoved( CacheEntryEvent aEvent )
+        {
+            if( aEvent != null )
+            {
+                if( log.isDebugEnabled() )
+                {
+                    log.debug( "attachment cache entry removed: " + aEvent.getKey() );
+                }
+                
+                CacheEntry e = aEvent.getEntry();
+                
+                if( e != null )
+                {
+                    Attachment item = (Attachment) e.getContent();
+
+                    if( item != null )
+                    {
+                        m_allItems.remove( item.getName() );
+                    }
+                }
+            }
+        }
+
+        public void cacheEntryUpdated( CacheEntryEvent aEvent )
+        {
+            if( log.isDebugEnabled() )
+            {
+                log.debug( "attachment cache entry updated: " + aEvent.getKey() );
+            }
+
+            Attachment item = (Attachment) aEvent.getEntry().getContent();
+
+            if( item != null )
+            {
+                // Item added or replaced.
+                m_allItems.put( item.getName(), item );
+            }
+            else
+            {
+                m_allItems.remove( aEvent.getKey() );
+            }
+        }
+
+        public void cacheEntryAdded( CacheEntryEvent aEvent )
+        {
+            cacheEntryUpdated( aEvent );
+        }
+
+        public void cachePatternFlushed( CachePatternEvent aEvent )
+        {
+            // do nothing
+        }
+
+        public void cacheGroupFlushed( CacheGroupEvent aEvent )
+        {
+            // do nothing
+        }
+
+        public void cacheFlushed( CachewideEvent aEvent )
+        {
+            // do nothing
+        }
+
+        public void cacheEntryFlushed( CacheEntryEvent aEvent )
+        {
+            cacheEntryRemoved( aEvent );
+        }
+    }
+
 }

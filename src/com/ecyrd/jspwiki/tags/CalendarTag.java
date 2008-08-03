@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.tags;
 
@@ -23,8 +24,6 @@ import java.io.IOException;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
@@ -32,9 +31,9 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 
@@ -52,7 +51,6 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  then the calendar will default to the current month.
  *
  *
- *  @author Janne Jalkanen
  *  @since 2.0
  */
 
@@ -68,6 +66,10 @@ public class CalendarTag
     private SimpleDateFormat m_monthUrlFormat = null;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -87,16 +89,42 @@ public class CalendarTag
     }
     */
 
+    /**
+     *  Sets the page format.  If a page corresponding to the format is found when
+     *  the calendar is being rendered, a link to that page is created.  E.g. if the
+     *  format is set to <tt>'Main_blogentry_'ddMMyy</tt>, it works nicely in
+     *  conjuction to the WeblogPlugin.
+     *  
+     *  @param format The format in the SimpleDateFormat fashion.
+     *  
+     *  @see SimpleDateFormat
+     *  @see com.ecyrd.jspwiki.plugin.WeblogPlugin
+     */
     public void setPageformat( String format )
     {
         m_pageFormat = new SimpleDateFormat(format);
     }
 
+    /**
+     *  Set the URL format.  If the pageformat is not set, all dates are
+     *  links to pages according to this format.  The pageformat
+     *  takes precedence.
+     *  
+     *  @param format The URL format in the SimpleDateFormat fashion.
+     *  @see SimpleDateFormat
+     */
     public void setUrlformat( String format )
     {
         m_urlFormat = new SimpleDateFormat(format);
     }
 
+    /**
+     *  Set the format to be used for links for the months.
+     *  
+     *  @param format The format to set in the SimpleDateFormat fashion.
+     *  
+     *  @see SimpleDateFormat
+     */
     public void setMonthurlformat( String format )
     {
         m_monthUrlFormat = new SimpleDateFormat( format );
@@ -104,9 +132,11 @@ public class CalendarTag
 
     private String format( String txt )
     {
-        if( m_page != null )
+        WikiPage p = m_wikiContext.getPage();
+
+        if( p != null )
         {
-            return TextUtil.replaceString( txt, "%p", m_page.getName() );
+            return TextUtil.replaceString( txt, "%p", p.getName() );
         }
 
         return txt;
@@ -117,7 +147,7 @@ public class CalendarTag
      */
     private String getDayLink( Calendar day )
     {
-        WikiEngine engine = m_actionBean.getEngine();
+        WikiEngine engine = m_wikiContext.getEngine();
         String result = "";
 
         if( m_pageFormat != null )
@@ -134,8 +164,7 @@ public class CalendarTag
                 }
                 else
                 {
-                    WikiContext context = (WikiContext)m_actionBean;
-                    result = "<td class=\"link\"><a href=\""+context.getViewURL( pagename )+"\">"+
+                    result = "<td class=\"link\"><a href=\""+m_wikiContext.getViewURL( pagename )+"\">"+
                              day.get( Calendar.DATE )+"</a></td>";
                 }
             }
@@ -193,15 +222,14 @@ public class CalendarTag
         nextMonth.add( Calendar.DATE, -1);
         nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
 
-        if ( day.before(nextMonth) && m_page != null )
+        if ( day.before(nextMonth) )
         {
-            WikiContext context = (WikiContext)m_actionBean;
-            String pageName = m_page.getName();
+            WikiPage thePage = m_wikiContext.getPage();
+            String pageName = thePage.getName();
 
             String calendarDate = m_dateFormat.format(day.getTime());
-            Map<String,String> urlParams = new HashMap<String,String>();
-            urlParams.put("calendar.date", calendarDate );
-            String url = context.getContext().getURL( ViewActionBean.class, pageName, urlParams );
+            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName, 
+                                               "calendar.date="+calendarDate );
 
             if ( (queryString != null) && (queryString.length() > 0) )
             {
@@ -243,11 +271,15 @@ public class CalendarTag
         return format(result);
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
     {
-        WikiEngine       engine   = m_actionBean.getEngine();
+        WikiEngine       engine   = m_wikiContext.getEngine();
         JspWriter        out      = pageContext.getOut();
         Calendar         cal      = Calendar.getInstance();
         Calendar         prevCal  = Calendar.getInstance();
@@ -286,7 +318,7 @@ public class CalendarTag
 
         out.write( "<table class=\"calendar\">\n" );
 
-        HttpServletRequest httpServletRequest = m_actionBean.getContext().getRequest();
+        HttpServletRequest httpServletRequest = m_wikiContext.getHttpRequest();
         String queryString = engine.safeGetQueryString( httpServletRequest );
         out.write( "<tr>"+
                    getMonthNaviLink(prevCal,"&lt;&lt;", queryString)+

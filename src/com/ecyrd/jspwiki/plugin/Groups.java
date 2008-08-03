@@ -25,12 +25,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.util.UrlBuilder;
-
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.GroupActionBean;
 import com.ecyrd.jspwiki.auth.PrincipalComparator;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 
@@ -44,8 +40,11 @@ import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 public class Groups
     implements WikiPlugin
 {
-    private static final Comparator COMPARATOR = new PrincipalComparator();
+    private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -61,18 +60,12 @@ public class Groups
         {
             String name = groups[i].getName();
             
-            // Make Stripes URL
-            String groupUrl = GroupActionBean.class.getAnnotation(UrlBinding.class).value();
-            UrlBuilder urlBuilder = new UrlBuilder(  groupUrl, true );
-            urlBuilder.addParameter("group", name);
-            String url = urlBuilder.toString();
-            
-            // Make re-written URL
-            String rewriteUrl = context.getContext().getResponse().encodeURL( url );
+            // Make URL
+            String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name, false, null );
             
             // Create hyperlink
             s.append( "<a href=\"" );
-            s.append( rewriteUrl );
+            s.append( url );
             s.append( "\">" );
             s.append( name );
             s.append( "</a>" );

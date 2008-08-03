@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2004 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.tags;
 
@@ -37,7 +38,7 @@ import com.ecyrd.jspwiki.plugin.PluginManager;
  *    <LI>plugin - name of the plugin you want to insert.
  *    <LI>args   - An argument string for the tag.
  *  </UL>
- *  @author Janne Jalkanen
+ *
  *  @since 2.0
  */
 public class PluginTag
@@ -50,6 +51,10 @@ public class PluginTag
 
     private boolean m_evaluated = false;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void release()
     {
         super.release();
@@ -57,22 +62,37 @@ public class PluginTag
         m_evaluated = false;
     }
     
+    /**
+     *  Set the name of the plugin to execute.
+     *  
+     *  @param p Name of the plugin.
+     */
     public void setPlugin( String p )
     {
         m_plugin = p;
     }
 
+    /**
+     *  Set the argument string to the plugin.
+     *  
+     *  @param a Arguments string.
+     */
     public void setArgs( String a )
     {
         m_args = a;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doWikiStartTag() throws JspException, IOException
     {
         m_evaluated = false;
         return EVAL_BODY_BUFFERED;
     }
 
+    @SuppressWarnings("unchecked")
     private String executePlugin( String plugin, String args, String body )
         throws PluginException, IOException
     {
@@ -81,7 +101,7 @@ public class PluginTag
 
         m_evaluated = true;
 
-        Map<String,Object> argmap = pm.parseArgs( args );
+        Map<String, String> argmap = pm.parseArgs( args );
         
         if( body != null ) 
         {
@@ -93,6 +113,10 @@ public class PluginTag
         return result;        
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doEndTag()
         throws JspException
     {
@@ -111,6 +135,10 @@ public class PluginTag
         return EVAL_PAGE;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doAfterBody()
         throws JspException
     {
@@ -118,7 +146,7 @@ public class PluginTag
         {
             BodyContent bc = getBodyContent();
             
-            getPreviousOut().write( executePlugin( m_plugin, m_args, ((bc != null) ? bc.getString() : null) ) );
+            getPreviousOut().write( executePlugin( m_plugin, m_args, (bc != null) ? bc.getString() : null) );
         }
         catch( Exception e )
         {

@@ -42,7 +42,7 @@ public class UserNameTag
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = this.m_actionBean.getEngine();
+        WikiEngine engine = this.m_wikiContext.getEngine();
         WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
         Principal user = wikiSession.getUserPrincipal();
 

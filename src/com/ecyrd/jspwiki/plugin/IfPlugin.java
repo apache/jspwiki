@@ -104,13 +104,28 @@ import com.ecyrd.jspwiki.WikiProvider;
  */
 public class IfPlugin implements WikiPlugin
 {
+    /** The parameter name for setting the group to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_GROUP    = "group";
+
+    /** The parameter name for setting the user id to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_USER     = "user";
+    
+    /** The parameter name for setting the ip address to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_IP       = "ip";
+    
+    /** The parameter name for setting the page name to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE     = "page";
+    
+    /** The parameter name for setting the contents of the page to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CONTAINS = "contains";
+    
+    /** The parameter name for setting the variable name to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_VAR      = "var";
+    
+    /** The parameter name for setting the exact content to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_IS       = "is";
+    
+    /** The parameter name for checking whether a page/var exists.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXISTS   = "exists";
 
     /**
@@ -133,6 +148,8 @@ public class IfPlugin implements WikiPlugin
      *
      * @param context   The current WikiContext.
      * @param params    The parameter Map which contains key-value pairs.
+     * @throws PluginException If something goes wrong
+     * @return True, if the condition holds.
      */
     public static boolean ifInclude( WikiContext context, Map params ) throws PluginException
     {

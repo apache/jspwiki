@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.providers;
 
@@ -41,7 +42,6 @@ import com.ecyrd.jspwiki.*;
  *
  *  @since 2.1.21.
  *
- *  @author Janne Jalkanen
  */
 public abstract class AbstractFileProvider
     implements WikiPageProvider
@@ -65,17 +65,19 @@ public abstract class AbstractFileProvider
      */
     public static final String FILE_EXT = ".txt";
 
+    /** The default encoding. */
     public static final String DEFAULT_ENCODING = "ISO-8859-1";
 
     private boolean m_windowsHackNeeded = false;
     
     /**
+     *  {@inheritDoc}
      *  @throws FileNotFoundException If the specified page directory does not exist.
      *  @throws IOException In case the specified page directory is a file, not a directory.
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
-               IOException
+               IOException, FileNotFoundException
     {
         log.debug("Initing FileSystemProvider");
         m_pageDirectory = WikiEngine.getRequiredProperty( properties, PROP_PAGEDIR );
@@ -84,11 +86,22 @@ public abstract class AbstractFileProvider
 
         if( !f.exists() )
         {
-            f.mkdirs();
+            if( !f.mkdirs() )
+            {
+                throw new IOException( "Failed to create page directory " + f.getAbsolutePath() + " , please check property "
+                                       + PROP_PAGEDIR );
+            }
         }
-        else if( !f.isDirectory() )
+        else
         {
-            throw new IOException("Page directory is not a directory: "+m_pageDirectory);
+            if( !f.isDirectory() )
+            {
+                throw new IOException( "Page directory is not a directory: " + f.getAbsolutePath() );
+            }
+            if( !f.canWrite() )
+            {
+                throw new IOException( "Page directory is not writable: " + f.getAbsolutePath() );
+            }
         }
         
         m_engine = engine;
@@ -120,7 +133,11 @@ public abstract class AbstractFileProvider
     
     /**
      *  This makes sure that the queried page name
-     *  is still readable by the file system.
+     *  is still readable by the file system.  For example, all XML entities
+     *  and slashes are encoded with the percent notation.
+     *  
+     *  @param pagename The name to mangle
+     *  @return The mangled name.
      */
     protected String mangleName( String pagename )
     {
@@ -128,6 +145,15 @@ public abstract class AbstractFileProvider
         
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
 
+        //
+        //  Names which start with a dot must be escaped to prevent problems.
+        //  Since we use URL encoding, this is invisible in our unescaping.
+        //
+        if( pagename.startsWith( "." ) )
+        {
+            pagename = "%2E" + pagename.substring( 1 );
+        }
+        
         if( m_windowsHackNeeded )
         {
             String pn = pagename.toLowerCase();
@@ -145,6 +171,9 @@ public abstract class AbstractFileProvider
 
     /**
      *  This makes the reverse of mangleName.
+     *  
+     *  @param filename The filename to unmangle
+     *  @return The unmangled name.
      */
     protected String unmangleName( String filename )
     {
@@ -166,13 +195,18 @@ public abstract class AbstractFileProvider
     
     /**
      *  Finds a Wiki page from the page repository.
+     *  
+     *  @param page The name of the page.
+     *  @return A File to the page.  May be null.
      */
     protected File findPage( String page )
     {
         return new File( m_pageDirectory, mangleName(page)+FILE_EXT );
     }
 
-    
+    /**
+     *  {@inheritDoc}
+     */
     public boolean pageExists( String page )
     {
         File pagefile = findPage( page );
@@ -183,6 +217,10 @@ public abstract class AbstractFileProvider
     /**
      *  This implementation just returns the current version, as filesystem
      *  does not provide versioning information for now.
+     *  
+     *  @param page {@inheritDoc}
+     *  @param version {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public String getPageText( String page, int version )
         throws ProviderException
@@ -239,6 +277,9 @@ public abstract class AbstractFileProvider
         return result;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void putPageText( WikiPage page, String text )        
         throws ProviderException
     {
@@ -262,12 +303,15 @@ public abstract class AbstractFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public Collection getAllPages()
         throws ProviderException
     {
         log.debug("Getting all pages...");
 
-        ArrayList set = new ArrayList();
+        ArrayList<WikiPage> set = new ArrayList<WikiPage>();
 
         File wikipagedir = new File( m_pageDirectory );
 
@@ -300,11 +344,20 @@ public abstract class AbstractFileProvider
         return set;        
     }
 
+    /**
+     *  Does not work.
+     *  
+     *  @param date {@inheritDoc}
+     *  @return {@inheritDoc}
+     */
     public Collection getAllChangedSince( Date date )
     {
         return new ArrayList(); // FIXME
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public int getPageCount()
     {
         File wikipagedir = new File( m_pageDirectory );
@@ -317,11 +370,14 @@ public abstract class AbstractFileProvider
     /**
      * Iterates through all WikiPages, matches them against the given query,
      * and returns a Collection of SearchResult objects.
+     * 
+     * @param query {@inheritDoc}
+     * @return {@inheritDoc}
      */
     public Collection findPages( QueryItem[] query )
     {
         File wikipagedir = new File( m_pageDirectory );
-        TreeSet res = new TreeSet( new SearchResultComparator() );
+        TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
         File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
@@ -368,6 +424,11 @@ public abstract class AbstractFileProvider
     /**
      *  Always returns the latest version, since FileSystemProvider
      *  does not support versioning.
+     *  
+     *  @param page {@inheritDoc}
+     *  @param version {@inheritDoc}
+     *  @return {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
@@ -387,22 +448,32 @@ public abstract class AbstractFileProvider
 
     /**
      *  The FileSystemProvider provides only one version.
+     *  
+     *  @param page {@inheritDoc}
+     *  @throws {@inheritDoc}
+     *  @return {@inheritDoc}
      */
     public List getVersionHistory( String page )
         throws ProviderException
     {
-        ArrayList list = new ArrayList();
+        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
 
         list.add( getPageInfo( page, WikiPageProvider.LATEST_VERSION ) );
 
         return list;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getProviderInfo()
     {
         return "";
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String pageName, int version )
         throws ProviderException
     {
@@ -414,6 +485,9 @@ public abstract class AbstractFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deletePage( String pageName )
         throws ProviderException
     {
@@ -422,9 +496,16 @@ public abstract class AbstractFileProvider
         f.delete();
     }
 
+    /**
+     *  A simple filter which filters only those filenames which correspond to the
+     *  file extension used.
+     */
     public static class WikiFileFilter
         implements FilenameFilter
     {
+        /**
+         *  {@inheritDoc}
+         */
         public boolean accept( File dir, String name )
         {
             return name.endsWith( FILE_EXT );

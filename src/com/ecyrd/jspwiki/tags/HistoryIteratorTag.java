@@ -23,13 +23,13 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -53,7 +53,8 @@ public class HistoryIteratorTag
 
     public final int doStartTag()
     {
-        m_wikiContext = (WikiContext) WikiActionBeanFactory.findActionBean( pageContext );
+        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
+                                                                PageContext.REQUEST_SCOPE );
 
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;
@@ -78,7 +79,9 @@ public class HistoryIteratorTag
                 {
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( (WikiPage)m_iterator.next() );
-                    WikiActionBeanFactory.saveActionBean( pageContext, context );
+                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                              context,
+                                              PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(),
                                               context.getPage() );
                 }
@@ -120,7 +123,9 @@ public class HistoryIteratorTag
         {
             WikiContext context = (WikiContext)m_wikiContext.clone();
             context.setPage( (WikiPage)m_iterator.next() );
-            WikiActionBeanFactory.saveActionBean( pageContext, context );
+            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
+                                      context,
+                                      PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(),
                                       context.getPage() );
             return EVAL_BODY_BUFFERED;

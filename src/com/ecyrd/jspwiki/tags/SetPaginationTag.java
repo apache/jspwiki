@@ -195,14 +195,14 @@ public class SetPaginationTag
 
         //(Total items: " + m_total + ")" );
         pagination.append( LocaleSupport.getLocalizedMessage(pageContext, m_fmtkey + ".total",
-                           new Object[]{ new Integer( m_total ) } ) );
+                           new Object[]{ m_total } ) );
 
         pagination.append( "</div>" );
 
 
         /* +++ processing done +++ */
 
-		String p = pagination.toString();
+        String p = pagination.toString();
 
         pageContext.getOut().println( p );
 
@@ -225,11 +225,11 @@ public class SetPaginationTag
      **/
     private void appendLink( StringBuffer sb, int page, String fmttextkey )
     {
-		appendLink2( sb, page, LocaleSupport.getLocalizedMessage( pageContext, fmttextkey ) );
+        appendLink2( sb, page, LocaleSupport.getLocalizedMessage( pageContext, fmttextkey ) );
     }
     private void appendLink( StringBuffer sb, int page, int paginationblock )
     {
-		appendLink2( sb, page, Integer.toString( paginationblock ) );
+        appendLink2( sb, page, Integer.toString( paginationblock ) );
     }
     private void appendLink2( StringBuffer sb, int page, String text )
     {
@@ -241,7 +241,7 @@ public class SetPaginationTag
         else
         {
             sb.append( LocaleSupport.getLocalizedMessage( pageContext, m_fmtkey + ".show.title",
-                       new Object[]{ new Integer( page + 1 ), new Integer( page + m_pagesize ) } ) );
+                       new Object[]{ page + 1, page + m_pagesize } ) );
         }
         sb.append( "\" " );
 

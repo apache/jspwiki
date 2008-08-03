@@ -41,21 +41,39 @@ public class ParamTag
     private String m_name;
     private String m_value;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void release() 
     {
         m_name = m_value = null;
     }
     
+    /**
+     *  Set the name of the parameter to transfer.
+     *  
+     *  @param s The name.
+     */
     public void setName( String s ) 
     {
         m_name = s;
     }
     
+    /**
+     *  Set the value of the parameter to transfer.
+     *  
+     *  @param s The value.
+     */
     public void setValue( String s ) 
     {
         m_value = s;
     }
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doEndTag()
     {
         Tag t = null;

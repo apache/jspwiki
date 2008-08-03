@@ -21,17 +21,15 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.AttachActionBean;
-import com.ecyrd.jspwiki.action.NoneActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -70,7 +68,7 @@ public class LinkTag
     private boolean m_absolute = false;
     private boolean m_overrideAbsolute = false;
 
-    private Map<String,String> m_containedParams;
+    private Map<String, String> m_containedParams;
 
     private BodyContent m_bodyContent;
 
@@ -162,7 +160,7 @@ public class LinkTag
         {
             if( m_containedParams == null )
             {
-                m_containedParams = new HashMap<String,String>();
+                m_containedParams = new HashMap<String, String>();
             }
             m_containedParams.put( name, value );
         }
@@ -179,37 +177,30 @@ public class LinkTag
     private String figureOutURL()
         throws ProviderException
     {
-        // Init container parameters if not set
-        if( m_containedParams == null )
-        {
-            m_containedParams = new HashMap<String,String>();
-        }
-
-        // Set up the URL parameters map
         String url = null;
-        WikiEngine engine = m_actionBean.getEngine();
-        HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();
-        Map<String,String> urlParams = new HashMap<String,String>();
+        WikiEngine engine = m_wikiContext.getEngine();
 
-        if( m_pageName == null ) 
+        if( m_pageName == null )
         {
-            if( m_page != null )
+            WikiPage page = m_wikiContext.getPage();
+
+            if( page != null )
             {
-                m_pageName = m_page.getName();
+                m_pageName = page.getName();
             }
         }
 
         if( m_templatefile != null )
         {
-            urlParams.putAll( m_containedParams );
+            String params = addParamsForRecipient( null, m_containedParams );
             String template = engine.getTemplateDir();
-            url = response.encodeURL( m_actionBean.getContext().getURL( NoneActionBean.class, "templates/"+template+"/"+m_templatefile, urlParams, false ) );
+            url = engine.getURL( WikiContext.NONE, "templates/"+template+"/"+m_templatefile, params, false );
         }
         else if( m_jsp != null )
         {
-            urlParams.putAll( m_containedParams );
+            String params = addParamsForRecipient( null, m_containedParams );
             //url = m_wikiContext.getURL( WikiContext.NONE, m_jsp, params );
-            url = response.encodeURL( m_actionBean.getContext().getURL( NoneActionBean.class, m_jsp, urlParams, m_absolute ) );
+            url = engine.getURL( WikiContext.NONE, m_jsp, params, m_absolute );
         }
         else if( m_ref != null )
         {
@@ -243,11 +234,7 @@ public class LinkTag
             {
                 int hashMark = -1;
 
-                Map<String,String> parms = new HashMap<String,String>();
-                if (m_version != null)
-                {
-                    parms.put("version", getVersion()); 
-                }
+                String parms = (m_version != null) ? "version="+getVersion() : null;
 
                 //
                 //  Internal wiki link, but is it an attachment link?
@@ -256,7 +243,7 @@ public class LinkTag
 
                 if( p instanceof Attachment )
                 {
-                    url = m_actionBean.getContext().getURL( AttachActionBean.class, m_pageName );
+                    url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
                 }
                 else if( (hashMark = m_ref.indexOf('#')) != -1 )
                 {
@@ -293,19 +280,25 @@ public class LinkTag
         {
             WikiPage p = engine.getPage( m_pageName );
 
-            if ( m_version != null )
-            {
-                urlParams.put("version", getVersion());
-            }
-            urlParams.putAll( m_containedParams );
+            String parms = (m_version != null) ? "version="+getVersion() : null;
+
+            parms = addParamsForRecipient( parms, m_containedParams );
 
             if( p instanceof Attachment )
             {
-                url = response.encodeURL( m_actionBean.getContext().getURL( AttachActionBean.class, m_pageName, urlParams, m_absolute ) );
+                String ctx = m_context;
+                // Switch context appropriately when attempting to view an
+                // attachment, but don't override the context setting otherwise
+                if( m_context == null || m_context.equals( WikiContext.VIEW ) )
+                {
+                    ctx = WikiContext.ATTACH;
+                }
+                url = engine.getURL( ctx, m_pageName, parms, m_absolute );
+                //url = m_wikiContext.getURL( ctx, m_pageName, parms );
             }
             else
             {
-                url = makeBasicURL( m_context, m_pageName, urlParams, m_absolute );
+                url = makeBasicURL( m_context, m_pageName, parms, m_absolute );
             }
         }
         else
@@ -316,13 +309,44 @@ public class LinkTag
 
         return url;
     }
-    
-    private String makeBasicURL( String context, String page, Map<String,String>parms, boolean absolute )
+
+    private String addParamsForRecipient( String addTo, Map params )
+    {
+        if( params == null || params.size() == 0 )
+        {
+            return addTo;
+        }
+        StringBuffer buf = new StringBuffer();
+        Iterator it = params.entrySet().iterator();
+        while( it.hasNext() )
+        {
+            Map.Entry e = (Map.Entry) it.next();
+            String n = (String)e.getKey();
+            String v = (String)e.getValue();
+            buf.append( n );
+            buf.append( "=" );
+            buf.append( v );
+            if( it.hasNext() )
+            {
+                buf.append( "&amp;" );
+            }
+        }
+        if( addTo == null )
+        {
+            return buf.toString();
+        }
+        if( !addTo.endsWith( "&amp;" ) )
+        {
+            return addTo + "&amp;" + buf.toString();
+        }
+        return addTo + buf.toString();
+    }
+
+    private String makeBasicURL( String context, String page, String parms, boolean absolute )
     {
         String url;
-        WikiEngine engine = m_actionBean.getEngine();
-        WikiContext wikiContext = (WikiContext)m_actionBean;
-        
+        WikiEngine engine = m_wikiContext.getEngine();
+
         if( context.equals( WikiContext.DIFF ) )
         {
             int r1 = 0;
@@ -336,12 +360,12 @@ public class LinkTag
             }
             else if( DiffLinkTag.VER_PREVIOUS.equals(getVersion()) )
             {
-                r1 = wikiContext.getPage().getVersion() - 1;
+                r1 = m_wikiContext.getPage().getVersion() - 1;
                 r1 = (r1 < 1 ) ? 1 : r1;
             }
             else if( DiffLinkTag.VER_CURRENT.equals(getVersion()) )
             {
-                r1 = wikiContext.getPage().getVersion();
+                r1 = m_wikiContext.getPage().getVersion();
             }
             else
             {
@@ -356,23 +380,23 @@ public class LinkTag
             }
             else if( DiffLinkTag.VER_PREVIOUS.equals(m_compareToVersion) )
             {
-                r2 = wikiContext.getPage().getVersion() - 1;
+                r2 = m_wikiContext.getPage().getVersion() - 1;
                 r2 = (r2 < 1 ) ? 1 : r2;
             }
             else if( DiffLinkTag.VER_CURRENT.equals(m_compareToVersion) )
             {
-                r2 = wikiContext.getPage().getVersion();
+                r2 = m_wikiContext.getPage().getVersion();
             }
             else
             {
                 r2 = Integer.parseInt( m_compareToVersion );
             }
 
-            parms.put("r1", String.valueOf(r1));
-            parms.put("r2", String.valueOf(r2));
+            parms = "r1="+r1+"&amp;r2="+r2;
         }
 
-        url = wikiContext.getContext().getURL( m_actionBean.getClass(), m_pageName, parms, m_absolute );
+        //url = m_wikiContext.getURL( m_context, m_pageName, parms );
+        url = engine.getURL( m_context, m_pageName, parms, m_absolute );
 
         return url;
     }
@@ -389,7 +413,7 @@ public class LinkTag
             if( !m_overrideAbsolute )
             {
                 // TODO: see WikiContext.getURL(); this check needs to be specified somewhere.
-                WikiEngine engine = m_actionBean.getEngine();
+                WikiEngine engine = m_wikiContext.getEngine();
                 m_absolute = "absolute".equals( engine.getWikiProperties().getProperty( WikiEngine.PROP_REFSTYLE ) );
             }
 

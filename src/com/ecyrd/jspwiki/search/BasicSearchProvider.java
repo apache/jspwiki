@@ -1,22 +1,23 @@
 /*
-JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
-Copyright (C) 2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or
-(at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.search;
 
 import java.io.IOException;
@@ -51,16 +52,31 @@ public class BasicSearchProvider implements SearchProvider
 
     private WikiEngine m_engine;
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize(WikiEngine engine, Properties props)
             throws NoRequiredPropertyException, IOException
     {
         m_engine = engine;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void pageRemoved(WikiPage page) {}
 
+    /**
+     *  {@inheritDoc}
+     */
     public void reindexPage(WikiPage page) {}
 
+    /**
+     *  Parses a query into something that we can use.
+     *  
+     *  @param query A query string.
+     *  @return A parsed array.
+     */
     public  QueryItem[] parseQuery(String query)
     {
         StringTokenizer st = new StringTokenizer( query, " \t," );
@@ -111,7 +127,7 @@ public class BasicSearchProvider implements SearchProvider
     {
         if(m_engine.getAttachmentManager().hasAttachments(page))
         {
-            Collection<Attachment> attachments;
+            Collection attachments;
             try
             {
                 attachments = m_engine.getAttachmentManager().listAttachments(page);
@@ -123,9 +139,9 @@ public class BasicSearchProvider implements SearchProvider
             }
 
             StringBuffer attachmentNames = new StringBuffer();
-            for( Iterator<Attachment> it = attachments.iterator(); it.hasNext(); )
+            for( Iterator it = attachments.iterator(); it.hasNext(); )
             {
-                Attachment att = it.next();
+                Attachment att = (Attachment) it.next();
                 attachmentNames.append(att.getName());
                 if(it.hasNext())
                     attachmentNames.append(separator);
@@ -136,12 +152,12 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection<SearchResult> findPages( QueryItem[] query )
+    private Collection findPages( QueryItem[] query )
     {
         TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
-        Collection<WikiPage> allPages = null;
+        Collection allPages = null;
         try
         {
             allPages = m_engine.getPageManager().getAllPages();
@@ -152,12 +168,12 @@ public class BasicSearchProvider implements SearchProvider
             return null;
         }
 
-        Iterator<WikiPage> it = allPages.iterator();
+        Iterator it = allPages.iterator();
         while( it.hasNext() )
         {
             try
             {
-                WikiPage page = it.next();
+                WikiPage page = (WikiPage) it.next();
                 if (page != null)
                 {
                     String pageName = page.getName();
@@ -184,13 +200,16 @@ public class BasicSearchProvider implements SearchProvider
         return res;
     }
 
-    public Collection<SearchResult> findPages(String query) 
+    /**
+     *  {@inheritDoc}
+     */
+    public Collection findPages(String query)
     {
         return findPages(parseQuery(query));
     }
 
     /**
-     * @see com.ecyrd.jspwiki.WikiProvider#getProviderInfo()
+     *  {@inheritDoc}
      */
     public String getProviderInfo()
     {

@@ -1,26 +1,26 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.NewBlogEntryActionBean;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,7 @@ public class WeblogEntryPlugin implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(WeblogEntryPlugin.class);
 
-    public static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
+    private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 
     public static final String PARAM_ENTRYTEXT = "entrytext";
     /** 
@@ -47,6 +47,15 @@ public class WeblogEntryPlugin implements WikiPlugin
     // "page" for uniform naming with WeblogPlugin...
     public static final String PARAM_BLOGNAME = "page"; 
 
+    /**
+     *  Returns a new page name for entries.  It goes through the list of
+     *  all blog pages, and finds out the next in line.
+     *  
+     *  @param engine A WikiEngine
+     *  @param blogName The page (or blog) name.
+     *  @return A new name.
+     *  @throws ProviderException If something goes wrong.
+     */
     public String getNewEntryPage( WikiEngine engine, String blogName )
         throws ProviderException
     {
@@ -65,6 +74,9 @@ public class WeblogEntryPlugin implements WikiPlugin
         return blogPage;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -83,9 +95,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         if( entryText == null ) 
             entryText = rb.getString("weblogentryplugin.newentry");
         
-        Map<String,String> blogParams = new HashMap<String,String>();
-        blogParams.put("page", engine.encodeName(weblogName));
-        String url = context.getContext().getURL( NewBlogEntryActionBean.class, null, blogParams );
+        String url = context.getURL( WikiContext.NONE, "NewBlogEntry.jsp", "page="+engine.encodeName(weblogName) );
             
         sb.append("<a href=\""+url+"\">"+entryText+"</a>");
 

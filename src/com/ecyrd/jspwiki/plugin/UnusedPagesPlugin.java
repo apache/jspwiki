@@ -45,11 +45,12 @@ public class UnusedPagesPlugin
     /**
      *  {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection links = refmgr.findUnreferenced();
+        Collection<String> links = refmgr.findUnreferenced();
         //
         // filter out attachments if "excludeattachments" was requested:
         //
@@ -71,13 +72,26 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet sortedSet = new TreeSet();
-
+        TreeSet<String> sortedSet = new TreeSet<String>();
+        
+        links = filterCollection( links );
+        
         sortedSet.addAll( links );
 
-        filterCollection( links );
-        String wikitext = wikitizeCollection( sortedSet, m_separator, ALL_ITEMS );
+        String wikitext = null;
         
+        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
+        {
+            wikitext = "" + links.size();
+            if (m_lastModified && links.size()!=0)
+            {
+                wikitext = links.size() + " (" + m_dateFormat.format(m_dateLastModified) + ")";
+            }
+        }
+        else
+        {
+            wikitext = wikitizeCollection(sortedSet, m_separator, ALL_ITEMS);
+        }        
         return makeHTML( context, wikitext );
     }
 

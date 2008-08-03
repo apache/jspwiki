@@ -32,10 +32,14 @@ public class BaseURLTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
-        pageContext.getOut().print( m_actionBean.getEngine().getBaseURL() );
+        pageContext.getOut().print( m_wikiContext.getEngine().getBaseURL() );
         return SKIP_BODY;
     }
 }

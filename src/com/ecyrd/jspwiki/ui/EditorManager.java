@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.ui;
 
@@ -34,7 +35,6 @@ import org.jdom.xpath.XPath;
 import com.ecyrd.jspwiki.NoSuchVariableException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.PreviewActionBean;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.plugin.PluginManager;
@@ -58,7 +58,6 @@ import com.ecyrd.jspwiki.preferences.Preferences;
  *  </modules>
  *  </pre>
  *
- *  @author jalkanen
  *  @author Christoph Sauer
  *  @author Chuck Smith
  *  @author Dirk Frederickx
@@ -85,7 +84,7 @@ public class EditorManager extends ModuleManager
     /** Known attribute name for storing the user edited text inside a session or a page context */
     public static final String       ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
 
-    private             Map          m_editors;
+    private             Map<String, WikiEditorInfo>  m_editors;
 
     private static      Logger       log             = Logger.getLogger( EditorManager.class );
 
@@ -113,7 +112,7 @@ public class EditorManager extends ModuleManager
     {
         log.info( "Registering editor modules" );
 
-        m_editors = new HashMap();
+        m_editors = new HashMap<String, WikiEditorInfo>();
         SAXBuilder builder = new SAXBuilder();
 
         try
@@ -192,7 +191,7 @@ public class EditorManager extends ModuleManager
      */
     public String getEditorName( WikiContext context )
     {
-        if( context instanceof PreviewActionBean )
+        if( context.getRequestContext().equals(WikiContext.PREVIEW) )
             return EDITOR_PREVIEW;
 
         String editor = null;
@@ -238,9 +237,9 @@ public class EditorManager extends ModuleManager
     {
         String[] editors = new String[m_editors.size()];
 
-        Set keys = m_editors.keySet();
+        Set<String> keys = m_editors.keySet();
 
-        return (String[]) keys.toArray( editors );
+        return keys.toArray( editors );
     }
 
     /**
@@ -255,7 +254,7 @@ public class EditorManager extends ModuleManager
 
         String editor = getEditorName( context );
 
-        WikiEditorInfo ed = (WikiEditorInfo)m_editors.get( editor );
+        WikiEditorInfo ed = m_editors.get( editor );
 
         if( ed != null )
         {
@@ -292,8 +291,6 @@ public class EditorManager extends ModuleManager
     /**
      *  Contains info about an editor.
      *
-     *  @author jalkanen
-     *
      */
     private static final class WikiEditorInfo
         extends WikiModuleInfo
@@ -328,7 +325,7 @@ public class EditorManager extends ModuleManager
 
     public Collection modules()
     {
-        ArrayList ls = new ArrayList();
+        ArrayList<WikiModuleInfo> ls = new ArrayList<WikiModuleInfo>();
 
         ls.addAll( m_editors.values() );
 

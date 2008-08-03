@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.parser;
 
@@ -63,13 +64,17 @@ public class CreoleToJSPWikiTranslator
     // [{$creolepagefilter.creoleversion}]
     // [{$creolepagefilter.linebreak}] -> bloglike/wikilike
 
-    public static String VAR_VERSION = "1.0.3";
+    /** The version of the filter. */
+    public static final String VAR_VERSION = "1.0.3";
 
-    public static String VAR_CREOLE_VERSION = "1.0";
+    /** The version of Creole that this filter supports. */
+    public static final String VAR_CREOLE_VERSION = "1.0";
 
-    public static String VAR_LINEBREAK_BLOGLIKE = "bloglike";
+    /** The linebreak style "bloglike". */
+    public static final String VAR_LINEBREAK_BLOGLIKE = "bloglike";
 
-    public static String VAR_LINEBREAK_C2LIKE = "c2like";
+    /** The linebreak style "c2like". */
+    public static final String VAR_LINEBREAK_C2LIKE = "c2like";
 
     private static final String CREOLE_BOLD = "\\*\\*((?s:.)*?)(\\*\\*|(\n\n|\r\r|\r\n\r\n))";
 
@@ -162,10 +167,18 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static Map          c_protectionMap = new HashMap();
+    private static Map<String, String> c_protectionMap = new HashMap<String, String>();
 
-    private        ArrayList    m_hashList = new ArrayList();
+    private        ArrayList<String> m_hashList = new ArrayList<String>();
 
+    /**
+     *  I have no idea what this method does.  Could someone please tell me?
+     *  
+     * @param wikiProps A property set
+     * @param content The content to translate?
+     * @param username The username in the signature?
+     * @return Probably some translated content.
+     */
     public String translateSignature(Properties wikiProps, final String content, String username)
     {
 
@@ -198,7 +211,13 @@ public class CreoleToJSPWikiTranslator
         return result;
     }
 
-    /** Translates Creole markup to JSPWiki markup */
+    /** 
+     *  Translates Creole markup to JSPWiki markup 
+     *  
+     *  @param wikiProps A set of Wiki Properties
+     *  @param content Creole markup
+     *  @return Wiki markup
+     */
     public String translate(Properties wikiProps, final String content)
     {
         boolean blogLineBreaks = false;
@@ -308,6 +327,13 @@ public class CreoleToJSPWikiTranslator
             }
             counter = 0;
         }
+        
+        // Fixes testExtensions5
+        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' ) 
+        {
+            result.append( '\n' );
+        }
+        
         return result.toString();
     }
 
@@ -333,7 +359,7 @@ public class CreoleToJSPWikiTranslator
         for (int i = it.length - 1; i >= 0; i--)
         {
             String hash = (String) it[i];
-            String protectedMarkup = (String) c_protectionMap.get(hash);
+            String protectedMarkup = c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
             if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
                 !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
@@ -356,12 +382,12 @@ public class CreoleToJSPWikiTranslator
      * the protected markup with the the md5 hash of the markup.
      *
      * @param content
-     * @return
+     * @return The content with protection
      */
     private String protectMarkup(String content)
     {
         c_protectionMap.clear();
-        this.m_hashList = new ArrayList();
+        m_hashList = new ArrayList<String>();
         content = protectMarkup(content, PREFORMATTED_PROTECTED, "", "");
         content = protectMarkup(content, URL_PROTECTED, "", "");
         content = protectMarkup(content, ESCAPE_PROTECTED, "", "");
@@ -376,18 +402,18 @@ public class CreoleToJSPWikiTranslator
     {
         Set keySet = wikiProps.keySet();
         Object[] keys = keySet.toArray();
-        ArrayList result = new ArrayList();
+        ArrayList<String[]> result = new ArrayList<String[]>();
 
-        for (int i = 0; i < keys.length; i++)
+        for( int i = 0; i < keys.length; i++ )
         {
             String key = keys[i] + "";
-            String value = wikiProps.getProperty(keys[i] + "");
-            if ((key).indexOf("creole.imagePlugin.para.%") > -1)
+            String value = wikiProps.getProperty( keys[i] + "" );
+            if( key.indexOf( "creole.imagePlugin.para.%" ) > -1 )
             {
                 String[] pair = new String[2];
-                pair[0] = key.replaceAll("creole.imagePlugin.para.%", "");
+                pair[0] = key.replaceAll( "creole.imagePlugin.para.%", "" );
                 pair[1] = value;
-                result.add(pair);
+                result.add( pair );
             }
         }
         return result;
@@ -496,7 +522,7 @@ public class CreoleToJSPWikiTranslator
                 String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
-                this.m_hashList.add(hash);
+                m_hashList.add(hash);
             }
             catch (NoSuchAlgorithmException e)
             {

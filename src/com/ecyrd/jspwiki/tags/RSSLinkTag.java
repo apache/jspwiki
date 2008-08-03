@@ -38,10 +38,14 @@ public class RSSLinkTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_actionBean.getEngine();
+        WikiEngine engine = m_wikiContext.getEngine();
 
         String rssURL = engine.getGlobalRSSURL();
 

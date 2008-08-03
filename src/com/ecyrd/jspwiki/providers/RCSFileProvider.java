@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.providers;
 
@@ -50,8 +51,6 @@ import com.ecyrd.jspwiki.*;
  *  If you decide to dabble with the default commands, please make sure
  *  that you do not check the default archive suffix ",v".  File deletion
  *  depends on it.
- *
- *  @author Janne Jalkanen
  */
 // FIXME: Not all commands read their format from the property file yet.
 public class RCSFileProvider
@@ -66,10 +65,19 @@ public class RCSFileProvider
 
     private static final Logger   log = Logger.getLogger(RCSFileProvider.class);
 
+    /** Property name for the checkin command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKIN  = "jspwiki.rcsFileProvider.checkinCommand";
+    
+    /** Property name for the checkout command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKOUT = "jspwiki.rcsFileProvider.checkoutCommand";
+    
+    /** Property name for the log command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_LOG      = "jspwiki.rcsFileProvider.logCommand";
+    
+    /** Property name for the full log command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_FULLLOG  = "jspwiki.rcsFileProvider.fullLogCommand";
+    
+    /** Property name for the checkout version command.  Value is <tt>{@value}</tt>. */
     public static final String    PROP_CHECKOUTVERSION = "jspwiki.rcsFileProvider.checkoutVersionCommand";
 
     private static final String   PATTERN_DATE      = "^date:\\s*(.*\\d);";
@@ -82,8 +90,11 @@ public class RCSFileProvider
 
     // Date format parsers, placed here to save on object creation
     private SimpleDateFormat m_rcsdatefmt     = new SimpleDateFormat( RCSFMT_DATE );
-    private SimpleDateFormat m_rcsdatefmt_utc = new SimpleDateFormat( RCSFMT_DATE_UTC );
+    private SimpleDateFormat m_rcsdatefmtUTC = new SimpleDateFormat( RCSFMT_DATE_UTC );
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties props )
         throws NoRequiredPropertyException,
                IOException
@@ -111,6 +122,9 @@ public class RCSFileProvider
         log.debug("checkoutversion="+m_checkoutVersionCommand);
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // NB: This is a very slow method.
 
     public WikiPage getPageInfo( String page, int version )
@@ -238,6 +252,9 @@ public class RCSFileProvider
         return info;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getPageText( String page, int version )
         throws ProviderException
     {
@@ -354,6 +371,10 @@ public class RCSFileProvider
     /**
      *  Puts the page into RCS and makes sure there is a fresh copy in
      *  the directory as well.
+     *  
+     *  @param page {@inheritDoc}
+     *  @param text {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public void putPageText( WikiPage page, String text )
         throws ProviderException
@@ -370,7 +391,7 @@ public class RCSFileProvider
             String cmd = m_checkinCommand;
 
             String author = page.getAuthor();
-            if( author == null ) author = "unknown";
+            if( author == null ) author = "unknown"; // Should be localized but cannot due to missing WikiContext
 
             String changenote = (String)page.getAttribute(WikiPage.CHANGENOTE);
             if( changenote == null ) changenote = "";
@@ -434,6 +455,9 @@ public class RCSFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     // FIXME: Put the rcs date formats into properties as well.
     public List getVersionHistory( String page )
     {
@@ -443,7 +467,7 @@ public class RCSFileProvider
 
         log.debug("Getting RCS version history");
 
-        ArrayList list = new ArrayList();
+        ArrayList<WikiPage> list = new ArrayList<WikiPage>();
 
         try
         {
@@ -482,7 +506,7 @@ public class RCSFileProvider
                     list.add( info );
                 }
 
-                if( matcher.contains( line, datepattern ) )
+                if( matcher.contains( line, datepattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
@@ -491,14 +515,14 @@ public class RCSFileProvider
                     info.setLastModified( d );
                 }
 
-                if( matcher.contains( line, userpattern ) )
+                if( matcher.contains( line, userpattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
 
-                if( matcher.contains( line, notepattern ) )
+                if( matcher.contains( line, notepattern ) && info != null )
                 {
                     MatchResult result = matcher.getMatch();
 
@@ -544,6 +568,9 @@ public class RCSFileProvider
     /**
      *  Removes the page file and the RCS archive from the repository.
      *  This method assumes that the page archive ends with ",v".
+     *  
+     *  @param page {@inheritDoc}
+     *  @throws {@inheritDoc}
      */
     public void deletePage( String page )
         throws ProviderException
@@ -575,6 +602,9 @@ public class RCSFileProvider
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void deleteVersion( String page, int version )
     {
         String         line = "<rcs not run>";
@@ -642,7 +672,7 @@ public class RCSFileProvider
      *  util method to parse a date string in Local and UTC formats.  This method is synchronized
      *  because SimpleDateFormat is not thread-safe.
      *
-     *  @see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335
+     *  @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4228335">Sun bug 4228335</a>
      */
     private synchronized Date parseDate( String str )
     {
@@ -658,7 +688,7 @@ public class RCSFileProvider
 
         try
         {
-            d = m_rcsdatefmt_utc.parse( str );
+            d = m_rcsdatefmtUTC.parse( str );
             return d;
         }
         catch ( ParseException pe )
@@ -667,6 +697,9 @@ public class RCSFileProvider
         return d;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void movePage( String from,
                           String to )
         throws ProviderException

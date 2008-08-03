@@ -20,6 +20,14 @@
 */
 package com.ecyrd.jspwiki.plugin;
 
+import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.apache.oro.text.regex.*;
+
+import com.ecyrd.jspwiki.*;
+
+
 /**
  *  Displays the pages referring to the current page.
  *
@@ -36,21 +44,12 @@ package com.ecyrd.jspwiki.plugin;
  *
  *  @author Dirk Frederickx
  */
-
-import java.util.*;
-
-import org.apache.log4j.Logger;
-import org.apache.oro.text.regex.*;
-
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.ViewActionBean;
-
 public class ReferredPagesPlugin implements WikiPlugin
 {
     private static Logger log = Logger.getLogger( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
-    private HashSet        m_exists  = new HashSet();
+    private HashSet<String> m_exists  = new HashSet<String>();
     private StringBuffer   m_result  = new StringBuffer(1024);
     private PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern        m_includePattern;
@@ -58,15 +57,33 @@ public class ReferredPagesPlugin implements WikiPlugin
     private boolean m_formatCompact  = true;
     private boolean m_formatSort     = false;
 
+    /** The parameter name for the root page to start from.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROOT    = "page";
+
+    /** The parameter name for the depth.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DEPTH   = "depth";
+
+    /** The parameter name for the type of the references.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TYPE    = "type";
+    
+    /** The parameter name for the included pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE = "include";
+    
+    /** The parameter name for the excluded pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXCLUDE = "exclude";
+    
+    /** The parameter name for the format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT  = "format";
+    
+    /** The minimum depth. Value is <tt>{@value}</tt>. */
     public static final int    MIN_DEPTH = 1;
+    
+    /** The maximum depth. Value is <tt>{@value}</tt>. */
     public static final int    MAX_DEPTH = 8;
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
@@ -155,7 +172,8 @@ public class ReferredPagesPlugin implements WikiPlugin
      * Retrieves a list of all referred pages. Is called recursively
      * depending on the depth parameter
      */
-    protected void getReferredPages( WikiContext context, String pagename, int depth )
+    @SuppressWarnings("unchecked")
+    private void getReferredPages( WikiContext context, String pagename, int depth )
     {
         if( depth >= m_depth ) return;  // end of recursion
         if( pagename == null ) return;
@@ -163,19 +181,19 @@ public class ReferredPagesPlugin implements WikiPlugin
 
         ReferenceManager mgr = m_engine.getReferenceManager();
 
-        Collection allPages = mgr.findRefersTo( pagename );
+        Collection<String> allPages = mgr.findRefersTo( pagename );
 
         handleLinks( context, allPages, ++depth, pagename );
     }
 
-    protected void handleLinks(WikiContext context,Collection links, int depth, String pagename)
+    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename)
     {
         boolean isUL = false;
-        HashSet localLinkSet = new HashSet();  // needed to skip multiple
+        HashSet<String> localLinkSet = new HashSet<String>();  // needed to skip multiple
         // links to the same page
         localLinkSet.add(pagename);
 
-        ArrayList allLinks = new ArrayList();
+        ArrayList<String> allLinks = new ArrayList<String>();
 
         if( links != null )
             allLinks.addAll( links );
@@ -220,7 +238,7 @@ public class ReferredPagesPlugin implements WikiPlugin
                     isUL = true; m_result.append("<ul>\n");
                 }
 
-                String href = context.getContext().getURL(ViewActionBean.class,link);  
+                String href = context.getURL(WikiContext.VIEW,link);
                 m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
 
                 m_exists.add( link );

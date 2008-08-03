@@ -35,7 +35,7 @@ import javax.servlet.jsp.tagext.*;
  *  @author Dirk Frederickx
  *  @since v2.3.63
  */
-
+// FIXME: Needs a bit more of explaining how this tag works.
 public class TabbedSectionTag extends BodyTagSupport
 {
     private static final long serialVersionUID = 1702437933960026481L;
@@ -53,6 +53,10 @@ public class TabbedSectionTag extends BodyTagSupport
 
     private              int m_state            = FIND_DEFAULT_TAB;
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void release()
     {
         super.release();
@@ -62,11 +66,19 @@ public class TabbedSectionTag extends BodyTagSupport
         m_state = FIND_DEFAULT_TAB;
     }
 
+    /**
+     *  Set the id of the default tab (the tab which should be shown when
+     *  the page is first loaded).
+     *  
+     *  @param anDefaultTabId ID attribute of the default tab.
+     */
     public void setDefaultTab(String anDefaultTabId)
     {
         m_defaultTabId = anDefaultTabId;
     }
 
+    // FIXME: I don't really understand what this does - so Dirk, please
+    //        add some documentation.
     public boolean validateDefaultTab( String aTabId )
     {
         if( m_firstTabId == null ) m_firstTabId = aTabId;
@@ -75,32 +87,59 @@ public class TabbedSectionTag extends BodyTagSupport
         return aTabId.equals( m_defaultTabId );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doStartTag() throws JspTagException
     {
         return EVAL_BODY_BUFFERED; /* always look inside */
     }
 
+    /**
+     *  Returns true, if the tab system is currently trying to
+     *  figure out which is the default tab.
+     *  
+     *  @return True, if finding the default tab.
+     */
     public boolean isStateFindDefaultTab()
     {
         return m_state == FIND_DEFAULT_TAB;
     }
 
+    /**
+     *  Returns true, if the tab system is currently generating
+     *  the tab menu.
+     *  
+     *  @return True, if currently generating the menu itself.
+     */
     public boolean isStateGenerateTabMenu()
     {
         return m_state == GENERATE_TABMENU;
     }
 
+    /**
+     *  Returns true, if the tab system is currently generating
+     *  the tab body.
+     *  
+     *  @return True, if the tab system is currently generating the tab body.
+     */
     public boolean isStateGenerateTabBody()
     {
         return m_state == GENERATE_TABBODY;
     }
 
 
-    /* The tabbed section iterates 3 time through the underlying Tab tags
+    /**
+     *  The tabbed section iterates 3 time through the underlying Tab tags
      * - first it identifies the default tab (displayed by default)
      * - second it generates the tabmenu markup (displays all tab-titles)
      * - finally it generates the content of each tab.
+     * 
+     * @return {@inheritDoc}
+     * @throws {@inheritDoc}
      */
+    @Override
     public int doAfterBody() throws JspTagException
     {
         if( isStateFindDefaultTab() )
@@ -138,6 +177,10 @@ public class TabbedSectionTag extends BodyTagSupport
         return SKIP_BODY;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doEndTag() throws JspTagException
     {
         try

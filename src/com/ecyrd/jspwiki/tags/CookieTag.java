@@ -114,37 +114,69 @@ public class CookieTag
     /** Name of a cookie or a cookie nvp to clear. */
     private String m_clear;
 
+    /**
+     *  Set the "name" parameter.
+     *  
+     *  @param s The name.
+     */
     public void setName( String s )
     {
         m_name = s;
     }
 
+    /**
+     *  Set the "item" parameter.
+     *  
+     *  @param s The item.
+     */
     public void setItem( String s )
     {
         m_item = s;
     }
 
+    /**
+     *  Set the "value" parameter.
+     *  
+     *  @param s The value.
+     */
     public void setValue( String s )
     {
         m_value = s;
     }
 
+    /**
+     *  Set the "var" parameter.
+     *  
+     *  @param s The parameter.
+     */
     public void setVar( String s )
     {
         m_scope = s;
     }
 
+    /**
+     *  Set the "clear" parameter.
+     *  
+     *  @param s The parameter.
+     */
     public void setClear( String s )
     {
         m_clear = s;
     }
 
+    /**
+     *  Set the "scope" parameter.
+     *  
+     *  @param s The scope.
+     */
     public void setScope( String s )
     {
         m_scope = s;
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public void release()
     {
         m_name = m_item = m_var = m_value = m_clear = m_scope = null;
@@ -179,7 +211,9 @@ public class CookieTag
         return PageContext.REQUEST_SCOPE;
     }
 
-
+    /**
+     *  {@inheritDoc}
+     */
     public int doEndTag()
     {
         String out = null;
@@ -294,7 +328,7 @@ public class CookieTag
      */
     private Map<String, String> parseCookieValues( String s )
     {
-        Map<String,String> rval = new HashMap<String,String>();
+        Map<String, String> rval = new HashMap<String, String>();
         if( s == null )
         {
             return rval;

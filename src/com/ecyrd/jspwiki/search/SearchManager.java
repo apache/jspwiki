@@ -1,22 +1,23 @@
 /*
-JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
-Copyright (C) 2005 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2.1 of the License, or
-(at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.search;
 
 import java.io.IOException;
@@ -53,13 +54,29 @@ public class SearchManager
     private static final Logger log = Logger.getLogger(SearchManager.class);
 
     private static final String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
-    public static final String PROP_USE_LUCENE         = "jspwiki.useLucene";
+    
+    /** Old option, now deprecated. */
+    private static final String PROP_USE_LUCENE        = "jspwiki.useLucene";
+    
+    /**
+     *  Property name for setting the search provider. Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_SEARCHPROVIDER     = "jspwiki.searchProvider";
 
     private SearchProvider    m_searchProvider = null;
 
+    /**
+     *  The name of the JSON object that manages search.
+     */
     public static final String JSON_SEARCH = "search";
 
+    /**
+     *  Creates a new SearchManager.
+     *  
+     *  @param engine The WikiEngine that owns this SearchManager.
+     *  @param properties The list of Properties.
+     *  @throws WikiException If it cannot be instantiated.
+     */
     public SearchManager( WikiEngine engine, Properties properties )
         throws WikiException
     {
@@ -73,7 +90,6 @@ public class SearchManager
 
     /**
      *  Provides a JSON RPC API to the JSPWiki Search Engine.
-     *  @author jalkanen
      */
     public class JSONSearch implements RPCCallable
     {
@@ -99,12 +115,12 @@ public class SearchManager
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase();
 
-                Set<String> allPages = m_engine.getReferenceManager().findCreated();
+                Set allPages = m_engine.getReferenceManager().findCreated();
 
                 int counter = 0;
-                for( Iterator<String> i = allPages.iterator(); i.hasNext() && counter < maxLength; )
+                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
                 {
-                    String p = i.next();
+                    String p = (String) i.next();
                     String pp = p.toLowerCase();
                     if( pp.startsWith( wikiName ) || pp.startsWith( oldStyleName ) )
                     {
@@ -126,18 +142,18 @@ public class SearchManager
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List<HashMap<String,Object>> findPages( String searchString, int maxLength )
+        public List findPages( String searchString, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>(maxLength);
+            List<HashMap> list = new ArrayList<HashMap>(maxLength);
 
             if( searchString.length() > 0 )
             {
                 try
                 {
-                    Collection<SearchResult> c;
+                    Collection c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider )
                         c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
@@ -145,12 +161,12 @@ public class SearchManager
                         c = m_searchProvider.findPages( searchString );
 
                     int count = 0;
-                    for( Iterator<SearchResult> i = c.iterator(); i.hasNext() && count < maxLength; count++ )
+                    for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
-                        SearchResult sr = i.next();
+                        SearchResult sr = (SearchResult)i.next();
                         HashMap<String,Object> hm = new HashMap<String,Object>();
                         hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", new Integer(sr.getScore()) );
+                        hm.put( "score", sr.getScore() );
                         list.add( hm );
                     }
                 }
@@ -251,6 +267,11 @@ public class SearchManager
         log.debug("Loaded search provider " + m_searchProvider);
     }
 
+    /**
+     *  Returns the SearchProvider used.
+     *  
+     *  @return The current SearchProvider.
+     */
     public SearchProvider getSearchEngine()
     {
         return m_searchProvider;
@@ -262,6 +283,8 @@ public class SearchManager
      *
      * @param query The query.  Null is safe, and is interpreted as an empty query.
      * @return A collection of WikiPages that matched.
+     * @throws ProviderException If the provider fails and a search cannot be completed.
+     * @throws IOException If something else goes wrong.
      */
     public Collection findPages( String query )
         throws ProviderException, IOException
@@ -281,6 +304,13 @@ public class SearchManager
         m_searchProvider.pageRemoved(page);
     }
 
+    /**
+     *  Reindexes the page.
+     *  
+     *  @param wikiContext {@inheritDoc}
+     *  @param content {@inheritDoc}
+     */
+    @Override
     public void postSave( WikiContext wikiContext, String content )
     {
         //
@@ -294,13 +324,18 @@ public class SearchManager
     /**
      *   Forces the reindex of the given page.
      *
-     *   @param page
+     *   @param page The page.
      */
     public void reindexPage(WikiPage page)
     {
         m_searchProvider.reindexPage(page);
     }
 
+    /**
+     *  If the page has been deleted, removes it from the index.
+     *  
+     *  @param event {@inheritDoc}
+     */
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )

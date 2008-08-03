@@ -46,16 +46,16 @@ public class Denounce implements WikiPlugin
     public static final String PARAM_LINK = "link";
     public static final String PARAM_TEXT = "text";
 
-    public static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";
-    public static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";
-    public static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
-    public static final String PROP_REFERERPATTERN = "denounce.refererpattern.";
+    private static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";
+    private static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";
+    private static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
+    private static final String PROP_REFERERPATTERN = "denounce.refererpattern.";
 
-    public static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
+    private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
-    private static ArrayList c_refererPatterns = new ArrayList();
-    private static ArrayList c_agentPatterns   = new ArrayList();
-    private static ArrayList c_hostPatterns    = new ArrayList();
+    private static ArrayList<Pattern> c_refererPatterns = new ArrayList<Pattern>();
+    private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<Pattern>();
+    private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<Pattern>();
 
     private static String    c_denounceText    = "";
 
@@ -119,6 +119,9 @@ public class Denounce implements WikiPlugin
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext context, Map params )
         throws PluginException
     {

@@ -31,6 +31,10 @@ import javax.servlet.jsp.tagext.VariableInfo;
  */
 public class AdminBeanIteratorInfo extends TagExtraInfo
 {
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public VariableInfo[] getVariableInfo(TagData data)
     {
         VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),

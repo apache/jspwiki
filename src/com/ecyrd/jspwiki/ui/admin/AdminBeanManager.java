@@ -1,21 +1,22 @@
-/*
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 JSPWiki development group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.ui.admin;
 
@@ -27,7 +28,6 @@ import java.util.List;
 
 import javax.management.*;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.Release;
@@ -45,7 +45,6 @@ import com.ecyrd.jspwiki.ui.admin.beans.UserBean;
  *  Provides a manager class for all AdminBeans within JSPWiki.  This class
  *  also manages registration for any AdminBean which is also a JMX bean.
  *
- *  @author Janne Jalkanen
  *  @since  2.5.52
  */
 public class AdminBeanManager implements WikiEventListener
@@ -59,24 +58,9 @@ public class AdminBeanManager implements WikiEventListener
 
     public AdminBeanManager( WikiEngine engine )
     {
-        if( SystemUtils.isJavaVersionAtLeast(1.5f) )
-        {
-            log.info("Using JDK 1.5 Platform MBeanServer");
-            m_mbeanServer = MBeanServerFactory15.getServer();
-        }
-        else
-        {
-            log.info("Finding a JDK 1.4 -compatible MBeanServer.");
-            try
-            {
-                m_mbeanServer = MBeanServerFactory14.getServer();
-            }
-            catch( Exception e )
-            {
-                log.error("Unable to locate the JMX libraries from your classpath. "+
-                          "Please make sure that \"jmxri.jar\" can be found in your WEB-INF/lib directory.");
-            }
-        }
+        log.info("Using JDK 1.5 Platform MBeanServer");
+        m_mbeanServer = MBeanServerFactory15.getServer();
+
         m_engine = engine;
 
         if( m_mbeanServer != null )
@@ -263,42 +247,8 @@ public class AdminBeanManager implements WikiEventListener
     }
 
     /**
-     *  A JDK 1.4 version of something which gets us the MBeanServer.  It
-     *  binds to the first server it can find.
-     *
-     *  @author Janne Jalkanen
-     *
-     */
-    private static final class MBeanServerFactory14
-    {
-        private MBeanServerFactory14()
-        {}
-
-        public static MBeanServer getServer()
-        {
-            MBeanServer server;
-            ArrayList servers = MBeanServerFactory.findMBeanServer(null);
-
-            if( servers == null || servers.size() == 0 )
-            {
-                log.info("Creating a new MBeanServer...");
-                server = MBeanServerFactory.createMBeanServer(Release.APPNAME);
-            }
-            else
-            {
-                server = (MBeanServer)servers.get(0);
-            }
-
-            return server;
-        }
-    }
-
-    /**
      *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This
      *  will simply bind to the platform MBeanServer.
-     *
-     *  @author Janne Jalkanen
-     *
      */
     private static final class MBeanServerFactory15
     {

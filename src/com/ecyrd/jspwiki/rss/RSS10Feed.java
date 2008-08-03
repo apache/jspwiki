@@ -1,45 +1,47 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.rss;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.ecs.xml.XML;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.action.DiffActionBean;
-import com.ecyrd.jspwiki.action.PageInfoActionBean;
 
 /**
- *  @author jalkanen
- *
- *  @since 
+ *  Provides an implementation of an RSS 1.0 feed.  In addition, this class is
+ *  capable of adding RSS 1.0 Wiki Extensions to the Feed, as defined in
+ *  <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  */
 public class RSS10Feed extends Feed
 {
+    /**
+     *  Create an RSS 1.0 feed for a given context.
+     *  
+     *  @param context {@inheritDoc}
+     */
     public RSS10Feed( WikiContext context )
     {
         super(context);
@@ -100,11 +102,9 @@ public class RSS10Feed extends Feed
 
             if( p.getVersion() > 1 )
             {
-                Map<String,String> rssParams = new HashMap<String,String>();
-                rssParams.put("r1", "-1");
-                item.addElement( new XML("wiki:diff").addElement( m_wikiContext.getContext().getURL( DiffActionBean.class,
+                item.addElement( new XML("wiki:diff").addElement( engine.getURL( WikiContext.DIFF,
                                                                                  p.getName(),
-                                                                                 rssParams,
+                                                                                 "r1=-1",
                                                                                  true) ) );
             }
 
@@ -150,7 +150,7 @@ public class RSS10Feed extends Feed
             
             //  PageHistory
 
-            item.addElement( new XML("wiki:history").addElement( m_wikiContext.getContext().getURL( PageInfoActionBean.class,
+            item.addElement( new XML("wiki:history").addElement( engine.getURL( WikiContext.INFO,
                                                                                 p.getName(),
                                                                                 null,
                                                                                 true ) ) );
@@ -187,9 +187,10 @@ public class RSS10Feed extends Feed
         return channel;
     }
     
-    /* (non-Javadoc)
-     * @see com.ecyrd.jspwiki.rss.Feed#getString()
+    /**
+     *  {@inheritDoc}
      */
+    @Override
     public String getString()
     {
         XML root = new XML("rdf:RDF");

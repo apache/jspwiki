@@ -39,24 +39,22 @@ public class IncludeTag
 {
     private static final long serialVersionUID = 0L;
     
-    protected String m_pageName;
-    protected boolean m_searchTemplates;
+    protected String m_page;
 
     public void initTag()
     {
         super.initTag();
-        m_pageName = null;
-        m_searchTemplates = false;
+        m_page = null;
     }
 
     public void setPage( String page )
     {
-        m_pageName = page;
+        m_page = page;
     }
 
     public String getPage()
     {
-        return m_pageName;
+        return m_page;
     }
 
     public final int doWikiStartTag()
@@ -73,13 +71,13 @@ public class IncludeTag
     {
         try
         {
-            String page = m_actionBean.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_actionBean.getTemplate(),
-                                                                                  m_pageName );
+            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
+                                                                                  m_wikiContext.getTemplate(),
+                                                                                  m_page );
             
             if( page == null )
             {
-                pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_pageName)+"'");
+                pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_page)+"'");
             }
             else
             {

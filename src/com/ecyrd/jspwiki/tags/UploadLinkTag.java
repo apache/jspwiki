@@ -23,7 +23,7 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
-import com.ecyrd.jspwiki.action.UploadActionBean;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Writes a link to the upload page.  Body of the link becomes the actual text.
@@ -49,9 +49,9 @@ public class UploadLinkTag
 
         if( m_pageName == null )
         {
-            if( m_page != null )
+            if( m_wikiContext.getPage() != null )
             {
-                pageName = m_page.getName();
+                pageName = m_wikiContext.getPage().getName();
             }
             else
             {
@@ -61,7 +61,8 @@ public class UploadLinkTag
 
         JspWriter out = pageContext.getOut();
 
-        String url = m_actionBean.getContext().getURL( UploadActionBean.class, pageName );
+        String url = m_wikiContext.getURL( WikiContext.UPLOAD,
+                                           pageName );
 
         switch( m_format )
         {

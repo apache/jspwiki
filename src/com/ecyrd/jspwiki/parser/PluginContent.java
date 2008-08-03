@@ -1,27 +1,27 @@
 /* 
-  JSPWiki - a JSP-based WikiWiki clone.
+    JSPWiki - a JSP-based WikiWiki clone.
 
-  Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation; either version 2.1 of the License, or
-  (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
 */
 package com.ecyrd.jspwiki.parser;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -35,8 +35,15 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  Stores the contents of a plugin in a WikiDocument DOM tree.
+ *  <p>
+ *  If the RenderingManager.WYSIWYG_EDITOR_MODE is set to Boolean.TRUE in the context, 
+ *  then the plugin
+ *  is rendered as WikiMarkup.  This allows an HTML editor to work without
+ *  rendering the plugin each time as well. 
+ *  <p>
+ *  If RenderingManager.VAR_EXECUTE_PLUGINS is set to Boolean.FALSE, then
+ *  the plugin is not executed.
  *  
- *  @author Janne Jalkanen
  *  @since  2.4
  */
 public class PluginContent extends Text
@@ -52,37 +59,70 @@ public class PluginContent extends Text
 
     private static final long serialVersionUID = 1L;
 
-    private String m_pluginName;
-    private Map    m_params;
+    private String                m_pluginName;
+    private Map<String,Object>    m_params;
     
+    /**
+     *  Creates a new DOM element with the given plugin name and a map of parameters.
+     *  
+     *  @param pluginName The FQN of a plugin.
+     *  @param parameters A Map of parameters.
+     */
+    @SuppressWarnings("unchecked")
     public PluginContent( String pluginName, Map parameters )
     {
         m_pluginName = pluginName;
         m_params     = parameters;
     }
     /**
-     * @since 2.5.7
+     *  Returns the name of the plugin invoked by the DOM element.
+     *  
+     *  @return Name of the plugin
+     *  @since 2.5.7
      */
     public String getPluginName()
     {
         return m_pluginName;
     }
     
+    /**
+     *  Returns a parameter value from the parameter map.
+     *  
+     *  @param name the name of the parameter.
+     *  @return The value from the map, or null, if no such parameter exists.
+     */
     public Object getParameter( String name )
     {
         return m_params.get(name);
     }
     
+    /**
+     *  Returns the parameter map given in the constructor.
+     *  
+     *  @return The parameter map.
+     */
     public Map getParameters()
     {
         return m_params;
     }
     
+    /**
+     *  Returns the rendered plugin.  Only calls getText().
+     *  
+     *  @return HTML
+     */
     public String getValue()
     {
         return getText();
     }
     
+    /**
+     *  The main invocation for the plugin.  When the getText() is called, it
+     *  invokes the plugin and returns its contents.  If there is no Document
+     *  yet, only returns the plugin name itself.
+     *  
+     *  @return The plugin rendered according to the options set in the WikiContext.
+     */
     public String getText()
     {
         String result;
@@ -136,15 +176,13 @@ public class PluginContent extends Text
 
                 WikiEngine engine = context.getEngine();
             
-                HashMap parsedParams = new HashMap();
+                HashMap<String,Object> parsedParams = new HashMap<String,Object>();
             
                 //
                 //  Parse any variable instances from the string
                 //
-                for( Iterator i = m_params.entrySet().iterator(); i.hasNext(); )
+                for( Map.Entry e : m_params.entrySet() )
                 {
-                    Map.Entry e = (Map.Entry) i.next();
-                
                     Object val = e.getValue();
                 
                     if( val instanceof String )
@@ -152,7 +190,7 @@ public class PluginContent extends Text
                         val = engine.getVariableManager().expandVariables( context, (String)val );
                     }
                 
-                    parsedParams.put( e.getKey(), val );
+                    parsedParams.put( (String)e.getKey(), val );
                 }
             
                 result = engine.getPluginManager().execute( context,
@@ -183,12 +221,13 @@ public class PluginContent extends Text
     /**
      *  Executes the executeParse() method.
      *  
-     *  @param m_context
+     *  @param context The WikiContext
+     *  @throws PluginException If something goes wrong.
      */
-    public void executeParse(WikiContext m_context)
+    public void executeParse(WikiContext context)
         throws PluginException
     {
-        m_context.getEngine().getPluginManager().executeParse( this, m_context );
+        context.getEngine().getPluginManager().executeParse( this, context );
     }
 
 }

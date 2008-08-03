@@ -25,9 +25,12 @@ import java.security.Permission;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.GroupContext;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.action.GroupActionBean;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
@@ -82,6 +85,7 @@ public class PermissionTag
     /**
      * Initializes the tag.
      */
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -106,40 +110,40 @@ public class PermissionTag
      */
     private boolean checkPermission( String permission )
     {
-        WikiEngine  engine         = m_actionBean.getEngine();
-        WikiSession session        = m_actionBean.getWikiSession();
-        AuthorizationManager mgr   = engine.getAuthorizationManager();
+        WikiSession session        = m_wikiContext.getWikiSession();
+        WikiPage    page           = m_wikiContext.getPage();
+        AuthorizationManager mgr   = m_wikiContext.getEngine().getAuthorizationManager();
         boolean gotPermission     = false;
         
         if ( CREATE_GROUPS.equals( permission ) || CREATE_PAGES.equals( permission )
             || EDIT_PREFERENCES.equals( permission ) || EDIT_PROFILE.equals( permission )
             || LOGIN.equals( permission ) )
         {
-            gotPermission = mgr.checkPermission( session, new WikiPermission( engine.getApplicationName(), permission ) );
+            gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
         }
         else if ( VIEW_GROUP.equals( permission ) )
         {
-            Group group = ((GroupContext)m_actionBean).getGroup();
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
             Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
             gotPermission = mgr.checkPermission( session, perm );
         }
         else if ( EDIT_GROUP.equals( permission ) )
         {
-            Group group = ((GroupContext)m_actionBean).getGroup();
-            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.EDIT_ACTION);
             gotPermission = mgr.checkPermission( session, perm );
         }
         else if ( DELETE_GROUP.equals( permission ) )
         {
-            Group group = ((GroupContext)m_actionBean).getGroup();
-            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.DELETE_ACTION );
             gotPermission = mgr.checkPermission( session, perm );
         }
         else if ( ALL_PERMISSION.equals( permission ) )
         {
-            gotPermission = mgr.checkPermission( session, new AllPermission( engine.getApplicationName() ) );
+            gotPermission = mgr.checkPermission( session, new AllPermission( m_wikiContext.getEngine().getApplicationName() ) );
         }
-        else if ( m_actionBean instanceof WikiContext && m_page != null )
+        else if ( page != null )
         {
             //
             //  Edit tag also checks that we're not trying to edit an
@@ -147,15 +151,15 @@ public class PermissionTag
             //
             if( EDIT.equals(permission) )
             {
-                WikiPage latest = engine.getPage( m_page.getName() );
-                if( m_page.getVersion() != WikiProvider.LATEST_VERSION &&
-                    latest.getVersion() != m_page.getVersion() )
+                WikiPage latest = m_wikiContext.getEngine().getPage( page.getName() );
+                if( page.getVersion() != WikiProvider.LATEST_VERSION &&
+                    latest.getVersion() != page.getVersion() )
                 {
                     return false;
                 }
             }
 
-            Permission p = PermissionFactory.getPagePermission( m_page, permission );
+            Permission p = PermissionFactory.getPagePermission( page, permission );
             gotPermission = mgr.checkPermission( session,
                                                   p );
         }
@@ -168,6 +172,7 @@ public class PermissionTag
      * @return the result of the tag: SKIP_BODY or EVAL_BODY_CONTINUE
      * @throws IOException this exception will never be thrown
      */
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {

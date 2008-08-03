@@ -1,29 +1,30 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.ui.progress;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
@@ -32,15 +33,14 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  *  Manages progressing items.  In general this class is used whenever JSPWiki
  *  is doing something which may require a long time.  In addition, this manager
  *  provides a JSON interface for finding remotely what the progress is.  The
- *  JSON object name is JSON_PROGRESSTRACKER = "{@value JSON_PROGRESSTRACKER}".
+ *  JSON object name is JSON_PROGRESSTRACKER = "{@value #JSON_PROGRESSTRACKER}".
  *
- *  @author Janne Jalkanen
  *  @since  2.6
  */
-// FIXME: Gotta synchronize
+// FIXME: Needs synchronization, I think
 public class ProgressManager
 {
-    private Map m_progressingTasks = new HashMap();
+    private Map<String,ProgressItem> m_progressingTasks = new HashMap<String,ProgressItem>();
 
     /**
      *  The name of the progress tracker JSON object.  The current value is "{@value}",
@@ -63,7 +63,7 @@ public class ProgressManager
      */
     public String getNewProgressIdentifier()
     {
-        return UUIDGenerator.getInstance().generateRandomBasedUUID().toString();
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -90,7 +90,7 @@ public class ProgressManager
     public void stopProgress( String id )
     {
         log.debug("Removed "+id+" from progress queue");
-        ProgressItem pi = (ProgressItem) m_progressingTasks.remove( id );
+        ProgressItem pi = m_progressingTasks.remove( id );
         if( pi != null ) pi.setState( ProgressItem.STOPPED );
     }
 
@@ -98,13 +98,13 @@ public class ProgressManager
      *  Get the progress in percents.
      *
      *  @param id The progress identifier.
-     *  @return A value between 0 to 100 indicating the progress.
+     *  @return a value between 0 to 100 indicating the progress
      *  @throws IllegalArgumentException If no such progress item exists.
      */
     public int getProgress( String id )
         throws IllegalArgumentException
     {
-        ProgressItem pi = (ProgressItem)m_progressingTasks.get( id );
+        ProgressItem pi = m_progressingTasks.get( id );
 
         if( pi != null )
         {
@@ -116,15 +116,16 @@ public class ProgressManager
 
     /**
      *  Provides access to a progress indicator, assuming you know the ID.
-     *
-     *  @author Janne Jalkanen
+     *  Progress of zero (0) means that the progress has just started, and a progress of
+     *  100 means that it is complete.
      */
     public class JSONTracker implements RPCCallable
     {
         /**
          *  Returns upload progress in percents so far.
-         *  @param uploadId
-         *  @return
+         *  @param progressId The string representation of the progress ID that you want to know the
+         *                    progress of.
+         *  @return a value between 0 to 100 indicating the progress
          */
         public int getProgress( String progressId )
         {

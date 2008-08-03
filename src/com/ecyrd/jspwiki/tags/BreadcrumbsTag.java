@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.tags;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
@@ -58,6 +57,10 @@ public class BreadcrumbsTag extends WikiTagBase
     private int m_maxQueueSize = 11;
     private String m_separator = ", ";
 
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -65,52 +68,78 @@ public class BreadcrumbsTag extends WikiTagBase
         m_separator = ", ";
     }
 
+    /**
+     *  Returns the maxpages.  This may differ from what was set by setMaxpages().
+     *  
+     *  @return The current size of the pages.
+     */
     public int getMaxpages()
     {
         return m_maxQueueSize;
     }
 
+    /**
+     *  Sets how many pages to show.
+     *  
+     *  @param maxpages The amount.
+     */
     public void setMaxpages(int maxpages)
     {
         m_maxQueueSize = maxpages + 1;
     }
 
+    /**
+     *  Get the separator string.
+     *  
+     *  @return The string set in setSeparator()
+     */
     public String getSeparator()
     {
         return m_separator;
     }
 
+    /**
+     *  Set the separator string.
+     *  
+     *  @param separator A string which separates the page names.
+     */
     public void setSeparator(String separator)
     {
         m_separator = separator;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
     public int doWikiStartTag() throws IOException
     {
         HttpSession session = pageContext.getSession();
-        FixedQueue  trail   = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
+        FixedQueue<String>  trail = (FixedQueue<String>) session.getAttribute(BREADCRUMBTRAIL_KEY);
+
+        String page = m_wikiContext.getPage().getName();
 
         if( trail == null )
         {
-            trail = new FixedQueue(m_maxQueueSize);
+            trail = new FixedQueue<String>(m_maxQueueSize);
         }
 
-        if( m_actionBean instanceof ViewActionBean && m_page != null )
+        if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
         {
-            String pageName = m_page.getName();
             if( trail.isEmpty() )
             {
-                trail.pushItem( pageName );
+                trail.pushItem(page);
             }
             else
             {
                 //
                 // Don't add the page to the queue if the page was just refreshed
                 //
-                if( !((String) trail.getLast()).equals( pageName ) )
+                if( !trail.getLast().equals(page) )
                 {
-                    trail.pushItem( pageName );
-                    log.debug( "added page: " + pageName );
+                    trail.pushItem(page);
+                    log.debug("added page: " + page);
                 }
                 log.debug("didn't add page because of refresh");
             }
@@ -132,15 +161,14 @@ public class BreadcrumbsTag extends WikiTagBase
 
         for( int i = 0; i < queueSize - 1; i++ )
         {
-            curPage = (String) trail.get(i);
+            curPage = trail.get(i);
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            if ( m_actionBean instanceof WikiContext )
+            if ( m_wikiActionBean instanceof WikiContext )
             {
-                WikiContext context = (WikiContext)m_actionBean;
                 out.print("<a class=\"" + linkclass + "\" href=\"" + 
-                          context.getViewURL(curPage)+ "\">" + curPage + "</a>");
+                          m_wikiContext.getViewURL(curPage)+ "\">" + curPage + "</a>");
             }
             
             if( i < queueSize - 2 ) 
@@ -155,8 +183,8 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    public static class FixedQueue
-        extends LinkedList<Object>
+    public static class FixedQueue<T>
+        extends LinkedList<T>
         implements Serializable
     {
         private int m_size;
@@ -167,7 +195,7 @@ public class BreadcrumbsTag extends WikiTagBase
             m_size = size;
         }
 
-        Object pushItem(Object o)
+        T pushItem(T o)
         {
             add(o);
             if( size() > m_size )

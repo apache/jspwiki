@@ -21,10 +21,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -34,30 +32,62 @@ import org.apache.oro.text.regex.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.render.RenderingManager;
 
 /**
  *  This is a base class for all plugins using referral things.
  *
- *  <p>Parameters:<br>
- *  maxwidth: maximum width of generated links<br>
- *  separator: separator between generated links (wikitext)<br>
- *  after: output after the link
- *  before: output before the link
+ *  <p>Parameters also valid for all subclasses.</p>
+ *  <ul>
+ *  <li><b>maxwidth</b>: maximum width of generated links</li>
+ *  <li><b>separator</b>: separator between generated links (wikitext)</li>
+ *  <li><b>after</b>: output after the link</li>
+ *  <li><b>before</b>: output before the link</li>
+ *  <li><b>show</b>: Either "pages" (default) or "count".  When "count", shows only the count
+ *      of pages which match. (Since 2.8)</li>
+ *  <li><b>showLastModified</b>: When show=count, shows also the last modified date. (Since 2.8)</li>
+ *  </ul>
+ *  
  */
 public abstract class AbstractReferralPlugin
     implements WikiPlugin
 {
     private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
 
-    public static final int    ALL_ITEMS       = -1;
-    public static final String PARAM_MAXWIDTH  = "maxwidth";
-    public static final String PARAM_SEPARATOR = "separator";
-    public static final String PARAM_AFTER     = "after";
-    public static final String PARAM_BEFORE    = "before";
+    /** Magic value for rendering all items. */
+    public static final int    ALL_ITEMS              = -1;
+    
+    /** Parameter name for setting the maximum width.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_MAXWIDTH         = "maxwidth";
 
-    public static final String PARAM_EXCLUDE   = "exclude";
-    public static final String PARAM_INCLUDE   = "include";
+    /** Parameter name for the separator string.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SEPARATOR        = "separator";
+    
+    /** Parameter name for the output after the link.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_AFTER            = "after";
+    
+    /** Parameter name for the output before the link.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_BEFORE           = "before";
+
+    /** Parameter name for setting the list of excluded patterns.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_EXCLUDE          = "exclude";
+    
+    /** Parameter name for setting the list of included patterns.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_INCLUDE          = "include";
+    
+    /** Parameter name for the show parameter.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW             = "show";
+    
+    /** Parameter name for setting show to "pages".  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW_VALUE_PAGES = "pages";
+    
+    /** Parameter name for setting show to "count".  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW_VALUE_COUNT = "count";
+    
+    /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_LASTMODIFIED     = "showLastModified";
 
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
@@ -66,20 +96,25 @@ public abstract class AbstractReferralPlugin
 
     protected           Pattern[]  m_exclude;
     protected           Pattern[]  m_include;
+    
+    protected           String m_show = "pages";
+    protected           boolean m_lastModified=false;
+    // the last modified date of the page that has been last modified:
+    protected           Date m_dateLastModified = new Date(0);
+    protected           SimpleDateFormat m_dateFormat;
 
     protected           WikiEngine m_engine;
 
     /**
-     *  Used to initialize some things.  All plugins must call this first.
-     *
-     *  @since 1.6.4
+     * @param context the wiki context
+     * @param params parameters for initializing the plugin
+     * @throws PluginException if any of the plugin parameters are malformed
      */
-
     // FIXME: The compiled pattern strings should really be cached somehow.
-
     public void initialize( WikiContext context, Map params )
         throws PluginException
     {
+        m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;
@@ -157,11 +192,43 @@ public abstract class AbstractReferralPlugin
         }
 
         // log.debug( "Requested maximum width is "+m_maxwidth );
-    }
+        s = (String) params.get(PARAM_SHOW);
 
+        if( s != null )
+        {
+            if( s.equalsIgnoreCase( "count" ) )
+            {
+                m_show = "count";
+            }
+        }
+
+        s = (String) params.get( PARAM_LASTMODIFIED );
+
+        if( s != null )
+        {
+            if( s.equalsIgnoreCase( "true" ) )
+            {
+                if( m_show.equals( "count" ) )
+                {
+                    m_lastModified = true;
+                }
+                else
+                {
+                    throw new PluginException( "showLastModified=true is only valid if show=count is also specified" );
+                }
+            }
+        }
+    }
+    
+    /**
+     *  Filters a collection according to the include and exclude -parameters.
+     *  
+     *  @param c The collection to filter.
+     *  @return A filtered collection.
+     */
     protected Collection filterCollection( Collection c )
     {
-        ArrayList result = new ArrayList();
+        ArrayList<String> result = new ArrayList<String>();
 
         PatternMatcher pm = new Perl5Matcher();
 
@@ -204,6 +271,26 @@ public abstract class AbstractReferralPlugin
             if( includeThis )
             {
                 result.add( pageName );
+                //
+                //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
+                WikiPage page = null;
+                if( m_lastModified )
+                {
+                    page = m_engine.getPage( pageName );
+                    if( page != null )
+                    {
+                        Date lastModPage = page.getLastModified();
+                        if( log.isDebugEnabled() )
+                        {
+                            log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
+                        }
+                        if( lastModPage.after( m_dateLastModified ) )
+                        {
+                            m_dateLastModified = lastModPage;
+                        }
+                    }
+
+                }
             }
         }
 
@@ -216,6 +303,7 @@ public abstract class AbstractReferralPlugin
      *  @param links Collection to make into WikiText.
      *  @param separator Separator string to use.
      *  @param numItems How many items to show.
+     *  @return The WikiText
      */
     protected String wikitizeCollection( Collection links, String separator, int numItems )
     {
@@ -258,6 +346,9 @@ public abstract class AbstractReferralPlugin
     /**
      *  Makes HTML with common parameters.
      *
+     *  @param context The WikiContext
+     *  @param wikitext The wikitext to render
+     *  @return HTML
      *  @since 1.6.4
      */
     protected String makeHTML( WikiContext context, String wikitext )

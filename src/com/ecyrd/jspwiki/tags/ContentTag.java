@@ -20,15 +20,14 @@
  */
 package com.ecyrd.jspwiki.tags;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.action.*;
+import com.ecyrd.jspwiki.*;
 
 /**
  *  Is used as a "super include" tag, which can include the proper context
@@ -41,58 +40,111 @@ public class ContentTag
 {
     private static final long serialVersionUID = 0L;
     
-    private Map<Class <? extends WikiActionBean>,String> m_mappings = new HashMap<Class <? extends WikiActionBean>,String>();
+    private Map<String, String> m_mappings = new HashMap<String, String>();
 
+    /**
+     *  Set the template for the VIEW context.
+     *  
+     *  @param s The template name.
+     */
     public void setView( String s )
     {
-        m_mappings.put( ViewActionBean.class, s );
+        m_mappings.put( WikiContext.VIEW, s );
     }
 
+    /**
+     *  Set the template for the DIFF context.
+     *  
+     *  @param s The template name.
+     */
     public void setDiff( String s )
     {
-        m_mappings.put( DiffActionBean.class, s );
+        m_mappings.put( WikiContext.DIFF, s );
     }
 
+    /**
+     *  Set the template for the INFO context.
+     *  
+     *  @param s The template name.
+     */
     public void setInfo( String s )
     {
-        m_mappings.put( PageInfoActionBean.class, s );
+        m_mappings.put( WikiContext.INFO, s );
     }
 
+    /**
+     *  Set the template for the PREVIEW context.
+     *  
+     *  @param s The template name.
+     */
     public void setPreview( String s )
     {
-        m_mappings.put( PreviewActionBean.class, s );
+        m_mappings.put( WikiContext.PREVIEW, s );
     }
 
+    /**
+     *  Set the template for the CONFLICT context.
+     *  
+     *  @param s The template name.
+     */
     public void setConflict( String s )
     {
-        m_mappings.put( DiffActionBean.class, s );
+        m_mappings.put( WikiContext.CONFLICT, s );
     }
 
+    /**
+     *  Set the template for the FIND context.
+     *  
+     *  @param s The template name.
+     */
     public void setFind( String s )
     {
-        m_mappings.put( SearchActionBean.class, s );
+        m_mappings.put( WikiContext.FIND, s );
     }
 
+    /**
+     *  Set the template for the PREFS context.
+     *  
+     *  @param s The template name.
+     */
     public void setPrefs( String s )
     {
-        m_mappings.put( UserPreferencesActionBean.class, s );
+        m_mappings.put( WikiContext.PREFS, s );
     }
 
+    /**
+     *  Set the template for the ERROR context.
+     *  
+     *  @param s The template name.
+     */
     public void setError( String s )
     {
-        m_mappings.put( ErrorActionBean.class, s );
+        m_mappings.put( WikiContext.ERROR, s );
     }
 
+    /**
+     *  Set the template for the EDIT context.
+     *  
+     *  @param s The template name.
+     */
     public void setEdit( String s )
     {
-        m_mappings.put( EditActionBean.class, s );
+        m_mappings.put( WikiContext.EDIT, s );
     }
 
+    /**
+     *  Set the template for the COMMENT context.
+     *  
+     *  @param s The template name.
+     */
     public void setComment( String s )
     {
-        m_mappings.put( CommentActionBean.class, s );
+        m_mappings.put( WikiContext.COMMENT, s );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
@@ -100,19 +152,23 @@ public class ContentTag
         return SKIP_BODY;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public final int doEndTag()
         throws JspException
     {
         try
         {
             // Check the overridden templates first
-            String contentTemplate = m_mappings.get( m_actionBean.getClass() );
+            String requestContext = m_wikiContext.getRequestContext();
+            String contentTemplate = m_mappings.get( requestContext );
 
             // If not found, use the default name (trim "ActionBean" from name, and append "Content"
             // e.g., EditActionBean yields "EditContent.jsp"
             if ( contentTemplate == null )
             {
-                String beanName = m_actionBean.getClass().getName();
+                String beanName = m_wikiActionBean.getClass().getName();
                 if ( beanName.endsWith( "ActionBean" ) )
                 {
                     beanName = beanName.substring( 0, beanName.lastIndexOf( "ActionBean") );
@@ -123,11 +179,11 @@ public class ContentTag
             // If still no, something fishy is going on
             if( contentTemplate == null )
             {
-                throw new JspException("This template uses <wiki:Content/> in an unsupported context: " + m_actionBean.getClass().getName() );
+                throw new JspException("This template uses <wiki:Content/> in an unsupported context: " + requestContext );
             }
 
-            String page = m_actionBean.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_actionBean.getTemplate(),
+            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
+                                                                                  m_wikiContext.getTemplate(),
                                                                                   contentTemplate );
             pageContext.include( page );
         }
