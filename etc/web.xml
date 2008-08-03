@@ -6,21 +6,37 @@
         version="2.4">
 
    <description>
-       JSPWiki is a free JSP-based WikiClone.  It is licenced
-       under the Lesser GNU General Public License.
+       JSPWiki is an open source JSP-based WikiClone.  It is licenced
+       under the Apache 2.0 license.
 
-       JSPWiki is maintained by Janne Jalkanen (+others),
-       jalkanen+jspwiki@ecyrd.com
+       For more information, please come to http://www.jspwiki.org/
    </description>
    <display-name>JSPWiki</display-name>
-   
+
    <!-- Resource bundle default location -->
    <context-param>
      <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
      <param-value>templates.default</param-value>
    </context-param>
 
-   <!-- All JSPs need to be checked for proper user access. -->
+   <!--
+      WikiServletFilter defines a servlet filter which filters all requests. It was
+      introduced in JSPWiki 2.4.
+
+      In 2.7/2.8, the WikiServlet filter also performs an important security function:
+      it sets authentication status based on container credentials. It should generally
+      execute first. Note that if you configure a filter *before* this one that returns
+      non-null values for getUserPrincipal() or getRemoteUser(), WikiSecurityFilter
+      will pick the credentials up, and set the user's WikiSession state to
+      "authenticated." WikiServletFlter will also set the WikiSession's' state
+      to "authenticated" if jspwiki.properties property "jspwiki.cookieAuthentication"
+      is set to true, and the user possesses the correct authentication cookie.
+
+      Lastly, if jspwiki.properties property "jspwiki.cookieAssertions" is set to true,
+      WikiServletFilter will also set WikiSession state to "asserted" if the user
+      possesses the correct "assertion cookie."
+   -->
+
    <filter>
       <filter-name>WikiServletFilter</filter-name>
       <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
@@ -36,34 +52,20 @@
       <display-name>Stripes Filter</display-name>
       <filter-name>StripesFilter</filter-name>
       <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
-      <!-- WikiRuntimeConfiguration replaces the default Stripes RuntimeConfiguration. 
-           It starts up the WikiEngine and the WikiTypeConverterFactory that
-           marshals request parameters into properly resolved WikiPage and Group objects.-->
+      <!-- Look for ActionBean implementations in the JSPWiki "action" package.
+           If you have custom WikiActionBeans you want JSPWiki to use, specify them
+           here (comma-delimited). -->
       <init-param>
-         <param-name>Configuration.Class</param-name>
-         <param-value>com.ecyrd.jspwiki.ui.WikiRuntimeConfiguration</param-value>
+         <param-name>ActionResolver.Packages</param-name>
+         <param-value>com.ecyrd.jspwiki.action</param-value>
       </init-param>
-      <!-- Look for ActionBean implementations in the JSPWiki JAR. If you have custom
-           ActionBeans you want JSPWiki to use, specify them here (comma-delimited). -->
+      <!-- Tell Stripes to auto-discover custom extension classes from the "action"
+           package also. Extensions JSPWiki uses includes WikiActionBeanContext,
+           WikiRuntimeConfiguration, WikiInterceptor and the various TypeConverter
+           implementations for JSPWiki-specific types. -->
       <init-param>
-         <param-name>ActionResolver.UrlFilters</param-name>
-         <param-value>WEB-INF/lib/JSPWiki.jar</param-value>
-      </init-param>
-      <!-- WikiActionBeanContext replaces the default Stripes ActionBeanContext. This class
-           contains references to the WikiEngine and WikiSesion. A new instance of 
-           WikiActionBeanContext is automatically injected into every ActionBean. -->
-      <init-param>
-         <param-name>ActionBeanContext.Class</param-name>
-         <param-value>com.ecyrd.jspwiki.action.WikiActionBeanContext</param-value>
-      </init-param>
-      <!-- In addition to the normal Stripes BeforeAfterMethodInterceptor, we add the
-           WikiInterceptor, which fires after the ActionBean is resolved. The interceptor
-           checks that the WikiEngine is initialized correctly, and that the user has
-           correct access to the ActionBean.-->
-      <init-param>
-         <param-name>Interceptor.Classes</param-name>
-         <param-value>com.ecyrd.jspwiki.ui.WikiInterceptor,
-            net.sourceforge.stripes.controller.BeforeAfterMethodInterceptor</param-value>
+         <param-name>Extension.Packages</param-name>
+         <param-value>com.ecyrd.jspwiki.action</param-value>
       </init-param>
       <!-- We override Stripes' normal resource bundle to use ours instead. -->
       <init-param>
@@ -73,12 +75,6 @@
       <init-param>
          <param-name>LocalizationBundleFactory.ErrorMessageBundle</param-name>
          <param-value>templates.default</param-value>
-      </init-param>
-      <!-- Lastly, we define a set of custom ExceptionHandlers that deal with any 
-           custom exceptions caught by Stripes. -->
-      <init-param>
-         <param-name>ExceptionHandler.Class</param-name>
-         <param-value>net.sourceforge.stripes.exception.DefaultExceptionHandler</param-value>
       </init-param>
       <!-- Library for parsing multi-part file uploads -->
       <init-param>
@@ -402,10 +398,11 @@
        either way, as long as they match.
        
        Note that accessing protected resources will cause your
-       container to try to use SSL to secure the web session.
-       This, of course, assumes your web container (or web server) 
-       is configured with SSL support. If you do not wish to use SSL,
-       remove the "user-data-constraint" elements.
+       container to try to use SSL (default port for Tomcat is 8443)
+       to secure the web session. This, of course, assumes your
+       web container (or web server) is configured with SSL support.
+       If you do not wish to use SSL, remove the "user-data-constraint"
+       elements.
    -->
 
    <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH

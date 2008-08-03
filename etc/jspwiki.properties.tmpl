@@ -15,6 +15,19 @@
 jspwiki.applicationName = @appname@
 
 #
+#  Describe where your wiki lives (the real URL through which it is available
+#  through the internet/intranet).  This is a mandatory attribute.
+#
+#  Be careful if you use a localhost address (http://localhost/ or http://127.0.0.1/),
+#  as this will cause some unwanted side effects if your wiki is accessed from
+#  any other computer than where the wiki is running.
+#
+#  Example:
+#  jspwiki.baseURL = http://www.jspwiki.org/
+#
+jspwiki.baseURL=
+
+#
 #  Which page provider class to use.  Possibilities are:
 #
 #    RCSFileProvider        - for simple RCS-based file storage
@@ -143,24 +156,6 @@ jspwiki.basicAttachmentProvider.storageDir = @pagedir@
 #
 jspwiki.diffProvider = TraditionalDiffProvider
 
-#
-#  BaseURL can be used to rewrite all of JSPWiki's internal references.
-#  Sometimes, especially if you're behind a address-rewriting firewall,
-#  relative URLs don't work since the servlet container has no idea
-#  where it's actually located.
-#
-#  Leave undefined if you want to rely on what your servlet container
-#  thinks of where your application lives.
-#
-#  You MUST, however, define this one if you want to enable RSS (see below).  In
-#  general, this is a good idea to define it anyway.  Do not forget the
-#  trailing slash.
-#
-#  Example:
-#  jspwiki.baseURL = http://www.jspwiki.org/
-#
-#jspwiki.baseURL=
-
 #  Determines if you need to have relative urls or not.  If the baseURL
 #  is not set, then this has no effect, but if you set the baseURL (which
 #  is highly recommended), you can use this to set relative urls.
@@ -252,46 +247,6 @@ jspwiki.translatorReader.camelCaseLinks = false
 #
 jspwiki.templateDir = default
 
-#
-#  Preferences for default template 
-#
-jspwiki.defaultprefs.template.skinname =PlainVanilla
-jspwiki.defaultprefs.template.dateformat =dd-MMM-yyyy HH:mm
-jspwiki.defaultprefs.template.timezone =GMT+01:00
-jspwiki.defaultprefs.template.orientation =fav-left
-jspwiki.defaultprefs.template.editor =plain
-
-jspwiki.defaultprefs.timeformat.01=d/MM
-jspwiki.defaultprefs.timeformat.02=d/MM/yy
-jspwiki.defaultprefs.timeformat.03=d/MM/yyyy
-jspwiki.defaultprefs.timeformat.04=dd/MM/yy
-jspwiki.defaultprefs.timeformat.05=dd/MM/yyyy
-jspwiki.defaultprefs.timeformat.06=EEE, dd/MM/yyyy
-jspwiki.defaultprefs.timeformat.07=EEE, dd/MM/yyyy, Z
-jspwiki.defaultprefs.timeformat.08=EEE, dd/MM/yyyy, zzzz
-jspwiki.defaultprefs.timeformat.09=d/MM/yy HH:mm
-jspwiki.defaultprefs.timeformat.10=d/MM/yy hh:mm a
-jspwiki.defaultprefs.timeformat.11=d/MM/yy hh:mm a, Z
-jspwiki.defaultprefs.timeformat.12=dd-MMM
-jspwiki.defaultprefs.timeformat.13=dd-MMM-yy
-jspwiki.defaultprefs.timeformat.14=dd-MMM-yyyy
-jspwiki.defaultprefs.timeformat.15=EEE, dd-MMM-yyyy
-jspwiki.defaultprefs.timeformat.16=EEE, dd-MMM-yyyy, Z
-jspwiki.defaultprefs.timeformat.17=EEE, dd-MMM-yyyy, zzzz
-jspwiki.defaultprefs.timeformat.18=dd-MMM-yyyy HH:mm
-jspwiki.defaultprefs.timeformat.19=dd-MMM-yyyy hh:mm a
-jspwiki.defaultprefs.timeformat.20=dd-MMM-yyyy hh:mm a, Z
-jspwiki.defaultprefs.timeformat.21=MMMM dd, yyyy
-jspwiki.defaultprefs.timeformat.22=MMMM dd, yyyy HH:mm
-jspwiki.defaultprefs.timeformat.23=MMMM dd, yyyy hh:mm a
-jspwiki.defaultprefs.timeformat.24=MMMM, EEE dd,yyyy hh:mm a
-jspwiki.defaultprefs.timeformat.25=MMMM, EEEE dd,yyyy hh:mm a
-jspwiki.defaultprefs.timeformat.26=dd.MM.yyyy
-jspwiki.defaultprefs.timeformat.27=dd.MM.yyyy, HH:mm
-jspwiki.defaultprefs.timeformat.28=dd.MM.yyyy, HH:mm zz
-jspwiki.defaultprefs.timeformat.29=EEEE, dd.MM.yyyy
-jspwiki.defaultprefs.timeformat.30=EE, dd.MM.yyyy, HH:mm zz
-jspwiki.defaultprefs.timeformat.31=EEEE, d. MMMM yyyy, HH:mm zz
 
 #
 #  The name of the front page.  This is the page that gets loaded if no
@@ -300,6 +255,11 @@ jspwiki.defaultprefs.timeformat.31=EEEE, d. MMMM yyyy, HH:mm zz
 #  defined, uses "Main".
 #
 #jspwiki.frontPage = Main
+
+#  
+#  Allow creation of empty pages. Defaults to false.
+#
+#jspwiki.allowCreationOfEmptyPages = false
 
 #
 #  If set to true, all outward links have a small icon attached.  The icon
@@ -418,6 +378,7 @@ jspwiki.plugin.searchPath =
 #jspwiki.urlConstructor = DefaultURLConstructor
 #jspwiki.urlConstructor = ShortViewURLConstructor
 #jspwiki.shortURLConstructor.prefix = wiki/
+jspwiki.urlConstructor = StripesURLConstructor
 
 #############################################################################
 #
@@ -444,42 +405,102 @@ jspwiki.plugin.searchPath =
 #
 #  For users looking to get started quickly, the default settings below
 #  should work fine. In addition to the properties below, you may also
-#  want to set the following JRE runtime properties when running JSPWiki
-#  or the servlet container it runs in:
+#  want to modify the security policy file WEB-INF/jspwiki.policy. See
+#  the policy file for more details.
 #
-#     java.security.auth.login.config==/path-to/jspwiki.jass
-#     java.security.policy=/path-to/jspwiki.policy
-#
-#  See the jspwiki.properties and jspwiki.jaas files for more details on
-#  how to do this. These files contain addition configuration options
-#  for the JSPWiki security policy and authentication, respectively, although
-#  the defaults should work fine. If you don't set the JRE properties,
-#  JSPWiki will use default versions from the WEB-INF directory.
-
 #  AUTHENTICATION
+#
 #  For authentication, JSPWiki uses JAAS (Java Authentication and Authorization
-#  Service). The Authentication system is configured in the jspwiki.jaas
-#  file; by default it will attempt to leverage your servlet container's
-#  authentication services, if present. JSPWiki also can use its own
-#  authentication system, which is separate from the container.
+#  Service) in combination with a servlet filter that picks up any credentials
+#  set by the servlet container. The Authentication system is configured below.
 #
-#  JSPWiki will try to detect whether you are using container authentication
-#  To use container authentication, you must uncomment
-#  the <security-constraint> elements in WEB-INF/web.xml.
+#  You must choose either (A) Container or (B) Custom authentication. (B) is the default.
 #
-#  AUTHORIZATION (EXTERNAL)
+#  A) CONTAINER AUTHENTICATION 
+#  JSPWiki will always (passively) collect credentials supplied by your servlet
+#  container, via HttpServletRequest.getUserPrincipal/getRemote user. You do not
+#  need to do anything to enable this. In addition, you can cause JSPWiki users
+#  to log in to the web container by uncommenting the the <security-constraint>
+#  elements in WEB-INF/web.xml.
+#
+#  B) CUSTOM AUTHENTICATION
+#  If you do not wish to use container-managed authentication, you can use JSPWiki's
+#  own custom authentication system. This uses a JAAS LoginModule (supplied below)
+#  to log in the user. You can use any JAAS LoginModule you want.
+#  The default class is com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule,
+#  which compares the supplied username and hashed password with the values stored
+#  in the configured UserDatabase (see USER DATABASE below).
+#
+#  Supply the JAAS LoginModule class used for custom authentication here.
+#  The implementation MUST have a zero-argument constructor (as noted in the
+#  javax.security.auth.spi.LoginModule Javadocs).
+jspwiki.loginModule.class = com.ecyrd.jspwiki.auth.login.UserDatabaseLoginModule
+
+#
+# JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
+#  etc. should be replaced with the actual parameter names. The parameter names and
+# values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
+# when its initialize() method is called. The default UserDatabaseLoginModule class does
+# not need any options.
+#jspwiki.loginModule.options.param1 = value1
+#jspwiki.loginModule.options.param2 = value2
+
+# 
+#  Cookie authentication & assertion
+#
+#  If this value is set to "true", then JSPWiki will allow you to "assert" an
+#  identity using a cookie.  It's still considered to be unsafe, just like no
+#  login at all, but it is useful when you have no need to force everyone to login.
+#
+#  By default, this is on.
+#
+#jspwiki.cookieAssertions=true
+
+#
+#  If you would like to keep your users logged in for weeks at a time, you can
+#  turn on "cookie authentication" feature.  However, this comes with important
+#  security caveats:
+#  1) User will stay logged in into your system for weeks.  This means that if
+#     someone manages to nab the cookie during this time, they can pretend to
+#     be that user.
+#  2) The mappings between cookies and users are written in your filesystem,
+#     in $jspwiki.workDir/logincookies.  Access to this directory means that
+#     the ability to fake anyone in the wiki, so please make sure that only
+#     the proper admin has read access to this directory.
+#
+#  By default, cookie authentication is off.
+#
+#jspwiki.cookieAuthentication=false
+
+#
+#  Defines how many days the cookies are kept, and how often the people have to log in.  
+#  The default is two weeks, i.e. 14 days.  If you need a shorter period than one day,
+#  turn off cookie authentication, then tweak your web.xml to allow for longer sessions.
+#
+#jspwiki.cookieAuthentication.expiry=14
+
+#
+#
+#  AUTHORIZATION
+#
 #  For authorization, JSPWiki has a two-tier system. When we want to
 #  determine whether a user has permission to perform a certain action,
-#  we first consult an external "authorizer" to determine if the user
-#  is a member of the required role. By default, JSPWiki uses the
-#  servlet container's authorization service for this (that is, it
-#  calls HttpServletRequest.isUserInRole(String) ).
-#  However, you can use another Authorizer if you wish; specify that
-#  class here.
+#  we first consult (A) an external "authorizer" to determine if the user
+#  is a member of the required role. In addition to checking its external
+#  authorizer, it also checks (B) its GroupManager for wiki-managed groups.
+#
+#  A) EXTERNAL AUTHORIZATION
+#  By default, JSPWiki uses the servlet container's authorization service
+#  for to check what roles the user belongs to (that is, it calls
+#  HttpServletRequest.isUserInRole(String)). After the user authenticates,
+#  the default Authorizer (WebContainerAuthorizer) checks to see if the user
+#  belongs to the roles listed in web.xml using <security-role>/<role-name> or
+#  <auth-constraint>/<role-name> elements. However, you can use another
+#  Authorizer if you wish; specify that class here.
 
 jspwiki.authorizer = com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer
 
-#  AUTHORIZATION (GROUPS)
+#  B) GROUPS
 #  As an additional source of authorization, users can belong to discretionary
 #  "wiki groups" that the users manage themselves. Wiki groups are stored in a
 #  GroupDatabase. The default group database uses an XML file for persistent
@@ -542,7 +563,7 @@ jspwiki.userdatabase = com.ecyrd.jspwiki.auth.user.XMLUserDatabase
 #  markup. For example: "[{ALLOW edit Charlie}]". If using a custom
 #  ACL manager, specify the AclManager implementation class here:
 
-jspwiki.aclManager          = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
+jspwiki.aclManager = com.ecyrd.jspwiki.auth.acl.DefaultAclManager
 
 #############################################################################
 #
@@ -646,36 +667,6 @@ jspwiki.rss.channelLanguage = en-us
 
 ###########################################################################
 #
-#  Determine how certain file commands are run.  They have been
-#  commented out, since most likely you want to use the defaults.
-#  Be warned, making mistakes with these may well ruin your entire
-#  Wiki collection!
-#
-#  The command to run diff:
-#     NOTE! If you do not specify this, an internal "diff" routine is used.
-#           In most cases, you really should not touch this.
-#
-#jspwiki.diffCommand = diff -u %s1 %s2
-
-#  The command for RCS checkin
-#jspwiki.rcsFileProvider.checkinCommand = ci -q -mx -l -t-none %s
-
-#  The command for RCS checkout of the newest version
-#jspwiki.rcsFileProvider.checkoutCommand = co -l %s
-
-#  The command for checking out a specific version (%v = version number)
-#jspwiki.rcsFileProvider.checkoutVersionCommand = co -p -r1.%v %s
-
-#  The command for RCS log headers
-#  If you have a version of RCS that does not support the "-z" flag, then
-#  you can try this one out without it.  It should work.
-#jspwiki.rcsFileProvider.logCommand = rlog -zLT -h %s
-
-#  The command for getting the entire modification history
-#jspwiki.rcsFileProvider.fullLogCommand = rlog -zLT %s
-
-###########################################################################
-#
 #  JDBC Configuration. Tells JSPWiki which tables and columns to map
 #  to for the JDBCUserDatabase and JDBCGroupDatabase. For more info, see the
 #  JavaDoc for classes com.ecyrd.jspwiki.auth.user.JDBCUserDatabase and
@@ -683,6 +674,7 @@ jspwiki.rss.channelLanguage = en-us
 #
 jspwiki.userdatabase.datasource=jdbc/UserDatabase
 jspwiki.userdatabase.table=users
+jspwiki.userdatabase.uid=uid
 jspwiki.userdatabase.email=email
 jspwiki.userdatabase.fullName=full_name
 jspwiki.userdatabase.loginName=login_name
@@ -690,6 +682,8 @@ jspwiki.userdatabase.password=password
 jspwiki.userdatabase.wikiName=wiki_name
 jspwiki.userdatabase.created=created
 jspwiki.userdatabase.modified=modified
+jspwiki.userdatabase.lockExpiry=lock_expiry
+jspwiki.userdatabase.attributes=attributes
 jspwiki.userdatabase.roleTable=roles
 jspwiki.userdatabase.role=role
 jspwiki.groupdatabase.datasource=jdbc/GroupDatabase
@@ -710,25 +704,33 @@ jspwiki.groupdatabase.modifier=modifier
 #  (recommended, and the default), or a stand-alone factory whose properties
 #  are configured with mail.* properties in this file (below).
 #
-#  A. JNDI Resource Factory Configuration. JSPWiki will try this first.
+
+#  A. Configure the address from which the email appears to come.
+#     If you're going to use a mail session obtained via JNDI, this setting
+#     will only be used if it hasn't already been configured in the obtained
+#     session itself. If you comment it out, JSPWiki will use its internal
+#     default value.
+#     If you're going to use a stand-alone mail session, you will surely want
+#     to configure it, otherwise the internal default value will be used.
+#
+mail.from = @mail.from@
+
+#  B. JNDI Resource Factory Configuration. JSPWiki will try this first.
 #     You will need to configure your container to provide a JavaMail
 #     resource factory. See your container documentation, or check our
 #     fairly complete documentation (with examples for Tomcat) in
 #     the JavaDocs for com.ecyrd.jspwiki.util.MailUtil.
 #
-#  JNDI resource name. The commented-out value is the default
+#  JNDI resource name. The commented-out value is the default.
 #jspwiki.mail.jndiname = mail/Session
 
-#  B. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
+#  C. Stand-alone Resource Factory. JSPWiki will use these values if JNDI fails.
 #
 #  Your SMTP host (i.e. the one which sends email)
 mail.smtp.host = @mail.smtp.host@
 
 # If for some reason the standard smtp port (25) is blocked, you can change it here
 #mail.smtp.port = @mail.smtp.port@
-
-#  The address from which the email appears to come
-mail.from = @mail.from@
 
 # If you are using a webserver that is publically accessible it usually
 # doesn't allow you to send mail anonymously
