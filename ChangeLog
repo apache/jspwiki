@@ -1,3 +1,11 @@
+2008-08-03  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-7
+
+		* JSPWiki-231: added Italian localisation, thanks to Luca Gilardoni
+		
+		* changed the schemaLocation in web.xml, reported by Thomas van der Pol
+        
 2008-08-01  Harry Metske <harry.metske@gmail.com>
 
 		* no version bump
