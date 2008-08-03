@@ -16,10 +16,10 @@
     String pagereq = wikiContext.getName();
 
     // Redirect if the request was for a 'special page'
-    String redirect = wiki.getRedirectURL( wikiContext );
+    String redirect = wiki.getWikiActionBeanFactory().getSpecialPageReference( pagereq );
     if( redirect != null )
     {
-        response.sendRedirect( redirect );
+        response.sendRedirect( wikiContext.getViewURL( redirect ) );
         return;
     }
     
