@@ -1,5 +1,9 @@
 package com.ecyrd.jspwiki.action;
 
+import net.sourceforge.stripes.action.DefaultHandler;
+import net.sourceforge.stripes.action.HandlesEvent;
+import net.sourceforge.stripes.action.Resolution;
+
 import com.ecyrd.jspwiki.WikiContext;
 
 /**
@@ -11,7 +15,13 @@ import com.ecyrd.jspwiki.WikiContext;
  * @author Andrew Jaquith
  * 
  */
-@WikiRequestContext("none")
 public class NoneActionBean extends WikiContext
 {
+    @DefaultHandler
+    @HandlesEvent( "none" )
+    @WikiRequestContext( "none" )
+    public Resolution view()
+    {
+        return null;
+    }
 }
