@@ -61,7 +61,6 @@ h2,h3,h4 {
 	background:#202326;
 	color:#6cf;
 }
-
 /* +++ 220 Lists and bullets +++ */
 /* +++ 225 Forms, Labels, form-values and form-help +++ */
 /* +++ 230 Horizontal rules +++ */
@@ -308,7 +307,6 @@ a.tool:hover {
 #tools .collapsetitle:hover {
 	background:#fc3;
 }
-
 #toolbuttons span {
 	border:1px solid #fc3;
 }
@@ -392,9 +390,7 @@ body {
 	color:#c7ff70;
 	border-bottom:none;
 }
-
 /* +++ 625 Table of contents plugin +++ */
-
 /* +++ 630 Weblog and weblogarchive plugins +++ */
 .weblogentryheading, .weblogentryfooter {
 	color:#c7ff70;
@@ -424,7 +420,6 @@ body {
 }
 
 /* +++ 800 JSPWiki JSP Taglibs +++ */
-
 /* +++ 805 CalendarTag +++ */
 table.calendar * {
 	font-size:0.9em;
@@ -513,7 +508,6 @@ table.calendar * {
 .tip-text a {
 	color:#c30 !important;
 }
-
 
 /* +++ 920 Collapsible lists +++ */
 .collapseBullet,
