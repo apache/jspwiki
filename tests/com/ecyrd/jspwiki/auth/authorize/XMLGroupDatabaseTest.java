@@ -1,6 +1,25 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.auth.authorize;
 import java.security.Principal;
-import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -73,23 +92,23 @@ public class XMLGroupDatabaseTest extends TestCase
       // Group TV has 3 members
       group = backendGroup( "TV" );
       assertEquals("TV", group.getName() );
-      assertEquals( 3, group.getMembers().size() );
+      assertEquals( 3, group.members().length );
 
       // Group Literature has 2 members
       group = backendGroup( "Literature" );
       assertEquals("Literature", group.getName() );
-      assertEquals( 2, group.getMembers().size() );
+      assertEquals( 2, group.members().length );
 
       // Group Art has no members
       group = backendGroup( "Art" );
       assertEquals("Art", group.getName() );
-      assertEquals( 0, group.getMembers().size() );
+      assertEquals( 0, group.members().length );
 
       // Group Admin has 1 member (Administrator)
       group = backendGroup( "Admin" );
       assertEquals("Admin", group.getName() );
-      assertEquals( 1, group.getMembers().size() );
-      assertEquals( "Administrator", group.getMembers().get(0).getName() );
+      assertEquals( 1, group.members().length );
+      assertEquals( "Administrator", group.members()[0].getName() );
 
       // Group Archaeology doesn't exist
       try
@@ -120,7 +139,7 @@ public class XMLGroupDatabaseTest extends TestCase
       // Make sure the profile saved successfully
       group = backendGroup( name );
       assertEquals( name, group.getName() );
-      assertEquals( 3, group.getMembers().size() );
+      assertEquals( 3, group.members().length );
       assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
       assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
       assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
@@ -162,8 +181,8 @@ public class XMLGroupDatabaseTest extends TestCase
       m_db.save(group, new WikiPrincipal( "SecondTester" ) );
 
       // We should see 4 members and new timestamp info
-      List<Principal> members = group.getMembers();
-      assertEquals( 4, members.size() );
+      Principal[] members = group.members();
+      assertEquals( 4, members.length );
       assertNotNull( group.getCreator() );
       assertEquals( "Tester", group.getCreator() );
       assertNotNull( group.getCreated() );
@@ -173,8 +192,8 @@ public class XMLGroupDatabaseTest extends TestCase
 
       // Check the back-end; We should see the same thing
       group = backendGroup( name );
-      members = group.getMembers();
-      assertEquals( 4, members.size() );
+      members = group.members();
+      assertEquals( 4, members.length );
       assertNotNull( group.getCreator() );
       assertEquals( "Tester", group.getCreator() );
       assertNotNull( group.getCreated() );

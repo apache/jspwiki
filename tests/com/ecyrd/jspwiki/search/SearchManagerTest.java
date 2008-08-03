@@ -4,18 +4,15 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Properties;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockHttpServletResponse;
-import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.EditActionBean;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 
 public class SearchManagerTest extends TestCase
 {
@@ -64,7 +61,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.yield();
 
-        Thread.sleep( 2000L ); // Should cover for both index and initial delay
+        Thread.sleep( 5000L ); // Should cover for both index and initial delay
         
         Collection res = m_mgr.findPages( "mankind" );
      
@@ -100,12 +97,10 @@ public class SearchManagerTest extends TestCase
     {
         String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
  
-        MockRoundtrip trip = m_engine.guestTrip( ViewActionBean.class );
-        MockHttpServletRequest request = trip.getRequest();
-        MockHttpServletResponse response = trip.getResponse();
-        request.getParameterMap().put("page",new String[]{ "TestPage" });
+        MockHttpServletRequest request = m_engine.newHttpRequest();
+        request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         
-        WikiContext ctx = (WikiContext)m_engine.getWikiActionBeanFactory().newActionBean( request, response, EditActionBean.class );
+        WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
         
         m_engine.saveText( ctx, txt );
 

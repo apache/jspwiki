@@ -10,7 +10,6 @@ import com.ecyrd.jspwiki.*;
  *  Tests the RCSFileProvider.  If you are getting strange errors, please check that you
  *  actually <i>have</i> RCS installed and in your path...
  * 
- *  @author jalkanen
  *
  *  @since forever
  */
@@ -201,7 +200,7 @@ public class RCSFileProviderTest extends TestCase
     {
         WikiPage p = new WikiPage( engine, NAME1 );
         p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean(null, null, p);
         
         engine.saveText( context, "test" );
         
@@ -214,7 +213,7 @@ public class RCSFileProviderTest extends TestCase
         throws Exception
     {
         WikiPage p = new WikiPage( engine, NAME1 );
-        WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean(null, null, p);
 
         context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
         engine.saveText( context, "test" );

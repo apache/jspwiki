@@ -5,21 +5,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.io.*;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import net.sourceforge.stripes.controller.DispatcherServlet;
 import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockRoundtrip;
-import net.sourceforge.stripes.mock.MockServletContext;
+import net.sourceforge.stripes.mock.*;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiActionBeanContext;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.ui.WikiServletFilter;
 
 /**
  *  <p>Simple test engine that always assumes pages are found. The version of TestEngine that is part of JSPWiki 3.0
@@ -38,17 +41,20 @@ public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
 
+    private HttpSession m_adminSession;
+    private HttpSession m_janneSession;
+    private WikiSession m_adminWikiSession;
+    private WikiSession m_janneWikiSession;
+    private WikiSession m_guestWikiSession;
+
     /**
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession adminSession() throws WikiSecurityException
+    public WikiSession adminSession()
     {
-        MockHttpServletRequest request = guestTrip( ViewActionBean.class ).getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
-        return session;
+        return m_adminWikiSession;
     }
 
     /**
@@ -58,41 +64,7 @@ public class TestEngine extends WikiEngine
      */
     public WikiSession guestSession()
     {
-        MockHttpServletRequest request = guestTrip( ViewActionBean.class ).getRequest();
-        return WikiSession.getWikiSession( this, request );
-    }
-   
-    /**
-     * Creates a "round trip" object initialized with a supplied set of credentials. The WikiSession
-     * associated with the created MockRoundtrip object will have privileges appropriate for
-     * the credentials supplied.
-     * @param user the login name
-     * @param password the password
-     * @param beanClass the Stripes action bean to start with
-     * @return the initialized round trip
-     * @throws WikiSecurityException
-     */
-    public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
-    {
-        MockRoundtrip trip = new MockRoundtrip( getServletContext(), beanClass );
-        MockHttpServletRequest request = trip.getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request);
-        this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
-        return trip;
-    }
-    
-    /**
-     * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
-     * plus a new mock request, mock response and action bean of type {@link com.ecyrd.jspwiki.action.ViewActionBean}.
-     * This method is the preferred way to instantiate request and response objects, which can be
-     * obtained by calling {@link net.sourceforge.stripes.mock.MockRoundtrip#getRequest()} and
-     * {@link net.sourceforge.stripes.mock.MockRoundtrip#getResponse()}.
-     * @param beanClass the Stripes action bean to start with
-     * @return the mock rountrip
-     */
-    public MockRoundtrip guestTrip( Class<? extends WikiActionBean> beanClass )
-    {
-        return new MockRoundtrip( getServletContext(), beanClass );
+        return m_guestWikiSession;
     }
 
     /**
@@ -100,70 +72,73 @@ public class TestEngine extends WikiEngine
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession janneSession() throws WikiSecurityException
+    public WikiSession janneSession()
     {
-        MockHttpServletRequest request = guestTrip( ViewActionBean.class ).getRequest();
-        request = guestTrip( ViewActionBean.class ).getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( session, Users.JANNE, Users.JANNE_PASS );
-        return session;
+        return m_janneWikiSession;
     }
 
     public TestEngine( Properties props )
         throws WikiException
     {
-        super( newServletContext( "test" ) , "test", props );
+        super( new MockServletContext( "test" ), "test", props );
         
         // Stash the WikiEngine in the servlet context
-        MockServletContext servletContext = this.getServletContext();
+        MockServletContext servletContext = (MockServletContext)this.getServletContext();
         servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
-    
-        // Add our preferred Stripes startup parameters
-        Map<String, String> filterParams = new HashMap<String, String>();
-        filterParams.put("Configuration.Class", "com.ecyrd.jspwiki.ui.WikiRuntimeConfiguration");
-        filterParams.put("ActionResolver.UrlFilters", "build/");
-        filterParams.put("ActionResolver.PackageFilters", "com.ecyrd.jspwiki");
-        filterParams.put("ActionBeanContext.Class", "com.ecyrd.jspwiki.action.WikiActionBeanContext");
-        filterParams.put("Interceptor.Classes", "com.ecyrd.jspwiki.ui.WikiInterceptor,net.sourceforge.stripes.controller.BeforeAfterMethodInterceptor");
-        filterParams.put("ExceptionHandler.Class", "net.sourceforge.stripes.exception.DefaultExceptionHandler");
         
-        // Add a captive Stripes Filter and Stripes Dispatcher to the servlet context
+        // Add mock StripesFilter and WikiServletfilter and to servlet config
+        Map<String,String> filterParams = new HashMap<String,String>();
+        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
         servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
+        servletContext.addFilter( WikiServletFilter.class, "WikiServletFilter", new HashMap<String,String>() );
         servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
+
+        // Set up long-running admin session
+        HttpServletRequest request = newHttpRequest();
+        m_adminWikiSession = WikiSession.getWikiSession( this, request );
+        this.getAuthenticationManager().login( m_adminWikiSession,
+                Users.ADMIN,
+                Users.ADMIN_PASS );
+        m_adminSession = request.getSession();
+
+        // Set up a test Janne session
+        request = newHttpRequest();
+        m_janneWikiSession = WikiSession.getWikiSession( this, request );
+        this.getAuthenticationManager().login( m_janneWikiSession,
+                Users.JANNE,
+                Users.JANNE_PASS );
+        m_janneSession = request.getSession();
+
+        // Set up guest session
+        request = newHttpRequest();
+        m_guestWikiSession = WikiSession.getWikiSession( this, request );
+    }
+    
+    /**
+     * Creates a correctly-instantiated mock HttpServletRequest with an associated
+     * HttpSession.
+     * @return the new request
+     */
+    public MockHttpServletRequest newHttpRequest()
+    {
+        return newHttpRequest( "/Wiki.jsp" );
     }
 
     /**
-     * Creates a mock servlet context used to initialize the test WikiEngine.
-     * @return the initialized servlet context
+     * Creates a correctly-instantiated mock HttpServletRequest with an associated
+     * HttpSession and path.
+     * @param path the path relative to the wiki context, for example "/Wiki.jsp"
+     * @return the new request
      */
-    private static MockServletContext newServletContext( String name )
+    public MockHttpServletRequest newHttpRequest( String path )
     {
-        MockServletContext servletContext = new MockServletContext( name );
-        return servletContext;
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
+        request.setSession( new MockHttpSession( this.getServletContext() ) );
+        return request;
     }
     
-    public static void emptyPageDir()
-    {
-        Properties properties = new Properties();
-
-        try
-        {
-            properties.load( findTestProperties() );
-
-            String pagedir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-            if( pagedir != null )
-            {
-                File f = new File( pagedir );
-
-                if( f.exists() && f.isDirectory() )
-                {
-                    deleteAll( f );
-                }
-            }
-        }
-        catch( IOException e ) {} // Fine
-    }
-
     public static void emptyWorkDir()
     {
         Properties properties = new Properties();
@@ -336,14 +311,12 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our admin session
-        MockRoundtrip trip = guestTrip( ViewActionBean.class );
-        MockHttpServletRequest request = trip.getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
+        request.setSession( m_adminSession );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = this.getWikiActionBeanFactory().newViewActionBean( trip.getRequest(), trip.getResponse(), page );
+        WikiContext context = getWikiActionBeanFactory().newViewActionBean( request, (HttpServletResponse)null, page );
         saveText( context, content );
     }
 
@@ -351,76 +324,13 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our Janne session
-        MockRoundtrip trip = guestTrip( ViewActionBean.class );
-        MockHttpServletRequest request = trip.getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( session, Users.JANNE, Users.JANNE_PASS );
+        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
+        request.setSession( m_janneSession );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = this.getWikiActionBeanFactory().newViewActionBean( trip.getRequest(), trip.getResponse(), page );
+        WikiContext context = getWikiActionBeanFactory().newViewActionBean( request, (HttpServletResponse)null, page );
         saveText( context, content );
-    }
-
-    /**
-     *  Returns the converted HTML of the page using a different
-     *  context than the default context.
-     *
-     *  @param  context A WikiContext in which you wish to render this page in.
-     *  @param  page WikiPage reference.
-     *  @return HTML-rendered version of the page.
-     */
-    @Override
-    public String getHTML( WikiContext context, WikiPage page )
-    {
-        // If needed, inject a mock request/response into the ActionBeanContext
-        WikiActionBeanContext wac = context.getContext();
-        if ( wac.getRequest() == null || wac.getResponse() == null )
-        {
-            MockRoundtrip trip = guestTrip( context.getClass() );
-            wac.setRequest( trip.getRequest() );
-            wac.setResponse( trip.getResponse() );
-        }
-        return super.getHTML( context, page );
-    }
-
-    /**
-     *  Returns the converted HTML of the page.
-     *
-     *  @param page WikiName of the page to convert.
-     *  @return HTML-rendered version of the page.
-     */
-    @Override
-    public String getHTML( String page )
-    {
-        return getHTML( page, WikiPageProvider.LATEST_VERSION );
-    }
-
-    /**
-     *  Returns the converted HTML of the page's specific version.
-     *  The version must be a positive integer, otherwise the current
-     *  version is returned.
-     *
-     *  @param pagename WikiName of the page to convert.
-     *  @param version Version number to fetch
-     *  @return HTML-rendered page text.
-     */
-    @Override
-    public String getHTML( String pagename, int version )
-    {
-        WikiPage page = getPage( pagename, version );
-
-        WikiContext context = getWikiActionBeanFactory().newViewActionBean( page );
-
-        String res = getHTML( context, page );
-
-        return res;
-    }
-    
-    @Override
-    public MockServletContext getServletContext()
-    {
-        return (MockServletContext)super.getServletContext();
     }
 
     public static void trace()
@@ -434,4 +344,73 @@ public class TestEngine extends WikiEngine
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
+     * plus a new mock request, mock response and action bean of type {@link com.ecyrd.jspwiki.action.ViewActionBean}.
+     * This method is the preferred way to instantiate request and response objects, which can be
+     * obtained by calling {@link net.sourceforge.stripes.mock.MockRoundtrip#getRequest()} and
+     * {@link net.sourceforge.stripes.mock.MockRoundtrip#getResponse()}.
+     * @param beanClass the Stripes action bean to start with
+     * @return the mock rountrip
+     */
+    public MockRoundtrip guestTrip( Class<? extends WikiActionBean> beanClass )
+    {
+        return new MockRoundtrip( (MockServletContext)getServletContext(), beanClass );
+    }
+
+    /**
+     * Creates a "round trip" object initialized with a supplied set of credentials. The WikiSession
+     * associated with the created MockRoundtrip object will have privileges appropriate for
+     * the credentials supplied.
+     * @param user the login name
+     * @param password the password
+     * @param beanClass the Stripes action bean to start with
+     * @return the initialized round trip
+     * @throws WikiSecurityException
+     */
+    public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
+    {
+        MockRoundtrip trip = new MockRoundtrip( (MockServletContext)getServletContext(), beanClass );
+        MockHttpServletRequest request = trip.getRequest();
+        WikiSession session = WikiSession.getWikiSession( this, request);
+        this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
+        return trip;
+    }
+    
+    /**
+     * Static single instance of the mock servlet.
+     */
+    private static final Servlet MOCK_SERVLET = new MockServlet();
+
+    /**
+     * Captive servlet class that does absolutely nothing. Used by
+     * MockRoundtrip.
+     */
+    protected static class MockServlet extends HttpServlet
+    {
+        private static final long serialVersionUID = 1L;
+        
+        private ServletConfig m_config;
+        
+        public MockServlet()
+        {
+        }
+
+        public ServletConfig getServletConfig()
+        {
+            return m_config;
+        }
+
+        public String getServletInfo()
+        {
+            return "Mock servlet";
+        }
+
+        public void init( ServletConfig config ) throws ServletException
+        {
+            m_config = config;
+        }
+    }
+
 }

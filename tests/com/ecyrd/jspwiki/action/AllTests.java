@@ -14,7 +14,8 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("ActionBean tests");
 
-        suite.addTest( EventPermissionInfoTest.suite() );
+        suite.addTest( GroupActionBeanTest.suite() );
+        suite.addTest( HandlerInfoTest.suite() );
         suite.addTest( RenameActionBeanTest.suite() );
         suite.addTest( UserPreferencesActionBeanTest.suite() );
         suite.addTest( UserProfileActionBeanTest.suite() );

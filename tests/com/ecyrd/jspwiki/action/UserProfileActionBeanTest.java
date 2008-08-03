@@ -36,7 +36,7 @@ public class UserProfileActionBeanTest extends TestCase
     }
     
     public void testMissingParameters() throws Exception {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
@@ -45,7 +45,7 @@ public class UserProfileActionBeanTest extends TestCase
         // profile.fullname
         // profile.loginName
         // profile.passwordAgain
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
         // Check to make sure all our expected validation errors are here...
@@ -63,7 +63,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
         
         // Submit just the e-mail param
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.email", "fred@friendly.org");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
@@ -83,7 +83,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
         
         // Submit just the full name param
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.fullname", "Fred Friendly");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
@@ -101,7 +101,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
         
         // Submit just the login name param
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "fred");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
@@ -119,7 +119,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
         
         // Submit just the first password field
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.password", "myPassword");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
@@ -138,7 +138,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
         
         // Submit just the second password field
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("passwordAgain", "myPassword");
         trip.execute("save");
         bean = trip.getActionBean(UserProfileActionBean.class);
@@ -158,13 +158,13 @@ public class UserProfileActionBeanTest extends TestCase
     }
     
     public void testMismatchedPasswords() throws Exception {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
         
         // Set different passwords
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "fred");
         trip.setParameter("profile.fullname", "Fred Friendly");
         trip.setParameter("profile.email", "fred@friendly.org");
@@ -180,13 +180,13 @@ public class UserProfileActionBeanTest extends TestCase
     }
     
     public void testIllegalEmail() throws Exception {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
         
         // Set an illegal e-mail address
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "fred");
         trip.setParameter("profile.fullname", "Fred Friendly");
         trip.setParameter("profile.email", "illegalEmail");
@@ -203,7 +203,7 @@ public class UserProfileActionBeanTest extends TestCase
     
     public void testSaveProfile() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
@@ -213,7 +213,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertFalse( userExists("user" + suffix));
         
         // Create new user
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "user"+suffix);
         trip.setParameter("profile.fullname", "Fred Friendly"+suffix);
         trip.setParameter("profile.email", "fred@friendly.org");
@@ -242,14 +242,14 @@ public class UserProfileActionBeanTest extends TestCase
     
     public void testSaveProfileWithCollisions() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
         
         // Create user #1; save; verify it saved ok
         String suffix1 = String.valueOf(System.currentTimeMillis());
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "user"+suffix1);
         trip.setParameter("profile.fullname", "Fred Friendly"+suffix1);
         trip.setParameter("profile.email", "fred1@friendly.org");
@@ -266,7 +266,7 @@ public class UserProfileActionBeanTest extends TestCase
         // Create user #2, but same loginName as #1; save; verify it did NOT save
         // (because loginnames collided), and redirected back to .Action
         String suffix2 = String.valueOf(System.currentTimeMillis());
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "user"+suffix1);
         trip.setParameter("profile.fullname", "Fred Friendly"+suffix2);
         trip.setParameter("profile.email", "fred2@friendly.org");
@@ -283,7 +283,7 @@ public class UserProfileActionBeanTest extends TestCase
         
         // Create user #2, but same fullname as #1; save; verify it did NOT save
         // (because fullnames collided), and redirected back to .Action
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "user"+suffix2);
         trip.setParameter("profile.fullname", "Fred Friendly"+suffix1);
         trip.setParameter("profile.email", "fred2@friendly.org");
@@ -304,14 +304,14 @@ public class UserProfileActionBeanTest extends TestCase
     
     public void testSaveProfileAgain() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserProfileActionBean bean;
         ValidationErrors errors;
         
         // Create user; save; verify it saved ok
         String suffix = String.valueOf(System.currentTimeMillis());
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         trip.setParameter("profile.loginName", "user"+suffix);
         trip.setParameter("profile.fullname", "Fred Friendly"+suffix);
         trip.setParameter("profile.email", "fred1@friendly.org");
@@ -325,7 +325,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertTrue( userExists("user" + suffix));
         
         // Create new session and login as new user...
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession(m_engine, request);
         boolean login = m_engine.getAuthenticationManager().login(wikiSession, "user"+suffix,"mypassword");
@@ -339,7 +339,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals("fred1@friendly.org", bean.getProfile().getEmail());
         
         // Now, create another session, and log in again....
-        trip = new MockRoundtrip(ctx, "/UserProfile.action");
+        trip = new MockRoundtrip(ctx, "/UserProfile.jsp");
         request = trip.getRequest();
         wikiSession = WikiSession.getWikiSession(m_engine, request);
         login = m_engine.getAuthenticationManager().login(wikiSession, "user"+suffix,"mypassword");

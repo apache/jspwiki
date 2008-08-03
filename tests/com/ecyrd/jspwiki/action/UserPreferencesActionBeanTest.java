@@ -38,12 +38,12 @@ public class UserPreferencesActionBeanTest extends TestCase
     
     public void testCreateAssertedName() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserPreferencesActionBean bean;
         
         // Create session; set 'assertion' param; verify it got saved
-        trip = new MockRoundtrip(ctx, "/UserPreferences.action");
+        trip = new MockRoundtrip(ctx, "/UserPreferences.jsp");
         trip.setParameter("assertedName", "MyAssertedIdentity");
         trip.setParameter("createAssertedName", "true");
         trip.execute();
@@ -61,12 +61,12 @@ public class UserPreferencesActionBeanTest extends TestCase
     
     public void testCreateAssertedNameAfterLogin() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserPreferencesActionBean bean;
         
         // Create session; login in as Janne
-        trip = new MockRoundtrip(ctx, "/UserPreferences.action");
+        trip = new MockRoundtrip(ctx, "/UserPreferences.jsp");
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession(m_engine, request);
         boolean login = m_engine.getAuthenticationManager().login(wikiSession, Users.JANNE,Users.JANNE_PASS);
@@ -88,12 +88,12 @@ public class UserPreferencesActionBeanTest extends TestCase
     
     public void testClearAssertedName() throws Exception
     {
-        MockServletContext ctx = m_engine.getServletContext();
+        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
         MockRoundtrip trip;
         UserPreferencesActionBean bean;
         
         // Create session; set 'assertion' param; verify it got saved
-        trip = new MockRoundtrip(ctx, "/UserPreferences.action");
+        trip = new MockRoundtrip(ctx, "/UserPreferences.jsp");
         MockHttpServletRequest request = trip.getRequest();
         Cookie cookie = new Cookie(CookieAssertionLoginModule.PREFS_COOKIE_NAME, "MyAssertedIdentity");
         request.setCookies(new Cookie[]{cookie});

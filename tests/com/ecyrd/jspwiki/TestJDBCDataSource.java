@@ -126,8 +126,8 @@ public class TestJDBCDataSource implements DataSource
     /**
      * Initialization method that reads a File, and attempts to locate and load
      * the JDBC driver from properties specified therein.
-     * @throws SQLException
      * @param file the file containing the JDBC properties
+     * @throws SQLException
      */
     protected void initializeJDBC( File file ) throws Exception
     {
@@ -150,8 +150,8 @@ public class TestJDBCDataSource implements DataSource
 
         // Load the driver using the sytem class loader
         final ClassLoader parent = ClassLoader.getSystemClassLoader();
-        URLClassLoader loader = (URLClassLoader)AccessController.doPrivileged( new PrivilegedAction() {
-            public Object run() {
+        URLClassLoader loader = AccessController.doPrivileged( new PrivilegedAction<URLClassLoader>() {
+            public URLClassLoader run() {
                 return new URLClassLoader( new URL[] { driverURL }, parent );
             }
         });

@@ -16,7 +16,6 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.*;
 
 public class WikiActionBeanFactoryTest extends TestCase
 {
@@ -39,40 +38,54 @@ public class WikiActionBeanFactoryTest extends TestCase
         testEngine.deletePage( "TestPage" );
     }
     
-    public void testGetUrlPatterns()
+    public void testNewActionBean() throws WikiException
     {
-        // If we look for action with "edit" request context, we get EDIT action
-        assertEquals( WikiContext.EDIT, EditActionBean.class.getAnnotation(WikiRequestContext.class).value() );
+        WikiActionBean bean;
+        MockRoundtrip trip = testEngine.guestTrip( ViewActionBean.class );
+        MockHttpServletRequest request = trip.getRequest();
+        MockHttpServletResponse response = trip.getResponse();
         
-        // Ditto for prefs context
-        assertEquals( WikiContext.PREFS, UserPreferencesActionBean.class.getAnnotation(WikiRequestContext.class).value() );
+        // Supplying an EditActionBean means the EDIT action
+        bean = resolver.newActionBean( request, response, EditActionBean.class );
+        assertEquals( WikiContext.EDIT, bean.getRequestContext() );
+        assertNull( ((WikiContext)bean).getPage() );
         
-        // Ditto for group view context
-        assertEquals( WikiContext.VIEW_GROUP, GroupActionBean.class.getAnnotation(WikiRequestContext.class).value() );
+        // Change the context to "preview"
+        bean.setRequestContext( WikiContext.PREVIEW );
+        assertEquals( WikiContext.PREVIEW, bean.getRequestContext() );
+        
+        // Change the context to "diff"
+        bean.setRequestContext( WikiContext.DIFF);
+        assertEquals( WikiContext.DIFF, bean.getRequestContext() );
+        
+        // Try changing the context to "comment" (but, this is an error)
+        try
+        {
+            bean.setRequestContext( WikiContext.COMMENT);
+        }
+        catch ( IllegalArgumentException e )
+        {
+            // Excellent. This what we expect.
+        }
+        
+        // Supplying the PrefsActionBean means the PREFS context
+        bean = resolver.newActionBean( request, response, UserPreferencesActionBean.class );
+        assertEquals( WikiContext.PREFS, bean.getRequestContext() );
+        
+        // Supplying the GroupActionBean means the VIEW_GROUP context
+        bean = resolver.newActionBean( request, response, GroupActionBean.class );
+        assertEquals( WikiContext.VIEW_GROUP, bean.getRequestContext() );
+        assertNull( ((GroupActionBean)bean).getGroup() );
     }
     
-    public void testActionBeansNoParams() throws WikiException
+    public void testNewActionBeanByJSP() throws WikiException
     {
         WikiActionBean bean;
         MockRoundtrip trip = testEngine.guestTrip( ViewActionBean.class );
         MockHttpServletRequest request = trip.getRequest();
         MockHttpServletResponse response = trip.getResponse();
         MockHttpSession session = (MockHttpSession)request.getSession();
-        
-        // Passing an EDIT request with no explicit page params means the EDIT action
-        bean = resolver.newActionBean( request, response, EditActionBean.class );
-        assertEquals( WikiContext.EDIT, bean.getRequestContext() );
-        assertNull( ((WikiContext)bean).getPage() );
-        
-        // Ditto for prefs context
-        bean = resolver.newActionBean( request, response, UserPreferencesActionBean.class );
-        assertEquals( WikiContext.PREFS, bean.getRequestContext() );
-        
-        // Ditto for group view context
-        bean = resolver.newActionBean( request, response, GroupActionBean.class );
-        assertEquals( WikiContext.VIEW_GROUP, bean.getRequestContext() );
-        assertNull( ((GroupContext)bean).getGroup() );
-        
+
         // Request for "UserPreference.jsp" should resolve to PREFS action
         request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/UserPreferences.jsp");
         request.setSession( session );
@@ -119,7 +132,7 @@ public class WikiActionBeanFactoryTest extends TestCase
         request.getParameterMap().put( "group", new String[]{"Art"} );
         bean = resolver.newActionBean( request, response, GroupActionBean.class );
         assertEquals( WikiContext.VIEW_GROUP, bean.getRequestContext() );
-        assertEquals( "/Group.action", bean.getClass().getAnnotation(UrlBinding.class).value() );
+        assertEquals( "/Group.jsp", bean.getClass().getAnnotation(UrlBinding.class).value() );
     }
     
     public void testFinalPageName() throws Exception

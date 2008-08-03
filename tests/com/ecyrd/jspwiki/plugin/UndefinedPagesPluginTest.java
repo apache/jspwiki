@@ -33,7 +33,7 @@ public class UndefinedPagesPluginTest extends TestCase
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
-        context = engine.getWikiActionBeanFactory().newViewActionBean( new WikiPage(engine, "TestPage") );
+        context = engine.getWikiActionBeanFactory().newViewActionBean( null, null, new WikiPage(engine, "TestPage") );
         manager = new PluginManager( engine, props );
     }
 
@@ -41,7 +41,6 @@ public class UndefinedPagesPluginTest extends TestCase
     {
         TestEngine.deleteTestPage( "TestPage" );
         TestEngine.deleteTestPage( "Foobar" );
-        TestEngine.emptyPageDir();
         TestEngine.emptyWorkDir();
     }
 
@@ -58,7 +57,7 @@ public class UndefinedPagesPluginTest extends TestCase
     public void testSimpleUndefined()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiActionBeanFactory().newViewActionBean( new WikiPage(engine, "Foobar") );
+        WikiContext context2 = engine.getWikiActionBeanFactory().newViewActionBean( null, null, new WikiPage(engine, "Foobar") );
 
         String res = manager.execute( context2,
                                       "{INSERT com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin");
@@ -66,6 +65,27 @@ public class UndefinedPagesPluginTest extends TestCase
         String exp = "[Foobar 2]\\\\";
 
         assertEquals( wikitize(exp), res );
+    }
+
+    public void testCount() throws Exception
+    {
+        String result = null;
+        result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
+        assertEquals("1", result);
+
+        // test if the proper exception is thrown:
+        String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
+        String exceptionString = null;
+        try
+        {
+            result = manager.execute(context, "{UndefinedPagesPlugin,show=count,showLastModified=true}");
+        }
+        catch (PluginException pe)
+        {
+            exceptionString = pe.getMessage();
+        }
+
+        assertEquals(expectedExceptionString, exceptionString);
     }
 
     public static Test suite()

@@ -1,22 +1,43 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.auth.login;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
+
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import junit.framework.TestCase;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -39,51 +60,25 @@ public class WebContainerLoginModuleTest extends TestCase
     public final void testLogin()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        Principal wrapper = new PrincipalWrapper( principal );
-        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
             // Test using Principal (WebContainerLoginModule succeeds)
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
+            LoginModule module = new WebContainerLoginModule();
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue(  principals.contains( wrapper ) );
+            assertEquals( 1, principals.size() );
+            assertTrue(  principals.contains( principal ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ASSERTED ) );
-            assertTrue(  principals.contains( Role.AUTHENTICATED ) );
-            assertTrue(  principals.contains( Role.ALL ) );
-
-            // Test using remote user (WebContainerLoginModule succeeds)
-            subject = new Subject();
-            request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
-            request.setUserPrincipal( new WikiPrincipal( "Andrew Jaquith" ) );
-            handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
-            principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue(  principals.contains( wrapper ) );
-            assertFalse( principals.contains( Role.ANONYMOUS ) );
-            assertFalse( principals.contains( Role.ASSERTED ) );
-            assertTrue(  principals.contains( Role.AUTHENTICATED ) );
-            assertTrue(  principals.contains( Role.ALL ) );
-
-            // Test using IP address (AnonymousLoginModule succeeds)
-            subject = new Subject();
-            request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
-            handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
-            principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertFalse( principals.contains( principal ) );
-            assertTrue(  principals.contains( Role.ANONYMOUS ) );
             assertFalse( principals.contains( Role.ASSERTED ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue(  principals.contains( Role.ALL ) );
+            assertFalse( principals.contains( Role.ALL ) );
         }
         catch( LoginException e )
         {
@@ -96,8 +91,7 @@ public class WebContainerLoginModuleTest extends TestCase
     {
         // Create user with 2 container roles; TestAuthorizer knows about these
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        Principal wrapper = new PrincipalWrapper( principal );
-        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         Set<String> roles = new HashSet<String>();
         roles.add( "IT" );
@@ -106,15 +100,19 @@ public class WebContainerLoginModuleTest extends TestCase
 
         // Test using Principal (WebContainerLoginModule succeeds)
         CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-        LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
-        context.login();
+        LoginModule module = new WebContainerLoginModule();
+        module.initialize(subject, handler, 
+                          new HashMap<String, Object>(), 
+                          new HashMap<String, Object>());
+        module.login();
+        module.commit();
         Set principals = subject.getPrincipals();
-        assertEquals( 5, principals.size() );
-        assertTrue( principals.contains( wrapper ) );
+        assertEquals( 3, principals.size() );
+        assertTrue( principals.contains( principal ) );
         assertFalse( principals.contains( Role.ANONYMOUS ) );
         assertFalse( principals.contains( Role.ASSERTED ) );
-        assertTrue(  principals.contains( Role.AUTHENTICATED ) );
-        assertTrue(  principals.contains( Role.ALL ) );
+        assertFalse( principals.contains( Role.AUTHENTICATED ) );
+        assertFalse( principals.contains( Role.ALL ) );
         assertTrue(  principals.contains( new Role( "IT" ) ) );
         assertTrue(  principals.contains( new Role( "Engineering" ) ) );
     }
@@ -122,20 +120,23 @@ public class WebContainerLoginModuleTest extends TestCase
     public final void testLogout()
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        Principal wrapper = new PrincipalWrapper( principal );
-        MockHttpServletRequest request = m_engine.guestTrip( ViewActionBean.class ).getRequest();
+        MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
             CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-            LoginContext context = new LoginContext( "JSPWiki-container", subject, handler );
-            context.login();
+            LoginModule module = new WebContainerLoginModule();
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( wrapper ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
-            context.logout();
+            assertEquals( 1, principals.size() );
+            assertTrue( principals.contains( principal ) );
+            assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            assertFalse( principals.contains( Role.ALL ) );
+            module.logout();
             assertEquals( 0, principals.size() );
         }
         catch( LoginException e )

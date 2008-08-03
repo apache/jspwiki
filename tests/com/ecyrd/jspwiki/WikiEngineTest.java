@@ -889,7 +889,7 @@ public class WikiEngineTest extends TestCase
         Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
         
-        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( m_engine.getPage("OldNameTestPage") );
+        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, m_engine.getPage("OldNameTestPage") );
         
         m_engine.renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
             
@@ -907,7 +907,7 @@ public class WikiEngineTest extends TestCase
     {
         WikiPage p = new WikiPage( m_engine, NAME1 );
     
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( p );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
 
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
         
@@ -926,6 +926,62 @@ public class WikiEngineTest extends TestCase
         WikiPage p3 = m_engine.getPage( NAME1, -1 );
     
         assertEquals( null, p3.getAttribute(WikiPage.CHANGENOTE) );
+    }
+    
+    public void testCreatePage() throws Exception 
+    {
+        String text = "Foobar.\r\n";
+        String name = "mrmyxpltz";
+        
+        assertEquals( "page should not exist right now",
+                      false,
+                      m_engine.pageExists( name ) );
+
+        m_engine.saveText( name, text );
+
+        assertEquals( "page does not exist",
+                      true,
+                      m_engine.pageExists( name ) );
+    }
+    
+    public void testCreateEmptyPage() throws Exception 
+    {
+        String text = "";
+        String name = "mrmxyzptlk";
+        
+        assertEquals( "page should not exist right now",
+                      false,
+                      m_engine.pageExists( name ) );
+
+        m_engine.saveText( name, text );
+
+        assertEquals( "page should not exist right now neither",
+                      false,
+                      m_engine.pageExists( name ) );
+    }
+    
+    public void testSaveExistingPageWithEmptyContent() throws Exception 
+    {
+        String text = "Foobar.\r\n";
+        String name = NAME1;
+        
+        m_engine.saveText( name, text );
+
+        assertEquals( "page does not exist",
+                      true,
+                      m_engine.pageExists( name ) );
+        
+        // saveText uses normalizePostData to assure it conforms to certain rules
+        assertEquals( "wrong content",
+                      TextUtil.normalizePostData( text ),
+                      m_engine.getText( name ) );
+        
+        m_engine.saveText( name, "" );
+        
+        assertEquals( "wrong content",
+                      TextUtil.normalizePostData( "" ), 
+                      m_engine.getText( name ) );
+        
     }
 
 }

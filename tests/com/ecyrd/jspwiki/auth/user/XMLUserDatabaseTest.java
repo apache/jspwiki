@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.auth.user;
+import java.io.Serializable;
 import java.security.Principal;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -12,6 +14,7 @@ import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.util.CryptoUtil;
 
 
 
@@ -44,7 +47,7 @@ public class XMLUserDatabaseTest extends TestCase
 
       // Create a new user with random name
       String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail("testuser@testville.com");
       profile.setLoginName( loginName );
       profile.setFullname( "FullName"+loginName );
@@ -61,15 +64,49 @@ public class XMLUserDatabaseTest extends TestCase
       assertEquals( oldUserCount, m_db.getWikiNames().length );
   }
 
+  public void testAttributes() throws Exception
+  {
+      UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
+      
+      Map<String,Serializable> attributes = profile.getAttributes();
+      assertEquals( 2, attributes.size() );
+      assertTrue( attributes.containsKey( "attribute1" ) );
+      assertTrue( attributes.containsKey( "attribute2" ) );
+      assertEquals( "some random value", attributes.get( "attribute1" ) );
+      assertEquals( "another value", attributes.get( "attribute2" ) );
+      
+      // Change attribute 1, and add another one
+      attributes.put( "attribute1", "replacement value" );
+      attributes.put( "attribute the third", "some value" );
+      m_db.save( profile );
+      
+      // Retrieve the profile again and make sure our values got saved
+      profile = m_db.findByEmail( "janne@ecyrd.com" );
+      attributes = profile.getAttributes();
+      assertEquals( 3, attributes.size() );
+      assertTrue( attributes.containsKey( "attribute1" ) );
+      assertTrue( attributes.containsKey( "attribute2" ) );
+      assertTrue( attributes.containsKey( "attribute the third" ) );
+      assertEquals( "replacement value", attributes.get( "attribute1" ) );
+      assertEquals( "another value", attributes.get( "attribute2" ) );
+      assertEquals( "some value", attributes.get( "attribute the third" ) );
+      
+      // Restore the original attributes and re-save
+      attributes.put( "attribute1", "some random value" );
+      attributes.remove( "attribute the third" );
+      m_db.save( profile );
+  }
+
   public void testFindByEmail()
   {
     try
     {
         UserProfile profile = m_db.findByEmail("janne@ecyrd.com");
+        assertEquals( -7739839977499061014L, profile.getUid() );
         assertEquals("janne",           profile.getLoginName());
         assertEquals("Janne Jalkanen",  profile.getFullname());
         assertEquals("JanneJalkanen",   profile.getWikiName());
-        assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+        assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
         assertEquals("janne@ecyrd.com", profile.getEmail());
     }
     catch (NoSuchPrincipalException e)
@@ -88,15 +125,76 @@ public class XMLUserDatabaseTest extends TestCase
     }
   }
 
+  public void testFindByFullName()
+  {
+      try
+      {
+          UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
+          assertEquals( -7739839977499061014L, profile.getUid() );
+          assertEquals( "janne", profile.getLoginName() );
+          assertEquals( "Janne Jalkanen", profile.getFullname() );
+          assertEquals( "JanneJalkanen", profile.getWikiName() );
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
+          assertEquals( "janne@ecyrd.com", profile.getEmail() );
+          assertNotNull( profile.getCreated() );
+          assertNotNull( profile.getLastModified() );
+      }
+      catch( NoSuchPrincipalException e )
+      {
+          assertTrue( false );
+      }
+      try
+      {
+          m_db.findByEmail( "foo@bar.org" );
+          // We should never get here
+          assertTrue( false );
+      }
+      catch( NoSuchPrincipalException e )
+      {
+          assertTrue( true );
+      }
+  }
+
+  public void testFindByUid()
+  {
+      try
+      {
+          UserProfile profile = m_db.findByUid( -7739839977499061014L );
+          assertEquals( -7739839977499061014L, profile.getUid() );
+          assertEquals( "janne", profile.getLoginName() );
+          assertEquals( "Janne Jalkanen", profile.getFullname() );
+          assertEquals( "JanneJalkanen", profile.getWikiName() );
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
+          assertEquals( "janne@ecyrd.com", profile.getEmail() );
+          assertNotNull( profile.getCreated() );
+          assertNotNull( profile.getLastModified() );
+      }
+      catch( NoSuchPrincipalException e )
+      {
+          assertTrue( false );
+      }
+      try
+      {
+          m_db.findByEmail( "foo@bar.org" );
+          // We should never get here
+          assertTrue( false );
+      }
+      catch( NoSuchPrincipalException e )
+      {
+          assertTrue( true );
+      }
+  }
+  
   public void testFindByWikiName()
   {
       try
       {
           UserProfile profile = m_db.findByWikiName("JanneJalkanen");
+          assertEquals( -7739839977499061014L, profile.getUid() );
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());
-          assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
           assertEquals("janne@ecyrd.com", profile.getEmail());
       }
       catch (NoSuchPrincipalException e)
@@ -120,10 +218,11 @@ public class XMLUserDatabaseTest extends TestCase
       try
       {
           UserProfile profile = m_db.findByLoginName("janne");
+          assertEquals( -7739839977499061014L, profile.getUid() );
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());
-          assertEquals("{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee", profile.getPassword());
+          assertEquals("{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword());
           assertEquals("janne@ecyrd.com", profile.getEmail());
       }
       catch (NoSuchPrincipalException e)
@@ -171,7 +270,7 @@ public class XMLUserDatabaseTest extends TestCase
       }
 
       // Create new user & verify it saved ok
-      UserProfile profile = new DefaultUserProfile();
+      UserProfile profile = m_db.newProfile();
       profile.setEmail( "renamed@example.com" );
       profile.setFullname( "Renamed User" );
       profile.setLoginName( "olduser" );
@@ -210,24 +309,24 @@ public class XMLUserDatabaseTest extends TestCase
       assertEquals( "renamed@example.com", profile.getEmail() );
       assertEquals( "Renamed User", profile.getFullname() );
       assertEquals( "renameduser", profile.getLoginName() );
-      assertEquals( "{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword() );
+      assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
 
       // Delete the user
       m_db.deleteByLoginName( "renameduser" );
   }
 
-  public void testSave()
+  public void testSave() throws Exception
   {
       try
       {
-          UserProfile profile = new DefaultUserProfile();
+          UserProfile profile = m_db.newProfile();
           profile.setEmail("user@example.com");
           profile.setLoginName("user");
           profile.setPassword("password");
           m_db.save(profile);
           profile = m_db.findByEmail("user@example.com");
           assertEquals("user@example.com", profile.getEmail());
-          assertEquals("{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", profile.getPassword());
+          assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
       }
       catch (NoSuchPrincipalException e)
       {

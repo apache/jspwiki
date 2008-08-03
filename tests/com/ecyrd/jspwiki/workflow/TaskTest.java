@@ -17,6 +17,8 @@ public class TaskTest extends TestCase
     /** Sample Task that completes normally. */
     public static class NormalTask extends Task
     {
+        private static final long serialVersionUID = 1L;
+
         public NormalTask(Workflow workflow)
         {
             super(workflow, "task.normal");
@@ -31,6 +33,8 @@ public class TaskTest extends TestCase
     /** Sample Task that encounters an error during processing. */
     public static class ErrorTask extends Task
     {
+        private static final long serialVersionUID = 1L;
+
         public ErrorTask(Workflow workflow)
         {
             super(workflow, "task.error");

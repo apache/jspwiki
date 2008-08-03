@@ -1,11 +1,19 @@
 
 package com.ecyrd.jspwiki.attachment;
 
-import junit.framework.*;
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Properties;
 
-import com.ecyrd.jspwiki.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class AttachmentManagerTest extends TestCase
 {
@@ -77,7 +85,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                       new WikiPage(m_engine, NAME1)), 
+                                                       null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -108,7 +116,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                                          new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test file.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -139,7 +147,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                                          new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt", 1 );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -174,7 +182,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                                          new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -200,7 +208,7 @@ public class AttachmentManagerTest extends TestCase
         //
 
         Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                                          new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt",
                                                        1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
@@ -235,7 +243,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                                          new WikiPage(m_engine, NAME1)),
+                                                                          null, null, new WikiPage(m_engine, NAME1)),
                                                        "test1" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -318,6 +326,36 @@ public class AttachmentManagerTest extends TestCase
                     m_engine.pageExists( att.getName() ) );
     }
 
+    public void testNonexistantPage() throws Exception
+    {
+        try
+        {
+            m_engine.saveText( "TestPage", "xx" );
+        
+            Attachment att = new Attachment( m_engine, "TestPages", "foo.bin" );
+        
+            att.setAuthor("MonicaBellucci");
+            m_manager.storeAttachment( att, makeAttachmentFile() );
+        
+            fail("Attachment was stored even when the page does not exist");
+        }
+        catch( ProviderException ex )
+        {
+            // This is the intended exception
+        }
+        finally
+        {
+            m_engine.deletePage("TestPage");
+        }
+    }
+    
+    public void testValidateFileName() throws Exception
+    {
+        assertEquals( "foo.jpg", "foo.jpg", AttachmentManager.validateFileName( "foo.jpg" ) );
+        
+        assertEquals( "C:\\Windows\\test.jpg", "test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test.jpg" ));
+    }
+    
     public static Test suite()
     {
         return new TestSuite( AttachmentManagerTest.class );

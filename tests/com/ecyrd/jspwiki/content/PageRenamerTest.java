@@ -1,4 +1,4 @@
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.content;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -7,7 +7,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 public class PageRenamerTest extends TestCase
@@ -52,7 +52,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
         
         m_engine.renamePage(context, "TestPage", "FooTest", false);
         
@@ -65,8 +65,9 @@ public class PageRenamerTest extends TestCase
         
         Collection refs = m_engine.getReferenceManager().findCreated();
         
+        assertTrue( "FooTest does not exist", refs.contains("FooTest") );
+        assertFalse( "TestPage exists", refs.contains("TestPage") );
         assertEquals( "wrong list size", refCount+1, refs.size() );
-        assertTrue( refs.contains("FooTest") );
     }
     
     public void testReferrerChange()
@@ -77,7 +78,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(null, null,  p );
         
         m_engine.renamePage(context, "TestPage", "FooTest", true);
         
@@ -102,7 +103,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -126,7 +127,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -150,7 +151,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -177,7 +178,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
      
         m_engine.renamePage(context, "Test", "TestPage", true);
         
@@ -196,7 +197,7 @@ public class PageRenamerTest extends TestCase
         m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
         WikiPage p = m_engine.getPage("TestPage");
  
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean(p);
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
  
         m_engine.renamePage(context, "TestPage", "FooTest", true);
  
@@ -274,7 +275,7 @@ public class PageRenamerTest extends TestCase
     {
         WikiPage p = m_engine.getPage(src);
 
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( p );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
         
         m_engine.renamePage(context, src, dst, true);
     }
@@ -339,8 +340,12 @@ public class PageRenamerTest extends TestCase
             System.out.println("NPE: Bug 85 caught?");
             fail();
         }
+        catch( WikiException e )
+        {
+            // Expected
+        }
     }
-    
+   
     public void testBug85_case2() throws Exception 
     {
         try
@@ -375,6 +380,10 @@ public class PageRenamerTest extends TestCase
             System.out.println("NPE: Bug 85 caught?");
             fail();
         }
+        catch( WikiException e )
+        {
+            // Expected
+        }
     }
     
     public void testBug85_case4() throws Exception 
@@ -395,6 +404,30 @@ public class PageRenamerTest extends TestCase
         }
     }
     
+    public void testRenameOfEscapedLinks() throws Exception
+    {
+        String src = "[[Link to TestPage2|TestPage2|target='_new']";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "[[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+    }
+
+    public void testRenameOfEscapedLinks2() throws Exception
+    {
+        String src = "~[Link to TestPage2|TestPage2|target='_new']";
+        
+        m_engine.saveText( "TestPage", src );
+        m_engine.saveText( "TestPage2", "foo" );
+        
+        rename ("TestPage2", "Test");
+        
+        assertEquals( "~[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( PageRenamerTest.class );

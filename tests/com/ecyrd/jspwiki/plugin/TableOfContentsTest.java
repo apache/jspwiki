@@ -7,13 +7,13 @@ package com.ecyrd.jspwiki.plugin;
 import java.util.Properties;
 
 import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- *  @author jalkanen
  *
  *  @since 
  */
@@ -217,6 +217,21 @@ public class TableOfContentsTest extends TestCase
         
     }
     
+    public void testSimilarNames() throws WikiException
+    {
+        String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
+        
+        testEngine.saveText( "Test", src );
+        
+        String res = testEngine.getHTML( "Test" );
+
+        assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
+        assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );
+
+        assertTrue( "First test", res.indexOf( "Wiki.jsp?page=Test#section-Test-Test" ) != -1 );
+        assertTrue( "2nd test",   res.indexOf( "Wiki.jsp?page=Test#section-Test-Test-2" ) != -1 );
+        
+    }
     public static Test suite()
     {
         return new TestSuite( TableOfContentsTest.class );

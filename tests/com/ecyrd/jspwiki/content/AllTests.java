@@ -1,5 +1,5 @@
 
-package com.ecyrd.jspwiki.web;
+package com.ecyrd.jspwiki.content;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -14,7 +14,10 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki web unit tests");
+        TestSuite suite = new TestSuite("JSPWiki Content Unit Tests");
+
+        suite.addTest( PageRenamerTest.suite() );
+        
         return suite;
     }
 }

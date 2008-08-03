@@ -1,12 +1,33 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.    
+ */
 package com.ecyrd.jspwiki.auth.login;
 
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 
 import junit.framework.TestCase;
 
@@ -33,24 +54,32 @@ public class UserDatabaseLoginModuleTest extends TestCase
         {
             // Log in with a user that isn't in the database
             CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
-            LoginContext context = new LoginContext( "JSPWiki-custom", subject, handler );
-            context.login();
+            LoginModule module = new UserDatabaseLoginModule();
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
+            assertEquals( 1, principals.size() );
+            assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
+            assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            assertFalse( principals.contains( Role.ALL ) );
             
-            // Login with a user that IS in the databasse
+            // Login with a user that IS in the database
             subject = new Subject();
             handler = new WikiCallbackHandler( db, "janne", "myP@5sw0rd" );
-            context = new LoginContext( "JSPWiki-custom", subject, handler );
-            context.login();
+            module = new UserDatabaseLoginModule();
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
+            module.login();
+            module.commit();
             principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );            
+            assertEquals( 1, principals.size() );
+            assertTrue( principals.contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
+            assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            assertFalse( principals.contains( Role.ALL ) );            
         }
         catch( LoginException e )
         {
@@ -64,14 +93,18 @@ public class UserDatabaseLoginModuleTest extends TestCase
         try
         {
             CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
-            LoginContext context = new LoginContext( "JSPWiki-custom", subject, handler );
-            context.login();
+            LoginModule module = new UserDatabaseLoginModule();
+            module.initialize(subject, handler, 
+                              new HashMap<String, Object>(), 
+                              new HashMap<String, Object>());
+            module.login();
+            module.commit();
             Set principals = subject.getPrincipals();
-            assertEquals( 3, principals.size() );
-            assertTrue( principals.contains( new PrincipalWrapper( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) ) );
-            assertTrue( principals.contains( Role.AUTHENTICATED ) );
-            assertTrue( principals.contains( Role.ALL ) );
-            context.logout();
+            assertEquals( 1, principals.size() );
+            assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
+            assertFalse( principals.contains( Role.AUTHENTICATED ) );
+            assertFalse( principals.contains( Role.ALL ) );
+            module.logout();
             assertEquals( 0, principals.size() );
         }
         catch( LoginException e )

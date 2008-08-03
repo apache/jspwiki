@@ -24,7 +24,7 @@ import com.ecyrd.jspwiki.render.XHTMLRenderer;
 public class JSPWikiMarkupParserTest extends TestCase
 {
     Properties props = new Properties();
-    Vector     created = new Vector();
+    Vector<String>     created = new Vector<String>();
 
     static final String PAGE_NAME = "testpage";
 
@@ -101,8 +101,8 @@ public class JSPWikiMarkupParserTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = e.getWikiActionBeanFactory().newViewActionBean( p );
-        JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context, 
+        WikiContext context = e.getWikiActionBeanFactory().newViewActionBean( null, null, p );
+        JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context,
                                                           new BufferedReader( new StringReader(src)) );
 
         XHTMLRenderer conv = new XHTMLRenderer( context, tr.parse() );
@@ -121,7 +121,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
         TestEngine testEngine2 = new TestEngine( props );
 
-        WikiContext context = testEngine2.getWikiActionBeanFactory().newViewActionBean(
+        WikiContext context = testEngine2.getWikiActionBeanFactory().newViewActionBean( null, null,
                                                new WikiPage(testEngine2, PAGE_NAME) );
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context,
                                                          new BufferedReader( new StringReader(src)) );
@@ -539,7 +539,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
 
-        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C3%84itiSy%C3%B6%C3%96ljy%C3%A4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
+        assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
                       translate(src) );
     }
 
@@ -657,7 +657,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
         assertEquals( "This should be an <a class=\"attachment\" href=\"/attach/Test/TestAtt.txt\">attachment link</a>"+
-                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(src));
     }
 
@@ -680,7 +680,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
         assertEquals( "This should be an <a class=\"attachment\" href=\"/attach/Test/TestAtt.txt\">attachment link</a>"+
-                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
@@ -703,7 +703,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "[Test page/TestAtt.txt]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
-                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
@@ -723,7 +723,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
-                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
+                      "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
                       translate(testEngine2,src));
     }
 
@@ -889,7 +889,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         newPage("\u00C5\u00E4Test"); // FIXME: Should be capital
 
-        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C3%85%C3%A4Test\">\u00c5\u00e4Test</a>",
+        assertEquals("Link <a class=\"wikipage\" href=\"/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>",
                      translate(src));
     }
 
@@ -1352,6 +1352,190 @@ public class JSPWikiMarkupParserTest extends TestCase
                       "</ul></li>"+
                       "<li>Item B</li>"+
                       "</ol>",
+                      result );
+    }
+
+    /**
+     * <pre>
+     *   * bullet A
+     *   ** bullet A_1
+     *   *# number A_1
+     *   * bullet B
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     * <ul>
+     *   <li>bullet A
+     *     <ul>
+     *       <li>bullet A_1</li>
+     *     </ul>
+     *     <ol>
+     *       <li>number A_1</li>
+     *     </ol>
+     *   </li>
+     *   <li>bullet B</li>
+     * </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel()
+    throws Exception
+    {
+        String src="* bullet A\n** bullet A_1\n*# number A_1\n* bullet B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet A"+
+                      "<ul>"+
+                      "<li>bullet A_1</li>"+
+                      "</ul>"+
+                      "<ol>"+
+                      "<li>number A_1</li>"+
+                      "</ol>"+
+                      "</li>"+
+                      "<li>bullet B</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+    /**
+     * <pre>
+     *   * bullet A
+     *   ** bullet A_1
+     *   ## number A_1
+     *   * bullet B
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     * <ul>
+     *   <li>bullet A
+     *     <ul>
+     *       <li>bullet A_1</li>
+     *     </ul>
+     *     <ol>
+     *       <li>number A_1</li>
+     *     </ol>
+     *   </li>
+     *   <li>bullet B</li>
+     * </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel2()
+    throws Exception
+    {
+        String src="* bullet A\n** bullet A_1\n## number A_1\n* bullet B\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet A"+
+                      "<ul>"+
+                      "<li>bullet A_1</li>"+
+                      "</ul>"+
+                      "<ol>"+
+                      "<li>number A_1</li>"+
+                      "</ol>"+
+                      "</li>"+
+                      "<li>bullet B</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+
+    /**
+     * <pre>
+     *   * bullet 1
+     *   ## number 2
+     *   ** bullet 3
+     *   ## number 4
+     *   * bullet 5 
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     *   <ul>
+     *       <li>bullet 1
+     *           <ol><li>number 2</li></ol>
+     *           <ul><li>bullet 3</li></ul>
+     *           <ol><li>number 4</li></ol>
+     *       </li>
+     *       <li>bullet 5</li>
+     *   </ul>
+     *  
+     */
+
+    public void testMixedListOnSameLevel3()
+    throws Exception
+    {
+        String src="* bullet 1\n## number 2\n** bullet 3\n## number 4\n* bullet 5\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ul>"+
+                      "<li>bullet 1"+
+                      "<ol><li>number 2</li></ol>"+
+                      "<ul><li>bullet 3</li></ul>"+
+                      "<ol><li>number 4</li></ol>"+
+                      "</li>"+
+                      "<li>bullet 5</li>"+
+                      "</ul>"
+                      ,
+                      result );
+    }
+    /**
+     * <pre>
+     *   # number 1
+     *   ** bullet 2
+     *   ## number 3
+     *   ** bullet 4
+     *   # number 5 
+     * </pre>
+     * 
+     * would come out as:
+     * 
+     *   <ol>
+     *       <li>number 1
+     *           <ul><li>bullet 2</li></ul>
+     *           <ol><li>number 3</li></ol>
+     *           <ul><li>bullet 4</li></ul>
+     *       </li>
+     *       <li>number 5</li>
+     *   </ol>
+     *  
+     */
+
+    public void testMixedListOnSameLevel4()
+    throws Exception
+    {
+        String src="# number 1\n** bullet 2\n## number 3\n** bullet 4\n# number 5\n";
+
+        String result = translate(src);
+
+        // Remove newlines for easier parsing.
+        result = TextUtil.replaceString( result, "\n", "" );
+
+        assertEquals( "<ol>"+
+                      "<li>number 1"+
+                      "<ul><li>bullet 2</li></ul>"+
+                      "<ol><li>number 3</li></ol>"+
+                      "<ul><li>bullet 4</li></ul>"+
+                      "</li>"+
+                      "<li>number 5</li>"+
+                      "</ol>"
+                      ,
                       result );
     }
 
@@ -2115,7 +2299,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
-        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean(
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( null, null,
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2138,7 +2322,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
 
-        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean(
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( null, null,
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2163,6 +2347,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         try
         {
+            testEngine.saveText( PAGE_NAME, "content" );
             Attachment att = new Attachment( testEngine, PAGE_NAME, "TestAtt.txt" );
             att.setAuthor( "FirstPost" );
             testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
@@ -2171,7 +2356,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             LinkCollector coll_others = new LinkCollector();
 
             String src = "[TestAtt.txt]";
-            WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( 
+            WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( null, null,
                                                    new WikiPage(testEngine,PAGE_NAME) );
 
             MarkupParser p = new JSPWikiMarkupParser( context,

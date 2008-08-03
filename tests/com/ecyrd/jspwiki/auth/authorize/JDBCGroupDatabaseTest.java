@@ -4,7 +4,6 @@ import java.io.File;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -112,23 +111,23 @@ public class JDBCGroupDatabaseTest extends TestCase
         // Group TV has 3 members
         group = backendGroup( "TV" );
         assertEquals("TV", group.getName() );
-        assertEquals( 3, group.getMembers().size() );
+        assertEquals( 3, group.members().length );
 
         // Group Literature has 2 members
         group = backendGroup( "Literature" );
         assertEquals("Literature", group.getName() );
-        assertEquals( 2, group.getMembers().size() );
+        assertEquals( 2, group.members().length );
 
         // Group Art has no members
         group = backendGroup( "Art" );
         assertEquals("Art", group.getName() );
-        assertEquals( 0, group.getMembers().size() );
+        assertEquals( 0, group.members().length );
 
         // Group Admin has 1 member (Administrator)
         group = backendGroup( "Admin" );
         assertEquals("Admin", group.getName() );
-        assertEquals( 1, group.getMembers().size() );
-        assertEquals( "Administrator", group.getMembers().get(0).getName() );
+        assertEquals( 1, group.members().length );
+        assertEquals( "Administrator", group.members()[0].getName() );
 
         // Group Archaeology doesn't exist
         try
@@ -159,7 +158,7 @@ public class JDBCGroupDatabaseTest extends TestCase
         // Make sure the profile saved successfully
         group = backendGroup( name );
         assertEquals( name, group.getName() );
-        assertEquals( 3, group.getMembers().size() );
+        assertEquals( 3, group.members().length );
         assertTrue( group.isMember( new WikiPrincipal( "Al" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Bob" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Cookie" ) ) );
@@ -201,8 +200,8 @@ public class JDBCGroupDatabaseTest extends TestCase
         m_db.save(group, new WikiPrincipal( "SecondTester" ) );
 
         // We should see 4 members and new timestamp info
-        List<Principal> members = group.getMembers();
-        assertEquals( 4, members.size() );
+        Principal[] members = group.members();
+        assertEquals( 4, members.length );
         assertNotNull( group.getCreator() );
         assertEquals( "Tester", group.getCreator() );
         assertNotNull( group.getCreated() );
@@ -212,8 +211,8 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Check the back-end; We should see the same thing
         group = backendGroup( name );
-        members = group.getMembers();
-        assertEquals( 4, members.size() );
+        members = group.members();
+        assertEquals( 4, members.length );
         assertNotNull( group.getCreator() );
         assertEquals( "Tester", group.getCreator() );
         assertNotNull( group.getCreated() );

@@ -13,7 +13,6 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 
 public class InputValidatorTest extends TestCase
 {
@@ -28,7 +27,7 @@ public class InputValidatorTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         testEngine = new TestEngine( props );
-        WikiSession session = WikiSession.getWikiSession( testEngine, testEngine.guestTrip( ViewActionBean.class ).getRequest() );
+        WikiSession session = WikiSession.getWikiSession( testEngine, testEngine.newHttpRequest() );
         val = new InputValidator( TEST, session );
     }
 

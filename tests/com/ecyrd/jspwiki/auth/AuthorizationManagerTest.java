@@ -11,11 +11,7 @@ import junit.framework.TestSuite;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiException;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.WikiSessionTest;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
@@ -25,7 +21,6 @@ import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.auth.user.DefaultUserProfile;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -505,7 +500,7 @@ public class AuthorizationManagerTest extends TestCase
     public void testResolveUsers() throws WikiException
     {
         // We should be able to resolve a user by login, user, or wiki name
-        UserProfile profile = new DefaultUserProfile();
+        UserProfile profile = m_engine.getUserManager().getUserDatabase().newProfile();
         profile.setEmail( "authmanagertest@tester.net" );
         profile.setFullname( "AuthorizationManagerTest User" );
         profile.setLoginName( "authmanagertest" );
