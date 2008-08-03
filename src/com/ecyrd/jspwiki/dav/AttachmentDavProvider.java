@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.dav;
 
@@ -26,9 +27,9 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.action.AttachActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.dav.items.AttachmentItem;
 import com.ecyrd.jspwiki.dav.items.DavItem;
@@ -45,6 +46,11 @@ public class AttachmentDavProvider implements DavProvider
         m_engine = engine;
     }
 
+    /**
+     *  Returns the engine used by this provider.
+     *  
+     *  @return The engine
+     */
     public WikiEngine getEngine()
     {
         return m_engine;
@@ -52,7 +58,7 @@ public class AttachmentDavProvider implements DavProvider
 
     private Collection listAllPagesWithAttachments()
     {
-        ArrayList pageNames = new ArrayList();
+        ArrayList<String> pageNames = new ArrayList<String>();
 
         try
         {
@@ -75,7 +81,7 @@ public class AttachmentDavProvider implements DavProvider
 
         Collections.sort( pageNames );
 
-        ArrayList result = new ArrayList();
+        ArrayList<DirectoryItem> result = new ArrayList<DirectoryItem>();
 
         for( Iterator i = pageNames.iterator(); i.hasNext(); )
         {
@@ -92,7 +98,7 @@ public class AttachmentDavProvider implements DavProvider
 
         log.debug("Listing attachments for page "+pageName);
 
-        ArrayList result = new ArrayList();
+        ArrayList<DavItem> result = new ArrayList<DavItem>();
         try
         {
             WikiPage page = m_engine.getPage( pageName );
@@ -172,7 +178,7 @@ public class AttachmentDavProvider implements DavProvider
 
         if( p.startsWith("/") ) p = p.substring( 1 );
 
-        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "attach/"), path.getPath() );
+        return m_engine.getURL( WikiContext.ATTACH, p, null, true );
     }
 
 }

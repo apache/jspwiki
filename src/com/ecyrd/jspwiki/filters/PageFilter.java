@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.filters;
 
@@ -39,40 +40,60 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  per each WikiEngine invocation.  If you need to store data persistently, use
  *  VariableManager, or WikiContext.
  *  <p>
- *  As of 2.5.30, initialize() gains accesso to the WikiEngine.
+ *  As of 2.5.30, initialize() gains access to the WikiEngine.
  *
- *  @author Janne Jalkanen
  */
 public interface PageFilter
 {
     /**
      *  Is called whenever the a new PageFilter is instantiated and
      *  reset.
+     *  
+     *  @param engine The WikiEngine whic owns this PageFilter
+     *  @param properties The properties ripped from filters.xml.
+     *  @throws FilterException If the filter could not be initialized. If this is thrown,
+     *                          the filter is not added to the internal queues.
      */
     public void initialize( WikiEngine engine, Properties properties )
         throws FilterException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider,
-     *  but not yet been sent through the TranslatorReader.  Note that you cannot
-     *  do HTML translation here, because TranslatorReader is likely to escape it.
+     *  but not yet been sent through the markup-translation process.  Note that you cannot
+     *  do HTML translation here, because it will be escaped.
      *
      *  @param wikiContext The current wikicontext.
      *  @param content     WikiMarkup.
+     *  @return The modified wikimarkup content.
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String preTranslate( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
-     *  This method is called after a page has been fed through the TranslatorReader,
+     *  This method is called after a page has been fed through the translation process,
      *  so anything you are seeing here is translated content.  If you want to
      *  do any of your own WikiMarkup2HTML translation, do it here.
+     *  
+     *  @param wikiContext The WikiContext.
+     *  @param htmlContent The translated HTML
+     *  @return The modified HTML
+     *  
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String postTranslate( WikiContext wikiContext, String htmlContent )
         throws FilterException;
 
     /**
      *  This method is called before the page has been saved to the PageProvider.
+     *  
+     *  @param wikiContext The WikiContext
+     *  @param content The wikimarkup that the user just wanted to save.
+     *  @return The modified wikimarkup
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
+     *                          processing to be abandoned.
      */
     public String preSave( WikiContext wikiContext, String content )
         throws FilterException;
@@ -84,17 +105,22 @@ public interface PageFilter
      *  <p>
      *  Since the result is discarded from this method, this is only useful
      *  for things like counters, etc.
+     *  
+     *  @param wikiContext The WikiContext
+     *  @param content The content which was just stored.
+     *  @throws FilterException If something goes wrong.  As the page is already saved,
+     *                          This is just logged.
      */
     public void postSave( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
-     * Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
-     * clean up or close global resources you allocated in the initialize() method.
+     *  Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
+     *  clean up or close global resources you allocated in the initialize() method.
      * 
-     * @since 2.5.36
+     *  @param engine The WikiEngine which owns this filter.
+     *  @since 2.5.36
      */
     public void destroy( WikiEngine engine );
-
 
 }

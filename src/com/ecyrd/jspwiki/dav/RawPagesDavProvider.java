@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.dav;
 
@@ -26,6 +27,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.items.DavItem;
@@ -38,7 +40,6 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
 /**
  *  Implements something for the pages.
  *  
- *  @author jalkanen
  *
  *  @since
  */
@@ -58,7 +59,7 @@ public class RawPagesDavProvider extends WikiDavProvider
 
     protected Collection listAlphabeticals( DavPath path )
     {
-        ArrayList charList = new ArrayList();
+        ArrayList<Character> charList = new ArrayList<Character>();
         
         try
         {
@@ -68,7 +69,7 @@ public class RawPagesDavProvider extends WikiDavProvider
             {
                 String pageName = ((WikiPage)i.next()).getName();
                 
-                Character firstChar = new Character(Character.toLowerCase(pageName.charAt(0)));
+                Character firstChar = Character.valueOf(Character.toLowerCase(pageName.charAt(0)));
                 
                 if( !charList.contains( firstChar ) )
                 {
@@ -83,7 +84,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         
         Collections.sort( charList );
         
-        ArrayList result = new ArrayList();
+        ArrayList<DavItem> result = new ArrayList<DavItem>();
         
         for( Iterator i = charList.iterator(); i.hasNext(); )
         {
@@ -103,7 +104,7 @@ public class RawPagesDavProvider extends WikiDavProvider
         String st = path.getName();
         
         log.info("Listing contents for dir "+st);
-        ArrayList davItems = new ArrayList();
+        ArrayList<DavItem> davItems = new ArrayList<DavItem>();
         
         try
         {
@@ -163,7 +164,8 @@ public class RawPagesDavProvider extends WikiDavProvider
     
     public String getURL( DavPath path )
     {
-        return DavUtil.combineURL( DavUtil.combineURL( m_engine.getBaseURL() , "dav/raw"), path.getPath() );
+        return m_engine.getURL( WikiContext.NONE, DavUtil.combineURL("dav/raw/",path.getPath()),
+                                null, true );
     }
     
     public DavItem getItem( DavPath dp )

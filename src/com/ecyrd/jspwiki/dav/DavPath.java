@@ -1,21 +1,22 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.dav;
 
@@ -32,13 +33,11 @@ import java.util.StringTokenizer;
  *  <p>
  *  If the path ends in a slash, it is understood to be a directory.  If not,
  *  it represents a file.
- *  
- * @author jalkanen
  *
  */
 public class DavPath
 {
-    private ArrayList m_parts = new ArrayList();
+    private ArrayList<String> m_parts = new ArrayList<String>();
     
     private boolean   m_isAbsolute  = false;
     private boolean   m_isDirectory = false;
@@ -154,7 +153,7 @@ public class DavPath
    
         for( int i = 0; i < m_parts.size()-(m_isDirectory ? 0 : 1); i++ )
         {
-            result.append( (String)m_parts.get(i) );
+            result.append( m_parts.get(i) );
             result.append( "/" );
         }
         
@@ -171,7 +170,7 @@ public class DavPath
     public String filePart()
     {
         if( m_parts.size() > 0 && !m_isDirectory )
-            return (String) m_parts.get( m_parts.size()-1 );
+            return m_parts.get( m_parts.size()-1 );
        
         return "";
     }
@@ -187,7 +186,7 @@ public class DavPath
         if( isRoot() ) return "/";
         if( !isDirectory() ) return filePart();
         
-        return (String) m_parts.get( m_parts.size()-1 );
+        return m_parts.get( m_parts.size()-1 );
     }
     
     /**
@@ -236,7 +235,7 @@ public class DavPath
         if( idx > size() )
             return null;
         
-        return (String)m_parts.get(idx);
+        return m_parts.get(idx);
     }
     
     /**

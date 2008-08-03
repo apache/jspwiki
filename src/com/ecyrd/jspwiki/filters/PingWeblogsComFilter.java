@@ -1,28 +1,27 @@
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.filters;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.ViewActionBean;
-
 import org.apache.xmlrpc.*;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -42,15 +41,24 @@ public class PingWeblogsComFilter
 {
     static Logger log = Logger.getLogger( PingWeblogsComFilter.class );
 
-    public String m_pingURL;
+    private String m_pingURL;
 
+    /**
+     *  The property name for the URL to ping.  Value is <tt>{@value}</tt>.
+     */
     public static final String PROP_PINGURL = "pingurl";
 
+    /**
+     *  {@inheritDoc}
+     */
     public void initialize( WikiEngine engine, Properties props )
     {
         m_pingURL = props.getProperty( PROP_PINGURL, "http://rpc.weblogs.com/RPC2" );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void postSave( WikiContext context, String pagecontent )
     {
         String     blogName = context.getPage().getName();
@@ -74,10 +82,10 @@ public class PingWeblogsComFilter
             XmlRpcClient xmlrpc = new XmlRpcClient(m_pingURL);
             Vector<String> params = new Vector<String>();
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
-            params.addElement( context.getContext().getURL( ViewActionBean.class, blogName, null, true ) );
+            params.addElement( engine.getURL( WikiContext.VIEW, blogName, null, true ) );
 
             if( log.isDebugEnabled() )
-                log.debug("Pinging weblogs.com with URL: "+context.getContext().getURL( ViewActionBean.class, blogName, null, true ));
+                log.debug("Pinging weblogs.com with URL: "+engine.getURL( WikiContext.VIEW, blogName, null, true ));
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() 

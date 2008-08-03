@@ -1,21 +1,22 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2007 JSPWiki Development Group
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.htmltowiki;
 
@@ -37,7 +38,7 @@ import org.jdom.Text;
 import org.jdom.xpath.XPath;
 
 /**
- * Converting XHtml to Wiki Markup
+ * Converting XHtml to Wiki Markup.  This is the class which does all of the heavy loading.
  *
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
@@ -55,11 +56,26 @@ public class XHtmlElementToWikiTranslator
 
     private PreStack m_preStack = new PreStack();
 
+    /**
+     *  Create a new translator using the default config.
+     *  
+     *  @param base The base element from which to start translating.
+     *  @throws IOException If reading of the DOM tree fails.
+     *  @throws JDOMException If the DOM tree is faulty.
+     */
     public XHtmlElementToWikiTranslator( Element base ) throws IOException, JDOMException
     {
         this( base, new XHtmlToWikiConfig() );
     }
 
+    /**
+     *  Create a new translator using the specified config.
+     *  
+     *  @param base The base element from which to start translating.
+     *  @param config The config to use.
+     *  @throws IOException If reading of the DOM tree fails.
+     *  @throws JDOMException If the DOM tree is faulty.
+     */
     public XHtmlElementToWikiTranslator( Element base, XHtmlToWikiConfig config ) throws IOException, JDOMException
     {
         this.m_config = config;
@@ -68,6 +84,11 @@ public class XHtmlElementToWikiTranslator
         print( base );
     }
 
+    /**
+     *  FIXME: I have no idea what this does...
+     * 
+     *  @return Something.
+     */
     public String getWikiString()
     {
         return m_outTimmer.toString();
@@ -668,6 +689,7 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void printImage( Element base ) throws JDOMException
     {
         Element child = (Element)XPath.selectSingleNode( base, "TBODY/TR/TD/*" );
@@ -677,7 +699,7 @@ public class XHtmlElementToWikiTranslator
         }
         Element img;
         String href;
-        Map map = new ForgetNullValuesLinkedHashMap();
+        Map<Object,Object> map = new ForgetNullValuesLinkedHashMap();
         if( child.getName().equals( "A" ) )
         {
             img = child.getChild( "IMG" );
@@ -763,7 +785,7 @@ public class XHtmlElementToWikiTranslator
      */
     private Map getAugmentedWikiLinkAttributes( Element a )
     {
-        Map attributesMap = new HashMap();
+        Map<String,String> attributesMap = new HashMap<String,String>();
 
         String id = a.getAttributeValue( "id" );
         if( id != null && !id.equals( "" ) )
@@ -999,7 +1021,7 @@ public class XHtmlElementToWikiTranslator
 
     // FIXME: These should probably be better used with java.util.Stack
 
-    static class LiStack
+    private static class LiStack
     {
 
         private StringBuffer m_li = new StringBuffer();
@@ -1022,7 +1044,7 @@ public class XHtmlElementToWikiTranslator
 
     }
 
-    class PreStack
+    private class PreStack
     {
 
         private int m_pre = 0;

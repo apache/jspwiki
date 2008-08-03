@@ -1,23 +1,23 @@
-/*
-    WikiForms - a WikiPage FORM handler for JSPWiki.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2003 BaseN.
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    JSPWiki Copyright (C) 2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published
-    by the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-*/
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
 package com.ecyrd.jspwiki.forms;
 
 import com.ecyrd.jspwiki.*;
@@ -30,14 +30,24 @@ import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.textarea;
 
 /**
+ *  Creates a Form text area element.   You may specify the size of the textarea
+ *  by using the {@link #PARAM_COLS} and {@link #PARAM_ROWS} to signify the width
+ *  and height of the area.
+ *  
  *  @author ebu
  */
 public class FormTextarea
     extends FormElement
 {
+    /** Parameter name for setting the rows value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROWS = "rows";
+    
+    /** Parameter name for setting the columns value.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_COLS = "cols";
 
+    /**
+     *  {@inheritDoc}
+     */
     public String execute( WikiContext ctx, Map params )
         throws PluginException
     {

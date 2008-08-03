@@ -1,29 +1,26 @@
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2002 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package com.ecyrd.jspwiki.htmltowiki;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.AttachActionBean;
-import com.ecyrd.jspwiki.action.EditActionBean;
-import com.ecyrd.jspwiki.action.PageInfoActionBean;
-import com.ecyrd.jspwiki.action.ViewActionBean;
 
 /**
  *  Defines a Wiki configuration to XHtmlToWikiTranslator, including things like
@@ -45,6 +42,9 @@ public class XHtmlToWikiConfig
 
     private String m_pageName;
 
+    /**
+     *  Creates a new, empty config object.
+     */
     public XHtmlToWikiConfig()
     {}
 
@@ -52,7 +52,7 @@ public class XHtmlToWikiConfig
      *  The constructor initializes the different internal fields
      *  according to the current URLConstructor.
      *
-     * @param wikiContext
+     * @param wikiContext A WikiContext
      */
     public XHtmlToWikiConfig( WikiContext wikiContext )
     {
@@ -65,29 +65,15 @@ public class XHtmlToWikiConfig
         //      the Wiki page name in VIEW or ATTACH
         //
 
-        m_wikiJspPage = wikiContext.getContext().getURL( ViewActionBean.class, "" );
+        m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
 
-        m_editJspPage = wikiContext.getContext().getURL( EditActionBean.class, "" );
+        m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
 
-        m_attachPage = wikiContext.getContext().getURL( AttachActionBean.class, "" );
+        m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
 
-        m_pageInfoJsp = wikiContext.getContext().getURL( PageInfoActionBean.class, "" );
+        m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
     }
 
-    /*
-    // FIXME: Unused.
-    private String removeLast(String str, String remove )
-    {
-        int idx = str.lastIndexOf( remove );
-
-        if( idx != -1 )
-        {
-            str = StringUtils.left( str, idx ) + StringUtils.substring( str, idx+remove.length() );
-        }
-
-        return str;
-    }
-    */
     private void setWikiContext( WikiContext wikiContext )
     {
         if( wikiContext.getPage() != null )
@@ -96,61 +82,122 @@ public class XHtmlToWikiConfig
         }
     }
 
+    /**
+     *  Return the URL for the attachments.
+     *  
+     *  @return URL for attachments.
+     */
     public String getAttachPage()
     {
         return m_attachPage;
     }
 
+    /**
+     *  Set the URL for attachments.
+     *  
+     *  @param attachPage The attachment URL.
+     */
     public void setAttachPage( String attachPage )
     {
         m_attachPage = attachPage;
     }
 
+    /**
+     *  Gets the URL of the outlink image.
+     *  
+     *  @return The URL of the outlink image.
+     */
     public String getOutlink()
     {
         return m_outlink;
     }
 
+    /**
+     *  Set the outlink URL.
+     *  
+     *  @param outlink The outlink URL.
+     */
     public void setOutlink( String outlink )
     {
         m_outlink = outlink;
     }
 
+    /**
+     *  Get the PageInfo.jsp URI.
+     *  
+     *  @return The URI for the page info display.
+     */
     public String getPageInfoJsp()
     {
         return m_pageInfoJsp;
     }
 
+    /**
+     *  Set the URI for the page info display.
+     *  
+     *  @param pageInfoJsp URI for the page info.
+     */
     public void setPageInfoJsp( String pageInfoJsp )
     {
         m_pageInfoJsp = pageInfoJsp;
     }
 
+    /**
+     *  Get the page name.
+     *  
+     *  @return The Page Name.
+     */
     public String getPageName()
     {
         return m_pageName;
     }
 
+    
+    /**
+     *  Set the page name.
+     *  
+     *  @param pageName The name of the page.
+     */
     public void setPageName( String pageName )
     {
         m_pageName = pageName;
     }
 
+    /**
+     *  Get the URI to the Wiki.jsp view.
+     *  
+     *  @return The URI to the Wiki.jsp.
+     */
     public String getWikiJspPage()
     {
         return m_wikiJspPage;
     }
 
+    /**
+     *  Set the URI to the Wiki.jsp.
+     *  
+     *  @param wikiJspPage The URI to the Wiki.jsp.
+     */
     public void setWikiJspPage( String wikiJspPage )
     {
         m_wikiJspPage = wikiJspPage;
     }
 
+    /**
+     *  Return the URI to the Edit.jsp page.
+     *  
+     *  @return The URI to the Edit.jsp page.
+     */
     public String getEditJspPage()
     {
         return m_editJspPage;
     }
 
+    /**
+     *  Set the URI to the Edit.jsp page.
+     *  
+     *  @param editJspPage The Edit.jsp URI.
+     */
     public void setEditJspPage( String editJspPage )
     {
         m_editJspPage = editJspPage;
