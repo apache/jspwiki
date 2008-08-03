@@ -103,6 +103,91 @@ To tie all of this together:
 
 Some classes currently call the URLConstructor directly. Mostly, this is WikiContext and WikiEngine (about 22 references in the JSPWiki core classes, plus 2 in the JSPs). However, most classes get their URLs by calling WikiContext.getViewURL(), getRedirectURL(), and getURL()/getURL() -- 73 references within the core, and 23 references in the templates. These probably should not be changed for compatibility's sake. However, we could easily cause these WikiContext/WikiEngine references to URLContructor instead to use Resolution.getURL + response.encodeURL().
 
+WIKICONTEXT OVERHAUL
+--------------------
+In JSPWiki versions prior to 3.0, WikiContext objects were created by calling a public constructor, followed by a call to setRequestContext(String). In 3.0, however, WikiContext becomes an interface [abtract class?] so contructors don't work. Instead, callers wishing to create WikiContexts should instead use the factory method WikiActionBeanFactory.newActionBean(request,response,beanClass). As an alternative, callers may also call WikiEngine.createContext(request,String).
+
+FORWARDING METHODS
+getContentTemplate():       to super
+getJSP():                   to super -- do we calculate it? put it in as an annotation?
+getEngine():                to super
+getRequestContext():        to super
+getVariable(String):        to super
+setVariable(String,Object): to super
+getHttpParameter(String):   to super
+getHttpRequest():           to super
+setTemplate():              to super
+getTemplate():              to super
+getCurrentUser():           to super
+getWikiSession():           to super
+getBundle()                 to super
+
+WIKI-CONTEXT-SPECIFIC
+setRealPage()
+getRealPage()
+getName():  refactored slightly
+getURL(String, String) -- essentially the same, although it assumes StripesURLConstructor is used (?)
+getViewURL()
+setPage()
+findContext() -- no change
+hasAdminPermissions()
+getLocale(m_context) forwards to m_context.getContext().getLocale();
+D hasAccess(HttpServletResponse) -- used in MANY JSPs. Refactored to look up the permission info for the method that contains @DefaultHander annotation.
+D hasAccess(HttpServletResponse,boolean) -- referenced only by other hasAccess(). 
+setRequestContext() -- refactor to set the action bean event (if request context matches, otherwise throw error; NONE always matches)
+clone() -- needs refactoring
+
+BACKWARDS INCOMPATIBILITIES
+
+WikiContext(WikiEngine,WikiPage)
+WikiContext(WikiEngine,HttpServletRequest,Command)
+WikiContext(WikiEngine,HttpServletRequest,WikiPage)
+getRedirectURL(). Used in exactly 2 places... Wiki.jsp + WikiEngine (forward to WikiContext)
+getTarget()
+getURLPattern()
+getCommand()
+requiredPermission() -- only used in tests and WikiContext itself. Ok to kill
+targetedCommand()
+setDefaultTemplate() [Protected]
+findCommand() [Protected]
+updateCommand() [Protected]
+
+WIKIENGINE
+----------
+WikiEngine.createContext(req, String) changes its internal behavior. It delegates to m_engine.getWikiActionBeanFactory().newActionBean(Class<? extends ActionBean). The String request context must resolve to a WikiContext subclass rather than a more general WikiActionBean; if not, an IllegalArgumentException is thrown.
+
+WikiEngine.getURL() should be banned! (What should it do instead....?)
+
+DEPRECATIONS
+getURLContructor() -- should use URLBuilder instead, with request awareness
+getViewURL() -- refactored; should use URLBuilder instead, with request awareness
+createContext() -- refactored to use WikiActionBeanFactory instead
+
+BACKWARDS INCOMPATIBILITIES
+getRedirectURL() -- only used on once place: Wiki.jsp
+createContext() -- only creates subclasses of WikiContext. JSPs that call createContext() will see errors if they try to create non-WikiContext action beams. Affected JSPs:
+-- DeleteGroup.jsp
+-- EditGroup.jsp
+-- Error.jsp
+Group.jsp
+Install.jsp
+Login.jsp
+LostPassword.jsp
+Message.jsp
+NewGroup.jsp
+Search.jsp
+UserPreferences.jsp
+Workflow.jsp
+templates/default/AJAXSearch.jsp
+
+URLCONSTRUCTOR -- keep package but deprecate all of it! UrlContructors suck because they have no visibility to the user's context. Stripes URLBuilder is much better; that is what WikiActionBeanContext uses.
+--------------
+DEPRECATIONS
+getForwardPage() -- used only by WikiServlet; refactor to delegate to WikiActionBeanFactory
+parsePage() -- used only by CommandResolver & URLContructor implementations; refactor to delegate to WikiActionBeanFactory
+Deprecated all URLConstructor implementations.
+
+
 Thus: to get a proper URL from inside a method that takes a WikiContext we'd do this: 
 
 // Create a new resolution and add the page parameter to it
