@@ -760,7 +760,7 @@ var TabbedSection = {
 
 				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
-				new Element('div',{'class':'clearbox'}).inject(tab);
+				new Element('div',{'styles':{'clear':'both'}}).inject(tab);
 
 				var title = clazz.substr(4).deCamelize(); //drop 'tab-' prefix
 				new Element('a', {
