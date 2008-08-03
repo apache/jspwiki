@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	This configuration file was written by the eclipse-cs plugin configuration editor
+    This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-Checkstyle-Configuration: JSPWiki Coding Style
-Description:
-
+    Checkstyle-Configuration: JSPWiki Coding Style
+    Description: none
 -->
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
@@ -65,9 +64,6 @@ Description:
         <module name="ParameterAssignment">
             <property name="severity" value="ignore"/>
         </module>
-        <module name="RedundantThrows">
-            <property name="allowUnchecked" value="true"/>
-        </module>
         <module name="StringLiteralEquality"/>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
@@ -86,8 +82,8 @@ Description:
         <module name="UpperEll"/>
         <module name="j2ee.FinalStatic"/>
         <module name="RequiredRegexp">
-            <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="LGPL missing"/>
-            <property name="format" value="^.*GNU Lesser General Public License.*$"/>
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="No ASF preamble"/>
+            <property name="format" value="^.*Licensed to the Apache Software Foundation.*$"/>
         </module>
         <module name="JavadocType">
             <property name="scope" value="package"/>
@@ -97,6 +93,11 @@ Description:
         </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
+        </module>
+        <module name="GenericIllegalRegexp">
+            <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="@author tags should not be used"/>
+            <property name="severity" value="info"/>
+            <property name="format" value="^.*@author.*$"/>
         </module>
     </module>
     <module name="NewlineAtEndOfFile"/>
