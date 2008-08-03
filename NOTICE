@@ -9,5 +9,12 @@ Portions of this code donated by BaseN Corporation.
 
 Based on JSPWiki by Janne Jalkanen, Andrew R. Jaquith, and others.
 
-TBA: Other copyright notices, also give kudos to all other contributors
-and committers here (I think this is the proper place.)
+There have been many contributors so far.  Especially thanks go to
+Andrew Jaquith, Dirk Fredericx, Murray Altheim, Olaf Kock, Mark
+Rawling, Dan Frankowski, Terry Steichen, Chuck Smith, Christoph Sauer,
+Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips,
+Mahlen Morris, Paul Downes, Michael Gentry, John Volkar, Torsten
+Hildebrandt, and Foster Schucker who have given quite a lot of
+support and/or code.  There are also a number of other people who have
+generously given their time, and you can find hopefully all of their
+names in the ChangeLog.

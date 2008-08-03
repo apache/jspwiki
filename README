@@ -3,10 +3,6 @@
                         JSPWiki documentation
                         =====================
 
-                         $Revision: 1.31 $
-                             $Date: 2007-05-05 10:35:45 $
-                           $Author: jalkanen $
-
 What is it?
 -----------
 
@@ -16,40 +12,25 @@ in its development.  JSPWiki supports all the traditional wiki features,
 as well as very detailed access control and security integration using JAAS. 
 
 
-    Copyright (C) 2001-2007 JSPWiki development team
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public License
-    as published by the Free Software Foundation; either version 2.1
-    of the License, or (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+    
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this program; if not, write to the Free
-    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-    02111-1307 USA
-
-
-The license file can be found in doc/LICENSE.
-
-(No, the LGPL does not mean that all the content in your new wiki will
-be under the LGPL, anymore than any text you write using Emacs becomes
-GPL.)
-
-One small request I have.  If you really, really like this software,
-donate a small amount of money to the World Wildlife Foundation
-(WWF), Free Software Foundation (FSF), or Electronic Freedom
-Foundation (EFF), or whichever charity is close to your heart.
-
-The world doesn't need to become a bad place.
-
-Oh yeah, and if you run a Wiki based on this software, let me know.
-I'm always interested in hearing from my users =).
-
+The license file can be found in LICENSE.
 
 Pre-requirements
 ----------------
@@ -60,15 +41,14 @@ REQUIRED:
 
 * A JSP engine that supports Servlet API 2.3.  I recommend Tomcat from
   http://jakarta.apache.org/tomcat for a really easy installation.
-  Tomcat 4.x or later is supported, however, we strongly recommend
-  Tomcat 5.x or later.
+  Tomcat 5.x or later is supported.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
 
 * And of course, a server to run the JSP engine on.
 
-* JDK 1.4+.  JDK 1.5 is recommended.
+* JDK 1.5+
 
 
 OPTIONAL:
@@ -152,7 +132,7 @@ getting RCS up and running may be a bit problematic, and thus we
 recommend the VersioningFileProvider.
 
 All JSPWiki documentation is in the web; please see
-http://doc.jspwiki.org/2.4/wiki/WindowsInstall
+http://doc.jspwiki.org/2.6/wiki/WindowsInstall
 
 Upgrading from previous versions
 --------------------------------
@@ -160,7 +140,7 @@ Upgrading from previous versions
 Please read ReleaseNotes.
 
 All JSPWiki documentation is in the web; please see
-http://doc.jspwiki.org/2.4/
+http://doc.jspwiki.org/2.6/
 
 
 Configuring JSPWiki
@@ -174,7 +154,7 @@ There are also some auxiliary configuration files, such as filters.xml.
 
 Also, there is a far more detailed documentation in the web:
 
-http://doc.jspwiki.org/2.4/
+http://doc.jspwiki.org/2.6/
 
 
 Where to go next aka. where is the rest of the documentation?
@@ -182,7 +162,7 @@ Where to go next aka. where is the rest of the documentation?
 
 The rest of the documentation is at
 
-http://doc.jspwiki.org/2.4/
+http://doc.jspwiki.org/2.6/
 
 
 Acknowledgements
@@ -195,16 +175,6 @@ This product includes software developed by the OpenSymphony Group
 (http://www.opensymphony.org/).  See doc/LICENSE.OpenSymphony for more
 information. 
 
-There have been many contributors so far.  Especially thanks go to
-Andrew Jaquith, Dirk Fredericx, Murray Altheim, Olaf Kock, Mark
-Rawling, Dan Frankowski, Terry Steichen, Chuck Smith, Christoph Sauer,
-Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips,
-Mahlen Morris, Paul Downes, Michael Gentry, John Volkar, Torsten
-Hildebrandt, and Foster Schucker who have given me quite a lot of
-support and/or code.  There are also a number of other people who have
-generously given their time, and you can find hopefully all of their
-names in the ChangeLog.
-
 
 Contact
 -------
@@ -215,15 +185,9 @@ You can see the instructions on http://www.jspwiki.org/wiki/JSPWikiMailingList.
 The mailing list should also be your primary place to ask support questions.
 There are many wise and knowledgeable people on that list.
 
-If all else fails, feel free to send me (Janne Jalkanen, the lead developer) 
-direct email, at jalkanen+jspwiki@ecyrd.com.
-
 
 LICENSES
 ========
-
-JSPWiki is licenced under the Lesser General Public License, version
-2.1.  See LICENSE.
 
 The various Jakarta libraries are licensed under the Apache Public
 License.  See http://www.apache.org/LICENSE.txt

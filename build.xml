@@ -1,21 +1,22 @@
 <!--
     JSPWiki - a JSP-based WikiWiki clone.
 
-    Copyright (C) 2001-2006 Janne Jalkanen (Janne.Jalkanen@iki.fi)
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation; either version 2.1 of the License, or
-    (at your option) any later version.
+       http://www.apache.org/licenses/LICENSE-2.0
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
 -->
 
 <!--
@@ -105,10 +106,13 @@
   <property name="tests.reports" value="tests/reports" />
   
   <!-- Web unit test properties -->
-  <property name="webtests.browser" value="*firefox" />
-  <property name="webtests.container.user" value="janne" />
-  <property name="webtests.container.password" value="myP@5sw0rd" />
-  <property name="webtests.reports" value="${basedir}/tests/reports/selenium" />
+  <property name="webtests.browser"  value="*firefox" />
+  <property name="webtests.reports"  value="${basedir}/tests/reports/selenium" />
+  <property name="webtests.build"    value="tests/build/webtests" />
+  <property name="webtests.port"     value="10024" />
+  <property name="webtests.shutdown" value="19041" />
+  <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
+  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-1.0-beta1.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -264,12 +268,13 @@
       <packageset dir="${code.src}">
         <include name="com/ecyrd/**" />
       </packageset>
-      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
       <link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
       <classpath refid="path.base" />
+      <classpath refid="path.tests" />   
     </javadoc>
 
   </target>
@@ -295,13 +300,13 @@
   	       used. FIXME: Figure out a better way to do this in the future. -->
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
-	  <copy file="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources.properties" tofile="${code.src}/com/ecyrd/jspwiki/plugin/PluginResources_en.properties"/>
+	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
-         <fileset dir="etc" includes="ini/*.xml" />
+         <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
       </jar>
   </target>
 
@@ -367,9 +372,9 @@
 
         We include the following things:
 
-        1) All .jar -files in the lib-directory (except servlet.jar, since
-           it's gonna be provided by the servlet container anyway.)
-           We also omit test-related jars like JUnit.
+        1) All .jar -files in the lib-directory (except servlet-api.jar
+           and jsp-api.jar, since these are provided by the servlet
+           container anyway.
         2) All .class-files from the build-directory
         3) Everything from the src/webdocs -directory
         4) Everything from the etc-directory go to the WEB-INF -directory
@@ -387,14 +392,15 @@
          webxml="etc/web.xml">
        <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
        <lib file="${jarfile}" />
-       <!-- TEMPORARY HACK: swap in the Stripes JSPs instead of the normal ones. -->
+       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
+       <!-- TEMPORARY HACK: swap in the Stripes JSPs instead of the normal ones. 
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/*.jsp" />
        <fileset dir="${code.src}/webdocs-stripes" />
        <webinf dir="${code.src}/webdocs-stripes/WEB-INF" />
+       -->
        <webinf dir="etc">
          <include name="dtd/**" />
          <include name="commons-logging.properties" />
-         <include name="jspwiki.jaas" />
          <include name="jspwiki.policy" />
          <include name="jspwiki.properties" />
          <include name="*.tld" />
@@ -406,33 +412,65 @@
 
     <war warfile="${warfile}"
          webxml="etc/web.xml" update="true">
-     	<fileset dir="${install.fulldir}/webdocs/" includes="**/*.js" />
+      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
+      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
     </war>
 
-  </target>
+   </target>
 
-  <!-- We compress the Javascript using Dojo's Rhino system.  Very useful.
-       If you don't want to use the compressed stuff, just copy the default
-       .js files from the distro on top of the compressed ones from the WAR.
-   -->
-  <target name="compressedjs">
-	<mkdir dir="${install.fulldir}/webdocs/scripts"/>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-common.js"
-  		  fork="true">
-  	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-common.js" />
-  	</java>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-edit.js"
-  		  fork="true">
-	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-edit.js" />
-	</java>
-  	<java jar="tests/lib/custom_rhino.jar"
-  		  output="${install.fulldir}/webdocs/scripts/jspwiki-prefs.js"
-  		  fork="true">
-	  <arg line="-c ${code.src}/webdocs/scripts/jspwiki-prefs.js" />
-	</java>
-  </target>
+    <!-- Defines a compression macro for the JS/CSS bits we want to transform
+         into something that saves a bit of space. -->
+    
+    <macrodef name="compressjs">
+        <attribute name="src"/>
+        <attribute name="args" default=""/>   
+        <sequential>
+            <java jar="tests/lib/yuicompressor-2.3.3.jar"
+                  output="${tmpdir}/compress/@{src}"
+                  fork="true">
+                <arg line="${code.src}/@{src} @{args}" />
+            </java>
+        </sequential>
+    </macrodef>
+    
+   <!-- We compress the Javascript using yahoo's yui compressor, 
+        which compresses both javascript and css files.
+        If you don't want to use the compressed stuff, just copy the default
+        .js files from the distro on top of the compressed ones from the WAR.
+    -->
+   <target name="compressedjs">
+        <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
+    
+        <compressjs src="webdocs/scripts/jspwiki-common.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
+        <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
+        <compressjs src="webdocs/scripts/prettify.js"/>
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
+
+        <compressjs src="webdocs/templates/default/jspwiki.css"
+                    args="--line-break 0" />
+    
+        <compressjs src="webdocs/templates/default/jspwiki_print.css"
+                    args="--line-break 0" />   	
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
+   	    <compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
+                args="--line-break 0" />
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
+   	    <compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
+                args="--line-break 0" />
+
+        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
+        <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
+                args="--line-break 0" />
+
+   	    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
+        <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
+                args="--line-break 0" />
+   </target>
 
   <target name="opened-war" depends="war"
    description="Creates an opened JSPWiki war hierarchy into the build dir.">
@@ -459,7 +497,7 @@
   	<delete dir="${install.src}" />
   	
   	<exec executable="svn">
-       <arg line="export ${svn.repository}/${svn.tag} ${install.src}"/>
+       <arg line="export ${svn.repository}/${svn.tag} &quot;${install.src}&quot;"/>
   	</exec>
   	
     <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
@@ -472,19 +510,27 @@
        whether a page is a core page or not is found in src/wikipages/.corepages -->
 
   <target name="corepageszip" depends="installinit">
-    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages.zip"
-         basedir="src/wikipages" includesfile="src/wikipages/.corepages">
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_en.zip"
+         basedir="src/wikipages/en" includesfile="src/wikipages/.corepages">
     </zip>
+  
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fi.zip"
+         basedir="src/wikipages/fi" includesfile="src/wikipages/.corepages">
+    </zip>
+
+    <!-- Add other languages here -->
+    
   </target>
 
-  <!-- Creates a full ZIP file of all document files -->
+  <!-- Creates a full ZIP file of all document files, ignoring any resources
+       which start with a dot. -->
 
   <target name="documentzip" depends="installinit,javadoc"
           description="Creates JSPWiki documentation zipfile">
 
     <zip zipfile="${install.fulldir}/${ant.project.name}-doc.zip">
         <zipfileset dir="doc" prefix="doc" />
-        <zipfileset dir="src/wikipages" prefix="doc/wikipages" />
+        <zipfileset dir="src/wikipages" prefix="doc/wikipages" excludes="**/.??*"/>
     </zip>
   </target>
 
@@ -499,7 +545,7 @@
      <copy file="README" todir="${install.fulldir}" />
      <copy file="ChangeLog" todir="${install.fulldir}" />
      <copy file="ReleaseNotes" todir="${install.fulldir}" />
-     <copy file="doc/LICENSE" todir="${install.fulldir}" />
+     <copy file="LICENSE" todir="${install.fulldir}" />
 
      <zip zipfile="${release.dir}/${ant.project.name}-bin.zip">
         <zipfileset dir="${install.fulldir}" prefix="${ant.project.name}" />
@@ -522,25 +568,25 @@
       <mkdir dir="tests/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
-      <copy file="${basedir}/etc/web.xml" tofile="${tests.build}/web.xml.custom" overwrite="true" />
+      <copy file="${basedir}/etc/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
 
       <!-- For web unit tests, turn off SSL (self-signed certs b0rk
            the tests) and enable JDBC refs -->
-      <replace file="${tests.build}/web.xml.custom"
+      <replace file="${webtests.build}/web.xml.custom"
                token="CONFIDENTIAL" value="NONE" />
-      <replace file="${tests.build}/web.xml.custom"
+      <replace file="${webtests.build}/web.xml.custom"
                token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-      <replace file="${tests.build}/web.xml.custom"
+      <replace file="${webtests.build}/web.xml.custom"
                token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
 
       <!-- For unit testing, turn on container auth -->
-      <copy file="${tests.build}/web.xml.custom"
-          tofile="${tests.build}/web.xml.container" overwrite="true" />
-      <replace file="${tests.build}/web.xml.container"
+      <copy file="${webtests.build}/web.xml.custom"
+          tofile="${webtests.build}/web.xml.container" overwrite="true" />
+      <replace file="${webtests.build}/web.xml.container"
                token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-      <replace file="${tests.build}/web.xml.container"
+      <replace file="${webtests.build}/web.xml.container"
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-      <copy file="${tests.build}/web.xml.container"
+      <copy file="${webtests.build}/web.xml.container"
           tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
 
       <!-- Copy the DTDs to the test WEB-INF -->
@@ -577,13 +623,9 @@
         <classpath>
            <path refid="path.tests" />
         </classpath>
-
-        <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-		<sysproperty key="jspwiki.tests.auth" value="true" />
-
+        <sysproperty key="jspwiki.tests.auth" value="true" />
         <formatter type="plain" />
-    	    <formatter type="xml" usefile="yes" />
-
+        <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
                 <include name="**/*Test.java" />
@@ -611,15 +653,11 @@
         <classpath>
            <path refid="path.tests" />
         </classpath>
-
-        <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
         <sysproperty key="jspwiki.tests.auth" value="true" />
         <jvmarg value="-Xdebug" />
         <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y" />
-
         <formatter type="plain" />
         <formatter type="xml" usefile="yes" />
-
         <batchtest todir="${tests.reports}">
            <fileset dir="${tests.src}">
                 <include name="**/AuthorizationManagerTest.java" />
@@ -636,156 +674,229 @@
 
   </target>
 
-  <target name="guitests" depends="jar,tests-init,jartests"
+  <target name="guitests" depends="jar,tests-init,jartests,tests-db-init"
           description="Runs the tests in a pretty window.">
 
      <java classname="junit.swingui.TestRunner" fork="yes" maxmemory="512m">
         <classpath>
            <path refid="path.tests" />
         </classpath>
-
-        <sysproperty key="java.security.auth.login.config" value="${basedir}/etc/jspwiki.jaas"/>
-		<sysproperty key="jspwiki.tests.auth" value="true" />
-
+        <sysproperty key="jspwiki.tests.auth" value="true" />
         <arg value="com.ecyrd.jspwiki.AllTests" />
      </java>
 
   </target>
 
-  <!-- This target runs web unit tests using Selenium. These tests assumes you 
-       have Tomcat or higher installed **and** that it is running on
-       ${tomcat.host}:${tomcat.port} when you execute this target. The Manager
-       app must be configured. Also, the Tomcat server's tomcat-users.xml
-       file must contain a user named 'janne' with a password 'myP@5sw0rd'
-       and an assigned role of 'Authenticated'.
-       These tests has been verified to deploy on Tomcat 5.5;
-       other versions may not work.
-
-       If you have previously set a custom JSPWiki security policy, you
-       MUST bounce Tomcat first. Otherwise, the previously installed policy
-       will be in effect, and may hose the web unit tests.
-
-       Of course, you need not use Tomcat in production... but to
-       keep this build file simple, we do require it for web unit tests.
-
-       Note: if the majority of JDBC tests fail but the non-JDBC tests do
-       not, that likely means that Tomcat cannot find your JDBC jar. You
-       should copy this file to Tomcat's common/lib directory (for 5.5) or
-       lib (6.0).
+  <!-- This target runs web unit tests using Selenium. These tests run
+       using an enbedded Jetty server running on a hard-coded high port.
+       The webapps deployed to Jetty contain 2 sample users:
+       - 'janne' with password 'myP@5sw0rd' and role of 'Authenticated'
+       - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
+       These are the same as the test users in tests/com.ecyrd.jspwiki.auth.Users.
   -->
-  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,tomcat-init,war">
-
-    <!-- Make sure Tomcat is set up the way we expect -->
-    <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-      target="webtests-init" inheritRefs="true" />
-
-    <!-- Build the custom auth WAR -->
-    <copy file="etc/jspwiki.properties"
-        toFile="${tests.build}/jspwiki.properties.custom" flatten="true" />
-    <propertyfile file="${tests.build}/jspwiki.properties.custom">
+  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,war">
+    <mkdir dir="${webtests.temp}" />
+    <mkdir dir="${webtests.build}" />
+  
+    <!-- Create the master jspwiki.properties template for all webtests -->
+    <copy file="tests/etc/jspwiki.properties"
+        toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
+    <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
+      <entry key="jspwiki.authorizer" value="com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer" />
       <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.XMLUserDatabase" />
       <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase" />
       <entry key="jspwiki.referenceStyle" value="relative" />
+      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
+      <entry key="log4j.appender.TestContainerLog.File" value="${basedir}/${webtests.build}/testcontainer.log" />
+      <entry key="jspwiki-x.securityconfig.enable" value="true" />
     </propertyfile>
+
+    <!-- Build the custom auth WAR -->
     <webtest-setup context="test-custom"
-      webxml="${tests.build}/web.xml.custom"
-      props="${tests.build}/jspwiki.properties.custom" />
+      webxml="${webtests.build}/web.xml.custom"/>
 
     <!-- Build the custom auth WAR (absolute URLs) -->
-    <copy file="${tests.build}/jspwiki.properties.custom"
-        toFile="${tests.build}/jspwiki.properties.custom-absolute" flatten="true" />
-    <propertyfile file="${tests.build}/jspwiki.properties.custom-absolute">
-      <entry key="jspwiki.referenceStyle" value="absolute" />
-      <entry key="jspwiki.baseURL" value="${tomcat.protocol}://${tomcat.host}:${tomcat.port}/test-custom-absolute/" />
-    </propertyfile>
     <webtest-setup context="test-custom-absolute"
-      webxml="${tests.build}/web.xml.custom"
-      props="${tests.build}/jspwiki.properties.custom-absolute" />
+      webxml="${webtests.build}/web.xml.custom">
+      <propertyfile-entries>
+        <entry key="jspwiki.referenceStyle" value="absolute" />
+        <entry key="jspwiki.baseURL" value="http://localhost:${webtests.port}/test-custom-absolute/" />
+      </propertyfile-entries>
+    </webtest-setup>
 
     <!-- Build the container auth WAR -->
     <webtest-setup context="test-container"
-      webxml="${tests.build}/web.xml.container"
-      props="${tests.build}/jspwiki.properties.custom" />
+      webxml="${webtests.build}/web.xml.container" />
 
     <!-- Build the custom auth WAR (JDBC database) -->
-    <copy file="etc/jspwiki.properties"
-        toFile="${tests.build}/jspwiki.properties.custom-jdbc" flatten="true" />
-    <propertyfile file="${tests.build}/jspwiki.properties.custom-jdbc">
-      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
-      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
-      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
-    </propertyfile>
     <webtest-setup context="test-custom-jdbc"
-      webxml="${tests.build}/web.xml.custom"
-      props="${tests.build}/jspwiki.properties.custom-jdbc" />
+      webxml="${webtests.build}/web.xml.custom">
+      <propertyfile-entries>
+        <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
+      </propertyfile-entries>
+    </webtest-setup>
 
-    <!-- Build the container auth WAR (shared JDBC database) and test it -->
-    <copy file="etc/jspwiki.properties"
-        toFile="${tests.build}/jspwiki.properties.container-jdbc" flatten="true" />
-    <propertyfile file="${tests.build}/jspwiki.properties.container-jdbc">
-      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
-      <entry key="jspwiki.userdatabase.isSharedWithContainer" value="true" />
-      <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
-      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
-    </propertyfile>
+    <!-- Build the container auth WAR (JDBC database) and test it -->
     <webtest-setup context="test-container-jdbc"
-      webxml="${tests.build}/web.xml.container"
-      props="${tests.build}/jspwiki.properties.container-jdbc" />
-  	
-  	<!-- Run the tests -->
-  	<webtest-selenium context="test-custom" />
-  	<webtest-selenium context="test-custom-absolute" />
-  	<webtest-selenium context="test-custom-jdbc" />
-  	<webtest-selenium context="test-container" />
-  	<webtest-selenium context="test-container-jdbc" />
-  	
-    <!-- Tear down the test contexts -->
-    <webtest-teardown context="test-custom" />
-    <webtest-teardown context="test-custom-absolute" />
-    <webtest-teardown context="test-custom-jdbc" />
-    <webtest-teardown context="test-container" />
-    <webtest-teardown context="test-container-jdbc" />
+      webxml="${webtests.build}/web.xml.container">
+      <propertyfile-entries>
+        <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
+      </propertyfile-entries>
+    </webtest-setup>
 
+    <!-- Run each test in succession -->
+    <mkdir dir="${webtests.reports}" />
+    <webtest-exec context="test-custom" />
+    <webtest-exec context="test-container" />
+    <webtest-exec context="test-custom-jdbc" />
+    <webtest-exec context="test-container-jdbc" />
+    <webtest-exec context="test-custom-absolute" />
     <echo>The web unit tests have finished. You can find the test reports in ${webtests.reports}.
     
-If all of the tests ran successfully, the reports will all be "green." If all tests ran successfully except for the "test-container" suite, then your web container is likely not set up correctly. Check to make sure that the your Tomcat container's default realm contains the user '${webtests.container.user}' with password '${webtests.container.password}' and role 'Authenticated'. Usually, Tomcat uses the "memory realm"; the config file is at ${tomcat.home}/conf/tomcat-users.xml.</echo>
+If all of the tests ran successfully, the reports will all be "green."</echo>
     
   </target>
 
   <macrodef name="webtest-setup">
     <attribute name="context" />
     <attribute name="webxml" />
-    <attribute name="props" />
+    <attribute name="context.dir" default="${webtests.build}/@{context}" />
+    <attribute name="context.path" default="${basedir}/${webtests.build}/@{context}" />
+    <element name="propertyfile-entries" implicit="no" optional="true" />
     <sequential>
-      <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-        target="webtest-setup" inheritRefs="true">
-        <property name="webtest.context" value="@{context}" />
-        <property name="webtest.webxml"  value="@{webxml}" />
-        <property name="webtest.props"   value="@{props}" />
-      </ant>
-    </sequential>
-  </macrodef>
 
-  <macrodef name="webtest-teardown">
-    <attribute name="context" />
-    <sequential>
-      <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-        target="webtest-teardown" inheritRefs="true">
-        <property name="webtest.context" value="@{context}" />
-      </ant>
+      <echo message="===============================================================" />
+      <echo message=" Setting up web unit tests for '@{context}'" />
+      <echo message="- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" />
+      <echo message="" />
+      <echo message="Creating Selenium test scripts..."/>
+      <mkdir dir="@{context.dir}/selenium" />
+      <copy flatten="true" toDir="@{context.dir}/selenium">
+        <fileset dir="tests/etc/selenium/tests/all" />
+        <filterset>
+          <filter token="selenium.context" value="@{context}" />
+        </filterset>
+      </copy>
+
+      <echo message="Creating test page repositories..."/>
+      <!-- Create a wiki page directory and point jspwiki.properties to it -->
+      <mkdir dir="@{context.dir}/wikipages" />
+      <copy toDir="@{context.dir}/wikipages" flatten="true" >
+        <fileset dir="src/wikipages/en">
+          <include name="Main.*" />
+          <include name="LeftMenu*.*" />
+          <include name="About.*" />
+          <include name="RecentChanges.*" />
+          <include name="WikiEtiquette.*" />
+          <include name="UnusedPages.*" />
+          <include name="UndefinedPages.*" />
+          <include name="PageIndex.*" />
+        </fileset>
+      </copy>
+
+      <echo message="Creating test webapp..."/>
+      <mkdir dir="@{context.dir}/webapp/WEB-INF/classes" />
+      <mkdir dir="@{context.dir}/webapp/WEB-INF/lib" />
+
+      <!-- Copy the WEB-INF files -->
+      <copy toDir="@{context.dir}/webapp/WEB-INF">
+        <fileset dir="etc">
+          <include name="dtd/**" />
+          <include name="commons-logging.properties" />
+          <include name="jspwiki.policy" />
+          <include name="*.tld" />
+        </fileset>
+        <fileset dir="tests/etc" includes="userdatabase.xml groupdatabase.xml" />
+      </copy>
+      <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
+      
+      <!-- Create the jspwiki.properties file -->
+      <mkdir dir="@{context.dir}/workdir" />
+      <copy toFile="@{context.dir}/webapp/WEB-INF/jspwiki.properties"
+        file="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
+        <propertyfile file="@{context.dir}/webapp/WEB-INF/jspwiki.properties">
+          <entry key="jspwiki.baseURL"                            value="http://localhost:${webtests.port}/@{context}/" />
+          <entry key="jspwiki.workDir"                            value="@{context.path}/workdir" />
+          <entry key="jspwiki.fileSystemProvider.pageDir"         value="@{context.path}/wikipages" />
+          <entry key="jspwiki.basicAttachmentProvider.storageDir" value="@{context.path}/wikipages" />
+          <entry key="jspwiki.xmlUserDatabaseFile"                value="@{context.path}/webapp/WEB-INF/userdatabase.xml" />
+          <entry key="jspwiki.xmlGroupDatabaseFile"               value="@{context.path}/webapp/WEB-INF/groupdatabase.xml" />
+          <entry key="log4j.appender.FileLog.File"                value="@{context.path}/jspwiki.log" />
+        <propertyfile-entries/>
+      </propertyfile>
+
+      <!-- Copy the classes -->
+      <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
+        <fileset dir="etc" includes="oscache.properties" />
+      </copy>
+
+      <!-- Copy the libraries -->
+      <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
+        <fileset dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+        <fileset file="${jarfile}"/>
+        <fileset file="${jdbc.driver.jar}"/>
+      </copy>
+
+      <!-- Copy the JSPs -->
+      <copy toDir="@{context.dir}/webapp">
+        <fileset dir="${code.src}/webdocs" includes="**" />
+      </copy>
+
     </sequential>
   </macrodef>
   
-  <macrodef name="webtest-selenium">
-	<attribute name="context" />
-	<sequential>
-	  <ant dir="${basedir}" antfile="tests/etc/webtests.xml"
-	    target="webtest-selenium-exec" inheritRefs="true">
-	    <property name="webtest.context" value="@{context}" />
-	  </ant>
-	</sequential>
-  </macrodef>
+  <!-- ============================================================== -->
+  
+  <!-- Selenium execution test task -->
 
+  <!-- This macro executes the Selenium test plans located in 
+       tests/build/selenium/@context@/, based on templates stored
+       in tests/etc/selenium/tests. It expects your favorite servlet
+       container up & running on ${tomcat.protocol}://${tomcat.host}:${tomcat.port} 
+       For this reason, these properties must be set up in your 
+       build.properties file.
+  -->
+
+  <macrodef name="webtest-exec">
+    <attribute name="context"/>
+    <sequential>
+      <!-- If already running, shut down the embedded Jetty server by pinging the shutdown port -->
+      <echo message="Shutting down Jetty (if it is up)."/>
+      <get src="http://localhost:${webtests.shutdown}/" dest="${webtests.temp}/shutdown.log"
+        ignoreerrors="true" verbose="true" />
+      <sleep seconds="2"/>
+
+      <!-- Start Jetty with our test context -->
+      <echo message="Starting Jetty."/>
+      <java classname="com.ecyrd.jspwiki.web.TestContainer" fork="true" spawn="true">
+        <classpath>
+           <path refid="path.tests" />
+        </classpath>
+        <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
+        <!--
+        <jvmarg value="-Xdebug" />
+        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
+        -->
+        <arg line="@{context}=${webtests.build}/@{context}/webapp" />
+      </java>
+
+      <!-- Start Selenium tests -->
+      <echo message="Running web unit tests for context '@{context}'."/>
+      <java jar="${selenium-rc.jar}" fork="true"
+        output="${webtests.build}/@{context}/selenium/selenium.log">
+        <!--
+        <arg line="-browserSessionReuse" />
+        -->
+        <arg line="-htmlSuite" />
+        <arg line='"${webtests.browser}"' />
+        <arg line='"http://localhost:${webtests.port}"' />
+        <arg line="${basedir}/${webtests.build}/@{context}/selenium/TestSuite.html" />
+        <arg line="${webtests.reports}/@{context}.html" />
+      </java>
+    </sequential>
+  </macrodef>
 
   <!-- ============================================================== -->
 
@@ -1280,7 +1391,7 @@ To automate the JAR signing processs, you can add the property
 	<input message="i18n template code to generate (ie: es_ES):" addproperty="i18n.template" />
 
   	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates" />
-  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/src/com/ecyrd/jspwiki/plugin" />
+  	<mkdir dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin" />
 
   	<copy file="etc/i18n/CoreResources.properties"
   		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/CoreResources_${i18n.template}.properties"
@@ -1288,8 +1399,8 @@ To automate the JAR signing processs, you can add the property
   	<copy file="etc/i18n/templates/default.properties"
   		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/templates/default_${i18n.template}.properties"
   		  overwrite="true"/>
-  	<copy file="src/com/ecyrd/jspwiki/plugin/PluginResources.properties"
-  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/src/com/ecyrd/jspwiki/plugin/PluginResources_${i18n.template}.properties"
+  	<copy file="etc/i18n/plugin/PluginResources.properties"
+  		  tofile="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}/etc/i18n/plugin/PluginResources_${i18n.template}.properties"
   		  overwrite="true" />
 
   	<echo message="Now you can start translating at ${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}." />
@@ -1307,6 +1418,40 @@ To automate the JAR signing processs, you can add the property
 
   <target name="i18n-clean-templates" description="Deletes all i18n directory structures">
 	<delete dir="${tmplt.i18n.dir}" />
+  </target>
+  
+  <target name="api-diff" description="Compares API in JSPWiki.jar with previous version"
+    depends="jar">
+     <!-- Assumes that the dependencyfinder.dir property points to the
+          dir containing the binary distribution of DependencyFinder -->
+     <check-property prop="dependencyfinder.dir" />
+     <check-property prop="jarfile.old" />
+     <mkdir dir="${tests.reports}" />
+     <java classname="com.jeantessier.dependencyfinder.cli.JarJarDiff"
+       output="${tests.reports}/API-changes.xml">
+       <classpath refid="path.tests" />
+       <classpath>
+         <pathelement location="${dependencyfinder.dir}/lib/DependencyFinder.jar" />
+       </classpath>
+       <arg value="-new" />
+       <arg value="${jarfile}" />
+       <arg value="-old" />
+       <arg value="${jarfile.old}" />
+       <arg value="-name" />
+       <arg value="JSPWiki Public API Changes" />
+     </java>
+
+     <!-- Filthy hack that suppresses DTD resolution -->
+     <replace file="${tests.reports}/API-changes.xml"
+       token='&lt;!DOCTYPE differences SYSTEM "http://depfind.sourceforge.net/dtd/differences.dtd"&gt;'
+       value=""/>
+     <!-- Just to be safe, replace raw ampersands with something bogus -->
+     <replace file="${tests.reports}/API-changes.xml"
+       token="&amp;" value="(ampersand)"/>
+     <xslt in="${tests.reports}/API-changes.xml"
+       out="${tests.reports}/API-changes.html"
+       style="${dependencyfinder.dir}/etc/DiffToHTML.xsl">
+     </xslt>
   </target>
 
 </project>
