@@ -15,18 +15,18 @@
       <author>Janne Jalkanen</author>
       <path>editors/plain.jsp</path>
       <minVersion>2.4</minVersion>
-      <maxVersion>2.6</maxVersion>
+      <maxVersion>2.8</maxVersion>
       <adminBean>com.ecyrd.jspwiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
    </editor>
-
+<!-- 
    <editor name="WikiWizard">
       <author>i3G Institut Hochschule Heilbronn</author>
       <path>editors/WikiWizard.jsp</path>
       <minVersion>2.4</minVersion>
-      <maxVersion>2.6</maxVersion>
+      <maxVersion>2.8</maxVersion>
       <adminBean>com.ecyrd.jspwiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
    </editor>
-
+-->
    <plugin class="com.ecyrd.jspwiki.plugin.IfPlugin">
       <author>Janne Jalkanen</author>
       <minVersion>2.4</minVersion>
