@@ -20,7 +20,7 @@
  */
  
 /*
-Javascript routines to support JSPWiki
+JavaScript routines to support JSPWiki
 Since v.2.6.0
 
 Uses mootools v1.1, with following components:  
@@ -760,7 +760,7 @@ var TabbedSection = {
 
 				(i==0) ? tab.removeClass('hidetab') : tab.addClass('hidetab');
 
-				new Element('div',{'styles':{'clear':'both'}}).inject(tab);
+				new Element('div',{'class':'clearbox'}).inject(tab);
 
 				var title = clazz.substr(4).deCamelize(); //drop 'tab-' prefix
 				new Element('a', {
