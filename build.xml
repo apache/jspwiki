@@ -988,6 +988,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <taskdef classname="org.apache.jasper.JspC" name="jasper2">
       <classpath>
         <path refid="tomcat.classpath" />
+        <path refid="path.base" />
       </classpath>
     </taskdef>
     <jasper2
