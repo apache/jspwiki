@@ -123,42 +123,19 @@ in your jspwiki.properties.
 <h3>JAAS Login Configuration</h3>
 
 <!-- Notify users which JAAS configs we need to find -->
-<p>JSPWiki uses JAAS to define the authentication process. We need to be able to locate a JAAS configuration file. The default location is <code>WEB-INF/jspwiki.jaas</code>), and its location is specified by the <code>java.security.auth.login.config</code> system property.</p>
+<p>JSPWiki wires up its own JAAS to define the authentication process, and does not rely on the JRE configuration. By default, JSPWiki configures its JAAS login stack to use the UserDatabaseLoginModule. You can specify a custom login module by setting the <code>jspwiki.loginModule.class</code> property in <code>jspwiki.properties</code>.</p>
 
 <wiki:Messages div="information" topic="<%=SecurityVerifier.INFO+"java.security.auth.login.config"%>" prefix="Good news: "/>
 <wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING+"java.security.auth.login.config"%>" prefix="We found some potential problems with your configuration: "/>
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR+"java.security.auth.login.config"%>" prefix="We found some errors with your configuration: " />
 
-<!-- Let the admin know if something other than JSPWiki set the config property first -->
-<%
-  if ( verifier.isJaasConfiguredAtStartup() )
-  {
-%>
-    <div class="warning">Note: some other application set the JAAS <code>java.security.auth.login.config</code> system property before JSPWiki started up. It could have been done by a prior installation of JSPWiki, or possibly by your web container's startup script. This is not necessary a bad thing, but we thought you should be aware of it in case you are seeing behavior you don't expect. You can ignore this message if we find the JAAS login configurations (below).</div>
-<%
-  }
-  else
-  {
-%>
-    <div class="information">Note: this instance of JSPWiki set the system property at startup.</div>
-<%
-  }
-%>
-
 <!-- Print JAAS configuration status -->
-<p>Inside the JAAS config file, we must be able to find two login configurations: <code>JSPWiki-container</code> and <code>JSPWiki-custom</code>.</p>
+<p>The JAAS login configuration is correctly configured if the <code>jspwiki.loginModule.class</code> property specifies
+a class we can find on the classpath. This class must also be a LoginModule implementation. We will check for both conditions.</p>
 
 <wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_JAAS%>" prefix="Good news: "/>
 <wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_JAAS%>" prefix="We found some potential problems with your configuration: "/>
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_JAAS%>" prefix="We found some errors with your configuration: " />
-<%
-  if ( !verifier.isJaasConfigured() )
-  {
-%>
-    <div class="error">The JAAS configuration looks broken. Users may not be able to log in. You should be able to fix this by locating the JAAS configuration file and appending the contents of <code>WEB-INF/jspwiki.jaas</code>.</div>
-<%
-  }
-%>
 
 <!-- 
   *********************************************
