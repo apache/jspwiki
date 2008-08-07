@@ -2229,6 +2229,9 @@ public class WikiEngine
     }
 
     /**
+     * Returns the RSSGenerator. If the property <code>jspwiki.rss.generate</code>
+     * has not been set to <code>true</code>, this method will return <code>null</code>,
+     * <em>and callers should check for this value.</em>
      * @since 2.1.165
      * @return the RSS generator
      */
