@@ -1,3 +1,15 @@
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-8
+        
+        * JSPWIKI-316: fixed SecurityConfig.jsp so that it compiles, and added
+        some sensible checks for the new JAAS scheme.
+
+        * Fixed NPE in RSSImageLinkTag, which erroneously assumes that RSSGenerator
+        is always available. However, it might not be if RSS feeds are disabled.
+        
+        * Fixed broken Ant 'war-tomcat' target.
+
 2008-08-03  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-7
