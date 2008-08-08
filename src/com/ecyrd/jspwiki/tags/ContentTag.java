@@ -164,11 +164,15 @@ public class ContentTag
             String requestContext = m_wikiContext.getRequestContext();
             String contentTemplate = m_mappings.get( requestContext );
 
+            // Next, see if the variable "contentTemplate" is part of the request
+            WikiEngine engine = m_wikiContext.getEngine();
+            contentTemplate = engine.getVariable( m_wikiContext, "contentTemplate" );
+            
             // If not found, use the default name (trim "ActionBean" from name, and append "Content"
             // e.g., EditActionBean yields "EditContent.jsp"
             if ( contentTemplate == null )
             {
-                String beanName = m_wikiActionBean.getClass().getName();
+                String beanName = m_wikiActionBean.getClass().getSimpleName();
                 if ( beanName.endsWith( "ActionBean" ) )
                 {
                     beanName = beanName.substring( 0, beanName.lastIndexOf( "ActionBean") );

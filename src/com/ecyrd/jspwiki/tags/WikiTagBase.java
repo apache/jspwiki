@@ -103,7 +103,7 @@ public abstract class WikiTagBase
             // It's really bad news if the WikiActionBean wasn't injected (or saved as a variable!)
             if ( m_wikiActionBean == null )
             {
-                throw new JspException( "Can't find WikiActionBean in page or request context. Make sure JSP saves it as a variable." );
+                throw new JspException( "Can't find WikiActionBean in page or request context! (tag=" + this.getClass() + ")" );
             }
 
             // Retrieve the WikiContext injected by WikiInterceptor (could be a fake context!)

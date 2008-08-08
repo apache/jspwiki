@@ -95,7 +95,7 @@ public class RSSImageLinkTag
         JspWriter out = pageContext.getOut();
         ResourceBundle rb = m_wikiContext.getBundle( InternationalizationManager.CORE_BUNDLE );
 
-        if( engine.getRSSGenerator().isEnabled() )
+        if( engine.getRSSGenerator() != null && engine.getRSSGenerator().isEnabled() )
         {
             if( RSSGenerator.MODE_FULL.equals(m_mode) )
             {
