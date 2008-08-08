@@ -169,24 +169,6 @@ public abstract class WikiContext extends AbstractActionBean
     }
 
     /**
-     * {@inheritDoc}
-     * @see com.ecyrd.jspwiki.action.WikiActionBean#getContentTemplate()
-     */
-    public String getContentTemplate()
-    {
-        return super.getContentTemplate();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see com.ecyrd.jspwiki.action.WikiActionBean#getJSP()
-     */
-    public String getJSP()
-    {
-        return super.getJSP();
-    }
-
-    /**
      *  Sets a reference to the real page whose content is currently being
      *  rendered.
      *  <p>
@@ -650,7 +632,7 @@ public abstract class WikiContext extends AbstractActionBean
      */
     public static Locale getLocale( WikiContext context )
     {
-        return Preferences.getLocale( context );
+        return context.getContext().getLocale();
 /*
         HttpServletRequest request = context.getHttpRequest();
         return ( request != null )

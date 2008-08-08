@@ -2135,9 +2135,12 @@ public class WikiEngine
             actionBean.getContext().setEventName( handler.getEventName() );
             if ( actionBean instanceof WikiContext )
             {
+                // Stash the action bean/wiki context, and return it!
+                WikiActionBeanFactory.saveActionBean( request, actionBean );
                 return (WikiContext)actionBean;
             }
-            throw new IllegalArgumentException( "Context '" + requestContext + "' resolved to non-WikiContext action bean class!" );
+            throw new IllegalArgumentException( "Context '" + requestContext + "' resolved to non-WikiContext action bean class! " +
+            		"Please use the <stripes:useActionBean> tag instead of WikiEngine.createContext()." );
         }
         catch ( WikiException e )
         {
