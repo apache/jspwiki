@@ -134,7 +134,7 @@ public class ViewActionBean extends WikiContext
      */
     @DefaultHandler
     @HandlesEvent("view")
-    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.VIEW_ACTION)
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
     @WikiRequestContext("view")
     public Resolution view()
     {

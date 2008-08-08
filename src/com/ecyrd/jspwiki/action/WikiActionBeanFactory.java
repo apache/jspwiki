@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
@@ -20,6 +19,7 @@ import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
@@ -65,6 +65,24 @@ import com.ecyrd.jspwiki.url.StripesURLConstructor;
  */
 public final class WikiActionBeanFactory
 {
+    /**
+     * The PageContext attribute name of the WikiActionBean stored by
+     * WikiInterceptor.
+     */
+    public static final String ATTR_ACTIONBEAN = "wikiActionBean";
+
+    /**
+     * The PageContext attribute name of the WikiEngine stored by
+     * WikiInterceptor.
+     */
+    public static final String ATTR_WIKIENGINE = "wikiEngine";
+
+    /**
+     * The PageContext attribute name of the WikiSession stored by
+     * WikiInterceptor.
+     */
+    public static final String ATTR_WIKISESSION = "wikiSession";
+    
     private static final Logger log = Logger.getLogger( WikiActionBeanFactory.class );
 
     private static final long serialVersionUID = 1L;
@@ -586,13 +604,13 @@ public final class WikiActionBeanFactory
      */
     public static WikiActionBean findActionBean( ServletRequest request )
     {
-        return (WikiActionBean) request.getAttribute( WikiInterceptor.ATTR_ACTIONBEAN );
+        return (WikiActionBean) request.getAttribute( ATTR_ACTIONBEAN );
     }
 
     /**
      * <p>
      * Saves the supplied WikiActionBean and its associated WikiPage as
-     * PageContext attributes, in request scope. The action bean is saved as an
+     * in request scope. The action bean is saved as an
      * attribute named {@link WikiInterceptor#ATTR_ACTIONBEAN}. If the action
      * bean was also a WikiContext instance, it is saved as an attribute named
      * {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}. Among other
@@ -609,14 +627,22 @@ public final class WikiActionBeanFactory
      * and that page will be used.
      * </p>
      * 
-     * @param pageContext the page context
+     * @param request the HTTP request
      * @param actionBean the WikiActionBean to save
      */
-    public static void saveActionBean( PageContext pageContext, WikiActionBean actionBean )
+    public static void saveActionBean( HttpServletRequest request, WikiActionBean actionBean )
     {
-        // Stash the WikiActionBean
+        // Stash WikiEngine as a request attribute (can be
+        // used later as ${wikiEngine} in EL markup)
         WikiEngine engine = actionBean.getEngine();
-        pageContext.setAttribute( WikiInterceptor.ATTR_ACTIONBEAN, actionBean, PageContext.REQUEST_SCOPE );
+        request.setAttribute( ATTR_WIKIENGINE, engine );
+        
+        // Stash the WikiSession as a request attribute
+        WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
+        request.setAttribute( ATTR_WIKISESSION, wikiSession );
+        
+        // Stash the WikiActionBean
+        request.setAttribute( ATTR_ACTIONBEAN, actionBean );
 
         // Stash it again as a WikiContext (or synthesize a fake one)
         WikiContext wikiContext;
@@ -640,12 +666,11 @@ public final class WikiActionBeanFactory
         }
         else
         {
-            HttpServletRequest request = actionBean.getContext().getRequest();
             HttpServletResponse response = actionBean.getContext().getResponse();
             page = engine.getPage( engine.getFrontPage() );
             wikiContext = engine.getWikiActionBeanFactory().newViewActionBean( request, response, page );
         }
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, actionBean, PageContext.REQUEST_SCOPE );
+        request.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext );
 
         // Debug messages
         if( log.isDebugEnabled() )

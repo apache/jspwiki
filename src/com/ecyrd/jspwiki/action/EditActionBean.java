@@ -10,7 +10,7 @@ public class EditActionBean extends WikiContext
 {
     @DefaultHandler
     @HandlesEvent("edit")
-    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.EDIT_ACTION)
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.EDIT_ACTION)
     @WikiRequestContext("edit")
     public Resolution edit()
     {
@@ -23,7 +23,7 @@ public class EditActionBean extends WikiContext
      * @return a forward resolution back to the preview page.
      */
     @HandlesEvent( "preview" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "preview" )
     public Resolution preview()
     {
@@ -37,7 +37,7 @@ public class EditActionBean extends WikiContext
      */
     @WikiRequestContext("diff")
     @HandlesEvent("diff")
-    @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.VIEW_ACTION)
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
     public Resolution diff()
     {
         return new ForwardResolution( "/Diff.jsp" );

@@ -323,6 +323,8 @@ public class HandlerInfo
      * Returns the Permission required to execute the method in the context of the supplied
      * WikiActionBean, based on its {@link HandlerPermission} annotation.
      * Any EL expressions found in the annotated target or actions are evaluated.
+     * Note that this method returns <code>null</code> if no Permission is required
+     * to execute this method, and <em>callers should check for nulls</code>.
      * 
      * @param actionBean the ActionBean that will be used as the base for any EL
      *            expressions
@@ -332,6 +334,11 @@ public class HandlerInfo
      */
     public Permission getPermission( WikiActionBean actionBean ) throws ELException
     {
+        if ( m_permissionClass == null )
+        {
+            return null;
+        }
+        
         // Get the target class, target and actions
         boolean hasOneParameter = m_permissionActions == null;
         String target = m_permissionTarget;
