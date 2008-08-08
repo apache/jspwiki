@@ -81,6 +81,11 @@
         <param-name>MultipartWrapper.Class</param-name>
         <param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
       </init-param>
+      <!-- Exception handler classes -->
+      <init-param>
+        <param-name>ExceptionHandler.Class</param-name>
+        <param-value>com.ecyrd.jspwiki.action.WikiExceptionHandler</param-value>
+      </init-param>
    </filter>
 
    <!--
