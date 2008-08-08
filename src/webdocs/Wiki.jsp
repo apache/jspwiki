@@ -15,11 +15,11 @@
     if(!wikiContext.hasAccess( response )) return;
     String pagereq = wikiContext.getName();
 
-    // Redirect if the request was for a 'special page'
-    String redirect = wiki.getWikiActionBeanFactory().getSpecialPageReference( pagereq );
+    // Redirect if request was for a special page
+    String redirect = wiki.getRedirectURL( wikiContext );
     if( redirect != null )
     {
-        response.sendRedirect( wikiContext.getViewURL( redirect ) );
+        response.sendRedirect( redirect );
         return;
     }
     
@@ -30,7 +30,6 @@
         w.enterState("Generating VIEW response for "+wikiContext.getPage(),60);
     
         // Set the content type and include the response content
-        wikiContext.setVariable( "contentTemplate", "PageContent.jsp" );
         response.setContentType("text/html; charset="+wiki.getContentEncoding() );
         String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                                 wikiContext.getTemplate(),
