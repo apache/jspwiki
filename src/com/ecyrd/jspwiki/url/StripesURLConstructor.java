@@ -138,11 +138,11 @@ public class StripesURLConstructor extends DefaultURLConstructor
                 }
             }
             
-            // Set the event handler if not the default
-            if ( !handler.equals( HandlerInfo.getDefaultHandlerInfo( beanClass ) ) )
-            {
-                urlBuilder.setEvent( handler.getEventName() );
-            }
+//            // Set the event handler if not the default
+//            if ( !handler.equals( HandlerInfo.getDefaultHandlerInfo( beanClass ) ) )
+//            {
+//                urlBuilder.setEvent( handler.getEventName() );
+//            }
         }
 
         // Append the other parameters
