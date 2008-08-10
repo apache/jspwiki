@@ -192,9 +192,6 @@ public class Installer
                                                       m_session.getLocale() );
         m_validated = false;
         
-        // Set request encoding
-        m_request.setCharacterEncoding("UTF-8");
-        
         try
         {
             InputStream in = null; 

@@ -210,7 +210,6 @@ public class DefaultURLConstructor
                              String encoding )
         throws UnsupportedEncodingException
     {
-        request.setCharacterEncoding( encoding );
         String pagereq = request.getParameter( "page" );
 
         if( context.equals(WikiContext.ATTACH) )

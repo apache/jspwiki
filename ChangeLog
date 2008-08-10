@@ -1,3 +1,10 @@
+2008-08-10  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-9
+        
+        * JSPWIKI-320: removed all httpRequest.setCharacterEncoding() calls (except in WikiServletFilter)
+        because they were called too late, reported by Clay Atkins
+        
 2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-8
