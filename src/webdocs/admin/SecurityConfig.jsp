@@ -32,7 +32,7 @@
         <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
         <wiki:IncludeResources type="stylesheet"/>
       </head>
-      <body class="view"><div id="wikibody">
+      <body><div id="wikibody">
          <h1>Disabled</h1>
          <p>JSPWiki SecurityConfig UI has been disabled.  This page could reveal important security
          details about your configuration to a potential attacker, so it has been turned off by
@@ -60,7 +60,7 @@
   <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>
 </head>
-<body class="view">
+<body>
 <div id="wikibody">
 <div id="page">
 <div id="pagecontent">

@@ -1,3 +1,12 @@
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-10
+
+        * [JSPWIKI-333] Language cookie is now set to default browser setting 
+        when initializing the Preferences. Previously this was not required as long as the  
+        user preferences were not modified by the user. Don't know why this stopped working.
+        
+
 2008-08-11  Harry Metske <harry.metske@gmail.com>
 
 		* no version bump

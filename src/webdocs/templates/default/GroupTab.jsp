@@ -11,7 +11,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%!
   String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)

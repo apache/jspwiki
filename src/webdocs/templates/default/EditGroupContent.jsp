@@ -8,7 +8,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%!
     Logger log = Logger.getLogger("JSPWiki");

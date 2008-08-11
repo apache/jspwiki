@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
 <%-- Powered by jswpwiki-common.js//SearchBox --%>

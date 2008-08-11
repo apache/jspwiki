@@ -6,7 +6,7 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
    This file provides a common header which includes the important JSPWiki scripts and other files.
@@ -54,6 +54,7 @@
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
+<meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
 
 <script type="text/javascript">//<![CDATA[
 /* Localized javascript strings: LocalizedStrings[] */

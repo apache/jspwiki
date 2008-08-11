@@ -2,7 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 
 <%-- Inserts page content for preview. --%>

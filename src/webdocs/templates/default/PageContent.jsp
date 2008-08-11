@@ -3,7 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );

@@ -5,7 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
@@ -102,7 +102,7 @@
       <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
       <td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>
       <td style="white-space:nowrap;text-align:right;">
-        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
       <td style="text-align:center;">
         <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title'/>"><wiki:PageVersion /></a>
