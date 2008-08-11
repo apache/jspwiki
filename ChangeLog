@@ -1,3 +1,9 @@
+2008-08-11  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-319: added extra checking on Attchment Change Notes
+
 2008-08-10  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-9
