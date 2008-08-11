@@ -159,13 +159,12 @@ var WikiSnippets =
 
 /*
  *
- *
  */
 var EditTools = 
 {
 	onPageLoad: function(){
 
-		Wiki.onPageLoad(); //Wiki.onpageload should always run first, but seems not guaranteed on ie sos let's do this for sure
+		Wiki.onPageLoad(); //Wiki.onpageload should always run first, but seems not guaranteed on ie so let's do this for sure
 		
 		this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
@@ -179,7 +178,7 @@ var EditTools =
 			.removeProperty('id')
 			.removeProperty('name')
 			.injectBefore( m.hide() ); 
-
+		
 		//this.ta = new TextArea( this.textarea );
 		this.ta = TextArea.initialize( this.textarea );
 
@@ -205,8 +204,6 @@ var EditTools =
 			.addEvent('click',this.getSuggestions.bind(this))
 			.addEvent('keyup',this.getSuggestions.bind(this))
 			.focus();
-		
-//		Wiki.setFocus();
 	},
 
 	/* add textarea resize drag bar */
@@ -222,9 +219,10 @@ var EditTools =
 		this.textarea.makeResizable({
 			handle:h, 
 			modifiers: {x:false, y:'height'}, 
-			onComplete: function(){	Wiki.prefs.set('EditorSize',this.value.now.y); }
+			onComplete: function(){	
+				Wiki.prefs.set('EditorSize',this.value.now.y); 
+			}
 		});		
-		
 	},	
 
 	onPageLoadToolbar: function(){	
@@ -247,22 +245,21 @@ var EditTools =
 			reGlobal	= $('tbGLOBAL').checked ? 'g' : '',
 			reMatchCase	= $('tbMatchCASE').checked ? '' : 'i';
 
-		if( findText == "") return;
+		if(findText == '') return;
 
 		var sel = TextArea.getSelection(this.textarea),
-			data = ( !sel || (sel=="") ) ? this.textarea.value : sel;
+			data = (!sel || (sel=='')) ? this.textarea.value : sel;
 
 		if(!isRegExp){ /* escape all special re characters */
-			var re = new RegExp( "([\.\*\\\?\+\[\^\$])", "gi");
-			findText = findText.replace( re,"\\$1" );
+			var re = new RegExp('([\.\*\\\?\+\[\^\$])','gi');
+			findText = findText.replace(re,'\\$1');
 		}
 		
-		var re = new RegExp(findText, reGlobal+reMatchCase+"m" ); //multiline
+		var re = new RegExp(findText, reGlobal+reMatchCase+'m'); //multiline
 		if(!re.exec(data)){
-			Wiki.alert( "edit.findandreplace.nomatch".localize() );
-			return true;
-		}
-		
+			Wiki.alert('edit.findandreplace.nomatch'.localize());
+			return;// true;
+		}		
 		data = data.replace(re, replaceText);  
 	
 		this.store();
@@ -272,61 +269,8 @@ var EditTools =
 			TextArea.replaceSelection( this.textarea, data );
 		}
 		this.textarea.fireEvent('change');		
-	} ,
-	
-/*  not stable across browsers	
-	doFind: function(){
-		var ta = this.ta,
-			data = this.textarea.value,
-			find = $('tbFIND').value, 
-			findlen = find.length,
-			isRegExp = $('tbREGEXP').checked,
-			reGlobal = $('tbGLOBAL').checked ? 'g' : '',
-			reMatchCase	= $('tbMatchCASE').checked ? '' : 'i';
-
-		if(find == "") return;
-		
-		//this.textarea.addEvent("select", function(){ alert('beep') });
-
-		var sel = TextArea.getSelectionCoordinates(this.textarea),
-			selection = data.substring(sel.start,sel.end);
-
-		data = data.substr(sel.start);
-
-		if(!isRegExp){ find = find.escapeRegExp(); }
-		var re = new RegExp("("+find+")", reGlobal+reMatchCase+"m" ); //multiline
-
-		var match = data.match(re);
-		if( match && match[0] == selection){ data = data.substr(match.length); sel.start+=match.length}
-
-		var newstart = data.search(re);
-		match = RegExp.$1;
-
-		if(newstart == -1){
-			Wiki.alert( "edit.findandreplace.nomatch".localize() );
-		} else {
-			sel.start+=newstart;
+	},	
 			
-			ta.setSelection(sel.start, sel.start + match.length );
-			
-			var el = this.textarea;
-			var i = sel.start + match.length;
-
-			try {  //only ok on firefox
-			el.setSelectionRange(i-1,i);
-			var evx = document.createEvent("KeyEvents");
-			evx.initKeyEvent('keypress', true, true, window,
-				false, false, false, false, 0,
-				el.value.charCodeAt(i-1));
-			el.dispatchEvent(evx);		// causes the scrolling
-			
-			} catch(e) { }
-
-			ta.setSelection(sel.start, i);			
-		}		
-		
-	},
-*/			
 	onPageLoadPostEditor: function(){
 		if(window.ie) return;
 		
@@ -339,13 +283,13 @@ var EditTools =
 		/* make posteditor changes undoable */
 		this.posteditor.value = function(value) {
 			EditTools.store();
-			this.element.value = value.join("");
+			this.element.value = value.join('');
 			this.element.fireEvent('change');		
 		};
 
 		/* next extra fix for latest Safari 3.1 cause tabs are not catched anymore in the onkeypress handler */
 		/* TODO: this could be a great workaround for ie as well */
-		if( window.webkit ){ 
+		if(window.webkit){ 
 			this.textarea.addEvent('keydown',function(e){
 				if(e.keyCode == 9) EditTools.posteditor.onKeyPress(e);
 			});
@@ -354,7 +298,6 @@ var EditTools =
 		['smartpairs', 'tabcompletion'].each( function(el){
 			$(el).setProperty('checked', Wiki.prefs.get(el) || false)
 				 .addEvent('click',function(e) {
-				 	//new Event(e).stop();
 					Wiki.prefs.set(el,this.checked);
 					EditTools.initPostEditor();
 				 });
@@ -385,7 +328,7 @@ var EditTools =
 		this.store();
 
 		if((el.rel=='break') && (!TextArea.isSelectionAtStartOfLine(this.textarea))) { 
-			t = "\n" + t;
+			t = '\n' + t;
 		}
 		if(s) {
 			// toggle markup
@@ -398,31 +341,10 @@ var EditTools =
 		TextArea.replaceSelection(this.textarea, t);
 	} ,
 
-	/* TOOLBAR: cut/copy/paste clipboard functionality */
-	/*
-	_CLIP : null,
-	clipboard : function( format ){
-		var s = TextArea.getSelection(this.textarea);
-		if( !s || s == "") return;
-
-		this._CLIP = s ;
-		$( 'tbPASTE' ).className = this.ToolbarMarker;
-		var ss = format.replace( /\$/, s);
-		if( s == ss ) return; //copy
-
-		this.store(); //cut
-		TextArea.replaceSelection( this.textarea, ss );
-	} ,
-	paste : function(){
-		if( !this._CLIP ) return;
-		this.store();
-		TextArea.replaceSelection( this.textarea, this._CLIP );
-	} ,
-	*/
 	// *** UNDO functionality ***
-	$undo : [],
-	$redo : [],
-	$maxundo : 20,
+	$undo: [],
+	$redo: [],
+	$maxundo: 20,
 	
 	$get: function() {
 		var ta = this.textarea,
@@ -472,20 +394,18 @@ var EditTools =
 			$('tbREDO').disabled = 'true';
 		}
 	},
-
 	// *** end of UNDO functionality ***
 	
 	getSuggestions: function() {
 		var textarea = this.textarea,
-			//pos = TextArea.getCursor(textarea),
 			sel = TextArea.getSelectionCoordinates(textarea),
 			val = textarea.value,
-			searchword = "";
+			searchword = '';
 			
-		var	suggestID = 'findSuggestionMenu', fav = $('favorites'),
+		var	suggestID = 'findSuggestionMenu',
 			suggest = $(suggestID) || new Element('div',{
 				'id':suggestID 
-			}).injectTop(fav);
+			}).injectAfter($('favorites').getFirst());
 
 		/* find a partial jspwiki-link 'searchword' */
 		/* look backwards for the start of a wiki-link bracket */
@@ -497,7 +417,7 @@ var EditTools =
 				break; 
 			}
 		}
-		if(searchword =="") return suggest.hide();
+		if(searchword =='') return suggest.hide();
 
 		var searchlen = searchword.length;		
 
@@ -549,6 +469,7 @@ var EditTools =
 
 			}.bind(this)).fireEvent('click');
     },
+
 	refreshPreview: function(){
     	var	preview = $('sneakpreview');
 		this.bgcolor = this.bgcolor || preview.getStyle('background-color');
@@ -572,16 +493,22 @@ var EditTools =
 	},
 
 	onPageLoadSectionToc : function(){
-		/* initialise a new sectionToc menu */
-		this.selector = new Element('ul');
-		Wiki.makeMenuFx( 'tbOUTLINE', this.selector);
 
+		if(Wiki.prefs.get('SectionEditing') != 'on') return;
+
+		var tt = new Element('div',{'id':'toctoc'}).adopt(
+			new Element('label').setHTML('sectionediting.label'.localize()),
+			this.selector = new Element('ul')
+		).injectTop($('favorites'))
+
+		/* initialise the section selectors */
 		this.onSelectorLoad();
     
 		var cursor = location.search.match(/[&?]section=(\d+)/);
 		cursor = (cursor && cursor[1]) ? 1+cursor[1].toInt() : 0;
 		if((cursor>0) && this.textarea.sop) cursor++;
 
+		/* initialise the selected section */
 		this.onChangeSelector(cursor);
 
 		this.textarea.addEvent('change', this.onChangeTextarea.bind(this));		
@@ -652,7 +579,7 @@ var EditTools =
 					'events':{
 						'click':this.onChangeSelector.pass([this.selector.offsets.length-1],this) 
 					}
-				}).setHTML(text.trunc(48))
+				}).setHTML(text.trunc(30))
 			) 
 		);	
 	},
@@ -670,7 +597,7 @@ var EditTools =
 		ta.begin = (cursor==0) ? 0 : se[cursor];
 		ta.end = ((cursor==0) || (cursor+1 >= se.length)) ? ma.length : se[cursor+1]; 
 		ta.value = ma.substring(ta.begin,ta.end);		
-		
+		ta.focus();
 		ta.fireEvent('preview');
 	},
 
@@ -699,8 +626,6 @@ var EditTools =
 
 /* 
  * TextArea support routines 
- *
- * with buildin undo/redo functionality
  */
 //var TextArea = new Class({
 var TextArea =

@@ -112,6 +112,8 @@
 	height:1% /*hasLayout:true; --ie peekaboo/layout hack */
 }
 
+b.roundedCorners {
+}
 
 /* +++ 200 Generic stuff here +++ */
 /* refined global reset */
@@ -175,23 +177,23 @@ h2, h3, h4 {
 	line-height:1.2;
 }
 h2 { font-size: 150%; }
-h2 .editsection { font-size: 67%; }
+h2 .editsection { font-size: 67%; padding-left:1em;}
 h3 { font-size: 132%; }
-h3 .editsection { font-size: 76%; }
+h3 .editsection { font-size: 76%; padding-left:1em;}
 h4 { font-size: 116%; }
-h4 .editsection { font-size: 86%; }
+h4 .editsection { font-size: 86%; padding-left:1em;}
 .editsection {
-	padding-left:1em;
 	font-weight:normal;
 	line-height:1.2;
 }
 .editsection a {
 	padding:0.25em;
 	text-decoration:none;
-	color:grey;
+	color:grey; /*transparent*/
+	/*background:url('images/pencil.png') no-repeat center;*/
 }
 .editsection a:hover {
-	background:#eee;
+	background-color:#eee;
 	color:blue;
 }
 b, i {
@@ -655,12 +657,22 @@ a.tool:hover, .btn:hover {
 #tbREDO		{ background-position:0 0; width:auto !important;}
 #tbUNDO		{ background-position:0 -16px; width:auto !important;}
 
-/*#tbOUTLINE	{ background-position:0 0; width:auto !important;}*/
+/*#tbOUTLINE	{ background-position:0 0; width:auto !important;}
 #tbOUTLINE	{ 
 	width:auto !important;
 	background-image:url("images/book_open.png") !important; 
 }
-
+*/
+/*
+label[for="edittoc"] {
+	background-repeat:no-repeat;
+	background-position:center left;
+	xxbackground-image:url("images/editor-strip.gif");
+	background-image:url("images/book_open.png") !important; 
+	background-color:transparent;
+	padding:2px 0 2px 20px; 
+}
+*/
 #tbH1 		{ background-position:0 -192px; }
 #tbH2 		{ background-position:0 -208px; }
 #tbH3 		{ background-position:0 -224px; }
@@ -700,13 +712,29 @@ a.tool:hover, .btn:hover {
 	padding:4px;
 	width:99%;
 }
-.edittoc {
-	background:yellow;
+#toctoc {
+	margin:0.5em 0;
+}
+#toctoc label {
+	display:block;
+	margin:0;
+	padding:0.5em;
+}
+#toctoc ul {
+	border:3px solid #eee;
+	width:auto;
 	overflow:auto;
-	width:18%;
-	height:100%;
-	float:right;
-	margin-top:2.5em;
+	height:150px;
+	list-style:none;
+	margin:0;
+	padding:0;	
+}
+#toctoc a {
+	display:block;
+	padding:0 0.5em;
+	cursor:pointer;
+	overflow:hidden;
+	white-space:nowrap;	
 }
 
 /* ie6 hack ensure moremenu remains properly aligned */
@@ -929,15 +957,16 @@ a.tool:hover, .btn:hover {
 	white-space:nowrap;
 }  
 .pagination {
-	margin:.25em;
-	padding:.5em;
-	background:#d7d7d7;	 
+	margin:0.25em;
+	padding:0.5em;
+	background:#eee;
+	/*line-height:1;*/
 }
 .pagination a, .pagination .cursor {
-	padding:0 0.2em;
+	padding:0.5em;
 }
-.pagination a:hover {
-	background-color:#eee;
+.pagination .cursor, .pagination a:hover {
+	background-color:#d7d7d7;
 }
 td.changenote {
 	font-style:italic;
@@ -1099,6 +1128,7 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
 #sneakpreviewheader {
+	clear:both;
 	font-size:110%;
 	background-color:#ddd;
 	padding:0.5em;
@@ -1220,12 +1250,23 @@ body.view {
 }
 
 /* +++ 625 Table of contents plugin +++ */
-.toc {
+div.toc {
 	 width:60%; 
 	 float:left;
 	 clear:left;
 }
-.toc h4 {
+/* duplicate toc items links back to the first rendered table of contents */
+a.toc {
+	color:grey;	
+	padding:0.25em;
+}
+a.toc:hover {
+	background:#eee;
+}
+#favorites .toc {
+	width:100%;
+}
+#pagecontent .toc h4 {
 	font-size:1.4em;
 }
 .toc ul {
@@ -1436,9 +1477,9 @@ table.calendar tr.weekdays {
 	cursor:pointer;
 	font-weight:bold;
 	line-height:1.4;
-	padding:0.25em 1em;
+	padding:0.25em 1em 0.25em 0;
 }
-.accordion .toggle:hover, .togglemenu .toggle:hover {
+.accordion .toggle:hover, .togglemenu .toggle:hover, .sidemenu .toggle:hover {
 	background:#eee;
 }
 .accordion .tab {
@@ -1468,6 +1509,45 @@ table.calendar tr.weekdays {
 .tabbedAccordion {
 	padding:0.5em;
 }
+.leftAccordion, .rightAccordion {
+	margin-bottom:0.5em;	
+}
+.leftAccordion .tab, .rightAccordion .tab {
+	border:1px solid #ddd !important;
+	margin:0 0 -2px 0; /* nice trick :: -2px to reveal top and bottom borders the tabs */
+	padding:0.25em 0.5em;
+}
+.sidemenu {
+	clear:both;
+	color:gray;
+	font-weight:bold; 
+	margin-top:0.5em;
+}
+.sidemenu.left {
+	float:left;
+}
+.sidemenu.right {
+	float:right;
+}
+.sidemenu .toggle {
+	background:#f9f9f9;
+	border:1px solid #ddd;
+	cursor:pointer;
+	margin:0 0 -1px 0;
+	padding:0.25em 0.5em;
+}
+.sidemenu.left .toggle {
+	border-right:none;
+}
+.sidemenu.right .toggle {
+	border-left:none;
+}
+.sidemenu .toggle.active {
+	background:transparent;
+	cursor:default;
+	color:black;
+} 
+
 /* ie only hack no needed ?
 * html .togglemenu {
 	margin-top:1px;

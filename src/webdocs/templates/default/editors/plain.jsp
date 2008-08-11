@@ -1,6 +1,8 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.SpamFilter" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
@@ -8,7 +10,7 @@
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
         This is a plain editor for JSPWiki.
@@ -32,7 +34,17 @@
     WikiPage p = engine.getPage( clone );
     if( p != null )
     {
-      usertext = engine.getPureText( p );
+        AuthorizationManager mgr = engine.getAuthorizationManager();
+        PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+
+        try
+        {            
+          if( mgr.checkPermission( context.getWikiSession(), pp ) )
+          {
+            usertext = engine.getPureText( p );
+          }
+        }
+        catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
     }
   }
 %>
@@ -133,17 +145,6 @@
       <span>
 	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
       </span>
-      <%-- converted to popup menu by jspwiki-edit.js--%>
-	  <span>
-      <a href="#" class="tool popup" id="tbOUTLINE"><fmt:message key="edit.sections"/></a>
-      </span>
-
-<%--
-  <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
-        title="<fmt:message key='editor.plain.redo.title' />" disabled="disabled" />
-  <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
-        title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
---%>
 	  </div>
 
 	  <div id="toolextra" class="clearbox" style="display:none;">
@@ -180,10 +181,12 @@
 	  </div>
 	  <div class="clearbox" ></div>
   </div>
+
   <div>
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
          class="editor" 
           rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+  <div class="clearbox"></div>
   </div>
 
   <wiki:CheckRequestContext context="comment">

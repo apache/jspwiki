@@ -7,7 +7,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<fmt:setLocale value="${prefs['Language']}" />
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
@@ -34,10 +34,12 @@
 
   int pagesize = 20;
   int startitem = itemcount;
+
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
   /*round to start of a pagination block */
   if( startitem > -1 ) startitem = ( (startitem/pagesize) * pagesize );
+  if( startitem == pagesize ) startitem = 0;
 
 %>
 <wiki:PageExists>
@@ -165,8 +167,8 @@
 
       <wiki:HistoryIterator id="currentPage">
       <% if( ( startitem == -1 ) ||
-             (  ( currentPage.getVersion() >= startitem )
-             && ( currentPage.getVersion() < startitem + pagesize ) ) )
+             (  ( currentPage.getVersion() > startitem )
+             && ( currentPage.getVersion() <= startitem + pagesize ) ) )
          {
        %>
       <tr>
@@ -177,9 +179,9 @@
         </td>
 
         <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
-        <td>
-          <%--<fmt:formatNumber value='<%=Double.toString(currentPage.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb--%>
-          <wiki:PageSize />
+        <td style="white-space:nowrap;text-align:right;">
+          <c:set var="ff"><wiki:PageSize /></c:set>
+          <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
         </td>
         <td><wiki:Author /></td>
 
@@ -208,7 +210,7 @@
 
     </table>
     </div>
-     ${pagination}
+    ${pagination}
     <%-- } /* itemcount > 1 */ --%>
     </wiki:CheckVersion>
   </wiki:Tab>

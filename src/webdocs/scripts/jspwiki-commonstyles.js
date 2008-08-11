@@ -125,10 +125,22 @@ var Reflection = {
 var WikiAccordion = {
 
 	render: function(page,name){
-		$ES('.accordion, .tabbedAccordion',page).each( function(tt){
+
+		var toggle = new Element('div',{'class':'toggle'}),
+			bullet = new Element('div',{'class':'collapseBullet'});
+
+		$ES('.accordion, .tabbedAccordion, .leftAccordion, .rightAccordion',page).each( function(tt){
 			
 			var toggles=[], contents=[], togglemenu=false;
-			if(tt.hasClass('tabbedAccordion')) togglemenu = new Element('div',{'class':'togglemenu'}).injectBefore(tt);
+			if(tt.hasClass('tabbedAccordion')){
+				togglemenu = new Element('div',{'class':'togglemenu'}).injectBefore(tt);
+			}
+			else if(tt.hasClass('leftAccordion')){
+				togglemenu = new Element('div',{'class':'sidemenu left'}).injectBefore(tt);
+			}
+			else if(tt.hasClass('rightAccordion')){
+				togglemenu = new Element('div',{'class':'sidemenu right'}).injectBefore(tt);
+			}
 			
 			tt.getChildren().each(function(tab) {
 				if( !tab.className.test('^tab-') ) return;
@@ -136,15 +148,18 @@ var WikiAccordion = {
 				//FIXME use class to make tabs visible during printing 
 				//(i==0) ? tab.removeClass('hidetab'): tab.addClass('hidetab');
 
-				var title = tab.className.substr(4).deCamelize();
+				var title = tab.className.substr(4).deCamelize(),
+					t = toggle.clone().appendText(title);
 				if(togglemenu) {
-					toggles.push(new Element('div',{'class':'toggle'}).inject(togglemenu).appendText(title));
+					toggles.push(t.inject(togglemenu));
 				} else {
-					toggles.push(new Element('div',{'class':'toggle'}).injectBefore(tab).appendText(title));
+					toggles.push(t.adopt(bullet.clone()).injectBefore(tab));
 				}        
 				contents.push(tab.addClass('tab'));
 			});
+			
 			new Accordion(toggles, contents, {     
+				height: true,
 				alwaysHide: !togglemenu,
 				onComplete: function(){
 					var el = $(this.elements[this.previous]);
@@ -152,15 +167,20 @@ var WikiAccordion = {
 				},
 				onActive: function(toggle,content){                          
 					toggle.addClass('active'); 
-					content.addClass('active').removeClass('xhidetab'); 
+					var b = toggle.getFirst();/*bullet*/
+					if(b) b.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).setHTML('-'); /* &raquo; */
+					content.addClass('active');//.removeClass('xhidetab'); 
 				},
 				onBackground: function(toggle,content){ 
 					content.setStyle('height', content['offsetHeight']);
 					toggle.removeClass('active'); 
-					content.removeClass('active').addClass('xhidetab');
+					var b = toggle.getFirst();/*bullet*/
+					if(b) b.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).setHTML('+'); /* &laquo; */
+					content.removeClass('active');//.addClass('xhidetab');
 				} 
 			});
 		});
+		bullet=toggle=null;
 	}
 }
 Wiki.addPageRender(WikiAccordion);
@@ -188,158 +208,178 @@ Wiki.addPageRender(WikiAccordion);
 var RoundedCorners =
 {
 	/** Definition of CORNER dimensions
-	 ** Normal    Normal+Border  Small  Small+Border
-	 ** .....+++  .....BBB       ..+++  ..BBB
-	 ** ...+++++  ...BB+++       .++++  .B+++
-	 ** ..++++++  ..B+++++       +++++  B++++
-	 ** .+++++++  .B++++++
-	 ** .+++++++  .B++++++
-	 ** ++++++++  B+++++++
+	 ** Normal    Normal+Border  Small  Small+Border   Big
+	 ** .....+++  .....BBB       ..+++  ..BBB          ........+++
+	 ** ...+++++  ...BB+++       .++++  .B+++          .....++++++
+	 ** ..++++++  ..B+++++       +++++  B++++          ...++++++++
+	 ** .+++++++  .B++++++                             ..+++++++++
+	 ** .+++++++  .B++++++                             .++++++++++
+	 ** ++++++++  B+++++++                             .++++++++++
+	 **                                                .++++++++++
+	 **                                                +++++++++++
 	 **
 	 ** legend: . background, B border, + forground color
 	 **/
-	NormalTop :
+	$Top: {
+		'y' : /* normal */
 		 [ { margin: "5px", height: "1px", borderSide: "0", borderTop: "1px" }
 		 , { margin: "3px", height: "1px", borderSide: "2px" }
 		 , { margin: "2px", height: "1px", borderSide: "1px" }
 		 , { margin: "1px", height: "2px", borderSide: "1px" }
 		 ] ,
-	SmallTop :
+		's' : /* small */
 		 [ { margin: "2px", height: "1px", borderSide: "0", borderTop: "1px" }
 		 , { margin: "1px", height: "1px", borderSide: "1px" }
 		 ] ,
-	//NormalBottom: see onPageLoad()
-	//SmallBottom: see onPageLoad()
+		'b' : /* big */ 
+		 [ { margin: "8px", height: "1px", borderSide: "0", borderTop: "1px" }
+		 , { margin: "6px", height: "1px", borderSide: "2px" }
+		 , { margin: "4px", height: "1px", borderSide: "1px" }
+		 , { margin: "3px", height: "1px", borderSide: "1px" }
+		 , { margin: "2px", height: "1px", borderSide: "1px" }
+		 , { margin: "1px", height: "3px", borderSide: "1px" }
+		 ] 
+	},
 
 	/**
 	 ** Usage:
 	 ** RoundedCorners.register( "#header", ['yyyy', '00f000', '32cd32'] );
 	 **/
-	registry: {},
-	register: function( selector, parameters )
-	{
-		this.registry[selector] = parameters;
+	$registry: {},
+	register: function(selector, parms){
+		this.$registry[selector] = parms;
 		return this;
 	},
 
 	render: function(page,name){
 		/* make reverse copies for bottom definitions */
-		this.NormalBottom = this.NormalTop.slice(0).reverse();
-		this.SmallBottom  = this.SmallTop.slice(0).reverse();
-
-		for(selector in this.registry ){  // CHECK NEEDED
-			var n = $$(selector), 
-				parms = this.registry[selector];
-			this.exec( n, parms[0], parms[1], parms[2], parms[3] );
+		this.$Bottom = {};
+		for(item in this.$Top){
+			this.$Bottom[item] = this.$Top[item].slice(0).reverse();
 		}
 
-		$ES('#pagecontent *[class^=roundedCorners]',page).each(function(el){ 
-			var parms = el.className.split('-');
-			if( parms.length < 2 ) return;
-			this.exec( [el], parms[1], parms[2], parms[3], parms[4] );
+		for(selector in this.$registry){  // CHECK NEEDED
+			var n = $$(selector), 
+				p = this.$registry[selector];
+			this.exec(n, p[0], p[1], p[2], p[3]);
+		}
+
+		$ES('*[class^=roundedCorners]',page).each(function(el){ 
+			var p = el.className.split('-');
+			if(p.length >= 2) this.exec([el], p[1], p[2], p[3], p[4] );
 		},this);
 	},
 
-	exec: function( nodes, corners, color, borderColor, background ){
-
-		corners = ( corners ? corners+"nnnn": "yyyy" );
-		color   = new Color(color,'hex') || 'transparent';
-		if(borderColor) borderColor = new Color(borderColor);
-		if(background)  background  = new Color(background);
+	exec: function(nodes, corners, color, borderColor, background){
+		corners = (corners || "yyyy") + 'nnnn';
+		color = new Color(color) || 'transparent';
+		borderColor = new Color(borderColor);
+		background  = new Color(background);
 
 		var c = corners.split('');
-		/* [0]=top-left; [1]=top-right; [2]=bottom-left; [3]=bottom-right; */
+		/* c[0]=top-left; c[1]=top-right; c[2]=bottom-left; c[3]=bottom-right; */
 
-		var nodeTop = null;
-		var nodeBottom = null;
+		nodes.each(function(n){
+			if( n.$passed ) return;
+						
+			var top = this.addCorner(this.$Top, c[0], c[1], color, borderColor, n),
+				bottom = this.addCorner(this.$Bottom, c[2], c[3], color, borderColor, n);
 
-		if( c[0]+c[1] != "nn" )  //add top rounded corners
-		{
-			nodeTop = document.createElement("b") ;
-			nodeTop.className = "roundedCorners" ;
+			if(top || bottom) {
+				this.addBody(n, color, borderColor);
 
-			if( (c[0] == "y") || (c[1] == "y") )
-			{
-				this.addCorner( nodeTop, this.NormalTop, c[0], c[1], color, borderColor );
-			}
-			else if( (c[0] == "s") || (c[1] == "s") )
-			{
-				this.addCorner( nodeTop, this.SmallTop, c[0], c[1], color, borderColor );
-			}
-		}
+				if(top){
+					var p = n.getStyle('padding-top').toInt();
+					top.setStyle('margin-top', p-top.getChildren().length);
+					n.setStyle('padding-top',0);
+					top.injectTop(n);
+				}
 
-		if( c[2]+c[3] != "nn" ) //add bottom rounded corners
-		{
-			nodeBottom = document.createElement("b");
-			nodeBottom.className = "roundedCorners";
-
-			if( (c[2] == "y") || (c[3] == "y") )
-			{
-				this.addCorner( nodeBottom, this.NormalBottom, c[2], c[3], color, borderColor );
-			}
-			else if( (c[2] == "s") || (c[3] == "s") )
-			{
-				this.addCorner( nodeBottom, this.SmallBottom, c[2], c[3], color, borderColor );
-			}
-		}
-
-		if( (!nodeTop) && (!borderColor) && (!nodeBottom) ) return;
-
-		for( var i=0; i<nodes.length; i++)
-		{
-			if( !nodes[i] || nodes[i].passed ) continue;
-			
-			this.addBody(nodes[i], color, borderColor);
-			if(nodeTop   ) nodes[i].insertBefore(nodeTop.cloneNode(true), nodes[i].firstChild);
-			if(nodeBottom) nodes[i].appendChild(nodeBottom.cloneNode(true));
-			
-			nodes[i].passed=true;
-		}
-	},
-
-	addCorner: function( node, arr, left, right, color, borderColor )
-	{
-		for( var i=0; i< arr.length; i++ )
-		{
-			var n =  document.createElement("div");
-			n.style.height = arr[i].height;
-			n.style.overflow = "hidden";
-			n.style.borderWidth = "0";
-			n.style.backgroundColor = color.hex;
-
-			if( borderColor )
-			{
-				n.style.borderColor = borderColor.hex;
-				n.style.borderStyle = "solid";
-				if(arr[i].borderTop)
-				{
-					n.style.borderTopWidth = arr[i].borderTop;
-					n.style.height = "0";
+				if(bottom){
+					var p = n.getStyle('padding-bottom').toInt();
+					bottom.setStyle('margin-bottom', p-bottom.getChildren().length);
+					n.setStyle('padding-bottom',0);
+					n.adopt(bottom);
 				}
 			}
+			if(borderColor) n.setStyle('border','none');
+			n.$passed=true;
+		},this);
+		top=bottom=null;
+	},
 
-			if( left != 'n' ) n.style.marginLeft = arr[i].margin;
-			if( right != 'n' ) n.style.marginRight = arr[i].margin;
-			if( borderColor )
-			{
-				n.style.borderLeftWidth  = ( left  == 'n' ) ? "1px": arr[i].borderSide;
-				n.style.borderRightWidth = ( right == 'n' ) ? "1px": arr[i].borderSide;
+	getTemplate: function(template, corners){
+		var t = false;
+		if(corners != 'nn') for(item in template){
+			if(corners.contains(item)){
+				t = template[item];
+				break;
 			}
-			node.appendChild( n );
 		}
+		return t;
+	},
+
+	addCorner: function(corner, left, right, color, border, n){
+
+		corner = this.getTemplate(corner, left+right);
+		if(!corner) return false;
+
+		var padl = n.getStyle('padding-left').toInt(), 
+			padr = n.getStyle('padding-right').toInt();
+		var node = new Element('b',{'class':'roundedCorners','styles':{
+			'display':'block',
+			'margin-left':-1*padl,
+			'margin-right':-1*padr
+		} });
+
+		corner.each(function(line){
+			var el = new Element('div', {'styles': {
+				'height':line.height,
+				'overflow':'hidden',
+				'border-width':'0',
+				'background-color':color.hex
+			} });
+
+			if(border.hex){
+				el.setStyles({'border-color':border.hex,'border-style':'solid'});
+				
+				if(line.borderTop){ 
+					el.setStyles({'border-top-width':line.borderTop,'height':'0'});				
+				}
+			}
+			if(left != 'n') el.setStyle('margin-left', line.margin);
+			if(right != 'n') el.setStyle('margin-right', line.margin);
+
+			if(border.hex){
+				el.setStyles({
+					'border-left-width': (left  == 'n') ? '1px': line.borderSide,
+					'border-right-width': (right == 'n') ? '1px': line.borderSide
+				});
+			}
+			node.adopt(el);
+		});
+		return node;
 	},
 
 	// move all children of the node inside a DIV and set color and bordercolor
-	addBody: function( node, color, borderColor)
-	{
-		var container = new Element('div').wrapChildren(node);
+	addBody: function(n, color, border){
 
-		container.style.padding = "0 4px";
-		container.style.backgroundColor = color.hex;
-		if( borderColor )
-		{
-			container.style.borderLeft  = "1px solid " + borderColor.hex;
-			container.style.borderRight = "1px solid " + borderColor.hex;
+		var padl = n.getStyle('padding-left').toInt(),
+			padr = n.getStyle('padding-right').toInt();	
+			
+		var container = new Element('div',{'styles':{
+			'overflow':'hidden',
+			'margin-left':-1*padl,
+			'margin-right':-1*padr,
+			'padding-left':(padl==0) ? 4 : padl,
+			'padding-right':(padr==0) ? 4 : padr,
+			'background-color':color.hex
+		} }).wrapChildren(n);
+
+		if(border.hex){
+			//n.setStyles('border','');
+			var st = "1px solid " + border.hex
+			container.setStyles({'border-left':st, 'border-right': st });
 		}
 	}
 }

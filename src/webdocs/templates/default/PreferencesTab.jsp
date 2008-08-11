@@ -77,7 +77,15 @@
   </select>
   </td>
   </tr>
-
+  
+  <tr>
+  <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label></td>
+  <td>
+  <input id="prefSectionEditing" name="prefSectionEditing" 
+       type="checkbox" <c:if test='${"on" == prefs["SectionEditing"]}'>checked="checked"</c:if> ></input>
+  <fmt:message key="prefs.user.sectionediting.text"/>
+  </td>
+  </tr>
   
   <tr>
   <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>

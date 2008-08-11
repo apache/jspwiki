@@ -1,5 +1,49 @@
 2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
 
+        * 2.7.0-alpha-11 - various smaller fixes in the default template
+
+        * [JSPWIKI-302] Added the clone function to FCK.jsp. 
+        Also added permission checking on the inclusion of the cloned-page.
+
+        * [JSPWIKI-307] Redirection from UserPreferences.jsp doesn't work if "&" is included 
+        in the original page name. 
+
+        * [JSPWIKI-300] You can now also add a TableOfContents to your the LeftMenu (or Footer or ...) 
+        Although a table of contents is only rendered once on a page; multiple invocations of 
+        the plugin will now render an in-page link (#section-TOC) instead of a plain useless text.
+
+        * [JSPWIKI-306] Rendering of rounded corners has been fixed. 
+        However, the skin "PlainVanilla 1024x768" has been updated not to use the rounder-corners style anymore.
+        This style is not considered part of core jspwiki. (will probably be removed in the future) 
+        You can still use it for now (or reactivate it in the skin.js file of the skin)
+
+        * Fixed the Left/Right orientation of Favorites block (with Left Menu) 
+        for the Edit and Attachment Upload screens.
+
+        * Made some final fixes and improvements to the SECTION editing feature. 
+        It has now become a user-preference, which is by default off. (this preference is only 
+        compatible with the plain editor) With section-editing on, you will get [edit] links 
+        at each header which allows you to directly edit a particular section of a page. 
+        In edting mode, a section overview box is shown in the left-menu allowing to switch 
+        between various page section or look at the whole page.
+        
+        New localisation resources:
+          javascript.sectionediting.label=Section Overview
+          prefs.user.sectionediting=Section Editing
+          prefs.user.sectionediting.text=Enable section editing via ...
+
+        * Some minor improvements on the Accordion style to improve consistent look & feel. 
+        Now also the accordion toggles show a blue +/- icon to indicate clickable regions. 
+        Also added a %%leftAccordion and %%rightAccordion style, similar to book-tabs.
+
+        * [JSPWiki-329] the consistency and correctnes of the pagination links has been improved
+        in the Page Info screens. Now every block (also the first 1..20) show 20 items; 
+        the link titles also match with the presented block. 
+        The page size are now represented in kB, similar as attachment sizes.
+        
+
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
         * 2.7.0-alpha-10
 
         * [JSPWIKI-333] Language cookie is now set to default browser setting 

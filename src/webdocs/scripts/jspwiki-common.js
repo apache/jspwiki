@@ -20,7 +20,7 @@
  */
  
 /*
-JavaScript routines to support JSPWiki
+Javascript routines to support JSPWiki
 Since v.2.6.0
 
 Uses mootools v1.1, with following components:  
@@ -273,13 +273,27 @@ var Wiki = {
 		return (res ? res[1] : false);
 	},
 
+	//ref com.ecyrd.jspwiki.parser.MarkupParser.cleanLink()
+	//trim repeated whitespace
+	//allow letters, digits and punctuation chars: ()&+,-=._$ 
+	cleanLink: function(p){
+		return p.trim().replace(/\s+/g,' ')
+				.replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
+	},
+
 	savePrefs: function(){
-		if($('prefSkin')) this.prefs.set('SkinName', $('prefSkin').getValue());
-		if($('prefTimeZone')) this.prefs.set('TimeZone', $('prefTimeZone').getValue());
-		if($('prefTimeFormat')) this.prefs.set('DateFormat', $('prefTimeFormat').getValue());
-		if($('prefOrientation')) this.prefs.set('Orientation', $('prefOrientation').getValue());
-		if($('editor')) this.prefs.set('editor', $('editor').getValue()); 
-		if($('prefLanguage')) this.prefs.set('Language', $('prefLanguage').getValue()); 
+		var prefs = {
+			'prefSkin':'SkinName',
+			'prefTimeZone':'TimeZone',
+			'prefTimeFormat':'DateFormat',
+			'prefOrientation':'Orientation',
+			'editor':'editor',
+			'prefLanguage':'Language',
+			'prefSectionEditing':'SectionEditing'
+		};
+		for(el in prefs){
+			if($(el)) this.prefs.set(prefs[el],$(el).getValue());
+		};
 	},
 
 	changeOrientation: function(){
@@ -379,20 +393,17 @@ var Wiki = {
 	},
 
 	addEditLinks: function(){
-		if( $("previewcontent") || !this.PermissionEdit ) return;	
+		if( $("previewcontent") || !this.PermissionEdit || this.prefs.get('SectionEditing') != 'on') return;
 
 		var url = this.EditUrl;
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
+		var aa = new Element('a').setHTML('quick.edit'.localize()), 
+			ee = new Element('span',{'class':'editsection'}).adopt(aa);
+
 		$$('#pagecontent *[id^=section]').each(function(el,i){
-						
-			new Element('span',{
-				'class':'editsection'
-			}).adopt( new Element('a', {
-				'href' : url+i /*,
-				'title' : 'quick.edit.title'.localize(el.getText()) */
-				}).setHTML('quick.edit'.localize()) 
-			).inject(el);
+			aa.set({'href':url+i});
+			el.adopt(ee.clone());
 		});
 	},
 
@@ -403,9 +414,10 @@ var Wiki = {
 			method: 'post', 
 			onComplete: function(result){ 
 				var r = Json.evaluate(result,true);
-				if(!r) return;
-				if(r.result) fn(r.result);
-				else if(r.error) fn(r.error);
+				if(r){
+					if(r.result){ fn(r.result) }
+					else if(r.error){ fn(r.error) }
+				}
 			}
 		}).request();
 	}	
@@ -420,7 +432,6 @@ var Wiki = {
  **/
 var WikiSlimbox = {
 
-//	onPageLoad: function(){
 	render: function(page, name){
 		var i = 0,
 			lnk = new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
@@ -816,9 +827,9 @@ var SearchBox = {
 			  .addEvent('mouseover',function(){ Wiki.locatemenu(this.query, $('searchboxMenu') ); this.hover.start(0.9) }.bind(this));
 		
 		/* use advanced search-input on safari - experimental */
-		if(window.xwebkit){
-			q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
-		} else {
+		//if(window.webkit){
+		//	q.setProperties({type:"search",autosave:q.form.action,results:"9",placeholder:q.defaultValue});
+		//} else {
 			$('recentClear').addEvent('click', this.clear.bind(this));
 
 			this.recent = Wiki.prefs.get('RecentSearch'); if(!this.recent) return;
@@ -830,7 +841,7 @@ var SearchBox = {
 					'events': {'click':function(){ q.value = el; q.form.submit(); }}
 					}).setHTML(el).inject( new Element('li').inject(ul) );
 			});
-		}
+		//}
 	},
 
 	onPageLoadFullSearch : function(){
@@ -869,7 +880,7 @@ var SearchBox = {
 			method: 'post',
 			onComplete: function() { 
 				$('spin').hide(); 
-				GraphBar.onPageLoad(); 
+				GraphBar.render($('searchResult2')); 
 				Wiki.prefs.set('PrevQuery', q2); 
 			} 
 		}).request();
@@ -919,18 +930,40 @@ var SearchBox = {
 
 	/* navigate to url, after smart pagename handling */
 	navigate: function(url, promptText, clone, search){
-		var p = Wiki.PageName, s = this.query.value;
+		var p = Wiki.PageName,
+			defaultResult = (clone) ? p+'sbox.clone.suffix'.localize() : p,
+			s = this.query.value;			
 		if(s == this.query.defaultValue) s = '';
 
-		if(s == ''){
-			s = prompt(promptText, (clone) ? p+'sbox.clone.suffix'.localize() : p);
-			if( !s || (s == '') ) return false;
-		}
-		//if(!search) s = s.replace(/[^A-Za-z0-9._\/]/g, ''); //valid pagename FIXME
-		if( clone && (s != p) )  s += '&clone=' + p;
+		var handleResult=function(s){
+			if(s == '') return;
+			if(!search)	s = Wiki.cleanLink(s);//remove invalid chars from the pagename
+		
+			p=encodeURIComponent(p);
+			s=encodeURIComponent(s);
+			if(clone && (s != p)) s += '&clone=' + p;
 
-		if(s == '') return false; //dont exec the click
-		location.href = url.replace('__PAGEHERE__', s);
+			location.href = url.replace('__PAGEHERE__', s );
+		};
+		
+		if(s!='') handleResult(s); //????
+		//handleResult(Wiki.prompt(promptText, (clone) ? p+'sbox.clone.suffix'.localize() : p));
+		//return;
+
+		Wiki.prompt(promptText, defaultResult, handleResult.bind(this));
+
+		return;
+/*		
+		new Popup({
+			caption:'',
+			body:promptText,
+			promptDefault:(clone) ? p+'sbox.clone.suffix'.localize() : p,
+			buttons:({
+				'Cancel':Class.empty,
+				'Ok':function(result){ doNavigate(result); }
+			})
+		});
+*/
 	}
 }
 
@@ -960,6 +993,7 @@ var Color = new Class({
 	},
 	
 	initialize: function(color, type){
+		if(!color) return false;
 		type = type || (color.push ? 'rgb' : 'hex');
 		if(this._HTMLColors[color]) color = this._HTMLColors[color];
 		var rgb = (type=='rgb') ? color : color.toString().hexToRgb(true);
@@ -1334,15 +1368,16 @@ var Sortable =
 	},
 
 	guessDataType: function(rows, colidx){
-		var num=date=ip4=euro=true;
+		var num=date=ip4=euro=kmgt=true;
 		rows.each(function(r,i){
 			var v = $getText(r.cells[colidx]).clean().toLowerCase();
 			if(num)  num  = !isNaN(parseFloat(v));
 			if(date) date = !isNaN(Date.parse(v));
-			if(ip4)  ip4  = v.test("(?:\\d{1,3}\\.){3}\\d{1,3}");
-			if(euro) euro = v.test("^[£$€][0-9.,]+");
+			if(ip4)  ip4  = v.test(/(?:\\d{1,3}\\.){3}\\d{1,3}/); //169.169.0.1
+			if(euro) euro = v.test(/^[£$€][0-9.,]+/);
+			if(kmgt) kmgt = v.test(/(?:[0-9.,]+)\s*(?:[kmgt])b/);  //2 MB, 4GB, 1.2kb, 8Tb
 		});
-		return (euro) ? 'euro': (ip4) ? 'ip4': (date) ? 'date': (num) ? 'num': 'string';
+		return (kmgt) ? 'kmgt': (euro) ? 'euro': (ip4) ? 'ip4': (date) ? 'date': (num) ? 'num': 'string';
 	},
 
 	convert: function(val, datatype){
@@ -1353,7 +1388,13 @@ var Sortable =
 			case "ip4" : 
 				var octet = val.split( "." );
 				return parseInt(octet[0]) * 1000000000 + parseInt(octet[1]) * 1000000 + parseInt(octet[2]) * 1000 + parseInt(octet[3]);
-			default    : return val.toString().toLowerCase();
+			case "kmgt":
+				var v = val.toString().toLowerCase().match(/([0-9.,]+)\s*([kmgt])b/);
+				if(!v) return 0;
+				var z=v[2];
+				z = (z=='m') ? 3 : (z=='g') ? 6 : (z=='t') ? 9 : 0;
+				return v[1].toFloat()*Math.pow(10,z);
+			default: return val.toString().toLowerCase();
 		}
 	},
 
@@ -1507,7 +1548,6 @@ var Categories =
 					postBody: '&page=' + page,
 					update: popup,
 					onComplete: function(){
-//alert(Wiki.TemplateUrl + 'AJAXCategories.jsp');
 						link.setProperty('title', '').removeEvent('click');
 						wrap.addEvent('mouseover', function(e){ popfx.start(0.9); })
 							.addEvent('mouseout', function(e){ popfx.start(0); });
@@ -1578,11 +1618,10 @@ Wiki.addPageRender(ZebraTable);
  **/
 var HighlightWord =
 {
-	ReQuery: new RegExp( "(?:\\?|&)(?:q|query)=([^&]*)", "g" ),
-
 	onPageLoad: function (){
-		var q = Wiki.prefs.get('PrevQuery'); Wiki.prefs.set('PrevQuery', '');
-		if( !q && this.ReQuery.test(document.referrer)) q = RegExp.$1; 
+		var q = Wiki.prefs.get('PrevQuery');
+		Wiki.prefs.set('PrevQuery', '');
+		if( !q && document.referrer.test("(?:\\?|&)(?:q|query)=([^&]*)","g") ) q = RegExp.$1;
 		if( !q ) return;
 
 		var words = decodeURIComponent(q);
@@ -1597,7 +1636,7 @@ var HighlightWord =
 
 	// recursive tree walk matching all text nodes
 	walkDomTree: function(node){
-		if( !node ) return; /* bugfix */
+		if( !node ) return;
 		for(var nn=null, n = node.firstChild; n ; n = nn) {
 			nn = n. nextSibling; /* prefetch nextSibling cause the tree will be modified */
 			this.walkDomTree(n);
