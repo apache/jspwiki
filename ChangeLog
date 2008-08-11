@@ -36,7 +36,7 @@
         Now also the accordion toggles show a blue +/- icon to indicate clickable regions. 
         Also added a %%leftAccordion and %%rightAccordion style, similar to book-tabs.
 
-        * [JSPWiki-329] the consistency and correctnes of the pagination links has been improved
+        * [JSPWIKI-329] the consistency and correctnes of the pagination links has been improved
         in the Page Info screens. Now every block (also the first 1..20) show 20 items; 
         the link titles also match with the presented block. 
         The page size are now represented in kB, similar as attachment sizes.
