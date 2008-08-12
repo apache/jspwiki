@@ -291,7 +291,7 @@ var Wiki = {
 			'prefLanguage':'Language',
 			'prefSectionEditing':'SectionEditing'
 		};
-		for(el in prefs){
+		for(var el in prefs){
 			if($(el)) this.prefs.set(prefs[el],$(el).getValue());
 		};
 	},

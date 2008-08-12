@@ -1,5 +1,25 @@
 2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
 
+        * 2.7.0-alpha-15
+
+        * [JSPWIKI-334] IE6/IE7 javascript bug causes section editor to crash.
+        JS is now running fine, but the Section Overview box still needs some CSS
+        fixes. Ongoing.
+        Note: Section Editing only works with the plain editor.
+        
+ 
+        * [JSPWIKI-337] Missing localization in WorkflowContent.jsp.
+
+2008-08-12  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-14
+        
+        * [JSPWIKI-231] updated de translation, thanks to Florian
+        
+        * fix for  [JSPWIKI-300] required some extra changes to the JUnit test for the TableOfContents Plugin
+
+2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
+
         * 2.7.0-alpha-13
 
         * [JSPWIKI-329] Pagination link was still not correct for the block 21-40.

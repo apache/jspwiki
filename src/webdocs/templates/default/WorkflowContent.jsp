@@ -89,7 +89,7 @@
             <td>&nbsp;</td>
             <td colspan="4" class="split">
               <a href="#" 
-                title="Show or hide details"
+                title="<fmt:message key='workflow.details.title' />"
               onclick="$('decision.<c:out value="${decision.workflow.id}"/>').toggle();" >
                 <fmt:message key="workflow.details" />
               </a>
