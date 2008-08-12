@@ -34,12 +34,12 @@
 
   int pagesize = 20;
   int startitem = itemcount;
+  if( startitem == pagesize ) startitem = 0;
 
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
   /*round to start of a pagination block */
   if( startitem > -1 ) startitem = ( (startitem/pagesize) * pagesize );
-  if( startitem == pagesize ) startitem = 0;
 
 %>
 <wiki:PageExists>

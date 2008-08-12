@@ -1,3 +1,11 @@
+2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-13
+
+        * [JSPWIKI-329] Pagination link was still not correct for the block 21-40.
+        Amazing catch from Harry and Florian - txs !
+ 
+ 
 2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-12
@@ -49,7 +57,7 @@
         Now also the accordion toggles show a blue +/- icon to indicate clickable regions. 
         Also added a %%leftAccordion and %%rightAccordion style, similar to book-tabs.
 
-        * [JSPWIKI-329] the consistency and correctnes of the pagination links has been improved
+        * [JSPWIKI-329] the consistency and correctness of the pagination links has been improved
         in the Page Info screens. Now every block (also the first 1..20) show 20 items; 
         the link titles also match with the presented block. 
         The page size are now represented in kB, similar as attachment sizes.
