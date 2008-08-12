@@ -1,3 +1,131 @@
+2008-08-12 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-13
+
+        * [JSPWIKI-329] Pagination link was still not correct for the block 21-40.
+        Amazing catch from Harry and Florian - txs !
+ 
+ 
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-12
+
+        * Refactored TestEngine so that MockRountrips and other heavier sessions are
+        lazily initialized. Also added a property to AuthenticationManager that allows
+        login throttling to be switched off (for example, during unit tests). The
+        effect of these two changes cuts unit test times [on my machine] from 25 minutes
+        down to about 4.5.
+
+        * Removed reference to Stripes MockServletContext in WebContainerAuthorizer.
+        It should not have been there.
+
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-11 - various smaller fixes in the default template
+
+        * [JSPWIKI-302] Added the clone function to FCK.jsp. 
+        Also added permission checking on the inclusion of the cloned-page.
+
+        * [JSPWIKI-307] Redirection from UserPreferences.jsp doesn't work if "&" is included 
+        in the original page name. 
+
+        * [JSPWIKI-300] You can now also add a TableOfContents to your the LeftMenu (or Footer or ...) 
+        Although a table of contents is only rendered once on a page; multiple invocations of 
+        the plugin will now render an in-page link (#section-TOC) instead of a plain useless text.
+
+        * [JSPWIKI-306] Rendering of rounded corners has been fixed. 
+        However, the skin "PlainVanilla 1024x768" has been updated not to use the rounder-corners style anymore.
+        This style is not considered part of core jspwiki. (will probably be removed in the future) 
+        You can still use it for now (or reactivate it in the skin.js file of the skin)
+
+        * Fixed the Left/Right orientation of Favorites block (with Left Menu) 
+        for the Edit and Attachment Upload screens.
+
+        * Made some final fixes and improvements to the SECTION editing feature. 
+        It has now become a user-preference, which is by default off. (this preference is only 
+        compatible with the plain editor) With section-editing on, you will get [edit] links 
+        at each header which allows you to directly edit a particular section of a page. 
+        In edting mode, a section overview box is shown in the left-menu allowing to switch 
+        between various page section or look at the whole page.
+        
+        New localisation resources:
+          javascript.sectionediting.label=Section Overview
+          prefs.user.sectionediting=Section Editing
+          prefs.user.sectionediting.text=Enable section editing via ...
+
+        * Some minor improvements on the Accordion style to improve consistent look & feel. 
+        Now also the accordion toggles show a blue +/- icon to indicate clickable regions. 
+        Also added a %%leftAccordion and %%rightAccordion style, similar to book-tabs.
+
+        * [JSPWIKI-329] the consistency and correctness of the pagination links has been improved
+        in the Page Info screens. Now every block (also the first 1..20) show 20 items; 
+        the link titles also match with the presented block. 
+        The page size are now represented in kB, similar as attachment sizes.
+        
+
+2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-10
+
+        * [JSPWIKI-333] Language cookie is now set to default browser setting 
+        when initializing the Preferences. Previously this was not required as long as the  
+        user preferences were not modified by the user. Don't know why this stopped working.
+        
+
+2008-08-11  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-319: added extra checking on Attchment Change Notes
+
+2008-08-10  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-9
+        
+        * JSPWIKI-320: removed all httpRequest.setCharacterEncoding() calls (except in WikiServletFilter)
+        because they were called too late, reported by Clay Atkins
+        
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-8
+        
+        * JSPWIKI-316: fixed SecurityConfig.jsp so that it compiles, and added
+        some sensible checks for the new JAAS scheme.
+
+        * Fixed NPE in RSSImageLinkTag, which erroneously assumes that RSSGenerator
+        is always available. However, it might not be if RSS feeds are disabled.
+        
+        * Fixed broken Ant 'war-tomcat' target.
+
+2008-08-03  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-7
+
+		* JSPWiki-231: added Italian localisation, thanks to Luca Gilardoni
+		
+		* changed the schemaLocation in web.xml, reported by Thomas van der Pol
+        
+2008-08-01  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-321: remove unmappable chars from 4 sources (causing warnings during build)
+
+        * JSPWIKI-312: small patch to build.xml, quotes around arguments of compressjs,
+          reported by Florian Holeczek.
+
+2008-07-31  Harry Metske <harry.metske@gmail.com>
+
+		* no version bump
+        
+        * JSPWIKI-317: Fixed InvalidDiff in ExternalDiffProvider, thanks to Jan Spitalnik.
+
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-6
+
+        * JSPWIKI-326: Fixed NPE in ProfanityFilter.
+
 2008-07-16  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-5
@@ -549,7 +677,7 @@
         start with a dot.  This is done in a fully backwards compatible manner,
         so no changes to the repo is needed.
         
-        * [JSPWIKI-100] Added two new parameters to ReferringPagesPlugin,
+        * [JSPWIKI-100] Added two new parameters to ReferringPagesPlugin,
         UnusedPagesPlugin, ReferredPagesPlugin, and UndefinedPagesPlugin:
         show and showLastModified.  Thanks to Harry Metske for the patch!
 
@@ -1076,7 +1204,7 @@
         
         * [JSPWIKI-95]: Links to anchors with blanks work now.  This introduces
         a tiny, very tiny compatibility issue with links to headings changing
-        case in some cases.  Reported by Jürgen Weber.
+        case in some cases.  Reported by JÃ¼gen Weber.
         
         * [JSPWIKI-125]: FilterManager now checks for version compatibility 
         of PageFilters by looking into the ini/jspwiki_module.xml.  This was a 

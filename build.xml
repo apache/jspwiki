@@ -400,6 +400,7 @@
        -->
        <webinf dir="etc">
          <include name="dtd/**" />
+         <include name="jsp/**" />
          <include name="commons-logging.properties" />
          <include name="jspwiki.policy" />
          <include name="jspwiki.properties" />
@@ -428,7 +429,7 @@
             <java jar="tests/lib/yuicompressor-2.3.3.jar"
                   output="${tmpdir}/compress/@{src}"
                   fork="true">
-                <arg line="${code.src}/@{src} @{args}" />
+                <arg line="'${code.src}/@{src}' @{args}" />
             </java>
         </sequential>
     </macrodef>
@@ -993,6 +994,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <taskdef classname="org.apache.jasper.JspC" name="jasper2">
       <classpath>
         <path refid="tomcat.classpath" />
+        <path refid="path.base" />
       </classpath>
     </taskdef>
     <jasper2
