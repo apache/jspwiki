@@ -56,7 +56,7 @@ public class TableOfContentsTest extends TestCase
         
         // FIXME: The <p> should not be here.
         assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
-                      "<h4>Table of Contents</h4>\n"+
+                      "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                       "<ul>\n"+
                       "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
                       "</ul>\n</div>\n</div>\n\n</p>"+
@@ -75,7 +75,7 @@ public class TableOfContentsTest extends TestCase
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
-                "<h4>Table of Contents</h4>\n"+
+                "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                 "<ul>\n"+
                 "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
                 "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
@@ -100,7 +100,7 @@ public class TableOfContentsTest extends TestCase
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
-        "<h4>Table of Contents</h4>\n"+
+        "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
@@ -135,7 +135,7 @@ public class TableOfContentsTest extends TestCase
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
-        "<h4>Table of Contents</h4>\n"+
+        "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading0\">3.1 Subheading0</a></li>\n"+
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">4 Heading bar</a></li>\n"+
@@ -172,7 +172,7 @@ public class TableOfContentsTest extends TestCase
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
-        "<h4>Table of Contents</h4>\n"+
+        "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">FooBar-3 Heading bar</a></li>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">FooBar-3.1 Subheading</a></li>\n"+
