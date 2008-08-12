@@ -1,3 +1,16 @@
+2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-12
+
+        * Refactored TestEngine so that MockRountrips and other heavier sessions are
+        lazily initialized. Also added a property to AuthenticationManager that allows
+        login throttling to be switched off (for example, during unit tests). The
+        effect of these two changes cuts unit test times [on my machine] from 25 minutes
+        down to about 4.5.
+
+        * Removed reference to Stripes MockServletContext in WebContainerAuthorizer.
+        It should not have been there.
+
 2008-08-11 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-11 - various smaller fixes in the default template
