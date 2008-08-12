@@ -34,7 +34,6 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  you would call makeURL( WikiContext.EDIT, "TextFormattingRules", false, null );
  *  
  *  @since 2.2
- *  @deprecated
  */
 public interface URLConstructor
 {
@@ -60,7 +59,6 @@ public interface URLConstructor
      *  @param parameters An URL parameter string (these must be URL-encoded, and separated with &amp;amp;)
      *  @return An URL pointing to the resource.  Must never return null - throw an InternalWikiException
      *          if something goes wrong.
-     *  @deprecated use the Stripes classes to make URLs
      */
     public String makeURL( String context,
                            String name,
@@ -79,7 +77,6 @@ public interface URLConstructor
      *  @param request The HTTP request that was used when coming here
      *  @param encoding The encoding with which the request was made (UTF-8 or ISO-8859-1).
      *  @return This method must return the name of the resource.
-     *  @deprecated callers should use Stripes ActionBean bindings to extract the WIkiPage
      *  @throws IOException If parsing failes
      */
     public String parsePage( String context,
@@ -94,7 +91,6 @@ public interface URLConstructor
      * @param request The HTTP Request that was used to end up in this page.
      * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
      *         JSPWiki will figure out the page.
-     * @deprecated callers should 
      */
     public String getForwardPage( HttpServletRequest request );
 }

@@ -142,7 +142,7 @@ public class WikiJSPFilter extends WikiServletFilter
     /**
      * Goes through all types and writes the appropriate response.
      * 
-     * @param wikiContext The action bean for the current context
+     * @param wikiContext The usual processing context
      * @param string The source string
      * @return The modified string with all the insertions in place.
      */
@@ -188,7 +188,7 @@ public class WikiJSPFilter extends WikiServletFilter
      *  were requested by any plugins or other components for this particular
      *  type.
      *  
-     *  @param wikiContext The action bean for the current context
+     *  @param wikiContext The usual processing context
      *  @param string The source string
      *  @param type Type identifier for insertion
      *  @return The filtered string.

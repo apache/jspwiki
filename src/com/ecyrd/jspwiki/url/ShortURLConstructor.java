@@ -38,7 +38,6 @@ import com.ecyrd.jspwiki.WikiEngine;
  *
  *
  *  @since 2.2
- *  @deprecated
  */
 public class ShortURLConstructor
     extends DefaultURLConstructor
@@ -171,7 +170,6 @@ public class ShortURLConstructor
 
     /**
      *  {@inheritDoc}
-     *  @deprecated
      */
     public String makeURL( String context,
                            String name,
@@ -202,14 +200,12 @@ public class ShortURLConstructor
 
     /**
      * {@inheritDoc}
-     *  @deprecated
      */
     public String parsePage( String context,
                              HttpServletRequest request,
                              String encoding )
         throws UnsupportedEncodingException
     {
-        request.setCharacterEncoding( encoding );
         String pagereq = request.getParameter( "page" );
 
         if( pagereq == null )
@@ -222,7 +218,6 @@ public class ShortURLConstructor
 
     /**
      *  {@inheritDoc}
-     *  @deprecated
      */
     public String getForwardPage( HttpServletRequest req )
     {

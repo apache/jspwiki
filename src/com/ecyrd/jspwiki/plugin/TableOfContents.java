@@ -150,7 +150,8 @@ public class TableOfContents
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
-            return rb.getString("tableofcontents.title");
+            //return rb.getString("tableofcontents.title");
+            return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
 
         StringBuffer sb = new StringBuffer();
 
@@ -158,14 +159,18 @@ public class TableOfContents
         sb.append("<div class=\"collapsebox\">\n");
 
         String title = (String) params.get(PARAM_TITLE);
+        sb.append("<h4 id=\"section-TOC\">");
         if( title != null )
         {
-            sb.append("<h4>"+TextUtil.replaceEntities(title)+"</h4>\n");
+            //sb.append("<h4>"+TextUtil.replaceEntities(title)+"</h4>\n");
+            sb.append(TextUtil.replaceEntities(title));
         }
         else
         {
-            sb.append("<h4>"+rb.getString("tableofcontents.title")+"</h4>\n");
+            //sb.append("<h4>"+rb.getString("tableofcontents.title")+"</h4>\n");
+            sb.append(rb.getString("tableofcontents.title"));
         }
+        sb.append("</h4>\n");
 
         // should we use an ordered list?
         m_usingNumberedList = false;

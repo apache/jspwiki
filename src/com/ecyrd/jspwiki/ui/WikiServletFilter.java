@@ -118,7 +118,13 @@ public class WikiServletFilter implements Filter
             return;
         }   
         
-        if( m_engine.getBaseURL().length() == 0 && !((HttpServletRequest)request).getRequestURI().endsWith("Install.jsp") )
+        // If we haven't done so, wrap the request
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        
+        // Set the character encoding
+        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
+        
+        if( m_engine.getBaseURL().length() == 0 && !httpRequest.getRequestURI().endsWith("Install.jsp") )
         {
             PrintWriter out = response.getWriter();
             
@@ -135,8 +141,6 @@ public class WikiServletFilter implements Filter
             return;
         }
         
-        // If we haven't done so, wrap the request and run the security filter
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
         if ( !isWrapped( request ) )
         {
             // Prepare the WikiSession
@@ -155,9 +159,6 @@ public class WikiServletFilter implements Filter
                 throw new ServletException( e );
             }
         }
-        
-        // Set the character encoding
-        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
 
         try
         {

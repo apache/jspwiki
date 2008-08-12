@@ -31,8 +31,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sourceforge.stripes.mock.MockServletContext;
-
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -389,12 +387,6 @@ public class WebContainerAuthorizer implements WebAuthorizer
         else
         {
             url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
-            // Hack in case we're using Stripes mock servlet context
-            // See bug [STS-376] at http://stripesframework.org/jira/browse/STS-376. Will be fixed in Stripes 1.5.
-            if ( url == null && m_engine.getServletContext() instanceof MockServletContext )
-            {
-                url = m_engine.getServletContext().getResource( "WEB-INF/web.xml" );
-            }
             if( url != null )
                 log.info( "Examining " + url.toExternalForm() );
         }

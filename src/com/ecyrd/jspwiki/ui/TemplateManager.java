@@ -418,7 +418,7 @@ public class TemplateManager
      * List all installed i18n language properties
      * 
      * @param pageContext
-     * @return map of installed Languages (with help of Juan Pablo Santos Rodr’guez)
+     * @return map of installed Languages (with help of Juan Pablo Santos Rodriguez)
      * @since 2.7.x
      */
     public Map listLanguages(PageContext pageContext)

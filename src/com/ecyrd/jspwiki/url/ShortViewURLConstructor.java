@@ -33,7 +33,6 @@ import com.ecyrd.jspwiki.WikiEngine;
  * 
  *
  *  @since 2.2
- *  @deprecated
  */
 public class ShortViewURLConstructor 
     extends ShortURLConstructor
@@ -69,7 +68,6 @@ public class ShortViewURLConstructor
 
     /**
      * {@inheritDoc}
-     *  @deprecated
      */
     public String makeURL( String context,
                            String name,
@@ -104,7 +102,6 @@ public class ShortViewURLConstructor
      *   
      * @param request The HTTP Request that was used to end up in this page.
      * @return always returns "Wiki.jsp"
-     *  @deprecated
      */
     public String getForwardPage( HttpServletRequest request )
     {        

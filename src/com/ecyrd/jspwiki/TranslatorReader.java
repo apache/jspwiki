@@ -264,7 +264,7 @@ public class TranslatorReader extends Reader
 
     private StringReader m_data;
     
-    /** {@inheritDoc} */
+    /** {@inheritDoc} */
     public int read()
         throws IOException
     {
@@ -280,21 +280,21 @@ public class TranslatorReader extends Reader
         return m_data.read();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} */
     public int read( char[] buf, int off, int len )
         throws IOException
     {
         return m_data.read( buf, off, len );
     }
     
-    /** {@inheritDoc} */
+    /** {@inheritDoc} */
     public boolean ready()
         throws IOException
     {
         return m_data.ready();
     }
     
-    /** {@inheritDoc} */
+    /** {@inheritDoc} */
     public void close()
     {
     }

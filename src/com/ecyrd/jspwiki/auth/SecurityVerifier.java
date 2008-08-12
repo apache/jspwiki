@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.security.auth.Subject;
+import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -583,11 +584,10 @@ public final class SecurityVerifier
     }
 
     /**
-     * Verfies the JAAS configuration. The configuration is valid if value of
-     * the system property <code>java.security.auth.login.config</code>
-     * resolves to an existing file, and we can find the JAAS login
-     * configurations for <code>JSPWiki-container</code> and
-     * <code>JSPWiki-custom</code>.
+     * Verfies the JAAS configuration. The configuration is valid if value of the
+     * <code>jspwiki.properties<code> property
+     * {@value com.ecyrd.jspwiki.auth.AuthenticationManager#PROP_LOGIN_MODULE}
+     * resolves to a valid class on the classpath.
      */
     protected final void verifyJaas()
     {
@@ -596,12 +596,48 @@ public final class SecurityVerifier
         if ( !authMgr.isJAASAuthorized() )
         {
             m_session.addMessage( ERROR_JAAS, "JSPWiki's JAAS-based authentication " +
-                    "and authorization system is turned off (your <code>jspwiki.properties</code> " +
+                    "and authorization system is turned off (your jspwiki.properties file " +
                     "contains the setting 'jspwiki.security = container'. This " +
                     "setting disables authorization checks and is meant for testing " +
                     "and troubleshooting only. The test results on this page will not " +
                     "be reliable as a result. You should set this to 'jaas' " +
                     "so that security works properly." );
+        }
+        
+        // Verify that the specified JAAS moduie corresponds to a class we can load successfully.
+        String jaasClass = m_engine.getWikiProperties().getProperty( AuthenticationManager.PROP_LOGIN_MODULE );
+        if ( jaasClass == null || jaasClass.length() == 0 )
+        {
+            m_session.addMessage( ERROR_JAAS, "The value of the '" + AuthenticationManager.PROP_LOGIN_MODULE +
+                    "' property was null or blank. This is a fatal error. This value should be set to a valid LoginModule implementation " +
+                    "on the classpath." );
+            return;
+        }
+        
+        // See if we can find the LoginModule on the classpath
+        Class c = null;
+        try
+        {
+            m_session.addMessage( INFO_JAAS, "The property '" + AuthenticationManager.PROP_LOGIN_MODULE +
+                                  "' specified the class '" + jaasClass + ".'" );
+            c = Class.forName( jaasClass );
+        }
+        catch( ClassNotFoundException e )
+        {
+            m_session.addMessage( ERROR_JAAS, "We could not find the the class '" + jaasClass + "' on the " +
+            "classpath. This is fatal error." );
+        }
+        
+        // Is the specified class actually a LoginModule?
+        if ( LoginModule.class.isAssignableFrom( c ) )
+        {
+            m_session.addMessage( INFO_JAAS, "We found the the class '" + jaasClass + "' on the " +
+                    "classpath, and it is a LoginModule implementation. Good!" );
+        }
+        else
+        {
+            m_session.addMessage( ERROR_JAAS, "We found the the class '" + jaasClass + "' on the " +
+            "classpath, but it does not seem to be LoginModule implementation! This is fatal error." );
         }
     }
 
@@ -697,8 +733,9 @@ public final class SecurityVerifier
             KeyStore ks = policy.getKeyStore();
             if ( ks == null )
             {
-                m_session.addMessage( ERROR_POLICY,
-                    "Policy file does not have a keystore... at least not one that we can locate." );
+                m_session.addMessage( WARNING_POLICY,
+                    "Policy file does not have a keystore... at least not one that we can locate. If your policy file " +
+                    "does not contain any 'signedBy' blocks, this is probably ok." );
             }
             else
             {

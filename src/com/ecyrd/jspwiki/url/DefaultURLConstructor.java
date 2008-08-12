@@ -41,7 +41,6 @@ import com.ecyrd.jspwiki.WikiEngine;
  *  WikiContext.VIEW points at "Wiki.jsp", etc.
  *  
  *  @since 2.2
- *  @deprecated
  */
 public class DefaultURLConstructor
     implements URLConstructor
@@ -203,7 +202,6 @@ public class DefaultURLConstructor
      *  @param parameters If null or empty, no parameters are added.
      *  
      *  {@inheritDoc}
-     *  @deprecated
      */
     public String makeURL( String context,
                            String name,
@@ -237,14 +235,12 @@ public class DefaultURLConstructor
      *  request.
      *  
      *  {@inheritDoc}
-     *  @deprecated
      */
     public String parsePage( String context,
                              HttpServletRequest request,
                              String encoding )
         throws UnsupportedEncodingException
     {
-        request.setCharacterEncoding( encoding );
         String pagereq = request.getParameter( "page" );
 
         if( context.equals(WikiContext.ATTACH) )
@@ -335,7 +331,6 @@ public class DefaultURLConstructor
      * @param request The HTTP Request that was used to end up in this page.
      * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name,
      *         JSPWiki will figure out the page.
-     *  @deprecated
      */
     public String getForwardPage( HttpServletRequest request )
     {
