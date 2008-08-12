@@ -5,7 +5,6 @@ import java.io.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
@@ -14,7 +13,10 @@ import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.auth.AuthenticationManager;
+import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.providers.*;
 
 /**
@@ -24,19 +26,27 @@ public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
 
-    private HttpSession m_adminSession;
-    private HttpSession m_janneSession;
-    private WikiSession m_adminWikiSession;
-    private WikiSession m_janneWikiSession;
-    private WikiSession m_guestWikiSession;
+    private WikiSession m_adminWikiSession = null;
+    private WikiSession m_janneWikiSession = null;
+    private WikiSession m_guestWikiSession = null;
 
     /**
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
      * @return the wiki session
+     * @throws WikiSecurityException 
      */
-    public WikiSession adminSession()
+    public WikiSession adminSession() throws WikiSecurityException
     {
+        if ( m_adminWikiSession == null )
+        {
+            // Set up long-running admin session
+            HttpServletRequest request = newHttpRequest();
+            m_adminWikiSession = WikiSession.getWikiSession( this, request );
+            this.getAuthenticationManager().login( m_adminWikiSession,
+                                                   Users.ADMIN,
+                                                   Users.ADMIN_PASS );
+        }
         return m_adminWikiSession;
     }
 
@@ -47,6 +57,12 @@ public class TestEngine extends WikiEngine
      */
     public WikiSession guestSession()
     {
+        if ( m_guestWikiSession == null )
+        {
+            // Set up guest session
+            HttpServletRequest request = newHttpRequest();
+            m_guestWikiSession = WikiSession.getWikiSession( this, request );
+        }
         return m_guestWikiSession;
     }
 
@@ -54,40 +70,30 @@ public class TestEngine extends WikiEngine
      * Creates WikiSession with the privileges of the Janne.
      * For testing purposes, obviously.
      * @return the wiki session
+     * @throws WikiSecurityException 
      */
-    public WikiSession janneSession()
+    public WikiSession janneSession() throws WikiSecurityException
     {
+        if ( m_janneWikiSession == null )
+        {
+            // Set up a test Janne session
+            HttpServletRequest request = newHttpRequest();
+            m_janneWikiSession = WikiSession.getWikiSession( this, request );
+            this.getAuthenticationManager().login( m_janneWikiSession,
+                    Users.JANNE,
+                    Users.JANNE_PASS );
+        }
         return m_janneWikiSession;
     }
 
     public TestEngine( Properties props )
         throws WikiException
     {
-        super( new MockServletContext( "test" ), "test", props );
+        super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
         
         // Stash the WikiEngine in the servlet context
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
-
-        // Set up long-running admin session
-        HttpServletRequest request = newHttpRequest();
-        m_adminWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_adminWikiSession,
-                Users.ADMIN,
-                Users.ADMIN_PASS );
-        m_adminSession = request.getSession();
-
-        // Set up a test Janne session
-        request = newHttpRequest();
-        m_janneWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_janneWikiSession,
-                Users.JANNE,
-                Users.JANNE_PASS );
-        m_janneSession = request.getSession();
-
-        // Set up guest session
-        request = newHttpRequest();
-        m_guestWikiSession = WikiSession.getWikiSession( this, request );
     }
     
     /**
@@ -285,8 +291,11 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our admin session
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
-        request.setSession( m_adminSession );
+        MockHttpServletRequest request = newHttpRequest();
+        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession,
+                Users.ADMIN,
+                Users.ADMIN_PASS );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
@@ -298,8 +307,11 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our Janne session
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
-        request.setSession( m_janneSession );
+        MockHttpServletRequest request = newHttpRequest();
+        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession,
+                Users.JANNE,
+                Users.JANNE_PASS );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
@@ -318,4 +330,16 @@ public class TestEngine extends WikiEngine
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Supplies a clean set of test properties for the TestEngine constructor.
+     * @param props the properties supplied by callers
+     * @return the corrected/clean properties
+     */
+    private static Properties cleanTestProps( Properties props )
+    {
+        props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+        return props;
+    }
+
 }
