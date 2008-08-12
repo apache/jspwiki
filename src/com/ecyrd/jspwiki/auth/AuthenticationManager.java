@@ -97,6 +97,9 @@ public final class AuthenticationManager
     /** Value specifying that the user wants to use the built-in JAAS-based system */
     public static final String                SECURITY_JAAS     = "jaas";
 
+    /** Whether logins should be throttled to limit brute-forcing attempts. Defaults to true. */
+    public static final String                 PROP_LOGIN_THROTTLING = "jspwiki.login.throttling";
+
     protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
 
     /** Prefix for LoginModule options key/value pairs. */
@@ -133,6 +136,8 @@ public final class AuthenticationManager
 
     /** Static Boolean for lazily-initializing the "allows assertions" flag */
     private boolean                     m_allowsCookieAssertions  = true;
+
+    private boolean                     m_throttleLogins = true;
 
     /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
     private boolean                     m_allowsCookieAuthentication = false;
@@ -175,6 +180,11 @@ public final class AuthenticationManager
                                                                     PROP_ALLOW_COOKIE_AUTH,
                                                                     false );
         
+        // Should we throttle logins? (default: yes)
+        m_throttleLogins = TextUtil.getBooleanProperty( props,
+                                                        PROP_LOGIN_THROTTLING,
+                                                        true );
+
         // Look up the LoginModule class
         String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
         try
@@ -348,7 +358,11 @@ public final class AuthenticationManager
             return false;
         }
 
-        delayLogin(username);
+        // Protect against brute-force password guessing if configured to do so
+        if ( m_throttleLogins )
+        {
+            delayLogin(username);
+        }
         
         UserManager userMgr = m_engine.getUserManager();
         CallbackHandler handler = new WikiCallbackHandler(
