@@ -17,31 +17,13 @@
     <Style name="Comment Box" element="div" >
         <Attribute name="class" value="commentbox" />
     </Style>
+    <Style name="Quote" element="div" >
+        <Attribute name="class" value="quote" />
+    </Style>
     <Style name="Left-to-right text" element="div" >
         <Attribute name="class" value="ltr" />
     </Style>
     <Style name="Right-to-left text" element="div" >
         <Attribute name="class" value="rtl" />
-    </Style>
-    <Style name="Strikethrough" element="span" >
-        <Attribute name="class" value="strike" />
-    </Style>
-    <Style name="Superscript" element="span" >
-        <Attribute name="class" value="sup" />
-    </Style>
-    <Style name="Subscript" element="span" >
-        <Attribute name="class" value="sub" />
-    </Style>
-    <Style name="Centered" element="div" >
-        <Attribute name="style" value="text-align:center" />
-    </Style>
-    <Style name="Align Left" element="div" >
-        <Attribute name="style" value="text-align:left" />
-    </Style>
-    <Style name="Align Right" element="div" >
-        <Attribute name="style" value="text-align:right" />
-    </Style>
-    <Style name="Justify" element="div" >
-        <Attribute name="style" value="text-align:justify" />
     </Style>
 </Styles>

@@ -13,7 +13,6 @@
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
-
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
@@ -82,7 +81,7 @@
    </script>
 </head>
 <body onload="i18nAsirra()">
-<div style="margin:8px">
+<div style="margin: 8px">
    <p><fmt:message key="captcha.description" /></p>
 
    <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">

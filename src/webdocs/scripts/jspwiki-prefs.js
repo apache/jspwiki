@@ -1,14 +1,51 @@
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+ */
+ 
 /**
- ** jspwiki preferences support routines
- ** based on brushedGroup.js
- ** Dirk Frederickx Jun 07
- ** Uses mootools library
+ ** Javascript routines to support JSPWiki UserPreferences
+ ** since v.2.6.0
+ ** uses mootools v1.1
  **/
 
+var WikiPreferences =
+{
+	onPageLoad: function(){
+
+		window.onbeforeunload = (function(){
+
+			if( $('prefs').getFormElements().some(function(el){
+				return (el.getValue() != el.getDefaultValue());  
+			}) ) return "prefs.areyousure".localize();
+
+		}).bind(this);
+ 	}
+}
+
+window.addEvent('load', WikiPreferences.onPageLoad.bind(WikiPreferences) );
+
+// refactor me
 var WikiGroup =
 {
 	MembersID   : "membersfield",
-	GroupTltID  : "grouptemplate",
+	//GroupTltID  : "grouptemplate",
 	GroupID     : "groupfield",
 	NewGroupID  : "newgroup",
 	GroupInfoID : "groupinfo",
@@ -24,11 +61,8 @@ var WikiGroup =
 	putGroup: function(group, members, groupInfo, isSelected){
 		this.groups[group] = { members: members, groupInfo: groupInfo };
 
-		var g = $(this.GroupTltID);
-		var gg = g.clone().setHTML(group);
-		gg.id = '';
-		g.parentNode.appendChild(gg);
-		$(gg).show();
+		var g = $("grouptemplate");
+			gg = g.clone().removeProperty('id').setHTML(group).inject(g.getParent()).show();
 
 		if(isSelected || !this.cursor) this.onMouseOverGroup(gg);
 	} ,

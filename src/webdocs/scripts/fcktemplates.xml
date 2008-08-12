@@ -62,6 +62,47 @@
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                             </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            ]]>
+        </Html>
+    </Template>
+
+        <Template title="Zebra Table">
+        <Description>
+        Insert a new table that has alternating background colors for each row.
+        </Description>
+        <Html>
+            <![CDATA[
+                <div class="zebra-table">
+                    <table border="1" class="wikitable">
+                        <tbody>
                             <tr class="odd">
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
@@ -87,6 +128,16 @@
                                 <td>&nbsp;</td>
                                 <td>&nbsp;</td>
                             </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr class="odd">
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>                            
                         </tbody>
                     </table>
                 </div>
