@@ -5,6 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
@@ -92,7 +93,7 @@
     <%
       String name = att.getFileName();
       int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "";
+      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
 
       String sname = name;
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
@@ -101,12 +102,12 @@
       <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
       <td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>
       <td style="white-space:nowrap;text-align:right;">
-        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
       <td style="text-align:center;">
         <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title'/>"><wiki:PageVersion /></a>
       </td>
-	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
+	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
       <td><wiki:Author /></td>
       <wiki:Permission permission="delete">
       <td>
@@ -118,7 +119,7 @@
       </wiki:Permission>
       <td class="changenote">
       <%
-         String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
+         String changeNote = TextUtil.replaceEntities((String)att.getAttribute(WikiPage.CHANGENOTE));
          if( changeNote != null ) {
          %><%=changeNote%><%
          }

@@ -6,6 +6,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
     String postURL = "";
@@ -130,6 +131,7 @@
       <td colspan="2" class="formhelp">
         <wiki:Messages div="error" topic="resetpw"
                     prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+        <wiki:Messages div="information" topic="resetpwok" />
       </td>
     </tr>
     </c:if>
@@ -186,7 +188,7 @@
   <wiki:NoSuchPage page="LoginHelp">
   <div class="error">
     <fmt:message key="login.loginhelpmissing">
-       <fmt:param><wiki:EditLink page="LoginPageHelp">LoginHelp</wiki:EditLink></fmt:param>
+       <fmt:param><wiki:EditLink page="LoginHelp">LoginHelp</wiki:EditLink></fmt:param>
     </fmt:message>
   </div>
   </wiki:NoSuchPage>

@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
 <%-- Powered by jswpwiki-common.js//SearchBox --%>
@@ -14,7 +15,7 @@
            type="text" value="<fmt:message key='sbox.search.submit'/>"
            name="query" id="query"
            size="20" 
-      accesskey="f"></input>
+      accesskey="f" />
   <button type="submit"
   		 name="searchSubmit" id="searchSubmit"
   		value="<fmt:message key='find.submit.go'/>"

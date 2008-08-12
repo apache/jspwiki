@@ -3,9 +3,10 @@
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <% 
-   WikiContext context = WikiContext.findContext( pageContext ); 
+  WikiContext context = WikiContext.findContext( pageContext ); 
   TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
 %>
 

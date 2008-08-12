@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <script language="JavaScript">
   function SubmitOutcomeIfSelected(selectId) 
@@ -79,7 +80,7 @@
           <td align="left"><c:out value="${decision.owner.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
-            <fmt:formatDate value="${decision.startTime}" pattern="${prefs['DateFormat']}" />
+            <fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 		  </td>
         </tr>
         <!-- Hidden row with Decision details, if there are any -->
@@ -156,7 +157,7 @@
           <td align="left"><c:out value="${workflow.currentActor.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
-            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs['DateFormat']}" />
+            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
           </td>
         </tr>
         <% i++; %>

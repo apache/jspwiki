@@ -7,6 +7,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext(pageContext);
@@ -33,6 +34,8 @@
 
   int pagesize = 20;
   int startitem = itemcount;
+  if( startitem == pagesize ) startitem = 0;
+
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
   /*round to start of a pagination block */
@@ -65,21 +68,13 @@
     <fmt:param>
       <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />"
         title="<fmt:message key='info.pagediff.title' />" >
-        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
+        <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
       </a>
     </fmt:param>
     <fmt:param><wiki:Author /></fmt:param>
   </fmt:message>
 
-  <a href="<wiki:Link format='url' jsp='rss.jsp'>
-             <wiki:Param name='page' value='<%=wikiPage.getName()%>'/>
-             <wiki:Param name='mode' value='wiki'/>
-           </wiki:Link>"
-    title="<fmt:message key='info.rsspagefeed.title'>
-             <fmt:param><wiki:PageName /></fmt:param>
-           </fmt:message>" >
-    <img src="<wiki:Link jsp='images/xml.png' format='url'/>" alt="[RSS]"/>
-  </a>
+  <wiki:RSSImageLink mode="wiki"/>
   </p>
 
   <wiki:CheckVersion mode="notfirst">
@@ -87,7 +82,7 @@
     <fmt:message key='info.createdon'>
       <fmt:param>
         <wiki:Link version="1">
-          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs['DateFormat']}" />
+          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </wiki:Link>
       </fmt:param>
       <fmt:param><%= creationAuthor %></fmt:param>
@@ -172,8 +167,8 @@
 
       <wiki:HistoryIterator id="currentPage">
       <% if( ( startitem == -1 ) ||
-             (  ( currentPage.getVersion() >= startitem )
-             && ( currentPage.getVersion() < startitem + pagesize ) ) )
+             (  ( currentPage.getVersion() > startitem )
+             && ( currentPage.getVersion() <= startitem + pagesize ) ) )
          {
        %>
       <tr>
@@ -183,10 +178,10 @@
           </wiki:LinkTo>
         </td>
 
-        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
-        <td>
-          <%--<fmt:formatNumber value='<%=Double.toString(currentPage.getSize()/1000.0)%>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;Kb--%>
-          <wiki:PageSize />
+        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+        <td style="white-space:nowrap;text-align:right;">
+          <c:set var="ff"><wiki:PageSize /></c:set>
+          <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
         </td>
         <td><wiki:Author /></td>
 
@@ -215,7 +210,7 @@
 
     </table>
     </div>
-     ${pagination}
+    ${pagination}
     <%-- } /* itemcount > 1 */ --%>
     </wiki:CheckVersion>
   </wiki:Tab>
@@ -323,7 +318,7 @@
     <%
       String name = att.getName(); //att.getFileName();
       int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "";
+      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
 
       String sname = name;
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
@@ -343,7 +338,7 @@
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs['DateFormat']}" /></td>
+	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.

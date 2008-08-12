@@ -11,6 +11,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%!
   String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)
@@ -135,8 +136,7 @@
   String groupname = request.getParameter( "group" );
 %>
  
-<script type="text/javascript">
-//<![CDATA[
+<script type="text/javascript">//<![CDATA[
 <%
   WikiContext c = WikiContext.findContext( pageContext );
   Principal[] roles = c.getWikiSession().getRoles();
@@ -152,8 +152,7 @@
     }
   }
 %>
-//]]>
-</script>
+//]]></script>
 
 <%--
 WikiGroup.putGroup( "Group1qsdf qsdf qsdf qsdf qsdffsdfq en nog een beetje langer he", "Member1\nMember2\nMember3\nMember4\nMember5\nMember6", "createdon", "createdby", "changedon", "changedby" );

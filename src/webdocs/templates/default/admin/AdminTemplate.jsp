@@ -13,6 +13,7 @@
 </head>
 <body class="view">
 <div id="wikibody">
+<div id="page" >
 <h1>JSPWiki Administration</h1>
 <div class="information">Not all things can be configured here.  Some things need to be configured
 in your <tt>jspwiki.properties</tt> file.</div>
@@ -84,6 +85,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
 <p>There will be more filter stuff here</p>
 </wiki:Tab>
 </wiki:TabbedSection>
+</div>
 
 </div>
 </body>

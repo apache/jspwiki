@@ -1,6 +1,8 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.SpamFilter" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
@@ -8,6 +10,7 @@
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
         This is a plain editor for JSPWiki.
@@ -15,12 +18,11 @@
 <% 
    WikiContext context = WikiContext.findContext( pageContext ); 
    WikiEngine engine = context.getEngine();
-   JSONRPCManager.requestJSON( context );  //FIXME: to be replace by standard mootools lib
    
    String contextPath = request.getContextPath();
 
-  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
-  TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
+   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
+   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">
@@ -32,7 +34,17 @@
     WikiPage p = engine.getPage( clone );
     if( p != null )
     {
-      usertext = engine.getPureText( p );
+        AuthorizationManager mgr = engine.getAuthorizationManager();
+        PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+
+        try
+        {            
+          if( mgr.checkPermission( context.getWikiSession(), pp ) )
+          {
+            usertext = engine.getPureText( p );
+          }
+        }
+        catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
     }
   }
 %>
@@ -73,69 +85,110 @@
   <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>" 
     accesskey="q" 
         title="<fmt:message key='editor.plain.cancel.title'/>" />
-  <input type="button" name="tbREDO" id="tbREDO" value="<fmt:message key='editor.plain.redo.submit' />" 
-        title="<fmt:message key='editor.plain.redo.title' />" disabled="disabled" />
-  <input type="button" name="tbUNDO" id="tbUNDO" value="<fmt:message key='editor.plain.undo.submit' />" 
-        title="<fmt:message key='editor.plain.undo.title' />" disabled="disabled" accesskey="z"/>
   </p>
-  
-  <div>
-  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
-         class="editor" 
-       onkeyup="getSuggestions(this.id)"
-       onclick="setCursorPos(this.id)" 
-      onchange="setCursorPos(this.id)"
-          rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
-  </div>
-  <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
+    <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
        Normal user should never see this field, nor type anything in it. --%>
   <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
-  <div style="display:none;">
-    <div id="editassist">
-      <a href="#" class="tool closed" rel="" title="<fmt:message key='editor.plain.editassist.title'/>">
-        <fmt:message key='editor.plain.editassist'/>
-      </a>
-    </div>
-
-    <div id="toolbar">
+  <table>
+<%--FIXME
+    <wiki:Permission permission="rename">
+    <tr>
+    <td><label for="renameto"><fmt:message key='editor.renameto'/></label></td>
+    <td><input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
+    &nbsp;&nbsp;
+    <input type="checkbox" name="references" checked="checked" />
+    <fmt:message key="info.updatereferrers"/>
+    FIXME</td>
+    </tr>
+    </wiki:Permission>
+--%>  
+    <tr>
+    <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
+    <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/></td>
+    </tr>
+  </table>
+  
+  <div id="tools">
+      <h4><fmt:message key='editor.plain.toolbar'/></h4>
+      <div id="toolbuttons">
+      <span>
 	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
 	  <a href="#" class="tool" rel="break" id="tbH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
 	  <a href="#" class="tool" rel="break" id="tbH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
 	  <a href="#" class="tool" rel="break" id="tbH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
-      <span>&nbsp;</span>
-	  <a href="#" class="tool" rel="break" id="tbHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
-	  <a href="#" class="tool" rel="" id="tbBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
-	  <a href="#" class="tool" rel="break" id="tbPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
-	  <a href="#" class="tool" rel="break" id="tbDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
-      <span>&nbsp;</span>
+      </span>
+      <span>
 	  <a href="#" class="tool" rel="" id="tbB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
 	  <a href="#" class="tool" rel="" id="tbI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
 	  <a href="#" class="tool" rel="" id="tbMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
 	  <a href="#" class="tool" rel="" id="tbSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
 	  <a href="#" class="tool" rel="" id="tbSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
 	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
-      <span>&nbsp;</span>
+      </span>
+      <span>
+	  <a href="#" class="tool" rel="" id="tbBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
+	  <a href="#" class="tool" rel="break" id="tbHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
+	  <a href="#" class="tool" rel="break" id="tbPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
+	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
+	  <a href="#" class="tool" rel="break" id="tbDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
+      </span>
+      <span>
 	  <a href="#" class="tool" rel="break" id="tbTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>
 	  <a href="#" class="tool" rel="break" id="tbTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
 	  <a href="#" class="tool" rel="break" id="tbTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
 	  <a href="#" class="tool" rel="" id="tbIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
-	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
 	  <a href="#" class="tool" rel="break" id="tbQUOTE" title="<fmt:message key='editor.plain.tbQUOTE.title'/>">quote</a>
 	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
-	  <div style="clear:both;">
+      </span>
+      <span>
+      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a></span>
+      <span>
+	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
+      </span>
 	  </div>
-      <div style="display:none;">
+
+	  <div id="toolextra" class="clearbox" style="display:none;">
+      <span>
       <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
       <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
+      </span>
+      <span>
       <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>
       <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>	  
+      </span>
 	  </div>
-    </div>
+
+	  <div id="searchbar">
+  		<span>
+        <label for="tbFIND" ><fmt:message key="editor.plain.find"/></label>
+  		<input type="text"   name="tbFIND" id="tbFIND" size="16" />
+		<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/></label>
+		<input type="text"   name="tbREPLACE" id="tbREPLACE" size="16" />
+        <input type="button" name="doreplace" id="doreplace" value="<fmt:message key='editor.plain.find.submit' />" />
+        </span>
+  		<span>
+  		<input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
+  		<label for="tbMatchCASE"><fmt:message key="editor.plain.matchcase"/></label>
+  		</span>
+  		<span>
+  		<input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
+  		<label for="tbREGEXP" ><fmt:message key="editor.plain.regexp"/></label>
+  		</span>
+  		<span>
+  		<input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
+  		<label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
+  		</span>
+	  </div>
+	  <div class="clearbox" ></div>
   </div>
-    <p>
-    <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-    <input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
-    </p>
+
+  <div>
+  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
+         class="editor" 
+          rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
+  <div class="clearbox"></div>
+  </div>
+
   <wiki:CheckRequestContext context="comment">
     <fieldset>
 	<legend><fmt:message key="editor.commentsignature"/></legend>
@@ -153,33 +206,11 @@
   </wiki:CheckRequestContext>
 
 </form>
-</div>
 
-<form id="searchbar" action="#" class='wikiform'>
-<p style="display:none;">
-<%-- Search and replace section --%>
-  <span style="white-space:nowrap;">
-  <label for="tbFIND"><fmt:message key="editor.plain.find"/></label>
-  <input type="text" name="tbFIND" id="tbFIND" size="16" />
-  </span>
-  <span style="white-space:nowrap;">
-  <label for="tbREPLACE"><fmt:message key="editor.plain.replace"/></label>
-  <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
-  </span>
-  <span style="white-space:nowrap;">
-  <input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-  <label for="tbMatchCASE"><fmt:message key="editor.plain.matchcase"/></label>
-  </span>
-  <span style="white-space:nowrap;">
-  <input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-  <label for="tbREGEXP"><fmt:message key="editor.plain.regexp"/></label>
-  </span>
-  <span style="white-space:nowrap;">
-  <input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-  <label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
-  </span>
-  <span style="white-space:nowrap;">
-  <input type="button" name="replace" id="replace" value="<fmt:message key='editor.plain.find.submit' />" />
-  </span>
-</p>
-</form>
+<div id="sneakpreviewheader">
+  <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%>/>
+  <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>	  
+</div>
+<div id="sneakpreview"/></div>
+
+</div>

@@ -2,6 +2,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="java.util.Properties"%>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="com.ecyrd.jspwiki.render.*" %>
 <%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
@@ -9,11 +11,13 @@
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%--
     This provides the FCK editor for JSPWiki.
 --%>
 <%  WikiContext context = WikiContext.findContext( pageContext );
+    WikiEngine engine = context.getEngine();
     context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
 
@@ -24,15 +28,38 @@
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
  %>   
-<wiki:CheckRequestContext context="edit"><%
+<wiki:CheckRequestContext context="edit">
+<wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
+<%
+  String clone = request.getParameter( "clone" ); 
+  if( clone != null )
+  {
+    WikiPage p = engine.getPage( clone );
+    if( p != null )
+    {
+        AuthorizationManager mgr = engine.getAuthorizationManager();
+        PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
+
+        try
+        {            
+          if( mgr.checkPermission( context.getWikiSession(), pp ) )
+          {
+            usertext = engine.getPureText( p );
+          }
+        }
+        catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
+    }
+  }
+%>
+</wiki:NoSuchPage>
+<%
     if( usertext == null )
     {
-        usertext = context.getEngine().getPureText( context.getPage() );
+        usertext = engine.getPureText( context.getPage() );
     }%>
 </wiki:CheckRequestContext>
 <% if( usertext == null ) usertext = "";
 
-   WikiEngine engine = context.getEngine();
    RenderingManager renderingManager = new RenderingManager();
    
    // since the WikiProperties are shared, we'll want to make our own copy of it for modifying.
