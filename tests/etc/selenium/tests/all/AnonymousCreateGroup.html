@@ -12,8 +12,9 @@
 	JSPWiki Test Anonymous Create Group<br>
 	Try to create a group; we should get redirected to login page
 	</td></tr>
-	<tr><td>store</td>	<td>../NewGroup.jsp</td>	<td>newgroupurl</td></tr>
-	<tr><td>store</td>	<td>../UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/NewGroup.jsp</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
 
     <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyElementPresent</td>	<td>css=form#clearCookie input[name="ok"]</td>		<td>&nbsp;</td></tr>

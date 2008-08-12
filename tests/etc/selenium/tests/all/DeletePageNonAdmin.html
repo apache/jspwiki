@@ -2,42 +2,49 @@
 <html>
 <head>
   <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-  <title>JSPWiki Test Create Page</title>
+  <title>JSPWiki Test Delete Page</title>
 </head>
 <body> 
 <table cellpadding="1" cellspacing="1" border="1">
 	<tbody>
-	<tr><td rowspan="1" colspan="3">JSPWiki Test Create Page<br></td></tr>
+	<tr><td rowspan="1" colspan="3">JSPWiki Test Delete Page<br></td></tr>
 
-	<tr><td>store</td>	<td>javascript{'Createpage '+new Date().getTime()}</td>	<td>page</td></tr>
-	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
+	<tr><td>store</td>	<td>javascript{'Delete-page '+new Date().getTime()}</td>	<td>page</td></tr>
+	<tr><td>store</td>	<td>janne</td>		<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
 
-	<tr><td>store</td>	<td>../Wiki.jsp?page=Main</td>		<td>url</td></tr>
-	<tr><td>store</td>	<td>../Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
-	<tr><td>store</td>	<td>../Login.jsp</td>			<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp?page=${page}</td>	<td>url</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/PageInfo.jsp?page=${page}</td><td>infourl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
     <tr><td>store</td>	<td>This page was created by the web unit tests.</td>	<td>PageContent</td></tr>
 
-	<!-- Login -->
+	<!-- Login --!>
     <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
     <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
     <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
     <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
 
-	<!-- create page -->
-    <tr><td>open</td>	<td>${editurl}</td>	<td>&nbsp;</td></tr>
-
-    <tr><td>verifyTitle</td>		<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
+	<!-- Create page --!>
+    <tr><td>open</td>					<td>${editurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>			<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyElementPresent</td>	<td>ok</td>	<td></td></tr>
     <tr><td>verifyElementPresent</td>	<td>id=editorarea</td>	<td></td></tr>
 
     <tr><td>type</td>			<td>id=editorarea</td>		<td>${PageContent}</td></tr>
     <tr><td>clickAndWait</td>	<td>ok</td>	<td>&nbsp;</td></tr>
 
+    <tr><td>open</td>				<td>${url}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>	
     
-    <!-- Log out -->
+	<!-- Delete Page --!>
+    <tr><td>open</td>					<td>${infourl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>			<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
+    <tr><td>assertElementNotPresent</td>	<td>id=delete-all</td>	<td>&nbsp;</td></tr>	
+
+    <!-- Log out --!>
     <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 
 	</tbody>

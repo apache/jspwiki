@@ -2,20 +2,21 @@
 <html>
 <head>
   <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-  <title>JSPWiki Test Create Group Full Name</title>
+  <title>JSPWiki Test Create Group WikiName</title>
 </head>
 <body> 
 <table cellpadding="1" cellspacing="1" border="1">
 	<tbody>
-	<tr><td rowspan="1" colspan="3">JSPWiki Test Create Group Full Name<br></td></tr>
-
+	<tr><td rowspan="1" colspan="3">JSPWiki Test Create Group WikiName<br></td></tr>
+	
+	<tr><td>store</td>	<td>/@selenium.context@</td>	<td>baseUrl</td></tr>
 	<tr><td>store</td>	<td>javascript{'Test-group-'+new Date().getTime()}</td>	<td>group</td></tr>
-	<tr><td>store</td>	<td>Janne Jalkanen</td>									<td>members</td></tr>
-	<tr><td>store</td>	<td>../Wiki.jsp</td>			<td>url</td></tr>
-	<tr><td>store</td>	<td>../Login.jsp</td>		<td>loginurl</td></tr>
-	<tr><td>store</td>	<td>../Group.jsp?</td>		<td>viewgroupurl</td></tr>
-	<tr><td>store</td>	<td>../NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
-	<tr><td>store</td>	<td>../EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
+	<tr><td>store</td>	<td>JanneJalkanen</td>									<td>members</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Wiki.jsp</td>			<td>url</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>		<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${baseUrl}/EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
 	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
     <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
 
@@ -81,7 +82,6 @@
     <!-- Log out -->
     <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 
-    
 	</tbody>
 </table>
 
