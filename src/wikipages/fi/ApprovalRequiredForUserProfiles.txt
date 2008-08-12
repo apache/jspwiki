@@ -1,0 +1,6 @@
+Uusien profiilien luonti vaatii ylläpidon hyväksynnän.  Pyyntösi on siirretty eteenpäin
+hyväksyttäväksi.
+
+Jos annoit sähköpostiosoitteesi, joku wikin ylläpitäjistä lähettänee sinulle sähköpostia
+kun tilisi on hyväksytty.  Muussa tapauksessa saatat ehkä haluta kokeilla myöhemmin, josko
+tämä jo toimisi.

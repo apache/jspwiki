@@ -32,4 +32,3 @@ You have some pages set up for you:
 
 Good luck, and thanks for choosing JSPWiki!
 
---[Janne Jalkanen|mailto:jalkanen+jspwiki@ecyrd.com].
