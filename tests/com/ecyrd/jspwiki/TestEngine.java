@@ -5,20 +5,25 @@ import java.util.Map;
 import java.util.Properties;
 import java.io.*;
 
-import javax.servlet.*;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.controller.DispatcherServlet;
 import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.mock.*;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockRoundtrip;
+import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.auth.AuthenticationManager;
+import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.providers.*;
@@ -41,19 +46,27 @@ public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
 
-    private HttpSession m_adminSession;
-    private HttpSession m_janneSession;
-    private WikiSession m_adminWikiSession;
-    private WikiSession m_janneWikiSession;
-    private WikiSession m_guestWikiSession;
+    private WikiSession m_adminWikiSession = null;
+    private WikiSession m_janneWikiSession = null;
+    private WikiSession m_guestWikiSession = null;
 
     /**
      * Creates WikiSession with the privileges of the administrative user.
      * For testing purposes, obviously.
      * @return the wiki session
+     * @throws WikiSecurityException 
      */
-    public WikiSession adminSession()
+    public WikiSession adminSession() throws WikiSecurityException
     {
+        if ( m_adminWikiSession == null )
+        {
+            // Set up long-running admin session
+            HttpServletRequest request = newHttpRequest();
+            m_adminWikiSession = WikiSession.getWikiSession( this, request );
+            this.getAuthenticationManager().login( m_adminWikiSession,
+                                                   Users.ADMIN,
+                                                   Users.ADMIN_PASS );
+        }
         return m_adminWikiSession;
     }
 
@@ -64,6 +77,12 @@ public class TestEngine extends WikiEngine
      */
     public WikiSession guestSession()
     {
+        if ( m_guestWikiSession == null )
+        {
+            // Set up guest session
+            HttpServletRequest request = newHttpRequest();
+            m_guestWikiSession = WikiSession.getWikiSession( this, request );
+        }
         return m_guestWikiSession;
     }
 
@@ -71,49 +90,30 @@ public class TestEngine extends WikiEngine
      * Creates WikiSession with the privileges of the Janne.
      * For testing purposes, obviously.
      * @return the wiki session
+     * @throws WikiSecurityException 
      */
-    public WikiSession janneSession()
+    public WikiSession janneSession() throws WikiSecurityException
     {
+        if ( m_janneWikiSession == null )
+        {
+            // Set up a test Janne session
+            HttpServletRequest request = newHttpRequest();
+            m_janneWikiSession = WikiSession.getWikiSession( this, request );
+            this.getAuthenticationManager().login( m_janneWikiSession,
+                    Users.JANNE,
+                    Users.JANNE_PASS );
+        }
         return m_janneWikiSession;
     }
 
     public TestEngine( Properties props )
         throws WikiException
     {
-        super( new MockServletContext( "test" ), "test", props );
+        super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
         
         // Stash the WikiEngine in the servlet context
         MockServletContext servletContext = (MockServletContext)this.getServletContext();
         servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
-        
-        // Add mock StripesFilter and WikiServletfilter and to servlet config
-        Map<String,String> filterParams = new HashMap<String,String>();
-        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
-        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
-        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
-        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
-        servletContext.addFilter( WikiServletFilter.class, "WikiServletFilter", new HashMap<String,String>() );
-        servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
-
-        // Set up long-running admin session
-        HttpServletRequest request = newHttpRequest();
-        m_adminWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_adminWikiSession,
-                Users.ADMIN,
-                Users.ADMIN_PASS );
-        m_adminSession = request.getSession();
-
-        // Set up a test Janne session
-        request = newHttpRequest();
-        m_janneWikiSession = WikiSession.getWikiSession( this, request );
-        this.getAuthenticationManager().login( m_janneWikiSession,
-                Users.JANNE,
-                Users.JANNE_PASS );
-        m_janneSession = request.getSession();
-
-        // Set up guest session
-        request = newHttpRequest();
-        m_guestWikiSession = WikiSession.getWikiSession( this, request );
     }
     
     /**
@@ -125,7 +125,7 @@ public class TestEngine extends WikiEngine
     {
         return newHttpRequest( "/Wiki.jsp" );
     }
-
+    
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession and path.
@@ -311,12 +311,15 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our admin session
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
-        request.setSession( m_adminSession );
+        MockHttpServletRequest request = newHttpRequest();
+        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession,
+                Users.ADMIN,
+                Users.ADMIN_PASS );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = getWikiActionBeanFactory().newViewActionBean( request, (HttpServletResponse)null, page );
+        WikiContext context = this.getWikiActionBeanFactory().newViewActionBean( request, null, page );
         saveText( context, content );
     }
 
@@ -324,12 +327,15 @@ public class TestEngine extends WikiEngine
         throws WikiException
     {
         // Build new request and associate our Janne session
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", "/Wiki.jsp" );
-        request.setSession( m_janneSession );
+        MockHttpServletRequest request = newHttpRequest();
+        WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        this.getAuthenticationManager().login( wikiSession,
+                Users.JANNE,
+                Users.JANNE_PASS );
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = getWikiActionBeanFactory().newViewActionBean( request, (HttpServletResponse)null, page );
+        WikiContext context = this.getWikiActionBeanFactory().newViewActionBean( request, null, page );
         saveText( context, content );
     }
 
@@ -346,6 +352,17 @@ public class TestEngine extends WikiEngine
     }
     
     /**
+     * Supplies a clean set of test properties for the TestEngine constructor.
+     * @param props the properties supplied by callers
+     * @return the corrected/clean properties
+     */
+    private static Properties cleanTestProps( Properties props )
+    {
+        props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+        return props;
+    }
+
+    /**
      * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
      * plus a new mock request, mock response and action bean of type {@link com.ecyrd.jspwiki.action.ViewActionBean}.
      * This method is the preferred way to instantiate request and response objects, which can be
@@ -356,7 +373,8 @@ public class TestEngine extends WikiEngine
      */
     public MockRoundtrip guestTrip( Class<? extends WikiActionBean> beanClass )
     {
-        return new MockRoundtrip( (MockServletContext)getServletContext(), beanClass );
+        MockServletContext servletContext = initStripesServletContext();
+        return new MockRoundtrip( servletContext, beanClass );
     }
 
     /**
@@ -371,11 +389,31 @@ public class TestEngine extends WikiEngine
      */
     public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
     {
-        MockRoundtrip trip = new MockRoundtrip( (MockServletContext)getServletContext(), beanClass );
-        MockHttpServletRequest request = trip.getRequest();
-        WikiSession session = WikiSession.getWikiSession( this, request);
+        MockServletContext servletContext = initStripesServletContext();
+        MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
+        WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
         this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
         return trip;
+    }
+    
+    /**
+     * Returns the TestEngine's MockServletContext, but with the Stripes filters and servlets added
+     * @return the initialized mock context
+     */
+    private MockServletContext initStripesServletContext()
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        
+        // Add mock StripesFilter and WikiServletfilter and to servlet config
+        Map<String,String> filterParams = new HashMap<String,String>();
+        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
+        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
+        servletContext.addFilter( WikiServletFilter.class, "WikiServletFilter", new HashMap<String,String>() );
+        servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
+        
+        return servletContext;
     }
     
     /**

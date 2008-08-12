@@ -19,8 +19,6 @@ public class ApprovalWorkflowTest extends TestCase
     TestEngine m_engine;
     WorkflowManager m_wm;
     DecisionQueue m_dq;
-    WikiSession m_adminSession;
-    WikiSession m_janneSession;
 
 
     protected void setUp() throws Exception
@@ -36,8 +34,6 @@ public class ApprovalWorkflowTest extends TestCase
         // Start the wiki engine
         m_engine = new TestEngine(props);
         m_wm = m_engine.getWorkflowManager();
-        m_adminSession = m_engine.adminSession();
-        m_janneSession = m_engine.janneSession();
         m_dq = m_wm.getDecisionQueue();
         m_builder = WorkflowBuilder.getBuilder( m_engine );
     }
@@ -178,14 +174,14 @@ public class ApprovalWorkflowTest extends TestCase
         assertFalse( m_engine.pageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
-        Collection decisions = m_dq.getActorDecisions(m_adminSession);
+        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         assertEquals(1, decisions.size());
 
-        // Now, approve the decision and it should go away, and page should apppear.
+        // Now, approve the decision and it should go away, and page should appear.
         Decision decision = (Decision)decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
         assertTrue( m_engine.pageExists(pageName));
-        decisions = m_dq.getActorDecisions(m_adminSession);
+        decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         assertEquals(0, decisions.size());
 
         // Delete the page we created
@@ -210,7 +206,7 @@ public class ApprovalWorkflowTest extends TestCase
         assertFalse( m_engine.pageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
-        Collection decisions = m_dq.getActorDecisions(m_adminSession);
+        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...
@@ -219,14 +215,14 @@ public class ApprovalWorkflowTest extends TestCase
         assertFalse( m_engine.pageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
-        decisions = m_dq.getActorDecisions(m_janneSession);
+        decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         assertEquals(1, decisions.size());
         decision = (Decision)decisions.iterator().next();
         assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);
-        decisions = m_dq.getActorDecisions(m_janneSession);
+        decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         assertEquals(0, decisions.size());
     }
 
