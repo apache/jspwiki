@@ -253,12 +253,13 @@ var RoundedCorners =
 
 	render: function(page,name){
 		/* make reverse copies for bottom definitions */
+
 		this.$Bottom = {};
-		for(item in this.$Top){
-			this.$Bottom[item] = this.$Top[item].slice(0).reverse();
+		for(var i in this.$Top){
+			this.$Bottom[i] = this.$Top[i].slice(0).reverse();
 		}
 
-		for(selector in this.$registry){  // CHECK NEEDED
+		for(var selector in this.$registry){  // CHECK NEEDED
 			var n = $$(selector), 
 				p = this.$registry[selector];
 			this.exec(n, p[0], p[1], p[2], p[3]);
@@ -310,7 +311,7 @@ var RoundedCorners =
 
 	getTemplate: function(template, corners){
 		var t = false;
-		if(corners != 'nn') for(item in template){
+		if(corners != 'nn') for(var item in template){
 			if(corners.contains(item)){
 				t = template[item];
 				break;
