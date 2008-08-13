@@ -6,7 +6,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
-import net.sourceforge.stripes.mock.MockServletContext;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiPage;
@@ -37,8 +36,7 @@ public class ViewActionBeanTest extends TestCase
         assertNotNull("Did not save page Test!", page);
         
         // Set the 'page' request parameter to 'Main'...
-        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
-        MockRoundtrip trip = new MockRoundtrip(ctx, "/Wiki.jsp");
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp");
         trip.setParameter("page", "Test");
         trip.execute("view");
 
@@ -57,8 +55,7 @@ public class ViewActionBeanTest extends TestCase
         assertNotNull("Did not save page Main!", page);
         
         // Execute the request without specifying a page
-        MockServletContext ctx = (MockServletContext)m_engine.getServletContext();
-        MockRoundtrip trip = new MockRoundtrip(ctx, "/Wiki.jsp");
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp");
         trip.execute("view");
 
         // ...we should automatically see Main bound to the ActionBean (nice!)

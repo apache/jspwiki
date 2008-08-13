@@ -95,7 +95,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "view"
-        trip = new MockRoundtrip( ctx, "/Group.jsp" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.getRequest().setMethod( "GET" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "view" );
@@ -115,7 +115,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "save"
-        trip = new MockRoundtrip( ctx, "/Group.jsp" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "save" );
         bean = trip.getActionBean( GroupActionBean.class );
@@ -133,7 +133,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "delete"
-        trip = new MockRoundtrip( ctx, "/Group.jsp" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "delete" );
         bean = trip.getActionBean( GroupActionBean.class );
@@ -152,7 +152,6 @@ public class HandlerInfoTest extends TestCase
 
     public void testNotEvaluatedPermissionAnnotation() throws Exception
     {
-        MockServletContext ctx = (MockServletContext) m_engine.getServletContext();
         MockRoundtrip trip;
         GroupActionBean bean;
         Method method;
@@ -160,7 +159,7 @@ public class HandlerInfoTest extends TestCase
         Permission perm;
 
         // Set up a new GroupActionBean with the non-existent group Foo
-        trip = new MockRoundtrip( ctx, "/Group.jsp" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.addParameter( "group", "Foo" );
         trip.execute( "view" );
         bean = trip.getActionBean( GroupActionBean.class );

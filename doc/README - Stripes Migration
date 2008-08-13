@@ -359,9 +359,16 @@ WikiTagBase
 -----------
 WikiTagBase changes slightly to support Stripes. Instead of extending import javax.servlet.jsp.tagext.TagSupport, it now extends StripesTagSupport. However, StripesTagSupport does not supply the methods setId/GetId. So, we've had to implement these. Also, the method TagSupport.findAncestorWithClass which is used by TabTag needs to be replaced by StripesTagSupport.getParentTag (without need for classcast).
 
+=========================================================================================
 
 TESTING NOTES
 =============
+
+JSP Migration
+-------------
+Form tags:
+- JavaScript onSubmit() code should be scrubbed?
+
 
 Eclipse Tools Notes
 -------------------

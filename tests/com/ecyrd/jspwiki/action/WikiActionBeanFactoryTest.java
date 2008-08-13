@@ -19,7 +19,7 @@ import com.ecyrd.jspwiki.*;
 
 public class WikiActionBeanFactoryTest extends TestCase
 {
-    TestEngine testEngine;
+    TestEngine m_engine;
     WikiActionBeanFactory resolver;
 
     protected void setUp() throws Exception
@@ -27,21 +27,21 @@ public class WikiActionBeanFactoryTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put( WikiEngine.PROP_MATCHPLURALS, "yes" );
-        testEngine = new TestEngine( props );
-        resolver = testEngine.getWikiActionBeanFactory();
-        testEngine.saveText( "SinglePage", "This is a test." );
-        testEngine.saveText( "PluralPages", "This is a test." );
+        m_engine = new TestEngine( props );
+        resolver = m_engine.getWikiActionBeanFactory();
+        m_engine.saveText( "SinglePage", "This is a test." );
+        m_engine.saveText( "PluralPages", "This is a test." );
     }
     
     protected void tearDown() throws Exception
     {
-        testEngine.deletePage( "TestPage" );
+        m_engine.deletePage( "TestPage" );
     }
     
     public void testNewActionBean() throws WikiException
     {
         WikiActionBean bean;
-        MockRoundtrip trip = testEngine.guestTrip( ViewActionBean.class );
+        MockRoundtrip trip = m_engine.guestTrip( ViewActionBean.class );
         MockHttpServletRequest request = trip.getRequest();
         MockHttpServletResponse response = trip.getResponse();
         
@@ -81,20 +81,20 @@ public class WikiActionBeanFactoryTest extends TestCase
     public void testNewActionBeanByJSP() throws WikiException
     {
         WikiActionBean bean;
-        MockRoundtrip trip = testEngine.guestTrip( ViewActionBean.class );
+        MockRoundtrip trip = m_engine.guestTrip( ViewActionBean.class );
         MockHttpServletRequest request = trip.getRequest();
         MockHttpServletResponse response = trip.getResponse();
         MockHttpSession session = (MockHttpSession)request.getSession();
 
         // Request for "UserPreference.jsp" should resolve to PREFS action
-        request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/UserPreferences.jsp");
+        request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/UserPreferences.jsp");
         request.setSession( session );
         bean = resolver.newActionBean( request, response, UserPreferencesActionBean.class );
         assertEquals( WikiContext.PREFS, bean.getRequestContext() );
         
         // We don't care about JSPs not mapped to actions, because the bean we get only depends on the class we pass
         // FIXME: this won't work because WikiActionBeanResolver doesn't keep a cache of URLBindings 
-        request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/NonExistent.jsp");
+        request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/NonExistent.jsp");
         request.setSession( session );
         bean = resolver.newActionBean( request, response, EditActionBean.class );
         assertEquals( WikiContext.EDIT, bean.getRequestContext() );
@@ -104,14 +104,14 @@ public class WikiActionBeanFactoryTest extends TestCase
     public void testActionBeansWithParams() throws Exception
     {
         WikiActionBean bean;
-        WikiPage page = testEngine.getPage( "SinglePage" );
-        MockRoundtrip trip = testEngine.guestTrip( ViewActionBean.class );
+        WikiPage page = m_engine.getPage( "SinglePage" );
+        MockRoundtrip trip = m_engine.guestTrip( ViewActionBean.class );
         MockHttpServletRequest request = trip.getRequest();
         MockHttpServletResponse response = trip.getResponse();
         MockHttpSession session = (MockHttpSession)request.getSession();
         
         // Passing an EDIT request with page param yields an ActionBean with a non-null page property
-        request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/Edit.jsp");
+        request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Edit.jsp");
         request.setSession( session );
         request.getParameterMap().put( "page", new String[]{"SinglePage"} );
         bean = resolver.newActionBean( request, response, EditActionBean.class );
@@ -120,14 +120,14 @@ public class WikiActionBeanFactoryTest extends TestCase
         
         // Passing a VIEW request with page=FindPage yields an ordinary page name, not a special page or JSP
         // FIXME: this won't work because WikiActionBeanResolver doesn't keep a cache of URLBindings 
-        request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/Wiki.jsp");
+        request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Wiki.jsp");
         request.setSession( session );
         request.getParameterMap().put( "page", new String[]{"FindPage"} );
         bean = resolver.newActionBean( request, response, ViewActionBean.class );
         assertEquals( WikiContext.VIEW, bean.getRequestContext() );
         
         // Passing a VIEW_GROUP request with group="Art" gets a ViewGroupActionBean
-        request = new MockHttpServletRequest( testEngine.getServletContext().getServletContextName(), "/Wiki.jsp");
+        request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Wiki.jsp");
         request.setSession( session );
         request.getParameterMap().put( "group", new String[]{"Art"} );
         bean = resolver.newActionBean( request, response, GroupActionBean.class );

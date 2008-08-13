@@ -1,14 +1,10 @@
 
 package com.ecyrd.jspwiki;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.io.*;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.controller.DispatcherServlet;
@@ -26,7 +22,10 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.providers.AbstractFileProvider;
+import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
+import com.ecyrd.jspwiki.providers.FileSystemProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.WikiServletFilter;
 
 /**
@@ -359,6 +358,7 @@ public class TestEngine extends WikiEngine
     private static Properties cleanTestProps( Properties props )
     {
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+        props.put( WikiEngine.PROP_URLCONSTRUCTOR, "com.ecyrd.jspwiki.url.DefaultURLConstructor" );
         return props;
     }
 
@@ -373,9 +373,33 @@ public class TestEngine extends WikiEngine
      */
     public MockRoundtrip guestTrip( Class<? extends WikiActionBean> beanClass )
     {
-        MockServletContext servletContext = initStripesServletContext();
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
         return new MockRoundtrip( servletContext, beanClass );
     }
+    
+    /**
+     * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
+     * plus a new mock request, mock response and URL.
+     * This method is the preferred way to instantiate request and response objects, which can be
+     * obtained by calling {@link net.sourceforge.stripes.mock.MockRoundtrip#getRequest()} and
+     * {@link net.sourceforge.stripes.mock.MockRoundtrip#getResponse()}.
+     * @param url the URL to start with
+     * @return the mock rountrip
+     */
+    public MockRoundtrip guestTrip( String url )
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
+        return new MockRoundtrip( servletContext, url );
+    }
+    
 
     /**
      * Creates a "round trip" object initialized with a supplied set of credentials. The WikiSession
@@ -389,7 +413,11 @@ public class TestEngine extends WikiEngine
      */
     public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
     {
-        MockServletContext servletContext = initStripesServletContext();
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
         MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
         WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
         this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
@@ -397,58 +425,25 @@ public class TestEngine extends WikiEngine
     }
     
     /**
-     * Returns the TestEngine's MockServletContext, but with the Stripes filters and servlets added
-     * @return the initialized mock context
+     * Initializes the TestEngine's MockServletContext, with the Stripes filters and servlets added
      */
-    private MockServletContext initStripesServletContext()
+    private void initStripesServletContext()
     {
+        // Configure the filter and servlet
         MockServletContext servletContext = (MockServletContext)getServletContext();
-        
-        // Add mock StripesFilter and WikiServletfilter and to servlet config
-        Map<String,String> filterParams = new HashMap<String,String>();
-        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
-        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
-        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
-        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
         servletContext.addFilter( WikiServletFilter.class, "WikiServletFilter", new HashMap<String,String>() );
         servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
         
-        return servletContext;
+        // Add extension classes
+        Map<String,String> filterParams = new HashMap<String,String>();
+        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
+        
+        // Add the exception handler class
+        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
+        
+        // Return the configured servlet context
+        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
     }
     
-    /**
-     * Static single instance of the mock servlet.
-     */
-    private static final Servlet MOCK_SERVLET = new MockServlet();
-
-    /**
-     * Captive servlet class that does absolutely nothing. Used by
-     * MockRoundtrip.
-     */
-    protected static class MockServlet extends HttpServlet
-    {
-        private static final long serialVersionUID = 1L;
-        
-        private ServletConfig m_config;
-        
-        public MockServlet()
-        {
-        }
-
-        public ServletConfig getServletConfig()
-        {
-            return m_config;
-        }
-
-        public String getServletInfo()
-        {
-            return "Mock servlet";
-        }
-
-        public void init( ServletConfig config ) throws ServletException
-        {
-            m_config = config;
-        }
-    }
-
 }
