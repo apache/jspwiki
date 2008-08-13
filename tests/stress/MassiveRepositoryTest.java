@@ -21,10 +21,18 @@ public class MassiveRepositoryTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();     
-        
-        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
 
+        props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
         props.setProperty( CachingProvider.PROP_CACHECAPACITY, "1000" );
+
+        
+        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+
+        // Remove file
+        File f = new File( files );
+
+        TestEngine.deleteAll(f);
+
         engine = new TestEngine(props);
     }
 
@@ -123,7 +131,9 @@ public class MassiveRepositoryTest extends TestCase
             String page = getName( random.nextInt( numPages ) );
             
             String content = engine.getHTML( page, WikiProvider.LATEST_VERSION );
-                        
+              
+            assertNotNull(content);
+            
             if( i % pm == 0 ) { System.out.print("."); System.out.flush(); }
         }
         
