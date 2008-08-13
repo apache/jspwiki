@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.controller.DispatcherServlet;
@@ -111,10 +112,10 @@ public class TestEngine extends WikiEngine
         super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
         
         // Stash the WikiEngine in the servlet context
-        MockServletContext servletContext = (MockServletContext)this.getServletContext();
+        ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
     }
-    
+
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession.
