@@ -38,6 +38,8 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("Test");
         TestEngine.deleteTestPage("CdauthNew");
         TestEngine.deleteTestPage("Cdauth");
+        TestEngine.deleteTestPage("TestPageReferring");
+        TestEngine.deleteTestPage("TestPageReferredNew");
 
         TestEngine.emptyWorkDir();
     }
@@ -427,6 +429,30 @@ public class PageRenamerTest extends TestCase
         
         assertEquals( "~[Link to TestPage2|TestPage2|target='_new']", m_engine.getText( "TestPage" ).trim() );
     }
+
+    /**
+     * Test for a referrer containing blanks
+     * 
+     * @throws Exception
+     */
+    public void testReferrerChangeWithBlanks() throws Exception
+    {
+        m_engine.saveText( "TestPageReferred", "bla bla bla som content" );
+        m_engine.saveText( "TestPageReferring", "[Test Page Referred]" );
+
+       rename( "TestPageReferred", "TestPageReferredNew" );
+
+        String data = m_engine.getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
+        assertEquals( "page not renamed", "[Test Page Referred|TestPageReferredNew]", data.trim() );
+
+        Collection refs = m_engine.getReferenceManager().findReferrers( "TestPageReferred" );
+        assertNull( "oldpage", refs );
+
+        refs = m_engine.getReferenceManager().findReferrers( "TestPageReferredNew" );
+        assertEquals( "new size", 1, refs.size() );
+        assertEquals( "wrong ref", "TestPageReferring", (String) refs.iterator().next() );
+    }
+
 
     public static Test suite()
     {

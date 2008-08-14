@@ -1,3 +1,11 @@
+2008-08-14  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-17
+        
+        * [JSPWIKI-238] PageRenamer now correctly handles links containing blanks
+          Added an additional JUnit test for this, there is stil one failing JUnit test however (attachment handling).
+          PageRenamer still needs improvement.
+        
 2008-08-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-16
