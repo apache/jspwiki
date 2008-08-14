@@ -9,7 +9,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
-import net.sourceforge.stripes.mock.MockServletContext;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
@@ -86,7 +85,6 @@ public class HandlerInfoTest extends TestCase
 
     public void testEvaluatedPermissionAnnotation() throws Exception
     {
-        MockServletContext ctx = (MockServletContext) m_engine.getServletContext();
         MockRoundtrip trip;
         GroupActionBean bean;
         Method method;

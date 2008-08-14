@@ -16,6 +16,7 @@ public class AllTests extends TestCase
 
         suite.addTest( GroupActionBeanTest.suite() );
         suite.addTest( HandlerInfoTest.suite() );
+        suite.addTest( LoginActionBeanTest.suite() );
         suite.addTest( RenameActionBeanTest.suite() );
         suite.addTest( UserPreferencesActionBeanTest.suite() );
         suite.addTest( UserProfileActionBeanTest.suite() );

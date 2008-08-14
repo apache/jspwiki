@@ -421,7 +421,7 @@ public class TestEngine extends WikiEngine
         }
         MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
         WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
-        this.getAuthenticationManager().login( session, Users.ADMIN, Users.ADMIN_PASS );
+        this.getAuthenticationManager().login( session, user, password );
         return trip;
     }
     

@@ -3,15 +3,19 @@ package com.ecyrd.jspwiki.action;
 import java.security.Principal;
 import java.util.ResourceBundle;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.validation.SimpleError;
+import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
@@ -43,14 +47,12 @@ public class LoginActionBean extends AbstractActionBean
             CookieAuthenticationLoginModule.setLoginCookie( getEngine(), getContext().getResponse(), principal.getName() );
         }
 
-        Resolution r = null;
+        UrlBuilder builder = new UrlBuilder( getContext().getLocale(), ViewActionBean.class, false );
         if( pageName != null )
         {
-            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), ViewActionBean.class, false );
             builder.addParameter( "page", pageName );
-            r = new RedirectResolution( builder.toString() );
         }
-        return r;
+        return new RedirectResolution( builder.toString() );
     }
 
     private String m_username = null;
@@ -139,9 +141,24 @@ public class LoginActionBean extends AbstractActionBean
     @WikiRequestContext( "logout" )
     public Resolution logout()
     {
-        return null;
+        WikiEngine engine = getEngine();
+        HttpServletRequest request = getContext().getRequest();
+        HttpServletResponse response = getContext().getResponse();
+        engine.getAuthenticationManager().logout( request );
+        
+        // Clear the asserted name cookie
+        CookieAssertionLoginModule.clearUserCookie( response );
+
+        // Delete the authentication cookie
+        if ( engine.getAuthenticationManager().allowsCookieAuthentication() )
+        {
+            CookieAuthenticationLoginModule.clearLoginCookie( engine, request, response );
+        }
+        
+        return new RedirectResolution( ViewActionBean.class );
     }
 
+    @Validate( required = true, on = "login", minlength = 1, maxlength = 128 )
     public void setJ_password( String password )
     {
         m_password = password;
@@ -152,6 +169,7 @@ public class LoginActionBean extends AbstractActionBean
         m_remember = remember;
     }
 
+    @Validate( required = true, on = "login", minlength = 1, maxlength = 128 )
     public void setJ_username( String username )
     {
         m_username = username;
@@ -165,7 +183,7 @@ public class LoginActionBean extends AbstractActionBean
 
     /**
      * Default handler that executes when the login page is viewed. It checks to
-     * see if the user is already authenticated, and if so, sents a "forbidden"
+     * see if the user is already authenticated, and if so, sends a "forbidden"
      * message.
      * 
      * @return the resolution
@@ -182,10 +200,6 @@ public class LoginActionBean extends AbstractActionBean
         {
             // Set cookies as needed and redirect
             r = saveCookiesAndRedirect( m_redirect, m_remember );
-            if( r == null )
-            {
-                r = new RedirectResolution( ViewActionBean.class );
-            }
         }
 
         if( getEngine().getAuthenticationManager().isContainerAuthenticated() )

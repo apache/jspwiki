@@ -610,6 +610,8 @@ public final class WikiSession implements WikiEventListener
         m_subject.getPrincipals().add( WikiPrincipal.GUEST );
         m_subject.getPrincipals().add( Role.ANONYMOUS );
         m_subject.getPrincipals().add( Role.ALL );
+        m_userPrincipal = WikiPrincipal.GUEST;
+        m_loginPrincipal = WikiPrincipal.GUEST;
     }
 
     /**
