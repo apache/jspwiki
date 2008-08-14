@@ -36,15 +36,25 @@ import com.ecyrd.jspwiki.TextUtil;
  *    <LI> total - total number of items
  *    <LI> pagesize - total number of items per page
  *    <LI> maxlinks - number of page links to be generated
- *    <LI> fmtkey - pagination prefix of the i18n resource key
+ *    <LI> fmtkey - pagination prefix of the i18n resource keys. Following keys are used:
+ *    <br>fmtkey="info.pagination"
+ *      <UL>
+ *        <LI> info.pagination.first=<span class="first">First</span>
+ *        <LI> info.pagination.last=<span class="last">Last</span>
+ *        <LI> info.pagination.previous=<span class="prev">Previous</span>
+ *        <LI> info.pagination.next=<span class="next">Next</span>
+ *        <LI> info.pagination.all=<span class="all">all</span>
+ *        <LI> info.pagination.total=&nbsp;(Total items: {0} ) 
+ *        <LI> info.pagination.show.title=Show items from {0} to {1}
+ *        <LI> info.pagination.showall.title=Show all items
+ *      </UL>
  *  </UL>
- *  <P>Following optional attributes can be parameterised with '%s' (item count)</P>
+ *  <P>Following optional attributes can be parameterized with '%s' (item count)</P>
  *  <UL>
  *    <LI> href - href of each page link. (optional)
  *    <LI> onclick - onclick of each page link. (optional)
  *  </UL>
  *
- *  @author Dirk Frederickx
  *  @since 2.5.109
  */
 public class SetPaginationTag
@@ -53,7 +63,7 @@ public class SetPaginationTag
     private static final long serialVersionUID = 0L;
     private static final int ALLITEMS = -1;
 
-        private int m_start;
+    private int m_start;
     private int m_total;
     private int m_pagesize;
     private int m_maxlinks;
@@ -117,7 +127,7 @@ public class SetPaginationTag
     public int doWikiStartTag()
         throws IOException
     {
-        if( m_total < m_pagesize ) return SKIP_BODY;
+        if( m_total <= m_pagesize ) return SKIP_BODY;
 
         StringBuffer pagination = new StringBuffer();
 
@@ -163,7 +173,7 @@ public class SetPaginationTag
             {
               pagination.append( "<span class='cursor'>" );
               pagination.append( 1 + cursor/m_pagesize );
-              pagination.append( "</span> " );
+              pagination.append( "</span>" );
             }
             else
             {
@@ -261,7 +271,7 @@ public class SetPaginationTag
 
         sb.append( ">" );
         sb.append( text );
-        sb.append( "</a> " );
+        sb.append( "</a>" );
     }
 
 }
