@@ -1,0 +1,31 @@
+[{TableOfContents}]
+
+!!Mailinglisten
+
+Es existieren Mailinglisten zur Diskussion außerhalb des Wikis. Diese eignen sich sehr gut zur Diskussion über Patches, Probleme, Entwicklung usw.
+Momentan gibt es zwei Listen: ''jspwiki-user'' und ''jspwiki-dev''
+
+!JSPWiki-User
+
+Die ''jspwiki-user''-Mailingliste wird im Apache Incubator gehostet. Du kannst der Mailingliste beitreten, indem du eine E-Mail an [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org] sendest. Das Listenarchiv befindet sich unter [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+
+Das [Archiv der alten Mailingliste|http://www.ecyrd.com/pipermail/jspwiki-users/] ist ebenfalls noch verfügbar. Es gibt auch ein [zweites Archiv|http://www.nabble.com/JspWiki---User-f2680.html] mit gleichem Inhalt bei Nabble.
+
+!JSPWiki-Dev
+
+Diese Liste ist für die JSPWiki-Entwickler gedacht. Die ''jspwiki-dev''-Liste kann abonniert werden durch das Senden einer E-Mail an [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org]. Das Archiv befindet sich unter [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/].
+
+Das Archiv der alten Mailingliste ist [ebenfalls verfügbar | http://www.ecyrd.com/pipermail/jspwiki-dev/].
+
+!!IRC-Kanal - chatte live mit den Entwicklern!
+
+Es gibt einen [IRC|http://de.wikipedia.org/wiki/IRC]-Kanal namens ''#jspwiki'' auf [Freenode|http://www.freenode.net]. Schau vorbei falls du irgendwelche Fragen hast oder einfach chatten willst!
+
+Im Kanal ist es zu bestimmten Tageszeiten relativ ruhig. Sei also nicht enttäuscht, wenn du nicht gleich eine Antwort bekommst. Bleib einfach eine Weile da...
+
+Regelmäßig anwesend:
+* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Lebt in der Zeitzone GMT+2.
+
+!!FaceBook-Gruppe
+
+Spaßeshalber habe ich eine [JSPWiki-Nutzergruppe bei FaceBook | http://www.facebook.com/group.php?gid=11138025370] angelegt. Wenn du bei Facebook angemeldet bist, schau vorbei!

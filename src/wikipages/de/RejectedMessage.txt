@@ -1,0 +1,7 @@
+%%error
+__Dein Bearbeitungsvorgang wurde aus dem folgenden Grund zurückgewiesen:__
+
+[{$message}]
+%%
+
+[{ALLOW view All}]
