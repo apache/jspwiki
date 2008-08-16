@@ -1,3 +1,16 @@
+2008-08-16  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-19
+        
+        * JSPWIKI-315: Fixed issues with upper/lowercase filtering in 
+        AttachmentManager
+        
+        * JSPWIKI-325: Patch from Harry to sort out plugin parameters and their 
+        javadocs.
+        
+        * JSPWIKI-307: Pages with & in their names were not being parsed properly 
+        in links.
+
 2008-08-15  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-18

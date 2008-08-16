@@ -918,19 +918,47 @@ public class JSPWikiMarkupParser
             }
             else if( ch == '&' )
             {
-                for( int j = (i < buf.length()-1 ) ? i+1 : i; j < buf.length(); j++ )
+                //
+                //  If the following is an XML entity reference (&#.*;) we'll
+                //  leave it as it is; otherwise we'll replace it with an &amp;
+                //
+                
+                boolean isEntity = false;
+                StringBuilder entityBuf = new StringBuilder();
+                
+                if( i < buf.length() -1 )
                 {
-                    int ch2 = buf.charAt(j);
-                    if( ch2 == ';' )
+                    for( int j = i; j < buf.length(); j++ )
                     {
-                        tmpBuf.append(ch);
-                        break;
-                    }
-                    if( ch2 != '#' && !Character.isLetterOrDigit( (char)ch2) )
-                    {
-                        tmpBuf.append("&amp;"); break;
+                        char ch2 = buf.charAt(j);
+                        
+                        if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' )
+                        {
+                            entityBuf.append(ch2);
+                            
+                            if( ch2 == ';' )
+                            {
+                                isEntity = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
+                
+                if( isEntity ) 
+                {
+                    tmpBuf.append( entityBuf );
+                    i = i + entityBuf.length() - 1;
+                }
+                else 
+                {
+                    tmpBuf.append("&amp;");
+                }
+                
             }
             else
             {
