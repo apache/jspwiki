@@ -27,9 +27,24 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  Provides an image plugin for better control than is possible with
- *  a simple image inclusion.
+ *  Provides an image plugin for better control than is possible with a simple image inclusion.
+ *  <br> Most parameters are equivalents of the html image attributes.
  *
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>src</b> - the source (a URL) of the image (required parameter)</li>
+ *  <li><b>align</b> - the alignment of the image</li>
+ *  <li><b>height</b> - the height of the image</li>
+ *  <li><b>width</b> - the width of the image</li>
+ *  <li><b>alt</b> - alternate text</li>
+ *  <li><b>caption</b> - the caption for the image</li>
+ *  <li><b>link</b> - the hyperlink for the image</li>
+ *  <li><b>target</b> - the target (frame) to be used for opening the image</li>
+ *  <li><b>style</b> - the style attribute of the image</li>
+ *  <li><b>class</b> - the associated class for the image</li>
+ *  <li><b>border</b> - the border for the image</li>
+ *  </ul>
+ *  
  *  @since 2.1.4.
  */
 // FIXME: It is not yet possible to do wiki internal links.  In order to
@@ -38,17 +53,28 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class Image
     implements WikiPlugin
 {
+    /** The parameter name for setting the src.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SRC      = "src";
+    /** The parameter name for setting the align.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ALIGN    = "align";
+    /** The parameter name for setting the height.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_HEIGHT   = "height";
+    /** The parameter name for setting the width.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_WIDTH    = "width";
+    /** The parameter name for setting the alt.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ALT      = "alt";
+    /** The parameter name for setting the caption.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CAPTION  = "caption";
+    /** The parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK     = "link";
+    /** The parameter name for setting the target.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TARGET   = "target";
+    /** The parameter name for setting the style.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_STYLE    = "style";
+    /** The parameter name for setting the class.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CLASS    = "class";
     //    public static final String PARAM_MAP      = "map";
+    /** The parameter name for setting the border.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_BORDER   = "border";
 
     /**

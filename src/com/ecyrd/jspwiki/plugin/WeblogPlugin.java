@@ -51,17 +51,17 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  <p>%p - Page name</p>
  *  <p>Parameters:</p>
  *  <ul>
- *    <li>page - which page is used to do the blog; default is the current page.</li>
- *    <li>entryFormat - how to display the date on pages, using the J2SE SimpleDateFormat
+ *    <li><b>page</b> - which page is used to do the blog; default is the current page.</li>
+ *    <li><b>entryFormat</b> - how to display the date on pages, using the J2SE SimpleDateFormat
  *       syntax. Defaults to the current locale's DateFormat.LONG format
  *       for the date, and current locale's DateFormat.SHORT for the time.
  *       Thus, for the US locale this will print dates similar to
  *       this: September 4, 2005 11:54 PM</li>
- *    <li>days - how many days the weblog aggregator should show.  If set to
+ *    <li><b>days</b> - how many days the weblog aggregator should show.  If set to
  *      "all", shows all pages.</li>
- *    <li>pageformat - What the entry pages should look like.</li>
- *    <li>startDate - Date when to start.  Format is "ddMMyy."</li>
- *    <li>maxEntries - How many entries to show at most.</li>
+ *    <li><b>pageformat</b> - What the entry pages should look like.</li>
+ *    <li><b>startDate</b> - Date when to start.  Format is "ddMMyy."</li>
+ *    <li><b>maxEntries</b> - How many entries to show at most.</li>
  *  </ul>
  *  <p>The "days" and "startDate" can also be sent in HTTP parameters,
  *  and the names are "weblog.days" and "weblog.startDate", respectively.</p>
@@ -87,11 +87,17 @@ public class WeblogPlugin
     /** The default date format used in the blog entry page names. */
     public static final String   DEFAULT_DATEFORMAT = "ddMMyy";
 
+    /** Parameter name for the startDate.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_STARTDATE    = "startDate";
+    /** Parameter name for the entryFormat.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_ENTRYFORMAT  = "entryFormat";
+    /** Parameter name for the days.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_DAYS         = "days";
+    /** Parameter name for the allowComments.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_ALLOWCOMMENTS = "allowComments";
+    /** Parameter name for the maxEntries.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_MAXENTRIES   = "maxEntries";
+    /** Parameter name for the page.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_PAGE         = "page";
 
     /** The attribute which is stashed to the WikiPage attributes to check if a page

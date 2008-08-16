@@ -29,6 +29,9 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
 /**
  *  Simple plugin which shows how to add JSON calls to your plugin.
  * 
+ *  <p>Parameters : </p>
+ *  NONE
+ *  
  *  @since  2.5.4
  */
 public class RPCSamplePlugin implements WikiPlugin, RPCCallable
@@ -39,6 +42,9 @@ public class RPCSamplePlugin implements WikiPlugin, RPCCallable
      *  @param echo The parameter
      *  @return the string <code>JSON says:</code>, plus the value 
      *  supplied by the <code>echo</code> parameter
+     *  
+     *  <p>Parameters : </p>
+     * NONE  
      */
     public String myFunction(String echo)
     {

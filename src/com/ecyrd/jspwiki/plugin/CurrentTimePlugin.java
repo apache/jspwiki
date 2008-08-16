@@ -32,7 +32,9 @@ import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 /**
  *  Just displays the current date and time.
  *  The time format is exactly like in the java.text.SimpleDateFormat class.
- *
+ *  
+ *  <p>Parameters : </p>
+ *  NONE
  *  @since 1.7.8
  *  @see java.text.SimpleDateFormat
  */

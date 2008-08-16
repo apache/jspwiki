@@ -39,15 +39,17 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 /**
  *  This is a base class for all plugins using referral things.
  *
- *  <p>Parameters also valid for all subclasses.</p>
+ *  <p>Parameters (also valid for all subclasses of this class) : </p>
  *  <ul>
- *  <li><b>maxwidth</b>: maximum width of generated links</li>
- *  <li><b>separator</b>: separator between generated links (wikitext)</li>
- *  <li><b>after</b>: output after the link</li>
- *  <li><b>before</b>: output before the link</li>
- *  <li><b>show</b>: Either "pages" (default) or "count".  When "count", shows only the count
- *      of pages which match. (Since 2.8)</li>
- *  <li><b>showLastModified</b>: When show=count, shows also the last modified date. (Since 2.8)</li>
+ *  <li><b>maxwidth</b> - maximum width of generated links</li>
+ *  <li><b>separator</b> - separator between generated links (wikitext)</li>
+ *  <li><b>after</b> - output after the link</li>
+ *  <li><b>before</b> - output before the link</li>
+ *  <li><b>exclude</b> -  a regular expression of pages to exclude from the list. </li>
+ *  <li><b>include</b> -  a regular expression of pages to include in the list. </li>
+ *  <li><b>show</b> - value is either "pages" (default) or "count".  When "count" is specified, shows only the count
+ *      of pages which match. (since 2.8)</li>
+ *  <li><b>showLastModified</b> - When show=count, shows also the last modified date. (since 2.8)</li>
  *  </ul>
  *  
  */

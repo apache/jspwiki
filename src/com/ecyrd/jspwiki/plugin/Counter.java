@@ -24,17 +24,16 @@ import com.ecyrd.jspwiki.*;
 import java.util.*;
 
 /**
- *  Provides a page-specific counter.
- *  <P>Parameters
- *  <UL>
- *    <LI>name - Name of the counter.  Optional.
- *    <LI>increment - The amount to increment, may be a negative value, default is 1.  Optional.
- *    <LI>showResult - Should the counter value be visible on the page, default is true.  Optional.
- *  </UL>
+ *  Provides a page-specific counter, it is reset every time a page is rendered, so it is not usable as a hitcounter.
+ *  <br>Stores a variable in the WikiContext called "counter", with the name of the optionally specified variable "name".  
+ *  <br>For example:  If name is "thispage", then the variable name is called "counter-thispage".
  *
- *  Stores a variable in the WikiContext called "counter", with the name of the
- *  optionally attached.  For example:<BR>
- *  If name is "thispage", then the variable name is called "counter-thispage".
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>name</b> - Name of the counter.  Optional.</li>
+ *  <li><b>increment</b> - The amount to increment, may be a negative value, default is 1.  Optional.</li>
+ *  <li><b>showResult</b> - Should the counter value be visible on the page, default is true.  Optional.</li>
+ *  </ul>
  *
  *  @since 1.9.30
  */
@@ -43,9 +42,13 @@ public class Counter
 {
     // private static Logger log = Logger.getLogger( Counter.class );
 
+    /** Parameter name for setting the name.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_NAME          = "name";
+    /** Parameter name for setting the increment.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_INCREMENT     = "increment";
+    /** Parameter name for setting the showResult.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_SHOW_RESULT   = "showResult";
+    /** Parameter name for setting the start.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_START         = "start";
     public static final String  DEFAULT_NAME        = "counter";
     private static final int     DEFAULT_INCREMENT   = 1;

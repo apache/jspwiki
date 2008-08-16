@@ -31,16 +31,15 @@ import com.ecyrd.jspwiki.*;
 /**
  *  Displays the pages referring to the current page.
  *
- *  <P>Parameters</P>
- *  <UL>
- *    <LI>name:    Name of the root page. Default name of calling page
- *    <LI>type:    local|externalattachment
- *    <LI>depth:   How many levels of pages to be parsed.
- *    <LI>include: Include only these pages. (eg. include='UC.*|BP.*' )
- *    <LI>exclude: Exclude with this pattern. (eg. exclude='LeftMenu' )
- *    <LI>format:  full|compact
- *        <br>FULL now expands all levels correctly
- *  </UL>
+ *  <p>Parameters</p>
+ *  <ul>
+ *    <li><b>name</b> - Name of the root page. Default name of calling page
+ *    <li><b>type</b> - local|externalattachment
+ *    <li><b>depth</b> - How many levels of pages to be parsed.
+ *    <li><b>include</b> - Include only these pages. (eg. include='UC.*|BP.*' )
+ *    <li><b>exclude</b> - Exclude with this pattern. (eg. exclude='LeftMenu' )
+ *    <li><b>format</b> -  full|compact, FULL now expands all levels correctly
+ *  </ul>
  *
  *  @author Dirk Frederickx
  */

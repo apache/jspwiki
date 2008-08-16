@@ -29,17 +29,33 @@ import java.util.*;
 /**
  *  Inserts page contents.  Muchos thanks to Scott Hurlbert for the initial code.
  *
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>page</b> - the name of the page to be inserted</li>
+ *  <li><b>style</b> - the style to use</li>
+ *  <li><b>maxlength</b> - the maximum length of the page to be inserted (page contents)</li>
+ *  <li><b>class</b> - the class to use</li>
+ *  <li><b>section</b> - the section of the page that has to be inserted (separated by "----"</li>
+ *  <li><b>default</b> - the text to insert if the requested page does not exist</li>
+ *  </ul>
+ *  
  *  @since 2.1.37
  *  @author Scott Hurlbert
  */
 public class InsertPage
     implements WikiPlugin
 {
+    /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGENAME  = "page";
+    /** Parameter name for setting the style.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_STYLE     = "style";
+    /** Parameter name for setting the maxlength.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAXLENGTH = "maxlength";
+    /** Parameter name for setting the class.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CLASS     = "class";
+    /** Parameter name for setting the section.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SECTION   = "section";
+    /** Parameter name for setting the default.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DEFAULT   = "default";
 
     private static final String DEFAULT_STYLE = "";

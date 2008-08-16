@@ -39,6 +39,11 @@ import com.ecyrd.jspwiki.WikiEngine;
  * his concept.
  * <p>
  * 
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>_cmdline</b> - the commentText</li>
+ *  </ul>
+ *  
  * @author John Volkar
  * @author Scott Hulbert
  */

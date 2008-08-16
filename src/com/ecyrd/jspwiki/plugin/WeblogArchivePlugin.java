@@ -30,12 +30,18 @@ import java.util.*;
 /**
  *  Creates a list of all weblog entries on a monthly basis.
  *
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>page</b> - the page name</li>
+ *  </ul>
+ *  
  *  @since 1.9.21
  */
 public class WeblogArchivePlugin implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
 
+    /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE = "page";
 
     private SimpleDateFormat m_monthUrlFormat;

@@ -37,21 +37,31 @@ import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
- *  Returns the Recent Changes.
+ *  Returns the Recent Changes in the wiki being a date-sorted list of page names.
  *
- *  Parameters: since=number of days,
- *              format=(compact|full)
- *
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>since</b> - show changes from the last n days, for example since=5 shows only the pages that were changed in the last five days</li>
+ *  <li><b>format</b> - (full|compact) : if "full", then display a long version with all possible info. If "compact", then be as compact as possible.</li>
+ *  <li><b>timeFormat</b> - the time format to use, the default is "HH:mm:ss"</li>
+ *  <li><b>dateFormat</b> - the date format to use, the default is "dd.MM.yyyy"</li>
+ *  </ul>
+ *  
  */
 public class RecentChangesPlugin
     implements WikiPlugin
 {
+    /** Parameter name for the separator format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT = "format";
+    /** Parameter name for the separator timeFormat.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TIME_FORMAT = "timeFormat";
+    /** Parameter name for the separator dateFormat.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DATE_FORMAT = "dateFormat";
 
     /** How many days we show by default. */
     private static final int    DEFAULT_DAYS = 100*365;
+    public static final String DEFAULT_TIME_FORMAT ="HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT ="dd.MM.yyyy";
 
     private static Logger log = Logger.getLogger( RecentChangesPlugin.class );
 
@@ -231,7 +241,7 @@ public class RecentChangesPlugin
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
     private DateFormat getTimeFormat( WikiContext context, Map params )
     {
-        String formatString = get(params, "HH:mm:ss", PARAM_TIME_FORMAT);
+        String formatString = get(params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT);
 
         if ("".equals(formatString.trim()))
             return Preferences.getDateFormat( context, TimeFormat.TIME );
@@ -243,7 +253,7 @@ public class RecentChangesPlugin
 
     private DateFormat getDateFormat( WikiContext context, Map params )
     {
-        String formatString = get(params, "dd.MM.yyyy", PARAM_DATE_FORMAT);
+        String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
 
         if ("".equals(formatString.trim()))
             return Preferences.getDateFormat( context, TimeFormat.DATE );

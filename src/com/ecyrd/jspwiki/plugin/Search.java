@@ -34,7 +34,15 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *
+ *  The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page. 
+ *  
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>query</b> - String. A standard JSPWiki search query.</li>
+ *  <li><b>set</b> - String. The JSPWiki context variable that will hold the results of the query. This allows you to pass your queries to other plugins on the same page as well. </li>
+ *  <li><b>max</b> - Integer. How many search results are shown at maximum.</li> 
+ *  </ul>
+ *  
  *  @since 
  */
 public class Search implements WikiPlugin

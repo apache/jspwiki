@@ -36,14 +36,14 @@ import com.ecyrd.jspwiki.WikiProvider;
  *  You can also use shorthand "If" to run it.
  *  Parameters:
  *  <ul>
- *    <li>group - A "|" -separated list of group names.
- *    <li>user  - A "|" -separated list of user names.
- *    <li>ip    - A "|" -separated list of ip addresses.
- *    <li>var   - A wiki variable
- *    <li>page  - A page name
- *    <li>contains - A Perl5 regexp pattern
- *    <li>is    - A Perl5 regexp pattern
- *    <li>exists - "true" or "false".
+ *    <li><b>group</b> - A "|" -separated list of group names.
+ *    <li><b>user</b>  - A "|" -separated list of user names.
+ *    <li><b>ip</b>    - A "|" -separated list of ip addresses.
+ *    <li><b>var</b>   - A wiki variable
+ *    <li><b>page</b>  - A page name
+ *    <li><b>contains</b> - A Perl5 regexp pattern
+ *    <li><b>is</b>    - A Perl5 regexp pattern
+ *    <li><b>exists</b> - "true" or "false".
  *  </ul>
  *
  *  <p>If any of them match, the body of the plugin is executed.  You can

@@ -32,22 +32,18 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- *  A plugin which creates an index of pages according to a certain
- *  pattern.
+ *  A plugin that creates an index of pages according to a certain  pattern.
+ *  <br>The default is to include all pages.
  *  <p>
  *  This is a complete rewrite of the old IndexPlugin under an Apache license.
- *  <p>
- *  Usage:
+ *  <p>Parameters (From AbstractReferralPlugin) : </p>
  *  <ul>
  *    <li><b>include</b> - A regexp pattern for marking which pages should be included.</li>
  *    <li><b>exclude</b> - A regexp pattern for marking which pages should be excluded.</li>
  *  </ul>
- *  The default is to include all pages.
  */
-public class IndexPlugin implements WikiPlugin
+public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
 {
-    public static final String PARAM_INCLUDE = "include";
-    public static final String PARAM_EXCLUDE = "exclude";
     private static Logger log = Logger.getLogger( IndexPlugin.class );
     
     /**
