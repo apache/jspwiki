@@ -1,3 +1,14 @@
+2008-08-17  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-20
+        
+        * [JSPWIKI-340] updated (english) corepages and README, mostly editorial changes, 
+           a brief summary :
+        - Java 5.0 is now a requirement for compiling (instead 1.4.2)
+        - Servlet API 2.2 is mentioned, is this still enough ? (I haven't checked)
+        - Removed dead link to tjworld.net/help/kb/0001_iis6-Tomcat5-JK2.html#conConnector
+        - Removed links to JSPWiki 2.2 ,  2.3 and 2.4 documentation
+
 2008-08-16  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-alpha-19
