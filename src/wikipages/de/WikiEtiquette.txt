@@ -12,9 +12,9 @@ Wenn du Seiten bearbeitest, beachte bitte folgende Regeln:
 
 !!Kommentare
 
-* Es steht dir frei, auch anonym beizutragen, aber bevorzugterweise signierst du deine Kommentare mit deinem Namen (oder Pseudonym). Es ist gemeinhin verbreitet, der Signatur '--' voranzustellen, beispielsweise so ''-- [Janne Jalkanen]'' (wenn wir gerade dabei sind: Erstelle doch deine eigene Wikiseite und stell dich uns vor!).
-* Eine gute Möglichkeit ist auch, die Signatur voranzustellen, zum Beispiel ''[Janne Jalkanen]: Ich bin der Meinung, dass...''
-* Überlege zuerst, bevor du schreibst. Ein Wiki ist kein Chat, Forum oder News-Server. Deine Mitteilung wird für immer und für alle sichtbar hier geschrieben stehen (wir erstellen Datensicherungen).
+* Es steht dir frei, auch anonym beizutragen, aber bevorzugterweise signierst du deine Kommentare mit deinem Namen (oder Pseudonym). Es ist allgemein üblich, der Signatur '--' voranzustellen, beispielsweise so: ''-- [Janne Jalkanen]'' (wenn wir gerade dabei sind: Erstelle doch deine eigene Wikiseite und stell dich uns vor!).
+* Eine gute Möglichkeit ist auch, die Signatur voranzustellen, zum Beispiel ''[Janne Jalkanen]: Ich bin der Meinung, dass...''.
+* Überlege zuerst, bevor du schreibst. Ein Wiki ist kein Chat, Forum oder News-Server. Dein Beitrag wird für immer und für alle sichtbar im Wiki stehen (Wenn du deinen Kommentar löschst, ist er in einer älteren Version der Seite immer noch sichtbar!).
 
 !!Erstellen von WikiNamen
 
