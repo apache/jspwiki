@@ -1,3 +1,20 @@
+2008-08-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-22
+        
+        * JSPWIKI-27: Managed to duplicate this pesky bug from way old times.
+        Looks like this was caused by a misread of the OSCache javadocs -
+        but I am not sure if the fix causes new problems.
+        
+        * JSPWIKI-353: Fixed wrong i18n key in PluginManager which showed
+        up if the plugin threw an exception.
+        
+        * JSPWIKI-352: Fixed a long-standing bug with ACLs being leaked
+        from one page to another if the InsertPageTag was used.
+        
+        * Added a KEYS file to the top-level dir.  It would be a good idea
+        if all committers added their current GPG keys to it.
+        
 2008-08-18  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-21
