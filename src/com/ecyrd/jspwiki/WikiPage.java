@@ -21,15 +21,19 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.auth.acl.AclEntry;
+import com.ecyrd.jspwiki.auth.acl.AclImpl;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
+ * @param <V>
  */
 
 // FIXME: We need to rethink how metadata is being used - probably the 
@@ -313,28 +317,35 @@ public class WikiPage
      */
     public Object clone()
     {
-        try
-        {
-            WikiPage p = (WikiPage)super.clone();
+        WikiPage p = new WikiPage( m_engine, m_name );
        
-            p.m_engine = m_engine;
-            p.m_name   = m_name;
-            p.m_wiki   = m_wiki;
+        p.m_wiki         = m_wiki;
             
-            p.m_author       = m_author;
-            p.m_version      = m_version;
-            p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
+        p.m_author       = m_author;
+        p.m_version      = m_version;
+        p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
 
-            p.m_fileSize     = m_fileSize;
-                            
-            p.m_attributes.putAll(m_attributes);
-            
-            return p;
+        p.m_fileSize     = m_fileSize;
+
+        for( Map.Entry<String,Object> entry : m_attributes.entrySet() )
+        {
+            p.m_attributes.put( entry.getKey(), 
+                                entry.getValue() );
         }
-        catch( CloneNotSupportedException e )
-        {}
-        
-        return null;
+
+        if( m_accessList != null )
+        {
+            p.m_accessList = new AclImpl();
+            
+            for( Enumeration entries = m_accessList.entries(); entries.hasMoreElements(); )
+            {
+                AclEntry e = (AclEntry)entries.nextElement();
+            
+                p.m_accessList.addEntry( e );
+            }
+        }
+            
+        return p;
     }
     
     /**
