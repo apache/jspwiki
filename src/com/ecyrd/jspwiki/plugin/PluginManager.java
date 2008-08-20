@@ -406,7 +406,7 @@ public class PluginManager extends ModuleManager
                     return stackTrace( params, t );
                 }
 
-                throw new PluginException( rb.getString( "plugin.error.pluginfailed" ), t );
+                throw new PluginException( rb.getString( "plugin.error.failed" ), t );
             }
 
         }
