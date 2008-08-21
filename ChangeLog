@@ -1,3 +1,10 @@
+2008-08-20  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-23
+
+        * Changed Stripes test jar to the released 1.5 version (congrats to Tim
+        and the team).
+
 2008-08-20  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-alpha-22
@@ -173,7 +180,7 @@
         * JSPWIKI-320: removed all httpRequest.setCharacterEncoding() calls (except in WikiServletFilter)
         because they were called too late, reported by Clay Atkins
         
-2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-08-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-8
         
