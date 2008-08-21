@@ -5,6 +5,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
@@ -14,15 +15,11 @@
   UserManager manager = wikiContext.getEngine().getUserManager();
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
-<form action="<wiki:CheckRequestContext 
-     context='login'><wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='tab'
-       value='profile'/></wiki:Link></wiki:CheckRequestContext><wiki:CheckRequestContext 
-     context='prefs'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
-       value='profile'/></wiki:Link></wiki:CheckRequestContext>" 
-          id="editProfile" 
+<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean"
+          id="editProfile"
        class="wikiform"
-    onsubmit="return Wiki.submitOnce( this );"
-      method="post" accept-charset="UTF-8">
+      method="post" acceptcharset="${wikiEngine.contentEncoding}">
+      <stripes:param name="tab" value="profile"/>
 
       <h3>
       <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
@@ -42,8 +39,8 @@
        <td><label for="loginname"><fmt:message key="prefs.loginname"/></label></td>
        <td>
          <wiki:UserProfile property="canChangeLoginName">
-           <input type="text" name="loginname" id="loginname"
-                  size="20" value="<wiki:UserProfile property='loginname' />" />
+           <stripes:text name="loginname" id="loginname"
+                  size="20"><wiki:UserProfile property="loginname"/></stripes:text>
          </wiki:UserProfile>
          <wiki:UserProfile property="!canChangeLoginName">
            <!-- If user can't change their login name, it's because the container manages the login -->
@@ -64,16 +61,16 @@
          <td><label for="password"><fmt:message key="prefs.password"/></label></td>
          <td>
             <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
-            <label for="password0">Old</label>&nbsp;
+            <label for="password">Old</label>&nbsp;
             <input type="password" name="password0" id="password0" size="20" value="" />
             &nbsp;&nbsp;--%>
-            <input type="password" name="password" id="password" size="20" value="" />
+            <stripes:password name="password" id="password" size="20" value="" />
           </td>
         </tr>
         <tr>
-          <td><label for="password2"><fmt:message key="prefs.password2"/></label></td>
+          <td><label for="passwordAgain"><fmt:message key="prefs.password2"/></label></td>
           <td>
-            <input type="password" name="password2" id="password2" size="20" value="" />
+            <stripes:password name="passwordAgain" id="passwordAgain" size="20" value="" />
             <%-- extra validation ? min size, allowed chars? --%>
          </td>
        </tr>
@@ -83,8 +80,8 @@
      <tr>
        <td><label for="fullname"><fmt:message key="prefs.fullname"/></label></td>
        <td>
-         <input type="text" name="fullname" id="fullname"
-                size="20" value="<wiki:UserProfile property='fullname'/>" />
+         <stripes:text name="fullname" id="fullname"
+                size="20"><wiki:UserProfile property="fullname"/></stripes:text>
          <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
        </td>
      </tr>
@@ -93,8 +90,8 @@
      <tr>
        <td><label for="email"><fmt:message key="prefs.email"/></label></td>
        <td>
-         <input type="text" name="email" id="email"
-                size="20" value="<wiki:UserProfile property='email' />" />
+         <stripes:text name="email" id="email"
+                size="20"><wiki:UserProfile property="email" /></stripes:text>
          <span class="formhelp"><fmt:message key="prefs.email.description"/></span>
        </td>
      </tr>
@@ -133,13 +130,11 @@
        <td>&nbsp;</td>
        <td>
        <wiki:UserProfile property="exists">
-        <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
+        <stripes:submit name="saveProfile"><fmt:message key="prefs.save.submit"/></stripes:submit>
        </wiki:UserProfile>
        <wiki:UserProfile property="new">
-         <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
+        <stripes:submit name="saveProfile"><fmt:message key="prefs.save.submit"/></stripes:submit>
        </wiki:UserProfile>
-       <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-       <input type="hidden" name="action" value="saveProfile" />
 
        <wiki:UserCheck status="assertionsAllowed">
           <div class="formhelp"><fmt:message key="prefs.cookie.info"/></div>
@@ -147,4 +142,4 @@
        </td>
      </tr>
    </table>
-</form>
+</stripes:form>

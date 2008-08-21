@@ -10,7 +10,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  * <p>
@@ -76,8 +75,7 @@ public abstract class AbstractActionBean implements WikiActionBean
 
     /**
      * Returns the WikiEngine, which may be <code>null</code> if this instance
-     * was created without invoking the WikiActionBeanContext methods
-     * {@link WikiActionBeanContext#setRequest(HttpServletRequest)} or
+     * was created without invoking the WikiActionBeanContext method
      * {@link WikiActionBeanContext#setServletContext(javax.servlet.ServletContext)}.
      */
     public WikiEngine getEngine()
@@ -224,8 +222,8 @@ public abstract class AbstractActionBean implements WikiActionBean
     }
 
     /**
-     * Locates the i18n ResourceBundle given. This method interprets the request
-     * locale, and uses that to figure out which language the user wants.
+     * Locates the i18n ResourceBundle given. This method examines the Stripes
+     * ActionBeanContext and returns the current locale.
      * 
      * @see com.ecyrd.jspwiki.i18n.InternationalizationManager
      * @param bundle The name of the bundle you are looking for.
@@ -236,12 +234,12 @@ public abstract class AbstractActionBean implements WikiActionBean
     // something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
-        Locale loc = Preferences.getLocale( this );
-
-        if( m_actionBeanContext != null && m_actionBeanContext.getRequest() != null )
+        if( m_actionBeanContext == null || m_actionBeanContext.getRequest() == null )
         {
-            loc = m_actionBeanContext.getRequest().getLocale();
+            throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
         }
+
+        Locale loc = m_actionBeanContext.getRequest().getLocale();
         ResourceBundle b = getEngine().getInternationalizationManager().getBundle( bundle, loc );
 
         return b;

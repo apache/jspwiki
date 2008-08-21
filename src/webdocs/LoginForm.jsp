@@ -1,8 +1,10 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
 <%! 
     /**
      * This page contains the logic for finding and including
@@ -19,17 +21,8 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
-    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
-    
-    // If no context, it means we're using container auth.  So, create one anyway
-    if( wikiContext == null )
-    {
-        wikiContext = wiki.createContext( request, WikiContext.LOGIN );
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  wikiContext,
-                                  PageContext.REQUEST_SCOPE );
-    }
-    
+    WikiActionBean wikiContext = WikiActionBeanFactory.findActionBean( request );
+    wikiContext.setVariable( "contentTemplate", "LoginContent.jsp" );
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
                                                             wikiContext.getTemplate(),

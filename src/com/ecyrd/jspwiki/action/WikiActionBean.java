@@ -63,8 +63,7 @@ public interface WikiActionBean extends ActionBean
     
     /**
      * Returns the WikiEngine, which may be <code>null</code> if this instance
-     * was created without invoking the WikiActionBeanContext methods
-     * {@link WikiActionBeanContext#setRequest(HttpServletRequest)} or
+     * was created without invoking the WikiActionBeanContext method
      * {@link WikiActionBeanContext#setServletContext(javax.servlet.ServletContext)}.
      */
     public WikiEngine getEngine();

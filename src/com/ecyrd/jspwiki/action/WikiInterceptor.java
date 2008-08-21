@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
+import com.ecyrd.jspwiki.auth.SessionMonitor;
 
 /**
  * <p>
@@ -123,12 +124,21 @@ public class WikiInterceptor implements Interceptor
             return r;
         }
 
+        // Retrieve the ActionBean, its ActionBeanContext, and HTTP request
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
-        WikiActionBeanContext beanContext = actionBean.getContext();
-        HttpServletRequest httpRequest = beanContext.getRequest();
+        WikiActionBeanContext actionBeanContext = actionBean.getContext();
+        HttpServletRequest request = actionBeanContext.getRequest();
+
+        // Set the WikiSession, if not set yet
+        if ( actionBeanContext.getWikiSession() == null )
+        {
+            WikiEngine engine = actionBeanContext.getWikiEngine();
+            WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
+            actionBeanContext.setWikiSession( wikiSession );
+        }
 
         // Stash the WikiActionBean and WikiPage in the request
-        WikiActionBeanFactory.saveActionBean( httpRequest, actionBean );
+        WikiActionBeanFactory.saveActionBean( request, actionBean );
 
         if( log.isDebugEnabled() )
         {

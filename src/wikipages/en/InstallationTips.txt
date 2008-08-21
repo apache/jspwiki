@@ -5,17 +5,13 @@
 !Wiki configuration
 The least painful approach to defining the location of your Wiki files is to have them located at the same drive as your Tomcat (or other web server) installation, and define the location in Unix format. For example, files in C:\JSPWiki\files are defined in the configuration file as /JSPWiki/files.
 
-Make also sure to change the setting for {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} if you want a log-file to be created. This setting is hidden quite well near the end of the config-file. The format is the same as the {{jspwiki.fileSystemProvider.pageDir}}-setting, i.e. backslashes must be duplicated.
-
-!How To Link Tomcat 5 with IIS 6 on Windows 2003 Server using the JK2 ajp13 connector
-
-Comprehensive illustrated guide at [http://tjworld.net/help/kb/0001_iis6-Tomcat5-JK2.html#conConnector]
+Also make sure you change the setting for {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} if you want a logfile to be created. This setting is hidden quite well near the end of the config-file. The format is the same as the {{jspwiki.fileSystemProvider.pageDir}}-setting, i.e. backslashes must be duplicated.
 
 !! UTF-8 Issues
 
-If you are having problems with Tomcat 5.x and JSPWiki with UTF-8, please note the following!
+If you are having problems with Tomcat 5.x (or higher) and JSPWiki with UTF-8, please note the following!
 
-You have to edit server.xml of Tomcat (is in the conf-directory of Tomcat). Please add to 
+You have to edit the server.xml of Tomcat (located in the conf-directory of Tomcat). Please add to 
 
 {{{<Connector port="8080"
                maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -25,7 +21,7 @@ You have to edit server.xml of Tomcat (is in the conf-directory of Tomcat). Plea
 
 the term '{{{URIEncoding="UTF-8"}}}'.
 
-It should look like that:
+It should look like this:
 
 {{{
 <Connector port="8080"
@@ -36,22 +32,9 @@ It should look like that:
                URIEncoding="UTF-8"/>
 }}}
 
-Remember that if you use mod_jk, you should define the {{URIEncoding}} for the AJK Connector, too.
+Remember that if you use mod_jk, you should define the {{URIEncoding}} for the JK Connector too :
 
-------
-
-WARNING: Our Wikis running on 2.2.33 with jspwiki.properties set to UTF-8 did not display pages anymore that contained Umlaute after setting this. I had to disable the URIEncoding again.
-
---[Christoph Sauer|http://www.jspwiki.org/wiki/ChristophSauer] 2-Sep.2006
-------
-Using jk connector and Apache needs extra settings.
-
-This is my successful configuration.
-(Suse10.1 / Tomcat5.0 and 5.5 / JSPWiki v2.4.87)
-
-/etc/tomcat5/base/server.xml (based on "server-minimal.xml" by SuSE)
 {{{
-<Server port=8005 shutdown="SHUTDOWN">
 .........
   <service name="Catalina">
     <connector port="8080" />
@@ -59,9 +42,7 @@ This is my successful configuration.
     <connector protocol="AJP/1.3" uriencoding="UTF-8" port="8009" />
 .........
   </service>
-</server>
 }}}
---Kei Watanabe 10-jan.2007 / 21 Dec.2007
 
 !! Other tips
 
@@ -69,7 +50,7 @@ This is my successful configuration.
 
 The menu on the left hand side (over there <-----) is just a standard Wiki page, called [LeftMenu].
 
-If you (the administrator) don't want anyone else to modify it, you can always edit [LeftMenu], then make the page read-only on the hard drive itself ;-).
+If you (the administrator) don't want anyone else to modify it, you can always edit [LeftMenu], and then make the page read-only by putting an ACL on it.
 
 
 The lower part of the left hand side is similarly called [LeftMenuFooter], and it is fully editable as well.

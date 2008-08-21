@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiActionBeanContext;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
@@ -195,7 +196,7 @@ public class Preferences
 
     
     /**
-     * Get Locale according to user-preference settings or the user browser locale
+     * Get Locale according to the Stripes ActionBeanContext.
      * 
      * @param context The context to examine.
      * @return a Locale object.
@@ -203,20 +204,13 @@ public class Preferences
      */
     public static Locale getLocale(WikiActionBean context)
     {
-        Locale loc = null;
-        
-        String language = Preferences.getPreference( context, "Language" );
-
-        if( language != null)
-            loc = new Locale(language);
-
-        if( loc == null) 
-        {    
-            HttpServletRequest request = context.getHttpRequest();
-            loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
+        WikiActionBeanContext beanContext = context.getContext();
+        if( beanContext == null || beanContext.getRequest() == null )
+        {
+            throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
         }
-                
-        return loc;
+
+        return beanContext.getRequest().getLocale();
     }
 
     /**

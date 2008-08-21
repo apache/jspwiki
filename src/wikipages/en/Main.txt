@@ -20,9 +20,6 @@ You have some pages set up for you:
 * For all of the Wiki markup features, see [TextFormattingRules].
 * Entry point for full [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
 ** [JSPWiki 2.6 New Features|http://www.jspwiki.org/wiki/NewIn2.6].
-** [JSPWiki 2.4.x|http://doc.jspwiki.org/2.4]. ([Security|http://doc.jspwiki.org/2.4/wiki/Security])
-** [Security2.3Howto|http://www.jspwiki.org/wiki/Security2.3Howto]
-** [JSPWiki 2.2.x|http://doc.jspwiki.org/2.2].
 
 !Miscellaneous
 

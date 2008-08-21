@@ -76,6 +76,11 @@
          <param-name>LocalizationBundleFactory.ErrorMessageBundle</param-name>
          <param-value>templates.default</param-value>
       </init-param>
+      <!-- Locales supported by this wiki -->
+      <init-param>
+         <param-name>LocalePicker.Locales</param-name>
+         <param-value>en:UTF8,de:UTF8,es:UTF8,fi:UTF8,it:UTF8,ln:UTF8,zh_CN:UTF8,</param-value>
+      </init-param>
       <!-- Library for parsing multi-part file uploads -->
       <init-param>
         <param-name>MultipartWrapper.Class</param-name>

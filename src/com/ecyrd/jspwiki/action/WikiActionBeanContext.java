@@ -4,17 +4,27 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.ActionBeanContext;
+import net.sourceforge.stripes.controller.FlashScope;
 
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.tags.WikiTagBase;
 
 /**
+ * <p>
  * {@link net.sourceforge.stripes.action.ActionBeanContext} subclass that
  * contains a convenient reference to the current JSPWiki WikiEngine and the
- * user's HttpServletRequest. The WikiEngine reference is lazily initialized
- * when either {@link #setServletContext(ServletContext)} or
- * {@link #setRequest(HttpServletRequest)} is invoked. The HttpServletRequest
- * reference is set via {@link #setRequest(HttpServletRequest)}.
+ * user's HttpServletRequest and WikiSession.
+ * </p>
+ * <p>
+ * When the WikiActionBeanContext is created, callers <em>must</em> set the
+ * WikiEngine reference by calling either {@link #setWikiEngine(WikiEngine)}
+ * (which sets it directly), or {@link #setServletContext(ServletContext)}
+ * (which sets it lazily). when {@link #setServletContext(ServletContext)}. The
+ * HttpServletRequest reference is set via
+ * {@link #setRequest(HttpServletRequest)}.
+ * </p>
  * 
  * @author Andrew Jaquith
  */
@@ -22,24 +32,14 @@ public class WikiActionBeanContext extends ActionBeanContext
 {
     private volatile WikiEngine m_engine = null;
 
+    private volatile WikiSession m_wikiSession = null;
+
+    /**
+     * Constructs a new WikiActionBeanContext.
+     */
     public WikiActionBeanContext()
     {
         super();
-    }
-
-    public WikiSession getWikiSession()
-    {
-        return WikiSession.getWikiSession( m_engine, getRequest() );
-    }
-
-    /**
-     * Sets the WikiEngine associated with this WikiActionBeanContext.
-     * 
-     * @param engine the wiki engine
-     */
-    public void setWikiEngine( WikiEngine engine )
-    {
-        m_engine = engine;
     }
 
     /**
@@ -53,28 +53,11 @@ public class WikiActionBeanContext extends ActionBeanContext
     }
 
     /**
-     * Calls the superclass
-     * {@link ActionBeanContext#setRequest(HttpServletRequest)} and lazily sets
-     * the internal WikiEngine reference, if still <code>null</code>.
-     * 
-     * @param request the HTTP request
+     * Returns the WikiSession associated with this WikiActionBeanContext.
      */
-    @Override
-    public void setRequest( HttpServletRequest request )
+    public WikiSession getWikiSession()
     {
-        super.setRequest( request );
-        if( request != null )
-        {
-            // Lazily set the WikiEngine reference
-            if( m_engine == null )
-            {
-                ServletContext servletContext = request.getSession().getServletContext();
-                m_engine = WikiEngine.getInstance( servletContext, null );
-            }
-        }
-
-        // Retrieve the WikiSession, which executes the login stack (if needed)
-        WikiSession.getWikiSession( m_engine, request );
+        return m_wikiSession;
     }
 
     /**
@@ -95,4 +78,53 @@ public class WikiActionBeanContext extends ActionBeanContext
         }
     }
 
+    /**
+     * Sets the WikiEngine associated with this WikiActionBeanContext.
+     * 
+     * @param engine the wiki engine
+     */
+    public void setWikiEngine( WikiEngine engine )
+    {
+        m_engine = engine;
+    }
+
+    /**
+     * Sets the WikiSession associated with this WikiActionBeanContext.
+     * 
+     * @param session the wiki session
+     */
+    public void setWikiSession( WikiSession session )
+    {
+        m_wikiSession = session;
+    }
+
+    /**
+     * Adds a supplied ActionBean to "flash scope" so that it can be used by the next
+     * HttpRequest. When this method is called, the ActionBean is stashed in the
+     * request and the flash scope as attributes. For both, the bean is stored
+     * under names {@link WikiActionBeanFactory.ATTR_ACTIONBEAN}
+     * and {@link WikiTagBase.ATTR_CONTEXT}. This method assumes that the
+     * method {@link #setRequest(HttpServletRequest)} has been previously called.
+     * @param actionBean the action bean to add
+     * @throws IllegalStateException if the request object has not been previously set
+     * for this ActionBeanContext
+     */
+    public void flash( WikiActionBean actionBean )
+    {
+        if ( getRequest() == null )
+        {
+            throw new IllegalStateException( "Request not set! Cannot flash action bean." );
+        }
+        FlashScope flash = FlashScope.getCurrent( getRequest(), true);
+        flash.put( actionBean );
+        flash.put( WikiActionBeanFactory.ATTR_ACTIONBEAN, actionBean );
+        
+        // If not a WikiContext, synthesize a fake one
+        WikiPage page = m_engine.getPage( m_engine.getFrontPage() );
+        actionBean = m_engine.getWikiActionBeanFactory().newViewActionBean( getRequest(), getResponse(), page );
+        
+        // Stash the WikiContext
+        flash.put( WikiTagBase.ATTR_CONTEXT, actionBean );
+    }
+    
 }

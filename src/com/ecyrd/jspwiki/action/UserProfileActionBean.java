@@ -230,7 +230,7 @@ public class UserProfileActionBean extends AbstractActionBean
         {
             if( m_profile.getPassword() == null )
             {
-                errors.add( "profile.password", new ScopedLocalizableError( "validation.required", "valueNotPresent" ) );
+                errors.add( "profile.password", new LocalizableError( "valueNotPresent" ) );
             }
         }
 
@@ -240,7 +240,7 @@ public class UserProfileActionBean extends AbstractActionBean
         {
             if( !m_profile.getPassword().equals( m_passwordAgain ) )
             {
-                errors.add( "profile.password", new ScopedLocalizableError( "validation.required", "noPasswordMatch" ) );
+                errors.add( "profile.password", new LocalizableError( "noPasswordMatch" ) );
             }
         }
     }

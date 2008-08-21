@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.stripes.action.RedirectResolution;
+import net.sourceforge.stripes.controller.StripesConstants;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
@@ -502,13 +503,15 @@ public final class WikiActionBeanFactory
             response = new MockHttpServletResponse();
         }
 
-        // Create the WikiActionBeanContext
+        // Create the WikiActionBeanContext and set all of its relevant properties
         WikiActionBeanContext actionBeanContext = new WikiActionBeanContext();
         bean.setContext( actionBeanContext );
         actionBeanContext.setRequest( request );
         actionBeanContext.setResponse( response );
         actionBeanContext.setWikiEngine( m_engine );
         actionBeanContext.setServletContext( m_engine.getServletContext() );
+        WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
+        actionBeanContext.setWikiSession( wikiSession );
 
         // Set the event name for this action bean to the default handler
         actionBeanContext.setEventName( HandlerInfo.getDefaultHandlerInfo( beanClass ).getEventName() );
@@ -596,15 +599,31 @@ public final class WikiActionBeanFactory
     /**
      * Returns the WikiActionBean associated with the current
      * {@link javax.servlet.http.HttpServletRequest}. The ActionBean will be
-     * retrieved from attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}.
+     * retrieved from attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}. If
+     * an ActionBean is not found under this name, the standard Stripes  attribute
+     * {@link net.sourceforge.stripes.controller.StripesConstants#REQ_ATTR_ACTION_BEAN}
+     * will be attempted.
      * 
      * @param pageContext the
-     * @return the WikiActionBean, or <code>null</code> if not found in the
-     *         current tag's PageContext
+     * @return the WikiActionBean
+     * @throws IllegalStateException if the WikiActionBean was not found in the
+     *         request scope
      */
     public static WikiActionBean findActionBean( ServletRequest request )
     {
-        return (WikiActionBean) request.getAttribute( ATTR_ACTIONBEAN );
+        WikiActionBean bean = (WikiActionBean) request.getAttribute( ATTR_ACTIONBEAN );
+        if ( bean == null )
+        {
+            log.debug( "WikiActionBean not found under request attribute '" + ATTR_ACTIONBEAN +
+                       "'; trying standard Stripes attribute '" + StripesConstants.REQ_ATTR_ACTION_BEAN + "'." );
+            bean = (WikiActionBean) request.getAttribute( StripesConstants.REQ_ATTR_ACTION_BEAN  );
+        }
+        
+        if ( bean == null )
+        {
+            throw new IllegalStateException( "WikiActionBean not found in request! Something failed to stash it..." );
+        }
+        return bean;
     }
 
     /**

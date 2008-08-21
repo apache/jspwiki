@@ -51,6 +51,19 @@ Note that every time <useActionBean> or createContext() is called, the request's
 
 Note: JSPs that create these (pre-3.0) WikiContexts will need to be changed:
 ADMIN, CREATE_GROUP, DELETE_GROUP, EDIT_GROUP, ERROR, FIND, INSTALL, LOGIN, LOGOUT, MESSAGE, NONE, OTHER, PREFS, RSS, VIEW_GROUP, WORKFLOW.
+Admin.jsp
+NewGroup.jsp
+DeleteGroup.jsp
+EditGroup.jsp
+Search.jsp
+templates/default/AJAXSearch.jsp
+Install.jsp
+LoginForm.jsp
+LostPassword.jsp
+admin/SecurityConfig.jsp
+UserPreferences.jsp
+Group.jsp
+Workflow.jsp
 
 Scriptlet code
 --------------
@@ -272,7 +285,7 @@ getViewURL()
 setPage()
 findContext() -- no change
 hasAdminPermissions()
-getLocale(m_context) -- forwards to WikiActionBeanContext.getLocale();
+getLocale(m_context) -- forwards to WikiActionBeanContext.getLocale(); uses Stripes-supplied Locale rather than the one set by Preferences cookies.
 D hasAccess(HttpServletResponse) -- used in MANY JSPs. Refactored to look up the permission info for the method that contains @DefaultHander annotation.
 D hasAccess(HttpServletResponse,boolean) -- referenced only by other hasAccess(). 
 setRequestContext() -- now delegates to set the action bean event (if request context matches, otherwise throw error; NONE always matches)
@@ -359,6 +372,10 @@ WikiTagBase
 -----------
 WikiTagBase changes slightly to support Stripes. Instead of extending import javax.servlet.jsp.tagext.TagSupport, it now extends StripesTagSupport. However, StripesTagSupport does not supply the methods setId/GetId. So, we've had to implement these. Also, the method TagSupport.findAncestorWithClass which is used by TabTag needs to be replaced by StripesTagSupport.getParentTag (without need for classcast).
 
+Preferences
+-----------
+Preferences.getLocale(WikiContext) was re-wired to delegate to WikiActionContext.getLocale(), as determined by Stripes. WikiContext.getBundle(String) was similarly re-wired.
+
 =========================================================================================
 
 TESTING NOTES
@@ -366,8 +383,54 @@ TESTING NOTES
 
 JSP Migration
 -------------
-Form tags:
-- JavaScript onSubmit() code should be scrubbed?
+<form> becomes <stripes:form>, </form> becomes </stripes:form>
+Remove <form> onsubmit="return Wiki.submitOnce(this);" because Stripes takes care of double-submits. accept-charset becomes "acceptcharset" and should use EL.
+
+    acceptcharset="${wikiEngine.contentEncoding}"
+    
+If a form action URL has an & appended to it, these should be added back as <stripes:param> tags. E.g., 
+    <form action="Login.jsp?tab=profile>
+means <stripes:param name="tab" value="profile">
+
+<input type="text"> becomes <stripes:text>; type attribute goes away. Value attribute contents should be moved into the body of the tag. So:
+
+    <input type="text" size="24" value="<wiki:Variable var='uid' default='' />" name="j_username" id="j_username" />
+         
+becomes this:
+
+    <stripes:text size="24" name="j_username" id="j_username"><wiki:Variable var="uid" default=""/></stripes:text>
+                                  
+<input type="password"> becomes <stripes:password>; type attribute goes away
+<input type="checkbox"> becomes <stripes:checkbox>; type attribute goes away
+
+<input type="submit"> becomes <stripes:submit>; type attribute goes away. "Name" should be the name of the event handler for the ActionBean that is executed. The value attribute should be moved into the body of the tag. So:
+
+    <input type="submit" name="login" value="<fmt:message key='login.submit.login'/>" />
+        
+becomes this:
+
+    <stripes:submit name="login"><fmt:message key="login.submit.login"/></stripes:submit>
+
+
+Hidden values are PROBABLY candidates to become bean properties that are automatically bound. E.g., in LoginForm.jsp,
+<input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" /> disappears because setRedirect() is already part of LoginActionBean.
+
+Replace:
+        <wiki:Messages div="error" topic="login"
+                    prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
+
+with this:
+
+      <div class="error">
+        <stripes:errors beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
+      </div>
+
+LocalePicker will need to default to the user's Preferences setting... we will need to create a separate class for this.
+
+Validation guidelines:
+1. Default the @Validate messages to the same resource bundle used by the templates. This would be default*.properties. Practically speaking, this means that the current contents of StripesResources.properties (which have the default messages for @Validate validations) would be appended to default*.properties. Stripes messages and keys are VERY stable.
+2. For @ValidateMethod custom validation methods, always add SimpleErrors to the ValidationProperties object. The message string passed to the SimpleError constructor should be the final text that is obtained by looking it up in CoreResources.
+3. For event handler methods (i.e., they have a @HandlesEvent annotation) that generate errors, do the same as #2: look up the final string in CoreResources and pass it to the SimpleError constructor.
 
 
 Eclipse Tools Notes

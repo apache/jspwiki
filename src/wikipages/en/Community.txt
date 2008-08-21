@@ -15,7 +15,17 @@ The [old list archives|http://www.ecyrd.com/pipermail/jspwiki-users/] are also a
 
 This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
 
-The old JSPWiki-dev archives are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
+!JSPWiki-commits
+
+If you subscribe to this list you will get emailed when (a committer) commits new or changed files to the SVN repository.
+The jspwiki-commits list is hosted at Apache, join it by sending an email to [jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].  
+The list archives are at http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
+
+!Unsubscribing
+
+Unsubscribing is equally easy: you can just send an email to jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org from the same email address that you originally subscribed from. 
+
+The old JSPWiki-dev archives (up until Oct. 2007) are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
 
 !! Other resources
 

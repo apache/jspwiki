@@ -22,7 +22,7 @@ import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
-@UrlBinding( "/Login.jsp" )
+@UrlBinding( "/Login.action" )
 public class LoginActionBean extends AbstractActionBean
 {
     private static final Logger log = Logger.getLogger( LoginActionBean.class );
@@ -73,7 +73,7 @@ public class LoginActionBean extends AbstractActionBean
         return m_remember;
     }
 
-    public String getJ_userName()
+    public String getJ_username()
     {
         return m_username;
     }
@@ -88,23 +88,23 @@ public class LoginActionBean extends AbstractActionBean
     public Resolution login()
     {
         WikiSession wikiSession = this.getWikiSession();
+        ValidationErrors errors = getContext().getValidationErrors();
+        ResourceBundle rb = getBundle( "CoreResources" );
 
         // If user got here and is already authenticated, it means
         // they just aren't allowed access to what they asked for.
         // Weepy tears and hankies all 'round.
         if( getWikiSession().isAuthenticated() )
         {
-            ResourceBundle rb = getBundle( "CoreResources" );
-            String message = rb.getString( "login.error.noaccess" );
-            getContext().getValidationErrors().addGlobalError( new SimpleError( message ) );
-            return new RedirectResolution( MessageActionBean.class ).flash( this );
+            errors.addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
+            getContext().flash( this );
+            return new RedirectResolution( MessageActionBean.class );
         }
 
         log.debug( "Attempting to authenticate user " + m_username );
 
         // Log the user in!
         Resolution r = null;
-        ValidationErrors errors = getContext().getValidationErrors();
         try
         {
             if( getEngine().getAuthenticationManager().login( wikiSession, m_username, m_password ) )
@@ -116,20 +116,20 @@ public class LoginActionBean extends AbstractActionBean
             else
             {
                 log.info( "Failed to authenticate user " + m_username );
-                errors.addGlobalError( new SimpleError( "login.error.password" ) );
-
+                errors.addGlobalError( new SimpleError( rb.getString( "login.error.password" ) ) );
             }
         }
         catch( WikiSecurityException e )
         {
-            errors.addGlobalError( new SimpleError( "login.error", e.getMessage() ) );
+            errors.addGlobalError( new SimpleError( rb.getString( "login.error" ), e.getMessage() ) );
         }
 
         // Any errors?
         if( !errors.isEmpty() )
         {
-            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), LoginActionBean.class, false );
+            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), "/Login.jsp", false );
             builder.addParameter( "tab", "logincontent" );
+            getContext().flash( this );
             r = new RedirectResolution( builder.toString() );
         }
 
@@ -214,9 +214,9 @@ public class LoginActionBean extends AbstractActionBean
             if( seen != null )
             {
                 ResourceBundle rb = getBundle( "CoreResources" );
-                String message = rb.getString( "login.error.noaccess" );
-                getContext().getValidationErrors().addGlobalError( new SimpleError( message ) );
-                return new RedirectResolution( MessageActionBean.class ).flash( this );
+                getContext().getValidationErrors().addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
+                getContext().flash( this );
+                return new RedirectResolution( MessageActionBean.class );
             }
             session.setAttribute( "_redirect", "I love Outi" ); // Any marker
             // will do
