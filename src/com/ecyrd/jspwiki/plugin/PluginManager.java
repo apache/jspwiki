@@ -74,7 +74,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  The class name can be shortened, and marked without the package.
  *  For example, "FunnyPlugin" would be expanded to
  *  "com.ecyrd.jspwiki.plugin.FunnyPlugin" automatically.  It is also
- *  possible to defined other packages, by setting the
+ *  possible to define other packages, by setting the
  *  "jspwiki.plugin.searchPath" property.  See the included
  *  jspwiki.properties file for examples.
  *  <P>
@@ -406,7 +406,7 @@ public class PluginManager extends ModuleManager
                     return stackTrace( params, t );
                 }
 
-                throw new PluginException( rb.getString( "plugin.error.pluginfailed" ), t );
+                throw new PluginException( rb.getString( "plugin.error.failed" ), t );
             }
 
         }

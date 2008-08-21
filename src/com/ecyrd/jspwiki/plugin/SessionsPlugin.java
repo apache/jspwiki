@@ -33,13 +33,16 @@ import com.ecyrd.jspwiki.WikiSession;
  *  <p>Displays information about active wiki sessions. The parameter
  *  <code>property</code> specifies what information is displayed.
  *  If omitted, the number of sessions is returned.
- *  Valid values for the <code>property</code> parameter
- *  include:</p>
+ *  
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>property</b> - specify what output to display, valid values are:</li>
  *  <ul>
  *    <li><code>users</code> - returns a comma-separated list of
  *    users</li>
  *    <li><code>distinctUsers</code> - will only show
  *    distinct users.
+ *  </ul>
  *  </ul>
  *  @since 2.3.84
  *  @author Andrew Jaquith

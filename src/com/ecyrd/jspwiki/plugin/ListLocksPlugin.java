@@ -27,6 +27,8 @@ import java.util.*;
  *  This is a plugin for the administrator: It allows him to see in a single
  *  glance who is editing what.
  *
+ *  <p>Parameters : </p>
+ *   NONE
  *  @since 2.0.22.
  */
 public class ListLocksPlugin

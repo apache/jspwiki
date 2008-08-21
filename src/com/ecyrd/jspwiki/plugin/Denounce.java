@@ -34,8 +34,14 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *  Denounces a link by removing it from any search engine.  The bots are listed
- *  in com/ecyrd/jspwiki/plugin/denounce.properties.
+ *  Denounces a link by removing it from any search engine. 
+ *  <br> The bots are listed in com/ecyrd/jspwiki/plugin/denounce.properties.
+ *  
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>link</b> - The link to be denounced, this parameter is required</li>
+ *  <li><b>text</b> - The text to use, defaults to the link</li>
+ *  </ul>
  *
  *  @since 2.1.40.
  */
@@ -43,7 +49,9 @@ public class Denounce implements WikiPlugin
 {
     private static Logger     log = Logger.getLogger(Denounce.class);
 
+    /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";
+    /** Parameter name for setting the text.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TEXT = "text";
 
     private static final String PROPERTYFILE = "com/ecyrd/jspwiki/plugin/denounce.properties";

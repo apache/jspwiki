@@ -1,3 +1,71 @@
+2008-08-20  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-23
+
+        * Changed Stripes test jar to the released 1.5 version (congrats to Tim
+        and the team).
+
+2008-08-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-22
+        
+        * JSPWIKI-27: Managed to duplicate this pesky bug from way old times.
+        Looks like this was caused by a misread of the OSCache javadocs -
+        but I am not sure if the fix causes new problems.
+        
+        * JSPWIKI-353: Fixed wrong i18n key in PluginManager which showed
+        up if the plugin threw an exception.
+        
+        * JSPWIKI-352: Fixed a long-standing bug with ACLs being leaked
+        from one page to another if the InsertPageTag was used.
+        
+        * Added a KEYS file to the top-level dir.  It would be a good idea
+        if all committers added their current GPG keys to it.
+        
+2008-08-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-21
+        
+        * [JSPWIKI-349] updated (German) corepages, credits to Florian again
+        
+2008-08-17  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-20
+        
+        * [JSPWIKI-340] updated (english) corepages and README, mostly editorial changes, 
+           a brief summary :
+        - Java 5.0 is now a requirement for compiling (instead 1.4.2)
+        - Servlet API 2.2 is mentioned, is this still enough ? (I haven't checked)
+        - Removed dead link to tjworld.net/help/kb/0001_iis6-Tomcat5-JK2.html#conConnector
+        - Removed links to JSPWiki 2.2 ,  2.3 and 2.4 documentation
+
+2008-08-16  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-19
+        
+        * JSPWIKI-315: Fixed issues with upper/lowercase filtering in 
+        AttachmentManager
+        
+        * JSPWIKI-325: Patch from Harry to sort out plugin parameters and their 
+        javadocs.
+        
+        * JSPWIKI-307: Pages with & in their names were not being parsed properly 
+        in links.
+
+2008-08-15  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-18
+        
+        * [JSPWIKI-339] added German core pages, many thanks to Florian again !
+
+2008-08-14  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-17
+        
+        * [JSPWIKI-238] PageRenamer now correctly handles links containing blanks
+          Added an additional JUnit test for this, there is stil one failing JUnit test however (attachment handling).
+          PageRenamer still needs improvement.
+        
 2008-08-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-16
@@ -112,7 +180,7 @@
         * JSPWIKI-320: removed all httpRequest.setCharacterEncoding() calls (except in WikiServletFilter)
         because they were called too late, reported by Clay Atkins
         
-2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-08-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-8
         

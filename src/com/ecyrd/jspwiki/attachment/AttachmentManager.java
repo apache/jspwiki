@@ -613,12 +613,13 @@ public class AttachmentManager
         //
         filename = filename.trim();
 
-        // If file name ends with .jsp, the user is being naughty!
-        if ( filename.endsWith( ".jsp" ) || filename.endsWith( ".JSP" ) )
+        // If file name ends with .jsp or .jspf, the user is being naughty!
+        if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith(".jspf") )
         {
-            AttachmentServlet.log.error( "Illegal file name." );
+            log.info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this" +
+            		" can trigger unwanted security side effects, so we're preventing it." );
             
-            throw new WikiException( "Illegal file name." );
+            throw new WikiException( "Unwanted file name." );
         }
     
         //

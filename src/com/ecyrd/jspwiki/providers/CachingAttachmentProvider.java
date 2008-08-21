@@ -147,7 +147,7 @@ public class CachingAttachmentProvider
     {
         m_provider.putAttachmentData( att, data );
 
-        m_cache.flushEntry( att.getParentName() );
+        m_cache.removeEntry( att.getParentName() );
         att.setLastModified(new Date());
         m_attCache.putInCache(att.getName(), att);
     }

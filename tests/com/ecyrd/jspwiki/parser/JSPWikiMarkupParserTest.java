@@ -2611,7 +2611,27 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         assertEquals( "<a class=\"external\" href=\"http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;\">http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;</a>", dst );
     }
+    
+    public void testAmpersand1() throws Exception
+    {
+        newPage( "Foo&Bar" );
+        String src = "[Foo&Bar]";
 
+        String dst = translate(src);
+
+        assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=Foo%26Bar\">Foo&amp;Bar</a>", dst );
+    }
+
+    public void testAmpersand2() throws Exception
+    {
+        newPage( "Foo & Bar" );
+        String src = "[Foo & Bar]";
+
+        String dst = translate(src);
+
+        assertEquals( "<a class=\"wikipage\" href=\"/Wiki.jsp?page=Foo%20%26%20Bar\">Foo &amp; Bar</a>", dst );
+    }
+    
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText =
         "Please ''check [RecentChanges].\n" +

@@ -32,8 +32,12 @@ import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 
 /**
  *  <p>Prints the groups managed by this wiki, separated by commas.
- *  The groups are sorted in ascending order, and are hyperlinked
- *  to the page that displays the group's members.</p>
+ *  <br>The groups are sorted in ascending order, and are hyperlinked to the page that displays the group's members.
+ *  </p>
+ *  <p>Parameters : </p>
+ *  NONE
+ *  
+ *  
  *  @since 2.4.19
  *  @author Andrew Jaquith
  */

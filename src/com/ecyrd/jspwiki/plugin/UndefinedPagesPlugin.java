@@ -26,11 +26,12 @@ import java.util.*;
 
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.
- *  Parameters: none.<BR>
- *  From AbstractReferralPlugin:<BR>
- *  separator: How to separate generated links; default is a wikitext line break,
- *             producing a vertical list.<BR>
- *  maxwidth: maximum width, in chars, of generated links.
+ *  
+ *  Parameters  (from AbstractReferralPlugin):
+ *  <ul>
+ *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
+ * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
+ * </ul>
  *
  */
 public class UndefinedPagesPlugin

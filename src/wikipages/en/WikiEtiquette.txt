@@ -13,7 +13,7 @@ When [editing pages|TextFormattingRules] just keep the following rules in mind:
 
 * You are free to contribute anonymously, but it is preferred that you sign your comments with your name (or handle). It is common to prepend the signature with '--' like this: ''-- [Janne Jalkanen]'' (While you're at it, you are free to create your own wikipage and tell us about yourself.)
 * A good way is also to put your name first, like this: ''[Janne Jalkanen] : I'd like to say that...''
-* Think before you comment.  [WikiWiki] is not a high-speed conversation board.   It's not a news server either.  What you say will stay here forever (yeah, we do take backups) for everyone to see and comment.
+* Think before you comment.  [WikiWiki] is not a high-speed conversation board.   It's not a news server either.  What you say will stay here forever (if you delete your comment, it is still in the previous version of the page) for everyone to see and comment.
 
 !!Creating WikiNames
 * A good [WikiName] is short and descriptive. If the name is logical and easy many more people will link to it.

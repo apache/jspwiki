@@ -31,7 +31,8 @@ import java.io.StringReader;
 import java.io.IOException;
 
 /**
- *  Provides a table of contents.  Possible parameters are:
+ *  Provides a table of contents. 
+ *  <p>Parameters : </p>
  *  <ul>
  *  <li><b>title</b> - The title of the table of contents.</li>
  *  <li><b>numbered</b> - if true, generates automatically numbers for the headings.</li>

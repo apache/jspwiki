@@ -30,6 +30,12 @@ import java.util.*;
 /**
  *  Builds a simple weblog.
  *
+ *  <p>Parameters : </p>
+ *  <ul>
+ *  <li><b>entrytext</b> - text of the link </li>
+ *  <li><b>page</b> - if set, the entry is added to the named blog page. The default is the current page. </li>
+ *  </ul>
+ *  
  *  @since 1.9.21
  */
 public class WeblogEntryPlugin implements WikiPlugin
@@ -38,6 +44,7 @@ public class WeblogEntryPlugin implements WikiPlugin
 
     private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
 
+    /** Parameter name for setting the entrytext  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ENTRYTEXT = "entrytext";
     /** 
      * Optional parameter: page that actually contains the blog.
@@ -45,6 +52,7 @@ public class WeblogEntryPlugin implements WikiPlugin
      * somewhere else than on the page itself.
      */
     // "page" for uniform naming with WeblogPlugin...
+    /** Parameter name for setting the page Value is <tt>{@value}</tt>. */
     public static final String PARAM_BLOGNAME = "page"; 
 
     /**

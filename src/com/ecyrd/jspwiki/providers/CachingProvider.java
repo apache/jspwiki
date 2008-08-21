@@ -273,10 +273,10 @@ public class CachingProvider
 
                 m_cache.putInCache( name, refreshed );
                 // Requests for this page are now no longer denied
-                m_negCache.putInCache( name, null );
+                m_negCache.removeEntry( name );
 
-                m_textCache.flushEntry( name );
-                m_historyCache.flushEntry( name );
+                m_textCache.removeEntry( name );
+                m_historyCache.removeEntry( name );
                 wasUpdated = true;
 
                 return refreshed;
@@ -289,9 +289,9 @@ public class CachingProvider
 
                 m_cache.putInCache( name, refreshed );
                 // Requests for this page are now no longer denied
-                m_negCache.putInCache( name, null );
-                m_textCache.flushEntry( name );
-                m_historyCache.flushEntry( name );
+                m_negCache.removeEntry( name );
+                m_textCache.removeEntry( name );
+                m_historyCache.removeEntry( name );
                 wasUpdated = true;
 
                 throw new RepositoryModifiedException( "Modified: "+name, name );
@@ -589,10 +589,10 @@ public class CachingProvider
 
             // Refresh caches properly
 
-            m_cache.flushEntry( page.getName() );
-            m_textCache.flushEntry( page.getName() );
-            m_historyCache.flushEntry( page.getName() );
-            m_negCache.flushEntry( page.getName() );
+            m_cache.removeEntry( page.getName() );
+            m_textCache.removeEntry( page.getName() );
+            m_historyCache.removeEntry( page.getName() );
+            m_negCache.removeEntry( page.getName() );
 
             // Refresh caches
             try
@@ -813,9 +813,9 @@ public class CachingProvider
             if( version == WikiPageProvider.LATEST_VERSION ||
                 version == latestcached )
             {
-                m_cache.flushEntry( pageName );
-                m_textCache.putInCache( pageName, null );
-                m_historyCache.putInCache( pageName, null );
+                m_cache.removeEntry( pageName );
+                m_textCache.removeEntry( pageName );
+                m_historyCache.removeEntry( pageName );
             }
 
             m_provider.deleteVersion( pageName, version );
@@ -854,13 +854,13 @@ public class CachingProvider
         {
             // Clear any cached version of the old page
             log.debug("Removing page "+from+" from cache");
-            m_cache.flushEntry( from );
+            m_cache.removeEntry( from );
 
             // Clear the cache for the to page, if that page already exists
             //if ( m_cache.get( to ) != null )
             //{
                 log.debug("Removing page "+to+" from cache");
-                m_cache.flushEntry( to );
+                m_cache.removeEntry( to );
             //}
         }
     }
@@ -926,11 +926,14 @@ public class CachingProvider
 
         public void cacheEntryRemoved( CacheEntryEvent arg0 )
         {
-            WikiPage item = (WikiPage) arg0.getEntry().getContent();
-
-            if( item != null )
+            if( arg0.getEntry() != null )
             {
-                m_allItems.remove( item.getName() );
+                WikiPage item = (WikiPage) arg0.getEntry().getContent();
+
+                if( item != null )
+                {
+                    m_allItems.remove( item.getName() );
+                }
             }
         }
 

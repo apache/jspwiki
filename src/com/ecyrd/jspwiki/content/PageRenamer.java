@@ -362,6 +362,13 @@ public class PageRenamer
         // System.out.println("   "+p+" :: "+p2);
         
         //
+        //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
+        int blank = reallink.indexOf( " ");
+        if (blank!=-1) {
+            return reallink + "|" + newlink; 
+        }
+        
+        //
         //  Yes, these point to the same page.
         //
         if( reallink.equals(from) )

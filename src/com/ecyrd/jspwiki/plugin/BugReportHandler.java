@@ -39,9 +39,13 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
 /**
  *  Provides a handler for bug reports.  Still under construction.
  *
+ *  <p>Parameters : </p>
  *  <ul>
- *   <li>"title" = title of the bug.  This is required.  If it is empty (as in "")
- *       it is a signal to the handler to return quietly.</li>
+ *  <li><b>title</b> -  title of the bug, this is required.  If it is empty (as in "")  it is a signal to the handler to return quietly.</li>
+ *  <li><b>description</b> - description of the bug.</li>
+ *  <li><b>version</b> - version</li>
+ *  <li><b>map</b> - I have no idea </li>
+ *  <li><b>page</b> - The name of the page to be created for this bug report </li>
  *  </ul>
  *
  */
@@ -50,11 +54,16 @@ public class BugReportHandler
 {
     private static Logger log = Logger.getLogger( BugReportHandler.class );
 
-    public static final String TITLE          = "title";
-    public static final String DESCRIPTION    = "description";
-    public static final String VERSION        = "version";
-    public static final String MAPPINGS       = "map";
-    public static final String PAGE           = "page";
+    /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_TITLE          = "title";
+    /** Parameter name for setting the description.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_DESCRIPTION    = "description";
+    /** Parameter name for setting the version.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_VERSION        = "version";
+    /** Parameter name for setting the map.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_MAPPINGS       = "map";
+    /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_PAGE           = "page";
 
     private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
@@ -71,9 +80,9 @@ public class BugReportHandler
         SimpleDateFormat format = new SimpleDateFormat( DEFAULT_DATEFORMAT );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
-        title       = (String) params.get( TITLE );
-        description = (String) params.get( DESCRIPTION );
-        version     = (String) params.get( VERSION );
+        title       = (String) params.get( PARAM_TITLE );
+        description = (String) params.get( PARAM_DESCRIPTION );
+        version     = (String) params.get( PARAM_VERSION );
 
         Principal wup = context.getCurrentUser();
 
@@ -88,7 +97,7 @@ public class BugReportHandler
         if( description == null ) description = "";
         if( version == null ) version = "unknown";
 
-        Properties mappings = parseMappings( (String) params.get( MAPPINGS ) );
+        Properties mappings = parseMappings( (String) params.get( PARAM_MAPPINGS ) );
 
         //
         //  Start things
@@ -104,9 +113,9 @@ public class BugReportHandler
             //
             //  Outputting of basic data
             //
-            out.println("|"+mappings.getProperty(TITLE,"Title")+"|"+title);
+            out.println("|"+mappings.getProperty(PARAM_TITLE,"Title")+"|"+title);
             out.println("|"+mappings.getProperty("date","Date")+"|"+format.format(d));
-            out.println("|"+mappings.getProperty(VERSION,"Version")+"|"+version);
+            out.println("|"+mappings.getProperty(PARAM_VERSION,"Version")+"|"+version);
             if( submitter != null )
             {
                 out.println("|"+mappings.getProperty("submitter","Submitter")+
@@ -120,11 +129,11 @@ public class BugReportHandler
             {
                 Map.Entry entry = (Map.Entry) i.next();
 
-                if( entry.getKey().equals( TITLE ) ||
-                    entry.getKey().equals( DESCRIPTION ) ||
-                    entry.getKey().equals( VERSION ) ||
-                    entry.getKey().equals( MAPPINGS ) ||
-                    entry.getKey().equals( PAGE ) ||
+                if( entry.getKey().equals( PARAM_TITLE ) ||
+                    entry.getKey().equals( PARAM_DESCRIPTION ) ||
+                    entry.getKey().equals( PARAM_VERSION ) ||
+                    entry.getKey().equals( PARAM_MAPPINGS ) ||
+                    entry.getKey().equals( PARAM_PAGE ) ||
                     entry.getKey().toString().startsWith("_") )
                 {
                     // Ignore this
@@ -154,7 +163,7 @@ public class BugReportHandler
             //  Now create a new page for this bug report
             //
             String pageName = findNextPage( context, title,
-                                            (String)params.get( PAGE ) );
+                                            (String)params.get( PARAM_PAGE ) );
 
             WikiPage newPage = new WikiPage( context.getEngine(), pageName );
             WikiContext newContext = (WikiContext)context.clone();
