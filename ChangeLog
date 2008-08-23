@@ -1,5 +1,13 @@
 2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
 
+        * 2.7.0-alpha-26 
+
+        * [JSPWIKI-333] Fixed side-impact in GroupManager due to new 
+        InputValidator constructor.  
+        
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
         * 2.7.0-alpha-25  Template fixes (mainly section editing)
 
         * The Section-Editing user preference can now also be set via the
