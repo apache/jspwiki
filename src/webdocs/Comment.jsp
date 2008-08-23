@@ -132,11 +132,8 @@
 
         modifiedPage.setAuthor( storedUser );
 
-        if( changenote == null ) changenote = (String) session.getAttribute("changenote");
-
-        session.removeAttribute("changenote");
-
-        modifiedPage.setAttribute( WikiPage.CHANGENOTE, "Comment by "+storedUser );
+        Object[] args = { storedUser };
+        modifiedPage.setAttribute( WikiPage.CHANGENOTE, java.text.MessageFormat.format( rb.getString("comment.by"), args ) );
 
         //
         //  Build comment part

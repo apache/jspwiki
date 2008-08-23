@@ -281,21 +281,6 @@ var Wiki = {
 				.replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
 	},
 
-	savePrefs: function(){
-		var prefs = {
-			'prefSkin':'SkinName',
-			'prefTimeZone':'TimeZone',
-			'prefTimeFormat':'DateFormat',
-			'prefOrientation':'Orientation',
-			'editor':'editor',
-			'prefLanguage':'Language',
-			'prefSectionEditing':'SectionEditing'
-		};
-		for(var el in prefs){
-			if($(el)) this.prefs.set(prefs[el],$(el).getValue());
-		};
-	},
-
 	changeOrientation: function(){
 		var fav = $('prefOrientation').getValue();
 		$('wikibody')
@@ -402,6 +387,7 @@ var Wiki = {
 			ee = new Element('span',{'class':'editsection'}).adopt(aa);
 
 		$$('#pagecontent *[id^=section]').each(function(el,i){
+			if(el.id=='section-TOC') return;
 			aa.set({'href':url+i});
 			el.adopt(ee.clone());
 		});

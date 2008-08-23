@@ -1081,12 +1081,6 @@ a.action.quick2top {
 	float:right;
  	background:url(images/arrup.gif) no-repeat 3px 3px;
 }
-/* obsolete
-a.action.quick2bottom {
- 	background:url(images/arrdown.png) no-repeat 3px 3px;
- 	height:16px;
-}
-*/
 
 /*********/
 .popup ul {

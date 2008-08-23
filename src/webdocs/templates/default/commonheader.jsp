@@ -95,15 +95,15 @@
 <wiki:FeedDiscovery />
 
 <%-- SKINS : extra stylesheets, extra javascript --%>
-<c:if test='${(!empty prefs["SkinName"]) && (prefs["SkinName"]!="PlainVanilla") }'>
+<c:if test='${(!empty prefs.SkinName) && (prefs.SkinName!="PlainVanilla") }'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print"
-     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.css' />" />
+     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.css' />" />
 <%--
 <link rel="stylesheet" type="text/css" media="print"
-     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/print_skin.css' />" />
+     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/print_skin.css' />" />
 --%>
 <script type="text/javascript"
-         src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs["SkinName"]}/skin.js' />" ></script>
+         src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.js' />" ></script>
 </c:if>
 
 <wiki:Include page="localheader.jsp"/>

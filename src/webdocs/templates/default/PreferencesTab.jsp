@@ -82,7 +82,7 @@
   <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label></td>
   <td>
   <input id="prefSectionEditing" name="prefSectionEditing" 
-       type="checkbox" <c:if test='${"on" == prefs["SectionEditing"]}'>checked="checked"</c:if> ></input>
+       type="checkbox" <c:if test='${"on" == prefs.SectionEditing}'>checked="checked"</c:if> ></input>
   <fmt:message key="prefs.user.sectionediting.text"/>
   </td>
   </tr>
@@ -92,7 +92,7 @@
   <td>
   <select id="prefSkin" name="prefSkin">
     <c:forEach items="${skins}" var="i">
-      <option value='<c:out value='${i}'/>' <c:if test='${i == prefs["SkinName"]}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
+      <option value='<c:out value='${i}'/>' <c:if test='${i == prefs.SkinName}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
     </c:forEach>
   </select>
   </td>
@@ -150,7 +150,7 @@
   <td><label for="prefShowQuickLinks">Show Quick Links</label></td>
   <td>
   <input class='checkbox' type='checkbox' id='prefShowQuickLinks' name='prefShowQuickLinks' 
-         <c:if test='${"on" == prefs["SectionEdit"]}'>selected="selected"</c:if> />
+         <c:if test='${"on" == prefs.SectionEdit}'>selected="selected"</c:if> />
          <span class="quicklinks"><span 
                class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
                class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 

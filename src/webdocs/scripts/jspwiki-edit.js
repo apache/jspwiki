@@ -166,22 +166,6 @@ var EditTools =
 
 		Wiki.onPageLoad(); //Wiki.onpageload should always run first, but seems not guaranteed on ie so let's do this for sure
 		
-		this.textarea = $('editorarea'); 
-		if(!this.textarea || !this.textarea.visible) return;
-
-		/* Duplicate the textarea into a main and work area.
-		   The workarea is used for actual editing.
-		   The mainarea reflects at all times the whole document
-		*/
-		var m = this.mainarea = this.textarea;
-		this.textarea = m.clone()
-			.removeProperty('id')
-			.removeProperty('name')
-			.injectBefore( m.hide() ); 
-		
-		//this.ta = new TextArea( this.textarea );
-		this.ta = TextArea.initialize( this.textarea );
-
 		window.onbeforeunload = (function(){
 			var ta = $('editorarea');
 			if(ta.value != ta.defaultValue) return "edit.areyousure".localize();
@@ -192,14 +176,32 @@ var EditTools =
 		this.wikisnippets = WikiSnippets.getSnippets();
 		this.wikismartpairs = WikiSnippets.getSmartPairs();
 
-		this.onPageLoadSectionToc();
+		this.textarea = $('editorarea'); 
+		if(!this.textarea || !this.textarea.visible) return;
+
+		/* section editing is only valid for edit context, not valid in the comment context */
+		if(Wiki.Context=='edit') {
+		/* Duplicate the textarea into a main and work area.
+		   The workarea is used for actual editing.
+		   The mainarea reflects at all times the whole document
+		*/
+			var m = this.mainarea = this.textarea;
+			this.textarea = m.clone()
+				.removeProperty('id')
+				.removeProperty('name')
+				.injectBefore( m.hide() ); 
+		
+			//this.ta = new TextArea( this.textarea );
+			this.ta = TextArea.initialize( this.textarea );
+			this.onPageLoadSectionToc();
+		}
+
 		this.onPageLoadResizeTextarea();
 		this.onPageLoadToolbar();
 
 		this.onPageLoadPostEditor();
 		this.onPageLoadPreview();
 
-		/* add textarea suggestion events */
 		this.textarea
 			.addEvent('click',this.getSuggestions.bind(this))
 			.addEvent('keyup',this.getSuggestions.bind(this))

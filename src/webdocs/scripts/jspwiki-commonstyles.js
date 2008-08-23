@@ -131,15 +131,15 @@ var WikiAccordion = {
 
 		$ES('.accordion, .tabbedAccordion, .leftAccordion, .rightAccordion',page).each( function(tt){
 			
-			var toggles=[], contents=[], togglemenu=false;
+			var toggles=[], contents=[], menu=false;
 			if(tt.hasClass('tabbedAccordion')){
-				togglemenu = new Element('div',{'class':'togglemenu'}).injectBefore(tt);
+				menu = new Element('div',{'class':'menu'}).injectBefore(tt);
 			}
 			else if(tt.hasClass('leftAccordion')){
-				togglemenu = new Element('div',{'class':'sidemenu left'}).injectBefore(tt);
+				menu = new Element('div',{'class':'sidemenu left'}).injectBefore(tt);
 			}
 			else if(tt.hasClass('rightAccordion')){
-				togglemenu = new Element('div',{'class':'sidemenu right'}).injectBefore(tt);
+				menu = new Element('div',{'class':'sidemenu right'}).injectBefore(tt);
 			}
 			
 			tt.getChildren().each(function(tab) {
@@ -150,17 +150,15 @@ var WikiAccordion = {
 
 				var title = tab.className.substr(4).deCamelize(),
 					t = toggle.clone().appendText(title);
-				if(togglemenu) {
-					toggles.push(t.inject(togglemenu));
-				} else {
-					toggles.push(t.adopt(bullet.clone()).injectBefore(tab));
-				}        
+				menu ? t.inject(menu) : bullet.clone().injectTop(t.injectBefore(tab));
+
+				toggles.push(t);
 				contents.push(tab.addClass('tab'));
 			});
 			
 			new Accordion(toggles, contents, {     
 				height: true,
-				alwaysHide: !togglemenu,
+				alwaysHide: !menu,
 				onComplete: function(){
 					var el = $(this.elements[this.previous]);
 					if (el.offsetHeight > 0) el.setStyle('height', 'auto');  

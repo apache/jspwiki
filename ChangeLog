@@ -1,5 +1,30 @@
 2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
 
+        * 2.7.0-alpha-25  Template fixes (mainly section editing)
+
+        * The Section-Editing user preference can now also be set via the
+        default_jspwiki.properties. By default the preference is turned off.
+        
+                jspwiki.defaultprefs.template.sectionediting =on
+        
+        * Small fix to avoid section-editing [edit] link on table of contents titles.
+        
+        * [JSPWIKI-350] Section-Editing needs to be suppressed in a comment context.
+        
+        * The change-note input field is suppressed in a comment context as JSPWiki
+        auto-generates the change-note for comments. Also added localization in Comment.jsp
+        Added new resource to CoreResources.properties.
+        
+                comment.by=Comment by {0}
+                
+        * [JSPWIKI-329] Pagination links on the version history were still not correct
+        when number of version equals a multiple of 20. Oops.
+        
+        * [JSPWIKI-309] Various updates of the OrderedList skin, including section editing.
+      
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
         * 2.7.0-alpha-24
 
         * [JSPWIKI-333] Language selection/deselection was not working correctly
