@@ -477,7 +477,7 @@ public final class UserManager
     {
         boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
-        InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
+        InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
         //

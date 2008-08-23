@@ -936,12 +936,7 @@ public class WikiContext
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
         Locale loc = Preferences.getLocale( this );
-
-/*        if( loc == null) {
-            if( m_request != null )
-                loc = m_request.getLocale();
-        }
-*/       
+       
         ResourceBundle b = m_engine.getInternationalizationManager().getBundle(bundle, loc);
 
         return b;
