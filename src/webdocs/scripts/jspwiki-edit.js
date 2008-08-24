@@ -176,25 +176,14 @@ var EditTools =
 		this.wikisnippets = WikiSnippets.getSnippets();
 		this.wikismartpairs = WikiSnippets.getSmartPairs();
 
-		this.textarea = $('editorarea'); 
+		this.mainarea = this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 
-		/* section editing is only valid for edit context, not valid in the comment context */
-		if(Wiki.Context=='edit') {
-		/* Duplicate the textarea into a main and work area.
-		   The workarea is used for actual editing.
-		   The mainarea reflects at all times the whole document
-		*/
-			var m = this.mainarea = this.textarea;
-			this.textarea = m.clone()
-				.removeProperty('id')
-				.removeProperty('name')
-				.injectBefore( m.hide() ); 
-		
-			//this.ta = new TextArea( this.textarea );
-			this.ta = TextArea.initialize( this.textarea );
-			this.onPageLoadSectionToc();
-		}
+		/* modifies this.textarea */
+		this.onPageLoadSectionToc( );
+
+		//this.ta = new TextArea( this.textarea );
+		//this.ta = TextArea.initialize( this.textarea );
 
 		this.onPageLoadResizeTextarea();
 		this.onPageLoadToolbar();
@@ -494,10 +483,21 @@ var EditTools =
 		}).request();
 	},
 
-	onPageLoadSectionToc : function(){
+	onPageLoadSectionToc : function( ){
 
-		if(Wiki.prefs.get('SectionEditing') != 'on') return;
+		/* section editing is only valid for edit context, not valid in the comment context */
+		if( (Wiki.Context!='edit') 
+		  ||(Wiki.prefs.get('SectionEditing') != 'on') ) return;
 
+		/* Duplicate the textarea into a main and work area.
+		   The workarea is used for actual editing.
+		   The mainarea reflects at all times the whole document
+		*/
+		this.textarea = this.mainarea.clone()
+			.removeProperty('id')
+			.removeProperty('name')
+			.injectBefore( this.mainarea.hide() ); 
+		
 		var tt = new Element('div',{'id':'toctoc'}).adopt(
 			new Element('label').setHTML('sectionediting.label'.localize()),
 			this.selector = new Element('ul')

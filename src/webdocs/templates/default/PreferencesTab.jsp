@@ -37,7 +37,7 @@
        class="wikiform" 
           id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />"
-    onsubmit="Wiki.savePrefs(); return Wiki.submitOnce(this);" >
+    onsubmit="WikiPreferences.savePrefs(); return Wiki.submitOnce(this);" >
 <table>
 
   <tr>

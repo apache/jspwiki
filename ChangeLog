@@ -1,3 +1,12 @@
+2008-08-24 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-28 
+
+        * [JSPWIKI-355] Fixing section-editing bug reported by Harry.
+        
+        * Saving user-preferences was broken in PreferencesTab.jsp
+        
+
 2008-08-24  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-27
