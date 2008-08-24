@@ -1,3 +1,24 @@
+2008-08-24  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-27
+        
+        * added my GPG key to KEYS
+        
+        * minor corrections/additions to UPGRADING
+        
+        * minor corrections/additions to the selenium readme.txt
+        
+        * added ${java.home}/../lib/tools.jar to path.tests, set jspwiki.login.throttling=false and some other comments in build.xml
+        
+        * added firefox-2 browser option (as extra comment) to build.properties
+        
+        * added new simple ViewPageSource selenium test
+        
+        * get rid of compile warning in WikiPage and WysiwygEditingRenderer and GroupManager
+        
+        * compile error in InputValidatorTest
+        
+
 2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-26 

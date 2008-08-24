@@ -578,7 +578,6 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final void validateGroup( WikiContext context, Group group )
     {
-        WikiSession session = context.getWikiSession();
         InputValidator validator = new InputValidator( MESSAGES_KEY, context );
 
         // Name cannot be null or one of the restricted names

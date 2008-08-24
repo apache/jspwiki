@@ -22,7 +22,7 @@ Start Tomcat and deploy the test-custom WAR.
 
 Start the Selenium server...
 
-java -jar tests/lib/selenium-server-0.9.2-patched.jar -interactive
+java -jar tests/lib/selenium-server-1.0-beta1.jar -interactive
 
 Open Firefox.
 Set the browser proxy to localhost:4444
@@ -33,7 +33,7 @@ chrome://selenium-ide/content/selenium/TestRunner.html?test=file:///Users/arj/wo
 CREATING TESTS
 --------------
 Selenium-IDE is the preferred way to create test files. The master
-test suite file is tests/etc/selenium/tests/JSPWikiTestSuite.html.
+test suite file is tests/etc/selenium/tests/TestSuite.html.
 
 You can add a new test file (such as one recorded in Selenium-IDE) to
 the suite file by appending a table row like this:

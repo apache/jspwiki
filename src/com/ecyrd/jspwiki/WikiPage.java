@@ -33,7 +33,6 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
- * @param <V>
  */
 
 // FIXME: We need to rethink how metadata is being used - probably the 

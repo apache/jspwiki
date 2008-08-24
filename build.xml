@@ -152,6 +152,7 @@
   <path id="path.tests">
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
+	<pathelement location="${java.home}/../lib/tools.jar" />
      <fileset dir="lib">
         <include name="*.jar" />
      </fileset>
@@ -708,6 +709,7 @@
       <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
       <entry key="log4j.appender.TestContainerLog.File" value="${basedir}/${webtests.build}/testcontainer.log" />
       <entry key="jspwiki-x.securityconfig.enable" value="true" />
+      <entry key="jspwiki.login.throttling" value="false" />
     </propertyfile>
 
     <!-- Build the custom auth WAR -->
@@ -887,6 +889,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         output="${webtests.build}/@{context}/selenium/selenium.log">
         <!--
         <arg line="-browserSessionReuse" />
+		<arg line="-log" />
+		<arg line="${webtests.reports}/@{context}.selenium.log" />
         -->
         <arg line="-htmlSuite" />
         <arg line='"${webtests.browser}"' />

@@ -85,7 +85,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
           
       (You should remove any older versions of these jars from WEB-INF/lib.)
 
-   -> Remove the following files from yoru existing WEB-INF/lib:
+   -> Remove the following files from your existing WEB-INF/lib:
           jug-asl-2.0.0.jar, multipartrequest.jar
     
    E. Upgrading security features
@@ -116,7 +116,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       If this property is not set, JSPWiki will default (as before) to the
       UserDatabaseLoginModule implementation.
            
-      Note that parameters passed to your custom LoginModule is now expressed in
+      Note that parameters passed to your custom LoginModule are now expressed in
       jspwiki.properties also, as key/value pairs, rather than in the JAAS config
       file. The parameter names and values will be loaded to a Map and passed to
       the LoginModule as the 'options' parameter when its initialize() method
@@ -141,10 +141,10 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       add the following columns to your users table:
        
           column name         type
-          ----------------------------
-          uid                 bigint (or other long integer equivalent)
-          lockExpiry          timestamp
-          attributes          longvarchar (or other large text/memo field)
+          --------------------------------------------------------------------------------------------
+          uid                            bigint (or other long integer equivalent)
+          lockExpiry                timestamp
+          attributes                longvarchar (or other large text/memo field)
   
       The primary key should also be changed to the 'uid' column. The column names
       can be re-mapped in jspwiki.properties similar to other JDBC columns.
@@ -186,6 +186,9 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
       not have them, on the fly, as users log in. The UID property is not
       widely used yet, but we expect it to be useful for security logging
       in future releases of JSPWiki. 
+
+      You can migrate your existing UserDatabase with a conversion utility
+      available at http://www.jspwiki.org/wiki/UserDatabaseConversion
 
 
 UPGRADE INSTRUCTIONS FOR DEVELOPERS
@@ -299,7 +302,8 @@ UPGRADE INSTRUCTIONS FOR DEVELOPERS
       removed so that it can no longer be instantiated. It is retained strictly for
       reverse compatibility.
       
-   -> Class PageRenamer was moved to package com.ecyrd.jspwiki.content.
+   -> Class PageRenamer was moved to package com.ecyrd.jspwiki.content and completely rewritten
+         because of licensing issues
    
    -> Class com.ecyrd.jspwiki.WikiSession method getLoginContext() was removed.
       
@@ -316,3 +320,5 @@ UPGRADE INSTRUCTIONS FOR DEVELOPERS
       was made final.
 
    -> Class com.ecyrd.jspwiki.rpc.RPCManager's constructor is now protected.
+   
+   -> Class com.ecyrd.jspwiki.plugin.BugReportHandler had it's public parameter names changed to PARAM_xxx

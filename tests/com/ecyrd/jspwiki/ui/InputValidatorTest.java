@@ -12,7 +12,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 
 public class InputValidatorTest extends TestCase
 {
@@ -27,8 +28,8 @@ public class InputValidatorTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         testEngine = new TestEngine( props );
-        WikiSession session = WikiSession.getWikiSession( testEngine, testEngine.newHttpRequest() );
-        val = new InputValidator( TEST, session );
+        WikiContext context = new WikiContext( testEngine, new WikiPage(testEngine,"dummyPage"));
+        val = new InputValidator( TEST, context );
     }
 
     public void testUnsafePattern()
