@@ -643,7 +643,7 @@ public final class UserManager
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
-        public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+        public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }

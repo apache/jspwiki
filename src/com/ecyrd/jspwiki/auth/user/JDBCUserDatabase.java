@@ -382,9 +382,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase
     /**
      * @see com.ecyrd.jspwiki.auth.user.UserDatabase#findByWikiName(String)
      */
-    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
     {
-        return findByPreparedStatement( m_findByUid, Long.valueOf( uid ) );
+        return findByPreparedStatement( m_findByUid, uid );
     }
 
     /**
@@ -715,7 +715,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
                 // User is new: insert new user record
                 ps = conn.prepareStatement( m_insertProfile );
-                ps.setLong( 1, profile.getUid() );
+                ps.setString( 1, profile.getUid() );
                 ps.setString( 2, profile.getEmail() );
                 ps.setString( 3, profile.getFullname() );
                 ps.setString( 4, password );
@@ -760,7 +760,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
             {
                 // User exists: modify existing record
                 ps = conn.prepareStatement( m_updateProfile );
-                ps.setLong( 1, profile.getUid() );
+                ps.setString( 1, profile.getUid() );
                 ps.setString( 2, profile.getEmail() );
                 ps.setString( 3, profile.getFullname() );
                 ps.setString( 4, password );
@@ -857,8 +857,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 profile = newProfile();
                 
                 // Fetch the basic user attributes
-                profile.setUid( rs.getLong( m_uid ) );
-                if ( profile.getUid() == UID_NOT_SET )
+                profile.setUid( rs.getString( m_uid ) );
+                if ( profile.getUid() == null )
                 {
                     profile.setUid( generateUid( this ) );
                 }

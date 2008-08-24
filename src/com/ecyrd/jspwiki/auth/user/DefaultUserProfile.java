@@ -56,7 +56,7 @@ public final class DefaultUserProfile implements UserProfile
 
     private String   m_password  = null;
     
-    private long m_uid = -1;
+    private String m_uid = null;
 
     private String   m_wikiname  = null;
 
@@ -319,7 +319,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
-    public long getUid()
+    public String getUid()
     {
         return m_uid;
     }
@@ -350,7 +350,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * {@inheritDoc}
      */
-    public void setUid( long uid )
+    public void setUid( String uid )
     {
         m_uid = uid;
     }

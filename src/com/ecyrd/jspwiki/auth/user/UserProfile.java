@@ -100,10 +100,10 @@ public interface UserProfile extends Serializable
 
     /**
      * Returns the unique identifier for the user profile. If not previously
-     * set, the value will be -1.
+     * set, the value will be <code>null</code>.
      * @return the unique ID.
      */
-    public long getUid();
+    public String getUid();
     
     /**
      * Returns the user's wiki name, based on the full name with all
@@ -189,7 +189,7 @@ public interface UserProfile extends Serializable
      * are required <em>not</em> to change the unique identifier after the initial save.
      * @param uid the unique identifier to set
      */
-    public void setUid( long uid );
+    public void setUid( String uid );
     
     /**
      * No-op method. In previous versions of JSPWiki, the method

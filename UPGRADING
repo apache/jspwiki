@@ -142,7 +142,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
        
           column name         type
           --------------------------------------------------------------------------------------------
-          uid                            bigint (or other long integer equivalent)
+          uid                       varchar (100)
           lockExpiry                timestamp
           attributes                longvarchar (or other large text/memo field)
   
@@ -182,7 +182,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
 
    -> User profiles now have a unique identifier associated with them. These
       are stored by the XML and JDBC UserDatabase implementations. UIDs are
-      long integers. They are transparently added to any profiles that do
+      Strings. They are transparently added to any profiles that do
       not have them, on the fly, as users log in. The UID property is not
       widely used yet, but we expect it to be useful for security logging
       in future releases of JSPWiki. 

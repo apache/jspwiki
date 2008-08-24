@@ -48,7 +48,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
-    protected static final long UID_NOT_SET = 0;
 
     /**
      * No-op method that in previous versions of JSPWiki was intended to
@@ -281,15 +280,15 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @param db The database for which the UID should be generated.
      * @return A random, unique UID.
      */
-    protected static long generateUid( UserDatabase db )
+    protected static String generateUid( UserDatabase db )
     {
         // Keep generating UUIDs until we find one that doesn't collide
-        long uid;
+        String uid = null;
         boolean collision;
         
         do 
         {
-            uid = UUID.randomUUID().getLeastSignificantBits();
+            uid = UUID.randomUUID().toString();
             collision = true;
             try
             {
@@ -300,7 +299,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
                 collision = false;
             }
         } 
-        while ( collision || uid == UID_NOT_SET );
+        while ( collision || uid == null );
         return uid;
     }
     
