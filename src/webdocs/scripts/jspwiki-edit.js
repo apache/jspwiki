@@ -183,7 +183,7 @@ var EditTools =
 		this.onPageLoadSectionToc( );
 
 		//this.ta = new TextArea( this.textarea );
-		//this.ta = TextArea.initialize( this.textarea );
+		this.ta = TextArea.initialize( this.textarea ); //FIXME
 
 		this.onPageLoadResizeTextarea();
 		this.onPageLoadToolbar();

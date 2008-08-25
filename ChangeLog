@@ -1,3 +1,16 @@
+2008-08-25 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-30 
+
+        * [JSPWIKI-329] Pagination link for All-entries fixed. Added comments to
+        InfoContent.jsp to clear-out obscure pagination counting logic.
+ 
+        * [JSPWIKI-357], [JSPWIKI-358] Wrong section counting when a page contains a TOC.
+
+        * [JSPWIKI-359] Popup when editing page from Quick Navigation Field should only
+        appear when no pagename was entered in input field.
+        
+
 2008-08-24  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-29
