@@ -239,7 +239,7 @@ public class Preferences
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
 
-        log.info( "using locale "+loc.toString() );
+        //log.info( "using locale "+loc.toString() );
         return loc;
     }
 
