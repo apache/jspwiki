@@ -14,6 +14,8 @@
         * The suggestion box no longer keeps suggesting wikipages if you start
         inserting a plugin or a variable.
         
+        * JSPWIKI-354: Fixed issue with fallback to default template not working.
+        
 2008-08-30 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-31
