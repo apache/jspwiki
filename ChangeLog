@@ -1,3 +1,22 @@
+2008-08-30 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-31
+        
+        * [JSPWIKI-346] Rename errors are now displayed inside a page-info in screen,
+        above the rename section.  Some localization updates are needed.
+
+        New resource:
+            prefs.errorprefix.rename=Could not rename the page:&nbsp;
+
+        And the CoreResources rename.* items are updated to remove the text
+        "Click "back" on your browser and change the new name.".
+        (done for default and .nl properties)
+
+        * [JSPWIKI-289] The edit SuggestionMenu (plain editor only) now also allows 
+        to enter a '/' to get a list of attachment links. Moreover, when you open a new link with 
+        a '[', by default jspwiki displays the list of attachments of the current page.
+ 
+
 2008-08-25 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-30 

@@ -63,7 +63,7 @@ public final class PageCommand extends AbstractCommand
         = new PageCommand( "preview", "%uPreview.jsp?page=%n", "PreviewContent.jsp", null, PagePermission.VIEW_ACTION );
 
     public static final Command RENAME
-        = new PageCommand( "rename", "%uRename.jsp?page=%n", null, null, PagePermission.RENAME_ACTION );
+        = new PageCommand( "rename", "%uRename.jsp?page=%n", "InfoContent.jsp", null, PagePermission.RENAME_ACTION );
 
     public static final Command RSS
         = new PageCommand( "rss", "%urss.jsp", null, null, PagePermission.VIEW_ACTION );

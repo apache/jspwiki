@@ -16,6 +16,9 @@
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
+  String parm_renameto = (String)request.getParameter( "renameto" );
+  if( parm_renameto == null ) parm_renameto = wikiPage.getName();
+
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
@@ -93,6 +96,11 @@
   </wiki:CheckVersion>
 
   <wiki:Permission permission="rename">
+
+    <div class="formhelp">
+      <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>'/>
+    </div>
+
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
            class="wikiform"
               id="renameform"
@@ -101,7 +109,7 @@
       <p>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
+      <input type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
       &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>

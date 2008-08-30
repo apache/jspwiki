@@ -17,7 +17,7 @@
     if(!wikiContext.hasAccess( response )) return;
 
     String renameFrom = wikiContext.getName();
-    String renameTo = request.getParameter( "renameto");
+    String renameTo = request.getParameter("renameto");
 
     boolean changeReferences = false;
 
@@ -27,9 +27,6 @@
     {
         changeReferences = true;
     }
-
-    // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser() );
 
@@ -47,54 +44,39 @@
         }
         else
         {
-            wikiSession.addMessage(rb.getString("rename.empty"));
+            wikiSession.addMessage("rename", rb.getString("rename.empty"));
 
             log.info("Page rename request failed because new page name was left blank");
-
-%>
-            <h3><fmt:message key="rename.error.title"/></h3>
-
-            <dl>
-               <dt><b><fmt:message key="rename.error.reason"/></b></dt>
-               <dd>
-                  <wiki:Messages div="error" />
-               </dd>
-            </dl>
-<%
         }
-
     }
     catch (WikiException e)
     {
-        if (e.getMessage().equals("Page exists"))
+        if (e.getMessage().equals("You cannot rename the page to itself"))
         {
-            if (renameTo.equals( renameFrom ))
-            {
-                log.info("Page rename request failed because page names are identical");
-                wikiSession.addMessage( rb.getString("rename.identical") );
-            }
-            else
-            {
-                log.info("Page rename request failed because new page name is already in use");
-                Object[] args = { renameTo };
-                wikiSession.addMessage(MessageFormat.format(rb.getString("rename.exists"),args));
-            }
+            log.info("Page rename request failed because page names are identical");
+            wikiSession.addMessage("rename", rb.getString("rename.identical") );
+        }
+        else if (e.getMessage().startsWith("Page already exists "))
+        {
+            log.info("Page rename request failed because new page name is already in use");
+            Object[] args = { renameTo };
+            wikiSession.addMessage("rename", MessageFormat.format(rb.getString("rename.exists"),args));
         }
         else
         {
             Object[] args = { e.toString() };
-            wikiSession.addMessage( MessageFormat.format(rb.getString("rename.unknownerror"),args));
+            wikiSession.addMessage("rename",  MessageFormat.format(rb.getString("rename.unknownerror"),args));
         }
 
-%>
-       <h3><fmt:message key="rename.error.title"/></h3>
-
-       <dl>
-          <dt><b><fmt:message key="rename.error.reason"/></b></dt>
-          <dd>
-             <wiki:Messages div="error" />
-          </dd>
-       </dl>
-<%
     }
-%>
+
+    pageContext.setAttribute( "renameto",
+                              TextUtil.replaceEntities( renameTo ),
+                              PageContext.REQUEST_SCOPE );
+
+    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
+                                                            wikiContext.getTemplate(),
+                                                            "ViewTemplate.jsp" );
+    
+%><wiki:Include page="<%=contentPage%>" />

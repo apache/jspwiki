@@ -391,7 +391,8 @@ var EditTools =
 		var textarea = this.textarea,
 			sel = TextArea.getSelectionCoordinates(textarea),
 			val = textarea.value,
-			searchword = '';
+			searchword = '',
+			searchlen = 0;
 			
 		var	suggestID = 'findSuggestionMenu',
 			suggest = $(suggestID) || new Element('div',{
@@ -400,21 +401,23 @@ var EditTools =
 
 		/* find a partial jspwiki-link 'searchword' */
 		/* look backwards for the start of a wiki-link bracket */
-		for( i = sel.start-1; i >= 0; i-- ){
+		for( var i = sel.start-1; i >= 0; i-- ){
 			if( val.charAt(i) == ']' ) break;
 			if( val.charAt(i) == '[' && i < val.length-1 ) { 
 				searchword = val.substring(i+1,sel.start); 
 				if(searchword.indexOf('|') != -1) searchword = searchword.split('|')[1];
+				searchlen = searchword.length;
+
+				if(searchlen == 0) searchword=Wiki.PageName+'/'; /* by default - get list of attachments, if any */
 				break; 
 			}
 		}
 		if(searchword =='') return suggest.hide();
 
-		var searchlen = searchword.length;		
-
-		if(sel.start == sel.end) { //when no selection, extend till next ]
-			var i = val.indexOf(']',sel.start);
-			if( i>0 ) sel.end = i
+		if(sel.start == sel.end) { //when no selection, extend till next ]  or end of the line
+			var ss = val.substring(sel.start),
+				end = ss.search(/[\n\r\]]/);
+			if(end!=-1) sel.end = sel.start+end;
 		}
 
 		Wiki.jsonrpc('search.getSuggestions', [searchword,30], function(result,exception){

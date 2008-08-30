@@ -7,7 +7,7 @@
 <div id="actionsTop" class="pageactions"> 
   <ul>
 
-    <wiki:CheckRequestContext context='view|info|diff|upload'>
+    <wiki:CheckRequestContext context='view|info|diff|upload|rename'>
     <wiki:Permission permission="edit">
 	<li>
         <wiki:PageType type="page">
