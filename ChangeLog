@@ -1,4 +1,15 @@
-2008-08-20  Janne Jalkanen <jalkanen@apache.org>
+2008-08-30  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-33
+        
+        * JSPWIKI-231: update the latest de localisation patch from Florian
+        and quite a few corrections to the nl localisation
+        
+        * Found during debugging that Lucene Indexer was using a bit 
+        agressive interval of 1 second for Emptying index queue, lowered to 5 seconds
+        Combined with a few textual corrections in WikiBackgroundThread 
+
+2008-08-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.7.0-alpha-32
         

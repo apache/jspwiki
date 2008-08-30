@@ -115,8 +115,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * The thread will initially pause for a full sleep interval
      * before starting, after which it will execute 
      * {@link #startupTask()}. This method will cleanly 
-     * terminates the thread if the it has previously 
-     * been marked for death, before which it will execute
+     * terminate the thread if it has previously 
+     * been marked as dead, before which it will execute
      * {@link #shutdownTask()}. If any of the three methods
      * return an exception, it will be re-thrown as a
      * {@link com.ecyrd.jspwiki.InternalWikiException}.
@@ -139,8 +139,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
                 // log.debug( "Running background task: " + name + "." );
                 backgroundTask();
                 
-                // Sleep for the interval we're supposed do, but
-                // wake up every second to see if thread should die
+                // Sleep for the interval we're supposed to, but
+                // wake up every POLLING_INTERVAL to see if thread should die
                 boolean interrupted = false;
                 try
                 {

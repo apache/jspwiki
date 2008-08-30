@@ -679,7 +679,7 @@ public class LuceneSearchProvider implements SearchProvider
      */
     private static final class LuceneUpdater extends WikiBackgroundThread
     {
-        protected static final int INDEX_DELAY    = 1;
+        protected static final int INDEX_DELAY    = 5;
         protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
 
