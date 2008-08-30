@@ -364,8 +364,10 @@ public class PageRenamer
         //
         //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
         int blank = reallink.indexOf( " ");
-        if (blank!=-1) {
-            return reallink + "|" + newlink; 
+        
+        if( blank != -1 )
+        {
+            return reallink + "|" + newlink;
         }
         
         //
