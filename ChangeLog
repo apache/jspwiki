@@ -6,6 +6,11 @@
         was no page metadata, therefore inadvertently loading old data whenever
         the wiki was restarted. 
         
+        * JSPWIKI-333: Thanks to Florian's patch, this annoying language selection
+        thing should now be fixed.
+        
+        * Fixed Finnish localization.
+        
 2008-08-30 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-31
