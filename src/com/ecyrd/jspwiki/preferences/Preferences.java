@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -207,17 +208,38 @@ public class Preferences
     {
         Locale loc = null;
         
-        String language = Preferences.getPreference( context, "Language" );
-
-        if( language != null)
-            loc = new Locale(language);
-
-        if( loc == null) 
+        String langSetting = Preferences.getPreference( context, "Language" );
+        
+        //
+        // parse language and construct valid Locale object
+        //
+        if( langSetting != null)
+        {
+            String language = "";
+            String country  = "";
+            String variant  = "";
+            
+            String[] res = StringUtils.split( langSetting, "-_" );
+            
+            if( res.length > 2 ) variant = res[2];
+            if( res.length > 1 ) country = res[1];
+            
+            if( res.length > 0 )
+            {
+                language = res[0];
+            
+                loc = new Locale( language, country, variant );
+            }
+        }
+        
+        // otherwise try to find out the browser's preferred language setting, or use the JVM's default
+        if( loc == null)
         {    
             HttpServletRequest request = context.getHttpRequest();
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
-                
+
+        log.info( "using locale "+loc.toString() );
         return loc;
     }
 
