@@ -405,6 +405,7 @@ var EditTools =
 			if( val.charAt(i) == ']' ) break;
 			if( val.charAt(i) == '[' && i < val.length-1 ) { 
 				searchword = val.substring(i+1,sel.start); 
+                if( searchword.charAt(0) == '{' ) return; // Ignore plugins.
 				if(searchword.indexOf('|') != -1) searchword = searchword.split('|')[1];
 				searchlen = searchword.length;
 
