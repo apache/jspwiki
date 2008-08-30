@@ -491,17 +491,11 @@ public class ReferenceManager
     private synchronized void serializeAttrsToDisk( WikiPage p )
     {
         ObjectOutputStream out = null;
+        StopWatch sw = new StopWatch();
+        sw.start();
 
         try
         {
-            // FIXME: There is a concurrency issue here...
-            Set entries = p.getAttributes().entrySet();
-
-            // if( entries.size() == 0 ) return;
-
-            StopWatch sw = new StopWatch();
-            sw.start();
-
             File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
 
             if( !f.exists() ) f.mkdirs();
@@ -510,6 +504,18 @@ public class ReferenceManager
             //  Create a digest for the name
             //
             f = new File( f, getHashFileName(p.getName()) );
+
+            // FIXME: There is a concurrency issue here...
+            Set entries = p.getAttributes().entrySet();
+
+            if( entries.size() == 0 ) 
+            {
+                //  Nothing to serialize, therefore we will just simply remove the
+                //  serialization file so that the next time we boot, we don't
+                //  deserialize old data.
+                f.delete();
+                return;
+            }
 
             out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
 
@@ -532,9 +538,6 @@ public class ReferenceManager
 
             out.close();
 
-            sw.stop();
-
-            log.debug("serialization for "+p.getName()+" done - took "+sw);
         }
         catch( IOException e )
         {
@@ -549,6 +552,12 @@ public class ReferenceManager
         catch( NoSuchAlgorithmException e )
         {
             log.fatal("No MD5 algorithm!?!");
+        }
+        finally
+        {
+            sw.stop();
+
+            log.debug("serialization for "+p.getName()+" done - took "+sw);
         }
     }
 
