@@ -102,7 +102,7 @@
     </tr>
     </wiki:Permission>
 --%>  
-<wiki:CheckRequestContext context="edit">
+<wiki:CheckRequestContext context="edit|comment">
     <tr>
     <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
     <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/></td>

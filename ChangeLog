@@ -1,3 +1,14 @@
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-34
+        
+        * Commenting now uses the changenote field properly (and we got rid
+        of the "Comment by XXX" -functionality.  Therefore, "comment.by" i18n field
+        is now unused.
+        
+        * Renaming now uses symbols instead of English text to put in the changenote
+        field.
+        
 2008-08-30  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-33
