@@ -51,7 +51,6 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
  * this method contains all of the logic needed to grab any user login credentials set 
  * by the container or by cookies.
  *  
- *  @author Janne Jalkanen
  *  @author Andrew Jaquith
  *
  */
@@ -60,6 +59,9 @@ public class WikiServletFilter implements Filter
     protected static final Logger log = Logger.getLogger( WikiServletFilter.class );
     protected WikiEngine m_engine = null;
 
+    /**
+     *  Creates a Wiki Servlet Filter.
+     */
     public WikiServletFilter()
     {
         super();
@@ -67,6 +69,9 @@ public class WikiServletFilter implements Filter
 
     /**
      * Initializes the WikiServletFilter.
+     * 
+     * @param config The FilterConfig.
+     * @throws ServletException If a WikiEngine cannot be started.
      */
     public void init( FilterConfig config ) throws ServletException
     {
@@ -89,8 +94,10 @@ public class WikiServletFilter implements Filter
     * {@link WikiRequestWrapper}.
     * @param request the current HTTP request object
     * @param response the current HTTP response object
+    * @param chain The Filter chain passed down.
     * @throws ServletException if {@link AuthenticationManager#login(HttpServletRequest)} fails for any reason
-     */
+    * @throws IOException If writing to the servlet response fails. 
+    */
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException
     {
         //
