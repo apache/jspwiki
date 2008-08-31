@@ -94,6 +94,9 @@
 
     session.setAttribute( "link", link );
 
+    if( changenote != null )
+       session.setAttribute( "changenote", changenote );
+    
     //
     //  Branch
     //

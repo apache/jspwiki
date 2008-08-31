@@ -1,3 +1,10 @@
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-36
+        
+        * [JSPWIKI-366]: changenote was lost in commenting previews. Also, FCK
+        was not showing the changenote field.
+        
 2008-08-31  Harry Metske <harry.metske@gmail.com>
 
         * 2.7.0-alpha-35

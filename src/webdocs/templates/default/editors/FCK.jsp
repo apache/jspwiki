@@ -119,7 +119,7 @@
   <div class="error"><fmt:message key="editor.fck.noscript" /></div>
 </noscript>
 
-   <wiki:CheckRequestContext context="edit">
+   <wiki:CheckRequestContext context="edit|comment">
     <p>
     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
