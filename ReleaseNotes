@@ -14,9 +14,9 @@ Please report any issues you can find at http://issues.apache.org/JIRA/
 NEW FEATURES
 ============
 
-* JSPWiki now requires JDK 1.5 to run!
+* JSPWiki now requires JDK 1.5 to run.
 
-* Simplified Chinese and Dutch localizations added!
+* Simplified Chinese, Dutch and Italian localizations added!
 
 * There is no more need for JAAS files!  Hooray!  This has
   been replaced with custom jspwiki properties.
@@ -26,7 +26,8 @@ NEW FEATURES
   
 * Sneak preview in the default editor
 
-* WikiWizard is removed (it is LGPL), but FCK integration is available.
+* WikiWizard is removed (it is LGPL), but FCK integration is available,
+  and WikiWizard can still be installed as a separate package.
 
 * German language corepages
 
