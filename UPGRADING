@@ -42,9 +42,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
    -> You must upgrade jspwiki.properties. JSPWiki 2.8 adds several
       new properties to it. We recommend you use the 2.8 version of
       jspwiki.properties as a base, and copy your existing
-      settings into it line-by-line. However, it you retain your existing
-      jspwiki.properties file, you must add the following new properties:
-          jspwiki.defaultprefs.*
+      settings into it line-by-line.
         
       You should also add these properties, although they will default to
       sensible values if you do not:
