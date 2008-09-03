@@ -171,16 +171,14 @@ var EditTools =
 			if(ta.value != ta.defaultValue) return "edit.areyousure".localize();
 		}).bind(this);
 
-		//alert($('scroll').getValue());
-
 		this.wikisnippets = WikiSnippets.getSnippets();
 		this.wikismartpairs = WikiSnippets.getSmartPairs();
 
 		this.mainarea = this.textarea = $('editorarea'); 
 		if(!this.textarea || !this.textarea.visible) return;
 
-		/* modifies this.textarea */
-		this.onPageLoadSectionToc( );
+		/* may insert a new this.textarea */
+		this.onPageLoadSectionEdit( );
 
 		//this.ta = new TextArea( this.textarea );
 		this.ta = TextArea.initialize( this.textarea ); //FIXME
@@ -192,8 +190,9 @@ var EditTools =
 		this.onPageLoadPreview();
 
 		this.textarea
-			.addEvent('click',this.getSuggestions.bind(this))
-			.addEvent('keyup',this.getSuggestions.bind(this))
+			.addEvent('click', this.getSuggestions.bind(this))
+			.addEvent('keyup', this.getSuggestions.bind(this))
+			.addEvent('change', this.onChangeTextarea.bind(this))
 			.focus();
 	},
 
@@ -447,7 +446,7 @@ var EditTools =
 			} /* endif */
 		});
 	},
-	
+
 	onPageLoadPreview : function(){
 		if( $$('#sneakpreview','#autopreview').length != 2) return;
 		$('autopreview')
@@ -487,7 +486,7 @@ var EditTools =
 		}).request();
 	},
 
-	onPageLoadSectionToc : function( ){
+	onPageLoadSectionEdit : function( ){
 
 		/* section editing is only valid for edit context, not valid in the comment context */
 		if( (Wiki.Context!='edit') 
@@ -504,31 +503,30 @@ var EditTools =
 		
 		var tt = new Element('div',{'id':'toctoc'}).adopt(
 			new Element('label').setHTML('sectionediting.label'.localize()),
-			this.selector = new Element('ul')
+			this.sections = new Element('ul')
 		).injectTop($('favorites'))
 
-		/* initialise the section selectors */
-		this.onSelectorLoad();
+		/* initialise the section sections */
+		this.onSectionLoad();
     
 		var cursor = location.search.match(/[&?]section=(\d+)/);
 		cursor = (cursor && cursor[1]) ? 1+cursor[1].toInt() : 0;
 		if((cursor>0) && this.textarea.sop) cursor++;
 
 		/* initialise the selected section */
-		this.onChangeSelector(cursor);
+		this.onChangeSection(cursor);
 
-		this.textarea.addEvent('change', this.onChangeTextarea.bind(this));		
 	},	
 	
 	/* 
-	 * UPDATE/RFEFRESH the section selector dropdown
+	 * UPDATE/RFEFRESH the section dropdown
 	 * This function is called at startup, and everytime the section textarea changes
-	 * Postcondition: the sectiontoc dropdown contains following entries
+	 * Postcondition: the section-edit dropdown contains following entries
 	 *   0. ( all )
 	 *   1. start-of-page (if applicable)
-	 *   2. text==<<header 1...n>> , <<selector.offset stores start-offset in main textarea>>
+	 *   2. text==<<header 1...n>> , <<sections.offset stores start-offset in main textarea>>
 	 */  
-	 onSelectorLoad : function(){
+	 onSectionLoad : function(){
 		var mainarea = this.mainarea.value,
 			ta = this.textarea,
 			DELIM = "\u00a4";
@@ -540,9 +538,9 @@ var EditTools =
 
 		var tt = mainarea.replace( /^([!]{1,3})/mg, DELIM+"$1"+DELIM ).split(DELIM);
 		
-		this.newSelector();
+		this.newSection();
 		ta.sop = (tt.length>1) && (tt[0] != ''); //start of page section has no !!!header 
-		if(ta.sop) this.addSelector("edit.startOfPage".localize(), 0, 0);
+		if(ta.sop) this.addSection("edit.startOfPage".localize(), 0, 0);
 		
 		var pos = tt.shift().length,
 			ttlen = tt.map(function(i){ return i.length });
@@ -552,29 +550,29 @@ var EditTools =
 				indent = (hlen==2) ? 1 : (hlen==1) ? 2 : 0,
 				title = tt[i+1].match(/.*?$/m)[0]; //title is first line only
 
-			this.addSelector(title, pos, indent);
+			this.addSection(title, pos, indent);
 			pos += hlen + ttlen[i+1];
 		};
 	},
 
-	setSelector: function( cursor ){
-		var els = this.selector.getChildren();
+	setSection: function( cursor ){
+		var els = this.sections.getChildren();
 		
 		if(cursor <0 || cursor >= els.length) cursor = 0;
 		els.removeClass('cursor');
 		els[cursor].addClass('cursor');
 	},
 
-	newSelector: function(){
-		this.selector.empty();
-		this.selector.offsets = [];
-		this.addSelector("edit.allsections".localize(),-1,0);
+	newSection: function(){
+		this.sections.empty();
+		this.sections.offsets = [];
+		this.addSection("edit.allsections".localize(),-1,0);
 	},
 
-	addSelector: function(text,offset,indent){
+	addSection: function(text,offset,indent){
 		text = text.replace(/~([^~])/g, '$1'); /*remove wiki-markup escape chars ~ */
-		this.selector.offsets.push(offset);
-		this.selector.adopt( 
+		this.sections.offsets.push(offset);
+		this.sections.adopt( 
 			new Element('li').adopt(
 				new Element('a',{
 					'class':'action',
@@ -583,22 +581,22 @@ var EditTools =
 					},
 					'title':text,
 					'events':{
-						'click':this.onChangeSelector.pass([this.selector.offsets.length-1],this) 
+						'click':this.onChangeSection.pass([this.sections.offsets.length-1],this) 
 					}
 				}).setHTML(text.trunc(30))
 			) 
 		);	
 	},
 
-	/* the USER clicks a new item from the section selector dropdown
+	/* the USER clicks a new item from the section dropdown
 	 * copy a part of the main textarea to the section textarea
 	 */
-	onChangeSelector: function(cursor){
-		var se = this.selector.offsets, 
+	onChangeSection: function(cursor){
+		var se = this.sections.offsets, 
 			ta = this.textarea, 
 			ma = this.mainarea.value;
 
-		this.setSelector(cursor);
+		this.setSection(cursor);
 		ta.cursor = cursor;
 		ta.begin = (cursor==0) ? 0 : se[cursor];
 		ta.end = ((cursor==0) || (cursor+1 >= se.length)) ? ma.length : se[cursor+1]; 
@@ -614,18 +612,20 @@ var EditTools =
 	 *  (ii) user clicks a toolbar-button
 	 *  
 	 * 1) copy section textarea at the right offset of the main textarea
-	 * 2) refresh the sectiontoc menu
+	 * 2) refresh the section-edit menu
 	 */
 	onChangeTextarea : function(){
 		var	ta = this.textarea,	ma = this.mainarea;
 
-		var	s = ta.value;
-		if( s.lastIndexOf("\n") + 1 != s.length ) ta.value += '\n';
-		 
-		s = ma.value;
-		ma.value = s.substring(0, ta.begin) + ta.value + s.substring(ta.end);
-		ta.end = ta.begin + ta.value.length;
-		this.onSelectorLoad();  //refresh selectortoc menu
+		if( this.sections ){
+			var	s = ta.value;
+			if( s.lastIndexOf("\n") + 1 != s.length ) ta.value += '\n';
+
+			s = ma.value;
+			ma.value = s.substring(0, ta.begin) + ta.value + s.substring(ta.end);
+			ta.end = ta.begin + ta.value.length;
+			this.onSectionLoad();  //refresh section-edit menu
+		}		
 		ta.fireEvent('preview');
 	 }
 } 

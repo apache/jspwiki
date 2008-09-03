@@ -133,13 +133,13 @@ var WikiAccordion = {
 			
 			var toggles=[], contents=[], menu=false;
 			if(tt.hasClass('tabbedAccordion')){
-				menu = new Element('div',{'class':'menu'}).injectBefore(tt);
+				menu = new Element('div',{'class':'menu top'}).injectBefore(tt);
 			}
 			else if(tt.hasClass('leftAccordion')){
-				menu = new Element('div',{'class':'sidemenu left'}).injectBefore(tt);
+				menu = new Element('div',{'class':'menu left'}).injectBefore(tt);
 			}
 			else if(tt.hasClass('rightAccordion')){
-				menu = new Element('div',{'class':'sidemenu right'}).injectBefore(tt);
+				menu = new Element('div',{'class':'menu right'}).injectBefore(tt);
 			}
 			
 			tt.getChildren().each(function(tab) {
@@ -178,7 +178,7 @@ var WikiAccordion = {
 				} 
 			});
 		});
-		bullet=toggle=null;
+		bullet=toggle=null; //avoid memory leaks
 	}
 }
 Wiki.addPageRender(WikiAccordion);

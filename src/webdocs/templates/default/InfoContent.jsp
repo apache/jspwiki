@@ -28,15 +28,15 @@
   {
     creationAuthor = firstPage.getAuthor();
 
-        if( creationAuthor != null && creationAuthor.length() > 0 )
-        {
-            creationAuthor = TextUtil.replaceEntities(creationAuthor);
-         }
-        else
-        {
-            creationAuthor = c.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" );
-        }
-   }
+    if( creationAuthor != null && creationAuthor.length() > 0 )
+    {
+      creationAuthor = TextUtil.replaceEntities(creationAuthor);
+    }
+    else
+    {
+      creationAuthor = c.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" );
+    }
+  }
 
   int itemcount = 0;  //number of page versions
   try
