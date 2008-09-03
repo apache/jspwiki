@@ -1,9 +1,3 @@
-2008-09-03  Harry Metske <harry.metske@gmail.com>
-
-        * 2.7.0-alpha-38
-        
-        * JSPWIKI-364:  Introduced UtilJ2EECompat to check for container type (thanks to Lutz Tietze)
-
 2008-09-03 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-37
