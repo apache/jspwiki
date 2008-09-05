@@ -1,6 +1,0 @@
-Here are the pages that have not yet been created.  Why don't you go and create
-a few?
-
-[{INSERT com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin}]
-
-(Back to [Main]).
