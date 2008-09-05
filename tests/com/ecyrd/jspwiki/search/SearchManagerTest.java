@@ -61,7 +61,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.yield();
 
-        Thread.sleep( 5000L ); // Should cover for both index and initial delay
+        Thread.sleep( 10000L ); // Should cover for both index and initial delay
         
         Collection res = m_mgr.findPages( "mankind" );
      
@@ -82,7 +82,7 @@ public class SearchManagerTest extends TestCase
         
         Thread.yield();
 
-        Thread.sleep( 2000L ); // Should cover for both index and initial delay
+        Thread.sleep( 10000L ); // Should cover for both index and initial delay
     
         Collection res = m_mgr.findPages( "mankind" );
  
@@ -108,7 +108,7 @@ public class SearchManagerTest extends TestCase
      
         Thread.yield();
 
-        Thread.sleep( 2000L ); // Should cover for both index and initial delay
+        Thread.sleep( 10000L ); // Should cover for both index and initial delay
  
         Collection res = m_mgr.findPages( "mankind" );
 
@@ -131,7 +131,7 @@ public class SearchManagerTest extends TestCase
      
         Thread.yield();
 
-        Thread.sleep( 2000L ); // Should cover for both index and initial delay
+        Thread.sleep( 5000L ); // Should cover for both index and initial delay
  
         Collection res = m_mgr.findPages( "Test" );
 
@@ -150,7 +150,7 @@ public class SearchManagerTest extends TestCase
  
         Thread.yield();
 
-        Thread.sleep( 2000L ); // Should cover for both index and initial delay
+        Thread.sleep( 5000L ); // Should cover for both index and initial delay
 
         Collection res = m_mgr.findPages( "TestPage" );
 
