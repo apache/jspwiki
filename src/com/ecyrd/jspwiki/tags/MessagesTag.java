@@ -21,6 +21,11 @@
 package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sourceforge.stripes.validation.ValidationError;
+import net.sourceforge.stripes.validation.ValidationErrors;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiSession;
@@ -99,7 +104,26 @@ public class MessagesTag extends WikiTagBase
         }
         else
         {
+            List<String> messageStrings = new ArrayList<String>();
+
+            // Add all of the Stripes validation errors first (all fields, even global errors)
+            ValidationErrors errors = m_wikiActionBean.getContext().getValidationErrors();
+            for ( List<ValidationError> fieldErrors : errors.values() ) {
+                for ( ValidationError error : fieldErrors )
+                {
+                    String message = error.getMessage( m_wikiActionBean.getContext().getLocale() );
+                    messageStrings.add( message );
+                }
+            }
+
+            // Add all of the messages added for this topic (legacy messages)
             String[] messages = ( m_topic == null ) ? session.getMessages() : session.getMessages( m_topic );
+            for ( String message : messages )
+            {
+                messageStrings.add( message );
+            }
+            messages = messageStrings.toArray( new String[messageStrings.size()] );
+            
             if ( messages.length > 0 )
             {
                 StringBuffer sb = new StringBuffer();

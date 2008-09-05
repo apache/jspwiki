@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.filters;
 
+import net.sourceforge.stripes.action.Resolution;
+
 /**
  *  This exception may be thrown if a filter wants to reject something and
  *  redirect the user elsewhere.
@@ -27,7 +29,7 @@ package com.ecyrd.jspwiki.filters;
  *  @since 2.1.112
  */
 public class RedirectException
-    extends FilterException
+    extends FilterException implements Resolution
 {
     private static final long serialVersionUID = 0L;
 

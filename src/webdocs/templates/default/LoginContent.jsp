@@ -44,9 +44,8 @@
   <table>
     <tr>
       <td colspan="2" class="formhelp">
-      <div class="error">
-        <stripes:errors beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
-      </div>
+        <wiki:Messages div="error" topic="login"
+                    prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
       </td>
     </tr>
     <tr>
@@ -123,9 +122,8 @@
     <c:if test="${param.tab eq 'lostpassword'}" >
     <tr>
       <td colspan="2" class="formhelp">
-        <div class="error">
-          <stripes:errors beanclass="com.ecyrd.jspwiki.action.NoneActionBean"/>
-        </div>
+        <wiki:Messages div="error" topic="resetpw"
+                    prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
         <wiki:Messages div="information" topic="resetpwok" />
       </td>
     </tr>
