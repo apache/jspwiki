@@ -1,3 +1,7 @@
+2008-09-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-1
+
 2008-09-03 Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.7.0-alpha-37
@@ -8,7 +12,6 @@
         as reported by Terry Steichen.
         
         * Few small fixes on the Accordion style.
-
  
 2008-09-02  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
