@@ -57,13 +57,13 @@ public final class Release
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "alpha";
+    private static final String    POSTFIX       = "beta";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
 
     /** The JSPWiki revision. */
-    public static final int        REVISION      = 7;
+    public static final int        REVISION      = 8;
 
     /** The minor revision.  */
     public static final int        MINORREVISION = 0;
@@ -77,7 +77,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "37";
+    public static final String     BUILD         = "1";
     
     /**
      *  This is the generic version string you should use
