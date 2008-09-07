@@ -10,6 +10,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  * <p>
@@ -239,8 +240,9 @@ public abstract class AbstractActionBean implements WikiActionBean
             throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
         }
 
-        Locale loc = m_actionBeanContext.getRequest().getLocale();
-        ResourceBundle b = getEngine().getInternationalizationManager().getBundle( bundle, loc );
+        Locale loc = Preferences.getLocale( this );
+        
+        ResourceBundle b = getEngine().getInternationalizationManager().getBundle(bundle, loc);
 
         return b;
     }

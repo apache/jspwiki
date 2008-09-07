@@ -45,7 +45,7 @@ public class WysiwygEditingRenderer
 {
 
     private static final String A_ELEMENT = "a";
-    private static final String PRE_ELEMENT = "pre";
+//    private static final String PRE_ELEMENT = "pre";
     private static final String CLASS_ATTRIBUTE = "class";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String TITLE_ATTRIBUTE = "title";

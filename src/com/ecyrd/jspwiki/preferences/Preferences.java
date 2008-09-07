@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -204,13 +205,45 @@ public class Preferences
      */
     public static Locale getLocale(WikiActionBean context)
     {
-        WikiActionBeanContext beanContext = context.getContext();
-        if( beanContext == null || beanContext.getRequest() == null )
+        Locale loc = null;
+        
+        String langSetting = Preferences.getPreference( context, "Language" );
+        
+        //
+        // parse language and construct valid Locale object
+        //
+        if( langSetting != null)
         {
-            throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
+            String language = "";
+            String country  = "";
+            String variant  = "";
+            
+            String[] res = StringUtils.split( langSetting, "-_" );
+            
+            if( res.length > 2 ) variant = res[2];
+            if( res.length > 1 ) country = res[1];
+            
+            if( res.length > 0 )
+            {
+                language = res[0];
+            
+                loc = new Locale( language, country, variant );
+            }
+        }
+        
+        // otherwise try to find out the browser's preferred language setting, or use the JVM's default
+        if( loc == null)
+        {    
+	        WikiActionBeanContext beanContext = context.getContext();
+    	    if( beanContext == null || beanContext.getRequest() == null )
+        	{
+            	throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
+	        }
+            loc = ( beanContext.getRequest() != null ) ? beanContext.getRequest().getLocale() : Locale.getDefault();
         }
 
-        return beanContext.getRequest().getLocale();
+        //log.info( "using locale "+loc.toString() );
+        return loc;
     }
 
     /**

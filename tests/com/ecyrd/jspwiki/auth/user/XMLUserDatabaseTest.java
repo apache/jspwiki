@@ -102,7 +102,7 @@ public class XMLUserDatabaseTest extends TestCase
     try
     {
         UserProfile profile = m_db.findByEmail("janne@ecyrd.com");
-        assertEquals( -7739839977499061014L, profile.getUid() );
+        assertEquals( "-7739839977499061014", profile.getUid() );
         assertEquals("janne",           profile.getLoginName());
         assertEquals("Janne Jalkanen",  profile.getFullname());
         assertEquals("JanneJalkanen",   profile.getWikiName());
@@ -130,7 +130,7 @@ public class XMLUserDatabaseTest extends TestCase
       try
       {
           UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
-          assertEquals( -7739839977499061014L, profile.getUid() );
+          assertEquals( "-7739839977499061014", profile.getUid() );
           assertEquals( "janne", profile.getLoginName() );
           assertEquals( "Janne Jalkanen", profile.getFullname() );
           assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -159,8 +159,8 @@ public class XMLUserDatabaseTest extends TestCase
   {
       try
       {
-          UserProfile profile = m_db.findByUid( -7739839977499061014L );
-          assertEquals( -7739839977499061014L, profile.getUid() );
+          UserProfile profile = m_db.findByUid( "-7739839977499061014" );
+          assertEquals( "-7739839977499061014", profile.getUid() );
           assertEquals( "janne", profile.getLoginName() );
           assertEquals( "Janne Jalkanen", profile.getFullname() );
           assertEquals( "JanneJalkanen", profile.getWikiName() );
@@ -190,7 +190,7 @@ public class XMLUserDatabaseTest extends TestCase
       try
       {
           UserProfile profile = m_db.findByWikiName("JanneJalkanen");
-          assertEquals( -7739839977499061014L, profile.getUid() );
+          assertEquals( "-7739839977499061014", profile.getUid() );
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());
@@ -218,7 +218,7 @@ public class XMLUserDatabaseTest extends TestCase
       try
       {
           UserProfile profile = m_db.findByLoginName("janne");
-          assertEquals( -7739839977499061014L, profile.getUid() );
+          assertEquals( "-7739839977499061014", profile.getUid() );
           assertEquals("janne",           profile.getLoginName());
           assertEquals("Janne Jalkanen",  profile.getFullname());
           assertEquals("JanneJalkanen",   profile.getWikiName());

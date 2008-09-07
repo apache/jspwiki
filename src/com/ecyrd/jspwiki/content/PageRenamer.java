@@ -134,7 +134,7 @@ public class PageRenamer
         
         if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
 
-        toPage.setAttribute( WikiPage.CHANGENOTE, "Renamed from "+fromPage.getName() );
+        toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
         
         engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
@@ -211,7 +211,7 @@ public class PageRenamer
             
             if( !sourceText.equals( newText ) )
             {
-                p.setAttribute( WikiPage.CHANGENOTE, "Renaming change "+fromPage.getName()+" to "+toPage.getName() );
+                p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
                 p.setAuthor( context.getCurrentUser().getName() );
          
                 try
@@ -364,8 +364,10 @@ public class PageRenamer
         //
         //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
         int blank = reallink.indexOf( " ");
-        if (blank!=-1) {
-            return reallink + "|" + newlink; 
+        
+        if( blank != -1 )
+        {
+            return reallink + "|" + newlink;
         }
         
         //

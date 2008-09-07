@@ -54,6 +54,7 @@
 	float:left;
 	margin-top:1.75em;
 	width:18%;
+	padding:0.5em;
 }
 #favorites .userbox {
 	border:1px solid #ddd;
@@ -126,7 +127,7 @@ fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
 	padding:0;
 	border:0;
 	outline:none;
-	vertical-align:baseline;
+	/* vertical-align:baseline; seems to give printing errors in FF */
 }
 /* remember to define focus styles! */
 :focus {
@@ -1081,12 +1082,6 @@ a.action.quick2top {
 	float:right;
  	background:url(images/arrup.gif) no-repeat 3px 3px;
 }
-/* obsolete
-a.action.quick2bottom {
- 	background:url(images/arrdown.png) no-repeat 3px 3px;
- 	height:16px;
-}
-*/
 
 /*********/
 .popup ul {
@@ -1479,32 +1474,58 @@ table.calendar tr.weekdays {
 	line-height:1.4;
 	padding:0.25em 1em 0.25em 0;
 }
-.accordion .toggle:hover, .togglemenu .toggle:hover, .sidemenu .toggle:hover {
+.accordion .toggle:hover, .menu .toggle:hover {
 	background:#eee;
 }
 .accordion .tab {
 	padding:0 1em;
 }
-.togglemenu {
+.menu {
     clear:both; /* check out */
 	color:gray;
 	font-weight:bold; 
-	padding:0.25em 0.5em;
 }
-.togglemenu .toggle {
+.menu.top {
+	margin-left:0.5em; /* small left indent of first toggle */
+}
+.menu.left {
 	float:left;
+	margin-top:0.5em; /* small top indent of first toggle */
+}
+.menu.right {
+	float:right;
+	margin-top:0.5em; /* small top indent of first toggle */
+}
+.menu .toggle {
 	background:#f9f9f9;
 	border:1px solid #ddd;
 	cursor:pointer;
-	display:inline;
-	margin:0 0 -1px -1px;
 	padding:0.25em 0.5em;
 }
-.togglemenu .toggle.active {
+.menu.top .toggle { 
+	float:left;
+	margin:0 0 -1px -1px; /* adjacent toggle will stick: let 1px border overlap.*/
+	display:inline;
+}
+.menu.left .toggle {
+	margin:0 -1px -1px 0; /* adjacent toggle will stick: let 1px border overlap.*/
+}
+.menu.right .toggle {
+	margin:0 0 -1px -1px; /* adjacent toggle will stick: let 1px border overlap.*/
+}
+.menu .toggle.active {
 	background:transparent;
-	border-bottom:1px solid white;
 	cursor:default;
 	color:black;
+} 
+.menu.top .toggle.active {
+	border-bottom:1px solid white;
+}
+.menu.left .toggle.active {
+	border-right:1px solid white;
+}
+.menu.right .toggle.active {
+	border-left:1px solid white;
 } 
 .tabbedAccordion {
 	padding:0.5em;
@@ -1514,38 +1535,8 @@ table.calendar tr.weekdays {
 }
 .leftAccordion .tab, .rightAccordion .tab {
 	border:1px solid #ddd !important;
-	margin:0 0 -2px 0; /* nice trick :: -2px to reveal top and bottom borders the tabs */
+	margin:0 0 -2px 0; /* trick :: -2px to reveal top and bottom borders the tabs */
 	padding:0.25em 0.5em;
-}
-.sidemenu {
-	clear:both;
-	color:gray;
-	font-weight:bold; 
-	margin-top:0.5em;
-}
-.sidemenu.left {
-	float:left;
-}
-.sidemenu.right {
-	float:right;
-}
-.sidemenu .toggle {
-	background:#f9f9f9;
-	border:1px solid #ddd;
-	cursor:pointer;
-	margin:0 0 -1px 0;
-	padding:0.25em 0.5em;
-}
-.sidemenu.left .toggle {
-	border-right:none;
-}
-.sidemenu.right .toggle {
-	border-left:none;
-}
-.sidemenu .toggle.active {
-	background:transparent;
-	cursor:default;
-	color:black;
 } 
 
 /* ie only hack no needed ?

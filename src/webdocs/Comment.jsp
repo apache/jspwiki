@@ -94,6 +94,9 @@
 
     session.setAttribute( "link", link );
 
+    if( changenote != null )
+       session.setAttribute( "changenote", changenote );
+    
     //
     //  Branch
     //
@@ -132,12 +135,11 @@
 
         modifiedPage.setAuthor( storedUser );
 
-        if( changenote == null ) changenote = (String) session.getAttribute("changenote");
-
-        session.removeAttribute("changenote");
-
-        modifiedPage.setAttribute( WikiPage.CHANGENOTE, "Comment by "+storedUser );
-
+        if( changenote != null )
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+        else
+            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
+        
         //
         //  Build comment part
         //

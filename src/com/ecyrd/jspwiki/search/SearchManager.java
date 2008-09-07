@@ -110,10 +110,19 @@ public class SearchManager
 
             if( wikiName.length() > 0 )
             {
-                wikiName = MarkupParser.cleanLink(wikiName);
-                wikiName = wikiName.toLowerCase();
+                
+                // split pagename and attachment filename
+                String filename = "";
+                int pos = wikiName.indexOf("/");
+                if( pos >= 0 ) 
+                {
+                    filename = wikiName.substring( pos ).toLowerCase();
+                    wikiName = wikiName.substring( 0, pos );
+                }
+                
+                String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
 
-                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase();
+                String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
 
                 Set allPages = m_engine.getReferenceManager().findCreated();
 
@@ -122,7 +131,7 @@ public class SearchManager
                 {
                     String p = (String) i.next();
                     String pp = p.toLowerCase();
-                    if( pp.startsWith( wikiName ) || pp.startsWith( oldStyleName ) )
+                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
                     {
                         list.add( p );
                         counter++;

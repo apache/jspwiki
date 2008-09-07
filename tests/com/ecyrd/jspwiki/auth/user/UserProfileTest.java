@@ -82,9 +82,9 @@ public class UserProfileTest extends TestCase
     public void testSetUid()
     {
         UserProfile p = m_db.newProfile();
-        assertNotSame( 1234567890, p.getUid() );
-        p.setUid( 1234567890 );
-        assertEquals( 1234567890, p.getUid() );
+        assertNotSame( "1234567890", p.getUid() );
+        p.setUid( "1234567890" );
+        assertEquals( "1234567890", p.getUid() );
     }
 
     public void testEquals()

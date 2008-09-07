@@ -242,6 +242,16 @@ var Wiki = {
 		var p = $('page'); if(p) this.renderPage(p, Wiki.PageName);
 		var f = $('favorites'); if(f) this.renderPage(f, "Favorites");
 	},
+	/* show popup alert, which allows any html msg to be displayed */
+	alert: function(msg){
+		return alert(msg); //standard js
+		
+	},
+	/* show popup prompt, which allows any html msg to be displayed and replied to */
+	prompt: function(msg, defaultreply, callback){
+		return callback( prompt(msg,defaultreply) ); //standard js
+		
+	},
 
 	renderPage: function(page, name){
 		this.$pageHandlers.each(function(obj){
@@ -279,21 +289,6 @@ var Wiki = {
 	cleanLink: function(p){
 		return p.trim().replace(/\s+/g,' ')
 				.replace(/[^A-Za-z0-9()&+,-=._$ ]/g, '');
-	},
-
-	savePrefs: function(){
-		var prefs = {
-			'prefSkin':'SkinName',
-			'prefTimeZone':'TimeZone',
-			'prefTimeFormat':'DateFormat',
-			'prefOrientation':'Orientation',
-			'editor':'editor',
-			'prefLanguage':'Language',
-			'prefSectionEditing':'SectionEditing'
-		};
-		for(var el in prefs){
-			if($(el)) this.prefs.set(prefs[el],$(el).getValue());
-		};
 	},
 
 	changeOrientation: function(){
@@ -361,16 +356,6 @@ var Wiki = {
 		location = location.href; /* now jump to the #hash */
 	},
 	
-	alert: function(msg){
-		/* TODO: create popup alert, which allowed any html msg to be displayed */
-		alert(msg);
-	},
-
-	prompt: function(title, msg){
-		/* TODO: create popup prompt */
-		return prompt(title,msg);
-	},
-
 	/* SubmitOnce: disable all buttons to avoid double submit */
 	submitOnce: function(form){
 		window.onbeforeunload = null; /* regular exit of this page -- see jspwiki-edit.js */
@@ -399,10 +384,12 @@ var Wiki = {
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
 		var aa = new Element('a').setHTML('quick.edit'.localize()), 
-			ee = new Element('span',{'class':'editsection'}).adopt(aa);
+			ee = new Element('span',{'class':'editsection'}).adopt(aa),
+			i = 0;
 
-		$$('#pagecontent *[id^=section]').each(function(el,i){
-			aa.set({'href':url+i});
+		$$('#pagecontent *[id^=section]').each(function(el){
+			if(el.id=='section-TOC') return;
+			aa.set({'href':url + i++ });
 			el.adopt(ee.clone());
 		});
 	},
@@ -935,7 +922,7 @@ var SearchBox = {
 			s = this.query.value;			
 		if(s == this.query.defaultValue) s = '';
 
-		var handleResult=function(s){
+		var handleResult = function(s){
 			if(s == '') return;
 			if(!search)	s = Wiki.cleanLink(s);//remove invalid chars from the pagename
 		
@@ -946,24 +933,11 @@ var SearchBox = {
 			location.href = url.replace('__PAGEHERE__', s );
 		};
 		
-		if(s!='') handleResult(s); //????
-		//handleResult(Wiki.prompt(promptText, (clone) ? p+'sbox.clone.suffix'.localize() : p));
-		//return;
-
-		Wiki.prompt(promptText, defaultResult, handleResult.bind(this));
-
-		return;
-/*		
-		new Popup({
-			caption:'',
-			body:promptText,
-			promptDefault:(clone) ? p+'sbox.clone.suffix'.localize() : p,
-			buttons:({
-				'Cancel':Class.empty,
-				'Ok':function(result){ doNavigate(result); }
-			})
-		});
-*/
+		if(s!='') {
+			handleResult(s); 
+		} else {
+			Wiki.prompt(promptText, defaultResult, handleResult.bind(this));
+		} 
 	}
 }
 

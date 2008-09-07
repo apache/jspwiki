@@ -243,26 +243,30 @@ public class TemplateManager
      */
     private static final String removeTemplatePart( String name )
     {
-        int idx = name.indexOf('/');
+        int idx = 0;
+        if( name.startsWith( "/" ) ) idx = 1;
+        
+        idx = name.indexOf('/', idx);
         if( idx != -1 )
         {
-            idx = name.indexOf('/', idx); // Find second "/"
+            idx = name.indexOf('/', idx+1); // Find second "/"
 
             if( idx != -1 )
             {
-                return name.substring( idx+1 );
+                name = name.substring( idx+1 );
             }
         }
 
+        log.info( "Final name = "+name );
         return name;
     }
 
     /**
      *  Returns the full name (/templates/foo/bar) for name=bar, template=foo.
      *
-     * @param template
-     * @param name
-     * @return
+     * @param template The name of the template.
+     * @param name The name of the resource.
+     * @return The full name for a template.
      */
     private static final String makeFullJSPName( String template, String name )
     {

@@ -5,7 +5,7 @@ drop table @jspwiki.groupdatabase.membertable@ if exists;
 drop user @jdbc.user.id@;
 
 create table @jspwiki.userdatabase.table@ (
-  @jspwiki.userdatabase.uid@ bigint,
+  @jspwiki.userdatabase.uid@ varchar(100),
   @jspwiki.userdatabase.email@ varchar(100),
   @jspwiki.userdatabase.fullName@ varchar(100),
   @jspwiki.userdatabase.loginName@ varchar(100) not null,

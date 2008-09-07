@@ -190,9 +190,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
     /**
      * {@inheritDoc}
      */
-    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
     {
-        UserProfile profile = findByAttribute( UID, Long.toString( uid ) );
+        UserProfile profile = findByAttribute( UID, uid );
         if ( profile != null )
         {
             return profile;
@@ -619,8 +619,8 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 UserProfile profile = newProfile();
                 
                 // Parse basic attributes
-                profile.setUid( parseLong( user.getAttribute( UID ) ) );
-                if ( profile.getUid() == UID_NOT_SET )
+                profile.setUid( user.getAttribute( UID ) );
+                if ( profile.getUid() == null )
                 {
                     profile.setUid( generateUid( this ) );
                 }

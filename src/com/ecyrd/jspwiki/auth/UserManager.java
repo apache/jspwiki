@@ -477,7 +477,7 @@ public final class UserManager
     {
         boolean isNew = profile.isNew();
         WikiSession session = context.getWikiSession();
-        InputValidator validator = new InputValidator( SESSION_MESSAGES, session );
+        InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
         //
@@ -643,7 +643,7 @@ public final class UserManager
          * @return the user profile
          * @throws NoSuchPrincipalException never...
          */
-        public UserProfile findByUid( long uid ) throws NoSuchPrincipalException
+        public UserProfile findByUid( String uid ) throws NoSuchPrincipalException
         {
             throw new NoSuchPrincipalException("No user profiles available");
         }

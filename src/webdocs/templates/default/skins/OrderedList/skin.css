@@ -101,6 +101,9 @@ a.wikipage:hover {
 a.feed {
 	border-bottom:none;
 }
+a.toc:hover {
+	background:transparent;
+}
 .calendar a, .breadcrumbs a, .applicationlogo a {
 	border-bottom:none !important;
 }
@@ -114,11 +117,11 @@ a.feed {
 	height:43px;
 	width:110px;
 	margin:0;
-	background-image:url(images/smart-logo.png) ;
+	background-image:url(images/smart-logo.gif) ;
 	background-position:0 0;
 }
 .applicationlogo a:hover {
-	background-image:url(images/smart-logo.png) ;
+	background-image:url(images/smart-logo.gif) ;
 }
 /* +++ 270 Footnotes and small text +++ */
 .small, .sub, .sup {
@@ -199,6 +202,19 @@ td.diff {
 	xxbackground-color:#ffff99; 
 	xxcolor:#grey;
 }
+#toctoc label {
+	color:#c7ff70;	
+}
+#toctoc ul {
+	border-color:#fc3;
+	background:#ffff99;
+}
+#toctoc a {
+	color:black;
+}
+#toctoc a.action:hover, #toctoc .cursor {
+	background-color:#fc3 !important;
+}
 
 /* +++ 440 Favorites +++ */
 .userbox {
@@ -248,7 +264,10 @@ td.diff {
 	background:#3f464a;
 	color:#c7ff70;
 }
-.pagination a:hover {
+.pagination a {
+	border:none;
+}
+.pagination .cursor, .pagination a:hover {
 	background-color:#c7ff70;
 	color:black;
 }
@@ -276,14 +295,7 @@ td.diff {
 	border:none;
 }
 a.action.more, a.action.sectiontoc {
-	background:#3f464a url(images/arrdown.png) 95% center no-repeat;*/
-}
-
-a.action.quick2top {
- 	background:url(images/arrup.png) no-repeat center;
-}
-a.action.quick2bottom {
- 	background:url(images/arrdown.png) no-repeat center;
+	background:#3f464a url(images/arrdown.gif) 95% center no-repeat;*/
 }
 
 a.tool {
@@ -356,9 +368,6 @@ a.tool:hover {
 /* +++ 485 SearchBox +++ */
 .spin { 
 	background:url(images/spin.gif) no-repeat;
-}
-#searchSubmit {
-	xxbackground:url(images/search.png) 0 center no-repeat;
 }
 #header a:link, #header a:visited, #recentSearches div {
 	color:#c7ff70;
@@ -439,6 +448,14 @@ table.calendar * {
 .tabmenu {
 	padding:2px 10px;
 }
+/* ie6 and lower */
+* html .tabmenu {
+	border:none;
+}
+/*ie7 hack */
+*:first-child+html .tabmenu {
+	border:none;
+}
 .tabmenu a {
 	padding:4px 8px;
 	border:1px solid #282c2f;
@@ -465,7 +482,7 @@ table.calendar * {
 	background:#303538;
 	color:#c7ff70;
 }
-.accordion .toggle:hover, .togglemenu .toggle:hover {
+.accordion .toggle:hover, .togglemenu .toggle:hover, .sidemenu .toggle:hover {
 	background:#202326;
 }
 .togglemenu .toggle { 
@@ -479,6 +496,18 @@ table.calendar * {
 	border-bottom:1px solid #3f464a;
 	color:white;
 }
+.leftAccordion .tab, .rightAccordion .tab {
+	border-color:#3f464a !important;
+}
+.sidemenu .toggle {
+	background:#282c2f;
+	border:1px solid #3f464a;
+	color:#c7ff70;
+}
+.sidemenu .toggle.active {
+	color:#c7ff70;
+} 
+
 /* +++ 915 Tips +++ */
 .tip-anchor {
 	border-bottom:2px solid #fc3;
@@ -540,14 +569,18 @@ table.calendar * {
 .sortable .sortDescending {
 	padding:0 1.25em;
 	background-color:inherit;
-	background-repeat:no-repeat;
 	background-position:0.25em 50%;
 }
+.sortable .sort {
+	background-image:url(images/sortable.gif);
+}
 .sortable .sortAscending {
-	background-image:url(images/bulletDown.png);
+	background-image:url(images/bulletDown.gif);
+	background-position:0.25em 50%;
 }
 .sortable .sortDescending {
-	background-image:url(images/bulletUp.png);
+	background-image:url(images/bulletUp.gif);
+	background-position:0.25em 50%;
 }
 /* +++ 940 Quick Section Links +++ */
 a.slimbox {
@@ -565,7 +598,7 @@ a.slimbox:hover {
 	background-color:#202326;
 }
 #lbImage, #lbBottom {
-	border:10px solid #202326;
+	border-color:#202326;
 }
 
 .categoryLink:link, .categoryLink:active, .categoryLink:visited {
@@ -599,8 +632,3 @@ pre.prettyprint {
 	font-weight:bold;
 	border-bottom:2px solid #c7ff70;
 }   
-#xspin {
-	background:url(images/throbber.gif) no-repeat;
-	width:32px;
-	height:32px;
-}

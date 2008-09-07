@@ -36,7 +36,22 @@ var WikiPreferences =
 			}) ) return "prefs.areyousure".localize();
 
 		}).bind(this);
- 	}
+ 	},
+ 	
+	savePrefs: function(){
+		var prefs = {
+			'prefSkin':'SkinName',
+			'prefTimeZone':'TimeZone',
+			'prefTimeFormat':'DateFormat',
+			'prefOrientation':'Orientation',
+			'editor':'editor',
+			'prefLanguage':'Language',
+			'prefSectionEditing':'SectionEditing'
+		};
+		for(var el in prefs){
+			if($(el)) Wiki.prefs.set(prefs[el],$(el).getValue());
+		};
+	}
 }
 
 window.addEvent('load', WikiPreferences.onPageLoad.bind(WikiPreferences) );

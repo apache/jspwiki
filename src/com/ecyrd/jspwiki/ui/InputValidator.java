@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 /**
@@ -61,18 +61,21 @@ public final class InputValidator
 
     private final WikiSession      m_session;
 
+    private final WikiContext      m_context;
+
     /**
      * Constructs a new input validator for a specific form and wiki session.
      * When validation errors are detected, they will be added to the wiki
      * session's messages.
      * @param form the ID or name of the form this validator should be
      * associated with
-     * @param session the wiki session
+     * @param context the wiki context
      */
-    public InputValidator( String form, WikiSession session )
+    public InputValidator( String form, WikiContext context )
     {
         m_form = form;
-        m_session = session;
+        m_context = context;
+        m_session = context.getWikiSession();
     }
 
     /**
@@ -102,8 +105,7 @@ public final class InputValidator
     {
         if ( isBlank( input ) )
         {
-            ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
-                                                          m_session.getLocale() );
+            ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
             
             Object[] args = { label };
             m_session.addMessage( m_form, MessageFormat.format( rb.getString("validate.cantbenull"),
@@ -132,8 +134,7 @@ public final class InputValidator
             return true;
         }
 
-        ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE,
-                                                      m_session.getLocale() );
+        ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
         // Otherwise, see if it matches the pattern for the target type
         Matcher matcher;

@@ -3,6 +3,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="com.ecyrd.jspwiki.attachment.*" %>
+<%@ page import="com.ecyrd.jspwiki.i18n.InternationalizationManager" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -16,6 +17,9 @@
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
+  String parm_renameto = (String)request.getParameter( "renameto" );
+  if( parm_renameto == null ) parm_renameto = wikiPage.getName();
+
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
@@ -23,6 +27,15 @@
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
+
+    if( creationAuthor != null && creationAuthor.length() > 0 )
+    {
+      creationAuthor = TextUtil.replaceEntities(creationAuthor);
+    }
+    else
+    {
+      creationAuthor = c.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "common.unknownauthor" );
+    }
   }
 
   int itemcount = 0;  //number of page versions
@@ -33,14 +46,16 @@
   catch( Exception  e )  { /* dont care */ }
 
   int pagesize = 20;
-  int startitem = itemcount;
-  if( startitem == pagesize ) startitem = 0;
+  int startitem = itemcount-1; /* itemcount==1-20 -> startitem=0-19 ... */
 
   String parm_start = (String)request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
-  /*round to start of a pagination block */
-  if( startitem > -1 ) startitem = ( (startitem/pagesize) * pagesize );
 
+  /* round to start of block: 0-19 becomes 0; 20-39 becomes 20 ... */
+  if( startitem > -1 ) startitem = ((startitem)/pagesize) * pagesize;
+
+  /* startitem drives the pagination logic */
+  /* startitem=-1:show all; startitem=0:show block 1-20; startitem=20:block 21-40 ... */
 %>
 <wiki:PageExists>
 
@@ -91,6 +106,11 @@
   </wiki:CheckVersion>
 
   <wiki:Permission permission="rename">
+
+    <div class="formhelp">
+      <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>'/>
+    </div>
+
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
            class="wikiform"
               id="renameform"
@@ -99,7 +119,7 @@
       <p>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
+      <input type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
       &nbsp;&nbsp;
       <input type="checkbox" name="references" checked="checked" />
       <fmt:message key="info.updatereferrers"/>

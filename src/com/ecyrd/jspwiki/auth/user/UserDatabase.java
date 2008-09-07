@@ -134,7 +134,7 @@ public interface UserDatabase
      * @return the user profile
      * @since 2.8
      */
-    public UserProfile findByUid( long uid ) throws NoSuchPrincipalException;
+    public UserProfile findByUid( String uid ) throws NoSuchPrincipalException;
     
     /**
      * Looks up and returns the first {@link UserProfile} in the user database

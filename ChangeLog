@@ -1,3 +1,186 @@
+2008-09-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-1
+
+2008-09-03 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-37
+        
+        * [JSPWIKI-369] SneakPreview was broken when no SectionEdit was turned off.
+
+        * [JSPWIKI-370] Remove 'vertical-align' css rule to prevent printing errors,
+        as reported by Terry Steichen.
+        
+        * Few small fixes on the Accordion style.
+ 
+2008-09-02  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * Updated spanish translation (CoreResources_es + default_es properties)
+        
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-36
+        
+        * [JSPWIKI-366]: changenote was lost in commenting previews. Also, FCK
+        was not showing the changenote field.
+        
+2008-08-31  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-35
+        
+        * JSPWIKI-364:  Info tab presents null string to user (reported by Florian)
+        
+2008-08-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-34
+        
+        * Commenting now uses the changenote field properly (and we got rid
+        of the "Comment by XXX" -functionality.  Therefore, "comment.by" i18n field
+        is now unused.
+        
+        * Renaming now uses symbols instead of English text to put in the changenote
+        field.
+        
+2008-08-30  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-33
+        
+        * JSPWIKI-231: update the latest de localisation patch from Florian
+        and quite a few corrections to the nl localisation
+        
+        * Found during debugging that Lucene Indexer was using a bit 
+        agressive interval of 1 second for Emptying index queue, lowered to 5 seconds
+        Combined with a few textual corrections in WikiBackgroundThread 
+
+2008-08-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.7.0-alpha-32
+        
+        * JSPWIKI-27: ReferenceManager was not serializing properly when there
+        was no page metadata, therefore inadvertently loading old data whenever
+        the wiki was restarted. 
+        
+        * JSPWIKI-333: Thanks to Florian's patch, this annoying language selection
+        thing should now be fixed.
+        
+        * Fixed Finnish localization.
+        
+        * The suggestion box no longer keeps suggesting wikipages if you start
+        inserting a plugin or a variable.
+        
+        * JSPWIKI-354: Fixed issue with fallback to default template not working.
+        
+2008-08-30 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-31
+        
+        * [JSPWIKI-346] Rename errors are now displayed inside a page-info in screen,
+        above the rename section.  Some localization updates are needed.
+
+        New resource:
+            prefs.errorprefix.rename=Could not rename the page:&nbsp;
+
+        And the CoreResources rename.* items are updated to remove the text
+        "Click "back" on your browser and change the new name.".
+        (done for default and .nl properties)
+
+        * [JSPWIKI-289] The edit SuggestionMenu (plain editor only) now also allows 
+        to enter a '/' to get a list of attachment links. Moreover, when you open a new link with 
+        a '[', by default jspwiki displays the list of attachments of the current page.
+ 
+
+2008-08-25 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-30 
+
+        * [JSPWIKI-329] Pagination link for All-entries fixed. Added comments to
+        InfoContent.jsp to clear-out obscure pagination counting logic.
+ 
+        * [JSPWIKI-357], [JSPWIKI-358] Wrong section counting when a page contains a TOC.
+
+        * [JSPWIKI-359] Popup when editing page from Quick Navigation Field should only
+        appear when no pagename was entered in input field.
+        
+
+2008-08-24  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.7.0-alpha-29
+
+        * Changed method signature for UserProfile.get/setUid() to use Strings rather
+        than long integers. Test and XML/JDBC UserDatabase implementations changed
+        also. This change was made for forward compatibility with JCR storage in  3.0. 
+
+2008-08-24 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-28 
+
+        * [JSPWIKI-355] Fixing section-editing bug reported by Harry.
+        
+        * Saving user-preferences was broken in PreferencesTab.jsp
+        
+
+2008-08-24  Harry Metske <harry.metske@gmail.com>
+
+        * 2.7.0-alpha-27
+        
+        * added my GPG key to KEYS
+        
+        * minor corrections/additions to UPGRADING
+        
+        * minor corrections/additions to the selenium readme.txt
+        
+        * added ${java.home}/../lib/tools.jar to path.tests, set jspwiki.login.throttling=false and some other comments in build.xml
+        
+        * added firefox-2 browser option (as extra comment) to build.properties
+        
+        * added new simple ViewPageSource selenium test
+        
+        * get rid of compile warning in WikiPage and WysiwygEditingRenderer and GroupManager
+        
+        * compile error in InputValidatorTest
+        
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-26 
+
+        * [JSPWIKI-333] Fixed side-impact in GroupManager due to new 
+        InputValidator constructor.  
+        
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-25  Template fixes (mainly section editing)
+
+        * The Section-Editing user preference can now also be set via the
+        default_jspwiki.properties. By default the preference is turned off.
+        
+                jspwiki.defaultprefs.template.sectionediting =on
+        
+        * Small fix to avoid section-editing [edit] link on table of contents titles.
+        
+        * [JSPWIKI-350] Section-Editing needs to be suppressed in a comment context.
+        
+        * The change-note input field is suppressed in a comment context as JSPWiki
+        auto-generates the change-note for comments. Also added localization in Comment.jsp
+        Added new resource to CoreResources.properties.
+        
+                comment.by=Comment by {0}
+                
+        * [JSPWIKI-329] Pagination links on the version history were still not correct
+        when number of version equals a multiple of 20. Oops.
+        
+        * [JSPWIKI-309] Various updates of the OrderedList skin, including section editing.
+      
+
+2008-08-23 Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.7.0-alpha-24
+
+        * [JSPWIKI-333] Language selection/deselection was not working correctly
+        for some error messages. Refactored the input-validator to use correct locale.
+
+
 2008-08-20  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-23

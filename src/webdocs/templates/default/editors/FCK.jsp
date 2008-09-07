@@ -119,12 +119,10 @@
   <div class="error"><fmt:message key="editor.fck.noscript" /></div>
 </noscript>
 
-   <wiki:CheckRequestContext context="edit">
-    <p>
-    <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-    <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
-    </p>
-   </wiki:CheckRequestContext>
+   <p>
+     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
+     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
+   </p>
    <wiki:CheckRequestContext context="comment">
     <fieldset>
 	<legend><fmt:message key="editor.commentsignature"/></legend>
@@ -143,9 +141,9 @@
   </wiki:CheckRequestContext>
 
   <p>
-        <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
-        <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
-        <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
+    <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
+    <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
+    <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
   </p>
 </div>
 </form>

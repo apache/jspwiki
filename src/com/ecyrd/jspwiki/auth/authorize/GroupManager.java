@@ -578,13 +578,12 @@ public final class GroupManager implements Authorizer, WikiEventListener
      */
     public final void validateGroup( WikiContext context, Group group )
     {
-        WikiSession session = context.getWikiSession();
-        InputValidator validator = new InputValidator( MESSAGES_KEY, session );
+        InputValidator validator = new InputValidator( MESSAGES_KEY, context );
 
         // Name cannot be null or one of the restricted names
         try
         {
-            checkGroupName( session, group.getName() );
+            checkGroupName( context, group.getName() );
         }
         catch( WikiSecurityException e )
         {
@@ -631,17 +630,12 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
-    protected final void checkGroupName( WikiSession session, String name ) throws WikiSecurityException
+    protected final void checkGroupName( WikiContext context, String name ) throws WikiSecurityException
     {
         //TODO: groups cannot have the same name as a user
 
-        if( session == null )
-        {
-            throw new WikiSecurityException( "Session cannot be null." );
-        }
-
         // Name cannot be null
-        InputValidator validator = new InputValidator( MESSAGES_KEY, session );
+        InputValidator validator = new InputValidator( MESSAGES_KEY, context );
         validator.validateNotNull( name, "Group name" );
 
         // Name cannot be one of the restricted names either
