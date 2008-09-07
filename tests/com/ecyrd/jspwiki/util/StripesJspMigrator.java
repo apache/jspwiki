@@ -75,10 +75,10 @@ public class StripesJspMigrator
                 migrate( src, dest );
             }
 
-            // Otherwise it's a file, so migrate it
+            // Otherwise it's a file, so migrate it if it's a JSP
             else
             {
-                if( src.getName().endsWith( "LoginForm.jsp" ) )
+                if( src.getName().endsWith( ".jsp" ) )
                 {
                     migrateFile( src, dest );
                 }
@@ -96,25 +96,18 @@ public class StripesJspMigrator
     {
         // Read in the file
         System.out.println( "Migrating " + src.getPath() + " ----> " + dest.getPath() );
-        FileReader reader = new FileReader( src );
-        StringBuffer s = new StringBuffer();
-        int ch = 0;
-        while ( (ch = reader.read()) != -1 )
-        {
-            s.append( (char) ch );
-        }
-        reader.close();
+        String s = readSource( src );
 
         // Parse the contents of the file
-        JspDocument tree = new JspDocument();
-        tree.parse( s.toString() );
-        for ( JspDocument.Node node : tree.getNodes() )
+        JspDocument doc = new JspDocument();
+        doc.parse( s.toString() );
+        for ( JspDocument.Node node : doc.getNodes() )
         {
             System.out.println( node.toString() );
         }
 
         // Write the migrated contents to disk
-        writeDestination( dest, tree.toString() );
+        writeDestination( dest, doc.toString() );
         System.out.println( "    done [" + s.length() + " chars]." );
     }
 
@@ -130,6 +123,20 @@ public class StripesJspMigrator
         FileWriter writer = new FileWriter( dest );
         writer.append( contents );
         writer.close();
+    }
+    
+    protected String readSource( File src ) throws IOException
+    {
+        // Read in the file
+        FileReader reader = new FileReader( src );
+        StringBuffer s = new StringBuffer();
+        int ch = 0;
+        while ( (ch = reader.read()) != -1 )
+        {
+            s.append( (char) ch );
+        }
+        reader.close();
+        return s.toString();
     }
 
 }
