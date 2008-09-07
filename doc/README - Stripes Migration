@@ -258,6 +258,21 @@ In 3.0, Permissions are much more flexible because they are annotation-driven. M
 
 Note the @EventPermission annotation. It defines the Permission class and its target and actions. The "permissionClass" attribute tells use that the Permission class this method needs is "PagePermission". Note also the JSTL-style syntax in the target and actions attributes -- these allow JSTL-access to bean properties for the instantiated ViewActionBean. In this case, "page" is the bean attribute that returns the value of this ViewActionBean's getPage() method. The nested syntax "page.qualifiedName" is equivalent to getPage().getQualifiedName(). Neat, huh?
 
+Notes from Janne Visit:
+----------------------
+RequestState: interface to most of the forwarding methods below. WikiActionBeanContext implements this.
+WikiActionBeanContext would contain (private/protected) get/sets for JCR context. Not in RequestState or WikiContext interfaces.
+
+Mappings from JCR paths to permissions and URLs:
+
+JCR node:          /wikis/{space}/{page}/{sub}/{subsub}
+Permission target: {space}:{page}/{sub}/{subsub}
+URL:               /wiki/{space}:{page}/{sub}/{subsub} -- where space == "default" if omitted
+
+Agreed: wipe out ISO text support and use UTF-8 completely.
+Deprecations: WikiSession messages should/will go away with Stripes.
+Don't need Stripes templates yet.
+JMX: use annotations to expose particular Manager methods as MBean.
 
 WIKICONTEXT
 -----------
@@ -384,7 +399,7 @@ TESTING NOTES
 JSP Migration
 -------------
 <form> becomes <stripes:form>, </form> becomes </stripes:form>
-Remove <form> onsubmit="return Wiki.submitOnce(this);" because Stripes takes care of double-submits. accept-charset becomes "acceptcharset" and should use EL.
+Remove <form> onsubmit="return Wiki.submitOnce(this);" because Stripes takes care of double-submits. accept-charset becomes "acceptcharset" and should use the following EL expression.
 
     acceptcharset="${wikiEngine.contentEncoding}"
     
@@ -425,7 +440,9 @@ with this:
         <stripes:errors beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
       </div>
 
-LocalePicker will need to default to the user's Preferences setting... we will need to create a separate class for this.
+However, MessagesTag has been retrofitted to print Stripes errors for the current ActionBean in addition to the standard kind. So even though <stripes:errors> are preferred, <wiki:Messages> works for now (but should be considered deprecated). <wiki:Messages> tag re-factored so the set of Valididation for the current ActionBean are always appended to the messages list. This allows <wiki:message> to be used transparently in place of <stripes:errors>.
+
+LocalePicker will need to default to the user's Preferences setting... we will need to create a separate class for this that extends DefaultLocalePicker.
 
 Validation guidelines:
 1. Default the @Validate messages to the same resource bundle used by the templates. This would be default*.properties. Practically speaking, this means that the current contents of StripesResources.properties (which have the default messages for @Validate validations) would be appended to default*.properties. Stripes messages and keys are VERY stable.
