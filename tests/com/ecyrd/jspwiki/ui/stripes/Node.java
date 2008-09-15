@@ -1,0 +1,150 @@
+package com.ecyrd.jspwiki.ui.stripes;
+
+import java.util.List;
+
+public interface Node
+{
+
+    public static final int POSITION_NOT_SET = -1;
+
+    /**
+     * Returns the JspDocument the Node belongs to. 
+     * @return the document
+     */
+    public abstract JspDocument getJspDocument();
+    
+    /**
+     * Adds a child to the current AbstractNode. If the AbstractNode is of type
+     * {@link NodeType#HTML_COMBINED_TAG}, the tag will be split into two nodes
+     * (start tag and end tag), with the child AbstractNode inserted between the two.
+     * 
+     * @param node the node to insert
+     * @param value the node to insert in between the split nodes
+     * @throws IllegalArgumentException if the supplied node to split is not of
+     *             type {@link NodeType#HTML_START_TAG},
+     *             {@link NodeType#HTML_START_TAG} or
+     *             {@link NodeType#HTML_COMBINED_TAG}
+     * @throws IllegalStateException if the current AbstractNode must be split, and does
+     *             not have a parent.
+     */
+    public abstract void addChild( Node node );
+
+    /**
+     * Returns the child nodes of this node, as a defensive copy of the
+     * internally-cached list.
+     * 
+     * @return the children
+     */
+    public abstract List<Node> getChildren();
+
+    /**
+     * Returns the column the node starts on, relative to the beginning of the
+     * line in the source text.
+     * 
+     * @return the column
+     */
+    public abstract int getColumn();
+
+    /**
+     * Returns the exnding character position of the node, exclusive, relative
+     * to the beginning of the source text.
+     * 
+     * @return the end position
+     */
+    public abstract int getEnd();
+
+    /**
+     * Returns the "level" of the tag; that is, how far from the top-level nodes
+     * (which are level 1). If the parent of this node is not set, this method
+     * returns -1.
+     * 
+     * @return
+     */
+    public abstract int getLevel();
+
+    /**
+     * Returns the line of the source text the node starts on.
+     * 
+     * @return the line
+     */
+    public abstract int getLine();
+
+    /**
+     * Returns the m_name of the tag, if the node is an HTML start, end, or
+     * combined tag, or the directive m_name if a JSP directive;
+     * <code>null</code> otherwise.
+     * 
+     * @return the tag m_name
+     */
+    public abstract String getName();
+
+    /**
+     * Returns the parent of this node, which may be null if a top-level node.
+     * 
+     * @return the parent
+     */
+    public abstract Node getParent();
+
+    /**
+     * Returns the siblings of this node.
+     * 
+     * @return the siblings
+     */
+    public abstract List<Node> getSiblings();
+
+    /**
+     * Returns the starting character position of the node, inclusive, relative
+     * to the beginning of the source text.
+     * 
+     * @return the start position
+     */
+    public abstract int getStart();
+
+    /**
+     * Returns the type of the node.
+     * 
+     * @return the type
+     */
+    public abstract NodeType getType();
+
+    /**
+     * Returns the value of the node, which will be all characters between
+     * a matched pair of start and end tags (for Tags), all characters between
+     * matching quotes (for Attributes), or text characters (for Texts).
+     * 
+     * @return the value
+     */
+    public abstract String getValue();
+
+    public abstract boolean isHtmlNode();
+
+    public abstract boolean isJspNode();
+
+    public abstract void removeChild( Node node );
+
+    public abstract void setColumn( int i );
+
+    public abstract void setEnd( int pos );
+
+    public abstract void setLine( int i );
+
+    /**
+     * For Node types that support it, sets the logical name of the Node.
+     * @param name a String representing the name.
+     */
+    public abstract void setName( String name );
+
+    public abstract void setParent( Node parent );
+
+    public abstract void setStart( int pos );
+
+    public abstract void setType( NodeType type );
+
+    /**
+     * Convenience method that replaces all child Nodes with a single text node
+     * whose value is supplied by the caller.
+     * @param value the value to replace
+     */
+    public abstract void setValue( String value );
+
+}

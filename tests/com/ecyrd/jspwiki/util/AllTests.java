@@ -2,6 +2,8 @@
 package com.ecyrd.jspwiki.util;
 
 
+import com.ecyrd.jspwiki.ui.stripes.JspParserTest;
+
 import junit.framework.*;
 
 public class AllTests extends TestCase
@@ -23,6 +25,7 @@ public class AllTests extends TestCase
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );
+        suite.addTest( JspParserTest.suite() );
         
         return suite;
     }

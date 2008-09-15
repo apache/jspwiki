@@ -398,15 +398,9 @@ TESTING NOTES
 
 JSP Migration
 -------------
-<form> becomes <stripes:form>, </form> becomes </stripes:form>
-Remove <form> onsubmit="return Wiki.submitOnce(this);" because Stripes takes care of double-submits. accept-charset becomes "acceptcharset" and should use the following EL expression.
+.<form> becomes <stripes:form>, </form> becomes </stripes:form>
 
-    acceptcharset="${wikiEngine.contentEncoding}"
-    
-If a form action URL has an & appended to it, these should be added back as <stripes:param> tags. E.g., 
-    <form action="Login.jsp?tab=profile>
-means <stripes:param name="tab" value="profile">
-
+(b)
 <input type="text"> becomes <stripes:text>; type attribute goes away. Value attribute contents should be moved into the body of the tag. So:
 
     <input type="text" size="24" value="<wiki:Variable var='uid' default='' />" name="j_username" id="j_username" />
@@ -418,6 +412,7 @@ becomes this:
 <input type="password"> becomes <stripes:password>; type attribute goes away
 <input type="checkbox"> becomes <stripes:checkbox>; type attribute goes away
 
+(c)
 <input type="submit"> becomes <stripes:submit>; type attribute goes away. "Name" should be the name of the event handler for the ActionBean that is executed. The value attribute should be moved into the body of the tag. So:
 
     <input type="submit" name="login" value="<fmt:message key='login.submit.login'/>" />
@@ -426,11 +421,28 @@ becomes this:
 
     <stripes:submit name="login"><fmt:message key="login.submit.login"/></stripes:submit>
 
+(c)    
+If a form action URL has an & appended to it, these should be added back as <stripes:param> tags. E.g., 
+    <form action="Login.jsp?tab=profile>
+means <stripes:param name="tab" value="profile">
 
+
+Items processed by JspMigrator + JSPWikiJspTransformer:
+
+(a)
+Remove <form> onsubmit="return Wiki.submitOnce(this);" because Stripes takes care of double-submits
+
+(b) 
+accept-charset becomes "acceptcharset" and should use UTF-8.
+
+    acceptcharset="${wikiEngine.contentEncoding}"
+
+(c) INFO
 Hidden values are PROBABLY candidates to become bean properties that are automatically bound. E.g., in LoginForm.jsp,
 <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" /> disappears because setRedirect() is already part of LoginActionBean.
 
-Replace:
+(d) INFO
+Consider replacing:
         <wiki:Messages div="error" topic="login"
                     prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.errorprefix")%>' />
 

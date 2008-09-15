@@ -1,11 +1,15 @@
-package com.ecyrd.jspwiki.util;
+package com.ecyrd.jspwiki.ui.stripes;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class StripesJspMigrator
+public class JspMigrator
 {
 
     /**
@@ -39,7 +43,7 @@ public class StripesJspMigrator
         {
             throw new IllegalArgumentException( "Source and destination cannot be the same." );
         }
-        StripesJspMigrator migrator = new StripesJspMigrator();
+        JspMigrator migrator = new JspMigrator();
         try
         {
             migrator.migrate( src, dest );
@@ -48,6 +52,21 @@ public class StripesJspMigrator
         {
             e.printStackTrace();
         }
+    }
+
+    private List<JspTransformer> m_transformers = new ArrayList<JspTransformer>();
+
+    private Map<String, Object> m_sharedState = new HashMap<String, Object>();
+
+    /**
+     * Adds a {@link JspTransformer} to the chain of transformers that will be
+     * applied to each file as it is migrated.
+     * 
+     * @param transformer the transformer to add to the chain
+     */
+    public void addTransformer( JspTransformer transformer )
+    {
+        m_transformers.add( transformer );
     }
 
     /**
@@ -64,6 +83,9 @@ public class StripesJspMigrator
         {
             destDir.mkdir();
         }
+
+        // Clear the shared state
+        m_sharedState.clear();
 
         // Assemble list of files
         for( File src : srcDir.listFiles() )
@@ -99,14 +121,16 @@ public class StripesJspMigrator
         String s = readSource( src );
 
         // Parse the contents of the file
-        JspDocument doc = new JspDocument();
-        doc.parse( s.toString() );
-        for ( JspDocument.Node node : doc.getNodes() )
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s.toString() );
+
+        // Apply any transformations
+        for( JspTransformer transformer : m_transformers )
         {
-            System.out.println( node.toString() );
+            transformer.transform( m_sharedState, doc );
         }
 
-        // Write the migrated contents to disk
+        // Write the transformed contents to disk
         writeDestination( dest, doc.toString() );
         System.out.println( "    done [" + s.length() + " chars]." );
     }
@@ -124,7 +148,7 @@ public class StripesJspMigrator
         writer.append( contents );
         writer.close();
     }
-    
+
     protected String readSource( File src ) throws IOException
     {
         // Read in the file
