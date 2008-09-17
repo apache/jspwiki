@@ -40,6 +40,10 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("Cdauth");
         TestEngine.deleteTestPage("TestPageReferring");
         TestEngine.deleteTestPage("TestPageReferredNew");
+        TestEngine.deleteTestPage("Main");
+        TestEngine.deleteTestPage("Main8887");
+        TestEngine.deleteTestPage("TestPage1234");
+        TestEngine.deleteTestPage("TestPageReferred");
 
         TestEngine.emptyWorkDir();
     }

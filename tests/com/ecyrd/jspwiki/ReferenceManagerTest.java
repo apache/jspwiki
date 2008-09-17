@@ -148,14 +148,14 @@ public class ReferenceManagerTest extends TestCase
         assertNull( "TestPage referrers", c );
 
         c = mgr.findReferrers( "Foobar" );
-        assertTrue( "Foobar referrers", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
+        assertTrue( "Foobar referrers", c.size()==2  );
 
         c = mgr.findReferrers( "Foobar2" );
         assertTrue( "Foobar2 referrers", c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
 
         c = mgr.findReferrers( "Foobars" );
-        assertEquals( "Foobars referrers", 1, c.size() );
-        assertEquals( "Foobars referrer 'TestPage'", "TestPage", (String) c.iterator().next() );
+        assertEquals( "Foobars referrers", 2, c.size() );
+        //assertEquals( "Foobars referrer 'TestPage'", "TestPage", (String) c.iterator().next() );
     }
 
     public void testRefersTo()
@@ -202,8 +202,7 @@ public class ReferenceManagerTest extends TestCase
         Iterator it = c.iterator();
         String s1 = (String)it.next();
         assertTrue( "Foobar referrers", 
-                    c.size()==1 && 
-                    s1.equals("TestPage") );
+                    c.size()==2 );
     }
 
 
@@ -227,8 +226,8 @@ public class ReferenceManagerTest extends TestCase
     {
         engine.saveText( "Foobars", "qwertz" );
         Collection c = mgr.findReferrers( "Foobars" );
-        assertEquals( "Foobars referrers", 1, c.size() );
-        assertEquals( "Foobars referrer is not TestPage", "TestPage", ((String) c.iterator().next()) );
+        assertEquals( "Foobars referrers", 2, c.size() );
+        assertTrue( "Foobars referrer is not TestPage", c.contains( "TestPage" ) && c.contains("Foobar"));
     }
 
     public void testUpdateBothExist2()
@@ -238,13 +237,13 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "TestPage", "Reference to [Foobar], [Foobars]." );
         
         Collection c = mgr.findReferrers( "Foobars" );
-        assertEquals( "Foobars referrers count", 1, c.size() );
+        assertEquals( "Foobars referrers count", 2, c.size() );
 
         Iterator i = c.iterator();
         String first = (String) i.next();
 
         assertTrue( "Foobars referrers", 
-                    first.equals("TestPage") );
+                    c.contains("TestPage") && c.contains("Foobar"));
     }
 
     public void testCircularRefs()
@@ -334,6 +333,14 @@ public class ReferenceManagerTest extends TestCase
 
     }
 
+    public void testSelf() throws WikiException
+    {
+        engine.saveText( "BugOne", "BugOne" );
+        Collection ref = mgr.findReferrers( "BugOne" );
+        assertEquals("wrong size",1,ref.size());
+        assertEquals("ref", "BugOne", ref.iterator().next());
+    }
+    
     public static Test suite()
     {
         return new TestSuite( ReferenceManagerTest.class );

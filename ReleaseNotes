@@ -19,7 +19,8 @@ NEW FEATURES
 * Simplified Chinese, Dutch and Italian localizations added!
 
 * There is no more need for JAAS files!  Hooray!  This has
-  been replaced with custom jspwiki properties.
+  been replaced with custom jspwiki properties.  Please see
+  the UPGRADING document.
 
 * Massive improvements to the default template, like
   section editing.
@@ -30,6 +31,12 @@ NEW FEATURES
   and WikiWizard can still be installed as a separate package.
 
 * German language corepages
+
+* Support for the UniversalEditButton (http://universaleditbutton.org/).
+
+* Password hashes are now salted.  This means you can't share the passwords
+  if you have JSPWiki 2.6 instances, as the passwords are upgraded
+  transparently.
 
 The full log of any issues fixed can be found at:
 
@@ -61,15 +68,14 @@ KNOWN PROBLEMS
   authentication/permissions scheme.  Therefore, if you have very
   sensitive data in your wiki, you might not want to enable it.
 
-* Not all old plugins work.  Specifically, plugins from 2.2, which
-  1) use com.ecyrd.jspwiki package, will fail because they are not
-     signed with the same key as jspwiki.jar, and
-  2) any plugin, which constructs new WikiPages will fail because
-     of the constructor has been changed.
+* Not all old plugins work.  Specifically any plugins, which construct 
+  new WikiPages will fail because of the constructor has been changed.
+
+* The PageFilter API was changed in 2.6
 
 * Our documentation simply sucks at this point.  Please forgive us,
   and point where those fixes are needed.  We will improve upon
-  this during our progress towards a stable.
+  based your input.
 
 * The ShortURLConstructor does not work reliably.  Please use
   ShortViewURLConstructor, or Apache mod_rewrite.

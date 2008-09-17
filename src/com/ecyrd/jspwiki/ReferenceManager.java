@@ -843,11 +843,12 @@ public class ReferenceManager
     private void updateReferredBy( String page, String referrer )
     {
         // We're not really interested in first level self-references.
+        /*
         if( page.equals( referrer ) )
         {
             return;
         }
-
+        */
         // Neither are we interested if plural forms refer to each other.
         if( m_matchEnglishPlurals )
         {
