@@ -624,7 +624,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
     /**
      * Checks if a String is blank or a restricted Group name, and if it is,
      * appends an error to the WikiSession's message list.
-     * @param session the wiki session
+     * @param context the wiki context
      * @param name the Group name to test
      * @throws WikiSecurityException if <code>session</code> is
      * <code>null</code> or the Group name is illegal
