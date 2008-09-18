@@ -31,7 +31,7 @@ public class HandlerInfo
     private static final Map<Class<? extends WikiActionBean>, Map<Method, HandlerInfo>> CACHED_INFO = new HashMap<Class<? extends WikiActionBean>, Map<Method, HandlerInfo>>();
 
     private final Class<? extends WikiActionBean> m_beanClass;
-    
+
     private final Method m_handlerMethod;
 
     private final Class<? extends Permission> m_permissionClass;
@@ -58,11 +58,12 @@ public class HandlerInfo
      * the name of the wiki request context by looking for a
      * {@link WikiRequestContext} annotation.
      * 
-     * @param beanClass the ActionBean implementation for which event information should be created
+     * @param beanClass the ActionBean implementation for which event
+     *            information should be created
      * @param method the method that denotes the event handler
      * @param eventHandler the name of the event the method handles
      */
-    private HandlerInfo( Class<? extends WikiActionBean>beanClass, Method method, String eventHandler )
+    private HandlerInfo( Class<? extends WikiActionBean> beanClass, Method method, String eventHandler )
     {
         // Determine the permission annotated by @HandlerPermission (if
         // supplied)
@@ -101,7 +102,8 @@ public class HandlerInfo
         }
         if( actions != null && actions.startsWith( "${" ) && actions.endsWith( "}" ) )
         {
-            m_permissionActionExpression = PropertyExpression.getExpression( m_permissionTarget.substring( 2, m_permissionTarget.length() - 1 ) );
+            m_permissionActionExpression = PropertyExpression.getExpression( m_permissionTarget.substring( 2, m_permissionTarget
+                .length() - 1 ) );
         }
         else
         {
@@ -223,7 +225,7 @@ public class HandlerInfo
         {
             return eventInfoCollection;
         }
-        
+
         // Not there, eh? Ok, let's figure it out.
         eventInfoCollection = new HashMap<Method, HandlerInfo>();
         CACHED_INFO.put( beanClass, eventInfoCollection );
@@ -245,18 +247,20 @@ public class HandlerInfo
     }
 
     /**
-     * Returns the WikiActionBean class that is the parent of the event method used to
-     * instantiate the HandlerInfo object.
-     * @return
+     * Returns the WikiActionBean class that is the parent of the event method
+     * used to instantiate the HandlerInfo object.
+     * 
+     * @return the WikiActionBean class
      */
     public Class<? extends WikiActionBean> getActionBeanClass()
     {
         return m_beanClass;
     }
-    
+
     /**
-     * Returns the Method associated with the event handler. This is the same method
-     * used to instantiate the HandlerInfo object in {@link #HandlerInfo(Method, String)}.
+     * Returns the Method associated with the event handler. This is the same
+     * method used to instantiate the HandlerInfo object in the private
+     * constructor {@link #HandlerInfo(Class, Method, String)}.
      * 
      * @return the method
      */
@@ -312,7 +316,7 @@ public class HandlerInfo
      * {@link IllegalArgumentException}.
      * </p>
      * 
-     * @return
+     * @return the wiki request context
      */
     public String getRequestContext()
     {
@@ -320,11 +324,12 @@ public class HandlerInfo
     }
 
     /**
-     * Returns the Permission required to execute the method in the context of the supplied
-     * WikiActionBean, based on its {@link HandlerPermission} annotation.
-     * Any EL expressions found in the annotated target or actions are evaluated.
-     * Note that this method returns <code>null</code> if no Permission is required
-     * to execute this method, and <em>callers should check for nulls</code>.
+     * Returns the Permission required to execute the method in the context of
+     * the supplied WikiActionBean, based on its {@link HandlerPermission}
+     * annotation. Any EL expressions found in the annotated target or actions
+     * are evaluated. Note that this method returns <code>null</code> if no
+     * Permission is required to execute this method, and
+     * <em>callers should check for nulls</code>.
      * 
      * @param actionBean the ActionBean that will be used as the base for any EL
      *            expressions
@@ -334,11 +339,11 @@ public class HandlerInfo
      */
     public Permission getPermission( WikiActionBean actionBean ) throws ELException
     {
-        if ( m_permissionClass == null )
+        if( m_permissionClass == null )
         {
             return null;
         }
-        
+
         // Get the target class, target and actions
         boolean hasOneParameter = m_permissionActions == null;
         String target = m_permissionTarget;

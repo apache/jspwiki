@@ -30,7 +30,8 @@ import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 /**
  * Stripes type converter that converts a Group name, expressed as a String,
  * into an {@link com.ecyrd.jspwiki.auth.authorize.Group} object. This converter
- * is looked up and returned by {@link WikiTypeConverterFactory} for HTTP
+ * is looked up and returned by the Stripes
+ * {@link net.sourceforge.stripes.validation.TypeConverterFactory} for HTTP
  * request parameters that need to be bound to ActionBean properties of type
  * Group. Stripes executes this TypeConverter during the
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
@@ -51,33 +52,30 @@ public class GroupTypeConverter implements TypeConverter<Group>
      * a message key of <code>pageNotFound</code> and a single parameter
      * (equal to the value passed for <code>groupName</code>).
      * 
-     * @param groupName
-     *            the name of the WikiPage to retrieve
-     * @param targetType
-     *            the type to return, which will always be of type
+     * @param groupName the name of the WikiPage to retrieve
+     * @param targetType the type to return, which will always be of type
      *            {@link com.ecyrd.jspwiki.auth.authorize.Group}
-     * @param errors
-     *            the current Collection of validation errors for this field
+     * @param errors the current Collection of validation errors for this field
      * @return the resolved Group
      */
-    public Group convert(String groupName, Class<? extends Group> targetType, Collection<ValidationError> errors)
+    public Group convert( String groupName, Class<? extends Group> targetType, Collection<ValidationError> errors )
     {
-        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration)StripesFilter.getConfiguration();
+        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
         WikiEngine engine = config.getEngine();
         GroupManager mgr = engine.getGroupManager();
         Group group = null;
         try
         {
-            group = mgr.getGroup(groupName);
+            group = mgr.getGroup( groupName );
         }
-        catch (NoSuchPrincipalException e)
+        catch( NoSuchPrincipalException e )
         {
-            errors.add(new LocalizableError("groupNotFound", groupName));
+            errors.add( new LocalizableError( "groupNotFound", groupName ) );
         }
         return group;
     }
 
-    public void setLocale(Locale locale)
+    public void setLocale( Locale locale )
     {
     };
 }

@@ -31,7 +31,7 @@ public class ViewActionBean extends WikiContext
     }
 
     /**
-     * <p>After the binding and validation  {@link LifecycleStage.BindingAndValidation}
+     * <p>After the binding and validation  {@link LifecycleStage#BindingAndValidation}
      * lifecycle stage executes, this method determines whether the
      * page name specified in the request is actually a special page and
      * redirects the user if needed. If no page was specified in the request, this method

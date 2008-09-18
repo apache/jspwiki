@@ -39,54 +39,31 @@ public abstract class AbstractNode implements Node
         m_type = type;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see com.ecyrd.jspwiki.ui.stripes.Node#addChild(com.ecyrd.jspwiki.ui.stripes.Node)
      */
     public void addChild( Node node )
     {
         // Set parent/child relationships
         node.setParent( this );
+        
+        // Add the node
         m_children.add( node );
-
-        // If this node is a "combined node," split it into two
-        if( m_type == NodeType.HTML_COMBINED_TAG )
-        {
-            // Check that this node has a parent
-            if( m_parent == null )
-            {
-                throw new IllegalStateException( "Node has no parent!" );
-            }
-
-            // Change node type to start tag
-            m_type = NodeType.HTML_START_TAG;
-
-            // Build new end tag & set its parent
-            Tag endNode = new Tag( m_doc, NodeType.HTML_END_TAG );
-            endNode.setName( m_name );
-            // FIXME
-            // endNode.setText( NodeType.HTML_END_TAG.getTagEnd() + m_name +
-            // NodeType.HTML_END_TAG.getTagEnd() );
-            endNode.setParent( m_parent );
-
-            // Insert as sibling of this node
-            List<Node> siblings = m_parent.getChildren();
-            int index = siblings.indexOf( this );
-            if( index == siblings.size() - 1 )
-            {
-                siblings.add( endNode );
-            }
-            else
-            {
-                siblings.add( index, endNode );
-            }
-        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
+     * @see com.ecyrd.jspwiki.ui.stripes.Node#addChild(Node, int)
+     */
+    public void addChild( Node node, int index )
+    {
+        // Set parent/child relationships
+        node.setParent( this );
+        
+        // Add the node
+        m_children.add( index, node );
+    }
+
+    /**
      * @see com.ecyrd.jspwiki.ui.stripes.Node#getChildren()
      */
     public List<Node> getChildren()

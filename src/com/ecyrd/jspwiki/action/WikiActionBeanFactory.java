@@ -28,37 +28,11 @@ import com.ecyrd.jspwiki.url.StripesURLConstructor;
 
 /**
  * <p>
- * Class that resolves special pages and JSPs on behalf of a WikiEngine.
- * WikiActionBeanResolver will automatically resolve page names with
- * singular/plural variants. It can also detect the correct Command based on
- * parameters supplied in an HTTP request, or due to the JSP being accessed.
- * </p>
- * <p>
- * <p>
- * WikiActionBeanResolver's static {@link #findCommand(String)} method is the
- * simplest method; it looks up and returns the Command matching a supplied wiki
- * context. For example, looking up the request context <code>view</code>
- * returns {@link PageCommand#VIEW}. Use this method to obtain static Command
- * instances that aren't targeted at a particular page or group.
- * </p>
- * <p>
- * For more complex lookups in which the caller supplies an HTTP request,
- * {@link #findCommand(HttpServletRequest, String)} will look up and return the
- * correct Command. The String parameter <code>defaultContext</code> supplies
- * the request context to use if it cannot be detected. However, note that the
- * default wiki context may be over-ridden if the request was for a "special
- * page."
- * </p>
- * <p>
- * For example, suppose the WikiEngine's properties specify a special page
- * called <code>UserPrefs</code> that redirects to
- * <code>UserPreferences.jsp</code>. The ordinary lookup method
- * {@linkplain #findCommand(String)} using a supplied context <code>view</code>
- * would return {@link PageCommand#VIEW}. But the
- * {@linkplain #findCommand(HttpServletRequest, String)} method, when passed the
- * same context (<code>view</code>) and an HTTP request containing the page
- * parameter value <code>UserPrefs</code>, will instead return
- * {@link WikiCommand#PREFS}.
+ * Class that looks up {@link WikiActionBean}s, and resolves special pages and
+ * JSPs on behalf of a WikiEngine. WikiActionBeanResolver will automatically
+ * resolve page names with singular/plural variants. It can also detect the
+ * correct WikiActionBean based on parameters supplied in an HTTP request, or
+ * due to the JSP being accessed.
  * </p>
  * 
  * @author Andrew Jaquith
@@ -83,7 +57,7 @@ public final class WikiActionBeanFactory
      * WikiInterceptor.
      */
     public static final String ATTR_WIKISESSION = "wikiSession";
-    
+
     private static final Logger log = Logger.getLogger( WikiActionBeanFactory.class );
 
     private static final long serialVersionUID = 1L;
@@ -94,7 +68,10 @@ public final class WikiActionBeanFactory
     /** Default list of packages to search for WikiActionBean implementations. */
     private static final String DEFAULT_ACTIONBEAN_PACKAGES = "com.ecyrd.jspwiki.action";
 
-    /** Property in jspwiki.properties that specifies packages to search for WikiActionBean implementations. */
+    /**
+     * Property in jspwiki.properties that specifies packages to search for
+     * WikiActionBean implementations.
+     */
     private static final String PROPS_ACTIONBEAN_PACKAGES = "jspwiki.actionBean.packages";
 
     /** Private map with JSPs as keys, Resolutions as values */
@@ -111,7 +88,9 @@ public final class WikiActionBeanFactory
     private final Map<String, HandlerInfo> m_contextMap = new HashMap<String, HandlerInfo>();
 
     /**
-     * Initializes the internal map that matches wiki request contexts with HandlerInfo objects.
+     * Initializes the internal map that matches wiki request contexts with
+     * HandlerInfo objects.
+     * 
      * @param properties
      */
     private void initRequestContextMap( Properties properties )
@@ -119,7 +98,7 @@ public final class WikiActionBeanFactory
         // Look up all classes that are WikiActionBeans.
         String beanPackagesProp = properties.getProperty( PROPS_ACTIONBEAN_PACKAGES, DEFAULT_ACTIONBEAN_PACKAGES ).trim();
         String[] beanPackages = beanPackagesProp.split( "," );
-        Set<Class<? extends WikiActionBean>> beanClasses = findBeanClasses( beanPackages);
+        Set<Class<? extends WikiActionBean>> beanClasses = findBeanClasses( beanPackages );
 
         // Stash the contexts and corresponding classes into a Map.
         for( Class<? extends WikiActionBean> beanClass : beanClasses )
@@ -146,8 +125,11 @@ public final class WikiActionBeanFactory
     }
 
     /**
-     * Searches a set of named packages for WikiActionBean implementations, and returns any it finds.
-     * @param beanPackages the packages to search on the current classpath, separated by commas
+     * Searches a set of named packages for WikiActionBean implementations, and
+     * returns any it finds.
+     * 
+     * @param beanPackages the packages to search on the current classpath,
+     *            separated by commas
      * @return the discovered classes
      */
     private Set<Class<? extends WikiActionBean>> findBeanClasses( String[] beanPackages )
@@ -206,9 +188,10 @@ public final class WikiActionBeanFactory
     }
 
     /**
-     * Skims through a supplied set of Properties and looks for anything with the "special page"
-     * prefix, and creates Stripes {@link net.sourceforge.stripes.action.RedirectResolution} objects
-     * for any that are found.
+     * Skims through a supplied set of Properties and looks for anything with
+     * the "special page" prefix, and creates Stripes
+     * {@link net.sourceforge.stripes.action.RedirectResolution} objects for any
+     * that are found.
      */
     private void initSpecialPageRedirects( Properties properties )
     {
@@ -329,11 +312,11 @@ public final class WikiActionBeanFactory
      * response with it, and incorporates the correct WikiPage into the bean if
      * required. This method will determine what page the user requested by
      * delegating to
-     * {@link #extractPageFromParameter(String, HttpServletRequest)}.
+     * {@link #extractPageFromParameter(HttpServletRequest)}.
      * </p>
      * <p>
      * This method will <em>always</em>return a WikiActionBean that is
-     * properly instantiated. It will also create a new {@WikiActionBeanContext}
+     * properly instantiated. It will also create a new {@link WikiActionBeanContext}
      * and associate it with the action bean. The supplied request and response
      * objects will be associated with the WikiActionBeanContext. The
      * <code>beanClass</code>is required. If either the <code>request</code>
@@ -503,7 +486,8 @@ public final class WikiActionBeanFactory
             response = new MockHttpServletResponse();
         }
 
-        // Create the WikiActionBeanContext and set all of its relevant properties
+        // Create the WikiActionBeanContext and set all of its relevant
+        // properties
         WikiActionBeanContext actionBeanContext = new WikiActionBeanContext();
         bean.setContext( actionBeanContext );
         actionBeanContext.setRequest( request );
@@ -599,27 +583,27 @@ public final class WikiActionBeanFactory
     /**
      * Returns the WikiActionBean associated with the current
      * {@link javax.servlet.http.HttpServletRequest}. The ActionBean will be
-     * retrieved from attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}. If
-     * an ActionBean is not found under this name, the standard Stripes  attribute
+     * retrieved from attribute {@link WikiActionBeanFactory#ATTR_ACTIONBEAN}. If an
+     * ActionBean is not found under this name, the standard Stripes attribute
      * {@link net.sourceforge.stripes.controller.StripesConstants#REQ_ATTR_ACTION_BEAN}
      * will be attempted.
      * 
-     * @param pageContext the
+     * @param request the HTTP request
      * @return the WikiActionBean
      * @throws IllegalStateException if the WikiActionBean was not found in the
-     *         request scope
+     *             request scope
      */
     public static WikiActionBean findActionBean( ServletRequest request )
     {
         WikiActionBean bean = (WikiActionBean) request.getAttribute( ATTR_ACTIONBEAN );
-        if ( bean == null )
+        if( bean == null )
         {
-            log.debug( "WikiActionBean not found under request attribute '" + ATTR_ACTIONBEAN +
-                       "'; trying standard Stripes attribute '" + StripesConstants.REQ_ATTR_ACTION_BEAN + "'." );
-            bean = (WikiActionBean) request.getAttribute( StripesConstants.REQ_ATTR_ACTION_BEAN  );
+            log.debug( "WikiActionBean not found under request attribute '" + ATTR_ACTIONBEAN
+                       + "'; trying standard Stripes attribute '" + StripesConstants.REQ_ATTR_ACTION_BEAN + "'." );
+            bean = (WikiActionBean) request.getAttribute( StripesConstants.REQ_ATTR_ACTION_BEAN );
         }
-        
-        if ( bean == null )
+
+        if( bean == null )
         {
             throw new IllegalStateException( "WikiActionBean not found in request! Something failed to stash it..." );
         }
@@ -628,10 +612,10 @@ public final class WikiActionBeanFactory
 
     /**
      * <p>
-     * Saves the supplied WikiActionBean and its associated WikiPage as
-     * in request scope. The action bean is saved as an
-     * attribute named {@link WikiInterceptor#ATTR_ACTIONBEAN}. If the action
-     * bean was also a WikiContext instance, it is saved as an attribute named
+     * Saves the supplied WikiActionBean and its associated WikiPage as in
+     * request scope. The action bean is saved as an attribute named
+     * {@link #ATTR_ACTIONBEAN}. If the action bean was also a
+     * WikiContext instance, it is saved as an attribute named
      * {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}. Among other
      * things, by saving these items as attributes, they can be accessed via JSP
      * Expression Language variables, in this case
@@ -655,11 +639,11 @@ public final class WikiActionBeanFactory
         // used later as ${wikiEngine} in EL markup)
         WikiEngine engine = actionBean.getEngine();
         request.setAttribute( ATTR_WIKIENGINE, engine );
-        
+
         // Stash the WikiSession as a request attribute
         WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
         request.setAttribute( ATTR_WIKISESSION, wikiSession );
-        
+
         // Stash the WikiActionBean
         request.setAttribute( ATTR_ACTIONBEAN, actionBean );
 

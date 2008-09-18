@@ -26,7 +26,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * <h3>Request parameters</h3>
  * <ul>
  * <li><code>page</code> - the existing page name. Returned by
- * {@ link #getPage()}
+ * {@link #getPage()}
  * <li><code>renameTo</code> - the proposed new name for the page. This
  * parameter is required, and it is a validation error if not</li>
  * <li><code>changeReferences</code> - whether to change all referring pages'

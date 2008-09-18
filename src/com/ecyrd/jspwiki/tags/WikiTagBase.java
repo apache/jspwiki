@@ -86,7 +86,7 @@ public abstract class WikiTagBase
      * {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#findActionBean(javax.servlet.ServletRequest)}.
      * (That method retrieves the WikiActionBean from page scope.).
      * If the WikiActionBean is a WikiContext, a specific reference to the WikiContext
-     * will be set also. Both of these available as protected fields {@link #m_actionBean} and
+     * will be set also. Both of these available as protected fields {@link #m_wikiActionBean} and
      * {@link #m_wikiContext}, respectively. It is considered an error condition if the 
      * WikiActionBean cannot be retrieved from the PageContext.
      * It's also an error condition if the WikiActionBean is actually a WikiContext, and it

@@ -78,7 +78,8 @@ public class UserProfileActionBean extends AbstractActionBean
      * to the <code>ApprovalRequiredForUserProfiles</code> will be returned.
      * Other validation errors will cause redirection back to the profile tab.
      * 
-     * @return
+     * @return a Resolution if the user is redirected for approvals or because
+     *         of errors, or <code>null</code> otherwise
      */
     @HandlesEvent( "save" )
     @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PROFILE_ACTION )

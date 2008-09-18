@@ -488,7 +488,7 @@ public abstract class WikiContext extends AbstractActionBean
 
     /**
      * Checks whether the current user has access to this wiki context,
-     * by obtaining the required Permission ({@link #requiredPermission()})
+     * by obtaining the required Permission (see {@link HandlerInfo#getPermission(WikiActionBean)})
      * and delegating the access check to
      * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
@@ -510,7 +510,7 @@ public abstract class WikiContext extends AbstractActionBean
 
     /**
      * Checks whether the current user has access to this wiki context (and
-     * optionally redirects if not), by obtaining the required Permission ({@link #requiredPermission()})
+     * optionally redirects if not), by obtaining the required Permission (see {@link HandlerInfo#getPermission(WikiActionBean)})
      * and delegating the access check to
      * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;

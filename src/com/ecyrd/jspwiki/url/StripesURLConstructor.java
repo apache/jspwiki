@@ -75,13 +75,12 @@ public class StripesURLConstructor extends DefaultURLConstructor
      * ActionBean class is not a WikiContext subclass, the value of the
      * <code>page</code> parameter is ignored.
      * 
-     * @param beanClass the WikiActionBean subclass to use
-     * @param page the wiki page; if <code>null</code>, the front page will
-     *            be used
-     * @param params the query parameters to append to the end of the URL; may
-     *            be <code>null</code> if no parameters
+     * @param context the wiki request context to use
+     * @param name the target of the action, typically the wiki page
      * @param absolute If <code>true</code>, will generate an absolute URL
      *            regardless of properties setting.
+     * @param parameters the query parameters to append to the end of the URL; may
+     *            be <code>null</code> if no parameters
      * @return the URL
      */
     @Override

@@ -97,7 +97,7 @@ public class WikiPage
      * Returns the full, qualified, name of the WikiPage that includes the wiki name.
      * Used by the {@link com.ecyrd.jspwiki.action.HandlerInfo} class and
      * {@link com.ecyrd.jspwiki.action.HandlerPermission} annotations.
-     * @return
+     * @return the qualified page name, for example <code>mywiki:Main</code>
      */
     public String getQualifiedName()
     {

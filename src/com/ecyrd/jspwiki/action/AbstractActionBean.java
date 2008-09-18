@@ -15,7 +15,7 @@ import com.ecyrd.jspwiki.preferences.Preferences;
 /**
  * <p>
  * Abstract ActionBean superclass for all wiki actions, such as page actions ({@link com.ecyrd.jspwiki.WikiContext}
- * and subclasses), group actions (e.g., {@link ViewGroupActionBean}), user
+ * and subclasses), group actions (e.g., {@link GroupActionBean}), user
  * actions (e.g., {@link UserPreferencesActionBean}) and others.
  * </p>
  * 
@@ -92,7 +92,7 @@ public abstract class AbstractActionBean implements WikiActionBean
      * this ActionBean does not have a a current event handler assigned, or if
      * the event handler method does not contain the WikiRequestContext
      * annotation, this method will return
-     * {@link ecyrd.jspwiki.WikiContext#NONE}.
+     * {@link com.ecyrd.jspwiki.WikiContext#NONE}.
      */
     public String getRequestContext()
     {

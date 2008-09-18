@@ -102,8 +102,8 @@ public class WikiActionBeanContext extends ActionBeanContext
      * Adds a supplied ActionBean to "flash scope" so that it can be used by the next
      * HttpRequest. When this method is called, the ActionBean is stashed in the
      * request and the flash scope as attributes. For both, the bean is stored
-     * under names {@link WikiActionBeanFactory.ATTR_ACTIONBEAN}
-     * and {@link WikiTagBase.ATTR_CONTEXT}. This method assumes that the
+     * under names {@link WikiActionBeanFactory#ATTR_ACTIONBEAN}
+     * and {@link WikiTagBase#ATTR_CONTEXT}. This method assumes that the
      * method {@link #setRequest(HttpServletRequest)} has been previously called.
      * @param actionBean the action bean to add
      * @throws IllegalStateException if the request object has not been previously set

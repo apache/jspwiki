@@ -15,11 +15,10 @@ public class Tag extends AbstractNode
     private List<Attribute> m_attributes = new ArrayList<Attribute>();
 
     /**
-     * 
      * @param doc the parent JspDocument
      * @param type
      */
-    public Tag ( JspDocument doc, NodeType type )
+    public Tag( JspDocument doc, NodeType type )
     {
         super( doc, type );
     }
@@ -104,33 +103,109 @@ public class Tag extends AbstractNode
         sb.append( getValue() );
         sb.append( "\"]" );
 
-        return sb.toString();    }
-    
-    public String  getValue()
+        return sb.toString();
+    }
+
+    /**
+     * Adds a child to the current Node. If the Node is of type
+     * {@link NodeType#HTML_COMBINED_TAG}, the tag will be split into two nodes
+     * (start tag and end tag), with the child Node inserted between the two.
+     * 
+     * @param node the node to insert
+     * @param value the node to insert in between the split nodes
+     * @throws IllegalStateException if the current Node must be split, and does
+     *             not have a parent.
+     */
+    public void addChild( Node node )
     {
-        if ( m_type != NodeType.HTML_START_TAG )
+        if( m_children.size() == 0 )
+        {
+            addChild( node, 0 );
+        }
+        else
+        {
+            super.addChild( node );
+        }
+    }
+
+    /**
+     * Adds a child to the current Node before a specified position in the list
+     * of children. If the position is 0, the Node will be inserted before the
+     * first child. If the Node is of type {@link NodeType#HTML_COMBINED_TAG},
+     * the tag will be split into two nodes (start tag and end tag), with the
+     * child Node inserted between the two.
+     * 
+     * @param node the node to insert
+     * @param index the position to insert the Node into
+     * @throws IllegalStateException if the current Node must be split, and does
+     *             not have a parent.
+     */
+    public void addChild( Node node, int index )
+    {
+        if( m_parent == null )
+        {
+            throw new IllegalStateException( "Node does not have a parent!" );
+        }
+
+        // If this node is a "combined node," split it into two
+        if( m_type == NodeType.HTML_COMBINED_TAG )
+        {
+            // Change node type to start tag
+            m_type = NodeType.HTML_START_TAG;
+
+            // Build new end tag & set its parent
+            Tag endNode = new Tag( m_doc, NodeType.HTML_END_TAG );
+            endNode.setName( m_name );
+
+            // FIXME
+            // endNode.setText( NodeType.HTML_END_TAG.getTagEnd() + m_name +
+            // NodeType.HTML_END_TAG.getTagEnd() );
+            endNode.setParent( m_parent );
+
+            // Insert as sibling of this node
+            List<Node> siblings = m_parent.getChildren();
+            int startTagPos = siblings.indexOf( this );
+            if( startTagPos == siblings.size() - 1 )
+            {
+                m_parent.addChild( endNode );
+            }
+            else
+            {
+                m_parent.addChild( endNode, startTagPos + 1 );
+            }
+        }
+        else
+        {
+            super.addChild( node, index );
+        }
+    }
+
+    public String getValue()
+    {
+        if( m_type != NodeType.HTML_START_TAG )
         {
             return null;
         }
         return super.getValue();
     }
-    
+
     /**
-     * Returns the string that represents the Tag, including the name and attributes, but not any child nodes.
+     * Returns the string that represents the Tag, including the name and
+     * attributes, but not any child nodes.
      */
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
         sb.append( m_type.getTagStart() );
-        
+
         // HTML nodes and JSP directives are formatted in mostly the same way.
-        if ( isHtmlNode() || m_type == NodeType.JSP_DIRECTIVE )
+        if( isHtmlNode() || m_type == NodeType.JSP_DIRECTIVE )
         {
-            if ( m_type == NodeType.JSP_DIRECTIVE )
+            if( m_type == NodeType.JSP_DIRECTIVE )
             {
                 sb.append( ' ' );
             }
-            sb.append(  m_name );
+            sb.append( m_name );
             if( m_attributes.size() > 0 )
             {
                 for( Attribute attr : m_attributes )
@@ -140,15 +215,16 @@ public class Tag extends AbstractNode
                 }
             }
         }
-        
+
         // Everything else is just the start/end tags plus the children nodes
-        else {
-            for ( Node child : m_children )
+        else
+        {
+            for( Node child : m_children )
             {
                 sb.append( child.toString() );
             }
         }
-        
+
         sb.append( m_type.getTagEnd() );
         return sb.toString();
     }

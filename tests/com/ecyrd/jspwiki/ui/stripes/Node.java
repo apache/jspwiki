@@ -14,20 +14,21 @@ public interface Node
     public abstract JspDocument getJspDocument();
     
     /**
-     * Adds a child to the current AbstractNode. If the AbstractNode is of type
-     * {@link NodeType#HTML_COMBINED_TAG}, the tag will be split into two nodes
-     * (start tag and end tag), with the child AbstractNode inserted between the two.
+     * Adds a child to the current Node.
      * 
      * @param node the node to insert
-     * @param value the node to insert in between the split nodes
-     * @throws IllegalArgumentException if the supplied node to split is not of
-     *             type {@link NodeType#HTML_START_TAG},
-     *             {@link NodeType#HTML_START_TAG} or
-     *             {@link NodeType#HTML_COMBINED_TAG}
-     * @throws IllegalStateException if the current AbstractNode must be split, and does
-     *             not have a parent.
      */
     public abstract void addChild( Node node );
+    
+    /**
+     * Adds a child to the current Node before a specified position
+     * in the list of children. If the position is 0, the Node will be
+     * inserted before the first child.
+     * 
+     * @param node the node to insert
+     * @param index the position to insert the Node into
+     */
+    public abstract void addChild( Node node, int index );
 
     /**
      * Returns the child nodes of this node, as a defensive copy of the

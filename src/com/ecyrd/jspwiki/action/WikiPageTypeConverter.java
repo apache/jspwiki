@@ -28,11 +28,12 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
- * Stripes type converter that converts a WikiPage name, expressed as a String, into an
- * {@link com.ecyrd.jspwiki.WikiPage} object. This converter is looked up
- * and returned by {@link WikiTypeConverterFactory} for HTTP request parameters
- * that need to be bound to ActionBean properties of type WikiPage. Stripes
- * executes this TypeConverter during the
+ * Stripes type converter that converts a WikiPage name, expressed as a String,
+ * into an {@link com.ecyrd.jspwiki.WikiPage} object. This converter is looked
+ * up and returned by the Stripes
+ * {@link net.sourceforge.stripes.validation.TypeConverterFactory} for HTTP
+ * request parameters that need to be bound to ActionBean properties of type
+ * WikiPage. Stripes executes this TypeConverter during the
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
  * stage of request processing.
  * 
@@ -50,39 +51,36 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
      * will have a message key of <code>pageNotFound</code> and a single
      * parameter (equal to the value passed for <code>pageName</code>).
      * 
-     * @param pageName
-     *            the name of the WikiPage to retrieve
-     * @param targetType
-     *            the type to return, which will always be of type
+     * @param pageName the name of the WikiPage to retrieve
+     * @param targetType the type to return, which will always be of type
      *            {@link com.ecyrd.jspwiki.WikiPage}
-     * @param errors
-     *            the current Collection of validation errors for this field
+     * @param errors the current Collection of validation errors for this field
      * @return the
      */
-    public WikiPage convert(String pageName, Class<? extends WikiPage> targetType, Collection<ValidationError> errors)
+    public WikiPage convert( String pageName, Class<? extends WikiPage> targetType, Collection<ValidationError> errors )
     {
-        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration)StripesFilter.getConfiguration();
+        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
         WikiEngine engine = config.getEngine();
-        WikiPage page = engine.getPage(pageName);
-        if (page == null)
+        WikiPage page = engine.getPage( pageName );
+        if( page == null )
         {
             try
             {
-                String finalName = engine.getWikiActionBeanFactory().getFinalPageName(pageName);
-                if (finalName == null || engine.getPage(finalName) == null)
+                String finalName = engine.getWikiActionBeanFactory().getFinalPageName( pageName );
+                if( finalName == null || engine.getPage( finalName ) == null )
                 {
-                    errors.add(new LocalizableError("pageNotFound", pageName));
+                    errors.add( new LocalizableError( "pageNotFound", pageName ) );
                 }
             }
-            catch (ProviderException e)
+            catch( ProviderException e )
             {
-                errors.add(new SimpleError(e.getMessage()));
+                errors.add( new SimpleError( e.getMessage() ) );
             }
         }
         return page;
     }
 
-    public void setLocale(Locale locale)
+    public void setLocale( Locale locale )
     {
     }
 }

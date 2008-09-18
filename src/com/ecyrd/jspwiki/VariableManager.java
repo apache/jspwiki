@@ -174,7 +174,7 @@ public class VariableManager
     }
 
     /**
-     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}.
+     *  Returns the value of a named variable.  See {@link #getValue(WikiActionBean, String)}.
      *  The only difference is that this method does not throw an exception, but it
      *  returns the given default value instead.
      *  

@@ -13,7 +13,7 @@ import net.sourceforge.stripes.action.HandlesEvent;
  * the WikiRequestContext annotation must also have a {@link HandlesEvent}
  * annotation. The values returned by both annotations do not need to match.
  * 
- * @see {@link HandlerInfo#getRequestContext(Class, String)}.
+ * @see HandlerInfo#getRequestContext()
  * @author Andrew Jaquith
  */
 @Retention( RetentionPolicy.RUNTIME )

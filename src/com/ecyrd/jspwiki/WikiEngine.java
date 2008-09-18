@@ -1048,7 +1048,7 @@ public class WikiEngine
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
-     *  {@link com.ecyrd.jspwiki.ui.CommandResolver#getSpecialPageReference(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#getSpecialPageReference(String)}.
      *  </p>
      *  <p>
      *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
@@ -1232,7 +1232,7 @@ public class WikiEngine
      *  Returns the correct page name, or null, if no such
      *  page can be found.  Aliases are considered. This
      *  method simply delegates to
-     *  {@link com.ecyrd.jspwiki.ui.WikiActionBeanFactory#getFinalPageName(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
