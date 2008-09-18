@@ -25,8 +25,8 @@ public class StripesJspTransformerTest extends TestCase
         JspDocument doc = new JspParser().parse( s );
         m_transformer.transform( m_sharedState, doc );
         
-        assertEquals( 3, doc.getNodes().size() );
-        Node node = doc.getNodes().get( 0 );
+        assertEquals( 4, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 1 );            // First line is the injected Stripes taglib declaration
         assertEquals( "stripes:form", node.getName() );
         assertEquals( 1, ((Tag)node).getAttributes().size() );
         Node attribute = ((Tag)node).getAttributes().get( 0 );
@@ -39,8 +39,8 @@ public class StripesJspTransformerTest extends TestCase
         JspDocument doc = new JspParser().parse( s );
         m_transformer.transform( m_sharedState, doc );
 
-        assertEquals( 1, doc.getNodes().size() );
-        Node node = doc.getNodes().get( 0 );
+        assertEquals( 2, doc.getNodes().size() );       // Added Stripes taglib
+        Node node = doc.getNodes().get( 1 );            // Node 0 is injected Stripes taglib
         assertEquals( "stripes:form", node.getName() );
         
         assertEquals( 2, ((Tag)node).getAttributes().size() );
@@ -61,8 +61,8 @@ public class StripesJspTransformerTest extends TestCase
         m_transformer.transform( m_sharedState, doc );
 
         // After transformation, the "type" attribute is deleted
-        assertEquals( 1, doc.getNodes().size() );
-        node = doc.getNodes().get( 0 );
+        assertEquals( 2, doc.getNodes().size() );           // Added Stripes taglib
+        node = doc.getNodes().get( 1 );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
         assertEquals( "stripes:password", node.getName() );
         assertEquals( 4, ((Tag)node).getAttributes().size() );
@@ -77,8 +77,8 @@ public class StripesJspTransformerTest extends TestCase
         m_transformer.transform( m_sharedState, doc );
 
         // After transformation, the "type" and "value" attributes are deleted; value becomes child node
-        assertEquals( 3, doc.getNodes().size() );
-        Node node = doc.getNodes().get( 0 );
+        assertEquals( 4, doc.getNodes().size() );           // Added Stripes taglib
+        Node node = doc.getNodes().get( 1 );
         assertEquals( NodeType.HTML_START_TAG, node.getType() );
         assertEquals( "stripes:password", node.getName() );
         assertEquals( 3, ((Tag)node).getAttributes().size() );

@@ -11,41 +11,11 @@ public class StripesJspTransformer extends AbstractJspTransformer
 
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
-
-        // Add the Stripes taglib declaration if it's not there already
-        List<Node> nodes = doc.getNodes( NodeType.JSP_DIRECTIVE );
-        boolean declaresStripesTaglib = false;
-        for ( Node node : nodes )
-        {
-            Tag tag = (Tag)node;
-            if ( "taglib".equals( node.getName() ) )
-            {
-                Attribute attribute = tag.getAttribute( "prefix" );
-                if ( attribute != null )
-                {
-                    declaresStripesTaglib = true;
-                    break;
-                }
-            }
-        }
-        if ( !declaresStripesTaglib )
-        {
-            Tag tag = new Tag( doc, NodeType.JSP_DIRECTIVE );
-            tag.setName( "taglib" );
-            Attribute attribute = new Attribute( doc );
-            attribute.setName( "uri" );
-            attribute.setValue( "/WEB-INF/stripes.tld" );
-            tag.addAttribute( attribute );
-            attribute = new Attribute( doc );
-            attribute.setName( "prefix" );
-            attribute.setValue( "stripes" );
-            tag.addAttribute( attribute );
-            doc.getRoot().addChild( tag );
-            message( doc.getRoot(), "Added Stripes taglib directive." );
-        }
+        // Add Stripes taglib entry
+        verifyStripesTaglib( doc );
         
         // Process HTML nodes
-        nodes = doc.getNodes();
+        List<Node> nodes = doc.getNodes();
         for( Node node : nodes )
         {
             // For all HTML tags...
@@ -66,6 +36,51 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 }
             }
         }
+    }
+
+    private void verifyStripesTaglib( JspDocument doc )
+    {
+        // Add the Stripes taglib declaration if it's not there already
+        List<Node> nodes = doc.getNodes( NodeType.JSP_DIRECTIVE );
+        boolean declaresStripesTaglib = false;
+        Node lastTaglib = null;
+        for ( Node node : nodes )
+        {
+            Tag tag = (Tag)node;
+            if ( "taglib".equals( node.getName() ) )
+            {
+                lastTaglib = node;
+                Attribute attribute = tag.getAttribute( "prefix" );
+                if ( attribute != null && "stripes".equals( attribute.getValue() ) )
+                {
+                    declaresStripesTaglib = true;
+                    break;
+                }
+            }
+        }
+        if ( !declaresStripesTaglib )
+        {
+            Tag tag = new Tag( doc, NodeType.JSP_DIRECTIVE );
+            tag.setName( "taglib" );
+            Attribute attribute = new Attribute( doc );
+            attribute.setName( "uri" );
+            attribute.setValue( "/WEB-INF/stripes.tld" );
+            tag.addAttribute( attribute );
+            attribute = new Attribute( doc );
+            attribute.setName( "prefix" );
+            attribute.setValue( "stripes" );
+            tag.addAttribute( attribute );
+            if ( lastTaglib == null )
+            {
+                doc.getRoot().addChild( tag, 0 );
+            }
+            else
+            {
+                lastTaglib.addSibling( tag );
+            }
+            message( doc.getRoot(), "Added Stripes taglib directive." );
+        }
+        
     }
 
     /**

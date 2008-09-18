@@ -142,24 +142,20 @@ public class Tag extends AbstractNode
      */
     public void addChild( Node node, int index )
     {
-        if( m_parent == null )
-        {
-            throw new IllegalStateException( "Node does not have a parent!" );
-        }
-
         // If this node is a "combined node," split it into two
         if( m_type == NodeType.HTML_COMBINED_TAG )
         {
+            if( m_parent == null )
+            {
+                throw new IllegalStateException( "Node does not have a parent!" );
+            }
+
             // Change node type to start tag
             m_type = NodeType.HTML_START_TAG;
 
             // Build new end tag & set its parent
             Tag endNode = new Tag( m_doc, NodeType.HTML_END_TAG );
             endNode.setName( m_name );
-
-            // FIXME
-            // endNode.setText( NodeType.HTML_END_TAG.getTagEnd() + m_name +
-            // NodeType.HTML_END_TAG.getTagEnd() );
             endNode.setParent( m_parent );
 
             // Insert as sibling of this node
@@ -174,10 +170,9 @@ public class Tag extends AbstractNode
                 m_parent.addChild( endNode, startTagPos + 1 );
             }
         }
-        else
-        {
-            super.addChild( node, index );
-        }
+        
+        // Finally add the child to the parent
+        super.addChild( node, index );
     }
 
     public String getValue()

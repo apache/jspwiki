@@ -13,6 +13,7 @@ public class AllTests extends TestCase
         suite.addTest( JspDocumentTest.suite() );
         suite.addTest( JSPWikiJspTransformerTest.suite() );
         suite.addTest( StripesJspTransformerTest.suite() );
+        suite.addTest( TagTest.suite() );
         return suite;
     }
 

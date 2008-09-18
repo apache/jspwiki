@@ -29,6 +29,13 @@ public interface Node
      * @param index the position to insert the Node into
      */
     public abstract void addChild( Node node, int index );
+    
+    /**
+     * Adds a Node as a sibling to the current Node.  The supplied sibling
+     * will be added just after the current Node. 
+     * @param node the node to insert
+     */
+    public abstract void addSibling( Node node );
 
     /**
      * Returns the child nodes of this node, as a defensive copy of the

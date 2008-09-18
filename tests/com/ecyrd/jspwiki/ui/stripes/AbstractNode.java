@@ -46,7 +46,7 @@ public abstract class AbstractNode implements Node
     {
         // Set parent/child relationships
         node.setParent( this );
-        
+
         // Add the node
         m_children.add( node );
     }
@@ -58,9 +58,27 @@ public abstract class AbstractNode implements Node
     {
         // Set parent/child relationships
         node.setParent( this );
-        
+
         // Add the node
         m_children.add( index, node );
+    }
+
+    public void addSibling( Node node )
+    {
+        if( m_parent == null )
+        {
+            throw new IllegalStateException( "This node does not have a parent." );
+        }
+        List<Node> siblings = m_parent.getChildren();
+        int pos = siblings.indexOf( this );
+        if( pos == siblings.size() - 1 )
+        {
+            m_parent.addChild( node );
+        }
+        else
+        {
+            m_parent.addChild( node, pos + 1 );
+        }
     }
 
     /**
@@ -91,6 +109,11 @@ public abstract class AbstractNode implements Node
     public int getEnd()
     {
         return m_end;
+    }
+
+    public JspDocument getJspDocument()
+    {
+        return m_doc;
     }
 
     /*
@@ -186,6 +209,21 @@ public abstract class AbstractNode implements Node
     /*
      * (non-Javadoc)
      * 
+     * @see com.ecyrd.jspwiki.ui.stripes.Node#getValue()
+     */
+    public String getValue()
+    {
+        StringBuilder builder = new StringBuilder();
+        for( Node child : m_children )
+        {
+            builder.append( child.toString() );
+        }
+        return builder.toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.ecyrd.jspwiki.ui.stripes.Node#isHtmlNode()
      */
     public boolean isHtmlNode()
@@ -258,6 +296,7 @@ public abstract class AbstractNode implements Node
 
     /**
      * Sets the name value of the Node to a supplied string. This method
+     * 
      * @see com.ecyrd.jspwiki.ui.stripes.Node#setName(Node)
      */
     public void setName( String name )
@@ -295,29 +334,9 @@ public abstract class AbstractNode implements Node
         m_type = type;
     }
 
-    public JspDocument getJspDocument()
-    {
-        return m_doc;
-    }
-    
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.ecyrd.jspwiki.ui.stripes.Node#getValue()
-     */
-    public String getValue()
-    {
-        StringBuilder builder = new StringBuilder();
-        for ( Node child : m_children )
-        {
-            builder.append( child.toString() );
-        }
-        return builder.toString();
-    }
-
     /**
      * Replaces all children of the Tag with a single Text node.
+     * 
      * @param value the string to set
      */
     public void setValue( String value )
