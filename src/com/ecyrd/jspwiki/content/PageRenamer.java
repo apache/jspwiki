@@ -112,7 +112,9 @@ public class PageRenamer
         m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), 
                                                    JSPWikiMarkupParser.PROP_CAMELCASELINKS, 
                                                    m_camelCase );
-        
+
+        Set<String> referrers = getReferencesToChange( fromPage, engine );
+
         //
         //  Do the actual rename by changing from the frompage to the topage, including
         //  all of the attachments
@@ -138,7 +140,7 @@ public class PageRenamer
         toPage.setAuthor( context.getCurrentUser().getName() );
         
         engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
-        
+
         //
         //  Update the references
         //
@@ -147,11 +149,11 @@ public class PageRenamer
         engine.updateReferences( toPage );
 
         //
-        //  Update referrers first
+        //  Update referrers
         //
         if( changeReferrers )
         {
-            updateReferrers( context, fromPage, toPage );
+            updateReferrers( context, fromPage, toPage, referrers );
         }
 
 
@@ -170,36 +172,21 @@ public class PageRenamer
      *  @param toPage The new page
      */
     @SuppressWarnings("unchecked")
-    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage )
+    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<String>referrers )
     {
         WikiEngine engine = context.getEngine();
-        Set<String> referrers = new TreeSet<String>();
-        
-        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
-        if( r != null ) referrers.addAll( r );
-        
-        try
-        {
-            Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
-
-            for( Attachment att : attachments  )
-            {
-                Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
-
-                if( c != null ) referrers.addAll(c);
-            }
-        }
-        catch( ProviderException e )
-        {
-            // We will continue despite this error
-            log.error( "Provider error while fetching attachments for rename", e );
-        }
-
         
         if( referrers.isEmpty() ) return; // No referrers
         
         for( String pageName : referrers )
         {
+            //  In case the page was just changed from under us, let's do this
+            //  small kludge.
+            if( pageName.equals( fromPage.getName() ) )
+            {
+                pageName = toPage.getName();
+            }
+            
             WikiPage p = engine.getPage( pageName );
             
             String sourceText = engine.getPureText( p );
@@ -229,6 +216,32 @@ public class PageRenamer
                 }
             }
         }
+    }
+
+    private Set<String> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
+    {
+        Set<String> referrers = new TreeSet<String>();
+        
+        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        if( r != null ) referrers.addAll( r );
+        
+        try
+        {
+            Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
+
+            for( Attachment att : attachments  )
+            {
+                Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
+
+                if( c != null ) referrers.addAll(c);
+            }
+        }
+        catch( ProviderException e )
+        {
+            // We will continue despite this error
+            log.error( "Provider error while fetching attachments for rename", e );
+        }
+        return referrers;
     }
 
     /**
@@ -274,14 +287,19 @@ public class PageRenamer
     {
         StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         
+        //
+        //  This monstrosity just looks for a JSPWiki link pattern.  But it is pretty
+        //  cool for a regexp, isn't it?  If you can understand this in a single reading,
+        //  you have way too much time in your hands.
+        //
         Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
         
         Matcher matcher = linkPattern.matcher( sourceText );
         
         int start = 0;
         
-        //System.out.println("====");
-        //System.out.println("SRC="+sourceText.trim());
+        // System.out.println("====");
+        // System.out.println("SRC="+sourceText.trim());
         while( matcher.find(start) )
         {
             char charBefore = (char)-1;
@@ -308,7 +326,7 @@ public class PageRenamer
             System.out.println("   text="+text);
             System.out.println("   link="+link);
             System.out.println("   attr="+attr);
-             */
+            */
             if( link.length() == 0 )
             {
                 text = replaceSingleLink( context, text, from, to );

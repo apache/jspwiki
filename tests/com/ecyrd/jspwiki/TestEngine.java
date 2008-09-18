@@ -241,6 +241,8 @@ public class TestEngine extends WikiEngine
 
             if( f.exists() )
                 f.delete();
+            
+            deleteAttachments( name );
         }
         catch( Exception e )
         {
@@ -251,11 +253,14 @@ public class TestEngine extends WikiEngine
     /**
      *  Deletes all attachments related to the given page.
      */
-    public void deleteAttachments( String page )
+    public static void deleteAttachments( String page )
     {
+        Properties properties = new Properties();
+
         try
         {
-            String files = getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            properties.load( findTestProperties() );
+            String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
 
             File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
 
