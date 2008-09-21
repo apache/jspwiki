@@ -75,7 +75,7 @@ public class WikiContext
     private    WikiEngine m_engine;
     private    String     m_template = "default";
 
-    private    Map<String,Object> m_variableMap = new HashMap<String,Object>();
+    private    HashMap<String,Object> m_variableMap = new HashMap<String,Object>();
 
     /**
      *  Stores the HttpServletRequest.  May be null, if the request did not
@@ -653,6 +653,38 @@ public class WikiContext
         return null;
     }
 
+    /**
+     *  Creates a deep clone of the WikiContext.  This is useful when you want
+     *  to be sure that you don't accidentally mess with page attributes, etc.
+     *  
+     *  @since  2.8.0
+     *  @return A deep clone of the WikiContext.
+     */
+    public WikiContext deepClone()
+    {
+        try
+        {
+            // super.clone() must always be called to make sure that inherited objects
+            // get the right type
+            WikiContext copy = (WikiContext)super.clone();
+
+            //  No need to deep clone these
+            copy.m_engine  = m_engine;
+            copy.m_command = m_command; // Static structure
+
+            copy.m_template       = m_template;
+            copy.m_variableMap    = (HashMap<String,Object>)m_variableMap.clone();
+            copy.m_request        = m_request;
+            copy.m_session        = m_session;
+            copy.m_page           = (WikiPage)m_page.clone();
+            copy.m_realPage       = (WikiPage)m_realPage.clone();
+            return copy;
+        }
+        catch( CloneNotSupportedException e ){} // Never happens
+
+        return null;
+    }
+    
     /**
      *  Returns the WikiSession associated with the context.
      *  This method is guaranteed to always return a valid WikiSession.

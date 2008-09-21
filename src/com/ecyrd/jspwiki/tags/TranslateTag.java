@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 
 import org.apache.log4j.Logger;
 
@@ -48,6 +49,17 @@ public class TranslateTag
         {
             WikiContext context = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
                                                                           PageContext.REQUEST_SCOPE );
+
+            //
+            //  Because the TranslateTag should not affect any of the real page attributes
+            //  we have to make a clone here.
+            //
+            
+            context = context.deepClone();
+            
+            //
+            //  Get the page data.
+            //
             BodyContent bc = getBodyContent();
             String wikiText = bc.getString();
             bc.clearBody();
