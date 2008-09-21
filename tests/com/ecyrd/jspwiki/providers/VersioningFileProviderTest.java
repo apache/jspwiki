@@ -172,9 +172,9 @@ public class VersioningFileProviderTest extends TestCase
     public void testGetOldVersionUTF8()
         throws Exception
     {
-        String text = "åäö\r\n";
-        String text2 = "barbaröö\r\n";
-        String text3 = "Barneyää\r\n";
+        String text = "\u00e5\u00e4\u00f6\r\n";
+        String text2 = "barbar\u00f6\u00f6\r\n";
+        String text3 = "Barney\u00e4\u00e4\r\n";
 
         engine.saveText( NAME1, text );
         engine.saveText( NAME1, text2 );
