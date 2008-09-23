@@ -34,7 +34,13 @@
  **/
 var WikiSnippets =
 {
-	getSnippets: function(){  
+	getSnippets: function(){
+	 	// FIXME: This is a kludge; should really insert a Date plugin or something.
+		var now = new Date();
+		var day = ((now.getDate() < 10) ? "0" + now.getDate() : now.getDate())
+		var month = ((now.getMonth() < 10) ? "0" + now.getMonth() : now.getMonth())
+		var currentDate = now.getFullYear() + "-" + month + "-" + day;
+	 
 		return {
 	"toc" : {
 		snippet:["","[{TableOfContents }]", "\n"],
@@ -122,8 +128,8 @@ var WikiSnippets =
 	},
 	//dynamic snippets
 	"sign" : {
-		snippet:["\\\\\n--",Wiki.UserName+", "+"25 Sep 07","\n"],
-		tab:[Wiki.UserName,'25 Sep 07','']
+		snippet:["\\\\\n--",Wiki.UserName+", "+currentDate,"\n"],
+		tab:[Wiki.UserName,currentDate,'']
 	},
 	/* TODO: how to insert the proper current date/timestamp, inline with the preferred time format */
 	"date" : {

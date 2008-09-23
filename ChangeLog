@@ -1,5 +1,13 @@
 2008-09-21  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.8.0-beta-8
+        
+        * [JSPWIKI-373] Fixed issue with sign button giving a fixed date.
+        Unfortunately the format is fixed.  Thanks to Stefan Bohn for 
+        a fix.
+
+2008-09-21  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.8.0-beta-7
         
         * [JSPWIKI-379] TranslateTag now properly does a deep
