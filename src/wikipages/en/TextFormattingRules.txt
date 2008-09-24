@@ -17,7 +17,7 @@ When you've figured out how the editor works, then you should read [WikiEtiquett
 ~NoLink    = disable link creation for the word in CamelCase.
 [1]        = make a reference to a footnote numbered 1.
 [#1]       = mark the footnote number 1.
-[link]     = create text '[link]'.
+[[link]     = create text '[link]'.
 
 !heading   = small heading with text 'heading'
 !!heading  = medium heading with text 'heading'
@@ -38,8 +38,8 @@ You can always Edit this page (look at the left sidebar) to see how the differen
 effects on this page are used.
 !Hyperlinks
 The link can also be a direct URL starting with {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}}, or {{news:}}, in which case the link points to an external entity. For example, to point at the java.sun.com home page, use {{[[http://java.sun.com]}}, which becomes [http://java.sun.com/] or {{[[Java home page|http://java.sun.com]}}, which becomes [Java home page|http://java.sun.com].
-If you do not start the link with one of the above "protocols", the wiki assumes a normal link to another page in the wiki space, you need to use a letter as the first character of the page, purely numeric page names are not allowed. If you want to use square brackets ({{[[]}}) in the page without creating a hyperlink, use two opening square brackets. So the text {{[[[Example Non-Link]}}, will appear as {{[[Example Non-Link]}}[[Murali].
-To add a new page you just create a link to it from somewhere else. After all, there isn't much point in having a page if you can't access it! You'll then see a small question mark after the page name when you return to that page. Then click on it and you have created a new page!
+If you do not start the link with one of the above "protocols", the wiki assumes a normal link to another page in the wiki space, you need to use a letter as the first character of the page, purely numeric page names are not allowed. If you want to use square brackets ({{[[]}}) in the page without creating a hyperlink, use two opening square brackets. So the text {{[[[Example Non-Link]}}, will appear as {{[[Example Non-Link]}}.
+To add a new page you just create a link to it from somewhere else. After all, there isn't much point in having a page if you can't access it! You'll then see the page name underlined with a red-dashed line when you return to that page. Then click on it and you have created a new page!
 It's allowed to use almost any kind of characters inside a [WikiName|http://www.jspwiki.org/wiki/WikiName], as long
 as they are letters or numbers.
 Note also that this Wiki can be configured to support standard [CamelCase|http://www.jspwiki.org/wiki/CamelCase] linking (if it's supported, the word CamelCase should be a link, if it doesn't start with '~~'). It's off by default, but if your friendly administrator has turned it on, then well, CamelCase all you want =).
@@ -51,7 +51,7 @@ where you want that footnote to point at. Look below to find the footnote.
 You can also make a named footnote, just as if you were doing a normal hyperlink, such as {{[[Footnote name|1]}} as another way of referring to the first footnote[Footnote name|1]. Or you can put the custom name at the footnote itself[2].
 ![InterWiki|http://www.jspwiki.org/wiki/InterWiki] links
 You can also do links between different Wikis without knowing the URL. Just use a link in the form {{[[Wiki:WikiPage]}} and JSPWiki will create a link for you. For example, this link points to the [JSPWiki TextFormatting rules|JSPWiki:TextFormattingRules]. Check the [SystemInfo] page for more information on which Wiki links are available.
-If an [InterWiki|http://www.jspwiki.org/wiki/InterWiki link is not supported, you'll get a notification of it on the page when
+If an [InterWiki|http://www.jspwiki.org/wiki/InterWiki] link is not supported, you'll get a notification of it on the page when
 you save your page.
 !Adding pictures
 You can embed
@@ -122,7 +122,6 @@ You may use __bold__ text or ''italic'' text, by using two underscores (_) and t
 A [underscore|] effect can be produced by using a hyperlink to nowhere, [[like this|]
 !Preformatted text
 If you want to add preformatted text (like code) just use three consecutive braces ({) to open a block, and three consecutive braces (}) to close a block. Edit this page for an example.
-({)java.package.pseudocode.class(})
 !Tables
 You can do simple tables by using pipe signs ('|'). Use double pipe
 signs to start the heading of a table, and single pipe signs to then
@@ -149,7 +148,7 @@ Create a link that points to a new (not existing) page using its [WikiName|http:
 Click that new link, which should now have a question mark (?) suffix and
 you will get an editor for the new page. -- [Asser|http://www.jspwiki.org/wiki/Asser]
 !Aliasing a Page
-Sometimes you want any link to a wiki page to immediately traverse to a different page. This can be done using a PageAlias.
+Sometimes you want any link to a wiki page to immediately traverse to a different page. This can be done using a [PageAlias].
 !Inserting variables
 There are many possible variables you can insert on a page. The basic form is:
 {{ [[{$variablename}], }}

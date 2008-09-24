@@ -12,7 +12,7 @@ JSPWiki supports multiple levels of __authentication__ and trust. Users can be a
 
 Depending on the default security policy and page access controls in place, users may (or may not) be required to authenticate. 
 
-When a user decides to log in — or is challenged to do so by a page access control or security policy — he or she sees a standard web form with a username field and a masked password field. After receiving the submitted web form, JSPWiki attempts to log the user in.
+When a user decides to log in - or is challenged to do so by a page access control or security policy - he or she sees a standard web form with a username field and a masked password field. After receiving the submitted web form, JSPWiki attempts to log the user in.
 
 !! Lost password
 

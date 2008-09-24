@@ -1,3 +1,12 @@
+2008-09-24  Juan Pablo Santos <juanpablo.santos@apache.org>
+
+        * 2.8.0-beta-10
+        
+        * added spanish corepages
+        
+        * [JSPWIKI 343] Go through all built-in wikipages and make sure all of the 
+        documentation in those is ok for 2.8.0. Applied only for en and es corepages.
+        
 2008-09-24  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-beta-9

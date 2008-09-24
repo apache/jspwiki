@@ -521,6 +521,10 @@
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_zh_CN.zip"
          basedir="src/wikipages/zh_CN">
     </zip>
+  	
+  	<zip zipfile="${install.fulldir}/${ant.project.name}-corepages_es.zip"
+         basedir="src/wikipages/es" includesfile="src/wikipages/.corepages">
+    </zip>
  
     <!-- Add other languages here -->
     

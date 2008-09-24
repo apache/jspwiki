@@ -3,7 +3,7 @@
 !! Mailing Lists
 There's a JSPWiki mailing list for discussion that is occurring off this wiki.  It is very good for discussing things like patches, problems, development, etc.
 
-There are currently two email lists, ''jspwiki-users'' and ''jspwiki-dev''.
+There are currently three email lists, ''jspwiki-users'', ''jspwiki-dev'' and ''jspwiki-commits''.
 
 !JSPWiki-user
 

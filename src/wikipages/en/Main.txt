@@ -19,7 +19,7 @@ You have some pages set up for you:
 
 * For all of the Wiki markup features, see [TextFormattingRules].
 * Entry point for full [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [JSPWiki 2.6 New Features|http://www.jspwiki.org/wiki/NewIn2.6].
+** [JSPWiki 2.8 New Features|http://www.jspwiki.org/wiki/NewIn2.8].
 
 !Miscellaneous
 
