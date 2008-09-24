@@ -230,6 +230,11 @@ var Wiki = {
 		var h = location.host;
 		this.BasePath = this.BaseUrl.slice(this.BaseUrl.indexOf(h)+h.length,-1);
 
+		// If JSPWiki is installed in the root, then we have to make sure that
+		// the cookie-cutter works properly here.
+		
+		if( this.BasePath == '' ) this.BasePath = '/';
+		
 		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
 		
 		this.PermissionEdit = !!$$('a.edit')[0]; //deduct permission level

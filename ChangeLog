@@ -1,3 +1,11 @@
+2008-09-24  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-9
+        
+        * [JSPWIKI-368] Fixed issue with multiple preferences cookies
+        appearing if the web app was installed to the root.  Thanks
+        to Florian for finding this!
+
 2008-09-21  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-beta-8
