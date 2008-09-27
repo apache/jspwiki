@@ -1,5 +1,6 @@
-These are the changes made to these pages during the last 30 days.  Check the [FullRecentChanges] for a complete list of all changed pages.
+Dit zijn de wijzigingen van pagina's van de laatste 30 dagen. Kijk op de  [FullRecentChanges] voor een lijst van alle wijzigingen.
 
 This server lives on [{INSERT CurrentTimePlugin format=zzzz}] and the time here is [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
+De server bevindt zich op [{INSERT CurrentTimePlugin format=zzzz}] en het is hier nu [{INSERT CurrentTimePlugin format='HH:mm \'on\' dd-MMM-yyyy'}].
 
 [{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]

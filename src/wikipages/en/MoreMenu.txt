@@ -1,8 +1,8 @@
-[Recent Changes]\\
-[Page Index]\\
+[Recente wijzigingen|Recent Changes]\\
+[Pagina index|Page Index]\\
 [About]\\
 [SystemInfo]\\
 
-[UnusedPages]\\
-[UndefinedPages]\\
+[Ongebruikte pagina's|UnusedPages]\\
+[Ongedefinieerde pagina's|UndefinedPages]\\
 

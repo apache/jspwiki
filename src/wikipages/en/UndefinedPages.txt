@@ -1,6 +1,5 @@
-Here are the pages that have not yet been created.  Why don't you go and create
-a few?
+Hier zijn de pagina's die nog niet zijn gemaakt. Waarom maak je er niet een paar ?
 
 [{INSERT com.ecyrd.jspwiki.plugin.UndefinedPagesPlugin}]
 
-(Back to [Main]).
+(Terug naar [Main]).

@@ -1,17 +1,17 @@
 [{TableOfContents}]
 
-!! Microsoft Windows Issues
+!! Microsoft Windows problemen
 
-!Wiki configuration
-The least painful approach to defining the location of your Wiki files is to have them located at the same drive as your Tomcat (or other web server) installation, and define the location in Unix format. For example, files in C:\JSPWiki\files are defined in the configuration file as /JSPWiki/files.
+!Wiki configuratie
+De makkelijkste plek voor je Wiki bestanden zijn op dezelfde drive als waar Tomcat (of andere container) is geïnstalleerd, en de locatie in Unix formaat definiëren.  Voorbeeld:  bestanden in C:\JSPWiki\bestanden worden in de config file opgegeven als  /JSPWiki/bestanden.
 
-Also make sure you change the setting for {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} if you want a logfile to be created. This setting is hidden quite well near the end of the config-file. The format is the same as the {{jspwiki.fileSystemProvider.pageDir}}-setting, i.e. backslashes must be duplicated.
+Verander ook de instelling voor {{log4j.appender.~FileLog.File}} in {{jspwiki.properties}} als je een logfile wilt. Deze instelling zit goed verstopt helemaal onderin de config-file. Het formaat is hetzelfde als de  {{jspwiki.fileSystemProvider.pageDir}}-setting, oftewel backslashes moeten dubbel worden opgegeven.
 
-!! UTF-8 Issues
+!! UTF-8 problemen
 
-If you are having problems with Tomcat 5.x (or higher) and JSPWiki with UTF-8, please note the following!
+Als je problemen hebt met Tomcat 5.x (of hoger) en JSPWiki met UTF-8, lees dan het volgende !
 
-You have to edit the server.xml of Tomcat (located in the conf-directory of Tomcat). Please add to 
+Mogelijk moet je de server.xml van Tomcat (in de conf directory van Tomcat) aanpassen. Voeg het volgende toe: 
 
 {{{<Connector port="8080"
                maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
@@ -19,9 +19,9 @@ You have to edit the server.xml of Tomcat (located in the conf-directory of Tomc
                debug="0" connectionTimeout="20000" 
                disableUploadTimeout="true"/>}}}
 
-the term '{{{URIEncoding="UTF-8"}}}'.
+de term '{{{URIEncoding="UTF-8"}}}'.
 
-It should look like this:
+Het moet er als volgt uit zien:
 
 {{{
 <Connector port="8080"
@@ -32,7 +32,7 @@ It should look like this:
                URIEncoding="UTF-8"/>
 }}}
 
-Remember that if you use mod_jk, you should define the {{URIEncoding}} for the JK Connector too :
+Als je mod_jk gebruikt, moet je de {{URIEncoding}} voor de JK Connector ook definiëren : 
 
 {{{
 .........
@@ -44,21 +44,21 @@ Remember that if you use mod_jk, you should define the {{URIEncoding}} for the J
   </service>
 }}}
 
-!! Other tips
+!! Andere tips
 
-!Editing the menu on the left hand side.
+!Wijzigen van het menu aan de linker kant.
 
-The menu on the left hand side (over there <-----) is just a standard Wiki page, called [LeftMenu].
+Het menu aan de linker kant (hiero <------) is gewoon een standaard Wiki pagina, genaamd [LeftMenu].
 
-If you (the administrator) don't want anyone else to modify it, you can always edit [LeftMenu], and then make the page read-only by putting an ACL on it.
+Als je (de administrator) niet wilt dat iemand anders dit wijzigt, zet  dan een ACL op de [LeftMenu] pagina. 
 
 
-The lower part of the left hand side is similarly called [LeftMenuFooter], and it is fully editable as well.
+Het onderste gedeelte van het linker menu is (niet erg verrassend) genaamd [LeftMenuFooter], en die kan je ook gewoon wijzigen. 
 
-!Enabling the [RSS|http://blogspace.com/rss/] feed
+![RSS|http://blogspace.com/rss/] feed aanzetten
 
-In your jspwiki.properties -file, you'll need to set the "jspwiki.rss.generate" to "true", and also set the "jspwiki.baseURL" to point at your Wiki.  Otherwise the RSS generator can't figure out how its links should go... :-)
+In je  jspwiki.properties -file, moet je de "jspwiki.rss.generate" op "true" zetten, en ook de "jspwiki.baseURL" moet een valide waarde hebben. Anders kan RSS niet weten hoe de links er uit moeten zien....:-)
 
-!I don't like ~ThingsSquashedTogether in the page titles.  What can I do?
+!Ik hou niet van ~DingenAanElkaarGeplakt in de pagina titels.  Wat nu?
 
-As Finns say, "voe tokkiinsa", meaning "yes, of course".  Just set the "jspwiki.breakTitleWithSpaces" property to "true" in your jspwiki.properties-file.
+Een Fin zegt altijd,  "voe tokkiinsa", het geen betekent "ja natuurlijk".    Zet gewoon de "jspwiki.breakTitleWithSpaces" property op "true" in je jspwiki.properties-file.

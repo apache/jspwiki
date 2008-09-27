@@ -1,11 +1,13 @@
-!Hiya!  And welcome to Wiki!
+!Hiya! Welkom op deze Wiki!
 
-WikiWiki is Hawaiian and means "quick".  The original idea of WikiWiki was to create a collaborative, fast environment which would still be persistent.
+WikiWiki is Hawaiiaans en betekent "vlug". Het originele idee van WikiWiki was om een snelle omgeving te maken waarin je kon samenwerken, waarbij alles wel wordt bewaard. 
 
-Anyone can contribute, even anonymously.  Yes, you can delete what other people said, and even delete whole pages, but surprisingly, wiki [does work|WikiWikiWeb:WhyWikiWorks].
+Iedereen kan bijdragen, zelfs anoniem. Ja, je kunt teksten van anderen verwijderen, en zelfs hele pagina's verwijderen, maar verrassend genoeg [werkt wiki| WikiWikiWeb:WhyWikiWorks].
 
-When editing, you can easily create (and you should create) hyperlinks by just putting the word in square brackets, [[like this].  If the page you are referring to does not exist, the resulting page will show the name underlined, with a following question mark.  Like this: [ThisPageDoesNotExist].  (Please don't foil this example by creating that page...)
+Wanneer je een pagina wijzigt, kan je makkelijk hyperlinks maken (moet je ook vooral doen), dit kan door een woord tussen vierkante haken te zetten.
+Als de pagina waarnaar je verwijst niet bestaat, zal de link rood en onderstreept zijn met een vraagteken. Zoals dit [ThisPageDoesNotExist].  (A.u.b. dit voorbeeld niet om zeep helpen door deze pagina te maken....)
 
-WikiNames that contain spaces or underscores are crushed together and capitalized, so that [[This is a link] becomes [[ThisIsALink].
+WikiNamen die spaties of underscores bevatten worden geplet, zodat [[This is a link] wordt [[ThisIsALink].
 
-Wiki is and should be simple.  This is why there is no need for complex HTML.  You can get some effects, such as __bold text__ and ''italics'', but nothing very complex.  Layout is the problem of the Wiki itself.  There is more information in [TextFormattingRules].
+Wiki is en zou simpel moet zijn. Daarom is er geen behoefte aan complexe HTML. Je kunt sommige effecten, zoals __vetgedrukt__ en ''cursief'' , maar niet echt ingewikkeld.  
+De opmaak is het probleem van de wiki zelf. Er is meer informatie op [TextFormattingRules].

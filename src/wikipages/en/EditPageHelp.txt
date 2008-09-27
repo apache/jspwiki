@@ -1,36 +1,30 @@
-Here's a short reminder on what elements you have at your disposal:
+Hier een korte samenvatting voor je:
 {{{
-----             Horizontal ruler
-\\               Forced line break
-[link]           Create hyperlink to "link", where "link" can be either an internal 
-                 WikiName or an external link (http://)
-[text|link]      Create a hyperlink where the link text is different from the actual 
-                 hyperlink link.
-[text|wiki:link] Create a hyperlink where the link text is different from the 
-                 actual hyperlink link, and the hyperlink points to a named Wiki. 
-                 This supports interWiki linking.
+----             Horizontale lijn
+\\               Geforceerd een nieuwe regel
+[link]           Maak een hyperlink naar "link", waar "link" zowel een interne 
+                 WikiName kan zijn als een externe link (http://)
+[text|link]      Maak een hyperlink waarbij de tekst anders is dan de tekst van de hyperlink 
+[text|wiki:link] Maak een hyperlink waarbij de tekst anders is dan de tekst van de hyperlink en waarbij naar een andere wiki wordt verwezen  Dit ondersteunt interWiki linking.
+*                Maak een opsommingslijst (moet op de eerste positie staan). Gebruik meerdere (**) om verder in te springen (meerdere niveaus).
+#               Maak een genummerde opsommingslijst (moet op de eerste positie staan). Gebruik meerdere (##, ###) om verder in te springen (meerdere niveaus). 
 
-*                Make a bulleted list (must be in first column). Use more (**) 
-                 for deeper indentations.
-#                Make a numbered list (must be in first column). Use more (##, ###) 
-                 for deeper indentations.
+!, !!, !!!      Begin een regel met een uitroep teken om een hoofdstuk te maken. 
+                 Meer uitroeptekens betekent een 'groter' hoofdstuk.
 
-!, !!, !!!       Start a line with an exclamation mark (!) to make a heading. 
-                 More exclamation marks mean bigger headings.
+__text__        Geeft vetgedrukte tekst
+''text''         Geeft cursieve tekst (letop dat dit enkele quotes zijn ('))
+{{text}}         Geeft tekst in monospaced font
+;term:def        Definieert 'term' met 'def'.  Gebruik dit met de lege 'term' om kleine commentaren te maken.
 
-__text__         Makes text bold.
-''text''         Makes text in italics (notice that these are single quotes ('))
-{{text}}         Makes text in monospaced font.
-;term:def        Defines 'term' with 'def'.  Use this with empty 'term' to make short comments.
-
-|text|more text  Makes a table. Double bars for a table heading.
+|tekst|meer tekst  Geeft een tabel. Dubbele strepen voor een tabel heading.
 }}}
 
-Don't try to use HTML, since it just won't work.
+Gebruik geen HTML, dat werkt gewoon niet.
 
-To embed images just put them available on the web using one of the approved formats, and they will get inlined automatically. To see the list of approved formats, go check [SystemInfo].
+Om plaatjes in te voegen, zet deze gewoon op een web pagina, en ze worden automatisch weergegeven. Kijk op [SystemInfo] om te zien welk formaten toegestaan zijn.
 
-To make a code block, use triple {'s to open, and triple }'s to close.
+Om een programma code blok te maken, gebruik drie accolades ({) voor het openen, en weer drie accolades (}) voor het sluiten ervan.
 
-''(Wondering where this text comes from?  It's on a page called [Edit Page Help], which you can edit too!)''
+''(Vraag je je af waar deze tekst vandaan komt?  Het staat op een pagina genaamd [Edit Page Help], die je zelf kan wijzigen !)''
 
