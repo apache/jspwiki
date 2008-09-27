@@ -1,3 +1,3 @@
-Pagina wijzigingen moeten eerst goedgekeurd te worden voordat ze actief worden. Je verzoek is verzonden en zal worden goedgekeurd of geweigerd.
+Page edits require approval before they become active. Your request has been submitted and will be approved or rejected.
 
-Je kunt de status van het gevraagde wijziging controleren door in te loggen (als je dat nog niet gedaan had), en te klikken op de "Workflow" link. 
+You can check on the status of your request by logging in (if you aren't already) and clicking on the "Workflow" link.

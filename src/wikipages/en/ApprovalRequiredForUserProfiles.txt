@@ -1,3 +1,3 @@
-Voor nieuwe gebruikers profielen is een goedkeuring nodig voordat ze actief worden. Je verzoek is verzonden, en zal worden geaccepteerd of geweigerd.  
+New user profiles require approval before they become active. Your request has been submitted and will be approved or rejected. 
 
-Als je een email adres hebt opgegeven, zal een wiki administrator het je laten weten wanneer je account is goedgekeurd.  Je kunt ook later terug komen , en kijken of je kan inloggen. 
+If you supplied an e-mail address, one of the wiki administrators will let you know when your account has been approved. Alternatively, you might want to come back later and see if you can log in.
