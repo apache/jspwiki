@@ -279,6 +279,21 @@
     </javadoc>
 
   </target>
+  
+  <!-- ============================================================== -->
+  
+  <!-- This target migrates Stripes JSPs -->
+  
+  <target name="migrate" depends="jar,jartests">
+    <mkdir dir="build/migrated" />
+    <java classname="com.ecyrd.jspwiki.ui.stripes.JspMigrator" fork="yes" maxmemory="512m">
+      <classpath>
+         <path refid="path.tests" />
+      </classpath>
+      <arg value="src/webdocs" />
+      <arg value="build/migrated" />
+    </java>
+  </target>
 
   <!-- ============================================================== -->
 

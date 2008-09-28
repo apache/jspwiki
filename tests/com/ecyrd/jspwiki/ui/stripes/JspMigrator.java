@@ -44,6 +44,8 @@ public class JspMigrator
             throw new IllegalArgumentException( "Source and destination cannot be the same." );
         }
         JspMigrator migrator = new JspMigrator();
+        migrator.addTransformer( new StripesJspTransformer() );
+        migrator.addTransformer( new JSPWikiJspTransformer() );
         try
         {
             migrator.migrate( src, dest );

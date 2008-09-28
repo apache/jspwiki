@@ -240,7 +240,7 @@ public abstract class AbstractNode implements Node
     public boolean isJspNode()
     {
         return m_type == NodeType.JSP_COMMENT || m_type == NodeType.JSP_DECLARATION || m_type == NodeType.JSP_EXPRESSION
-               || m_type == NodeType.SCRIPTLET || m_type == NodeType.JSP_DIRECTIVE || m_type == NodeType.UNRESOLVED_JSP_TAG;
+               || m_type == NodeType.SCRIPTLET || m_type == NodeType.JSP_DIRECTIVE;
     }
 
     /**

@@ -50,6 +50,28 @@ public class JSPWikiJspTransformerTest extends TestCase
         assertEquals( "method", attribute.getName() );
         assertEquals( "POST", attribute.getValue() );
     }
+    
+    public void testSetBundle() throws Exception
+    {
+        String s = "<fmt:setBundle basename=\"templates.default\"/>\n<form method=\"POST\" onsubmit=\"return Wiki.submitOnce(this);\" />";
+        JspDocument doc = new JspParser().parse( s );
+   
+        // Should be 3 nodes: 2 HTML + 1 text
+        assertEquals( 3, doc.getNodes().size() );
+        assertEquals( 3, doc.getRoot().getChildren().size() );
+        
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+        
+        // Now, should be only 2 nodes now because the <fmt:setBundle> tag was removed
+        assertEquals( 2, doc.getNodes().size() );
+        assertEquals( 2, doc.getRoot().getChildren().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        node = doc.getNodes().get( 1 );
+        assertEquals( "form", node.getName() );
+    }
+    
 
     public static Test suite()
     {

@@ -11,6 +11,8 @@ public enum NodeType
     ATTRIBUTE(null,null),
     /** Text node */
     TEXT("", ""),
+    /** HTML comment tag */
+    HTML_COMMENT("<!--", "-->"),
     /** HTML start tag */
     HTML_START_TAG("<", ">"),
     /** HTML end tag */
@@ -37,11 +39,7 @@ public enum NodeType
      * JSP page, import or taglib directive, e.g., &lt;%@ include... %&gt;
      * &lt;%@ page... %&gt; &lt;%@ taglib... %&gt;
      */
-    JSP_DIRECTIVE("<%@", "%>"),
-    /** JSP tag, but not sure what kind.. */
-    UNRESOLVED_JSP_TAG(null, null),
-    /** Parser has seen &lt;, but hasn't figured out what it is yet. */
-    UNRESOLVED(null, null);
+    JSP_DIRECTIVE("<%@", "%>");
     private final String m_tagStart;
 
     private final String m_tagEnd;

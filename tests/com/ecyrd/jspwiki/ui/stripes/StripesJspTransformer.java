@@ -46,11 +46,11 @@ public class StripesJspTransformer extends AbstractJspTransformer
         Node lastTaglib = null;
         for ( Node node : nodes )
         {
-            Tag tag = (Tag)node;
+            JspDirective directive = (JspDirective)node;
             if ( "taglib".equals( node.getName() ) )
             {
                 lastTaglib = node;
-                Attribute attribute = tag.getAttribute( "prefix" );
+                Attribute attribute = directive.getAttribute( "prefix" );
                 if ( attribute != null && "stripes".equals( attribute.getValue() ) )
                 {
                     declaresStripesTaglib = true;
@@ -60,23 +60,27 @@ public class StripesJspTransformer extends AbstractJspTransformer
         }
         if ( !declaresStripesTaglib )
         {
-            Tag tag = new Tag( doc, NodeType.JSP_DIRECTIVE );
-            tag.setName( "taglib" );
+            Text linebreak = new Text( doc );
+            linebreak.setValue( System.getProperty( "line.separator" ) );
+            JspDirective directive = new JspDirective( doc );
+            directive.setName( "taglib" );
             Attribute attribute = new Attribute( doc );
             attribute.setName( "uri" );
             attribute.setValue( "/WEB-INF/stripes.tld" );
-            tag.addAttribute( attribute );
+            directive.addAttribute( attribute );
             attribute = new Attribute( doc );
             attribute.setName( "prefix" );
             attribute.setValue( "stripes" );
-            tag.addAttribute( attribute );
+            directive.addAttribute( attribute );
             if ( lastTaglib == null )
             {
-                doc.getRoot().addChild( tag, 0 );
+                doc.getRoot().addChild( directive, 0 );
+                directive.addSibling( linebreak );
             }
             else
             {
-                lastTaglib.addSibling( tag );
+                linebreak.addSibling( directive );
+                lastTaglib.addSibling( linebreak );
             }
             message( doc.getRoot(), "Added Stripes taglib directive." );
         }
