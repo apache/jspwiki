@@ -1,3 +1,9 @@
+2008-09-24  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-12
+        
+        * [JSPWIKI-387] Fixed a number of quotes on Install.jsp.
+
 2008-09-27  Harry Metske <harry.metske@gmail.com>
 
         * 2.8.0-beta-11
