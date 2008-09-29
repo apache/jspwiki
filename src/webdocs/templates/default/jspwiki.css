@@ -172,7 +172,7 @@ hr, .hr, .clearbox {
 	margin-bottom:0.5em;
 }
 h2, h3, h4 {
-	clear:both;
+	clear:left;
 	margin:1em 0 0.5em 0;
 	padding:0.25em 0;
 	line-height:1.2;
