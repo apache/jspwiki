@@ -98,7 +98,6 @@
 
   <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" 
                      fmtkey="info.pagination"
-                       href="#" 
                     onclick="$('start').value=%s; SearchBox.runfullsearch();" />
   
     <div class="graphBars">

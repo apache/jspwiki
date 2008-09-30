@@ -846,13 +846,27 @@ var SearchBox = {
 			this.runfullsearch();
 		}.bind(this);
 		
-		q2.observe( this.runfullsearch.bind(this) );
+		q2.observe( this.runfullsearch0.bind(this) );
 		
 		$('scope').addEvent('change', changescope);
 		$('details').addEvent('click', this.runfullsearch.bind(this));
+		
+		if(location.hash){
+			/* hash contains query:pagination(-1=all,0,1,2...) */
+			var s = location.hash.substr(1).match(/(.*):(-?\d+)$/);
+			q2.value = s[1];
+			$('start').value = s[2];
+			changescope();
+		}
 	},
 
-	runfullsearch : function(){
+	/* reset the start page before rerunning the ajax search */
+	runfullsearch0: function(){
+		$('start').value='0';
+		this.runfullsearch();
+	},
+
+	runfullsearch: function(e){
 		var q2 = this.query2.value;
 		if( !q2 || (q2.trim()=='')) { 
 			$('searchResult2').empty();
@@ -862,6 +876,7 @@ var SearchBox = {
 
 		var scope = $('scope'), 
 			match= q2.match(/^(?:author:|name:|contents:|attachment:)/) ||"";
+
 		$each(scope.options, function(option){
 			if (option.value == match) option.selected = true;
 		});
@@ -876,6 +891,8 @@ var SearchBox = {
 				Wiki.prefs.set('PrevQuery', q2); 
 			} 
 		}).request();
+
+		location.hash = '#'+q2+":"+$('start').value;  /* push the query into the url history */
 	},
 
 	submit: function(){ 
