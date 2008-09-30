@@ -1,52 +1,48 @@
 [{TableOfContents}]
 
 !! Mailing Lists
-Er is een JSPWiki mailing list  voor discussies buiten deze wiki. Het is heel goed voor discussies over patches, problemen en ontwikkelingen etc.
+There's a JSPWiki mailing list for discussion that is occurring off this wiki.  It is very good for discussing things like patches, problems, development, etc.
 
-Erz ijn momenteel 3 mailing lists,  ''jspwiki-users'', ''jspwiki-dev'' and ''jspwiki-commits''.
+There are currently three email lists, ''jspwiki-users'', ''jspwiki-dev'' and ''jspwiki-commits''.
 
 !JSPWiki-user
 
-De jspwiki-user mailing list wordt gehost bij Apache Incubator. Je kan er aan mee doen door een mail te sturen naar [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org].
-De list archieven zijn te vinden op [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
+The jspwiki-user mailing list is hosted at Apache Incubator.  You can join it by sending an email to [jspwiki-user-subscribe@incubator.apache.org|mailto:jspwiki-user-subscribe@incubator.apache.org]. The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-user/]
 
-De oude [list archieven|http://www.ecyrd.com/pipermail/jspwiki-users/] zijn ook nog beschikbaar. En er is ook nog een [tweede archief|http://www.nabble.com/JspWiki---User-f2680.html] op Nabble. 
+The [old list archives|http://www.ecyrd.com/pipermail/jspwiki-users/] are also available. There's also a [secondary archive|http://www.nabble.com/JspWiki---User-f2680.html] on Nabble.
 
 !JSPWiki-dev
 
-Deze list is voor JSPWiki ontwikkelaars, Abonneer je hier niet op als je bang bent voor geek-talk.  
-De jspwiki-dev list wordt gehost bij Apache, je kan meedoen door een mail te sturen naar  [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].
-De list archieven zijn te vinden op [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
-
+This is the list for JSPWiki developers.  Do not join if you fear geek-talk.  The jspwiki-dev list is hosted at Apache, so you join by sending an email to [jspwiki-dev-subscribe@incubator.apache.org|mailto:jspwiki-dev-subscribe@incubator.apache.org].  The list archives are at [http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-dev/]
 
 !JSPWiki-commits
 
-Als je je hier op abonneert krijg je mail zodra een committer gewijzigde files of nieuwe files commit in de SVN repository.
-De jspwiki-commits list wordt gehost bij Apache, je kan meedoen door een mail te sturen naar  [jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].
-De lijst archieven zijn te vinden op http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
+If you subscribe to this list you will get emailed when (a committer) commits new or changed files to the SVN repository.
+The jspwiki-commits list is hosted at Apache, join it by sending an email to [jspwiki-commits-subscribe@incubator.apache.org|mailto:jspwiki-commits-subscribe@incubator.apache.org].  
+The list archives are at http://mail-archives.apache.org/mod_mbox/incubator-jspwiki-commits/
 
 !Unsubscribing
 
-Unsubscribing is net zo makkelijk: je stuurt een mail naar jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org vanaf het zelfde email adres als waarvan je de subscribe hebt gedaan. 
+Unsubscribing is equally easy: you can just send an email to jspwiki-<user|dev|commits>-unsubscribe@incubator.apache.org from the same email address that you originally subscribed from. 
 
-De oude jspwiki-dev archieven (tot en met Oct. 2007) zijn [ook beschikbaar|http://www.ecyrd.com/pipermail/jspwiki-dev/], als je wat interessante zaken wilt uitzoeken.
+The old JSPWiki-dev archives (up until Oct. 2007) are [also available|http://www.ecyrd.com/pipermail/jspwiki-dev/], if you want to peruse some interesting issues.
 
-!! Andere bronnen
+!! Other resources
 
-! IrcChannel - chat live met de ontwikkelaars!
+! IrcChannel - chat live with the developers!
 
-Er is een JSPWiki [IRC|http://www.mirc.com/irc.html] channel op [Freenode|http://www.freenode.net], genaamd #jspwiki. Kom langs als je vragen hebt, of als je alleen even wil chatten. 
+There is a JSPWiki [IRC|http://www.mirc.com/irc.html] channel on [Freenode|http://www.freenode.net], called #jspwiki. Drop by if you have any questions, or just want to chat.
 
-Let er op dat dit channel af en toe heel erg rustig is, dus wanhoop niet als je geen antwoord op je vragen krijgt, gewoon ff wachten.
+Note that the channel is pretty quiet at certain times of the day, so don't be discouraged if you don't get an answer.  Just hang around for a while...
 
-Regulars op dit channel:
-* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Leeft op GMT+2.
+Regulars on the channel:
+* [Janne Jalkanen|http://www.jspwiki.org/wiki/JanneJalkanen] (Ecyrd): Lives on GMT+2.
 
 ! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
 
-Gewoon voor de lol, ik heb een JSPWiki Users group gemaakt op Facebook. Als je een actieve Facebook gebruiker bent, kom eens langs !
+Just for fun, I create a JSPWiki Users group at Facebook.  If you're a regular Facebook user, drop by!
 
-(En nee, we zijn niet van plan om er een bestaande site mee te vervangen. Maar sinds jan en alleman op Facebook schijnt te zitten, dacht ik dat het geen slecht idee was om hier een extra channel te maken)
+(And no, we're not planning to replace any existing site with it.  But since everyone and their cousin seems to be on Facebook, I figured that it's probably not a bad idea to add an extra channel)
 -- Janne 17/09/07
 
 * [JSPWiki dev blog|http://blog.jspwiki.org/]

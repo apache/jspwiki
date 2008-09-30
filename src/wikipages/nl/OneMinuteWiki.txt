@@ -1,0 +1,13 @@
+!Hiya! Welkom op deze Wiki!
+
+WikiWiki is Hawaiiaans en betekent "vlug". Het originele idee van WikiWiki was om een snelle omgeving te maken waarin je kon samenwerken, waarbij alles wel wordt bewaard. 
+
+Iedereen kan bijdragen, zelfs anoniem. Ja, je kunt teksten van anderen verwijderen, en zelfs hele pagina's verwijderen, maar verrassend genoeg [werkt wiki| WikiWikiWeb:WhyWikiWorks].
+
+Wanneer je een pagina wijzigt, kan je makkelijk hyperlinks maken (moet je ook vooral doen), dit kan door een woord tussen vierkante haken te zetten.
+Als de pagina waarnaar je verwijst niet bestaat, zal de link rood en onderstreept zijn met een vraagteken. Zoals dit [ThisPageDoesNotExist].  (A.u.b. dit voorbeeld niet om zeep helpen door deze pagina te maken....)
+
+WikiNamen die spaties of underscores bevatten worden geplet, zodat [[This is a link] wordt [[ThisIsALink].
+
+Wiki is en zou simpel moet zijn. Daarom is er geen behoefte aan complexe HTML. Je kunt sommige effecten, zoals __vetgedrukt__ en ''cursief'' , maar niet echt ingewikkeld.  
+De opmaak is het probleem van de wiki zelf. Er is meer informatie op [TextFormattingRules].

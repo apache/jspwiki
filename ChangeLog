@@ -1,3 +1,8 @@
+2008-09-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * Oops, Dutch corepages had overwritten the English corepages,
+        so restored both English ones and created a dir for Dutch.
+
 2008-09-29  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.0-beta-13
@@ -7,7 +12,7 @@
         
         * [JSPWIKI-380] Fix backspace handling of the plain editor.
 
-2008-09-24  Janne Jalkanen <jalkanen@apache.org>
+2008-09-29  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-beta-12
         

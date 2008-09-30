@@ -1,1 +1,1 @@
-zet hier je [CopyrightNotice] neer !
+put your [CopyrightNotice] in here !

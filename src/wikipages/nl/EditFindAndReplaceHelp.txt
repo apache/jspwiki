@@ -1,0 +1,25 @@
+Je kunt meta-karakters gebruiken in het 'Search For' veld:
+
+|.      |elk karakter behalve newline    |+      |een of meerdere keren
+|*      |0 of meerdere keren              |?      |geen of een keer
+|{n}    |match precies n keer            |{n,m}  |tenminste n, maximaal m keer
+|~|    |pipe: {{a~|b}} matcht a of b  | -     |hyphen, match een range van karakters
+|^      |begin van een regel             |$      |einde van een regel
+|[[...] |een van de karakters van een set   |[[^...] |genegeerde karakter set
+|\b     |woord grens                   |\B     |woord niet grens
+|\d     |numeriek [[0-9]                  |\D     |niet numeriek [[^0-9]
+|\s     |enkele spatie              |\S     |enkele niet spatie 
+|\w     |[[A-Za-z0-9_]                   |\W     |[[^A-Za-z0-9_]
+|(...)  |groepering opgeslagen als $1..$9   |\.     |escape een meta karakter
+
+Het 'Replace' veld can $1..$9 gebruiken als een terugverwijzing naar haakjes van het 'Search for' veld.
+----
+Voorbeeld:\\
+
+Search for __/abc|def/__ matcht het woord 'abc' of het woord 'def'\\
+Search for  __/bwiki/b__ matcht het woord 'wiki' maar niet het woord 'jspwiki'.\\
+Search for __^[[IVXMDCL]+\.__ matcht elke combinatie van romeinse numerieke karakters gevolgd door een punt\\
+Search for __/(-?\d+)(\d{3})/__ and replace with __$1,$2__ om comma's in grote getallen in te voegen. 
+
+Dit is de [EditFindAndReplaceHelp] pagina.
+[Meer informatie over regular expressions|http://www.regular-expressions.info/javascript.html] en [RegExp Sandbox|http://www.regular-expressions.info/javascriptexample.html]\\

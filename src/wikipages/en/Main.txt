@@ -1,30 +1,31 @@
-!!!Gefeliciteerd!
+!!!Congratulations!
 
-Je hebt JSPWiki goed geïnstalleerd [JSPWiki|About].
+You have successfully installed [JSPWiki|About].
 
-Je moet een paar pagina's gaan maken:
+You have some pages set up for you:
 
 !Quick start
 
-* Om dingetjes te testen, probeer de [Sandbox].
-* Voor een korte blik op wat Wiki is, kijk op [OneMinuteWiki].
-* Voor een handleiding over goede gewoontes met wiki, zie [WikiEtiquette].
+* For testing things, try the [SandBox].
+* For a quick look on what Wiki is, check out [OneMinuteWiki].
+* For a guideline on good working habits with wiki, see [WikiEtiquette].
 
-!Installatie issues
+!Installation issues
 
 * If you run Microsoft Windows, or you are having trouble with UTF-8 then you probably want to take a look
-* Als je Microsoft Windows gebruikt, of als je problemen hebt met UTF-8, dan moet je misschien even kijken naar [InstallationTips] voor meer informatie..
+  at [InstallationTips] for further information.
 
-!Documentatie
+!Documentation
 
-* Voor alle Wiki opmaak mogelijkheden, zie [TextFormattingRules].
-* Ingang voor de volledige  [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
-** [JSPWiki 2.8 nieuwe features|http://www.jspwiki.org/wiki/NewIn2.8].
+* For all of the Wiki markup features, see [TextFormattingRules].
+* Entry point for full [JSPWikiDocumentation|http://www.jspwiki.org/wiki/JSPWikiDocumentation]
+** [JSPWiki 2.8 New Features|http://www.jspwiki.org/wiki/NewIn2.8].
 
-!Diversen
+!Miscellaneous
 
-* Er zijn diverse manieren om met de JSPWiki [Community] in contact te komen, kijk daar even !
-* Om te zien waar deze wiki over gaat, klik op de Wiki naam in de linker bovenhoek van je browser window, of [klik hier|SystemInfo].
+* There are several ways you can get in touch with JSPWiki [Community]. Check them out!
+* To see what this particular wiki is about, click on the Wiki name
+  on the top left corner of the browser window, or [click here|SystemInfo].
 
-Het beste, en bedankt voor het kiezen van JSPWiki!
+Good luck, and thanks for choosing JSPWiki!
 

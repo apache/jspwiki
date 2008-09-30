@@ -1,17 +1,13 @@
-Soms is het handig om een pagina echt naar iets anders te laten wijzen.
-Bijvoorbeeld, als je een pagina hebt met de naam "Page Aliases", maar je wilt die ook beschikbaar hebben onder de naam "Aliases". In zo'n geval kun je een "page alias"  gebruiken.
+Sometimes it's useful to have one page ''really'' mean some other page.  For example, you might have a page called "Page Aliases", but you would also like people to have it available under "Aliases".  In such a case, you can use a "page alias":
 
-Zet het volgende op de pagina "[PageAliases]" : (We hebben een voorbeeld pagina, dus als je er op klikt, kom je weer hier terug.)
+Put the following on the "[PageAliases]" -page:  (We have an example page there, so if you click on it, you will be returned back here.)
 
 {{{
 [{SET alias='PageAlias'}]
 }}}
 
-Iedere keer als iemand de pagina  "[PageAliases]" bekijkt, wordt ie automatisch doorgestuurd naar deze pagina.
-Dit is heel handig als je wat ongebruikelijke meervoud namen wil gebruiken  bijvoorbeeld.  
-Normaal zal JSPWiki Engelse meervouds pagina namen goed herkennen, maar hij kan bepaalde vormen niet herkennen, zoals "aliases". 
+Every time someone views the page "[PageAliases]", they will be automatically redirected to this page.  This is very useful if you want to be able to use the irregular plural forms, for example.  Normally, JSPWiki does properly recognize English language plural forms of page names, but it's not smart enough to recognize certain forms, such as "aliases".
 
-! Het wijzigen van de alias/redirect pagina's
+!Editing the alias/redirect pages
 
-Je kunt natuurlijk niet op de "Edit this page"-link klikken, want dan wordt je steeds geredirect als je de pagina wilt bekijken.   
-Maar je kunt ook de pagina direct wijzigen door in te tikken   {{Edit.jsp?page=''pagename''}} achter de base URL. Of wat ook kan is een InterWikiRef definiëren voor het editen, de default staat op "Edit" (i.e., [[Edit Aliases Page|Edit:Aliases])
+Well, obviously you cannot click on the "Edit this page" -link, because you are redirected every time you try to view a page.  You can, however, edit the page directly by just writing {{Edit.jsp?page=''pagename''}} after the base URL. Alternatively, you can use the interWikiRef defined for editing, by default it is set to "Edit" (i.e., [[Edit Aliases Page|Edit:Aliases]) 

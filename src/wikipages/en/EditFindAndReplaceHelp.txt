@@ -1,25 +1,26 @@
-Je kunt meta-karakters gebruiken in het 'Search For' veld:
+You can use meta-characters in the 'Search For' field:
 
-|.      |elk karakter behalve newline    |+      |een of meerdere keren
-|*      |0 of meerdere keren              |?      |geen of een keer
-|{n}    |match precies n keer            |{n,m}  |tenminste n, maximaal m keer
-|~|    |pipe: {{a~|b}} matcht a of b  | -     |hyphen, match een range van karakters
-|^      |begin van een regel             |$      |einde van een regel
-|[[...] |een van de karakters van een set   |[[^...] |genegeerde karakter set
-|\b     |woord grens                   |\B     |woord niet grens
-|\d     |numeriek [[0-9]                  |\D     |niet numeriek [[^0-9]
-|\s     |enkele spatie              |\S     |enkele niet spatie 
+|.      |any character except newline    |+      |one or more times
+|*      |zero or more times              |?      |zero or one time
+|{n}    |match exact n times             |{n,m}  |at least n, at most m times
+|~|    |pipe: {{a~|b}} matches a or b  | -     |hyphen, match a range of chars
+|^      |beginning of a line             |$      |end of a line
+|[[...] |one of the char's of a set      |[[^...] |negated character set
+|\b     |word boundary                   |\B     |word non boundary
+|\d     |numeral [[0-9]                  |\D     |non numeral [[^0-9]
+|\s     |single white space              |\S     |single non white space 
 |\w     |[[A-Za-z0-9_]                   |\W     |[[^A-Za-z0-9_]
-|(...)  |groepering opgeslagen als $1..$9   |\.     |escape een meta karakter
+|(...)  |grouping are stored as $1..$9   |\.     |escape a meta char
 
-Het 'Replace' veld can $1..$9 gebruiken als een terugverwijzing naar haakjes van het 'Search for' veld.
+The 'Replace with' field can use $1..$9  as a backreference to parentheses of 'Search for' field.
 ----
-Voorbeeld:\\
+Example:\\
 
-Search for __/abc|def/__ matcht het woord 'abc' of het woord 'def'\\
-Search for  __/bwiki/b__ matcht het woord 'wiki' maar niet het woord 'jspwiki'.\\
-Search for __^[[IVXMDCL]+\.__ matcht elke combinatie van romeinse numerieke karakters gevolgd door een punt\\
-Search for __/(-?\d+)(\d{3})/__ and replace with __$1,$2__ om comma's in grote getallen in te voegen. 
+Search for __/abc|def/__ will match the word 'abc' or the word 'def'\\
+Search for  __/bwiki/b__ will match the word 'wiki' but not the word 'jspwiki'.\\
+Search for __^[[IVXMDCL]+\.__ will match any combination of roman numeral char's followed by a period\\
+Search for __/(-?\d+)(\d{3})/__ and replace with __$1,$2__ to insert commas in large integers. 
 
-Dit is de [EditFindAndReplaceHelp] pagina.
-[Meer informatie over regular expressions|http://www.regular-expressions.info/javascript.html] en [RegExp Sandbox|http://www.regular-expressions.info/javascriptexample.html]\\
+This is the [EditFindAndReplaceHelp] page. 
+[More info on regular expressions|http://www.regular-expressions.info/javascript.html]
+and [RegExp Sandbox|http://www.regular-expressions.info/javascriptexample.html]\\
