@@ -853,10 +853,12 @@ var SearchBox = {
 		
 		if(location.hash){
 			/* hash contains query:pagination(-1=all,0,1,2...) */
-			var s = location.hash.substr(1).match(/(.*):(-?\d+)$/);
-			q2.value = s[1];
-			$('start').value = s[2];
-			changescope();
+			var s = decodeURIComponent(location.hash.substr(1)).match(/(.*):(-?\d+)$/);
+			if(s && s.length==3){
+				q2.value = s[1];
+				$('start').value = s[2];
+				changescope();
+			}
 		}
 	},
 
