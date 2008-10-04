@@ -22,9 +22,7 @@ Building
 Ant is the build system.
 
 Everything should Just Compile, when you say 'ant', assuming you have
-everything in your path.  Most notably, you'll probably have to copy
-the servlet.jar into either your $JAVA_HOME/jre/lib/ext, or to
-JSPWiki/lib.
+everything in your path. 
 
 There are few targets:
 
@@ -33,6 +31,7 @@ ant javadoc: builds the javadocs into doc/javadoc
 ant compile: just the basic compile, thankyouverymuch
 ant tests  : runs JUnit tests.
 ant jar    : builds the JSPWiki.jar into build/
+ant war  : builds the JSPWiki.war that can be deployed to your webcontainer
 
 You can customize your compilation by changing the contents of the
 build.properties file, or better yet, make your own compilation
@@ -43,7 +42,17 @@ small shell script and call it "my_build.sh":
 #!/bin/sh
 ant -Dbuild.properties=/path/to/my.properties
 
+Eclipse
 
+To be a little bit more productive you probably want to use Eclipse.
+To get JSPWiki build from within Eclipse, here are a few guidelines:
+- first install the SVN Eclipse Plugin (the JSPWiki sources are in svn.(eu.)apache.org)
+- create a new SVN Project and check out the trunk ( (incubator/)jspwiki/trunk)
+- the only thing you propably have to change is the buildpath (see properties of the project)
+- then the sources should be compiled correctly
+- to run a build, switch to the Ant View and add the build.xml buildfile
+- then you can choose the Ant target by double clicking on it
+    
 
 Directory structure
 ===================
@@ -54,7 +63,7 @@ Directory structure
 webapps directory, including all of the deployment files under
 WEB-INF.
 
-'src/wikipages' contains a number of ready-made Wikipages.  Feel free
+'src/wikipages' contains a number of ready-made Wikipages called the core pages.  Feel free
 to use them.
 
 'tests' contains a number of tests which you can run by saying 'ant
