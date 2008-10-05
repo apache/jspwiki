@@ -15,10 +15,16 @@ public enum NodeType
     TEXT("", ""),
     /** CDATA node. */
     CDATA("<![CDATA[","]]>"),
+    /** DOCTYPE declaration */
+    DOCTYPE("<!DOCTYPE ", ">"),
     /** HTML comment tag */
     HTML_COMMENT("<!--", "-->"),
     /** HTML start tag */
     HTML_START_TAG("<", ">"),
+    /** HTML LINK tag. */
+    HTML_LINK("<",">"),
+    /** HTML META tag. */
+    HTML_META("<",">"),
     /** HTML end tag */
     HTML_END_TAG("</", ">"),
     /** HTML end tag */

@@ -1,6 +1,5 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,15 +72,6 @@ public class JSPWikiJspTransformerTest extends TestCase
         assertEquals( "form", node.getName() );
     }
     
-    public void testParseWeirdDoc() throws Exception
-    {
-        File src = new File( "src/webdocs/Captcha.jsp" );
-        String s = JspMigrator.readSource( src );
-        
-        JspDocument doc = new JspParser().parse( s );
-        m_transformer.transform( m_sharedState, doc );
-    }
-
     public static Test suite()
     {
         return new TestSuite( JSPWikiJspTransformerTest.class );

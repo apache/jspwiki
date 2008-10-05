@@ -180,7 +180,7 @@ public class JspParser
 
             // Figure out what this tag is
             String lookahead = ctx.lookahead( 4 );
-            String lookahead9 = ctx.lookahead( 9 );
+            String lookahead10= ctx.lookahead( 10 );
             JspDocument doc = ctx.getDocument();
 
             // <%- means hidden JSP comment
@@ -223,8 +223,14 @@ public class JspParser
                 }
             }
             
+            // <!DOCTYPE means DOCTYPE
+            else if ( lookahead10.startsWith( NodeType.DOCTYPE.getTagStart() ) )
+            {
+                initNode( new Text( doc, NodeType.DOCTYPE ), Stage.CODE_OR_COMMENT );
+            }
+            
             // <![CDATA[ means CDATA
-            else if( lookahead9.startsWith( NodeType.CDATA.getTagStart() ) )
+            else if( lookahead10.startsWith( NodeType.CDATA.getTagStart() ) )
             {
                 initNode( new Text( doc, NodeType.CDATA ), Stage.CODE_OR_COMMENT );
             }
@@ -328,7 +334,7 @@ public class JspParser
                 case CODE_OR_COMMENT: {
                     switch( ch )
                     {
-                        // Terminating %> or --> means the end of the comment
+                        // Terminating %>, > or --> means the end of the comment (or DOCTYPE)
                         case ('>'): {
                             String tagEnd = node.getType().getTagEnd();
                             String lookbehind = ctx.lookbehind( tagEnd.length() );
@@ -384,6 +390,16 @@ public class JspParser
         {
             ParseContext ctx = ParseContext.currentContext();
             Node node = ctx.getNode();
+            
+            // Special case if we have a META or LINK tag
+            if ( "LINK".equals( node.getName() ) )
+            {
+                node.setType( NodeType.HTML_LINK );
+            }
+            else if ( "META".equals( node.getName() ) )
+            {
+                node.setType( NodeType.HTML_META );
+            }
 
             // Resolve tag type if not set
             if( node.getType() == NodeType.UNRESOLVED_HTML_TAG )
@@ -421,7 +437,23 @@ public class JspParser
                     // Make end tag the peer of the start tag
                     Node startTag = node.getParent();
                     node.setParent( startTag.getParent() );
-
+                    
+                    // Does the end tag match the start tag?
+                    if ( !node.getName().equals( startTag.getName() ) )
+                    {
+                        if ( startTag.equals( ctx.getDocument().getRoot() ) )
+                        {
+                            throw new IllegalStateException( "Encountered end tag </"
+                                                             + node.getName() + "> (" + node.getLine() + "," + node.getColumn() + " char " + node.getStart()
+                                                             + ") that did have a matching start tag." );
+                        }
+                        throw new IllegalStateException( "Encountered end tag </"
+                                                         + node.getName() + "> (" + node.getLine() + "," + node.getColumn() + " char " + node.getStart()
+                                                         + ") that did not match start tag <"
+                                                         + startTag.getName() + "> (" + startTag.getLine() + "," + startTag.getColumn() + " char " + startTag.getEnd() + ")"
+                        );
+                    }
+                    
                     // Get rid of the current node in the parent context
                     ctx = ParseContext.pop();
                     ctx.setNode( null );

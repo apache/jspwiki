@@ -14,6 +14,69 @@ public class JspParserTest extends TestCase
         super( s );
     }
     
+    public void testParseDoctype() throws Exception
+    {
+        String s = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+        
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+        
+        // Verify three nodes total
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Node node = nodes.get( 0 );
+        assertEquals( "(TEXT)", node.getName() );
+        assertEquals( NodeType.DOCTYPE, node.getType() );
+        assertEquals( "html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"", node.getValue() );
+    }
+
+    public void testMeta() throws Exception
+    {
+        String s = "<META name=\"Author\" content=\"Dave Raggett\">";
+        
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+        
+        // Verify three nodes total
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Tag tag = (Tag)nodes.get( 0 );
+        assertEquals( "META", tag.getName() );
+        assertEquals( NodeType.HTML_META, tag.getType() );
+        assertEquals( 2, tag.getAttributes().size() );
+        assertEquals( "name", tag.getAttribute( "name" ).getName() );
+        assertEquals( "Author", tag.getAttribute( "name" ).getValue() );
+        assertEquals( "content", tag.getAttribute( "content" ).getName() );
+        assertEquals( "Dave Raggett", tag.getAttribute( "content" ).getValue() );
+    }
+    
+    public void testLink() throws Exception
+    {
+        String s = "<LINK rel=\"Start\" title=\"First\" type=\"text/html\" href=\"http://start.html\">";
+        
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+        
+        // Verify three nodes total
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Tag tag = (Tag)nodes.get( 0 );
+        assertEquals( "LINK", tag.getName() );
+        assertEquals( NodeType.HTML_LINK, tag.getType() );
+        assertEquals( 4, tag.getAttributes().size() );
+        assertEquals( "rel", tag.getAttribute( "rel" ).getName() );
+        assertEquals( "Start", tag.getAttribute( "rel" ).getValue() );
+        assertEquals( "title", tag.getAttribute( "title" ).getName() );
+        assertEquals( "First", tag.getAttribute( "title" ).getValue() );
+        assertEquals( "type", tag.getAttribute( "type" ).getName() );
+        assertEquals( "text/html", tag.getAttribute( "type" ).getValue() );
+        assertEquals( "href", tag.getAttribute( "href" ).getName() );
+        assertEquals( "http://start.html", tag.getAttribute( "href" ).getValue() );
+    }
+    
     public void testNestedAttributes() throws Exception
     {
         String s = "<a <b test=\"c\">selected=\"d\"</b> >Foo</a>";
