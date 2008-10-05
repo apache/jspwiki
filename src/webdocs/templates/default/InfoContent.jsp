@@ -138,7 +138,7 @@
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
       <p>
       <input type="submit" name="delete-all" id="delete-all"
-            value="<fmt:message key='info.delete.submit'/>" >
+            value="<fmt:message key='info.delete.submit'/>" />
       </p>
     </form>
   </wiki:Permission>

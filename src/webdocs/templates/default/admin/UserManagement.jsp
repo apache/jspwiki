@@ -112,15 +112,16 @@ function addNew()
        <td><label>Last modified</label></td>
        <td class="formvalue" id="lastmodified">
        </td>
+     </tr>
 
      <tr>
         <td><input type="submit" name="action" value="Save"/></td>
      </tr>
 
      </table>
-   </div>
    <div id="useractions">
      <input type="submit" name="action" value="Remove" onclick="return( confirm('Are you sure you wish to remove this user?') && Wiki.submitOnce(this) );"/>      <input type="button" value="Add" onclick="javascript:addNew()"/>
+   </div>
    </form>
    </div>
 </div>

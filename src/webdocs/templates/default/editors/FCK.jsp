@@ -127,9 +127,9 @@
     <fieldset>
 	<legend><fmt:message key="editor.commentsignature"/></legend>
     <p>
-    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label></td>
+    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label>
     <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
-    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%>"/>
+    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
     <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
     </p>
 	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>

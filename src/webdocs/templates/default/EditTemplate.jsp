@@ -25,8 +25,7 @@
   <wiki:Include page="commonheader.jsp"/>
 </head>
 
-<wiki:CheckRequestContext context="edit"><body class="edit" ></wiki:CheckRequestContext>
-<wiki:CheckRequestContext context="comment"><body class="comment" ></wiki:CheckRequestContext>
+<body <wiki:CheckRequestContext context='edit'>class="edit"</wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'>class="comment"</wiki:CheckRequestContext> >
 
 <div id="wikibody" class="${prefs.Orientation}">
 
