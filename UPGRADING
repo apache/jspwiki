@@ -90,7 +90,7 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
 
    -> JSPWiki now wires up its own JAAS login process, and no longer
       interferes with existing JAAS login stacks. The JAAS configuration
-      options that were previously set in WEB-INF/jwpwiki.jaas are now
+      options that were previously set in WEB-INF/jspwiki.jaas are now
       set in jspwiki.properties. You should make the following changes to
       jspwiki.properties in accordance with your preferred container
       login configuration (package names omitted for brevity):
@@ -140,8 +140,8 @@ UPGRADE INSTRUCTIONS FOR DEPLOYERS
        
           column name         type
           --------------------------------------------------------------------------------------------
-          uid                       varchar (100)
-          lockExpiry                timestamp
+          uid                            varchar (100)
+          lockExpiry               timestamp
           attributes                longvarchar (or other large text/memo field)
   
       The primary key should also be changed to the 'uid' column. The column names
@@ -198,7 +198,7 @@ UPGRADE INSTRUCTIONS FOR DEVELOPERS
 
 1. Required Steps
    --------------
-(to be written)
+JSPWiki 2.8 requires at least Java 5, so make sure you have that available.
 
 
 2. Suggested Steps

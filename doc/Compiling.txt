@@ -63,8 +63,9 @@ Directory structure
 webapps directory, including all of the deployment files under
 WEB-INF.
 
-'src/wikipages' contains a number of ready-made Wikipages called the core pages.  Feel free
-to use them.
+'src/wikipages' contains a number of ready-made Wikipages called the core pages.
+There is a subdirectory for each language that is supported.  
+Feel free to use them.
 
 'tests' contains a number of tests which you can run by saying 'ant
 tests'.  If any of them fail, you know you've broken something.

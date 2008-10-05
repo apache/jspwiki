@@ -1,3 +1,9 @@
+2008-10-05  Harry Metske <harry.metske@gmail.com>
+
+        * Updated LICENSE and NOTICE file quite a couple of resources (most of them Apache licensed)
+        
+        * a few minor updates to Compiling.txt, UPGRADING and ReleaseNotes
+
 2008-10-05  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * Updated LICENSE and NOTICE file for javascript related resources. (no version step-up)

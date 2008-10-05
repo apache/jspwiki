@@ -30,7 +30,7 @@ NEW FEATURES
 * WikiWizard is removed (it is LGPL), but FCK integration is available,
   and WikiWizard can still be installed as a separate package.
 
-* German language corepages
+* German, Finnish, Spanish, Simplified Chinese and Dutch language corepages
 
 * Support for the UniversalEditButton (http://universaleditbutton.org/).
 
