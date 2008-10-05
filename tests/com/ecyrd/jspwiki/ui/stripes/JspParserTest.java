@@ -14,19 +14,141 @@ public class JspParserTest extends TestCase
         super( s );
     }
     
-    public void testCombinedTag() throws Exception
+    public void testNestedAttributes() throws Exception
     {
-        String s = "<foo />";
+        String s = "<a <b test=\"c\">selected=\"d\"</b> >Foo</a>";
         
         // Parse the contents
         JspParser parser = new JspParser();
         JspDocument doc = parser.parse( s );
         
+        // Verify three nodes total
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 3, nodes.size() );
+        
+        // First node is a start tag
+        Node node;
+        node = nodes.get( 0 );
+        assertEquals( "a", node.getName() );
+        assertEquals( NodeType.HTML_START_TAG, node.getType() );
+        assertEquals( "<a <b test=\"c\">selected=\"d\"</b> >", node.toString() );
+        
+        // Second node is a Text node
+        node = nodes.get( 1 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( "Foo", node.getValue() );
+        
+        // Third node is an end tag
+        node = nodes.get( 2 );
+        assertEquals( "a", node.getName() );
+        assertEquals( NodeType.HTML_END_TAG, node.getType() );
+        
+        // First and third node are children of the root
+        assertEquals( 2, doc.getRoot().getChildren().size() );
+        assertEquals( NodeType.HTML_START_TAG, doc.getRoot().getChildren().get( 0 ).getType() );
+        assertEquals( NodeType.HTML_END_TAG, doc.getRoot().getChildren().get( 1 ).getType() );
+        
+        // Test first node: should have 3 attributes (2 dynamic)
+        Tag tag = (Tag)nodes.get( 0 );
+        assertEquals( 3, tag.getAttributes().size() );
+        Attribute attribute;
+        attribute = tag.getAttributes().get( 0 );
+        assertEquals( null, attribute.getName() );
+        assertEquals( NodeType.DYNAMIC_ATTRIBUTE, attribute.getType() );
+        assertEquals( "<b test=\"c\">", attribute.getValue() );
+        assertEquals( "<b test=\"c\">", attribute.toString() );
+        attribute = tag.getAttributes().get( 1 );
+        assertEquals( "selected", attribute.getName() );
+        assertEquals( "d", attribute.getValue() );
+        assertEquals( "selected=\"d\"", attribute.toString() );
+        attribute = tag.getAttributes().get( 2 );
+        assertEquals( null, attribute.getName() );
+        assertEquals( NodeType.DYNAMIC_ATTRIBUTE, attribute.getType() );
+        assertEquals( "</b>", attribute.getValue() );
+        assertEquals( "</b>", attribute.toString() );
+    }
+
+    public void testAttributes() throws Exception
+    {
+        String s = "<a b=\"cd\"/>";
+
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+
         // Results in one node
         List<Node> nodes = doc.getNodes();
         assertEquals( 1, nodes.size() );
         Tag node;
+
+        // Verify HTML start tag
+        node = (Tag) nodes.get( 0 );
+        assertEquals( "a", node.getName() );
+        assertEquals( null, node.getValue() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( "<a b=\"cd\"/>", node.toString() );
+
+        // Verify attributes
+        assertEquals( 1, node.getAttributes().size() );
+        Attribute attribute = node.getAttribute( "b" );
+        assertEquals( "b", attribute.getName() );
+        assertEquals( "cd", attribute.getValue() );
+        assertEquals( 3, attribute.getStart() );
+        assertEquals( 9, attribute.getEnd() );
+    }
+
+    public void testCdata() throws Exception
+    {
+        String s = "  <![CDATA[ foo ]]>  ";
+
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+
+        // Results in 3 nodes
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 3, nodes.size() );
+        Node node;
+
+        // Verify text tag (0)
+        node = nodes.get( 0 );
+        assertEquals( "(TEXT)", node.getName() );
+        assertEquals( "  ", node.getValue() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( "  ", node.toString() );
+
+        // Verify CDATA tag (1)
+        node = nodes.get( 1 );
+        assertEquals( "(TEXT)", node.getName() );
+        assertEquals( " foo ", node.getValue() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.CDATA, node.getType() );
+        assertEquals( "<![CDATA[ foo ]]>", node.toString() );
         
+        // Verify text tag (2)
+        node = nodes.get( 2 );
+        assertEquals( "(TEXT)", node.getName() );
+        assertEquals( "  ", node.getValue() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( "  ", node.toString() );
+    }
+    
+    public void testCombinedTag() throws Exception
+    {
+        String s = "<foo />";
+
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+
+        // Results in one node
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Tag node;
+
         // Verify HTML combined tag
         node = (Tag) nodes.get( 0 );
         assertEquals( "foo", node.getName() );
@@ -47,15 +169,15 @@ public class JspParserTest extends TestCase
         // Results in one node
         List<Node> nodes = doc.getNodes();
         assertEquals( 1, nodes.size() );
-        Markup node;
+        Text node;
 
         // Verify comment
-        node = (Markup) nodes.get( 0 );
-        assertEquals( "(MARKUP)", node.getName() );
+        node = (Text) nodes.get( 0 );
+        assertEquals( "(TEXT)", node.getName() );
         assertEquals( " This is a comment ", node.getValue() );
         assertEquals( 0, node.getChildren().size() );
     }
-    
+
     public void testParseDirective() throws Exception
     {
         String s = "<%@ page import=\"org.apache.log4j.*\" %>";
@@ -67,11 +189,11 @@ public class JspParserTest extends TestCase
         // Results in one node
         List<Node> nodes = doc.getNodes();
         assertEquals( 1, nodes.size() );
-        JspDirective node;
+        Tag node;
         Node attribute;
 
         // Verify directive
-        node = (JspDirective) nodes.get( 0 );
+        node = (Tag) nodes.get( 0 );
         assertEquals( "page", node.getName() );
         assertEquals( 1, node.getAttributes().size() );
         attribute = node.getAttributes().get( 0 );
@@ -81,9 +203,8 @@ public class JspParserTest extends TestCase
 
     public void testParse() throws Exception
     {
-        JspMigrator m = new JspMigrator();
         File src = new File( "src/webdocs/LoginForm.jsp" );
-        String s = m.readSource( src );
+        String s = JspMigrator.readSource( src );
 
         // Parse the contents of the file
         JspParser parser = new JspParser();
@@ -106,11 +227,10 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "page", node.getName() );
-        assertEquals( 1, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "import", attribute.getName() );
         assertEquals( "org.apache.log4j.*", attribute.getValue() );
         i++;
@@ -122,7 +242,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -136,11 +255,10 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "page", node.getName() );
-        assertEquals( 1, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "import", attribute.getName() );
         assertEquals( "com.ecyrd.jspwiki.*", attribute.getValue() );
         i++;
@@ -152,7 +270,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -166,11 +283,10 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "page", node.getName() );
-        assertEquals( 1, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "import", attribute.getName() );
         assertEquals( "com.ecyrd.jspwiki.action.*", attribute.getValue() );
         i++;
@@ -182,7 +298,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -196,11 +311,10 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "page", node.getName() );
-        assertEquals( 1, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "errorPage", attribute.getName() );
         assertEquals( "/Error.jsp", attribute.getValue() );
         i++;
@@ -212,7 +326,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -226,14 +339,13 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "taglib", node.getName() );
-        assertEquals( 2, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 2, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "uri", attribute.getName() );
         assertEquals( "/WEB-INF/jspwiki.tld", attribute.getValue() );
-        attribute = ((JspDirective) node).getAttributes().get( 1 );
+        attribute = ((Tag) node).getAttributes().get( 1 );
         assertEquals( "prefix", attribute.getName() );
         assertEquals( "wiki", attribute.getValue() );
         i++;
@@ -245,7 +357,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -259,14 +370,13 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "taglib", node.getName() );
-        assertEquals( 2, ((JspDirective) node).getAttributes().size() );
-        attribute = ((JspDirective) node).getAttributes().get( 0 );
+        assertEquals( 2, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "uri", attribute.getName() );
         assertEquals( "/WEB-INF/stripes.tld", attribute.getValue() );
-        attribute = ((JspDirective) node).getAttributes().get( 1 );
+        attribute = ((Tag) node).getAttributes().get( 1 );
         assertEquals( "prefix", attribute.getName() );
         assertEquals( "stripes", attribute.getValue() );
         i++;
@@ -278,7 +388,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -292,7 +401,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "stripes:useActionBean", node.getName() );
 
@@ -315,7 +423,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -328,9 +435,8 @@ public class JspParserTest extends TestCase
         assertEquals( 767, node.getEnd() );
         assertEquals( NodeType.JSP_DECLARATION, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
-        assertEquals( "(MARKUP)", node.getName() );
+        assertEquals( "(TEXT)", node.getName() );
         i++;
         node = nodes.get( i );
         assertEquals( 19, node.getLine() );
@@ -340,7 +446,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
@@ -354,9 +459,8 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.SCRIPTLET, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
-        assertEquals( "(MARKUP)", node.getName() );
+        assertEquals( "(TEXT)", node.getName() );
         i++;
 
         // Test second tag on line 33 aka node 17
@@ -368,7 +472,6 @@ public class JspParserTest extends TestCase
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "wiki:Include", node.getName() );
 
@@ -509,7 +612,6 @@ public class JspParserTest extends TestCase
         assertEquals( "  ", node.getValue() );
         assertEquals( "(TEXT)", node.getName() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 2, node.getSiblings().size() );
         assertEquals( 0, node.getChildren().size() );
 
@@ -524,7 +626,6 @@ public class JspParserTest extends TestCase
         assertEquals( "wiki:Include", node.getName() );
         assertEquals( null, node.getValue() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 2, node.getSiblings().size() );
         assertEquals( 0, node.getChildren().size() );
 
@@ -557,7 +658,6 @@ public class JspParserTest extends TestCase
         assertEquals( "  ", node.getValue() );
         assertEquals( "(TEXT)", node.getName() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 1, node.getLevel() );
         assertEquals( 2, node.getSiblings().size() );
         assertEquals( 0, node.getChildren().size() );
     }

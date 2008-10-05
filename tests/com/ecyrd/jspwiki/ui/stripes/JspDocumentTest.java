@@ -30,8 +30,6 @@ public class JspDocumentTest extends TestCase
         assertEquals( 5, endTag.getStart() );
         assertEquals( 11, endTag.getEnd() );
         assertEquals( "foo", endTag.getName() );
-
-        Node child = new Tag( doc, NodeType.HTML_COMBINED_TAG );
     }
 
     public static Test suite()

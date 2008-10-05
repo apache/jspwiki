@@ -28,7 +28,11 @@ public class Attribute extends AbstractNode
     @Override
     public void setType( NodeType type )
     {
-        throw new UnsupportedOperationException( "Attributes are always of type NodeType.ATTRIBUTE; illegal to call this method." );
+        if ( type != NodeType.ATTRIBUTE && type != NodeType.DYNAMIC_ATTRIBUTE )
+        {
+            throw new UnsupportedOperationException( "Attributes are always of type NodeType.ATTRIBUTE or NodeType.DYNAMIC_ATTRIBUTE." );
+        }
+        super.setType( type );
     }
 
     /**
@@ -37,14 +41,21 @@ public class Attribute extends AbstractNode
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(  m_name );
-        sb.append( '=' );
-        sb.append( m_quote );
-        for ( Node valueNode : m_children )
+        if ( m_type == NodeType.ATTRIBUTE )
         {
-            sb.append( valueNode.toString() );
+            sb.append(  m_name );
+            sb.append( '=' );
+            sb.append( m_quote );
+            for ( Node valueNode : m_children )
+            {
+                sb.append( valueNode.toString() );
+            }
+            sb.append( m_quote );
         }
-        sb.append( m_quote );
+        else
+        {
+            sb.append( getValue() );
+        }
         return sb.toString();
     }
 }

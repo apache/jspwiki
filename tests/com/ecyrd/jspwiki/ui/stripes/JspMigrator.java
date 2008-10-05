@@ -151,7 +151,7 @@ public class JspMigrator
         writer.close();
     }
 
-    protected String readSource( File src ) throws IOException
+    protected static String readSource( File src ) throws IOException
     {
         // Read in the file
         FileReader reader = new FileReader( src );

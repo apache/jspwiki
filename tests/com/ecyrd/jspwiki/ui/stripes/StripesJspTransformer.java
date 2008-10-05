@@ -46,7 +46,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
         Node lastTaglib = null;
         for ( Node node : nodes )
         {
-            JspDirective directive = (JspDirective)node;
+            Tag directive = (Tag)node;
             if ( "taglib".equals( node.getName() ) )
             {
                 lastTaglib = node;
@@ -62,7 +62,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
         {
             Text linebreak = new Text( doc );
             linebreak.setValue( System.getProperty( "line.separator" ) );
-            JspDirective directive = new JspDirective( doc );
+            linebreak.setParent( doc.getRoot() );
+            Tag directive = new Tag( doc, NodeType.JSP_DIRECTIVE );
             directive.setName( "taglib" );
             Attribute attribute = new Attribute( doc );
             attribute.setName( "uri" );
@@ -165,7 +166,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
             if( actionUrl != null )
             {
                 int qmark = actionUrl.indexOf( '?' );
-                if( qmark < actionUrl.length() - 1 )
+                if( qmark != -1 && qmark < actionUrl.length() - 1 )
                 {
                     // Change "action" attribute"
                     String trimmedPath = actionUrl.substring( 0, qmark );

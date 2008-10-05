@@ -1,5 +1,6 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,9 +109,9 @@ public class StripesJspTransformerTest extends TestCase
         node = doc.getNodes().get( 0 );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( "taglib", node.getName() );
-        attribute = ((JspDirective) node).getAttribute( "prefix" );
+        attribute = ((Tag) node).getAttribute( "prefix" );
         assertEquals( "stripes", attribute.getValue() );
-        attribute = ((JspDirective) node).getAttribute( "uri" );
+        attribute = ((Tag) node).getAttribute( "uri" );
         assertEquals( "/WEB-INF/stripes.tld", attribute.getValue() );
 
         // Verify linebreak

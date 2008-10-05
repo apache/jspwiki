@@ -69,43 +69,6 @@ public class Tag extends AbstractNode
         m_attributes.remove( attribute );
     }
 
-    private String diagnostic()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append( "[" );
-        sb.append( m_type.toString() );
-        sb.append( "(pos=" );
-        sb.append( m_line );
-        sb.append( ":" );
-        sb.append( m_col );
-        sb.append( ",chars=" );
-        sb.append( m_start );
-        sb.append( ":" );
-        sb.append( m_end );
-        sb.append( ",L" );
-        sb.append( getLevel() );
-        sb.append( ")," );
-        sb.append( "name=\"" );
-        sb.append( m_name );
-        sb.append( "\"," );
-        if( m_attributes.size() > 0 )
-        {
-            sb.append( "attributes=" );
-            for( Attribute attr : m_attributes )
-            {
-                sb.append( "[" );
-                sb.append( attr.toString() );
-                sb.append( "\"]" );
-            }
-            sb.append( "," );
-        }
-        sb.append( "value=\"" );
-        sb.append( getValue() );
-        sb.append( "\"]" );
-
-        return sb.toString();
-    }
-
     /**
      * Adds a child to the current Node. If the Node is of type
      * {@link NodeType#HTML_COMBINED_TAG}, the tag will be split into two nodes
@@ -190,23 +153,43 @@ public class Tag extends AbstractNode
      */
     public String toString()
     {
+        // Root node is easy!
+        if ( m_type == NodeType.ROOT )
+        {
+            return "ROOT";
+        }
+        
         StringBuilder sb = new StringBuilder();
-        sb.append( m_type.getTagStart() );
+        
+        // Calculate start and end nodes
+        String tagStart= m_type.getTagStart();
+        String tagEnd = m_type.getTagEnd();
+        if ( tagStart == null ) tagStart = "?";
+        if ( tagEnd == null ) tagEnd = "?";
 
-        // HTML nodes and JSP directives are formatted in mostly the same way.
+        // Print tag start
+        sb.append( tagStart );
+
+        // If Tag, print start/end plus attributes.
         if( isHtmlNode() || m_type == NodeType.JSP_DIRECTIVE )
         {
-            if( m_type == NodeType.JSP_DIRECTIVE )
-            {
-                sb.append( ' ' );
-            }
             sb.append( m_name );
             if( m_attributes.size() > 0 )
             {
+                sb.append( ' ' );
+                NodeType lastType = null;
                 for( Attribute attr : m_attributes )
                 {
-                    sb.append( ' ' );
+                    if ( attr.getType() == lastType )
+                    {
+                        sb.append( ' ' );
+                    }
                     sb.append( attr.toString() );
+                    lastType = attr.getType();
+                }
+                if ( lastType == NodeType.DYNAMIC_ATTRIBUTE )
+                {
+                    sb.append( ' ' );
                 }
             }
         }
@@ -220,7 +203,8 @@ public class Tag extends AbstractNode
             }
         }
 
-        sb.append( m_type.getTagEnd() );
+        // Print tag end
+        sb.append( tagEnd );
         return sb.toString();
     }
 

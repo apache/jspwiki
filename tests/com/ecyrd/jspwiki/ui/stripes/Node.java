@@ -62,15 +62,6 @@ public interface Node
     public abstract int getEnd();
 
     /**
-     * Returns the "level" of the tag; that is, how far from the top-level nodes
-     * (which are level 1). If the parent of this node is not set, this method
-     * returns -1.
-     * 
-     * @return
-     */
-    public abstract int getLevel();
-
-    /**
      * Returns the line of the source text the node starts on.
      * 
      * @return the line

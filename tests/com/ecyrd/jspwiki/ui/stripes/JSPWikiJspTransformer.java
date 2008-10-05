@@ -30,9 +30,9 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                     removeSetBundle( tag );
                 }
 
-                // Advise user about <input type="hidden"> tags
+                // Advise user about <input type="hidden"> or <stripes:hidden> tags
                 boolean isTypeHidden = false;
-                isTypeHidden = "stripes:form".equals( tag.getName() );
+                isTypeHidden = "stripes:hidden".equals( tag.getName() ) && tag.getType() != NodeType.HTML_END_TAG;
                 if( "input".equals( tag.getName() ) )
                 {
                     Attribute attribute = tag.getAttribute( "type" );
@@ -41,7 +41,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                 if( isTypeHidden )
                 {
                     Attribute hidden = tag.getAttribute( "name" );
-                    message( hidden, "NOTE: hidden form input \"" + hidden.getValue()
+                    message( hidden, "NOTE: hidden form input with name \"" + hidden.getValue()
                                      + "\" should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
                 }
 

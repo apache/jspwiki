@@ -119,28 +119,6 @@ public abstract class AbstractNode implements Node
     /*
      * (non-Javadoc)
      * 
-     * @see com.ecyrd.jspwiki.ui.stripes.Node#getLevel()
-     */
-    public int getLevel()
-    {
-        if( m_parent == null )
-        {
-            return -1;
-        }
-
-        int level = 0;
-        Node node = this;
-        while ( node.getType() != NodeType.ROOT )
-        {
-            level++;
-            node = node.getParent();
-        }
-        return level;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.ecyrd.jspwiki.ui.stripes.Node#getLine()
      */
     public int getLine()
