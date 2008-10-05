@@ -10,7 +10,7 @@ Portions of this code donated by BaseN Corporation.
 Based on JSPWiki by Janne Jalkanen, Andrew R. Jaquith, and others.
 
 There have been many contributors so far.  Especially thanks go to
-Andrew Jaquith, Dirk Fredericx, Murray Altheim, Olaf Kock, Mark
+Andrew Jaquith, Dirk Frederickx, Murray Altheim, Olaf Kock, Mark
 Rawling, Dan Frankowski, Terry Steichen, Chuck Smith, Christoph Sauer,
 Erik Bunn, Niilo Neuvo, Alain Ravet, Kalle Kivimaa, Jeff Phillips,
 Mahlen Morris, Paul Downes, Michael Gentry, John Volkar, Torsten
@@ -43,5 +43,8 @@ JUnit Copyright Eric Gamma and others.
 
 Selenium (C) OpenQA.org
 
+Prettify Copyright (C) 2006 Google Inc.
 
+posteditor by Daniel Mota aka IceBeat, (see http://icebeat.bitacoras.com)
 
+Slimbox, adapted for JSPWiki, by Christophe Bleys. (see http://www.digitalia.be/software/slimbox) 

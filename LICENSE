@@ -256,11 +256,9 @@ yuicompressor-2.3.3.jar						doc/LICENSE.yui
 JS LIBRARY									LICENSE FILE
 ===================================================================================
 mootools.js									doc/LICENSE.mit
-jsonrpc.js									LICENSE
 prettify.js									LICENSE
-SlimBox
-Reflection
-posteditor.js								MIT-like, but unknown
+SlimBox										doc/LICENSE.mit 
+posteditor.js								doc/LICENSE.mit
 
 RESOURCES									LICENSE FILE
 ===================================================================================
