@@ -484,6 +484,7 @@ public abstract class WikiContext extends AbstractActionBean
 
             //  No need to deep clone these
             copy.m_engine  = m_engine;
+
             copy.m_template       = m_template;
             copy.m_variableMap    = (HashMap<String,Object>)m_variableMap.clone();
             copy.m_request        = m_request;
