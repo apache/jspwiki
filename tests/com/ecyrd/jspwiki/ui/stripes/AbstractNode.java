@@ -207,7 +207,8 @@ public abstract class AbstractNode implements Node
     public boolean isHtmlNode()
     {
         return m_type == NodeType.HTML_START_TAG || m_type == NodeType.HTML_COMBINED_TAG || m_type == NodeType.UNRESOLVED_HTML_TAG
-               || m_type == NodeType.HTML_END_TAG;
+               || m_type == NodeType.HTML_END_TAG || m_type == NodeType.DECLARATION || m_type == NodeType.HTML_LINK
+               || m_type == NodeType.HTML_META;
     }
 
     /*

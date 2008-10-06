@@ -32,17 +32,20 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
 
                 // Advise user about <input type="hidden"> or <stripes:hidden> tags
                 boolean isTypeHidden = false;
-                isTypeHidden = "stripes:hidden".equals( tag.getName() ) && tag.getType() != NodeType.HTML_END_TAG;
-                if( "input".equals( tag.getName() ) )
+                if ( tag.getType() != NodeType.HTML_END_TAG )
                 {
-                    Attribute attribute = tag.getAttribute( "type" );
-                    isTypeHidden = "hidden".equals( attribute.getValue() );
-                }
-                if( isTypeHidden )
-                {
-                    Attribute hidden = tag.getAttribute( "name" );
-                    message( hidden, "NOTE: hidden form input with name \"" + hidden.getValue()
-                                     + "\" should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
+                    isTypeHidden = "stripes:hidden".equals( tag.getName() );
+                    if( "input".equals( tag.getName() ) )
+                    {
+                        Attribute attribute = tag.getAttribute( "type" );
+                        isTypeHidden = "hidden".equals( attribute.getValue() );
+                    }
+                    if( isTypeHidden )
+                    {
+                        Attribute hidden = tag.getAttribute( "name" );
+                        message( hidden, "NOTE: hidden form input with name \"" + hidden.getValue()
+                                         + "\" should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
+                    }
                 }
 
                 // Tell user about <wiki:Messages> tags.

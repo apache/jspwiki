@@ -27,6 +27,8 @@ public enum NodeType
     HTML_META("<",">"),
     /** HTML end tag */
     HTML_END_TAG("</", ">"),
+    /** XML declaration, <em>e.g.</em>, <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code>. */
+    DECLARATION("<?","?>"),
     /** HTML end tag */
     HTML_COMBINED_TAG("<", "/>"),
     /** HTML tag, but not sure whether it's a start, end or combined tag. */

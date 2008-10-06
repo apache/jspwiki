@@ -48,7 +48,6 @@
 
     </table>
   </form>
-  </wiki:Permission>
   <wiki:Messages div="error" />
 </wiki:Permission>
 <wiki:Permission permission="!upload">

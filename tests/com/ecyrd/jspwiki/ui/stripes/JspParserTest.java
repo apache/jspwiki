@@ -14,6 +14,26 @@ public class JspParserTest extends TestCase
         super( s );
     }
     
+    public void testDeclaration() throws Exception
+    {
+        String s = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><html/>";
+        
+        // Parse the contents
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+        
+        // Verify 2 nodes total
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 2, nodes.size() );
+        
+        // First node is XML declaration
+        Tag node = (Tag)nodes.get( 0 );
+        assertEquals( "xml", node.getName() );
+        assertEquals( null, node.getValue() );
+        assertEquals( NodeType.DECLARATION, node.getType() );
+        assertEquals( 2, node.getAttributes().size() );
+    }
+    
     public void testParseDoctype() throws Exception
     {
         String s = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
@@ -29,6 +49,7 @@ public class JspParserTest extends TestCase
         assertEquals( "(TEXT)", node.getName() );
         assertEquals( NodeType.DOCTYPE, node.getType() );
         assertEquals( "html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"", node.getValue() );
+        assertEquals( s, node.toString() );
     }
 
     public void testMeta() throws Exception
@@ -50,6 +71,7 @@ public class JspParserTest extends TestCase
         assertEquals( "Author", tag.getAttribute( "name" ).getValue() );
         assertEquals( "content", tag.getAttribute( "content" ).getName() );
         assertEquals( "Dave Raggett", tag.getAttribute( "content" ).getValue() );
+        assertEquals( s, tag.toString() );
     }
     
     public void testLink() throws Exception

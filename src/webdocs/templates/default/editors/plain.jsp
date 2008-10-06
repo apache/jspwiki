@@ -212,3 +212,5 @@
   <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>	  
 </div>
 <div id="sneakpreview"/></div>
+
+</div>

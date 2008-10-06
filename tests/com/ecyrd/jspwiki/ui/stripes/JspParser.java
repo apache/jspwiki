@@ -179,8 +179,7 @@ public class JspParser
             ParseContext ctx = ParseContext.currentContext();
 
             // Figure out what this tag is
-            String lookahead = ctx.lookahead( 4 );
-            String lookahead10= ctx.lookahead( 10 );
+            String lookahead = ctx.lookahead( 10 );
             JspDocument doc = ctx.getDocument();
 
             // <%- means hidden JSP comment
@@ -223,14 +222,20 @@ public class JspParser
                 }
             }
             
+            // <? means declaration, such as XML declaration
+            else if ( lookahead.startsWith( NodeType.DECLARATION.getTagStart() ) )
+            {
+                initNode( new Tag( doc, NodeType.DECLARATION ), Stage.NAME );
+            }
+            
             // <!DOCTYPE means DOCTYPE
-            else if ( lookahead10.startsWith( NodeType.DOCTYPE.getTagStart() ) )
+            else if ( lookahead.startsWith( NodeType.DOCTYPE.getTagStart() ) )
             {
                 initNode( new Text( doc, NodeType.DOCTYPE ), Stage.CODE_OR_COMMENT );
             }
             
             // <![CDATA[ means CDATA
-            else if( lookahead10.startsWith( NodeType.CDATA.getTagStart() ) )
+            else if( lookahead.startsWith( NodeType.CDATA.getTagStart() ) )
             {
                 initNode( new Text( doc, NodeType.CDATA ), Stage.CODE_OR_COMMENT );
             }
@@ -305,6 +310,7 @@ public class JspParser
                     {
                         case ('/'):
                         case (' '):
+                        case ('?'):
                         case ('%'): {
                             break;
                         }
@@ -543,7 +549,7 @@ public class JspParser
                             if( lookahead.length() == 2 )
                             {
                                 char nextChar = lookahead.charAt( 1 );
-                                if( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!/%_:".indexOf( nextChar ) != -1 )
+                                if( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!/%_:?".indexOf( nextChar ) != -1 )
                                 {
                                     ctx.setParser( TAG_PARSER, Stage.TAG_START, 0 );
                                 }
