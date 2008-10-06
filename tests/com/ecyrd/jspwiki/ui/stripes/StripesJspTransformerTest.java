@@ -1,6 +1,5 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 

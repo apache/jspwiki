@@ -187,7 +187,7 @@ public class Tag extends AbstractNode
                     sb.append( attr.toString() );
                     lastType = attr.getType();
                 }
-                if ( lastType == NodeType.DYNAMIC_ATTRIBUTE )
+                if ( lastType == NodeType.DYNAMIC_ATTRIBUTE  || m_type == NodeType.JSP_DIRECTIVE  )
                 {
                     sb.append( ' ' );
                 }

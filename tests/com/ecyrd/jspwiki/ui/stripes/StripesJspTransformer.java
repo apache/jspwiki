@@ -11,8 +11,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
 
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
-        // Add Stripes taglib entry
-        verifyStripesTaglib( doc );
+        boolean migratedStuff = false;
         
         // Process HTML nodes
         List<Node> nodes = doc.getNodes();
@@ -27,62 +26,32 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 if( "form".equals( tag.getName() ) )
                 {
                     migrateFormTag( tag );
+                    migratedStuff = true;
                 }
 
                 // Change <input type="*"> tags to <stripes:*>
                 else if( "input".equals( tag.getName() ) )
                 {
                     migrateInputTag( tag );
+                    migratedStuff = true;
                 }
             }
+        }
+        
+        // If we did any work here, add Stripes taglib entry
+        if ( migratedStuff )
+        {
+            verifyStripesTaglib( doc );
         }
     }
 
     private void verifyStripesTaglib( JspDocument doc )
     {
         // Add the Stripes taglib declaration if it's not there already
-        List<Node> nodes = doc.getNodes( NodeType.JSP_DIRECTIVE );
-        boolean declaresStripesTaglib = false;
-        Node lastTaglib = null;
-        for ( Node node : nodes )
+        List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
+        if ( nodes.size() == 0 )
         {
-            Tag directive = (Tag)node;
-            if ( "taglib".equals( node.getName() ) )
-            {
-                lastTaglib = node;
-                Attribute attribute = directive.getAttribute( "prefix" );
-                if ( attribute != null && "stripes".equals( attribute.getValue() ) )
-                {
-                    declaresStripesTaglib = true;
-                    break;
-                }
-            }
-        }
-        if ( !declaresStripesTaglib )
-        {
-            Text linebreak = new Text( doc );
-            linebreak.setValue( System.getProperty( "line.separator" ) );
-            linebreak.setParent( doc.getRoot() );
-            Tag directive = new Tag( doc, NodeType.JSP_DIRECTIVE );
-            directive.setName( "taglib" );
-            Attribute attribute = new Attribute( doc );
-            attribute.setName( "uri" );
-            attribute.setValue( "/WEB-INF/stripes.tld" );
-            directive.addAttribute( attribute );
-            attribute = new Attribute( doc );
-            attribute.setName( "prefix" );
-            attribute.setValue( "stripes" );
-            directive.addAttribute( attribute );
-            if ( lastTaglib == null )
-            {
-                doc.getRoot().addChild( directive, 0 );
-                directive.addSibling( linebreak );
-            }
-            else
-            {
-                linebreak.addSibling( directive );
-                lastTaglib.addSibling( linebreak );
-            }
+            doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
             message( doc.getRoot(), "Added Stripes taglib directive." );
         }
         
