@@ -88,7 +88,7 @@
   </p>
     <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
        Normal user should never see this field, nor type anything in it. --%>
-  <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value=""/></div>
+  <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" /></div>
   <table>
 <%--FIXME
     <wiki:Permission permission="rename">
@@ -141,7 +141,8 @@
 	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
       </span>
       <span>
-      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a></span>
+      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a>
+      </span>
       <span>
 	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
       </span>
@@ -186,7 +187,7 @@
   <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>" 
          class="editor" 
           rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
-  <div class="clearbox"></div>
+  <div class="clearbox" ></div>
   </div>
 
   <wiki:CheckRequestContext context="comment">
@@ -208,9 +209,9 @@
 </form>
 
 <div id="sneakpreviewheader">
-  <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%>/>
+  <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />
   <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>	  
 </div>
-<div id="sneakpreview"/></div>
+<div id="sneakpreview" ></div>
 
 </div>
