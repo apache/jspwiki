@@ -61,7 +61,7 @@ if ( !installer.adminExists() )
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title><fmt:message key="install.jsp.title" /></title>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
+  <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>
   <wiki:IncludeResources type="stylesheet"/>
 </head>
 <body class="view">
@@ -79,9 +79,9 @@ if ( !installer.adminExists() )
 
 <!-- Any messages or errors? -->
 <div class="instructions">
-  <wiki:Messages div="information" topic="<%=Installer.INSTALL_INFO%>" prefix="<%= rb.getString( "install.jsp.install.info" )%>"/>
-  <wiki:Messages div="warning" topic="<%=Installer.INSTALL_WARNING%>" prefix="<%= rb.getString( "install.jsp.install.warning" )%>"/>
-  <wiki:Messages div="error" topic="<%=Installer.INSTALL_ERROR%>" prefix="<%= rb.getString( "install.jsp.install.error" )%>"/>
+  <wiki:Messages div="information" topic="<%=Installer.INSTALL_INFO%>" prefix='<%= rb.getString( "install.jsp.install.info" )%>'/>
+  <wiki:Messages div="warning" topic="<%=Installer.INSTALL_WARNING%>" prefix='<%= rb.getString( "install.jsp.install.warning" )%>'/>
+  <wiki:Messages div="error" topic="<%=Installer.INSTALL_ERROR%>" prefix='<%= rb.getString( "install.jsp.install.error" )%>'/>
 </div>
  
 <div class="formcontainer">

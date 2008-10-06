@@ -10,4 +10,4 @@ Every time someone views the page "[PageAliases]", they will be automatically re
 
 !Editing the alias/redirect pages
 
-Well, obviously you cannot click on the "Edit this page" -link, because you are redirected every time you try to view a page.  You can, however, edit the page directly by just writing {{Edit.jsp?page=''pagename''}} after the base URL. 
+Well, obviously you cannot click on the "Edit this page" -link, because you are redirected every time you try to view a page.  You can, however, edit the page directly by just writing {{Edit.jsp?page=''pagename''}} after the base URL. Alternatively, you can use the interWikiRef defined for editing, by default it is set to "Edit" (i.e., [[Edit Aliases Page|Edit:Aliases]) 

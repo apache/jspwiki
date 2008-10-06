@@ -371,7 +371,7 @@ public final class AuthenticationManager
                 password );
         
         // Execute the user's specified login module
-        Set<Principal> principals = doJAASLogin( UserDatabaseLoginModule.class, handler, m_loginModuleOptions );
+        Set<Principal> principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
         if (principals.size() > 0)
         {
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );

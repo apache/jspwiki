@@ -130,7 +130,7 @@ public class CryptoUtilTest extends TestCase
         String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes() );
 
         // slappasswd says that a 4-byte salt should give us 6 chars for prefix
-        // + 20 chars for the hash + 12 for salt (38 total)
+        // + 20 chars for the hash + 12 for salt (38 total)
         assertEquals( 38, hash.length() );
     }
 

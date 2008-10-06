@@ -1,0 +1,34 @@
+Wanneer je [pagina's wijzigt|TextFormattingRules] hou dan rekening met de volgende regels :
+
+!!Algemeen
+* Wees vriendelijk - niet ruw of agressief.
+* Schrijf eenvoudig en makkelijk te begrijpen, voorkom lokaal gebrabbel. Velen die je teksten lezen hebben Engels als eerste taal.
+* Verwijder niet andermans bijdragen (tenzij je goed weet wat je doet)
+* Gebruik niet te veel afkortingen (of gebruik tenminste een pagina waar de uitleg staat)
+* __Voorkom de __''"Klik hier"'' zin !__ Zeg geen: "Meer informatie over etiquette kan je hier vinden [hier|WikiEtiquette]" maar gebruik "Meer informatie over etiquette kan je vinden op [WikiEtiquette]".  Ook voor externe links moet je dit doen.
+* Draag alleen origineel spul bij. Links zijn prima, maar niet knippen/plakken van auteursrechtelijk beschermde zaken.
+* Typefouten corrigeren is prima - het is eigenlijk een goede gewoonte, het maakt de pagina leesbaarder.
+
+!!Over opmerkingen
+
+* Je mag gerust anoniem bijdragen, maar het is beter je onderschrift onder commentaar te zetten. Het is gebruikelijk om je handtekening met een '--' vooraf te gaan, zoals ''--[Harry Metske]'' (En terwijl je hier toch bent, maak ook even je eigen wiki pagina, en vertel iets over jezelf.)
+* Het is ook goed om je naam als eerste te zetten, zoals dit: ''[Harry Metske]: Ik wil even zeggen...''
+* Denk na voordat je commentaar geeft. [WikiWiki] is geen high-speed communicatie medium. Het is ook geen nieuws server. Wat je zegt blijft er voor altijd (als je commentaar verwijdert, blijft het nog steeds bestaan in de vorige versie van de pagina)  voor iedereen zichtbaar en om commentaar op te leveren.
+
+!!Maken van Wiki pagina's
+* Een goede [WikiNaam] is kort en beschrijvend. Als de naam logisch is en makkelijk zullen meer mensen er links naar toe leggen.
+* Alhoewel je een hele zin kan pletten tot een [WikiNaam], is het beter om het te beperken tot maximaal 5 woorden.
+* In plaats daarvan, probeer [WikiNamen]  te gebruiken die je als hoofdstukken van een boek zou gebruiken.
+* Deze Wiki geeft je de mogelijkheid om pagina's met een woord als naam, maar probeer tenminste twee woorden te gebruiken, we willen de namespace niet uitputten :-).
+* __Controleer [WikiNamen] op type fouten__ - anders maakt iemand anders een verkeerde wiki pagina ! Verkeerd gekozen pagina namen zijn fout, want er naar toe linken is moeilijker dan naar een logische [Wiki Naam].
+
+!!Refactoren van pagina's
+
+Herindelen wil zeggen, samenvatten, inkorten, beter leesbaar maken. Iedereen die er zin in heeft kan er mee aan de slag gaan, maar we stellen voor dat je het laat doen door de frequente (ervaren) bezoekers
+
+* Wees objectief - zowel voordelen als nadelen moeten worden genoemd
+* Wees voorzichtig met ondertekende bijdrages, verander hun bedoeling niet
+* Geef Ere wie Ere toekomt
+* Gebruik de derde persoon of meervoud i.p.v. de 1e persoon in een samenvatting.
+
+(Met dank aan [Sensei's library|http://senseis.xmp.net/] voor deze oorspronkelijke tekst in het engels.)

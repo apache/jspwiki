@@ -1,5 +1,5 @@
 
-This is a beta release of JSPWiki 2.8!
+Welcome to the stable version of JSPWiki 2.8!
 
 This is the first version of JSPWiki which is released completely under
 the Apache License.  This is done as a part of the transition to the
@@ -30,7 +30,7 @@ NEW FEATURES
 * WikiWizard is removed (it is LGPL), but FCK integration is available,
   and WikiWizard can still be installed as a separate package.
 
-* German language corepages
+* German, Finnish, Spanish, Simplified Chinese and Dutch language corepages
 
 * Support for the UniversalEditButton (http://universaleditbutton.org/).
 

@@ -63,35 +63,35 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
 
         assertEquals(
                      "|| Throalisches Jahr || Ereignis\n"
-                                                                                       + "| 100 v. TH | Elianer Messias übersetzt die tausendjährigen Bücher von Harrow.\n"
-                                                                                       + "| 50 v. TH | Gründung Nehr?eshams und der ewigen Bibliothek.\n",
+                                                                                       + "| 100 v. TH | Elianer Messias \u00fcbersetzt die tausendj\u00e4hrigen B\u00fccher von Harrow.\n"
+                                                                                       + "| 50 v. TH | Gr\u00fcndung Nehr?eshams und der ewigen Bibliothek.\n",
                      html2wiki
                              .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><th> Throalisches Jahr </th><th> Ereignis</th></tr>\n"
-                                         + "<tr><td> 100 v. TH</td><td> Elianer Messias übersetzt die tausendjährigen Bücher von Harrow.</td></tr>\n"
-                                         + "<tr><td> 50 v. TH</td><td> Gründung Nehr?eshams und der ewigen Bibliothek.</td></tr>\n"
+                                         + "<tr><td> 100 v. TH</td><td> Elianer Messias \u00fcbersetzt die tausendj\u00e4hrigen B\u00fccher von Harrow.</td></tr>\n"
+                                         + "<tr><td> 50 v. TH</td><td> Gr\u00fcndung Nehr?eshams und der ewigen Bibliothek.</td></tr>\n"
                                          + "</tbody></table>" ) );
 
        assertEquals(
                      "|| Throalisches Jahr || Ereignis\n"
-                                                                                       + "| 100 v. TH | Elianer Messias übersetzt die tausendjährigen Bücher von Harrow.\n"
-                                                                                       + "| 50 v. TH | Gründung Nehr?eshams und der ewigen Bibliothek.\n\u00A0",
+                                                                                       + "| 100 v. TH | Elianer Messias \u00fcbersetzt die tausendj\u00e4hrigen B\u00fccher von Harrow.\n"
+                                                                                       + "| 50 v. TH | Gr\u00fcndung Nehr?eshams und der ewigen Bibliothek.\n\u00A0",
                      html2wiki
                              .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><th> Throalisches Jahr </th><th> Ereignis</th></tr>\n"
-                                    + "<tr><td> 100 v. TH</td><td> Elianer Messias übersetzt die tausendjährigen Bücher von Harrow.</td></tr>\n"
-                                    + "<tr><td> 50 v. TH</td><td> Gründung Nehr?eshams und der ewigen Bibliothek.</td></tr>\n"
+                                    + "<tr><td> 100 v. TH</td><td> Elianer Messias \u00fcbersetzt die tausendj\u00e4hrigen B\u00fccher von Harrow.</td></tr>\n"
+                                    + "<tr><td> 50 v. TH</td><td> Gr\u00fcndung Nehr?eshams und der ewigen Bibliothek.</td></tr>\n"
                                     + "</tbody></table> &nbsp;" ) );
 
        assertEquals(
-                    "| 3. Rang | Name des Helden, den der Bogen töten sollte.\n"
-                                                                                      + "| Fähigkeit | Bonus auf die Initiative von 1\n",
+                    "| 3. Rang | Name des Helden, den der Bogen t\u00f6ten sollte.\n"
+                                                                                      + "| F\u00e4higkeit | Bonus auf die Initiative von 1\n",
                     html2wiki
-                            .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><td> 3. Rang</td><td> Name des Helden, den der Bogen töten sollte.</td></tr>\n"
-                                        + "<tr><td> Fähigkeit</td><td> Bonus auf die Initiative von 1</td></tr></tbody></table></p><p>" ) );
+                            .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><td> 3. Rang</td><td> Name des Helden, den der Bogen t\u00f6ten sollte.</td></tr>\n"
+                                        + "<tr><td> F\u00e4higkeit</td><td> Bonus auf die Initiative von 1</td></tr></tbody></table></p><p>" ) );
 
        assertEquals(
-                    "| Name: [Christian|ChristianS] \\\\ Geschicklichkeit: 2 \\\\ Hang zu perversen Sexorgien. Jongliert mit Worten und Köpfen. \\\\ [Berian Nachtschleicher|Berian] \\\\ [XLerul] \\\\ [Effifot Erif|EffifotErif]\n",
+                    "| Name: [Christian|ChristianS] \\\\ Geschicklichkeit: 2 \\\\ Hang zu perversen Sexorgien. Jongliert mit Worten und K\u00f6pfen. \\\\ [Berian Nachtschleicher|Berian] \\\\ [XLerul] \\\\ [Effifot Erif|EffifotErif]\n",
                     html2wiki
-                            .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><td> Name: <a class=\"wikipage\" href=\"Wiki.jsp?page=ChristianS\">Christian</a> <br> Geschicklichkeit: 2 <br> Hang zu perversen Sexorgien. Jongliert mit Worten und Köpfen. <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=Berian\">Berian Nachtschleicher</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=XLerul\">XLerul</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=EffifotErif\">Effifot Erif</a></td></tr> </tbody></table>" ) );
+                            .translate( "<table class=\"wikitable\" border=\"1\"><tbody><tr><td> Name: <a class=\"wikipage\" href=\"Wiki.jsp?page=ChristianS\">Christian</a> <br> Geschicklichkeit: 2 <br> Hang zu perversen Sexorgien. Jongliert mit Worten und K\u00f6pfen. <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=Berian\">Berian Nachtschleicher</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=XLerul\">XLerul</a> <br> <a class=\"wikipage\" href=\"Wiki.jsp?page=EffifotErif\">Effifot Erif</a></td></tr> </tbody></table>" ) );
 
         
     }
@@ -317,8 +317,8 @@ public class HtmlStringToWikiTranslatorTest extends TestCase
                      "Dies ist __bold__, ''italic'' und __''both''__ 3.",
                      html2wiki.translate( "Dies ist <strong>bold</strong>, <em>italic</em> und <strong><em>both</em></strong> 3." ) );
 
-        assertEquals( "Wilma: ''Ich möchte hiermal in allerDeutlichkeit sagen! ''", html2wiki
-                      .translate( "Wilma: <i>Ich             möchte hier\nmal in aller\nDeutlichkeit sagen! </i>" ) );
+        assertEquals( "Wilma: ''Ich m\u00f6chte hiermal in allerDeutlichkeit sagen! ''", html2wiki
+                      .translate( "Wilma: <i>Ich             m\u00f6chte hier\nmal in aller\nDeutlichkeit sagen! </i>" ) );
 
     }
     

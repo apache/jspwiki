@@ -143,7 +143,7 @@ public class BasicAttachmentProviderTest extends TestCase
     {
         File in = makeAttachmentFile();
 
-        Attachment att = new Attachment( m_engine, NAME1, "\u3072\u3048\u308båäötest.füü" );
+        Attachment att = new Attachment( m_engine, NAME1, "\u3072\u3048\u308b\u00e5\u00e4\u00f6test.f\u00fc\u00fc" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 

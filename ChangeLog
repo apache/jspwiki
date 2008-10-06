@@ -1,3 +1,119 @@
+2008-10-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-17
+
+        * [JSPWIKI-395] Few fixes to improve xhtml compliance.
+        (txs to the wonderful tools of Andrew ;-)
+        
+
+2008-10-05  Harry Metske <harry.metske@gmail.com>
+
+        * Updated LICENSE and NOTICE file quite a couple of resources (most of them Apache licensed)
+        
+        * a few minor updates to Compiling.txt, UPGRADING and ReleaseNotes
+
+2008-10-05  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * Updated LICENSE and NOTICE file for javascript related resources. (no version step-up)
+
+2008-10-01  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-16
+
+        * [JSPWIKI-386] Custom LoginModules were not being configured correctly.
+        Thanks to Peter Hormanns for reporting this.
+
+2008-10-01  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-15
+        
+        * [JSPWIKI-327] Few more tweaks to stabilize the 'back' button handling after a search.
+        
+        
+2008-09-30  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-14
+        
+        * [JSPWIKI-327] Going back to the search page now remembers the last search query.
+        The query and selected pagination-page is stored in the #hash of the url.
+        
+        
+2008-09-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * Oops, Dutch corepages had overwritten the English corepages,
+        so restored both English ones and created a dir for Dutch.
+
+2008-09-29  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.0-beta-13
+        
+        * [JSPWIKI-385] Header lines are now cleared 'left' so that comment-boxes 
+        can appear side by side with !!!header lines. 
+        
+        * [JSPWIKI-380] Fix backspace handling of the plain editor.
+
+2008-09-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-12
+        
+        * [JSPWIKI-387] Fixed a number of quotes on Install.jsp.
+
+2008-09-27  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-11
+        
+        * added Dutch corepages
+
+2008-09-24  Juan Pablo Santos <juanpablo.santos@apache.org>
+
+        * 2.8.0-beta-10
+        
+        * added spanish corepages
+        
+        * [JSPWIKI 343] Go through all built-in wikipages and make sure all of the 
+        documentation in those is ok for 2.8.0. Applied only for en and es corepages.
+        
+2008-09-24  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-9
+        
+        * [JSPWIKI-368] Fixed issue with multiple preferences cookies
+        appearing if the web app was installed to the root.  Thanks
+        to Florian for finding this!
+
+2008-09-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-8
+        
+        * [JSPWIKI-373] Fixed issue with sign button giving a fixed date.
+        Unfortunately the format is fixed.  Thanks to Stefan Bohn for 
+        a fix.
+
+2008-09-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-7
+        
+        * [JSPWIKI-379] TranslateTag now properly does a deep
+        clone of the WikiContext, so that you no longer can get
+        ACLs instantiated just by previewing a page.
+        
+2008-09-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-6
+        
+        * [JSPWIKI-231] Brought Italian and Chinese translations up to
+        par.
+        
+        * Added Chinese corepages, thanks to David Gao.
+
+2008-09-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-5  JSPWIKI-231: update the latest de localisation, patch from Florian
+
+2008-09-18  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.0-beta-4  JSPWIKI-263: DOC change to the README file
+        
 2008-09-18  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.8.0-beta-3
@@ -296,7 +412,7 @@
         Amazing catch from Harry and Florian - txs !
  
  
-2008-07-31  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-08-12  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.7.0-alpha-12
 

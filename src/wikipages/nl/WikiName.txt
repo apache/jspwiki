@@ -1,0 +1,7 @@
+[WikiNamen] worden traditioneel geschreven met ~InterCapping, ook bekend als ~CamelCase (met hoofdletter beginnen, en ook minstens nog een hoofdletter in het wiki link woord). Hierdoor zijn hyperlinks heel makkelijk te maken. 
+
+Echter, in dit [WikiWiki] worden de [links]  geschreven volgens de [link] notatie, want de originele ~InterCapping stijl van linke is soms verwarrend. De namen zijn nog steeds conform de [WikiWiki] standaard als je kijkt naar de URL bovenaan.
+
+Namen worden 'geplet'',b.v. [[Dit is een link] wordt [[DitIsEenLink]. Behalve underscores en punten worden behouden, dus je kunt een link hebben als: [[Dit_is_een_link], of [[Dit.Is.Een.Link]. Alle non-alfanumerieke karakters behalve de '_' en de '.' worden verwijderd (d.w.z. alle karakters die geen letters of cijfers zijn), zodat [[John's page] wordt [[JohnsPage].  Zo kan je normale zinnen typen die dan in links worden veranderd, zoals wanneer we het hebben over [Wiki etiquette].
+
+Een WikiNaam mag geen nummer zijn. Numerieke namen worden gebruikt voor [footnotes|TextFormattingRules].

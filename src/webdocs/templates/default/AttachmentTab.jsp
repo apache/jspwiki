@@ -16,7 +16,6 @@
 <div id="addattachment">
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
-  <wiki:Permission permission="upload">
   <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
@@ -46,10 +45,10 @@
         <div id="progressbar"><div class="ajaxprogress"></div></div>
       </td>
     </tr>
-    </wiki:Permission>
 
     </table>
   </form>
+  </wiki:Permission>
   <wiki:Messages div="error" />
 </wiki:Permission>
 <wiki:Permission permission="!upload">

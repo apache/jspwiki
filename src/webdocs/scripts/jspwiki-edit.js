@@ -34,7 +34,13 @@
  **/
 var WikiSnippets =
 {
-	getSnippets: function(){  
+	getSnippets: function(){
+	 	// FIXME: This is a kludge; should really insert a Date plugin or something.
+		var now = new Date();
+		var day = ((now.getDate() < 10) ? "0" + now.getDate() : now.getDate())
+		var month = ((now.getMonth() < 9) ? "0" + (now.getMonth()+1) : (now.getMonth()+1) )
+		var currentDate = now.getFullYear() + "-" + month + "-" + day;
+	 
 		return {
 	"toc" : {
 		snippet:["","[{TableOfContents }]", "\n"],
@@ -122,10 +128,11 @@ var WikiSnippets =
 	},
 	//dynamic snippets
 	"sign" : {
-		snippet:["\\\\\n--",Wiki.UserName+", "+"25 Sep 07","\n"],
-		tab:[Wiki.UserName,'25 Sep 07','']
+		snippet:["\\\\\n--",Wiki.UserName+", "+currentDate,"\n"],
+		tab:[Wiki.UserName,currentDate,'']
 	},
 	/* TODO: how to insert the proper current date/timestamp, inline with the preferred time format */
+	/* TODO: Should be localized. */
 	"date" : {
 		//return new object snippet
 		command: function(k) {
@@ -276,6 +283,34 @@ var EditTools =
 			this.element.value = value.join('');
 			this.element.fireEvent('change');		
 		};
+
+		/* quick dirty patch: backspace should remove only one char and not 4 spaces */
+		this.posteditor.onBackspace=function(e) {
+		    var ss = this.ss(), se = this.se();
+    		if(ss == se && this.slice(ss - this.tabl,ss) == this.tab) {
+				return;
+			/*
+				e.preventDefault();
+				var start = this.getStart(this.tab), end = this.slice(ss,this.element.value.length);
+				if(start.match(/\n$/g) && end.match(/^\n/g)) {
+        			this.value([start,this.slice(ss-1,this.element.value.length)]);
+				} else {
+			  		this.value([start,end]);
+				}
+		  		this.selectRange(ss - this.tabl,0);
+		  	*/
+			} else if(ss == se) {
+  		  		var charCode  = this.slice(ss - 1,ss), 
+  		      	close     = this.slice(ss,ss+1), 
+  		      	stpair    = this.options.smartTypingPairs[charCode];
+  		  		if($type(stpair) == 'string') stpair = { pair : stpair };
+  		  		if(stpair && stpair.pair == close) {
+  		    		this.value([this.getStart(stpair.pair),this.slice(ss,this.element.value.length)]);
+          			this.selectRange(ss,0);
+  		  		}
+  			}
+  		};
+	
 
 		/* next extra fix for latest Safari 3.1 cause tabs are not catched anymore in the onkeypress handler */
 		/* TODO: this could be a great workaround for ie as well */

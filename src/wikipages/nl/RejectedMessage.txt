@@ -1,0 +1,6 @@
+Je bijdrage is geweigerd om de volgende reden:
+%%(padding: 4px; margin: 3em; border: 1px inset; background: #eeeeee)
+[{$message}]
+%%
+
+[{ALLOW view All}]
