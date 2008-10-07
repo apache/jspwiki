@@ -569,6 +569,8 @@ public class JspParser
     {
         private int m_pos;
 
+        private final List<Integer> lineBreaks = new ArrayList<Integer>();
+
         Counter()
         {
             m_pos = 0;
@@ -643,8 +645,6 @@ public class JspParser
         }
 
         private Parser m_parser = null;
-
-        private final List<Integer> lineBreaks = new ArrayList<Integer>();
 
         private Node m_node = null;
 
@@ -780,13 +780,20 @@ public class JspParser
         public void incrementPosition()
         {
             // Reset the line/column counters if we encounter linebreaks
-            char currentChar = m_source.charAt( position() );
-            if( currentChar == '\r' || currentChar == '\n' )
+            int pos = position();
+            char currentChar = m_source.charAt( pos );
+            char nextChar = ( pos +1 ) < m_source.length() ? m_source.charAt( pos + 1 ) : currentChar;
+            if( currentChar == '\r' && nextChar == '\n' )
             {
-                lineBreaks.add( position() );
+                m_counter.lineBreaks.add( pos );
+                m_counter.increment();
             }
-
+            else if ( currentChar == '\r' || currentChar == '\n' )
+            {
+                m_counter.lineBreaks.add( pos );
+            }
             m_counter.increment();
+
         }
 
         /**
@@ -936,8 +943,8 @@ public class JspParser
         {
             // Set the start, end, linebreak
             node.setStart( pos );
-            int lastLineBreakPos = lineBreaks.size() == 0 ? Node.POSITION_NOT_SET : lineBreaks.get( lineBreaks.size() - 1 );
-            node.setLine( lineBreaks.size() + 1 );
+            int lastLineBreakPos = m_counter.lineBreaks.size() == 0 ? Node.POSITION_NOT_SET : m_counter.lineBreaks.get( m_counter.lineBreaks.size() - 1 );
+            node.setLine( m_counter.lineBreaks.size() + 1 );
             node.setColumn( pos - lastLineBreakPos );
         }
 

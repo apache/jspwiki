@@ -172,7 +172,7 @@ public class JspParserTest extends TestCase
         assertEquals( null, node.getValue() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
-        assertEquals( "<a b=\"cd\"/>", node.toString() );
+        assertEquals( "<a b=\"cd\" />", node.toString() );
 
         // Verify attributes
         assertEquals( 1, node.getAttributes().size() );
@@ -602,7 +602,7 @@ public class JspParserTest extends TestCase
         assertEquals( NodeType.HTML_START_TAG, node.getType() );
         assertEquals( "<foo attribute1=\"1\">", node.toString() );
         assertEquals( "foo", node.getName() );
-        assertEquals( "  <bar attribute2=\"2\" attribute3=\"3\"/>  ", node.getValue() );
+        assertEquals( "  <bar attribute2=\"2\" attribute3=\"3\" />  ", node.getValue() );
         assertEquals( 2, node.getStart() );
         assertEquals( 22, node.getEnd() );
 
@@ -630,7 +630,7 @@ public class JspParserTest extends TestCase
         // Check AbstractNode 1, child 1 -- should be <bar>
         node = nodes.get( 1 ).getChildren().get( 1 );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
-        assertEquals( "<bar attribute2=\"2\" attribute3=\"3\"/>", node.toString() );
+        assertEquals( "<bar attribute2=\"2\" attribute3=\"3\" />", node.toString() );
         assertEquals( "bar", node.getName() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( 24, node.getStart() );
@@ -707,7 +707,7 @@ public class JspParserTest extends TestCase
         assertEquals( 2, node.getStart() );
         assertEquals( 52, node.getEnd() );
         assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
-        assertEquals( "<wiki:Include page=\"<%=contentPage%>\" var=\'Foo\'/>", node.toString() );
+        assertEquals( "<wiki:Include page=\"<%=contentPage%>\" var=\'Foo\' />", node.toString() );
         assertEquals( "wiki:Include", node.getName() );
         assertEquals( null, node.getValue() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );

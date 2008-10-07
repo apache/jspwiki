@@ -11,8 +11,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
 
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
-        boolean migratedStuff = false;
-        
+        boolean migrated = false;
+
         // Process HTML nodes
         List<Node> nodes = doc.getNodes();
         for( Node node : nodes )
@@ -20,98 +20,62 @@ public class StripesJspTransformer extends AbstractJspTransformer
             // For all HTML tags...
             if( node.isHtmlNode() )
             {
-                Tag tag = (Tag)node;
-                
+                Tag tag = (Tag) node;
+
                 // Change <form> to <stripes:form>
                 if( "form".equals( tag.getName() ) )
                 {
-                    migrateFormTag( tag );
-                    migratedStuff = true;
+                    migrated = migrateFormTag( tag ) || migrated;
                 }
 
                 // Change <input type="*"> tags to <stripes:*>
                 else if( "input".equals( tag.getName() ) )
                 {
-                    migrateInputTag( tag );
-                    migratedStuff = true;
+                    migrated = migrateInputTag( tag ) || migrated;
+                }
+
+                else if( "textarea".equals( tag.getName() ) )
+                {
+                    migrated = migrateTextArea( tag ) || migrated;
                 }
             }
         }
-        
-        // If we did any work here, add Stripes taglib entry
-        if ( migratedStuff )
-        {
-            verifyStripesTaglib( doc );
-        }
-    }
 
-    private void verifyStripesTaglib( JspDocument doc )
-    {
-        // Add the Stripes taglib declaration if it's not there already
-        List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
-        if ( nodes.size() == 0 )
+        // If we did any work here, add Stripes taglib entry
+        if( migrated )
         {
-            doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
-            message( doc.getRoot(), "Added Stripes taglib directive." );
+            addStripesTaglib( doc );
         }
-        
     }
 
     /**
-     * Migrates the &lt;input&gt; tag.
-     * @param tag the AbstractNode that represents the form tag being processed.
+     * Verifies the presence of the Stripes taglib directive, and adds it to the
+     * JspDocument if not present. For the taglib to be considered "present,"
+     * the JspDocument must contain a JSP <code>taglib</code> directive with
+     * the <code>prefix</code> set to <code>stripes</code>; any
+     * <code>uri</code> value is acceptable. If the taglib declaration is
+     * added, it is given the prefix <code>stripes</code> and the URI
+     * <code>/WEB-INF/stripes.tld</code>.
+     * 
+     * @param doc the JspDocument to process
      */
-    private void migrateInputTag( Tag tag )
+    private void addStripesTaglib( JspDocument doc )
     {
-
-        // Move 'type' attribute value to the localname
-        Attribute attribute = tag.getAttribute( "type" );
-        if( attribute != null )
+        // Add the Stripes taglib declaration if it's not there already
+        List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
+        if( nodes.size() == 0 )
         {
-            // If a submit input, tell user to change the "name"
-            // value to something useful for Stripes
-            if( "submit".equals( attribute.getValue() ) )
-            {
-                Node nameAttribute = tag.getAttribute( "name" );
-                String nameValue = nameAttribute == null ? "(not set)" : nameAttribute.getName();
-                message( nameAttribute, "NOTE: the \"name\" attribute of <input type=\"submit\" is \"" + nameValue
-                                        + "\"" );
-            }
-
-            // Move type attribute to qname
-            String type = attribute.getValue();
-            message( attribute, "Changed <input type=\"" + type + "\"> to <stripes:" + type + ">." );
-            tag.setName( "stripes:" + type );
-            tag.removeAttribute( attribute );
-        }
-
-        // If embedded markup in "value" attribute, move to child
-        // nodes
-        attribute = tag.getAttribute( "value" );
-        if( attribute != null )
-        {
-            List<Node> children = attribute.getChildren();
-            if( children.size() > 1 || (children.size() == 1 && children.get( 0 ).getType() != NodeType.TEXT) )
-            {
-                // Remove the attribute
-                tag.removeAttribute( attribute );
-                // Move all of the attribute's nodes to the
-                // children nodes
-                for( Node valueNode : attribute.getChildren() )
-                {
-                    tag.addChild( valueNode );
-                }
-                message( attribute,
-                         "Moved embedded tag(s) in <input> \"value\" attribute to the tag body. These are now child element(s) of <input>." );
-            }
+            doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
+            message( doc.getRoot(), "Added Stripes taglib directive." );
         }
     }
 
     /**
      * Migrates the &lt;form&gt; tag.
-     * @param tag the AbstractNode that represents the form tag being processed.
+     * 
+     * @param tag the Tag that represents the form tag being processed.
      */
-    private void migrateFormTag( Tag tag )
+    private boolean migrateFormTag( Tag tag )
     {
         message( tag, "Changed name to <stripes:form>." );
         tag.setName( "stripes:form" );
@@ -139,7 +103,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 {
                     // Change "action" attribute"
                     String trimmedPath = actionUrl.substring( 0, qmark );
-                    message( attribute, "Trimmed value to \"" + trimmedPath + "\"");
+                    message( attribute, "Trimmed value to \"" + trimmedPath + "\"" );
                     attribute.setValue( trimmedPath );
 
                     // Split the parameters and add a new
@@ -151,7 +115,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
                         {
                             JspDocument doc = tag.getJspDocument();
                             String name = param.substring( 0, param.indexOf( '=' ) );
-                            String value = param.substring( name.length() +1 );
+                            String value = param.substring( name.length() + 1 );
                             Tag stripesParam = new Tag( doc, NodeType.HTML_COMBINED_TAG );
                             stripesParam.setName( "stripes:param" );
                             Attribute nameAttribute = new Attribute( doc );
@@ -163,13 +127,111 @@ public class StripesJspTransformer extends AbstractJspTransformer
                             valueAttribute.setValue( value );
                             stripesParam.addAttribute( valueAttribute );
                             tag.addChild( stripesParam );
-                            message( tag, "Created <stripes:form> child element <stripes:param name=\"" + name + "\""
-                                           + " value=\"" + value + "\"/>." );
+                            message( tag, "Created <stripes:form> child element <stripes:param name=\"" + name + "\"" + " value=\""
+                                          + value + "\"/>." );
                         }
                     }
                 }
             }
         }
+        return true;
+    }
+
+    /**
+     * Migrates the &lt;input&gt; tag.
+     * 
+     * @param tag the Tag that represents the form tag being processed.
+     */
+    private boolean migrateInputTag( Tag tag )
+    {
+        boolean migrated = false;
+        
+        // Move 'type' attribute value to the localname
+        Attribute attribute = tag.getAttribute( "type" );
+        if( attribute != null )
+        {
+            // If a submit input, tell user to change the "name"
+            // value to something useful for Stripes
+            if( "submit".equals( attribute.getValue() ) )
+            {
+                Node nameAttribute = tag.getAttribute( "name" );
+                String nameValue = nameAttribute == null ? "(not set)" : nameAttribute.getName();
+                message( nameAttribute, "NOTE: the \"name\" attribute of <input type=\"submit\" is \"" + nameValue + "\"" );
+            }
+
+            // Move type attribute to qname
+            String type = attribute.getValue();
+            message( attribute, "Changed <input type=\"" + type + "\"> to <stripes:" + type + ">." );
+            tag.setName( "stripes:" + type );
+            tag.removeAttribute( attribute );
+            migrated = true;
+        }
+
+        // If the value attribute contains embedded tags, move to child nodes
+        return migrateValueAttribute( tag ) || migrated;
+    }
+
+    private boolean migrateTextArea( Tag tag )
+    {
+        boolean migrated = false;
+        
+        // Only migrate textarea if 'name' attribute is present
+        Attribute name = tag.getAttribute( "name" );
+        if( name != null )
+        {
+            // Change the name to stripes:textarea
+            tag.setName( "stripes:textarea" );
+            message( tag, "Changed <textarea> to <stripes:textarea>. NOTE: Stripes will attempt to bind request parameter \""
+                          + name.getValue() + "\" to this element." );
+
+            // If the value attribute contains embedded tags, move to child
+            // nodes
+            migrateValueAttribute( tag );
+            migrated = true;
+        }
+        else
+        {
+            message( tag, "NOTE: <textarea> did not contain a \"name\" attribute, so it was not migrated." );
+        }
+        return migrated;
+    }
+
+    /**
+     * Moves the contents of an HTML form tag with a <code>value</code>
+     * attribute to child nodes of the tag, if <code>value</code> contains
+     * anything other than a simple text string. If the <code>value</code>
+     * attribute is not present, or its contents is a simple text string, this
+     * method leaves the attribute as-is.
+     * 
+     * @param tag the tag to migrate
+     * @return <code>true</code> if this method changed the JspDocument, and <code>false</code> if not
+     */
+    private boolean migrateValueAttribute( Tag tag )
+    {
+        boolean migrated = false;
+        
+        // If embedded markup in "value" attribute, move to child
+        // nodes
+        Attribute attribute = tag.getAttribute( "value" );
+        if( attribute != null )
+        {
+            List<Node> attributeNodes = attribute.getChildren();
+            if( attributeNodes.size() > 1 || (attributeNodes.size() == 1 && attributeNodes.get( 0 ).getType() != NodeType.TEXT) )
+            {
+                // Remove the attribute
+                tag.removeAttribute( attribute );
+                // Move all of the attribute's nodes to the
+                // children nodes
+                for( Node valueNode : attribute.getChildren() )
+                {
+                    tag.addChild( valueNode );
+                }
+                message( attribute, "Moved embedded tag(s) in <" + tag.getName()
+                                    + "> \"value\" attribute to the tag body. These are now child element(s)." );
+                migrated = true;
+            }
+        }
+        return migrated;
     }
 
 }

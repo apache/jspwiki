@@ -133,7 +133,7 @@ public class Tag extends AbstractNode
                 m_parent.addChild( endNode, startTagPos + 1 );
             }
         }
-        
+
         // Finally add the child to the parent
         super.addChild( node, index );
     }
@@ -154,18 +154,20 @@ public class Tag extends AbstractNode
     public String toString()
     {
         // Root node is easy!
-        if ( m_type == NodeType.ROOT )
+        if( m_type == NodeType.ROOT )
         {
             return "ROOT";
         }
-        
+
         StringBuilder sb = new StringBuilder();
-        
+
         // Calculate start and end nodes
-        String tagStart= m_type.getTagStart();
+        String tagStart = m_type.getTagStart();
         String tagEnd = m_type.getTagEnd();
-        if ( tagStart == null ) tagStart = "?";
-        if ( tagEnd == null ) tagEnd = "?";
+        if( tagStart == null )
+            tagStart = "?";
+        if( tagEnd == null )
+            tagEnd = "?";
 
         // Print tag start
         sb.append( tagStart );
@@ -176,18 +178,29 @@ public class Tag extends AbstractNode
             sb.append( m_name );
             if( m_attributes.size() > 0 )
             {
-                sb.append( ' ' );
+                int dynamicAttributeLevels = 0;
                 NodeType lastType = null;
                 for( Attribute attr : m_attributes )
                 {
-                    if ( attr.getType() == lastType )
+                    if( dynamicAttributeLevels == 0 )
                     {
                         sb.append( ' ' );
                     }
                     sb.append( attr.toString() );
                     lastType = attr.getType();
+                    if( lastType == NodeType.DYNAMIC_ATTRIBUTE  && attr.getValue().length() > 3 )
+                    {
+                        if( attr.getValue().charAt( 1 ) != '/' )
+                        {
+                            dynamicAttributeLevels++;
+                        }
+                        else if ( attr.getValue().charAt( attr.getValue().length() - 2 ) != '/' )
+                        {
+                            dynamicAttributeLevels--;
+                        }
+                    }
                 }
-                if ( lastType == NodeType.DYNAMIC_ATTRIBUTE  || m_type == NodeType.JSP_DIRECTIVE  )
+                if( lastType == NodeType.DYNAMIC_ATTRIBUTE || m_type == NodeType.JSP_DIRECTIVE || m_type == NodeType.HTML_COMBINED_TAG )
                 {
                     sb.append( ' ' );
                 }
