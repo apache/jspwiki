@@ -8,7 +8,16 @@ import java.util.Map;
  */
 public class StripesJspTransformer extends AbstractJspTransformer
 {
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize( Map<String, Object> sharedState, JspDocument doc )
+    {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
         boolean migrated = false;
@@ -34,9 +43,16 @@ public class StripesJspTransformer extends AbstractJspTransformer
                     migrated = migrateInputTag( tag ) || migrated;
                 }
 
+                // Change <textarea> to <stripes:textarea>
                 else if( "textarea".equals( tag.getName() ) )
                 {
                     migrated = migrateTextArea( tag ) || migrated;
+                }
+                
+                // Remove any <fmt:setLocale> tags (and their children)
+                else if ( "fmt:setLocale".equals( tag.getName() ) )
+                {
+                    removeSetLocale( tag );
                 }
             }
         }
@@ -116,7 +132,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
                             JspDocument doc = tag.getJspDocument();
                             String name = param.substring( 0, param.indexOf( '=' ) );
                             String value = param.substring( name.length() + 1 );
-                            Tag stripesParam = new Tag( doc, NodeType.HTML_COMBINED_TAG );
+                            Tag stripesParam = new Tag( doc, NodeType.EMPTY_ELEMENT_TAG );
                             stripesParam.setName( "stripes:param" );
                             Attribute nameAttribute = new Attribute( doc );
                             nameAttribute.setName( "name" );
@@ -156,7 +172,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
             {
                 Node nameAttribute = tag.getAttribute( "name" );
                 String nameValue = nameAttribute == null ? "(not set)" : nameAttribute.getName();
-                message( nameAttribute, "NOTE: the \"name\" attribute of <input type=\"submit\" is \"" + nameValue + "\"" );
+                message( nameAttribute, "NOTE: name=\"" + nameValue + "\"" );
             }
 
             // Move type attribute to qname
@@ -234,4 +250,15 @@ public class StripesJspTransformer extends AbstractJspTransformer
         return migrated;
     }
 
+    /**
+     * Removes the &lt;fmt:setLocale&gt; tag and advises the user.
+     * 
+     * @param tag the tag to remove
+     */
+    private void removeSetLocale( Tag tag )
+    {
+        Node parent = tag.getParent();
+        parent.removeChild( tag );
+        message( tag, "Removed <fmt:setLocale> tag because Stripes LocalePicker does this instead." );
+    }
 }

@@ -163,8 +163,18 @@ public class JspParser
             ParseContext ctx = ParseContext.currentContext();
             ctx.setNode( node );
 
-            // Skip ahead if tag start > 1 char long
-            int increment = node.getType().getTagStart().length() - 1;
+            // Skip ahead until we get to the first name character
+            int pos = ctx.position();
+            int increment = node.getType().getTagStart().length();
+            String source = ctx.getSource();
+            while ( pos + increment < source.length() && Character.isWhitespace( source.charAt( pos + increment ) ) )
+            {
+                increment++;
+            }
+            
+            // Walk backwards one position
+            increment--;
+            
             for( int i = 0; i < increment; i++ )
             {
                 ctx.incrementPosition();
@@ -200,16 +210,16 @@ public class JspParser
                 initNode( new Text( doc, NodeType.JSP_EXPRESSION ), Stage.CODE_OR_COMMENT );
             }
 
-            // <%@ + space means JSP directive
+            // <%@ + optional space means JSP directive
             else if( lookahead.startsWith( NodeType.JSP_DIRECTIVE.getTagStart() ) )
             {
                 initNode( new Tag( doc, NodeType.JSP_DIRECTIVE ), Stage.NAME );
             }
 
             // <!-- means HTML comment
-            else if( lookahead.startsWith( NodeType.HTML_COMMENT.getTagStart() ) )
+            else if( lookahead.startsWith( NodeType.COMMENT.getTagStart() ) )
             {
-                initNode( new Text( doc, NodeType.HTML_COMMENT ), Stage.CODE_OR_COMMENT );
+                initNode( new Text( doc, NodeType.COMMENT ), Stage.CODE_OR_COMMENT );
             }
 
             // Whitespace after <% means
@@ -241,16 +251,16 @@ public class JspParser
             }
 
             // If </, it's an HTML end tag
-            else if( lookahead.startsWith( NodeType.HTML_END_TAG.getTagStart() ) )
+            else if( lookahead.startsWith( NodeType.END_TAG.getTagStart() ) )
             {
-                initNode( new Tag( doc, NodeType.HTML_END_TAG ), Stage.NAME );
+                initNode( new Tag( doc, NodeType.END_TAG ), Stage.NAME );
             }
 
             // Any other char means its HTML start tag
             // or combined tag
             else
             {
-                initNode( new Tag( doc, NodeType.UNRESOLVED_HTML_TAG ), Stage.NAME );
+                initNode( new Tag( doc, NodeType.UNRESOLVED_TAG ), Stage.NAME );
             }
         }
 
@@ -373,15 +383,15 @@ public class JspParser
          * </p>
          * <ul>
          * <li>If the tag's type has not been determined (that is, its current
-         * type is {@link NodeType#UNRESOLVED_HTML_TAG}, its type is resolved
-         * to either {@link NodeType#HTML_COMBINED_TAG} or
-         * {@link NodeType#HTML_START_TAG}, depending on whether the last
+         * type is {@link NodeType#UNRESOLVED_TAG}, its type is resolved
+         * to either {@link NodeType#EMPTY_ELEMENT_TAG} or
+         * {@link NodeType#START_TAG}, depending on whether the last
          * character was /.
          * <li>
          * <li>If the tag's name has not been set, because the parser has not
          * encountered whitespace that delimits attributes, its name is set.</li>
-         * <li>If the tag is of type {@link NodeType#HTML_START_TAG} or
-         * {@link NodeType#HTML_START_TAG}, the current ParseContext is pushed
+         * <li>If the tag is of type {@link NodeType#START_TAG} or
+         * {@link NodeType#START_TAG}, the current ParseContext is pushed
          * on, or popped off, of the stack. In addition, if the tag is an end
          * tag, its parent is re-wired to the same parent as the start tag. This
          * makes the start and end tag logical peers, as they should be.</li>
@@ -400,24 +410,24 @@ public class JspParser
             // Special case if we have a META or LINK tag
             if ( "LINK".equals( node.getName() ) )
             {
-                node.setType( NodeType.HTML_LINK );
+                node.setType( NodeType.LINK );
             }
             else if ( "META".equals( node.getName() ) )
             {
-                node.setType( NodeType.HTML_META );
+                node.setType( NodeType.META );
             }
 
             // Resolve tag type if not set
-            if( node.getType() == NodeType.UNRESOLVED_HTML_TAG )
+            if( node.getType() == NodeType.UNRESOLVED_TAG )
             {
                 String lookbehind = ctx.lookbehind( 2 );
-                if( NodeType.HTML_COMBINED_TAG.getTagEnd().equals( lookbehind ) )
+                if( NodeType.EMPTY_ELEMENT_TAG.getTagEnd().equals( lookbehind ) )
                 {
-                    node.setType( NodeType.HTML_COMBINED_TAG );
+                    node.setType( NodeType.EMPTY_ELEMENT_TAG );
                 }
                 else
                 {
-                    node.setType( NodeType.HTML_START_TAG );
+                    node.setType( NodeType.START_TAG );
                 }
             }
 
@@ -433,13 +443,13 @@ public class JspParser
             // otherwise start new Text
             switch( node.getType() )
             {
-                case HTML_START_TAG: {
+                case START_TAG: {
                     // Add the start tag to parent, and push it onto stack
                     endStage();
                     ctx = ParseContext.push();
                     break;
                 }
-                case HTML_END_TAG: {
+                case END_TAG: {
                     // Make end tag the peer of the start tag
                     Node startTag = node.getParent();
                     node.setParent( startTag.getParent() );

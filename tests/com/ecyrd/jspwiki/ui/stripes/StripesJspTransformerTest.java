@@ -52,12 +52,12 @@ public class StripesJspTransformerTest extends TestCase
 
         // Verify old tag is still there too
         node = doc.getNodes().get( 2 );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "stripes:form", node.getName() );
         assertEquals( 0, ((Tag) node).getAttributes().size() );
     }
 
-    public void testFormCombinedTag() throws Exception
+    public void testFormEmptyElementTag() throws Exception
     {
         String s = "<form accept-charset=\"UTF-8\" method=\"POST\" />";
         JspDocument doc = new JspParser().parse( s );
@@ -112,7 +112,7 @@ public class StripesJspTransformerTest extends TestCase
         // After transformation, the "type" attribute is deleted
         assertEquals( 3, doc.getNodes().size() ); // Added Stripes taglib + linebreak
         node = doc.getNodes().get( 2 ); // First 2 are injected Stripes taglib+llinebreak
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "stripes:password", node.getName() );
         assertEquals( 4, ((Tag) node).getAttributes().size() );
         assertEquals( 0, node.getChildren().size() );
@@ -129,14 +129,14 @@ public class StripesJspTransformerTest extends TestCase
         // value becomes child node
         assertEquals( 5, doc.getNodes().size() ); // Added Stripes taglib +linebreak
         Node node = doc.getNodes().get( 2 ); // First 2 are injected Stripes taglib+ llinebreak
-        assertEquals( NodeType.HTML_START_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( "stripes:password", node.getName() );
         assertEquals( 3, ((Tag) node).getAttributes().size() );
 
         // The value attribute should show up as a child node
         assertEquals( 1, node.getChildren().size() );
         node = node.getChildren().get( 0 );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "wiki:Variable", node.getName() );
     }
 
@@ -150,7 +150,7 @@ public class StripesJspTransformerTest extends TestCase
         // After transformation, the tag name is renamed
         assertEquals( 3, doc.getNodes().size() ); // Added Stripes taglib + linebreak
         Node node = doc.getNodes().get( 2 ); // First 2 are injected Stripes taglib+ llinebreak
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "stripes:textarea", node.getName() );
         assertEquals( 5, ((Tag) node).getAttributes().size() );
 
@@ -173,13 +173,13 @@ public class StripesJspTransformerTest extends TestCase
         // After transformation, the tag name is renamed & tag is split
         assertEquals( 5, doc.getNodes().size() ); // Added Stripes taglib + linebreak
         Node node = doc.getNodes().get( 2 ); // First 2 are injected Stripes taglib+ llinebreak
-        assertEquals( NodeType.HTML_START_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( "stripes:textarea", node.getName() );
         assertEquals( 4, ((Tag) node).getAttributes().size() ); // Value attribute vanishes...
 
         // Verify newly created end tag
         node = doc.getNodes().get( 4 );
-        assertEquals( NodeType.HTML_END_TAG, node.getType() );
+        assertEquals( NodeType.END_TAG, node.getType() );
         assertEquals( "stripes:textarea", node.getName() );
 
         // The value attribute should have moved to child nodes
@@ -204,7 +204,7 @@ public class StripesJspTransformerTest extends TestCase
         // After transformation, the tag name is stays the same (no name attribute...)
         assertEquals( 1, doc.getNodes().size() ); // NO Stripes taglib or  linebreak
         Node node = doc.getNodes().get( 0 );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "textarea", node.getName() );
         assertEquals( 4, ((Tag) node).getAttributes().size() );
     }

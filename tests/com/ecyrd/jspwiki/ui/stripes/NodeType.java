@@ -17,22 +17,22 @@ public enum NodeType
     CDATA("<![CDATA[","]]>"),
     /** DOCTYPE declaration */
     DOCTYPE("<!DOCTYPE ", ">"),
-    /** HTML comment tag */
-    HTML_COMMENT("<!--", "-->"),
-    /** HTML start tag */
-    HTML_START_TAG("<", ">"),
-    /** HTML LINK tag. */
-    HTML_LINK("<",">"),
-    /** HTML META tag. */
-    HTML_META("<",">"),
-    /** HTML end tag */
-    HTML_END_TAG("</", ">"),
+    /** HTML, XML or XHTML comment tag */
+    COMMENT("<!--", "-->"),
+    /** HTML, XML or XHTML start tag */
+    START_TAG("<", ">"),
+    /** HTML or XHTML LINK tag. */
+    LINK("<",">"),
+    /** HTML or XHTML META tag. */
+    META("<",">"),
+    /** HTML, XML or XHTML end tag */
+    END_TAG("</", ">"),
     /** XML declaration, <em>e.g.</em>, <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code>. */
     DECLARATION("<?","?>"),
-    /** HTML end tag */
-    HTML_COMBINED_TAG("<", "/>"),
-    /** HTML tag, but not sure whether it's a start, end or combined tag. */
-    UNRESOLVED_HTML_TAG("<", null),
+    /** HTML, XML or XHTML empty-element tag. */
+    EMPTY_ELEMENT_TAG("<", "/>"),
+    /** HTML tag, but not sure whether it's a start, end or empty-element tag. */
+    UNRESOLVED_TAG("<", null),
     /** JSP comments, e.g., &lt;%-- comment --%&gt; */
     JSP_COMMENT("<%--", "--%>"),
     /**
@@ -51,7 +51,7 @@ public enum NodeType
      * JSP page, import or taglib directive, e.g., &lt;%@ include... %&gt;
      * &lt;%@ page... %&gt; &lt;%@ taglib... %&gt;
      */
-    JSP_DIRECTIVE("<%@ ", "%>");
+    JSP_DIRECTIVE("<%@", "%>");
     private final String m_tagStart;
 
     private final String m_tagEnd;

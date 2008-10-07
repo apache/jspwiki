@@ -8,24 +8,96 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Node implementation representing an HTML or XML tag.
+ * Node implementation representing an HTML tag, XML tag or JSP tag.
  */
 public class Tag extends AbstractNode
 {
     private List<Attribute> m_attributes = new ArrayList<Attribute>();
 
     /**
+     * Constructs a new Tag.
      * @param doc the parent JspDocument
-     * @param type
+     * @param type the node type
      */
     public Tag( JspDocument doc, NodeType type )
     {
         super( doc, type );
     }
 
+    /**
+     * Adds an attribute to the Tag.
+     * @param attribute the attribute to add
+     */
     public void addAttribute( Attribute attribute )
     {
         m_attributes.add( attribute );
+    }
+
+    /**
+     * {@inheritDoc} If the Node is of type
+     * {@link NodeType#EMPTY_ELEMENT_TAG}, the tag will be split into two nodes
+     * (start tag and end tag), with the child Node inserted between the two.
+     * 
+     * @param node the node to insert
+     * @param value the node to insert in between the split nodes
+     * @throws IllegalStateException if the current Node must be split, and does
+     *             not have a parent.
+     */
+    public void addChild( Node node )
+    {
+        if( m_children.size() == 0 )
+        {
+            addChild( node, 0 );
+        }
+        else
+        {
+            super.addChild( node );
+        }
+    }
+
+    /**
+     * {@inheritDoc} If the Node is of type {@link NodeType#EMPTY_ELEMENT_TAG},
+     * the tag will be split into two nodes (start tag and end tag), with the
+     * child Node inserted between the two.
+     * 
+     * @param node the node to insert
+     * @param index the position to insert the Node into
+     * @throws IllegalStateException if the current Node must be split, and does
+     *             not have a parent.
+     */
+    public void addChild( Node node, int index )
+    {
+        // If this node is a "combined node," split it into two
+        if( m_type == NodeType.EMPTY_ELEMENT_TAG )
+        {
+            if( m_parent == null )
+            {
+                throw new IllegalStateException( "Node does not have a parent!" );
+            }
+
+            // Change node type to start tag
+            m_type = NodeType.START_TAG;
+
+            // Build new end tag & set its parent
+            Tag endNode = new Tag( m_doc, NodeType.END_TAG );
+            endNode.setName( m_name );
+            endNode.setParent( m_parent );
+
+            // Insert as sibling of this node
+            List<Node> siblings = m_parent.getChildren();
+            int startTagPos = siblings.indexOf( this );
+            if( startTagPos == siblings.size() - 1 )
+            {
+                m_parent.addChild( endNode );
+            }
+            else
+            {
+                m_parent.addChild( endNode, startTagPos + 1 );
+            }
+        }
+
+        // Finally add the child to the parent
+        super.addChild( node, index );
     }
 
     /**
@@ -52,10 +124,9 @@ public class Tag extends AbstractNode
     }
 
     /**
-     * Returns the attributes of this node, as a defensive copy of the
-     * internally-cached list.
+     * Returns an unmodifiable copy of the attributes of this Tag.
      * 
-     * @return
+     * @return the list of attributes
      */
     public List<Attribute> getAttributes()
     {
@@ -64,87 +135,37 @@ public class Tag extends AbstractNode
         return Collections.unmodifiableList( attributesCopy );
     }
 
-    public void removeAttribute( Attribute attribute )
-    {
-        m_attributes.remove( attribute );
-    }
-
     /**
-     * Adds a child to the current Node. If the Node is of type
-     * {@link NodeType#HTML_COMBINED_TAG}, the tag will be split into two nodes
-     * (start tag and end tag), with the child Node inserted between the two.
-     * 
-     * @param node the node to insert
-     * @param value the node to insert in between the split nodes
-     * @throws IllegalStateException if the current Node must be split, and does
-     *             not have a parent.
+     * Returns the values of all child nodes, concatenated, if the Tag is a start tag; <code>null</code> otherwise.
+     * @return the Tag value nodes
      */
-    public void addChild( Node node )
-    {
-        if( m_children.size() == 0 )
-        {
-            addChild( node, 0 );
-        }
-        else
-        {
-            super.addChild( node );
-        }
-    }
-
-    /**
-     * Adds a child to the current Node before a specified position in the list
-     * of children. If the position is 0, the Node will be inserted before the
-     * first child. If the Node is of type {@link NodeType#HTML_COMBINED_TAG},
-     * the tag will be split into two nodes (start tag and end tag), with the
-     * child Node inserted between the two.
-     * 
-     * @param node the node to insert
-     * @param index the position to insert the Node into
-     * @throws IllegalStateException if the current Node must be split, and does
-     *             not have a parent.
-     */
-    public void addChild( Node node, int index )
-    {
-        // If this node is a "combined node," split it into two
-        if( m_type == NodeType.HTML_COMBINED_TAG )
-        {
-            if( m_parent == null )
-            {
-                throw new IllegalStateException( "Node does not have a parent!" );
-            }
-
-            // Change node type to start tag
-            m_type = NodeType.HTML_START_TAG;
-
-            // Build new end tag & set its parent
-            Tag endNode = new Tag( m_doc, NodeType.HTML_END_TAG );
-            endNode.setName( m_name );
-            endNode.setParent( m_parent );
-
-            // Insert as sibling of this node
-            List<Node> siblings = m_parent.getChildren();
-            int startTagPos = siblings.indexOf( this );
-            if( startTagPos == siblings.size() - 1 )
-            {
-                m_parent.addChild( endNode );
-            }
-            else
-            {
-                m_parent.addChild( endNode, startTagPos + 1 );
-            }
-        }
-
-        // Finally add the child to the parent
-        super.addChild( node, index );
-    }
-
     public String getValue()
     {
-        if( m_type != NodeType.HTML_START_TAG )
+        if( m_type != NodeType.START_TAG )
         {
             return null;
         }
         return super.getValue();
+    }
+
+    /**
+     * Returns <code>true</code> if the Tag has an attribute with a supplied name, 
+     * and <code>false</code> otherwise.
+     * @param name the attribute to search for
+     * @return the result
+     */
+    public boolean hasAttribute( String name )
+    {
+        return getAttribute( name ) != null;
+    }
+    
+    /**
+     * Removes an attribute from the Tag.
+     * @param the attribute to remove
+     */
+    public void removeAttribute( Attribute attribute )
+    {
+        m_attributes.remove( attribute );
     }
 
     /**
@@ -171,6 +192,12 @@ public class Tag extends AbstractNode
 
         // Print tag start
         sb.append( tagStart );
+        
+        // For JSP directives, add a leading space
+        if ( m_type == NodeType.JSP_DIRECTIVE )
+        {
+            sb.append( ' ' );
+        }
 
         // If Tag, print start/end plus attributes.
         if( isHtmlNode() || m_type == NodeType.JSP_DIRECTIVE )
@@ -200,7 +227,7 @@ public class Tag extends AbstractNode
                         }
                     }
                 }
-                if( lastType == NodeType.DYNAMIC_ATTRIBUTE || m_type == NodeType.JSP_DIRECTIVE || m_type == NodeType.HTML_COMBINED_TAG )
+                if( lastType == NodeType.DYNAMIC_ATTRIBUTE || m_type == NodeType.JSP_DIRECTIVE || m_type == NodeType.EMPTY_ELEMENT_TAG )
                 {
                     sb.append( ' ' );
                 }

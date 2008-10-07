@@ -206,9 +206,9 @@ public abstract class AbstractNode implements Node
      */
     public boolean isHtmlNode()
     {
-        return m_type == NodeType.HTML_START_TAG || m_type == NodeType.HTML_COMBINED_TAG || m_type == NodeType.UNRESOLVED_HTML_TAG
-               || m_type == NodeType.HTML_END_TAG || m_type == NodeType.DECLARATION || m_type == NodeType.HTML_LINK
-               || m_type == NodeType.HTML_META;
+        return m_type == NodeType.START_TAG || m_type == NodeType.EMPTY_ELEMENT_TAG || m_type == NodeType.UNRESOLVED_TAG
+               || m_type == NodeType.END_TAG || m_type == NodeType.DECLARATION || m_type == NodeType.LINK
+               || m_type == NodeType.META;
     }
 
     /*
@@ -230,7 +230,7 @@ public abstract class AbstractNode implements Node
      */
     public boolean isTagWithAttributes()
     {
-        return m_type == NodeType.HTML_START_TAG || m_type == NodeType.HTML_COMBINED_TAG || m_type == NodeType.UNRESOLVED_HTML_TAG;
+        return m_type == NodeType.START_TAG || m_type == NodeType.EMPTY_ELEMENT_TAG || m_type == NodeType.UNRESOLVED_TAG;
     }
 
     /*

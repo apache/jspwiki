@@ -4,16 +4,72 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JspMigrator
 {
 
     /**
-     * @param args
+     * Key for a list of File objects stored in the shared-state array.
+     */
+    public static final String ALL_JSPS = "allJSPs";
+
+    /**
+     * Returns a list of files that match a specified extension, starting in a
+     * supplied directory and scanning each child directory recursively..
+     * 
+     * @param dir the directory to start in
+     * @param extension the extension to check, for example <code>.jsp</code>.
+     *            If the extension is "*", all files are returned
+     * @return the list of files
+     * @throws IOException
+     * @throws IllegalArgumentException if <code>dir</code> does not already
+     *             exist, or if <code>extension</code>
+     */
+    public static List<File> getFiles( File dir, String extension ) throws IOException
+    {
+        // Verify parameters
+        if( dir == null || extension == null )
+        {
+            throw new IllegalArgumentException( "Dir and extension must not be null." );
+        }
+
+        // Verify that the directory exists
+        if( !dir.exists() )
+        {
+            throw new IllegalArgumentException( "Dir " + dir.getPath() + " does not exist!" );
+        }
+
+        List<File> allFiles = new ArrayList<File>();
+
+        // Assemble list of files
+        for( File file : dir.listFiles() )
+        {
+            // If directory, migrate everything in it recursively
+            if( file.isDirectory() )
+            {
+                allFiles.addAll( getFiles( file, extension ) );
+            }
+
+            // Otherwise it's a file, so add it to the list
+            else
+            {
+                if( "*".equals( extension ) || file.getName().endsWith( extension ) )
+                {
+                    allFiles.add( file );
+                }
+            }
+        }
+        return allFiles;
+    }
+
+    /**
+     * Migrates a directory containing JSPs, and all of its subdirectories, to a
+     * destination directory.
+     * 
+     * @param args two Strings specifying the source and destination
+     *            directories, respectively. Both source and destination must
+     *            already exist, and may not be the same.
      */
     public static void main( String[] args )
     {
@@ -56,6 +112,20 @@ public class JspMigrator
         }
     }
 
+    protected static String readSource( File src ) throws IOException
+    {
+        // Read in the file
+        FileReader reader = new FileReader( src );
+        StringBuffer s = new StringBuffer();
+        int ch = 0;
+        while ( (ch = reader.read()) != -1 )
+        {
+            s.append( (char) ch );
+        }
+        reader.close();
+        return s.toString();
+    }
+
     private List<JspTransformer> m_transformers = new ArrayList<JspTransformer>();
 
     private Map<String, Object> m_sharedState = new HashMap<String, Object>();
@@ -75,39 +145,44 @@ public class JspMigrator
      * Migrates the contents of an entire directory from one location to
      * another.
      * 
-     * @param srcDir the source directory
+     * @param sourceDir the source directory
      * @param destDir the destination directory
      */
-    public void migrate( File srcDir, File destDir ) throws IOException
+    public void migrate( File sourceDir, File destDir ) throws IOException
     {
-        // Create the destination directory if it does not already exist
-        if( !destDir.exists() )
-        {
-            destDir.mkdir();
-        }
-
         // Clear the shared state
         m_sharedState.clear();
 
-        // Assemble list of files
-        for( File src : srcDir.listFiles() )
-        {
-            // If directory, migrate everything in it recursively
-            File dest = new File( destDir, src.getName() );
-            if( src.isDirectory() )
-            {
-                migrate( src, dest );
-            }
+        // Find the files we need to migrate
+        String sourcePath = sourceDir.getPath();
+        List<File> allFiles = Collections.unmodifiableList( getFiles( sourceDir, ".jsp" ) );
+        m_sharedState.put( ALL_JSPS, allFiles );
 
-            // Otherwise it's a file, so migrate it if it's a JSP
-            else
-            {
-                if( src.getName().endsWith( ".jsp" ) )
-                {
-                    migrateFile( src, dest );
-                }
-            }
+        for( File src : allFiles )
+        {
+            // Figure out the new file name
+            String destPath = src.getPath().substring( sourcePath.length() );
+            File dest = new File( destDir, destPath );
+
+            // Create any directories we need
+            dest.getParentFile().mkdirs();
+
+            migrateFile( src, dest );
         }
+    }
+
+    /**
+     * Writes a String to a file.
+     * 
+     * @param dest the destination file
+     * @param contents the String to write to the file
+     * @throws IOException
+     */
+    private void writeDestination( File dest, String contents ) throws IOException
+    {
+        FileWriter writer = new FileWriter( dest );
+        writer.append( contents );
+        writer.close();
     }
 
     /**
@@ -135,34 +210,6 @@ public class JspMigrator
         // Write the transformed contents to disk
         writeDestination( dest, doc.toString() );
         System.out.println( "    done [" + s.length() + " chars]." );
-    }
-
-    /**
-     * Writes a String to a file.
-     * 
-     * @param dest the destination file
-     * @param contents the String to write to the file
-     * @throws IOException
-     */
-    private void writeDestination( File dest, String contents ) throws IOException
-    {
-        FileWriter writer = new FileWriter( dest );
-        writer.append( contents );
-        writer.close();
-    }
-
-    protected static String readSource( File src ) throws IOException
-    {
-        // Read in the file
-        FileReader reader = new FileReader( src );
-        StringBuffer s = new StringBuffer();
-        int ch = 0;
-        while ( (ch = reader.read()) != -1 )
-        {
-            s.append( (char) ch );
-        }
-        reader.close();
-        return s.toString();
     }
 
 }

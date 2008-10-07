@@ -65,7 +65,7 @@ public class JspParserTest extends TestCase
         assertEquals( 1, nodes.size() );
         Tag tag = (Tag)nodes.get( 0 );
         assertEquals( "META", tag.getName() );
-        assertEquals( NodeType.HTML_META, tag.getType() );
+        assertEquals( NodeType.META, tag.getType() );
         assertEquals( 2, tag.getAttributes().size() );
         assertEquals( "name", tag.getAttribute( "name" ).getName() );
         assertEquals( "Author", tag.getAttribute( "name" ).getValue() );
@@ -87,7 +87,7 @@ public class JspParserTest extends TestCase
         assertEquals( 1, nodes.size() );
         Tag tag = (Tag)nodes.get( 0 );
         assertEquals( "LINK", tag.getName() );
-        assertEquals( NodeType.HTML_LINK, tag.getType() );
+        assertEquals( NodeType.LINK, tag.getType() );
         assertEquals( 4, tag.getAttributes().size() );
         assertEquals( "rel", tag.getAttribute( "rel" ).getName() );
         assertEquals( "Start", tag.getAttribute( "rel" ).getValue() );
@@ -115,7 +115,7 @@ public class JspParserTest extends TestCase
         Node node;
         node = nodes.get( 0 );
         assertEquals( "a", node.getName() );
-        assertEquals( NodeType.HTML_START_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( "<a <b test=\"c\">selected=\"d\"</b> >", node.toString() );
         
         // Second node is a Text node
@@ -126,12 +126,12 @@ public class JspParserTest extends TestCase
         // Third node is an end tag
         node = nodes.get( 2 );
         assertEquals( "a", node.getName() );
-        assertEquals( NodeType.HTML_END_TAG, node.getType() );
+        assertEquals( NodeType.END_TAG, node.getType() );
         
         // First and third node are children of the root
         assertEquals( 2, doc.getRoot().getChildren().size() );
-        assertEquals( NodeType.HTML_START_TAG, doc.getRoot().getChildren().get( 0 ).getType() );
-        assertEquals( NodeType.HTML_END_TAG, doc.getRoot().getChildren().get( 1 ).getType() );
+        assertEquals( NodeType.START_TAG, doc.getRoot().getChildren().get( 0 ).getType() );
+        assertEquals( NodeType.END_TAG, doc.getRoot().getChildren().get( 1 ).getType() );
         
         // Test first node: should have 3 attributes (2 dynamic)
         Tag tag = (Tag)nodes.get( 0 );
@@ -171,7 +171,7 @@ public class JspParserTest extends TestCase
         assertEquals( "a", node.getName() );
         assertEquals( null, node.getValue() );
         assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "<a b=\"cd\" />", node.toString() );
 
         // Verify attributes
@@ -221,7 +221,7 @@ public class JspParserTest extends TestCase
         assertEquals( "  ", node.toString() );
     }
     
-    public void testCombinedTag() throws Exception
+    public void testEmptyElementTag() throws Exception
     {
         String s = "<foo />";
 
@@ -239,7 +239,7 @@ public class JspParserTest extends TestCase
         assertEquals( "foo", node.getName() );
         assertEquals( null, node.getValue() );
         assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "<foo/>", node.toString() );
     }
 
@@ -284,6 +284,31 @@ public class JspParserTest extends TestCase
         attribute = node.getAttributes().get( 0 );
         assertEquals( "import", attribute.getName() );
         assertEquals( "org.apache.log4j.*", attribute.getValue() );
+        assertEquals( "<%@ page import=\"org.apache.log4j.*\" %>", node.toString());
+    }
+    
+    public void testParseDirectiveNoLeadingSpace() throws Exception
+    {
+        String s = "<%@page import=\"org.apache.log4j.*\"%>";
+
+        // Parse the contents of the file
+        JspParser parser = new JspParser();
+        JspDocument doc = parser.parse( s );
+
+        // Results in one node
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Tag node;
+        Node attribute;
+
+        // Verify directive
+        node = (Tag) nodes.get( 0 );
+        assertEquals( "page", node.getName() );
+        assertEquals( 1, node.getAttributes().size() );
+        attribute = node.getAttributes().get( 0 );
+        assertEquals( "import", attribute.getName() );
+        assertEquals( "org.apache.log4j.*", attribute.getValue() );
+        assertEquals( "<%@ page import=\"org.apache.log4j.*\" %>", node.toString());
     }
 
     public void testParse() throws Exception
@@ -484,7 +509,7 @@ public class JspParserTest extends TestCase
         assertEquals( 277, node.getStart() );
         assertEquals( 354, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "stripes:useActionBean", node.getName() );
@@ -555,7 +580,7 @@ public class JspParserTest extends TestCase
         assertEquals( 1513, node.getStart() );
         assertEquals( 1553, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
         assertEquals( 17, node.getSiblings().size() );
         assertEquals( "wiki:Include", node.getName() );
@@ -599,7 +624,7 @@ public class JspParserTest extends TestCase
 
         // AbstractNode 1 is <foo> with 1 attribute
         node = nodes.get( 1 );
-        assertEquals( NodeType.HTML_START_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( "<foo attribute1=\"1\">", node.toString() );
         assertEquals( "foo", node.getName() );
         assertEquals( "  <bar attribute2=\"2\" attribute3=\"3\" />  ", node.getValue() );
@@ -629,7 +654,7 @@ public class JspParserTest extends TestCase
 
         // Check AbstractNode 1, child 1 -- should be <bar>
         node = nodes.get( 1 ).getChildren().get( 1 );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "<bar attribute2=\"2\" attribute3=\"3\" />", node.toString() );
         assertEquals( "bar", node.getName() );
         assertEquals( 0, node.getChildren().size() );
@@ -652,7 +677,7 @@ public class JspParserTest extends TestCase
 
         // AbstractNode 5 (</foo) has no attributes
         node = nodes.get( 5 );
-        assertEquals( NodeType.HTML_END_TAG, node.getType() );
+        assertEquals( NodeType.END_TAG, node.getType() );
         assertEquals( null, node.getValue() );
         assertEquals( "foo", node.getName() );
         assertEquals( 0, ((Tag) node).getAttributes().size() );
@@ -706,7 +731,7 @@ public class JspParserTest extends TestCase
         assertEquals( 3, node.getColumn() );
         assertEquals( 2, node.getStart() );
         assertEquals( 52, node.getEnd() );
-        assertEquals( NodeType.HTML_COMBINED_TAG, node.getType() );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( "<wiki:Include page=\"<%=contentPage%>\" var=\'Foo\' />", node.toString() );
         assertEquals( "wiki:Include", node.getName() );
         assertEquals( null, node.getValue() );

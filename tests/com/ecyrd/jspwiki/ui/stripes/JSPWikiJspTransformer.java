@@ -8,7 +8,16 @@ import java.util.Map;
  */
 public class JSPWikiJspTransformer extends AbstractJspTransformer
 {
+    /**
+     * {@inheritDoc}
+     */
+    public void initialize( Map<String, Object> sharedState, JspDocument doc )
+    {
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
         List<Node> nodes = doc.getNodes();
@@ -32,7 +41,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
 
                 // Advise user about <input type="hidden"> or <stripes:hidden> tags
                 boolean isTypeHidden = false;
-                if ( tag.getType() != NodeType.HTML_END_TAG )
+                if ( tag.getType() != NodeType.END_TAG )
                 {
                     isTypeHidden = "stripes:hidden".equals( tag.getName() );
                     if( "input".equals( tag.getName() ) )
@@ -42,9 +51,13 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                     }
                     if( isTypeHidden )
                     {
-                        Attribute hidden = tag.getAttribute( "name" );
-                        message( hidden, "NOTE: hidden form input with name \"" + hidden.getValue()
-                                         + "\" should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
+                        String paramName = tag.hasAttribute( "name" ) ? tag.getAttribute( "name" ).getValue() : null;
+                        String paramValue = tag.hasAttribute( "value" ) ? tag.getAttribute( "value" ).getValue() : null;
+                        if ( paramName != null && paramValue != null )
+                        {
+                            message( tag, "NOTE: hidden form input sets parameter " + paramName
+                                     + "=\"" + paramValue + "\". This should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
+                        }
                     }
                 }
 
