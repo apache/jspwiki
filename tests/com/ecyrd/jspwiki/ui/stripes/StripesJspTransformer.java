@@ -49,8 +49,13 @@ public class StripesJspTransformer extends AbstractJspTransformer
                     migrated = migrateTextArea( tag ) || migrated;
                 }
                 
+                else if ( "label".equals( tag.getName() ) )
+                {
+                    migrated = migrateLabel( tag ) || migrated;
+                }
+
                 // Remove any <fmt:setLocale> tags (and their children)
-                else if ( "fmt:setLocale".equals( tag.getName() ) )
+                else if( "fmt:setLocale".equals( tag.getName() ) )
                 {
                     removeSetLocale( tag );
                 }
@@ -84,6 +89,72 @@ public class StripesJspTransformer extends AbstractJspTransformer
             doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
             message( doc.getRoot(), "Added Stripes taglib directive." );
         }
+    }
+
+    /**
+     * <p>
+     * Migrates an existing &lt;label&gt; element to &lt;stripes:label&gt;.
+     * Migration can happen in two ways:
+     * </p>
+     * <ul>
+     * <li>If the label tag has an a single <code>fmt:message</code> child
+     * element whose <code>key</code> attribute contains a value, that value
+     * will become the <code>name</code> attribute of the
+     * <code>stripes:label</code>element. </li>
+     * <li>In all other cases, the <code>label</code> element is simply re-named to
+     * <code>stripes:label</code>.</li>
+     * </ul>
+     * <p>
+     * For example, the ordinary HTML tag <code>&lt;label
+     * for="assertedName"&gt;&lt;fmt:message
+     * key="prefs.assertedname"/&gt;&lt;/label&gt;</code>
+     * will be migrated to &lt;stripes:label name="prefs.assertedname"
+     * for="assertedName"&gt;.
+     * </p>
+     * 
+     * @param tag
+     * @return
+     */
+    private boolean migrateLabel( Tag tag )
+    {
+        // Change the name to <stripes:label>
+        tag.setName( "stripes:label" );
+        
+        // Not a start tag, we're done
+        if ( tag.getType() != NodeType.START_TAG)
+        {
+            return false;
+        }
+        
+        // Do we have a single child <fmt:message>?
+        Node child = tag.getChildren().size() == 1 ? tag.getChildren().get( 0 ) : null;
+        if ( child != null && child.getType() == NodeType.EMPTY_ELEMENT_TAG )
+        {
+            if ( "fmt:message".equals( child.getName() ) )
+            {
+                // Move the fmt:message tag's key attribute to stripes:label name
+                Tag message = (Tag)child;
+                if ( message.hasAttribute( "key" ) )
+                {
+                    Attribute key = message.getAttribute( "key" );
+                    key.setName( "name" );
+                    message.removeAttribute( key );
+                    tag.addAttribute( key );
+                    tag.removeChild( message );
+                }
+                
+                // Change to an empty end tag
+                tag.setType( NodeType.EMPTY_ELEMENT_TAG );
+                
+                // Delete the matching end tag
+                int i = tag.getParent().getChildren().indexOf( tag );
+                Node endTag = tag.getParent().getChildren().get( i + 1 );
+                tag.getParent().removeChild( endTag );
+            }
+        }
+        message( tag, "Changed <label> to <stripes:label>." );
+        
+        return true;
     }
 
     /**
@@ -161,7 +232,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
     private boolean migrateInputTag( Tag tag )
     {
         boolean migrated = false;
-        
+
         // Move 'type' attribute value to the localname
         Attribute attribute = tag.getAttribute( "type" );
         if( attribute != null )
@@ -190,7 +261,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
     private boolean migrateTextArea( Tag tag )
     {
         boolean migrated = false;
-        
+
         // Only migrate textarea if 'name' attribute is present
         Attribute name = tag.getAttribute( "name" );
         if( name != null )
@@ -220,12 +291,13 @@ public class StripesJspTransformer extends AbstractJspTransformer
      * method leaves the attribute as-is.
      * 
      * @param tag the tag to migrate
-     * @return <code>true</code> if this method changed the JspDocument, and <code>false</code> if not
+     * @return <code>true</code> if this method changed the JspDocument, and
+     *         <code>false</code> if not
      */
     private boolean migrateValueAttribute( Tag tag )
     {
         boolean migrated = false;
-        
+
         // If embedded markup in "value" attribute, move to child
         // nodes
         Attribute attribute = tag.getAttribute( "value" );

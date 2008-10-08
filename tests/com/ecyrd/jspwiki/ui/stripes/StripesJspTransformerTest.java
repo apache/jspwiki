@@ -1,6 +1,7 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Test;
@@ -84,6 +85,74 @@ public class StripesJspTransformerTest extends TestCase
         assertEquals( 1, ((Tag) node).getAttributes().size() );
         Node attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "Login.jsp", attribute.getValue() );
+    }
+    
+    public void testLabel() throws Exception
+    {
+        String s = "<label for=\"assertedName\"><fmt:message key=\"prefs.assertedname\"/></label>";
+        JspDocument doc = new JspParser().parse( s );
+        m_transformer.transform( m_sharedState, doc );
+
+        // Message tag is removed; 2 more added
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 3, nodes.size() );
+        
+        // First node is the Stripes taglib
+        Node node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+
+        // Second node is the injected linebreak
+        node = nodes.get( 1 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        
+        // Third node is the re-structured stripes:label
+        Tag tag = (Tag)nodes.get( 2 );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, tag.getType() );
+        assertEquals( "stripes:label", tag.getName() );
+        assertEquals( 2, tag.getAttributes().size() );
+        assertEquals( "for", tag.getAttribute( "for" ).getName() );
+        assertEquals( "assertedName", tag.getAttribute( "for" ).getValue() );
+        assertEquals( "name", tag.getAttribute( "name" ).getName() );
+        assertEquals( "prefs.assertedname", tag.getAttribute( "name" ).getValue() );
+        
+        assertEquals( "<stripes:label for=\"assertedName\" name=\"prefs.assertedname\" />", tag.toString() );
+    }
+
+    public void testLabelNoFmtMessage() throws Exception
+    {
+        String s = "<label for=\"assertedName\">This is a test.</label>";
+        JspDocument doc = new JspParser().parse( s );
+        m_transformer.transform( m_sharedState, doc );
+
+        // Added 2 nodes...
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 5, nodes.size() );
+        
+        // First node is the Stripes taglib
+        Node node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+
+        // Second node is the injected linebreak
+        node = nodes.get( 1 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        
+        // Third node is the stripes:label start
+        Tag tag = (Tag)nodes.get( 2 );
+        assertEquals( NodeType.START_TAG, tag.getType() );
+        assertEquals( "stripes:label", tag.getName() );
+        assertEquals( 1, tag.getAttributes().size() );
+        assertEquals( "for", tag.getAttribute( "for" ).getName() );
+        assertEquals( "assertedName", tag.getAttribute( "for" ).getValue() );
+
+        // Fourth node is the label text
+        node = nodes.get( 3 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( "This is a test.", node.getValue() );
+        
+        // Fifth node is the stripes:label end
+        tag = (Tag)nodes.get( 4 );
+        assertEquals( NodeType.END_TAG, tag.getType() );
+        assertEquals( "stripes:label", tag.getName() );
     }
 
     public void testNoAddStripesTaglib() throws Exception
