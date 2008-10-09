@@ -611,6 +611,9 @@ public class XMLUserDatabase extends AbstractUserDatabase
         checkForRefresh();
         
         NodeList users = c_dom.getElementsByTagName( USER_TAG );
+        
+        if( users == null ) return null;
+        
         for( int i = 0; i < users.getLength(); i++ )
         {
             Element user = (Element) users.item( i );
