@@ -152,6 +152,12 @@ public class JspMigrator
     {
         // Clear the shared state
         m_sharedState.clear();
+        
+        // Initialize the transformers
+        for ( JspTransformer transformer: m_transformers )
+        {
+            transformer.initialize( m_sharedState );
+        }
 
         // Find the files we need to migrate
         String sourcePath = sourceDir.getPath();

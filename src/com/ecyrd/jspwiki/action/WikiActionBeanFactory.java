@@ -66,13 +66,13 @@ public final class WikiActionBeanFactory
     private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
 
     /** Default list of packages to search for WikiActionBean implementations. */
-    private static final String DEFAULT_ACTIONBEAN_PACKAGES = "com.ecyrd.jspwiki.action";
+    public static final String DEFAULT_ACTIONBEAN_PACKAGES = "com.ecyrd.jspwiki.action";
 
     /**
      * Property in jspwiki.properties that specifies packages to search for
      * WikiActionBean implementations.
      */
-    private static final String PROPS_ACTIONBEAN_PACKAGES = "jspwiki.actionBean.packages";
+    public static final String PROPS_ACTIONBEAN_PACKAGES = "jspwiki.actionBean.packages";
 
     /** Private map with JSPs as keys, Resolutions as values */
     private final Map<String, RedirectResolution> m_specialRedirects;

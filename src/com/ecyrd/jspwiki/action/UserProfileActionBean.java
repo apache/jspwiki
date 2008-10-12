@@ -125,7 +125,7 @@ public class UserProfileActionBean extends AbstractActionBean
             return new RedirectResolution( builder.toString() );
         }
 
-        // Otherwise, return user to source page
+        // Otherwise, send user to source page
         UrlBuilder builder = new UrlBuilder( this.getContext().getLocale(), context.getSourcePage(), false );
         builder.addParameter( "tab", "profile" );
         return new RedirectResolution( builder.toString() );

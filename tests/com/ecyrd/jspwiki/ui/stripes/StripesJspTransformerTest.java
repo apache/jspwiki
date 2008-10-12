@@ -117,6 +117,49 @@ public class StripesJspTransformerTest extends TestCase
         
         assertEquals( "<stripes:label for=\"assertedName\" name=\"prefs.assertedname\" />", tag.toString() );
     }
+    
+    public void testLabelConflictingName() throws Exception
+    {
+        String s = "<label for=\"assertedName\" name=\"foo\"><fmt:message key=\"prefs.assertedname\"/></label>";
+        JspDocument doc = new JspParser().parse( s );
+        m_transformer.transform( m_sharedState, doc );
+
+        // Added 2 nodes...
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 5, nodes.size() );
+        
+        // First node is the Stripes taglib
+        Node node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+
+        // Second node is the injected linebreak
+        node = nodes.get( 1 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        
+        // Third node is the re-structured stripes:label
+        Tag tag = (Tag)nodes.get( 2 );
+        assertEquals( NodeType.START_TAG, tag.getType() );
+        assertEquals( "stripes:label", tag.getName() );
+        assertEquals( 2, tag.getAttributes().size() );
+        assertEquals( "for", tag.getAttribute( "for" ).getName() );
+        assertEquals( "assertedName", tag.getAttribute( "for" ).getValue() );
+        assertEquals( "name", tag.getAttribute( "name" ).getName() );
+        assertEquals( "foo", tag.getAttribute( "name" ).getValue() );
+        
+        // Fourth node is the fmt:message tag, which did NOT get moved
+        tag = (Tag)nodes.get( 3 );
+        assertEquals( NodeType.EMPTY_ELEMENT_TAG, tag.getType() );
+        assertEquals( "fmt:message", tag.getName() );
+        assertEquals( 1, tag.getAttributes().size() );
+        assertEquals( "key", tag.getAttribute( "key" ).getName() );
+        assertEquals( "prefs.assertedname", tag.getAttribute( "key" ).getValue() );
+        
+        // Fifth node is the end tag
+        tag = (Tag)nodes.get( 4 );
+        assertEquals( NodeType.END_TAG, tag.getType() );
+        assertEquals( "stripes:label", tag.getName() );
+        assertEquals( 0, tag.getAttributes().size() );
+    }
 
     public void testLabelNoFmtMessage() throws Exception
     {

@@ -1,18 +1,97 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
-import java.util.List;
-import java.util.Map;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.util.*;
+
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.util.ResolverUtil;
+
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
  */
 public class StripesJspTransformer extends AbstractJspTransformer
 {
+    private Map<Class<? extends ActionBean>, Set<String>> beanProperties = new HashMap<Class<? extends ActionBean>, Set<String>>();
+
+    private Map<String, Class<? extends ActionBean>> beanBindings = new HashMap<String, Class<? extends ActionBean>>();
+
     /**
      * {@inheritDoc}
      */
-    public void initialize( Map<String, Object> sharedState, JspDocument doc )
+    public void initialize( Map<String, Object> sharedState )
     {
+        // Find all ActionBean implementations on the classpath
+        String beanPackagesProp = System.getProperty( WikiActionBeanFactory.PROPS_ACTIONBEAN_PACKAGES,
+                                                      WikiActionBeanFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
+        String[] beanPackages = beanPackagesProp.split( "," );
+        ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
+        resolver.findImplementations( ActionBean.class, beanPackages );
+        Set<Class<? extends ActionBean>> beanClasses = resolver.getClasses();
+
+        // Fetch the URL bindings
+        initUrlBindingCache( beanClasses );
+
+        // Initialize properties that "should" bind to each class
+        initActionBeanPropertyCache( beanClasses );
+
+        System.out.println( "Initialized StripesJspTransformer." );
+    }
+
+    private void initUrlBindingCache( Set<Class<? extends ActionBean>> beanClasses )
+    {
+        for( Class<? extends ActionBean> beanClass : beanClasses )
+        {
+            UrlBinding binding = beanClass.getAnnotation( UrlBinding.class );
+            if( binding != null && binding.value() != null )
+            {
+                beanBindings.put( binding.value(), beanClass );
+            }
+        }
+    }
+
+    private void initActionBeanPropertyCache( Set<Class<? extends ActionBean>> beanClasses )
+    {
+        for( Class<? extends ActionBean> beanClass : beanClasses )
+        {
+            PropertyDescriptor[] pds;
+            Set<String> properties = new HashSet<String>();
+            try
+            {
+                pds = Introspector.getBeanInfo( beanClass ).getPropertyDescriptors();
+                for( PropertyDescriptor pd : pds )
+                {
+                    String propertyName = pd.getName();
+                    boolean hasSetter = pd.getWriteMethod() != null;
+                    boolean hasField = false;
+                    try
+                    {
+                        Field field = beanClass.getDeclaredField( propertyName );
+                        hasField = (field != null);
+                    }
+                    catch( NoSuchFieldException e )
+                    {
+                    }
+                    if( hasSetter || hasField )
+                    {
+                        properties.add( propertyName );
+                    }
+                }
+                if( properties.size() > 0 )
+                {
+                    beanProperties.put( beanClass, properties );
+                }
+            }
+            catch( IntrospectionException e )
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -48,8 +127,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 {
                     migrated = migrateTextArea( tag ) || migrated;
                 }
-                
-                else if ( "label".equals( tag.getName() ) )
+
+                else if( "label".equals( tag.getName() ) )
                 {
                     migrated = migrateLabel( tag ) || migrated;
                 }
@@ -101,8 +180,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
      * element whose <code>key</code> attribute contains a value, that value
      * will become the <code>name</code> attribute of the
      * <code>stripes:label</code>element. </li>
-     * <li>In all other cases, the <code>label</code> element is simply re-named to
-     * <code>stripes:label</code>.</li>
+     * <li>In all other cases, the <code>label</code> element is simply
+     * re-named to <code>stripes:label</code>.</li>
      * </ul>
      * <p>
      * For example, the ordinary HTML tag <code>&lt;label
@@ -119,42 +198,70 @@ public class StripesJspTransformer extends AbstractJspTransformer
     {
         // Change the name to <stripes:label>
         tag.setName( "stripes:label" );
-        
+
+        // If child fmt:message, pull into element
+        migrateMessageTag( tag );
+        message( tag, "Changed <label> to <stripes:label>." );
+
+        return true;
+    }
+
+    private boolean migrateMessageTag( Tag tag )
+    {
         // Not a start tag, we're done
-        if ( tag.getType() != NodeType.START_TAG)
+        if( tag.getType() != NodeType.START_TAG )
         {
             return false;
         }
-        
-        // Do we have a single child <fmt:message>?
-        Node child = tag.getChildren().size() == 1 ? tag.getChildren().get( 0 ) : null;
-        if ( child != null && child.getType() == NodeType.EMPTY_ELEMENT_TAG )
+
+        // Do we have children <fmt:message/> or <fmt:message></fmt:message>?
+        List<Node> children = tag.getChildren();
+        boolean hasOneTag = children.size() == 1 && children.get( 0 ).getType() == NodeType.EMPTY_ELEMENT_TAG
+                            && "fmt:message".equals( children.get( 0 ).getName() );
+        boolean hasTwoTags = children.size() == 2 && children.get( 0 ).getType() == NodeType.START_TAG
+                             && children.get( 1 ).getType() == NodeType.END_TAG
+                             && "fmt.message".equals( children.get( 0 ).getName() )
+                             && "fmt.message".equals( children.get( 1 ).getName() );
+
+        if( ( hasOneTag || hasTwoTags ) )
         {
-            if ( "fmt:message".equals( child.getName() ) )
+            if ( tag.hasAttribute( "name" ) )
             {
-                // Move the fmt:message tag's key attribute to stripes:label name
-                Tag message = (Tag)child;
-                if ( message.hasAttribute( "key" ) )
+                message( children.get( 0 ), "NOTE: did not migrate <fmt:message> tag because parent <" + tag.getName() + "> already has 'name' attribute. Refactor?" );
+            }
+            else
+            {
+                // Move the fmt:message tag's key attribute to stripes:label
+                // name
+                Tag message = (Tag) children.get( 0 );
+                if( message.hasAttribute( "key" ) )
                 {
                     Attribute key = message.getAttribute( "key" );
                     key.setName( "name" );
                     message.removeAttribute( key );
                     tag.addAttribute( key );
-                    tag.removeChild( message );
+                    
+                    // Delete all of the children
+                    for ( Node child : tag.getChildren() )
+                    {
+                        tag.removeChild( child );
+                    }
                 }
                 
-                // Change to an empty end tag
+                // Change parent to an empty end tag
                 tag.setType( NodeType.EMPTY_ELEMENT_TAG );
-                
+
                 // Delete the matching end tag
                 int i = tag.getParent().getChildren().indexOf( tag );
                 Node endTag = tag.getParent().getChildren().get( i + 1 );
                 tag.getParent().removeChild( endTag );
+                
+                // Tell user what we did
+                message( tag, "Moved <fmt:message> tag into parent <" + tag.getName() + ">." );
+                return true;
             }
         }
-        message( tag, "Changed <label> to <stripes:label>." );
-        
-        return true;
+        return false;
     }
 
     /**
@@ -255,7 +362,10 @@ public class StripesJspTransformer extends AbstractJspTransformer
         }
 
         // If the value attribute contains embedded tags, move to child nodes
-        return migrateValueAttribute( tag ) || migrated;
+        migrated = migrateValueAttribute( tag ) || migrated;
+
+        // If child fmt:message, pull into element
+        return migrateMessageTag( tag ) || migrated;
     }
 
     private boolean migrateTextArea( Tag tag )

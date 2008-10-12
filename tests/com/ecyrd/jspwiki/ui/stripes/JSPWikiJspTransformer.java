@@ -11,8 +11,9 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
     /**
      * {@inheritDoc}
      */
-    public void initialize( Map<String, Object> sharedState, JspDocument doc )
+    public void initialize( Map<String, Object> sharedState )
     {
+        System.out.println( "Initialized JSPWikiJspTransformer." );
     }
 
     /**

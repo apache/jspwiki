@@ -14,9 +14,8 @@ public interface JspTransformer
      * @param sharedState a map containing key/value pairs that represent any
      *            shared-state information that this method might need during
      *            transformation.
-     * @param doc the JSP to transform
      */
-    public void initialize( Map<String, Object> sharedState, JspDocument doc );
+    public void initialize( Map<String, Object> sharedState );
 
     /**
      * Executes the transformation on the JSP and returns the result. This
