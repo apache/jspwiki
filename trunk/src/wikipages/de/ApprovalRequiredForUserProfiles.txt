@@ -1,0 +1,9 @@
+%%information
+__In diesem Wiki bedarf das Anlegen neuer Benutzerprofile einer Genehmigung!
+
+Dein Antrag wurden übertragen und wird demnächst bearbeitet.__
+
+Falls du eine E-Mail-Adresse angegeben hast, wirst du eventuell benachrichtigt, wenn dein Antrag bearbeitet wurde. Alternativ kannst du jederzeit zurückkommen und ausprobieren, ob du dich anmelden kannst.
+%%
+
+[{ALLOW view All}]

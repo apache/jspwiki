@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     This file lists the classes you can change in a running JSPWiki
+     environment.
+     
+     The requestedClass can either be a Class or an Interface.  However,
+     the mappedClass must always be a concrete Class, which either extends
+     or implements requestedClass (depending on whether it is a class or an
+     interface).
+     
+     Note that this does not change static class contents; normal
+     inheritance rules apply.
+     
+     If this file does not define a class mapping, then the requestedClass
+     is always instantiated (if it's a concrete class).
+     
+     Please understand that the contents of this file are not to be changed
+     lightly.  It's very easy to break JSPWiki, and this is really meant
+     for people who wish to make very deep modifications but don't want
+     to be patching their code all the time.
+     
+     Note that there is no guarantee that your modifications will stay
+     compatible between different versions of JSPWiki.  This is really,
+     really deeply, invasive stuff we're talking here.  Really, seriously!
+     We're not kidding!  We don't even know if this works ourselves!
+  -->
+  
+<classmappings>
+  <mapping>
+    <requestedClass>com.ecyrd.jspwiki.render.RenderingManager</requestedClass>
+    <mappedClass>com.ecyrd.jspwiki.render.RenderingManager</mappedClass>
+  </mapping>
+</classmappings>

@@ -1,0 +1,249 @@
+Diese Seite beschreibt die von JSPWiki verwendete Wiki-Syntax. Um Details darüber zu erfahren, wie sich diese Syntax von der in der [Wikipedia|http://de.wikipedia.org/] verwendeten unterscheidet, lies [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+[{TableOfContents}]
+
+\\Wenn du herausgefunden hast wie der Editor funktioniert, solltest du als nächstes noch die [WikiEtiquette] lesen um zu erfahren, wie du diese neuen Kenntnisse richtig einsetzten kannst. Der [Sandkasten|SandBox] ist ein guter Platz, um sie auszuprobieren.
+
+!Kurzreferenz
+
+{{{
+----             Horizontale Linie. Zusätzliche '-' werden ignoriert.
+\\               Erzwungener Zeilenumbruch
+
+[link]           Erzeugt einen Hyperlink zu 'link', wobei 'link' sowohl eine
+                 interne Wikiseite als auch eine externe Webseite (http://...)
+                 oder ein InterWiki-Link sein kann.
+[Auch ein Link]  Erzeugt einen Hyperlink zu einer internen Wikiseite namens
+                 'AuchEinLink', aber zeigt den Link mit enthaltenen Leerzeichen
+                 an.
+[text|link]      Erzeugt einen Hyperlink zu einer internen Wikiseite namens
+                 'Link', aber zeigt stattdessen den Text 'text' an.
+~NoLink          Deaktiviert die Linkerzeugung für ein Wort in CamelCase-Notation.
+[1]              Verweis auf eine Fußnote mit der Nummer 1.
+[#1]             Markiert die Fußnote Nummer 1.
+[[link]          Erstellt den Text '[link]'.
+
+!Überschrift     Kleine Überschrift mit Text 'Überschrift'.
+!!Überschrift    Mittlere Überschrift mit Text 'Überschrift'.
+!!!Überschrift   Große Überschrift mit Text 'Überschrift'.
+
+''text''         Formatiert 'text' kursiv.
+__text__         Formatiert 'text' fett.
+{{text}}         Formatiert 'text' mit nichtproportionaler Schrift.
+* text           Erzeugt ein Aufzählungselement mit vorangestelltem Punkt und
+                 dem Text 'text'.
+# text           Erzeugt ein nummeriertes Aufzählungselement mit dem Text 'text'.
+;term:ex         Definiere 'term' als 'ex'.
+}}}
+
+!Text schreiben
+
+Du brauchst gar nichts über die Formatierungsregeln zu wissen, um ein Wiki verwenden zu können. Schreibe einfach normalen Text und füge eine leere Zeile ein, um einen neuen Abschnitt zu beginnen. Es ist so einfach wie eine E-Mail zu schreiben!
+
+Rufe eine bestehende Seite zum Bearbeiten auf, um herauszufinden, wie gewisse Effekte erzeugt werden.
+
+!Hyperlinks
+
+Ein Link kann auch eine URL sein, die mit {{http:}}, {{https:}}, {{ftp:}}, {{mailto:}} oder {{news:}} beginnt. In diesem Fall zeigt der Link auf einen externen Ort. Um beispielsweise einen Link auf die java.sun.com Homepage zu setzen, schreibe {{[[http://java.sun.com]}} was im Text zu [http://java.sun.com] wird, oder {{[[Java Homepage|http://java.sun.com]}}, was zu [Java Homepage|http://java.sun.com] wird.
+
+Falls du den Link nicht mit einem der genannten "Protokolle" beginnst, wird das Wiki annehmen, dass es sich um einen normalen Link zu einer internen Seite handelt. In diesem Fall muss der Seitenname mit einem Buchstaben beginnen - rein numerische Seitennamen sind nicht erlaubt. Falls du in einer Seite eckige Klammern ({{[[]}}) verwenden willst, ohne einen Link zu erzeugen, dann verwende zwei öffnende eckige Klammern. Der Text {{[[[NichtLinkBeispiel]}} wird dann erscheinen als {{[[NichtLinkBeispiel]}}.
+
+Um eine neue Seite zu erzeugen musst du einfach nur von irgendwoher einen Link darauf erzeugen. Denn was nützt eine Seite, wenn sie nicht zugänglich ist! Nach dem Speichern ist der neue Link rot und unterstrichen. Dies bedeutet, dass die Zielseite noch nicht existiert. Klicke den Link an und es erscheint ein Editor für die neue Seite.
+
+In einem [WikiNamen|JSPWiki:WikiName] sind fast alle Zeichen erlaubt, solange es sich um Buchstaben oder Zahlen handelt.
+
+Beachte auch, dass dieses Wiki so konfiguriert werden kann, dass auch [CamelCase|JSPWiki:CamelCase]-Links unterstützt werden (Wenn diese Unterstützung aktiviert ist, dann sollte CamelCase ein Link sein!). In der Grundeinstellung ist dies ausgeschaltet, aber wenn der Administrator es aktiviert hat, dann CamelCase alles was du willst =).
+
+!Fußnoten
+
+Fußnoten sind eine spezielle Art von Hyperlink. Wenn nur eine Zahl im Link steht, wird ein Verweis auf eine Fußnote erzeugt. {{[[1]}} erzeugt eine Fußnote[1]. Um die Fußnote selbst zu schreiben, muss {{[[#1]}} vor den Text der Fußnote gestellt werden. (Die Fußnote findest du am Seitenende).
+
+Es ist auch möglich, eine benannte Fußnote zu erstellen, genauso wie bei einem normalen Hyperlink. {{[[Fußnote Nummer 1|1]}} ist beispielsweise die gleiche Fußnote wie oben: [Fußnote Nummer 1|1]. Man kann auch den Namen in der Fußnote selbst vergeben [2].
+
+![InterWiki|JSPWiki:InterWiki]-Links
+
+Es ist auch möglich, Links zwischen verschiedenen Wikis zu erstellen, ohne die URL zu kennen. Setze einfach einen Link in der Form {{[[Wiki:Wikiseite]}}, und JSPWiki wird den Link für dich erstellen. Beispielsweise führt dieser Link zu den [JSPWiki TextFormattingRules|JSPWiki:TextFormattingRules] auf der JSPWiki-Homepage. Sieh in den [Systeminformationen|SystemInfo] nach, welche InterWiki-Links verfügbar sind.
+
+Wenn ein InterWiki-Link nicht unterstützt wird, wird eine entsprechende Meldung beim Speichern der Seite ausgegeben.
+
+!Hinzufügen von Bildern
+
+Jedes irgendwo im Web verfügbare Bild kann in eine Wikiseite eingebettet werden, indem einfach darauf verlinkt wird.
+
+Wenn du einen Link-Text angibst wird dieser zum Alternativ-Text für dieses Bild ({{[[Dieser Text hier | http://example.com/example.png]}}). Dieser Text wird angezeigt, wenn das Bild nicht geladen werden kann oder der Benutzer die Anzeige von Bildern ausgeschaltet hat.
+
+Die Liste der zugelassenen Formate hängt vom Wiki ab. Schau in den [Systeminformationen|SystemInfo] nach, welche Bildformate in diesem Wiki zugelassen sind.
+
+Eine andere Möglichkeit ist die Verwendung des [Image Plugin|JSPWiki:Image], welches mehr Kontrolle über die Anordnung und Attribute des Bildes gibt.
+
+!Unnummerierte Aufzählungen
+
+Verwende einen Stern (*) als erstes Zeichen einer Zeile, um eine unnummerierte Aufzählung zu erstellen. Mit mehreren Sternen in Folge können tiefere Einzüge erstellt werden. Ein Beispiel:
+
+{{{
+* Eins
+* Zwei
+* Drei
+** Drei.Eins
+}}}
+
+ergibt
+
+* Eins
+* Zwei
+* Drei
+** Drei.Eins
+
+!Nummerierte Aufzählungen
+
+Nummerierte Aufzählungen funktionieren wie unnummerierte Aufzählungen. Verwende einfach das Rautenzeichen (#) anstelle des Sterns.
+
+{{{
+# Eins
+# Zwei
+# Drei
+## Drei.Eins
+}}}
+
+ergibt
+
+# Eins
+# Zwei
+# Drei
+## Drei.Eins
+
+!Mehrzeilige Aufzählungselemente
+
+Um den Inhalt eines Aufzählungselements über mehrere Zeilen zu schreiben, beginne einfach die Folgezeile(n) mit einem oder mehreren Leerzeichen. Diese Zeilen werden dann automatisch dem vorangehenden Aufzählungselement zugerechnet.
+
+Beispiel:
+
+{{{
+* Dies ist ein einzeiliges Element.
+* Das ist ein mehrzeiliges Element.
+  Der zweite Satz wird auf einer eigenen Zeile geschrieben.
+  Wenn wir schon dabei sind, können wir auch gerade noch eine dritte Zeile schreiben.
+  Beachte, dass alle diese Zeilen (jetzt sind es schon vier) nur ein Aufzählungszeichen haben!
+* Das dritte Element besteht nun wieder nur aus einer Zeile.
+}}}
+
+ergibt
+
+* Dies ist ein einzeiliges Element.
+* Das ist ein mehrzeiliges Element.
+  Der zweite Satz wird auf einer eigenen Zeile geschrieben.
+  Wenn wir schon dabei sind, können wir auch gerade noch eine dritte Zeile schreiben.
+  Beachte, dass alle diese Zeilen (jetzt sind es schon vier) nur ein Aufzählungszeichen haben!
+* Das dritte Element besteht nun wieder nur aus einer Zeile.
+
+!Definitionslisten und Kommentare
+
+Ein einfacher Weg um Definitionslisten zu erstellen, ist die Verwendung des ';:'-Konstrukts:
+
+{{{
+;__Konstrukt__:''Etwas, das man benutzt, um etwas damit zu tun.''
+}}}
+
+ergibt
+
+;__Konstrukt__:''Etwas, das man benutzt, um etwas damit zu tun.''
+
+Eine weitere Anwendungsmöglichkeit des ';:'-Konstrukts sind Kurzkommentare zu Texten anderer Personen, indem man den ersten Teil leer lässt:
+
+{{{
+;:''Das ist der Kommentar.''
+}}}
+
+ergibt
+
+;:''Das ist der Kommentar.''
+
+!Texteffekte
+
+Es ist möglich, Text __fett__ oder ''kursiv'' zu formatieren, indem der Text in zwei Unterstriche (_) respektive zwei einzelne Apostrophen (') eingeschlossen wird.
+
+Wenn du an einem Windows-PC sitzt stelle sicher, dass du das richtige Apostroph-Zeichen verwendest, da es auf den dort verwendeten Tastaturen meist noch eines gibt, das so ähnlich aussieht.
+
+Eine [Unterstreichung|] kann erreicht werden, indem man einen Link ins Nirgendwo setzt, {{[[so wie hier| ]}}.
+
+!Vorformatierter Text
+
+Wenn Formatierungszeichen nicht als solche interpretiert, sondern als Text dargestellt werden sollen (z.B. bei Programmcode), dann muss der Text in drei geschweifte Klammern ({) eingeschlossen werden. Schaue in den Quelltext dieser Seite oder bearbeite sie, um das folgende Beispiel zu untersuchen:
+
+{{{
+public class HelloWorld {
+
+	/**
+	 * Say hello to WikiWiki!
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		System.out.println("Hello W...iki! ;-)");
+	}
+	
+}
+}}}
+
+!Tabellen
+
+Du kannst einfache Tabellen mit Hilfe des Pipe-Zeichens ('|') erstellen. Mit einem Doppelstrich kann der Kopfteil begonnen werden, mit einfachen Strichen werden dann die einzelnen Zeilen der Tabelle erzeugt. Eine Zeile ohne Strich beendet die Tabelle. Beispiel:
+
+{{{
+|| Titel 1 || Titel 2
+| ''Text 1'' | Text 2 \\ bla
+| [Startseite|Main]    | [SandBox]
+}}}
+
+ergibt
+
+|| Titel 1 || Titel 2
+| ''Text 1'' | Text 2 \\ bla
+| [Startseite|Main]    | [SandBox]
+
+!CSS-Formatierungen
+
+Obwohl es dem "Keep it simple"-Prinzip widerspricht, können CSS-Formatierungen [innerhalb von Wikiseiten verwendet werden|JSPWiki:CSSInWikipages], um Fällen gerecht zu werden in denen man wirklich Teile einer Seite hervorheben muss.
+
+!Konflikte
+
+Wenn jemand gleichzeitig die gleiche Seite bearbeitet wie du, wird JSPWiki dich davon abhalten, die Seite zu bearbeiten und dir stattdessen eine Meldungsseite anzeigen. Wer zuerst kommt mahlt zuerst!
+
+__Achtung:__ Wenn man mit dem "zurück"-Knopf des Browsers zur Bearbeitungsseite zurückgeht, wird einem fast sicher ein Konflikt angezeigt.
+
+!Seiten löschen
+
+Es ist für normale Benutzer meist nicht möglich, Seiten zu löschen. Es ist möglich, alle Links auf eine Seite zu entfernen, so dass sie auf normalem Wege nicht mehr gefunden wird. Man kann auch den Administrator beten, die Seite zu löschen.
+
+Gebräuchlich ist auch, einen Link zur Seite [DELETEME|JSPWiki:DELETEME] auf der Seite zu setzen. Der Administrator wird dann die Seite gelegentlich entfernen.
+
+!Neue Seiten hinzufügen
+
+Erstelle einen Link zu einer neuen (noch nicht vorhandenen) Seite, indem du einen [Wiki Namen|JSPWiki:WikiName] verwendest. Klicke dann nach dem Speichern der Änderung auf den neuen Link und du kommst direkt in die Bearbeitungsmaske für die neue Seite.
+
+!Alternativnamen (Alias) für eine Seite
+
+Siehe [PageAlias].
+
+!Dateien an eine Seite anhängen
+
+Wenn der Administrator dies erlaubt hat, gibt es im "Info"-Tab einer Seite die Möglichkeit, Dateien auszuwählen und hochzuladen.
+
+!Variablen einfügen
+
+Es gibt viele Variablen, die auf einer Seite eingefügt werden können. Die Grundstruktur ist {{[[{$variablenname}]}}, wobei ''variablenname'' der Name der einzufügenden Variablen ist. Variablennamen berücksichtigen Gross-/Kleinschreibung nicht, "pagename" ist also dasselbe wie "paGeNamE" und "PageName".
+
+Eine Liste der verfügbaren Variablen findest du unter [JSPWiki:WikiVariables].
+
+!Einfügen von Plugins
+
+Die Grundform zum Einfügen eines Plugins sieht folgendermaßen aus:
+
+{{[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]}}
+
+Mehr Informationen zu Plugins findest du unter [JSPWiki:JSPWikiPlugins].
+
+----
+
+[#1] Hier ist die erwähnte Fußnote.
+
+[Die andere Fußnote|#2] Die andere Fußnote. Beachte den Unterschied im Namen!

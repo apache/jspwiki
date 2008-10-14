@@ -1,0 +1,41 @@
+Hier ist eine kurze Zusammenfassung der zur Verfügung stehenden Formatierungen. Einen ausführlicheren Überblick findest du in den [Formatierungsregeln|TextFormattingRules].
+
+{{{
+----             Horizontale Linie. Zusätzliche '-' werden ignoriert.
+\\               Erzwungener Zeilenumbruch
+
+[link]           Erzeugt einen Hyperlink zu 'link', wobei 'link' sowohl eine
+                 interne Wikiseite als auch eine externe Webseite (http://...)
+                 oder ein InterWiki-Link sein kann.
+[Auch ein Link]  Erzeugt einen Hyperlink zu einer internen Wikiseite namens
+                 'AuchEinLink', aber zeigt den Link mit enthaltenen Leerzeichen
+                 an.
+[text|link]      Erzeugt einen Hyperlink zu einer internen Wikiseite namens
+                 'Link', aber zeigt stattdessen den Text 'text' an.
+~NoLink          Deaktiviert die Linkerzeugung für ein Wort in CamelCase-Notation.
+[1]              Verweis auf eine Fußnote mit der Nummer 1.
+[#1]             Markiert die Fußnote Nummer 1.
+[[link]          Erstellt den Text '[link]'.
+
+!Überschrift     Kleine Überschrift mit Text 'Überschrift'.
+!!Überschrift    Mittlere Überschrift mit Text 'Überschrift'.
+!!!Überschrift   Große Überschrift mit Text 'Überschrift'.
+
+''text''         Formatiert 'text' kursiv.
+__text__         Formatiert 'text' fett.
+{{text}}         Formatiert 'text' mit nichtproportionaler Schrift.
+* text           Erzeugt ein Aufzählungselement mit vorangestelltem Punkt und
+                 dem Text 'text'.
+# text           Erzeugt ein nummeriertes Aufzählungselement mit dem Text 'text'.
+;term:ex         Definiere 'term' als 'ex'.
+}}}
+
+Versuche nicht, HTML zu verwenden, es wird nicht funktionieren (es sei denn, der Administrator hat es aktiviert).
+
+Einfügen von Bildern: Stelle sie in einem vom Wiki akzeptierten Format ins Web und füge im Text den Link ein. Die Bilder werden automatisch angezeigt. Die akzeptierten Formate siehst du in den [Systeminformationen|SystemInfo].\\
+
+Um einen Codeblock darzustellen, umschließt du diesen mit drei öffnenden und drei schließenden geschweiften Klammern ('{' und '}').
+
+Falls eckige Klammern ({{[[]}}) benötigt werden, ohne einen Link erzeugen zu wollen, müssen zwei öffnende Klammern gesetzt werden. Der Text {{[[[Beispiel Kein Link]}} erscheint als {{[[Beispiel Kein Link]}}.
+
+[{ALLOW view All}]

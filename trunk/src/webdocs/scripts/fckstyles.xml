@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Styles>
+    <Style name="Monospace" element="tt" />
+    <Style name="Small" element="span" >
+        <Attribute name="class" value="small" />
+    </Style>
+    <Style name="Code" element="pre" />
+    <Style name="Info" element="div" >
+        <Attribute name="class" value="information" />
+    </Style>
+    <Style name="Warning" element="div" >
+        <Attribute name="class" value="warning" />
+    </Style>
+    <Style name="Error" element="div" >
+        <Attribute name="class" value="error" />
+    </Style>
+    <Style name="Comment Box" element="div" >
+        <Attribute name="class" value="commentbox" />
+    </Style>
+    <Style name="Quote" element="div" >
+        <Attribute name="class" value="quote" />
+    </Style>
+    <Style name="Left-to-right text" element="div" >
+        <Attribute name="class" value="ltr" />
+    </Style>
+    <Style name="Right-to-left text" element="div" >
+        <Attribute name="class" value="rtl" />
+    </Style>
+</Styles>

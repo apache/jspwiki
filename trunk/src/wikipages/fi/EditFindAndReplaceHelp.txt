@@ -1,0 +1,28 @@
+JSPWiki tukee niin kutsuttuja säännöllisiä lausekkeita (regexp). Etsiessäsi voit siis käyttää seuraavia 
+apumerkkejä:
+
+|.      |mikä tahansa merkki paitsi rivinvaihto  |+      |yhden tai useampia kertoja
+|*      |nolla tai useampia kertoja              |?      |nolla tai ei yhtään kertaa
+|{n}    |tasan n kertaa                          |{n,m}  |vähintään n, enintään m kertaa
+|~|    |putki: {{a~|b}} on joko a tai b          | -     |viiva tai useampi merkki
+|^      |rivin alku             |$               |rivin loppu
+|[[...] |jokin näistä merkeistä                  |[[^...] |mikä tahansa muu paitsi jokin näistä merkeistä
+|\b     |sanojen raja                            |\B     |mikä tahansa paitsi sanojen raja
+|\d     |numero [[0-9]                           |\D     |mikä tahansa paitsi numero [[^0-9]
+|\s     |tyhjä merkki                            |\S     |mikä tahansa paitsi tyhjä merkki 
+|\w     |[[A-Za-z0-9_]                           |\W     |[[^A-Za-z0-9_]
+|(...)  |ryhmä, joka tallennetaan muuttujiin $1..$9 |\.     |palauta tavalliseksi
+
+
+Korvaa-kentässä voidaan käyttää merkkejä $1...$9 viittaamaan vastaaviin sulkulausekkeisiin Etsi-kentässä.
+----
+Esimerkiksi:\\
+
+Lauseke __/abc|def/__ löytää merkkijonot 'abc' tai merkkijonot 'def'\\
+Lauseke  __/bwiki/b__ löytää kaikki 'wiki' -sanat, mutta ei sanaa 'jspwiki'.\\
+Lauseke __^[[IVXMDCL]+\.__ löytää kaikki roomalaiset numerot, joiden perässä on piste.\\
+Lauseke __/(-?\d+)(\d{3})/__ ja joka korvataan merkkijonolla __$1,$2__ laittaa pilkun kaikkiin isoihin numeroihin. 
+
+Tämä on  [EditFindAndReplaceHelp].
+[Lisätietoa säännöllisistä lausekkeista|http://www.regular-expressions.info/javascript.html] (englanniksi) 
+ja [hiekkalaatikko, jossa voit kokeilla|http://www.regular-expressions.info/javascriptexample.html].\\
