@@ -126,7 +126,8 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.LOGIN) )
         {
-            return doReplacement( viewurl+"?do=Login", name, absolute ); 
+            String loginUrl = absolute ? "%uLogin.jsp?redirect=%n" : "%pLogin.jsp?redirect=%n";
+            return doReplacement( loginUrl, name, absolute ); 
         }
         else if( context.equals(WikiContext.DELETE) )
         {

@@ -1,6 +1,13 @@
-2008-10-01  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
-        * 2.8.0-beta-18
+        * 2.8.0-beta-20
+
+        * [JSPWIKI-313] ShortURLConstructor was not creating URLs for the LOGIN
+        context correctly. We now check for this context specifically.
+
+2008-10-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-19
 
         * [JSPWiki-342] Resolved issue by removing outdated doc files.
 
