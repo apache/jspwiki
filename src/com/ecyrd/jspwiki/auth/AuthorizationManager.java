@@ -92,6 +92,9 @@ public final class AuthorizationManager
      */
     public static final String                DEFAULT_AUTHORIZER = "com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer";
 
+    /** Property that supplies the security policy file name, in WEB-INF. */
+    protected static final String             POLICY      = "jspwiki.policy.file";
+    
     /** Name of the default security policy file, in WEB-INF. */
     protected static final String             DEFAULT_POLICY      = "jspwiki.policy";
 
@@ -403,7 +406,8 @@ public final class AuthorizationManager
         // Initialize local security policy
         try
         {
-            URL policyURL = AuthenticationManager.findConfigFile( engine, DEFAULT_POLICY );
+            String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
+            URL policyURL = AuthenticationManager.findConfigFile( engine, policyFileName );
             
             if (policyURL != null) 
             {
