@@ -44,6 +44,10 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("Main8887");
         TestEngine.deleteTestPage("TestPage1234");
         TestEngine.deleteTestPage("TestPageReferred");
+        TestEngine.deleteTestPage("RenameTest");
+        TestEngine.deleteTestPage("Link one");
+        TestEngine.deleteTestPage("Link uno");
+        TestEngine.deleteTestPage("Link two");
 
         TestEngine.emptyWorkDir();
     }
@@ -444,7 +448,7 @@ public class PageRenamerTest extends TestCase
         m_engine.saveText( "TestPageReferred", "bla bla bla som content" );
         m_engine.saveText( "TestPageReferring", "[Test Page Referred]" );
 
-       rename( "TestPageReferred", "TestPageReferredNew" );
+        rename( "TestPageReferred", "TestPageReferredNew" );
 
         String data = m_engine.getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
         assertEquals( "page not renamed", "[Test Page Referred|TestPageReferredNew]", data.trim() );
@@ -457,6 +461,25 @@ public class PageRenamerTest extends TestCase
         assertEquals( "wrong ref", "TestPageReferring", (String) refs.iterator().next() );
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-398 */
+    public void testReferrerChangeWithBlanks2() throws Exception
+    {
+        m_engine.saveText( "RenameTest", "[link one] [link two]" );
+        m_engine.saveText( "Link one", "Leonard" );
+        m_engine.saveText( "Link two", "Cohen" );
+
+        rename( "Link one", "Link uno" );
+       
+        String data = m_engine.getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
+        assertEquals( "page not renamed", "[link one|Link uno] [link two]", data.trim() );
+
+        Collection refs = m_engine.getReferenceManager().findReferrers( "Link one" );
+        assertNull( "oldpage", refs );
+
+        refs = m_engine.getReferenceManager().findReferrers( "Link uno" );
+        assertEquals( "new size", 1, refs.size() );
+        assertEquals( "wrong ref", "RenameTest", (String) refs.iterator().next() );
+    }
 
     public static Test suite()
     {

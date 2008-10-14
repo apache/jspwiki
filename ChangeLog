@@ -1,3 +1,10 @@
+2008-09-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-21
+        
+        * [JSPWIKI-398] Pages with spaces in them caused erratic rename
+        behaviour by renaming all the links on the page.
+
 2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 2.8.0-beta-20
