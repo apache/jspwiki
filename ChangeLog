@@ -1,4 +1,10 @@
-2008-09-30  Janne Jalkanen <jalkanen@apache.org>
+2008-10-17  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-rc-2.
+
+        * JSPWIKI-400: Chinese core pages were corrupted.
+
+2008-10-14  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-beta-21
         

@@ -1,43 +1,42 @@
-??ãÈù¢ÊòØ??Ä??õÊàòÁï?ÊÄßÁöÑÂõæË°®ÂíåÂÖ??ªñÊúâÂÖ?Ëøô??? Wiki ÁöÑÊúâË?£?ø°ÊÅØ?ÄÇÂ¶ÇÊûúÊÇ®ÊâìÁÆóÂú®ÂÖ??ªñÈ°µÈù¢??ä??øÁî® Wiki ÂèòÈáèÔºåÊâÄÊúâËøô??õ?ø°ÊÅØÂèØ?ª?Âú® [WikiVariables] È°µÈù¢ÊâæÂà??ÄÇ
+ä¸‹é¢æ˜¯ä¸€äº›æˆ˜ç•¥æ€§çš„å›¾è¡¨å’Œå…¶ä»–æœ‰å…³è¿™ä¸ª Wiki çš„æœ‰è¶£ä¿¡æ¯ã€‚å¦‚æœæ‚¨æ‰“ç®—åœ¨å…¶ä»–é¡µé¢ä¸Šä½¿ç”¨ Wiki å˜é‡ï¼Œæ‰€æœ‰è¿™äº›ä¿¡æ¯å¯ä»¥åœ¨ [WikiVariables] é¡µé¢æ‰¾åˆ°ã€‚
 
-| __Â?îÁî®ÂêçÁß?__               | [{$applicationname}]
-| __Âü?Êú¨Âú?ÂùÄ__                   | [{$baseurl}]
-| __JSPWiki ÂºïÊìéÁâàÊú¨__         | [{$jspwikiversion}]
-| __Â?óÁ¨¶ÁºñÁ?Å__             | [{$encoding}]
-| __ÊÄªÈ°µÈù¢Êï?__          | [{$totalpages}]
-| __ÊÄªÊ¥ªÂä®?ºöËØùÊï?__          | [{INSERT SessionsPlugin}]
-| __Ê¥ªÂä®ÁöÑ Wiki Áî®Êà?__              | [{INSERT SessionsPlugin property=users}]
-| __Âà?ÁõÆÂâç???Ê?¢ÁöÑËøêË°åÊó?Èó¥__                 | [{$uptime}]
-| __Â?ìÂâçÈ°µÈù¢Êèê?æõÁ®ãÂ?è__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
-| __Â?ìÂâçÈôÑ?ª?Êèê?æõÁ®ãÂ?è__    | [{$jspwiki.attachmentProvider}]
-| __ÂèØÁî®ÁöÑ InterWiki ÈìæÊé?__      | [{$interwikilinks}]
-| __ÂµåÂÖ?ÂºèÂõæÂÉè__             | [{$inlinedimages}]
-| __ÂÖ??ªñÊèí?ª?ÊêúÁ¥¢Ë?ØÂæÑ__  | [{$pluginpath}]
-| __Â??ÂÆâË£ÖÁöÑ [PageFilters]__        | [{$pagefilters}]
+| __åº”ç”¨åç§°__               | [{$applicationname}]
+| __åŸºæœ¬åœ°å€__                   | [{$baseurl}]
+| __JSPWiki å¼•æ“ç‰ˆæœ¬__         | [{$jspwikiversion}]
+| __å­—ç¬¦ç¼–ç __             | [{$encoding}]
+| __æ€»é¡µé¢æ•°__          | [{$totalpages}]
+| __æ€»æ´»åŠ¨ä¼šè¯æ•°__          | [{INSERT SessionsPlugin}]
+| __æ´»åŠ¨çš„ Wiki ç”¨æˆ·__              | [{INSERT SessionsPlugin property=users}]
+| __åˆ°ç›®å‰ä¸ºæ­¢çš„è¿è¡Œæ—¶é—´__                 | [{$uptime}]
+| __å½“å‰é¡µé¢æä¾›ç¨‹åº__          | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __å½“å‰é™„ä»¶æä¾›ç¨‹åº__    | [{$jspwiki.attachmentProvider}]
+| __å¯ç”¨çš„ InterWiki é“¾æ¥__      | [{$interwikilinks}]
+| __åµŒå…¥å¼å›¾åƒ__             | [{$inlinedimages}]
+| __å…¶ä»–æ’ä»¶æœç´¢è·¯å¾„__  | [{$pluginpath}]
+| __å·²å®‰è£…çš„ [PageFilters]__        | [{$pagefilters}]
 
-!??øÁî®ÊÉÖÂÜµ
+!ä½¿ç”¨æƒ…å†µ
 
-| __Êàë?ª¨ÁæéÂåñÊ?áÈ¢òÂêóÔºü__ | [{$jspwiki.breakTitleWithSpaces}]
-| __Êàë?ª¨Âå?ÈÖçËã±ËØ?Â§çÊï?Â?¢ÂºèÂêóÔºü__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
-| __??øÁî®??Ü CamelCase ÈìæÊé?ÂêóÔºü__ | [{$jspwiki.translatorReader.camelCaseLinks}]
-| __È°µÈù¢ÂÖÅËÆ? HTML ÂêóÔºü__ | [{$jspwiki.translatorReader.allowHTML}]
+| __æˆ‘ä»¬ç¾åŒ–æ ‡é¢˜å—ï¼Ÿ__ | [{$jspwiki.breakTitleWithSpaces}]
+| __æˆ‘ä»¬åŒ¹é…è‹±è¯­å¤æ•°å½¢å¼å—ï¼Ÿ__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __ä½¿ç”¨äº† CamelCase é“¾æ¥å—ï¼Ÿ__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __é¡µé¢å…è®¸ HTML å—ï¼Ÿ__ | [{$jspwiki.translatorReader.allowHTML}]
 
 !RichSiteSummary
 
-| __Êàë?ª¨ÁîüÊàê RSS Êñá?ª?ÂêóÔºü__ | [{$jspwiki.rss.generate}]
-| __Â¶ÇÊûúÁîüÊàêÔºåÈÇ£Êñá?ª?ÂêçÊòØÔºü__ | [{$jspwiki.rss.fileName}]
-| __RSS Êõ¥Êñ?ÁöÑÈ¢ëÁéáÂ¶Ç??ïÔºü__ |  [{$jspwiki.rss.interval}]
+| __æˆ‘ä»¬ç”Ÿæˆ RSS æ–‡ä»¶å—ï¼Ÿ__ | [{$jspwiki.rss.generate}]
+| __å¦‚æœç”Ÿæˆï¼Œé‚£æ–‡ä»¶åæ˜¯ï¼Ÿ__ | [{$jspwiki.rss.fileName}]
+| __RSS æ›´æ–°çš„é¢‘ç‡å¦‚ä½•ï¼Ÿ__ |  [{$jspwiki.rss.interval}]
 
-!???????ø°ÊÅØ
+!ä¸ªäººä¿¡æ¯
 
-??ãÈù¢ÊòØÊàëÁõÆÂâçÊâÄÁü?ÈÅìÁöÑÂÖ???é???ÁöÑÊÉÖÂÜµÔºö
+ä¸‹é¢æ˜¯æˆ‘ç›®å‰æ‰€çŸ¥é“çš„å…³äºä½ çš„æƒ…å†µï¼š
 
-| __Áî®Êà?Âêç__    | [{$username}]
-| __ÁôªÂ?ïÁä?ÊÄÅ__ | [{$loginstatus}]
+| __ç”¨æˆ·å__    | [{$username}]
+| __ç™»å½•çŠ¶æ€__ | [{$loginstatus}]
 
-!ÁõÆÂâçÂú®ÁºñËæëÁöÑÈ°µÈù¢
+!ç›®å‰åœ¨ç¼–è¾‘çš„é¡µé¢
 
 [{ListLocksPlugin}]
 
-JSPWiki ??ªÈ°µÊòØ [http://www.jspwiki.org/]. Ê¨¢Ëøé??øÁî® JSPWikiÔºÅ
-
+JSPWiki ä¸»é¡µæ˜¯ [http://www.jspwiki.org/]. æ¬¢è¿ä½¿ç”¨ JSPWikiï¼

@@ -1,8 +1,8 @@
-[ÊúÄËøë?øÆÊî?|Recent Changes]\\
-[È°µÈù¢Á¥¢Âºï|Page Index]\\
-[È°µÈù¢Á¥¢Âºï|About]\\
-[Á?ªÁªü?ø°ÊÅØ|SystemInfo]\\
+[æœ€è¿‘ä¿®æ”¹|Recent Changes]\\
+[é¡µé¢ç´¢å¼•|Page Index]\\
+[é¡µé¢ç´¢å¼•|About]\\
+[ç³»ç»Ÿä¿¡æ¯|SystemInfo]\\
 
-[Êú?ÂºïÁî®È°µÈù¢|UnusedPages]\\
-[Êú?ÂÆö??âÈ°µÈù¢|UndefinedPages]\\
+[æœªå¼•ç”¨é¡µé¢|UnusedPages]\\
+[æœªå®šä¹‰é¡µé¢|UndefinedPages]\\
 

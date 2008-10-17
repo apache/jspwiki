@@ -1,15 +1,14 @@
-Êú¨ Wiki ÈááÁî®??Ü [JSP|http://java.sun.com/products/jsp] ÊäÄÊúØÔºåËøôÊ??ÁöÑÊäÄÊúØ??øÂæó Wiki ÈùûÂ??ÂÆ?ÊòìÊõ¥Êñ?ÔºåÂ????î?ºº??éÊØîÂ§ßÂ§öÊï?Âü???é[ÂéüÂßãÁâàÊú¨|http://c2.com/cgi/wiki]ÁöÑ Wiki Ë¶ÅÊõ¥Â???ÄÇÂÆöÂà?ÁöÑ bean Ë¥üË¥£Â?ÜÊñáÊú¨Ë?¨Êç¢Êàê HTML ÂÜÖÂÆ??ÄÇ
+æœ¬ Wiki é‡‡ç”¨äº† [JSP|http://java.sun.com/products/jsp] æŠ€æœ¯ï¼Œè¿™æ ·çš„æŠ€æœ¯ä½¿å¾— Wiki éå¸¸å®¹æ˜“æ›´æ–°ï¼Œå¹¶ä¸”ä¼¼ä¹æ¯”å¤§å¤šæ•°åŸºäº[åŸå§‹ç‰ˆæœ¬|http://c2.com/cgi/wiki]çš„ Wiki è¦æ›´å¥½ã€‚å®šåˆ¶çš„ bean è´Ÿè´£å°†æ–‡æœ¬è½¬æ¢æˆ HTML å†…å®¹ã€‚
 
-Â§ßÂ§öÊï?[ÁºñËæëÊ?áËÆ?|TextFormattingRules]Ê??ÊçÆ [Sensei's Library|http://senseis.xmp.net] ËÆæËÆ°ÔºåÂÆÉÊòØ??íËÅîÁ?ë??äÊúÄÂ??ÁöÑ GO Á´ôÁÇ???ã??Ä?ÄÇÊàëËßâÂæó?ªñ?ª¨ÁöÑÊ?áËÆ?ÈùûÂ??ÂÆ?ÊòìÔºåËÄå??îÊ?ÖÊô??ÄÇ
+å¤§å¤šæ•°[ç¼–è¾‘æ ‡è®°|TextFormattingRules]æ ¹æ® [Sensei's Library|http://senseis.xmp.net] è®¾è®¡ï¼Œå®ƒæ˜¯äº’è”ç½‘ä¸Šæœ€å¥½çš„ GO ç«™ç‚¹ä¹‹ä¸€ã€‚æˆ‘è§‰å¾—ä»–ä»¬çš„æ ‡è®°éå¸¸å®¹æ˜“ï¼Œè€Œä¸”æ¸…æ™°ã€‚
 
-Êú¨ WikiÔºàJSPWikiÔºâÁöÑËÆ?ÂèØÂçèËÆÆÊòØ [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]?ÄÇËØ?ÂèÇËÄÉ [http://incubator.apache.org/jspwiki] ??ÜËß£Êõ¥Â§ö?ø°ÊÅØ?ÄÇ
+æœ¬ Wikiï¼ˆJSPWikiï¼‰çš„è®¸å¯åè®®æ˜¯ [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0]ã€‚è¯·å‚è€ƒ [http://incubator.apache.org/jspwiki] äº†è§£æ›´å¤šä¿¡æ¯ã€‚
 
-Â¶ÇÊûúÊÇ®ÂØ? JSPWiki ÂºÄÂèëÊÑüÂÖ¥Ë?£ÔºåJSPWiki ÁöÑ??ªÈ°µÊòØ [http://www.jspwiki.org]?ÄÇ??ãÈù¢ÊòØ??Ä??õÂø´ÈÄüÈìæÊé?Ôºö
+å¦‚æœæ‚¨å¯¹ JSPWiki å¼€å‘æ„Ÿå…´è¶£ï¼ŒJSPWiki çš„ä¸»é¡µæ˜¯ [http://www.jspwiki.org]ã€‚ä¸‹é¢æ˜¯ä¸€äº›å¿«é€Ÿé“¾æ¥ï¼š
 
-* [Áº?Èô?Êä?Âëä|JSPWiki:SubmitBugReport] ÊàñËÄÖ[Áúã??Ä??ã Open Áº?Èô?ÁöÑÂàóË°®|JSPWiki:OpenBugs].
-* [Ë¥°ÁåÆÊñ?ÁöÑÊÉ?Ê?ï|JSPWiki:SubmitNewIdea]?ÄÇ
-* Áúã??Ä??ãÊúÄÊñ?ÁöÑ [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
-* ÂØªÊâæÂÖ??ªñÁöÑ[Êèí?ª?|JSPWiki:ContributedPlugins]?ÄÅ[Ê®°Êùø|JSPWiki:ContributedTemplates]?ÄÅ[ËøáÊª§Âô®|JSPWiki:ContributedFilters]?ÄÅ[Êèê?æõÁ®ãÂ?è|JSPWiki:ContributedProviders] ÊàñËÄÖ[ÂÖ??ªñÊØîËæÉÈÖ?ÁöÑ??úË?ø|JSPWiki:ContributedCode]?ÄÇ
+* [ç¼ºé™·æŠ¥å‘Š|JSPWiki:SubmitBugReport] æˆ–è€…[çœ‹ä¸€ä¸‹ Open ç¼ºé™·çš„åˆ—è¡¨|JSPWiki:OpenBugs].
+* [è´¡çŒ®æ–°çš„æƒ³æ³•|JSPWiki:SubmitNewIdea]ã€‚
+* çœ‹ä¸€ä¸‹æœ€æ–°çš„ [JSPWiki FAQ|JSPWiki:JSPWikiFAQ]
+* å¯»æ‰¾å…¶ä»–çš„[æ’ä»¶|JSPWiki:ContributedPlugins]ã€[æ¨¡æ¿|JSPWiki:ContributedTemplates]ã€[è¿‡æ»¤å™¨|JSPWiki:ContributedFilters]ã€[æä¾›ç¨‹åº|JSPWiki:ContributedProviders] æˆ–è€…[å…¶ä»–æ¯”è¾ƒé…·çš„ä¸œè¥¿|JSPWiki:ContributedCode]ã€‚
 
-Á?ùÂÆöÂà?(hacking)ÊÑâÂø´ÔºåÊÑüË?¢ÊÇ®ÈÄâÊã©??Ü JSPWikiÔºÅ
-
+ç¥å®šåˆ¶(hacking)æ„‰å¿«ï¼Œæ„Ÿè°¢æ‚¨é€‰æ‹©äº† JSPWikiï¼
