@@ -1,3 +1,11 @@
+2008-10-21  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.1-svn-1
+        
+        * [JSPWIKI-348] OC4J compatibility, thanks to Lutz Tietze.
+        
+        * [JSPWIKI-389] Wrong mixed quotes in SecurityConfig.jsp corrected.
+
 2008-10-17  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.0-rc-2.

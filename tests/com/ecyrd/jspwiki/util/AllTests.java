@@ -23,6 +23,7 @@ public class AllTests extends TestCase
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );
+        suite.addTest( UtilJ2eeCompatTest.suite() );
         
         return suite;
     }

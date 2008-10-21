@@ -20,9 +20,7 @@
  */
 package com.ecyrd.jspwiki.ui;
 
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +34,7 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.url.DefaultURLConstructor;
+import com.ecyrd.jspwiki.util.UtilJ2eeCompat;
 import com.ecyrd.jspwiki.util.WatchDog;
 
 /**
@@ -69,7 +68,16 @@ import com.ecyrd.jspwiki.util.WatchDog;
  */
 public class WikiJSPFilter extends WikiServletFilter
 {
+    private Boolean m_useOutputStream;
+
     /** {@inheritDoc} */
+    public void init( FilterConfig config ) throws ServletException
+    {
+        super.init( config );
+        ServletContext context = config.getServletContext();
+        m_useOutputStream = UtilJ2eeCompat.useOutputStream( context.getServerInfo() );
+    }
+
     public void doFilter( ServletRequest  request,
                           ServletResponse response,
                           FilterChain     chain )
@@ -81,8 +89,19 @@ public class WikiJSPFilter extends WikiServletFilter
             NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
 
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
-          
-            HttpServletResponseWrapper responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
+            HttpServletResponseWrapper responseWrapper;
+         
+            if( m_useOutputStream )
+            {
+                log.debug( "Using ByteArrayResponseWrapper" );
+                responseWrapper = new ByteArrayResponseWrapper( (HttpServletResponse)response );
+            }
+            else
+            {
+                log.debug( "Using MyServletResponseWrapper" );
+                responseWrapper = new MyServletResponseWrapper( (HttpServletResponse)response );
+                
+            }
         
             // fire PAGE_REQUESTED event
             String pagename = DefaultURLConstructor.parsePageFromURL(
@@ -284,6 +303,75 @@ public class WikiJSPFilter extends WikiServletFilter
         }
     }
 
+    /**
+     *  Response wrapper for application servers which do not work with CharArrayWriter
+     *  Currently only OC4J
+     */
+    private static class ByteArrayResponseWrapper
+        extends HttpServletResponseWrapper
+    {
+        private ByteArrayOutputStream m_output;
+        private HttpServletResponse m_response;
+      
+        /** 
+         *  How large the initial buffer should be.  This should be tuned to achieve
+         *  a balance in speed and memory consumption.
+         */
+        private static final int INIT_BUFFER_SIZE = 4096;
+        
+        public ByteArrayResponseWrapper( HttpServletResponse r )
+        {
+            super(r);
+            m_output = new ByteArrayOutputStream( INIT_BUFFER_SIZE );
+            m_response = r;
+        }
+        
+        /**
+         *  Returns a writer for output; this wraps the internal buffer
+         *  into a PrintWriter.
+         */
+        public PrintWriter getWriter()
+        {
+            return new PrintWriter( getOutputStream(), true );
+        }
+
+        public ServletOutputStream getOutputStream()
+        {
+            return new MyServletOutputStream( m_output );
+        }
+
+        static class MyServletOutputStream extends ServletOutputStream
+        {
+            private DataOutputStream m_stream;
+
+            public MyServletOutputStream( OutputStream aOutput )
+            {
+                super();
+                m_stream = new DataOutputStream( aOutput );
+            }
+
+            public void write( int aInt ) throws IOException
+            {
+                m_stream.write( aInt );
+            }
+        }
+        
+        /**
+         *  Returns whatever was written so far into the Writer.
+         */
+        public String toString()
+        {
+            try
+            {
+                return m_output.toString( m_response.getCharacterEncoding() );
+            }
+            catch( UnsupportedEncodingException e )
+            {
+                log.error( ByteArrayResponseWrapper.class + " Unsupported Encoding", e );
+                return null;
+            }
+        }
+    }
 
     // events processing .......................................................
 
