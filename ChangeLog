@@ -5,6 +5,9 @@
         * [JSPWIKI-348] OC4J compatibility, thanks to Lutz Tietze.
         
         * [JSPWIKI-389] Wrong mixed quotes in SecurityConfig.jsp corrected.
+        
+        * [JSPWIKI-138] rss.jsp now caches the produced XML in a custom
+          cache, resulting in *very* fast operation.
 
 2008-10-17  Janne Jalkanen <jalkanen@apache.org>
 
