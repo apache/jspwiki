@@ -1,3 +1,7 @@
+2008-10-26  Janne Jalkanen <jalkanen@apache.org>
+
+        * Added the 3.0 API definition interfaces from the SVN.
+
 2008-10-17  Janne Jalkanen <jalkanen@apache.org>
 
         * Merged fixes from 2.8.0 branch
