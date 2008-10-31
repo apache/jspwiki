@@ -277,7 +277,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         String file = props.getProperty( PROP_USERDATABASE );
         if( file == null )
         {
-            log.error( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile  );
+            log.warn( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile  );
             c_file = defaultFile;
         }
         else 

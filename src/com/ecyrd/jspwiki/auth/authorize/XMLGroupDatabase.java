@@ -199,7 +199,7 @@ public class XMLGroupDatabase implements GroupDatabase
         String file = props.getProperty( PROP_DATABASE );
         if ( file == null )
         {
-            log.error( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
+            log.warn( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
             m_file = defaultFile;
         }
         else

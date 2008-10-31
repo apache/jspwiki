@@ -1,3 +1,11 @@
+2008-10-31  Harry Metske <harry.metske@gmail.com>
+
+        * 2.8.1-svn-2
+        
+        * [JSPWIKI-406] Renaming a page back to the old name
+           destroys text changes of the page, thanks to Stefan Bohn.
+        * changed two annoying log.error's to log.warn's 
+        
 2008-10-21  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.1-svn-1
