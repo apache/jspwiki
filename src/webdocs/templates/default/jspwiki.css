@@ -347,7 +347,17 @@ a.feed {
 a.infolink img {
 	display:none;
 }*/
-
+/* hashlink */
+a.hashlink {
+	color:transparent;
+	line-height:1.2;
+	padding:0.25em;
+	text-decoration:none;
+}
+a.hashlink:hover {
+	background-color:#eee;
+	color:blue;
+}
 /* +++ 260 Image styles +++ */
 img {
 	border:none;

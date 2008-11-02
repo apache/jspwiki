@@ -60,7 +60,7 @@ public class TableOfContentsTest extends TestCase
                       "<ul>\n"+
                       "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
                       "</ul>\n</div>\n</div>\n\n</p>"+
-                      "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>\n",
+                      "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>\n",
                       res );
     }
 
@@ -81,9 +81,9 @@ public class TableOfContentsTest extends TestCase
                 "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
                 "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">3.1.1 Subsubheading</a></li>\n"+
                 "</ul>\n</div>\n</div>\n\n</p>"+
-                "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
-                "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
-                "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>\n";
+                "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
+                "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
+                "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
                 
         assertEquals(expecting,
                 res );
@@ -111,14 +111,14 @@ public class TableOfContentsTest extends TestCase
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">4 Heading</a></li>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">4.1 Subheading3</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
-        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
-        "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
-        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>"+
-        "\n<h4 id=\"section-Test-Subsubheading2\">Subsubheading2</h4>"+
-        "\n<h3 id=\"section-Test-Subheading2\">Subheading2</h3>"+
-        "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3</h4>"+
-        "\n<h2 id=\"section-Test-Heading\">Heading</h2>"+
-        "\n<h3 id=\"section-Test-Subheading3\">Subheading3</h3>\n";
+        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
+        "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
+        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>"+
+        "\n<h4 id=\"section-Test-Subsubheading2\">Subsubheading2<a class=\"hashlink\" href=\"#section-Test-Subsubheading2\">#</a></h4>"+
+        "\n<h3 id=\"section-Test-Subheading2\">Subheading2<a class=\"hashlink\" href=\"#section-Test-Subheading2\">#</a></h3>"+
+        "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3<a class=\"hashlink\" href=\"#section-Test-Subsubheading3\">#</a></h4>"+
+        "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
+        "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
         
         assertEquals(expecting,
                 res );
@@ -147,15 +147,15 @@ public class TableOfContentsTest extends TestCase
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">5 Heading</a></li>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">5.1 Subheading3</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
-        "\n<h3 id=\"section-Test-Subheading0\">Subheading0</h3>"+
-        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
-        "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
-        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>"+
-        "\n<h4 id=\"section-Test-Subsubheading2\">Subsubheading2</h4>"+
-        "\n<h3 id=\"section-Test-Subheading2\">Subheading2</h3>"+
-        "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3</h4>"+
-        "\n<h2 id=\"section-Test-Heading\">Heading</h2>"+
-        "\n<h3 id=\"section-Test-Subheading3\">Subheading3</h3>\n";
+        "\n<h3 id=\"section-Test-Subheading0\">Subheading0<a class=\"hashlink\" href=\"#section-Test-Subheading0\">#</a></h3>"+
+        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
+        "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
+        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>"+
+        "\n<h4 id=\"section-Test-Subsubheading2\">Subsubheading2<a class=\"hashlink\" href=\"#section-Test-Subsubheading2\">#</a></h4>"+
+        "\n<h3 id=\"section-Test-Subheading2\">Subheading2<a class=\"hashlink\" href=\"#section-Test-Subheading2\">#</a></h3>"+
+        "\n<h4 id=\"section-Test-Subsubheading3\">Subsubheading3<a class=\"hashlink\" href=\"#section-Test-Subsubheading3\">#</a></h4>"+
+        "\n<h2 id=\"section-Test-Heading\">Heading<a class=\"hashlink\" href=\"#section-Test-Heading\">#</a></h2>"+
+        "\n<h3 id=\"section-Test-Subheading3\">Subheading3<a class=\"hashlink\" href=\"#section-Test-Subheading3\">#</a></h3>\n";
         
         assertEquals(expecting,
                      res );
@@ -178,9 +178,9 @@ public class TableOfContentsTest extends TestCase
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">FooBar-3.1 Subheading</a></li>\n"+
         "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">FooBar-3.1.1 Subsubheading</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
-        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar</h2>"+
-        "\n<h3 id=\"section-Test-Subheading\">Subheading</h3>"+
-        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading</h4>\n";
+        "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
+        "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
+        "\n<h4 id=\"section-Test-Subsubheading\">Subsubheading<a class=\"hashlink\" href=\"#section-Test-Subsubheading\">#</a></h4>\n";
         
         assertEquals(expecting,
                 res );

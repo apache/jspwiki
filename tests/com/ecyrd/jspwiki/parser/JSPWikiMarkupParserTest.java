@@ -204,7 +204,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         String src = "!Heading Too\r\nThis should be a [HyperLink#heading too]";
 
-        assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too</h4>\nThis should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
+        assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too<a class=\"hashlink\" href=\"#section-testpage-HeadingToo\">#</a></h4>\nThis should be a <a class=\"wikipage\" href=\"/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
                       translate(src) );
     }
     
@@ -917,7 +917,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
 
-        assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi</h4>\n<p>Foo.</p>",
+        assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi<a class=\"hashlink\" href=\"#section-testpage-Testi\">#</a></h4>\n<p>Foo.</p>",
                       translate(src) );
     }
 
@@ -2017,7 +2017,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!Hello\nThis is a test";
 
-        assertEquals( "<h4 id=\"section-testpage-Hello\">Hello</h4>\nThis is a test",
+        assertEquals( "<h4 id=\"section-testpage-Hello\">Hello<a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>\nThis is a test",
                       translate(src) );
     }
 
@@ -2026,7 +2026,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!Hello, testing 1, 2, 3";
 
-        assertEquals( "<h3 id=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3</h3>",
+        assertEquals( "<h3 id=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3<a class=\"hashlink\" href=\"#section-testpage-HelloTesting123\">#</a></h3>",
                       translate(src) );
     }
 
@@ -2035,7 +2035,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!!Hello there, how are you doing?";
 
-        assertEquals( "<h2 id=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?</h2>",
+        assertEquals( "<h2 id=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?<a class=\"hashlink\" href=\"#section-testpage-HelloThereHowAreYouDoing\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2044,7 +2044,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!![Hello]";
 
-        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"createpage\" href=\"/Edit.jsp?page=Hello\" title=\"Create &quot;Hello&quot;\">Hello</a></h2>",
+        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"createpage\" href=\"/Edit.jsp?page=Hello\" title=\"Create &quot;Hello&quot;\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2053,7 +2053,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="!!![Hello|http://www.google.com/]";
 
-        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a></h2>",
+        assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                       translate(src) );
     }
 
@@ -2062,7 +2062,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src="![Hello|http://www.google.com/?p=a&c=d]";
 
-        assertEquals( "<h4 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a></h4>",
+        assertEquals( "<h4 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>",
                       translate(src) );
     }
 
