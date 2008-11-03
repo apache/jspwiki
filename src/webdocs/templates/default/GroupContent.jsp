@@ -6,6 +6,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -35,12 +36,12 @@
     creator = group.getCreator();
     if ( group.getCreated() != null )
     {
-      created = group.getCreated().toString();
+      created = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME);
     }
     modifier = group.getModifier();
     if ( group.getLastModified() != null )
     {
-      modified = group.getLastModified().toString();
+      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ; 
     }
   }
   name = TextUtil.replaceEntities(name);

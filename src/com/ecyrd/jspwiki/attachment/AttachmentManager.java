@@ -487,7 +487,8 @@ public class AttachmentManager
         //
         if( !m_engine.getPageManager().pageExists( att.getParentName() ) )
         {
-            throw new ProviderException("Parent page does not exist");
+            // the caller should catch the exception and use the exception text as an i18n key
+            throw new ProviderException(  "attach.parent.not.exist"  );
         }
         
         m_provider.putAttachmentData( att, in );
@@ -603,9 +604,10 @@ public class AttachmentManager
     {
         if( filename == null || filename.trim().length() == 0 )
         {
-            AttachmentServlet.log.error("Empty file name given.");
+            log.error("Empty file name given.");
     
-            throw new WikiException("Empty file name given.");
+            // the caller should catch the exception and use the exception text as an i18n key
+            throw new WikiException(  "attach.empty.file" );
         }
     
         //
@@ -618,8 +620,9 @@ public class AttachmentManager
         {
             log.info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this" +
             		" can trigger unwanted security side effects, so we're preventing it." );
-            
-            throw new WikiException( "Unwanted file name." );
+            //
+            // the caller should catch the exception and use the exception text as an i18n key
+            throw new WikiException(  "attach.unwanted.file"  );
         }
     
         //

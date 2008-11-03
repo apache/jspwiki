@@ -44,15 +44,19 @@ public class ListLocksPlugin
 
         PageManager mgr = context.getEngine().getPageManager();
         List locks = mgr.getActiveLocks();
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         result.append("<table class=\"wikitable\">\n");
         result.append("<tr>\n");
-        result.append("<th>Page</th><th>Locked by</th><th>Acquired</th><th>Expires</th>\n");
+        result.append( "<th>" + rb.getString( "plugin.listlocks.page" ) + "</th><th>" + rb.getString( "plugin.listlocks.locked.by" )
+                       + "</th><th>" + rb.getString( "plugin.listlocks.acquired" ) + "</th><th>"
+                       + rb.getString( "plugin.listlocks.expires" ) + "</th>\n" );
         result.append("</tr>");
 
         if( locks.size() == 0 )
         {
-            result.append("<tr><td colspan=\"4\" class=\"odd\">No locks exist currently.</td></tr>\n");
+            result.append( "<tr><td colspan=\"4\" class=\"odd\">" + rb.getString( "plugin.listlocks.no.locks.exist" )
+                           + "</td></tr>\n" );
         }
         else
         {
