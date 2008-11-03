@@ -52,6 +52,7 @@
 }
 #favorites {
 	float:left;
+	overflow:hidden; /*avoid overflow for wide content of leftmenu or leftmenufooter */
 	margin-top:1.75em;
 	width:18%;
 	padding:0.5em;
@@ -178,11 +179,11 @@ h2, h3, h4 {
 	line-height:1.2;
 }
 h2 { font-size: 150%; }
-h2 .editsection { font-size: 67%; padding-left:1em;}
+h2 .editsection, h2 .hashlink { font-size: 67%; padding-left:1em;}
 h3 { font-size: 132%; }
-h3 .editsection { font-size: 76%; padding-left:1em;}
+h3 .editsection, h3 .hashlink { font-size: 76%; padding-left:1em;}
 h4 { font-size: 116%; }
-h4 .editsection { font-size: 86%; padding-left:1em;}
+h4 .editsection, h4 .hashlink { font-size: 86%; padding-left:1em;}
 .editsection {
 	font-weight:normal;
 	line-height:1.2;
@@ -724,6 +725,7 @@ label[for="edittoc"] {
 	width:99%;
 }
 #toctoc {
+	position:relative;
 	margin:0.5em 0;
 }
 #toctoc label {
@@ -973,6 +975,9 @@ label[for="edittoc"] {
 	background:#eee;
 	/*line-height:1;*/
 }
+.pagination a {
+	cursor:pointer;
+}
 .pagination a, .pagination .cursor {
 	padding:0.5em;
 }
@@ -1166,17 +1171,16 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 }
 #searchSubmit {
 	position:absolute;
-    top: 5px;
-	right: 3px;
+    top:5px;
+	right:3px;
 
 	margin:0; 
 	padding:0;
 	width:16px; 
 	height:16px;
-	border:none;
-	background: #fff url(images/search.gif) no-repeat center;
+	border:none; 
+	background: url(images/search.gif) no-repeat center;
 	overflow:hidden;	
-    text-indent:16px;
     cursor:pointer;
 }
 #searchboxMenu {
@@ -1256,9 +1260,9 @@ body.view {
 
 /* +++ 625 Table of contents plugin +++ */
 div.toc {
-	 width:60%; 
-	 float:left;
-	 clear:left;
+	width:60%; 
+	float:left;
+	clear:left;
 }
 /* duplicate toc items links back to the first rendered table of contents */
 a.toc {

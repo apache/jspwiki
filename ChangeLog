@@ -1,3 +1,12 @@
+2008-11-03  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.1-svn-5
+        
+        * JSPWIKI-408: Hide wide-content on left-menu and leftmenu-footer.
+        
+        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.
+        
+
 2008-11-03  Janne Jalkanen <jalkanen@apache.org>
 
         * Finnish localization updated (no version bump):
