@@ -1,3 +1,10 @@
+2008-11-03  Harry Metske <metskem@apache.org>
+
+        * 2.8.1-svn-4
+        
+        * JSPWIKI-407: Unlocalized messages and times in user, group and attachment
+           management, reported by Olivier Descout (Forbidden.html not fixed yet)	
+
 2008-11-02  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.1-svn-3
