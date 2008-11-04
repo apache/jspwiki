@@ -212,18 +212,34 @@ public class LuceneSearchProvider implements SearchProvider
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
                     {
                         WikiPage page = (WikiPage) iterator.next();
-                        String text = m_engine.getPageManager().getPageText( page.getName(),
-                                                                             WikiProvider.LATEST_VERSION );
-                        luceneIndexPage( page, text, writer );
+                        
+                        try
+                        {
+                            String text = m_engine.getPageManager().getPageText( page.getName(),
+                                                                                 WikiProvider.LATEST_VERSION );
+                            luceneIndexPage( page, text, writer );
+                        }
+                        catch( Exception e )
+                        {
+                            log.info("Unable to index page, continuing to next: "+page.getName(),e );
+                        }
                     }
 
                     Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
                     for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
                     {
                         Attachment att = (Attachment) iterator.next();
-                        String text = getAttachmentContent( att.getName(),
-                                                            WikiProvider.LATEST_VERSION );
-                        luceneIndexPage( att, text, writer );
+                        
+                        try
+                        {
+                            String text = getAttachmentContent( att.getName(),
+                                                                WikiProvider.LATEST_VERSION );
+                            luceneIndexPage( att, text, writer );
+                        }
+                        catch( Exception e )
+                        {
+                            log.info("Unable to index attachment, continuing to next: "+att.getName(),e );                            
+                        }
                     }
 
                     writer.optimize();
