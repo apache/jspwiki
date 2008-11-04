@@ -219,9 +219,9 @@ public class LuceneSearchProvider implements SearchProvider
                                                                                  WikiProvider.LATEST_VERSION );
                             luceneIndexPage( page, text, writer );
                         }
-                        catch( Exception e )
+                        catch( IOException e )
                         {
-                            log.info("Unable to index page, continuing to next: "+page.getName(),e );
+                            log.warn( "Unable to index page " + page.getName() + ", continuing to next ", e );
                         }
                     }
 
@@ -236,9 +236,9 @@ public class LuceneSearchProvider implements SearchProvider
                                                                 WikiProvider.LATEST_VERSION );
                             luceneIndexPage( att, text, writer );
                         }
-                        catch( Exception e )
+                        catch( IOException e )
                         {
-                            log.info("Unable to index attachment, continuing to next: "+att.getName(),e );                            
+                            log.warn( "Unable to index attachment " + att.getName() + ", continuing to next", e );
                         }
                     }
 
