@@ -211,6 +211,7 @@
 <div id="sneakpreviewheader">
   <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />
   <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>	  
+  <span id="previewSpin" class="spin" style="position:absolute;display:none;"></span>
 </div>
 <div id="sneakpreview" ></div>
 

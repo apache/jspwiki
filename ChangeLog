@@ -1,3 +1,10 @@
+2008-11-04  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.1-svn-6
+        
+        * JSPWIKI-381: Sneak-preview is now refreshed periodically as well as the
+        section-list at the left of the screen. 
+        
 2008-11-03  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.1-svn-5
