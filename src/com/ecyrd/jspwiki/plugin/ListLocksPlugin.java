@@ -21,6 +21,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.preferences.Preferences;
+
 import java.util.*;
 
 /**
@@ -68,8 +70,11 @@ public class ListLocksPlugin
                 result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
                 result.append("<td>"+lock.getPage()+"</td>");
                 result.append("<td>"+lock.getLocker()+"</td>");
-                result.append("<td>"+lock.getAcquisitionTime()+"</td>");
-                result.append("<td>"+lock.getExpiryTime()+"</td>");
+                result.append( "<td>"
+                               + Preferences.renderDate( context, lock.getAcquisitionTime(), Preferences.TimeFormat.DATETIME )
+                               + "</td>" );
+                result.append( "<td>" + Preferences.renderDate( context, lock.getExpiryTime(), Preferences.TimeFormat.DATETIME )
+                               + "</td>" );
                 result.append("</tr>\n");
                 rowNum++;
             }
