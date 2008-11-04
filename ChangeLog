@@ -1,5 +1,13 @@
 2008-11-03  Janne Jalkanen <jalkanen@apache.org>
 
+        * Merged in changes from 2.8:
+
+        * JSPWIKI-408: Hide wide-content on left-menu and leftmenu-footer.
+        
+        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.
+
+2008-11-03  Janne Jalkanen <jalkanen@apache.org>
+
         * Merged changes from 2.8: JSPWIKI-407.
 
 2008-11-02  Janne Jalkanen <jalkanen@apache.org>
