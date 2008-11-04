@@ -1,3 +1,10 @@
+2008-11-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.1-svn-7
+        
+        * [JSPWIKI-411] LuceneSearchProvider no longer stops processing at startup
+        if the indexing dies due to non-indexable content.
+
 2008-11-04  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.1-svn-6
@@ -11,8 +18,7 @@
         
         * JSPWIKI-408: Hide wide-content on left-menu and leftmenu-footer.
         
-        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.
-        
+        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.        
 
 2008-11-03  Janne Jalkanen <jalkanen@apache.org>
 
