@@ -1,3 +1,7 @@
+2008-11-05  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * [JSPWIKI-407]: updated es translation; fixed some HTML entities left behind.
+        
 2008-11-03  Harry Metske <metskem@apache.org>
 
         * 2.8.1-svn-8
