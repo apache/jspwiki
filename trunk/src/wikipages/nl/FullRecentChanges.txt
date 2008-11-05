@@ -1,3 +1,0 @@
-Dit zijn alle wijzigingen die op deze pagina's zijn gemaakt. Een betere lijst is beschikbaar op [RecentChanges].
-
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin}]

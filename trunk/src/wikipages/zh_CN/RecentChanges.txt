@@ -1,5 +1,0 @@
-?ª???ãÊòØËøáÂéª 30 Â§©?ª?Êù?ÂØ?Ëøô??õÈ°µÈù¢ÊâÄ??úÁöÑÊõ¥Êî??ÄÇÊâÄÊúâÊõ¥Êî?ËøáÈ°µÈù¢ÁöÑÂàóË°®ÂèØ?ª?Âú® [FullRecentChanges] ???ÊâæÂà??ÄÇ
-
-Ê?§ÊúçÂä°Âô®ÊâÄÂú®Êó?Âå???? [{INSERT CurrentTimePlugin format=zzzz}]ÔºåÁõÆÂâçÁöÑÊó?Èó¥ÊòØ [{INSERT CurrentTimePlugin format='yyyy-MM-dd HH:mm'}]?ÄÇ
-
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]

@@ -1,3 +1,0 @@
-Estás páginas no son accesibles desde ninguna otra página (excepto aquellas que son generadas automáticamente).
-
-[{INSERT com.ecyrd.jspwiki.plugin.UnusedPagesPlugin}]
