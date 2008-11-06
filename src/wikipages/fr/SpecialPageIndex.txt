@@ -1,0 +1,32 @@
+Voici la liste des pages spéciales du wiki.
+
+%%(overflow:auto; border: 1px solid #aaa; clear:both; margin:1em 2.5%; padding:0.5em; background:#f9f9f9)
+%%columns
+[A propos|EditPageHelp]\\
+[Aide de la page d'édition|EditPageHelp]\\
+[Aide de la page d'identification|LoginHelp]\\
+[Aide de la page de recherche|SearchPageHelp]\\
+\\
+[Derniers changements|Recent Changes]\\
+\\
+[Edition refusée|RejectedMessage]\\
+[Entraînez-vous ici|SandBox]\\
+\\
+[Index des pages|Page Index]\\
+[Index des pages spéciales|Special Page Index]\\
+[Infos système|System Info]\\
+----
+[Menu de gauche|Left Menu]\\
+[Menu 'Plus...'|More Menu]\\
+\\
+[Page principale|Main]\\
+[Pages non définies|Undefined Pages]\\
+[Pages orphelines|Unused Pages]\\
+[Pied du menu de gauche|Left Menu Footer]\\
+\\
+[Rechercher une page|Find Page]\\
+[Règles de formatage|Text Formatting Rules]\\
+[Règles de formatage complètes|Full Text Formatting Rules]\\
+\\
+[Tous les changements|Full Recent Changes]\\
+/%
