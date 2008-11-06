@@ -1,0 +1,6 @@
+Les éditions de page doivent être approuvés avant de devenir visibles.
+Votre demande a été soumise, et sera soit approuvée, soit rejetée.
+
+Vous pouvez, si vous le souhaitez, consulter le statut de votre demande
+en vous identifiant (si ce n'est pas encore fait) et en cliquant sur
+le lien "Workflow".

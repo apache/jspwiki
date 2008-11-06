@@ -1,0 +1,63 @@
+Lorsque vous [modifiez des pages|TextFormattingRules], gardez toujours les règles suivantes
+à l'esprit :
+
+!!Général
+* Soyez gentil - ne soyez pas grossier ou injurieux.
+* Ecrivez dans une langue facile à comprendre, et évitez les particularismes locaux
+  et l'argot. Tous vos lecteurs n'ont pas forcément un français aussi courant que vous.
+* N'effacez pas les contributions des autres (à moins que vous sachiez très exactement
+  ce que vous faites)
+* N'utilisez pas trop de sigles (ou, sinon, rédigez une page qui les explique)
+* __Evitez la phrase ''"cliquez ici"'' !!__ N'écrivez pas : "Plus d'infos sur l'étiquette
+  se trouvent [ici|WikiEtiquette]", mais plutôt "Plus d'infos sur l'étiquette se trouvent 
+  dans la [WikiEtiquette]". Cette règle est aussi valable pour les liens vers l'extérieur
+  du Wiki.
+* Ne contribuez que sur des informations nouvelles. Les liens, c'est très pratique, mais
+  ne faites pas de copier/coller de textes soumis à copyright.
+* Corriger les fautes de frappe ou d'orthographe est pluôt bien vu - en fait, c'est une
+  très bonne habitude, car cela rend la page Wiki plus facile à lire.
+
+!!A propos des commentaires
+
+* Vous êtes libre de contribuer de manière anonyme, mais on préférera toujours que
+  vous signiez vos commentaires de votre nom (ou pseudo). L'usage veut que la
+  signature soit mentionnée par '--' comme ceci : ''-- [Janne Jalkanen|JSPWiki:Janne Jalkanen]''
+  (Tant que vous y êtes, vous pouvez carrément créer votre propre page Wiki et nous parler un
+  peu de vous !)
+* Une bonne habitude est de préfixer vos commentaires avec votre nom, comme ceci :
+  ''[Janne Jalkanen|JSPWiki:Janne Jalkanen] : J'aimerais dire que...''
+* Réfléchissez avant de commenter. [WikiWiki|JSPWiki:WikiWiki] n'est pas un forum de discussion
+  ultra-rapide. Ce n'est pas non plus un serveur de news. Ce que vous allez dire va
+  y restera pour toujours, au vu et au su de tout le monde (si vous supprimez votre
+  commentaire, il sera toujours là, dans la version précédente de la page).
+
+!!Créer des noms Wiki
+* Un bon [nom Wiki|JSPWiki:WikiName] est court et descriptif. Si le nom est logique
+  et facile à lire, de nombreuses personnes feront des liens vers elle.
+* Bien qu'il vous soit possible de prendre une phrase entière et de la concaténer pour
+  en faire un [nom Wiki|JSPWiki:WikiName], il est recommandé de se limiter à 5 mots maxi.
+* Essayez plutôt de définir des [noms Wiki|JSPWiki:WikiName] comme vous écririez des
+  titres de chapitre dans un livre.
+* Ce Wiki vous permet de créer des pages dont le nom est composé d'un seul mot, mais
+  essayez quand même d'utiliser au moins deux mots - ce serait dommage d'arriver à
+  court de mots ! :-)
+* __Regardez à deux fois vos [noms Wiki|JSPWiki:WikiName]__ pour vérifier que vous n'avez
+  pas de fautes de frappe - sinon quelqu'un risque de créer une page mal nommée !
+  Et de mauvais noms de pages sont une mauvaise chose, car créer des liens sur une page
+  mal nommée demande plus d'efforts que le faire sur un [nom Wiki|JSPWiki:WikiName]
+  logique et correct.
+
+!!Restructurer les pages
+
+La restructuration est le processus de résumer une page, de la raccourcir, de la rendre
+plus lisible. Si quelqu'un s'en sent le courage, qu'il n'hésite pas, mais nous suggérons
+de laisser cette tâche aux visiteurs les plus fréquents et expérimentés.
+
+N'oubliez jamais les règles suivantes quand vous restructurez une page :
+* Soyez objectif - les pour et les contre doivent être représentés honnêtement.
+* Soyez attentif aux contributions signées - ne changez pas leur signification.
+* Rendez à César ce qui appartient à César.
+* Dans votre résumé, préférez la 3ème personne ou le pluriel à la 1ère personne du
+  singulier.
+
+(Merci à la [bibliothèque de Sensei|http://senseis.xmp.net/] pour l'original de ce texte.)
