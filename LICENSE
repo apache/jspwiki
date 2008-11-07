@@ -216,7 +216,7 @@ commons-io-1.4.jar							LICENSE
 commons-lang-2.3.jar						LICENSE
 commons-logging-api.jar						LICENSE
 ecs.jar										LICENSE
-freshcookies-security-0.54.jar				LICENSE
+freshcookies-security-0.60.jar				LICENSE
 jakarta-taglibs-standard-1.1.2.jar			LICENSE
 jakarta-taglibs-jstl-1.1.2.jar				LICENSE
 jaxen.jar									doc/LICENSE.jaxen

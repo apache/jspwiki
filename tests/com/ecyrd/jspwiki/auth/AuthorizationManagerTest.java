@@ -707,12 +707,12 @@ public class AuthorizationManagerTest extends TestCase
 
         s = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
         assertTrue( "Bob  view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
-        assertFalse( "Bob edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
-        assertFalse( "Bob comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
-        assertFalse( "Bob modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
-        assertFalse( "Bob upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertTrue( "Bob edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Bob comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Bob modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertTrue( "Bob upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
         assertFalse( "Bob rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
-        assertFalse( "Bob delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertTrue( "Bob delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
         assertFalse( "Bob prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
         assertFalse( "Bob profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
         assertFalse( "Bob pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
