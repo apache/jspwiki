@@ -46,27 +46,49 @@ public class TranslationsCheck
         System.out.println("Internationalization property file differences between 'default en' and '"
                            + suffix + "' following:\n");
 
-        diff("/etc/i18n/CoreResources.properties",
-             "/etc/i18n/CoreResources_" + suffix + ".properties");
-        detectDuplicates("/etc/i18n/CoreResources_" + suffix + ".properties");
+        try
+        {
+            diff("/etc/i18n/CoreResources.properties",
+                 "/etc/i18n/CoreResources_" + suffix + ".properties");
+            detectDuplicates("/etc/i18n/CoreResources_" + suffix + ".properties");
+        }
+        catch( FileNotFoundException e )
+        {
+            System.err.println("Unable to locate "+"/etc/i18n/CoreResources_" + suffix + ".properties");
+        }
 
-        diff("/etc/i18n/templates/default.properties",
-             "/etc/i18n/templates/default_" + suffix + ".properties");
-        detectDuplicates("/etc/i18n/templates/default_" + suffix + ".properties");
-
-        diff("/etc/i18n/plugin/PluginResources.properties",
-             "/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
-        detectDuplicates("/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+        try
+        {
+            diff("/etc/i18n/templates/default.properties",
+                 "/etc/i18n/templates/default_" + suffix + ".properties");
+            detectDuplicates("/etc/i18n/templates/default_" + suffix + ".properties");
+        }
+        catch( FileNotFoundException e )
+        {
+            System.err.println("Unable to locate "+"/etc/i18n/templates/default_" + suffix + ".properties");
+        }    
         
-        System.out.println("Duplicates overall (two or more occurences):");
-        System.out.println("--------------------------------------------");
-        Iterator iter = duplProps.iterator();
-        if (duplProps.size() == 0)
-            System.out.println("(none)");
-        else
-            while (iter.hasNext())
-                System.out.println(iter.next());
-        System.out.println();
+        try
+        {
+            diff("/etc/i18n/plugin/PluginResources.properties",
+                 "/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+        
+            detectDuplicates("/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+        
+            System.out.println("Duplicates overall (two or more occurences):");
+            System.out.println("--------------------------------------------");
+            Iterator iter = duplProps.iterator();
+            if (duplProps.size() == 0)
+                System.out.println("(none)");
+            else
+                while (iter.hasNext())
+                    System.out.println(iter.next());
+            System.out.println();
+        }
+        catch( FileNotFoundException e ) 
+        {
+            System.err.println("Unable to locate "+"/etc/i18n/plugin/PluginResources_" + suffix + ".properties");
+        } 
 
         System.out.println("NOTE: Please remember that dependent on the usage of these i18n files, outdated " +
         		"properties maybe should not be deleted, because they may be used by previous releases. " +

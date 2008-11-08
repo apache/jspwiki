@@ -9,3 +9,7 @@ grant principal com.ecyrd.jspwiki.auth.authorize.Role "Authenticated" {
 grant principal com.ecyrd.jspwiki.auth.WikiPrincipal "Janne Jalkanen" {
     permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,delete";
 };
+
+grant principal "Bob" {
+    permission com.ecyrd.jspwiki.auth.permissions.PagePermission "*:*", "edit,delete";
+};

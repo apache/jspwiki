@@ -1,3 +1,17 @@
+2008-11-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-1
+
+        * Merged from the 2.8 branch:
+        
+        * JSPWIKI-345
+
+        * Added doc/Translating.txt as a guide for people who want to create
+        translations.  
+        
+        * Added ant "i18n-check" target as an interface
+        to TranslationsCheck (no need to get geeky running a Java class).
+        
 2008-11-06  Janne Jalkanen <jalkanen@apache.org>
 
         * Merged from 2.8: [JSPWIKI-416]: French translation and corepages from Olivier Descout
