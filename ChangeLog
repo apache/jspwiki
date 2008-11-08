@@ -1,3 +1,9 @@
+2008-11-08 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-2
+        
+        * JSPWIKI-407: applied de patch from FLorian
+        
 2008-11-08  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-1
