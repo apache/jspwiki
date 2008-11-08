@@ -1440,6 +1440,17 @@ To automate the JAR signing processs, you can add the property
 	<delete dir="${tmplt.i18n.dir}" />
   </target>
   
+  <target name="i18n-check" depends="compile,compiletests" 
+	      description="Run this target to check whether a translation is up to date.">
+	  	 <input message="Please give the language you want to check translation for (e.g. fi, es, de)"
+	  			addproperty="check.language"/>
+	     <java classname="TranslationsCheck">
+	       <classpath path="${tests.build}"/>
+	       <classpath path="${code.build}"/>
+	       <arg line="${check.language}"/>
+	     </java>
+  </target>
+	
   <target name="api-diff" description="Compares API in JSPWiki.jar with previous version"
     depends="jar">
      <!-- Assumes that the dependencyfinder.dir property points to the
