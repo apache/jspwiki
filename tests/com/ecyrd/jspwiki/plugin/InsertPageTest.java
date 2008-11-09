@@ -25,6 +25,8 @@ public class InsertPageTest extends TestCase
         TestEngine.deleteTestPage( "ThisPage" );
         TestEngine.deleteTestPage( "ThisPage2" );
         TestEngine.deleteTestPage( "Test_Page" );
+        TestEngine.deleteTestPage( "TestPage" );
+        TestEngine.deleteTestPage( "Test Page" );
     }
 
     public void testRecursive() throws Exception
@@ -77,6 +79,32 @@ public class InsertPageTest extends TestCase
         assertTrue( "got circ ref", testEngine.getHTML("ThisPage").indexOf("Circular reference") == -1 );
         
         assertEquals( "found != 1", "<div style=\"\">foo\n</div>\n", testEngine.getHTML("ThisPage") );    
+    }
+    
+    
+    /**
+     * a link containing a blank should work if there is a page with exact the
+     * same name ('Test Page')
+     */
+    public void testWithBlanks1() throws Exception
+    {
+        testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
+        testEngine.saveText( "Test Page", "foo[{ALLOW view Anonymous}]" );
+
+        assertEquals( "found != 1", "<div style=\"\">foo\n</div>\n", testEngine.getHTML( "ThisPage" ) );
+    }
+
+    /**
+     * same as testWithBlanks1, but it should still work if the page does not
+     * have the blank in it ( 'Test Page' should work if the included page is
+     * called 'TestPage')
+     */
+    public void testWithBlanks2() throws Exception
+    {
+        testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
+        testEngine.saveText( "TestPage", "foo[{ALLOW view Anonymous}]" );
+
+        assertEquals( "found != 1", "<div style=\"\">foo\n</div>\n", testEngine.getHTML( "ThisPage" ) );
     }
     
     public static Test suite()

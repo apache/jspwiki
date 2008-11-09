@@ -1,3 +1,11 @@
+2008-11-09 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-3
+        
+        * JSPWIKI-415: Favorites not displayed properly when blank in userName, reported by Trevor Harrison
+          also i18n'ed the InsertPlugin as the fix for JSPWIKI-415 was there.
+          Added 2 JUnit tests for InsertPage plugin
+        
 2008-11-08 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-2
