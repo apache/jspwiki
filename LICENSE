@@ -222,7 +222,7 @@ jakarta-taglibs-jstl-1.1.2.jar				LICENSE
 jaxen.jar									doc/LICENSE.jaxen
 jdom.jar									doc/LICENSE.jdom
 jrcs-diff.jar								LICENSE
-jsonrpc-1.0.jar								LICENSE
+jabsorb-1.3.jar								LICENSE
 jsp-api.jar									LICENSE
 log4j-1.2.14.jar							LICENSE
 lucene-highlighter.jar						LICENSE
@@ -234,6 +234,8 @@ oscache.jar									doc/LICENSE.OpenSymphony
 sandler.jar									doc/LICENSE.sandler
 servlet-api.jar								doc/LICENSE.cddl
 xmlrpc.jar									LICENSE
+slf4j-api-1.5.5.jar                      MIT-style license
+slf4j-log4j12-1.5.5.jar                      MIT-style license
 
 TEST LIBRARY								LICENSE FILE
 ===================================================================================

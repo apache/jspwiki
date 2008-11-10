@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.preferences;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,6 +30,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ecyrd.jspwiki.InternalWikiException;
@@ -152,7 +152,7 @@ public class Preferences
                     prefs.put(key, jo.getString(key) );
                 }
             }
-            catch( ParseException e )
+            catch( JSONException e )
             {
             }
         }
