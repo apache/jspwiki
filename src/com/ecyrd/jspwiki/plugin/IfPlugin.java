@@ -25,6 +25,7 @@ import java.security.Principal;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jspwiki.api.ModuleData;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.TextUtil;
@@ -102,6 +103,7 @@ import com.ecyrd.jspwiki.WikiProvider;
  *  @author Murray Altheim
  *  @since 2.6
  */
+@ModuleData( aliases = { "If" } )
 public class IfPlugin implements WikiPlugin
 {
     /** The parameter name for setting the group to check.  Value is <tt>{@value}</tt>. */

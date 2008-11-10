@@ -65,13 +65,13 @@ public @interface ModuleData
      *  Defines the style sheets which should be included whenever this module
      *  is used.  For PageFilters this means almost every single request.
      */
-    String[] stylesheets()  default {};
+    String[] stylesheets()  default "";
     
     /**  
      *  Defines the Javascripts which should be included whenever this module
      *  is used.
      */
-    String[] scripts()      default {};
+    String[] scripts()      default "";
     
     /**
      *  Returns the class name for the AdminBean which governs the use of this

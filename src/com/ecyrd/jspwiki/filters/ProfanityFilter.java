@@ -39,6 +39,7 @@ import com.ecyrd.jspwiki.WikiContext;
  *  is case unsensitive.
  *
  */
+@Deprecated
 public class ProfanityFilter extends BasicPageFilter
 {
     private static Logger     log = Logger.getLogger(ProfanityFilter.class);

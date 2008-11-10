@@ -37,7 +37,6 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
-import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
@@ -123,7 +122,7 @@ public class EditorManager extends ModuleManager
             // Get all resources of all modules
             //
 
-            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
+            Enumeration resources = getClass().getClassLoader().getResources( MODULE_RESOURCE_LOCATION );
 
             while( resources.hasMoreElements() )
             {
@@ -159,17 +158,17 @@ public class EditorManager extends ModuleManager
                 }
                 catch( java.io.IOException e )
                 {
-                    log.error( "Couldn't load " + PluginManager.PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
+                    log.error( "Couldn't load " + ModuleManager.MODULE_RESOURCE_LOCATION + " resources: " + resource, e );
                 }
                 catch( JDOMException e )
                 {
-                    log.error( "Error parsing XML for plugin: "+PluginManager.PLUGIN_RESOURCE_LOCATION );
+                    log.error( "Error parsing XML for plugin: "+ModuleManager.MODULE_RESOURCE_LOCATION );
                 }
             }
         }
         catch( java.io.IOException e )
         {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
+            log.error( "Couldn't load all " + MODULE_RESOURCE_LOCATION + " resources", e );
         }
     }
 

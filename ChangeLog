@@ -1,3 +1,15 @@
+2008-11-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-5
+        
+        * Stripes-1.5 resides now in lib instead of tests/lib.  Yay!
+        
+        * JSPWIKI-423: Plugins and filters now use annotations instead of
+        jspwiki_module.xml.  Editors still do it the old way, though. 
+        jspwiki_module.xml still is used to optionally locate the packages,
+        through "<module package="org.mycompany"/>".  Please see PluginManager
+        for documentation.
+        
 2008-11-10 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-4

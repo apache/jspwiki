@@ -76,7 +76,7 @@ public class PluginBean extends SimpleAdminBean
 
         tr head = new tr();
         head.addElement( new th("Name") );
-        head.addElement( new th("Alias") );
+        head.addElement( new th("Aliases") );
         head.addElement( new th("Author") );
         head.addElement( new th("Notes") );
 
@@ -89,8 +89,16 @@ public class PluginBean extends SimpleAdminBean
 
             WikiPluginInfo info = i.next();
 
+            StringBuilder aliases = new StringBuilder();
+            
+            for( String s : info.getAliases() )
+            {
+                if( aliases.length() > 0 ) aliases.append( ", " );
+                aliases.append( s );
+            }
+
             row.addElement( new td(info.getName()) );
-            row.addElement( new td(info.getAlias()) );
+            row.addElement( new td(aliases.toString()) );
             row.addElement( new td(info.getAuthor()) );
 
             String verWarning = "";

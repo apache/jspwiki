@@ -21,6 +21,9 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.util.*;
+
+import org.apache.jspwiki.api.ModuleData;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -50,6 +53,9 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 // FIXME: It is not yet possible to do wiki internal links.  In order to
 //        do this cleanly, a TranslatorReader revamp is needed.
 
+@ModuleData(
+    author = "JSPWiki development group"
+)
 public class Image
     implements WikiPlugin
 {
