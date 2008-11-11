@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.rpc.json;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.RPCManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
-import com.metaparadigm.jsonrpc.InvocationCallback;
-import com.metaparadigm.jsonrpc.JSONRPCBridge;
+import org.jabsorb.callback.InvocationCallback;
+import org.jabsorb.JSONRPCBridge;
 
 /**
  *  Provides an easy-to-use interface for different modules to AJAX-enable
@@ -120,7 +121,7 @@ public final class JSONRPCManager extends RPCManager
         }
         
         if( bridge == null) bridge = JSONRPCBridge.getGlobalBridge();
-        bridge.setDebug(false);
+//        bridge. setDebug(false);
         
         return bridge;
     }
@@ -182,8 +183,6 @@ public final class JSONRPCManager extends RPCManager
         
         /**
          *  Does not do anything.
-         * 
-         *  {@inheritDoc}
          */
         public void postInvoke(Object context, Object instance, Method method, Object result) throws Exception
         {
@@ -191,8 +190,6 @@ public final class JSONRPCManager extends RPCManager
 
         /**
          *  Checks access against the permission given.
-         *  
-         *  {@inheritDoc}
          */
         public void preInvoke(Object context, Object instance, Method method, Object[] arguments) throws Exception
         {
@@ -224,6 +221,14 @@ public final class JSONRPCManager extends RPCManager
 
             log.debug("Failed JSON permission check: "+instance);
             throw new WikiSecurityException("No permission to access this AJAX method!");
+        }
+
+        public void postInvoke( Object arg0, Object arg1, AccessibleObject arg2, Object arg3 ) throws Exception
+        {
+        }
+
+        public void preInvoke( Object arg0, Object arg1, AccessibleObject arg2, Object[] arg3 ) throws Exception
+        {
         }
         
     }

@@ -174,7 +174,8 @@ public class JSPWikiMarkupParser
 
     private int                    m_rowNum              = 1;
 
-
+    private Heading                m_lastHeading         = null;
+    
     /**
      *  The default inlining pattern.  Currently "*.png"
      */
@@ -1215,6 +1216,7 @@ public class JSPWikiMarkupParser
             throw new InternalWikiException("Illegal heading type "+level);
         }
 
+        
         return el;
     }
 
@@ -1935,6 +1937,8 @@ public class JSPWikiMarkupParser
 
         callHeadingListenerChain( hd );
 
+        m_lastHeading = hd;
+        
         if( el != null ) pushElement(el);
 
         return el;
@@ -2680,6 +2684,7 @@ public class JSPWikiMarkupParser
             }
         }
 
+        closeHeadings();
         popElement("domroot");
     }
 
@@ -2741,10 +2746,10 @@ public class JSPWikiMarkupParser
             //
 
             // FIXME: This is not really very fast
+            
+            closeHeadings();
+              
             popElement("dl"); // Close definition lists.
-            popElement("h2");
-            popElement("h3");
-            popElement("h4");
             if( m_istable )
             {
                 popElement("tr");
@@ -2884,6 +2889,19 @@ public class JSPWikiMarkupParser
         }
 
         return el != null ? ELEMENT : CHARACTER;
+    }
+
+    private void closeHeadings()
+    {
+        if( m_lastHeading != null )
+        {
+            // Add the hash anchor element at the end of the heading
+            addElement( new Element("a").setAttribute( "class","hashlink" ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
+            m_lastHeading = null;
+        }
+        popElement("h2");
+        popElement("h3");
+        popElement("h4");
     }
 
     /**

@@ -69,6 +69,11 @@ public class AuthorizationManagerTest extends TestCase
     {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
+        
+        // Make sure we are using the default security policy file jspwiki.policy
+        props.put( AuthorizationManager.POLICY, AuthorizationManager.DEFAULT_POLICY );
+        
+        // Initialize the test engine
         m_engine = new TestEngine( props );
         m_auth = m_engine.getAuthorizationManager();
         m_groupMgr = m_engine.getGroupManager();
@@ -658,6 +663,86 @@ public class AuthorizationManagerTest extends TestCase
                                                                        new AllPermission( m_engine.getApplicationName() )));
         assertTrue( "Alice cannot read", m_auth.checkPermission( session, 
                                                                  new PagePermission("TestDefaultPage","view") ) );
+    }
+    
+    public void testUserPolicy() throws Exception
+    {
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        
+        // Make sure we are using the default security policy file jspwiki.policy
+        props.put( AuthorizationManager.POLICY, "jspwiki-testUserPolicy.policy" );
+        
+        // Initialize the test engine
+        m_engine = new TestEngine( props );
+        m_auth = m_engine.getAuthorizationManager();
+        m_groupMgr = m_engine.getGroupManager();
+        m_session = WikiSessionTest.adminSession( m_engine );
+        
+        WikiSession s = WikiSessionTest.anonymousSession( m_engine );
+        assertFalse( "Anonymous view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertFalse( "Anonymous edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertFalse( "Anonymous comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertFalse( "Anonymous modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Anonymous upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Anonymous rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Anonymous delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertFalse( "Anonymous prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertFalse( "Anonymous profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertFalse( "Anonymous pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Anonymous groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
+
+        s = WikiSessionTest.assertedSession( m_engine, "Jack Sparrow" );
+        assertFalse( "Asserted view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertFalse( "Asserted edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertFalse( "Asserted comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertFalse( "Asserted modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Asserted upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Asserted rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Asserted delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertFalse( "Asserted prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertFalse( "Asserted profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertFalse( "Asserted pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Asserted groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
+
+        s = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        assertTrue( "Bob  view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Bob edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Bob comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Bob modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertTrue( "Bob upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Bob rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertTrue( "Bob delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertFalse( "Bob prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertFalse( "Bob profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertFalse( "Bob pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Bob groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
+
+        s = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        assertTrue( "Janne  view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertTrue( "Janne edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertTrue( "Janne comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertTrue( "Janne modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertTrue( "Janne upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Janne rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertTrue( "Janne delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertFalse( "Janne prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertFalse( "Janne profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertFalse( "Janne pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Janne groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
+
+        s = WikiSessionTest.adminSession( m_engine );
+        assertTrue( "Admin view", m_auth.checkStaticPermission( s, PagePermission.VIEW ) );
+        assertFalse( "Admin edit", m_auth.checkStaticPermission( s, PagePermission.EDIT ) );
+        assertFalse( "Admin comment", m_auth.checkStaticPermission( s, PagePermission.COMMENT ) );
+        assertFalse( "Admin modify", m_auth.checkStaticPermission( s, PagePermission.MODIFY ) );
+        assertFalse( "Admin upload", m_auth.checkStaticPermission( s, PagePermission.UPLOAD ) );
+        assertFalse( "Admin rename", m_auth.checkStaticPermission( s, PagePermission.RENAME ) );
+        assertFalse( "Admin delete", m_auth.checkStaticPermission( s, PagePermission.DELETE ) );
+        assertFalse( "Admin prefs", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PREFERENCES ) );
+        assertFalse( "Admin profile", m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ) );
+        assertFalse( "Admin pages", m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ) );
+        assertFalse( "Admin groups", m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ) );
     }
 
 }

@@ -1,5 +1,5 @@
-?ª???ãÊòØËøáÂéª 30 Â§©?ª?Êù?ÂØ?Ëøô??õÈ°µÈù¢ÊâÄ??úÁöÑÊõ¥Êî??ÄÇÊâÄÊúâÊõ¥Êî?ËøáÈ°µÈù¢ÁöÑÂàóË°®ÂèØ?ª?Âú® [FullRecentChanges] ???ÊâæÂà??ÄÇ
+ä»¥ä¸‹æ˜¯è¿‡å» 30 å¤©ä»¥æ¥å¯¹è¿™äº›é¡µé¢æ‰€ä½œçš„æ›´æ”¹ã€‚æ‰€æœ‰æ›´æ”¹è¿‡é¡µé¢çš„åˆ—è¡¨å¯ä»¥åœ¨ [FullRecentChanges] ä¸­æ‰¾åˆ°ã€‚
 
-Ê?§ÊúçÂä°Âô®ÊâÄÂú®Êó?Âå???? [{INSERT CurrentTimePlugin format=zzzz}]ÔºåÁõÆÂâçÁöÑÊó?Èó¥ÊòØ [{INSERT CurrentTimePlugin format='yyyy-MM-dd HH:mm'}]?ÄÇ
+æ­¤æœåŠ¡å™¨æ‰€åœ¨æ—¶åŒºä¸º [{INSERT CurrentTimePlugin format=zzzz}]ï¼Œç›®å‰çš„æ—¶é—´æ˜¯ [{INSERT CurrentTimePlugin format='yyyy-MM-dd HH:mm'}]ã€‚
 
 [{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]

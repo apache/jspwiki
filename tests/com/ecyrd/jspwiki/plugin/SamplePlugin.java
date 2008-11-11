@@ -2,6 +2,8 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.util.Map;
 
+import org.apache.jspwiki.api.ModuleData;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.parser.PluginContent;
 
@@ -10,9 +12,9 @@ import com.ecyrd.jspwiki.parser.PluginContent;
  *  <P>
  *  Parameters: text - text to return.
  *  Any _body content gets appended between brackets.
- *
- *  @author Janne Jalkanen
  */
+@ModuleData( author = "Urgle Burgle", 
+             aliases = { "samplealias2", "samplealias" } )
 public class SamplePlugin
     implements WikiPlugin, ParserStagePlugin
 {

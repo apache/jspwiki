@@ -47,7 +47,7 @@ This page was created with an ACL by TestRenameProfileUser
 	<tr><td>store</td>	<td>${baseUrl}/Logout.jsp</td>			<td>logouturl</td></tr>
 	<tr><td>store</td>	<td>This page was created with an ACL by ${user}</td>	<td>PageContent</td></tr>
 
-	<tr><td rowspan="1" colspan="3"> Create a new user and group (and log in)<br/></td></tr>
+	<tr><td rowspan="1" colspan="3"> Create a new user and group (and log in) -- at the moment, this ALWAYS fails for container-managed tests.<br/></td></tr>
     <tr><td>open</td>	<td>${loginurl}?tab=profile</td>	<td>&nbsp;</td></tr>
 	<tr><td>type</td>	<td>loginname</td>	<td>${user}</td></tr>
 	<tr><td>type</td>	<td>password</td>	<td>password</td></tr>

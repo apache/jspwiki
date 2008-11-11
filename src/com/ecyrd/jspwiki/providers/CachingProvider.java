@@ -853,14 +853,21 @@ public class CachingProvider
         synchronized(this)
         {
             // Clear any cached version of the old page
-            log.debug("Removing page "+from+" from cache");
-            m_cache.removeEntry( from );
-
+            log.debug("Removing from page "+from+" from cache");
+//            m_cache.removeEntry( from );
+            m_cache.putInCache( from, null );
+            m_textCache.putInCache( from, null );
+            m_historyCache.putInCache( from, null );
+            m_negCache.putInCache( from, from );
             // Clear the cache for the to page, if that page already exists
             //if ( m_cache.get( to ) != null )
             //{
-                log.debug("Removing page "+to+" from cache");
-                m_cache.removeEntry( to );
+                log.debug("Removing to page "+to+" from cache");
+//                m_cache.removeEntry( to );
+                m_cache.putInCache( to, null );
+                m_textCache.putInCache( to, null );
+                m_historyCache.putInCache( to, null );
+                m_negCache.putInCache( to, to );
             //}
         }
     }

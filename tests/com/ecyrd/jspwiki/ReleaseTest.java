@@ -38,9 +38,17 @@ public class ReleaseTest extends TestCase
         String rel = null;
         
         if( Release.MINORREVISION != 0 )
-            rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
+        {
+            rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-svn";
+        }
+        else if( Release.REVISION != 0 )
+        {
+            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-svn";            
+        }
         else
-            rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";            
+        {
+            rel = (Release.VERSION-1)+".9999.9999-svn";
+        }
         
         assertTrue( Release.isNewerOrEqual(rel) );
     }
@@ -92,8 +100,10 @@ public class ReleaseTest extends TestCase
         
         if( Release.MINORREVISION != 0 )
             rel = Release.VERSION+"."+Release.REVISION+"."+(Release.MINORREVISION-1)+"-cvs";
-        else
+        else if( Release.REVISION != 0 )
             rel = Release.VERSION+"."+(Release.REVISION-1)+".9999"+"-cvs";   
+        else
+            rel = (Release.VERSION-1)+".9999.9999-svn";
         
         assertFalse( Release.isOlderOrEqual(rel) );
     }

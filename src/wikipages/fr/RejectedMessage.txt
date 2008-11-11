@@ -1,0 +1,6 @@
+Vos modifications ont été rejetées pour la raison suivante :
+%%(padding: 4px; margin: 3em; border: 1px inset; background: #eeeeee)
+[{$message}]
+%%
+
+[{ALLOW view All}]

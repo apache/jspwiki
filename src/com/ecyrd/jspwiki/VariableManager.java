@@ -22,10 +22,7 @@ package com.ecyrd.jspwiki;
 
 import java.lang.reflect.Method;
 import java.security.Principal;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,6 +31,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.filters.PageFilter;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.modules.InternalModule;
 
 /**
@@ -484,14 +482,15 @@ public class VariableManager
         public String getLoginstatus()
         {
             WikiSession session = m_context.getWikiSession();
-            return session.getStatus();
+            return m_context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "varmgr." + session.getStatus());
         }
 
         public String getUsername()
         {
             Principal wup = m_context.getCurrentUser();
-
-            return wup != null ? wup.getName() : "not logged in";
+            
+            ResourceBundle rb = m_context.getBundle( InternationalizationManager.CORE_BUNDLE );
+            return wup != null ? wup.getName() : rb.getString( "varmgr.not.logged.in" );
         }
 
         public String getRequestcontext()

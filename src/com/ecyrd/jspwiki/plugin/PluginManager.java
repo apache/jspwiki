@@ -21,19 +21,17 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.*;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 
+import net.sourceforge.stripes.util.ResolverUtil;
+
 import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
+import org.apache.jspwiki.api.ModuleData;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
-import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.modules.ModuleManager;
@@ -94,23 +92,29 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  *  <pre>
  *  [{Counter name='foo'}]
  *  </pre>
- *  <h3>Plugin property files</h3>
+ *  <h3>Plugin annotations</h3>
  *  <p>
- *  Since 2.3.25 you can also define a generic plugin XML properties file per
- *  each JAR file.
+ *  As of JSPWiki 3.0, plugins may be annotated using the ModuleData
+ *  annotation.  Please see the javadoc for ModuleData.
+ *  
+ *  <h3>Adding plugins to the automatic search path</h3>
+ *  <p>
+ *  You may add a plugin by defining a deployment file "ini/jspwiki_module.xml"
+ *  with a single modules-element:
  *  <pre>
- *  <modules>
- *   <plugin class="com.ecyrd.jspwiki.foo.TestPlugin">
- *       <author>Janne Jalkanen</author>
- *       <script>foo.js</script>
- *       <stylesheet>foo.css</stylesheet>
- *       <alias>code</alias>
- *   </plugin>
- *   <plugin class="com.ecyrd.jspwiki.foo.TestPlugin2">
- *       <author>Janne Jalkanen</author>
- *   </plugin>
- *   </modules>
+ *  &lt;modules package="com.mycompany.plugins"/&gt;
  *  </pre>
+ *  This adds the plugin path "com.mycompany.plugins" in the list of
+ *  packages which are searched for WikiPlugin instances.
+ *  <p>
+ *  Another possibility is to use the <tt>jspwiki.plugin.searchPath</tt> -property.
+ *  For example, the equivalent invocation to the previous example:
+ *  <pre>
+ *  jspwiki.plugin.searchPath = com.mycompany.plugins
+ *  </pre>
+ *  However, this needs you to modify the property file by hand for each installation.
+ *  It is a recommended practice to create a deployment file for your plugin JAR.
+ *  
  *  <h3>Plugin lifecycle</h3>
  *
  *  <p>Plugin can implement multiple interfaces to let JSPWiki know at which stages they should
@@ -147,11 +151,6 @@ public class PluginManager extends ModuleManager
     private static final String DEFAULT_FORMS_PACKAGE = "com.ecyrd.jspwiki.forms";
 
     /**
-     *  The property name defining which packages will be searched for properties.
-     */
-    public static final String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
-
-    /**
      *  The name of the body content.  Current value is "_body".
      */
     public static final String PARAM_BODY      = "_body";
@@ -173,7 +172,7 @@ public class PluginManager extends ModuleManager
      */
     public static final String PARAM_DEBUG     = "debug";
 
-    private ArrayList<String>  m_searchPath = new ArrayList<String>();
+    private List<String>  m_searchPath;
 
     private Pattern m_pluginPattern;
 
@@ -194,19 +193,10 @@ public class PluginManager extends ModuleManager
     public PluginManager( WikiEngine engine, Properties props )
     {
         super(engine);
-        String packageNames = props.getProperty( PROP_SEARCHPATH );
 
-        if( packageNames != null )
-        {
-            StringTokenizer tok = new StringTokenizer( packageNames, "," );
-
-            while( tok.hasMoreTokens() )
-            {
-                m_searchPath.add( tok.nextToken().trim() );
-            }
-        }
-
-        registerPlugins();
+        m_searchPath = buildPluginSearchPath( props );
+        
+        registerAllPlugins();
 
         //
         //  The default packages are always added.
@@ -278,7 +268,7 @@ public class PluginManager extends ModuleManager
      *
      *  @throws ClassNotFoundException if no such class exists.
      */
-    private Class findPluginClass( String classname )
+    private Class<? extends WikiPlugin> findPluginClass( String classname )
         throws ClassNotFoundException
     {
         return ClassUtil.findClass( m_searchPath, classname );
@@ -614,7 +604,6 @@ public class PluginManager extends ModuleManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
-   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
@@ -681,12 +670,15 @@ public class PluginManager extends ModuleManager
             m_pluginClassMap.put(name, pluginClass);
         }
 
-        // Registrar the plugin with a short convenient name.
-        name = pluginClass.getAlias();
-        if(name != null)
+        // Register the plugin with a short convenient name.
+        String[] aliases = pluginClass.getAliases();
+        if(aliases != null)
         {
-            log.debug("Registering plugin [shortName]: " + name);
-            m_pluginClassMap.put(name, pluginClass);
+            for( String a : aliases )
+            {
+                log.debug("Registering plugin [shortName]: " + a);
+                m_pluginClassMap.put(a, pluginClass);
+            }
         }
 
         // Registrar the plugin with the className with the package-part
@@ -700,61 +692,31 @@ public class PluginManager extends ModuleManager
         pluginClass.initializePlugin( m_engine );
     }
 
-    private void registerPlugins()
+    private void registerAllPlugins()
     {
         log.info( "Registering plugins" );
 
-        SAXBuilder builder = new SAXBuilder();
-
-        try
+        //
+        //  We locate every single class which implements the "WikiPlugin" interface.
+        //
+        
+        ResolverUtil<WikiPlugin> resolver = new ResolverUtil<WikiPlugin>();
+        
+        String[] paths = m_searchPath.toArray( new String[0] );
+        resolver.findImplementations( WikiPlugin.class, paths );
+        
+        Set<Class<? extends WikiPlugin>> resultSet = resolver.getClasses();
+        
+        log.debug( "Found "+resultSet.size()+" plugins" );
+        
+        for( Class<? extends WikiPlugin> clazz : resultSet )
         {
-            //
-            // Register all plugins which have created a resource containing its properties.
-            //
-            // Get all resources of all plugins.
-            //
+            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( clazz );
 
-            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
-
-            while( resources.hasMoreElements() )
+            if( pluginInfo != null )
             {
-                URL resource = (URL) resources.nextElement();
-
-                try
-                {
-                    log.debug( "Processing XML: " + resource );
-
-                    Document doc = builder.build( resource );
-
-                    List plugins = XPath.selectNodes( doc, "/modules/plugin");
-
-                    for( Iterator i = plugins.iterator(); i.hasNext(); )
-                    {
-                        Element pluginEl = (Element) i.next();
-
-                        String className = pluginEl.getAttributeValue("class");
-
-                        WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( className, pluginEl );
-
-                        if( pluginInfo != null )
-                        {
-                            registerPlugin( pluginInfo );
-                        }
-                    }
-                }
-                catch( java.io.IOException e )
-                {
-                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
-                }
-                catch( JDOMException e )
-                {
-                    log.error( "Error parsing XML for plugin: "+PLUGIN_RESOURCE_LOCATION );
-                }
-            }
-        }
-        catch( java.io.IOException e )
-        {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
+                registerPlugin( pluginInfo );
+            } 
         }
     }
 
@@ -762,116 +724,62 @@ public class PluginManager extends ModuleManager
      *  Contains information about a bunch of plugins.
      *
      *  @author Kees Kuip
-     *  @author Janne Jalkanen
-     *
-     *  @since
      */
-    // FIXME: This class needs a better interface to return all sorts of possible
-    //        information from the plugin XML.  In fact, it probably should have
-    //        some sort of a superclass system.
     public static final class WikiPluginInfo
         extends WikiModuleInfo
     {
-        private String m_className;
-        private String m_alias;
-        private Class  m_clazz;
-
-        private boolean m_initialized = false;
-
-        /**
-         *  Creates a new plugin info object which can be used to access a plugin.
-         *
-         *  @param className Either a fully qualified class name, or a "short" name which is then
-         *                   checked against the internal list of plugin packages.
-         *  @param el A JDOM Element containing the information about this class.
-         *  @return A WikiPluginInfo object.
-         */
-        protected static WikiPluginInfo newInstance( String className, Element el )
-        {
-            if( className == null || className.length() == 0 ) return null;
-            WikiPluginInfo info = new WikiPluginInfo( className );
-
-            info.initializeFromXML( el );
-            return info;
-        }
-        /**
-         *  Initializes a plugin, if it has not yet been initialized.
-         *
-         *  @param engine The WikiEngine
-         */
-        protected void initializePlugin( WikiEngine engine )
-        {
-            if( !m_initialized )
-            {
-                // This makes sure we only try once per class, even if init fails.
-                m_initialized = true;
-
-                try
-                {
-                    WikiPlugin p = newPluginInstance();
-                    if( p instanceof InitializablePlugin )
-                    {
-                        ((InitializablePlugin)p).initialize( engine );
-                    }
-                }
-                catch( Exception e )
-                {
-                    log.info( "Cannot initialize plugin "+m_className, e );
-                }
-            }
-        }
-
-        /**
-         *  {@inheritDoc}
-         */
-        @Override
-        protected void initializeFromXML( Element el )
-        {
-            super.initializeFromXML( el );
-            m_alias = el.getChildText("alias");
-        }
-
+        String[] m_aliases;
+        Class<? extends WikiPlugin> m_clazz;
+        boolean m_initialized = false;
+        
         /**
          *  Create a new WikiPluginInfo based on the Class information.
          *  
          *  @param clazz The class to check
          *  @return A WikiPluginInfo instance
          */
-        protected static WikiPluginInfo newInstance( Class clazz )
+        protected static WikiPluginInfo newInstance( Class<? extends WikiPlugin> clazz )
         {
-            WikiPluginInfo info = new WikiPluginInfo( clazz.getName() );
+            WikiPluginInfo info = new WikiPluginInfo( clazz );
 
             return info;
         }
 
-        private WikiPluginInfo( String className )
+        private WikiPluginInfo( Class<? extends WikiPlugin> clazz )
         {
-            super(className);
-            setClassName( className );
+            super(clazz.getName());
+            setClassName( clazz.getName() );
+            initializeFromClass( clazz );
+            m_clazz = clazz;
+            
+            ModuleData md = clazz.getAnnotation( ModuleData.class );
+            if( md != null )
+            {
+                m_aliases = md.aliases();
+            }
         }
 
         private void setClassName( String fullClassName )
         {
             m_name = ClassUtils.getShortClassName( fullClassName );
-            m_className = fullClassName;
         }
-
+        
         /**
          *  Returns the full class name of this object.
          *  @return The full class name of the object.
          */
         public String getClassName()
         {
-            return m_className;
+            return m_clazz.getCanonicalName();
         }
 
         /**
          *  Returns the alias name for this object.
          *  @return An alias name for the plugin.
          */
-        public String getAlias()
+        public String[] getAliases()
         {
-            return m_alias;
+            return m_aliases;
         }
 
         /**
@@ -887,12 +795,7 @@ public class PluginManager extends ModuleManager
                    InstantiationException,
                    IllegalAccessException
         {
-            if( m_clazz == null )
-            {
-                m_clazz = Class.forName(m_className);
-            }
-
-            return (WikiPlugin) m_clazz.newInstance();
+            return m_clazz.newInstance();
         }
 
         /**
@@ -938,7 +841,7 @@ public class PluginManager extends ModuleManager
 
             try
             {
-                m_scriptText = getTextResource(m_scriptLocation);
+                m_scriptText = getTextResource(m_scriptLocation[0]);
             }
             catch( IOException ex )
             {
@@ -965,7 +868,7 @@ public class PluginManager extends ModuleManager
 
             try
             {
-                m_stylesheetText = getTextResource(m_stylesheetLocation);
+                m_stylesheetText = getTextResource(m_stylesheetLocation[0]);
             }
             catch( IOException ex )
             {
@@ -978,6 +881,33 @@ public class PluginManager extends ModuleManager
         }
 
         /**
+         *  Initializes a plugin, if it has not yet been initialized.
+         *
+         *  @param engine The WikiEngine
+         */
+        protected void initializePlugin( WikiEngine engine )
+        {
+            if( !m_initialized )
+            {
+                // This makes sure we only try once per class, even if init fails.
+                m_initialized = true;
+
+                try
+                {
+                    WikiPlugin p = newPluginInstance();
+                    if( p instanceof InitializablePlugin )
+                    {
+                        ((InitializablePlugin)p).initialize( engine );
+                    }
+                }
+                catch( Exception e )
+                {
+                    log.info( "Cannot initialize plugin "+m_clazz.getCanonicalName(), e );
+                }
+            }
+        }
+
+        /**
          *  Returns a string suitable for debugging.  Don't assume that the format
          *  would stay the same.
          *  
@@ -985,20 +915,20 @@ public class PluginManager extends ModuleManager
          */
         public String toString()
         {
-            return "Plugin :[name=" + m_name + "][className=" + m_className + "]";
+            return "Plugin :[name=" + m_name + "][className=" + m_clazz.getCanonicalName() + "]";
         }
     } // WikiPluginClass
 
     /**
      *  {@inheritDoc}
      */
-    public Collection modules()
+    public Collection<WikiPluginInfo> modules()
     {
-        TreeSet<WikiModuleInfo> ls = new TreeSet<WikiModuleInfo>();
+        TreeSet<WikiPluginInfo> ls = new TreeSet<WikiPluginInfo>();
         
         for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
         {
-            WikiModuleInfo wmi = (WikiModuleInfo)i.next();
+            WikiPluginInfo wmi = (WikiPluginInfo) i.next();
             
             if( !ls.contains(wmi) ) ls.add(wmi);
         }

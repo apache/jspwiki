@@ -5,10 +5,13 @@
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="com.opensymphony.oscache.base.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
 <%!
     Logger log = Logger.getLogger("JSPWiki");
+    Cache m_cache = new Cache( true, false, false, true, 
+                               "com.opensymphony.oscache.base.algorithm.LRUCache", 256 );
 %>
 
 <%
@@ -104,10 +107,37 @@
 
     response.addDateHeader("Last-Modified",latest.getTime());
     response.addHeader("ETag", HttpUtil.createETag(wikipage) );
-%>
-<%-- <oscache:cache time="300"> --%>
-<%
-    out.println(wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type ));
-%>
-<%-- </oscache:cache> --%>
-<% w.exitState(); %>
+    
+    //
+    //  Try to get the RSS XML from the cache.  We build the hashkey
+    //  based on the LastModified-date, so whenever it changes, so does
+    //  the hashkey so we don't have to make any special modifications.
+    //
+    //  TODO: Figure out if it would be a good idea to use a disk-based
+    //        cache here.
+    //
+    String hashKey = wikipage.getName()+";"+mode+";"+type+";"+latest.getTime();
+    
+    String rss = "";
+    
+    try
+    {
+        rss = (String)m_cache.getFromCache(hashKey);
+    }
+    catch( NeedsRefreshException e )
+    { 
+        try
+        {
+            rss = wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type );
+            m_cache.putInCache(hashKey,rss);
+        }
+        catch( Exception e1 )
+        {
+            m_cache.cancelUpdate(hashKey);            
+        }
+    }
+    
+    out.println(rss);
+    
+    w.exitState(); 
+    %>

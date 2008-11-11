@@ -20,12 +20,13 @@ public class AllTests extends TestCase
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( CommentedPropertiesTest.suite() );
         suite.addTest( CryptoUtilTest.suite() );
+        suite.addTest( JspParserTest.suite() );
         suite.addTest( MailUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );
-        suite.addTest( JspParserTest.suite() );
+        suite.addTest( UtilJ2eeCompatTest.suite() );
         
         return suite;
     }

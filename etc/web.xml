@@ -207,8 +207,8 @@
 
    <!-- JSON AJAX API -->
    <servlet>
-       <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
-       <servlet-class>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-class>
+       <servlet-name>org.jabsorb.JSONRPCServlet</servlet-name>
+       <servlet-class>org.jabsorb.JSONRPCServlet</servlet-class>
    </servlet>
 
    <!-- Atom Publishing Protocol -->
@@ -302,7 +302,7 @@
    -->
    
    <servlet-mapping>
-       <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
+       <servlet-name>org.jabsorb.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>
    </servlet-mapping>
 

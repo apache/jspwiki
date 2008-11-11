@@ -1,0 +1,27 @@
+Vous pouvez utiliser des caractères génériques dans le champ de saisie 'Rechercher' :
+
+||.      |n'importe quel caractère autre qu'un saut de ligne ||+      |répété une ou plusieurs fois
+||*      |répété zéro, une ou plusieurs fois                 ||?      |répété zéro ou une fois
+||{n}    |répété exactement ''n'' fois                       ||{n,m}  |répété au moins ''n'' fois et au plus ''m'' fois
+||~|     |tube: {{a~|b}} recherche a ou b || -      |tiret: recherche un intervalle de caractères
+||^      |début de ligne                  ||$       |fin de ligne
+||[[...] |un caractère parmi ceux de l'ensemble ainsi défini ||[[^...] |absence de tous les caractères de l'ensemble ainsi défini
+||\b     |séparateur de mot               ||\B      |non-séparateur de mot
+||\d     |caractère numérique [[0-9]      ||\D      |caractère non numérique [[^0-9]
+||\s     |caractère blanc                 ||\S      |caractère non blanc
+||\w     |[[A-Za-z0-9_]                   ||\W      |non-mot [[^A-Za-z0-9_]
+||(...)  |définit un groupe ; \\il peut ensuite être référencé par $1..$9       ||\.      |échappe un méta-caractère (ici un point)
+
+Le champ 'Remplacer par' peut contenir $1..$9 comme références arrières à des sous-expressions parenthésées du champ 'Rechercher'.
+----
+Exemples :\\
+
+Rechercher __/abc|def/__ trouvera le mot 'abc' ou le mot 'def'\\
+Rechercher __/bwiki/b__ trouvera le mot 'wiki' mais pas le mot 'jspwiki'.\\
+Rechercher __^[[IVXMDCL]+\.__ trouvera toute combinaison de chiffres romains, suivie par un point\\
+Rechercher __/(-?\d+)(\d{3})/__ et le remplacer par __$1,$2__ pour insérer des virgules dans des grands entiers. 
+
+Ceci est la page [EditFindAndReplaceHelp].
+
+Plus d'infos : sur les [expressions régulières|http://www.regular-expressions.info/javascript.html]
+et la [Sandbox RegExp|http://www.regular-expressions.info/javascriptexample.html].

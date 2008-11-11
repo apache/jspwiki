@@ -7,6 +7,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
+<%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -34,11 +35,11 @@
       
       ss.append( delim );
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
-      args = new Object[]{(group.getCreated()==null) ? "" : group.getCreated().toString(), group.getCreator()};
+      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
       ss.append( mf.format( args ) );
       
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
-      args = new Object[]{(group.getCreated()==null) ? "" : group.getCreated().toString(), group.getModifier()};
+      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
       ss.append( mf.format( args ) );
       
       ss.append( "\", " );

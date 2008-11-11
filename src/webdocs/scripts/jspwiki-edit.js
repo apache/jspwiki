@@ -201,6 +201,9 @@ var EditTools =
 			.addEvent('keyup', this.getSuggestions.bind(this))
 			.addEvent('change', this.onChangeTextarea.bind(this))
 			.focus();
+
+		/* regularly refresh section-edit toc and sneak-preview */		
+		this.textarea.fireEvent.periodical(3000,this.textarea,['change']);		
 	},
 
 	/* add textarea resize drag bar */
@@ -483,12 +486,15 @@ var EditTools =
 	},
 
 	onPageLoadPreview : function(){
-		if( $$('#sneakpreview','#autopreview').length != 2) return;
-		$('autopreview')
+		var checkbox = $('autopreview');
+
+		if(!checkbox) return;
+
+		checkbox
 			.setProperty('checked', Wiki.prefs.get('autopreview') || false)
 			.addEvent('click', function(){ 
 				var ta = this.textarea,
-					isOn = $('autopreview').checked;
+					isOn = checkbox.checked;
 
 				$('sneakpreview').empty();
 				ta.removeEvents('preview');
@@ -501,22 +507,14 @@ var EditTools =
 
 	refreshPreview: function(){
     	var	preview = $('sneakpreview');
-		this.bgcolor = this.bgcolor || preview.getStyle('background-color');
 
-    	var	bgcolorfx = (this.bgcolor == 'transparent' ) ? '#fff' : this.bgcolor,
-    		previewfx = preview.effect('background-color', {
-    			duration:2000,
-    			wait:false,
-    			onComplete:function(){ preview.setStyle('background-color', this.bgcolor); }
-    		});
-
-		//TODO: put a spinner in the preview result block
+		$('previewSpin').show();
 		new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page="+Wiki.PageName, { 
 			postBody: 'wikimarkup=' + encodeURIComponent(this.textarea.value),
 			update: preview,
 			onComplete: function(){ 
+				$('previewSpin').hide();
 				Wiki.renderPage(preview, Wiki.PageName);
-				previewfx.start('#ffff88',bgcolorfx); 
 			}
 		}).request();
 	},
@@ -645,12 +643,16 @@ var EditTools =
 	 * happens when 
 	 *  (i)  textarea is changed and deselected (click outside the textarea) 
 	 *  (ii) user clicks a toolbar-button
+	 *  (iii) periodical
 	 *  
 	 * 1) copy section textarea at the right offset of the main textarea
 	 * 2) refresh the section-edit menu
 	 */
 	onChangeTextarea : function(){
 		var	ta = this.textarea,	ma = this.mainarea;
+
+		if(ta.value == this.cacheTextarea) return;
+		this.cacheTextarea=ta.value;
 
 		if( this.sections ){
 			var	s = ta.value;

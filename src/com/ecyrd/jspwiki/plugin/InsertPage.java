@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki.plugin;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 import java.util.*;
 
@@ -73,17 +74,16 @@ public class InsertPage
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
+        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         StringBuffer res = new StringBuffer();
 
         String clazz        = (String) params.get( PARAM_CLASS );
         String includedPage = (String) params.get( PARAM_PAGENAME );
         String style        = (String) params.get( PARAM_STYLE );
-        String defaultstr   = (String) params.get( PARAM_DEFAULT );
-        int    section      = TextUtil.parseIntParameter((String) params.get( PARAM_SECTION ), 
-                                                         -1 );
-        int    maxlen       = TextUtil.parseIntParameter((String) params.get( PARAM_MAXLENGTH ),
-                                                         -1 );
+        String defaultstr = (String) params.get( PARAM_DEFAULT );
+        int section = TextUtil.parseIntParameter( (String) params.get( PARAM_SECTION ), -1 );
+        int maxlen = TextUtil.parseIntParameter( (String) params.get( PARAM_MAXLENGTH ), -1 );
 
         if( style == null ) style = DEFAULT_STYLE;
 
@@ -91,8 +91,24 @@ public class InsertPage
 
         if( includedPage != null )
         {
-            WikiPage page = engine.getPage( includedPage );
-
+            WikiPage page = null;
+            try
+            {
+                String pageName = engine.getFinalPageName( includedPage );
+                if( pageName != null )
+                {
+                    page = engine.getPage( pageName );
+                }
+                else
+                {
+                    page = engine.getPage( includedPage );
+                }
+            }
+            catch( ProviderException e )
+            {
+                res.append("<span class=\"error\">" + rb.getString( "plugin.insert.notfound" ) + "</span>");
+                return res.toString();
+            }
             
             if( page != null )
             {
@@ -106,7 +122,7 @@ public class InsertPage
                 {
                     if( previousIncludes.contains( page.getName() ) )
                     {
-                        return "<span class=\"error\">Error: Circular reference - you can't include a page in itself!</span>";
+                        return "<span class=\"error\">"+ rb.getString( "plugin.insert.recursion")+"</span>";
                     }
                 }
                 else
@@ -125,7 +141,7 @@ public class InsertPage
                 if( !mgr.checkPermission( context.getWikiSession(),
                                           PermissionFactory.getPagePermission( page, "view") ) )
                 {
-                    res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
+                    res.append("<span class=\"error\">"+rb.getString("plugin.insert.nopermission")+"</span>");
                     return res.toString();
                 }
 
@@ -177,15 +193,15 @@ public class InsertPage
                 }
                 else
                 {
-                    res.append("There is no page called '"+includedPage+"'.  Would you like to ");
-                    res.append("<a href=\""+context.getURL( WikiContext.EDIT, includedPage )+"\">create it?</a>");
+                    res.append(rb.getString("plugin.insert.nopage1") +" '"+includedPage+"'.  " + rb.getString( "plugin.insert.nopage2" ));
+                    res.append("<a href=\""+context.getURL( WikiContext.EDIT, includedPage )+"\"> "+rb.getString("plugin.insert.nopage3")+"</a>");
                 }
             }
         }
         else
         {
             res.append("<span class=\"error\">");
-            res.append("You have to define a page!");
+            res.append(rb.getString("plugin.insert.definepage"));
             res.append("</span>");
         }
 

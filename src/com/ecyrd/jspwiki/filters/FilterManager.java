@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import net.sourceforge.stripes.util.ResolverUtil;
+
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -41,6 +43,8 @@ import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
+import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.PriorityList;
 
@@ -210,7 +214,7 @@ public final class FilterManager extends ModuleManager
 
         try
         {
-            registerFilters();
+            registerAllFilters();
             
             if( m_engine.getServletContext() != null )
             {
@@ -466,61 +470,29 @@ public final class FilterManager extends ModuleManager
         return modules;
     }
 
-    private void registerFilters()
+    private void registerAllFilters()
     {
         log.info( "Registering filters" );
 
-        SAXBuilder builder = new SAXBuilder();
-
-        try
+        List<String> searchPath = buildPluginSearchPath( m_engine.getWikiProperties() );
+        
+        ResolverUtil<PageFilter> resolver = new ResolverUtil<PageFilter>();
+        
+        String[] paths = searchPath.toArray( new String[0] );
+        resolver.findImplementations( PageFilter.class, paths );
+        
+        Set<Class<? extends PageFilter>> resultSet = resolver.getClasses();
+        
+        log.debug( "Found "+resultSet.size()+" pagefilters" );
+        
+        for( Class<? extends PageFilter> clazz : resultSet )
         {
-            //
-            // Register all filters which have created a resource containing its properties.
-            //
-            // Get all resources of all plugins.
-            //
+            PageFilterInfo pluginInfo = PageFilterInfo.newInstance( clazz );
 
-            Enumeration resources = getClass().getClassLoader().getResources( PLUGIN_RESOURCE_LOCATION );
-
-            while( resources.hasMoreElements() )
+            if( pluginInfo != null )
             {
-                URL resource = (URL) resources.nextElement();
-
-                try
-                {
-                    log.debug( "Processing XML: " + resource );
-
-                    Document doc = builder.build( resource );
-
-                    List plugins = XPath.selectNodes( doc, "/modules/filter");
-
-                    for( Iterator i = plugins.iterator(); i.hasNext(); )
-                    {
-                        Element pluginEl = (Element) i.next();
-
-                        String className = pluginEl.getAttributeValue("class");
-
-                        PageFilterInfo pluginInfo = PageFilterInfo.newInstance( className, pluginEl );
-
-                        if( pluginInfo != null )
-                        {
-                            registerPlugin( pluginInfo );
-                        }
-                    }
-                }
-                catch( java.io.IOException e )
-                {
-                    log.error( "Couldn't load " + PLUGIN_RESOURCE_LOCATION + " resources: " + resource, e );
-                }
-                catch( JDOMException e )
-                {
-                    log.error( "Error parsing XML for filter: "+PLUGIN_RESOURCE_LOCATION );
-                }
-            }
-        }
-        catch( java.io.IOException e )
-        {
-            log.error( "Couldn't load all " + PLUGIN_RESOURCE_LOCATION + " resources", e );
+                registerPlugin( pluginInfo );
+            } 
         }
     }
 
@@ -536,17 +508,16 @@ public final class FilterManager extends ModuleManager
      */
     private static final class PageFilterInfo extends WikiModuleInfo
     {
-        private PageFilterInfo( String name )
+        private PageFilterInfo( Class<? extends PageFilter> clazz )
         {
-            super(name);
+            super(clazz.getName());
+            initializeFromClass( clazz );
         }
         
-        protected static PageFilterInfo newInstance(String className, Element pluginEl)
+        protected static PageFilterInfo newInstance(Class<? extends PageFilter> clazz)
         {
-            if( className == null || className.length() == 0 ) return null;
-            PageFilterInfo info = new PageFilterInfo( className );
+            PageFilterInfo info = new PageFilterInfo( clazz );
 
-            info.initializeFromXML( pluginEl );
             return info;        
         }
     }

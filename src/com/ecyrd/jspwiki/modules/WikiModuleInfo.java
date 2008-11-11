@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.jspwiki.api.ModuleData;
 import org.jdom.Element;
 
 import com.ecyrd.jspwiki.FileUtil;
@@ -39,9 +40,9 @@ public class WikiModuleInfo
     implements Comparable<WikiModuleInfo>
 {
     protected String m_name;
-    protected String m_scriptLocation;
+    protected String[] m_scriptLocation;
     protected String m_scriptText;
-    protected String m_stylesheetLocation;
+    protected String[] m_stylesheetLocation;
     protected String m_stylesheetText;
     protected String m_author;
     protected URL    m_resource;
@@ -94,14 +95,29 @@ public class WikiModuleInfo
      */
     protected void initializeFromXML( Element el )
     {
-        m_scriptLocation     = el.getChildText("script");
-        m_stylesheetLocation = el.getChildText("stylesheet");
+        m_scriptLocation     = new String[] { el.getChildText("script") };
+        m_stylesheetLocation = new String[] { el.getChildText("stylesheet") };
         m_author             = el.getChildText("author");
         m_minVersion         = el.getChildText("minVersion");
         m_maxVersion         = el.getChildText("maxVersion");
         m_adminBeanClass     = el.getChildText("adminBean");
     }
 
+    protected void initializeFromClass( Class<?> c )
+    {
+        ModuleData data = c.getAnnotation( ModuleData.class );
+        
+        if( data != null )
+        {
+            m_author = data.author();
+            m_minVersion = data.minVersion();
+            m_maxVersion = data.maxVersion();
+            m_scriptLocation = data.scripts();
+            m_stylesheetLocation = data.stylesheets();
+            m_adminBeanClass = data.adminBeanClass();
+        }
+    }
+    
     /**
      *  Returns the AdminBean class which is supposed to manage this module.
      *  
@@ -131,7 +147,7 @@ public class WikiModuleInfo
      *  
      *  @return The path to the location.
      */
-    public String getStylesheetLocation()
+    public String[] getStylesheetLocation()
     {
         return m_stylesheetLocation;
     }
@@ -141,7 +157,7 @@ public class WikiModuleInfo
      *  
      *  @return The path to the location.
      */
-    public String getScriptLocation()
+    public String[] getScriptLocation()
     {
         return m_scriptLocation;
     }
@@ -202,7 +218,7 @@ public class WikiModuleInfo
     
         // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested
         //   resourceLocation.
-        int length = ModuleManager.PLUGIN_RESOURCE_LOCATION.length();
+        int length = ModuleManager.MODULE_RESOURCE_LOCATION.length();
         spec = spec.substring(0, spec.length() - length) + resourceLocation;
     
         URL url = new URL(spec);

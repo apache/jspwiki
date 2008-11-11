@@ -54,6 +54,7 @@ import com.ecyrd.jspwiki.dav.WebdavServlet;
 import com.ecyrd.jspwiki.dav.methods.DavMethod;
 import com.ecyrd.jspwiki.dav.methods.PropFindMethod;
 import com.ecyrd.jspwiki.filters.RedirectException;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.progress.ProgressItem;
 import com.ecyrd.jspwiki.util.HttpUtil;
@@ -723,8 +724,9 @@ public class AttachmentServlet
         }
         catch( WikiException e )
         {
-            log.error( "Illegal filename given: "+e.getMessage() );
-            throw new RedirectException( e.getMessage(), errorPage );
+            // this is a kludge, the exception that is caught here contains the i18n key
+            // here we have the context available, so we can internationalize it properly :
+            throw new RedirectException(context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( e.getMessage() ), errorPage );
         }
         
         //
@@ -800,8 +802,14 @@ public class AttachmentServlet
             {
                 att.setAttribute( WikiPage.CHANGENOTE, changenote );
             }
-
+            
+            try {
             m_engine.getAttachmentManager().storeAttachment( att, data );
+            } catch (ProviderException pe) {
+                // this is a kludge, the exception that is caught here contains the i18n key
+                // here we have the context available, so we can internationalize it properly :
+                throw new ProviderException( context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( pe.getMessage() ) );
+            }
 
             log.info( "User " + user + " uploaded attachment to " + parentPage +
                       " called "+filename+", size " + att.getSize() );

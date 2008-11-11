@@ -125,9 +125,9 @@ in your jspwiki.properties.
 <!-- Notify users which JAAS configs we need to find -->
 <p>JSPWiki wires up its own JAAS to define the authentication process, and does not rely on the JRE configuration. By default, JSPWiki configures its JAAS login stack to use the UserDatabaseLoginModule. You can specify a custom login module by setting the <code>jspwiki.loginModule.class</code> property in <code>jspwiki.properties</code>.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO+"java.security.auth.login.config"%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING+"java.security.auth.login.config"%>" prefix="We found some potential problems with your configuration: "/>
-<wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR+"java.security.auth.login.config"%>" prefix="We found some errors with your configuration: " />
+<wiki:Messages div="information" topic='<%=SecurityVerifier.INFO+"java.security.auth.login.config"%>' prefix="Good news: "/>
+<wiki:Messages div="warning" topic='<%=SecurityVerifier.WARNING+"java.security.auth.login.config"%>' prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="error" topic='<%=SecurityVerifier.ERROR+"java.security.auth.login.config"%>' prefix="We found some errors with your configuration: " />
 
 <!-- Print JAAS configuration status -->
 <p>The JAAS login configuration is correctly configured if the <code>jspwiki.loginModule.class</code> property specifies

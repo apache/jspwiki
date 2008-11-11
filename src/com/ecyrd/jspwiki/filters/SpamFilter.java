@@ -32,6 +32,7 @@ import net.sf.akismet.Akismet;
 import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.jspwiki.api.ModuleData;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.*;
 
@@ -70,6 +71,7 @@ import com.ecyrd.jspwiki.ui.EditorManager;
  *
  *  @since 2.1.112
  */
+@ModuleData( author = "JSPWiki development group" )
 public class SpamFilter
     extends BasicPageFilter
 {

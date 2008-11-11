@@ -1,3 +1,114 @@
+2008-11-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-5
+        
+        * Stripes-1.5 resides now in lib instead of tests/lib.  Yay!
+        
+        * JSPWIKI-423: Plugins and filters now use annotations instead of
+        jspwiki_module.xml.  Editors still do it the old way, though. 
+        jspwiki_module.xml still is used to optionally locate the packages,
+        through "<module package="org.mycompany"/>".  Please see PluginManager
+        for documentation.
+        
+2008-11-10 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-4
+        
+        * JSPWIKI-276: jsonrpc replaced by jabsorb, reported by Jorge Ferrer.
+        
+          Note that web.xml had changes, the package name com.metaparadigm.jsonrpc has been
+          changed to org.jabsorb.
+        
+2008-11-09 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-3
+        
+        * JSPWIKI-415: Favorites not displayed properly when blank in userName, reported by Trevor Harrison
+          also i18n'ed the InsertPlugin as the fix for JSPWIKI-415 was there.
+          Added 2 JUnit tests for InsertPage plugin
+        
+2008-11-08 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-2
+        
+        * JSPWIKI-407: applied de patch from FLorian
+        
+2008-11-08  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-1
+
+        * Merged from the 2.8 branch:
+        
+        * JSPWIKI-345
+
+        * Added doc/Translating.txt as a guide for people who want to create
+        translations.  
+        
+        * Added ant "i18n-check" target as an interface
+        to TranslationsCheck (no need to get geeky running a Java class).
+        
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged from 2.8: [JSPWIKI-416]: French translation and corepages from Olivier Descout
+
+2008-11-05  Juan Pablo Santos <juanpablo.santos@gmail.com>
+
+        * [JSPWIKI-407]: updated es translation; fixed some HTML entities left behind.
+        
+2008-11-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged in from 2.8: JSPWIKI-411 & JSPWIKI-381.
+
+2008-11-03  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged in changes from 2.8:
+
+        * JSPWIKI-408: Hide wide-content on left-menu and leftmenu-footer.
+        
+        * JSPWIKI-403: Pagination links now show a pointer cursor at hover.
+
+2008-11-03  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged changes from 2.8: JSPWIKI-407.
+
+2008-11-02  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged changes from 2.8 branch: JSPWIKI-288, JSPWIKI-406,
+		JSPWIKI-348, JSPWIKI-389, JSPWIKI-138
+
+2008-10-26  Janne Jalkanen <jalkanen@apache.org>
+
+        * Added the 3.0 API definition interfaces from the SVN.
+
+2008-10-17  Janne Jalkanen <jalkanen@apache.org>
+
+        * Merged fixes from 2.8.0 branch
+
+        * JSPWIKI-400: Chinese core pages were corrupted.
+
+2008-10-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.0-beta-21
+        
+        * [JSPWIKI-398] Pages with spaces in them caused erratic rename
+        behaviour by renaming all the links on the page.
+
+2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-20
+
+        * [JSPWIKI-313] ShortURLConstructor was not creating URLs for the LOGIN
+        context correctly. We now check for this context specifically.
+
+2008-10-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.0-beta-19
+
+        * [JSPWiki-342] Resolved issue by removing outdated doc files.
+
+        * [JSPWIKI-345] Added unit tests for testing single user policies. Confirmed bug
+        and workaround but did not fix root cause (freshcookies-security bug).
+
 2008-10-06  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.0-beta-18
@@ -71,7 +182,7 @@
         
         * added Dutch corepages
 
-2008-09-24  Juan Pablo Santos <juanpablo.santos@apache.org>
+2008-09-24  Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * 2.8.0-beta-10
         

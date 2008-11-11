@@ -1,6 +1,7 @@
 
 package com.ecyrd.jspwiki.plugin;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -11,6 +12,7 @@ import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 public class PluginManagerTest extends TestCase
@@ -198,6 +200,28 @@ public class PluginManagerTest extends TestCase
         assertTrue( SamplePlugin.c_rendered );
     }
 
+    public void testAnnotations() throws Exception
+    {
+        Collection<WikiPluginInfo> plugins = manager.modules();
+        
+        for( WikiPluginInfo wpi : plugins )
+        {
+            if( wpi.getName().equals( "SamplePlugin" ) )
+            {
+                assertEquals("author", "Urgle Burgle", wpi.getAuthor());
+                String[] aliases = wpi.getAliases();
+                
+                assertNotNull("aliases",aliases);
+                assertEquals( "aliases len", 2, aliases.length );
+                assertTrue( "data", ( aliases[0].equals( "samplealias2" ) && aliases[1].equals( "samplealias" ) )
+                            || (aliases[0].equals("samplealias") && aliases[1].equals("samplealias2")) );
+                return; // We're done
+            }
+        }
+        
+        fail("No SamplePlugin found");
+    }
+    
     public static Test suite()
     {
         return new TestSuite( PluginManagerTest.class );
