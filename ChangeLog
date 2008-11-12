@@ -1,3 +1,9 @@
+2008-11-10 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-6
+        
+        * JSPWIKI-424: Enforce (autofix) baseURL property to end with trailing slash, reported by John Volkar
+
 2008-11-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-5
