@@ -51,11 +51,11 @@ public interface WikiRenderer
     /**
      *  Returns the rendered content.
      */
-    public InputStream render( AbstractContext context, String content );
+    public InputStream render( ActionContext context, String content );
     
     /**
      *  Returns the rendered content as a String.  This is just a simplification
      *  for those content types where it can be rendered as a String.
      */
-    public String renderString( AbstractContext context, String content );
+    public String renderString( ActionContext context, String content );
 }
