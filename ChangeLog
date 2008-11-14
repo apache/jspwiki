@@ -1,3 +1,15 @@
+2008-11-13  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.1-svn-12
+        
+        * [JSPWIKI-381] fixed a bug with periodicially refreshed sneak-preview
+        while in section-edit mode. When section-edit was active,
+        linefeeds were inserted at every sneak-prev refresh.
+        
+        * [JSPWIKI-384] Filter js-scripts from input fields and cookies.
+        (xss vulnerability)
+        
+
 2008-11-06  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.1-svn-11
