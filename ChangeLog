@@ -1,3 +1,13 @@
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.1-svn-13
+        
+        * [JSPWIKI-428]: WeblogPlugin was not properly finding the page title
+        due to misshapen regexp.
+        
+        * [JSPWIKI-407]: Added Italian translation of corepages, thanks to Luca
+        Gilardoni. 
+
 2008-11-13  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.1-svn-12
