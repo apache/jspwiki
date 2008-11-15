@@ -1,10 +1,17 @@
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-8
+        
+        * [JSPWIKI-428]: WeblogPlugin was not properly finding the page title
+        due to misshapen regexp.
+        
 2008-11-13 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-7
         
         * JSPWIKI-407: added Italian corepages and update to it resources, thanks to Luca
  
- 2008-11-10 Harry Metske <metskem@apache.org>
+2008-11-10 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-6
         
