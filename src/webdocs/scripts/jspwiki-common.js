@@ -67,10 +67,10 @@ String.extend({
 	},
 	stripScripts: function(){
 		var text = this.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function(){
-		      return '';
+			return '';
 		});
 		return text;
-  },
+	}
 })
 
 // get text of a dhtml node
