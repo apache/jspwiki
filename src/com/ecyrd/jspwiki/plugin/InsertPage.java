@@ -23,6 +23,7 @@ package com.ecyrd.jspwiki.plugin;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 import java.util.*;
 
@@ -91,8 +92,24 @@ public class InsertPage
 
         if( includedPage != null )
         {
-            WikiPage page = engine.getPage( includedPage );
-
+            WikiPage page = null;
+            try
+            {
+                String pageName = engine.getFinalPageName( includedPage );
+                if( pageName != null )
+                {
+                    page = engine.getPage( pageName );
+                }
+                else
+                {
+                    page = engine.getPage( includedPage );
+                }
+            }
+            catch( ProviderException e )
+            {
+                res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
+                return res.toString();
+            }
             
             if( page != null )
             {

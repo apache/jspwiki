@@ -1,3 +1,11 @@
+2008-11-18  Harry Metske <metskem@apache.org>
+
+        * 2.8.1-svn-15
+         
+        * JSPWIKI-415: Favorites not displayed properly when blank in userName, reported by Trevor Harrison
+          Backport from 3.0 to 2.8 on request of Erik Bunn.
+          Added 2 JUnit tests for InsertPage plugin
+  
 2008-11-15  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 2.8.1-svn-14
