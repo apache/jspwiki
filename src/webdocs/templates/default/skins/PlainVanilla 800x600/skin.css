@@ -1,0 +1,13 @@
+#wikibody{width:750px;margin:1em auto;padding:.5em;}
+#header,#footer{padding:0;width:750px;}
+#header .applicationlogo{position:static;float:left;width:80px;}
+#header .breadcrumbs{float:none;}
+#favorites{width:150px;}
+#page,#wikibody.fav-left #page,#wikibody.fav-right #page{width:590px;}
+#collapseFavsWrapper #favorites{border:none;}
+#wikibody.fav-slide #page{width:750px;}
+/*
+#header .userbox{display:none;}
+#favorites .userbox{display:block;border:2px solid #ddd;}
+*/
+#pagecontent{width:100%;}

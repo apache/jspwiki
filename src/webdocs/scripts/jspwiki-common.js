@@ -64,6 +64,12 @@ String.extend({
 	trunc: function(size,elips){
 		if( !elips ) elips="...";
 		return (this.length<size) ? this : this.substring(0,size)+elips;
+	},
+	stripScripts: function(){
+		var text = this.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, function(){
+			return '';
+		});
+		return text;
 	}
 })
 
@@ -376,6 +382,7 @@ var Wiki = {
 		$('progressbar').setStyle('visibility','visible');
 		this.progressbar =
 		Wiki.jsonrpc.periodical(1000, this, ["progressTracker.getProgress",[progress],function(result){
+			result = result.stripScripts(); //xss vulnerability
 			if(!result.code) $('progressbar').getFirst().setStyle('width',result+'%').setHTML(result+'%');
 		}]);
 
@@ -828,6 +835,8 @@ var SearchBox = {
 
 			var ul = new Element('ul',{'id':'recentItems'}).inject($('recentSearches').show());
 			this.recent.each(function(el){
+				// xss vulnerability JSPWIKI-384
+				el = el.stripScripts();				
 				new Element('a',{
 					'href':'#', 
 					'events': {'click':function(){ q.value = el; q.form.submit(); }}
@@ -898,7 +907,7 @@ var SearchBox = {
 	},
 
 	submit: function(){ 
-		var v = this.query.value;
+		var v = this.query.value.stripScripts(); //xss vulnerability
 		if( v == this.query.defaultValue) this.query.value = '';
 		if( !this.recent ) this.recent=[];
 		if( !this.recent.test(v) ){
@@ -915,7 +924,7 @@ var SearchBox = {
 	},
 
 	ajaxQuickSearch: function(){
-		var qv = this.query.value ;
+		var qv = this.query.value.stripScripts() ;
 		if( (qv==null) || (qv.trim()=="") || (qv==this.query.defaultValue) ) {
 			$('searchOutput').empty();
 			return;
@@ -1622,7 +1631,7 @@ var HighlightWord =
 		if( !q && document.referrer.test("(?:\\?|&)(?:q|query)=([^&]*)","g") ) q = RegExp.$1;
 		if( !q ) return;
 
-		var words = decodeURIComponent(q);
+		var words = decodeURIComponent(q).stripScripts(); //xss vulnerability
 		words = words.replace( /\+/g, " " );
 		words = words.replace( /\s+-\S+/g, "" );
 		words = words.replace( /([\(\[\{\\\^\$\|\)\?\*\.\+])/g, "\\$1" ); //escape metachars

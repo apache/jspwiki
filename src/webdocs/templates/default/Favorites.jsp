@@ -78,7 +78,7 @@
 %%collapsebox-closed
 ! [My Favorites|{$username}Favorites]
 [{InsertPage page='{$username}Favorites' }]
-%% }]
+/% }]
   </wiki:Translate>
   </wiki:UserCheck>
 
