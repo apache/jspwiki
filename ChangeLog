@@ -1,5 +1,17 @@
 2008-11-21 Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-12
+        
+        * JSPWIKI-440: Plesk installation of war files.
+        JSPWiki (in most cases) fails to install from an unmodified download because
+        the pageDir points to a directory that cannot be created, changed a couple of default
+        values in build.properties.
+        
+        * JSPWIKI-424 The famous trailing slash in baseURL
+        Now also fixed in Installer and DefaultURLConstructor.
+        
+2008-11-21 Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-11
         
         * JSPWIKI-407: applied zh_CN patch from Hubert Chang
