@@ -1,3 +1,9 @@
+2008-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-11
+        
+        * JSPWIKI-407: applied zh_CN patch from Hubert Chang
+        
 2008-11-20  Dirk Frederickx <dirk.frederickx@gmail.com>
 
         * 3.0.0-svn-10  -- merged from 2.8.1-svn-12
