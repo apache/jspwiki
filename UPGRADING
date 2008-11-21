@@ -1,9 +1,40 @@
-Upgrading JSPWiki to 2.8
-------------------------
+Upgrading JSPWiki from 2.8.0 to 2.8.1
+-------------------------------------
 
-This file documents the steps necessary to upgrade JSPWiki 2.8 from 2.6. This document was written for two audiences: 
+1. Backup your old configuration files:
+   * jspwiki.properties
+   * filters.xml
+   * web.xml
+   
+2. Backup any modifications or custom templates you may have done
 
-a. Deployers -- system administrators who want to upgrade JSPWiki , but who have not created custom JSPs, plugins, or developed against JSPWiki APIs
+3. Unzip JSPWiki.war to a new directory
+
+4. Copy your old modified files on top of the newly installed copy
+
+5. Replace your old installed copy with the new version.
+
+6. Empty any temporary directories your web container might have
+   (e.g. $CATALINA_HOME/work)
+   
+7. Restart container.
+
+There is no need to empty the JSPWiki work directory or modify
+any preferences or settings.
+
+If you've deployed JSPWiki already as a WAR file, then you can
+just reinstall JSPWiki.war using the new version.  Just make
+sure you have backed up your configuration files first!
+
+
+Upgrading JSPWiki from older versions to any version of 2.8
+-----------------------------------------------------------
+
+This file documents the steps necessary to upgrade JSPWiki 2.8 from 2.6. This 
+document was written for two audiences: 
+
+a. Deployers -- system administrators who want to upgrade JSPWiki , but who have 
+not created custom JSPs, plugins, or developed against JSPWiki APIs
 
 b. Developers -- persons who have integrated their code with JSPWiki public APIs.
 
