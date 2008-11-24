@@ -28,7 +28,7 @@ public class InputValidatorTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         testEngine = new TestEngine( props );
-        WikiContext context = testEngine.getWikiActionBeanFactory().newViewActionBean( null, null, new WikiPage(testEngine,"dummyPage") );
+        WikiContext context = testEngine.getWikiActionBeanFactory().newViewWikiContext( null, null, new WikiPage(testEngine,"dummyPage") );
         val = new InputValidator( TEST, context );
     }
 

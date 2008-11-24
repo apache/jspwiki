@@ -104,11 +104,12 @@ public class WikiJSPFilter extends WikiServletFilter
             }
         
             // fire PAGE_REQUESTED event
-            WikiActionBean wikiContext = WikiActionBeanFactory.findActionBean( request );
-            boolean isWikiContext = ( wikiContext instanceof WikiContext );
-            if ( isWikiContext )
+            WikiActionBean wikiActionBean = WikiActionBeanFactory.findActionBean( request );
+            WikiContext wikiContext = wikiActionBean.getContext();
+            boolean isViewContext = WikiContext.VIEW .equals( wikiContext.getRequestContext() );
+            if ( isViewContext )
             {
-                String pageName = ((WikiContext)wikiContext).getPage().getName();
+                String pageName = wikiContext.getPage().getName();
                 fireEvent( WikiPageEvent.PAGE_REQUESTED, pageName );
             }
 
@@ -134,15 +135,12 @@ public class WikiJSPFilter extends WikiServletFilter
                 response.getWriter().write(r);
             
                 // Clean up the UI messages and loggers
-                if( wikiContext != null )
+                // fire PAGE_DELIVERED event
+                wikiContext.getWikiSession().clearMessages();
+                if ( isViewContext )
                 {
-                    // fire PAGE_DELIVERED event
-                    wikiContext.getWikiSession().clearMessages();
-                    if ( isWikiContext )
-                    {
-                        String pageName = ((WikiContext)wikiContext).getPage().getName();
-                        fireEvent( WikiPageEvent.PAGE_DELIVERED, pageName );
-                    }
+                    String pageName = wikiContext.getPage().getName();
+                    fireEvent( WikiPageEvent.PAGE_DELIVERED, pageName );
                 }
             }
             finally
@@ -165,7 +163,7 @@ public class WikiJSPFilter extends WikiServletFilter
      * @param string The source string
      * @return The modified string with all the insertions in place.
      */
-    private String filter(WikiActionBean wikiContext, HttpServletResponse response )
+    private String filter(WikiContext wikiContext, HttpServletResponse response )
     {
         String string = response.toString();
 
@@ -212,7 +210,7 @@ public class WikiJSPFilter extends WikiServletFilter
      *  @param type Type identifier for insertion
      *  @return The filtered string.
      */
-    private String insertResources(WikiActionBean wikiContext, String string, String type )
+    private String insertResources(WikiContext wikiContext, String string, String type )
     {
         if( wikiContext == null )
         {

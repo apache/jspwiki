@@ -132,7 +132,7 @@ public class WikiInterceptor implements Interceptor
         // Set the WikiSession, if not set yet
         if ( actionBeanContext.getWikiSession() == null )
         {
-            WikiEngine engine = actionBeanContext.getWikiEngine();
+            WikiEngine engine = actionBeanContext.getEngine();
             WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
             actionBeanContext.setWikiSession( wikiSession );
         }
@@ -199,9 +199,9 @@ public class WikiInterceptor implements Interceptor
             Permission requiredPermission = eventInfo.getPermission( actionBean );
             if( requiredPermission != null )
             {
-                WikiEngine engine = actionBean.getEngine();
+                WikiEngine engine = actionBean.getContext().getEngine();
                 AuthorizationManager mgr = engine.getAuthorizationManager();
-                WikiSession wikiSession = actionBean.getWikiSession();
+                WikiSession wikiSession = actionBean.getContext().getWikiSession();
                 allowed = mgr.checkPermission( wikiSession, requiredPermission );
             }
         }

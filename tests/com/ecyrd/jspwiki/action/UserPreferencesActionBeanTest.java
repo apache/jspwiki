@@ -41,7 +41,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
         
         // Create session; set 'assertion' param; verify it got saved
-        trip = m_engine.guestTrip( "/UserPreferences.jsp");
+        trip = m_engine.guestTrip( "/UserPreferences.action");
         trip.setParameter("assertedName", "MyAssertedIdentity");
         trip.setParameter("createAssertedName", "true");
         trip.execute();
@@ -63,7 +63,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
         
         // Create session; login in as Janne
-        trip = m_engine.guestTrip( "/UserPreferences.jsp");
+        trip = m_engine.guestTrip( "/UserPreferences.action");
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession(m_engine, request);
         boolean login = m_engine.getAuthenticationManager().login(wikiSession, Users.JANNE,Users.JANNE_PASS);
@@ -89,7 +89,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
         
         // Create session; set 'assertion' param; verify it got saved
-        trip = m_engine.guestTrip( "/UserPreferences.jsp");
+        trip = m_engine.guestTrip( "/UserPreferences.action");
         MockHttpServletRequest request = trip.getRequest();
         Cookie cookie = new Cookie(CookieAssertionLoginModule.PREFS_COOKIE_NAME, "MyAssertedIdentity");
         request.setCookies(new Cookie[]{cookie});

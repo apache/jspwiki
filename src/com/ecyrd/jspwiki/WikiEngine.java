@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.ecyrd.jspwiki.action.HandlerInfo;
-import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiActionBeanContext;
 import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -1472,7 +1472,7 @@ public class WikiEngine
     {
         WikiPage page = getPage( pagename, version );
 
-        WikiContext context = m_beanFactory.newViewActionBean( null, null, page );
+        WikiContext context = m_beanFactory.newViewWikiContext( null, null, page );
 
         String res = getHTML( context, page );
 
@@ -1540,7 +1540,7 @@ public class WikiEngine
     {
         LinkCollector localCollector = new LinkCollector();
 
-        textToHTML( m_beanFactory.newViewActionBean( null, null, page ),
+        textToHTML( m_beanFactory.newViewWikiContext( null, null, page ),
                     pagedata,
                     localCollector,
                     null,
@@ -2005,7 +2005,7 @@ public class WikiEngine
      *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2
      */
-    public String getVariable( WikiActionBean context, String name )
+    public String getVariable( WikiContext context, String name )
     {
         try
         {
@@ -2126,21 +2126,15 @@ public class WikiEngine
             log.error( "No HandlerInfo found for request context '" + requestContext + "'! Check your annotations." );
             return null;
         }
-        Class<? extends WikiActionBean> beanClass = handler.getActionBeanClass();
         
         // Build the wiki context... dummy reply and response objects will be added by WikiActionBeanFactory
         try
         {
-            WikiActionBean actionBean = m_beanFactory.newActionBean( request, (HttpServletResponse)null, beanClass );
-            actionBean.getContext().setEventName( handler.getEventName() );
-            if ( actionBean instanceof WikiContext )
-            {
-                // Stash the action bean/wiki context, and return it!
-                WikiActionBeanFactory.saveActionBean( request, actionBean );
-                return (WikiContext)actionBean;
-            }
-            throw new IllegalArgumentException( "Context '" + requestContext + "' resolved to non-WikiContext action bean class! " +
-            		"Please use the <stripes:useActionBean> tag instead of WikiEngine.createContext()." );
+            WikiActionBeanContext context = m_beanFactory.newWikiContext( request, (HttpServletResponse)null, requestContext );
+            
+            // Stash the action bean/wiki context, and return it!
+            WikiActionBeanFactory.saveContext( request, context );
+            return context;
         }
         catch ( WikiException e )
         {

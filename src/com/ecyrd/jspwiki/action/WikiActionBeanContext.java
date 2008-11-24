@@ -1,11 +1,16 @@
 package com.ecyrd.jspwiki.action;
 
+import java.security.Principal;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.controller.FlashScope;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
@@ -14,8 +19,9 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
 /**
  * <p>
  * {@link net.sourceforge.stripes.action.ActionBeanContext} subclass that
- * contains a convenient reference to the current JSPWiki WikiEngine and the
- * user's HttpServletRequest and WikiSession.
+ * implements the {@link com.ecyrd.jspwiki.WikiContext} interface by wrapping
+ * a {@link DefaultWikiContext} delegate. WikiActionBeanContext  maintains references to the current 
+ * JSPWiki WikiEngine and the user's HttpServletRequest and WikiSession.
  * </p>
  * <p>
  * When the WikiActionBeanContext is created, callers <em>must</em> set the
@@ -28,11 +34,9 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
  * 
  * @author Andrew Jaquith
  */
-public class WikiActionBeanContext extends ActionBeanContext
+public class WikiActionBeanContext extends ActionBeanContext implements WikiContext
 {
-    private volatile WikiEngine m_engine = null;
-
-    private volatile WikiSession m_wikiSession = null;
+    private DefaultWikiContext m_delegate;
 
     /**
      * Constructs a new WikiActionBeanContext.
@@ -40,24 +44,99 @@ public class WikiActionBeanContext extends ActionBeanContext
     public WikiActionBeanContext()
     {
         super();
+        m_delegate = new DefaultWikiContext();      // Initialize the delegate
     }
 
     /**
-     * Returns the WikiEngine associated with this WikiActionBeanContext.
+     * Adds a supplied ActionBean to "flash scope" so that it can be used by the
+     * next HttpRequest. When this method is called, the ActionBean is stashed
+     * in the request and the flash scope as attributes. For both, the bean is
+     * stored under names {@link WikiActionBeanFactory#ATTR_ACTIONBEAN} and
+     * {@link WikiTagBase#ATTR_CONTEXT}. This method assumes that the method
+     * {@link #setRequest(HttpServletRequest)} has been previously called.
      * 
-     * @return the wiki engine
+     * @param actionBean the action bean to add
+     * @throws IllegalStateException if the request object has not been
+     *             previously set for this ActionBeanContext
      */
-    public WikiEngine getWikiEngine()
+    public void flash( WikiActionBean actionBean )
     {
-        return m_engine;
+        if( getRequest() == null )
+        {
+            throw new IllegalStateException( "Request not set! Cannot flash action bean." );
+        }
+        FlashScope flash = FlashScope.getCurrent( getRequest(), true );
+        flash.put( actionBean );
+        flash.put( WikiActionBeanFactory.ATTR_ACTIONBEAN, actionBean );
+
+        // If not a WikiContext, synthesize a fake one
+        WikiEngine engine = m_delegate.getEngine();
+        WikiPage page = engine.getPage( engine.getFrontPage() );
+        WikiContext context = engine.getWikiActionBeanFactory().newViewWikiContext( getRequest(), getResponse(), page );
+
+        // Stash the WikiContext
+        flash.put( WikiTagBase.ATTR_CONTEXT, context );
     }
 
     /**
-     * Returns the WikiSession associated with this WikiActionBeanContext.
+     * Returns the request context for this ActionBean by looking up the value
+     * of the annotation {@link WikiRequestContext} associated with the current
+     * event handler method for this ActionBean. The current event handler is
+     * obtained from {@link WikiActionBeanContext#getEventName()}. Note that if
+     * this ActionBean does not have a a current event handler assigned, or if
+     * the event handler method does not contain the WikiRequestContext
+     * annotation, this method will return
+     * {@link com.ecyrd.jspwiki.WikiContext#NONE}.
      */
-    public WikiSession getWikiSession()
+    public String getRequestContext()
     {
-        return m_wikiSession;
+        return m_delegate.getRequestContext();
+    }
+
+    /**
+     * Sets the request context. See above for the different request contexts
+     * (VIEW, EDIT, etc.) This argument must correspond exactly to the value of
+     * a Stripes event handler method's
+     * {@link com.ecyrd.jspwiki.action.WikiRequestContext} annotation for the
+     * bean class. For event handlers that do not have an
+     * {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext} annotation,
+     * callers can supply a request context value based on the bean class and
+     * the event name; see the
+     * {@link com.ecyrd.jspwiki.action.HandlerInfo#getRequestContext()}
+     * documentation for more details.
+     * 
+     * @param arg The request context (one of the predefined contexts.)
+     * @throws IllegalArgumentException if the supplied request context does not
+     *             correspond to a
+     *             {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext}
+     *             annotation, or the automatically request context name
+     */
+    public void setRequestContext( String arg )
+    {
+        HandlerInfo handler = getEngine().getWikiActionBeanFactory().findEventHandler( arg );
+        setEventName( handler.getEventName() );
+        m_delegate.setRequestContext( arg );
+    }
+
+    /**
+     *  {@inheritDoc}. Also calls {@link DefaultWikiContext#setHttpRequest(HttpServletRequest)} on
+     *  the DefaultWikiContext delegate.
+     */
+    @Override
+    public void setEventName( String eventName )
+    {
+        super.setEventName( eventName );
+    }
+
+    /**
+     *  {@inheritDoc}. Also calls {@link DefaultWikiContext#setHttpRequest(HttpServletRequest)} on
+     *  the DefaultWikiContext delegate.
+     */
+    @Override
+    public void setRequest( HttpServletRequest request )
+    {
+        super.setRequest( request );
+        m_delegate.setHttpRequest( request );
     }
 
     /**
@@ -71,60 +150,211 @@ public class WikiActionBeanContext extends ActionBeanContext
     public void setServletContext( ServletContext servletContext )
     {
         super.setServletContext( servletContext );
-        if( m_engine == null )
+        if( m_delegate.getEngine() == null )
         {
             WikiEngine engine = WikiEngine.getInstance( servletContext, null );
-            setWikiEngine( engine );
+            m_delegate.setEngine( engine );
         }
     }
 
     /**
-     * Sets the WikiEngine associated with this WikiActionBeanContext.
-     * 
-     * @param engine the wiki engine
+     *  Sets the WikiEngine by calling {@link DefaultWikiContext#setEngine(WikiEngine)} on
+     *  the DefaultWikiContext delegate.
      */
-    public void setWikiEngine( WikiEngine engine )
+    public void setEngine( WikiEngine engine )
     {
-        m_engine = engine;
+        m_delegate.setEngine( engine );
     }
 
     /**
-     * Sets the WikiSession associated with this WikiActionBeanContext.
-     * 
-     * @param session the wiki session
+     *  Sets the WikiSession by calling {@link DefaultWikiContext#setEngine(WikiEngine)} on
+     *  the DefaultWikiContext delegate.
      */
-    public void setWikiSession( WikiSession session )
+    public void setWikiSession( WikiSession wikiSession )
     {
-        m_wikiSession = session;
+        m_delegate.setWikiSession( wikiSession );
     }
-
+    
     /**
-     * Adds a supplied ActionBean to "flash scope" so that it can be used by the next
-     * HttpRequest. When this method is called, the ActionBean is stashed in the
-     * request and the flash scope as attributes. For both, the bean is stored
-     * under names {@link WikiActionBeanFactory#ATTR_ACTIONBEAN}
-     * and {@link WikiTagBase#ATTR_CONTEXT}. This method assumes that the
-     * method {@link #setRequest(HttpServletRequest)} has been previously called.
-     * @param actionBean the action bean to add
-     * @throws IllegalStateException if the request object has not been previously set
-     * for this ActionBeanContext
+     *  {@inheritDoc}
      */
-    public void flash( WikiActionBean actionBean )
+    public Object clone()
     {
-        if ( getRequest() == null )
+        try
         {
-            throw new IllegalStateException( "Request not set! Cannot flash action bean." );
+            // super.clone() must always be called to make sure that inherited
+            // objects
+            // get the right type
+            WikiActionBeanContext copy = (WikiActionBeanContext) super.clone();
+            copy.m_delegate = m_delegate;
+            return copy;
         }
-        FlashScope flash = FlashScope.getCurrent( getRequest(), true);
-        flash.put( actionBean );
-        flash.put( WikiActionBeanFactory.ATTR_ACTIONBEAN, actionBean );
-        
-        // If not a WikiContext, synthesize a fake one
-        WikiPage page = m_engine.getPage( m_engine.getFrontPage() );
-        actionBean = m_engine.getWikiActionBeanFactory().newViewActionBean( getRequest(), getResponse(), page );
-        
-        // Stash the WikiContext
-        flash.put( WikiTagBase.ATTR_CONTEXT, actionBean );
+        catch( CloneNotSupportedException e )
+        {
+        } // Never happens
+
+        return null;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiContext deepClone()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public ResourceBundle getBundle( String bundle ) throws MissingResourceException
+    {
+        return m_delegate.getBundle( bundle );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public Principal getCurrentUser()
+    {
+        return m_delegate.getCurrentUser();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiEngine getEngine()
+    {
+        return m_delegate.getEngine();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getHttpParameter( String paramName )
+    {
+        return m_delegate.getHttpParameter( paramName );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public HttpServletRequest getHttpRequest()
+    {
+        return m_delegate.getHttpRequest();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getName()
+    {
+        return m_delegate.getName();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiPage getPage()
+    {
+        return m_delegate.getPage();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiPage getRealPage()
+    {
+        return m_delegate.getRealPage();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getTemplate()
+    {
+        return m_delegate.getTemplate();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getURL( String context, String page )
+    {
+        return m_delegate.getURL( context, page );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getURL( String context, String page, String params )
+    {
+        return m_delegate.getURL( context, page, params );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public Object getVariable( String key )
+    {
+        return m_delegate.getVariable( key );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public String getViewURL( String page )
+    {
+        return m_delegate.getViewURL( page );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiSession getWikiSession()
+    {
+        return m_delegate.getWikiSession();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public boolean hasAdminPermissions()
+    {
+        return m_delegate.hasAdminPermissions();
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public void setPage( WikiPage page )
+    {
+        m_delegate.setPage( page );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public WikiPage setRealPage( WikiPage page )
+    {
+        return m_delegate.setRealPage( page );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public void setTemplate( String dir )
+    {
+        m_delegate.setTemplate( dir );
+    }
+
+    /**
+     *  {@inheritDoc}
+     */
+    public void setVariable( String key, Object data )
+    {
+        m_delegate.setVariable( key, data );
     }
     
 }

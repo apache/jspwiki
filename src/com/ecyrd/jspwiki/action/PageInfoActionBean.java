@@ -5,11 +5,10 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
 @UrlBinding("/PageInfo.jsp")
-public class PageInfoActionBean extends WikiContext
+public class PageInfoActionBean extends AbstractActionBean
 {
     @DefaultHandler
     @HandlesEvent("info")

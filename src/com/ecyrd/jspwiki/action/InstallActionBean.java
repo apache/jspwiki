@@ -18,7 +18,7 @@ public class InstallActionBean extends AbstractActionBean
     {
         // See if admin users exists
         Permission perm = null;
-        WikiEngine engine = getContext().getWikiEngine();
+        WikiEngine engine = getContext().getEngine();
         try
         {
             UserManager userMgr = engine.getUserManager();

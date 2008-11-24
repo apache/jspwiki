@@ -4,11 +4,10 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
 @UrlBinding("/NewPage.jsp")
-public class NewPageActionBean extends WikiContext
+public class NewPageActionBean extends AbstractActionBean
 {
     @WikiRequestContext("newPage")
     @HandlesEvent("create")

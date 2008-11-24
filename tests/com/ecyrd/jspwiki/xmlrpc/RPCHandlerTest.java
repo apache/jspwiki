@@ -30,7 +30,7 @@ public class RPCHandlerTest extends TestCase
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
-        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, new WikiPage(m_engine, "Dummy") );
+        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewWikiContext( null, null, new WikiPage(m_engine, "Dummy") );
         m_handler.initialize( ctx );
     }
 

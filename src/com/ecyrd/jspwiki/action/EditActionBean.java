@@ -2,11 +2,10 @@ package com.ecyrd.jspwiki.action;
 
 import net.sourceforge.stripes.action.*;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
 @UrlBinding("/Edit.jsp")
-public class EditActionBean extends WikiContext
+public class EditActionBean extends AbstractActionBean
 {
     @DefaultHandler
     @HandlesEvent("edit")

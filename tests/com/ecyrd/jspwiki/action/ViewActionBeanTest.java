@@ -36,7 +36,7 @@ public class ViewActionBeanTest extends TestCase
         assertNotNull("Did not save page Test!", page);
         
         // Set the 'page' request parameter to 'Main'...
-        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp");
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action");
         trip.setParameter("page", "Test");
         trip.execute("view");
 
@@ -45,7 +45,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals( page, bean.getPage() );
         
         // ...and the destination should be Wiki.jsp (aka /View.action)
-        assertEquals("/Wiki.jsp", trip.getDestination() );
+        assertEquals("/Wiki.action", trip.getDestination() );
     }
     
     public void testActionBeanNoParameter() throws Exception {
@@ -55,7 +55,7 @@ public class ViewActionBeanTest extends TestCase
         assertNotNull("Did not save page Main!", page);
         
         // Execute the request without specifying a page
-        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp");
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action");
         trip.execute("view");
 
         // ...we should automatically see Main bound to the ActionBean (nice!)
@@ -64,7 +64,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals( page, bean.getPage() );
         
         // ...and the destination should be Wiki.jsp (aka /View.action)
-        assertEquals("/Wiki.jsp", trip.getDestination() );
+        assertEquals("/Wiki.action", trip.getDestination() );
     }
     
     public static Test suite()

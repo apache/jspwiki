@@ -219,7 +219,7 @@ public class RPCHandlerUTF8
         LinkCollector extCollector   = new LinkCollector();
         LinkCollector attCollector   = new LinkCollector();
 
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, page );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewWikiContext( null, null, page );
         context.setVariable( WikiEngine.PROP_REFSTYLE, "absolute" );
 
         m_engine.textToHTML( context,

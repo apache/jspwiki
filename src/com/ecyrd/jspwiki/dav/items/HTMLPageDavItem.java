@@ -76,7 +76,7 @@ public class HTMLPageDavItem extends PageDavItem
     {
         WikiEngine engine = ((WikiDavProvider)m_provider).getEngine();
 
-        WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean( null, null, m_page );
+        WikiContext context = engine.getWikiActionBeanFactory().newViewWikiContext( null, null, m_page );
 
         context.setVariable( MarkupParser.PROP_RUNPLUGINS, "false" );
         context.setVariable( WikiEngine.PROP_RUNFILTERS, "false" );

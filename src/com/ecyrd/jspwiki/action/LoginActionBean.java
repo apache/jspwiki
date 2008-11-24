@@ -38,13 +38,13 @@ public class LoginActionBean extends AbstractActionBean
     private Resolution saveCookiesAndRedirect( String pageName, boolean rememberMe )
     {
         // Set user cookie
-        Principal principal = getWikiSession().getUserPrincipal();
+        Principal principal = getContext().getWikiSession().getUserPrincipal();
         CookieAssertionLoginModule.setUserCookie( getContext().getResponse(), principal.getName() );
 
         // Set "remember me?" cookie
         if( rememberMe )
         {
-            CookieAuthenticationLoginModule.setLoginCookie( getEngine(), getContext().getResponse(), principal.getName() );
+            CookieAuthenticationLoginModule.setLoginCookie( getContext().getEngine(), getContext().getResponse(), principal.getName() );
         }
 
         UrlBuilder builder = new UrlBuilder( getContext().getLocale(), ViewActionBean.class, false );
@@ -84,17 +84,17 @@ public class LoginActionBean extends AbstractActionBean
     }
 
     @HandlesEvent( "login" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
     public Resolution login()
     {
-        WikiSession wikiSession = this.getWikiSession();
+        WikiSession wikiSession = getContext().getWikiSession();
         ValidationErrors errors = getContext().getValidationErrors();
-        ResourceBundle rb = getBundle( "CoreResources" );
+        ResourceBundle rb = getContext().getBundle( "CoreResources" );
 
         // If user got here and is already authenticated, it means
         // they just aren't allowed access to what they asked for.
         // Weepy tears and hankies all 'round.
-        if( getWikiSession().isAuthenticated() )
+        if( getContext().getWikiSession().isAuthenticated() )
         {
             errors.addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
             getContext().flash( this );
@@ -107,7 +107,7 @@ public class LoginActionBean extends AbstractActionBean
         Resolution r = null;
         try
         {
-            if( getEngine().getAuthenticationManager().login( wikiSession, m_username, m_password ) )
+            if( getContext().getEngine().getAuthenticationManager().login( wikiSession, m_username, m_password ) )
             {
                 // Set cookies as needed and redirect
                 log.info( "Successfully authenticated user " + m_username + " (custom auth)" );
@@ -137,11 +137,11 @@ public class LoginActionBean extends AbstractActionBean
     }
 
     @HandlesEvent( "logout" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
     @WikiRequestContext( "logout" )
     public Resolution logout()
     {
-        WikiEngine engine = getEngine();
+        WikiEngine engine = getContext().getEngine();
         HttpServletRequest request = getContext().getRequest();
         HttpServletResponse response = getContext().getResponse();
         engine.getAuthenticationManager().logout( request );
@@ -178,7 +178,7 @@ public class LoginActionBean extends AbstractActionBean
     public void setRedirect( String redirect )
     {
         m_redirect = redirect;
-        setVariable( "redirect", redirect );
+        getContext().setVariable( "redirect", redirect );
     }
 
     /**
@@ -190,19 +190,19 @@ public class LoginActionBean extends AbstractActionBean
      */
     @DefaultHandler
     @HandlesEvent( "view" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.LOGIN_ACTION )
     @WikiRequestContext( "login" )
     public Resolution view()
     {
         Resolution r = null;
 
-        if( getWikiSession().isAuthenticated() )
+        if( getContext().getWikiSession().isAuthenticated() )
         {
             // Set cookies as needed and redirect
             r = saveCookiesAndRedirect( m_redirect, m_remember );
         }
 
-        if( getEngine().getAuthenticationManager().isContainerAuthenticated() )
+        if( getContext().getEngine().getAuthenticationManager().isContainerAuthenticated() )
         {
             //
             // Have we already been submitted? If yes, then we can assume that
@@ -213,7 +213,7 @@ public class LoginActionBean extends AbstractActionBean
             Object seen = session.getAttribute( "_redirect" );
             if( seen != null )
             {
-                ResourceBundle rb = getBundle( "CoreResources" );
+                ResourceBundle rb = getContext().getBundle( "CoreResources" );
                 getContext().getValidationErrors().addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
                 getContext().flash( this );
                 return new RedirectResolution( MessageActionBean.class );
@@ -227,7 +227,7 @@ public class LoginActionBean extends AbstractActionBean
             // the user already. All we do is simply record that fact.
             // Nice and easy.
 
-            Principal user = getWikiSession().getLoginPrincipal();
+            Principal user = getContext().getWikiSession().getLoginPrincipal();
             log.info( "Successfully authenticated user " + user.getName() + " (container auth)" );
         }
 

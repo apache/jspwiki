@@ -5,12 +5,11 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
 @UrlBinding("/attach/{page}/{attachment}")
-public class AttachActionBean extends WikiContext
+public class AttachActionBean extends AbstractActionBean
 {
     private Attachment m_attachment;
     

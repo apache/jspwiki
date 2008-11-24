@@ -58,7 +58,7 @@ public class AdministerProfilesActionBean extends AbstractActionBean
     @WikiRequestContext("adminProfiles")
     public Resolution saveChanges() throws WikiSecurityException
     {
-        UserDatabase db = super.getContext().getWikiEngine().getUserManager().getUserDatabase();
+        UserDatabase db = super.getContext().getEngine().getUserManager().getUserDatabase();
 
         // Apply any changes to existing profiles (and create new ones)
         for( UserProfile profile : m_profiles )
@@ -72,7 +72,7 @@ public class AdministerProfilesActionBean extends AbstractActionBean
             }
             catch( NoSuchPrincipalException e )
             {
-                existingProfile = this.getEngine().getUserManager().getUserDatabase().newProfile();
+                existingProfile = this.getContext().getEngine().getUserManager().getUserDatabase().newProfile();
             }
 
             // Make changes to things that have changed

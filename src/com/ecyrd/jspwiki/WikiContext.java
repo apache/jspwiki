@@ -20,27 +20,13 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.io.IOException;
-import java.security.Permission;
 import java.security.Principal;
-import java.text.MessageFormat;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.el.ELException;
-
-import net.sourceforge.stripes.validation.Validate;
-
-import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.action.*;
-import com.ecyrd.jspwiki.auth.*;
-import com.ecyrd.jspwiki.auth.permissions.AllPermission;
-import com.ecyrd.jspwiki.i18n.InternationalizationManager;
-import com.ecyrd.jspwiki.tags.WikiTagBase;
-import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
@@ -66,24 +52,9 @@ import com.ecyrd.jspwiki.preferences.Preferences;
  *
  *  @author Andrew R. Jaquith
  */
-public abstract class WikiContext extends AbstractActionBean
-    implements Cloneable
+public interface WikiContext
+    extends Cloneable
 {
-    private    WikiPage   m_page;
-    private    WikiPage   m_realPage;
-    private    WikiEngine m_engine;
-    private    String     m_template = "default";
-
-    private    HashMap<String,Object> m_variableMap = new HashMap<String,Object>();
-
-    /**
-     *  Stores the HttpServletRequest.  May be null, if the request did not
-     *  come from a servlet.
-     */
-    protected  HttpServletRequest m_request = null;
-
-    private    WikiSession m_session = null;
-
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String    INSTALL  = HandlerInfo.getHandlerInfo( InstallActionBean.class, "install" ).getRequestContext();
 
@@ -166,20 +137,7 @@ public abstract class WikiContext extends AbstractActionBean
 
     /** User is doing administrative things. */
     public static final String    ADMIN    = "admin";
-
-    private static final Logger   log      = Logger.getLogger( WikiContext.class );
-
-    /**
-     * Creates a new WikiContext, without a WikiEngine, Request or WikiPage. This constructor should
-     * <em>never be called;</em> factory methods such as {@link WikiEngine#createContext(HttpServletRequest, String)}
-     * and {@link WikiActionBeanFactory#newActionBean(HttpServletRequest, HttpServletResponse, Class)} should
-     * be used instead.
-     */
-    public WikiContext()
-    {
-        super();
-    }
-
+ 
     /**
      *  Sets a reference to the real page whose content is currently being
      *  rendered.
@@ -199,12 +157,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @since 2.3.14
      *  @see com.ecyrd.jspwiki.tags.InsertPageTag
      */
-    public WikiPage setRealPage( WikiPage page )
-    {
-        WikiPage old = m_realPage;
-        m_realPage = page;
-        return old;
-    }
+    public WikiPage setRealPage( WikiPage page );
 
     /**
      *  Gets a reference to the real page whose content is currently being rendered.
@@ -223,30 +176,21 @@ public abstract class WikiContext extends AbstractActionBean
      *  @see com.ecyrd.jspwiki.tags.InsertPageTag
      *  @see com.ecyrd.jspwiki.parser.JSPWikiMarkupParser
      */
-    public WikiPage getRealPage()
-    {
-        return m_realPage;
-    }
+    public WikiPage getRealPage();
 
     /**
      *  Returns the handling engine.
      *
      *  @return The wikiengine owning this context.
      */
-    public WikiEngine getEngine()
-    {
-        return super.getEngine();
-    }
+    public WikiEngine getEngine();
 
     /**
      *  Returns the page that is being handled.
      *
      *  @return the page which was fetched.
      */
-    public WikiPage getPage()
-    {
-        return m_page;
-    }
+    public WikiPage getPage();
 
     /**
      *  Sets the page that is being handled.
@@ -254,43 +198,21 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param page The wikipage
      *  @since 2.1.37.
      */
-    @Validate(required = true)
-    public void setPage( WikiPage page )
-    {
-        m_page = page;
-        m_realPage = m_page;
-    }
+    public void setPage( WikiPage page );
 
     /**
      *  Returns the request context.
      *  @return The name of the request context (e.g. VIEW).
      */
-    public String getRequestContext()
-    {
-        return super.getRequestContext();
-    }
+    public String getRequestContext();
 
     /**
-     * Sets the request context. See above for the different request contexts
-     * (VIEW, EDIT, etc.) This argument must correspond exactly to the value of
-     * a Stripes event handler method's
-     * {@link com.ecyrd.jspwiki.action.WikiRequestContext} annotation for the
-     * bean class. For event handlers that do not have an
-     * {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext} annotation,
-     * callers can supply a request context value based on the bean class and
-     * the event name; see the
-     * {@link com.ecyrd.jspwiki.action.HandlerInfo#getRequestContext()}
-     * documentation for more details.
-     * 
-     * @param arg The request context (one of the predefined contexts.)
-     * @throws if the supplied request context does not correspond
-     * to a {@linkplain com.ecyrd.jspwiki.action.WikiRequestContext}
-     * annotation, or the automatically request context name
+     *  Sets the request context.  See above for the different
+     *  request contexts (VIEW, EDIT, etc.)
+     *
+     *  @param arg The request context (one of the predefined contexts.)
      */
-    public void setRequestContext( String arg )
-    {
-        super.setRequestContext( arg );
-    }
+    public void setRequestContext( String arg );
 
     /**
      *  Gets a previously set variable.
@@ -298,10 +220,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param key The variable name.
      *  @return The variable contents.
      */
-    public Object getVariable( String key )
-    {
-        return super.getVariable( key );
-    }
+    public Object getVariable( String key );
 
     /**
      *  Sets a variable.  The variable is valid while the WikiContext is valid,
@@ -311,10 +230,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param key The variable name.
      *  @param data The variable value.
      */
-    public void setVariable( String key, Object data )
-    {
-        super.setVariable( key, data );
-    }
+    public void setVariable( String key, Object data );
 
     /**
      *  This method will safely return any HTTP parameters that
@@ -327,10 +243,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param paramName Parameter name to look for.
      *  @return HTTP parameter, or null, if no such parameter existed.
      */
-    public String getHttpParameter( String paramName )
-    {
-        return super.getHttpParameter( paramName );
-    }
+    public String getHttpParameter( String paramName );
 
     /**
      *  If the request did originate from a HTTP request,
@@ -341,10 +254,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @return Null, if no HTTP request was done.
      *  @since 2.0.13.
      */
-    public HttpServletRequest getHttpRequest()
-    {
-        return super.getHttpRequest();
-    }
+    public HttpServletRequest getHttpRequest();
 
     /**
      *  Sets the template to be used for this request.
@@ -352,29 +262,29 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param dir The template name
      *  @since 2.1.15.
      */
-    public void setTemplate( String dir )
-    {
-        super.setTemplate( dir );
-    }
+    public void setTemplate( String dir );
 
     /**
-     * Returns the name of the WikiPage associated with this wiki context.
-     * @return the page name
+     * Returns the target of this wiki context: a page, group name or JSP. If
+     * the associated Command is a PageCommand, this method returns the page's
+     * name. Otherwise, this method delegates to the associated Command's
+     * {@link com.ecyrd.jspwiki.ui.Command#getName()} method. Calling classes
+     * can rely on the results of this method for looking up canonically-correct
+     * page or group names. Because it does not automatically assume that the
+     * wiki context is a PageCommand, calling this method is inherently safer
+     * than calling <code>getPage().getName()</code>.
+     * @return the name of the target of this wiki context
+     * @see com.ecyrd.jspwiki.ui.PageCommand#getName()
+     * @see com.ecyrd.jspwiki.ui.GroupCommand#getName()
      */
-    public String getName()
-    {
-        return m_page != null ? m_page.getName() : "<no page>";
-    }
+    public String getName();
 
     /**
      *  Gets the template that is to be used throughout this request.
      *  @since 2.1.15.
      *  @return template name
      */
-    public String getTemplate()
-    {
-        return super.getTemplate();
-    }
+    public String getTemplate();
 
     /**
      *  Convenience method that gets the current user. Delegates the
@@ -385,10 +295,7 @@ public abstract class WikiContext extends AbstractActionBean
      *
      *  @return The current user; or maybe null in case of internal calls.
      */
-    public Principal getCurrentUser()
-    {
-        return super.getCurrentUser();
-    }
+    public Principal getCurrentUser();
 
     /**
      *  A shortcut to generate a VIEW url.
@@ -396,10 +303,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @param page The page to which to link.
      *  @return An URL to the page.  This honours the current absolute/relative setting.
      */
-    public String getViewURL( String page )
-    {
-        return getURL( VIEW, page, null );
-    }
+    public String getViewURL( String page );
 
     /**
      *  Creates an URL for the given request context.
@@ -409,10 +313,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
     public String getURL( String context,
-                          String page )
-    {
-        return getURL( context, page, null );
-    }
+                          String page );
 
     /**
      *  Returns an URL from a page. It this WikiContext instance was constructed
@@ -427,45 +328,15 @@ public abstract class WikiContext extends AbstractActionBean
      */
     public String getURL( String context,
                           String page,
-                          String params )
-    {
-        boolean absolute = "absolute".equals( getEngine().getVariable( this, WikiEngine.PROP_REFSTYLE ) );
-
-        // FIXME: is rather slow
-        return getEngine().getURL( context,
-                                page,
-                                params,
-                                absolute );
-
-    }
-
+                          String params );
+    
     /**
      *  Returns a shallow clone of the WikiContext.
      *
      *  @since 2.1.37.
      *  @return A shallow clone of the WikiContext
      */
-    public Object clone()
-    {
-        try
-        {
-            // super.clone() must always be called to make sure that inherited objects
-            // get the right type
-            WikiContext copy = (WikiContext)super.clone();
-
-            copy.m_variableMap    = m_variableMap;
-            copy.m_page           = m_page;
-            copy.m_realPage       = m_realPage;
-            WikiActionBeanContext context = getContext();
-            copy.setContext( context );
-            String template = getTemplate();
-            copy.setTemplate( template );
-            return copy;
-        }
-        catch( CloneNotSupportedException e ){} // Never happens
-
-        return null;
-    }
+    public Object clone();
 
     /**
      *  Creates a deep clone of the WikiContext.  This is useful when you want
@@ -474,29 +345,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @since  2.8.0
      *  @return A deep clone of the WikiContext.
      */
-    public WikiContext deepClone()
-    {
-        try
-        {
-            // super.clone() must always be called to make sure that inherited objects
-            // get the right type
-            WikiContext copy = (WikiContext)super.clone();
-
-            //  No need to deep clone these
-            copy.m_engine  = m_engine;
-
-            copy.m_template       = m_template;
-            copy.m_variableMap    = (HashMap<String,Object>)m_variableMap.clone();
-            copy.m_request        = m_request;
-            copy.m_session        = m_session;
-            copy.m_page           = (WikiPage)m_page.clone();
-            copy.m_realPage       = (WikiPage)m_realPage.clone();
-            return copy;
-        }
-        catch( CloneNotSupportedException e ){} // Never happens
-
-        return null;
-    }
+    public WikiContext deepClone();
     
     /**
      *  Returns the WikiSession associated with the context.
@@ -506,131 +355,7 @@ public abstract class WikiContext extends AbstractActionBean
      *
      *  @return The WikiSession associate with this context.
      */
-    public WikiSession getWikiSession()
-    {
-        return super.getWikiSession();
-    }
-
-    /**
-     *  This method can be used to find the WikiContext programmatically
-     *  from a JSP PageContext. We check the request context. 
-     *  The wiki context, if it exists,
-     *  is looked up using the key
-     *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     *
-     *  @since 2.4
-     *  @param pageContext the JSP page context
-     *  @return Current WikiContext, or null, of no context exists.
-     */
-    public static WikiContext findContext( PageContext pageContext )
-    {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        WikiContext context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
-        return context;
-    }
-
-    /**
-     * Checks whether the current user has access to this wiki context,
-     * by obtaining the required Permission (see {@link HandlerInfo#getPermission(WikiActionBean)})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as an attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * Note that this method will automatically redirect the user to
-     * a login or error page, as appropriate, if access fails. This is
-     * NOT guaranteed to be default behavior in the future.
-     * @param response the http response
-     * @return the result of the access check
-     * @throws IOException In case something goes wrong
-     * @deprecated callers should not need to call this method, and should rely on {@link WikiInterceptor} instead to control access
-     */
-    public boolean hasAccess( HttpServletResponse response ) throws IOException
-    {
-        return hasAccess( response, true );
-    }
-
-    /**
-     * Checks whether the current user has access to this wiki context (and
-     * optionally redirects if not), by obtaining the required Permission (see {@link HandlerInfo#getPermission(WikiActionBean)})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * Note: for 3.0, this method obtains the required permission by looking up its permission information
-     * by calling {@link com.ecyrd.jspwiki.action.HandlerInfo#getDefaultHandlerInfo(Class)}.
-     * The method that contains the {@link net.sourceforge.stripes.action.DefaultHandler} annotation
-     * is the one that will be used to determine the correct permission. If no method containing a
-     * DefaultHandler is found, this method returns <code>true</code>.
-     * @return the result of the access check
-     * @param response The servlet response object
-     * @param redirect If true, makes an automatic redirect to the response
-     * @throws IOException If something goes wrong
-     * @deprecated callers should not need to call this method, and should rely on {@link WikiInterceptor} instead to control access
-     */
-    public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException
-    {
-        // Look up the HandlerInfo for the current Stripes event handler
-        String eventMethod = getContext().getEventName();
-        HandlerInfo handlerInfo;
-        if ( eventMethod == null )
-        {
-            handlerInfo = HandlerInfo.getDefaultHandlerInfo( this.getClass() );
-        }
-        else
-        {
-            handlerInfo = HandlerInfo.getHandlerInfo( this.getClass(), eventMethod );
-        }
-        
-        // Get the required permission
-        Permission requiredPermission = null;
-        try
-        {
-            requiredPermission = handlerInfo.getPermission( this );
-        }
-        catch ( ELException e ) {
-            log.error( "Could not evaluate event handler permission for  " + this.getClass() + ", method=" + handlerInfo.getHandlerMethod().getName() );
-        }
-        
-        WikiSession wikiSession = getWikiSession();
-        AuthorizationManager mgr = getEngine().getAuthorizationManager();
-        boolean allowed = requiredPermission == null ? true : mgr.checkPermission( getWikiSession(), requiredPermission );
-        ResourceBundle rb = getBundle( InternationalizationManager.CORE_BUNDLE );
-
-        // Stash the wiki context
-        if( allowed )
-        {
-            if ( getContext().getRequest().getAttribute( WikiTagBase.ATTR_CONTEXT ) == null )
-            {
-                getContext().getRequest().setAttribute( WikiTagBase.ATTR_CONTEXT, this );
-            }
-        }
-
-        // If access not allowed, redirect
-        if( !allowed && redirect )
-        {
-            Principal currentUser  = wikiSession.getUserPrincipal();
-            Object[] arguments = { getName() };
-            if( wikiSession.isAuthenticated() )
-            {
-                log.info("User "+currentUser.getName()+" has no access - forbidden (permission=" + requiredPermission + ")" );
-                String pageurl = m_page.getName();
-                wikiSession.addMessage( MessageFormat.format( rb.getString("security.error.noaccess.logged"), arguments) );
-                response.sendRedirect( getEngine().getURL(WikiContext.LOGIN, pageurl, null, false ) );
-            }
-            else
-            {
-                log.info("User "+currentUser.getName()+" has no access - redirecting (permission=" + requiredPermission + ")");
-                String pageurl = m_page.getName();
-                wikiSession.addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), arguments) );
-                response.sendRedirect( getEngine().getURL(WikiContext.LOGIN, pageurl, null, false ) );
-            }
-        }
-        return allowed;
-    }
+    public WikiSession getWikiSession();
 
     /**
      *  Returns true, if the current user has administrative permissions (i.e. the omnipotent
@@ -639,16 +364,7 @@ public abstract class WikiContext extends AbstractActionBean
      *  @since 2.4.46
      *  @return true, if the user has all permissions.
      */
-    public boolean hasAdminPermissions()
-    {
-        boolean admin = false;
-
-        WikiEngine m_engine = getEngine();
-        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(),
-                                                                    new AllPermission(m_engine.getApplicationName()) );
-
-        return admin;
-    }
+    public boolean hasAdminPermissions();
 
     /**
      *  Locates the i18n ResourceBundle given.  This method interprets
@@ -660,27 +376,6 @@ public abstract class WikiContext extends AbstractActionBean
      *  @throws MissingResourceException If the bundle cannot be found
      */
     // FIXME: This method should really cache the ResourceBundles or something...
-    public ResourceBundle getBundle( String bundle ) throws MissingResourceException
-    {
-        return super.getBundle( bundle );
-    }
-
-    /**
-     *  Returns the locale of the HTTP request if available,
-     *  otherwise returns the default Locale of the server.
-     *
-     *  @return A valid locale object
-     *  @param context The WikiContext
-     *  @deprecated use {@link com.ecyrd.jspwiki.action.WikiActionBeanContext#getLocale()} instead
-     */
-    public static Locale getLocale( WikiContext context )
-    {
-        return context.getContext().getLocale();
-/*
-        HttpServletRequest request = context.getHttpRequest();
-        return ( request != null )
-                ? request.getLocale() : Locale.getDefault();
-*/
-    }
+    public ResourceBundle getBundle( String bundle ) throws MissingResourceException;
 
 }

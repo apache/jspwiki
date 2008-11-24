@@ -21,7 +21,6 @@
 package com.ecyrd.jspwiki.util;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.WikiActionBean;
 
 
 /**
@@ -46,7 +45,7 @@ public final class BlogUtil
      * @param context the wiki context
      * @return the site name
      */
-    public static String getSiteName( WikiActionBean context )
+    public static String getSiteName( WikiContext context )
     {
         WikiEngine engine = context.getEngine();
 
@@ -60,14 +59,7 @@ public final class BlogUtil
 
         if( blogname == null )
         {
-            if ( context instanceof WikiContext )
-            {
-                blogname = engine.getApplicationName()+": "+((WikiContext)context).getPage().getName();
-            }
-            else
-            {
-                blogname = engine.getApplicationName();
-            }
+            blogname = engine.getApplicationName()+": "+ context.getPage().getName();
         }
 
         return blogname;

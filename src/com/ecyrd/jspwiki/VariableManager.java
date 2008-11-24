@@ -217,7 +217,7 @@ public class VariableManager
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    public String getValue( WikiActionBean context,
+    public String getValue( WikiContext context,
                             String      varName )
         throws IllegalArgumentException,
                NoSuchVariableException
@@ -293,27 +293,24 @@ public class VariableManager
             // And the final straw: see if the current page has named metadata.
             //
             
-            if ( context instanceof WikiContext )
+            WikiPage pg = context.getPage();
+            if( pg != null )
             {
-                WikiPage pg = ((WikiContext)context).getPage();
-                if( pg != null )
-                {
-                    Object metadata = pg.getAttribute( varName );
-                    if( metadata != null )
-                        return metadata.toString();
-                }
-                //
-                // And the final straw part 2: see if the "real" current page has
-                // named metadata. This allows a parent page to control a inserted
-                // page through defining variables
-                //
-                WikiPage rpg = ((WikiContext)context).getRealPage();
-                if( rpg != null )
-                {
-                    Object metadata = rpg.getAttribute( varName );
-                    if( metadata != null )
-                        return metadata.toString();
-                }
+                Object metadata = pg.getAttribute( varName );
+                if( metadata != null )
+                    return metadata.toString();
+            }
+            //
+            // And the final straw part 2: see if the "real" current page has
+            // named metadata. This allows a parent page to control a inserted
+            // page through defining variables
+            //
+            WikiPage rpg = context.getRealPage();
+            if( rpg != null )
+            {
+                Object metadata = rpg.getAttribute( varName );
+                if( metadata != null )
+                    return metadata.toString();
             }
             
             //
@@ -368,16 +365,16 @@ public class VariableManager
      */
     private static class SystemVariables
     {
-        private WikiActionBean m_context;
+        private WikiContext m_context;
 
-        public SystemVariables(WikiActionBean context)
+        public SystemVariables(WikiContext context)
         {
             m_context=context;
         }
 
         public String getPagename()
         {
-            return (m_context instanceof WikiContext ? ((WikiContext)m_context).getPage().getName() : null);
+            return m_context.getPage().getName();
         }
 
         public String getApplicationname()

@@ -260,8 +260,8 @@ Note the @EventPermission annotation. It defines the Permission class and its ta
 
 Notes from Janne Visit:
 ----------------------
-RequestState: interface to most of the forwarding methods below. WikiActionBeanContext implements this.
-WikiActionBeanContext would contain (private/protected) get/sets for JCR context. Not in RequestState or WikiContext interfaces.
+ActionContext: interface to most of the forwarding methods below. WikiActionBeanContext implements this.
+WikiActionBeanContext would contain (private/protected) get/sets for JCR context. Not in ActionContext or WikiContext interfaces.
 
 Mappings from JCR paths to permissions and URLs:
 
@@ -278,33 +278,34 @@ WIKICONTEXT
 -----------
 In JSPWiki versions prior to 3.0, WikiContext objects were created by calling a public constructor, followed by a call to setRequestContext(String). In 3.0, however, WikiContext becomes an interface [abtract class?] so contructors don't work. Instead, callers wishing to create WikiContexts should instead use the factory method WikiActionBeanFactory.newActionBean(request,response,beanClass). As an alternative, callers may also call WikiEngine.createContext(request,String).
 
-FORWARDING METHODS
+FORWARDING METHODS -- MOVE TO SUPERINTERFACE ACTIONCONTEXT
+clone() -- needs refactoring
+getBundle()                 to super
+getCurrentUser():           to super
 getEngine():                to super
-getRequestContext():        to super
-getVariable(String):        to super
-setVariable(String,Object): to super
 getHttpParameter(String):   to super
 getHttpRequest():           to super
-setTemplate():              to super
+getLocale(m_context) -- forwards to WikiActionBeanContext.getLocale(); uses Stripes-supplied Locale rather than the one set by Preferences cookies. This is also shared with Stripes class ActionBeanContext, which is rather convenient, no?
+getRequestContext():        to super
 getTemplate():              to super
-getCurrentUser():           to super
+getVariable(String):        to super
 getWikiSession():           to super
-getBundle()                 to super
+setVariable(String,Object): to super
+setTemplate():              to super
 
 WIKI-CONTEXT-SPECIFIC
-setRealPage()
-getRealPage()
 getName():  refactored slightly
+getPage()
+getRealPage()
 getURL(String, String) -- essentially the same, although it assumes StripesURLConstructor is used (?)
 getViewURL()
-setPage()
-findContext() -- no change
-hasAdminPermissions()
-getLocale(m_context) -- forwards to WikiActionBeanContext.getLocale(); uses Stripes-supplied Locale rather than the one set by Preferences cookies.
 D hasAccess(HttpServletResponse) -- used in MANY JSPs. Refactored to look up the permission info for the method that contains @DefaultHander annotation.
 D hasAccess(HttpServletResponse,boolean) -- referenced only by other hasAccess(). 
 setRequestContext() -- now delegates to set the action bean event (if request context matches, otherwise throw error; NONE always matches)
-clone() -- needs refactoring
+setPage()
+setRealPage()
+findContext() -- no change
+hasAdminPermissions()
 
 BACKWARDS INCOMPATIBILITIES
 

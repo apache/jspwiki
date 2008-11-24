@@ -13,9 +13,9 @@ import net.sourceforge.stripes.validation.ValidationMethod;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 
 /**
@@ -48,15 +48,26 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * 
  * @author Andrew Jaquith
  */
-@UrlBinding( "/Rename.jsp" )
-public class RenameActionBean extends WikiContext
+@UrlBinding( "/Rename.action" )
+public class RenameActionBean extends AbstractActionBean
 {
     private static final Logger log = Logger.getLogger( RenameActionBean.class );
 
     private boolean m_changeReferences = false;
+    
+    private WikiPage m_page = null;
 
     private String m_renameTo = null;
 
+    /**
+     * Returns the WikiPage; defaults to <code>null</code>.
+     * @return the page
+     */
+    public WikiPage getPage()
+    {
+        return m_page;
+    }
+    
     /**
      * Returns the proposed new name for the page; defaults to <code>null</code>
      * if not set.
@@ -92,12 +103,12 @@ public class RenameActionBean extends WikiContext
     @WikiRequestContext( "rename" )
     public Resolution rename() throws WikiException
     {
-        WikiEngine engine = this.getEngine();
-        String renameFrom = getPage().getName();
+        WikiEngine engine = getContext().getEngine();
+        String renameFrom = getContext().getPage().getName();
         HttpServletRequest request = getContext().getRequest();
         log.info( "Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
                   + request.getRemoteAddr() + " by " + request.getRemoteUser() );
-        String renamedTo = engine.renamePage( this, renameFrom, m_renameTo, m_changeReferences );
+        String renamedTo = engine.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );
         RedirectResolution r = new RedirectResolution( ViewActionBean.class );
         r.addParameter( "page", renamedTo );
@@ -117,6 +128,17 @@ public class RenameActionBean extends WikiContext
         m_changeReferences = changeReferences;
     }
 
+    /**
+     * Sets the page.
+     * @param page the wiki page.
+     */
+    @Validate( required = true )
+    public void setPage( WikiPage page )
+    {
+        m_page = page;
+        getContext().setPage( page );
+    }
+    
     /**
      * Sets the new name for the page, which will be set when the
      * {@link #rename()} handler is executed.
@@ -139,7 +161,7 @@ public class RenameActionBean extends WikiContext
     @ValidationMethod( on = "rename" )
     public void validateBeforeRename( ValidationErrors errors )
     {
-        if( getContext().getWikiEngine().pageExists( m_renameTo ) )
+        if( getContext().getEngine().pageExists( m_renameTo ) )
         {
             errors.add( "renameTo", new SimpleError( "The page name '" + m_renameTo + "' already exists. Choose another." ) );
         }

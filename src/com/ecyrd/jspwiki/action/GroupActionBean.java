@@ -16,7 +16,7 @@ import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 
-@UrlBinding( "/Group.jsp" )
+@UrlBinding( "/Group.action" )
 public class GroupActionBean extends AbstractActionBean
 {
     private Group m_group = null;
@@ -93,7 +93,7 @@ public class GroupActionBean extends AbstractActionBean
     {
         try
         {
-            WikiEngine engine = getEngine();
+            WikiEngine engine = getContext().getEngine();
             GroupManager groupMgr = engine.getGroupManager();
             groupMgr.removeGroup( m_group.getName() );
         }
@@ -109,7 +109,7 @@ public class GroupActionBean extends AbstractActionBean
     @WikiRequestContext( "editGroup" )
     public Resolution save() throws WikiSecurityException
     {
-        GroupManager mgr = getContext().getWikiEngine().getGroupManager();
+        GroupManager mgr = getContext().getEngine().getGroupManager();
         mgr.setGroup( getContext().getWikiSession(), m_group );
         RedirectResolution r = new RedirectResolution( "/Group.jsp" );
         r.addParameter( "group", m_group.getName() );

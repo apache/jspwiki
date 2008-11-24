@@ -889,7 +889,7 @@ public class WikiEngineTest extends TestCase
         Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
         
-        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, m_engine.getPage("OldNameTestPage") );
+        WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewWikiContext( null, null, m_engine.getPage("OldNameTestPage") );
         
         m_engine.renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
             
@@ -907,7 +907,7 @@ public class WikiEngineTest extends TestCase
     {
         WikiPage p = new WikiPage( m_engine, NAME1 );
     
-        WikiContext context = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, p );
+        WikiContext context = m_engine.getWikiActionBeanFactory().newViewWikiContext( null, null, p );
 
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
         

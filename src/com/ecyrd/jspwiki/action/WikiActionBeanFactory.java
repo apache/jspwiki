@@ -1,14 +1,12 @@
 package com.ecyrd.jspwiki.action;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.controller.StripesConstants;
@@ -22,6 +20,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.parser.MarkupParser;
+import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.url.StripesURLConstructor;
@@ -308,56 +307,51 @@ public final class WikiActionBeanFactory
 
     /**
      * <p>
-     * Creates a WikiActionBean instance, associates an HTTP request and
-     * response with it, and incorporates the correct WikiPage into the bean if
+     * Creates a WikiActionBeanContext instance, associates an HTTP request and
+     * response with it, and sets the correct WikiPage into the context if
      * required. This method will determine what page the user requested by
-     * delegating to
-     * {@link #extractPageFromParameter(HttpServletRequest)}.
+     * delegating to {@link #extractPageFromParameter(HttpServletRequest)}.
      * </p>
      * <p>
-     * This method will <em>always</em>return a WikiActionBean that is
-     * properly instantiated. It will also create a new {@link WikiActionBeanContext}
-     * and associate it with the action bean. The supplied request and response
-     * objects will be associated with the WikiActionBeanContext. The
-     * <code>beanClass</code>is required. If either the <code>request</code>
-     * or <code>response</code> parameters are <code>null</code>,
-     * appropriate mock objects will be substituted instead.
-     * </p>
-     * <p>
-     * This method performs a similar role to the &lt;stripes:useActionBean&gt;
-     * tag, in the sense that it will instantiate an arbitrary WikiActionBean
-     * class and, in the case of WikiContext subclasses, bind a WikiPage to it.
-     * However, it lacks some of the capabilities the JSP tag possesses. For
-     * example, although this method will correctly identity the page requested
-     * by the user (by inspecting request parameters), it will not do anything
-     * special if the page is a "special page." If special page resolution and
-     * redirection is required, use the &lt;stripes:useActionBean&gt; JSP tag
+     * This method will <em>always</em>return a {@link WikiActionBeanContext}
+     * that is properly instantiated. The supplied request and response objects
+     * will be associated with the WikiActionBeanContext. The
+     * <code>requestContext</code>is required. If either the
+     * <code>request</code> or <code>response</code> parameters are
+     * <code>null</code>, appropriate mock objects will be substituted
      * instead.
+     * </p>
+     * <p>
+     * This method performs a similar role to the Stripes
+     * {@link net.sourceforge.stripes.controller.ActionBeanContextFactory#getContextInstance(HttpServletRequest, HttpServletResponse)}
+     * method, in the sense that it will instantiate an arbitrary
+     * ActionBeanContext class. However, although this method will correctly
+     * identity the page requested by the user (by inspecting request
+     * parameters), it will not do anything special if the page is a "special
+     * page."
      * </p>
      * 
      * @param request the HTTP request
      * @param response the HTTP request
-     * @param beanClass the request context to use by default</code>
-     * @return the resolved wiki action bean
-     * @see net.sourceforge.stripes.tag.UseActionBeanTag
+     * @param requestContext the request context to use by default
+     * @return the new WikiActionBeanContext
      */
-    public WikiActionBean newActionBean( HttpServletRequest request, HttpServletResponse response,
-                                         Class<? extends WikiActionBean> beanClass ) throws WikiException
+    public WikiActionBeanContext newWikiContext( HttpServletRequest request, HttpServletResponse response, String requestContext )
+                                                                                                                           throws WikiException
     {
-        return newInstance( beanClass, request, response, null );
+        return newContext( requestContext, request, response, null );
     }
 
     /**
-     * Creates a new ViewActionBean for the given WikiEngine, WikiPage and
-     * HttpServletRequest. This method performs a similar role to the
-     * &lt;stripes:useActionBean&gt; tag, in the sense that it will instantiate
-     * an arbitrary WikiActionBean class and, in the case of WikiContext
-     * subclasses, bind a WikiPage to it. However, it lacks some of the
-     * capabilities the JSP tag possesses. For example, although this method
-     * will correctly identity the page requested by the user (by inspecting
-     * request parameters), it will not do anything special if the page is a
-     * "special page." If special page resolution and redirection is required,
-     * use the &lt;stripes:useActionBean&gt; JSP tag instead.
+     * <p>Creates a new WikiActionBeanContext for the given HttpServletRequest, HttpServletResponse and WikiPage,
+     * using the {@link WikiContext#VIEW} request context. Similar to method {@link #newWikiContext(HttpServletRequest, HttpServletResponse, String)},
+     * this method will <em>always</em>return a {@link WikiActionBeanContext}
+     * that is properly instantiated. The supplied request and response objects
+     * will be associated with the WikiActionBeanContext. If either the
+     * <code>request</code> or <code>response</code> parameters are
+     * <code>null</code>, appropriate mock objects will be substituted
+     * instead.
+     * </p>
      * 
      * @param request The HttpServletRequest that should be associated with this
      *            context. This parameter may be <code>null</code>.
@@ -365,18 +359,18 @@ public final class WikiActionBeanFactory
      *            this context. This parameter may be <code>null</code>.
      * @param page The WikiPage. If you want to create a WikiContext for an
      *            older version of a page, you must supply this parameter
-     * @see net.sourceforge.stripes.tag.UseActionBeanTag
+     * @return the new WikiActionBeanContext
      */
-    public ViewActionBean newViewActionBean( HttpServletRequest request, HttpServletResponse response, WikiPage page )
+    public WikiActionBeanContext newViewWikiContext( HttpServletRequest request, HttpServletResponse response, WikiPage page )
     {
-        // Create a new "view" ActionBean, and swallow any exceptions
-        ViewActionBean bean = null;
+        // Create a new "view" WikiActionBeanContext, and swallow any exceptions
+        WikiActionBeanContext ctx = null;
         try
         {
-            bean = (ViewActionBean) newInstance( ViewActionBean.class, request, response, page );
-            if( bean == null )
+            ctx = newContext( WikiContext.VIEW, request, response, page );
+            if( ctx == null )
             {
-                throw new IllegalStateException( "Could not create new ViewActionBean! This indicates a bug..." );
+                throw new IllegalStateException( "Could not create new WikiContext of type VIEW! This indicates a bug..." );
             }
         }
         catch( WikiException e )
@@ -384,7 +378,7 @@ public final class WikiActionBeanFactory
             e.printStackTrace();
             log.error( e.getMessage() );
         }
-        return bean;
+        return ctx;
     }
 
     /**
@@ -447,31 +441,14 @@ public final class WikiActionBeanFactory
      * those supplied by the caller; if not supplied, synthetic instances will
      * be substituted.
      * 
-     * @param beanClass the bean class that should be newly instantiated
+     * @param requestContext the request context to use by default
      * @param request
      * @param response
      * @return the newly instantiated bean
      */
-    protected WikiActionBean newInstance( Class<? extends WikiActionBean> beanClass, HttpServletRequest request,
+    protected WikiActionBeanContext newContext( String requestContext, HttpServletRequest request,
                                           HttpServletResponse response, WikiPage page ) throws WikiException
     {
-        // Instantiate the ActionBean first
-        WikiActionBean bean = null;
-        if( beanClass == null )
-        {
-            throw new IllegalArgumentException( "Bean class cannot be null!" );
-        }
-        {
-            try
-            {
-                bean = beanClass.newInstance();
-            }
-            catch( Exception e )
-            {
-                throw new WikiException( "Could not create ActionBean: " + e.getMessage() );
-            }
-        }
-
         // Create synthetic request if not supplied
         if( request == null )
         {
@@ -485,49 +462,44 @@ public final class WikiActionBeanFactory
         {
             response = new MockHttpServletResponse();
         }
-
         // Create the WikiActionBeanContext and set all of its relevant
         // properties
         WikiActionBeanContext actionBeanContext = new WikiActionBeanContext();
-        bean.setContext( actionBeanContext );
         actionBeanContext.setRequest( request );
         actionBeanContext.setResponse( response );
-        actionBeanContext.setWikiEngine( m_engine );
+        actionBeanContext.setEngine( m_engine );
         actionBeanContext.setServletContext( m_engine.getServletContext() );
         WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
         actionBeanContext.setWikiSession( wikiSession );
 
-        // Set the event name for this action bean to the default handler
-        actionBeanContext.setEventName( HandlerInfo.getDefaultHandlerInfo( beanClass ).getEventName() );
+        // Set the request context (and related event name)
+        actionBeanContext.setRequestContext( requestContext );
 
-        // If ActionBean is a WikiContext, extract and set the WikiPage
-        if( bean instanceof WikiContext )
+        // Extract and set the WikiPage
+        if( page == null )
         {
-            if( page == null )
+            String pageName = extractPageFromParameter( request );
+
+            // For view action, default to front page
+            if( pageName == null && WikiContext.VIEW.equals( requestContext ) )
             {
-                String pageName = extractPageFromParameter( request );
-
-                // For view action, default to front page
-                if( pageName == null && bean instanceof ViewActionBean )
-                {
-                    pageName = m_engine.getFrontPage();
-                }
-
-                // Make sure the page is resolved properly (taking into account
-                // funny plurals)
-                if( pageName != null )
-                {
-                    page = resolvePage( request, pageName );
-                }
+                pageName = m_engine.getFrontPage();
             }
 
-            if( page != null )
+            // Make sure the page is resolved properly (taking into account
+            // funny plurals)
+            if( pageName != null )
             {
-                ((WikiContext) bean).setPage( page );
+                page = resolvePage( request, pageName );
             }
         }
 
-        return bean;
+        if( page != null )
+        {
+            actionBeanContext.setPage( page );
+        }
+
+        return actionBeanContext;
     }
 
     /**
@@ -581,10 +553,46 @@ public final class WikiActionBeanFactory
     }
 
     /**
+         *  Returns the locale of the HTTP request if available,
+         *  otherwise returns the default Locale of the server.
+         *
+         *  @return A valid locale object
+         *  @param context The WikiContext
+         */
+        public static Locale getLocale( WikiContext context )
+        {
+            return Preferences.getLocale( context );
+    /*
+            HttpServletRequest request = context.getHttpRequest();
+            return ( request != null )
+                    ? request.getLocale() : Locale.getDefault();
+    */
+        }
+
+    /**
+     *  This method can be used to find the WikiContext programmatically
+     *  from a JSP PageContext. We check the request context. 
+     *  The wiki context, if it exists,
+     *  is looked up using the key
+     *  {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     *
+     *  @since 2.4
+     *  @param pageContext the JSP page context
+     *  @return Current WikiContext, or null, of no context exists.
+     */
+    public static WikiContext findContext( PageContext pageContext )
+    {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        WikiContext context = (WikiContext)request.getAttribute( WikiTagBase.ATTR_CONTEXT );
+        return context;
+    }
+
+    /**
      * Returns the WikiActionBean associated with the current
      * {@link javax.servlet.http.HttpServletRequest}. The ActionBean will be
-     * retrieved from attribute {@link WikiActionBeanFactory#ATTR_ACTIONBEAN}. If an
-     * ActionBean is not found under this name, the standard Stripes attribute
+     * retrieved from attribute {@link WikiActionBeanFactory#ATTR_ACTIONBEAN}.
+     * If an ActionBean is not found under this name, the standard Stripes
+     * attribute
      * {@link net.sourceforge.stripes.controller.StripesConstants#REQ_ATTR_ACTION_BEAN}
      * will be attempted.
      * 
@@ -612,22 +620,11 @@ public final class WikiActionBeanFactory
 
     /**
      * <p>
-     * Saves the supplied WikiActionBean and its associated WikiPage as in
+     * Saves the supplied WikiActionBean and its associated WikiContext,
+     * WikiEngine and WikiSession in
      * request scope. The action bean is saved as an attribute named
-     * {@link #ATTR_ACTIONBEAN}. If the action bean was also a
-     * WikiContext instance, it is saved as an attribute named
-     * {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}. Among other
-     * things, by saving these items as attributes, they can be accessed via JSP
-     * Expression Language variables, in this case
-     * <code>${wikiActionBean}</code> and <code>${wikiContext}</code>
-     * respectively.
-     * </p>
-     * <p>
-     * Note: the WikiPage set by this method is guaranteed to be non-null. If
-     * the WikiActionBean is not a WikiContext, or it is a WikiContext but its
-     * WikiPage is <code>null</code>, the
-     * {@link com.ecyrd.jspwiki.WikiEngine#getFrontPage()} will be consulted,
-     * and that page will be used.
+     * {@link #ATTR_ACTIONBEAN}. The other attributes are saved
+     * as described in {@link #saveContext(HttpServletRequest, WikiContext)}.
      * </p>
      * 
      * @param request the HTTP request
@@ -635,53 +632,59 @@ public final class WikiActionBeanFactory
      */
     public static void saveActionBean( HttpServletRequest request, WikiActionBean actionBean )
     {
+        // Stash the WikiActionBean
+        request.setAttribute( ATTR_ACTIONBEAN, actionBean );
+
+        // Stash the other attributes
+        saveContext( request, actionBean.getContext() );
+    }
+
+    /**
+     * <p>
+     * Saves the supplied WikiContext, and the related WikiEngine and
+     * WikiSession, in request scope. The WikiContext is saved as an attribute
+     * named {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}. The
+     * WikiEngine is also saved as {@link #ATTR_WIKIENGINE}, and the
+     * WikiSession as {@link #ATTR_WIKISESSION}. Among other things, by saving
+     * these items as attributes, they can be accessed via JSP Expression
+     * Language variables, in this case <code>${wikiContext}</code>,
+     * <code>${wikiEngine}</code> and <code>${wikiSession}</code>.
+     * </p>
+     * <p>
+     * Note: when the WikiContext is saved, it will be guaranteed to have a
+     * non-null WikiPage. If the context as supplied has a WikiPage that is
+     * <code>null</code>, the
+     * {@link com.ecyrd.jspwiki.WikiEngine#getFrontPage()} will be consulted,
+     * and that page will be used.
+     * </p>
+     * 
+     * @param request the HTTP request
+     * @param context the WikiContext to save
+     */
+    public static void saveContext( HttpServletRequest request, WikiContext context )
+    {
         // Stash WikiEngine as a request attribute (can be
         // used later as ${wikiEngine} in EL markup)
-        WikiEngine engine = actionBean.getEngine();
+        WikiEngine engine = context.getEngine();
         request.setAttribute( ATTR_WIKIENGINE, engine );
 
         // Stash the WikiSession as a request attribute
         WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
         request.setAttribute( ATTR_WIKISESSION, wikiSession );
 
-        // Stash the WikiActionBean
-        request.setAttribute( ATTR_ACTIONBEAN, actionBean );
-
-        // Stash it again as a WikiContext (or synthesize a fake one)
-        WikiContext wikiContext;
-        WikiPage page;
-        if( actionBean instanceof WikiContext )
+        WikiPage page = context.getPage();
+        if( page == null )
         {
-            wikiContext = (WikiContext) actionBean;
-            page = wikiContext.getPage();
+            // If the page supplied was blank, default to the front page to
+            // avoid NPEs
+            page = engine.getPage( engine.getFrontPage() );
+            // Front page does not exist?
             if( page == null )
             {
-                // If the page supplied was blank, default to the front page to
-                // avoid NPEs
-                page = engine.getPage( engine.getFrontPage() );
-                // Front page does not exist?
-                if( page == null )
-                {
-                    page = new WikiPage( engine, engine.getFrontPage() );
-                }
-                wikiContext.setPage( page );
+                page = new WikiPage( engine, engine.getFrontPage() );
             }
+            context.setPage( page );
         }
-        else
-        {
-            HttpServletResponse response = actionBean.getContext().getResponse();
-            page = engine.getPage( engine.getFrontPage() );
-            wikiContext = engine.getWikiActionBeanFactory().newViewActionBean( request, response, page );
-        }
-        request.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext );
-
-        // Debug messages
-        if( log.isDebugEnabled() )
-        {
-            log.debug( "Stashed WikiActionBean '" + actionBean + "' in page scope." );
-            log.debug( "Stashed WikiPage '" + page.getName() + "' in page scope." );
-        }
-
+        request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
     }
-
 }

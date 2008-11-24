@@ -59,8 +59,8 @@ public class UserProfileActionBean extends AbstractActionBean
     public Resolution initUserProfile()
     {
         // Retrieve the user profile
-        WikiEngine engine = getEngine();
-        WikiSession session = getWikiSession();
+        WikiEngine engine = getContext().getEngine();
+        WikiSession session = getContext().getWikiSession();
         UserManager manager = engine.getUserManager();
         m_profile = manager.getUserProfile( session );
 
@@ -82,17 +82,16 @@ public class UserProfileActionBean extends AbstractActionBean
      *         of errors, or <code>null</code> otherwise
      */
     @HandlesEvent( "save" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PROFILE_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PROFILE_ACTION )
     public Resolution save()
     {
         WikiActionBeanContext context = getContext();
         ValidationErrors errors = context.getValidationErrors();
-        Resolution r = null;
         try
         {
             // Save the profile
-            WikiEngine engine = getEngine();
-            engine.getUserManager().setUserProfile( getWikiSession(), m_profile );
+            WikiEngine engine = getContext().getEngine();
+            engine.getUserManager().setUserProfile( getContext().getWikiSession(), m_profile );
             CookieAssertionLoginModule.setUserCookie( context.getResponse(), m_profile.getFullname() );
         }
 
@@ -101,7 +100,7 @@ public class UserProfileActionBean extends AbstractActionBean
         {
             UrlBuilder builder = new UrlBuilder( this.getContext().getLocale(), ViewActionBean.class, false );
             builder.addParameter( "page", "ApprovalRequiredForUserProfiles" );
-            r = new RedirectResolution( builder.toString() );
+            return new RedirectResolution( builder.toString() );
         }
 
         // Any other errors are either UI or config problems, so let the user
@@ -115,7 +114,7 @@ public class UserProfileActionBean extends AbstractActionBean
         if( errors.size() == 0 )
         {
             // Set user cookie
-            Principal principal = getWikiSession().getUserPrincipal();
+            Principal principal = getContext().getWikiSession().getUserPrincipal();
             CookieAssertionLoginModule.setUserCookie( getContext().getResponse(), principal.getName() );
             UrlBuilder builder = new UrlBuilder( getContext().getLocale(), ViewActionBean.class, false );
             if( m_redirect != null )
@@ -148,7 +147,7 @@ public class UserProfileActionBean extends AbstractActionBean
     public void setRedirect( String redirect )
     {
         m_redirect = redirect;
-        setVariable( "redirect", redirect );
+        getContext().setVariable( "redirect", redirect );
     }
 
     /**
@@ -162,9 +161,9 @@ public class UserProfileActionBean extends AbstractActionBean
     @ValidationMethod( on = "save", when = ValidationState.NO_ERRORS )
     public void validateNoCollision( ValidationErrors errors )
     {
-        WikiEngine engine = getEngine();
-        WikiSession session = getWikiSession();
-        UserManager manager = getEngine().getUserManager();
+        WikiEngine engine = getContext().getEngine();
+        WikiSession session = getContext().getWikiSession();
+        UserManager manager = engine.getUserManager();
         UserDatabase database = manager.getUserDatabase();
 
         // Locate the old user profile

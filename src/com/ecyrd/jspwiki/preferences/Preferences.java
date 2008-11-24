@@ -37,8 +37,7 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiActionBeanContext;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
@@ -97,7 +96,7 @@ public class Preferences
     {
         Preferences prefs = new Preferences();
         Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        WikiContext ctx = WikiContext.findContext( pageContext );
+        WikiContext ctx = WikiActionBeanFactory.findContext( pageContext );
         
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", 
@@ -165,7 +164,7 @@ public class Preferences
      *  @param name
      *  @return the preference value
      */
-    public static String getPreference( WikiActionBean wikiContext, String name )
+    public static String getPreference( WikiContext wikiContext, String name )
     {
         HttpServletRequest request = wikiContext.getHttpRequest();
         if ( request == null ) return null;
@@ -203,7 +202,7 @@ public class Preferences
      * @return a Locale object.
      * @since 2.8
      */
-    public static Locale getLocale(WikiActionBean context)
+    public static Locale getLocale(WikiContext context)
     {
         Locale loc = null;
         
@@ -234,12 +233,11 @@ public class Preferences
         // otherwise try to find out the browser's preferred language setting, or use the JVM's default
         if( loc == null)
         {    
-	        WikiActionBeanContext beanContext = context.getContext();
-    	    if( beanContext == null || beanContext.getRequest() == null )
+    	    if( context.getHttpRequest() == null )
         	{
             	throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
 	        }
-            loc = ( beanContext.getRequest() != null ) ? beanContext.getRequest().getLocale() : Locale.getDefault();
+            loc = ( context.getHttpRequest() != null ) ? context.getHttpRequest().getLocale() : Locale.getDefault();
         }
 
         //log.info( "using locale "+loc.toString() );

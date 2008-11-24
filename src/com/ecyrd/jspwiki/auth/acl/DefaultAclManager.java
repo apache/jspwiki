@@ -180,7 +180,7 @@ public class DefaultAclManager implements AclManager
                 //
                 //  Or, try parsing the page
                 //
-                WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewActionBean( null, null, page );
+                WikiContext ctx = m_engine.getWikiActionBeanFactory().newViewWikiContext( null, null, page );
 
                 ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
 

@@ -26,6 +26,7 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -36,7 +37,6 @@ import org.apache.oro.text.regex.*;
 import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -1111,9 +1111,9 @@ public class JSPWikiMarkupParser
     {
         if( m_cleanTranslator == null )
         {
-            WikiContext dummyContext = m_engine.getWikiActionBeanFactory().newViewActionBean(
-                                                           m_context.getContext().getRequest(),
-                                                           m_context.getContext().getResponse(),
+            WikiContext dummyContext = m_engine.getWikiActionBeanFactory().newViewWikiContext(
+                                                           m_context.getHttpRequest(),
+                                                           (HttpServletResponse)null,
                                                            m_context.getPage() );            
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
 

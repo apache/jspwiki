@@ -23,7 +23,6 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import java.util.Collection;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
@@ -32,7 +31,6 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 
 /**
  *  Iterates through Search result results.
@@ -106,7 +104,7 @@ public class SearchResultIteratorTag
             
             // Create a wiki context for the result
             WikiEngine engine = m_wikiContext.getEngine();
-            WikiContext context = engine.getWikiActionBeanFactory().newViewActionBean( null, null, r.getPage() );
+            WikiContext context = engine.getWikiActionBeanFactory().newViewWikiContext( null, null, r.getPage() );
             
             // Stash it in the page context
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

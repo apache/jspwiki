@@ -16,7 +16,7 @@ import com.ecyrd.jspwiki.ui.EditorManager;
 /**
  * @author Andrew Jaquith
  */
-@UrlBinding( "/UserPreferences.jsp" )
+@UrlBinding( "/UserPreferences.action" )
 public class UserPreferencesActionBean extends AbstractActionBean
 {
     private String m_assertedName = null;
@@ -32,7 +32,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * @return a redirection to the logout page
      */
     @HandlesEvent( "clearAssertedName" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
     public Resolution clearAssertedName()
     {
         HttpServletResponse response = getContext().getResponse();
@@ -49,7 +49,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
     @WikiRequestContext( "favorites" )
     public Resolution editFavorites()
     {
-        Principal principal = this.getCurrentUser();
+        Principal principal = getContext().getCurrentUser();
         return new RedirectResolution( "/Edit.jsp?" + principal.getName() + "Favorites" );
     }
 
@@ -62,11 +62,11 @@ public class UserPreferencesActionBean extends AbstractActionBean
      */
     @DefaultHandler
     @HandlesEvent( "createAssertedName" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
     @WikiRequestContext( "prefs" )
     public Resolution createAssertedName()
     {
-        if( !getWikiSession().isAuthenticated() )
+        if( !getContext().getWikiSession().isAuthenticated() )
         {
             HttpServletRequest request = getContext().getRequest();
             HttpServletResponse response = getContext().getResponse();

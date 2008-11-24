@@ -48,7 +48,7 @@ public class LoginActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Verify that the initial user is anonymous
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         HttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
         assertNotSame( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
@@ -79,7 +79,7 @@ public class LoginActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Verify that the initial user is anonymous
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         HttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
         assertNotSame( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
@@ -92,7 +92,7 @@ public class LoginActionBeanTest extends TestCase
         assertEquals( 2, errors.size() );
 
         // Log in again with just a password; should see one error
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         trip.setParameter( "j_password", Users.JANNE_PASS );
         trip.execute( "login" );
         bean = trip.getActionBean( LoginActionBean.class );
@@ -100,7 +100,7 @@ public class LoginActionBeanTest extends TestCase
         assertEquals( 1, errors.size() );
 
         // Log in again with just a username; should see one error
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         trip.setParameter( "j_username", Users.JANNE );
         trip.execute( "login" );
         bean = trip.getActionBean( LoginActionBean.class );
@@ -115,7 +115,7 @@ public class LoginActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Verify that the initial user is anonymous
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         HttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
         assertNotSame( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
@@ -141,7 +141,7 @@ public class LoginActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Verify that the initial user is anonymous
-        trip = m_engine.guestTrip( "/Login.jsp" );
+        trip = m_engine.guestTrip( "/Login.action" );
         HttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
         assertNotSame( Users.JANNE, wikiSession.getLoginPrincipal().getName() );

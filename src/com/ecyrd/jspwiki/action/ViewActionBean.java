@@ -8,7 +8,6 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
@@ -20,14 +19,25 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
  * @author Andrew Jaquith
  *
  */
-@UrlBinding("/Wiki.jsp")
-public class ViewActionBean extends WikiContext
+@UrlBinding("/Wiki.action")
+public class ViewActionBean extends AbstractActionBean
 {
     private Logger log = Logger.getLogger(ViewActionBean.class);
+    
+    private WikiPage m_page = null;
 
     public ViewActionBean()
     {
         super();
+    }
+
+    /**
+     * Returns the WikiPage; defaults to <code>null</code>.
+     * @return the page
+     */
+    public WikiPage getPage()
+    {
+        return m_page;
     }
 
     /**
@@ -50,7 +60,7 @@ public class ViewActionBean extends WikiContext
     {
         WikiPage page = getPage();
         ValidationErrors errors = this.getContext().getValidationErrors();
-        WikiEngine engine = getContext().getWikiEngine();
+        WikiEngine engine = getContext().getEngine();
         
         // If user supplied a page that doesn't exist, redirect to the "create pages" ActionBean
         if ( errors.get("page" )!= null )
@@ -92,24 +102,24 @@ public class ViewActionBean extends WikiContext
         
         // Ok, the user supplied a page. That's nice. But is it a special page?
         String pageName = page.getName();
-        String specialUrl = getEngine().getWikiActionBeanFactory().getSpecialPageReference( pageName );
+        String specialUrl = getContext().getEngine().getWikiActionBeanFactory().getSpecialPageReference( pageName );
         if ( specialUrl != null )
         {
-            return new RedirectResolution( getViewURL( specialUrl ) );
+            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
 
         // Is there an ALIAS attribute in the wiki pge?
         specialUrl = (String)page.getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
-            return new RedirectResolution( getViewURL( specialUrl ) );
+            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
         
         // Is there a REDIRECT attribute in the wiki page?
         specialUrl = (String)page.getAttribute( WikiPage.REDIRECT );
         if( specialUrl != null )
         {
-            return new RedirectResolution( getViewURL( specialUrl ) );
+            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
         
         // If we got this far, it means the user supplied a page parameter, AND it exists
@@ -117,13 +127,14 @@ public class ViewActionBean extends WikiContext
     }
 
     /**
-     * Calls the superclass {@link WikiContext#setPage(WikiPage)} method, but disables validation.
+     * Sets the page.
+     * @param page the wiki page.
      */
-    @Override
     @Validate( required = false)
     public void setPage( WikiPage page )
     {
-        super.setPage( page );
+        m_page = page;
+        getContext().setPage( page );
     }
     
     /**

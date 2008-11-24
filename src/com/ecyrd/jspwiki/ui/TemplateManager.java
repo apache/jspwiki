@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
@@ -490,7 +490,7 @@ public class TemplateManager
      */
     public Map listTimeFormats(PageContext pageContext)
     {
-        WikiContext context = WikiContext.findContext( pageContext ); 
+        WikiContext context = WikiActionBeanFactory.findContext( pageContext ); 
         Properties props = m_engine.getWikiProperties();
         ArrayList<String> tfArr = new ArrayList<String>(40);
         LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();
@@ -663,7 +663,7 @@ public class TemplateManager
      *  @param type the marker
      *  @return the generated marker comment
      */
-    public static String getMarker( WikiActionBean context, String type )
+    public static String getMarker( WikiContext context, String type )
     {
         if( type.equals(RESOURCE_JSLOCALIZEDSTRINGS) )
         {
@@ -685,7 +685,7 @@ public class TemplateManager
      *  @author Dirk Frederickx
      *  @since 2.5.108
      */
-    private static String getJSLocalizedStrings( WikiActionBean context )
+    private static String getJSLocalizedStrings( WikiContext context )
     {
         StringBuffer sb = new StringBuffer();
 
@@ -743,7 +743,7 @@ public class TemplateManager
      *  @param resource The resource to add.
      */
     @SuppressWarnings("unchecked")
-    public static void addResourceRequest( WikiActionBean ctx, String type, String resource )
+    public static void addResourceRequest( WikiContext ctx, String type, String resource )
     {
         HashMap<String,Vector<String>> resourcemap = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
@@ -803,7 +803,7 @@ public class TemplateManager
      */
 
     @SuppressWarnings("unchecked")
-    public static String[] getResourceRequests( WikiActionBean ctx, String type )
+    public static String[] getResourceRequests( WikiContext ctx, String type )
     {
         HashMap<String,Vector<String>> hm = (HashMap<String,Vector<String>>) ctx.getVariable( RESOURCE_INCLUDES );
 
@@ -825,7 +825,7 @@ public class TemplateManager
      * @return the array of types requested
      */
     @SuppressWarnings("unchecked")
-    public static String[] getResourceTypes( WikiActionBean ctx )
+    public static String[] getResourceTypes( WikiContext ctx )
     {
         String[] res = new String[0];
 
