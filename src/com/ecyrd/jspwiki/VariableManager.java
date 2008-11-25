@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.modules.InternalModule;
@@ -172,7 +171,7 @@ public class VariableManager
     }
 
     /**
-     *  Returns the value of a named variable.  See {@link #getValue(WikiActionBean, String)}.
+     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}.
      *  The only difference is that this method does not throw an exception, but it
      *  returns the given default value instead.
      *  

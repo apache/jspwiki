@@ -38,9 +38,8 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import com.ecyrd.jspwiki.action.HandlerInfo;
 import com.ecyrd.jspwiki.action.WikiActionBeanContext;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
@@ -197,8 +196,8 @@ public class WikiEngine
     /** Stores the ACL manager. */
     private AclManager       m_aclManager = null;
 
-    /** Creates wiki action beans based on context names. */
-    private WikiActionBeanFactory m_beanFactory = null;
+    /** Creates WikiContexts. */
+    private WikiContextFactory m_contextFactory = null;
 
     private TemplateManager  m_templateManager = null;
 
@@ -517,7 +516,7 @@ public class WikiEngine
         try
         {
             //  Initialize the WikiActionBeanResolver -- this MUST be done after setting the baseURL
-            m_beanFactory  = new WikiActionBeanFactory( this, props );
+            m_contextFactory  = new WikiContextFactory( this, props );
             
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
@@ -1048,7 +1047,7 @@ public class WikiEngine
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
-     *  {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#getSpecialPageReference(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageReference(String)}.
      *  </p>
      *  <p>
      *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
@@ -1061,7 +1060,7 @@ public class WikiEngine
      */
     public String getSpecialPageReference( String original )
     {
-        return m_beanFactory.getSpecialPageReference( original );
+        return m_contextFactory.getSpecialPageReference( original );
     }
 
     /**
@@ -1147,7 +1146,7 @@ public class WikiEngine
 
         try
         {
-            if( m_beanFactory.getSpecialPageReference(page) != null ) return true;
+            if( m_contextFactory.getSpecialPageReference(page) != null ) return true;
 
             if( getFinalPageName( page ) != null )
             {
@@ -1176,7 +1175,7 @@ public class WikiEngine
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        if( m_beanFactory.getSpecialPageReference(page) != null ) return true;
+        if( m_contextFactory.getSpecialPageReference(page) != null ) return true;
 
         String finalName = getFinalPageName( page );
 
@@ -1232,7 +1231,7 @@ public class WikiEngine
      *  Returns the correct page name, or null, if no such
      *  page can be found.  Aliases are considered. This
      *  method simply delegates to
-     *  {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#getFinalPageName(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
@@ -1241,7 +1240,7 @@ public class WikiEngine
     public String getFinalPageName( String page )
         throws ProviderException
     {
-        return m_beanFactory.getFinalPageName( page );
+        return m_contextFactory.getFinalPageName( page );
     }
 
     /**
@@ -1472,7 +1471,7 @@ public class WikiEngine
     {
         WikiPage page = getPage( pagename, version );
 
-        WikiContext context = m_beanFactory.newViewWikiContext( null, null, page );
+        WikiContext context = m_contextFactory.newViewContext( null, null, page );
 
         String res = getHTML( context, page );
 
@@ -1540,7 +1539,7 @@ public class WikiEngine
     {
         LinkCollector localCollector = new LinkCollector();
 
-        textToHTML( m_beanFactory.newViewWikiContext( null, null, page ),
+        textToHTML( m_contextFactory.newViewContext( null, null, page ),
                     pagedata,
                     localCollector,
                     null,
@@ -2029,12 +2028,12 @@ public class WikiEngine
     }
 
     /**
-     * Returns the WikiActionBeanFactory for this wiki engine.
+     * Returns the WikiContextFactory for this wiki engine.
      * @return the factory
      */
-    public WikiActionBeanFactory getWikiActionBeanFactory()
+    public WikiContextFactory getWikiContextFactory()
     {
-        return m_beanFactory;
+        return m_contextFactory;
     }
 
     /**
@@ -2105,8 +2104,6 @@ public class WikiEngine
      *  @param request the HTTP request
      *  @param requestContext the default context to use
      *  @return a new WikiContext object.
-     *  @deprecated use WikiActionBeanFactory instead, especially for WikiActionBeans that are not page-related.
-     *  This method returns <em>only</em> WikiContexts, not other WikiActionBean types
      *  @since 2.1.15.
      */
     // FIXME: We need to have a version which takes a fixed page
@@ -2119,21 +2116,13 @@ public class WikiEngine
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
         
-        // Find the WikiActionBean and event handler for this request context
-        HandlerInfo handler = m_beanFactory.findEventHandler( requestContext );
-        if( handler == null )
-        {
-            log.error( "No HandlerInfo found for request context '" + requestContext + "'! Check your annotations." );
-            return null;
-        }
-        
-        // Build the wiki context... dummy reply and response objects will be added by WikiActionBeanFactory
+        // Build the wiki context... dummy reply and response objects will be added by WikiContextFactory
         try
         {
-            WikiActionBeanContext context = m_beanFactory.newWikiContext( request, (HttpServletResponse)null, requestContext );
+            WikiActionBeanContext context = m_contextFactory.newContext( request, (HttpServletResponse)null, requestContext );
             
             // Stash the action bean/wiki context, and return it!
-            WikiActionBeanFactory.saveContext( request, context );
+            WikiContextFactory.saveContext( request, context );
             return context;
         }
         catch ( WikiException e )

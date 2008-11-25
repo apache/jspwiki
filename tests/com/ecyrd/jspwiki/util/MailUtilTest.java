@@ -55,7 +55,7 @@ public class MailUtilTest extends TestCase
         
         TestEngine testEngine = new TestEngine( m_props );
         
-        m_context = testEngine.getWikiActionBeanFactory().newViewWikiContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
+        m_context = testEngine.getWikiContextFactory().newViewContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
     }
 
     public void tearDown()

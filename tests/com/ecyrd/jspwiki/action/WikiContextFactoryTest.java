@@ -17,10 +17,10 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.*;
 
-public class WikiActionBeanFactoryTest extends TestCase
+public class WikiContextFactoryTest extends TestCase
 {
     TestEngine m_engine;
-    WikiActionBeanFactory resolver;
+    WikiContextFactory resolver;
 
     protected void setUp() throws Exception
     {
@@ -28,7 +28,7 @@ public class WikiActionBeanFactoryTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.put( WikiEngine.PROP_MATCHPLURALS, "yes" );
         m_engine = new TestEngine( props );
-        resolver = m_engine.getWikiActionBeanFactory();
+        resolver = m_engine.getWikiContextFactory();
         m_engine.saveText( "SinglePage", "This is a test." );
         m_engine.saveText( "PluralPages", "This is a test." );
     }
@@ -46,7 +46,7 @@ public class WikiActionBeanFactoryTest extends TestCase
         MockHttpServletResponse response = trip.getResponse();
         
         // Supplying an EditActionBean means the EDIT action
-        context = resolver.newWikiContext( request, response, WikiContext.EDIT );
+        context = resolver.newContext( request, response, WikiContext.EDIT );
         assertEquals( WikiContext.EDIT, context.getRequestContext() );
         assertNull( context.getPage() );
         
@@ -69,11 +69,11 @@ public class WikiActionBeanFactoryTest extends TestCase
         }
         
         // Supplying the PrefsActionBean means the PREFS context
-        context = resolver.newWikiContext( request, response, WikiContext.PREFS );
+        context = resolver.newContext( request, response, WikiContext.PREFS );
         assertEquals( WikiContext.PREFS, context.getRequestContext() );
         
         // Supplying the GroupActionBean means the VIEW_GROUP context
-        context = resolver.newWikiContext( request, response, WikiContext.VIEW_GROUP );
+        context = resolver.newContext( request, response, WikiContext.VIEW_GROUP );
         assertEquals( WikiContext.VIEW_GROUP, context.getRequestContext() );
     }
     
@@ -88,14 +88,14 @@ public class WikiActionBeanFactoryTest extends TestCase
         // Request for "UserPreference.jsp" should resolve to PREFS action
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/UserPreferences.jsp");
         request.setSession( session );
-        context = resolver.newWikiContext( request, response, WikiContext.PREFS );
+        context = resolver.newContext( request, response, WikiContext.PREFS );
         assertEquals( WikiContext.PREFS, context.getRequestContext() );
         
         // We don't care about JSPs not mapped to actions, because the bean we get only depends on the class we pass
         // FIXME: this won't work because WikiActionBeanResolver doesn't keep a cache of URLBindings 
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/NonExistent.jsp");
         request.setSession( session );
-        context = resolver.newWikiContext( request, response, WikiContext.EDIT );
+        context = resolver.newContext( request, response, WikiContext.EDIT );
         assertEquals( WikiContext.EDIT, context.getRequestContext() );
         assertNull( context.getPage() );
     }
@@ -113,7 +113,7 @@ public class WikiActionBeanFactoryTest extends TestCase
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Edit.jsp");
         request.setSession( session );
         request.getParameterMap().put( "page", new String[]{"SinglePage"} );
-        context = resolver.newWikiContext( request, response, WikiContext.EDIT );
+        context = resolver.newContext( request, response, WikiContext.EDIT );
         assertEquals( WikiContext.EDIT, context.getRequestContext() );
         assertEquals( page, context.getPage());
         
@@ -122,14 +122,14 @@ public class WikiActionBeanFactoryTest extends TestCase
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Wiki.jsp");
         request.setSession( session );
         request.getParameterMap().put( "page", new String[]{"FindPage"} );
-        context = resolver.newWikiContext( request, response, WikiContext.VIEW );
+        context = resolver.newContext( request, response, WikiContext.VIEW );
         assertEquals( WikiContext.VIEW, context.getRequestContext() );
         
         // Passing a VIEW_GROUP request with group="Art" gets a ViewGroupActionBean
         request = new MockHttpServletRequest( m_engine.getServletContext().getServletContextName(), "/Wiki.jsp");
         request.setSession( session );
         request.getParameterMap().put( "group", new String[]{"Art"} );
-        context = resolver.newWikiContext( request, response, WikiContext.VIEW_GROUP );
+        context = resolver.newContext( request, response, WikiContext.VIEW_GROUP );
         assertEquals( WikiContext.VIEW_GROUP, context.getRequestContext() );
     }
     
@@ -166,6 +166,6 @@ public class WikiActionBeanFactoryTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( WikiActionBeanFactoryTest.class );
+        return new TestSuite( WikiContextFactoryTest.class );
     }
 }

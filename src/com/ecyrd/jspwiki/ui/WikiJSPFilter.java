@@ -32,7 +32,7 @@ import org.apache.log4j.NDC;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiInterceptor;
 import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.util.UtilJ2eeCompat;
 import com.ecyrd.jspwiki.util.WatchDog;
@@ -104,7 +104,7 @@ public class WikiJSPFilter extends WikiServletFilter
             }
         
             // fire PAGE_REQUESTED event
-            WikiActionBean wikiActionBean = WikiActionBeanFactory.findActionBean( request );
+            WikiActionBean wikiActionBean = WikiInterceptor.findActionBean( request );
             WikiContext wikiContext = wikiActionBean.getContext();
             boolean isViewContext = WikiContext.VIEW .equals( wikiContext.getRequestContext() );
             if ( isViewContext )

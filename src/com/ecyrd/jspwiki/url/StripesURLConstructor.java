@@ -105,7 +105,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
         // For the other contexts, initialize UrlBuilder with the WikiActionBean's URLBinding
         else
         {
-            HandlerInfo handler = m_engine.getWikiActionBeanFactory().findEventHandler( context );
+            HandlerInfo handler = m_engine.getWikiContextFactory().findEventHandler( context );
             Class<? extends WikiActionBean> beanClass = handler.getActionBeanClass();
             UrlBinding mapping = UrlBindingFactory.getInstance().getBindingPrototype(beanClass);
             baseUrl = mapping == null ? null : mapping.getPath();

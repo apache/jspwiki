@@ -66,7 +66,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         {
             try
             {
-                String finalName = engine.getWikiActionBeanFactory().getFinalPageName( pageName );
+                String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
                 if( finalName == null || engine.getPage( finalName ) == null )
                 {
                     errors.add( new LocalizableError( "pageNotFound", pageName ) );

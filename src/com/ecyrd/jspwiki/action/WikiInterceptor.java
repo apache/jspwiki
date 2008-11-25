@@ -4,18 +4,17 @@ import java.lang.reflect.Method;
 import java.security.Permission;
 import java.util.Map;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.controller.ExecutionContext;
-import net.sourceforge.stripes.controller.Interceptor;
-import net.sourceforge.stripes.controller.Intercepts;
-import net.sourceforge.stripes.controller.LifecycleStage;
+import net.sourceforge.stripes.controller.*;
 
 import org.apache.log4j.Logger;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
@@ -54,7 +53,7 @@ import com.ecyrd.jspwiki.auth.SessionMonitor;
  * <p>
  * After the intercept method fires, calling classes can obtain the saved
  * WikiActionBean by calling
- * {@link WikiActionBeanFactory#findActionBean(javax.servlet.ServletRequest)}.
+ * {@link WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
  * This is the recommended method that JSP scriptlet code should use.
  * </p>
  * <p>
@@ -70,6 +69,11 @@ import com.ecyrd.jspwiki.auth.SessionMonitor;
 public class WikiInterceptor implements Interceptor
 {
     private static final Logger log = Logger.getLogger( WikiInterceptor.class );
+    /**
+     * The PageContext attribute name of the WikiActionBean stored by
+     * WikiInterceptor.
+     */
+    public static final String ATTR_ACTIONBEAN = "wikiActionBean";
 
     /**
      * Intercepts the Stripes lifecycle stages and dispatches execution to
@@ -138,7 +142,7 @@ public class WikiInterceptor implements Interceptor
         }
 
         // Stash the WikiActionBean and WikiPage in the request
-        WikiActionBeanFactory.saveActionBean( request, actionBean );
+        WikiInterceptor.saveActionBean( request, actionBean );
 
         if( log.isDebugEnabled() )
         {
@@ -221,6 +225,58 @@ public class WikiInterceptor implements Interceptor
         }
 
         return null;
+    }
+
+    /**
+     * <p>
+     * Saves the supplied WikiActionBean and its associated WikiContext,
+     * WikiEngine and WikiSession in
+     * request scope. The action bean is saved as an attribute named
+     * {@link WikiInterceptor#ATTR_ACTIONBEAN}. The other attributes are saved
+     * as described in {@link WikiContextFactory#saveContext(HttpServletRequest, WikiContext)}.
+     * </p>
+     * 
+     * @param request the HTTP request
+     * @param actionBean the WikiActionBean to save
+     */
+    public static void saveActionBean( HttpServletRequest request, WikiActionBean actionBean )
+    {
+        // Stash the WikiActionBean
+        request.setAttribute( WikiInterceptor.ATTR_ACTIONBEAN, actionBean );
+    
+        // Stash the other attributes
+        WikiContextFactory.saveContext( request, actionBean.getContext() );
+    }
+
+    /**
+     * Returns the WikiActionBean associated with the current
+     * {@link javax.servlet.http.HttpServletRequest}. The ActionBean will be
+     * retrieved from attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}.
+     * If an ActionBean is not found under this name, the standard Stripes
+     * attribute
+     * {@link net.sourceforge.stripes.controller.StripesConstants#REQ_ATTR_ACTION_BEAN}
+     * will be attempted.
+     * 
+     * @param request the HTTP request
+     * @return the WikiActionBean
+     * @throws IllegalStateException if the WikiActionBean was not found in the
+     *             request scope
+     */
+    public static WikiActionBean findActionBean( ServletRequest request )
+    {
+        WikiActionBean bean = (WikiActionBean) request.getAttribute( WikiInterceptor.ATTR_ACTIONBEAN );
+        if( bean == null )
+        {
+            log.debug( "WikiActionBean not found under request attribute '" + WikiInterceptor.ATTR_ACTIONBEAN
+                       + "'; trying standard Stripes attribute '" + StripesConstants.REQ_ATTR_ACTION_BEAN + "'." );
+            bean = (WikiActionBean) request.getAttribute( StripesConstants.REQ_ATTR_ACTION_BEAN );
+        }
+    
+        if( bean == null )
+        {
+            throw new IllegalStateException( "WikiActionBean not found in request! Something failed to stash it..." );
+        }
+        return bean;
     }
 
 }

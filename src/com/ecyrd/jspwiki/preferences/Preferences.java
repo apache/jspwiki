@@ -37,7 +37,7 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
@@ -96,7 +96,7 @@ public class Preferences
     {
         Preferences prefs = new Preferences();
         Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        WikiContext ctx = WikiActionBeanFactory.findContext( pageContext );
+        WikiContext ctx = WikiContextFactory.findContext( pageContext );
         
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", 

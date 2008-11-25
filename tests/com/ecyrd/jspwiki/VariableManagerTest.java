@@ -29,7 +29,7 @@ public class VariableManagerTest extends TestCase
 
             m_variableManager = new VariableManager( props );
             TestEngine testEngine = new TestEngine( props );
-            m_context = testEngine.getWikiActionBeanFactory().newViewWikiContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
+            m_context = testEngine.getWikiContextFactory().newViewContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
 
         }
         catch( IOException e ) {}

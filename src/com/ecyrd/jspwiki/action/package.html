@@ -30,9 +30,9 @@ called <em>events</em> that correspond to the values that old-style
 JSPWiki templates stored in their "action" form parameters. In JSPWiki
 3.0, we provide a subclass called <a href="../ui/WikiActionBean.html">WikiActionBean</a>
 includes accessors for things needed by JSPWiki, such as a {@linkplain
-com.ecyrd.jspwiki.action.WikiActionBean#getEngine()} method that returns
+com.ecyrd.jspwiki.action.WikiActionBeanContext#getEngine()} method that returns
 the WikiEngine, and {@linkplain
-com.ecyrd.jspwiki.action.WikiActionBean#getWikiSession()} that returns
+com.ecyrd.jspwiki.action.WikiActionBeanContext#getWikiSession()} that returns
 the user's WikiSession.</p>
 
 <h3>Request parameter binding</h3>
@@ -422,7 +422,7 @@ to the use simply need to return one of these four resolutions. For
 example, the previous scriptlet code could be re-written as an
 EditActionBean event handler as follows:
 <pre>
-@HandlesEvent("save")
+&#064;HandlesEvent("save")
 public Resolution save()
 {
   if( m_change != null && m_change.getTime() != m_pagedate )

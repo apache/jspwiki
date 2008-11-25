@@ -38,7 +38,7 @@ public class WysiwygEditingRendererTest extends TestCase
     private String render(String s) throws IOException
     {
         WikiPage dummyPage = new WikiPage(m_testEngine,"TestPage");
-        WikiContext ctx = m_testEngine.getWikiActionBeanFactory().newViewWikiContext( null, null, dummyPage );
+        WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( null, null, dummyPage );
 
         StringReader in = new StringReader(s);
 

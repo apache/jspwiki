@@ -324,7 +324,7 @@ public class TestEngine extends WikiEngine
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = this.getWikiActionBeanFactory().newViewWikiContext( request, null, page );
+        WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
 
@@ -340,7 +340,7 @@ public class TestEngine extends WikiEngine
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = this.getWikiActionBeanFactory().newViewWikiContext( request, null, page );
+        WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
 

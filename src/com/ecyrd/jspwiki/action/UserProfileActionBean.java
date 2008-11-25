@@ -23,7 +23,7 @@ import com.ecyrd.jspwiki.workflow.DecisionRequiredException;
 /**
  * @author Andrew Jaquith
  */
-@UrlBinding( "/UserProfile.jsp" )
+@UrlBinding( "/UserProfile.action" )
 public class UserProfileActionBean extends AbstractActionBean
 {
     Logger log = Logger.getLogger( UserProfileActionBean.class );

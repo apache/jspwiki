@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.ui.Editor;
 import com.ecyrd.jspwiki.ui.EditorManager;
 
@@ -47,7 +47,7 @@ public class EditorIteratorTag
 
     public final int doStartTag()
     {
-        m_wikiContext = WikiActionBeanFactory.findContext(pageContext);
+        m_wikiContext = WikiContextFactory.findContext(pageContext);
 
         WikiEngine engine = m_wikiContext.getEngine();
         EditorManager mgr    = engine.getEditorManager();

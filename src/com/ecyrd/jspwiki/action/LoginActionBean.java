@@ -97,7 +97,6 @@ public class LoginActionBean extends AbstractActionBean
         if( getContext().getWikiSession().isAuthenticated() )
         {
             errors.addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
-            getContext().flash( this );
             return new RedirectResolution( MessageActionBean.class );
         }
 
@@ -129,7 +128,6 @@ public class LoginActionBean extends AbstractActionBean
         {
             UrlBuilder builder = new UrlBuilder( getContext().getLocale(), "/Login.jsp", false );
             builder.addParameter( "tab", "logincontent" );
-            getContext().flash( this );
             r = new RedirectResolution( builder.toString() );
         }
 
@@ -215,7 +213,6 @@ public class LoginActionBean extends AbstractActionBean
             {
                 ResourceBundle rb = getContext().getBundle( "CoreResources" );
                 getContext().getValidationErrors().addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
-                getContext().flash( this );
                 return new RedirectResolution( MessageActionBean.class );
             }
             session.setAttribute( "_redirect", "I love Outi" ); // Any marker

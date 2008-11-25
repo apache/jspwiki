@@ -21,7 +21,7 @@ public class AllTests extends TestCase
         suite.addTest( UserPreferencesActionBeanTest.suite() );
         suite.addTest( UserProfileActionBeanTest.suite() );
         suite.addTest( ViewActionBeanTest.suite() );
-        suite.addTest( WikiActionBeanFactoryTest.suite() );
+        suite.addTest( WikiContextFactoryTest.suite() );
 
         return suite;
     }

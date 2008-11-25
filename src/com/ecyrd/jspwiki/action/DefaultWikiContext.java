@@ -222,25 +222,6 @@ public class DefaultWikiContext implements WikiContext
     }
 
     /**
-     * Returns the target of this wiki context: a page, group name or JSP. If
-     * the associated Command is a PageCommand, this method returns the page's
-     * name. Otherwise, this method delegates to the associated Command's
-     * {@link com.ecyrd.jspwiki.ui.Command#getName()} method. Calling classes
-     * can rely on the results of this method for looking up canonically-correct
-     * page or group names. Because it does not automatically assume that the
-     * wiki context is a PageCommand, calling this method is inherently safer
-     * than calling <code>getPage().getName()</code>.
-     * 
-     * @return the name of the target of this wiki context
-     * @see com.ecyrd.jspwiki.ui.PageCommand#getName()
-     * @see com.ecyrd.jspwiki.ui.GroupCommand#getName()
-     */
-    public String getName()
-    {
-        return m_page != null ? m_page.getName() : "<no page>";
-    }
-
-    /**
      * Returns the page that is being handled.
      * 
      * @return the page which was fetched.

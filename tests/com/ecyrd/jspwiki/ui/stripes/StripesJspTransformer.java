@@ -10,7 +10,7 @@ import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.UrlBinding;
 import net.sourceforge.stripes.util.ResolverUtil;
 
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
@@ -27,8 +27,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
     public void initialize( Map<String, Object> sharedState )
     {
         // Find all ActionBean implementations on the classpath
-        String beanPackagesProp = System.getProperty( WikiActionBeanFactory.PROPS_ACTIONBEAN_PACKAGES,
-                                                      WikiActionBeanFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
+        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
+                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
         String[] beanPackages = beanPackagesProp.split( "," );
         ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
         resolver.findImplementations( ActionBean.class, beanPackages );

@@ -37,7 +37,7 @@ import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 
@@ -182,7 +182,7 @@ public class TraditionalDiffProvider implements DiffProvider
             double[] choiceLimits = { 1, 2 };
             
             MessageFormat fmt = new MessageFormat("");
-            fmt.setLocale( WikiActionBeanFactory.getLocale(m_context) );
+            fmt.setLocale( WikiContextFactory.getLocale(m_context) );
             ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );
             Format[] formats = { NumberFormat.getInstance(), cfmt, NumberFormat.getInstance() };

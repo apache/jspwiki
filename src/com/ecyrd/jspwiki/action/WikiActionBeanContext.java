@@ -8,13 +8,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.ActionBeanContext;
-import net.sourceforge.stripes.controller.FlashScope;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.tags.WikiTagBase;
 
 /**
  * <p>
@@ -25,7 +23,7 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
  * </p>
  * <p>
  * When the WikiActionBeanContext is created, callers <em>must</em> set the
- * WikiEngine reference by calling either {@link #setWikiEngine(WikiEngine)}
+ * WikiEngine reference by calling either {@link #setEngine(WikiEngine)}
  * (which sets it directly), or {@link #setServletContext(ServletContext)}
  * (which sets it lazily). when {@link #setServletContext(ServletContext)}. The
  * HttpServletRequest reference is set via
@@ -45,37 +43,6 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     {
         super();
         m_delegate = new DefaultWikiContext();      // Initialize the delegate
-    }
-
-    /**
-     * Adds a supplied ActionBean to "flash scope" so that it can be used by the
-     * next HttpRequest. When this method is called, the ActionBean is stashed
-     * in the request and the flash scope as attributes. For both, the bean is
-     * stored under names {@link WikiActionBeanFactory#ATTR_ACTIONBEAN} and
-     * {@link WikiTagBase#ATTR_CONTEXT}. This method assumes that the method
-     * {@link #setRequest(HttpServletRequest)} has been previously called.
-     * 
-     * @param actionBean the action bean to add
-     * @throws IllegalStateException if the request object has not been
-     *             previously set for this ActionBeanContext
-     */
-    public void flash( WikiActionBean actionBean )
-    {
-        if( getRequest() == null )
-        {
-            throw new IllegalStateException( "Request not set! Cannot flash action bean." );
-        }
-        FlashScope flash = FlashScope.getCurrent( getRequest(), true );
-        flash.put( actionBean );
-        flash.put( WikiActionBeanFactory.ATTR_ACTIONBEAN, actionBean );
-
-        // If not a WikiContext, synthesize a fake one
-        WikiEngine engine = m_delegate.getEngine();
-        WikiPage page = engine.getPage( engine.getFrontPage() );
-        WikiContext context = engine.getWikiActionBeanFactory().newViewWikiContext( getRequest(), getResponse(), page );
-
-        // Stash the WikiContext
-        flash.put( WikiTagBase.ATTR_CONTEXT, context );
     }
 
     /**
@@ -113,7 +80,7 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
      */
     public void setRequestContext( String arg )
     {
-        HandlerInfo handler = getEngine().getWikiActionBeanFactory().findEventHandler( arg );
+        HandlerInfo handler = getEngine().getWikiContextFactory().findEventHandler( arg );
         setEventName( handler.getEventName() );
         m_delegate.setRequestContext( arg );
     }
@@ -243,14 +210,6 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     public HttpServletRequest getHttpRequest()
     {
         return m_delegate.getHttpRequest();
-    }
-
-    /**
-     *  {@inheritDoc}
-     */
-    public String getName()
-    {
-        return m_delegate.getName();
     }
 
     /**

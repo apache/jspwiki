@@ -51,7 +51,7 @@ public class ViewActionBean extends AbstractActionBean
      * for one, or a "special page" reference. This method considers
      * special page names from <code>jspwiki.properties</code>, and possible aliases.
      * To determine whether the page is a special page, this method calls
-     *  {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#getSpecialPageReference(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageReference(String)}.
      *  @return a {@link net.sourceforge.stripes.action.RedirectResolution} to the special
      *  page's real URL, if a special page was specified, or <code>null</code> otherwise
      */
@@ -102,7 +102,7 @@ public class ViewActionBean extends AbstractActionBean
         
         // Ok, the user supplied a page. That's nice. But is it a special page?
         String pageName = page.getName();
-        String specialUrl = getContext().getEngine().getWikiActionBeanFactory().getSpecialPageReference( pageName );
+        String specialUrl = getContext().getEngine().getWikiContextFactory().getSpecialPageReference( pageName );
         if ( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );

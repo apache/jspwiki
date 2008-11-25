@@ -83,7 +83,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                        null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
@@ -114,7 +114,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                                           null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test file.txt" );
 
@@ -145,7 +145,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                                           null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt", 1 );
 
@@ -180,7 +180,7 @@ public class AttachmentManagerTest extends TestCase
         att.setAuthor( "FooBar" );
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                                           null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt" );
 
@@ -206,7 +206,7 @@ public class AttachmentManagerTest extends TestCase
         // Check that first author did not disappear
         //
 
-        Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                                           null, null, new WikiPage(m_engine, NAME1)), 
                                                        "test1.txt",
                                                        1 );
@@ -241,7 +241,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiActionBeanFactory().newViewWikiContext(
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
                                                                           null, null, new WikiPage(m_engine, NAME1)),
                                                        "test1" );
 

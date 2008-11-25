@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiActionBeanFactory;
+import com.ecyrd.jspwiki.action.WikiInterceptor;
 
 /**
  *  Base class for JSPWiki tags.  You do not necessarily have
@@ -83,7 +83,7 @@ public abstract class WikiTagBase
     /**
      * Initializes the tag, and sets an internal reference to the current WikiActionBean
      * by delegating to
-     * {@link com.ecyrd.jspwiki.action.WikiActionBeanFactory#findActionBean(javax.servlet.ServletRequest)}.
+     * {@link com.ecyrd.jspwiki.action.WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
      * (That method retrieves the WikiActionBean from page scope.).
      * If the WikiActionBean is a WikiContext, a specific reference to the WikiContext
      * will be set also. Both of these available as protected fields {@link #m_wikiActionBean} and
@@ -98,7 +98,7 @@ public abstract class WikiTagBase
         try
         {
             // Retrieve the ActionBean injected by WikiInterceptor
-            m_wikiActionBean = WikiActionBeanFactory.findActionBean( this.getPageContext().getRequest() );
+            m_wikiActionBean = WikiInterceptor.findActionBean( this.getPageContext().getRequest() );
             
             // It's really bad news if the WikiActionBean wasn't injected (or saved as a variable!)
             if ( m_wikiActionBean == null )

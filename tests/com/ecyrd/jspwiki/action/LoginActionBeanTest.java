@@ -63,7 +63,7 @@ public class LoginActionBeanTest extends TestCase
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
         assertEquals( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
-        assertEquals( "/Wiki.jsp", trip.getDestination() );
+        assertEquals( "/Wiki.action", trip.getDestination() );
 
         // Should be just one cookie (the JSPWiki asserted name cookie)
         Cookie[] cookies = trip.getResponse().getCookies();
@@ -131,7 +131,7 @@ public class LoginActionBeanTest extends TestCase
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
         assertEquals( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
-        assertEquals( "/Wiki.jsp?page=Foo", trip.getDestination() );
+        assertEquals( "/Wiki.action?page=Foo", trip.getDestination() );
     }
 
     public void testLoginRememberMe() throws Exception
@@ -157,7 +157,7 @@ public class LoginActionBeanTest extends TestCase
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
         assertEquals( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
-        assertEquals( "/Wiki.jsp", trip.getDestination() );
+        assertEquals( "/Wiki.action", trip.getDestination() );
 
         // Should be two cookies (the JSPWiki asserted name cookie plus the
         // Remember Me? cookie)
@@ -185,7 +185,7 @@ public class LoginActionBeanTest extends TestCase
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
         assertNotSame( Users.JANNE, wikiSession.getLoginPrincipal().getName() );
-        assertEquals( "/Wiki.jsp", trip.getDestination() );
+        assertEquals( "/Wiki.action", trip.getDestination() );
 
         // Should be just one cookie (the JSPWiki asserted name cookie), and it
         // should be empty
