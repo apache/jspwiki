@@ -655,11 +655,11 @@ var EditTools =
 		this.cacheTextarea=ta.value;
 
 		if( this.sections ){
-			var	s = ta.value;
-			if( s.lastIndexOf("\n") + 1 != s.length ) ta.value += '\n';
-
-			s = ma.value;
-			ma.value = s.substring(0, ta.begin) + ta.value + s.substring(ta.end);
+			var	s = ma.value,
+				//insert \n to ensure the next line's !!!header remains at column 0.
+				addNewLine = ((ta.value.slice(-1) != '\n')  && (s.charAt(ta.end) =='!')) ? '\n' : '';
+			
+			ma.value = s.substring(0, ta.begin) + ta.value + addNewLine + s.substring(ta.end);
 			ta.end = ta.begin + ta.value.length;
 			this.onSectionLoad();  //refresh section-edit menu
 		}		

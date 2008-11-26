@@ -1,3 +1,59 @@
+2008-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-12
+        
+        * JSPWIKI-440: Plesk installation of war files.
+        JSPWiki (in most cases) fails to install from an unmodified download because
+        the pageDir points to a directory that cannot be created, changed a couple of default
+        values in build.properties.
+        
+        * JSPWIKI-424 The famous trailing slash in baseURL
+        Now also fixed in Installer and DefaultURLConstructor.
+        
+2008-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-11
+        
+        * JSPWIKI-407: applied zh_CN patch from Hubert Chang
+        
+2008-11-20  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 3.0.0-svn-10  -- merged from 2.8.1-svn-12
+        
+        * [JSPWIKI-381] fixed a bug with periodicially refreshed sneak-preview
+        while in section-edit mode. When section-edit was active,
+        linefeeds were inserted at every sneak-prev refresh.
+        
+        * [JSPWIKI-384] Filter js-scripts from input fields and cookies.
+        (xss vulnerability)
+        
+        * Added 800x600 plain-vanilla skin
+        
+2008-11-18 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-9
+        
+        * JSPWIKI-439: German localization by Florian Holeczek
+ 
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-8
+        
+        * [JSPWIKI-428]: WeblogPlugin was not properly finding the page title
+        due to misshapen regexp.
+        
+2008-11-13 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-7
+        
+        * JSPWIKI-407: added Italian corepages and update to it resources, thanks to Luca
+ 
+2008-11-10 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-6
+        
+        * JSPWIKI-424: Enforce (autofix) baseURL property to end with trailing slash, reported by John Volkar
+
 2008-11-10  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-5

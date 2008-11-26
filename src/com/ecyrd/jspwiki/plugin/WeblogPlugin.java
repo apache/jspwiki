@@ -108,7 +108,7 @@ public class WeblogPlugin
     static
     {
         // This is a pretty ugly, brute-force regex. But it will do for now...
-        HEADINGPATTERN = Pattern.compile("(<h[1-4].*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
+        HEADINGPATTERN = Pattern.compile("(<h[1-4][^>]*>)(.*)(</h[1-4]>)", Pattern.CASE_INSENSITIVE);
     }
 
     /**

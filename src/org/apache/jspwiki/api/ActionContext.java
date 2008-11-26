@@ -20,18 +20,15 @@
  */
 package org.apache.jspwiki.api;
 
-import java.io.IOException;
-import java.security.Permission;
 import java.security.Principal;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
- *  The AbstractContext represents a request lifecycle.  It is valid throughout
+ *  The ActionContext represents a request lifecycle.  It is valid throughout
  *  the request, and gives access to innards of JSPWiki.
  *  <p>
  *  This mostly replaces the old WikiContext class.  The reason is that WikiContext
@@ -43,23 +40,8 @@ import javax.servlet.http.HttpServletResponse;
  *  or filters).
  */
 // FIXME: This might be the wrong name.
-public interface AbstractContext
+public interface ActionContext
 {
-    
-    /**
-     *  Returns the name of the current template which is in use.
-     *  
-     *  @return The template name
-     */
-    // FIXME: Would it be better to return an object (e.g. WikiTemplate?)
-    public String getContentTemplate();
-    
-    /**
-     *  Returns the name of the top-level JSP file that this one refers to
-     *  @return The JSP file name
-     */
-    // FIXME: Shouldn't this be really just a pointer to the bean?
-    public String getJSP();
     
     /**
      *  Returns the handling engine.
@@ -134,41 +116,6 @@ public interface AbstractContext
     public Principal getCurrentUser();
 
     /**
-     *  A shortcut to generate a VIEW url.
-     *
-     *  @param page The page to which to link.
-     *  @return An URL to the page.  This honours the current absolute/relative setting.
-     */
-    // FIXME: Better to create a new URL creation class, which is WikiContext-specific?
-    public String getViewURL( String page );
-
-    /**
-     *  Creates an URL for the given request context.
-     *
-     *  @param context e.g. WikiContext.EDIT
-     *  @param page The page to which to link
-     *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
-     */
-    public String getURL( String context,
-                          String page );
-
-    /**
-     *  Returns an URL from a page. It this WikiContext instance was constructed
-     *  with an actual HttpServletRequest, we will attempt to construct the
-     *  URL using HttpUtil, which preserves the HTTPS portion if it was used.
-     *
-     *  @param context The request context (e.g. WikiContext.UPLOAD)
-     *  @param page    The page to which to link
-     *  @param params  A list of parameters, separated with "&amp;"
-     *
-     *  @return An URL to the given context and page.
-     */
-    public String getURL( String context,
-                          String page,
-                          String params );
-
-
-    /**
      *  Returns a shallow clone of the WikiContext.
      *
      *  @since 2.1.37.
@@ -185,56 +132,6 @@ public interface AbstractContext
      *  @return The WikiSession associate with this context.
      */
     public WikiSession getWikiSession();
-
-    /**
-     * Returns the permission required to successfully execute this context.
-     * For example, the a wiki context of VIEW for a certain page means that
-     * the PagePermission "view" is required for the page. In some cases, no
-     * particular permission is required, in which case a dummy permission will
-     * be returned ({@link java.util.PropertyPermission}<code> "os.name",
-     * "read"</code>). This method is guaranteed to always return a valid,
-     * non-null permission.
-     * @return the permission
-     * @since 2.4
-     */
-    public Permission requiredPermission();
-
-
-    /**
-     * Checks whether the current user has access to this wiki context,
-     * by obtaining the required Permission ({@link #requiredPermission()})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as an attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * Note that this method will automatically redirect the user to
-     * a login or error page, as appropriate, if access fails. This is
-     * NOT guaranteed to be default behavior in the future.
-     * @param response the http response
-     * @return the result of the access check
-     * @throws IOException In case something goes wrong
-     */
-    // FIXME: Is this the correct place really for this?
-    public boolean hasAccess( HttpServletResponse response ) throws IOException;
-
-    /**
-     * Checks whether the current user has access to this wiki context (and
-     * optionally redirects if not), by obtaining the required Permission ({@link #requiredPermission()})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * @return the result of the access check
-     * @param response The servlet response object
-     * @param redirect If true, makes an automatic redirect to the response
-     * @throws IOException If something goes wrong
-     */
-    // FIXME: Is this the correct place really for this?
-    public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException;
 
     /**
      *  Locates the i18n ResourceBundle given.  This method interprets
