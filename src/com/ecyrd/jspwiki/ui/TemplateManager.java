@@ -663,7 +663,7 @@ public class TemplateManager
      *  @param type the marker
      *  @return the generated marker comment
      */
-    public static String getMarker( WikiContext context, String type )
+    public static String getMarker(WikiContext context, String type )
     {
         if( type.equals(RESOURCE_JSLOCALIZEDSTRINGS) )
         {

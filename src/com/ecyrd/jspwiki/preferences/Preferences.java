@@ -114,6 +114,9 @@ public class Preferences
         prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language",
                                                           getLocale( ctx ).toString() ) );
 
+        prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting",
+                                                          "" ) );
+
         // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
         // disabling it until knowing why it's happening
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
@@ -196,7 +199,7 @@ public class Preferences
 
     
     /**
-     * Get Locale according to the Stripes ActionBeanContext.
+     * Get Locale according to user-preference settings or the Stripes ActionBeanContext.
      * 
      * @param context The context to examine.
      * @return a Locale object.
@@ -233,11 +236,8 @@ public class Preferences
         // otherwise try to find out the browser's preferred language setting, or use the JVM's default
         if( loc == null)
         {    
-    	    if( context.getHttpRequest() == null )
-        	{
-            	throw new IllegalStateException( "WikiActionBean did not have a valid ActionBeanContext or associated request." );
-	        }
-            loc = ( context.getHttpRequest() != null ) ? context.getHttpRequest().getLocale() : Locale.getDefault();
+            HttpServletRequest request = context.getHttpRequest();
+            loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
 
         //log.info( "using locale "+loc.toString() );

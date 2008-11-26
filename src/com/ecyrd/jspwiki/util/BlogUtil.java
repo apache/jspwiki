@@ -59,7 +59,7 @@ public final class BlogUtil
 
         if( blogname == null )
         {
-            blogname = engine.getApplicationName()+": "+ context.getPage().getName();
+            blogname = engine.getApplicationName()+": "+context.getPage().getName();
         }
 
         return blogname;

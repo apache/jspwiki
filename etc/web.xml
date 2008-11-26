@@ -2,11 +2,11 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
         version="2.4">
 
    <description>
-       JSPWiki is an open source JSP-based WikiClone.  It is licenced
+       JSPWiki is an open source JSP-based WikiClone.  It is licensed
        under the Apache 2.0 license.
 
        For more information, please come to http://www.jspwiki.org/

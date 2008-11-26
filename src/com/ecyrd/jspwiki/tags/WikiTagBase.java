@@ -106,9 +106,8 @@ public abstract class WikiTagBase
                 throw new JspException( "Can't find WikiActionBean in page or request context! (tag=" + this.getClass() + ")" );
             }
 
-            // Retrieve the WikiContext injected by WikiInterceptor (could be a fake context!)
-            m_wikiContext = (WikiContext) pageContext.getAttribute( ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
+            // The WikiContext is the ActionBean's ActionBeanContext
+            m_wikiContext = m_wikiActionBean.getContext();
 
             if( m_wikiContext == null )
             {

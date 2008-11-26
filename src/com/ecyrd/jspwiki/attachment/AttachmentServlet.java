@@ -499,7 +499,7 @@ public class AttachmentServlet
         {
             InputStream data = req.getInputStream();
 
-            WikiContext context = (WikiContext)m_engine.createContext( req, WikiContext.UPLOAD );
+            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
 
             String wikipage = path.get( 0 );
 
@@ -586,7 +586,7 @@ public class AttachmentServlet
             
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
-            WikiContext context = (WikiContext)m_engine.createContext( req, WikiContext.ATTACH );
+            WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
 
             UploadListener pl = new UploadListener();
 

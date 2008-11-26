@@ -115,7 +115,7 @@ public class TestEngine extends WikiEngine
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("com.ecyrd.jspwiki.WikiEngine", this);
     }
-
+    
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession.
@@ -125,7 +125,7 @@ public class TestEngine extends WikiEngine
     {
         return newHttpRequest( "/Wiki.jsp" );
     }
-    
+
     /**
      * Creates a correctly-instantiated mock HttpServletRequest with an associated
      * HttpSession and path.

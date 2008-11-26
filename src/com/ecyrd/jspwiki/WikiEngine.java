@@ -519,7 +519,7 @@ public class WikiEngine
         //        of a better way to do the startup-sequence.
         try
         {
-            //  Initialize the WikiActionBeanResolver -- this MUST be done after setting the baseURL
+            //  Initialize the WikiContextFactory -- this MUST be done after setting the baseURL
             m_contextFactory  = new WikiContextFactory( this, props );
             
             Class urlclass = ClassUtil.findClass( "com.ecyrd.jspwiki.url",
@@ -2003,7 +2003,7 @@ public class WikiEngine
      *  throw a NoSuchVariableException, but returns null in case the variable does
      *  not exist.
      *
-     *  @param context WikiActionBean to look up the variable in
+     *  @param context WikiContext to look the variable in
      *  @param name Name of the variable to look for
      *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2

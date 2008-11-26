@@ -299,6 +299,7 @@ public class VariableManager
                 if( metadata != null )
                     return metadata.toString();
             }
+            
             //
             // And the final straw part 2: see if the "real" current page has
             // named metadata. This allows a parent page to control a inserted
