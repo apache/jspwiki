@@ -40,8 +40,7 @@ import com.ecyrd.jspwiki.Release;
  * <p>
  * You can decide at runtime which logging framework to use by placing one of
  * the slf4j wrapped implementations in WEB-INF/lib. By default, JSPWiki ships
- * with a log4j implementation. The factory keeps a HashMap of all registered
- * loggers to a maximum of 1000 Loggers. The static initializer calls the
+ * with a log4j implementation. The static initializer calls the
  * SLF4JBridgeHandler.install() which is a jul handler, that routes all incoming
  * jul records to the slf4j API.
  * </p>
@@ -51,13 +50,13 @@ import com.ecyrd.jspwiki.Release;
  */
 public class LoggerFactory
 {
-    private static boolean log4jPresent = true;
+    private static boolean c_log4jPresent = true;
 
     public static final String SLF4J_LOG4J_ADAPTER_CLASS = "org.slf4j.impl.Log4jLoggerAdapter";
 
     public static final String LOG4J_LOGGER_CLASS = "org.apache.log4j.Logger";
 
-    private static HashMap<String, LoggerImpl> registeredLoggers = new HashMap<String, LoggerImpl>( 1000 );
+    private static HashMap<String, LoggerImpl> c_registeredLoggers = new HashMap<String, LoggerImpl>( 200 );
 
     static
     {
@@ -70,17 +69,17 @@ public class LoggerFactory
      */
     public static final synchronized Logger getLogger( String loggerName )
     {
-        if( registeredLoggers.get( loggerName ) == null )
+        if( c_registeredLoggers.get( loggerName ) == null )
         {
             LoggerImpl logger = new LoggerImpl( loggerName );
-            registeredLoggers.put( loggerName, logger );
-            if( log4jPresent )
+            c_registeredLoggers.put( loggerName, logger );
+            if( c_log4jPresent )
             {
                 registerLoggerMBean( loggerName );
             }
             return logger;
         }
-        return registeredLoggers.get( loggerName );
+        return c_registeredLoggers.get( loggerName );
     }
 
     /**
@@ -129,7 +128,7 @@ public class LoggerFactory
         {
             // apparently we cannot find the slf4j log4j adapter, so we assume there is no log4j
             // available, so there is no use in registering MBeans
-            log4jPresent = false;
+            c_log4jPresent = false;
             System.out.println( "Could not find class " +SLF4J_LOG4J_ADAPTER_CLASS + ", so no dynamic log configuration here :-(" );
         }
         catch( Exception e )
