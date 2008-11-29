@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.tags;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -42,7 +43,7 @@ public class EditorIteratorTag
 {
     private static final long serialVersionUID = 0L;
 
-    static    Logger    log = Logger.getLogger( EditorIteratorTag.class );
+    static    Logger    log = LoggerFactory.getLogger( EditorIteratorTag.class );
 
     public final int doStartTag()
     {

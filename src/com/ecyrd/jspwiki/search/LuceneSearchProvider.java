@@ -24,7 +24,8 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -64,7 +65,7 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  */
 public class LuceneSearchProvider implements SearchProvider
 {
-    protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
+    protected static final Logger log = LoggerFactory.getLogger(LuceneSearchProvider.class);
 
     private WikiEngine m_engine;
 

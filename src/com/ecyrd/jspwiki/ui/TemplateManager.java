@@ -33,7 +33,8 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
@@ -116,7 +117,7 @@ public class TemplateManager
 
     // private Cache m_propertyCache;
 
-    protected static final Logger log = Logger.getLogger(TemplateManager.class);
+    protected static final Logger log = LoggerFactory.getLogger(TemplateManager.class);
 
     /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
@@ -289,7 +290,7 @@ public class TemplateManager
     {
         if( name == null || template == null )
         {
-            log.fatal("findJSP() was asked to find a null template or name ("+template+","+name+")."+
+            log.error("findJSP() was asked to find a null template or name ("+template+","+name+")."+
                       " JSP page '"+
                       ((HttpServletRequest)pageContext.getRequest()).getRequestURI()+"'");
             throw new InternalWikiException("Illegal arguments to findJSP(); please check logs.");

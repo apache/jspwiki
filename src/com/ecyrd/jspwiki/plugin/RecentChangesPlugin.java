@@ -25,7 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.ecs.xhtml.*;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
@@ -63,8 +64,7 @@ public class RecentChangesPlugin
     public static final String DEFAULT_TIME_FORMAT ="HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT ="dd.MM.yyyy";
 
-    private static Logger log = Logger.getLogger( RecentChangesPlugin.class );
-
+    private static Logger log = LoggerFactory.getLogger( RecentChangesPlugin.class );
     private boolean isSameDay( Date a, Date b )
     {
         Calendar aa = Calendar.getInstance(); aa.setTime(a);

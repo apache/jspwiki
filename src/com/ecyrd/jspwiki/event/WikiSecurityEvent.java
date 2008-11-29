@@ -23,8 +23,9 @@ package com.ecyrd.jspwiki.event;
 import java.security.Principal;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Level;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.event.WikiEvent;
 
@@ -118,7 +119,7 @@ public final class WikiSecurityEvent extends WikiEvent
     public static final int   PROFILE_NAME_CHANGED     = 54;
     
     /** The security logging service. */
-    protected static final Logger log = Logger.getLogger( "SecurityLog" );
+    protected static final Logger log = LoggerFactory.getLogger( "SecurityLog" );
     
     private final Principal m_principal;
     
@@ -152,19 +153,19 @@ public final class WikiSecurityEvent extends WikiEvent
         }
         this.m_principal = principal;
         this.m_target = target;
-        if ( log.isEnabledFor( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) )
+        if ( log.isErrorEnabled() && ArrayUtils.contains( ERROR_EVENTS, type ) )
         {
-            log.error( this );
+            log.error( this.toString() );
         }
-        else if ( log.isEnabledFor( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) )
+        else if ( log.isWarnEnabled() && ArrayUtils.contains( WARN_EVENTS, type ) )
         {
-            log.warn( this );
+            log.warn( this.toString() );
         }
-        else if ( log.isEnabledFor( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) )
+        else if ( log.isInfoEnabled() && ArrayUtils.contains( INFO_EVENTS, type ) )
         {
-            log.info( this );
+            log.info( this.toString() );
         }
-        log.debug( this );
+        log.debug( this.toString() );
     }
 
     /**

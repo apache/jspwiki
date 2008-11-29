@@ -30,7 +30,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
@@ -69,7 +70,7 @@ public final class UserManager
 
     private WikiEngine m_engine;
 
-    private static Logger log = Logger.getLogger(UserManager.class);
+    private static Logger log = LoggerFactory.getLogger(UserManager.class);
 
     /** Message key for the "save profile" message. */
     public  static final String SAVE_APPROVER               = "workflow.createUserProfile";

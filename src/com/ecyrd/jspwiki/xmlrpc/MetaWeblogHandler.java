@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.xmlrpc;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.PageTimeComparator;
@@ -55,7 +56,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class MetaWeblogHandler
     implements WikiRPCHandler
 {
-    private static Logger log = Logger.getLogger( MetaWeblogHandler.class ); 
+    private static Logger log = LoggerFactory.getLogger( MetaWeblogHandler.class ); 
 
     private WikiContext m_context;
     

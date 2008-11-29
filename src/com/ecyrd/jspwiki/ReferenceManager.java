@@ -26,7 +26,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -136,7 +137,7 @@ public class ReferenceManager
 
     private boolean        m_matchEnglishPlurals = false;
 
-    private static Logger log = Logger.getLogger(ReferenceManager.class);
+    private static Logger log = LoggerFactory.getLogger(ReferenceManager.class);
 
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
@@ -255,7 +256,7 @@ public class ReferenceManager
 
                     if( page.getLastModified() == null )
                     {
-                        log.fatal( "Provider returns null lastModified.  Please submit a bug report." );
+                        log.error( "Provider returns null lastModified.  Please submit a bug report." );
                     }
                     else if( page.getLastModified().getTime() > saved )
                     {
@@ -475,7 +476,7 @@ public class ReferenceManager
         }
         catch( NoSuchAlgorithmException e )
         {
-            log.fatal("No MD5!?!");
+            log.error("No MD5!?!");
         }
         finally
         {
@@ -551,7 +552,7 @@ public class ReferenceManager
         }
         catch( NoSuchAlgorithmException e )
         {
-            log.fatal("No MD5 algorithm!?!");
+            log.error("No MD5 algorithm!?!");
         }
         finally
         {
@@ -827,7 +828,7 @@ public class ReferenceManager
         }
         catch( ClassCastException e )
         {
-            log.fatal( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
+            log.error( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
         }
     }
 

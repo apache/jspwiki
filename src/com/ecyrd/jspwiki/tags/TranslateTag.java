@@ -26,9 +26,9 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  Converts the body text into HTML content.
@@ -40,7 +40,7 @@ public class TranslateTag
 {
     private static final long serialVersionUID = 0L;
     
-    static    Logger    log = Logger.getLogger( TranslateTag.class );
+    static    Logger    log = LoggerFactory.getLogger( TranslateTag.class );
 
     public final int doAfterBody()
         throws JspException

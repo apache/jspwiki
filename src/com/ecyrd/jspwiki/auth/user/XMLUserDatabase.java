@@ -334,7 +334,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
             catch( ParserConfigurationException e )
             {
-                log.fatal( "Could not create in-memory DOM" );
+                log.error( "Could not create in-memory DOM" );
             }
         }
     }
@@ -343,7 +343,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
     {
         if ( c_dom == null )
         {
-            log.fatal( "User database doesn't exist in memory." );
+            log.error( "User database doesn't exist in memory." );
         }
 
         File newFile = new File( c_file.getAbsolutePath() + ".new" );
@@ -450,7 +450,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
     {
         if ( c_dom == null )
         {
-            log.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
+            log.error( "Could not rename profile '" + loginName + "'; database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
         checkForRefresh();
@@ -504,7 +504,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
     {
         if ( c_dom == null )
         {
-            log.fatal( "Could not save profile " + profile + " database does not exist" );
+            log.error( "Could not save profile " + profile + " database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
         

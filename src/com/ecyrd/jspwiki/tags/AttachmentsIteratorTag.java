@@ -25,7 +25,8 @@ import java.util.Collection;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiContext;
@@ -51,7 +52,7 @@ public class AttachmentsIteratorTag
 {
     private static final long serialVersionUID = 0L;
     
-    static    Logger    log = Logger.getLogger( AttachmentsIteratorTag.class );
+    static    Logger    log = LoggerFactory.getLogger( AttachmentsIteratorTag.class );
 
     /**
      *  {@inheritDoc}
@@ -114,7 +115,7 @@ public class AttachmentsIteratorTag
         }
         catch( ProviderException e )
         {
-            log.fatal("Provider failed while trying to iterator through history",e);
+            log.error("Provider failed while trying to iterator through history",e);
             // FIXME: THrow something.
         }
 

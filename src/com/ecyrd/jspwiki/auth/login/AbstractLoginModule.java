@@ -30,7 +30,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
@@ -46,7 +47,7 @@ import com.ecyrd.jspwiki.auth.WikiPrincipal;
 public abstract class AbstractLoginModule implements LoginModule
 {
 
-    private static final Logger   log = Logger.getLogger( AbstractLoginModule.class );
+    private static final Logger   log = LoggerFactory.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
 

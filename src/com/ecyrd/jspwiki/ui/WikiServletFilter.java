@@ -27,8 +27,9 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.slf4j.MDC;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -56,7 +57,7 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
  */
 public class WikiServletFilter implements Filter
 {
-    protected static final Logger log = Logger.getLogger( WikiServletFilter.class );
+    protected static final Logger log = LoggerFactory.getLogger( WikiServletFilter.class );
     protected WikiEngine m_engine = null;
 
     /**
@@ -169,14 +170,13 @@ public class WikiServletFilter implements Filter
 
         try
         {
-            NDC.push( m_engine.getApplicationName()+":"+httpRequest.getRequestURL() );
+            MDC.put( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI(), "WikiServletFilter" );
             
             chain.doFilter( httpRequest, response );
         }
         finally
         {
-            NDC.pop();
-            NDC.remove();
+            MDC.remove( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI() );
         }
 
     }

@@ -32,7 +32,8 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -70,7 +71,7 @@ import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
 public class WebContainerLoginModule extends AbstractLoginModule
 {
 
-    protected static final Logger log      = Logger.getLogger( WebContainerLoginModule.class );
+    protected static final Logger log      = LoggerFactory.getLogger( WebContainerLoginModule.class );
 
     /**
      * Logs in the user.

@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,7 +40,7 @@ import java.util.*;
  */
 public class WeblogArchivePlugin implements WikiPlugin
 {
-    private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
+    private static Logger     log = LoggerFactory.getLogger(WeblogArchivePlugin.class);
 
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE = "page";

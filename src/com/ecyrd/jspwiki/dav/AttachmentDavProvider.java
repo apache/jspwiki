@@ -25,7 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -39,7 +40,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class AttachmentDavProvider implements DavProvider
 {
     protected WikiEngine m_engine;
-    protected static final Logger log = Logger.getLogger( AttachmentDavProvider.class );
+    protected static final Logger log = LoggerFactory.getLogger( AttachmentDavProvider.class );
 
     public AttachmentDavProvider( WikiEngine engine )
     {

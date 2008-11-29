@@ -20,7 +20,8 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
@@ -45,7 +46,7 @@ import java.io.IOException;
 public class TableOfContents
     implements WikiPlugin, HeadingListener
 {
-    private static Logger log = Logger.getLogger( TableOfContents.class );
+    private static Logger log = LoggerFactory.getLogger( TableOfContents.class );
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";

@@ -31,7 +31,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -203,7 +204,7 @@ public final class MailUtil
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    protected static final Logger log = Logger.getLogger(MailUtil.class);
+    protected static final Logger log = LoggerFactory.getLogger(MailUtil.class);
 
     protected static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 
@@ -296,7 +297,7 @@ public final class MailUtil
         }
         catch (MessagingException e)
         {
-            log.error(e);
+            log.error(e.toString());
             throw e;
         }
     }

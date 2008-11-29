@@ -10,7 +10,8 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
@@ -24,7 +25,7 @@ import com.ecyrd.jspwiki.providers.*;
  */
 public class TestEngine extends WikiEngine
 {
-    static Logger log = Logger.getLogger( TestEngine.class );
+    static Logger log = LoggerFactory.getLogger( TestEngine.class );
 
     private WikiSession m_adminWikiSession = null;
     private WikiSession m_janneWikiSession = null;

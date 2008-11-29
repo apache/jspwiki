@@ -23,7 +23,8 @@
 package com.ecyrd.jspwiki.plugin;
 
 import com.ecyrd.jspwiki.*;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.*;
 import org.apache.oro.text.regex.*;
 
@@ -47,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class Denounce implements WikiPlugin
 {
-    private static Logger     log = Logger.getLogger(Denounce.class);
+    private static Logger     log = LoggerFactory.getLogger(Denounce.class);
 
     /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";

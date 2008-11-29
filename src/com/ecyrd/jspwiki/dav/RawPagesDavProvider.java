@@ -25,7 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -45,7 +46,7 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  */
 public class RawPagesDavProvider extends WikiDavProvider
 {
-    protected static final Logger log = Logger.getLogger( RawPagesDavProvider.class );
+    protected static final Logger log = LoggerFactory.getLogger( RawPagesDavProvider.class );
 
     private Cache m_davItemCache = new Cache(true,false,false);
     

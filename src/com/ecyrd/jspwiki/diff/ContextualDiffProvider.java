@@ -29,7 +29,8 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
@@ -49,7 +50,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 public class ContextualDiffProvider implements DiffProvider
 {
 
-    private static final Logger log = Logger.getLogger( ContextualDiffProvider.class );
+    private static final Logger log = LoggerFactory.getLogger( ContextualDiffProvider.class );
 
     /**
      *  A jspwiki.properties value to define how many characters are shown around the change context.

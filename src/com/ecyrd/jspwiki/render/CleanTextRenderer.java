@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.JDOMException;
 import org.jdom.Text;
 import org.jdom.xpath.XPath;
@@ -44,7 +45,7 @@ public class CleanTextRenderer
 {
     private static final String ALL_TEXT_NODES = "//text()";
     
-    protected static final Logger log = Logger.getLogger( CleanTextRenderer.class );
+    protected static final Logger log = LoggerFactory.getLogger( CleanTextRenderer.class );
     
     /**
      *  Create a renderer.

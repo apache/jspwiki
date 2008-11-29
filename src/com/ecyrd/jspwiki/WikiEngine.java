@@ -34,8 +34,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
+//import org.apache.log4j.PropertyConfigurator;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -92,12 +93,12 @@ public class WikiEngine
 {
     private static final String ATTR_WIKIENGINE = "com.ecyrd.jspwiki.WikiEngine";
 
-    private static final Logger log = Logger.getLogger(WikiEngine.class);
+    private static final Logger log = LoggerFactory.getLogger(WikiEngine.class);
 
     /** True, if log4j has been configured. */
     // FIXME: If you run multiple applications, the first application
     // to run defines where the log goes.  Not what we want.
-    private static boolean   c_configured = false;
+//    private static boolean   c_configured = false;
 
     /** Stores properties. */
     private Properties       m_properties;
@@ -426,14 +427,14 @@ public class WikiEngine
         //  the property file, we do not do any property setting
         //  either.q
         //
-        if( !c_configured )
-        {
-            if( props.getProperty("log4j.rootCategory") != null )
-            {
-                PropertyConfigurator.configure( props );
-            }
-            c_configured = true;
-        }
+//        if( !c_configured )
+//        {
+//            if( props.getProperty("log4j.rootCategory") != null )
+//            {
+//                PropertyConfigurator.configure( props );
+//            }
+//            c_configured = true;
+//        }
 
         log.info("*******************************************");
         log.info(Release.APPNAME+" "+Release.getVersionString()+" starting. Whee!");
@@ -487,7 +488,7 @@ public class WikiEngine
         }
         catch( SecurityException e )
         {
-            log.fatal("Unable to find or create the working directory: "+m_workDir,e);
+            log.error("Unable to find or create the working directory: "+m_workDir,e);
             throw new IllegalArgumentException("Unable to find or create the working dir: "+m_workDir);
         }
 
@@ -598,29 +599,29 @@ public class WikiEngine
         catch( RuntimeException e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.fatal( "Failed to start managers.", e );
+            log.error( "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage() );
         }
         catch (ClassNotFoundException e)
         {
-            log.fatal( "JSPWiki could not start, URLConstructor was not found: ",e );
+            log.error( "JSPWiki could not start, URLConstructor was not found: ",e );
             throw new WikiException(e.getMessage());
         }
         catch (InstantiationException e)
         {
-            log.fatal( "JSPWiki could not start, URLConstructor could not be instantiated: ",e );
+            log.error( "JSPWiki could not start, URLConstructor could not be instantiated: ",e );
             throw new WikiException(e.getMessage());
         }
         catch (IllegalAccessException e)
         {
-            log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
+            log.error( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
             throw new WikiException(e.getMessage());
         }
         catch( Exception e )
         {
             // Final catch-all for everything
             
-            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
+            log.error( "JSPWiki could not start, due to an unknown exception when starting.",e );
             throw new WikiException("Failed to start; please check log files for better information.");
         }
         
@@ -698,7 +699,7 @@ public class WikiEngine
         }
         catch( ProviderException e )
         {
-            log.fatal("PageProvider is unable to list pages: ", e);
+            log.error("PageProvider is unable to list pages: ", e);
         }
     }
 
@@ -944,7 +945,7 @@ public class WikiEngine
         }
         catch( UnsupportedEncodingException e )
         {
-            log.fatal( "Unsupported encoding", e );
+            log.error( "Unsupported encoding", e );
             return "";
         }
 
@@ -996,7 +997,7 @@ public class WikiEngine
         }
         catch( UnsupportedEncodingException e )
         {
-            log.fatal( "Unsupported encoding", e );
+            log.error( "Unsupported encoding", e );
             return "";
         }
     }
@@ -2334,7 +2335,7 @@ public class WikiEngine
             }
             catch ( WikiException we )
             {
-                log.fatal( "unable to instantiate class for AclManager: " + we.getMessage() );
+                log.error( "unable to instantiate class for AclManager: " + we.getMessage() );
                 throw new InternalWikiException("Cannot instantiate AclManager, please check logs.");
             }
         }

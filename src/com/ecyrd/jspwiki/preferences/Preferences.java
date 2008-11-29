@@ -29,7 +29,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +56,7 @@ public class Preferences
      */
     public static final String SESSIONPREFS = "prefs";
      
-    private static Logger log = Logger.getLogger( Preferences.class );
+    private static Logger log = LoggerFactory.getLogger( Preferences.class );
     
     /**
      *  This is an utility method which is called to make sure that the

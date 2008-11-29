@@ -1,3 +1,25 @@
+2008-11-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-13
+        
+        * JSPWIKI-376: move from log4j to slf4j
+        3 new classes in the new package com.ecyrd.jspwiki.log
+        - LoggerFactory
+        - Logger (interface)
+        - LoggerImpl
+        The LoggerFactory also takes care of registering DynamicMBeans if log4j is used 
+        as the underlying logging implementation.
+        Log4j remains the default implementation (Stripes still needs it too) 
+        Changes to 34 JSP's
+        Changes to 135 Java classes
+        Additions to WEB-INF/lib : slf4j-log4j12-1.5.6.jar, jul-to-slf4j-1.5.6.jar, jcl-over-slf4j-1.5.6.jar
+        Removals from .classpath: commons-logging-api.jar, log4j-1.2.14.jar
+        Additions to .classpath : slf4j-api-1.5.6.jar, jul-to-slf4j-1.5.6.jar
+        Move log4j config statements from jspwiki.properties to log4j.properties
+        Changes to build.xml (include org.apache.jspwiki in javadoc gen)
+        A few other minor changes.
+          
+        
 2008-11-21 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-12

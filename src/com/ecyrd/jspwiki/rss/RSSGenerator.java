@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.rss;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -48,7 +49,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 // FIXME3.0: This class would need a bit of refactoring.  Method names, e.g. are confusing.
 public class RSSGenerator
 {
-    static Logger              log = Logger.getLogger( RSSGenerator.class );
+    static Logger              log = LoggerFactory.getLogger( RSSGenerator.class );
     private WikiEngine         m_engine;
 
     private String             m_channelDescription = "";

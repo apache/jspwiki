@@ -1,4 +1,5 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
@@ -12,7 +13,7 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

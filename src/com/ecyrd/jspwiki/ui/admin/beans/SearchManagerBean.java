@@ -45,7 +45,7 @@ public class SearchManagerBean extends SimpleAdminBean
 
     private static final String[] METHODS = { "reload" };
 
-    // private static Logger log = Logger.getLogger( SearchManagerBean.class );
+    // private static Logger log = LoggerFactory.getLogger( SearchManagerBean.class );
 
     private WikiBackgroundThread m_updater;
 

@@ -7,8 +7,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiEngine;
 
@@ -25,7 +23,6 @@ public class UserProfileTest extends TestCase
     {
             Properties props = new Properties();
             props.load( TestEngine.findTestProperties() );
-            PropertyConfigurator.configure(props);
             WikiEngine engine  = new TestEngine(props);
             m_db = engine.getUserManager().getUserDatabase();
     }

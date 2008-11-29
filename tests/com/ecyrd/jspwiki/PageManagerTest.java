@@ -7,8 +7,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.ecyrd.jspwiki.PageManager;
 import com.ecyrd.jspwiki.providers.CachingProvider;
 
@@ -27,7 +25,6 @@ public class PageManagerTest extends TestCase
         throws Exception
     {
         props.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(props);
         engine = new TestEngine(props);
     }
 

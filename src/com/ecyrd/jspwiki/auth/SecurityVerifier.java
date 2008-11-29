@@ -33,7 +33,8 @@ import javax.security.auth.Subject;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.freshcookies.security.policy.PolicyReader;
 import org.jdom.JDOMException;
 
@@ -130,7 +131,7 @@ public final class SecurityVerifier
 
     private static final String   BG_RED                       = "bgcolor=\"#ffc0c0\"";
 
-    private static final Logger LOG                          = Logger.getLogger( SecurityVerifier.class.getName() );
+    private static final Logger LOG                          = LoggerFactory.getLogger( SecurityVerifier.class.getName() );
 
     /**
      * Constructs a new SecurityVerifier for a supplied WikiEngine and WikiSession.

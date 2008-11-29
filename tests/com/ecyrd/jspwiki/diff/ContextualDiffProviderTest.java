@@ -7,8 +7,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.ecyrd.jspwiki.*;
 
 public class ContextualDiffProviderTest extends TestCase
@@ -179,7 +177,6 @@ public class ContextualDiffProviderTest extends TestCase
         diff.initialize(null, props);
 
         props.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(props);
         TestEngine engine = new TestEngine(props);
         
         WikiContext ctx = new WikiContext( engine, new WikiPage(engine,"Dummy") );

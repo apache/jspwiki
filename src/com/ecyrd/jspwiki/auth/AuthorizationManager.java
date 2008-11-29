@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
 
@@ -86,7 +87,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public final class AuthorizationManager
 {
-    private static final Logger log = Logger.getLogger( AuthorizationManager.class );
+    private static final Logger log = LoggerFactory.getLogger( AuthorizationManager.class );
     /**
      * The default external Authorizer is the {@link com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer}
      */
@@ -424,7 +425,7 @@ public final class AuthorizationManager
                 sb.append( "This file should exist regardless of the existance of a global policy file. " );
                 sb.append( "The global policy file is identified by the java.security.policy variable. " );
                 WikiSecurityException wse = new WikiSecurityException( sb.toString() );
-                log.fatal( sb.toString(), wse );
+                log.error( sb.toString(), wse );
                 throw wse;
             }
         }
@@ -472,17 +473,17 @@ public final class AuthorizationManager
             }
             catch( ClassNotFoundException e )
             {
-                log.fatal( "Authorizer " + clazz + " cannot be found", e );
+                log.error( "Authorizer " + clazz + " cannot be found", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be found" );
             }
             catch( InstantiationException e )
             {
-                log.fatal( "Authorizer " + clazz + " cannot be created", e );
+                log.error( "Authorizer " + clazz + " cannot be created", e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be created" );
             }
             catch( IllegalAccessException e )
             {
-                log.fatal( "You are not allowed to access this authorizer class", e );
+                log.error( "You are not allowed to access this authorizer class", e );
                 throw new WikiException( "You are not allowed to access this authorizer class" );
             }
         }

@@ -29,9 +29,9 @@ import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.jspwiki.api.ModuleData;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.regex.*;
-import org.jdom.Element;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.modules.ModuleManager;
@@ -140,7 +140,7 @@ public class PluginManager extends ModuleManager
 {
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
-    private static Logger log = Logger.getLogger( PluginManager.class );
+    private static Logger log = LoggerFactory.getLogger( PluginManager.class );
 
     /**
      *  This is the default package to try in case the instantiation
@@ -212,7 +212,7 @@ public class PluginManager extends ModuleManager
         }
         catch( MalformedPatternException e )
         {
-            log.fatal("Internal error: someone messed with pluginmanager patterns.", e );
+            log.error("Internal error: someone messed with pluginmanager patterns.", e );
             throw new InternalWikiException( "PluginManager patterns are broken" );
         }
 

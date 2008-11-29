@@ -4,7 +4,6 @@ package com.ecyrd.jspwiki;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import org.apache.log4j.*;
 
 public class VariableManagerTest extends TestCase
 {
@@ -25,7 +24,6 @@ public class VariableManagerTest extends TestCase
         try
         {
             props.load( TestEngine.findTestProperties() );
-            PropertyConfigurator.configure(props);
 
             m_variableManager = new VariableManager( props );
             TestEngine testEngine = new TestEngine( props );

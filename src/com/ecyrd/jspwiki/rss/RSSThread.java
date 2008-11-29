@@ -32,7 +32,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -45,7 +46,7 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  */
 public class RSSThread extends WikiBackgroundThread
 {
-    static Logger              log = Logger.getLogger( RSSThread.class );
+    static Logger              log = LoggerFactory.getLogger( RSSThread.class );
         
     private final File m_rssFile;
     private final int m_rssInterval;
@@ -127,7 +128,7 @@ public class RSSThread extends WikiBackgroundThread
                 }
                 catch( IOException e )
                 {
-                    log.fatal("Could not close I/O for RSS", e );
+                    log.error("Could not close I/O for RSS", e );
                     m_generator.setEnabled( false );
                 }
                 m_watchdog.exitState();

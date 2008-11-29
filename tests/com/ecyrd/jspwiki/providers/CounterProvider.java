@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
 
-import org.apache.log4j.*;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 
@@ -38,7 +39,7 @@ public class CounterProvider
     public int m_getAllPagesCalls = 0;
     public int m_initCalls        = 0;
 
-    static Logger log = Logger.getLogger( CounterProvider.class );
+    static Logger log = LoggerFactory.getLogger( CounterProvider.class );
 
     WikiPage[]    m_pages         = new WikiPage[0];
     

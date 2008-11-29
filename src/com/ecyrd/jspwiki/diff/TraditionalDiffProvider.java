@@ -31,7 +31,8 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TextUtil;
@@ -49,7 +50,7 @@ import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 
 public class TraditionalDiffProvider implements DiffProvider
 {
-    private static final Logger log = Logger.getLogger(TraditionalDiffProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(TraditionalDiffProvider.class);
 
     private static final String CSS_DIFF_ADDED = "<tr><td class=\"diffadd\">";
     private static final String CSS_DIFF_REMOVED = "<tr><td class=\"diffrem\">";

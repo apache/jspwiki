@@ -27,7 +27,8 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 
@@ -46,7 +47,7 @@ import com.ecyrd.jspwiki.*;
 public abstract class AbstractFileProvider
     implements WikiPageProvider
 {
-    private static final Logger   log = Logger.getLogger(AbstractFileProvider.class);
+    private static final Logger   log = LoggerFactory.getLogger(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
     
     protected String m_encoding;
@@ -259,7 +260,7 @@ public abstract class AbstractFileProvider
                     }
                     catch( Exception e ) 
                     {
-                        log.fatal("Closing failed",e);
+                        log.error("Closing failed",e);
                     }
                 }
             }

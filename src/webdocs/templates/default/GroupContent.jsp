@@ -7,13 +7,14 @@
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
 <%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
 <%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%!
-  Logger log = Logger.getLogger("JSPWiki");
+  Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 
 <%

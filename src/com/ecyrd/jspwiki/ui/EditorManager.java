@@ -25,7 +25,8 @@ import java.util.*;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -85,7 +86,7 @@ public class EditorManager extends ModuleManager
 
     private             Map<String, WikiEditorInfo>  m_editors;
 
-    private static      Logger       log             = Logger.getLogger( EditorManager.class );
+    private static      Logger       log             = LoggerFactory.getLogger( EditorManager.class );
 
     public EditorManager( WikiEngine engine )
     {

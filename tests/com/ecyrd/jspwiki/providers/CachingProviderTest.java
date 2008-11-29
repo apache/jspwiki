@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.StringReader;
 import java.util.*;
 
-import org.apache.log4j.*;
-
 import com.ecyrd.jspwiki.*;
 
 public class CachingProviderTest extends TestCase
@@ -24,11 +22,6 @@ public class CachingProviderTest extends TestCase
         throws Exception
     {
         TestEngine.emptyWorkDir();
-
-        Properties props2 = new Properties();
-
-        props2.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(props2);
     }
 
     public void tearDown()

@@ -28,7 +28,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  Generic utilities related to file and stream handling.
@@ -38,7 +39,7 @@ public final class FileUtil
 {
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 4096;
-    private static final Logger   log         = Logger.getLogger(FileUtil.class);
+    private static final Logger   log         = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      *  Private constructor prevents instantiation.

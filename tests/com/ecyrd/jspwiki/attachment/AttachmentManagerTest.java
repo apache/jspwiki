@@ -64,8 +64,8 @@ public class AttachmentManagerTest extends TestCase
         TestEngine.deleteTestPage( NAME1 );
         TestEngine.deleteTestPage( NAMEU );
 
-        m_engine.deleteAttachments(NAME1);
-        m_engine.deleteAttachments(NAMEU);
+        TestEngine.deleteAttachments(NAME1);
+        TestEngine.deleteAttachments(NAMEU);
 
         TestEngine.emptyWorkDir();
     }

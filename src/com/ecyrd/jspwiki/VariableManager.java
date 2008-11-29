@@ -27,7 +27,8 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
@@ -41,7 +42,7 @@ import com.ecyrd.jspwiki.modules.InternalModule;
  */
 public class VariableManager
 {
-    private static Logger log = Logger.getLogger( VariableManager.class );
+    private static Logger log = LoggerFactory.getLogger( VariableManager.class );
    
     // FIXME: These are probably obsolete.
     public static final String VAR_ERROR = "error";

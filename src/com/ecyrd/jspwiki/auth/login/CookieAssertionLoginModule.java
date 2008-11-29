@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -69,7 +70,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule
      *  @deprecated */
     public static final String PROMPT            = "User name";
 
-    protected static final Logger    log         = Logger.getLogger( CookieAssertionLoginModule.class );
+    protected static final Logger    log         = LoggerFactory.getLogger( CookieAssertionLoginModule.class );
 
     /**
      * Logs in the user by calling back to the registered CallbackHandler with

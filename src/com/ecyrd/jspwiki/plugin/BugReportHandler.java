@@ -27,7 +27,8 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -52,7 +53,7 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
 public class BugReportHandler
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( BugReportHandler.class );
+    private static Logger log = LoggerFactory.getLogger( BugReportHandler.class );
 
     /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TITLE          = "title";

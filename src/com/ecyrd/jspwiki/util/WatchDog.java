@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.util;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiEngine;
 
@@ -54,7 +55,7 @@ public final class WatchDog
     private boolean   m_enabled    = true;
     private WikiEngine m_engine;
 
-    private Logger log = Logger.getLogger(WatchDog.class.getName());
+    private static Logger log = LoggerFactory.getLogger(WatchDog.class.getName());
 
     private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = 
         new HashMap<Integer,WeakReference<WatchDog>>();

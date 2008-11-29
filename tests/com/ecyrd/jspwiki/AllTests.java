@@ -1,40 +1,13 @@
 
 package com.ecyrd.jspwiki;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.PropertyConfigurator;
-
 public class AllTests extends TestCase
 {
-    //
-    //  Ensure everything runs properly and that we can locate all necessary
-    //  thingies.
-    //
-    static
-    {
-        Properties props = new Properties();
-        try
-        {
-            InputStream pin = TestEngine.findTestProperties();
-            if( pin == null )
-            {
-                fail( "No property file found!" );
-            }
-            props.load( pin );
-            PropertyConfigurator.configure(props);
-        }
-        catch( IOException e ) 
-        {
-        }
-    }
-
+ 
     public AllTests( String s )
     {
         super( s );

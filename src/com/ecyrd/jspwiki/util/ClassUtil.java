@@ -25,7 +25,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -41,7 +42,7 @@ import com.ecyrd.jspwiki.WikiException;
  */
 public final class ClassUtil
 {
-    private static final Logger log = Logger.getLogger(ClassUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ClassUtil.class);
     /**
      *  The location of the classmappings.xml document. It will be searched for
      *  in the classpath.  It's value is "{@value}".

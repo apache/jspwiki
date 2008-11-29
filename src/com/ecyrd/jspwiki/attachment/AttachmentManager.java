@@ -27,7 +27,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -69,7 +70,7 @@ public class AttachmentManager
      */
     public static final String PROP_FORDBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
 
-    static Logger log = Logger.getLogger( AttachmentManager.class );
+    static Logger log = LoggerFactory.getLogger( AttachmentManager.class );
     private WikiAttachmentProvider m_provider;
     private WikiEngine             m_engine;
 

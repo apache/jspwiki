@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.xmlrpc;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.*;
@@ -42,7 +43,7 @@ import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 public class RPCHandler
     extends AbstractRPCHandler
 {
-    private static Logger log = Logger.getLogger( RPCHandler.class ); 
+    private static Logger log = LoggerFactory.getLogger( RPCHandler.class ); 
 
     /**
      *  {@inheritDoc}
@@ -84,7 +85,7 @@ public class RPCHandler
             //  use UTF-8.  We revert to platform default, so that the other
             //  end might have a chance of getting something.
             //
-            log.fatal("Platform does not support UTF-8, reverting to platform default");
+            log.error("Platform does not support UTF-8, reverting to platform default");
             return src.getBytes();
         }
     }

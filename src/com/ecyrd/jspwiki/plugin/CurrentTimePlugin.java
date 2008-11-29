@@ -41,7 +41,7 @@ import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 public class CurrentTimePlugin
     implements WikiPlugin
 {
-    // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
+    // private static Logger log = LoggerFactory.getLogger( CurrentTimePlugin.class );
 
     /**
      *  {@inheritDoc}

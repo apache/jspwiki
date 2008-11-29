@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
@@ -168,7 +169,7 @@ public class WikiContext
     /** User is doing administrative things. */
     public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
 
-    private static final Logger   log      = Logger.getLogger( WikiContext.class );
+    private static final Logger   log      = LoggerFactory.getLogger( WikiContext.class );
 
     private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
 

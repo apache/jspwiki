@@ -27,7 +27,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
@@ -46,7 +47,7 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  */
 public class SessionMonitor implements HttpSessionListener
 {
-    private static Logger log = Logger.getLogger( SessionMonitor.class );
+    private static Logger log = LoggerFactory.getLogger( SessionMonitor.class );
 
     /** Map with WikiEngines as keys, and SessionMonitors as values. */
     private static Map<WikiEngine, SessionMonitor>          c_monitors   = new HashMap<WikiEngine, SessionMonitor>();

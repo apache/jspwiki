@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
@@ -47,7 +48,7 @@ public class ProgressManager
      */
     public static final String JSON_PROGRESSTRACKER = "progressTracker";
 
-    private static Logger log = Logger.getLogger( ProgressManager.class );
+    private static Logger log = LoggerFactory.getLogger( ProgressManager.class );
 
     /**
      *  Creates a new ProgressManager.

@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.modules;
 import java.net.URL;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -52,7 +53,7 @@ public abstract class ModuleManager
         
     protected WikiEngine m_engine;
     
-    private static Logger log = Logger.getLogger( ModuleManager.class );
+    private static Logger log = LoggerFactory.getLogger( ModuleManager.class );
     
     private boolean m_loadIncompatibleModules = false;
     

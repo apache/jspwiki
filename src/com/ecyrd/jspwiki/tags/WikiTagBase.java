@@ -25,7 +25,8 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
@@ -45,7 +46,7 @@ public abstract class WikiTagBase
 {
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
-    static    Logger    log = Logger.getLogger( WikiTagBase.class );
+    static    Logger    log = LoggerFactory.getLogger( WikiTagBase.class );
 
     protected WikiContext m_wikiContext;
 

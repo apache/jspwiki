@@ -20,14 +20,15 @@
  */
 package com.ecyrd.jspwiki.util;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * Misc J2EE Compatibility Utility Functions
  */
 public class UtilJ2eeCompat
 {
-    private static Logger log = Logger.getLogger( UtilJ2eeCompat.class.getName() );
+    private static Logger log = LoggerFactory.getLogger( UtilJ2eeCompat.class.getName() );
 
     public static final String TOMCAT = "Apache Tomcat";
 

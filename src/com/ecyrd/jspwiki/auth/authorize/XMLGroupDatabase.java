@@ -40,7 +40,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -77,7 +78,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
  */
 public class XMLGroupDatabase implements GroupDatabase
 {
-    protected static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+    protected static final Logger log              = LoggerFactory.getLogger( XMLGroupDatabase.class );
 
     /**
      * The jspwiki.properties property specifying the file system location of
@@ -294,7 +295,7 @@ public class XMLGroupDatabase implements GroupDatabase
             }
             catch( ParserConfigurationException e )
             {
-                log.fatal( "Could not create in-memory DOM" );
+                log.error( "Could not create in-memory DOM" );
             }
         }
 
@@ -404,7 +405,7 @@ public class XMLGroupDatabase implements GroupDatabase
     {
         if ( m_dom == null )
         {
-            log.fatal( "Group database doesn't exist in memory." );
+            log.error( "Group database doesn't exist in memory." );
         }
 
         File newFile = new File( m_file.getAbsolutePath() + ".new" );

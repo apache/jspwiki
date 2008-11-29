@@ -25,7 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 
@@ -56,7 +57,7 @@ import com.ecyrd.jspwiki.render.RenderingManager;
 public abstract class AbstractReferralPlugin
     implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
+    private static Logger log = LoggerFactory.getLogger( AbstractReferralPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;

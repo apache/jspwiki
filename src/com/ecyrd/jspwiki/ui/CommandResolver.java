@@ -28,7 +28,8 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.TextUtil;
@@ -95,7 +96,7 @@ public final class CommandResolver
         }
     }
 
-    private final Logger        m_log = Logger.getLogger( CommandResolver.class );
+    private final Logger        m_log = LoggerFactory.getLogger( CommandResolver.class );
 
     private final WikiEngine    m_engine;
 

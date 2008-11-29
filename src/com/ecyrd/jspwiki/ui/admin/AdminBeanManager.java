@@ -28,7 +28,8 @@ import java.util.List;
 
 import javax.management.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -54,7 +55,7 @@ public class AdminBeanManager implements WikiEventListener
 
     private MBeanServer m_mbeanServer = null;
 
-    private static Logger log = Logger.getLogger(AdminBeanManager.class);
+    private static Logger log = LoggerFactory.getLogger(AdminBeanManager.class);
 
     public AdminBeanManager( WikiEngine engine )
     {
