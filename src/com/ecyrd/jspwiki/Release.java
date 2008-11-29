@@ -66,7 +66,7 @@ public final class Release
     public static final int        REVISION      = 8;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 1;
+    public static final int        MINORREVISION = 2;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just
      *  so that people can add other identifiers to it.  The build number is incremented
@@ -77,7 +77,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "17";
+    public static final String     BUILD         = "1";
     
     /**
      *  This is the generic version string you should use
