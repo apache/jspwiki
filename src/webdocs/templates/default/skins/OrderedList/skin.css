@@ -217,6 +217,12 @@ td.diff {
 }
 
 /* +++ 440 Favorites +++ */
+#favoriteToggle {
+	padding:0.25em 0.25em 0.25em 0.75em;
+}
+#favoriteToggle:hover {
+	background-color:transparent;
+}
 .userbox {
 	background:#3f464a;
 	padding:0;

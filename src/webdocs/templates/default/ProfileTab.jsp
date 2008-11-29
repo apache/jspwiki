@@ -85,7 +85,7 @@
        <td>
          <input type="text" name="fullname" id="fullname"
                 size="20" value="<wiki:UserProfile property='fullname'/>" />
-         <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
+         <div class="formhelp"><fmt:message key="prefs.fullname.description"/></div>
        </td>
      </tr>
 
@@ -95,7 +95,7 @@
        <td>
          <input type="text" name="email" id="email"
                 size="20" value="<wiki:UserProfile property='email' />" />
-         <span class="formhelp"><fmt:message key="prefs.email.description"/></span>
+         <div class="formhelp"><fmt:message key="prefs.email.description"/></div>
        </td>
      </tr>
 

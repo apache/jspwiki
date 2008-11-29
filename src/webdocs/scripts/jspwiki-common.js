@@ -250,9 +250,16 @@ var Wiki = {
 		this.makeMenuFx('morebutton', 'morepopup');
 		this.addEditLinks();
 
-		var p = $('page'); if(p) this.renderPage(p, Wiki.PageName);
-		var f = $('favorites'); if(f) this.renderPage(f, "Favorites");
+		var p = $('page'),
+			f = $('favorites'); 
+		
+		if(p) this.renderPage(p, Wiki.PageName);
+		if(f) this.renderPage(f, "Favorites");
+		
+		this.addCollapsableFavs();
 	},
+
+
 	/* show popup alert, which allows any html msg to be displayed */
 	alert: function(msg){
 		return alert(msg); //standard js
@@ -307,7 +314,6 @@ var Wiki = {
 		$('wikibody')
 			.removeClass('fav-left').removeClass('fav-right')
 			.addClass(fav);
-		//$('collapseFavs').fireEvent('click').fireEvent('click'); //refresh sliding favorites
 	},
 
 	/* make hover menu with fade effect */
@@ -354,6 +360,8 @@ var Wiki = {
 				TabbedSection.click.apply($('menu-'+el.id));
 			} else if( el.hasClass('tab') ){
 				/* accordion -- need to find accordion toggle object */
+				el.fireEvent('onShow');
+				
 			} else if( el.hasClass('collapsebody') ){
 				/* collapsible box -- need to find the toggle button */
 			} else if(!el.visible() ){
@@ -389,20 +397,51 @@ var Wiki = {
 		return Wiki.submitOnce(form);
 	},
 
+	addCollapsableFavs: function(){
+
+		var body = $('wikibody'),
+			$pref = 'fav-slide',
+			pref = Wiki.prefs.get('ToggleFav'),
+			renderBullet = function(el){
+				if(el.hasClass('collapseOpen')){
+					el.setProperty('title','favorites.show'.localize()).setHTML('-'); /* &raquo; */
+				} else {
+					el.setProperty('title','favorites.hide'.localize()).setHTML('+'); /* &laquo; */
+				}
+			};
+		
+		//FIXME: cookie is not loaded into server Preferences automatically, so body class not yet set
+		//Should better move server side, for faster rendering. wf-stripes
+		(pref==$pref) ? body.addClass($pref) : body.removeClass($pref);		
+		
+		renderBullet( new Element('a', { 
+			'id':'favoriteToggle',
+			'class': (pref==$pref) ? 'collapseOpen':'collapseClose',
+			'events': {
+				'click': function(){
+					this.toggleClass('collapseOpen').toggleClass('collapseClose');
+					body.toggleClass($pref);
+					renderBullet(this);
+					Wiki.prefs.set('ToggleFav', body.hasClass($pref) ? $pref:'' );
+
+				}
+			}
+		}).injectTop('page') );
+ 
+	},
+
 	addEditLinks: function(){
 		if( $("previewcontent") || !this.PermissionEdit || this.prefs.get('SectionEditing') != 'on') return;
 
 		var url = this.EditUrl;
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
-		var aa = new Element('a').setHTML('quick.edit'.localize()), 
-			ee = new Element('span',{'class':'editsection'}).adopt(aa),
+		var aa = new Element('a',{'class':'editsection'}).setHTML('quick.edit'.localize()), 
 			i = 0;
 
 		$$('#pagecontent *[id^=section]').each(function(el){
 			if(el.id=='section-TOC') return;
-			aa.set({'href':url + i++ });
-			el.adopt(ee.clone());
+			el.adopt(aa.set({'href':url + i++ }).clone());
 		});
 	},
 
@@ -452,7 +491,7 @@ var WikiSlimbox = {
 					'href':href, 
 					'rel':group+' '+rel,
 					'title':el.alt||el.getText()
-				}).injectBefore(el);
+				}).injectAfter(el);//.injectBefore(el);
 
 				if(el.src) el.replaceWith(new Element('a',{
 					'class':'attachment',

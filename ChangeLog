@@ -1,3 +1,22 @@
+2008-11-29  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 3.0.0-svn-14 
+        
+        * [JSPWIKI-288] CSS fix for the rendering of hash-links.
+        
+        * [JSPWIKI-318] You can now show/hide the left-menu, with a click
+          of the mouse. The status of the left-menu is saved in the 
+          user-pref cookie.
+          
+          New localization resources:
+          javascript.favorites.hide=Click to hide the Favorites
+          javascript.favorites.show=Chick to show the Favorites
+          
+          * [JSPWIKI-429] The Slimbox icon has been changed to a magnifying 
+          glass. If you don't know what this is, check out the attachement
+          tab. Clicking the slimbox icon provides you with a sneak preview 
+          of images like png, gif, jpg.
+
 2008-11-29 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-13
