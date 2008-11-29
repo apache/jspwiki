@@ -1,3 +1,9 @@
+2008-11-29  Dirk Frederickx <dirk.frederickx@gmail.com>
+
+        * 2.8.1-svn-17 
+        
+        * [JSPWIKI-288] CSS fix for the rendering of hash-links.
+ 
 2008-11-21  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.1, first release candidate build.
