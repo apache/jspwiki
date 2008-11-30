@@ -667,7 +667,7 @@ public class PluginManager extends ModuleManager
         name = pluginClass.getName();
         if(name != null)
         {
-            log.debug("Registering plugin [name]: " + name);
+            log.debug("Registering plugin [name]: %s", name);
             m_pluginClassMap.put(name, pluginClass);
         }
 
@@ -677,7 +677,7 @@ public class PluginManager extends ModuleManager
         {
             for( String a : aliases )
             {
-                log.debug("Registering plugin [shortName]: " + a);
+                log.debug("Registering plugin [shortName]: %s", a);
                 m_pluginClassMap.put(a, pluginClass);
             }
         }
@@ -686,7 +686,7 @@ public class PluginManager extends ModuleManager
         name = pluginClass.getClassName();
         if(name != null)
         {
-            log.debug("Registering plugin [className]: " + name);
+            log.debug("Registering plugin [className]: %s", name);
             m_pluginClassMap.put(name, pluginClass);
         }
 
@@ -707,6 +707,8 @@ public class PluginManager extends ModuleManager
         resolver.findImplementations( WikiPlugin.class, paths );
         
         Set<Class<? extends WikiPlugin>> resultSet = resolver.getClasses();
+        
+        log.debug( "Found %d plugins", resultSet.size() );
         
         for( Class<? extends WikiPlugin> clazz : resultSet )
         {
@@ -906,7 +908,7 @@ public class PluginManager extends ModuleManager
                 }
                 catch( Exception e )
                 {
-                    log.info( "Cannot initialize plugin "+m_clazz.getCanonicalName(), e );
+                    log.info( "Cannot initialize plugin '%s'", e, m_clazz.getCanonicalName() );
                 }
             }
         }

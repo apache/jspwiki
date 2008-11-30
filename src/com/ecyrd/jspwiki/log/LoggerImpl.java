@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.log;
 
+import java.util.Formatter;
+
 import org.slf4j.Logger;
 
 /**
@@ -31,7 +33,7 @@ import org.slf4j.Logger;
 public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger
 {
     Logger m_slf4jLogger = null;
-
+    
     /**
      * @param loggerName The name of the SFL4J Logger to find
      */
@@ -42,51 +44,99 @@ public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger
 
     /** {@inheritDoc} */
     
-    public void error( String string )
+    public void error( String string, Object... params )
     {
-        m_slf4jLogger.error( string );
+        if( isErrorEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.error( string );
+        }
     }
 
     /** {@inheritDoc} */
-    public void warn( String string )
+    public void warn( String string, Object... params )
     {
-        m_slf4jLogger.warn( string );
+        if( isWarnEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.warn( string );
+        }
     }
 
     /** {@inheritDoc} */
-    public void info( String string )
+    public void info( String string, Object... params )
     {
-        m_slf4jLogger.info( string );
+        if( isInfoEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.info( string );
+        }
     }
 
     /** {@inheritDoc} */
-    public void debug( String arg0 )
+    public void debug( String string, Object... params )
     {
-        m_slf4jLogger.debug( arg0 );
+        if( isDebugEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.debug( string );
+        }
     }
 
     /** {@inheritDoc} */
-    public void error( String string, Throwable t )
+    public void error( String string, Throwable t, Object... params )
     {
-        m_slf4jLogger.error( string, t );
+        if( isErrorEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.error( string, t );
+        }
     }
 
     /** {@inheritDoc} */
-    public void warn( String string, Throwable t )
+    public void warn( String string, Throwable t, Object... params )
     {
-        m_slf4jLogger.warn( string, t );
+        if( isWarnEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.warn( string, t );
+        }
     }
 
     /** {@inheritDoc} */
-    public void info( String string, Throwable t )
+    public void info( String string, Throwable t, Object... params )
     {
-        m_slf4jLogger.info( string, t );
+        if( isInfoEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+
+            m_slf4jLogger.info( string, t );
+        }
     }
 
     /** {@inheritDoc} */
-    public void debug( String string, Throwable t )
+    public void debug( String string, Throwable t, Object... params )
     {
-        m_slf4jLogger.debug( string, t );
+        if( isDebugEnabled() )
+        {
+            if( params.length > 0 )
+                string = String.format( string, params );
+        
+            m_slf4jLogger.debug( string, t );
+        }
     }
 
     /** {@inheritDoc} */

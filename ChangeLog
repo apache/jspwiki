@@ -1,3 +1,11 @@
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-17
+        
+        * Logging package now implements an varargs interface for
+        faster and more flexible logging.  Please see Logger javadocs
+        for further information.
+        
 2008-11-30 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-16

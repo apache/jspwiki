@@ -20,30 +20,103 @@
  */
 package com.ecyrd.jspwiki.log;
 
+import java.util.Formatter;
+
 /**
- * This is just a plain wrapper around the slf4j logging interface.
+ *  <p>This is just a plain wrapper around the slf4j logging interface with additional
+ *  varargs interfaces.  The varargs interfaces are useful because they are faster
+ *  to construct than the usual string concatenation, so you won't lose as much time
+ *  if you're not logging.  In addition, they allow for easy locale-specific numbers
+ *  and dates.</p>
+ *  <p>For example, these two logging statements are equivalent, but the latter does
+ *  not construct the string <i>every</i> time the log sentence is created, and
+ *  also is in general easier to read.</p>
+ *  <pre>
+ *     log.debug("Found "+list.size()+" elements of type '"+elementType+"'");
+ *     log.debug("Found %d elements of type '%s'", list.size, elementType );
+ *  </pre>
  * 
- * @author Harry Metske
- * @since 3.0
+ *  @author Harry Metske
+ *  @since 3.0
+ *  @see java.util.Formatter
  */
 public interface Logger
 {
+    /**
+     *  Log an error.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param params An array of parameters.
+     */
+    void error( String string, Object... params );
 
-    void error( String string );
+    /**
+     *  Log a warning.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param params An array of parameters.
+     */
+    void warn( String string, Object... params );
 
-    void warn( String string );
+    /**
+     *  Log an informative message.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param params An array of parameters.
+     */
+    void info( String string, Object... params );
 
-    void info( String string );
+    /**
+     *  Log a debug message.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param params An array of parameters.
+     */
+    void debug( String string, Object... params );
 
-    void debug( String string );
+    /**
+     *  Log an error with an exception.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param t The exception to log. 
+     *  @param params An array of parameters.
+     */
+    void error( String string, Throwable t, Object... params );
 
-    void error( String string, Throwable t );
+    /**
+     *  Log a warning with an exception.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param t The exception to log. 
+     *  @param params An array of parameters.
+     */
+    void warn( String string, Throwable t, Object... params );
 
-    void warn( String string, Throwable t );
+    /**
+     *  Log an informative message with an exception.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param t The exception to log. 
+     *  @param params An array of parameters.
+     */
+    void info( String string, Throwable t, Object... params );
 
-    void info( String string, Throwable t );
-
-    void debug( String string, Throwable t );
+    /**
+     *  Log a debug message with an exception.
+     *  
+     *  @param string The string to log.  May contain {@link Formatter} -specific
+     *  formatting codes.
+     *  @param t The exception to log. 
+     *  @param params An array of parameters.
+     */
+    void debug( String string, Throwable t, Object... params );
 
     /**
      *  Checks if ERROR messages are enabled for this Logger.
