@@ -82,7 +82,7 @@
        <td>
          <stripes:text name="fullname" id="fullname"
                 size="20"><wiki:UserProfile property="fullname"/></stripes:text>
-         <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
+         <div class="formhelp"><fmt:message key="prefs.fullname.description"/></div>
        </td>
      </tr>
 
@@ -92,7 +92,7 @@
        <td>
          <stripes:text name="email" id="email"
                 size="20"><wiki:UserProfile property="email" /></stripes:text>
-         <span class="formhelp"><fmt:message key="prefs.email.description"/></span>
+         <div class="formhelp"><fmt:message key="prefs.email.description"/></div>
        </td>
      </tr>
 
