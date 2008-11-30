@@ -1,3 +1,11 @@
+2008-11-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-16
+        
+        * JSPWIKI-447: InstantiationException in PluginManager
+        sneaked in an example log4j override in log4j.properties
+        WatchDog did not have it's Logger final.
+         
 2008-11-30 Florian Holeczek <florianh@apache.org>
 
         * 3.0.0-svn-15

@@ -55,7 +55,7 @@ public final class WatchDog
     private boolean   m_enabled    = true;
     private WikiEngine m_engine;
 
-    private static Logger log = LoggerFactory.getLogger(WatchDog.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(WatchDog.class.getName());
 
     private static HashMap<Integer,WeakReference<WatchDog>> c_kennel = 
         new HashMap<Integer,WeakReference<WatchDog>>();

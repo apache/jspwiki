@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -707,16 +708,19 @@ public class PluginManager extends ModuleManager
         
         Set<Class<? extends WikiPlugin>> resultSet = resolver.getClasses();
         
-        log.debug( "Found "+resultSet.size()+" plugins" );
-        
         for( Class<? extends WikiPlugin> clazz : resultSet )
         {
-            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( clazz );
-
-            if( pluginInfo != null )
+            if( !clazz.isInterface() & !Modifier.isAbstract( clazz.getModifiers() ) )
             {
-                registerPlugin( pluginInfo );
-            } 
+                WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( clazz );
+
+                if( pluginInfo != null )
+                {
+                    registerPlugin( pluginInfo );
+                }
+            } else {
+                log.debug( "Plugin class " + clazz.getName() +" not registered, it is either an interface or it is abstract");
+            }
         }
     }
 
