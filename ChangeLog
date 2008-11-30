@@ -1,5 +1,12 @@
 2008-11-30 Florian Holeczek <florianh@apache.org>
 
+        * 3.0.0-svn-15
+
+        * german localization update for resources introduced in JSPWIKI-318
+
+
+2008-11-30 Florian Holeczek <florianh@apache.org>
+
         * corrected a copy & paste error in the newly introduced log4j.properties
 
 2008-11-29  Dirk Frederickx <dirk.frederickx@gmail.com>
