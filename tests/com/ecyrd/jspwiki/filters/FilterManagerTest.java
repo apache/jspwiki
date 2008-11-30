@@ -4,8 +4,6 @@ package com.ecyrd.jspwiki.filters;
 import junit.framework.*;
 import java.util.*;
 
-import org.apache.log4j.*;
-
 import com.ecyrd.jspwiki.*;
 
 public class FilterManagerTest extends TestCase
@@ -23,7 +21,6 @@ public class FilterManagerTest extends TestCase
         throws Exception
     {
         props.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(props);
         engine = new TestEngine(props);
     }
 

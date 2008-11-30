@@ -199,8 +199,6 @@ public class ReferenceManagerTest extends TestCase
         assertTrue( "Foobar unreferenced", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
 
         c = mgr.findReferrers( "Foobar" );
-        Iterator it = c.iterator();
-        String s1 = (String)it.next();
         assertTrue( "Foobar referrers", 
                     c.size()==2 );
     }
@@ -238,9 +236,6 @@ public class ReferenceManagerTest extends TestCase
         
         Collection c = mgr.findReferrers( "Foobars" );
         assertEquals( "Foobars referrers count", 2, c.size() );
-
-        Iterator i = c.iterator();
-        String first = (String) i.next();
 
         assertTrue( "Foobars referrers", 
                     c.contains("TestPage") && c.contains("Foobar"));

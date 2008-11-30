@@ -65,7 +65,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             String name = (String) i.next();
 
             TestEngine.deleteTestPage(name);
-            testEngine.deleteAttachments(name);
+            TestEngine.deleteAttachments(name);
         }
 
         created.clear();

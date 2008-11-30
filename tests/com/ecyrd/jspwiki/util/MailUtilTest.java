@@ -10,8 +10,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
@@ -51,7 +49,6 @@ public class MailUtilTest extends TestCase
         throws Exception
     {
         m_props.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(m_props);
         
         TestEngine testEngine = new TestEngine( m_props );
         

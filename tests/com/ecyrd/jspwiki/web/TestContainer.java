@@ -29,7 +29,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.hsqldb.jdbc.jdbcDataSource;
 import org.mortbay.http.*;
 import org.mortbay.http.handler.SecurityHandler;
@@ -75,7 +76,7 @@ public class TestContainer
     /** Number of jetty threads for the server. */
     private static int jettyThreads = DEFAULT_JETTY_THREADS;
 
-    private static final Logger log = Logger.getLogger( TestContainer.class );
+    private static final Logger log = LoggerFactory.getLogger( TestContainer.class );
 
     /**
      * Starts up a test server for a particular web application on the specified

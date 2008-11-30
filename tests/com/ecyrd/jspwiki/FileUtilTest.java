@@ -3,23 +3,13 @@ package com.ecyrd.jspwiki;
 
 import junit.framework.*;
 import java.io.*;
-import java.util.*;
-import org.apache.log4j.*;
 
 public class FileUtilTest extends TestCase
 {
     public FileUtilTest( String s )
     {
         super( s );
-        Properties props = new Properties();
-        try
-        {
-            props.load( TestEngine.findTestProperties() );
-            PropertyConfigurator.configure(props);
-        }
-        catch( IOException e ) {}
     }
-
     public void setUp()
         throws Exception
     {

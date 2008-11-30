@@ -5,8 +5,6 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.*;
-
 import com.ecyrd.jspwiki.*;
 
 public class FileSystemProviderTest extends TestCase
@@ -28,15 +26,10 @@ public class FileSystemProviderTest extends TestCase
     {
         m_pagedir = System.getProperties().getProperty("java.io.tmpdir");
 
-        Properties props2 = new Properties();
-
         props.setProperty( PageManager.PROP_PAGEPROVIDER, "FileSystemProvider" );
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            m_pagedir );
 
-        props2.load( TestEngine.findTestProperties() );
-        PropertyConfigurator.configure(props2);
-        
         m_engine = new TestEngine(props);
 
         m_provider = new FileSystemProvider();
