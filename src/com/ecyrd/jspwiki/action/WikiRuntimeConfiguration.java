@@ -4,9 +4,9 @@ import javax.servlet.ServletContext;
 
 import net.sourceforge.stripes.config.RuntimeConfiguration;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * Subclass of Stripes
@@ -20,7 +20,7 @@ import com.ecyrd.jspwiki.WikiEngine;
  */
 public class WikiRuntimeConfiguration extends RuntimeConfiguration
 {
-    private Logger log = Logger.getLogger(WikiRuntimeConfiguration.class);
+    private Logger log = LoggerFactory.getLogger(WikiRuntimeConfiguration.class);
 
     private WikiEngine m_engine = null;
 

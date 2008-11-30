@@ -12,13 +12,13 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.controller.*;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * <p>
@@ -68,7 +68,7 @@ import com.ecyrd.jspwiki.auth.SessionMonitor;
 @Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.BindingAndValidation } )
 public class WikiInterceptor implements Interceptor
 {
-    private static final Logger log = Logger.getLogger( WikiInterceptor.class );
+    private static final Logger log = LoggerFactory.getLogger( WikiInterceptor.class );
     /**
      * The PageContext attribute name of the WikiActionBean stored by
      * WikiInterceptor.

@@ -13,19 +13,19 @@ import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 @UrlBinding( "/Login.action" )
 public class LoginActionBean extends AbstractActionBean
 {
-    private static final Logger log = Logger.getLogger( LoginActionBean.class );
+    private static final Logger log = LoggerFactory.getLogger( LoginActionBean.class );
 
     /**
      * Sets cookies and redirects the user to a wiki page after a successful

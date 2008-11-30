@@ -28,14 +28,14 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.preferences.Preferences;
  */
 public class DefaultWikiContext implements WikiContext
 {
-    private static final Logger log = Logger.getLogger( DefaultWikiContext.class );
+    private static final Logger log = LoggerFactory.getLogger( DefaultWikiContext.class );
 
     private WikiPage m_page;
 

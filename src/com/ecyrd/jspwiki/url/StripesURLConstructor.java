@@ -35,11 +35,15 @@ import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.util.bean.ParseException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.action.*;
+import com.ecyrd.jspwiki.action.AttachActionBean;
+import com.ecyrd.jspwiki.action.GroupActionBean;
+import com.ecyrd.jspwiki.action.HandlerInfo;
+import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * Implements the default URL constructor using links directly to the JSP pages.
@@ -50,7 +54,7 @@ import com.ecyrd.jspwiki.action.*;
  */
 public class StripesURLConstructor extends DefaultURLConstructor
 {
-    private static final Logger log = Logger.getLogger( StripesURLConstructor.class );
+    private static final Logger log = LoggerFactory.getLogger( StripesURLConstructor.class );
     
     /**
      * Contains the absolute path of the JSPWiki Web application without the

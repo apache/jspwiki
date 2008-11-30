@@ -11,12 +11,12 @@ import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationErrors;
 import net.sourceforge.stripes.validation.ValidationMethod;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 @UrlBinding( "/Rename.action" )
 public class RenameActionBean extends AbstractActionBean
 {
-    private static final Logger log = Logger.getLogger( RenameActionBean.class );
+    private static final Logger log = LoggerFactory.getLogger( RenameActionBean.class );
 
     private boolean m_changeReferences = false;
     

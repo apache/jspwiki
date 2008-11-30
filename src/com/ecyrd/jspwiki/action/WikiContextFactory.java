@@ -13,10 +13,10 @@ import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.util.ResolverUtil;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -58,7 +58,7 @@ public final class WikiContextFactory
      */
     public static final String PROPS_ACTIONBEAN_PACKAGES = "jspwiki.actionBean.packages";
 
-    private static final Logger log = Logger.getLogger( WikiContextFactory.class );
+    private static final Logger log = LoggerFactory.getLogger( WikiContextFactory.class );
 
     private static final long serialVersionUID = 1L;
 

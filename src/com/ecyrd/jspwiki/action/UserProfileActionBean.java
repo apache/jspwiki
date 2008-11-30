@@ -7,8 +7,6 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.validation.*;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
@@ -18,6 +16,8 @@ import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.workflow.DecisionRequiredException;
 
 /**
@@ -26,7 +26,7 @@ import com.ecyrd.jspwiki.workflow.DecisionRequiredException;
 @UrlBinding( "/UserProfile.action" )
 public class UserProfileActionBean extends AbstractActionBean
 {
-    Logger log = Logger.getLogger( UserProfileActionBean.class );
+    Logger log = LoggerFactory.getLogger( UserProfileActionBean.class );
 
     private String m_redirect = null;
 

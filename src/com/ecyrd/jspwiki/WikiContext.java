@@ -25,15 +25,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
-<<<<<<< .working
-=======
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.PageContext;
-
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
->>>>>>> .merge-right.r721865
 
 import com.ecyrd.jspwiki.action.*;
 
@@ -145,134 +136,8 @@ public interface WikiContext
     public static final String    OTHER    = "other";
 
     /** User is doing administrative things. */
-<<<<<<< .working
     public static final String    ADMIN    = "admin";
  
-=======
-    public static final String    ADMIN    = WikiCommand.ADMIN.getRequestContext();
-
-    private static final Logger   log      = LoggerFactory.getLogger( WikiContext.class );
-
-    private static final Permission DUMMY_PERMISSION  = new java.util.PropertyPermission( "os.name", "read" );
-
-    /**
-     *  Create a new WikiContext for the given WikiPage. Delegates to
-     * {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
-     *  @param engine The WikiEngine that is handling the request.
-     *  @param page   The WikiPage.  If you want to create a
-     *  WikiContext for an older version of a page, you must use this
-     *  constructor.
-     */
-    public WikiContext( WikiEngine engine, WikiPage page )
-    {
-        this( engine, null, findCommand( engine, null, page ) );
-    }
-
-    /**
-     * <p>
-     * Creates a new WikiContext for the given WikiEngine, Command and
-     * HttpServletRequest.
-     * </p>
-     * <p>
-     * This constructor will also look up the HttpSession associated with the
-     * request, and determine if a WikiSession object is present. If not, a new
-     * one is created.
-     * </p>
-     * @param engine The WikiEngine that is handling the request
-     * @param request The HttpServletRequest that should be associated with this
-     *            context. This parameter may be <code>null</code>.
-     * @param command the command
-     * @throws IllegalArgumentException if <code>engine</code> or
-     *             <code>command</code> are <code>null</code>
-     */
-    public WikiContext( WikiEngine engine, HttpServletRequest request, Command command )
-        throws IllegalArgumentException
-    {
-        super();
-        if ( engine == null || command == null )
-        {
-            throw new IllegalArgumentException( "Parameter engine and command must not be null." );
-        }
-
-        m_engine = engine;
-        m_request = request;
-        m_session = WikiSession.getWikiSession( engine, request );
-        m_command = command;
-
-        // If PageCommand, get the WikiPage
-        if( command instanceof PageCommand )
-        {
-            m_page = (WikiPage)((PageCommand)command).getTarget();
-        }
-
-        // If page not supplied, default to front page to avoid NPEs
-        if( m_page == null )
-        {
-            m_page = m_engine.getPage( m_engine.getFrontPage() );
-
-            // Front page does not exist?
-            if( m_page == null )
-            {
-                m_page = new WikiPage( m_engine, m_engine.getFrontPage() );
-            }
-        }
-
-        m_realPage = m_page;
-
-        // Special case: retarget any empty 'view' PageCommands to the front page
-        if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null )
-        {
-            m_command = command.targetedCommand( m_page );
-        }
-
-        // Debugging...
-        if( log.isDebugEnabled() )
-        {
-            HttpSession session = ( request == null ) ? null : request.getSession( false );
-            String sid = ( session == null ) ? "(null)" : session.getId();
-            log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
-        }
-
-        // Figure out what template to use
-        setDefaultTemplate( request );
-    }
-
-    /**
-     * Creates a new WikiContext for the given WikiEngine, WikiPage and
-     * HttpServletRequest. This method simply looks up the appropriate Command
-     * using {@link #findCommand(WikiEngine, HttpServletRequest, WikiPage)} and
-     * delegates to
-     * {@link #WikiContext(WikiEngine, HttpServletRequest, Command)}.
-     * @param engine The WikiEngine that is handling the request
-     * @param request The HttpServletRequest that should be associated with this
-     *            context. This parameter may be <code>null</code>.
-     * @param page The WikiPage. If you want to create a WikiContext for an
-     *            older version of a page, you must supply this parameter
-     */
-    public WikiContext(WikiEngine engine, HttpServletRequest request, WikiPage page)
-    {
-        this( engine, request, findCommand( engine, request, page ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see com.ecyrd.jspwiki.ui.Command#getContentTemplate()
-     */
-    public String getContentTemplate()
-    {
-        return m_command.getContentTemplate();
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see com.ecyrd.jspwiki.ui.Command#getJSP()
-     */
-    public String getJSP()
-    {
-        return m_command.getContentTemplate();
-    }
-
->>>>>>> .merge-right.r721865
     /**
      *  Sets a reference to the real page whose content is currently being
      *  rendered.

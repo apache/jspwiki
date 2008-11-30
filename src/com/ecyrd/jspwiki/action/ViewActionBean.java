@@ -6,12 +6,12 @@ import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
-import org.apache.log4j.Logger;
-
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * Displays the wiki page a users requested, resolving special page names and
@@ -22,7 +22,7 @@ import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 @UrlBinding("/Wiki.action")
 public class ViewActionBean extends AbstractActionBean
 {
-    private Logger log = Logger.getLogger(ViewActionBean.class);
+    private Logger log = LoggerFactory.getLogger(ViewActionBean.class);
     
     private WikiPage m_page = null;
 
