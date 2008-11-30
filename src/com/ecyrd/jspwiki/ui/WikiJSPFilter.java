@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.log4j.NDC;
+import org.slf4j.MDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
@@ -86,7 +86,7 @@ public class WikiJSPFilter extends WikiServletFilter
         WatchDog w = m_engine.getCurrentWatchDog();
         try
         {
-            NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
+            MDC.put( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI(), "WikiJSPFilter" );
 
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             HttpServletResponseWrapper responseWrapper;
@@ -151,8 +151,7 @@ public class WikiJSPFilter extends WikiServletFilter
         finally
         {
             w.exitState();
-            NDC.pop();
-            NDC.remove();
+            MDC.remove( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI() );
         }
     }
 

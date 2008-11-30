@@ -62,7 +62,6 @@ public class PluginBean extends SimpleAdminBean
         return CORE;
     }
 
-    @SuppressWarnings("unchecked")
     public String doGet(WikiContext context)
     {
         Collection<WikiPluginInfo> plugins = m_engine.getPluginManager().modules();
