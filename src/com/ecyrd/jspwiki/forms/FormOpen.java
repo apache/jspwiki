@@ -68,8 +68,8 @@ import com.ecyrd.jspwiki.plugin.WikiPlugin;
 public class FormOpen
     extends FormElement
 {
-    private static org.apache.log4j.Logger log =
-        org.apache.log4j.Logger.getLogger( FormOpen.class );
+    private static com.ecyrd.jspwiki.log.Logger log =
+        com.ecyrd.jspwiki.log.LoggerFactory.getLogger( FormOpen.class );
 
     /** Parameter name for setting the method (GET or POST).  Value is <tt>{@value}</tt>. */
     public static final String PARAM_METHOD = "method";

@@ -24,7 +24,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.url.DefaultURLConstructor;
 
@@ -41,7 +42,7 @@ public class WikiServlet
 {
     private static final long serialVersionUID = 3258410651167633973L;
     private WikiEngine m_engine;
-    static final Logger log = Logger.getLogger(WikiServlet.class.getName());
+    static final Logger log = LoggerFactory.getLogger(WikiServlet.class.getName());
 
     /**
      *  {@inheritDoc}

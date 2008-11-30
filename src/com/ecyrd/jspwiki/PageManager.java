@@ -26,7 +26,8 @@ import java.security.Principal;
 import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -109,7 +110,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     /** Fact name for storing whether the user is authenticated or not.  Value is {@value}. */
     public static final String FACT_IS_AUTHENTICATED = "fact.isAuthenticated";
 
-    static Logger log = Logger.getLogger( PageManager.class );
+    static Logger log = LoggerFactory.getLogger( PageManager.class );
 
     private WikiPageProvider m_provider;
 

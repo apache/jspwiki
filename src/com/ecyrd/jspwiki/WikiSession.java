@@ -29,7 +29,8 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.authorize.Group;
@@ -102,7 +103,7 @@ public final class WikiSession implements WikiEventListener
 
     private static final int    DOT                   = 46;
 
-    private static final Logger log                   = Logger.getLogger( WikiSession.class );
+    private static final Logger log                   = LoggerFactory.getLogger( WikiSession.class );
 
     private static final String ALL                   = "*";
 

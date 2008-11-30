@@ -24,7 +24,8 @@ package com.ecyrd.jspwiki.event;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent
@@ -145,7 +146,7 @@ import org.apache.log4j.Logger;
  */
 public final class WikiEventManager
 {
-    private static final Logger log = Logger.getLogger(WikiEventManager.class);
+    private static final Logger log = LoggerFactory.getLogger(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
     private static boolean c_permitMonitor = false;
