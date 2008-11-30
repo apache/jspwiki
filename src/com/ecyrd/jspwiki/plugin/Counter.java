@@ -40,7 +40,7 @@ import java.util.*;
 public class Counter
     implements WikiPlugin
 {
-    // private static Logger log = Logger.getLogger( Counter.class );
+    // private static Logger log = LoggerFactory.getLogger( Counter.class );
 
     /** Parameter name for setting the name.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_NAME          = "name";

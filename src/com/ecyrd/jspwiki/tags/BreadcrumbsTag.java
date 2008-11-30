@@ -25,7 +25,8 @@ import com.ecyrd.jspwiki.WikiContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,7 +53,7 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
+    private static final Logger log = LoggerFactory.getLogger(BreadcrumbsTag.class);
     private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
     private String m_separator = ", ";

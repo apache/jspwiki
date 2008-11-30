@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -29,9 +30,9 @@ import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.jspwiki.api.ModuleData;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.regex.*;
-import org.jdom.Element;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.modules.ModuleManager;
@@ -140,7 +141,7 @@ public class PluginManager extends ModuleManager
 {
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
-    private static Logger log = Logger.getLogger( PluginManager.class );
+    private static Logger log = LoggerFactory.getLogger( PluginManager.class );
 
     /**
      *  This is the default package to try in case the instantiation
@@ -212,7 +213,7 @@ public class PluginManager extends ModuleManager
         }
         catch( MalformedPatternException e )
         {
-            log.fatal("Internal error: someone messed with pluginmanager patterns.", e );
+            log.error("Internal error: someone messed with pluginmanager patterns.", e );
             throw new InternalWikiException( "PluginManager patterns are broken" );
         }
 
@@ -666,7 +667,7 @@ public class PluginManager extends ModuleManager
         name = pluginClass.getName();
         if(name != null)
         {
-            log.debug("Registering plugin [name]: " + name);
+            log.debug("Registering plugin [name]: %s", name);
             m_pluginClassMap.put(name, pluginClass);
         }
 
@@ -676,7 +677,7 @@ public class PluginManager extends ModuleManager
         {
             for( String a : aliases )
             {
-                log.debug("Registering plugin [shortName]: " + a);
+                log.debug("Registering plugin [shortName]: %s", a);
                 m_pluginClassMap.put(a, pluginClass);
             }
         }
@@ -685,7 +686,7 @@ public class PluginManager extends ModuleManager
         name = pluginClass.getClassName();
         if(name != null)
         {
-            log.debug("Registering plugin [className]: " + name);
+            log.debug("Registering plugin [className]: %s", name);
             m_pluginClassMap.put(name, pluginClass);
         }
 
@@ -707,16 +708,21 @@ public class PluginManager extends ModuleManager
         
         Set<Class<? extends WikiPlugin>> resultSet = resolver.getClasses();
         
-        log.debug( "Found "+resultSet.size()+" plugins" );
+        log.debug( "Found %d plugins", resultSet.size() );
         
         for( Class<? extends WikiPlugin> clazz : resultSet )
         {
-            WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( clazz );
-
-            if( pluginInfo != null )
+            if( !clazz.isInterface() & !Modifier.isAbstract( clazz.getModifiers() ) )
             {
-                registerPlugin( pluginInfo );
-            } 
+                WikiPluginInfo pluginInfo = WikiPluginInfo.newInstance( clazz );
+
+                if( pluginInfo != null )
+                {
+                    registerPlugin( pluginInfo );
+                }
+            } else {
+                log.debug( "Plugin class " + clazz.getName() +" not registered, it is either an interface or it is abstract");
+            }
         }
     }
 
@@ -902,7 +908,7 @@ public class PluginManager extends ModuleManager
                 }
                 catch( Exception e )
                 {
-                    log.info( "Cannot initialize plugin "+m_clazz.getCanonicalName(), e );
+                    log.info( "Cannot initialize plugin '%s'", e, m_clazz.getCanonicalName() );
                 }
             }
         }

@@ -30,7 +30,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -192,7 +193,7 @@ public class JDBCGroupDatabase implements GroupDatabase
     /** The column containing the name of the user who last modified the group. */
     public static final String PROP_GROUPDB_MODIFIER = "jspwiki.groupdatabase.modifier";
 
-    protected static final Logger log = Logger.getLogger( JDBCGroupDatabase.class );
+    protected static final Logger log = LoggerFactory.getLogger( JDBCGroupDatabase.class );
 
     private DataSource m_ds = null;
 

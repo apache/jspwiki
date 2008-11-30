@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 
@@ -37,7 +38,7 @@ import com.ecyrd.jspwiki.*;
  */
 public class ExternalDiffProvider implements DiffProvider
 {
-    private static final Logger log = Logger.getLogger(ExternalDiffProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalDiffProvider.class);
 
     /**
      * Determines the command to be used for 'diff'. This program must be able

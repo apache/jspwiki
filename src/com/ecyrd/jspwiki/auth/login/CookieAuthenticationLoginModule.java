@@ -30,7 +30,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TextUtil;
@@ -68,7 +69,7 @@ import com.ecyrd.jspwiki.util.HttpUtil;
 public class CookieAuthenticationLoginModule extends AbstractLoginModule
 {
 
-    private static final Logger log = Logger.getLogger( CookieAuthenticationLoginModule.class );
+    private static final Logger log = LoggerFactory.getLogger( CookieAuthenticationLoginModule.class );
     private static final String LOGIN_COOKIE_NAME = "JSPWikiUID";
 
     /** The directory name under which the cookies are stored.  The value is {@value}. */

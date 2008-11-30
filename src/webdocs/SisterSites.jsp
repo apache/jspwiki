@@ -1,11 +1,12 @@
 <%@ page import="java.util.*,com.ecyrd.jspwiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 <%
     /*

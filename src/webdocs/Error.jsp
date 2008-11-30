@@ -1,11 +1,12 @@
 <%@ page isErrorPage="true" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ErrorActionBean"/>
 <%

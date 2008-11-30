@@ -1,11 +1,12 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
 
 <%

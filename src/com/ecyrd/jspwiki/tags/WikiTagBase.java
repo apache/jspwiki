@@ -26,7 +26,8 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import net.sourceforge.stripes.tag.StripesTagSupport;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.action.WikiActionBean;
@@ -47,7 +48,7 @@ public abstract class WikiTagBase
 {
     public static final String ATTR_CONTEXT = "wikiContext";
 
-    static    Logger    log = Logger.getLogger( WikiTagBase.class );
+    static    Logger    log = LoggerFactory.getLogger( WikiTagBase.class );
 
     protected WikiContext m_wikiContext;
 

@@ -1,4 +1,5 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -14,7 +15,7 @@
        container-managed authentication is in force, the container
        will prevent direct access to it.
      */
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LoggerFactory.getLogger("JSPWiki"); 
 
 %>
 <%

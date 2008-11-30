@@ -32,7 +32,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.xmlrpc.*;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -61,7 +62,7 @@ public class RPCServlet extends HttpServlet
     private WikiEngine       m_engine;
     private XmlRpcServer     m_xmlrpcServer = new XmlRpcServer();
 
-    static Logger log = Logger.getLogger( RPCServlet.class );
+    static Logger log = LoggerFactory.getLogger( RPCServlet.class );
 
     public void initHandler( String prefix, String handlerName )
         throws ClassNotFoundException,
@@ -104,7 +105,7 @@ public class RPCServlet extends HttpServlet
         }
         catch( Exception e )
         {
-            log.fatal("Unable to start RPC interface: ", e);
+            log.error("Unable to start RPC interface: ", e);
             throw new ServletException( "No RPC interface", e );
         }
     }

@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -51,7 +52,7 @@ public class SearchManager
     extends BasicPageFilter
     implements InternalModule, WikiEventListener
 {
-    private static final Logger log = Logger.getLogger(SearchManager.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchManager.class);
 
     private static final String DEFAULT_SEARCHPROVIDER  = "com.ecyrd.jspwiki.search.LuceneSearchProvider";
     

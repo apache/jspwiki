@@ -31,7 +31,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -59,7 +60,7 @@ public class WebContainerAuthorizer implements WebAuthorizer
 {
     private static final String J2EE_SCHEMA_24_NAMESPACE = "http://java.sun.com/xml/ns/j2ee";
 
-    protected static final Logger log                   = Logger.getLogger( WebContainerAuthorizer.class );
+    protected static final Logger log                   = LoggerFactory.getLogger( WebContainerAuthorizer.class );
 
     protected WikiEngine          m_engine;
 

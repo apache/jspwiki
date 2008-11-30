@@ -27,7 +27,8 @@ import java.security.Principal;
 import java.util.*;
 
 import org.apache.catalina.util.HexUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -45,7 +46,7 @@ import com.ecyrd.jspwiki.util.CryptoUtil;
 public abstract class AbstractUserDatabase implements UserDatabase
 {
 
-    protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
+    protected static final Logger log = LoggerFactory.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
 
@@ -264,7 +265,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
         catch( UnsupportedEncodingException e )
         {
-            log.fatal( "You do not have UTF-8!?!" );
+            log.error( "You do not have UTF-8!?!" );
         }
         catch( WikiSecurityException e )
         {
@@ -324,7 +325,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
         catch( UnsupportedEncodingException e )
         {
-            log.fatal("You do not have UTF-8!?!");
+            log.error("You do not have UTF-8!?!");
         }
         return hash;
     }
@@ -353,7 +354,7 @@ public abstract class AbstractUserDatabase implements UserDatabase
         }
         catch (UnsupportedEncodingException e)
         {
-            log.fatal("UTF-8 not supported!?!");
+            log.error("UTF-8 not supported!?!");
         }
         return hash;
     }

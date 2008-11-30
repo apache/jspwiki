@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -44,7 +45,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( IndexPlugin.class );
+    private static Logger log = LoggerFactory.getLogger( IndexPlugin.class );
     
     /**
      *  {@inheritDoc}

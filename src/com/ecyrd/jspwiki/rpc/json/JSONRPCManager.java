@@ -29,7 +29,8 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -173,7 +174,7 @@ public final class JSONRPCManager extends RPCManager
     static class WikiJSONAccessor implements InvocationCallback
     {
         private static final long serialVersionUID = 1L;
-        private static final Logger log = Logger.getLogger( WikiJSONAccessor.class );
+        private static final Logger log = LoggerFactory.getLogger( WikiJSONAccessor.class );
         
         /**
          *  Create an accessor.

@@ -35,7 +35,7 @@
 #wikibody.fav-slide #page {
 	width:960px;
 }
-
+/*
 #header .userbox {
 	display:none;
 }
@@ -43,6 +43,7 @@
 	display:block;
 	border:2px solid #ddd;
 }
+*/
 #pagecontent {
 	width:100%;
 }

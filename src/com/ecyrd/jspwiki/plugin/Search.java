@@ -26,7 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ecs.xhtml.*;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
@@ -47,7 +48,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class Search implements WikiPlugin
 {
-    static Logger log = Logger.getLogger(Search.class);
+    static Logger log = LoggerFactory.getLogger(Search.class);
     
     /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";

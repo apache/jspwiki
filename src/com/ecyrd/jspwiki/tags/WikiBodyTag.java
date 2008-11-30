@@ -27,7 +27,8 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 
@@ -41,7 +42,7 @@ public abstract class WikiBodyTag extends BodyTagSupport
     implements TryCatchFinally
 {
     protected WikiContext m_wikiContext;
-    static    Logger    log = Logger.getLogger( WikiBodyTag.class );
+    static    Logger    log = LoggerFactory.getLogger( WikiBodyTag.class );
 
     public int doStartTag() throws JspException
     {

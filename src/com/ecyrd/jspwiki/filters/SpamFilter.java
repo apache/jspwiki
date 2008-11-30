@@ -33,7 +33,8 @@ import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.ModuleData;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
@@ -147,8 +148,8 @@ public class SpamFilter
 
     private Date            m_lastRebuild = new Date( 0L );
 
-    private static  Logger  c_spamlog = Logger.getLogger( "SpamLog" );
-    private static  Logger  log = Logger.getLogger( SpamFilter.class );
+    private static  Logger  c_spamlog = LoggerFactory.getLogger( "SpamLog" );
+    private static  Logger  log = LoggerFactory.getLogger( SpamFilter.class );
 
 
     private Vector<Host>    m_temporaryBanList = new Vector<Host>();
@@ -241,7 +242,7 @@ public class SpamFilter
         }
         catch( MalformedPatternException e )
         {
-            log.fatal("Internal error: Someone put in a faulty pattern.",e);
+            log.error("Internal error: Someone put in a faulty pattern.",e);
             throw new InternalWikiException("Faulty pattern.");
         }
 

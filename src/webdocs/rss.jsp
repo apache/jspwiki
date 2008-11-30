@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <%@ page import="java.util.*,com.ecyrd.jspwiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
@@ -9,7 +9,7 @@
 <%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LoggerFactory.getLogger("JSPWiki");
     Cache m_cache = new Cache( true, false, false, true, 
                                "com.opensymphony.oscache.base.algorithm.LRUCache", 256 );
 %>

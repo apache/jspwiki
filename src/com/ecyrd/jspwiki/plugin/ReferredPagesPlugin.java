@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
@@ -45,7 +46,7 @@ import com.ecyrd.jspwiki.*;
  */
 public class ReferredPagesPlugin implements WikiPlugin
 {
-    private static Logger log = Logger.getLogger( ReferredPagesPlugin.class );
+    private static Logger log = LoggerFactory.getLogger( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
     private HashSet<String> m_exists  = new HashSet<String>();

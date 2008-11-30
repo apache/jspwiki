@@ -20,7 +20,8 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.*;
 
 import java.text.MessageFormat;
@@ -46,7 +47,7 @@ import java.util.*;
 public class ReferringPagesPlugin
     extends AbstractReferralPlugin
 {
-    private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
+    private static Logger log = LoggerFactory.getLogger( ReferringPagesPlugin.class );
 
     /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";

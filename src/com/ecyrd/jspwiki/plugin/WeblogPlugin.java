@@ -35,7 +35,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
@@ -77,7 +78,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class WeblogPlugin
     implements WikiPlugin, ParserStagePlugin
 {
-    private static Logger     log = Logger.getLogger(WeblogPlugin.class);
+    private static Logger     log = LoggerFactory.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */

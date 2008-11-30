@@ -26,7 +26,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -44,7 +45,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 public class PageRenamer
 {
 
-    private static final Logger log = Logger.getLogger( PageRenamer.class );
+    private static final Logger log = LoggerFactory.getLogger( PageRenamer.class );
     
     private boolean m_camelCase = false;
     
@@ -171,7 +172,6 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    @SuppressWarnings("unchecked")
     private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<String>referrers )
     {
         WikiEngine engine = context.getEngine();

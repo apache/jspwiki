@@ -96,7 +96,6 @@ public class AclEntryImpl implements AclEntry, Serializable
      * Returns an enumeration of the permissions in this ACL entry.
      * @return an enumeration of the permissions
      */
-    @SuppressWarnings("unchecked")
     public Enumeration permissions()
     {
         return m_permissions.elements();

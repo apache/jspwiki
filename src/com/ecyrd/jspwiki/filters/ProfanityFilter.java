@@ -27,7 +27,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
@@ -42,7 +43,7 @@ import com.ecyrd.jspwiki.WikiContext;
 @Deprecated
 public class ProfanityFilter extends BasicPageFilter
 {
-    private static Logger     log = Logger.getLogger(ProfanityFilter.class);
+    private static Logger     log = LoggerFactory.getLogger(ProfanityFilter.class);
     
     private static final String PROPERTYFILE = "com/ecyrd/jspwiki/filters/profanity.properties";
     private static String[] c_profanities = new String[0];

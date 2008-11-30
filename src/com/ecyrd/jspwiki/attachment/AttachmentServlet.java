@@ -42,7 +42,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
@@ -81,7 +82,7 @@ public class AttachmentServlet
     private static final long serialVersionUID = 3257282552187531320L;
 
     private WikiEngine m_engine;
-    static Logger log = Logger.getLogger(AttachmentServlet.class.getName());
+    static Logger log = LoggerFactory.getLogger(AttachmentServlet.class.getName());
 
     private static final String HDR_VERSION     = "version";
     // private static final String HDR_NAME        = "page";
@@ -157,7 +158,7 @@ public class AttachmentServlet
         }
         else if( !f.isDirectory() )
         {
-            log.fatal("A file already exists where the temporary dir is supposed to be: "+m_tmpDir+".  Please remove it.");
+            log.error("A file already exists where the temporary dir is supposed to be: "+m_tmpDir+".  Please remove it.");
         }
 
         log.debug( "UploadServlet initialized. Using " +

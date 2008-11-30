@@ -28,7 +28,8 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
@@ -62,7 +63,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
      */
     public static final String PROMPT            = "User name";
 
-    protected static final Logger log            = Logger.getLogger( AnonymousLoginModule.class );
+    protected static final Logger log            = LoggerFactory.getLogger( AnonymousLoginModule.class );
 
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an

@@ -3,14 +3,15 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
 <%@ page import="com.ecyrd.jspwiki.ui.Installer" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
 
 <%

@@ -33,7 +33,8 @@ import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
@@ -100,7 +101,7 @@ public final class AuthenticationManager
     /** Whether logins should be throttled to limit brute-forcing attempts. Defaults to true. */
     public static final String                 PROP_LOGIN_THROTTLING = "jspwiki.login.throttling";
 
-    protected static final Logger              log                 = Logger.getLogger( AuthenticationManager.class );
+    protected static final Logger              log                 = LoggerFactory.getLogger( AuthenticationManager.class );
 
     /** Prefix for LoginModule options key/value pairs. */
     protected static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
@@ -614,7 +615,7 @@ public final class AuthenticationManager
             catch( MalformedURLException e )
             {
                 // This should never happen unless I screw up
-                log.fatal("Your code is b0rked.  You are a bad person.");
+                log.error("Your code is b0rked.  You are a bad person.");
             }
         }
 

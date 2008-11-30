@@ -1,17 +1,19 @@
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

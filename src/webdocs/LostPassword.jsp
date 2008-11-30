@@ -1,4 +1,5 @@
-<%@ page import="org.apache.log4j.*"%>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.text.*"%>
@@ -11,7 +12,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase"%>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
-<%!Logger log = Logger.getLogger( "JSPWiki" );
+<%!Logger log = LoggerFactory.getLogger( "JSPWiki" );
 
     String message = null;
 

@@ -24,12 +24,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 
 import net.sourceforge.stripes.util.ResolverUtil;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -43,8 +43,6 @@ import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
-import com.ecyrd.jspwiki.plugin.WikiPlugin;
-import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.PriorityList;
 
@@ -101,7 +99,7 @@ public final class FilterManager extends ModuleManager
 
     private HashMap<String, PageFilterInfo>          m_filterClassMap = new HashMap<String,PageFilterInfo>();
 
-    private static final Logger log = Logger.getLogger(WikiEngine.class);
+    private static final Logger log = LoggerFactory.getLogger(WikiEngine.class);
 
     /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
     public static final String PROP_FILTERXML = "jspwiki.filterConfig";

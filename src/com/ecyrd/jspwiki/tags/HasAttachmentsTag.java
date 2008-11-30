@@ -56,7 +56,7 @@ public class HasAttachmentsTag
         }
         catch( ProviderException e )
         {
-            log.fatal("Provider failed while trying to check for attachements",e);
+            log.error("Provider failed while trying to check for attachements",e);
             // FIXME: THrow something.
         }
 

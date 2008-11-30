@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki;
 
 import java.io.Serializable;
 import java.util.*;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
@@ -39,7 +40,7 @@ public class PageTimeComparator
 {
     private static final long serialVersionUID = 0L;
 
-    static Logger log = Logger.getLogger( PageTimeComparator.class ); 
+    static Logger log = LoggerFactory.getLogger( PageTimeComparator.class ); 
 
     /**
      *  {@inheritDoc}

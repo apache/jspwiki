@@ -27,7 +27,8 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.QueryItem;
@@ -48,7 +49,7 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
  */
 public class BasicSearchProvider implements SearchProvider
 {
-    private static final Logger log = Logger.getLogger(BasicSearchProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(BasicSearchProvider.class);
 
     private WikiEngine m_engine;
 

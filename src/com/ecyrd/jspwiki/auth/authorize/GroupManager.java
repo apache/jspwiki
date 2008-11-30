@@ -31,7 +31,8 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiContext;
@@ -70,7 +71,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
     private static final String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
 
-    static final Logger         log                = Logger.getLogger( GroupManager.class );
+    static final Logger         log                = LoggerFactory.getLogger( GroupManager.class );
 
     protected WikiEngine        m_engine;
 

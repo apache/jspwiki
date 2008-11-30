@@ -24,7 +24,8 @@ package com.ecyrd.jspwiki.diff;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiContext;
@@ -40,7 +41,7 @@ import com.ecyrd.jspwiki.util.ClassUtil;
  */
 public class DifferenceManager
 {
-    private static final Logger log = Logger.getLogger(DifferenceManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DifferenceManager.class);
 
     /** Property value for storing a diff provider.  Value is {@value}. */
     public static final String PROP_DIFF_PROVIDER = "jspwiki.diffProvider";

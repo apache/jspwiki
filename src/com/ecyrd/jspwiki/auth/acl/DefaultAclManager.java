@@ -26,7 +26,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -45,7 +46,7 @@ import com.ecyrd.jspwiki.render.RenderingManager;
  */
 public class DefaultAclManager implements AclManager
 {
-    static Logger                log    = Logger.getLogger( DefaultAclManager.class );
+    static Logger                log    = LoggerFactory.getLogger( DefaultAclManager.class );
 
     private AuthorizationManager m_auth = null;
     private WikiEngine           m_engine = null;

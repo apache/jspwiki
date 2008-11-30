@@ -26,7 +26,8 @@ import org.apache.xmlrpc.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.*;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  A very dumb class that pings weblogs.com on each save.  INTERNAL USE ONLY SO FAR!
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
 public class PingWeblogsComFilter
     extends BasicPageFilter
 {
-    static Logger log = Logger.getLogger( PingWeblogsComFilter.class );
+    static Logger log = LoggerFactory.getLogger( PingWeblogsComFilter.class );
 
     private String m_pingURL;
 
