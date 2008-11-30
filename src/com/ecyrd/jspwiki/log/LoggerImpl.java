@@ -33,68 +33,81 @@ public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger
     Logger m_slf4jLogger = null;
 
     /**
-     * @param loggerName
+     * @param loggerName The name of the SFL4J Logger to find
      */
     protected LoggerImpl( String loggerName )
     {
         m_slf4jLogger = org.slf4j.LoggerFactory.getLogger( loggerName );
     }
 
+    /** {@inheritDoc} */
+    
     public void error( String string )
     {
         m_slf4jLogger.error( string );
     }
 
+    /** {@inheritDoc} */
     public void warn( String string )
     {
         m_slf4jLogger.warn( string );
     }
 
+    /** {@inheritDoc} */
     public void info( String string )
     {
         m_slf4jLogger.info( string );
     }
 
+    /** {@inheritDoc} */
     public void debug( String arg0 )
     {
         m_slf4jLogger.debug( arg0 );
     }
 
+    /** {@inheritDoc} */
     public void error( String string, Throwable t )
     {
         m_slf4jLogger.error( string, t );
     }
 
+    /** {@inheritDoc} */
     public void warn( String string, Throwable t )
     {
         m_slf4jLogger.warn( string, t );
     }
 
+    /** {@inheritDoc} */
     public void info( String string, Throwable t )
     {
         m_slf4jLogger.info( string, t );
     }
 
+    /** {@inheritDoc} */
     public void debug( String string, Throwable t )
     {
         m_slf4jLogger.debug( string, t );
     }
 
+    /** {@inheritDoc} */
     public boolean isErrorEnabled()
     {
         return m_slf4jLogger.isErrorEnabled();
     }
 
+    /** {@inheritDoc} */
     public boolean isWarnEnabled()
     {
         return m_slf4jLogger.isWarnEnabled();
     }
 
+    /** {@inheritDoc} */
     public boolean isInfoEnabled()
     {
         return m_slf4jLogger.isInfoEnabled();
     }
 
+    /** {@inheritDoc} */
     public boolean isDebugEnabled()
     {
         return m_slf4jLogger.isDebugEnabled();

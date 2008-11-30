@@ -48,13 +48,13 @@ import com.ecyrd.jspwiki.Release;
  * @author Harry Metske
  * @since 3.0
  */
-public class LoggerFactory
+public final class LoggerFactory
 {
     private static boolean c_log4jPresent = true;
 
-    public static final String SLF4J_LOG4J_ADAPTER_CLASS = "org.slf4j.impl.Log4jLoggerAdapter";
+    private static final String SLF4J_LOG4J_ADAPTER_CLASS = "org.slf4j.impl.Log4jLoggerAdapter";
 
-    public static final String LOG4J_LOGGER_CLASS = "org.apache.log4j.Logger";
+    private static final String LOG4J_LOGGER_CLASS = "org.apache.log4j.Logger";
 
     private static HashMap<String, LoggerImpl> c_registeredLoggers = new HashMap<String, LoggerImpl>( 200 );
 
@@ -64,8 +64,16 @@ public class LoggerFactory
     }
 
     /**
-     * @param loggerName
-     * @return <code>
+     *  Private constructor prevents instantiation.
+     */
+    private LoggerFactory()
+    {}
+    
+    /**
+     * Returns a Logger instance, and also, if it is a Log4J logger, registers the Logging MBean.
+     * 
+     * @param loggerName Logger to find.
+     * @return A Logger instance. 
      */
     public static final synchronized Logger getLogger( String loggerName )
     {
@@ -103,7 +111,7 @@ public class LoggerFactory
             // first instantiate the logger: Logger.getLogger(loggerName)
             //
             @SuppressWarnings("unused")
-            Object slf4j_log4j_Impl = Class.forName( SLF4J_LOG4J_ADAPTER_CLASS);
+            Object slf4jLog4jImpl = Class.forName( SLF4J_LOG4J_ADAPTER_CLASS);
             //
             Object log4jLogger = Class.forName(LOG4J_LOGGER_CLASS );
             Class loggerClass = Class.forName(LOG4J_LOGGER_CLASS  );
@@ -137,6 +145,12 @@ public class LoggerFactory
         }
     }
 
+    /**
+     *  Utility method for locating a Logger based on a Class.
+     *  
+     *  @param clazz The Class to find a Logger for.
+     *  @return A Logger instance.
+     */
     public static final Logger getLogger( Class clazz )
     {
         return getLogger( clazz.getName() );

@@ -45,12 +45,34 @@ public interface Logger
 
     void debug( String string, Throwable t );
 
+    /**
+     *  Checks if ERROR messages are enabled for this Logger.
+     *  
+     *  @return True, if ERROR messages are enabled.
+     */
+
     boolean isErrorEnabled();
+
+    /**
+     *  Checks if WARN messages are enabled for this Logger.
+     *  
+     *  @return True, if WARN messages are enabled.
+     */
 
     boolean isWarnEnabled();
 
+    /**
+     *  Checks if INFO messages are enabled for this Logger.
+     *  
+     *  @return True, if INFO messages are enabled.
+     */
     boolean isInfoEnabled();
 
+    /**
+     *  Checks if DEBUG messages are enabled for this Logger.
+     *  
+     *  @return True, if DEBUG messages are enabled.
+     */
     boolean isDebugEnabled();
 
 }
