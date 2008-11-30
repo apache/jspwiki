@@ -8,9 +8,6 @@ import java.util.*;
 
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.util.ResolverUtil;
-
-import com.ecyrd.jspwiki.action.WikiContextFactory;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
@@ -24,16 +21,8 @@ public class StripesJspTransformer extends AbstractJspTransformer
     /**
      * {@inheritDoc}
      */
-    public void initialize( Map<String, Object> sharedState )
+    public void initialize( Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
     {
-        // Find all ActionBean implementations on the classpath
-        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
-                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
-        String[] beanPackages = beanPackagesProp.split( "," );
-        ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
-        resolver.findImplementations( ActionBean.class, beanPackages );
-        Set<Class<? extends ActionBean>> beanClasses = resolver.getClasses();
-
         // Fetch the URL bindings
         initUrlBindingCache( beanClasses );
 
@@ -43,6 +32,11 @@ public class StripesJspTransformer extends AbstractJspTransformer
         System.out.println( "Initialized StripesJspTransformer." );
     }
 
+    /**
+     * Using introspection, creates a Map of key/value pairs where the key is an {@link net.sourceforge.stripes.action.UrlBinding} annotation
+     * value, and the corresponding value is the {@link net.sourceforge.stripes.action.ActionBean} classes it annotates.
+     * @param beanClasses the set of ActionBean classes to inspect
+     */
     private void initUrlBindingCache( Set<Class<? extends ActionBean>> beanClasses )
     {
         for( Class<? extends ActionBean> beanClass : beanClasses )
@@ -55,6 +49,11 @@ public class StripesJspTransformer extends AbstractJspTransformer
         }
     }
 
+    /**
+     * Using introspection, creates a Map of key/value pairs where the key is an ActionBean class, and its corresponding
+     * value is a Set of property names the bean has (as Strings).
+     * @param beanClasses the set of ActionBean classes to inspect
+     */
     private void initActionBeanPropertyCache( Set<Class<? extends ActionBean>> beanClasses )
     {
         for( Class<? extends ActionBean> beanClass : beanClasses )
@@ -144,7 +143,10 @@ public class StripesJspTransformer extends AbstractJspTransformer
         // If we did any work here, add Stripes taglib entry
         if( migrated )
         {
-            addStripesTaglib( doc );
+            if ( addStripesTaglib( doc ) )
+            {
+                message( doc.getRoot(), "Added Stripes taglib directive." );
+            }
         }
     }
 
@@ -158,16 +160,19 @@ public class StripesJspTransformer extends AbstractJspTransformer
      * <code>/WEB-INF/stripes.tld</code>.
      * 
      * @param doc the JspDocument to process
+     * @return <code>true</code> if the Stripes taglib declaration was
+     * actually added, <code>false</code> if it already exists
      */
-    private void addStripesTaglib( JspDocument doc )
+    static protected boolean addStripesTaglib( JspDocument doc )
     {
         // Add the Stripes taglib declaration if it's not there already
         List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
         if( nodes.size() == 0 )
         {
             doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
-            message( doc.getRoot(), "Added Stripes taglib directive." );
+            return true;
         }
+        return true;
     }
 
     /**

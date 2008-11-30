@@ -58,14 +58,8 @@ class JspDocument
         // Create new directive
         Tag directive = new Tag( this, NodeType.JSP_DIRECTIVE );
         directive.setName( "taglib" );
-        Attribute attribute = new Attribute( this );
-        attribute.setName( "uri" );
-        attribute.setValue( "/WEB-INF/stripes.tld" );
-        directive.addAttribute( attribute );
-        attribute = new Attribute( this );
-        attribute.setName( "prefix" );
-        attribute.setValue( "stripes" );
-        directive.addAttribute( attribute );
+        directive.addAttribute( new Attribute( this, "uri", uri ) );
+        directive.addAttribute( new Attribute( this, "prefix", prefix ) );
         
         // Create linebreak
         Text linebreak = new Text( this );

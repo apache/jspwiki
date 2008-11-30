@@ -1,7 +1,10 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
+import java.security.ProtectionDomain;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -14,6 +17,11 @@ public class JSPWikiJspTransformerTest extends TestCase
     protected JspTransformer m_transformer = new JSPWikiJspTransformer();
     protected JspDocument m_doc = new JspDocument();
     
+    public void setUp()
+    {
+        m_transformer.initialize( JspMigrator.findBeanClasses(), m_sharedState );
+    }
+
     public JSPWikiJspTransformerTest( String s )
     {
         super( s );
@@ -70,6 +78,29 @@ public class JSPWikiJspTransformerTest extends TestCase
         assertEquals( NodeType.TEXT, node.getType() );
         node = doc.getNodes().get( 1 );
         assertEquals( "form", node.getName() );
+    }
+    
+    public void testUseActionBean()
+    {
+        String s = "<% engine.createContext( request, WikiContext.EDIT ); %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 5 nodes: Stripes taglib + <useActionBean> tag + scriptlet + 2 whitespace nodes
+        assertEquals( 5, doc.getNodes().size() );
+        Tag tag = (Tag)doc.getNodes().get( 2 );
+        assertEquals( "stripes:useActionBean", tag.getName() );
+        assertEquals( "beanClass", tag.getAttributes().get( 0 ).getName() );
+        assertEquals( "com.ecyrd.jspwiki.action.EditActionBean", tag.getAttributes().get( 0 ).getValue() );
+        assertEquals( "event", tag.getAttributes().get( 1 ).getName() );
+        assertEquals( "edit", tag.getAttributes().get( 1 ).getValue() );
     }
     
     public static Test suite()

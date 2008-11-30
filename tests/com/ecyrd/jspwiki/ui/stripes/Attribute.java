@@ -12,6 +12,19 @@ public class Attribute extends AbstractNode
         super(doc, NodeType.ATTRIBUTE);
     }
 
+    /**
+     * Convenience method that creates an attribute with a name and string value.
+     * @param doc the JspDocument the Attribute is a child of
+     * @param name the Attribute's name
+     * @param value the Attribute's value
+     */
+    public Attribute( JspDocument doc, String name, String value )
+    {
+        super(doc, NodeType.ATTRIBUTE);
+        setName( name );
+        setValue( value );
+    }
+
     public char getAttributeDelimiter()
     {
         return m_quote;

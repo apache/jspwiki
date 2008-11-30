@@ -1,18 +1,31 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import net.sourceforge.stripes.action.ActionBean;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.HandlerInfo;
+import com.ecyrd.jspwiki.action.WikiActionBean;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
  */
 public class JSPWikiJspTransformer extends AbstractJspTransformer
 {
+    private static final Pattern CONTEXT_PATTERN = Pattern.compile( "\\.createContext\\(.*?WikiContext.([A-Z]*?)\\s*\\);" );
+
+    private Map<String,HandlerInfo> m_contextMap = new HashMap<String,HandlerInfo>();
+
     /**
      * {@inheritDoc}
      */
-    public void initialize( Map<String, Object> sharedState )
+    public void initialize( Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
     {
+        m_contextMap = cacheRequestContexts( beanClasses );
         System.out.println( "Initialized JSPWikiJspTransformer." );
     }
 
@@ -69,7 +82,63 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                              "Consider using <stripes:errors> tags instead of <wiki:Messages> for displaying validation errors." );
                 }
             }
+
+            // Look for WikiEngine.createContext() statements, and add matching <stripes:useActionBean> tag
+            else if ( node.getType() == NodeType.JSP_DECLARATION || node.getType() == NodeType.SCRIPTLET )
+            {
+                String scriptlet = node.getValue();
+                Matcher m = CONTEXT_PATTERN.matcher( scriptlet );
+                if (m.find()) {
+                    String context = m.group(1).trim();     // EDIT, COMMENT etc.
+                    HandlerInfo handler = m_contextMap.get( context );
+                    if ( handler != null )
+                    {
+                        // Add the <stripes:useActionBean> tag
+                        addUseActionBeanTag( doc, handler.getActionBeanClass(), handler.getEventName() );
+                        
+                        // Now add the Stripes taglib declaration
+                        if ( StripesJspTransformer.addStripesTaglib( doc ) )
+                        {
+                            message( doc.getRoot(), "Added Stripes taglib directive." );
+                        }
+                    }
+                }
+                
+            }
         }
+    }
+
+    private void addUseActionBeanTag( JspDocument doc, Class<? extends ActionBean> beanClass, String event )
+    {
+        // Create Tag
+        Tag tag = new Tag( doc, NodeType.EMPTY_ELEMENT_TAG );
+        tag.setName( "stripes:useActionBean" );
+        tag.addAttribute( new Attribute( doc, "beanClass", beanClass.getName() ) );
+        if ( event != null )
+        {
+            tag.addAttribute( new Attribute( doc, "event", event ) );
+        }
+        
+        // Create linebreak
+        Text linebreak = new Text( doc );
+        linebreak.setValue( System.getProperty( "line.separator" ) );
+        Node root = doc.getRoot();
+        linebreak.setParent( root );
+        
+        // Figure out where to put it
+        List<Node> directives = doc.getNodes( NodeType.JSP_DIRECTIVE );
+        if ( directives.size() == 0 )
+        {
+            root.addChild( linebreak, 0 );
+            root.addChild( tag, 0 );
+        }
+        else
+        {
+            Node lastDirective = directives.get( directives.size() - 1 );
+            lastDirective.addSibling( tag );
+            lastDirective.addSibling( linebreak );
+        }
+        message( doc.getRoot(), "Added <stripes:useActionBean beanClass=\"" + beanClass.getName() + "\" event=\"" + event + "\" />" );
     }
 
     /**
@@ -113,6 +182,52 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
             message( attribute, "Removed JavaScript call \"" + value + "\". REASON: it probably does not work with Stripes." );
             tag.removeAttribute( attribute );
         }
+    }
+
+    /**
+     * Using introspection, creates a cached Map of with request context field names as keys, and ActionBean classes as values.
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String,HandlerInfo> cacheRequestContexts( Set<Class<? extends ActionBean>> beanClasses )
+    {
+        // Create a map with of all String constant; key: constant value, value: constant name
+        // e.g., "login", "LOGIN"
+        Map<String,String> fields = new HashMap<String,String>(); 
+        for ( Field field : WikiContext.class.getDeclaredFields() )
+        {
+            if ( String.class.equals( field.getType() ) )
+            {
+                String fieldName = field.getName();
+                String fieldValue = null;
+                try
+                {
+                    fieldValue = (String)field.get( null );
+                    fields.put( fieldValue, fieldName );
+                }
+                catch( Exception e )
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        // Match WikiRequestContext annotations with WikiContext field values
+        Map<String,HandlerInfo> contextMap = new HashMap<String,HandlerInfo>();
+        for ( Class<? extends ActionBean> beanClass : beanClasses )
+        {
+            Collection<HandlerInfo> handlers = HandlerInfo.getHandlerInfoCollection( (Class<? extends WikiActionBean>)beanClass ).values();
+            
+            for ( HandlerInfo handler : handlers )
+            {
+                String eventName = handler.getRequestContext();
+                String fieldName = fields.get( eventName );
+                if ( fieldName != null )
+                {
+                    contextMap.put( fieldName, handler );
+                }
+            }
+        }
+        return contextMap;
     }
 
 }

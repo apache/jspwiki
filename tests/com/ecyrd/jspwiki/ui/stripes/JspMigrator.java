@@ -6,6 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.util.ResolverUtil;
+
+import com.ecyrd.jspwiki.action.WikiContextFactory;
+
 public class JspMigrator
 {
 
@@ -102,6 +107,7 @@ public class JspMigrator
         JspMigrator migrator = new JspMigrator();
         migrator.addTransformer( new StripesJspTransformer() );
         migrator.addTransformer( new JSPWikiJspTransformer() );
+        migrator.initialize( new HashMap<String,Object>() );
         try
         {
             migrator.migrate( src, dest );
@@ -142,6 +148,42 @@ public class JspMigrator
     }
 
     /**
+     * Initializes the JspMigrator with a shared-state Map containing key/value pairs. Each
+     * {@link JspTransformer} added to the transformer via {@link #addTransformer(JspTransformer)}
+     * is initialized in sequence by calling its respective {@link JspTransformer#initialize(Map)}
+     * method. Each JspTransformer is passed a Set of discovered {@link net.sourceforge.stripes.action.ActionBean}
+     * classes, plus the shared-state Map.
+     * @param sharedState the shared-state Map passed to all JspTransformers at time of initialization
+     */
+    public void initialize( Map<String, Object> sharedState )
+    {
+        m_sharedState = sharedState;
+        
+        // Initialize the transformers
+        for ( JspTransformer transformer: m_transformers )
+        {
+            transformer.initialize( findBeanClasses(), m_sharedState );
+        }
+    }
+
+    /**
+     * Returns the ActionBean implementations found on the classpath.
+     * @return
+     */
+    protected static Set<Class<? extends ActionBean>> findBeanClasses()
+    {
+        // Find all ActionBean implementations on the classpath
+        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
+                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
+        String[] beanPackages = beanPackagesProp.split( "," );
+        ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
+        resolver.findImplementations( ActionBean.class, beanPackages );
+        Set<Class<? extends ActionBean>> beanClasses = resolver.getClasses();
+        
+        return beanClasses;
+    }
+
+    /**
      * Migrates the contents of an entire directory from one location to
      * another.
      * 
@@ -150,15 +192,6 @@ public class JspMigrator
      */
     public void migrate( File sourceDir, File destDir ) throws IOException
     {
-        // Clear the shared state
-        m_sharedState.clear();
-        
-        // Initialize the transformers
-        for ( JspTransformer transformer: m_transformers )
-        {
-            transformer.initialize( m_sharedState );
-        }
-
         // Find the files we need to migrate
         String sourcePath = sourceDir.getPath();
         List<File> allFiles = Collections.unmodifiableList( getFiles( sourceDir, ".jsp" ) );
