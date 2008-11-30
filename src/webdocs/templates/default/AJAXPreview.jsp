@@ -1,6 +1,7 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
+<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
@@ -11,7 +12,7 @@
   {
     wiki = WikiEngine.getInstance( getServletConfig() );
   }
-  Logger log = Logger.getLogger("JSPWikiSearch");
+  Logger log = LoggerFactory.getLogger("JSPWikiSearch");
   WikiEngine wiki;
 %>
 <%
