@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.parser;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.jdom.Attribute;
 
 /**
@@ -150,7 +151,7 @@ import org.jdom.Attribute;
  */
 public class LinkParser
 {
-    private static Logger log = Logger.getLogger(LinkParser.class);
+    private static Logger log = LoggerFactory.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
     private static final String[] PERMITTED_ATTRIBUTES = new String[] {

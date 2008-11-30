@@ -27,7 +27,8 @@ import java.util.Properties;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 
@@ -61,7 +62,7 @@ public class VersioningFileProvider
     extends AbstractFileProvider
     implements VersioningProvider
 {
-    private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
+    private static final Logger     log = LoggerFactory.getLogger(VersioningFileProvider.class);
    
     /** Name of the directory where the old versions are stored. */
     public static final String      PAGEDIR      = "OLD";
@@ -372,7 +373,7 @@ public class VersioningFileProvider
                     }
                     catch( Exception e ) 
                     {
-                        log.fatal("Closing failed",e);
+                        log.error("Closing failed",e);
                     }
                 }
             }
@@ -730,7 +731,7 @@ public class VersioningFileProvider
             }
             catch( IOException e )
             {
-                log.fatal("Something wrong with the page directory - you may have just lost data!",e);
+                log.error("Something wrong with the page directory - you may have just lost data!",e);
             }
             finally
             {

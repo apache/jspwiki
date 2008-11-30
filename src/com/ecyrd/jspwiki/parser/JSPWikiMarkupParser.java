@@ -31,7 +31,8 @@ import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 import org.jdom.*;
@@ -86,7 +87,7 @@ public class JSPWikiMarkupParser
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
+    private static Logger log = LoggerFactory.getLogger( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
@@ -300,7 +301,7 @@ public class JSPWikiMarkupParser
             }
             catch( MalformedPatternException e )
             {
-                log.fatal("Internal error: Someone put in a faulty pattern.",e);
+                log.error("Internal error: Someone put in a faulty pattern.",e);
                 throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
             }
             m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
@@ -1173,7 +1174,7 @@ public class JSPWikiMarkupParser
         }
         catch( IOException e )
         {
-            log.fatal("CleanTranslator not working", e);
+            log.error("CleanTranslator not working", e);
             throw new InternalWikiException("CleanTranslator not working as expected, when cleaning title"+ e.getMessage() );
         }
 

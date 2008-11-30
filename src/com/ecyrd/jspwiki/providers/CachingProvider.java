@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.providers;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -57,7 +58,7 @@ import com.opensymphony.oscache.base.events.*;
 public class CachingProvider
     implements WikiPageProvider, VersioningProvider
 {
-    private static final Logger log = Logger.getLogger(CachingProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(CachingProvider.class);
 
     private WikiPageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from WikiEngine?

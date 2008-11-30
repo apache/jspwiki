@@ -39,7 +39,8 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -101,7 +102,7 @@ public class BasicAttachmentProvider
     /** The default extension for the attachment directory. */
     public static final String ATTDIR_EXTENSION = "-dir";
     
-    static final Logger log = Logger.getLogger( BasicAttachmentProvider.class );
+    static final Logger log = LoggerFactory.getLogger( BasicAttachmentProvider.class );
 
     /**
      *  {@inheritDoc}

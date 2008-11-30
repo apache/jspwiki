@@ -27,7 +27,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
@@ -63,7 +64,7 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  */
 public class RenderingManager implements WikiEventListener, InternalModule
 {
-    private static Logger log = Logger.getLogger( RenderingManager.class );
+    private static Logger log = LoggerFactory.getLogger( RenderingManager.class );
 
     private              int    m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
 
