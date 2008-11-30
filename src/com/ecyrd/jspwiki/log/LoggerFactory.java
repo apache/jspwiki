@@ -137,7 +137,7 @@ public final class LoggerFactory
             // apparently we cannot find the slf4j log4j adapter, so we assume there is no log4j
             // available, so there is no use in registering MBeans
             c_log4jPresent = false;
-            System.out.println( "Could not find class " +SLF4J_LOG4J_ADAPTER_CLASS + ", so no dynamic log configuration here :-(" );
+            System.err.println( "Could not find class " +SLF4J_LOG4J_ADAPTER_CLASS + ", so no dynamic log configuration here :-(" );
         }
         catch( Exception e )
         {
