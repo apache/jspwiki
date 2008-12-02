@@ -2,10 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   String frontpage = c.getEngine().getFrontPage(); 
 %> 
 <div id="footer">
@@ -17,7 +18,7 @@
 
   <div class="companylogo"></div>
 
-  <div class="copyright"><wiki:InsertPage page="CopyrightNotice"/></div>
+  <div class="copyright"><wiki:InsertPage page="CopyrightNotice" /></div>
 
   <div class="wikiversion">
     <%=Release.APPNAME%> v<%=Release.getVersionString()%>

@@ -8,7 +8,9 @@
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="CoreResources"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.InstallActionBean" event="install" />
+
 
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
@@ -18,7 +20,7 @@
 WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
 // Create wiki context and check for authorization
 WikiContext wikiContext = wiki.createContext( request, WikiContext.INSTALL );
-if(!wikiContext.hasAccess( response )) return;
+
 
 Installer installer = new Installer( request, config );
 WikiSession wikiSession = wikiContext.getWikiSession();
@@ -62,8 +64,8 @@ if ( !installer.adminExists() )
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title><fmt:message key="install.jsp.title" /></title>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>
-  <wiki:IncludeResources type="stylesheet"/>
+  <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css" />' />
+  <wiki:IncludeResources type="stylesheet" />
 </head>
 <body class="view">
 <div id="wikibody">
@@ -80,9 +82,9 @@ if ( !installer.adminExists() )
 
 <!-- Any messages or errors? -->
 <div class="instructions">
-  <wiki:Messages div="information" topic="<%=Installer.INSTALL_INFO%>" prefix='<%= rb.getString( "install.jsp.install.info" )%>'/>
-  <wiki:Messages div="warning" topic="<%=Installer.INSTALL_WARNING%>" prefix='<%= rb.getString( "install.jsp.install.warning" )%>'/>
-  <wiki:Messages div="error" topic="<%=Installer.INSTALL_ERROR%>" prefix='<%= rb.getString( "install.jsp.install.error" )%>'/>
+  <wiki:Messages div="information" topic="<%=Installer.INSTALL_INFO%>" prefix='<%= rb.getString( "install.jsp.install.info" )%>' />
+  <wiki:Messages div="warning" topic="<%=Installer.INSTALL_WARNING%>" prefix='<%= rb.getString( "install.jsp.install.warning" )%>' />
+  <wiki:Messages div="error" topic="<%=Installer.INSTALL_ERROR%>" prefix='<%= rb.getString( "install.jsp.install.error" )%>' />
 </div>
  
 <div class="formcontainer">
@@ -94,19 +96,19 @@ if ( !installer.adminExists() )
   <div class="block">
   
     <label><fmt:message key="install.jsp.basics.appname.label" /></label>
-    <input type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/><br />
+    <input type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>" /><br/>
     <div class="description">
       <fmt:message key="install.jsp.basics.appname.desc" />
     </div>
     
     <label><fmt:message key="install.jsp.basics.baseurl.label" /></label>
-    <input type="text" name="<%=Installer.BASE_URL%>" size="40" value="<%=installer.getProperty( Installer.BASE_URL )%>"/><br />
+    <input type="text" name="<%=Installer.BASE_URL%>" size="40" value="<%=installer.getProperty( Installer.BASE_URL )%>" /><br/>
     <div class="description">
       <fmt:message key="install.jsp.basics.baseurl.desc" />
     </div>
     
     <label><fmt:message key="install.jsp.basics.page.storage.label" /></label>
-    <input type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/><br />
+    <input type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>" /><br/>
     <div class="description">
       <fmt:message key="install.jsp.basics.page.storage.desc" />
     </div>
@@ -117,9 +119,9 @@ if ( !installer.adminExists() )
   <div class="block">
   
     <label><fmt:message key="install.jsp.security.sec.conf.label" /></label><br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked"/>
+    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_JAAS%>" checked="checked" />
       <fmt:message key="install.jsp.security.sec.conf.opt1" /><br/>
-    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_OFF%>"/>
+    <input type="radio" name="<%=AuthenticationManager.PROP_SECURITY%>" value="<%=AuthenticationManager.SECURITY_OFF%>" />
       <fmt:message key="install.jsp.security.sec.conf.opt2" />
    <div class="description">
      <fmt:message key="install.jsp.security.sec.conf.desc" />
@@ -155,22 +157,22 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
   <div class="block">
     <label><fmt:message key="install.jsp.adv.settings.logfile.label" /></label>
-    <input type="text" name="<%=Installer.LOG_DIR%>" value="<%=installer.getProperty( Installer.LOG_DIR )%>" size="40"/><br />
+    <input type="text" name="<%=Installer.LOG_DIR%>" value="<%=installer.getProperty( Installer.LOG_DIR )%>" size="40" /><br/>
     <div class="description">
       <fmt:message key="install.jsp.adv.settings.logfile.desc" />
     </div>
 
     <label><fmt:message key="install.jsp.adv.settings.workdir.label" /></label>
-    <input type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/><br />
+    <input type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>" /><br/>
     <div class="description">
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />
     </div>
   </div>
   
-  <br /><br />
+  <br/><br/>
   <div class="block">
     <div class="instructions">
-      <fmt:message key="install.jsp.instr.desc" >
+      <fmt:message key="install.jsp.instr.desc">
         <fmt:param><%=installer.getPropertiesPath()%></fmt:param>
       </fmt:message>
     </div>
@@ -181,7 +183,7 @@ if ( !installer.adminExists() )
 
 </div>
 
-<hr />
+<hr/>
     <% 
       if( validated )
       {

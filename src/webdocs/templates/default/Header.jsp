@@ -1,16 +1,17 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   String frontpage = c.getEngine().getFrontPage(); 
 %>
 
 <div id="header">
 
-  <div class="titlebox"><wiki:InsertPage page="TitleBox"/></div>
+  <div class="titlebox"><wiki:InsertPage page="TitleBox" /></div>
 
   <div class="applicationlogo" > 
     <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
@@ -21,10 +22,10 @@
 
   <wiki:Include page="UserBox.jsp" />
 
-  <div class="pagename"><wiki:PageName /></div>
+  <div class="pagename"><wiki:PageName/></div>
 
   <div class="searchbox"><wiki:Include page="SearchBox.jsp" /></div>
 
-  <div class="breadcrumbs"><fmt:message key="header.yourtrail"/><wiki:Breadcrumbs /></div>
+  <div class="breadcrumbs"><fmt:message key="header.yourtrail" /><wiki:Breadcrumbs/></div>
 
 </div>

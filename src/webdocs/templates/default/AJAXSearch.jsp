@@ -1,5 +1,5 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <%@ page import="com.ecyrd.jspwiki.log.Logger" %>
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
@@ -13,8 +13,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" />
+
+
 <%! 
   public void jspInit()
   {
@@ -28,7 +30,7 @@
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-  if(!wikiContext.hasAccess( response )) return;
+  
  
   String query = request.getParameter( "query");
 
@@ -82,32 +84,24 @@
 
 <wiki:SearchResults>
 
-  <h4><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}"/></fmt:param></fmt:message></h4>
+  <h4><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}" /></fmt:param></fmt:message></h4>
 
   <p>
-  <fmt:message key="find.externalsearch"/>
-    <a class="external" 
-        href="http://www.google.com/search?q=<c:out value='${param.query}'/>"
-        title="Google Search '<c:out value='${param.query}'/>'"
-       target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
+  <fmt:message key="find.externalsearch" />
+    <a class="external" href="http://www.google.com/search?q=<c:out value='${param.query}' />" title="Google Search '<c:out value='${param.query}' />'" target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
     |     
-    <a class="external" 
-        href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}'/>" 
-        title="Wikipedia Search '<c:out value='${param.query}'/>'"
-       target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
+    <a class="external" href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}' />" title="Wikipedia Search '<c:out value='${param.query}' />'" target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
   </p>
 
-  <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" 
-                     fmtkey="info.pagination"
-                    onclick="$('start').value=%s; SearchBox.runfullsearch();" />
+  <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9" fmtkey="info.pagination" onclick="$('start').value=%s; SearchBox.runfullsearch();" />
   
     <div class="graphBars">
     <div class="zebra-table">
-    <table class="wikitable" >
+    <table class="wikitable">
 
       <tr>
-         <th align="left"><fmt:message key="find.results.page"/></th>
-         <th align="left"><fmt:message key="find.results.score"/></th>
+         <th align="left"><fmt:message key="find.results.page" /></th>
+         <th align="left"><fmt:message key="find.results.score" /></th>
       </tr>
 
       <wiki:SearchResultIterator id="searchref" start="${param.start}" maxItems="<%=maxitems%>">
@@ -122,8 +116,8 @@
         if( (contexts != null) && (contexts.length > 0) ) 
         {
 %>  
-      <tr class="odd" >
-        <td colspan="2" >
+      <tr class="odd">
+        <td colspan="2">
           <div class="fragment">
 <%
           for (int i = 0; i < contexts.length; i++) 
@@ -145,7 +139,7 @@
 
       <wiki:IfNoSearchResults>
         <tr>
-          <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults"/></td>
+          <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults" /></td>
         </tr>
       </wiki:IfNoSearchResults>
 

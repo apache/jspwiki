@@ -9,14 +9,16 @@
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
 
   // Extract the group name and members
   String name = request.getParameter( "group" );
@@ -70,21 +72,21 @@
 
     <table class="wikitable">
     <tr>
-      <th><fmt:message key="group.name"/></th>
+      <th><fmt:message key="group.name" /></th>
       <td><%=name%></td>
     </tr>
     <tr>
-      <th><label><fmt:message key="group.members"/></label></th>
+      <th><label><fmt:message key="group.members" /></label></th>
       <td>
       <textarea id="members" name="members" rows="10" cols="30"><%=TextUtil.replaceEntities(s.toString())%></textarea>
-      <div class="formhelp"><fmt:message key="editgroup.memberlist"/></div>
+      <div class="formhelp"><fmt:message key="editgroup.memberlist" /></div>
       </td>
     </tr>
     </table>
     <div class="formhelp">
       <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
     </div>
-      <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
+      <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save" />" />
       <input type="hidden" name="group" value="<%=name%>" />
       <input type="hidden" name="action" value="save" />
   </form>

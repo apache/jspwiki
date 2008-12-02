@@ -11,14 +11,16 @@
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%!
   Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
 
   // Extract the group name and members
   String name = request.getParameter( "group" );
@@ -37,12 +39,12 @@
     creator = group.getCreator();
     if ( group.getCreated() != null )
     {
-      created = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME);
+      created = Preferences.renderDate(WikiContextFactory.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME);
     }
     modifier = group.getModifier();
     if ( group.getLastModified() != null )
     {
-      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ; 
+      modified = Preferences.renderDate(WikiContextFactory.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ; 
     }
   }
   name = TextUtil.replaceEntities(name);
@@ -58,13 +60,13 @@
     if ( c.getWikiSession().getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
     {
 %>
-    <fmt:message key="group.doesnotexist"/>
+    <fmt:message key="group.doesnotexist" />
     <wiki:Permission permission="createGroups">
       <fmt:message key="group.createsuggestion">
         <fmt:param><wiki:Link jsp="NewGroup.jsp">
                       <wiki:Param name="group" value="<%=name%>" />
                       <wiki:Param name="group" value="<%=name%>" />
-                      <fmt:message key="group.createit"/>
+                      <fmt:message key="group.createit" />
                    </wiki:Link>
         </fmt:param>
       </fmt:message>
@@ -74,7 +76,7 @@
     else
     {
 %>
-       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>'/>
+       <wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>' />
 <%
     }
   }
@@ -83,7 +85,7 @@
 %>
  <table class="wikitable">
     <tr>
-      <th><fmt:message key="group.name"/></th>
+      <th><fmt:message key="group.name" /></th>
       <td>
         <fmt:message key="group.groupintro">
           <fmt:param><em><%=name%></em></fmt:param>
@@ -92,7 +94,7 @@
     </tr>
     <!-- Members -->
     <tr>
-      <th><fmt:message key="group.members"/>
+      <th><fmt:message key="group.members" />
       </th>
       <td><%
             for ( int i = 0; i < members.length; i++ )

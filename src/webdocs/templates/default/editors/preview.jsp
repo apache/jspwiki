@@ -1,23 +1,25 @@
-<%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%--
         This is a special editor component for JSPWiki preview storage.
 --%>
 <% 
-   WikiContext context = WikiContext.findContext( pageContext ); 
+   WikiContext context = WikiContextFactory.findContext( pageContext ); 
    String usertext = (String)pageContext.getAttribute( EditorManager.ATTR_EDITEDTEXT, PageContext.REQUEST_SCOPE ); 
    if( usertext == null ) usertext = ""; 
  
    String action = "comment".equals(request.getParameter("action")) ? 
-                   context.getURL(WikiContext.COMMENT,context.getName()) : 
-                   context.getURL(WikiContext.EDIT,context.getName());
+                   context.getURL(WikiContext.COMMENT,context.getPage().getName()) : 
+                   context.getURL(WikiContext.EDIT,context.getPage().getName());
  %>
 <form action="<%=action%>"
       method="post" accept-charset="<wiki:ContentEncoding/>" 

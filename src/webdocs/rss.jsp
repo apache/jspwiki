@@ -18,7 +18,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
-    if(!wikiContext.hasAccess( response )) return;
+   
     WikiPage    wikipage    = wikiContext.getPage();
 
     // Redirect if baseURL not set or RSS generation not on

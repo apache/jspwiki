@@ -15,7 +15,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE_GROUP );
-    if(!wikiContext.hasAccess( response )) return;
+   
 
     WikiSession wikiSession = wikiContext.getWikiSession();
     GroupManager groupMgr = wiki.getGroupManager();

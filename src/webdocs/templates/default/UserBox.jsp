@@ -2,10 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
+  WikiContext c = WikiContextFactory.findContext( pageContext );
 %>
 <div class="userbox">
 
@@ -17,14 +18,14 @@
   <wiki:UserCheck status="asserted">
     <span class="username asserted">
       <fmt:message key="fav.greet.asserted">
-      <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+      <fmt:param><wiki:Translate>[<wiki:UserName/>]</wiki:Translate></fmt:param>
     </fmt:message>
     </span>
   </wiki:UserCheck>
   <wiki:UserCheck status="authenticated">
     <span class="username authenticated">
       <fmt:message key="fav.greet.authenticated">
-        <fmt:param><wiki:Translate>[<wiki:UserName />]</wiki:Translate></fmt:param>
+        <fmt:param><wiki:Translate>[<wiki:UserName/>]</wiki:Translate></fmt:param>
       </fmt:message>
     </span>
   </wiki:UserCheck>

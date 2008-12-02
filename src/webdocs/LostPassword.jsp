@@ -1,17 +1,19 @@
 <%@ page import="com.ecyrd.jspwiki.log.Logger" %>
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*"%>
-<%@ page import="java.util.*"%>
-<%@ page import="java.text.*"%>
-<%@ page import="javax.mail.*"%>
-<%@ page import="com.ecyrd.jspwiki.auth.user.*"%>
-<%@ page import="com.ecyrd.jspwiki.auth.*"%>
-<%@ page import="com.ecyrd.jspwiki.util.*"%>
-<%@ page import="com.ecyrd.jspwiki.i18n.*"%>
-<%@ page errorPage="/Error.jsp"%>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
-<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase"%>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
+<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.*" %>
+<%@ page import="javax.mail.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.user.*" %>
+<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="com.ecyrd.jspwiki.i18n.*" %>
+<%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean" event="login" />
 <%!Logger log = LoggerFactory.getLogger( "JSPWiki" );
 
     String message = null;

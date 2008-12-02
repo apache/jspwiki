@@ -53,6 +53,43 @@ class JspDocument
         return typeNodes;
     }
     
+    /**
+    * Convenience method that inserts a page-import  directive after the last directive in the document.
+    * @param type the type to add, <em>e.g.,</em> <code>org.foo.Bar</code> or <code>org.foo.*</code>
+     */
+    public void addPageImportDirective( String type )
+    {
+        // Create new directive
+        Tag directive = new Tag( this, NodeType.JSP_DIRECTIVE );
+        directive.setName( "page" );
+        directive.addAttribute( new Attribute( this, "import", type ) );
+        
+        // Create linebreak
+        Text linebreak = new Text( this );
+        linebreak.setValue( System.getProperty( "line.separator" ) );
+        linebreak.setParent( root );
+        
+        // Figure out where to put it
+        List<Node> directives = getNodes( NodeType.JSP_DIRECTIVE );
+        if ( directives.size() == 0 )
+        {
+            root.addChild( linebreak, 0 );
+            root.addChild( directive, 0 );
+        }
+        else
+        {
+            Node lastDirective = directives.get( directives.size() - 1 );
+            lastDirective.addSibling( directive );
+            lastDirective.addSibling( linebreak );
+        }
+        
+    }
+
+    /**
+     * Convenience method that inserts a taglib directive after the last directive in the document.
+     * @param uri the URI of the taglib to add, <em>e.g.,</em><code>/WEB-INF/stripes.tld</code>
+     * @param prefix the prefix for the tablib, <em>e.g.,</em><code>stripes</code>
+     */
     public void addTaglibDirective( String uri, String prefix )
     {
         // Create new directive
@@ -79,7 +116,44 @@ class JspDocument
             lastDirective.addSibling( directive );
             lastDirective.addSibling( linebreak );
         }
-        
+    }
+    
+    /**
+     * <p>Returns a list of JSP page-import directive Tags that match a supplied type name.
+     * To be considered a match, the type named in the import must match
+     * the supplied type exactly, or match be the wildcard import for the package
+     * containing it. For example, if the type being searched for was <code>org.bar.Foo</code>,
+     * these page imports would match:</p>
+     * <ul>
+     * <li>&lt;%@ page import="org.bar.Foo" %&gt;</li>
+     * <li>&lt;%@ page import="org.bar.*" %&gt;</li>
+     * </ul>
+     * @param type the class, interface or other type to match
+     * @return a list of all matching tags, which may be a zero-length list
+     */
+    public List<Tag> getPageImport( String type )
+    {
+        if( type == null )
+        {
+            throw new IllegalArgumentException( "Type cannot be null." );
+        }
+        int periodPosition = type.lastIndexOf( '.' );
+        String wildcardType = periodPosition == -1 ? "*" : type.substring( 0, periodPosition ) + ".*";
+        List<Node> directives = getNodes( NodeType.JSP_DIRECTIVE );
+        List<Tag> matchingDirectives = new ArrayList<Tag>();
+        for( Node node : directives )
+        {
+            Tag directive = (Tag)node;
+            Attribute imported = directive.getAttribute( "import" );
+            if ( "page".equals( directive.getName() ) && imported != null )
+            {
+                if ( type.equals( imported.getValue() ) || wildcardType.equals( imported.getValue() ) )
+                {
+                    matchingDirectives.add( directive );
+                }
+            }
+        }
+        return matchingDirectives;
     }
 
     /**

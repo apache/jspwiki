@@ -13,8 +13,10 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%!
   String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)
   {
@@ -36,11 +38,11 @@
       
       ss.append( delim );
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
-      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
+      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContextFactory.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
       ss.append( mf.format( args ) );
       
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
-      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
+      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContextFactory.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
       ss.append( mf.format( args ) );
       
       ss.append( "\", " );
@@ -53,9 +55,9 @@
   }
 %>
 
-<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>'/>
+<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>' />
 
-<table id='wikigroups' class='wikitable' >
+<table id='wikigroups' class='wikitable'>
 <tr>
   <th><fmt:message key="group.name" /></th>
   <th><fmt:message key="group.members" /></th>
@@ -81,14 +83,11 @@
   </td>
   <td id="groupmembers">
     <div style="float:left;">
-    <textarea rows="8" cols="30" disabled="disabled"
-              name="membersfield" id="membersfield" ></textarea>
+    <textarea rows="8" cols="30" disabled="disabled" name="membersfield" id="membersfield"></textarea>
     </div>
-    <form action="<wiki:Link format='url' jsp='Group.jsp'/>" 
-              id="groupForm" 
-          method="post" accept-charset="<wiki:ContentEncoding />" >
+    <form action="<wiki:Link format='url' jsp='Group.jsp' />" id="groupForm" method="post" accept-charset="UTF-8">
       <div>
-      <input type="hidden" name="group"   value="" />
+      <input type="hidden" name="group" value="" />
       <input type="hidden" name="members" value="" />
       <input type="hidden" name="action"  value="save" />
       <input type="button" disabled="disabled"
@@ -124,13 +123,13 @@
   </tr>
   <tr valign="top">
   <td>
-    <div class="formhelp"><fmt:message key="grp.formhelp"/></div>
+    <div class="formhelp"><fmt:message key="grp.formhelp" /></div>
     <p id="groupinfo" class="formhelp"></p>
   </td>
   </tr>
 </table>
 
-<h3><fmt:message key="grp.allgroups"/></h3>
+<h3><fmt:message key="grp.allgroups" /></h3>
 <p><wiki:Translate>[{Groups}]</wiki:Translate></p>
 
 
@@ -140,7 +139,7 @@
  
 <script type="text/javascript">//<![CDATA[
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   Principal[] roles = c.getWikiSession().getRoles();
 
   for( int i = 0; i < roles.length; i++ )

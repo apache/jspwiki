@@ -10,20 +10,29 @@ import net.sourceforge.stripes.action.ActionBean;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.HandlerInfo;
 import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
+ * Known limitations: will not modify Java code inside of tag attributes.
  */
 public class JSPWikiJspTransformer extends AbstractJspTransformer
 {
     private static final Pattern CONTEXT_PATTERN = Pattern.compile( "\\.createContext\\(.*?WikiContext.([A-Z]*?)\\s*\\);" );
 
-    private Map<String,HandlerInfo> m_contextMap = new HashMap<String,HandlerInfo>();
+    private static final Pattern HASACCESS_PATTERN = Pattern
+        .compile( "if\\s*\\(\\s*\\!(wikiContext|context|ctx)\\.hasAccess\\(.*?\\)\\s*\\)\\s*return;" );
+
+    private static final Pattern PAGE_GETNAME_PATTERN = Pattern.compile( "(wikiContext|context|ctx)\\.getName\\(\\)" );
+
+    private static final Pattern FINDCONTEXT_PATTERN = Pattern.compile( "WikiContext\\.findContext\\((.*?)\\)" );
+
+    private Map<String, HandlerInfo> m_contextMap = new HashMap<String, HandlerInfo>();
 
     /**
      * {@inheritDoc}
      */
-    public void initialize( Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
+    public void initialize( JspMigrator migrator, Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
     {
         m_contextMap = cacheRequestContexts( beanClasses );
         System.out.println( "Initialized JSPWikiJspTransformer." );
@@ -53,9 +62,10 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                     removeSetBundle( tag );
                 }
 
-                // Advise user about <input type="hidden"> or <stripes:hidden> tags
+                // Advise user about <input type="hidden"> or <stripes:hidden>
+                // tags
                 boolean isTypeHidden = false;
-                if ( tag.getType() != NodeType.END_TAG )
+                if( tag.getType() != NodeType.END_TAG )
                 {
                     isTypeHidden = "stripes:hidden".equals( tag.getName() );
                     if( "input".equals( tag.getName() ) )
@@ -67,10 +77,10 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                     {
                         String paramName = tag.hasAttribute( "name" ) ? tag.getAttribute( "name" ).getValue() : null;
                         String paramValue = tag.hasAttribute( "value" ) ? tag.getAttribute( "value" ).getValue() : null;
-                        if ( paramName != null && paramValue != null )
+                        if( paramName != null && paramValue != null )
                         {
-                            message( tag, "NOTE: hidden form input sets parameter " + paramName
-                                     + "=\"" + paramValue + "\". This should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
+                            message( tag, "NOTE: hidden form input sets parameter " + paramName + "=\"" + paramValue
+                                          + "\". This should probably correspond to a Stripes ActionBean getter/settter. Refactor?" );
                         }
                     }
                 }
@@ -83,51 +93,108 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                 }
             }
 
-            // Look for WikiEngine.createContext() statements, and add matching <stripes:useActionBean> tag
-            else if ( node.getType() == NodeType.JSP_DECLARATION || node.getType() == NodeType.SCRIPTLET )
+            // Look for WikiEngine.createContext() statements, and add matching
+            // <stripes:useActionBean> tag
+            else if( node.getType() == NodeType.JSP_DECLARATION || 
+                         node.getType() == NodeType.SCRIPTLET || 
+                         node.getType() == NodeType.JSP_EXPRESSION ||
+                         node.getType() == NodeType.CDATA )
             {
                 String scriptlet = node.getValue();
                 Matcher m = CONTEXT_PATTERN.matcher( scriptlet );
-                if (m.find()) {
-                    String context = m.group(1).trim();     // EDIT, COMMENT etc.
+                if( m.find() )
+                {
+                    String context = m.group( 1 ).trim(); // EDIT, COMMENT
+                                                            // etc.
                     HandlerInfo handler = m_contextMap.get( context );
-                    if ( handler != null )
+                    if( handler != null )
                     {
                         // Add the <stripes:useActionBean> tag
                         addUseActionBeanTag( doc, handler.getActionBeanClass(), handler.getEventName() );
-                        
+
                         // Now add the Stripes taglib declaration
-                        if ( StripesJspTransformer.addStripesTaglib( doc ) )
+                        if( StripesJspTransformer.addStripesTaglib( doc ) )
                         {
                             message( doc.getRoot(), "Added Stripes taglib directive." );
                         }
                     }
                 }
-                
+
+                // Remove any WikiContext.hasAccess() statements
+                m = HASACCESS_PATTERN.matcher( scriptlet );
+                if( m.find() )
+                {
+                    String hasAccess = m.group( 0 );
+                    scriptlet = scriptlet.replace( hasAccess, "" );
+                    node.setValue( scriptlet );
+                    message( node, "Removed WikiContext.hasAccess() statement." );
+                }
+
+                // Change WikiContext.getName() to
+                // WikiContext.getPage().getName();
+                m = PAGE_GETNAME_PATTERN.matcher( scriptlet );
+                if( m.find() )
+                {
+                    String getName = m.group( 0 );
+                    String ctx = m.group( 1 ).trim();
+                    scriptlet = scriptlet.replace( getName, ctx + ".getPage().getName()" );
+                    node.setValue( scriptlet );
+                    message( node, "Changed WikiContext.getName() statement to WikiContext.getPage().getName()." );
+                }
+
+                // Change WikiContext.findContext() to
+                // WikiContextFactory.findContext()
+                m = FINDCONTEXT_PATTERN.matcher( scriptlet );
+                if( m.find() )
+                {
+                    String findContext = m.group( 0 );
+                    String ctx = m.group( 1 ).trim();
+                    scriptlet = scriptlet.replace( findContext, "WikiContextFactory.findContext( " + ctx + " )" );
+                    node.setValue( scriptlet );
+                    message( node, "Changed WikiContext.findContext() statement to WikiContextFactory.findContext()." );
+
+                    // Make sure we have a page import statement!
+                    List<Tag> imports = doc.getPageImport( WikiContextFactory.class.getName() );
+                    if( imports.size() == 0 )
+                    {
+                        doc.addPageImportDirective( WikiContextFactory.class.getName() );
+                        message( node, "Added page import for WikiContextFactory." );
+                    }
+                }
             }
         }
     }
 
     private void addUseActionBeanTag( JspDocument doc, Class<? extends ActionBean> beanClass, String event )
     {
+        // If UseActionBean tag already added, bail
+        List<Node> nodes = doc.getNodes();
+        for( Node node : nodes )
+        {
+            if( "stripes:useActionBean".equals( node.getName() ) )
+            {
+                return;
+            }
+        }
+
         // Create Tag
         Tag tag = new Tag( doc, NodeType.EMPTY_ELEMENT_TAG );
         tag.setName( "stripes:useActionBean" );
-        tag.addAttribute( new Attribute( doc, "beanClass", beanClass.getName() ) );
-        if ( event != null )
+        tag.addAttribute( new Attribute( doc, "beanclass", beanClass.getName() ) );
+        if( event != null )
         {
             tag.addAttribute( new Attribute( doc, "event", event ) );
         }
-        
+
         // Create linebreak
         Text linebreak = new Text( doc );
         linebreak.setValue( System.getProperty( "line.separator" ) );
         Node root = doc.getRoot();
         linebreak.setParent( root );
-        
+
         // Figure out where to put it
         List<Node> directives = doc.getNodes( NodeType.JSP_DIRECTIVE );
-        if ( directives.size() == 0 )
+        if( directives.size() == 0 )
         {
             root.addChild( linebreak, 0 );
             root.addChild( tag, 0 );
@@ -138,7 +205,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
             lastDirective.addSibling( tag );
             lastDirective.addSibling( linebreak );
         }
-        message( doc.getRoot(), "Added <stripes:useActionBean beanClass=\"" + beanClass.getName() + "\" event=\"" + event + "\" />" );
+        message( doc.getRoot(), "Added <stripes:useActionBean beanclass=\"" + beanClass.getName() + "\" event=\"" + event + "\" />" );
     }
 
     /**
@@ -185,23 +252,25 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
     }
 
     /**
-     * Using introspection, creates a cached Map of with request context field names as keys, and ActionBean classes as values.
+     * Using introspection, creates a cached Map of with request context field
+     * names as keys, and ActionBean classes as values.
      */
-    @SuppressWarnings("unchecked")
-    private Map<String,HandlerInfo> cacheRequestContexts( Set<Class<? extends ActionBean>> beanClasses )
+    @SuppressWarnings( "unchecked" )
+    private Map<String, HandlerInfo> cacheRequestContexts( Set<Class<? extends ActionBean>> beanClasses )
     {
-        // Create a map with of all String constant; key: constant value, value: constant name
+        // Create a map with of all String constant; key: constant value, value:
+        // constant name
         // e.g., "login", "LOGIN"
-        Map<String,String> fields = new HashMap<String,String>(); 
-        for ( Field field : WikiContext.class.getDeclaredFields() )
+        Map<String, String> fields = new HashMap<String, String>();
+        for( Field field : WikiContext.class.getDeclaredFields() )
         {
-            if ( String.class.equals( field.getType() ) )
+            if( String.class.equals( field.getType() ) )
             {
                 String fieldName = field.getName();
                 String fieldValue = null;
                 try
                 {
-                    fieldValue = (String)field.get( null );
+                    fieldValue = (String) field.get( null );
                     fields.put( fieldValue, fieldName );
                 }
                 catch( Exception e )
@@ -210,18 +279,19 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                 }
             }
         }
-        
+
         // Match WikiRequestContext annotations with WikiContext field values
-        Map<String,HandlerInfo> contextMap = new HashMap<String,HandlerInfo>();
-        for ( Class<? extends ActionBean> beanClass : beanClasses )
+        Map<String, HandlerInfo> contextMap = new HashMap<String, HandlerInfo>();
+        for( Class<? extends ActionBean> beanClass : beanClasses )
         {
-            Collection<HandlerInfo> handlers = HandlerInfo.getHandlerInfoCollection( (Class<? extends WikiActionBean>)beanClass ).values();
-            
-            for ( HandlerInfo handler : handlers )
+            Collection<HandlerInfo> handlers = HandlerInfo.getHandlerInfoCollection( (Class<? extends WikiActionBean>) beanClass )
+                .values();
+
+            for( HandlerInfo handler : handlers )
             {
                 String eventName = handler.getRequestContext();
                 String fieldName = fields.get( eventName );
-                if ( fieldName != null )
+                if( fieldName != null )
                 {
                     contextMap.put( fieldName, handler );
                 }

@@ -13,11 +13,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
 
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
   //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   TemplateManager t = c.getEngine().getTemplateManager();
   pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
   pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
@@ -25,11 +27,11 @@
   pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
 %>
 
-<h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></h3>
+<h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
-<c:if test="${param.tab eq 'prefs'}" >
+<c:if test="${param.tab eq 'prefs'}">
   <div class="formhelp">
-    <wiki:Messages div="error" topic="prefs" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.prefs")%>'/>
+    <wiki:Messages div="error" topic="prefs" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.prefs")%>' />
   </div>
 </c:if>
 
@@ -41,7 +43,7 @@
 <table>
 
   <tr>
-  <td><label for="assertedName"><fmt:message key="prefs.assertedname"/></label></td>
+  <td><label for="assertedName"><fmt:message key="prefs.assertedname" /></label></td>
   <td> 
   <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='wikiname' />" />
   <%-- CHECK THIS
@@ -68,18 +70,18 @@
   </wiki:UserCheck>
 
   <tr>
-  <td><label for="editor"><fmt:message key="edit.chooseeditor"/></label></td>
+  <td><label for="editor"><fmt:message key="edit.chooseeditor" /></label></td>
   <td>
     <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
-        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
+        <option <%=edt.isSelected()%>value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
   </select>
   </td>
   </tr>
   
   <tr>
-  <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting"/></label></td>
+  <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting" /></label></td>
   <td>
   <input id="prefSectionEditing" name="prefSectionEditing" 
        type="checkbox" <c:if test='${"on" == prefs.SectionEditing}'>checked="checked"</c:if> ></input>
@@ -88,11 +90,11 @@
   </tr>
   
   <tr>
-  <td><label for="prefSkin"><fmt:message key="prefs.user.skin"/></label></td>
+  <td><label for="prefSkin"><fmt:message key="prefs.user.skin" /></label></td>
   <td>
   <select id="prefSkin" name="prefSkin">
     <c:forEach items="${skins}" var="i">
-      <option value='<c:out value='${i}'/>' <c:if test='${i == prefs.SkinName}'>selected="selected"</c:if> ><c:out value="${i}"/></option>
+      <option value='<c:out value='${i}' />' <c:if test='${i == prefs.SkinName}'>selected="selected"</c:if> ><c:out value="${i}" /></option>
     </c:forEach>
   </select>
   </td>
@@ -100,13 +102,13 @@
 
 
   <c:if test='${not empty languages}'>
-  <c:set var="prefLanguage" ><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
+  <c:set var="prefLanguage"><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
   <tr>
-  <td><label for="prefLanguage"><fmt:message key="prefs.user.language"/></label></td>
+  <td><label for="prefLanguage"><fmt:message key="prefs.user.language" /></label></td>
   <td>
   <select id="prefLanguage" name="prefLanguage">
     <c:forEach items='${languages}' var='lg'>
-      <option value="<c:out value='${lg.key}'/>" <c:if test='${fn:startsWith(prefLanguage,lg.key)}'>selected="selected"</c:if> ><c:out value="${lg.value}"/></option>
+      <option value="<c:out value='${lg.key}' />" <c:if test='${fn:startsWith(prefLanguage,lg.key)}'>selected="selected"</c:if> ><c:out value="${lg.value}" /></option>
     </c:forEach>
   </select>
   </td>
@@ -114,32 +116,32 @@
   </c:if>
 
   <tr>
-  <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation"/></label></td>
+  <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation" /></label></td>
   <td>
   <select id="prefOrientation" name="prefOrientation" onclick="Wiki.changeOrientation();">
-      <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left"/></option>
-      <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right"/></option>
+      <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left" /></option>
+      <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right" /></option>
   </select>
   </td>
   </tr>
 
   <tr>
-  <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat"/></label></td>
+  <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat" /></label></td>
   <td>
-  <select id="prefTimeFormat" name="prefTimeFormat" >
-    <c:forEach items='${timeformats}' var='tf' >
-      <option value='<c:out value="${tf.key}"/>' <c:if test='${tf.key == prefs.DateFormat}'>selected="selected"</c:if> ><c:out value="${tf.value}"/></option>
+  <select id="prefTimeFormat" name="prefTimeFormat">
+    <c:forEach items='${timeformats}' var='tf'>
+      <option value='<c:out value="${tf.key}" />' <c:if test='${tf.key == prefs.DateFormat}'>selected="selected"</c:if> ><c:out value="${tf.value}" /></option>
     </c:forEach>
   </select>
   </td>
   </tr>
 
   <tr>
-  <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone"/></label></td>
+  <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone" /></label></td>
   <td>
   <select id='prefTimeZone' name='prefTimeZone'>
     <c:forEach items='${timezones}' var='tz'>
-      <option value='<c:out value="${tz.key}"/>' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}"/></option>
+      <option value='<c:out value="${tz.key}" />' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}" /></option>
     </c:forEach>
   </select>
   </td>
@@ -171,11 +173,10 @@
  <tr>
   <td>&nbsp;</td>
   <td>
-    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit'/>" 
-      accesskey="s" />
+    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit' />" accesskey="s" />
     <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
     <input type="hidden" name="action" value="setAssertedName" />
-    <div class="formhelp"><fmt:message key='prefs.cookies'/></div>
+    <div class="formhelp"><fmt:message key='prefs.cookies' /></div>
   </td>
   </tr>
 
@@ -185,14 +186,14 @@
 <!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
-<h3><fmt:message key='prefs.clear.heading'/></h3>
+<h3><fmt:message key='prefs.clear.heading' /></h3>
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
           id="clearCookie"
     onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
       method="post" accept-charset="<wiki:ContentEncoding />" >
   <div>
-  <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />
+  <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit' />" />
   <input type="hidden" name="action" value="clearAssertedName" />
   </div>
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>

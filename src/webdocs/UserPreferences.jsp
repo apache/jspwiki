@@ -15,6 +15,8 @@
 <%@ page import="com.ecyrd.jspwiki.preferences.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" event="createAssertedName" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
@@ -24,7 +26,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.PREFS );
-    if(!wikiContext.hasAccess( response )) return;
+   
     
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getUserManager();

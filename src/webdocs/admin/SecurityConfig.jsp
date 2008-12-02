@@ -5,6 +5,8 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.NoneActionBean" event="none" />
 <%! 
   public void jspInit()
   {
@@ -16,7 +18,7 @@
 %>
 <%
   WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
-  if(!wikiContext.hasAccess( response )) return;
+ 
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 
@@ -29,9 +31,9 @@
       %>
       <html>
       <head>
-        <base href="../"/>
-        <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
-        <wiki:IncludeResources type="stylesheet"/>
+        <base href="../" />
+        <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css" />" />
+        <wiki:IncludeResources type="stylesheet" />
       </head>
       <body><div id="wikibody">
          <h1>Disabled</h1>
@@ -57,9 +59,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>JSPWiki Security Configuration Verifier</title>
-  <base href="../"/>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
-  <wiki:IncludeResources type="stylesheet"/>
+  <base href="../" />
+  <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css" />" />
+  <wiki:IncludeResources type="stylesheet" />
 </head>
 <body>
 <div id="wikibody">
@@ -126,16 +128,16 @@ in your jspwiki.properties.
 <!-- Notify users which JAAS configs we need to find -->
 <p>JSPWiki wires up its own JAAS to define the authentication process, and does not rely on the JRE configuration. By default, JSPWiki configures its JAAS login stack to use the UserDatabaseLoginModule. You can specify a custom login module by setting the <code>jspwiki.loginModule.class</code> property in <code>jspwiki.properties</code>.</p>
 
-<wiki:Messages div="information" topic='<%=SecurityVerifier.INFO+"java.security.auth.login.config"%>' prefix="Good news: "/>
-<wiki:Messages div="warning" topic='<%=SecurityVerifier.WARNING+"java.security.auth.login.config"%>' prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="information" topic='<%=SecurityVerifier.INFO+"java.security.auth.login.config"%>' prefix="Good news: " />
+<wiki:Messages div="warning" topic='<%=SecurityVerifier.WARNING+"java.security.auth.login.config"%>' prefix="We found some potential problems with your configuration: " />
 <wiki:Messages div="error" topic='<%=SecurityVerifier.ERROR+"java.security.auth.login.config"%>' prefix="We found some errors with your configuration: " />
 
 <!-- Print JAAS configuration status -->
 <p>The JAAS login configuration is correctly configured if the <code>jspwiki.loginModule.class</code> property specifies
 a class we can find on the classpath. This class must also be a LoginModule implementation. We will check for both conditions.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_JAAS%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_JAAS%>" prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_JAAS%>" prefix="Good news: " />
+<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_JAAS%>" prefix="We found some potential problems with your configuration: " />
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_JAAS%>" prefix="We found some errors with your configuration: " />
 
 <!-- 
@@ -208,8 +210,8 @@ a <code>permission</code> entry that is signed, we verify that the certificate
 alias exists in our keystore. The keystore itself must also exist in the file system.
 And as an additional check, we will try to load each <code>Permission</code> class into memory to verify that JSPWiki's classloader can find them.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_POLICY%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_POLICY%>" prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_POLICY%>" prefix="Good news: " />
+<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_POLICY%>" prefix="We found some potential problems with your configuration: " />
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_POLICY%>" prefix="We found some errors with your configuration: " />
 
 <%
@@ -288,7 +290,7 @@ In addition, because you are using container-managed security, constraints on us
   &lt;role-name&gt;Admin&lt;/role-name&gt;
 &lt;/security-role&gt;</pre></blockquote>
 
-    <wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_ROLES%>" prefix="Good news: "/>
+    <wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_ROLES%>" prefix="Good news: " />
     <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_ROLES%>" prefix="We found some errors with your configuration: " />
 
 <%
@@ -300,15 +302,15 @@ In addition, because you are using container-managed security, constraints on us
 <h3>User Database Configuration</h3>
 <p>The user database stores user profiles. It's pretty important that it functions properly. We will try to determine what your current UserDatabase implementation is, based on the current value of the <code>jspwiki.userdatabase</code> property in your <code>jspwiki.properties</code> file. In addition, once we establish that the UserDatabase has been initialized properly, we will try to add (then, delete) a random test user. If all of these things work they way they should, then you should have no problems with user self-registration.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_DB%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_DB%>" prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_DB%>" prefix="Good news: " />
+<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_DB%>" prefix="We found some potential problems with your configuration: " />
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_DB%>" prefix="We found some errors with your configuration: " />
 
 <h3>Group Database Configuration</h3>
 <p>The group database stores wiki groups. It's pretty important that it functions properly. We will try to determine what your current GroupDatabase implementation is, based on the current value of the <code>jspwiki.groupdatabase</code> property in your <code>jspwiki.properties</code> file. In addition, once we establish that the GroupDatabase has been initialized properly, we will try to add (then, delete) a random test group. If all of these things work they way they should, then you should have no problems with wiki group creation and editing.</p>
 
-<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_GROUPS%>" prefix="Good news: "/>
-<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_GROUPS%>" prefix="We found some potential problems with your configuration: "/>
+<wiki:Messages div="information" topic="<%=SecurityVerifier.INFO_GROUPS%>" prefix="Good news: " />
+<wiki:Messages div="warning" topic="<%=SecurityVerifier.WARNING_GROUPS%>" prefix="We found some potential problems with your configuration: " />
 <wiki:Messages div="error" topic="<%=SecurityVerifier.ERROR_GROUPS%>" prefix="We found some errors with your configuration: " />
 
 <!-- We're done... -->

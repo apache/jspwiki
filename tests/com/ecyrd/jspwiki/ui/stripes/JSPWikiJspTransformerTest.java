@@ -1,10 +1,9 @@
 package com.ecyrd.jspwiki.ui.stripes;
 
-import java.security.ProtectionDomain;
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -19,7 +18,7 @@ public class JSPWikiJspTransformerTest extends TestCase
     
     public void setUp()
     {
-        m_transformer.initialize( JspMigrator.findBeanClasses(), m_sharedState );
+        m_transformer.initialize( new JspMigrator(), JspMigrator.findBeanClasses(), m_sharedState );
     }
 
     public JSPWikiJspTransformerTest( String s )
@@ -57,6 +56,154 @@ public class JSPWikiJspTransformerTest extends TestCase
         Node attribute = ((Tag)node).getAttributes().get( 0 );
         assertEquals( "method", attribute.getName() );
         assertEquals( "POST", attribute.getValue() );
+    }
+    
+    public void testChangeFindContext1() throws Exception
+    {
+        String s = "<% WikiContext ctx = WikiContext.findContext(pageContext); %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 1, nodes.size() );
+        Node node = nodes.get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 3 nodes: page import, plus CR, plus WikiContext.findContext() changed to WikiContextFactory.findContext();
+        nodes = doc.getNodes();
+        assertEquals( 3, nodes.size() );
+        node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+        assertEquals( "page", node.getName() );
+        assertEquals( "com.ecyrd.jspwiki.action.WikiContextFactory", ( (Tag)node).getAttribute( "import" ).getValue() );
+        node = nodes.get( 1 );
+        assertEquals( NodeType.TEXT, node.getType() );
+        node = nodes.get( 2 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+        assertEquals( " WikiContext ctx = WikiContextFactory.findContext( pageContext ); ", node.getValue() );
+    }
+    
+    public void testChangeFindContext2() throws Exception
+    {
+        String s = "<%@ page import=\"com.ecyrd.jspwiki.action.*\" %><% WikiContext ctx = WikiContext.findContext(pageContext); %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 2 nodes: directive (with wildcard) plus scriptlet
+        List<Node> nodes = doc.getNodes();
+        assertEquals( 2, nodes.size() );
+        Node node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+        assertEquals( "page", node.getName() );
+        assertEquals( "com.ecyrd.jspwiki.action.*", ( (Tag)node).getAttribute( "import" ).getValue() );
+        node = nodes.get( 1 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 3 nodes: page import, plus CR, plus WikiContext.findContext() changed to WikiContextFactory.findContext();
+        nodes = doc.getNodes();
+        assertEquals( 2, nodes.size() );
+        node = nodes.get( 0 );
+        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
+        assertEquals( "page", node.getName() );
+        assertEquals( "com.ecyrd.jspwiki.action.*", ( (Tag)node).getAttribute( "import" ).getValue() );
+        node = nodes.get( 1 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+        assertEquals( " WikiContext ctx = WikiContextFactory.findContext( pageContext ); ", node.getValue() );
+    }
+    
+    public void testRemoveGetName1() throws Exception
+    {
+        String s = "<% String pagereq = wikiContext.getName();%>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 1 node with getName() changed to getPage().getName();
+        assertEquals( 1, doc.getNodes().size() );
+        assertEquals( " String pagereq = wikiContext.getPage().getName();", node.getValue() );
+    }
+
+    public void testRemoveGetName2() throws Exception
+    {
+        String s = "<% String pagereq = context.getName();%>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 1 node with getName() changed to getPage().getName();
+        assertEquals( 1, doc.getNodes().size() );
+        assertEquals( " String pagereq = context.getPage().getName();", node.getValue() );
+    }
+
+    public void testRemoveHasAccess1() throws Exception
+    {
+        String s = "<% WikiContext context;   if(!wikiContext.hasAccess( response )) return;  %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 1 node with hasAccess() removed
+        assertEquals( 1, doc.getNodes().size() );
+        assertEquals( " WikiContext context;     ", node.getValue() );
+    }
+    
+    public void testRemoveHasAccess2() throws Exception
+    {
+        String s = "<% WikiContext context;   if( !context.hasAccess( r ) ) return;  %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 1 node with hasAccess() removed
+        assertEquals( 1, doc.getNodes().size() );
+        assertEquals( " WikiContext context;     ", node.getValue() );
+    }
+    
+    public void testRemoveHasAccess3() throws Exception
+    {
+        String s = "<% if(!wikiContext.hasAccess( response )) return; %>";
+        JspDocument doc = new JspParser().parse( s );
+
+        // Should be 1 node: scriptlet
+        assertEquals( 1, doc.getNodes().size() );
+        Node node = doc.getNodes().get( 0 );
+        assertEquals( NodeType.SCRIPTLET, node.getType() );
+
+        // Run the transformer
+        m_transformer.transform( m_sharedState, doc );
+
+        // Should be 1 node with hasAccess() removed
+        assertEquals( 1, doc.getNodes().size() );
+        assertEquals( "  ", node.getValue() );
     }
     
     public void testSetBundle() throws Exception
@@ -97,7 +244,7 @@ public class JSPWikiJspTransformerTest extends TestCase
         assertEquals( 5, doc.getNodes().size() );
         Tag tag = (Tag)doc.getNodes().get( 2 );
         assertEquals( "stripes:useActionBean", tag.getName() );
-        assertEquals( "beanClass", tag.getAttributes().get( 0 ).getName() );
+        assertEquals( "beanclass", tag.getAttributes().get( 0 ).getName() );
         assertEquals( "com.ecyrd.jspwiki.action.EditActionBean", tag.getAttributes().get( 0 ).getValue() );
         assertEquals( "event", tag.getAttributes().get( 1 ).getName() );
         assertEquals( "edit", tag.getAttributes().get( 1 ).getValue() );

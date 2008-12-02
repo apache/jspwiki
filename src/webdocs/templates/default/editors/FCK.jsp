@@ -1,6 +1,6 @@
-<%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki"%>
-<%@ page import="java.util.Properties"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ page import="java.util.Properties" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
@@ -11,12 +11,14 @@
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%--
     This provides the FCK editor for JSPWiki.
 --%>
-<%  WikiContext context = WikiContext.findContext( pageContext );
+<%  WikiContext context = WikiContextFactory.findContext( pageContext );
     WikiEngine engine = context.getEngine();
     context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
@@ -91,7 +93,7 @@
       enctype="application/x-www-form-urlencoded">
     <p>
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-        <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
+        <input name="page" type="hidden" value="<wiki:Variable var="pagename" />" />
         <input name="action" type="hidden" value="save" />
         <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
     </p>
@@ -120,30 +122,30 @@
 </noscript>
 
    <p>
-     <label for="changenote"><fmt:message key='editor.plain.changenote'/></label>
-     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}'/>"/>
+     <label for="changenote"><fmt:message key='editor.plain.changenote' /></label>
+     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}' />" />
    </p>
    <wiki:CheckRequestContext context="comment">
     <fieldset>
-	<legend><fmt:message key="editor.commentsignature"/></legend>
+	<legend><fmt:message key="editor.commentsignature" /></legend>
     <p>
-    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label>
+    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name" /></label>
     <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
     <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-    <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
+    <label for="rememberme"><fmt:message key="editor.plain.remember" /></label>
     </p>
 	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
     <p>
-    <label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
+    <label for="link" accesskey="m"><fmt:message key="editor.plain.email" /></label>
     <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
     </p>
     </fieldset>
   </wiki:CheckRequestContext>
 
   <p>
-    <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />
-    <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit"/>' />
-    <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit"/>' />
+    <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit" />' />
+    <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit" />' />
+    <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit" />' />
   </p>
 </div>
 </form>

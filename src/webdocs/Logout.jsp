@@ -1,6 +1,6 @@
-<%@page import="com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule"%>
-<%@page import="com.ecyrd.jspwiki.WikiEngine" %>
-<%@page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule" %>
+<%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
+<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
 <%
   WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
   wiki.getAuthenticationManager().logout( request );

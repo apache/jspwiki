@@ -6,7 +6,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
-<fmt:setBundle basename="CoreResources"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.RenameActionBean" event="rename" />
+
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
@@ -15,9 +17,9 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
 	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
-    if(!wikiContext.hasAccess( response )) return;
+   
 
-    String renameFrom = wikiContext.getName();
+    String renameFrom = wikiContext.getPage().getName();
     String renameTo = request.getParameter("renameto");
 
     boolean changeReferences = false;

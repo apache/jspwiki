@@ -2,7 +2,7 @@
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
-<%@page import="com.ecyrd.jspwiki.ui.TemplateManager"%>
+<%@ page import="com.ecyrd.jspwiki.ui.TemplateManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
@@ -14,7 +14,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
-    if(!wikiContext.hasAccess( response )) return;
+   
     
     //
     //  This is an experimental feature, so we will turn it off unless the

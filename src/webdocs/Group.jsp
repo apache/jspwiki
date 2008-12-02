@@ -15,7 +15,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW_GROUP );
-    if(!wikiContext.hasAccess( response )) return;
+   
     
     // Extract the current user, group name, members
     WikiSession wikiSession = wikiContext.getWikiSession();

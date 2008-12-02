@@ -9,8 +9,9 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+
+
 <%
   // Extract the group name and members
   String name = request.getParameter( "group" );
@@ -37,24 +38,23 @@
 <wiki:TabbedSection defaultTab="${param.tab}">
   <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "newgroup.heading.create")%>'>
 
-<h3><fmt:message key="newgroup.heading.create"/></h3>
+<h3><fmt:message key="newgroup.heading.create" /></h3>
 
 <wiki:Messages div='error' topic='<%=GroupManager.MESSAGES_KEY%>' prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"newgroup.errorprefix")%>' />
 
-  <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>"
-    method="POST" accept-charset="UTF-8">
+  <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp" />" method="POST" accept-charset="UTF-8">
 
   <div class="formhelp">
-     <fmt:message key="newgroup.instructions.start"/>
+     <fmt:message key="newgroup.instructions.start" />
   </div>
 
   <table class="wikitable">
     <!-- Name -->
     <tr>
-      <th><label><fmt:message key="newgroup.name"/></label></th>
+      <th><label><fmt:message key="newgroup.name" /></label></th>
       <td><input type="text" name="group" size="30" value="<%=name%>" />
       <div class="formhelp">
-        <fmt:message key="newgroup.name.description"/>
+        <fmt:message key="newgroup.name.description" />
       </div>
       </td>
     </tr>
@@ -69,18 +69,18 @@
       }
     %>
     <tr>
-      <th><label><fmt:message key="group.members"/></label></th>
+      <th><label><fmt:message key="group.members" /></label></th>
       <td><textarea id="members" name="members" rows="20" cols="40"><%=TextUtil.replaceEntities(s.toString())%></textarea>
       <div class="formhelp">
-        <fmt:message key="newgroup.members.description"/>
+        <fmt:message key="newgroup.members.description" />
       </div>
       </td>
     </tr>
     </table>
-    <input type="submit" name="ok" value="<fmt:message key="newgroup.creategroup"/>" />
+    <input type="submit" name="ok" value="<fmt:message key="newgroup.creategroup" />" />
     <input type="hidden" name="action" value="save" />
     <div class="formhelp">
-         <fmt:message key="newgroup.instructions.end"/>
+         <fmt:message key="newgroup.instructions.end" />
     </div>
   </form>
 

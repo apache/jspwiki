@@ -9,7 +9,7 @@
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.MessageActionBean"/>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.MessageActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     MessageActionBean wikiContext = (MessageActionBean)WikiActionBeanFactory.findActionBean( request );

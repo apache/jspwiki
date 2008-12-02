@@ -8,7 +8,7 @@
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ErrorActionBean"/>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ErrorActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiActionBean wikiContext = WikiActionBeanFactory.findActionBean( request );

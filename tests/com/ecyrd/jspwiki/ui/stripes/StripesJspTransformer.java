@@ -17,12 +17,17 @@ public class StripesJspTransformer extends AbstractJspTransformer
     private Map<Class<? extends ActionBean>, Set<String>> beanProperties = new HashMap<Class<? extends ActionBean>, Set<String>>();
 
     private Map<String, Class<? extends ActionBean>> beanBindings = new HashMap<String, Class<? extends ActionBean>>();
-
+    
+    private boolean migrateForms = false;
+    
     /**
      * {@inheritDoc}
      */
-    public void initialize( Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
+    public void initialize( JspMigrator migrator, Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
     {
+        // What features should we use?
+        migrateForms = migrator.getFeature( JspMigrator.MIGRATE_FORMS );
+        
         // Fetch the URL bindings
         initUrlBindingCache( beanClasses );
 
@@ -110,24 +115,24 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 Tag tag = (Tag) node;
 
                 // Change <form> to <stripes:form>
-                if( "form".equals( tag.getName() ) )
+                if( migrateForms && "form".equals( tag.getName() ) )
                 {
                     migrated = migrateFormTag( tag ) || migrated;
                 }
 
                 // Change <input type="*"> tags to <stripes:*>
-                else if( "input".equals( tag.getName() ) )
+                else if( migrateForms && "input".equals( tag.getName() ) )
                 {
                     migrated = migrateInputTag( tag ) || migrated;
                 }
 
                 // Change <textarea> to <stripes:textarea>
-                else if( "textarea".equals( tag.getName() ) )
+                else if( migrateForms && "textarea".equals( tag.getName() ) )
                 {
                     migrated = migrateTextArea( tag ) || migrated;
                 }
 
-                else if( "label".equals( tag.getName() ) )
+                else if( migrateForms && "label".equals( tag.getName() ) )
                 {
                     migrated = migrateLabel( tag ) || migrated;
                 }

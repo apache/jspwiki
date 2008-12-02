@@ -6,8 +6,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+
+
 <script>
 function constructdate(date)
 {
@@ -55,7 +56,7 @@ function addNew()
    <div id="userlist">
       <select name="userid" id="userid" size="16" onchange="javascript:refreshUserInfo()">
          <c:forEach var="user" items="${engine.userManager.userDatabase.wikiNames}">
-            <option><c:out value="${user.name}" escapeXml="true"/></option>
+            <option><c:out value="${user.name}" escapeXml="true" /></option>
          </c:forEach>
       </select>
    </div>
@@ -72,8 +73,7 @@ function addNew()
      <tr>
        <td><label for="loginname">Login name</label></td>
        <td>
-           <input type="text" name="loginname" id="loginname"
-                  size="20" value="" />
+           <input type="text" name="loginname" id="loginname" size="20" value="" />
        </td>
      </tr>
      <tr>
@@ -91,15 +91,13 @@ function addNew()
      <tr>
        <td><label for="fullname">Full name</label></td>
        <td>
-         <input type="text" name="fullname" id="fullname"
-                size="20" value="" />
+         <input type="text" name="fullname" id="fullname" size="20" value="" />
        </td>
      </tr>
      <tr>
        <td><label for="email">Email</label></td>
        <td>
-         <input type="text" name="email" id="email"
-                size="20" value="" />
+         <input type="text" name="email" id="email" size="20" value="" />
        </td>
      </tr>
 
@@ -115,12 +113,12 @@ function addNew()
      </tr>
 
      <tr>
-        <td><input type="submit" name="action" value="Save"/></td>
+        <td><input type="submit" name="action" value="Save" /></td>
      </tr>
 
      </table>
    <div id="useractions">
-     <input type="submit" name="action" value="Remove" onclick="return( confirm('Are you sure you wish to remove this user?') && Wiki.submitOnce(this) );"/>      <input type="button" value="Add" onclick="javascript:addNew()"/>
+     <input type="submit" name="action" value="Remove" onclick="return( confirm('Are you sure you wish to remove this user?') && Wiki.submitOnce(this) );" />      <input type="button" value="Add" onclick="javascript:addNew()" />
    </div>
    </form>
    </div>

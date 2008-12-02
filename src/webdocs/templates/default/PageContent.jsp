@@ -3,22 +3,23 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 %>
 
-<wiki:TabbedSection defaultTab='${param.tab}' >
+<wiki:TabbedSection defaultTab='${param.tab}'>
 
   <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' accesskey="v">
-    <wiki:Include page="PageTab.jsp"/>
+    <wiki:Include page="PageTab.jsp" />
     <wiki:PageType type="attachment">
       <div class="information">
-	    <fmt:message key="info.backtoparentpage" >
+	    <fmt:message key="info.backtoparentpage">
 	      <fmt:param><wiki:LinkToParent><wiki:ParentPageName/></wiki:LinkToParent></fmt:param>
         </fmt:message>
       </div>
@@ -32,7 +33,7 @@
 
   <wiki:PageType type="page">
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
+    <wiki:Include page="AttachmentTab.jsp" />
   </wiki:Tab>
   </wiki:PageType>
     

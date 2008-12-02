@@ -13,12 +13,13 @@ public interface JspTransformer
     /**
      * Initializes the transformer. This method should be called only once, when
      * the transformer is initialized.
+     * @param migrator the JspMigrator initializing the transformer
      * @param beanClasses the Set of ActionBean classes discovered by
      * @param sharedState a Map containing key/value pairs that represent any
      *            shared-state information that this method might need during
      *            transformation.
      */
-    public void initialize( Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState );
+    public void initialize( JspMigrator migrator, Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState );
 
     /**
      * Executes the transformation on the JSP and returns the result. This

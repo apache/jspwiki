@@ -1,7 +1,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+
+
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
 <%-- Powered by jswpwiki-common.js//SearchBox --%>
 
@@ -36,15 +37,15 @@
       onclick="SearchBox.navigate( '<wiki:BaseURL />Search.jsp?query=__PAGEHERE__','<wiki:Variable var="pagename"/>' )"
         title="<fmt:message key="sbox.find.title"/> [ f ]"><fmt:message key="sbox.find"/></a>
     </div>
-    <div id="searchResult" >
-	  <fmt:message key='sbox.search.result'/>
-      <span id="searchTarget" ><fmt:message key='sbox.search.target'/></span>
+    <div id="searchResult">
+	  <fmt:message key='sbox.search.result' />
+      <span id="searchTarget"><fmt:message key='sbox.search.target' /></span>
       <span id="searchSpin" class="spin" style="position:absolute;display:none;"></span>
-	  <div id="searchOutput" ></div>
+	  <div id="searchOutput"></div>
     </div>
     <div id="recentSearches" style="display:none;">
-      <fmt:message key="sbox.recentsearches"/>
-      <span><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent"/></a></span>
+      <fmt:message key="sbox.recentsearches" />
+      <span><a href="#" id="recentClear"><fmt:message key="sbox.clearrecent" /></a></span>
     </div>
   </div>
 

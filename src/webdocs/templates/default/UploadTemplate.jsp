@@ -2,10 +2,11 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+
+
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
@@ -16,8 +17,8 @@
 <html id="top" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
-  <wiki:Include page="commonheader.jsp"/>
+  <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></title>
+  <wiki:Include page="commonheader.jsp" />
   <meta name="robots" content="noindex,nofollow" />
 </head>
 
@@ -30,7 +31,7 @@
   <div id="content">
 
     <div id="page">
-      <wiki:Include page="PageActionsTop.jsp"/>
+      <wiki:Include page="PageActionsTop.jsp" />
 
       <wiki:TabbedSection defaultTab="attachments" >
         <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
@@ -39,8 +40,8 @@
         </wiki:Tab>
         
         <wiki:PageExists>
-        <wiki:Tab id="attachments" title="<%= attTitle %>" >
-          <wiki:Include page="AttachmentTab.jsp"/>
+        <wiki:Tab id="attachments" title="<%= attTitle %>">
+          <wiki:Include page="AttachmentTab.jsp" />
         </wiki:Tab>
         <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
                  url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
@@ -50,11 +51,11 @@
         </wiki:PageExists>
       </wiki:TabbedSection>
 
-      <wiki:Include page="PageActionsBottom.jsp"/>
+      <wiki:Include page="PageActionsBottom.jsp" />
 
     </div>
 
-    <wiki:Include page="Favorites.jsp"/>
+    <wiki:Include page="Favorites.jsp" />
 
 	<div class="clearbox"></div>
   </div>

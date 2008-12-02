@@ -18,7 +18,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
-    if(!wikiContext.hasAccess( response )) return;
+   
     
     Set allPages = wiki.getReferenceManager().findCreated();
     

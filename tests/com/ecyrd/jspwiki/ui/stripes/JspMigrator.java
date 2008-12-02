@@ -13,11 +13,10 @@ import com.ecyrd.jspwiki.action.WikiContextFactory;
 
 public class JspMigrator
 {
-
     /**
      * Key for a list of File objects stored in the shared-state array.
      */
-    public static final String ALL_JSPS = "allJSPs";
+    protected static final String ALL_JSPS = "allJSPs";
 
     /**
      * Returns a list of files that match a specified extension, starting in a
@@ -107,7 +106,7 @@ public class JspMigrator
         JspMigrator migrator = new JspMigrator();
         migrator.addTransformer( new StripesJspTransformer() );
         migrator.addTransformer( new JSPWikiJspTransformer() );
-        migrator.initialize( new HashMap<String,Object>() );
+        migrator.initialize( new HashMap<String, Object>() );
         try
         {
             migrator.migrate( src, dest );
@@ -116,6 +115,24 @@ public class JspMigrator
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Returns the ActionBean implementations found on the classpath.
+     * 
+     * @return
+     */
+    protected static Set<Class<? extends ActionBean>> findBeanClasses()
+    {
+        // Find all ActionBean implementations on the classpath
+        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
+                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
+        String[] beanPackages = beanPackagesProp.split( "," );
+        ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
+        resolver.findImplementations( ActionBean.class, beanPackages );
+        Set<Class<? extends ActionBean>> beanClasses = resolver.getClasses();
+
+        return beanClasses;
     }
 
     protected static String readSource( File src ) throws IOException
@@ -131,6 +148,14 @@ public class JspMigrator
         reader.close();
         return s.toString();
     }
+
+    /**
+     * Whether the JspMigrator should migrate HTML form elements to the Stripes
+     * format. Defaults to <code>true</code>.
+     */
+    public static final String MIGRATE_FORMS = "stripes.migrator.migrateForms";
+
+    private Map<String, Boolean> m_features = new HashMap<String, Boolean>();
 
     private List<JspTransformer> m_transformers = new ArrayList<JspTransformer>();
 
@@ -148,39 +173,47 @@ public class JspMigrator
     }
 
     /**
-     * Initializes the JspMigrator with a shared-state Map containing key/value pairs. Each
-     * {@link JspTransformer} added to the transformer via {@link #addTransformer(JspTransformer)}
-     * is initialized in sequence by calling its respective {@link JspTransformer#initialize(Map)}
-     * method. Each JspTransformer is passed a Set of discovered {@link net.sourceforge.stripes.action.ActionBean}
-     * classes, plus the shared-state Map.
-     * @param sharedState the shared-state Map passed to all JspTransformers at time of initialization
+     * Returns <code>true</code> if a feature for the JspMigrator has been
+     * set.
+     * 
+     * @param feature the feature to check; for example, {@link #MIGRATE_FORMS}
+     * @return the result
      */
-    public void initialize( Map<String, Object> sharedState )
+    public boolean getFeature( String feature )
     {
-        m_sharedState = sharedState;
-        
-        // Initialize the transformers
-        for ( JspTransformer transformer: m_transformers )
+        if( feature == null )
         {
-            transformer.initialize( findBeanClasses(), m_sharedState );
+            throw new IllegalArgumentException( "Feature cannot be null." );
         }
+        Boolean featureValue = m_features.get( feature );
+        return featureValue == null ? false : featureValue.booleanValue();
     }
 
     /**
-     * Returns the ActionBean implementations found on the classpath.
-     * @return
+     * Initializes the JspMigrator with a shared-state Map containing key/value
+     * pairs. Each {@link JspTransformer} added to the transformer via
+     * {@link #addTransformer(JspTransformer)} is initialized in sequence by
+     * calling its respective {@link JspTransformer#initialize(Map)} method.
+     * Each JspTransformer is passed a Set of discovered
+     * {@link net.sourceforge.stripes.action.ActionBean} classes, plus the
+     * shared-state Map.
+     * 
+     * @param sharedState the shared-state Map passed to all JspTransformers at
+     *            time of initialization
      */
-    protected static Set<Class<? extends ActionBean>> findBeanClasses()
+    public void initialize( Map<String, Object> sharedState )
     {
-        // Find all ActionBean implementations on the classpath
-        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
-                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
-        String[] beanPackages = beanPackagesProp.split( "," );
-        ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
-        resolver.findImplementations( ActionBean.class, beanPackages );
-        Set<Class<? extends ActionBean>> beanClasses = resolver.getClasses();
-        
-        return beanClasses;
+        // Figure out the properties to use.
+        boolean migrateForms = Boolean.getBoolean( System.getProperty( MIGRATE_FORMS, "true" ) );
+        setFeature( MIGRATE_FORMS, migrateForms );
+
+        m_sharedState = sharedState;
+
+        // Initialize the transformers
+        for( JspTransformer transformer : m_transformers )
+        {
+            transformer.initialize( this, findBeanClasses(), m_sharedState );
+        }
     }
 
     /**
@@ -208,6 +241,22 @@ public class JspMigrator
 
             migrateFile( src, dest );
         }
+    }
+
+    /**
+     * Sets a feature for the JspMigrator.
+     * 
+     * @param feature the feature to set; for example, {@link #MIGRATE_FORMS}
+     * @param whether the feature should be activated (<code>true</code>) or
+     *            not (<code>false</code>).
+     */
+    public void setFeature( String feature, boolean value )
+    {
+        if( feature == null )
+        {
+            throw new IllegalArgumentException( "Feature cannot be null." );
+        }
+        m_features.put( feature, value );
     }
 
     /**
