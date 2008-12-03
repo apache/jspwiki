@@ -22,7 +22,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
-    WikiActionBean wikiContext = WikiActionBeanFactory.findActionBean( request );
+    WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
     wikiContext.setVariable( "contentTemplate", "LoginContent.jsp" );
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,

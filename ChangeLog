@@ -1,4 +1,10 @@
-2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-19
+
+        * Fixed JSPs so that they compile. They still don't work, though.
+
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-18
 

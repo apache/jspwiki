@@ -18,7 +18,6 @@
 <%
   // Copied from a top-level jsp -- which would be a better place to put this 
   WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
-  if( !wikiContext.hasAccess( response ) ) return;
 
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   

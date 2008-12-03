@@ -12,9 +12,10 @@
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.MessageActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    MessageActionBean wikiContext = (MessageActionBean)WikiActionBeanFactory.findActionBean( request );
+    WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
+    MessageActionBean bean = (MessageActionBean)WikiInterceptor.findActionBean( request );
 
-    request.setAttribute( "message", wikiContext.getMessage() );
+    request.setAttribute( "message", bean.getMessage() );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

@@ -11,7 +11,7 @@
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ErrorActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiActionBean wikiContext = WikiActionBeanFactory.findActionBean( request );
+    WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 

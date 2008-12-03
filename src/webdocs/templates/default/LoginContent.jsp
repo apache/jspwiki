@@ -9,7 +9,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%
     String postURL = "";
-    WikiActionBean ctx = WikiContextFactory.findContext( pageContext );
+    WikiContext ctx = WikiContextFactory.findContext( pageContext );
     AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
 
     if( mgr.isContainerAuthenticated() )

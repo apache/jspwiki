@@ -1,6 +1,7 @@
 <%@ page import="com.ecyrd.jspwiki.log.Logger" %>
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -14,11 +15,11 @@
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
+    WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
     String pagereq = wikiContext.getPage().getName();
 
     // Redirect if the request was for a special page
-    String redirect = wiki.getWikiActionBeanFactory().getSpecialPageReference( pagereq );
+    String redirect = wiki.getWikiContextFactory().getSpecialPageReference( pagereq );
     if( redirect != null )
     {
         response.sendRedirect( wikiContext.getViewURL( redirect ) );
