@@ -28,6 +28,7 @@ public class AllTests extends TestCase
         // suite.addTest( TranslatorReaderTest.suite() );
         suite.addTest( WikiSessionTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
+        suite.addTest( com.ecyrd.jspwiki.action.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.content.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.attachment.AllTests.suite() );
         suite.addTest( com.ecyrd.jspwiki.auth.AllTests.suite() );

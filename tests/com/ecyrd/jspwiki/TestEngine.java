@@ -1,27 +1,47 @@
 
 package com.ecyrd.jspwiki;
-import java.util.Properties;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.controller.DispatcherServlet;
+import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
+import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
+import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.providers.AbstractFileProvider;
+import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
+import com.ecyrd.jspwiki.providers.FileSystemProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.ui.WikiServletFilter;
 
 /**
- *  Simple test engine that always assumes pages are found.
+ *  <p>Simple test engine that always assumes pages are found. The version of TestEngine that is part of JSPWiki 3.0
+ *  differs slightly from earlier versions. In particular, it integrates the Stripes framework's mock objects to simulate
+ *  servlet testing.</p>
+ *  <p>Because of its use of Stripes mock objects, TestEngine needs to be able to find the various ActionBean
+ *  implementations provided in JSPWiki. Therefore, it is <em>extremely</em> sensitive to changes in the build
+ *  path. In particular, the mock servlet filter used by TestEngine hard-wires in the relative location
+ *  <code>build</code> for finding ActionBeans. This is the directory (relative to the project root) that the
+ *  Ant build scripts use for placing generated Java class files. The Eclipse project configuration must configure
+ *  itself the same way. To run unit tests in Eclipse, the <code>build</code> directory absolutely <em>must</em>
+ *  place generated class files in this directory, rather than the Eclipse default of <code>classes</code>. If
+ *  unit tests do not run in Eclipse for some reason, this is the likeliest culprit.
  */
 public class TestEngine extends WikiEngine
 {
@@ -305,7 +325,7 @@ public class TestEngine extends WikiEngine
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = new WikiContext( this, request, page );
+        WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
 
@@ -321,7 +341,7 @@ public class TestEngine extends WikiEngine
 
         // Create page and wiki context
         WikiPage page = new WikiPage( this, pageName );
-        WikiContext context = new WikiContext( this, request, page );
+        WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
 
@@ -345,7 +365,92 @@ public class TestEngine extends WikiEngine
     private static Properties cleanTestProps( Properties props )
     {
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+        props.put( WikiEngine.PROP_URLCONSTRUCTOR, "com.ecyrd.jspwiki.url.DefaultURLConstructor" );
         return props;
     }
 
+    /**
+     * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
+     * plus a new mock request, mock response and action bean of type {@link com.ecyrd.jspwiki.action.ViewActionBean}.
+     * This method is the preferred way to instantiate request and response objects, which can be
+     * obtained by calling {@link net.sourceforge.stripes.mock.MockRoundtrip#getRequest()} and
+     * {@link net.sourceforge.stripes.mock.MockRoundtrip#getResponse()}.
+     * @param beanClass the Stripes action bean to start with
+     * @return the mock rountrip
+     */
+    public MockRoundtrip guestTrip( Class<? extends WikiActionBean> beanClass )
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
+        return new MockRoundtrip( servletContext, beanClass );
+    }
+    
+    /**
+     * Creates a guest "round trip" object that initializes itself with the TestEngine's mock servlet context,
+     * plus a new mock request, mock response and URL.
+     * This method is the preferred way to instantiate request and response objects, which can be
+     * obtained by calling {@link net.sourceforge.stripes.mock.MockRoundtrip#getRequest()} and
+     * {@link net.sourceforge.stripes.mock.MockRoundtrip#getResponse()}.
+     * @param url the URL to start with
+     * @return the mock rountrip
+     */
+    public MockRoundtrip guestTrip( String url )
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
+        return new MockRoundtrip( servletContext, url );
+    }
+    
+
+    /**
+     * Creates a "round trip" object initialized with a supplied set of credentials. The WikiSession
+     * associated with the created MockRoundtrip object will have privileges appropriate for
+     * the credentials supplied.
+     * @param user the login name
+     * @param password the password
+     * @param beanClass the Stripes action bean to start with
+     * @return the initialized round trip
+     * @throws WikiSecurityException
+     */
+    public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        if ( servletContext.getFilters().size() == 0 )
+        {
+            initStripesServletContext();
+        }
+        MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
+        WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
+        this.getAuthenticationManager().login( session, user, password );
+        return trip;
+    }
+    
+    /**
+     * Initializes the TestEngine's MockServletContext, with the Stripes filters and servlets added
+     */
+    private void initStripesServletContext()
+    {
+        // Configure the filter and servlet
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        servletContext.addFilter( WikiServletFilter.class, "WikiServletFilter", new HashMap<String,String>() );
+        servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
+        
+        // Add extension classes
+        Map<String,String> filterParams = new HashMap<String,String>();
+        filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
+        
+        // Add the exception handler class
+        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
+        
+        // Return the configured servlet context
+        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
+    }
+    
 }
