@@ -2891,7 +2891,7 @@ public class JSPWikiMarkupParser
 
     private void closeHeadings()
     {
-        if( m_lastHeading != null )
+        if( m_lastHeading != null && !m_wysiwygEditorMode )
         {
             // Add the hash anchor element at the end of the heading
             addElement( new Element("a").setAttribute( "class","hashlink" ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
