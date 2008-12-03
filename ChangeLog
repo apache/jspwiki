@@ -1,3 +1,15 @@
+2008-10-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-18
+
+        * Checked in the Stripes code (about 220 classes, tests, JSPs
+        and other files. All code compiles clean, but the JSPs do NOT
+        work at the moment. Unit tests run clean except for some
+        stray failing Stripes-related unit tests. See the file
+        doc/README - Stripes Migration for some (repeat, SOME) details
+        of what it all means. I'll sort out the JSP issues later this
+        week.
+
 2008-11-06  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-17

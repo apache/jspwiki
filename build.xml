@@ -274,10 +274,39 @@
       <link href="http://java.sun.com/products/javamail/javadocs/"/>
       <link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
+      <link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
       <classpath refid="path.base" />
       <classpath refid="path.tests" />   
     </javadoc>
 
+  </target>
+  
+  <!-- ============================================================== -->
+  
+  <!-- This target migrates Stripes JSPs -->
+  
+  <target name="migrate" depends="jar,jartests">
+    <mkdir dir="build/migrated" />
+    <pathconvert property="cp" refid="path.tests"/>
+    <path id="srcfiles">
+      <fileset dir="src" includes="**/*.java" excludes="**/NoneActionBean.java" />
+    </path>
+    <pathconvert property="srcfiles" refid="srcfiles" pathsep=" "/>
+    <!-- Generate the Stripes SiteStructure doc -->
+    <exec executable="apt">
+      <arg line="-classpath ${cp} -nocompile"/>
+      <arg line="-factory net.sourceforge.stripes.tools.SiteStructureTool"/>
+      <arg line="-Astripes.output.file=sitemap.xml"/>
+      <arg line="${srcfiles}"/>
+    </exec>
+    <!-- Migrate the JSPs -->
+    <java classname="com.ecyrd.jspwiki.ui.stripes.JspMigrator" fork="yes" maxmemory="512m">
+      <classpath>
+         <path refid="path.tests" />
+      </classpath>
+      <arg value="src/webdocs" />
+      <arg value="build/migrated" />
+    </java>
   </target>
 
   <!-- ============================================================== -->
