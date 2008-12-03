@@ -1,3 +1,10 @@
+2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-20
+
+        * [JSPWIKI-444] Wysiwyg editors (such as FCK) no longer duplicate
+        the permalink anchors.
+
 2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-19
