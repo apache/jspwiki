@@ -39,6 +39,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
@@ -490,7 +491,7 @@ public class TemplateManager
      */
     public Map listTimeFormats(PageContext pageContext)
     {
-        WikiContext context = WikiContext.findContext( pageContext ); 
+        WikiContext context = WikiContextFactory.findContext( pageContext ); 
         Properties props = m_engine.getWikiProperties();
         ArrayList<String> tfArr = new ArrayList<String>(40);
         LinkedHashMap<String,String> resultMap = new LinkedHashMap<String,String>();

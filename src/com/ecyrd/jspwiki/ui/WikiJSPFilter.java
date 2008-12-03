@@ -31,9 +31,9 @@ import org.slf4j.MDC;
 
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.event.WikiEventManager;
-import com.ecyrd.jspwiki.event.WikiPageEvent;
-import com.ecyrd.jspwiki.url.DefaultURLConstructor;
+import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiInterceptor;
+import com.ecyrd.jspwiki.event.*;
 import com.ecyrd.jspwiki.util.UtilJ2eeCompat;
 import com.ecyrd.jspwiki.util.WatchDog;
 
@@ -104,9 +104,14 @@ public class WikiJSPFilter extends WikiServletFilter
             }
         
             // fire PAGE_REQUESTED event
-            String pagename = DefaultURLConstructor.parsePageFromURL(
-                    (HttpServletRequest)request, response.getCharacterEncoding() );
-            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+            WikiActionBean wikiActionBean = WikiInterceptor.findActionBean( request );
+            WikiContext wikiContext = wikiActionBean.getContext();
+            boolean isViewContext = WikiContext.VIEW .equals( wikiContext.getRequestContext() );
+            if ( isViewContext )
+            {
+                String pageName = wikiContext.getPage().getName();
+                fireEvent( WikiPageEvent.PAGE_REQUESTED, pageName );
+            }
 
             super.doFilter( request, responseWrapper, chain );
 
@@ -118,7 +123,6 @@ public class WikiJSPFilter extends WikiServletFilter
             try
             {
                 w.enterState( "Delivering response", 30 );
-                WikiContext wikiContext = getWikiContext( request );
                 String r = filter( wikiContext, responseWrapper );
         
                 //String encoding = "UTF-8";
@@ -131,14 +135,13 @@ public class WikiJSPFilter extends WikiServletFilter
                 response.getWriter().write(r);
             
                 // Clean up the UI messages and loggers
-                if( wikiContext != null )
-                {
-                    wikiContext.getWikiSession().clearMessages();
-                }
-
                 // fire PAGE_DELIVERED event
-                fireEvent( WikiPageEvent.PAGE_DELIVERED, pagename );
-
+                wikiContext.getWikiSession().clearMessages();
+                if ( isViewContext )
+                {
+                    String pageName = wikiContext.getPage().getName();
+                    fireEvent( WikiPageEvent.PAGE_DELIVERED, pageName );
+                }
             }
             finally
             {
