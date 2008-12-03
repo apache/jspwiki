@@ -101,7 +101,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( e, p );
+        WikiContext context = e.getWikiContextFactory().newViewContext( null, null, p );
         JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context,
                                                           new BufferedReader( new StringReader(src)) );
 
@@ -121,7 +121,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
         TestEngine testEngine2 = new TestEngine( props );
 
-        WikiContext context = new WikiContext( testEngine2,
+        WikiContext context = testEngine2.getWikiContextFactory().newViewContext( null, null,
                                                new WikiPage(testEngine2, PAGE_NAME) );
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context,
                                                          new BufferedReader( new StringReader(src)) );
@@ -2299,7 +2299,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2322,7 +2322,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
 
-        WikiContext context = new WikiContext( testEngine,
+        WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
                                                new WikiPage(testEngine,PAGE_NAME) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
@@ -2356,7 +2356,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             LinkCollector coll_others = new LinkCollector();
 
             String src = "[TestAtt.txt]";
-            WikiContext context = new WikiContext( testEngine,
+            WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
                                                    new WikiPage(testEngine,PAGE_NAME) );
 
             MarkupParser p = new JSPWikiMarkupParser( context,

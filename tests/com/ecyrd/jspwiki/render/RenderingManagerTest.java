@@ -55,7 +55,7 @@ public class RenderingManagerTest extends TestCase
             WikiPage page = m_engine.getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );
             
-            WikiContext context = new WikiContext( m_engine, page );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, page );
             
             MarkupParser p = m_manager.getParser( context, pagedata );
             
@@ -78,7 +78,7 @@ public class RenderingManagerTest extends TestCase
             WikiPage page = m_engine.getPage( "TestPage" );
             String pagedata = m_engine.getPureText( page );
             
-            WikiContext context = new WikiContext( m_engine, page );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, page );
             
             String html = m_manager.getHTML( context, pagedata );
             
