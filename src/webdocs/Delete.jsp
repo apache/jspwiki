@@ -5,6 +5,8 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.DeleteActionBean" event="delete" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki");
@@ -14,8 +16,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
-    if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getName();
+    String pagereq = wikiContext.getPage().getName();
 
     WikiPage wikipage      = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );

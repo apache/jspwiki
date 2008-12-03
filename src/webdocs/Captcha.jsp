@@ -10,7 +10,9 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="CoreResources"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ViewActionBean" event="view" />
+
 
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
@@ -19,8 +21,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
-    if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getName();
+    String pagereq = wikiContext.getPage().getName();
 
     String content = request.getParameter("text");
 
@@ -52,7 +53,7 @@
 <html>
 
 <head>
-  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
+  <title><wiki:Variable var="applicationname" />: <wiki:PageName/></title>
   <%-- <wiki:Include page="commonheader.jsp"/> --%>
   <meta name="robots" content="noindex,nofollow" />
   <script type="text/javascript">

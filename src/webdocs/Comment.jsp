@@ -16,6 +16,8 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 
@@ -38,8 +40,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.COMMENT );
-    if( !wikiContext.hasAccess( response ) ) return;
-    String pagereq = wikiContext.getName();
+    String pagereq = wikiContext.getPage().getName();
 
     ResourceBundle rb = wikiContext.getBundle("CoreResources");
     WikiSession wikiSession = wikiContext.getWikiSession();

@@ -6,6 +6,8 @@
 <%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWikiSearch");
@@ -15,8 +17,7 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-    if(!wikiContext.hasAccess( response )) return;
-    String pagereq = wikiContext.getName();
+    String pagereq = wikiContext.getPage().getName();
 
     // Get the search results
     Collection list = null;

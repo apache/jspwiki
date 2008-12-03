@@ -4,6 +4,8 @@
 <%@ page import="com.ecyrd.jspwiki.plugin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit" />
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
@@ -13,7 +15,7 @@
     // Create wiki context; no need to check for authorization since the 
     // redirect will take care of that
     WikiContext wikiContext = wiki.createContext( request, WikiContext.EDIT );
-    String pagereq = wikiContext.getName();
+    String pagereq = wikiContext.getPage().getName();
     
     // Redirect if the request was for a 'special page'
     String specialpage = wiki.getSpecialPageReference( pagereq );

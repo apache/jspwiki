@@ -12,6 +12,8 @@
 <%@ page import="com.ecyrd.jspwiki.workflow.Workflow" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.WorkflowActionBean" event="view" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
@@ -21,7 +23,6 @@
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, WikiContext.WORKFLOW );
-    if(!wikiContext.hasAccess( response )) return;
     
     // Extract the wiki session
     WikiSession wikiSession = wikiContext.getWikiSession();
