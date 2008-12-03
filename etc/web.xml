@@ -41,10 +41,68 @@
       <filter-name>WikiServletFilter</filter-name>
       <filter-class>com.ecyrd.jspwiki.ui.WikiServletFilter</filter-class>
    </filter>
+   
+   <!-- Configuration of the Stripes Filter. The Stripes MVC framework provides
+         essential request routing, form processing and type conversion services
+         for JSPWiki. -->
+   <filter>
+      <description>
+         Configures the Stripes framework.
+      </description>
+      <display-name>Stripes Filter</display-name>
+      <filter-name>StripesFilter</filter-name>
+      <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
+      <!-- Look for ActionBean implementations in the JSPWiki "action" package.
+           If you have custom WikiActionBeans you want JSPWiki to use, specify them
+           here (comma-delimited). -->
+      <init-param>
+         <param-name>ActionResolver.Packages</param-name>
+         <param-value>com.ecyrd.jspwiki.action</param-value>
+      </init-param>
+      <!-- Tell Stripes to auto-discover custom extension classes from the "action"
+           package also. Extensions JSPWiki uses includes WikiActionBeanContext,
+           WikiRuntimeConfiguration, WikiInterceptor and the various TypeConverter
+           implementations for JSPWiki-specific types. -->
+      <init-param>
+         <param-name>Extension.Packages</param-name>
+         <param-value>com.ecyrd.jspwiki.action</param-value>
+      </init-param>
+      <!-- We override Stripes' normal resource bundle to use ours instead. -->
+      <init-param>
+         <param-name>LocalizationBundleFactory.FieldNameBundle</param-name>
+         <param-value>templates.default</param-value>
+      </init-param>
+      <init-param>
+         <param-name>LocalizationBundleFactory.ErrorMessageBundle</param-name>
+         <param-value>templates.default</param-value>
+      </init-param>
+      <!-- Locales supported by this wiki -->
+      <init-param>
+         <param-name>LocalePicker.Locales</param-name>
+         <param-value>en:UTF8,de:UTF8,es:UTF8,fi:UTF8,it:UTF8,ln:UTF8,zh_CN:UTF8,</param-value>
+      </init-param>
+      <!-- Library for parsing multi-part file uploads -->
+      <init-param>
+        <param-name>MultipartWrapper.Class</param-name>
+        <param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
+      </init-param>
+      <!-- Exception handler classes -->
+      <init-param>
+        <param-name>ExceptionHandler.Class</param-name>
+        <param-value>com.ecyrd.jspwiki.action.WikiExceptionHandler</param-value>
+      </init-param>
+   </filter>
+
+   <!--
+      This is new in 2.4.  This defines a servlet filter which filters all requests. 
+   -->
+
+   <!--
    <filter>
       <filter-name>WikiJSPFilter</filter-name>
       <filter-class>com.ecyrd.jspwiki.ui.WikiJSPFilter</filter-class>
    </filter>
+   -->
 
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
@@ -70,6 +128,19 @@
        <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/JSON-RPC</url-pattern>
    </filter-mapping> 
+    <filter-mapping>
+        <filter-name>StripesFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>StripesFilter</filter-name>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+   <!--
    <filter-mapping>
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>/wiki/*</url-pattern>
@@ -78,7 +149,8 @@
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
-   
+   -->
+
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
@@ -86,6 +158,15 @@
       <listener-class>com.ecyrd.jspwiki.auth.SessionMonitor</listener-class>
    </listener>
    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--         Configuration of the Stripes dispatcher Servlet.            -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <servlet>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
@@ -139,8 +220,10 @@
    <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
    <servlet>
        <servlet-name>WikiServlet</servlet-name>
-       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>       
+       <servlet-class>com.ecyrd.jspwiki.WikiServlet</servlet-class>
+       <!--
        <load-on-startup>1</load-on-startup>
+       -->
    </servlet>
 
    <servlet>
@@ -156,6 +239,21 @@
        <servlet-name>AttachmentServlet</servlet-name>
        <servlet-class>com.ecyrd.jspwiki.attachment.AttachmentServlet</servlet-class>
    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <url-pattern>/dispatcher</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <url-pattern>/action/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StripesDispatcher</servlet-name>
+        <url-pattern>*.action</url-pattern>
+    </servlet-mapping>
 
    <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
 
@@ -219,6 +317,22 @@
      <error-code>403</error-code>
      <location>/error/Forbidden.html</location>
    </error-page>
+   
+   <!-- Taglibs -->
+   <!--
+   <taglib>
+     <taglib-location>/WEB-INF/jstl-core.tld</taglib-location>
+     <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
+   </taglib>
+   <taglib>
+     <taglib-location>/WEB-INF/jstl-fmt.tld</taglib-location>
+     <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
+   </taglib>
+   -->
+   <taglib>
+     <taglib-location>/WEB-INF/stripes.tld</taglib-location>
+     <taglib-uri>http://stripes.sourceforge.net/stripes.tld</taglib-uri>
+   </taglib>
 
    <!--  REMOVE ME TO ENABLE JDBC DATABASE
    <resource-ref>

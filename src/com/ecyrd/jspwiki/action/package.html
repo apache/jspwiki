@@ -1,0 +1,482 @@
+<html>
+<body>
+<p>Provides processing logic used by JSPs, using ActionBeans as used
+by the <a href="http://mc4j.org/confluence/display/stripes/Home">Stripes
+MVC framework</a>. In JSPWiki 3.0, the old JSP layer has been completely
+overhauled and simplified.</p>
+
+<h3>Overview of Stripes Features Used by JSPWiki 3.0</h3>
+<p>The Stripes MVC framework enforces separation of presentation and
+page markup (JSPs) from processing logic. By "presentation" we mean
+anything that generates valid HTML or related markup, like cascading
+stylesheets. By "processing logic" we mean things like:</p>
+<ul>
+	<li>Creating wiki contexts</li>
+	<li>Extracting request parameters</li>
+	<li>Validating submitted form values</li>
+	<li>Looking, changing, or saving domain objects (<em>e.g.</em>,
+	WikiPages, Groups, UserProfiles)</li>
+	<li>Request flow processing (<em>e.g.</em>, redirects)</li>
+	<li>Localization of resources</li>
+</ul>
+
+<p>In versions of JSPWiki prior to 3.0, JSPs did most of these
+things. In 3.0, JSPs do very little, and instead delegate most of the
+heavy lifting to the Stripes framework and to special JavaBeans called <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/ActionBean.html">ActionBeans</a>.
+These ActionBeans contain getters/setters that are used to store
+parameter values extracted from the HTTP request, and additional methods
+called <em>events</em> that correspond to the values that old-style
+JSPWiki templates stored in their "action" form parameters. In JSPWiki
+3.0, we provide a subclass called <a href="../ui/WikiActionBean.html">WikiActionBean</a>
+includes accessors for things needed by JSPWiki, such as a {@linkplain
+com.ecyrd.jspwiki.action.WikiActionBeanContext#getEngine()} method that returns
+the WikiEngine, and {@linkplain
+com.ecyrd.jspwiki.action.WikiActionBeanContext#getWikiSession()} that returns
+the user's WikiSession.</p>
+
+<h3>Request parameter binding</h3>
+<p>Stripes includes a very cool, easy-to-understand technique for <a
+	href="http://mc4j.org/confluence/display/stripes/Quick+Start+Guide">automatically
+populating WikiActionBeans</a> with submitted request parameters. Basically
+it boils down to this: if you have a request parameter that you want to
+map to a bean value, just create getters and setters that have same
+field name. Stripes will detect which parameters correspond to
+ActionBean fields, and will set the values automatically. For example,
+consider JSPWiki 2.<em>x</em>'s <code>Edit.jsp</code> that edits wiki
+pages. Page-related parameters supplied to this JSP include:</p>
+<ul>
+	<li><code>changenote</code></li>
+	<li><code>author</code></li>
+	<li><code>edittime</code></li>
+	<li><code>link</code></li>
+	<li><code>htmlPageText</code></li>
+</ul>
+
+<p>These are parameters we need in order to save the wiki page
+correctly. Some of them are mandatory, and some aren't. In JSPWiki 3.0,
+responsibility for parsing and validating all of these parameters reside
+with Stripes. What happens is that when <code>Edit.jsp</code> is
+rendered, Stripes instantiates a corresponding WikiActionBean subclass
+called {@link com.ecyrd.jspwiki.action.EditActionBean} and automatically
+calls the correct accessors. In this example, the getters/setters look
+like this:</p>
+
+<pre>public String getChangenote() { ... }
+public void setChangenote(String note) { ... }
+
+public String getAuthor() { ... }
+public void setAuthor(String author) { ... }
+
+public String getEdittime() { ... }
+public void setEdittime(String time) { ... }
+
+public String getLink() { ... }
+public void setLink(String link) { ... }
+
+public String getHtmlPageText() { ... }
+public void setHtmlPageText(String text) { ... }</pre>
+
+<p>As you can see, there is a straight 1-to-1 binding between the
+getter/setter field names (<em>e.g.</em>, <code>getChangenote</code>/<code>setChangenote</code>)
+and request parameters (<code>changenote</code>). So, when the URL <code>Edit.jsp?changenote=Finished</code>
+is requested, Stripes invokes ViewActionBean's <code>setChangenote</code>
+method and passes the String "Finished". This is all done completely
+automatically -- there is no code to write.</p>
+
+<blockquote><em><strong>Guideline #1 for
+JSPWiki developers</strong>: processing code that extracts request parameters
+(that would have ordinarily gone into top-level JSPs) should </em>always<em>
+be moved into WikiActionBean getter and setter fields. For example, if
+the parameter <code>foo</code> is needed, add methods <code>setFoo</code>
+and <code>getFoo</code> to the ActionBean). The field types can be <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/validation/TypeConverter.html">any
+type that Stripes knows how to convert</a>, such as <code>int</code>, <code>long</code>,
+<code>Date</code>, <code>String</code>, <code>BigDecimal</code> and
+others, or JSPWiki-specific types we've built converters for: WikiPage
+(via {@link com.ecyrd.jspwiki.action.WikiPageTypeConverter}), Group (via
+{@link com.ecyrd.jspwiki.action.GroupTypeConverter}, and Principal (via
+{@link com.ecyrd.jspwiki.action.PrincipalTypeConverter}).</em></blockquote>
+
+<h3>Bindings ActionBeans to URLs</h3>
+<p>All of this sounds great, but all of this assumes that somebody
+(us, Stripes, or God) knows how to bind the JSP <code>Edit.jsp</code> to
+our magic EditActionBean. How do we do this? Binding is done in two
+ways: manually in our JSPs by telling Stripes what bean to use, and
+automatically by Stripes when its servlet filter (StripesFilter) detects
+URLs that end in <code>.action</code>. JSPWiki uses both methods.</p>
+
+<p><strong>Manual binding via JSP markup</strong></p>
+<p>In JSPWiki 3.0, each top-level JSP is mapped to at least one, and
+usually just one, WikiActionBean. Each JSP declares what WikiActionBean
+it needs by including the following line:
+<p>
+<blockquote><code>&lt;<a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/useActionBean.html">stripes:useActionBean</a>
+beanclass="com.ecyrd.jspwiki.action.<em>foo</em>ActionBean"/&gt;</code></blockquote>
+<p>... where <em>foo</em> corresponds to a named action, such as <code>View</code>
+(for viewing wiki pages) and <code>UserProfile</code> (for editing a
+user's profile). For example, the page-editing JSP, <code>Edit.jsp</code>,
+contains this line:</p>
+
+<blockquote><code>&lt;stripes:useActionBean
+beanclass="com.ecyrd.jspwiki.action.EditActionBean"/&gt;</code></blockquote>
+
+<p>See this package for a complete list of WikiActionBeans used in
+JSPWiki 3.0. By convention, every top-level JSP in JSPWiki 3.0 <em>must</em>
+include a <code>&lt;stripes:useActionBean&gt;</code> tag at the top of
+their pages. This does three things: first, it guarantees that the
+specified WikiActionBean will be injected into into the PageContext's
+request scope with the well-known name {@link
+com.ecyrd.jspwiki.action.WikiActionBeanFactory#ATTR_ACTIONBEAN}
+("wikiActionBean"). Second, it also means that JSTL expression language
+(EL) markup can access the WikiActionBean directly, for example, <code>${wikiActionBean.changenote}</code>.
+Third, it ensures that all of the request parameters we expect will be
+correctly bound to the WikiActionBean.</p>
+
+<p>In case you were wondering: conceptually, using <code>&lt;stripes:useActionBean&gt;</code>
+to instantiate WikiActionBeans is analogous to creating old-style "wiki
+contexts" JSPWiki versions prior to 3.0 using code like this:</p>
+
+<blockquote><code>WikiContext wikiContext =
+wiki.createContext( request, WikiContext.EDIT );</code></blockquote>
+
+<p>...although of course in 3.0 we do things via Stripes JSP tags
+rather than scriptlet code. WikiContexts aren't forgotten though; in
+fact, WikiContext is a <em>subclass</em> of WikiActionBean. That's
+right: we've refactored WikiContext so that it is now an ActionBean in
+its own right, and is the parent superclass of all of page-related
+WikiActionBeans, like {@link com.ecyrd.jspwiki.action.ViewActionBean},
+{@link com.ecyrd.jspwiki.action.EditActionBean}, {@link
+com.ecyrd.jspwiki.action.PageInfoActionBean} and many others. If you've
+been paying attention, this means JSP markup can use and evaluate
+expressions like this:</p>
+
+<blockquote><code>${wikiActionBean.wikiSession.loginName}</code></blockquote>
+
+<p>EL syntax can be used to navigate much more complicated object
+graphs than this, but you get the idea. What could be easier?</p>
+
+<blockquote><em><strong>Guideline #2 for
+JSPWiki developers</strong>: JSPs should not attempt to instantiate WikiContexts
+directly. Instead, they </em>must<em> include a <code>&lt;stripes:useActionBean
+beanclass="com.ecyrd.jspwiki.action.</em>foo<em>Bean"/&gt;</code> element that
+tells JSPWiki which WikiActionBean (generally, a WikiContext subclass)
+to use. For example, <code>&lt;stripes:useActionBean
+beanclass="com.ecyrd.jspwiki.action.EditActionBean"/&gt;</code> tells a JSPWiki
+to automatically instantiate the wiki context EditActionBean and place
+it in request scope.</em></blockquote>
+
+<p><strong>Automatic binding to <code>.action</code> URLs</strong></p>
+<p>In addition to the manual method for binding WikiActionBeans to
+JSPs, Stripes also automatically binds ActionBeans to URLs that contain
+the <code>.action</code> suffix. When it detects such a URL, it tries to
+locate and bind the correct ActionBean by scanning for ActionBean
+subclasses whose names share the same prefix and whose suffixes are
+ActionBean or Action. For example, the URL <code>Group.action</code>
+causes Stripes to look for ActionBeans called <code>GroupActionBean</code>
+and <code>GroupAction</code>, and if a class with that name is found,
+Stripes will instantiate one of these and bind its fields to the request
+parameters.</p>
+
+<p>Stripes also attempts to locate ActionBeans by looking for a
+special class-level annotation, <code><a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/UrlBinding.html">@UrlBinding</a></code>,
+that specifies the mapping. By convention, this is how we do things in
+JSPWiki 3.0. For example, the ViewActionBean class contains this
+annotation:</p>
+
+<blockquote><code>@UrlBinding("/Wiki.action")</code></blockquote>
+
+<p>This annotation guarantees that any time StripesFilter encounters
+the URL <code>/Wiki.Action</code>, an instance of ViewActionBean will be
+instantiated and injected into the request as an attribute; its fields
+will also be bound in the same way as the manual method.</p>
+
+<p>Automatic ActionBean binding is typically done upon form
+submission, because Stripes' form tags cause forms to be posted to <code>.action</code>
+URLs. For this reason, automatic binding also causes fields to be
+validated as well (more on this shortly).</p>
+
+<blockquote><em><strong>Guideline #3 for
+JSPWiki developers</strong>: every WikiActionBean subclass should contain a
+class-level <code>@UrlBinding</code> annotation that tells Stripes how
+to locate the bean when user submit forms.</em></blockquote>
+
+<blockquote><em><strong>Guideline #4 for
+JSPWiki developers</strong>: JSPs can -- and should -- use JSP 2.0 EL syntax to
+access properties of the current WikiActionBean. JSPWiki guarantees that
+when the <code>&lt;useActionBean&gt;</code> tag is present, the
+ActionBean will be made available as the page attibute <code>wikiActionBean</code>.
+For example, <code>${wikiActionBean.wikiSession.loginName}</code> prints
+the user's login name.</em></blockquote>
+
+<h3>ActionBean Events</h3>
+<p>As discussed at the beginning of this page, Stripes ActionBeans
+includes getters and setters for parameters that are extracted from the
+request stream. ActionBeans also include methods that are annotated as
+"events," which respond to client activities like form POSTs. In JSPWiki
+2.<em>x</em>, events were (very roughly) implemented using JSP scriptlet
+code. For example, consider this snippet from the old <code>UserPreferences.jsp</code>:</p>
+
+<pre>String action  = request.getParameter("action");
+if( "createAssertedName".equals(action) )
+{
+   ...
+   (event processing code goes here)
+   ...
+}</pre>
+
+<p>Scriptlets like these served only to clutter up JSPs with lots of
+spaghetti code. With Stripes, all event processing code is moved into
+ActionBean methods that have a special <code><a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/HandlesEvent.html">@HandlesEvent</a></code>
+annotation. For example, the user preferences code that previously
+created user name assertions moved into an annotated <code>addAssertionCookie()</code>
+method that does the work by "handling" the event <code>createAssertedName</code>:</p>
+
+<pre>@HandlesEvent("createAssertedName")
+public Resolution addAssertionCookie()
+{
+    ...
+    (event processing code goes here)
+    ...
+    return new RedirectResolution("/");
+}</pre>
+
+<p>The effect of moving POST processing code into ActionBeans
+dramatically simplifies JSPs. But you might be wondering, how does
+Stripes know how (and when) it should call ActionBean event methods?
+Simple: a series of simple JSP tags, modeled after their HTML
+counterparts, tells Stripes what beans and events it should invoke. For
+example:</p>
+
+<pre>&lt;stripes:form id="preferences" action="/UserPreferences.action" method="POST" acceptcharset="UTF-8"&gt;
+  ...
+  (form markup)
+  ...
+  &lt;stripes:submit name="createAssertedName"/&gt;
+&lt;/stripes:form&gt;&lt;/pre&gt;</pre>
+
+<p>Here, the <code><a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/form.html">stripes:form</a></code>
+tag includes an <code>action</code> parameter that specifies the URL to
+post to. Because the {@link
+com.ecyrd.jspwiki.action.UserPreferencesActionBean} contains a
+class-level <code>@UrlBinding("/UserPreferences.action")</code>
+annotation, Stripes knows that this corresponds to that bean class
+UserPreferencesActionBean. And because the <code><a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/submit.html">stripes:submit</a></code>
+tag's <code>name</code> attribute contains the value <code>createAssertedName</code>,
+Stripes knows that it needs to locate and call the corresponding method
+that handles that event, in this case <code>addAssertionCookie</code>.
+<p>Note: an alternative syntax for &lt;stripes:form&gt; uses the <code>beanClass</code>
+attribute instead of <code>action</code>, which might be a little easier
+in some cases. This is functionally equivalent:</p>
+
+<pre>&lt;stripes:form id="preferences" action="/UserPreferences.action" method="POST" acceptcharset="UTF-8"&gt;</pre>
+
+<blockquote><em><strong>Guideline #5 for
+JSPWiki developers</strong>: processing code that handles form POST activities
+(that would have ordinarily gone into top-level JSPs) should </em>always<em>
+be moved into WikiActionBean event handler methods. These methods should
+contain a <code>@HandlesEvent</code> annotation that specifies which
+named event it handles. On JSPs, each event name should have an
+equivalent <code>&lt;stripes:submit&gt;</code> button; for example, <code>&lt;stripes:submit
+name="createAssertedName"/&gt;</code>. Its containing &lt;stripes:form&gt;
+element's <code>action</code> should contain the URL of the ActionBean
+the event pertains to, or alternative a <code>beanClass</code> attribute
+that names the ActionBean class explicitly. Example: <code>&lt;stripes:form
+beanClass="UserPreferencesAction.class"&gt;</code></em></blockquote>
+
+<blockquote><em><strong>Guideline #6 for
+JSPWiki developers</strong>: all <code>&lt;form&gt;</code> tags and related
+markup (such as <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>,
+<code>&lt;option&gt;</code>) should use the Stripes tags instead (</em>e.g.<em>,
+<code>&lt;stripes:form&gt;</code>, <code><a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/text.html">&lt;stripes:text&gt;</a></code>,
+<code><a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/textarea.html">&lt;stripes:textarea&gt;</a></code>,
+<code><a
+	href="http://stripes.sourceforge.net/docs/current/taglib/stripes/option.html">&lt;stripes:option&gt;</a></code>).
+With one or two exceptions, these tags are identical to their HTML
+equivalents, and contain a few extra attributes used by Stripes.</em></blockquote>
+
+<h3>Form validation</h3>
+<p>Because JSPWiki 3.0 uses Stripes, our WikiActionBeans take
+advantage of another terrific feature: automatic form field validation
+based on annotations. Recall previously that ActionBeans have getters
+and setters that Stripes uses to store and retrieve request parameters.
+For validation, either the getter or setter (by convention, the setter)
+can also contain a <code><a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/validation/Validate.html">@validate</a></code>
+annotation that indicates whether values are required, and what their
+acceptable lengths or constraints might be. For example, consider {@link
+com.ecyrd.jspwiki.action.UserProfileActionBean}, a WikiActionBean that
+allows users to edit their user profile information. The <code>fullname</code>
+field has this annotation right above the setter:</p>
+
+<blockquote><code>@Validate(field="fullname",
+required=true, maxlength=100)</code></blockquote>
+
+<p>This annotation tells Stripes that the <code>fullname</code>
+field is a required field, and that its length must be less than 100
+characters. When the form is POSTed, Stripes will check to see if this
+field was submitted by the user, and if not, automatically generate an
+error message that can be retrieved later. (By the <code>&lt;stripes:errors&gt;</code>
+tag, incidentally.) But Stripes can do more than simple text field
+validation. Here is the annotation for UserProfileActionBean's <code>email</code>
+field:</p>
+
+<blockquote><code>@Validate(field="email", required
+= false, converter = <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/validation/EmailTypeConverter.html">EmailTypeConverter.class</a>)</code></blockquote>
+
+<p>In this case, Stripes will use one of its own custom String
+converters to validate the e-mail address. In addition to these two
+validators (for Strings and e-mail addresses), Stripes also converts and
+validates dates, times, integers, longs, doubles, and <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/validation/TypeConverter.html">many
+other types</a>. It "knows" which converter to invoke because of the field's
+type. In addition to Stripes' own converters, JSPWiki 3.0 contains
+converters for fields of type WikiPage, Group and Principal.</p>
+
+<blockquote><em><strong>Guideline #7 for
+JSPWiki developers</strong>: When creating WikiActionBeans, all fields that
+require validation should have <code>@validate</code> annotations on
+their setter methods.</em></blockquote>
+
+<h3>Pageflow and Redirection</h3>
+<p>Browser redirects and related pageflow issues are handled very
+differently in JSPWiki 3.0 than in previous versions. Previously,
+redirects were implemented directly in JSP scriptlet code. For example,
+consider this snippet from <code>Edit.jsp</code>:</p>
+
+<pre>if( change != null && change.getTime() != pagedate )
+{
+    //
+    // Someone changed the page while we were editing it!
+    //
+
+    log.info("Page changed, warning user.");
+
+    session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
+    response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null, false) );
+    return;
+}</pre>
+
+<p>In JSPWiki 3.0, these activities fall into the category of
+"processing logic" -- the type of code that gets put into WikiActionBean
+events. In this particular case, the code moves into a Stripes event
+handler method in the EditActionBean class that has an <code>@HandlesEvent</code>
+annotation with the name <code>save</code>.</p>
+
+<p>When a Stripes event handler method needs to redirect a user to
+another page, it returns an object called a <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/Resolution.html">Resolution</a>
+that tells Stripes how to proceed. Stripes contains four easy-to-use
+Resolutions:</p>
+
+<ul>
+	<li><strong><a
+		href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/ForwardResolution.html">ForwardResolution</a></strong>:
+	forwards the user to another path within the same web application using
+	a server side forward. Constructors include:
+	<ul>
+		<li><code>ForwardResolution(Class<? extends ActionBean> beanType, String event)</code> - Constructs a ForwardResolution that will forward to the URL appropriate for the ActionBean supplied.</li>
+      <li><code>ForwardResolution(String path)</code> - Simple constructor that takes in the path to forward the user to.</li>
+    </ul>
+  </li>
+  <li><strong><a href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/ajax/JavaScriptResolution.html">JavaScriptResolution</a></strong>: converts a Java object web to a web of JavaScript objects and arrays, and stream the JavaScript back to the client. The output of this resolution can be evaluated in JavaScript using the eval() function, and will return a reference to the top level JavaScript object. Constructors include:
+    <ul>
+      <li><code>JavaScriptResolution(Object rootObject, Class<?>...
+		userTypesExcluded)</code></li>
+	</ul>
+	</li>
+	<li><strong><a
+		href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/RedirectResolution.html">RedirectResolution</a></strong>:
+	redirects the user to another path by issuing a client side redirect.
+	Constructors include:
+	<ul>
+		<li><code>RedirectResolution(Class&lt;? extends
+		ActionBean&gt; beanType)</code> - Constructs a RedirectResolution that will
+		redirect to the URL appropriate for the ActionBean supplied.</li>
+		<li><code>RedirectResolution(Class&lt;? extends
+		ActionBean&gt; beanType, String event)</code> - Constructs a
+		RedirectResolution that will redirect to the URL appropriate for the
+		ActionBean supplied.</li>
+		<li><code>RedirectResolution(String url)</code> - Simple
+		constructor that takes the URL to which to forward the user.</li>
+	</ul>
+	</li>
+
+	<li><strong><a
+		href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/StreamingResolution.html">StreamingResolution</a></strong>:
+	streams data back to the client (in place of forwarding the user to
+	another page). Designed to be used for streaming non-page data such as
+	generated images/charts and XML islands.</li>
+</ul>
+
+<p>Handler events that need to interrupt processing or return data
+to the use simply need to return one of these four resolutions. For
+example, the previous scriptlet code could be re-written as an
+EditActionBean event handler as follows:
+<pre>
+&#064;HandlesEvent("save")
+public Resolution save()
+{
+  if( m_change != null && m_change.getTime() != m_pagedate )
+  {
+      //
+      // Someone changed the page while we were editing it!
+      //
+  
+      log.info("Page changed, warning user.");
+      
+      Resolution r = new RedirectResolution(ConflictActionBean.class).flash( this );
+      r.addParameter("page", m_page.getName());
+      return r;
+  }
+}</pre>
+
+<p>The <code>RedirectResolution</code> tells Stripes to redirect the
+user to the conflict-editing page, the URL for which Stripes will
+automatically locate due to ConflictActionBean's <code>@UrlBinding</code>
+annotation (see Guideline #3). It will also append the parameter <code>page</code>
+with the value of the page. And finally it will add the current
+ActionBean to a temporary storage area called the <a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/controller/FlashScope.html">flash
+scope</a> where it can be retrieved by the target of the redirect. When the
+target (in this case, ConflictActionBean) executes, it can retrieve the
+bean stored in flash scope easily:</p>
+
+<pre>FlashScope scope = FlashScope.getCurrent( request, true);
+WikiActionBean editContext = (WikiActionBean)scope.get( "/EditActionBean" );</pre>
+
+<p>After retrieving the previously-flashed EditActionBean, its
+contents can be retrieved and manipulated like any other bean.</p>
+
+<blockquote><em><strong>Guideline #8 for
+JSPWiki developers</strong>: processing logic that would, in previous versions of
+JSPWiki, reside in scriptlet code should be moved into WikiActionBean
+event handlers. When an event handler needs to modify the user page flow
+or redirect the browser, it should return a suitable Resolution, such as
+the RedirectResolution.</blockquote>
+
+<blockquote><em><strong>Guideline #9 for
+JSPWiki developers</strong>: client-side code that need to retrieve AJAX or JSON
+data from JSPWiki should POST to a WikiActionBean event handler, which
+should in turn return a <code>JavaScriptResolution</code> or a <code>StreamingResolution</code>.</blockquote>
+
+<blockquote><em><strong>Guideline #10 for
+JSPWiki developers</strong>: event handlers that need to ensure that the current
+WikiActionBean is accessible by the next one in the request cycle should
+add themselves to "flash scope" by calling the Resolution's <code><a
+	href="http://stripes.sourceforge.net/docs/current/javadoc/net/sourceforge/stripes/action/RedirectResolution.html#flash(net.sourceforge.stripes.action.ActionBean)">flash()</a></code>
+method. These can be retrieved by the next ActionBean by retrieving the
+current FlashScope for the request and calling its <code><a
+	href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/HashMap.html#get(java.lang.Object)">get()</a></code>
+method and passing the URLBinding as a parameter.</blockquote>
+
+</body>
+</html>
