@@ -269,7 +269,7 @@ public class MetaWeblogHandler
             WikiPage entryPage = new WikiPage( engine, pageName );
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( engine, entryPage );
+            WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+content.get("title") );
@@ -366,7 +366,7 @@ public class MetaWeblogHandler
             WikiPage entryPage = (WikiPage)page.clone();
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( engine, entryPage );
+            WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+content.get("title") );
