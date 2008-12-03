@@ -28,14 +28,14 @@ import org.apache.commons.lang.StringUtils;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.action.GroupActionBean;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
+import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.ui.Command;
-import com.ecyrd.jspwiki.ui.GroupCommand;
 
 /**
  *  Tells whether the user in the current wiki context possesses a particular
@@ -121,27 +121,23 @@ public class PermissionTag
         {
             gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
         }
-        else if ( VIEW_GROUP.equals( permission ) 
-            || EDIT_GROUP.equals( permission )
-            || DELETE_GROUP.equals( permission ) )
+        else if ( VIEW_GROUP.equals( permission ) )
         {
-            Command command = m_wikiContext.getCommand();
-            gotPermission = false;
-            if ( command instanceof GroupCommand && command.getTarget() != null )
-            {
-                GroupPrincipal group = (GroupPrincipal)command.getTarget();
-                String groupName = group.getName();
-                String action = "view";
-                if( EDIT_GROUP.equals( permission ) )
-                {
-                    action = "edit";
-                }
-                else if ( DELETE_GROUP.equals( permission ) )
-                {
-                    action = "delete";
-                }
-                gotPermission = mgr.checkPermission( session, new GroupPermission( groupName, action ) );
-            }
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.VIEW_ACTION );
+            gotPermission = mgr.checkPermission( session, perm );
+        }
+        else if ( EDIT_GROUP.equals( permission ) )
+        {
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.EDIT_ACTION);
+            gotPermission = mgr.checkPermission( session, perm );
+        }
+        else if ( DELETE_GROUP.equals( permission ) )
+        {
+            Group group = ((GroupActionBean)m_wikiActionBean).getGroup();
+            Permission perm = new GroupPermission( group.getName(), GroupPermission.DELETE_ACTION );
+            gotPermission = mgr.checkPermission( session, perm );
         }
         else if ( ALL_PERMISSION.equals( permission ) )
         {

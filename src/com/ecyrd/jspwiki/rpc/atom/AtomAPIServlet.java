@@ -143,7 +143,7 @@ public class AtomAPIServlet extends HttpServlet
             WikiPage entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
-            WikiContext context = new WikiContext( m_engine, request, entryPage );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( request, response, entryPage );
 
             StringBuffer text = new StringBuffer();
             text.append( "!"+title.getBody() );
@@ -281,7 +281,7 @@ public class AtomAPIServlet extends HttpServlet
 
             String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
 
-            WikiContext context = new WikiContext( m_engine, p );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
 
             String title = TextUtil.replaceEntities(BlogUtil.getSiteName(context));
 

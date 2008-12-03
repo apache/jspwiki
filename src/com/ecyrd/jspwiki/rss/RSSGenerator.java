@@ -228,7 +228,7 @@ public class RSSGenerator
         StringBuffer buf = new StringBuffer();
         String author = getAuthor(page);
 
-        WikiContext ctx = new WikiContext( m_engine, page );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
         if( page.getVersion() > 1 )
         {
             String diff = m_engine.getDiff( ctx,
@@ -275,10 +275,10 @@ public class RSSGenerator
      *  
      *  @return A RSS 1.0 feed in the "full" mode.
      */
-    public String generate()
+    public String generate() throws WikiException
     {
-        WikiContext context = new WikiContext( m_engine,new WikiPage( m_engine, "__DUMMY" ) );
-        context.setRequestContext( WikiContext.RSS );
+        WikiContext context = m_engine.getWikiContextFactory().newContext(null,null,WikiContext.RSS);
+        context.setPage( new WikiPage( m_engine, "__DUMMY" ) );
         Feed feed = new RSS10Feed( context );
 
         String result = generateFullWikiRSS( context, feed );

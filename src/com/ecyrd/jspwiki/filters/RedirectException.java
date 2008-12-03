@@ -20,18 +20,28 @@
  */
 package com.ecyrd.jspwiki.filters;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sourceforge.stripes.action.RedirectResolution;
+import net.sourceforge.stripes.action.Resolution;
+
 /**
  *  This exception may be thrown if a filter wants to reject something and
- *  redirect the user elsewhere.
+ *  redirect the user elsewhere. In addition to being a subclass of FilterException,
+ *  this class also implements the Stripes {@link net.sourceforge.stripes.action.Resolution}
+ *  interface, which means it can be caught and used by Stripes for redirection.
  *
  *  @since 2.1.112
  */
 public class RedirectException
-    extends FilterException
+    extends FilterException implements Resolution
 {
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     private final String m_where;
+
+    private Resolution m_resolution = null;
 
     /**
      *  Constructs a new RedirectException.
@@ -44,6 +54,8 @@ public class RedirectException
         super( msg );
 
         m_where = redirect;
+
+        m_resolution = new RedirectResolution( redirect );
     }
 
     /**
@@ -54,5 +66,37 @@ public class RedirectException
     public String getRedirect()
     {
         return m_where;
+    }
+
+    /**
+     * Sets the Resolution executed by {@link #execute(HttpServletRequest, HttpServletResponse)}. Calling
+     * this method overrides the default RedirectResolution created during construction.
+     * @param resolution the Resolution to set
+     */
+    public void setResolution( Resolution resolution )
+    {
+        m_resolution = resolution;
+    }
+    
+    /**
+     * Returns the Resolution that will be executed by {@link #execute(HttpServletRequest, HttpServletResponse)}.
+     * If not set explicitly by {@link #setResolution(Resolution)}, this method returns a
+     * {@link net.sourceforge.stripes.action.RedirectResolution} that redirects to the URL supplied during
+     * construction.
+     * @return the Resolution
+     */
+    public Resolution getResolution()
+    {
+        return m_resolution;
+    }
+    
+    /**
+     * Executes the Stripes redirect activity by calling
+     * {@link net.sourceforge.stripes.action.Resolution#execute(HttpServletRequest, HttpServletResponse)}
+     * for the Resolution returned by {@link #getResolution()}.
+     */
+    public void execute( HttpServletRequest request, HttpServletResponse response ) throws Exception
+    {
+        m_resolution.execute( request, response );
     }
 }

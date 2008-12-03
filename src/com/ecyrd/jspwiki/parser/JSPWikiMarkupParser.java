@@ -26,6 +26,7 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -546,12 +547,12 @@ public class JSPWikiMarkupParser
                 //  to make sure the links are unique across Wiki.
                 //
             case LOCALREF:
-                el = createAnchor( LOCALREF, "#ref-"+m_context.getName()+"-"+link, "["+text+"]", "" );
+                el = createAnchor( LOCALREF, "#ref-"+m_context.getPage().getName()+"-"+link, "["+text+"]", "" );
                 break;
 
             case LOCAL:
                 el = new Element("a").setAttribute("class","footnote");
-                el.setAttribute("name", "ref-"+m_context.getName()+"-"+link.substring(1));
+                el.setAttribute("name", "ref-"+m_context.getPage().getName()+"-"+link.substring(1));
                 el.addContent("["+text+"]");
                 break;
 
@@ -1111,9 +1112,10 @@ public class JSPWikiMarkupParser
     {
         if( m_cleanTranslator == null )
         {
-            WikiContext dummyContext = new WikiContext( m_engine,
-                                                        m_context.getHttpRequest(),
-                                                        m_context.getPage() );
+            WikiContext dummyContext = m_engine.getWikiContextFactory().newViewContext(
+                                                           m_context.getHttpRequest(),
+                                                           (HttpServletResponse)null,
+                                                           m_context.getPage() );            
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
 
             m_cleanTranslator.m_allowHTML = true;
@@ -2376,7 +2378,7 @@ public class JSPWikiMarkupParser
                 }
                 catch( EmptyStackException e )
                 {
-                    log.debug("Page '"+m_context.getName()+"' closes a %%-block that has not been opened.");
+                    log.debug("Page '"+m_context.getPage().getName()+"' closes a %%-block that has not been opened.");
                     return m_currentElement;
                 }
 

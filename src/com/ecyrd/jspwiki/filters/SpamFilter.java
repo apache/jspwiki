@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -1127,7 +1128,7 @@ public class SpamFilter
      */
     public static final String insertInputFields( PageContext pageContext )
     {
-        WikiContext ctx = WikiContext.findContext(pageContext);
+        WikiContext ctx = WikiContextFactory.findContext(pageContext);
         WikiEngine engine = ctx.getEngine();
 
         StringBuffer sb = new StringBuffer();

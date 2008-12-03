@@ -22,14 +22,16 @@ package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
+
+import net.sourceforge.stripes.tag.StripesTagSupport;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.TextUtil;
-import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.action.WikiActionBean;
+import com.ecyrd.jspwiki.action.WikiInterceptor;
 
 /**
  *  Base class for JSPWiki tags.  You do not necessarily have
@@ -41,14 +43,18 @@ import com.ecyrd.jspwiki.WikiContext;
  *  @since 2.0
  */
 public abstract class WikiTagBase
-    extends TagSupport
+    extends StripesTagSupport
     implements TryCatchFinally
 {
-    public static final String ATTR_CONTEXT = "jspwiki.context";
+    public static final String ATTR_CONTEXT = "wikiContext";
 
     static    Logger    log = LoggerFactory.getLogger( WikiTagBase.class );
 
     protected WikiContext m_wikiContext;
+
+    protected WikiActionBean m_wikiActionBean;
+
+    private String m_id;
 
     /**
      *   This method calls the parent setPageContext() but it also
@@ -71,16 +77,38 @@ public abstract class WikiTagBase
     public void initTag()
     {
         m_wikiContext = null;
+        m_id = null;
         return;
     }
     
+    /**
+     * Initializes the tag, and sets an internal reference to the current WikiActionBean
+     * by delegating to
+     * {@link com.ecyrd.jspwiki.action.WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
+     * (That method retrieves the WikiActionBean from page scope.).
+     * If the WikiActionBean is a WikiContext, a specific reference to the WikiContext
+     * will be set also. Both of these available as protected fields {@link #m_wikiActionBean} and
+     * {@link #m_wikiContext}, respectively. It is considered an error condition if the 
+     * WikiActionBean cannot be retrieved from the PageContext.
+     * It's also an error condition if the WikiActionBean is actually a WikiContext, and it
+     * returns a <code>null</code> WikiPage.
+     */
     public int doStartTag()
         throws JspException
     {
         try
         {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
+            // Retrieve the ActionBean injected by WikiInterceptor
+            m_wikiActionBean = WikiInterceptor.findActionBean( this.getPageContext().getRequest() );
+            
+            // It's really bad news if the WikiActionBean wasn't injected (or saved as a variable!)
+            if ( m_wikiActionBean == null )
+            {
+                throw new JspException( "Can't find WikiActionBean in page or request context! (tag=" + this.getClass() + ")" );
+            }
+
+            // The WikiContext is the ActionBean's ActionBeanContext
+            m_wikiContext = m_wikiActionBean.getContext();
 
             if( m_wikiContext == null )
             {
@@ -107,6 +135,15 @@ public abstract class WikiTagBase
     {
         return EVAL_PAGE;
     }
+    
+    public int doAfterBody() throws JspException {
+        return SKIP_BODY;
+    }
+    
+    public String getId()
+    {
+        return m_id;
+    }
 
     public void doCatch(Throwable arg0) throws Throwable
     {
@@ -115,11 +152,12 @@ public abstract class WikiTagBase
     public void doFinally()
     {
         m_wikiContext = null;
+        m_id = null;
     }
 
     public void setId(String id)
     {
-        super.setId( TextUtil.replaceEntities( id ) );
-    }
+		m_id = ( TextUtil.replaceEntities( id ) );
+	}
 
 }

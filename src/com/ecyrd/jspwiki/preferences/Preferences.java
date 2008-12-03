@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
 
@@ -96,7 +97,7 @@ public class Preferences
     {
         Preferences prefs = new Preferences();
         Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        WikiContext ctx = WikiContext.findContext( pageContext );
+        WikiContext ctx = WikiContextFactory.findContext( pageContext );
         
         prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
         prefs.put("DateFormat", 
@@ -199,7 +200,7 @@ public class Preferences
 
     
     /**
-     * Get Locale according to user-preference settings or the user browser locale
+     * Get Locale according to user-preference settings or the Stripes ActionBeanContext.
      * 
      * @param context The context to examine.
      * @return a Locale object.

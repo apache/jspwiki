@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 
 /**
  *  Iterates through tags.
@@ -111,7 +112,7 @@ public abstract class IteratorTag
      */
     public int doStartTag()
     {
-        m_wikiContext = WikiContext.findContext(pageContext);
+        m_wikiContext = WikiContextFactory.findContext(pageContext);
         
         resetIterator();
         
