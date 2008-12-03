@@ -3,10 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  WikiContext c = WikiContextFactory.findContext( pageContext );
   int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
@@ -17,8 +16,8 @@
   <wiki:CheckLock mode="locked" id="lock">
     <div class="error">
       <fmt:message key="edit.locked">
-        <fmt:param><c:out value="${lock.locker}"/></fmt:param>
-        <fmt:param><c:out value="${lock.timeLeft}"/></fmt:param>
+        <fmt:param><c:out value="${lock.locker}" /></fmt:param>
+        <fmt:param><c:out value="${lock.timeLeft}" /></fmt:param>
       </fmt:message>
     </div>
   </wiki:CheckLock>
@@ -31,14 +30,14 @@
     </div>
   </wiki:CheckVersion>
     
-  <wiki:Editor />
+  <wiki:Editor/>
     
 </wiki:Tab>
   
   <wiki:PageExists>  
 
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
+    <wiki:Include page="AttachmentTab.jsp" />
   </wiki:Tab>
 
   <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
@@ -48,7 +47,7 @@
 
   </wiki:PageExists>  
     
-  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' accesskey="h" >
+  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' accesskey="h">
   <wiki:InsertPage page="EditPageHelp" />
   <wiki:NoSuchPage page="EditPageHelp">
     <div class="error">

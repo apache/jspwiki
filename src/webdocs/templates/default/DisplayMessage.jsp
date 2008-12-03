@@ -5,7 +5,7 @@
 <%-- Inserts a string message. --%>
 
    <div class="error">
-     <c:out value="${message}"/>
+     <c:out value="${message}" />
    </div>
 
    <br clear="all" />

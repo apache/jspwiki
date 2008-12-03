@@ -1,8 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 
 <div id="favorites">
@@ -31,7 +29,7 @@
      </wiki:CheckRequestContext>
     
      <wiki:PageExists>  
-     <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview' >
+     <wiki:CheckRequestContext context='view|info|diff|upload|edit|comment|preview'>
        <li>
        <wiki:CheckVersion mode="latest">
        <a class="action rawpage wikipage" 
@@ -65,7 +63,7 @@
         </a></li>
       </wiki:Permission>
 	  <li class='separator'>
-        <div id="moremenu" ><wiki:InsertPage page="MoreMenu" /></div>
+        <div id="moremenu"><wiki:InsertPage page="MoreMenu" /></div>
       </li>
   </ul>
   </div>

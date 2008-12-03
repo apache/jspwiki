@@ -4,23 +4,24 @@
 <%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <html>
 <head>
 <title>JSPWiki administration</title>
-  <wiki:Include page="commonheader.jsp"/>
-  <link rel="stylesheet" media="screen, projection, print" type="text/css" 
-        href="<wiki:Link format='url' templatefile='admin/admin.css'/>"/>
+  <wiki:Include page="commonheader.jsp" />
+  <link rel="stylesheet" media="screen, projection, print" type="text/css" href="<wiki:Link format='url' templatefile='admin/admin.css' />" />
 </head>
 <body class="view">
 <div id="wikibody">
-<div id="page" >
+<div id="page">
 <h1>JSPWiki Administration</h1>
 <div class="information">Not all things can be configured here.  Some things need to be configured
 in your <tt>jspwiki.properties</tt> file.</div>
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext ctx = WikiContext.findContext(pageContext);
+    WikiContext ctx = WikiContextFactory.findContext( pageContext );
     AdminBeanManager mgr = wiki.getAdminBeanManager();
  %>
 
@@ -35,7 +36,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
       
       <div class="formcontainer">
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
-        <input type="hidden" name="tab-admin" value="core"/>
+        <input type="hidden" name="tab-admin" value="core" />
         <input type="hidden" name="tab-core" value="${ab.title}" />
         <input type="hidden" name="bean" value="${ab.id}" />
         <%
@@ -49,7 +50,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
 </wiki:Tab>
 
 <wiki:Tab id="users" title="Users">
-   <wiki:Include page="admin/UserManagement.jsp"/>
+   <wiki:Include page="admin/UserManagement.jsp" />
 </wiki:Tab>
 
 <wiki:Tab id="groups" title="Groups">
@@ -57,7 +58,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
    <p>This is a list of all groups in this wiki.  If you click on the group name,
    you will be taken to the administration page of that particular group.</p>
    <p>
-   <wiki:Plugin plugin="Groups"/>
+   <wiki:Plugin plugin="Groups" />
    </p>
    </div>
 </wiki:Tab>
@@ -70,7 +71,7 @@ in your <tt>jspwiki.properties</tt> file.</div>
       
       <div class="formcontainer"> 
       <form action="Admin.jsp" method="post" accept-charset="UTF-8">
-         <input type="hidden" name="tab-admin" value="editors"/>
+         <input type="hidden" name="tab-admin" value="editors" />
          <input type="hidden" name="tab-editors" value="${ab.title}" />
          <%
          out.write( ab.doGet(ctx) );

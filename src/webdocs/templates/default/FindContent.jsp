@@ -7,8 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}" />
-<fmt:setBundle basename="templates.default"/>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 
 <wiki:TabbedSection>
 <wiki:Tab id="findcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab")%>' accesskey="s">
@@ -28,7 +27,7 @@
     <input type="checkbox" name="details" id="details" <c:if test='${param.details == "on"}'>checked='checked'</c:if> />
     <fmt:message key="find.details" />
 
-    <select name="scope" id="scope" > 
+    <select name="scope" id="scope"> 
       <option value="" <c:if test="${empty param.scope}">selected="selected"</c:if> ><fmt:message key='find.scope.all' /></option>
       <option value="author:" <c:if test='${param.scope eq "author:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.authors' /></option>
       <option value="name:" <c:if test='${param.scope eq "name:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.pagename' /></option>
@@ -36,8 +35,8 @@
       <option value="attachment:" <c:if test='${param.scope eq "attachment:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.attach' /></option>       
     </select>
 
-	<input type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find"/>" />
-	<input type="submit" name="go" id="go" value="<fmt:message key="find.submit.go"/>" />
+	<input type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find" />" />
+	<input type="submit" name="go" id="go" value="<fmt:message key="find.submit.go" />" />
     <input type="hidden" name="start" id="start" value="0" />
     <input type="hidden" name="maxitems" id="maxitems" value="20" />
 
@@ -45,13 +44,13 @@
   </p>
 </form>
 
-<div id="searchResult2" ><wiki:Include page="AJAXSearch.jsp"/></div>
+<div id="searchResult2"><wiki:Include page="AJAXSearch.jsp" /></div>
 
 </wiki:Tab>
 
 <wiki:PageExists page="SearchPageHelp">
 <wiki:Tab id="findhelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab.help")%>' accesskey="h">
-  <wiki:InsertPage page="SearchPageHelp"/>
+  <wiki:InsertPage page="SearchPageHelp" />
 </wiki:Tab>
 </wiki:PageExists>
 
