@@ -1,3 +1,10 @@
+2008-12-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-22
+        
+        * Moved WikiException & PluginException to the org.apache.jspwiki.api
+        package.  This is a part of the overall transition to have a stable API.
+
 2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-21
@@ -6,7 +13,7 @@
         Stripes support classes move to .ui.stripes. Also, the JSP migrator
         code moves to package .ui.migrator. Many Javadoc tweaks also.
         
-2008-11-06  Janne Jalkanen <jalkanen@apache.org>
+2008-12-02  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-20
 
