@@ -2133,7 +2133,7 @@ public class WikiEngine
             WikiActionBeanContext context = m_contextFactory.newContext( request, (HttpServletResponse)null, requestContext );
             
             // Stash the action bean/wiki context, and return it!
-            WikiContextFactory.saveContext( request, context );
+            WikiContextFactory.saveContext( context.getRequest(), context );
             return context;
         }
         catch ( WikiException e )

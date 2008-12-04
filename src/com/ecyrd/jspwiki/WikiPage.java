@@ -439,7 +439,10 @@ public class WikiPage
     {
         try
         {
-            m_node.save();
+            if( m_node.isNew() )
+                m_node.getParent().save();
+            else
+                m_node.save();
         }
         catch( RepositoryException e )
         {
