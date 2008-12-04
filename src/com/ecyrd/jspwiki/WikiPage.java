@@ -25,6 +25,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.*;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
+
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclImpl;
@@ -54,6 +61,8 @@ public class WikiPage
     private String           m_author = null;
     private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
 
+    private Node             m_node = null;
+    
     /**
      *  "Summary" is a short summary of the page.  It is a String.
      */
@@ -83,6 +92,17 @@ public class WikiPage
         m_wiki = engine.getApplicationName();
     }
 
+    // FIXME: This should be a part of the constructor
+    public void setJCRNode(Node nd)
+    {
+        m_node = nd;
+    }
+    
+    public Node getJCRNode()
+    {
+        return m_node;
+    }
+    
     /**
      *  Returns the name of the page.
      *  
@@ -413,5 +433,50 @@ public class WikiPage
     public int hashCode()
     {
         return m_name.hashCode() * m_version;
+    }
+
+    public void save() throws WikiException
+    {
+        try
+        {
+            m_node.save();
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Save failed",e);
+        }
+    }
+    
+    private static final String ATTR_CONTENT = "wiki:content";
+    
+    public String getContentAsString() throws WikiException
+    {
+        try
+        {
+            Property p = m_node.getProperty( ATTR_CONTENT );
+                
+            return p.getString();
+        }
+        catch( PathNotFoundException e )
+        {
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Unable to get property",e);
+        }
+        
+        return null;
+    }
+
+    public void setContent( String content ) throws WikiException
+    {
+        try
+        {
+            m_node.setProperty( ATTR_CONTENT, content );
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Unable to set content",e);
+        }
     }
 }

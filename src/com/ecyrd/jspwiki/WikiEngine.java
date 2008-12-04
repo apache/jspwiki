@@ -47,6 +47,7 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.content.PageRenamer;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
@@ -265,6 +266,8 @@ public class WikiEngine
 
     private AdminBeanManager m_adminBeanManager;
 
+    private ContentManager   m_contentManager;
+    
     /** Stores wikiengine attributes. */
     private Map<String,Object> m_attributes = Collections.synchronizedMap(new HashMap<String,Object>());
 
@@ -529,6 +532,7 @@ public class WikiEngine
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
+            m_contentManager    = new ContentManager( this ); // FIXME: Should use getMappedObject
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
@@ -2353,6 +2357,11 @@ public class WikiEngine
     public EditorManager getEditorManager()
     {
         return m_editorManager;
+    }
+    
+    public ContentManager getContentManager()
+    {
+        return m_contentManager;
     }
 
     /**
