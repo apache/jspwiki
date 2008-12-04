@@ -113,12 +113,12 @@ public class AdminBeanManager implements WikiEventListener
                 if( !m_mbeanServer.isRegistered(name))
                 {
                     m_mbeanServer.registerMBean( ab, name );
+                    log.info("Registered new admin bean "+ab.getTitle());
                 }
             }
 
             m_allBeans.add( ab );
 
-            log.info("Registered new admin bean "+ab.getTitle());
         }
         catch( InstanceAlreadyExistsException e )
         {

@@ -1,3 +1,13 @@
+2008-11-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-23
+        
+        * implemented the unregisterAllLoggerMBeans method in the LoggerFactory
+        * added some more robustness to LoggerFactory
+        * made the LoggerImpl Serializable
+        * added a note to the ReleaseNotes
+        
+        
 2008-12-04  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-22

@@ -1531,6 +1531,7 @@ public class WikiEngine
     {
         fireEvent( WikiEngineEvent.SHUTDOWN );
         m_filterManager.destroy();
+        LoggerFactory.unRegisterAllLoggerMBeans();
     }
 
     /**
