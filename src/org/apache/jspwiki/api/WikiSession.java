@@ -62,7 +62,7 @@ import java.util.Locale;
  * managing WikiSessions for an entire wiki. These methods allow callers
  * to find, query and remove WikiSession objects, and
  * to obtain a list of the current wiki session users.</p>
- * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
+ * <p>WikiSession encloses a protected static class, {@link com.ecyrd.jspwiki.auth.SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
  * @author Andrew R. Jaquith
  */
@@ -239,9 +239,9 @@ public interface WikiSession
     /**
      * <p>Returns the status of the wiki session as a text string. Valid values are:</p>
      * <ul>
-     *   <li>{@link #AUTHENTICATED}</li>
-     *   <li>{@link #ASSERTED}</li>
-     *   <li>{@link #ANONYMOUS}</li>
+     *   <li>{@link com.ecyrd.jspwiki.WikiSession#AUTHENTICATED}</li>
+     *   <li>{@link com.ecyrd.jspwiki.WikiSession#ASSERTED}</li>
+     *   <li>{@link com.ecyrd.jspwiki.WikiSession#ANONYMOUS}</li>
      * </ul>
      * @return the user's session status
      */

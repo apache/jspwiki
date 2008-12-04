@@ -40,10 +40,10 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.action.AttachActionBean;
 import com.ecyrd.jspwiki.action.GroupActionBean;
-import com.ecyrd.jspwiki.action.HandlerInfo;
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 
 /**
  * Implements the default URL constructor using links directly to the JSP pages.
@@ -171,6 +171,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void initialize( WikiEngine engine, Properties properties )
     {
         super.initialize( engine, properties );

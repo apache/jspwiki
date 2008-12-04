@@ -5,6 +5,8 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/NewBlogEntry.jsp")
 public class NewBlogEntryActionBean extends AbstractActionBean

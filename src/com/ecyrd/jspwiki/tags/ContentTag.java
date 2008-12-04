@@ -180,12 +180,6 @@ public class ContentTag
                 contentTemplate = beanName + "Content.jsp";
             }
             
-            // If still no, something fishy is going on
-            if( contentTemplate == null )
-            {
-                throw new JspException("This template uses <wiki:Content/> in an unsupported context: " + requestContext );
-            }
-
             String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
                                                                                   m_wikiContext.getTemplate(),
                                                                                   contentTemplate );

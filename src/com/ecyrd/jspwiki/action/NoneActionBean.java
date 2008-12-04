@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.action;
 
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
+
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;

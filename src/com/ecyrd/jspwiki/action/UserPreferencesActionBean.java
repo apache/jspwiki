@@ -12,6 +12,8 @@ import net.sourceforge.stripes.validation.Validate;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
 import com.ecyrd.jspwiki.ui.EditorManager;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 /**
  * @author Andrew Jaquith

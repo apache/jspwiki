@@ -39,7 +39,6 @@ import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 //import org.apache.log4j.PropertyConfigurator;
 
-import com.ecyrd.jspwiki.action.WikiActionBeanContext;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -71,6 +70,7 @@ import com.ecyrd.jspwiki.ui.EditorManager;
 import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 import com.ecyrd.jspwiki.ui.progress.ProgressManager;
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.WatchDog;

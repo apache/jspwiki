@@ -7,6 +7,8 @@ import net.sourceforge.stripes.action.UrlBinding;
 
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/attach/{page}/{attachment}")
 public class AttachActionBean extends AbstractActionBean

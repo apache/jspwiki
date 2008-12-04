@@ -2,7 +2,7 @@
 package com.ecyrd.jspwiki.util;
 
 
-import com.ecyrd.jspwiki.ui.stripes.JspParserTest;
+import com.ecyrd.jspwiki.ui.migrator.JspParserTest;
 
 import junit.framework.*;
 

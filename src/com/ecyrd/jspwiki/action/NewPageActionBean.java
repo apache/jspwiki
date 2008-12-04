@@ -5,6 +5,8 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/NewPage.jsp")
 public class NewPageActionBean extends AbstractActionBean

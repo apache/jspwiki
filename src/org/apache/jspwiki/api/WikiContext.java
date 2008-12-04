@@ -16,27 +16,129 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.   
+    under the License.    
  */
 package org.apache.jspwiki.api;
 
-import java.io.IOException;
-import java.security.Permission;
+import java.security.Principal;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
+import com.ecyrd.jspwiki.action.*;
+import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 
 /**
- *  The WikiContext represents a request which targets a WikiPage
- *  in some way or the other.
- *  <p>
- *  This class would be better named as "PageRequestContext" or something,
- *  but we need to keep at least some similarity with the 2.x API...
+ *  <p>Provides state information throughout the processing of a page.  A
+ *  WikiContext is born when the JSP pages that are the main entry
+ *  points, are invoked.  The JSPWiki engine creates the new
+ *  WikiContext, which basically holds information about the page, the
+ *  handling engine, and in which context (view, edit, etc) the
+ *  call was done.</p>
+ *  <p>A WikiContext also provides request-specific variables, which can
+ *  be used to communicate between plugins on the same page, or
+ *  between different instances of the same plugin.  A WikiContext
+ *  variable is valid until the processing of the page has ended.  For
+ *  an example, please see the Counter plugin.</p>
+ *  <p>When a WikiContext is created, it automatically associates a
+ *  {@link WikiSession} object with the user's HttpSession. The
+ *  WikiSession contains information about the user's authentication
+ *  status, and is consulted by {@link #getCurrentUser()}.
+ *  object</p>
+ *  <p>Do not cache the page object that you get from the WikiContext; always
+ *  use getPage()!</p>
+ *
+ *  @see com.ecyrd.jspwiki.plugin.Counter
+ *
+ *  @author Andrew R. Jaquith
  */
-public interface WikiContext extends ActionContext
+public interface WikiContext
+    extends Cloneable
 {
+    /** User is administering JSPWiki (Install, SecurityConfig). */
+    public static final String    INSTALL  = HandlerInfo.getHandlerInfo( InstallActionBean.class, "install" ).getRequestContext();
 
+    /** The VIEW context - the user just wants to view the page
+        contents. */
+    public static final String    VIEW     = HandlerInfo.getHandlerInfo( ViewActionBean.class, "view" ).getRequestContext();
 
+    /** User wants to view or administer workflows. */
+    public static final String    WORKFLOW = HandlerInfo.getHandlerInfo( WorkflowActionBean.class, "view" ).getRequestContext();
+
+    /** The EDIT context - the user is editing the page. */
+    public static final String    EDIT     = HandlerInfo.getHandlerInfo( EditActionBean.class, "edit" ).getRequestContext();
+
+    /** User is preparing for a login/authentication. */
+    public static final String    LOGIN    = HandlerInfo.getHandlerInfo( LoginActionBean.class, "login" ).getRequestContext();
+
+    /** User is preparing to log out. */
+    public static final String    LOGOUT   = HandlerInfo.getHandlerInfo( LoginActionBean.class, "logout" ).getRequestContext();
+
+    /** JSPWiki wants to display a message. */
+    public static final String    MESSAGE  = HandlerInfo.getHandlerInfo( MessageActionBean.class, "message" ).getRequestContext();
+
+    /** User is viewing a DIFF between the two versions of the page. */
+    public static final String    DIFF     = HandlerInfo.getHandlerInfo( EditActionBean.class, "diff" ).getRequestContext();
+
+    /** User is viewing page history. */
+    public static final String    INFO     = HandlerInfo.getHandlerInfo( PageInfoActionBean.class, "info" ).getRequestContext();
+
+    /** User is previewing the changes he just made. */
+    public static final String    PREVIEW  = HandlerInfo.getHandlerInfo( EditActionBean.class, "preview" ).getRequestContext();
+
+    /** User has an internal conflict, and does quite not know what to
+        do. Please provide some counseling. */
+    public static final String    CONFLICT = HandlerInfo.getHandlerInfo( PageModifiedActionBean.class, "conflict" ).getRequestContext();
+
+    /** An error has been encountered and the user needs to be informed. */
+    public static final String    ERROR    = HandlerInfo.getHandlerInfo( ErrorActionBean.class, "error" ).getRequestContext();
+
+    /** User is uploading something. */
+    public static final String    UPLOAD   = HandlerInfo.getHandlerInfo( UploadActionBean.class, "upload" ).getRequestContext();
+
+    /** User is commenting something. */
+    public static final String    COMMENT  = HandlerInfo.getHandlerInfo( CommentActionBean.class, "comment" ).getRequestContext();
+
+    /** User is searching for content. */
+    public static final String    FIND     = HandlerInfo.getHandlerInfo( SearchActionBean.class, "find" ).getRequestContext();
+
+    /** User wishes to create a new group */
+    public static final String    CREATE_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "create" ).getRequestContext();
+
+    /** User is deleting an existing group. */
+    public static final String    DELETE_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "delete" ).getRequestContext();
+
+    /** User is editing an existing group. */
+    public static final String    EDIT_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "save" ).getRequestContext();
+
+    /** User is viewing an existing group */
+    public static final String    VIEW_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "view" ).getRequestContext();
+
+    /** User is editing preferences */
+    public static final String    PREFS    = HandlerInfo.getHandlerInfo( UserPreferencesActionBean.class, "createAssertedName" ).getRequestContext();
+
+    /** User is renaming a page. */
+    public static final String    RENAME   = HandlerInfo.getHandlerInfo( RenameActionBean.class, "rename" ).getRequestContext();
+
+    /** User is deleting a page or an attachment. */
+    public static final String    DELETE   = HandlerInfo.getHandlerInfo( DeleteActionBean.class, "delete" ).getRequestContext();
+
+    /** User is downloading an attachment. */
+    public static final String    ATTACH   = HandlerInfo.getHandlerInfo( AttachActionBean.class, "upload" ).getRequestContext();
+
+    /** RSS feed is being generated. */
+    public static final String    RSS      = HandlerInfo.getHandlerInfo( RSSActionBean.class, "rss" ).getRequestContext();
+
+    /** This is not a JSPWiki context, use it to access static files. */
+    public static final String    NONE     = "none";  
+
+    /** Same as NONE; this is just a clarification. */
+    public static final String    OTHER    = "other";
+
+    /** User is doing administrative things. */
+    public static final String    ADMIN    = "admin";
+ 
     /**
      *  Sets a reference to the real page whose content is currently being
      *  rendered.
@@ -78,6 +180,13 @@ public interface WikiContext extends ActionContext
     public WikiPage getRealPage();
 
     /**
+     *  Returns the handling engine.
+     *
+     *  @return The wikiengine owning this context.
+     */
+    public WikiEngine getEngine();
+
+    /**
      *  Returns the page that is being handled.
      *
      *  @return the page which was fetched.
@@ -85,19 +194,102 @@ public interface WikiContext extends ActionContext
     public WikiPage getPage();
 
     /**
-     * Returns the target of this wiki context: a page, group name or JSP. If
-     * the associated Command is a PageCommand, this method returns the page's
-     * name. Otherwise, this method delegates to the associated Command's
-     * {@link com.ecyrd.jspwiki.ui.Command#getName()} method. Calling classes
-     * can rely on the results of this method for looking up canonically-correct
-     * page or group names. Because it does not automatically assume that the
-     * wiki context is a PageCommand, calling this method is inherently safer
-     * than calling <code>getPage().getName()</code>.
-     * @return the name of the target of this wiki context
-     * @see com.ecyrd.jspwiki.ui.PageCommand#getName()
-     * @see com.ecyrd.jspwiki.ui.GroupCommand#getName()
+     *  Sets the page that is being handled.
+     *
+     *  @param page The wikipage
+     *  @since 2.1.37.
      */
-    public String getName();
+    public void setPage( WikiPage page );
+
+    /**
+     *  Returns the request context.
+     *  @return The name of the request context (e.g. VIEW).
+     */
+    public String getRequestContext();
+
+    /**
+     *  Sets the request context.  See above for the different
+     *  request contexts (VIEW, EDIT, etc.)
+     *
+     *  @param arg The request context (one of the predefined contexts.)
+     */
+    public void setRequestContext( String arg );
+
+    /**
+     *  Gets a previously set variable.
+     *
+     *  @param key The variable name.
+     *  @return The variable contents.
+     */
+    public Object getVariable( String key );
+
+    /**
+     *  Sets a variable.  The variable is valid while the WikiContext is valid,
+     *  i.e. while page processing continues.  The variable data is discarded
+     *  once the page processing is finished.
+     *
+     *  @param key The variable name.
+     *  @param data The variable value.
+     */
+    public void setVariable( String key, Object data );
+
+    /**
+     *  This method will safely return any HTTP parameters that
+     *  might have been defined.  You should use this method instead
+     *  of peeking directly into the result of getHttpRequest(), since
+     *  this method is smart enough to do all of the right things,
+     *  figure out UTF-8 encoded parameters, etc.
+     *
+     *  @since 2.0.13.
+     *  @param paramName Parameter name to look for.
+     *  @return HTTP parameter, or null, if no such parameter existed.
+     */
+    public String getHttpParameter( String paramName );
+
+    /**
+     *  If the request did originate from a HTTP request,
+     *  then the HTTP request can be fetched here.  However, it the request
+     *  did NOT originate from a HTTP request, then this method will
+     *  return null, and YOU SHOULD CHECK FOR IT!
+     *
+     *  @return Null, if no HTTP request was done.
+     *  @since 2.0.13.
+     */
+    public HttpServletRequest getHttpRequest();
+
+    /**
+     *  Sets the template to be used for this request.
+     *
+     *  @param dir The template name
+     *  @since 2.1.15.
+     */
+    public void setTemplate( String dir );
+
+    /**
+     *  Gets the template that is to be used throughout this request.
+     *  @since 2.1.15.
+     *  @return template name
+     */
+    public String getTemplate();
+
+    /**
+     *  Convenience method that gets the current user. Delegates the
+     *  lookup to the WikiSession associated with this WikiContect.
+     *  May return null, in case the current
+     *  user has not yet been determined; or this is an internal system.
+     *  If the WikiSession has not been set, <em>always</em> returns null.
+     *
+     *  @return The current user; or maybe null in case of internal calls.
+     */
+    public Principal getCurrentUser();
+
+    /**
+     *  A shortcut to generate a VIEW url.
+     *
+     *  @param page The page to which to link.
+     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     */
+    public String getViewURL( String page );
 
     /**
      *  Creates an URL for the given request context.
@@ -123,50 +315,53 @@ public interface WikiContext extends ActionContext
     public String getURL( String context,
                           String page,
                           String params );
-
+    
     /**
-     *  A shortcut to generate a VIEW url.
+     *  Returns a shallow clone of the WikiContext.
      *
-     *  @param page The page to which to link.
-     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     *  @since 2.1.37.
+     *  @return A shallow clone of the WikiContext
      */
-    // FIXME: Better to create a new URL creation class, which is WikiContext-specific?
-    public String getViewURL( String page );
+    public Object clone();
 
     /**
-     * Checks whether the current user has access to this wiki context,
-     * by obtaining the required Permission ({@link #requiredPermission()})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as an attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * Note that this method will automatically redirect the user to
-     * a login or error page, as appropriate, if access fails. This is
-     * NOT guaranteed to be default behavior in the future.
-     * @param response the http response
-     * @return the result of the access check
-     * @throws IOException In case something goes wrong
+     *  Creates a deep clone of the WikiContext.  This is useful when you want
+     *  to be sure that you don't accidentally mess with page attributes, etc.
+     *  
+     *  @since  2.8.0
+     *  @return A deep clone of the WikiContext.
      */
-    // FIXME: Is this the correct place really for this?
-    public boolean hasAccess( HttpServletResponse response ) throws IOException;
+    public WikiContext deepClone();
+    
+    /**
+     *  Returns the WikiSession associated with the context.
+     *  This method is guaranteed to always return a valid WikiSession.
+     *  If this context was constructed without an associated
+     *  HttpServletRequest, it will return {@link com.ecyrd.jspwiki.WikiSession#guestSession(com.ecyrd.jspwiki.WikiEngine)}.
+     *
+     *  @return the WikiSession associate with this context.
+     */
+    public WikiSession getWikiSession();
 
     /**
-     * Checks whether the current user has access to this wiki context (and
-     * optionally redirects if not), by obtaining the required Permission ({@link #requiredPermission()})
-     * and delegating the access check to
-     * {@link com.ecyrd.jspwiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}.
-     * If the user is allowed, this method returns <code>true</code>;
-     * <code>false</code> otherwise. If access is allowed,
-     * the wiki context will be added to the request as attribute
-     * with the key name {@link com.ecyrd.jspwiki.tags.WikiTagBase#ATTR_CONTEXT}.
-     * @return the result of the access check
-     * @param response The servlet response object
-     * @param redirect If true, makes an automatic redirect to the response
-     * @throws IOException If something goes wrong
+     *  Returns true, if the current user has administrative permissions (i.e. the omnipotent
+     *  AllPermission).
+     *
+     *  @since 2.4.46
+     *  @return true, if the user has all permissions.
      */
-    // FIXME: Is this the correct place really for this?
-    public boolean hasAccess( HttpServletResponse response, boolean redirect ) throws IOException;
+    public boolean hasAdminPermissions();
+
+    /**
+     *  Locates the i18n ResourceBundle given.  This method interprets
+     *  the request locale, and uses that to figure out which language the
+     *  user wants.
+     *  @see com.ecyrd.jspwiki.i18n.InternationalizationManager
+     *  @param bundle The name of the bundle you are looking for.
+     *  @return A resource bundle object
+     *  @throws MissingResourceException If the bundle cannot be found
+     */
+    // FIXME: This method should really cache the ResourceBundles or something...
+    public ResourceBundle getBundle( String bundle ) throws MissingResourceException;
 
 }

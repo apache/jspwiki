@@ -1,3 +1,11 @@
+2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-21
+
+        * Split .action package: ActionBeans (only) remain in .action, while
+        Stripes support classes move to .ui.stripes. Also, the JSP migrator
+        code moves to package .ui.migrator. Many Javadoc tweaks also.
+        
 2008-11-06  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-20

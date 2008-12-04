@@ -20,8 +20,6 @@
  */
 package com.ecyrd.jspwiki.log;
 
-import java.util.Formatter;
-
 import org.slf4j.Logger;
 
 /**

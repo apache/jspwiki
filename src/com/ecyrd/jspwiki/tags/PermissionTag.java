@@ -30,7 +30,6 @@ import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.action.GroupActionBean;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
-import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;

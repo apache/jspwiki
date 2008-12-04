@@ -17,6 +17,8 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 /**
  * <p>

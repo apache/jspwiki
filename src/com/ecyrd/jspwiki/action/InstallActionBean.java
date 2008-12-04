@@ -10,6 +10,7 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.ui.Installer;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding( "/Install.jsp" )
 public class InstallActionBean extends AbstractActionBean

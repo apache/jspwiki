@@ -167,7 +167,7 @@ public interface WikiPage
     /**
      *  Returns the Acl for this page.  May return <code>null</code>, 
      *  in case there is no Acl defined, or it has not
-     *  yet been set by {@link #setAcl(Acl)}.
+     *  yet been set.
      *  
      *  @return The access control list.  May return null, if there is 
      *          no acl.

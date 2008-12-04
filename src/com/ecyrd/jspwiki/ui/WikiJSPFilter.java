@@ -32,8 +32,8 @@ import org.slf4j.MDC;
 import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiInterceptor;
 import com.ecyrd.jspwiki.event.*;
+import com.ecyrd.jspwiki.ui.stripes.WikiInterceptor;
 import com.ecyrd.jspwiki.util.UtilJ2eeCompat;
 import com.ecyrd.jspwiki.util.WatchDog;
 

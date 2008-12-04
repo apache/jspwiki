@@ -1,5 +1,7 @@
 package com.ecyrd.jspwiki.action;
 
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
+
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
 

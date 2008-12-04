@@ -28,6 +28,7 @@ public class FilterManagerTest extends TestCase
     {
     }
 
+    @SuppressWarnings("deprecation")
     public void testInitFilters()
         throws Exception
     {

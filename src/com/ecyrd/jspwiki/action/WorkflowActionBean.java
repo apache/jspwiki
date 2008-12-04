@@ -1,6 +1,8 @@
 package com.ecyrd.jspwiki.action;
 
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 import net.sourceforge.stripes.action.*;
 

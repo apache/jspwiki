@@ -21,6 +21,8 @@ import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
+import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.url.StripesURLConstructor;
 
 /**
@@ -191,7 +193,7 @@ public final class WikiContextFactory
      * Looks up and returns the correct HandlerInfo class corresponding to a
      * supplied wiki context. The supplied context name is matched against the
      * values annotated using
-     * {@link com.ecyrd.jspwiki.action.WikiRequestContext}. If a match is not
+     * {@link com.ecyrd.jspwiki.ui.stripes.WikiRequestContext}. If a match is not
      * found, this method throws an IllegalArgumentException.
      * 
      * @param requestContext the context to look up
@@ -290,7 +292,7 @@ public final class WikiContextFactory
 
         if( resolution != null )
         {
-            return resolution.getUrl();
+            return resolution.getUrl( Locale.getDefault() );
         }
 
         return null;

@@ -28,10 +28,10 @@ import net.sourceforge.stripes.tag.StripesTagSupport;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.stripes.WikiInterceptor;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.action.WikiInterceptor;
 
 /**
  *  Base class for JSPWiki tags.  You do not necessarily have
@@ -84,7 +84,7 @@ public abstract class WikiTagBase
     /**
      * Initializes the tag, and sets an internal reference to the current WikiActionBean
      * by delegating to
-     * {@link com.ecyrd.jspwiki.action.WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
+     * {@link com.ecyrd.jspwiki.ui.stripes.WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
      * (That method retrieves the WikiActionBean from page scope.).
      * If the WikiActionBean is a WikiContext, a specific reference to the WikiContext
      * will be set also. Both of these available as protected fields {@link #m_wikiActionBean} and

@@ -269,6 +269,7 @@ public class PluginManager extends ModuleManager
      *
      *  @throws ClassNotFoundException if no such class exists.
      */
+    @SuppressWarnings("unchecked")
     private Class<? extends WikiPlugin> findPluginClass( String classname )
         throws ClassNotFoundException
     {
@@ -605,6 +606,7 @@ public class PluginManager extends ModuleManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
+   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {

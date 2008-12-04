@@ -11,6 +11,7 @@ import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 /**
  * Manages the administration of UserProfiles, from the Administer Profiles

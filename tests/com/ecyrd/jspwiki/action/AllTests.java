@@ -1,7 +1,9 @@
 
 package com.ecyrd.jspwiki.action;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class AllTests extends TestCase
 {
@@ -15,7 +17,6 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("ActionBean tests");
 
         suite.addTest( GroupActionBeanTest.suite() );
-        suite.addTest( HandlerInfoTest.suite() );
         suite.addTest( LoginActionBeanTest.suite() );
         suite.addTest( RenameActionBeanTest.suite() );
         suite.addTest( UserPreferencesActionBeanTest.suite() );

@@ -218,6 +218,7 @@ public class PageRenamer
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Set<String> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
     {
         Set<String> referrers = new TreeSet<String>();

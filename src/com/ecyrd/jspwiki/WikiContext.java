@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.action.*;
+import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 
 /**
  *  <p>Provides state information throughout the processing of a page.  A
