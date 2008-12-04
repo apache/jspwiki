@@ -342,7 +342,8 @@ public class Installer
         String s = m_props.getProperty( key );
         s = TextUtil.replaceString( s, "\\", "/" );
         s = s.trim();
-        if (!s.endsWith( "/" )) {
+        if (!s.endsWith( "/" )) 
+        {
             s = s+"/" ;
         }
 

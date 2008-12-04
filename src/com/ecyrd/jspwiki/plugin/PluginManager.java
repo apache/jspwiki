@@ -723,7 +723,9 @@ public class PluginManager extends ModuleManager
                 {
                     registerPlugin( pluginInfo );
                 }
-            } else {
+            } 
+            else 
+            {
                 log.debug( "Plugin class " + clazz.getName() +" not registered, it is either an interface or it is abstract");
             }
         }

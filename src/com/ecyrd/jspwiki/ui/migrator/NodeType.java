@@ -72,7 +72,8 @@ public enum NodeType
         return m_tagStart;
     }
     
-    public String toString() {
+    public String toString() 
+    {
         return name();
     }
     

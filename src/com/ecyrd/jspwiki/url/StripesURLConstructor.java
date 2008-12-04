@@ -284,28 +284,36 @@ public class StripesURLConstructor extends DefaultURLConstructor
         char[] chars = pattern.toCharArray();
         StringBuilder buf = new StringBuilder(pattern.length());
         char c = 0;
-        for (int i = 0; i < chars.length; i++) {
+        for (int i = 0; i < chars.length; i++) 
+        {
             c = chars[i];
-            if (!escape) {
-                switch (c) {
+            if (!escape) 
+            {
+                switch (c) 
+                {
                 case '{':
                     ++braceLevel;
-                    if (braceLevel == 1) {
-                        if (path == null) {
+                    if (braceLevel == 1) 
+                    {
+                        if (path == null) 
+                        {
                             // extract trailing non-alphanum chars as a literal to trim the path
                             int end = buf.length() - 1;
                             while (end >= 0 && !Character.isJavaIdentifierPart(buf.charAt(end)))
                                 --end;
-                            if (end < 0) {
+                            if (end < 0) 
+                            {
                                 path = buf.toString();
                             }
-                            else {
+                            else 
+                            {
                                 ++end;
                                 path = buf.substring(0, end);
                                 components.add(buf.substring(end));
                             }
                         }
-                        else {
+                        else 
+                        {
                             components.add(buf.toString());
                         }
                         buf.setLength(0);
@@ -313,10 +321,12 @@ public class StripesURLConstructor extends DefaultURLConstructor
                     }
                     break;
                 case '}':
-                    if (braceLevel > 0) {
+                    if (braceLevel > 0) 
+                    {
                         --braceLevel;
                     }
-                    if (braceLevel == 0) {
+                    if (braceLevel == 0) 
+                    {
                         components.add(parseUrlBindingParameter(beanType, buf.toString()));
                         buf.setLength(0);
                         continue;
@@ -334,7 +344,8 @@ public class StripesURLConstructor extends DefaultURLConstructor
         }
 
         // handle whatever is left
-        if (buf.length() > 0) {
+        if (buf.length() > 0) 
+        {
             if (escape)
                 throw new ParseException(pattern, "Expression must not end with escape character");
             else if (braceLevel > 0)
@@ -361,23 +372,27 @@ public class StripesURLConstructor extends DefaultURLConstructor
      * @throws ParseException if the pattern cannot be parsed
      */
     protected static UrlBindingParameter parseUrlBindingParameter(
-            Class<? extends ActionBean> beanClass, String string) {
+            Class<? extends ActionBean> beanClass, String string) 
+    {
         char[] chars = string.toCharArray();
         char c = 0;
         boolean escape = false;
         StringBuilder name = new StringBuilder();
         StringBuilder defaultValue = new StringBuilder();
         StringBuilder current = name;
-        for (int i = 0; i < chars.length; i++) {
+        for (int i = 0; i < chars.length; i++) 
+        {
             c = chars[i];
-            if (!escape) {
-                switch (c) {
-                case '\\':
-                    escape = true;
-                    continue;
-                case '=':
-                    current = defaultValue;
-                    continue;
+            if (!escape) 
+            {
+                switch (c) 
+                {
+                    case '\\':
+                        escape = true;
+                        continue;
+                    case '=':
+                        current = defaultValue;
+                        continue;
                 }
             }
 
@@ -386,7 +401,9 @@ public class StripesURLConstructor extends DefaultURLConstructor
         }
 
         String dflt = defaultValue.length() < 1 ? null : defaultValue.toString();
-        if (dflt != null && UrlBindingParameter.PARAMETER_NAME_EVENT.equals(name.toString())) {
+        
+        if (dflt != null && UrlBindingParameter.PARAMETER_NAME_EVENT.equals(name.toString())) 
+        {
             throw new ParseException(string, "In ActionBean class " + beanClass.getName()
                     + ", the " + UrlBindingParameter.PARAMETER_NAME_EVENT
                     + " parameter may not be assigned a default value. Its default value is"
@@ -394,7 +411,8 @@ public class StripesURLConstructor extends DefaultURLConstructor
         }
         return new UrlBindingParameter(beanClass, name.toString(), null, dflt) {
             @Override
-            public String getValue() {
+            public String getValue() 
+            {
                 throw new UnsupportedOperationException(
                         "getValue() is not implemented for URL parameter prototypes");
             }

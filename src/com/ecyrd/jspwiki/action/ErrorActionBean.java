@@ -14,7 +14,8 @@ public class ErrorActionBean extends AbstractActionBean
     @DefaultHandler
     @HandlesEvent("error")
     @WikiRequestContext("error")
-    public Resolution view() {
+    public Resolution view() 
+    {
         return new ForwardResolution( "/Error.jsp" );
     }
 }

@@ -136,7 +136,8 @@ public abstract class WikiTagBase
         return EVAL_PAGE;
     }
     
-    public int doAfterBody() throws JspException {
+    public int doAfterBody() throws JspException 
+    {
         return SKIP_BODY;
     }
     

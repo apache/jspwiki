@@ -108,7 +108,8 @@ public class MessagesTag extends WikiTagBase
 
             // Add all of the Stripes validation errors first (all fields, even global errors)
             ValidationErrors errors = m_wikiActionBean.getContext().getValidationErrors();
-            for ( List<ValidationError> fieldErrors : errors.values() ) {
+            for ( List<ValidationError> fieldErrors : errors.values() ) 
+            {
                 for ( ValidationError error : fieldErrors )
                 {
                     String message = error.getMessage( m_wikiActionBean.getContext().getLocale() );

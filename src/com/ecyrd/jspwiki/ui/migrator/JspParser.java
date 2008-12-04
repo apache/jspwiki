@@ -53,8 +53,8 @@ public class JspParser
                 }
                 ch = ctx.getSource().charAt( ctx.position() );
                
-               switch (ch) {
-                   
+               switch (ch) 
+               {    
                    case ('<'):
                    {
                        leftAngleBrackets++;
