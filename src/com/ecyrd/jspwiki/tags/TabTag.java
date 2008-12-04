@@ -22,7 +22,8 @@
 package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.*;
-import com.ecyrd.jspwiki.TextUtil;
+
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Generates single tabbed page layout.

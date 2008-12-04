@@ -22,11 +22,11 @@ package com.ecyrd.jspwiki.render;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Provides an interface to the basic rendering engine.

@@ -18,12 +18,15 @@
     specific language governing permissions and limitations
     under the License.   
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.search;
 
 
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;
+
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
  * SearchMatcher performs the task of matching a search query to a page's

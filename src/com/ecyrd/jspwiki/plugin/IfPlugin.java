@@ -29,9 +29,9 @@ import org.apache.jspwiki.api.ModuleData;
 import org.apache.jspwiki.api.PluginException;
 import org.apache.oro.text.regex.*;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiProvider;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally.

@@ -32,7 +32,6 @@ import org.apache.jspwiki.api.WikiException;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -44,6 +43,7 @@ import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.providers.CachingProvider;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 

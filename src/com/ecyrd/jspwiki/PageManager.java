@@ -44,6 +44,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 import com.ecyrd.jspwiki.workflow.Outcome;
 import com.ecyrd.jspwiki.workflow.Task;

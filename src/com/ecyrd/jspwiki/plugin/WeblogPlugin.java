@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  <p>Builds a simple weblog.

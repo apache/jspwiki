@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 public class FileSystemProviderTest extends TestCase
 {

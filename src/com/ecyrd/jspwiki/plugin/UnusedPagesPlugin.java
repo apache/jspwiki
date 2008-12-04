@@ -28,8 +28,8 @@ import java.util.TreeSet;
 import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.ReferenceManager;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.

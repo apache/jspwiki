@@ -39,6 +39,7 @@ import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
 import com.ecyrd.jspwiki.util.CommentedProperties;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * Manages JSPWiki installation on behalf of <code>admin/Install.jsp</code>.

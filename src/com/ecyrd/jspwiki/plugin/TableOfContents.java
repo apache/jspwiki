@@ -33,6 +33,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Provides a table of contents. 

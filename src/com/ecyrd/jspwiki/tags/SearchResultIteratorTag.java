@@ -28,8 +28,8 @@ import javax.servlet.jsp.PageContext;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.search.SearchResult;
 
-import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 

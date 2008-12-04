@@ -73,6 +73,7 @@ import com.ecyrd.jspwiki.ui.progress.ProgressManager;
 import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.util.WatchDog;
 import com.ecyrd.jspwiki.workflow.*;
 

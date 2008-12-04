@@ -34,6 +34,9 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
+
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;

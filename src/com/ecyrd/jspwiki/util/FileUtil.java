@@ -18,7 +18,7 @@
     specific language governing permissions and limitations
     under the License.   
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.util;
 
 import java.io.*;
 import java.nio.ByteBuffer;

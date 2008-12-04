@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).

@@ -4,6 +4,8 @@ package com.ecyrd.jspwiki;
 import junit.framework.*;
 import java.io.*;
 
+import com.ecyrd.jspwiki.util.FileUtil;
+
 public class FileUtilTest extends TestCase
 {
     public FileUtilTest( String s )

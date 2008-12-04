@@ -28,6 +28,7 @@ import org.apache.oro.text.regex.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 
 /**

@@ -18,7 +18,7 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.search;
 
 /**
  *  This simple class just fulfils the role of a container

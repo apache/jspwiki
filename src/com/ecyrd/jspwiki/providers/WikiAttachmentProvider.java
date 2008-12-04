@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.search.QueryItem;
 
 /**
  *  Defines an attachment provider - a class which is capable of saving

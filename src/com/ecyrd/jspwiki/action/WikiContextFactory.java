@@ -26,6 +26,7 @@ import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.url.StripesURLConstructor;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * <p>

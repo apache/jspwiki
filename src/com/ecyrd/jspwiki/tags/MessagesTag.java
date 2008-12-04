@@ -27,8 +27,8 @@ import java.util.List;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * Returns or clears the current messages associated with the user's wiki

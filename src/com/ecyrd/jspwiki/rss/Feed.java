@@ -24,8 +24,8 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Represents an abstract feed.

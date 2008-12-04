@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 public class CachingProviderTest extends TestCase
 {

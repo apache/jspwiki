@@ -22,6 +22,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 public class JSPWikiMarkupParserTest extends TestCase
 {

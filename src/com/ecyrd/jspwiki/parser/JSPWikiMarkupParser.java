@@ -49,6 +49,7 @@ import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.CleanTextRenderer;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the

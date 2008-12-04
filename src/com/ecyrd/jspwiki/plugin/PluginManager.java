@@ -40,6 +40,8 @@ import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.parser.PluginContent;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager

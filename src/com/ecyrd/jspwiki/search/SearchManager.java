@@ -41,6 +41,7 @@ import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.rpc.RPCCallable;
 import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Manages searching the Wiki.

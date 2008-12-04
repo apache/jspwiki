@@ -34,7 +34,6 @@ import javax.naming.NamingException;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**

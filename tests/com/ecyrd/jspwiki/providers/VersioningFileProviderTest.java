@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 // FIXME: Should this thingy go directly to the VersioningFileProvider,
 //        or should it rely on the WikiEngine API?

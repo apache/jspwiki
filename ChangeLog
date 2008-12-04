@@ -10,6 +10,12 @@
         regexp library with Java built-in regexps for DenouncePlugin, as well
         as DenouncePluginTest.  Thanks!
 
+        * Moved FileUtil and TextUtil to com.ecyrd.jspwiki.util (where they
+        should've been in the first place)
+        
+        * Moved QueryItem, SearchMatcher, SearchResult and SearchResultComparator
+        to the search-package.
+
 2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-21

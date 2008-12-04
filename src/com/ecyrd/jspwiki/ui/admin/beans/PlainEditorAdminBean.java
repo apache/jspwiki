@@ -23,10 +23,10 @@ package com.ecyrd.jspwiki.ui.admin.beans;
 import javax.management.NotCompliantMBeanException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.ui.admin.AdminBean;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.management.SimpleMBean;
 
 /**

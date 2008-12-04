@@ -27,13 +27,13 @@ import java.util.ResourceBundle;
 
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Inserts page contents.  Muchos thanks to Scott Hurlbert for the initial code.

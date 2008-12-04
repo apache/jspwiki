@@ -7,6 +7,7 @@ import java.util.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 public class BasicAttachmentProviderTest extends TestCase
 {

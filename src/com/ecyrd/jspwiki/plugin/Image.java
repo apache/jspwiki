@@ -25,12 +25,12 @@ import java.util.Map;
 import org.apache.jspwiki.api.ModuleData;
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Provides an image plugin for better control than is possible with a simple image inclusion.

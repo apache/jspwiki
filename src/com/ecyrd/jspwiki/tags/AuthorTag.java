@@ -24,11 +24,11 @@ import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Writes the author name of the current page, including a link to that page,

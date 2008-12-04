@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Returns the current user name, or empty, if the user has not been

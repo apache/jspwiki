@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  This is a base class for all plugins using referral things.

@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.TextUtil;
 
 /**
  * Extends {@link java.util.Properties} by providing support for comment

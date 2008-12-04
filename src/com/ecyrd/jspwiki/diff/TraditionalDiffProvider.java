@@ -33,9 +33,9 @@ import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.action.WikiContextFactory;

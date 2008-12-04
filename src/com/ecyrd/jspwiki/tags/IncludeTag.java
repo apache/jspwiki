@@ -24,8 +24,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.ServletException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Includes an another JSP page, making sure that we actually pass

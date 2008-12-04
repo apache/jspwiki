@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.search.QueryItem;
 
 /**
  *  This is a simple provider that is used by some of the tests.  It has some

@@ -29,6 +29,7 @@ import net.sourceforge.stripes.tag.StripesTagSupport;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.ui.stripes.WikiInterceptor;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.action.WikiActionBean;

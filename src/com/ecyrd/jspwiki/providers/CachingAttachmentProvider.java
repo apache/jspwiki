@@ -30,6 +30,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.search.QueryItem;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.CacheEntry;

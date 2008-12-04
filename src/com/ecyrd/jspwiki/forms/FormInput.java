@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 import org.apache.ecs.xhtml.input;
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.plugin.WikiPlugin;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Creates a simple input text field.

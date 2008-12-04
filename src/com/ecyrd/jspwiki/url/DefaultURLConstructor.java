@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Implements the default URL constructor using links directly to the

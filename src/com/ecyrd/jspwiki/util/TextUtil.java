@@ -18,12 +18,14 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.Random;
+
+import com.ecyrd.jspwiki.InternalWikiException;
 
 
 /**

@@ -53,9 +53,7 @@ import com.ecyrd.jspwiki.attachment.AttachmentManager;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
-import com.ecyrd.jspwiki.util.ClassUtil;
-import com.ecyrd.jspwiki.util.WatchDog;
-import com.ecyrd.jspwiki.util.WikiBackgroundThread;
+import com.ecyrd.jspwiki.util.*;
 
 /**
  *  Interface for the search providers that handle searching the Wiki

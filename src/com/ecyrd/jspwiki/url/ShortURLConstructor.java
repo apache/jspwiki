@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 import com.ecyrd.jspwiki.InternalWikiException;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 

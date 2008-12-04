@@ -38,7 +38,6 @@ import org.apache.jspwiki.api.WikiException;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.Role;
@@ -47,6 +46,7 @@ import com.ecyrd.jspwiki.auth.login.*;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiSecurityEvent;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.util.TimedCounterList;
 
 /**

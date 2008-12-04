@@ -5,6 +5,7 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 /**
  *  Tests the RCSFileProvider.  If you are getting strange errors, please check that you

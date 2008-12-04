@@ -30,6 +30,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.jspwiki.api.WikiException;
 
+import com.ecyrd.jspwiki.util.TextUtil;
+
 /**
  * Property Reader for the WikiEngine. Reads the properties for the WikiEngine
  * and implements the feature of cascading properties and variable substitution,

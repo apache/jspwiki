@@ -28,7 +28,6 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
@@ -39,6 +38,7 @@ import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * <p>

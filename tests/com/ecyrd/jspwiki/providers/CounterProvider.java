@@ -24,6 +24,7 @@ import java.util.*;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.search.QueryItem;
 
 import com.ecyrd.jspwiki.*;
 

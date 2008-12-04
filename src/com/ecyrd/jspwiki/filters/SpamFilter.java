@@ -43,6 +43,8 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.EditorManager;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  This is Herb, the JSPWiki spamfilter that can also do choke modifications.

@@ -7,10 +7,10 @@ import java.util.Random;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.providers.CachingProvider;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 public class MassiveRepositoryTest extends TestCase
 {

@@ -26,10 +26,10 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.items.DavItem;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 /**
  *

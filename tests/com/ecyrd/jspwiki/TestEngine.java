@@ -31,6 +31,8 @@ import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.WikiServletFilter;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  <p>Simple test engine that always assumes pages are found. The version of TestEngine that is part of JSPWiki 3.0

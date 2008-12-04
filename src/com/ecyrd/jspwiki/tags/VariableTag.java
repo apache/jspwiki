@@ -24,9 +24,9 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.NoSuchVariableException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Returns the value of an Wiki variable.

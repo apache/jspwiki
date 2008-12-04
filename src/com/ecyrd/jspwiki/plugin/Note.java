@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by

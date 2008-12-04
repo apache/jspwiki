@@ -22,12 +22,12 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.util.BlogUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Outputs links to all the site feeds and APIs this Wiki/blog supports.

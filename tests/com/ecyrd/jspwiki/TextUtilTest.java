@@ -4,6 +4,8 @@ package com.ecyrd.jspwiki;
 import junit.framework.*;
 import java.util.*;
 
+import com.ecyrd.jspwiki.util.TextUtil;
+
 public class TextUtilTest extends TestCase
 {
 

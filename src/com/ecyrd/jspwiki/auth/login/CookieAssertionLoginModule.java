@@ -34,9 +34,9 @@ import javax.servlet.http.HttpSession;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.util.HttpUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * <p>

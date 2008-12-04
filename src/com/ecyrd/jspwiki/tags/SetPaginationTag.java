@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
-import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 
 /**

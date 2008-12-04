@@ -18,36 +18,38 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package com.ecyrd.jspwiki;
+package com.ecyrd.jspwiki.search;
 
-import java.io.Serializable;
-import java.util.*;
+import com.ecyrd.jspwiki.WikiPage;
 
 /**
- *  Simple class that decides which search results are more
- *  important than others.
+ *  Defines a search result.
  */
-// FIXME3.0: move to the search package
-public class SearchResultComparator
-    implements Comparator<SearchResult>, Serializable
+// FIXME3.0: Move to the search-package
+public interface SearchResult
 {
-    private static final long serialVersionUID = 1L;
+    /**
+     *  Return the page.
+     *  
+     *  @return the WikiPage object containing this result
+     */
+    public WikiPage getPage();
 
     /**
-     *  Compares two SearchResult objects, returning
-     *  the one that scored higher.
+     *  Returns the score.
      *  
-     *  {@inheritDoc}
+     *  @return A positive score value.  Note that there is no upper limit for the score.
      */
-    public int compare( SearchResult s1, SearchResult s2 )
-    {
-        // Bigger scores are first.
 
-        int res = s2.getScore() - s1.getScore();
-
-        if( res == 0 )
-            res = s1.getPage().getName().compareTo(s2.getPage().getName());
-
-        return res;
-    }
+    public int getScore();
+    
+    
+    /**
+     * Collection of XHTML fragments representing some contexts in which
+     * the match was made (a.k.a., "snippets").
+     *
+     * @return the search results
+     * @since 2.4
+     */
+    public String[] getContexts();
 }

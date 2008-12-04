@@ -61,6 +61,7 @@ import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.ui.progress.ProgressItem;
 import com.ecyrd.jspwiki.util.HttpUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 
 /**

@@ -9,10 +9,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.FileUtil;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 public class AttachmentManagerTest extends TestCase
 {

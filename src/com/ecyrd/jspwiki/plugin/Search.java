@@ -28,12 +28,12 @@ import java.util.Map;
 import org.apache.ecs.xhtml.*;
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.search.SearchResult;
 
 /**
  *  The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page. 

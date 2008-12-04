@@ -33,11 +33,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.FileUtil;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.util.FileUtil;
 import com.ecyrd.jspwiki.util.HttpUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Logs in an user based on a cookie stored in the user's computer.  The cookie

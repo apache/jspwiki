@@ -29,6 +29,8 @@ import java.util.Properties;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 import com.ecyrd.jspwiki.*;
 

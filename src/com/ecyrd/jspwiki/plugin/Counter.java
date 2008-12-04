@@ -24,8 +24,8 @@ import java.util.Map;
 
 import org.apache.jspwiki.api.PluginException;
 
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Provides a page-specific counter, it is reset every time a page is rendered, so it is not usable as a hitcounter.

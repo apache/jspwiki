@@ -1,6 +1,5 @@
 package com.ecyrd.jspwiki.util;
 
-import com.ecyrd.jspwiki.TextUtil;
 
 import junit.framework.*;
 

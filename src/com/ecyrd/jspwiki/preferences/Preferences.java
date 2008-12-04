@@ -36,11 +36,11 @@ import org.json.JSONObject;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
-import com.ecyrd.jspwiki.TextUtil;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.util.HttpUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Represents an object which is used to store user preferences.

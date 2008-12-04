@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.search.QueryItem;
 
 /**
  *  Each Wiki page provider should implement this interface.

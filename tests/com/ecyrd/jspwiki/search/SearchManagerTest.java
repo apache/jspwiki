@@ -10,7 +10,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import com.ecyrd.jspwiki.SearchResult;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 

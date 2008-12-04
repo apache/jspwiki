@@ -28,7 +28,7 @@ import java.net.URL;
 import org.apache.jspwiki.api.ModuleData;
 import org.jdom.Element;
 
-import com.ecyrd.jspwiki.FileUtil;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 /**
  *  A WikiModule describes whatever JSPWiki plugin there is: it can be a plugin,

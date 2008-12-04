@@ -31,10 +31,6 @@ import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.QueryItem;
-import com.ecyrd.jspwiki.SearchMatcher;
-import com.ecyrd.jspwiki.SearchResult;
-import com.ecyrd.jspwiki.SearchResultComparator;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;

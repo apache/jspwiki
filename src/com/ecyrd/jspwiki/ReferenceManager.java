@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.filters.BasicPageFilter;
 import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /*
   BUGS

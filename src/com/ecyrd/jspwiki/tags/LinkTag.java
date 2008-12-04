@@ -34,6 +34,7 @@ import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  *  Provides a generic link tag for all kinds of linking

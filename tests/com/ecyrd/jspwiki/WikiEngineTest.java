@@ -8,6 +8,8 @@ import java.util.*;
 import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.attachment.*;
 
 public class WikiEngineTest extends TestCase

@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.*;
+import com.ecyrd.jspwiki.util.FileUtil;
 
 public final class StressTestSpeed extends TestCase
 {
