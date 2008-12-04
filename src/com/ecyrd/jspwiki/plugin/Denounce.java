@@ -25,12 +25,12 @@ package com.ecyrd.jspwiki.plugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.log.Logger;
@@ -78,7 +78,6 @@ public class Denounce implements WikiPlugin
     {
         try
         {
-            PatternCompiler compiler = new GlobCompiler();
             ClassLoader loader = Denounce.class.getClassLoader();
 
             InputStream in = loader.getResourceAsStream( PROPERTYFILE );
@@ -101,18 +100,18 @@ public class Denounce implements WikiPlugin
                 {
                     if( name.startsWith( PROP_REFERERPATTERN ) )
                     {
-                        c_refererPatterns.add( compiler.compile( props.getProperty(name) ) );
+                        c_refererPatterns.add( Pattern.compile( props.getProperty(name) ) );
                     }
                     else if( name.startsWith( PROP_AGENTPATTERN ) )
                     {
-                        c_agentPatterns.add( compiler.compile( props.getProperty(name) ) );
+                        c_agentPatterns.add( Pattern.compile( props.getProperty(name) ) );
                     }
                     else if( name.startsWith( PROP_HOSTPATTERN ) )
                     {
-                        c_hostPatterns.add( compiler.compile( props.getProperty(name) ) );
+                        c_hostPatterns.add( Pattern.compile( props.getProperty(name) ) );
                     }
                 }
-                catch( MalformedPatternException ex )
+                catch(PatternSyntaxException  ex )
                 {
                     log.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
                 }
@@ -168,11 +167,10 @@ public class Denounce implements WikiPlugin
      */
     private boolean matchPattern( List list, String path )
     {
-        PatternMatcher matcher = new Perl5Matcher();
-
         for( Iterator i = list.iterator(); i.hasNext(); )
         {
-            if( matcher.matches( path, (Pattern)i.next() ) )
+            Pattern pattern = (Pattern)i.next();
+            if (pattern.matcher(path).find())
             {
                 return true;
             }
