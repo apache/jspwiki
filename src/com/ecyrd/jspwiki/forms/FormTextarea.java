@@ -20,14 +20,16 @@
  */
 package com.ecyrd.jspwiki.forms;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.plugin.PluginException;
-import com.ecyrd.jspwiki.plugin.WikiPlugin;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.xhtml.textarea;
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
 /**
  *  Creates a Form text area element.   You may specify the size of the textarea

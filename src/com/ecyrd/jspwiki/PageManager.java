@@ -26,6 +26,8 @@ import java.security.Principal;
 import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

@@ -3,9 +3,10 @@ package com.ecyrd.jspwiki.workflow;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.TestCase;
 
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 
 public class SimpleDecisionTest extends TestCase

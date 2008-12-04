@@ -3,6 +3,7 @@ package com.ecyrd.jspwiki.plugin;
 import java.util.Map;
 
 import org.apache.jspwiki.api.ModuleData;
+import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.parser.PluginContent;

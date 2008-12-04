@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Date;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.TestCase;
 
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 

@@ -1,6 +1,7 @@
 <%@ page import="com.ecyrd.jspwiki.log.Logger" %>
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.jspwiki.api.WikiException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -72,12 +73,11 @@
     }
 
     pageContext.setAttribute( "renameto",
-                              TextUtil.replaceEntities( renameTo ),
-                              PageContext.REQUEST_SCOPE );
+                      TextUtil.replaceEntities( renameTo ),
+                      PageContext.REQUEST_SCOPE );
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
-    
+                                                    wikiContext.getTemplate(),
+                                                    "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

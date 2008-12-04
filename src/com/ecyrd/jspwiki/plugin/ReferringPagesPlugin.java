@@ -20,12 +20,19 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.ReferenceManager;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
-import com.ecyrd.jspwiki.*;
-
-import java.text.MessageFormat;
-import java.util.*;
 
 /**
  *  Displays the pages referring to the current page.

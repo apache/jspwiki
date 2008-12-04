@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.workflow;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
 
 /**
  * Exception thrown when an activity -- that would otherwise complete silently --

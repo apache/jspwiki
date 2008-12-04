@@ -24,8 +24,9 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.jspwiki.api.PluginException;
+
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.plugin.PluginException;
 import com.ecyrd.jspwiki.plugin.PluginManager;
 import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.util.FormUtil;

@@ -20,9 +20,14 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeSet;
 
-import java.util.*;
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.ReferenceManager;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.

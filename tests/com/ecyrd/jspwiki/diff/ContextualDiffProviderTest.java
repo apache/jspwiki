@@ -3,6 +3,8 @@ package com.ecyrd.jspwiki.diff;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

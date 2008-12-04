@@ -5,6 +5,8 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.providers.*;
 import com.ecyrd.jspwiki.attachment.*;
 

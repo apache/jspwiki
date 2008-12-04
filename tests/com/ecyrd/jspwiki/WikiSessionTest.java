@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.*;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.Users;

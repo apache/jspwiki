@@ -10,6 +10,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.*;

@@ -1,6 +1,10 @@
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.plugin.*;
-import java.util.*;
+import java.util.Map;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
 /**
  *  Implements a simple plugin that just returns its text.

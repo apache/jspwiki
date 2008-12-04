@@ -3,9 +3,11 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.util.Properties;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.Test;
+
+import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;

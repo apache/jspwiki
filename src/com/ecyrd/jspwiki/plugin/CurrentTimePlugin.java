@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.jspwiki.api.PluginException;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;

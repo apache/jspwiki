@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.providers.AbstractFileProvider;

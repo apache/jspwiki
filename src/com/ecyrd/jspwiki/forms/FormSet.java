@@ -20,9 +20,13 @@
  */
 package com.ecyrd.jspwiki.forms;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.plugin.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
 /**
  * FormSet is a companion WikiPlugin for Form. 

@@ -29,8 +29,6 @@ public class PluginException
 {
     private static final long serialVersionUID = 0L;
 
-    private final Throwable m_throwable;
-
     /**
      *  Create a PluginException.
      *  
@@ -39,7 +37,6 @@ public class PluginException
     public PluginException( String message )
     {
         super( message );
-        m_throwable = null;
     }
 
     /**
@@ -50,17 +47,7 @@ public class PluginException
      */
     public PluginException( String message, Throwable original )
     {
-        super( message );
-        m_throwable = original;
+        super( message, original );
     }
 
-    /**
-     *  Return the original exception.
-     *  
-     *  @return The original exception.
-     */
-    public Throwable getRootThrowable()
-    {
-        return m_throwable;
-    }
 }

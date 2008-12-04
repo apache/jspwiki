@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.*;

@@ -33,6 +33,8 @@ import javax.security.auth.Subject;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import org.freshcookies.security.policy.PolicyReader;
@@ -40,7 +42,6 @@ import org.jdom.JDOMException;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.*;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;

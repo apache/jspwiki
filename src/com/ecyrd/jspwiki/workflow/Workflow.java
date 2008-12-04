@@ -24,7 +24,8 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WorkflowEvent;

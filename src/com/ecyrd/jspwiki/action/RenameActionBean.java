@@ -2,6 +2,8 @@ package com.ecyrd.jspwiki.action;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jspwiki.api.WikiException;
+
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -12,7 +14,6 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 import net.sourceforge.stripes.validation.ValidationMethod;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.log.Logger;
@@ -95,7 +96,7 @@ public class RenameActionBean extends AbstractActionBean
     /**
      * Handler method that renames the current wiki page. If the rename
      * operation does not succeed for any reason, this method throws a
-     * {@link com.ecyrd.jspwiki.WikiException}.
+     * {@link org.apache.jspwiki.api.WikiException}.
      * 
      * @return a redirection to the renamed wiki page
      * @throws WikiException if the page cannot be renamed

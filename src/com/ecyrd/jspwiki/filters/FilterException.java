@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.filters;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
 
 /**
  *  A generic PageFilter exception.

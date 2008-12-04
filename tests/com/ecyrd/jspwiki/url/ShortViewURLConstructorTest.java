@@ -6,6 +6,8 @@ package com.ecyrd.jspwiki.url;
 
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -13,7 +15,6 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 
 public class ShortViewURLConstructorTest extends TestCase
 {

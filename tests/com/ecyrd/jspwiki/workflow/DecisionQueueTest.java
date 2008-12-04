@@ -24,10 +24,11 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.GroupPrincipal;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;

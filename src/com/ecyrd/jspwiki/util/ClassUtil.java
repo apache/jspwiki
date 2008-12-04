@@ -27,12 +27,13 @@ import java.util.*;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+
+import org.apache.jspwiki.api.WikiException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
-import com.ecyrd.jspwiki.WikiException;
 
 /**
  *  Contains useful utilities for class file manipulation.  This is a static class,

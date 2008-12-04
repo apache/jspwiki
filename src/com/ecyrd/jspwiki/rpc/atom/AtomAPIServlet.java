@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+
+import org.apache.jspwiki.api.WikiException;
 import org.intabulas.sandler.*;
 import org.intabulas.sandler.exceptions.*;
 import org.intabulas.sandler.elements.*;

@@ -23,8 +23,9 @@ package com.ecyrd.jspwiki.workflow;
 import java.security.Principal;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.acl.UnresolvedPrincipal;
 import com.ecyrd.jspwiki.event.WikiEvent;

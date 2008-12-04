@@ -20,13 +20,15 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  *  Builds a simple weblog.

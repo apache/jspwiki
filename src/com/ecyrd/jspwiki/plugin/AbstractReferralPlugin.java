@@ -25,12 +25,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.PluginException;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.preferences.Preferences;

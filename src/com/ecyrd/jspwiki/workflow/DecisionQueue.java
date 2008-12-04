@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.WikiSession;
 
 /**

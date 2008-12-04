@@ -24,8 +24,9 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 
 /**
  * Factory class that creates common Workflow instances such as a standard approval workflow.

@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.providers;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
 
 /**
  *  This exception represents the superclass of all exceptions that providers

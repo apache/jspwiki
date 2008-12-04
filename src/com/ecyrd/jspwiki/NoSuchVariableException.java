@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki;
 
+import org.apache.jspwiki.api.WikiException;
+
 /**
  *  Marks that no such variable was located.
  */

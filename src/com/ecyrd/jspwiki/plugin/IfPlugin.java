@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.ModuleData;
+import org.apache.jspwiki.api.PluginException;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.TextUtil;

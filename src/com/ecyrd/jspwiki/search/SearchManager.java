@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

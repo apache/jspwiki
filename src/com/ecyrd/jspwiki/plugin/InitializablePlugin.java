@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
+import org.apache.jspwiki.api.PluginException;
+
 import com.ecyrd.jspwiki.WikiEngine;
 
 /**

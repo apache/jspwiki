@@ -31,13 +31,14 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.*;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
@@ -124,7 +125,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
      * Returns the current external {@link GroupDatabase} in use. This method
      * is guaranteed to return a properly-initialized GroupDatabase, unless
      * it could not be initialized. In that case, this method throws
-     * a {@link com.ecyrd.jspwiki.WikiException}. The GroupDatabase
+     * a {@link org.apache.jspwiki.api.WikiException}. The GroupDatabase
      * is lazily initialized.
      * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the GroupDatabase could
      * not be initialized

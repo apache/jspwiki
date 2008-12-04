@@ -31,12 +31,13 @@ import java.util.WeakHashMap;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+
+import org.apache.jspwiki.api.WikiException;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.acl.Acl;

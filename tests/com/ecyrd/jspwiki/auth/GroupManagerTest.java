@@ -4,13 +4,13 @@ import java.security.Principal;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.auth.authorize.Group;

@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.rss;
 
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

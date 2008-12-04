@@ -20,8 +20,16 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.PageLock;
+import com.ecyrd.jspwiki.PageManager;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  *  This is a plugin for the administrator: It allows him to see in a single

@@ -22,11 +22,12 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.util.*;
 
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.PluginException;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 
 /**

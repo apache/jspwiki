@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

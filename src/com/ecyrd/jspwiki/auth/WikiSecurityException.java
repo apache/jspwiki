@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.auth;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
 
 /**
  *  Indicates an authentication or authorization

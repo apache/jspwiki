@@ -22,17 +22,19 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
-
-import java.util.*;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.jspwiki.api.PluginException;
+import org.apache.oro.text.GlobCompiler;
+import org.apache.oro.text.regex.*;
+
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  *  Denounces a link by removing it from any search engine. 

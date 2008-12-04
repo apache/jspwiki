@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.parser;
 
-import com.ecyrd.jspwiki.WikiException;
+import org.apache.jspwiki.api.WikiException;
 
 /**
  *  This is an exception which gets thrown whenever the parser cannot

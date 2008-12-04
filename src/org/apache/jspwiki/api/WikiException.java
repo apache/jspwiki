@@ -21,14 +21,15 @@
 package org.apache.jspwiki.api;
 
 /**
- *  A generic Wiki exception.
+ *  The main JSPWiki exception.  All JSPWiki exceptions thrown by JSPWiki
+ *  are derivatives of this exception type.
  *
- *  @since 2.0
+ *  @since 3.0
  */
 public class WikiException
     extends Exception
 {
-    private static final long serialVersionUID = 3257290231723210803L;
+    private static final long serialVersionUID = 3257290231723210813L;
 
     /**
      *  Constructs an exception.
@@ -38,5 +39,16 @@ public class WikiException
     public WikiException( String msg )
     {
         super(msg);
+    }
+    
+    /**
+     *  Constructs an exception with a root cause.
+     *  
+     *  @param msg The message in the exception
+     *  @param rootCause The root cause.
+     */
+    public WikiException( String msg, Throwable rootCause )
+    {
+        super( msg, rootCause );
     }
 }

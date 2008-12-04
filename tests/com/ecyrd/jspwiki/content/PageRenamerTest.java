@@ -3,6 +3,8 @@ package com.ecyrd.jspwiki.content;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

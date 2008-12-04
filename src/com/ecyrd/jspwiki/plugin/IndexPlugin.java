@@ -26,10 +26,11 @@ import java.util.regex.Pattern;
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**

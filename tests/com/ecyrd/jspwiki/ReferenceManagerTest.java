@@ -5,6 +5,8 @@ import junit.framework.*;
 import java.util.*;
 import java.io.*;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
 
 /**

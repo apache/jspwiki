@@ -30,11 +30,12 @@ import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.jspwiki.api.ModuleData;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.PluginException;
 import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.parser.PluginContent;

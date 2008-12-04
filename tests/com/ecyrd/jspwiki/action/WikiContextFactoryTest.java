@@ -6,6 +6,8 @@
 package com.ecyrd.jspwiki.action;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

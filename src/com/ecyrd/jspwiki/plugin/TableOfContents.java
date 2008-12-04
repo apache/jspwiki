@@ -20,16 +20,19 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
-import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.Heading;
 import com.ecyrd.jspwiki.parser.HeadingListener;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
-
-import java.util.*;
-import java.io.StringReader;
-import java.io.IOException;
 
 /**
  *  Provides a table of contents. 

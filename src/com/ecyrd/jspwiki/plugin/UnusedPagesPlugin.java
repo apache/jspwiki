@@ -20,8 +20,16 @@
  */
 package com.ecyrd.jspwiki.plugin;
 
-import com.ecyrd.jspwiki.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeSet;
+
+import org.apache.jspwiki.api.PluginException;
+
+import com.ecyrd.jspwiki.ReferenceManager;
+import com.ecyrd.jspwiki.TextUtil;
+import com.ecyrd.jspwiki.WikiContext;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.

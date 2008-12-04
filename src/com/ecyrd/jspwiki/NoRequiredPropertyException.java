@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki;
 
+import org.apache.jspwiki.api.WikiException;
+
 /**
  *  Marks an erroneus jspwiki.properties file.  Certain properties
  *  have been marked as "required", and if you do not provide
