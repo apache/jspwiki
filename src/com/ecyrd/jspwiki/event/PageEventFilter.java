@@ -21,11 +21,12 @@
 
 package com.ecyrd.jspwiki.event;
 
-import com.ecyrd.jspwiki.filters.BasicPageFilter;
-import com.ecyrd.jspwiki.filters.FilterException;
+import java.util.Properties;
+
+import org.apache.jspwiki.api.FilterException;
 
 import com.ecyrd.jspwiki.WikiContext;
-import java.util.Properties;
+import com.ecyrd.jspwiki.filters.BasicPageFilter;
 
 /**
   * Fires WikiPageEvents for page events.

@@ -2,8 +2,9 @@
 
         * 3.0.0-svn-22
         
-        * Moved WikiException & PluginException to the org.apache.jspwiki.api
-        package.  This is a part of the overall transition to have a stable API.
+        * Moved WikiException, FilterException & PluginException to the 
+        org.apache.jspwiki.api package.  This is a part of the overall 
+        transition to have a stable API.
 
         * [JSPWIKI-291] Added patch from Thomas Engelschmidt to replace ORO
         regexp library with Java built-in regexps for DenouncePlugin, as well

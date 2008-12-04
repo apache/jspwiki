@@ -26,10 +26,8 @@ import java.security.Principal;
 import java.util.*;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
-
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -38,7 +36,8 @@ import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.event.*;
-import com.ecyrd.jspwiki.filters.FilterException;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.providers.CachingProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;

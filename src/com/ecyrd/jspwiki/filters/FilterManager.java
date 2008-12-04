@@ -28,9 +28,7 @@ import java.util.*;
 
 import net.sourceforge.stripes.util.ResolverUtil;
 
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-
+import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,6 +40,8 @@ import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.modules.WikiModuleInfo;
 import com.ecyrd.jspwiki.util.ClassUtil;

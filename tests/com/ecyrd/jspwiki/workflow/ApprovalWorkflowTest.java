@@ -5,15 +5,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.jspwiki.api.WikiException;
-
 import junit.framework.TestCase;
 
-import com.ecyrd.jspwiki.*;
+import org.apache.jspwiki.api.FilterException;
+import org.apache.jspwiki.api.WikiException;
+
+import com.ecyrd.jspwiki.PageManager;
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
-import com.ecyrd.jspwiki.filters.FilterException;
 
 public class ApprovalWorkflowTest extends TestCase
 {

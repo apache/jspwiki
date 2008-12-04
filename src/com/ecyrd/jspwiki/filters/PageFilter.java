@@ -22,6 +22,8 @@ package com.ecyrd.jspwiki.filters;
 
 import java.util.Properties;
 
+import org.apache.jspwiki.api.FilterException;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 

@@ -35,11 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
-
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-//import org.apache.log4j.PropertyConfigurator;
 
 import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -55,9 +52,10 @@ import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventManager;
-import com.ecyrd.jspwiki.filters.FilterException;
 import com.ecyrd.jspwiki.filters.FilterManager;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;

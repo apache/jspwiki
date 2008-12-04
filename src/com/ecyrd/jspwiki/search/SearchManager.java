@@ -24,10 +24,8 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
-
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -35,7 +33,8 @@ import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.event.WikiEventUtils;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
 import com.ecyrd.jspwiki.filters.BasicPageFilter;
-import com.ecyrd.jspwiki.filters.FilterException;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.modules.InternalModule;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 
+import org.apache.jspwiki.api.FilterException;
+
 /**
  *  This exception may be thrown if a filter wants to reject something and
  *  redirect the user elsewhere. In addition to being a subclass of FilterException,
