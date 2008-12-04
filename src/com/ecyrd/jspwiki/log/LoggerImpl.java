@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.log;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 
 /**
@@ -28,8 +30,9 @@ import org.slf4j.Logger;
  * @author Harry Metske
  * @since 3.0
  */
-public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger
+public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger, Serializable
 {
+    private static final long serialVersionUID = 1L;
     Logger m_slf4jLogger = null;
     
     /**

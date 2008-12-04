@@ -24,7 +24,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Set;
 
+import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -50,13 +52,22 @@ import com.ecyrd.jspwiki.Release;
  */
 public final class LoggerFactory
 {
-    private static boolean c_log4jPresent = true;
+    private static boolean c_isLog4jPresent = true;
+    
+    //     it appears that after shutting down JSPWiki, we get new requests for Loggers, to prevent this we "close the door" :
+    private static boolean c_isLoggerFactoryClosed= false;
 
     private static final String SLF4J_LOG4J_ADAPTER_CLASS = "org.slf4j.impl.Log4jLoggerAdapter";
 
     private static final String LOG4J_LOGGER_CLASS = "org.apache.log4j.Logger";
 
     private static HashMap<String, LoggerImpl> c_registeredLoggers = new HashMap<String, LoggerImpl>( 200 );
+
+    /**
+     *   @TODO  We need something here to make the Logger MBeans unique across the JVM, this will not work if you
+     *                     run multiple wiki's in the same JVM, same is true for other MBeans. 
+     */
+    private static final String OBJECTNAME_PREFIX = Release.APPNAME + ":component=Loggers,name=";
 
     static
     {
@@ -68,6 +79,19 @@ public final class LoggerFactory
      */
     private LoggerFactory()
     {}
+
+
+    /**
+     *  Utility method for locating a Logger based on a Class.
+     *  
+     *  @param clazz The Class to find a Logger for.
+     *  @return A Logger instance.
+     */
+    public static final Logger getLogger( Class clazz )
+    {
+        return getLogger( clazz.getName() );
+    }
+
     
     /**
      * Returns a Logger instance, and also, if it is a Log4J logger, registers the Logging MBean.
@@ -77,11 +101,16 @@ public final class LoggerFactory
      */
     public static final synchronized Logger getLogger( String loggerName )
     {
+        if( c_isLoggerFactoryClosed )
+        {
+            return null;
+        }
+        
         if( c_registeredLoggers.get( loggerName ) == null )
         {
             LoggerImpl logger = new LoggerImpl( loggerName );
             c_registeredLoggers.put( loggerName, logger );
-            if( c_log4jPresent )
+            if( c_isLog4jPresent )
             {
                 registerLoggerMBean( loggerName );
             }
@@ -130,13 +159,17 @@ public final class LoggerFactory
             Constructor constr = mbeanClass.getConstructor( loggerClass );
             Object dynMBean = constr.newInstance( arglist );
             ObjectName mbeanName = new ObjectName( Release.APPNAME + ":component=Loggers,name=" + loggerName );
-            ManagementFactory.getPlatformMBeanServer().registerMBean( dynMBean, mbeanName );
+            MBeanServer mbeanServer =  ManagementFactory.getPlatformMBeanServer();
+            if( !mbeanServer.isRegistered( mbeanName ) )
+            {
+                mbeanServer.registerMBean( dynMBean, mbeanName );
+            }
         }
         catch( ClassNotFoundException cnfe )
         {
             // apparently we cannot find the slf4j log4j adapter, so we assume there is no log4j
             // available, so there is no use in registering MBeans
-            c_log4jPresent = false;
+            c_isLog4jPresent = false;
             System.err.println( "Could not find class " +SLF4J_LOG4J_ADAPTER_CLASS + ", so no dynamic log configuration here :-(" );
         }
         catch( Exception e )
@@ -145,14 +178,26 @@ public final class LoggerFactory
         }
     }
 
+    
     /**
-     *  Utility method for locating a Logger based on a Class.
-     *  
-     *  @param clazz The Class to find a Logger for.
-     *  @return A Logger instance.
+     * UnRegisters all Logger MBeans from the Platform MBeanServer.
      */
-    public static final Logger getLogger( Class clazz )
+    public static void unRegisterAllLoggerMBeans()
     {
-        return getLogger( clazz.getName() );
+        c_isLoggerFactoryClosed = true;
+
+        Set<String> loggerNames = c_registeredLoggers.keySet();
+        for( String loggerName : loggerNames )
+        {
+            try
+            {
+                ObjectName mbeanName = new ObjectName( OBJECTNAME_PREFIX + loggerName );
+                ManagementFactory.getPlatformMBeanServer().unregisterMBean( mbeanName );
+            }
+            catch( Exception e )
+            {
+                // ignore this, we can't do anything about it
+            }
+        }
     }
 }
