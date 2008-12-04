@@ -15,6 +15,8 @@
         
         * Moved QueryItem, SearchMatcher, SearchResult and SearchResultComparator
         to the search-package.
+        
+        * TranslatorReader is now gone for good.  R.I.P.
 
 2008-12-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
