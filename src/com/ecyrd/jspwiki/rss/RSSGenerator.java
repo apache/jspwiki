@@ -204,7 +204,7 @@ public class RSSGenerator
     private String getAttachmentDescription( Attachment att )
     {
         String author = getAuthor(att);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if( att.getVersion() != 1 )
         {
@@ -228,7 +228,7 @@ public class RSSGenerator
 
     private String getPageDescription( WikiPage page )
     {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String author = getAuthor(page);
 
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );

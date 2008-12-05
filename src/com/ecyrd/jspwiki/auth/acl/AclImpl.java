@@ -173,7 +173,7 @@ public class AclImpl implements Acl, Serializable
     @SuppressWarnings("unchecked")
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for( AclEntry entry : m_entries )
         {

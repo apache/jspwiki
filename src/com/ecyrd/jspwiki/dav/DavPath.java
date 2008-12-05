@@ -149,7 +149,7 @@ public class DavPath
      */
     public String pathPart()
     {
-        StringBuffer result = new StringBuffer( m_isAbsolute ? "/" : "" );
+        StringBuilder result = new StringBuilder( m_isAbsolute ? "/" : "" );
    
         for( int i = 0; i < m_parts.size()-(m_isDirectory ? 0 : 1); i++ )
         {

@@ -252,7 +252,7 @@ public class WeblogPlugin
         stopTime.set( Calendar.MINUTE, 59 );
         stopTime.set( Calendar.SECOND, 59 );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         try
         {
@@ -297,7 +297,7 @@ public class WeblogPlugin
      *  @param entry
      *  @throws ProviderException
      */
-    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuffer buffer, WikiPage entry) 
+    private void addEntryHTML(WikiContext context, DateFormat entryFormat, boolean hasComments, StringBuilder buffer, WikiPage entry) 
         throws ProviderException
     {
         WikiEngine engine = context.getEngine();

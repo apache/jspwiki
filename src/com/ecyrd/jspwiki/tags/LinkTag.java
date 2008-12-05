@@ -317,7 +317,7 @@ public class LinkTag
         {
             return addTo;
         }
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         Iterator it = params.entrySet().iterator();
         while( it.hasNext() )
         {
@@ -421,7 +421,7 @@ public class LinkTag
             JspWriter out = pageContext.getOut();
             String url = figureOutURL();
 
-            StringBuffer sb = new StringBuffer( 20 );
+            StringBuilder sb = new StringBuilder( 20 );
 
             sb.append( (m_class != null)   ? "class=\""+m_class+"\" " : "" );
             sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );

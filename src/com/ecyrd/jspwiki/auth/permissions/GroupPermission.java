@@ -174,7 +174,7 @@ public final class GroupPermission extends Permission implements Serializable
         String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( groupActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for( int i = 0; i < groupActions.length; i++ )
         {
             buffer.append( groupActions[i] );

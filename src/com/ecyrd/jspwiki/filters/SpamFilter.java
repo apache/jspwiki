@@ -970,7 +970,7 @@ public class SpamFilter
      */
     private static String getUniqueID()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random rand = new Random();
 
         for( int i = 0; i < 6; i++ )
@@ -1133,7 +1133,7 @@ public class SpamFilter
         WikiContext ctx = WikiContextFactory.findContext(pageContext);
         WikiEngine engine = ctx.getEngine();
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (engine.getContentEncoding().equals("UTF-8"))
         {
             sb.append("<input name='encodingcheck' type='hidden' value='\u3041' />\n");

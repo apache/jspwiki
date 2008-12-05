@@ -84,7 +84,7 @@ public class InsertPage
         WikiEngine engine = context.getEngine();
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
 
         String clazz        = (String) params.get( PARAM_CLASS );
         String includedPage = (String) params.get( PARAM_PAGENAME );

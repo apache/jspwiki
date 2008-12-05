@@ -276,7 +276,7 @@ public class DefaultAclManager implements AclManager
 
         // Now, iterate through each permission in the map and generate an ACL string
 
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         for ( Map.Entry<String,List<Principal>>entry : permissionPrincipals.entrySet() )
         {
             String action = entry.getKey();

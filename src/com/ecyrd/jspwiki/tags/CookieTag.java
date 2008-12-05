@@ -358,7 +358,7 @@ public class CookieTag
      */
     private String encodeValues( Map values )
     {
-        StringBuffer rval = new StringBuffer();
+        StringBuilder rval = new StringBuilder();
         if( values == null || values.size() == 0 )
         {
             return rval.toString();

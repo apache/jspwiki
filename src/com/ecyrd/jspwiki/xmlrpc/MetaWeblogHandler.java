@@ -271,7 +271,7 @@ public class MetaWeblogHandler
 
             WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
 
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder();
             text.append( "!"+content.get("title") );
             text.append( "\n\n" );
             text.append( content.get("description") );
@@ -368,7 +368,7 @@ public class MetaWeblogHandler
 
             WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
 
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder();
             text.append( "!"+content.get("title") );
             text.append( "\n\n" );
             text.append( content.get("description") );

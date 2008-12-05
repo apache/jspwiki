@@ -129,7 +129,7 @@ public class SetPaginationTag
     {
         if( m_total <= m_pagesize ) return SKIP_BODY;
 
-        StringBuffer pagination = new StringBuffer();
+        StringBuilder pagination = new StringBuilder();
 
         if( m_start > m_total ) m_start = m_total;
         if( m_start < ALLITEMS ) m_start = 0;
@@ -233,15 +233,15 @@ public class SetPaginationTag
      * @param onclick : link text
      *
      **/
-    private void appendLink( StringBuffer sb, int page, String fmttextkey )
+    private void appendLink( StringBuilder sb, int page, String fmttextkey )
     {
         appendLink2( sb, page, LocaleSupport.getLocalizedMessage( pageContext, fmttextkey ) );
     }
-    private void appendLink( StringBuffer sb, int page, int paginationblock )
+    private void appendLink( StringBuilder sb, int page, int paginationblock )
     {
         appendLink2( sb, page, Integer.toString( paginationblock ) );
     }
-    private void appendLink2( StringBuffer sb, int page, String text )
+    private void appendLink2( StringBuilder sb, int page, String text )
     {
         sb.append( "<a title=\"" );
         if( page == ALLITEMS )

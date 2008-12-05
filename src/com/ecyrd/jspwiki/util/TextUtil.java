@@ -50,7 +50,7 @@ public final class TextUtil
      */
     protected static String urlEncode( byte[] rs )
     {
-        StringBuffer result = new StringBuffer(rs.length*2);
+        StringBuilder result = new StringBuilder(rs.length*2);
 
         // Does the URLEncoding.  We could use the java.net one, but
         // it does not eat byte[]s.
@@ -311,7 +311,7 @@ public final class TextUtil
         if ( src == null || dest == null ) throw new NullPointerException();
         if ( src.length() == 0 ) return orig;
 
-        StringBuffer res = new StringBuffer(orig.length()+20); // Pure guesswork
+        StringBuilder res = new StringBuilder(orig.length()+20); // Pure guesswork
         int start = 0;
         int end = 0;
         int last = 0;
@@ -342,7 +342,7 @@ public final class TextUtil
     {
         if( orig == null ) return null;
 
-        StringBuffer buf = new StringBuffer(orig);
+        StringBuilder buf = new StringBuilder(orig);
 
         buf.replace( start, end, text );
 
@@ -361,7 +361,7 @@ public final class TextUtil
     {
         if( orig == null ) return null;
 
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         int start        = 0;
         int end          = 0;
         int last         = 0;
@@ -509,7 +509,7 @@ public final class TextUtil
      */
     public static String normalizePostData( String postData )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for( int i = 0; i < postData.length(); i++ )
         {
@@ -591,7 +591,7 @@ public final class TextUtil
      */
     public static String beautifyString( String s, String space )
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         if( s == null || s.length() == 0 ) return "";
 
@@ -744,7 +744,7 @@ public final class TextUtil
      */
     public static String repeatString( String what, int times )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for( int i = 0; i < times; i++ )
         {
@@ -764,7 +764,7 @@ public final class TextUtil
      */
     public static String native2Ascii(String s)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(int i = 0; i < s.length(); i++)
         {
             char aChar = s.charAt(i);
@@ -805,7 +805,7 @@ public final class TextUtil
      */
     public static String toHexString( byte[] bytes )
     {
-        StringBuffer sb = new StringBuffer( bytes.length*2 );
+        StringBuilder sb = new StringBuilder( bytes.length*2 );
         for( int i = 0; i < bytes.length; i++ )
         {
             sb.append( toHex(bytes[i] >> 4) );

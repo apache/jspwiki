@@ -100,7 +100,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         }
         WikiEngine engine = context.getEngine();
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         String entryText = (String) params.get(PARAM_ENTRYTEXT);
         if( entryText == null ) 

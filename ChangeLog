@@ -1,12 +1,22 @@
-2008-11-29 Harry Metske <metskem@apache.org>
+2008-12-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-24
+        
+        * Did a mass change of StringBuffer => StringBuilder.  It's
+        faster and in most cases a drop-in replacement.  Noticed that
+        StringBuffer.append() was taking quite a bit of time...
+        
+2008-12-04 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-23
         
         * implemented the unregisterAllLoggerMBeans method in the LoggerFactory
-        * added some more robustness to LoggerFactory
-        * made the LoggerImpl Serializable
-        * added a note to the ReleaseNotes
         
+        * added some more robustness to LoggerFactory
+        
+        * made the LoggerImpl Serializable
+        
+        * added a note to the ReleaseNotes
         
 2008-12-04  Janne Jalkanen <jalkanen@apache.org>
 

@@ -135,7 +135,7 @@ public class BasicSearchProvider implements SearchProvider
                 return "";
             }
 
-            StringBuffer attachmentNames = new StringBuffer();
+            StringBuilder attachmentNames = new StringBuilder();
             for( Iterator it = attachments.iterator(); it.hasNext(); )
             {
                 Attachment att = (Attachment) it.next();

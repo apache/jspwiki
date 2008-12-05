@@ -81,7 +81,7 @@ public final class JSONRPCManager extends RPCManager
      */
     public static String emitJSONCall( WikiContext context, RPCCallable c, String function, String params )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<script>");
         sb.append("var result = jsonrpc."+getId(c)+"."+function+"("+params+");\r\n");
         sb.append("document.write(result);\r\n");

@@ -420,7 +420,7 @@ public final class AuthorizationManager
             }
             else
             {
-                StringBuffer sb = new StringBuffer( "JSPWiki was unable to initialize the " );
+                StringBuilder sb = new StringBuilder( "JSPWiki was unable to initialize the " );
                 sb.append( "default security policy (WEB-INF/jspwiki.policy) file. " );
                 sb.append( "Please ensure that the jspwiki.policy file exists in the default location. " );
                 sb.append( "This file should exist regardless of the existance of a global policy file. " );

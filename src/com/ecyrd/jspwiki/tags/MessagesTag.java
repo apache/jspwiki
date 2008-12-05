@@ -127,7 +127,7 @@ public class MessagesTag extends WikiTagBase
             
             if ( messages.length > 0 )
             {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 if ( messages.length == 1 )
                 {
                     sb.append( "<div class=\"" + m_div + "\">" + m_prefix + TextUtil.replaceEntities(messages[0]) + "</div>" );

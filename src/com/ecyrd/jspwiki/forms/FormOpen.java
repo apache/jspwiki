@@ -139,7 +139,7 @@ public class FormOpen
         info.setName( formName );
         info.setAction( submitServlet );
 
-        StringBuffer tag = new StringBuffer( 40 );
+        StringBuilder tag = new StringBuilder( 40 );
         tag.append( "<div class=\"wikiform\">\n" );
         tag.append( "<form action=\"" + submitServlet );
         tag.append( "\" name=\"" + formName );

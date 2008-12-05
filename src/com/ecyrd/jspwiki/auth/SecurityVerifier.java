@@ -204,7 +204,7 @@ public final class SecurityVerifier
             colWidth = "67%";
         }
 
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
 
         // Write the table header
         s.append( "<table class=\"wikitable\" border=\"1\">\n" );
@@ -306,7 +306,7 @@ public final class SecurityVerifier
      */
     private final String printPermissionTest( Permission permission, Principal principal, int cols )
     {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         if ( permission == null )
         {
             s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"N/A\">" );
@@ -362,7 +362,7 @@ public final class SecurityVerifier
         // Now, print a table with JSP pages listed on the left, and
         // an evaluation of each pages' constraints for each role
         // we discovered
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         Principal[] roles = authorizer.getRoles();
         s.append( "<table class=\"wikitable\" border=\"1\">\n" );
         s.append( "<thead>\n" );

@@ -67,7 +67,7 @@ public class SessionsPlugin
         if ( "users".equals( prop ) )
         {
             Principal[] principals = WikiSession.userPrincipals( engine );
-            StringBuffer s = new StringBuffer();
+            StringBuilder s = new StringBuilder();
             for ( int i = 0; i < principals.length; i++ )
             {
                 s.append(principals[i].getName() + ", ");
@@ -105,7 +105,7 @@ public class SessionsPlugin
             }
             //
             //
-            StringBuffer s = new StringBuffer();
+            StringBuilder s = new StringBuilder();
             Iterator entries = distinctPrincipals.entrySet().iterator();
             while (entries.hasNext())
             {

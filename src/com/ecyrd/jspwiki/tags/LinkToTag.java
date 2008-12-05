@@ -112,7 +112,7 @@ public class LinkToTag
         }
         else
         {
-            StringBuffer params = new StringBuffer();
+            StringBuilder params = new StringBuilder();
             if( getVersion() != null ) params.append( "version="+getVersion() );
             if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
 

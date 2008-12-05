@@ -236,7 +236,7 @@ public class UserProfileTag extends WikiTagBase
             return rb.getString("userprofile.nogroups");
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = tempRoles.get( i );
@@ -277,7 +277,7 @@ public class UserProfileTag extends WikiTagBase
             return rb.getString( "userprofile.noroles" );
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < tempRoles.size(); i++ )
         {
             String name = tempRoles.get( i );

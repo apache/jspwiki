@@ -64,7 +64,7 @@ public class CleanTextRenderer
     public String getString()
         throws IOException
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         try
         {

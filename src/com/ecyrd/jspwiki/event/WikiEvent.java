@@ -149,7 +149,7 @@ public abstract class WikiEvent extends EventObject
      */
     public String toString()
     {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         out.append( "WikiEvent." );
         out.append( eventName() );
         out.append( " [source=" );
