@@ -106,7 +106,7 @@ public class TranslationsCheck
 
         String msg = "Properties in file " + source2;
         System.out.println(msg);
-        StringBuffer sb = new StringBuffer(msg.length());
+        StringBuilder sb = new StringBuilder(msg.length());
         for (int i = 0; i < msg.length(); i++)
             sb.append("-");
         System.out.println(sb.toString());

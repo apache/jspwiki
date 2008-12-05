@@ -66,7 +66,7 @@ public class TableOfContents
 
     private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
 
-    StringBuffer m_buf = new StringBuffer();
+    StringBuilder m_buf = new StringBuilder();
     private boolean m_usingNumberedList = false;
     private String m_prefix = "";
     private int m_starting = 0;
@@ -159,7 +159,7 @@ public class TableOfContents
             //return rb.getString("tableofcontents.title");
             return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("<div class=\"toc\">\n");
         sb.append("<div class=\"collapsebox\">\n");

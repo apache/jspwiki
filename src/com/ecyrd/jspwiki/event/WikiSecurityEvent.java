@@ -211,7 +211,7 @@ public final class WikiSecurityEvent extends WikiEvent
      */
     public final String toString()
     {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         msg.append( "WikiSecurityEvent." );
         msg.append(  eventName( getType() ) );
         msg.append( " [source=" + getSource().toString() );

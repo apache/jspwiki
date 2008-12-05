@@ -93,11 +93,11 @@ public class CreoleRenderer extends WikiRenderer
     }
     
     /**
-     * Renders an element into the StringBuffer given
+     * Renders an element into the StringBuilder given
      * @param ce
      * @param sb
      */
-    private void renderElement( Element ce, StringBuffer sb )
+    private void renderElement( Element ce, StringBuilder sb )
     {
         String endEl = EMPTY_STRING;
         for( int i = 0; i < ELEMENTS.length; i+=3 )
@@ -197,7 +197,7 @@ public class CreoleRenderer extends WikiRenderer
      */
     public String getString() throws IOException
     {
-        StringBuffer sb = new StringBuffer(1000);
+        StringBuilder sb = new StringBuilder(1000);
         
         Element ce = m_document.getRootElement();
         

@@ -132,7 +132,7 @@ public class TabTag extends WikiTagBase
 
         if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
 
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
 
         sb.append( "<div id=\""+ getId() + "\"" );
 
@@ -161,7 +161,7 @@ public class TabTag extends WikiTagBase
     {
         TabbedSectionTag parent=getParentTag( TabbedSectionTag.class );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if( parent.isStateFindDefaultTab() )
         {

@@ -107,7 +107,7 @@ public final class WorkflowEvent extends WikiEvent
      */
     public final String toString()
     {
-        StringBuffer msg = new StringBuffer();
+        StringBuilder msg = new StringBuilder();
         msg.append("WorkflowEvent.");
         msg.append(eventName(getType()));
         msg.append(" [source=" + getSource().toString());

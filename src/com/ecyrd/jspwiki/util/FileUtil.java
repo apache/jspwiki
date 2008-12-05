@@ -116,7 +116,7 @@ public final class FileUtil
         throws IOException,
                InterruptedException
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         log.info("Running simple command "+command+" in "+directory);
 
@@ -137,7 +137,7 @@ public final class FileUtil
                 result.append( line+"\n");
             }
 
-            StringBuffer error = new StringBuffer();
+            StringBuilder error = new StringBuilder();
             while( (line = stderr.readLine()) != null )
             {
                 error.append( line+"\n");
@@ -309,7 +309,7 @@ public final class FileUtil
     public static String getThrowingMethod( Throwable t )
     {
         StackTraceElement[] trace = t.getStackTrace();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if( trace == null || trace.length == 0 )
         {

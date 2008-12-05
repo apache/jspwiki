@@ -753,7 +753,7 @@ public class XHtmlElementToWikiTranslator
 
     private String propsToStyleString( Map styleProps )
     {
-        StringBuffer style = new StringBuffer();
+        StringBuilder style = new StringBuilder();
         for( Iterator i = styleProps.entrySet().iterator(); i.hasNext(); )
         {
             Map.Entry entry = (Map.Entry)i.next();
@@ -880,7 +880,7 @@ public class XHtmlElementToWikiTranslator
      */
     private String augmentedWikiLinkMapToString( Map attributesMap )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for ( Iterator itr = attributesMap.entrySet().iterator(); itr.hasNext(); )
         {
@@ -1024,7 +1024,7 @@ public class XHtmlElementToWikiTranslator
     private static class LiStack
     {
 
-        private StringBuffer m_li = new StringBuffer();
+        private StringBuilder m_li = new StringBuilder();
 
         public void push( String c )
         {

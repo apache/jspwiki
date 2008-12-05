@@ -124,7 +124,7 @@ public class VariableManager
     public String expandVariables( WikiContext context,
                                    String      source )
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
 
         for( int i = 0; i < source.length(); i++ )
         {
@@ -423,7 +423,7 @@ public class VariableManager
 
         public String getInterwikilinks()
         {
-            StringBuffer res = new StringBuffer();
+            StringBuilder res = new StringBuilder();
 
             for( Iterator i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
             {
@@ -438,7 +438,7 @@ public class VariableManager
 
         public String getInlinedimages()
         {
-            StringBuffer res = new StringBuffer();
+            StringBuilder res = new StringBuilder();
 
             for( Iterator i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
             {
@@ -499,7 +499,7 @@ public class VariableManager
         public String getPagefilters()
         {
             List filters = m_context.getEngine().getFilterManager().getFilterList();
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             for (Iterator i = filters.iterator(); i.hasNext();)
             {

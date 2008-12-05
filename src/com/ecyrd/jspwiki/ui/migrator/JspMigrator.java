@@ -139,7 +139,7 @@ public class JspMigrator
     {
         // Read in the file
         FileReader reader = new FileReader( src );
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         int ch = 0;
         while ( (ch = reader.read()) != -1 )
         {

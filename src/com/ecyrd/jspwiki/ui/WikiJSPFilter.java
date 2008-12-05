@@ -228,7 +228,7 @@ public class WikiJSPFilter extends WikiServletFilter
         
         String[] resources = TemplateManager.getResourceRequests( wikiContext, type );
         
-        StringBuffer concat = new StringBuffer( resources.length * 40 );
+        StringBuilder concat = new StringBuilder( resources.length * 40 );
         
         for( int i = 0; i < resources.length; i++  )
         {

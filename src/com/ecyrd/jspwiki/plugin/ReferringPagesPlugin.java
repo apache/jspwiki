@@ -79,7 +79,7 @@ public class ReferringPagesPlugin
         String pageName = (String)params.get( PARAM_PAGE );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         
-        StringBuffer result = new StringBuffer( 256 );
+        StringBuilder result = new StringBuilder( 256 );
         
         if( pageName == null )
         {
@@ -137,7 +137,7 @@ public class ReferringPagesPlugin
             {
                 if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) )
                 {
-                    result = new StringBuffer();
+                    result = new StringBuilder();
                     result.append( links.size() );
                     if( m_lastModified )
                     {

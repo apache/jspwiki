@@ -72,7 +72,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
     {
         MBeanInfo info = getMBeanInfo();
         MBeanAttributeInfo[] attributes = info.getAttributes();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         
         for( int i = 0; i < attributes.length; i++ )
         {

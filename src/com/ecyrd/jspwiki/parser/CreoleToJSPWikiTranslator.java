@@ -283,7 +283,7 @@ public class CreoleToJSPWikiTranslator
     private static String translateLists(String content, String sourceSymbol, String targetSymbol, String sourceSymbol2)
     {
         String[] lines = content.split("\n");
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int counter = 0;
         int inList = -1;
         for (int i = 0; i < lines.length; i++)

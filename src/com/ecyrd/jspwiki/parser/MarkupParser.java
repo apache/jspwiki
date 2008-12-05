@@ -280,7 +280,7 @@ public abstract class MarkupParser
         if( link == null ) return null;
 
         link = link.trim();
-        StringBuffer clean = new StringBuffer(link.length());
+        StringBuilder clean = new StringBuilder(link.length());
 
         //
         //  Remove non-alphanumeric characters that should not

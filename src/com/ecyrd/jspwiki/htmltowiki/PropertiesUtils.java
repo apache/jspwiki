@@ -85,7 +85,7 @@ public final class PropertiesUtils
     public static String saveConvert( String string, boolean encodeWhiteSpace )
     {
         int i = string.length();
-        StringBuffer stringbuffer = new StringBuffer( i * 2 );
+        StringBuilder stringbuffer = new StringBuilder( i * 2 );
         for( int i3 = 0; i3 < i; i3++ )
         {
             char c = string.charAt( i3 );

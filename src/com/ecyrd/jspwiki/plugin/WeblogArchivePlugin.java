@@ -72,7 +72,7 @@ public class WeblogArchivePlugin implements WikiPlugin
                                                 context.getURL( WikiContext.VIEW, weblogName,
                                                                 "weblog.startDate='ddMMyy'&amp;weblog.days=%d")+"'");
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( "<div class=\"weblogarchive\">\n" );
         
