@@ -1,12 +1,11 @@
 package com.ecyrd.jspwiki.action;
 
-import org.apache.jspwiki.api.WikiException;
-
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
-import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
+
+import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
