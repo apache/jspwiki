@@ -233,7 +233,15 @@ public class AttachmentServlet
     public void doGet( HttpServletRequest  req, HttpServletResponse res )
         throws IOException, ServletException
     {
-        WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+        WikiContext context;
+        try
+        {
+            context = m_engine.getWikiContextFactory().newContext( req, res, WikiContext.ATTACH );
+        }
+        catch( WikiException e )
+        {
+            throw new ServletException( e );
+        }
 
         String version  = req.getParameter( HDR_VERSION );
         String nextPage = req.getParameter( "nextpage" );
@@ -503,7 +511,15 @@ public class AttachmentServlet
         {
             InputStream data = req.getInputStream();
 
-            WikiContext context = m_engine.createContext( req, WikiContext.UPLOAD );
+            WikiContext context;
+            try
+            {
+                context = m_engine.getWikiContextFactory().newContext( req, res, WikiContext.UPLOAD );
+            }
+            catch( WikiException e )
+            {
+                throw new ServletException( e );
+            }
 
             String wikipage = path.get( 0 );
 
@@ -590,7 +606,15 @@ public class AttachmentServlet
             
             // Create the context _before_ Multipart operations, otherwise
             // strict servlet containers may fail when setting encoding.
-            WikiContext context = m_engine.createContext( req, WikiContext.ATTACH );
+            WikiContext context;
+            try
+            {
+                context = m_engine.getWikiContextFactory().newContext( req, null, WikiContext.ATTACH );
+            }
+            catch( WikiException e )
+            {
+                throw new IOException( e.getMessage() );
+            }
 
             UploadListener pl = new UploadListener();
 

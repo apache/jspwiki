@@ -54,7 +54,7 @@ public class DenouncePluginTest extends TestCase {
         //if(host != null)
 
         request.getParameterMap().put("page", new String[]{"TestPage"});
-        context = engine.createContext( request, WikiContext.VIEW );
+        context = engine.getWikiContextFactory().newViewContext( request, null, null );
         manager = new PluginManager(engine, props);
     }
 

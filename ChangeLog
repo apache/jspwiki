@@ -1,3 +1,10 @@
+2008-12-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-25
+
+        * Fixed failing unit tests (plus or minus a few). Minor refinements
+        to WikiContext.createContext().
+
 2008-12-05  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-24

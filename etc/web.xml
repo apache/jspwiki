@@ -65,7 +65,7 @@
            implementations for JSPWiki-specific types. -->
       <init-param>
          <param-name>Extension.Packages</param-name>
-         <param-value>com.ecyrd.jspwiki.action</param-value>
+         <param-value>com.ecyrd.jspwiki.ui.stripes</param-value>
       </init-param>
       <!-- We override Stripes' normal resource bundle to use ours instead. -->
       <init-param>
@@ -89,7 +89,7 @@
       <!-- Exception handler classes -->
       <init-param>
         <param-name>ExceptionHandler.Class</param-name>
-        <param-value>com.ecyrd.jspwiki.action.WikiExceptionHandler</param-value>
+        <param-value>com.ecyrd.jspwiki.ui.stripes.WikiExceptionHandler</param-value>
       </init-param>
    </filter>
 
