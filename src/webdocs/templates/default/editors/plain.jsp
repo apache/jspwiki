@@ -12,6 +12,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%--
         This is a plain editor for JSPWiki.
 --%>

@@ -300,7 +300,7 @@
       <arg line="${srcfiles}"/>
     </exec>
     <!-- Migrate the JSPs -->
-    <java classname="com.ecyrd.jspwiki.ui.stripes.JspMigrator" fork="yes" maxmemory="512m">
+    <java classname="com.ecyrd.jspwiki.ui.migrator.JspMigrator" fork="yes" maxmemory="512m">
       <classpath>
          <path refid="path.tests" />
       </classpath>

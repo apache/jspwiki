@@ -33,6 +33,57 @@ public class JspDocument
         visitChildren( allNodes, root.getChildren() );
         return Collections.unmodifiableList( allNodes );
     }
+    
+    /**
+     * Returns a list of nodes contained in the JspDocument that contain Java
+     * code, in the order parsed (depth-first search). Nodes that are of type
+     * {@link NodeType#JSP_DECLARATION}, {@link NodeType#SCRIPTLET},
+     * {@link NodeType#JSP_EXPRESSION} or {@link NodeType#CDATA} are considered
+     * to contain Java code. Attributes contained within Tags that are JSP expressions
+     * are also returned. The list returned is a defensive copy of the
+     * internally cached list.
+     * 
+     * @return the list of nodes
+     */
+    public List<Node> getScriptNodes()
+    {
+        List<Node> scriptNodes = new ArrayList<Node>();
+        List<Node> nodes = getNodes();
+        for ( Node node : nodes )
+        {
+            switch ( node.getType() )
+            {
+                case CDATA:
+                case JSP_DECLARATION:
+                case JSP_EXPRESSION:
+                case SCRIPTLET:
+                {
+                    scriptNodes.add( node );
+                    break;
+                }
+                case START_TAG:
+                case EMPTY_ELEMENT_TAG:
+                {
+                    Tag tag = (Tag)node;
+                    for ( Attribute attribute : tag.getAttributes() )
+                    {
+                        if ( attribute.getType() == NodeType.ATTRIBUTE )
+                        {
+                            for ( Node attributeNode : attribute.getChildren() )
+                            {
+                                if ( attributeNode.getType() == NodeType.JSP_EXPRESSION )
+                                {
+                                    scriptNodes.add( attributeNode );
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        return scriptNodes;
+    }
 
     /**
      * Returns the list of nodes contained in the JspDocument, of a specified
@@ -55,15 +106,26 @@ public class JspDocument
     }
 
     /**
-     * Convenience method that inserts a page-import directive after the last
-     * directive in the document.
-     * 
-     * @param type the type to add, <em>e.g.,</em> <code>org.foo.Bar</code>
+     * Convenience method that inserts a page-import directive for a supplied class
+     * after the last directive in the document. If an import directive already exists
+     * for this class (or for its containing package), it is not added.
+     *
+     * @param clazz the type to add, <em>e.g.,</em> <code>org.foo.Bar</code>
      *            or <code>org.foo.*</code>
+     *  @return <code>true</code> if an import was actually added, <code>false</code>
+     *  otherwise
      */
-    public void addPageImportDirective( String type )
+    public boolean addPageImportDirective( Class clazz )
     {
+        // No need to add it if it's already there
+        List<Tag> imports = getPageImport( clazz );
+        if( imports.size() > 0 )
+        {
+            return false;
+        }
+        
         // Create new directive
+        String type = clazz.getName();
         Tag directive = new Tag( this, NodeType.JSP_DIRECTIVE );
         directive.setName( "page" );
         directive.addAttribute( new Attribute( this, "import", type ) );
@@ -86,7 +148,7 @@ public class JspDocument
             lastDirective.addSibling( directive );
             lastDirective.addSibling( linebreak );
         }
-
+        return true;
     }
 
     /**
@@ -139,15 +201,16 @@ public class JspDocument
      * <li>&lt;%@ page import="org.bar.*" %&gt;</li>
      * </ul>
      * 
-     * @param type the class, interface or other type to match
+     * @param clazz the class, interface or other type to match
      * @return a list of all matching tags, which may be a zero-length list
      */
-    public List<Tag> getPageImport( String type )
+    public List<Tag> getPageImport( Class clazz )
     {
-        if( type == null )
+        if( clazz == null )
         {
-            throw new IllegalArgumentException( "Type cannot be null." );
+            throw new IllegalArgumentException( "Class cannot be null." );
         }
+        String type = clazz.getName();
         int periodPosition = type.lastIndexOf( '.' );
         String wildcardType = periodPosition == -1 ? "*" : type.substring( 0, periodPosition ) + ".*";
         List<Node> directives = getNodes( NodeType.JSP_DIRECTIVE );

@@ -3,7 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %><%--CHECK why is this needed --%>
+<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%--CHECK why is this needed --%>
 <%
 	WikiContext c = WikiContextFactory.findContext( pageContext );
    	WikiPage p = c.getPage();

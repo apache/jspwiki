@@ -8,6 +8,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.RenameActionBean" event="rename" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");

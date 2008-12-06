@@ -23,24 +23,13 @@ import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
  *
  */
 @UrlBinding("/Wiki.action")
-public class ViewActionBean extends AbstractActionBean
+public class ViewActionBean extends AbstractPageActionBean
 {
     private Logger log = LoggerFactory.getLogger(ViewActionBean.class);
-    
-    private WikiPage m_page = null;
 
     public ViewActionBean()
     {
         super();
-    }
-
-    /**
-     * Returns the WikiPage; defaults to <code>null</code>.
-     * @return the page
-     */
-    public WikiPage getPage()
-    {
-        return m_page;
     }
 
     /**
@@ -92,6 +81,10 @@ public class ViewActionBean extends AbstractActionBean
             {
                 // Bind the front page to the action bean
                 page = engine.getPage( engine.getFrontPage() );
+                if ( page == null )
+                {
+                    page = new WikiPage( engine, engine.getFrontPage() );
+                }
                 setPage(page);
                 return null;
             }
@@ -129,17 +122,6 @@ public class ViewActionBean extends AbstractActionBean
         return null;
     }
 
-    /**
-     * Sets the page.
-     * @param page the wiki page.
-     */
-    @Validate( required = false)
-    public void setPage( WikiPage page )
-    {
-        m_page = page;
-        getContext().setPage( page );
-    }
-    
     /**
      * Default handler that simply forwards the user back to the same page. 
      * Every ActionBean needs a default handler to function properly, so we use

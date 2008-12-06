@@ -5,8 +5,10 @@
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
 <%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="com.ecyrd.jspwiki.search.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" />
 
 <%! 
