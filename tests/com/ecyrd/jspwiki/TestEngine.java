@@ -448,10 +448,10 @@ public class TestEngine extends WikiEngine
         // Add extension classes
         Map<String,String> filterParams = new HashMap<String,String>();
         filterParams.put("ActionResolver.Packages", "com.ecyrd.jspwiki.action");
-        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.action");
+        filterParams.put("Extension.Packages", "com.ecyrd.jspwiki.ui.stripes");
         
         // Add the exception handler class
-        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.action.WikiExceptionHandler" );
+        filterParams.put( "ExceptionHandler.Class", "com.ecyrd.jspwiki.ui.stripes.WikiExceptionHandler" );
         
         // Return the configured servlet context
         servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);

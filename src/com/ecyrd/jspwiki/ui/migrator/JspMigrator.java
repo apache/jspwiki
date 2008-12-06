@@ -204,7 +204,7 @@ public class JspMigrator
     public void initialize( Map<String, Object> sharedState )
     {
         // Figure out the properties to use.
-        boolean migrateForms = Boolean.getBoolean( System.getProperty( MIGRATE_FORMS, "true" ) );
+        boolean migrateForms = Boolean.getBoolean( MIGRATE_FORMS );
         setFeature( MIGRATE_FORMS, migrateForms );
 
         m_sharedState = sharedState;

@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+
+import org.apache.jspwiki.api.WikiException;
 import org.apache.xmlrpc.*;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -121,7 +123,15 @@ public class RPCServlet extends HttpServlet
 
         try
         {
-            WikiContext ctx = m_engine.createContext( request, WikiContext.NONE );
+            WikiContext ctx;
+            try
+            {
+                ctx = m_engine.getWikiContextFactory().newContext( request, response, WikiContext.NONE );
+            }
+            catch( WikiException e )
+            {
+                throw new ServletException( e );
+            }
 
             XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(),
                                                                  ctx );

@@ -38,6 +38,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
 
+import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
@@ -71,6 +72,7 @@ import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 import com.ecyrd.jspwiki.ui.progress.ProgressManager;
 import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
+import com.ecyrd.jspwiki.ui.stripes.WikiInterceptor;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
@@ -2106,12 +2108,39 @@ public class WikiEngine
     }
 
     /**
-     *  Shortcut to create a WikiContext from a supplied HTTP request,
-     *  using a default wiki context.
+     *  <p>Factory method to create a named WikiContext from a supplied HTTP request.
+     *  This method is designed to be called <em>only</em> from within JSP scriptlets;
+     *  core classes in JSPWiki itself are expected to use either
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#newContext(HttpServletRequest, HttpServletResponse, String)}
+     *  or
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#newViewContext(HttpServletRequest, HttpServletResponse, WikiPage)}
+     *  instead.</p>
+     *  <p>Note to JSP authors: JSPs that are bound to a {@link com.ecyrd.jspwiki.action.WikiActionBean}
+     *  and/or contain a <code>&lt;stripes:useActionBean&gt;</code> tag will automatically
+     *  cause a WikiActionBean and {@link com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext}
+     *  (a WikiContext object) to be created and bound in request scope. This WikiContext
+     *  instance will already exist by the time this method is called. So that the Stripes-provided
+     *  WikiContext is not overwritten inadvertently, this method uses the following algorithm
+     *  to safely return the WikiContext:</p>
+     *  <ul>
+     *  <li>If the request scope is non-null, it is examined for the presence of an ActionBean bound using the
+     *  key {@link com.ecyrd.jspwiki.ui.stripes.WikiInterceptor#ATTR_ACTIONBEAN})</li>
+     *  <li>If an ActionBean is found, its WikiActionBeanContext is returned
+     *  (via {@link com.ecyrd.jspwiki.action.WikiActionBean#getContext()}</li>
+     *  <li>Otherwise, a new WikiContext is created by delegating to
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#newContext(HttpServletRequest, HttpServletResponse, String)}</li>
+     *  </ul>
+     *  <p>JSPs that are bound to WikiActionBeans can also recover the Stripes-stashed
+     *  WikiActionBean by calling
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#findContext(javax.servlet.jsp.PageContext)}
+     *  instead of this method.</p>
      *  @param request the HTTP request
-     *  @param requestContext the default context to use
-     *  @return a new WikiContext object.
+     *  @param requestContext the named context to use
+     *  @return the WikiActionBeanContext previously stashed by Stripes, or a new WikiContext if one was not found
+     *  @see com.ecyrd.jspwiki.action.WikiContextFactory#newContext(HttpServletRequest, HttpServletResponse, String)
+     *  @see com.ecyrd.jspwiki.action.WikiContextFactory#newViewContext(HttpServletRequest, HttpServletResponse, WikiPage)
      *  @since 2.1.15.
+     *  @deprecated this method is retained for backwards compatibility with JSPs
      */
     // FIXME: We need to have a version which takes a fixed page
     //        name as well, or check it elsewhere.
@@ -2123,10 +2152,26 @@ public class WikiEngine
             throw new InternalWikiException("WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason.");
         }
         
+        // Recycle/return existing WikiActionBeanContext if Stripes put ActionBean in request scope already
+        WikiActionBeanContext context;
+        if ( request != null )
+        {
+            try
+            {
+                WikiActionBean actionBean = WikiInterceptor.findActionBean( request );
+                context = actionBean.getContext();
+                context.setRequestContext( requestContext );
+            }
+            catch ( IllegalStateException e )
+            {
+                // No actionBean previously stashed -- no worries. We will just create a fresh one
+            }
+        }
+        
         // Build the wiki context... dummy reply and response objects will be added by WikiContextFactory
         try
         {
-            WikiActionBeanContext context = m_contextFactory.newContext( request, (HttpServletResponse)null, requestContext );
+            context = m_contextFactory.newContext( request, (HttpServletResponse)null, requestContext );
             
             // Stash the action bean/wiki context, and return it!
             WikiContextFactory.saveContext( request, context );

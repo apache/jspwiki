@@ -26,6 +26,14 @@ public class StripesJspTransformerTest extends TestCase
         super( s );
     }
 
+    public void setUp()
+    {
+        System.setProperty( JspMigrator.MIGRATE_FORMS, "true" );
+        JspMigrator migrator = new JspMigrator();
+        migrator.addTransformer( m_transformer );
+        migrator.initialize( m_sharedState );
+    }
+
     public void testAddStripesTaglib() throws Exception
     {
         String s = "<form/>";

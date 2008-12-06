@@ -99,7 +99,7 @@ public class SearchManagerTest extends TestCase
         MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         
-        WikiContext ctx = m_engine.createContext( request, WikiContext.EDIT );
+        WikiContext ctx = m_engine.getWikiContextFactory().newContext( request, null, WikiContext.EDIT );
         
         m_engine.saveText( ctx, txt );
 
