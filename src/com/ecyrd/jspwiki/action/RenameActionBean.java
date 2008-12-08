@@ -52,7 +52,7 @@ import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
  * @author Andrew Jaquith
  */
 @UrlBinding( "/Rename.action" )
-public class RenameActionBean extends AbstractActionBean
+public class RenameActionBean extends AbstractPageActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( RenameActionBean.class );
 

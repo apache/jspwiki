@@ -48,7 +48,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
      * exist), this method will add a validation error to the supplied
      * Collection of errors and return <code>null</code>. The error will be
      * of type {@link net.sourceforge.stripes.validation.LocalizableError} and
-     * will have a message key of <code>pageNotFound</code> and a single
+     * will have a message key of <code>common.nopage</code> and a single
      * parameter (equal to the value passed for <code>pageName</code>).
      * 
      * @param pageName the name of the WikiPage to retrieve
@@ -69,7 +69,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
                 String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
                 if( finalName == null || engine.getPage( finalName ) == null )
                 {
-                    errors.add( new LocalizableError( "pageNotFound", pageName ) );
+                    errors.add( new LocalizableError( "common.nopage", pageName ) );
                 }
             }
             catch( ProviderException e )

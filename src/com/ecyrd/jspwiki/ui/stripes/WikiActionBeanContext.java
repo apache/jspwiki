@@ -86,8 +86,7 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     }
 
     /**
-     *  {@inheritDoc}. Also calls {@link DefaultWikiContext#setHttpRequest(HttpServletRequest)} on
-     *  the DefaultWikiContext delegate.
+     *  {@inheritDoc}.
      */
     @Override
     public void setEventName( String eventName )

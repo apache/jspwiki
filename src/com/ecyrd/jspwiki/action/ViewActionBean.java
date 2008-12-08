@@ -42,7 +42,7 @@ public class ViewActionBean extends AbstractPageActionBean
      * for one, or a "special page" reference. This method considers
      * special page names from <code>jspwiki.properties</code>, and possible aliases.
      * To determine whether the page is a special page, this method calls
-     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageReference(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageResolution(String)}.
      *  @return a {@link net.sourceforge.stripes.action.RedirectResolution} to the special
      *  page's real URL, if a special page was specified, or <code>null</code> otherwise
      */
@@ -53,17 +53,26 @@ public class ViewActionBean extends AbstractPageActionBean
         ValidationErrors errors = this.getContext().getValidationErrors();
         WikiEngine engine = getContext().getEngine();
         
-        // If user supplied a page that doesn't exist, redirect to the "create pages" ActionBean
+        // The user supplied a page that doesn't exist
         if ( errors.get("page" )!= null )
         {
             for (ValidationError pageParamError : errors.get("page"))
             {
                 if ( "page".equals(pageParamError.getFieldName()) )
                 {
-                    String newPage = pageParamError.getFieldValue();
-                    log.info("User supplied page name '" + newPage + "' that doesn't exist; redirecting to create pages JSP." );
-                    RedirectResolution resolution = new RedirectResolution(NewPageActionBean.class);
-                    resolution.addParameter("page", newPage);
+                    String pageName = pageParamError.getFieldValue();
+                    
+                    // Is it a special page?
+                    RedirectResolution resolution = getContext().getEngine().getWikiContextFactory().getSpecialPageResolution( pageName );
+                    if ( resolution != null )
+                    {
+                        return resolution;
+                    }
+
+                    // Ok, it really doesn't exist. Send 'em to the "Create new page?" JSP
+                    log.info("User supplied page name '" + pageName + "' that doesn't exist; redirecting to create pages JSP." );
+                    resolution = new RedirectResolution(NewPageActionBean.class);
+                    resolution.addParameter("page", pageName);
                     return resolution;
                 }
             }
@@ -95,16 +104,8 @@ public class ViewActionBean extends AbstractPageActionBean
             throw new WikiException("Page not supplied, and WikiEngine does not define a front page! This is highly unusual.") ;
         }
         
-        // Ok, the user supplied a page. That's nice. But is it a special page?
-        String pageName = page.getName();
-        String specialUrl = getContext().getEngine().getWikiContextFactory().getSpecialPageReference( pageName );
-        if ( specialUrl != null )
-        {
-            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
-        }
-
         // Is there an ALIAS attribute in the wiki pge?
-        specialUrl = (String)page.getAttribute( WikiPage.ALIAS );
+        String specialUrl = (String)page.getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );

@@ -18,14 +18,6 @@
     WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
     String pagereq = wikiContext.getPage().getName();
 
-    // Redirect if the request was for a special page
-    String redirect = wiki.getWikiContextFactory().getSpecialPageReference( pagereq );
-    if( redirect != null )
-    {
-        response.sendRedirect( wikiContext.getViewURL( redirect ) );
-        return;
-    }
-    
     StopWatch sw = new StopWatch();
     sw.start();
     WatchDog w = wiki.getCurrentWatchDog();

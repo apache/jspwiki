@@ -5,7 +5,7 @@ import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 import net.sourceforge.stripes.action.*;
 
 @UrlBinding("/Error.jsp")
-public class ErrorActionBean extends AbstractActionBean
+public class ErrorActionBean extends AbstractPageActionBean
 {
     /**
      * Default event that forwards control to /Message.jsp.

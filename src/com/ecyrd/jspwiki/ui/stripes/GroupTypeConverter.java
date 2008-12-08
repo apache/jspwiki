@@ -49,7 +49,7 @@ public class GroupTypeConverter implements TypeConverter<Group>
      * method will add a validation error to the supplied Collection of errors.
      * The error will be of type
      * {@link net.sourceforge.stripes.validation.LocalizableError} and will have
-     * a message key of <code>pageNotFound</code> and a single parameter
+     * a message key of <code>group.doesnotexist</code> and a single parameter
      * (equal to the value passed for <code>groupName</code>).
      * 
      * @param groupName the name of the WikiPage to retrieve
@@ -70,7 +70,7 @@ public class GroupTypeConverter implements TypeConverter<Group>
         }
         catch( NoSuchPrincipalException e )
         {
-            errors.add( new LocalizableError( "groupNotFound", groupName ) );
+            errors.add( new LocalizableError( "group.doesnotexist", groupName ) );
         }
         return group;
     }

@@ -29,7 +29,7 @@ public class ViewActionBeanTest extends TestCase
         }
     }
     
-    public void testActionBean() throws Exception {
+    public void testView() throws Exception {
         // Save page Main
         m_engine.saveText("Test", "This is a test.");
         WikiPage page = m_engine.getPage("Test");
@@ -48,7 +48,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals("/Wiki.action", trip.getDestination() );
     }
     
-    public void testActionBeanNoParameter() throws Exception {
+    public void testViewNoParameter() throws Exception {
         // Save page Main
         m_engine.saveText("Main", "This is the main page.");
         WikiPage page = m_engine.getPage("Main");
@@ -67,6 +67,21 @@ public class ViewActionBeanTest extends TestCase
         assertEquals("/Wiki.action", trip.getDestination() );
     }
     
+    public void testSpecialPage() throws Exception {
+        
+        // Execute the request with a 'special page' reference
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action");
+        trip.addParameter( "page","FindPage" );
+        trip.execute("view");
+
+        // ...we should get a null for the 'page' property
+        ViewActionBean bean = trip.getActionBean(ViewActionBean.class);
+        assertEquals( null, bean.getPage() );
+        
+        // ...and the destination should be Search.jsp
+        assertEquals("/Search.jsp", trip.getDestination() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( ViewActionBeanTest.class );

@@ -9,7 +9,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/Delete.jsp")
-public class DeleteActionBean extends AbstractActionBean
+public class DeleteActionBean extends AbstractPageActionBean
 {
     @HandlesEvent("delete")
     @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.DELETE_ACTION)

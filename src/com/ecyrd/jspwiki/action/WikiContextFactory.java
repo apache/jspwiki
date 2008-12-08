@@ -1,19 +1,21 @@
 package com.ecyrd.jspwiki.action;
 
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.jspwiki.api.WikiException;
-
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.util.ResolverUtil;
+
+import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
@@ -278,27 +280,21 @@ public final class WikiContextFactory
 
     /**
      * <p>
-     * If the page is a special page, this method returns a direct URL to that
-     * page; otherwise, it returns <code>null</code>.
+     * If the page is a special page, this method returns a
+     * {@link net.sourceforge.stripes.action.RedirectResolution} for that page;
+     * otherwise, it returns <code>null</code>.
      * </p>
      * <p>
-     * Special pages are non-existant references to other pages. For example,
+     * Special pages are non-existent references to other pages. For example,
      * you could define a special page reference "RecentChanges" which would
      * always be redirected to "RecentChanges.jsp" instead of trying to find a
      * Wiki page called "RecentChanges".
      * </p>
      * TODO: fix this algorithm
      */
-    public final String getSpecialPageReference( String page )
+    public final RedirectResolution getSpecialPageResolution( String page )
     {
-        RedirectResolution resolution = m_specialRedirects.get( page );
-
-        if( resolution != null )
-        {
-            return resolution.getUrl( Locale.getDefault() );
-        }
-
-        return null;
+        return m_specialRedirects.get( page );
     }
 
     /**
@@ -450,7 +446,28 @@ public final class WikiContextFactory
                 if( specialPage != null && redirectUrl != null )
                 {
                     specialPage = specialPage.trim();
+                    
+                    // Parse the special page
                     redirectUrl = redirectUrl.trim();
+                    try
+                    {
+                        URI uri = new URI( redirectUrl );
+                        if ( uri.getAuthority() == null )
+                        {
+                            // No http:// ftp:// or other authority, so it must be relative to webapp /
+                            if ( !redirectUrl.startsWith( "/" ) )
+                            {
+                                redirectUrl = "/" + redirectUrl;
+                            }
+                        }
+                    }
+                    catch( URISyntaxException e )
+                    {
+                        // The user supplied a STRANGE reference
+                        log.error( "Strange special page reference: " + redirectUrl );
+                    }
+                    
+                    // Add a new RedirectResolution for the special page
                     RedirectResolution resolution = m_specialRedirects.get( specialPage );
                     if( resolution == null )
                     {
