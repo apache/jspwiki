@@ -4,19 +4,24 @@
  */
 
 package com.ecyrd.jspwiki.action;
+import java.util.Locale;
 import java.util.Properties;
-
-import org.apache.jspwiki.api.WikiException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 
-import com.ecyrd.jspwiki.*;
+import org.apache.jspwiki.api.WikiException;
+
+import com.ecyrd.jspwiki.TestEngine;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiPage;
 
 public class WikiContextFactoryTest extends TestCase
 {
@@ -153,16 +158,16 @@ public class WikiContextFactoryTest extends TestCase
     
     public void testSpecialPageReference()
     {
-        String url;
-        url = resolver.getSpecialPageReference( "RecentChanges" );
-        assertEquals( "RecentChanges.jsp", url );
+        RedirectResolution r;
+        r = resolver.getSpecialPageResolution( "RecentChanges" );
+        assertEquals( "/RecentChanges.jsp", r.getUrl( Locale.getDefault() ) );
         
-        url = resolver.getSpecialPageReference( "FindPage" );
-        assertEquals( "Search.jsp", url );
+        r = resolver.getSpecialPageResolution( "FindPage" );
+        assertEquals( "/Search.jsp", r.getUrl( Locale.getDefault() ) );
         
         // UserPrefs doesn't exist in our test properties
-        url = resolver.getSpecialPageReference( "UserPrefs" );
-        assertNull( url );
+        r = resolver.getSpecialPageResolution( "UserPrefs" );
+        assertNull( r );
     }
 
     public static Test suite()

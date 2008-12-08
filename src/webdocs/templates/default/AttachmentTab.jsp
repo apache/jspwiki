@@ -7,6 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContextFactory.findContext( pageContext );

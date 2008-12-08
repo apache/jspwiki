@@ -9,7 +9,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/Comment.jsp")
-public class CommentActionBean extends AbstractActionBean
+public class CommentActionBean extends AbstractPageActionBean
 {
     @HandlesEvent("comment")
     @HandlerPermission(permissionClass=PagePermission.class, target="${page.name}", actions=PagePermission.COMMENT_ACTION)

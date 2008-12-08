@@ -14,7 +14,7 @@ import net.sourceforge.stripes.action.Resolution;
  * 
  * @author Andrew Jaquith
  */
-public class NoneActionBean extends AbstractActionBean
+public class NoneActionBean extends AbstractPageActionBean
 {
     @DefaultHandler
     @HandlesEvent( "none" )

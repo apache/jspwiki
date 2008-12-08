@@ -7,6 +7,7 @@
 <%@ page import="com.ecyrd.jspwiki.render.*" %>
 <%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%@ page import="com.ecyrd.jspwiki.filters.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

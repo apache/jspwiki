@@ -34,6 +34,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sourceforge.stripes.action.RedirectResolution;
+
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
@@ -1059,7 +1061,7 @@ public class WikiEngine
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
-     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageReference(String)}.
+     *  {@link com.ecyrd.jspwiki.action.WikiContextFactory#getSpecialPageResolution(String)}.
      *  </p>
      *  <p>
      *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
@@ -1072,7 +1074,8 @@ public class WikiEngine
      */
     public String getSpecialPageReference( String original )
     {
-        return m_contextFactory.getSpecialPageReference( original );
+        RedirectResolution resolution = m_contextFactory.getSpecialPageResolution( original );
+        return resolution == null ? null : resolution.getUrl( Locale.getDefault() );
     }
 
     /**
@@ -1158,7 +1161,7 @@ public class WikiEngine
 
         try
         {
-            if( m_contextFactory.getSpecialPageReference(page) != null ) return true;
+            if( m_contextFactory.getSpecialPageResolution(page) != null ) return true;
 
             if( getFinalPageName( page ) != null )
             {
@@ -1187,7 +1190,7 @@ public class WikiEngine
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        if( m_contextFactory.getSpecialPageReference(page) != null ) return true;
+        if( m_contextFactory.getSpecialPageResolution(page) != null ) return true;
 
         String finalName = getFinalPageName( page );
 

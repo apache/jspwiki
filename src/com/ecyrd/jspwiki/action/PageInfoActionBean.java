@@ -10,7 +10,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/PageInfo.jsp")
-public class PageInfoActionBean extends AbstractActionBean
+public class PageInfoActionBean extends AbstractPageActionBean
 {
     @DefaultHandler
     @HandlesEvent("info")

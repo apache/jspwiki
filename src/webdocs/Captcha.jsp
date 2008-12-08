@@ -87,15 +87,15 @@
 <div style="margin: 8px">
    <p><fmt:message key="captcha.description" /></p>
 
-   <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
+   <form action="<wiki:Link jsp='Captcha.jsp' format='url' />" method="post" id="mainForm" style="display: none;">
       <input type="hidden" value="foo" name="text" />
-      <input type="hidden" value='<%=request.getParameter("page")%>' name='page'/>
+      <input type="hidden" value='<%=request.getParameter("page")%>' name='page' />
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>
       <script type="text/javascript">
          asirraState.SetEnlargedPosition("right");
          // asirraState.SetCellsPerRow(6);
       </script>
-      <br />
+      <br/>
       <input type="button" value="<fmt:message key="captcha.submit" />" onclick="javascript:Asirra_CheckIfHuman(HumanCheckComplete)" />
   </form>
 </div>

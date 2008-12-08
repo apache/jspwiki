@@ -1,3 +1,19 @@
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-27
+
+        * Improvements to JSPs and special page handling. JSPs are still
+        not quite working yet, but the webapp does run, and without too
+        many errors.
+
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-26
+
+        * Small tweaks to JspMigrator to look for, and fix, JSP page import directives
+        for TextUtil, FileUtil and SearchResult (these have moved). Fixed JspMigrator
+        Ant task ("migrate") so that it runs. Minor JSP tweaks so they compile again.
+
 2008-12-05  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-25
@@ -71,7 +87,7 @@
         * 3.0.0-svn-18
 
         * Checked in the Stripes code (about 220 classes, tests, JSPs
-        and other files. All code compiles clean, but the JSPs do NOT
+        and other files). All code compiles clean, but the JSPs do NOT
         work at the moment. Unit tests run clean except for some
         stray failing Stripes-related unit tests. See the file
         doc/README - Stripes Migration for some (repeat, SOME) details

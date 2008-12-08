@@ -17,6 +17,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");

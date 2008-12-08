@@ -196,11 +196,18 @@ public class WikiInterceptor implements Interceptor
         // Get the resolved ActionBean and event handler method
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
         Method handler = context.getHandler();
+        
+        // Make sure we set the WikiContext request context, while we're at it
+        Map<Method, HandlerInfo> eventinfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
+        HandlerInfo eventInfo = eventinfos.get( handler );
+        if ( eventInfo != null )
+        {
+            String requestContext = eventInfo.getRequestContext();
+            actionBean.getContext().setRequestContext( requestContext );
+        }
 
         // Does the event handler have a required permission?
         boolean allowed = true;
-        Map<Method, HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
-        HandlerInfo eventInfo = handlerInfos.get( handler );
         if( eventInfo != null )
         {
             Permission requiredPermission = eventInfo.getPermission( actionBean );

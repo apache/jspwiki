@@ -10,7 +10,10 @@ import net.sourceforge.stripes.action.ActionBean;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
+import com.ecyrd.jspwiki.search.SearchResult;
 import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
+import com.ecyrd.jspwiki.util.FileUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
  * Transforms a JspDocument from standard JSP markup to Stripes markup.
@@ -154,11 +157,54 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
                     message( node, "Changed WikiContext.findContext() statement to WikiContextFactory.findContext()." );
 
                     // Make sure we have a page import statement!
-                    List<Tag> imports = doc.getPageImport( WikiContextFactory.class.getName() );
-                    if( imports.size() == 0 )
+                    doc.addPageImportDirective( WikiContextFactory.class );
+                }
+                
+            }
+            
+            // Make sure we have imports for any classes that moved
+            verifyImports( doc, SearchResult.class, FileUtil.class, TextUtil.class );
+            
+        }
+    }
+
+    /**
+     * Verifies that JSP page imports are available for a variable array of Classes.
+     * If a class does not have a corresponding import (either for the class
+     * specifically or for its enclosing package), one will be added.
+     * @param doc the JspDocument to check
+     * @param clazzes the classes to verify imports for
+     */
+    private void verifyImports( JspDocument doc, Class... clazzes )
+    {
+        // Build the regex Pattern to search for, and a lookup Map
+        Map<String,Class> classNames = new HashMap<String,Class>();
+        StringBuilder s = new StringBuilder();
+        s.append( '(' );
+        for ( Class clazz : clazzes )
+        {
+            classNames.put( clazz.getSimpleName(), clazz );
+            s.append( clazz.getSimpleName() );
+            s.append( '|' );
+        }
+        s.deleteCharAt( s.length() - 1 );
+        s.append( ')' );
+        Pattern searchPattern = Pattern.compile( s.toString() );
+
+        // Iterate through each script node and look for the classes that match
+        List<Node> nodes = doc.getScriptNodes();
+        for ( Node node : nodes )
+        {
+            Matcher m = searchPattern.matcher( node.getValue() );
+            while( m.find() )
+            {
+                String found= m.group( 1 ).trim();
+                Class foundClass = classNames.get( found );
+                if ( foundClass != null )
+                {
+                    if ( doc.addPageImportDirective( foundClass ) )
                     {
-                        doc.addPageImportDirective( WikiContextFactory.class.getName() );
-                        message( node, "Added page import for WikiContextFactory." );
+                        message( node, "Added page import for " + foundClass + "." );
                     }
                 }
             }

@@ -7,7 +7,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/Edit.jsp")
-public class EditActionBean extends AbstractActionBean
+public class EditActionBean extends AbstractPageActionBean
 {
     @DefaultHandler
     @HandlesEvent("edit")

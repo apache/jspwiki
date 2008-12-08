@@ -5,6 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.util.FileUtil" %>
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>

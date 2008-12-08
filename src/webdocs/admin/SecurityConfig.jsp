@@ -6,6 +6,7 @@
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.NoneActionBean" event="none" />
 <%! 
   public void jspInit()

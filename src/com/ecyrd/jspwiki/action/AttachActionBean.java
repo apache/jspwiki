@@ -11,7 +11,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding("/attach/{page}/{attachment}")
-public class AttachActionBean extends AbstractActionBean
+public class AttachActionBean extends AbstractPageActionBean
 {
     private Attachment m_attachment;
     

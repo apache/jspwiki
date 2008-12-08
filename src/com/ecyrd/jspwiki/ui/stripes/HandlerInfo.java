@@ -57,7 +57,10 @@ public class HandlerInfo
      * {@link HandlerPermission} annotation to determine the correct Permission
      * needed to execute the event (if supplied). Finally, attempts to determine
      * the name of the wiki request context by looking for a
-     * {@link WikiRequestContext} annotation.
+     * {@link WikiRequestContext} annotation. If the event handler method does
+     * not contain a WikiRequestContext annotation, a default wiki request
+     * context will be assigned, based on the ActionBean name plus "." plus the
+     * method name.
      * 
      * @param beanClass the ActionBean implementation for which event
      *            information should be created
@@ -325,20 +328,36 @@ public class HandlerInfo
     }
 
     /**
-     * Returns the Permission required to execute the method in the context of
-     * the supplied WikiActionBean, based on its {@link HandlerPermission}
-     * annotation. Any EL expressions found in the annotated target or actions
-     * are evaluated. Note that this method returns <code>null</code> if no
-     * Permission is required to execute this method, and
-     * <em>callers should check for nulls</code>.
+     * <p>
+     * Returns a dynamic Permission based on the combination of the handler
+     * method's {@link HandlerPermission} annotation and a supplied object,
+     * which is evaluated to populate the Permission target and/or actions. The
+     * object supplied must be an object with standard bean property accessors
+     * and mutators (get/set methods). Any EL expressions found in the
+     * HandlerPermission's target or actions are evaluated against the object.
+     * Note that this method returns <code>null</code> if no HandlerPermission
+     * annotation was supplied for the handler method;
+     * <em>callers should check for nulls</em>.
+     * </p>
+     * <p>
+     * For example, suppose the HandlerPermission annotation for the
+     * <code>view()</code> handler method is
+     * </p>
+     * <blockquote><code>&#064;HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)</code></blockquote>
+     * <p>
+     * If <code>object</code> is a ViewActionBean whose <code>getPage()</code>
+     * property returns page "Main" in the wiki named "Default", the returned
+     * Permission will be:
+     * </p>
+     * <blockquote><code>PagePermission "Default:Main", "view"</code></blockquote>
      * 
-     * @param actionBean the ActionBean that will be used as the base for any EL
+     * @param object the Object that will be used as the base for any EL
      *            expressions
      * @return the resolved and instantiated Permission
      * @throws ELException if EL expressions cannot be parsed, or of the
      *             Permission itself cannot be instantiated for any reason
      */
-    public Permission getPermission( WikiActionBean actionBean ) throws ELException
+    public Permission getPermission( Object object ) throws ELException
     {
         if( m_permissionClass == null )
         {
@@ -353,7 +372,7 @@ public class HandlerInfo
         // Evaluate the target, if it's an expression
         if( m_permissionTargetExpression != null )
         {
-            PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionTargetExpression, actionBean );
+            PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionTargetExpression, object );
             target = (String) evaluation.getValue();
             if( target == null )
             {
@@ -367,7 +386,7 @@ public class HandlerInfo
         // Evaluate the actions, if it's an expression
         if( m_permissionActionExpression != null )
         {
-            PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionActionExpression, actionBean );
+            PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionActionExpression, object );
             actions = (String) evaluation.getValue();
             if( actions == null )
             {
