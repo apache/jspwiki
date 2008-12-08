@@ -2,7 +2,9 @@
 
         * 3.0.0-svn-27
 
-        * Improvements to JSPs and special page handling.
+        * Improvements to JSPs and special page handling. JSPs are still
+        not quite working yet, but the webapp does run, and without too
+        many errors.
 
 2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
