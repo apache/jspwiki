@@ -42,4 +42,9 @@ public class ProviderException
     {
         super( msg );
     }
+
+    public ProviderException( String string, Throwable rootCause )
+    {
+        super( string, rootCause );
+    }
 }

@@ -23,6 +23,9 @@ package com.ecyrd.jspwiki.content;
 import java.util.*;
 
 import javax.jcr.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
@@ -48,6 +51,12 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  */
 public class ContentManager
 {
+    protected static final String DEFAULT_SPACE = "Main";
+    
+    private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE;
+
+    private static final String JCR_PAGES_NODE = "pages";
+
     private static final long serialVersionUID = 2L;
     
     /** The property value for setting the amount of time before the page locks expire. 
@@ -110,9 +119,6 @@ public class ContentManager
     
     private String m_workspaceName = DEFAULT_WORKSPACE; // FIXME: Make settable
     
-    /** This is the name of the default wikispace. */
-    
-    private static final String DEFAULT_SPACE = "Main";
     /**
      *  Creates a new PageManager.
      *  
@@ -201,18 +207,18 @@ public class ContentManager
             //
             // Create main page directory
             //
-            if( !root.hasNode( "pages" ) )
+            if( !root.hasNode( JCR_PAGES_NODE ) )
             {
-                root.addNode( "pages" );
+                root.addNode( JCR_PAGES_NODE );
             }
         
             //
             //  Make sure at least the default "Main" wikispace exists.
             //
             
-            if( !root.hasNode( "pages/Main" ) )
+            if( !root.hasNode( JCR_DEFAULT_SPACE ) )
             {
-                root.addNode( "pages/Main" );
+                root.addNode( JCR_DEFAULT_SPACE );
             }
             
             session.save();
@@ -228,16 +234,44 @@ public class ContentManager
      *  please see {@link ReferenceManager#findCreated()}, which is probably a lot
      *  faster.  This method may cause repository access.
      *  
+     *  @param space Name of the Wiki space.  May be null, in which case gets all spaces
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    /*
-    public Collection getAllPages()
+   
+    public Collection<WikiPage> getAllPages( WikiContext ctx, String space )
         throws ProviderException
     {
-        return m_provider.getAllPages();
+        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
+        try
+        {
+            Session session = getJCRSession( ctx );
+        
+            QueryManager mgr = session.getWorkspace().getQueryManager();
+            
+            Query q = mgr.createQuery( "/"+JCR_PAGES_NODE+"/"+((space != null) ? space : "")+"/*", Query.XPATH );
+            
+            QueryResult qr = q.execute();
+            
+            for( NodeIterator ni = qr.getNodes(); ni.hasNext(); )
+            {
+                Node n = ni.nextNode();
+                
+                result.add( new WikiPage(ctx.getEngine(), n ) );
+            }
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("getAllPages()",e);
+        }
+        catch( WikiException e )
+        {
+            throw new ProviderException("getAllPages()",e);
+        }
+        
+        return result;
     }
-*/
+
     /**
      *  
      *  @param pageName The name of the page to fetch.
@@ -804,55 +838,65 @@ public class ContentManager
         return session;
     }
     
-    protected static String getJCRPath( WikiContext ctx, String wikipath ) throws WikiException
+    /**
+     *  Evaluates a WikiName in the context of the current page request.
+     *  
+     *  @param ctx The current WikiContext.  May be null, in which case the wikiName must be a FQN.
+     *  @param wikiName The WikiName.
+     *  @return A full JCR path
+     *  @throws WikiException If the conversion could not be done.
+     */
+    protected static String getJCRPath( WikiContext ctx, String wikiName ) throws WikiException
     {
         String spaceName;
         String spacePath;
         
-        int colon = wikipath.indexOf(':');
+        int colon = wikiName.indexOf(':');
         
         if( colon != -1 )
         {
             // This is a FQN
-            spaceName = wikipath.substring( 0, colon );
-            spacePath = wikipath.substring( colon+1 );
+            spaceName = wikiName.substring( 0, colon );
+            spacePath = wikiName.substring( colon+1 );
         }
-        else if( ctx != null && ctx instanceof WikiContext )
+        else if( ctx != null )
         {
-            WikiPage contextPage = ((WikiContext)ctx).getPage();
+            WikiPage contextPage = ctx.getPage();
             
             // Not an FQN, the wiki name is missing, so we'll use the context to figure it out
             spaceName = contextPage.getWiki();
             
             // If the wikipath starts with "/", we assume it is an absolute path within this
             // wiki space.  Otherwise, it must be relative to the current path.
-            if( wikipath.startsWith( "/" ) )
+            if( wikiName.startsWith( "/" ) )
             {
-                spacePath = wikipath;
+                spacePath = wikiName;
             }
             else
             {
-                spacePath = contextPage.getName()+"/"+wikipath;
+                spacePath = contextPage.getName()+"/"+wikiName;
             }
         }
         else
         {
             spaceName = DEFAULT_SPACE;
-            spacePath = wikipath;
+            spacePath = wikiName;
         }
         
         return "/pages/"+spaceName+"/"+spacePath;
     }
 
-    protected static String getWikiPath( String jcrpath ) throws WikiException
+    // FIXME: Should be protected - fix once WikiPage moves to content-package
+    public static WikiName getWikiPath( String jcrpath ) throws WikiException
     {
-        if( jcrpath.startsWith("/pages/") )
+        if( jcrpath.startsWith("/"+JCR_PAGES_NODE+"/") )
         {
-            String wikiPath = jcrpath.substring( "/pages/".length() );
+            String wikiPath = jcrpath.substring( ("/"+JCR_PAGES_NODE+"/").length() );
 
             int firstSlash = wikiPath.indexOf( '/' );
             
-            return wikiPath.substring( 0, firstSlash )+":"+wikiPath.substring( firstSlash+1 );
+            return new WikiName(wikiPath.substring( 0, firstSlash ), 
+                                wikiPath.substring( firstSlash+1 ) );
         }
         
         throw new WikiException("This is not a valid JCR path: "+jcrpath);
