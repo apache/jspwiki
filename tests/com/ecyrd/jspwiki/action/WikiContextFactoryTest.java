@@ -160,14 +160,14 @@ public class WikiContextFactoryTest extends TestCase
     {
         RedirectResolution r;
         r = resolver.getSpecialPageResolution( "RecentChanges" );
-        assertEquals( "RecentChanges.jsp", r.getUrl( Locale.getDefault() ) );
+        assertEquals( "/RecentChanges.jsp", r.getUrl( Locale.getDefault() ) );
         
         r = resolver.getSpecialPageResolution( "FindPage" );
-        assertEquals( "Search.jsp", r.getUrl( Locale.getDefault() ) );
+        assertEquals( "/Search.jsp", r.getUrl( Locale.getDefault() ) );
         
         // UserPrefs doesn't exist in our test properties
         r = resolver.getSpecialPageResolution( "UserPrefs" );
-        assertNull( r.getUrl( Locale.getDefault() ) );
+        assertNull( r );
     }
 
     public static Test suite()
