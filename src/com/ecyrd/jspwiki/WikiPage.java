@@ -28,6 +28,7 @@ import java.util.Map;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclImpl;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
@@ -45,9 +46,8 @@ public class WikiPage
 {
     private static final long serialVersionUID = 1L;
 
-    private       String     m_name;
+    private       WikiName   m_name;
     private       WikiEngine m_engine;
-    private       String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
     private int              m_version = WikiPageProvider.LATEST_VERSION;
@@ -74,13 +74,18 @@ public class WikiPage
      *  Create a new WikiPage using a given engine and name.
      *  
      *  @param engine The WikiEngine that owns this page.
-     *  @param name   The name of the page.
+     *  @param name   The path of the page.
      */
-    public WikiPage( WikiEngine engine, String name )
+    public WikiPage( WikiEngine engine, String path )
     {
         m_engine = engine;
-        m_name = name;
-        m_wiki = engine.getApplicationName();
+        m_name   = WikiName.valueOf( path );
+    }
+
+    public WikiPage( WikiEngine engine, WikiName name )
+    {
+        m_engine = engine;
+        m_name   = name;
     }
 
     /**
@@ -90,7 +95,7 @@ public class WikiPage
      */
     public String getName()
     {
-        return m_name;
+        return m_name.getPath();
     }
     
     /**
@@ -101,7 +106,7 @@ public class WikiPage
      */
     public String getQualifiedName()
     {
-        return m_wiki + ":" + m_name;
+        return m_name.toString();
     }
 
     /**
@@ -270,9 +275,10 @@ public class WikiPage
      *  
      *  @return The name of the wiki.
      */
+    // FIXME: Should we rename this method?
     public String getWiki()
     {
-        return m_wiki;
+        return m_name.getSpace();
     }
 
     /**
@@ -314,7 +320,7 @@ public class WikiPage
      */
     public String toString()
     {
-        return "WikiPage ["+m_wiki+":"+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+        return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
     }
 
     /**
@@ -328,8 +334,6 @@ public class WikiPage
     public Object clone()
     {
         WikiPage p = new WikiPage( m_engine, m_name );
-       
-        p.m_wiki         = m_wiki;
             
         p.m_author       = m_author;
         p.m_version      = m_version;

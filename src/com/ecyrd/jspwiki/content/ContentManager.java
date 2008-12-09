@@ -1,4 +1,4 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,35 +16,15 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.      
  */
-package com.ecyrd.jspwiki.providers;
-
-import org.apache.jspwiki.api.WikiException;
+package com.ecyrd.jspwiki.content;
 
 /**
- *  This exception represents the superclass of all exceptions that providers
- *  may throw.  It is okay to throw it in case you cannot use any of
- *  the specific subclasses, in which case the page loading is
- *  considered to be broken, and the user is notified.
+ *  Please see JSPWIKI_JCR_BRANCH for a functioning version.
+ *  Exists in the trunk only to provide useful constants for now.
  */
-public class ProviderException
-    extends WikiException
+public class ContentManager
 {
-    private static final long serialVersionUID = 0L;
-    
-    /**
-     *  Creates a ProviderException.
-     *  
-     *  @param msg {@inheritDoc}
-     */
-    public ProviderException( String msg )
-    {
-        super( msg );
-    }
-
-    public ProviderException( String string, Throwable rootCause )
-    {
-        super( string, rootCause );
-    }
+    protected static final String DEFAULT_SPACE = "Main";
 }

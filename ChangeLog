@@ -1,3 +1,11 @@
+2008-12-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-28
+        
+        * Brought in the WikiName class, which should now be used
+        instead of Strings to denote page names internally wherever
+        possible.
+        
 2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-27
