@@ -17,6 +17,8 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("JSPWiki Content Unit Tests");
 
         suite.addTest( PageRenamerTest.suite() );
+        suite.addTest( WikiNameTest.suite() );
+        suite.addTest( ContentManagerTest.suite() );
         
         return suite;
     }
