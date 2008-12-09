@@ -104,6 +104,26 @@ public class WikiName implements Serializable, Comparable
     }
     
     /**
+     *  Resolves a path with respect to this WikiName.  This is typically used
+     *  when figuring out where a subpage should be pointing at.
+     *  
+     *  @param path Path to resolve
+     *  @return A new WikiName
+     */
+    public WikiName resolve( String path )
+    {
+        int colon = path.indexOf( ':' );
+        
+        if( colon != -1 )
+        {
+            // It is a FQN, essentially an absolute path, so no resolution necessary
+            return WikiName.valueOf( path );
+        }
+        
+        return new WikiName( getSpace(), path );
+    }
+    
+    /**
      *  Returns the FQN format (space:path) of the name.
      *  
      *  @return The name in FQN format.
