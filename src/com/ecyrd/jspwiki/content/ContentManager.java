@@ -47,7 +47,20 @@ import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
 
 /**
- *  Provides access to the content repository.
+ *  Provides access to the content repository.  Unlike previously, in JSPWiki
+ *  3.0 all content is managed by this single repository, and we use the MIME
+ *  type of the content to determine what kind of content it actually is.
+ *  <p>
+ *  The underlying content is stored in a JCR Repository object.  JSPWiki
+ *  will first try to locate a Repository object using JNDI, under the
+ *  "java:comp/env/jcr/repository" name.  If this fails, it will try to see
+ *  if there is a property called "jspwiki.repository" defined in jspwiki.properties.
+ *  Current allowed values are "priha" for the <a href="http://www.priha.org/">Priha content repository</a>,
+ *  and "jackrabbit" for <a href="http://jackrabbit.apache.org">Apache Jackrabbit</a>.
+ *  <p>
+ *  If there is no property defined, defaults to "priha".
+ *  
+ *  @since 3.0
  */
 public class ContentManager
 {
@@ -129,8 +142,6 @@ public class ContentManager
     public ContentManager( WikiEngine engine )
         throws WikiException
     {
-        String classname;
-
         m_engine = engine;
 
         m_expiryTime = TextUtil.parseIntParameter( engine.getWikiProperties().getProperty( PROP_LOCKEXPIRY ), 60 );
@@ -168,6 +179,27 @@ public class ContentManager
                 {
                     throw new WikiException( "Unable to initialize Priha as the main repository",e1);
                 }
+            }
+            else if( "jackrabbit".equals(repositoryName) )
+            {
+                try
+                {
+                    Class<Repository> jackrabbitRepo = (Class<Repository>) Class.forName( "org.apache.jackrabbit.TransientRepository" );
+                    m_repository = jackrabbitRepo.newInstance();
+                }
+                catch( ClassNotFoundException e1 )
+                {
+                    throw new WikiException("Jackrabbit libraries not found in the classpath",e1);
+                }
+                catch( InstantiationException e1 )
+                {
+                    throw new WikiException("Jackrabbit could not be initialized",e1);
+                }
+                catch( IllegalAccessException e1 )
+                {
+                    throw new WikiException("You do not have permission to access Jackrabbit",e1);
+                }
+                
             }
             else
             {
