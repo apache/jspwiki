@@ -146,20 +146,15 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
      */
     public Object clone()
     {
-        try
-        {
-            // super.clone() must always be called to make sure that inherited
-            // objects
-            // get the right type
-            WikiActionBeanContext copy = (WikiActionBeanContext) super.clone();
-            copy.m_delegate = m_delegate;
-            return copy;
-        }
-        catch( CloneNotSupportedException e )
-        {
-        } // Never happens
-
-        return null;
+        WikiActionBeanContext copy = new WikiActionBeanContext();
+        copy.m_delegate = m_delegate;
+        copy.setEngine( getEngine() );
+        copy.setEventName( getEventName() );
+        copy.setRequest( getRequest() );
+        copy.setResponse( getResponse() );
+        copy.setServletContext( getServletContext() );
+        copy.setValidationErrors( getValidationErrors() );
+        return copy;
     }
 
     /**
@@ -167,8 +162,15 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
      */
     public WikiContext deepClone()
     {
-        // TODO Auto-generated method stub
-        return null;
+        WikiActionBeanContext copy = new WikiActionBeanContext();
+        copy.m_delegate = (DefaultWikiContext) m_delegate.deepClone();
+        copy.setEngine( getEngine() );
+        copy.setEventName( getEventName() );
+        copy.setRequest( getRequest() );
+        copy.setResponse( getResponse() );
+        copy.setServletContext( getServletContext() );
+        copy.setValidationErrors( getValidationErrors() );
+        return copy;
     }
 
     /**

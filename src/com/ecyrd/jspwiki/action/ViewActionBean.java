@@ -123,10 +123,10 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Default handler that simply forwards the user back to the same page. 
+     * Default handler that simply forwards the user back to the display JSP <code>PageContent.jsp</code>. 
      * Every ActionBean needs a default handler to function properly, so we use
      * this (very simple) one.
-     * @return a forward resolution back to the same page
+     * @return a forward to the content template
      */
     @DefaultHandler
     @HandlesEvent("view")
@@ -134,7 +134,19 @@ public class ViewActionBean extends AbstractPageActionBean
     @WikiRequestContext("view")
     public Resolution view()
     {
-        return new ForwardResolution(ViewActionBean.class);
+        return getContext().getEngine().getTemplateManager().getContentPage( this, "ViewTemplate.jsp", "PageContent.jsp" );
+    }
+    
+    /**
+     * Handler that forwards to the page information display JSP <code>InfoContent.jsp</code>.
+     * @return a forward to the content template
+     */
+    @HandlesEvent("info")
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
+    @WikiRequestContext("info")
+    public Resolution info()
+    {
+        return getContext().getEngine().getTemplateManager().getContentPage( this, "ViewTemplate.jsp", "InfoContent.jsp" );
     }
     
 }

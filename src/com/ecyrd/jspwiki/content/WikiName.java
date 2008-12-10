@@ -71,13 +71,11 @@ public class WikiName implements Serializable, Comparable
             
             return name;
         }
-        else
-        {
-            name.m_space = ContentManager.DEFAULT_SPACE;
-            name.m_path = path;
-            
-            return name;
-        }
+
+        name.m_space = ContentManager.DEFAULT_SPACE;
+        name.m_path = path;
+        
+        return name;
         
         // FIXME: Should probably use this
         //throw new IllegalArgumentException("The path does not represent a fully qualified WikiName (space:path/path/path)");

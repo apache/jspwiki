@@ -730,7 +730,12 @@
     </attribute>
     <attribute>
       <name>title</name>
-      <required>true</required>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>titleKey</name>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>

@@ -12,7 +12,7 @@
 %>
   
 <wiki:TabbedSection defaultTab="editcontent">  
-  <wiki:Tab id="editcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.edit")%>' accesskey="e">
+  <wiki:Tab id="editcontent" titleKey="edit.tab.edit" accesskey="e">
   <wiki:CheckLock mode="locked" id="lock">
     <div class="error">
       <fmt:message key="edit.locked">
@@ -40,14 +40,14 @@
     <wiki:Include page="AttachmentTab.jsp" />
   </wiki:Tab>
 
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+  <wiki:Tab id="info" titleKey="info.tab"
            url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
            accesskey="i" >
   </wiki:Tab>
 
   </wiki:PageExists>  
     
-  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>' accesskey="h">
+  <wiki:Tab id="edithelp" titleKey="edit.tab.help" accesskey="h">
   <wiki:InsertPage page="EditPageHelp" />
   <wiki:NoSuchPage page="EditPageHelp">
     <div class="error">
