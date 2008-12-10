@@ -11,11 +11,11 @@
 %>
 
 <wiki:TabbedSection defaultTab="commentcontent">
-  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.discussionpage")%>'>
+  <wiki:Tab id="pagecontent" titleKey="comment.tab.discussionpage">
     <wiki:InsertPage/>
   </wiki:Tab>
 
-  <wiki:Tab id="commentcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.addcomment")%>'>
+  <wiki:Tab id="commentcontent" titleKey="comment.tab.addcomment">
 
   <wiki:Editor/>
   </wiki:Tab>
@@ -24,12 +24,12 @@
     <wiki:Include page="AttachmentTab.jsp" />
   </wiki:Tab>
   
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+  <wiki:Tab id="info" titleKey="info.tab"
            url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
            accesskey="i" >
   </wiki:Tab>
     
-  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>'>
+  <wiki:Tab id="edithelp" titleKey="edit.tab.help">
     <wiki:NoSuchPage page="EditPageHelp">
       <div class="error">
          <fmt:message key="comment.edithelpmissing">

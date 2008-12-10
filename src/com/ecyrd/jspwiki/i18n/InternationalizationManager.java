@@ -37,6 +37,7 @@ public class InternationalizationManager
      *  resource strings.  It's value is {@value}.
      */
     public static final String CORE_BUNDLE = "CoreResources";
+    public static final String TEMPLATES_BUNDLE = "templates.default";
     // public static final String JSPWIKI_BUNDLE = "jspwiki";
     // public static final String PLUGINS_BUNDLE = "plugins";
 

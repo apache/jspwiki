@@ -10,7 +10,7 @@
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 
 <wiki:TabbedSection>
-<wiki:Tab id="findcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab")%>' accesskey="s">
+<wiki:Tab id="findcontent" titleKey="find.tab" accesskey="s">
 
 <form action="<wiki:Link format='url' jsp='Search.jsp'/>"
        class="wikiform"
@@ -49,7 +49,7 @@
 </wiki:Tab>
 
 <wiki:PageExists page="SearchPageHelp">
-<wiki:Tab id="findhelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "find.tab.help")%>' accesskey="h">
+<wiki:Tab id="findhelp" titleKey="find.tab.help" accesskey="h">
   <wiki:InsertPage page="SearchPageHelp" />
 </wiki:Tab>
 </wiki:PageExists>

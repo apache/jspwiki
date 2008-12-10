@@ -35,7 +35,7 @@
 %>
 
 <wiki:TabbedSection defaultTab="${param.tab}">
-  <wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "newgroup.heading.create")%>'>
+  <wiki:Tab id="logincontent" titleKey="newgroup.heading.create">
 
 <h3><fmt:message key="newgroup.heading.create" /></h3>
 

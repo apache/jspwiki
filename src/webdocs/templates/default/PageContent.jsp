@@ -13,7 +13,7 @@
 
 <wiki:TabbedSection defaultTab='${param.tab}'>
 
-  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' accesskey="v">
+  <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v">
     <wiki:Include page="PageTab.jsp" />
     <wiki:PageType type="attachment">
       <div class="information">
@@ -35,7 +35,7 @@
   </wiki:Tab>
   </wiki:PageType>
     
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
+  <wiki:Tab id="info" titleKey="info.tab"
            url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
            accesskey="i" >
   </wiki:Tab>

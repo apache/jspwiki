@@ -36,13 +36,13 @@
 <wiki:TabbedSection defaultTab="editgroup">
 
   <wiki:Permission permission="viewGroup">
-  <wiki:Tab id="viewgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.viewgroup")%>'
+  <wiki:Tab id="viewgroup" titleKey="actions.viewgroup"
            url='<%=c.getURL(WikiContext.NONE, "Group.jsp", "group="+request.getParameter("group") ) %>'
            accesskey="v" >
   </wiki:Tab>
   </wiki:Permission>
 
-  <wiki:Tab id="editgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "editgroup.tab")%>'>
+  <wiki:Tab id="editgroup" titleKey="editgroup.tab">
 
   <h3><%=name%></h3>
 

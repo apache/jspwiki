@@ -32,8 +32,8 @@
       <wiki:Include page="PageActionsTop.jsp" />
 
       <wiki:TabbedSection defaultTab="attachments" >
-        <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
-	  		     url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
+        <wiki:Tab id="pagecontent" titleKey="view.tab"
+	  		 url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
 	       accesskey="v" >
         </wiki:Tab>
         
@@ -41,9 +41,9 @@
         <wiki:Tab id="attachments" title="<%= attTitle %>">
           <wiki:Include page="AttachmentTab.jsp" />
         </wiki:Tab>
-        <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-                 url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-           accesskey="i" >
+        <wiki:Tab id="info" titleKey="info.tab"
+         url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+         accesskey="i" >
         </wiki:Tab>
 
         </wiki:PageExists>

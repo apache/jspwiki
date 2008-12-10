@@ -66,8 +66,7 @@
   <wiki:TabbedSection defaultTab="info">
 
   <wiki:Tab id="pagecontent"
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
-     accesskey="v"
+         titleKey="actions.view" accesskey="v"
 	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
@@ -77,7 +76,7 @@
   </wiki:Tab>
 
   <%-- actual infopage content --%>
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>' accesskey="i">
+  <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
   <p>
   <fmt:message key='info.lastmodified'>
     <fmt:param><wiki:PageVersion>1</wiki:PageVersion></fmt:param>
@@ -245,13 +244,11 @@
 %>
 
   <wiki:TabbedSection defaultTab="info">
-  <wiki:Tab id="pagecontent"
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>'
-     accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
+  <wiki:Tab id="pagecontent" titleKey="info.parent" accesskey="v"
+	 url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
   </wiki:Tab>
 
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>' accesskey="i">
+  <wiki:Tab id="info" titleKey="info.attachment.tab" accesskey="i">
 
   <h3><fmt:message key="info.uploadnew" /></h3>
 

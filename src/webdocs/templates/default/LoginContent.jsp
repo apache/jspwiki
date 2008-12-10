@@ -27,7 +27,7 @@
 
 <%-- Login functionality --%>
 <wiki:UserCheck status="notauthenticated">
-<wiki:Tab id="logincontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.tab")%>'>
+<wiki:Tab id="logincontent" titleKey="login.tab">
 <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
 <stripes:form action="<%=postURL%>" id="login" class="wikiform" method="post" acceptcharset="UTF-8">
@@ -89,7 +89,7 @@
 </wiki:Tab>
 
 <%-- Lost pasword functionality --%>
-<wiki:Tab id="lostpassword" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.lostpw.tab")%>'>
+<wiki:Tab id="lostpassword" titleKey="login.lostpw.tab">
 
 <div class="center">
 <stripes:form action="/LostPassword.jsp" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
@@ -157,12 +157,12 @@
 
 <%-- Register new user profile --%>
 <wiki:Permission permission='editProfile'>
-<wiki:Tab id="profile" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "login.register.tab")%>'>
+<wiki:Tab id="profile" titleKey="login.register.tab">
   <wiki:Include page='ProfileTab.jsp' />
 </wiki:Tab>
 </wiki:Permission>
 
-<wiki:Tab id="loginhelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"login.tab.help")%>'>
+<wiki:Tab id="loginhelp" titleKey="login.tab.help">
   <wiki:InsertPage page="LoginHelp" />
 
   <wiki:NoSuchPage page="LoginHelp">
