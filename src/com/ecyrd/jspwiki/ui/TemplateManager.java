@@ -32,17 +32,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
+import net.sourceforge.stripes.action.ForwardResolution;
+
 import org.apache.commons.lang.StringUtils;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.modules.ModuleManager;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 
 /**
  *  This class takes care of managing JSPWiki templates.  This class also provides
@@ -123,6 +127,8 @@ public class TemplateManager
     /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
 
+    private WikiEngine m_engine;
+
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
      *
@@ -132,7 +138,7 @@ public class TemplateManager
     public TemplateManager( WikiEngine engine, Properties properties )
     {
         super(engine);
-
+        m_engine = engine;
         //
         //  Uses the unlimited cache.
         //
@@ -222,6 +228,20 @@ public class TemplateManager
         String fullname = makeFullJSPName( template, name );
 
         return findResource( sContext, fullname );
+    }
+
+    /**
+     * Returns a Stripes ForwardResolution to the content page
+     * @return
+     */
+    public ForwardResolution getContentPage( WikiActionBean actionBean, String templateJsp, String contentJsp )
+    {
+        WikiActionBeanContext wikiContext = actionBean.getContext();
+        wikiContext.setVariable( "contentTemplate", contentJsp );
+        String contentPage = findResource( wikiContext.getServletContext(), wikiContext.getTemplate(), templateJsp );
+        
+        ForwardResolution r = new ForwardResolution( contentPage );
+        return r;
     }
 
     /**
