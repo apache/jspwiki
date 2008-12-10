@@ -1,3 +1,17 @@
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
+        * Additional improvements, bug fixes to Stripes-related code.
+        Wiki.jsp and PageInfo.jsp completely migrated to Stripes.
+
+        * TemplateManager gains a new (fairly volatile) method that
+        returns a ForwardResolution to content template pages.
+        
+        * TabTag gains a much-needed 'titleKey' property, making the
+        need to embed i18n-related scriptlets in JSPs unnecessary.
+        Please use this in preference to the 'title' property.
+
 2008-12-05  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-28

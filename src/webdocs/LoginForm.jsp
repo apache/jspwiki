@@ -5,7 +5,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean" event="view" executeResolution="true" />
 <%! 
     /**
      * This page contains the logic for finding and including

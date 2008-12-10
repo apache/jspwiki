@@ -82,7 +82,7 @@ public interface WikiContext
     public static final String    DIFF     = HandlerInfo.getHandlerInfo( EditActionBean.class, "diff" ).getRequestContext();
 
     /** User is viewing page history. */
-    public static final String    INFO     = HandlerInfo.getHandlerInfo( PageInfoActionBean.class, "info" ).getRequestContext();
+    public static final String    INFO     = HandlerInfo.getHandlerInfo( ViewActionBean.class, "info" ).getRequestContext();
 
     /** User is previewing the changes he just made. */
     public static final String    PREVIEW  = HandlerInfo.getHandlerInfo( EditActionBean.class, "preview" ).getRequestContext();

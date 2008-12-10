@@ -119,7 +119,7 @@ public class UserProfileActionBean extends AbstractActionBean
             // Set user cookie
             Principal principal = getContext().getWikiSession().getUserPrincipal();
             CookieAssertionLoginModule.setUserCookie( getContext().getResponse(), principal.getName() );
-            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), ViewActionBean.class, false );
+            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), "/Wiki.jsp", false );
             if( m_redirect != null )
             {
                 builder.addParameter( "page", m_redirect );
@@ -258,7 +258,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @WikiRequestContext( "profile" )
     public Resolution view()
     {
-        return new ForwardResolution( ViewActionBean.class );
+        return new ForwardResolution( "/UserPreferences.jsp" );
     }
 
 }

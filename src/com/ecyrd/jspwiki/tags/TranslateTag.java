@@ -21,12 +21,11 @@
 package com.ecyrd.jspwiki.tags;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import com.ecyrd.jspwiki.WikiContext;
-
+import com.ecyrd.jspwiki.action.WikiContextFactory;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -47,8 +46,7 @@ public class TranslateTag
     {
         try
         {
-            WikiContext context = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                          PageContext.REQUEST_SCOPE );
+            WikiContext context = WikiContextFactory.findContext( pageContext );
 
             //
             //  Because the TranslateTag should not affect any of the real page attributes
