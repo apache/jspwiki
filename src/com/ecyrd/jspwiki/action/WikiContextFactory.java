@@ -649,4 +649,20 @@ public final class WikiContextFactory
         }
         return m_engine.getPageManager().pageExists( page );
     }
+
+    /**
+     *  Creates an "empty" wiki context which is used internally sometimes when
+     *  access to the repository is desired outside of a request.  This is
+     *  really just shorthand of getting a new VIEW context with an imaginary
+     *  page.
+     *  
+     *  @return A valid WikiContext.
+     */
+    // TODO: Should this be better called "newVirtualContext()" or something?  "Empty" is not
+    //       very descriptive.
+    public WikiContext newEmptyContext()
+    {
+        WikiPage page = new WikiPage(m_engine,"__DUMMY__");
+        return newViewContext( null, null, page );
+    }
 }

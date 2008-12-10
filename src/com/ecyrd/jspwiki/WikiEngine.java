@@ -1741,21 +1741,21 @@ public class WikiEngine
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
-        Task prepTask = new PageManager.PreSaveWikiPageTask( context, proposedText );
-        Task completionTask = new PageManager.SaveWikiPageTask();
+        Task prepTask = new ContentManager.PreSaveWikiPageTask( context, proposedText );
+        Task completionTask = new ContentManager.SaveWikiPageTask();
         String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         Fact[] facts = new Fact[5];
-        facts[0] = new Fact( PageManager.FACT_PAGE_NAME, page.getName() );
-        facts[1] = new Fact( PageManager.FACT_DIFF_TEXT, diffText );
-        facts[2] = new Fact( PageManager.FACT_PROPOSED_TEXT, proposedText );
-        facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
-        facts[4] = new Fact( PageManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
-        String rejectKey = isAuthenticated ? PageManager.SAVE_REJECT_MESSAGE_KEY : null;
+        facts[0] = new Fact( ContentManager.FACT_PAGE_NAME, page.getName() );
+        facts[1] = new Fact( ContentManager.FACT_DIFF_TEXT, diffText );
+        facts[2] = new Fact( ContentManager.FACT_PROPOSED_TEXT, proposedText );
+        facts[3] = new Fact( ContentManager.FACT_CURRENT_TEXT, oldText);
+        facts[4] = new Fact( ContentManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
+        String rejectKey = isAuthenticated ? ContentManager.SAVE_REJECT_MESSAGE_KEY : null;
         Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                           PageManager.SAVE_APPROVER,
+                                                           ContentManager.SAVE_APPROVER,
                                                            prepTask,
-                                                           PageManager.SAVE_DECISION_MESSAGE_KEY,
+                                                           ContentManager.SAVE_DECISION_MESSAGE_KEY,
                                                            facts,
                                                            completionTask,
                                                            rejectKey );

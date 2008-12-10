@@ -20,6 +20,8 @@
  */
 package com.ecyrd.jspwiki.content;
 
+import java.security.Permission;
+import java.security.Principal;
 import java.util.*;
 
 import javax.jcr.*;
@@ -33,18 +35,31 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.auth.WikiPrincipal;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.auth.acl.Acl;
+import com.ecyrd.jspwiki.auth.acl.AclEntry;
+import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventManager;
 import com.ecyrd.jspwiki.event.WikiPageEvent;
+import com.ecyrd.jspwiki.event.WikiSecurityEvent;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.util.WikiBackgroundThread;
+import com.ecyrd.jspwiki.workflow.Outcome;
+import com.ecyrd.jspwiki.workflow.Task;
+import com.ecyrd.jspwiki.workflow.Workflow;
 
 /**
  *  Provides access to the content repository.  Unlike previously, in JSPWiki
@@ -59,9 +74,16 @@ import com.ecyrd.jspwiki.util.WikiBackgroundThread;
  *  and "jackrabbit" for <a href="http://jackrabbit.apache.org">Apache Jackrabbit</a>.
  *  <p>
  *  If there is no property defined, defaults to "priha".
+ *
+ *  FIXME:
+ *    * This class is currently designed to be a drop-in replacement for PageManager.
+ *      However, this brings in a lot of unfortunate side effects in complexity, and
+ *      it does not really take advantage of all of the JCR API.  Therefore, this
+ *      class should be treated as extremely volatile.
  *  
  *  @since 3.0
  */
+
 public class ContentManager
 {
     protected static final String DEFAULT_SPACE = "Main";
@@ -281,7 +303,7 @@ public class ContentManager
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
             
-            Query q = mgr.createQuery( "/"+JCR_PAGES_NODE+"/"+((space != null) ? space : "")+"/*", Query.XPATH );
+            Query q = mgr.createQuery( "/jcr:root/"+JCR_PAGES_NODE+"/"+((space != null) ? space : "")+"/*", Query.XPATH );
             
             QueryResult qr = q.execute();
             
@@ -289,7 +311,9 @@ public class ContentManager
             {
                 Node n = ni.nextNode();
                 
-                result.add( new WikiPage(ctx.getEngine(), n ) );
+                // Hack to make sure we don't add the space root node. 
+                if( n.getDepth() != 2 )
+                    result.add( new WikiPage(ctx.getEngine(), n ) );
             }
         }
         catch( RepositoryException e )
@@ -320,7 +344,10 @@ public class ContentManager
             throw new WikiException("Illegal page name");
         }
 
-        WikiPage p = getPage( null, path, version );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, 
+                                                                           null, 
+                                                                           new WikiPage(m_engine,path) );
+        WikiPage p = getPage( ctx, path, version );
         
         return p.getContentAsString();
     }
@@ -344,50 +371,51 @@ public class ContentManager
      *  @param user Username to use for locking
      *  @return null, if page could not be locked.
      */
-//    public PageLock lockPage( WikiPage page, String user )
-//    {
-//        PageLock lock = null;
-//
-//        if( m_reaper == null )
-//        {
-//            //
-//            //  Start the lock reaper lazily.  We don't want to start it in
-//            //  the constructor, because starting threads in constructors
-//            //  is a bad idea when it comes to inheritance.  Besides,
-//            //  laziness is a virtue.
-//            //
-//            m_reaper = new LockReaper( m_engine );
-//            m_reaper.start();
-//        }
-//
-//        synchronized( m_pageLocks )
-//        {
-//            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
-//
-//            lock = m_pageLocks.get( page.getName() );
-//
-//            if( lock == null )
-//            {
-//                //
-//                //  Lock is available, so make a lock.
-//                //
-//                Date d = new Date();
-//                lock = new PageLock( page, user, d,
-//                                     new Date( d.getTime() + m_expiryTime*60*1000L ) );
-//
-//                m_pageLocks.put( page.getName(), lock );
-//
-//                log.debug( "Locked page "+page.getName()+" for "+user);
-//            }
-//            else
-//            {
-//                log.debug( "Page "+page.getName()+" already locked by "+lock.getLocker() );
-//                lock = null; // Nothing to return
-//            }
-//        }
-//
-//        return lock;
-//    }
+    // FIXME: This should probably also cause a lock in the repository.
+    public PageLock lockPage( WikiPage page, String user )
+    {
+        PageLock lock = null;
+
+        if( m_reaper == null )
+        {
+            //
+            //  Start the lock reaper lazily.  We don't want to start it in
+            //  the constructor, because starting threads in constructors
+            //  is a bad idea when it comes to inheritance.  Besides,
+            //  laziness is a virtue.
+            //
+            m_reaper = new LockReaper( m_engine );
+            m_reaper.start();
+        }
+
+        synchronized( m_pageLocks )
+        {
+            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
+
+            lock = m_pageLocks.get( page.getName() );
+
+            if( lock == null )
+            {
+                //
+                //  Lock is available, so make a lock.
+                //
+                Date d = new Date();
+                lock = new PageLock( page, user, d,
+                                     new Date( d.getTime() + m_expiryTime*60*1000L ) );
+
+                m_pageLocks.put( page.getName(), lock );
+
+                log.debug( "Locked page "+page.getName()+" for "+user);
+            }
+            else
+            {
+                log.debug( "Page "+page.getName()+" already locked by "+lock.getLocker() );
+                lock = null; // Nothing to return
+            }
+        }
+
+        return lock;
+    }
     /**
      *  Marks a page free to be written again.  If there has not been a lock,
      *  will fail quietly.
@@ -435,7 +463,7 @@ public class ContentManager
      *          an empty list.
      *  @since 2.0.22.
      */
-    public List getActiveLocks()
+    public List<PageLock> getActiveLocks()
     {
         ArrayList<PageLock> result = new ArrayList<PageLock>();
 
@@ -460,7 +488,9 @@ public class ContentManager
      *                            name or the repository
      */
     /*
-    public WikiPage getPageInfo( String pageName, int version )
+    // FIXME: Remove.  Just exists to make sure that all the things that need
+    //        to be called are called.
+    public WikiPage getPage( String pageName, int version )
         throws ProviderException
     {
         if( pageName == null || pageName.length() == 0 )
@@ -515,29 +545,48 @@ public class ContentManager
      *          of WikiPages.
      *  @throws ProviderException If the repository fails.
      */
-    /*
-    public List getVersionHistory( String pageName )
+
+    public List<WikiPage> getVersionHistory( WikiContext ctx, String path )
         throws ProviderException
     {
-        if( pageExists( pageName ) )
-        {
-            return m_provider.getVersionHistory( pageName );
-        }
+        List<WikiPage> result = new ArrayList<WikiPage>();
+        WikiPage base = getPage(ctx,path);
 
-        return null;
+        Node baseNode = base.getJCRNode();
+        
+        try
+        {
+            VersionHistory vh = baseNode.getVersionHistory();
+            
+            for( VersionIterator vi = vh.getAllVersions(); vi.hasNext(); )
+            {
+                Version v = vi.nextVersion();
+                
+                result.add( new WikiPage(m_engine,v) );
+            }
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to get version history",e);
+        }
+        catch( WikiException e )
+        {
+            throw new ProviderException("Unable to get version history",e);
+        }
+        
+        return result;
     }
-*/
+    
     /**
      *  Returns a human-readable description of the current provider.
      *  
      *  @return A human-readable description.
      */
-    /*
     public String getProviderDescription()
     {
-        return m_provider.getProviderInfo();
+        return m_repository.getDescriptor( Repository.REP_NAME_DESC );
     }
-*/
+
     /**
      *  Returns the total count of all pages in the repository. This
      *  method is equivalent of calling getAllPages().size(), but
@@ -546,12 +595,13 @@ public class ContentManager
      *  
      *  @return The number of pages, or -1, if there is an error.
      */
-    /*
-    public int getTotalPageCount()
+    // FIXME: Unfortunately this method is very slow, since it involves gobbling
+    //        up the entire repo.
+    public int getTotalPageCount(WikiContext context, String space)
     {
         try
         {
-            return m_provider.getAllPages().size();
+            return getAllPages(context, space).size();
         }
         catch( ProviderException e )
         {
@@ -559,26 +609,36 @@ public class ContentManager
             return -1;
         }
     }
-*/
     /**
      *  Returns true, if the page exists (any version).
      *  
-     *  @param pageName  Name of the page.
+     *  @param wikiPath  Name of the page.
      *  @return A boolean value describing the existence of a page
      *  @throws ProviderException If the backend fails or the name is illegal.
      */
-    /*
-    public boolean pageExists( String pageName )
+ 
+    public boolean pageExists( WikiContext ctx, String wikiPath )
         throws ProviderException
     {
-        if( pageName == null || pageName.length() == 0 )
+        if( wikiPath == null || wikiPath.length() == 0 )
         {
             throw new ProviderException("Illegal page name");
         }
 
-        return m_provider.pageExists( pageName );
+        try
+        {
+            Session session = getJCRSession( ctx );
+            
+            String jcrPath = getJCRPath( ctx, wikiPath ); 
+            
+            return session.getRootNode().hasNode( jcrPath );
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException( "Unable to check for page existence",e);
+        }
     }
-*/
+    
     /**
      *  Checks for existence of a specific page and version.
      *  
@@ -601,7 +661,7 @@ public class ContentManager
         {
             session = getJCRSession( ctx );
             
-            return session.itemExists( getJCRPath( (WikiContext) ctx, path ) );
+            return session.itemExists( getJCRPath( ctx, path ) );
         }
         catch( RepositoryException e )
         {
@@ -734,109 +794,109 @@ public class ContentManager
      *
      * @author Andrew Jaquith
      */
-//    public static class PreSaveWikiPageTask extends Task
-//    {
-//        private static final long serialVersionUID = 6304715570092804615L;
-//        private final WikiContext m_context;
-//        private final String m_proposedText;
-//
-//        /**
-//         *  Creates the task.
-//         *  
-//         *  @param context The WikiContext
-//         *  @param proposedText The text that was just saved.
-//         */
-//        public PreSaveWikiPageTask( WikiContext context, String proposedText )
-//        {
-//            super( PRESAVE_TASK_MESSAGE_KEY );
-//            m_context = context;
-//            m_proposedText = proposedText;
-//        }
-//
-//        /**
-//         *  {@inheritDoc}
-//         */
-//        @Override
-//        public Outcome execute() throws WikiException
-//        {
-//            // Retrieve attributes
-//            WikiEngine engine = m_context.getEngine();
-//            Workflow workflow = getWorkflow();
-//
-//            // Get the wiki page
-//            WikiPage page = m_context.getPage();
-//
-//            // Figure out who the author was. Prefer the author
-//            // set programmatically; otherwise get from the
-//            // current logged in user
-//            if ( page.getAuthor() == null )
-//            {
-//                Principal wup = m_context.getCurrentUser();
-//
-//                if ( wup != null )
-//                    page.setAuthor( wup.getName() );
-//            }
-//
-//            // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
-//            String saveText;
-//            try
-//            {
-//                saveText = engine.getFilterManager().doPreSaveFiltering( m_context, m_proposedText );
-//            }
-//            catch ( FilterException e )
-//            {
-//                throw e;
-//            }
-//
-//            // Stash the wiki context, old and new text as workflow attributes
-//            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, m_context );
-//            workflow.setAttribute( FACT_PROPOSED_TEXT, saveText );
-//            return Outcome.STEP_COMPLETE;
-//        }
-//    }
-//
-//    /**
-//     * Inner class that handles the actual page save and post-save actions. Instances
-//     * of this class are assumed to have been added to an approval workflow via
-//     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)};
-//     * they will not function correctly otherwise.
-//     *
-//     * @author Andrew Jaquith
-//     */
-//    public static class SaveWikiPageTask extends Task
-//    {
-//        private static final long serialVersionUID = 3190559953484411420L;
-//
-//        /**
-//         *  Creates the Task.
-//         */
-//        public SaveWikiPageTask()
-//        {
-//            super( SAVE_TASK_MESSAGE_KEY );
-//        }
-//
-//        /** {@inheritDoc} */
-//        @Override
-//        public Outcome execute() throws WikiException
-//        {
-//            // Retrieve attributes
-//            WikiContext context = (WikiContext) getWorkflow().getAttribute( PRESAVE_WIKI_CONTEXT );
-//            String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
-//
-//            WikiEngine engine = context.getEngine();
-//            WikiPage page = context.getPage();
-//
-//            // Let the rest of the engine handle actual saving.
-//            engine.getPageManager().putPageText( page, proposedText );
-//
-//            // Refresh the context for post save filtering.
-//            engine.getPage( page.getName() );
-//            engine.textToHTML( context, proposedText );
-//            engine.getFilterManager().doPostSaveFiltering( context, proposedText );
-//
-//            return Outcome.STEP_COMPLETE;
-//        }
-//    }
+    public static class PreSaveWikiPageTask extends Task
+    {
+        private static final long serialVersionUID = 6304715570092804615L;
+        private final WikiContext m_context;
+        private final String m_proposedText;
+
+        /**
+         *  Creates the task.
+         *  
+         *  @param context The WikiContext
+         *  @param proposedText The text that was just saved.
+         */
+        public PreSaveWikiPageTask( WikiContext context, String proposedText )
+        {
+            super( PRESAVE_TASK_MESSAGE_KEY );
+            m_context = context;
+            m_proposedText = proposedText;
+        }
+
+        /**
+         *  {@inheritDoc}
+         */
+        @Override
+        public Outcome execute() throws WikiException
+        {
+            // Retrieve attributes
+            WikiEngine engine = m_context.getEngine();
+            Workflow workflow = getWorkflow();
+
+            // Get the wiki page
+            WikiPage page = m_context.getPage();
+
+            // Figure out who the author was. Prefer the author
+            // set programmatically; otherwise get from the
+            // current logged in user
+            if ( page.getAuthor() == null )
+            {
+                Principal wup = m_context.getCurrentUser();
+
+                if ( wup != null )
+                    page.setAuthor( wup.getName() );
+            }
+
+            // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
+            String saveText;
+            try
+            {
+                saveText = engine.getFilterManager().doPreSaveFiltering( m_context, m_proposedText );
+            }
+            catch ( FilterException e )
+            {
+                throw e;
+            }
+
+            // Stash the wiki context, old and new text as workflow attributes
+            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, m_context );
+            workflow.setAttribute( FACT_PROPOSED_TEXT, saveText );
+            return Outcome.STEP_COMPLETE;
+        }
+    }
+
+    /**
+     * Inner class that handles the actual page save and post-save actions. Instances
+     * of this class are assumed to have been added to an approval workflow via
+     * {@link com.ecyrd.jspwiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, com.ecyrd.jspwiki.workflow.Fact[], Task, String)};
+     * they will not function correctly otherwise.
+     *
+     * @author Andrew Jaquith
+     */
+    public static class SaveWikiPageTask extends Task
+    {
+        private static final long serialVersionUID = 3190559953484411420L;
+
+        /**
+         *  Creates the Task.
+         */
+        public SaveWikiPageTask()
+        {
+            super( SAVE_TASK_MESSAGE_KEY );
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Outcome execute() throws WikiException
+        {
+            // Retrieve attributes
+            WikiContext context = (WikiContext) getWorkflow().getAttribute( PRESAVE_WIKI_CONTEXT );
+            String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
+
+            WikiEngine engine = context.getEngine();
+            WikiPage page = context.getPage();
+
+            // Let the rest of the engine handle actual saving.
+            engine.getPageManager().putPageText( page, proposedText );
+
+            // Refresh the context for post save filtering.
+            engine.getPage( page.getName() );
+            engine.textToHTML( context, proposedText );
+            engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+
+            return Outcome.STEP_COMPLETE;
+        }
+    }
 
     // events processing .......................................................
 
@@ -876,9 +936,8 @@ public class ContentManager
      *  @param ctx The current WikiContext.  May be null, in which case the wikiName must be a FQN.
      *  @param wikiName The WikiName.
      *  @return A full JCR path
-     *  @throws WikiException If the conversion could not be done.
      */
-    protected static String getJCRPath( WikiContext ctx, String wikiName ) throws WikiException
+    protected static String getJCRPath( WikiContext ctx, String wikiName )
     {
         String spaceName;
         String spacePath;
@@ -927,11 +986,14 @@ public class ContentManager
 
             int firstSlash = wikiPath.indexOf( '/' );
             
-            return new WikiName(wikiPath.substring( 0, firstSlash ), 
-                                wikiPath.substring( firstSlash+1 ) );
+            if( firstSlash != -1 )
+            {
+                return new WikiName(wikiPath.substring( 0, firstSlash ), 
+                                    wikiPath.substring( firstSlash+1 ) );
+            }
         }
         
-        throw new WikiException("This is not a valid JCR path: "+jcrpath);
+        throw new WikiException("This is not a valid JSPWiki JCR path: "+jcrpath);
     }
     
     /**
@@ -967,7 +1029,7 @@ public class ContentManager
      *  @param path
      *  @return
      */
-    public WikiPage getPage( WikiContext context, String path ) throws WikiException
+    public WikiPage getPage( WikiContext context, String path ) throws ProviderException
     {
         try
         {
@@ -985,7 +1047,7 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new WikiException( "Unable to get a page", e );
+            throw new ProviderException( "Unable to get a page", e );
         }
     }
 
@@ -1021,56 +1083,56 @@ public class ContentManager
      * 
      *  @param event The event
      */
-//    public void actionPerformed(WikiEvent event)
-//    {
-//        if (! ( event instanceof WikiSecurityEvent ) )
-//        {
-//            return;
-//        }
-//
-//        WikiSecurityEvent se = (WikiSecurityEvent)event;
-//        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
-//        {
-//            UserProfile[] profiles = (UserProfile[])se.getTarget();
-//            Principal[] oldPrincipals = new Principal[]
-//                { new WikiPrincipal( profiles[0].getLoginName() ),
-//                  new WikiPrincipal( profiles[0].getFullname() ),
-//                  new WikiPrincipal( profiles[0].getWikiName() ) };
-//            Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
-//
-//            // Examine each page ACL
-//            try
-//            {
-//                int pagesChanged = 0;
-//                Collection pages = getAllPages();
-//                for ( Iterator it = pages.iterator(); it.hasNext(); )
-//                {
-//                    WikiPage page = (WikiPage)it.next();
-//                    boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
-//                    if ( aclChanged )
-//                    {
-//                        // If the Acl needed changing, change it now
-//                        try
-//                        {
-//                            m_engine.getAclManager().setPermissions( page, page.getAcl() );
-//                        }
-//                        catch ( WikiSecurityException e )
-//                        {
-//                            log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage() );
-//                        }
-//                        pagesChanged++;
-//                    }
-//                }
-//                log.info( "Profile name change for '" + newPrincipal.toString() +
-//                          "' caused " + pagesChanged + " page ACLs to change also." );
-//            }
-//            catch ( ProviderException e )
-//            {
-//                // Oooo! This is really bad...
-//                log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage() );
-//            }
-//        }
-//    }
+    public void actionPerformed(WikiEvent event)
+    {
+        if (! ( event instanceof WikiSecurityEvent ) )
+        {
+            return;
+        }
+
+        WikiSecurityEvent se = (WikiSecurityEvent)event;
+        if ( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED )
+        {
+            UserProfile[] profiles = (UserProfile[])se.getTarget();
+            Principal[] oldPrincipals = new Principal[]
+                { new WikiPrincipal( profiles[0].getLoginName() ),
+                  new WikiPrincipal( profiles[0].getFullname() ),
+                  new WikiPrincipal( profiles[0].getWikiName() ) };
+            Principal newPrincipal = new WikiPrincipal( profiles[1].getFullname() );
+
+            // Examine each page ACL
+            try
+            {
+                int pagesChanged = 0;
+                Collection pages = getAllPages( m_engine.getWikiContextFactory().newEmptyContext(), null );
+                for ( Iterator it = pages.iterator(); it.hasNext(); )
+                {
+                    WikiPage page = (WikiPage)it.next();
+                    boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
+                    if ( aclChanged )
+                    {
+                        // If the Acl needed changing, change it now
+                        try
+                        {
+                            m_engine.getAclManager().setPermissions( page, page.getAcl() );
+                        }
+                        catch ( WikiSecurityException e )
+                        {
+                            log.error( "Could not change page ACL for page " + page.getName() + ": " + e.getMessage() );
+                        }
+                        pagesChanged++;
+                    }
+                }
+                log.info( "Profile name change for '" + newPrincipal.toString() +
+                          "' caused " + pagesChanged + " page ACLs to change also." );
+            }
+            catch ( ProviderException e )
+            {
+                // Oooo! This is really bad...
+                log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage() );
+            }
+        }
+    }
 
     /**
      *  For a single wiki page, replaces all Acl entries matching a supplied array of Principals 
@@ -1082,46 +1144,46 @@ public class ContentManager
      *  @param newPrincipal the Principal that should receive the old Principals' permissions
      *  @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
      */
-//    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
-//    {
-//        Acl acl = page.getAcl();
-//        boolean pageChanged = false;
-//        if ( acl != null )
-//        {
-//            Enumeration entries = acl.entries();
-//            Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
-//            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
-//            while ( entries.hasMoreElements() )
-//            {
-//                AclEntry entry = (AclEntry)entries.nextElement();
-//                if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
-//                {
-//                    // Create new entry
-//                    AclEntry newEntry = new AclEntryImpl();
-//                    newEntry.setPrincipal( newPrincipal );
-//                    Enumeration permissions = entry.permissions();
-//                    while ( permissions.hasMoreElements() )
-//                    {
-//                        Permission permission = (Permission)permissions.nextElement();
-//                        newEntry.addPermission(permission);
-//                    }
-//                    pageChanged = true;
-//                    entriesToRemove.add( entry );
-//                    entriesToAdd.add( newEntry );
-//                }
-//            }
-//            for ( Iterator ix = entriesToRemove.iterator(); ix.hasNext(); )
-//            {
-//                AclEntry entry = (AclEntry)ix.next();
-//                acl.removeEntry( entry );
-//            }
-//            for ( Iterator ix = entriesToAdd.iterator(); ix.hasNext(); )
-//            {
-//                AclEntry entry = (AclEntry)ix.next();
-//                acl.addEntry( entry );
-//            }
-//        }
-//        return pageChanged;
-//    }
+    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
+    {
+        Acl acl = page.getAcl();
+        boolean pageChanged = false;
+        if ( acl != null )
+        {
+            Enumeration entries = acl.entries();
+            Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
+            Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
+            while ( entries.hasMoreElements() )
+            {
+                AclEntry entry = (AclEntry)entries.nextElement();
+                if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
+                {
+                    // Create new entry
+                    AclEntry newEntry = new AclEntryImpl();
+                    newEntry.setPrincipal( newPrincipal );
+                    Enumeration permissions = entry.permissions();
+                    while ( permissions.hasMoreElements() )
+                    {
+                        Permission permission = (Permission)permissions.nextElement();
+                        newEntry.addPermission(permission);
+                    }
+                    pageChanged = true;
+                    entriesToRemove.add( entry );
+                    entriesToAdd.add( newEntry );
+                }
+            }
+            for ( Iterator ix = entriesToRemove.iterator(); ix.hasNext(); )
+            {
+                AclEntry entry = (AclEntry)ix.next();
+                acl.removeEntry( entry );
+            }
+            for ( Iterator ix = entriesToAdd.iterator(); ix.hasNext(); )
+            {
+                AclEntry entry = (AclEntry)ix.next();
+                acl.addEntry( entry );
+            }
+        }
+        return pageChanged;
+    }
 
 }
