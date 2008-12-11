@@ -12,6 +12,7 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
@@ -134,7 +135,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @WikiRequestContext("view")
     public Resolution view()
     {
-        return getContext().getEngine().getTemplateManager().getContentPage( this, "ViewTemplate.jsp", "PageContent.jsp" );
+        return getContext().getContentPage( this, TemplateManager.Template.VIEW, "PageContent.jsp" );
     }
     
     /**
@@ -146,7 +147,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @WikiRequestContext("info")
     public Resolution info()
     {
-        return getContext().getEngine().getTemplateManager().getContentPage( this, "ViewTemplate.jsp", "InfoContent.jsp" );
+        return getContext().getContentPage( this, TemplateManager.Template.VIEW, "InfoContent.jsp" );
     }
-    
+
 }

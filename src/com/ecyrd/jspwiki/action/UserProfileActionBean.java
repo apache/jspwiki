@@ -18,6 +18,7 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
@@ -258,7 +259,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @WikiRequestContext( "profile" )
     public Resolution view()
     {
-        return new ForwardResolution( "/UserPreferences.jsp" );
+        return getContext().getContentPage( this, TemplateManager.Template.VIEW, "PreferencesContent.jsp" );
     }
 
 }

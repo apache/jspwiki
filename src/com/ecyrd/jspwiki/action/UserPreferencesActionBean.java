@@ -11,8 +11,12 @@ import net.sourceforge.stripes.validation.Validate;
 
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.ui.EditorManager;
+import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 /**
@@ -21,6 +25,8 @@ import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 @UrlBinding( "/UserPreferences.action" )
 public class UserPreferencesActionBean extends AbstractActionBean
 {
+    private Logger log = LoggerFactory.getLogger( "JSPWiki" );
+
     private String m_assertedName = null;
 
     private String m_editor = null;
@@ -62,18 +68,24 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @return a redirection to the front page
      */
-    @DefaultHandler
     @HandlesEvent( "createAssertedName" )
     @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
-    @WikiRequestContext( "prefs" )
     public Resolution createAssertedName()
     {
+        // FIXME: should reload preferences (see Preferences.reloadPreferences)
         if( !getContext().getWikiSession().isAuthenticated() )
         {
             HttpServletRequest request = getContext().getRequest();
             HttpServletResponse response = getContext().getResponse();
             String assertedName = request.getParameter( "assertedName" );
             CookieAssertionLoginModule.setUserCookie( response, assertedName );
+        }
+        if( m_redirect != null )
+        {
+            RedirectResolution r = new RedirectResolution( ViewActionBean.class );
+            r.addParameter( "page", m_redirect );
+            log.info( "Redirecting user to wiki page " + m_redirect );
+            return r;
         }
         return new RedirectResolution( "/" );
     }
@@ -148,5 +160,22 @@ public class UserPreferencesActionBean extends AbstractActionBean
     public String getRedirect()
     {
         return m_redirect;
+    }
+
+    /**
+     * Handler for displaying user preferences that simply forwards to the
+     * preferences display JSP <code>PreferencesContent.jsp</code>.
+     * 
+     * @return a forward to the content template
+     */
+    @DefaultHandler
+    @HandlesEvent("prefs")
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
+    @WikiRequestContext( "prefs" )
+    public Resolution view()
+    {
+        WikiActionBeanContext context = getContext();
+        TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
+        return context.getContentPage( this, TemplateManager.Template.VIEW, "PreferencesContent.jsp" );
     }
 }

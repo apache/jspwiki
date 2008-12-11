@@ -92,8 +92,8 @@
 <wiki:Tab id="lostpassword" titleKey="login.lostpw.tab">
 
 <div class="center">
-<stripes:form action="/LostPassword.jsp" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
-
+<stripes:form beanclass="com.ecyrd.jspwiki.action.LoginActionBean" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
+  <stripes:param name="tab" value="lostpassword" />
   <h3><fmt:message key="login.lostpw.heading" /></h3>
 
   <c:choose>
@@ -119,8 +119,8 @@
     </tr>
     </c:if>
     <tr>
-      <td><stripes:label for="name" name="login.lostpw.name" /></td>
-      <td><stripes:text size="24" name="name" id="name" /></td>
+      <td><stripes:label for="email" name="login.lostpw.name" /></td>
+      <td><stripes:text size="24" name="email" id="email" /></td>
     </tr>
     <tr>
       <td>&nbsp;</td>

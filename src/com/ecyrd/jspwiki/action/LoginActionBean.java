@@ -1,8 +1,11 @@
 package com.ecyrd.jspwiki.action;
 
 import java.security.Principal;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.mail.AuthenticationFailedException;
+import javax.mail.SendFailedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,16 +16,23 @@ import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
+import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
+import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule;
 import com.ecyrd.jspwiki.auth.login.CookieAuthenticationLoginModule;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
+import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.auth.user.UserProfile;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
+import com.ecyrd.jspwiki.util.MailUtil;
+import com.ecyrd.jspwiki.util.TextUtil;
 
 @UrlBinding( "/Login.action" )
 public class LoginActionBean extends AbstractActionBean
@@ -56,6 +66,8 @@ public class LoginActionBean extends AbstractActionBean
         }
         return new RedirectResolution( builder.toString() );
     }
+    
+    private String m_email = null;
 
     private String m_username = null;
 
@@ -65,6 +77,15 @@ public class LoginActionBean extends AbstractActionBean
 
     private String m_redirect;
 
+    /**
+     * Returns the e-mail address.
+     * @return the e-mail address
+     */
+    public String getEmail()
+    {
+        return m_email;
+    }
+    
     public String getJ_password()
     {
         return m_password;
@@ -158,6 +179,16 @@ public class LoginActionBean extends AbstractActionBean
         return new RedirectResolution( ViewActionBean.class );
     }
 
+    /**
+     * Sets the e-mail property. Used by the {@link #resetPassword()} event.
+     * @param email the e-mail address
+     */
+    @Validate( required = true, on = "resetPassword", converter=net.sourceforge.stripes.validation.EmailTypeConverter.class )
+    public void setEmail( String email )
+    {
+        m_email = email;
+    }
+    
     @Validate( required = true, on = "login", minlength = 1, maxlength = 128 )
     public void setJ_password( String password )
     {
@@ -230,6 +261,88 @@ public class LoginActionBean extends AbstractActionBean
             log.info( "Successfully authenticated user " + user.getName() + " (container auth)" );
         }
 
+        return r;
+    }
+
+    /**
+     * Event handler that resets the user's password, based on the e-mail address
+     * returned by {@link #getEmail()}.
+     * @return always returns <code>null</code>
+     */
+    @HandlesEvent( "resetPassword" )
+    public Resolution resetPassword()
+    {
+        String message = null;
+        ResourceBundle rb = getContext().getBundle( "CoreResources" );
+        
+        // Reset pw for account name
+        WikiEngine wiki = getContext().getEngine();
+        WikiSession wikiSession = getContext().getWikiSession();
+        UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
+        boolean success = false;
+
+        
+        try
+        {
+            // Look up the e-mail supplied by the user
+            UserProfile profile = userDatabase.findByEmail( m_email );
+            String email = profile.getEmail();
+            String randomPassword = TextUtil.generateRandomPassword();
+
+            // Compose the message e-mail body
+            Object[] args = { profile.getLoginName(), randomPassword,
+                             wiki.getURLConstructor().makeURL( WikiContext.NONE, "Login.jsp", true, "" ), wiki.getApplicationName() };
+            String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );
+
+            // Compose the message subject line
+            args = new Object[] { wiki.getApplicationName() };
+            String mailSubject = MessageFormat.format( rb.getString( "lostpwd.newpassword.subject" ), args );
+            
+            // Send the message.
+            MailUtil.sendMessage( wiki, email, mailSubject, mailMessage );
+            log.info( "User " + email + " requested and received a new password." );
+
+            // Mail succeeded.  Now reset the password.
+            // If this fails, we're kind of screwed, because we already mailed it.
+            profile.setPassword( randomPassword );
+            userDatabase.save( profile );
+            success = true;
+        }
+        catch( NoSuchPrincipalException e )
+        {
+            Object[] args = { m_email };
+            message = MessageFormat.format( rb.getString( "lostpwd.nouser" ), args );
+            log.info( "Tried to reset password for non-existent user '" + m_email + "'" );
+        }
+        catch( SendFailedException e )
+        {
+            message = rb.getString( "lostpwd.nomail" );
+            log.error( "Tried to reset password and got SendFailedException: " + e );
+        }
+        catch( AuthenticationFailedException e )
+        {
+            message = rb.getString( "lostpwd.nomail" );
+            log.error( "Tried to reset password and got AuthenticationFailedException: " + e );
+        }
+        catch( Exception e )
+        {
+            message = rb.getString( "lostpwd.nomail" );
+            log.error( "Tried to reset password and got another exception: " + e );
+        }
+        
+        if( success )
+        {
+            wikiSession.addMessage( "resetpwok", rb.getString( "lostpwd.emailed" ) );
+            getContext().getRequest().setAttribute( "passwordreset", "done" );
+        }
+        else
+        // Error
+        {
+            wikiSession.addMessage( "resetpw", message );
+        }
+        
+        ForwardResolution r = getContext().getContentPage( this, TemplateManager.Template.VIEW, "LoginContent.jsp" );
+        r.addParameter( "tab", "lostpassword" );
         return r;
     }
 

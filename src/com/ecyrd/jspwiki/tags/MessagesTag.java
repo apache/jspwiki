@@ -107,13 +107,16 @@ public class MessagesTag extends WikiTagBase
             List<String> messageStrings = new ArrayList<String>();
 
             // Add all of the Stripes validation errors first (all fields, even global errors)
-            ValidationErrors errors = m_wikiActionBean.getContext().getValidationErrors();
-            for ( List<ValidationError> fieldErrors : errors.values() ) 
+            if ( "error".equals( m_div) )
             {
-                for ( ValidationError error : fieldErrors )
+                ValidationErrors errors = m_wikiActionBean.getContext().getValidationErrors();
+                for ( List<ValidationError> fieldErrors : errors.values() ) 
                 {
-                    String message = error.getMessage( m_wikiActionBean.getContext().getLocale() );
-                    messageStrings.add( message );
+                    for ( ValidationError error : fieldErrors )
+                    {
+                        String message = error.getMessage( m_wikiActionBean.getContext().getLocale() );
+                        messageStrings.add( message );
+                    }
                 }
             }
 
