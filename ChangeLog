@@ -2,6 +2,13 @@
 
         * 3.0.0-svn-29
 
+        * Lots of work on user preferences/profile JSPs and ActionBeans; LostPassword.jsp
+        has been assimilated into LoginActionBean. <rubs hands gleefully> Muhuhahaha!
+
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
         * Additional improvements, bug fixes to Stripes-related code.
         Wiki.jsp and PageInfo.jsp completely migrated to Stripes.
 
