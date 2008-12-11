@@ -1,3 +1,9 @@
+2008-12-11 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-31
+        
+        * JSPWIKI-451 Fix the copyright templates on all test cases
+        
 2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-29
