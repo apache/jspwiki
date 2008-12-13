@@ -1,5 +1,12 @@
 2008-12-03  Janne Jalkanen <jalkanen@apache.org>
 
+        * 2.8.2-svn-3
+
+        * [JSPWIKI-454] Added the first version of 
+        com.ecyrd.jspwiki.content.Exporter
+
+2008-12-03  Janne Jalkanen <jalkanen@apache.org>
+
         * 2.8.2-svn-2
         
         * [JSPWIKI-444] Wysiwyg editors (such as FCK) no longer duplicate

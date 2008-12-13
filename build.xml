@@ -392,6 +392,7 @@
          webxml="etc/web.xml">
        <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
        <lib file="${jarfile}" />
+       <lib file="tests/lib/stripes*.jar" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
          <include name="dtd/**" />
