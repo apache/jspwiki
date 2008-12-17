@@ -1,3 +1,11 @@
+2008-12-17  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-32
+        
+        * Further refinements to Stripes-related JSPs. Refactoring of Login/Profile/View
+        ActionBeans. Introduction of Stripes layout system, which makes templating
+        somewhat easier (but at the moment all Stripes JSPs are  hardwired to 'default'). 
+        
 2008-12-11 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-31

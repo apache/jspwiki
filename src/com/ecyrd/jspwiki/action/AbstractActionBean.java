@@ -1,8 +1,8 @@
 package com.ecyrd.jspwiki.action;
 
-import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
-
 import net.sourceforge.stripes.action.ActionBeanContext;
+
+import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  */
 public abstract class AbstractActionBean implements WikiActionBean
 {
-    private WikiActionBeanContext m_actionBeanContext = null;
+    private WikiActionBeanContext m_context = null;
 
     /**
      * Creates a new instance of this class, without a WikiEngine, Request or
@@ -35,7 +35,7 @@ public abstract class AbstractActionBean implements WikiActionBean
      */
     public WikiActionBeanContext getContext()
     {
-        return m_actionBeanContext;
+        return m_context;
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class AbstractActionBean implements WikiActionBean
      */
     public void setContext( ActionBeanContext context )
     {
-        m_actionBeanContext = ((WikiActionBeanContext) context);
+        m_context = ((WikiActionBeanContext) context);
     }
 
 }

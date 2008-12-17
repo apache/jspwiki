@@ -105,7 +105,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @param name the asserted name
      */
-    @Validate( required = true, on = "createAssertedName" )
+    @Validate( required = true, on = "createAssertedName", minlength=1, maxlength=128 )
     public void setAssertedName( String name )
     {
         m_assertedName = name;
@@ -130,7 +130,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @param editor the editor
      */
-    @Validate( required = false )
+    @Validate()
     public void setEditor( String editor )
     {
         m_editor = editor;
@@ -146,7 +146,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
      * 
      * @param url the URL to redirect to
      */
-    @Validate( required = false )
+    @Validate()
     public void setRedirect( String url )
     {
         m_redirect = url;
@@ -176,6 +176,6 @@ public class UserPreferencesActionBean extends AbstractActionBean
     {
         WikiActionBeanContext context = getContext();
         TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
-        return context.getContentPage( this, TemplateManager.Template.VIEW, "PreferencesContent.jsp" );
+        return new ForwardResolution( "/UserPreferences.jsp" );
     }
 }

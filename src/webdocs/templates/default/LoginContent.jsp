@@ -31,8 +31,9 @@
 <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
 <stripes:form action="<%=postURL%>" id="login" class="wikiform" method="post" acceptcharset="UTF-8">
+  <stripes:param name="tab" value="logincontent" />
 
-<div class="center">
+  <div class="center">
 
   <h3><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
@@ -56,8 +57,8 @@
     </tr>
     <% if( supportsCookieAuthentication ) { %>
     <tr>
-      <td><stripes:label for="j_remember" name="login.remember" /></td>
-      <td><stripes:checkbox name="j_remember" id="j_remember" /></td>
+      <td><stripes:label for="remember" name="login.remember" /></td>
+      <td><stripes:checkbox name="remember" id="j_remember" /></td>
     </tr>
     <% } %>
     <tr>
@@ -83,7 +84,7 @@
       </a>
     </div>
 
-</div>
+  </div>
 </stripes:form>
 
 </wiki:Tab>
@@ -157,9 +158,7 @@
 
 <%-- Register new user profile --%>
 <wiki:Permission permission='editProfile'>
-<wiki:Tab id="profile" titleKey="login.register.tab">
-  <wiki:Include page='ProfileTab.jsp' />
-</wiki:Tab>
+<wiki:Tab id="profile" titleKey="login.register.tab" url="CreateProfile.jsp" />
 </wiki:Permission>
 
 <wiki:Tab id="loginhelp" titleKey="login.tab.help">

@@ -12,7 +12,6 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
-import com.ecyrd.jspwiki.ui.TemplateManager;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
 import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
@@ -124,22 +123,23 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Default handler that simply forwards the user back to the display JSP <code>PageContent.jsp</code>. 
+     * Default handler that simply forwards the user back to the display JSP <code>/Wiki.jsp</code>. 
      * Every ActionBean needs a default handler to function properly, so we use
      * this (very simple) one.
      * @return a forward to the content template
      */
     @DefaultHandler
+    @DontValidate
     @HandlesEvent("view")
     @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
     @WikiRequestContext("view")
     public Resolution view()
     {
-        return getContext().getContentPage( this, TemplateManager.Template.VIEW, "PageContent.jsp" );
+        return new ForwardResolution( "/Wiki.jsp");
     }
     
     /**
-     * Handler that forwards to the page information display JSP <code>InfoContent.jsp</code>.
+     * Handler that forwards to the page information display JSP <code>/PageInfo.jsp</code>.
      * @return a forward to the content template
      */
     @HandlesEvent("info")
@@ -147,7 +147,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @WikiRequestContext("info")
     public Resolution info()
     {
-        return getContext().getContentPage( this, TemplateManager.Template.VIEW, "InfoContent.jsp" );
+        return new ForwardResolution( "/PageInfo.jsp");
     }
 
 }

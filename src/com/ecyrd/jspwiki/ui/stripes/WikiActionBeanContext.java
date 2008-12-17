@@ -8,14 +8,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.ActionBeanContext;
-import net.sourceforge.stripes.action.ForwardResolution;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.action.WikiActionBean;
-import com.ecyrd.jspwiki.ui.TemplateManager;
 
 /**
  * <p>
@@ -182,19 +179,6 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
         return m_delegate.getBundle( bundle );
-    }
-
-    /**
-     * Returns a Stripes ForwardResolution for the full path to the resolved content page.
-     * @return the resolution
-     */
-    public ForwardResolution getContentPage( WikiActionBean actionBean, TemplateManager.Template template, String contentJsp )
-    {
-        TemplateManager mgr = getEngine().getTemplateManager();
-        WikiActionBeanContext wikiContext = actionBean.getContext();
-        wikiContext.setVariable( "contentTemplate", contentJsp );
-        String contentPage = mgr.findResource( wikiContext, wikiContext.getTemplate(), template.template() );
-        return new ForwardResolution( contentPage );
     }
 
     /**
