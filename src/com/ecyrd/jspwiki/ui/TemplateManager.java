@@ -57,6 +57,36 @@ import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
 public class TemplateManager
     extends ModuleManager
 {
+    /**
+     * Enum that specifies the two types of templates: {@link #VIEW} and {@link #EDIT}.
+     */
+    public enum Template { 
+        /** Template used for viewing things. */
+        VIEW("ViewTemplate.jsp"), 
+        /** Template used for editing things. */
+        EDIT("EditTemplate.jsp");
+        
+        private final String m_template;
+        
+        /**
+         * Package-private constructor.
+         * @param template the name of the template
+         */
+        Template( String template )
+        {
+            m_template = template;
+        }
+        
+        /**
+         * Returns the JSP for the template.
+         * @return
+         */
+        public String template()
+        {
+            return m_template;
+        }
+    }
+    
     private static final String SKIN_DIRECTORY = "skins";
 
     /**

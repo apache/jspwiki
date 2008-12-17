@@ -1,14 +1,4 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<% 
-  WikiContext context = WikiContextFactory.findContext( pageContext ); 
-  TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
-%>
-
 <wiki:TabbedSection defaultTab="${param.tab}">
 
   <wiki:Tab id="prefs" titleKey="prefs.tab.prefs" accesskey="p">

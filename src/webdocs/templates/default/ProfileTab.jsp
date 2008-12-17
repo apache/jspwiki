@@ -1,20 +1,9 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.user.*" %>
-<%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%
-  /* dateformatting not yet supported by wiki:UserProfile tag - diy */
-  WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
-  UserManager manager = wikiContext.getEngine().getUserManager();
-  UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
-%>
-<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
+<stripes:form beanclass="com.ecyrd.jspwiki.action.UserProfileActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
       <stripes:param name="tab" value="profile" />
 
       <h3>
@@ -32,10 +21,11 @@
 
      <!-- Login name -->
      <tr>
-       <td><stripes:label for="loginname" name="prefs.loginname" /></td>
+       <td><stripes:label for="profile.loginName" name="prefs.loginname" /></td>
        <td>
          <wiki:UserProfile property="canChangeLoginName">
-           <stripes:text name="loginname" id="loginname" size="20"><wiki:UserProfile property="loginname" /></stripes:text>
+           <stripes:text name="profile.loginName" id="loginName" size="20"><wiki:UserProfile property="loginname" /></stripes:text>
+           <stripes:errors field="profile.loginName" />
          </wiki:UserProfile>
          <wiki:UserProfile property="!canChangeLoginName">
            <!-- If user can't change their login name, it's because the container manages the login -->
@@ -53,38 +43,37 @@
      <!-- Password; not displayed if container auth used -->
      <wiki:UserProfile property="canChangePassword">
        <tr>
-         <td><stripes:label for="password" name="prefs.password" /></td>
+         <td><stripes:label for="profile.password" name="prefs.password" /></td>
          <td>
-            <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
-            <label for="password">Old</label>&nbsp;
-            <input type="password" name="password0" id="password0" size="20" value="" />
-            &nbsp;&nbsp;--%>
-            <stripes:password name="password" id="password" size="20" value="" />
+           <stripes:password name="profile.password" id="password" size="20" value="" />
+           <stripes:errors field="profile.password" />
           </td>
         </tr>
         <tr>
           <td><stripes:label for="passwordAgain" name="prefs.password2" /></td>
           <td>
-            <stripes:password name="passwordAgain" id="passwordAgain" size="20" value="" />
-            <%-- extra validation ? min size, allowed chars? --%>
+           <stripes:password name="passwordAgain" id="passwordAgain" size="20" value="" />
+           <stripes:errors field="profile.passwordAgain" />
          </td>
        </tr>
      </wiki:UserProfile>
 
      <!-- Full name -->
      <tr>
-       <td><stripes:label for="fullname" name="prefs.fullname" /></td>
+       <td><stripes:label for="profile.fullname" name="prefs.fullname" /></td>
        <td>
-         <stripes:text name="fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></stripes:text>
+         <stripes:text name="profile.fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></stripes:text>
+          <stripes:errors field="profile.fullname" />
          <div class="formhelp"><fmt:message key="prefs.fullname.description" /></div>
        </td>
      </tr>
 
      <!-- E-mail -->
      <tr>
-       <td><stripes:label for="email" name="prefs.email" /></td>
+       <td><stripes:label for="profile.email" name="prefs.email" /></td>
        <td>
-         <stripes:text name="email" id="email" size="20"><wiki:UserProfile property="email" /></stripes:text>
+         <stripes:text name="profile.email" id="email" size="20"><wiki:UserProfile property="email" /></stripes:text>
+         <stripes:errors field="profile.email" />
          <div class="formhelp"><fmt:message key="prefs.email.description" /></div>
        </td>
      </tr>
@@ -107,14 +96,14 @@
        <td><stripes:label name="prefs.creationdate" /></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
- 	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+ 	     <fmt:formatDate value="${profile.Created}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      <tr class="additinfo">
        <td><stripes:label name="prefs.profile.lastmodified" /></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
- 	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+ 	     <fmt:formatDate value="${profile.LastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      </wiki:UserProfile>
@@ -123,10 +112,10 @@
        <td>&nbsp;</td>
        <td>
        <wiki:UserProfile property="exists">
-        <stripes:submit name="saveProfile"><fmt:message key="prefs.save.submit" /></stripes:submit>
+        <stripes:submit name="save"><fmt:message key="prefs.save.submit" /></stripes:submit>
        </wiki:UserProfile>
        <wiki:UserProfile property="new">
-        <stripes:submit name="saveProfile"><fmt:message key="prefs.save.submit" /></stripes:submit>
+        <stripes:submit name="save"><fmt:message key="prefs.save.submit" /></stripes:submit>
        </wiki:UserProfile>
 
        <wiki:UserCheck status="assertionsAllowed">

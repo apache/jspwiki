@@ -1,3 +1,46 @@
+2008-12-17  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-32
+        
+        * Further refinements to Stripes-related JSPs. Refactoring of Login/Profile/View
+        ActionBeans. Introduction of Stripes layout system, which makes templating
+        somewhat easier (but at the moment all Stripes JSPs are  hardwired to 'default'). 
+        
+2008-12-11 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-31
+        
+        * JSPWIKI-451 Fix the copyright templates on all test cases
+        
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
+        * Lots of work on user preferences/profile JSPs and ActionBeans; LostPassword.jsp
+        has been assimilated into LoginActionBean. <rubs hands gleefully> Muhuhahaha!
+
+2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-29
+
+        * Additional improvements, bug fixes to Stripes-related code.
+        Wiki.jsp and PageInfo.jsp completely migrated to Stripes.
+
+        * TemplateManager gains a new (fairly volatile) method that
+        returns a ForwardResolution to content template pages.
+        
+        * TabTag gains a much-needed 'titleKey' property, making the
+        need to embed i18n-related scriptlets in JSPs unnecessary.
+        Please use this in preference to the 'title' property.
+
+2008-12-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-28
+        
+        * Brought in the WikiName class, which should now be used
+        instead of Strings to denote page names internally wherever
+        possible.
+        
 2008-12-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-27

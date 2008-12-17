@@ -54,7 +54,9 @@ public class UserProfileActionBean extends AbstractActionBean
 
     /**
      * Pre-action that loads the UserProfile before user-supplied parameters are
-     * bound to the ActionBean.
+     * bound to the ActionBean. Also stashes the UserProfile as a request-scoped
+     * attribute named <code>profile</code>. This attribute can be used in
+     * JSP EL expressions as <code>$%7Bprofile%7D</code>.
      * 
      * @return <code>null</code>, always
      */
@@ -69,7 +71,11 @@ public class UserProfileActionBean extends AbstractActionBean
 
         // Null out the password, so that we don't re-encrypt it by accident
         m_profile.setPassword( null );
+
+        // Stash the profile as a request attribute
+        getContext().getRequest().setAttribute( "profile", m_profile );
         return null;
+
     }
 
     /**
@@ -138,8 +144,8 @@ public class UserProfileActionBean extends AbstractActionBean
         m_passwordAgain = password;
     }
 
-    @ValidateNestedProperties( { @Validate( field = "loginName", maxlength = 100, required = true, on = "save" ),
-                                @Validate( field = "fullname", maxlength = 100, required = true, on = "save" ),
+    @ValidateNestedProperties( { @Validate( field = "loginName", required = true, minlength = 1, maxlength = 100 ),
+                                @Validate( field = "fullname", required = true, minlength = 1, maxlength = 100 ),
                                 @Validate( field = "password", minlength = 8, maxlength = 100 ),
                                 @Validate( field = "email", converter = EmailTypeConverter.class ) } )
     public void setProfile( UserProfile profile )
@@ -161,7 +167,7 @@ public class UserProfileActionBean extends AbstractActionBean
      * 
      * @param errors the current validation errors for this ActionBean
      */
-    @ValidationMethod( on = "save", when = ValidationState.NO_ERRORS )
+    @ValidationMethod( when = ValidationState.NO_ERRORS )
     public void validateNoCollision( ValidationErrors errors )
     {
         WikiEngine engine = getContext().getEngine();
@@ -188,7 +194,7 @@ public class UserProfileActionBean extends AbstractActionBean
             otherProfile = database.findByLoginName( m_profile.getLoginName() );
             if( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
-                errors.add( "profile.loginName", new LocalizableError( "nameCollision" ) );
+                errors.add( "profile.loginName", new LocalizableError( "profile.nameCollision" ) );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -199,7 +205,7 @@ public class UserProfileActionBean extends AbstractActionBean
             otherProfile = database.findByFullName( m_profile.getFullname() );
             if( otherProfile != null && !otherProfile.equals( oldProfile ) )
             {
-                errors.add( "profile.fullname", new LocalizableError( "nameCollision" ) );
+                errors.add( "profile.fullname", new LocalizableError( "profile.nameCollision" ) );
             }
         }
         catch( NoSuchPrincipalException e )
@@ -208,24 +214,12 @@ public class UserProfileActionBean extends AbstractActionBean
     }
 
     /**
-     * After all fields validate correctly, this method validates that the user
-     * account is not spam.
-     * 
-     * @param errors the current validation errors for this ActionBean
-     */
-    @ValidationMethod( on = "save", when = ValidationState.NO_ERRORS )
-    public void validateNotSpam( ValidationErrors errors )
-    {
-        log.info( "Skipped validateNotSpam method because it has not been coded yet..." );
-    }
-
-    /**
      * If the user profile is new, this method verifies that the user has
      * supplied matching passwords.
      * 
      * @param errors the current validation errors for this ActionBean
      */
-    @ValidationMethod( on = "save", when = ValidationState.ALWAYS )
+    @ValidationMethod( when = ValidationState.ALWAYS )
     public void validatePasswords( ValidationErrors errors )
     {
         // All new profiles must have a supplied password
@@ -233,7 +227,7 @@ public class UserProfileActionBean extends AbstractActionBean
         {
             if( m_profile.getPassword() == null )
             {
-                errors.add( "profile.password", new LocalizableError( "valueNotPresent" ) );
+                errors.add( "profile.password", new LocalizableError( "validation.required.valueNotPresent" ) );
             }
         }
 
@@ -243,22 +237,38 @@ public class UserProfileActionBean extends AbstractActionBean
         {
             if( !m_profile.getPassword().equals( m_passwordAgain ) )
             {
-                errors.add( "profile.password", new LocalizableError( "noPasswordMatch" ) );
+                errors.add( "profile.password", new LocalizableError( "profile.noPasswordMatch" ) );
             }
         }
     }
 
     /**
-     * Default handler that forwards the user back to itself.
+     * Event handler that forwards the user to <code>/CreateProfile.jsp</code>.
+     * 
+     * @return the resolution
+     */
+    @HandlesEvent( "create" )
+    @DontValidate
+    public Resolution create()
+    {
+        return new ForwardResolution( "/CreateProfile.jsp" );
+    }
+
+    /**
+     * Default event handler that forwards the user to
+     * <code>/UserPreferences.jsp</code>.
      * 
      * @return the resolution
      */
     @HandlesEvent( "view" )
     @DefaultHandler
+    @DontValidate
     @WikiRequestContext( "profile" )
     public Resolution view()
     {
-        return new ForwardResolution( "/UserPreferences.jsp" );
+        ForwardResolution r = new ForwardResolution( "/UserPreferences.jsp" );
+        r.addParameter( "tab", "profile" );
+        return r;
     }
 
 }

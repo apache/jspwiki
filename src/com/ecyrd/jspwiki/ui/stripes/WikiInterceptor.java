@@ -12,7 +12,6 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.controller.*;
 
-import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.action.LoginActionBean;
@@ -56,8 +55,8 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
  * <p>
  * After the intercept method fires, calling classes can obtain the saved
  * WikiActionBean by calling
- * {@link WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}.
- * This is the recommended method that JSP scriptlet code should use.
+ * {@link WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}. This
+ * is the recommended method that JSP scriptlet code should use.
  * </p>
  * <p>
  * Because these objects are saved as attributes, they are available to JSPs as
@@ -72,6 +71,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 public class WikiInterceptor implements Interceptor
 {
     private static final Logger log = LoggerFactory.getLogger( WikiInterceptor.class );
+
     /**
      * The PageContext attribute name of the WikiActionBean stored by
      * WikiInterceptor.
@@ -137,15 +137,21 @@ public class WikiInterceptor implements Interceptor
         HttpServletRequest request = actionBeanContext.getRequest();
 
         // Set the WikiSession, if not set yet
-        if ( actionBeanContext.getWikiSession() == null )
+        if( actionBeanContext.getWikiSession() == null )
         {
             WikiEngine engine = actionBeanContext.getEngine();
             WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
             actionBeanContext.setWikiSession( wikiSession );
         }
 
-        // Stash the WikiActionBean and WikiPage in the request
-        WikiInterceptor.saveActionBean( request, actionBean );
+        // Stash the ActionBean as request attribute, if not saved yet
+        if( request.getAttribute( ATTR_ACTIONBEAN ) == null )
+        {
+            request.setAttribute( ATTR_ACTIONBEAN, actionBean );
+        }
+
+        // Stash the WikiContext, WikiEngine
+        WikiContextFactory.saveContext( request, actionBean.getContext() );
 
         if( log.isDebugEnabled() )
         {
@@ -186,6 +192,14 @@ public class WikiInterceptor implements Interceptor
      */
     protected Resolution interceptBindingAndValidation( ExecutionContext context ) throws Exception
     {
+        // Stash the WikiActionBean as a PageContext attribute
+        WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
+        PageContext pageContext = DispatcherHelper.getPageContext();
+        if( pageContext != null )
+        {
+            pageContext.setAttribute( ATTR_ACTIONBEAN, actionBean );
+        }
+
         // Did the handler resolution stage return a Resolution? If so, bail.
         Resolution r = context.proceed();
         if( r != null )
@@ -193,14 +207,13 @@ public class WikiInterceptor implements Interceptor
             return r;
         }
 
-        // Get the resolved ActionBean and event handler method
-        WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
+        // Get the event handler method
         Method handler = context.getHandler();
-        
+
         // Make sure we set the WikiContext request context, while we're at it
         Map<Method, HandlerInfo> eventinfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
         HandlerInfo eventInfo = eventinfos.get( handler );
-        if ( eventInfo != null )
+        if( eventInfo != null )
         {
             String requestContext = eventInfo.getRequestContext();
             actionBean.getContext().setRequestContext( requestContext );
@@ -238,34 +251,41 @@ public class WikiInterceptor implements Interceptor
     }
 
     /**
-     * <p>
-     * Saves the supplied WikiActionBean and its associated WikiContext,
-     * WikiEngine and WikiSession in
-     * request scope. The action bean is saved as an attribute named
-     * {@link WikiInterceptor#ATTR_ACTIONBEAN}. The other attributes are saved
-     * as described in {@link WikiContextFactory#saveContext(HttpServletRequest, WikiContext)}.
-     * </p>
+     * Returns the WikiActionBean associated with the current
+     * {@link javax.servlet.jsp.PageContext}, which may have been previously stashed by
+     * {@link #interceptBindingAndValidation(ExecutionContext)}. Note that each
+     * PageContext can contain its own ActionBean. The ActionBean will be
+     * retrieved from page-scope attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}.
+     * If the WikiActionBean cannot be obtained as a page-scope attribute, the
+     * request scope will be tried also.
      * 
-     * @param request the HTTP request
-     * @param actionBean the WikiActionBean to save
+     * @param pageContext the page context
+     * @return the WikiActionBean
+     * @throws IllegalStateException if the WikiActionBean was not found in the
+     *             page context or 
      */
-    public static void saveActionBean( HttpServletRequest request, WikiActionBean actionBean )
+    public static WikiActionBean findActionBean( PageContext pageContext )
     {
-        // Stash the WikiActionBean
-        request.setAttribute( WikiInterceptor.ATTR_ACTIONBEAN, actionBean );
-    
-        // Stash the other attributes
-        WikiContextFactory.saveContext( request, actionBean.getContext() );
+        WikiActionBean bean = (WikiActionBean) pageContext.getAttribute( WikiInterceptor.ATTR_ACTIONBEAN );
+        if( bean == null )
+        {
+            bean = findActionBean( pageContext.getRequest() );
+            if ( bean == null )
+            {
+                log.debug( "WikiActionBean not found under page context attribute '" + WikiInterceptor.ATTR_ACTIONBEAN
+                           + "'! Something failed to stash it..." );
+            }
+        }
+        return bean;
     }
 
     /**
      * Returns the WikiActionBean associated with the current
-     * {@link javax.servlet.http.HttpServletRequest}. The ActionBean will be
-     * retrieved from attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}.
-     * If an ActionBean is not found under this name, the standard Stripes
-     * attribute
-     * {@link net.sourceforge.stripes.controller.StripesConstants#REQ_ATTR_ACTION_BEAN}
-     * will be attempted.
+     * {@link javax.servlet.http.HttpServletRequest}, which was previously
+     * stashed by {@link #interceptActionBeanResolution(ExecutionContext)}.
+     * Only the first ActionBean on a JSP will be stashed as a request-level
+     * attribute. The ActionBean will be retrieved from attribute
+     * {@link WikiInterceptor#ATTR_ACTIONBEAN}.
      * 
      * @param request the HTTP request
      * @return the WikiActionBean
@@ -278,13 +298,8 @@ public class WikiInterceptor implements Interceptor
         if( bean == null )
         {
             log.debug( "WikiActionBean not found under request attribute '" + WikiInterceptor.ATTR_ACTIONBEAN
-                       + "'; trying standard Stripes attribute '" + StripesConstants.REQ_ATTR_ACTION_BEAN + "'." );
-            bean = (WikiActionBean) request.getAttribute( StripesConstants.REQ_ATTR_ACTION_BEAN );
-        }
-    
-        if( bean == null )
-        {
-            throw new IllegalStateException( "WikiActionBean not found in request! Something failed to stash it..." );
+                       + "'! Something failed to stash it..." );
+            bean = (WikiActionBean) request.getAttribute( WikiInterceptor.ATTR_ACTIONBEAN );
         }
         return bean;
     }
