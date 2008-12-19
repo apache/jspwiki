@@ -28,7 +28,7 @@ NEW FEATURES SINCE 2.6.x
 
 * JSPWiki now requires JDK 1.5 to run.
 
-* Simplified Chinese, Dutch and Italian localizations added!
+* Simplified Chinese, Dutch, Italian and Russian localizations added!
 
 * There is no more need for JAAS files!  Hooray!  This has
   been replaced with custom jspwiki properties.  Please see
