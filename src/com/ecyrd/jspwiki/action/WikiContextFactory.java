@@ -656,7 +656,7 @@ public final class WikiContextFactory
     //       very descriptive.
     public WikiContext newEmptyContext()
     {
-        WikiPage page = new WikiPage(m_engine,"__DUMMY__");
+        WikiPage page = m_engine.createPage( "__DUMMY__");
         return newViewContext( null, null, page );
     }
 }

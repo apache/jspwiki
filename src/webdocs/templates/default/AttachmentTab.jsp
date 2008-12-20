@@ -115,9 +115,9 @@
       </wiki:Permission>
       <td class="changenote">
       <%
-         String changeNote = TextUtil.replaceEntities((String)att.getAttribute(WikiPage.CHANGENOTE));
-         if( changeNote != null ) {
-         %><%=changeNote%><%
+          String changeNote = TextUtil.replaceEntities((String)att.getAttribute(JCRWikiPage.CHANGENOTE));
+               if( changeNote != null ) {
+      %><%=changeNote%><%
          }
       %>
       </td>

@@ -7,8 +7,8 @@
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%--CHECK why is this needed --%>
 <%
-	WikiContext c = WikiContextFactory.findContext( pageContext );
-   	WikiPage p = c.getPage();
+    WikiContext c = WikiContextFactory.findContext( pageContext );
+   	JCRWikiPage p = c.getPage();
 	String pagename = p.getName();
 
 	/* check possible permalink (blogentry) pages */

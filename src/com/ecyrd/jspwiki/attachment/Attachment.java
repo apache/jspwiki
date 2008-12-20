@@ -20,6 +20,7 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
+import com.ecyrd.jspwiki.JCRWikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 
@@ -30,7 +31,7 @@ import com.ecyrd.jspwiki.WikiPage;
  *  @author Erik Bunn
  */
 public class Attachment
-    extends WikiPage
+    extends JCRWikiPage
 {
     private String m_fileName;
     private String m_parentName;

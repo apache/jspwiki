@@ -17,25 +17,26 @@
 <%--
     This provides the FCK editor for JSPWiki.
 --%>
-<%  WikiContext context = WikiContextFactory.findContext( pageContext );
+<%
+    WikiContext context = WikiContextFactory.findContext( pageContext );
     WikiEngine engine = context.getEngine();
     context.setVariable( RenderingManager.WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( WikiEngine.PROP_RUNFILTERS,  "false" );
 
-    WikiPage wikiPage = context.getPage();
+    JCRWikiPage wikiPage = context.getPage();
     String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
     wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
     
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
- %>   
+%>   
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
-  String clone = request.getParameter( "clone" ); 
+    String clone = request.getParameter( "clone" ); 
   if( clone != null )
   {
-    WikiPage p = engine.getPage( clone );
+    JCRWikiPage p = engine.getPage( clone );
     if( p != null )
     {
         AuthorizationManager mgr = engine.getAuthorizationManager();
@@ -45,7 +46,7 @@
         {            
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPureText( p );
+    usertext = engine.getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }

@@ -12,8 +12,8 @@
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%
-  WikiContext c = WikiContextFactory.findContext( pageContext );
-  WikiPage wikiPage = c.getPage();
+    WikiContext c = WikiContextFactory.findContext( pageContext );
+  JCRWikiPage wikiPage = c.getPage();
   int attCount = c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
@@ -24,7 +24,7 @@
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
+  JCRWikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
@@ -99,7 +99,7 @@
           <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </wiki:Link>
       </fmt:param>
-      <fmt:param><%= creationAuthor %></fmt:param>
+      <fmt:param><%=creationAuthor%></fmt:param>
     </fmt:message>
     </p>
   </wiki:CheckVersion>
@@ -182,11 +182,12 @@
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
-      <% if( ( startitem == -1 ) ||
-             (  ( currentPage.getVersion() > startitem )
-             && ( currentPage.getVersion() <= startitem + pagesize ) ) )
-         {
-       %>
+      <%
+          if( ( startitem == -1 ) ||
+           (  ( currentPage.getVersion() > startitem )
+           && ( currentPage.getVersion() <= startitem + pagesize ) ) )
+               {
+      %>
       <tr>
         <td>
           <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
@@ -214,14 +215,16 @@
 
          <td class="changenote">
            <%
-              String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
-              changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
+               String changeNote = (String)currentPage.getAttribute( JCRWikiPage.CHANGENOTE );
+                 changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
            %>
-           <%= changeNote %>
+           <%=changeNote%>
          </td>
 
       </tr>
-      <% } %>
+      <%
+          }
+      %>
       </wiki:HistoryIterator>
 
     </table>
@@ -239,7 +242,7 @@
 <%-- part 2 : attachments --%>
 <wiki:PageType type="attachment">
 <%
-  int MAXATTACHNAMELENGTH = 30;
+    int MAXATTACHNAMELENGTH = 30;
   String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
 
@@ -329,16 +332,16 @@
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
     <%
-      String name = att.getName(); //att.getFileName();
-      int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
+        String name = att.getName(); //att.getFileName();
+          int dot = name.lastIndexOf(".");
+          String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
 
-      String sname = name;
-      if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
+          String sname = name;
+          if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
     %>
 
     <tr>
-      <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
+      <td><div id="attach-<%= attachtype %>" class="attachtype"><%=attachtype%></div></td>
       <%--<td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>--%>
       <%--FIXME classs parameter throws java exception
       <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>'
@@ -365,10 +368,10 @@
       --%>
       <td class='changenote'>
       <%
-         String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
-         if( changeNote != null ) {
-             changeNote = TextUtil.replaceEntities(changeNote);
-         %><%=changeNote%><%
+          String changeNote = (String)att.getAttribute(JCRWikiPage.CHANGENOTE);
+               if( changeNote != null ) {
+           changeNote = TextUtil.replaceEntities(changeNote);
+      %><%=changeNote%><%
          }
       %>
       </td>

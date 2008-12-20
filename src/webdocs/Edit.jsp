@@ -66,8 +66,8 @@
         text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
     }
 
-    WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    JCRWikiPage wikipage = wikiContext.getPage();
+    JCRWikiPage latestversion = wiki.getPage( pagereq );
 
     if( latestversion == null )
     {
@@ -97,10 +97,10 @@
         
         if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
-            return;
+    return;
         }
         
-        WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
+        JCRWikiPage modifiedPage = (JCRWikiPage)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -110,15 +110,15 @@
 
         if( !h.equals(spamhash) )
         {
-            //
-            // Someone changed the page while we were editing it!
-            //
+    //
+    // Someone changed the page while we were editing it!
+    //
 
-            log.info("Page changed, warning user.");
+    log.info("Page changed, warning user.");
 
-            session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
-            response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null, false) );
-            return;
+    session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
+    response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null, false) );
+    return;
         }
 
         //
@@ -141,11 +141,11 @@
 
         if( changenote != null && changenote.length() > 0 )
         {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+    modifiedPage.setAttribute( JCRWikiPage.CHANGENOTE, changenote );
         }
         else
         {
-            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
+    modifiedPage.removeAttribute( JCRWikiPage.CHANGENOTE );
         }
 
         //
@@ -154,7 +154,7 @@
 
         if( text == null )
         {
-            throw new ServletException( "No parameter text set!" );
+    throw new ServletException( "No parameter text set!" );
         }
 
         //
@@ -164,48 +164,48 @@
 
         try
         {
-            wikiContext.setPage( modifiedPage );
+    wikiContext.setPage( modifiedPage );
 
-            if( captcha != null )
-            {
-                wikiContext.setVariable( "captcha", Boolean.TRUE );
-                session.removeAttribute( "captcha" );
-            }
+    if( captcha != null )
+    {
+        wikiContext.setVariable( "captcha", Boolean.TRUE );
+        session.removeAttribute( "captcha" );
+    }
 
-            if( append != null )
-            {
-                StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
+    if( append != null )
+    {
+        StringBuffer pageText = new StringBuffer(wiki.getText( pagereq ));
 
-                pageText.append( text );
+        pageText.append( text );
 
-                wiki.saveText( wikiContext, pageText.toString() );
-            }
-            else
-            {
-                wiki.saveText( wikiContext, text );
-            }
+        wiki.saveText( wikiContext, pageText.toString() );
+    }
+    else
+    {
+        wiki.saveText( wikiContext, text );
+    }
         }
         catch( DecisionRequiredException ex )
         {
         	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
-            response.sendRedirect( redirect );
-            return;
+    response.sendRedirect( redirect );
+    return;
         }
         catch( RedirectException ex )
         {
-            // FIXME: Cut-n-paste code.
-            wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
-            session.setAttribute( "message", ex.getMessage() );
-            session.setAttribute(EditorManager.REQ_EDITEDTEXT,
-                                 EditorManager.getEditedText(pageContext));
-            session.setAttribute("author",user);
-            session.setAttribute("link",link != null ? link : "" );
-            if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
+    // FIXME: Cut-n-paste code.
+    wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
+    session.setAttribute( "message", ex.getMessage() );
+    session.setAttribute(EditorManager.REQ_EDITEDTEXT,
+                         EditorManager.getEditedText(pageContext));
+    session.setAttribute("author",user);
+    session.setAttribute("link",link != null ? link : "" );
+    if( htmlText != null ) session.setAttribute( EditorManager.REQ_EDITEDTEXT, text );
 
-            session.setAttribute("changenote", changenote != null ? changenote : "" );
-            session.setAttribute(SpamFilter.getHashFieldName(request), spamhash);
-            response.sendRedirect( ex.getRedirect() );
-            return;
+    session.setAttribute("changenote", changenote != null ? changenote : "" );
+    session.setAttribute(SpamFilter.getHashFieldName(request), spamhash);
+    response.sendRedirect( ex.getRedirect() );
+    return;
         }
 
         response.sendRedirect(wiki.getViewURL(pagereq));
@@ -215,7 +215,7 @@
     {
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT,
-                             EditorManager.getEditedText(pageContext));
+                     EditorManager.getEditedText(pageContext));
         session.setAttribute("author",user);
         session.setAttribute("link",link != null ? link : "" );
 
@@ -232,8 +232,8 @@
 
         if( lock != null )
         {
-            wiki.getPageManager().unlockPage( lock );
-            session.removeAttribute( "lock-"+pagereq );
+    wiki.getPageManager().unlockPage( lock );
+    session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wiki.getViewURL(pagereq) );
         return;
@@ -251,14 +251,14 @@
     String lastchange = SpamFilter.getSpamHash( latestversion, request );
 
     pageContext.setAttribute( "lastchange",
-                              lastchange,
-                              PageContext.REQUEST_SCOPE );
+                      lastchange,
+                      PageContext.REQUEST_SCOPE );
 
     //
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage,
-                                                    user );
+                                            user );
 
     if( lock != null )
     {
@@ -266,7 +266,6 @@
     }
 
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
-
+                                                    wikiContext.getTemplate(),
+                                                    "EditTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

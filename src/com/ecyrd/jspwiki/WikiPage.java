@@ -21,23 +21,15 @@
 package com.ecyrd.jspwiki;
 
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.*;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 
 import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
-import com.ecyrd.jspwiki.auth.acl.AclEntry;
-import com.ecyrd.jspwiki.auth.acl.AclImpl;
-import com.ecyrd.jspwiki.content.ContentManager;
-import com.ecyrd.jspwiki.content.WikiName;
-import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
@@ -48,22 +40,8 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 //        author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
 
-public class WikiPage
-    implements Cloneable,
-               Comparable
+public interface WikiPage
 {
-    private static final long serialVersionUID = 1L;
-
-    private       WikiName   m_name;
-    private       WikiEngine m_engine;
-    private Date             m_lastModified;
-    private long             m_fileSize = -1;
-    private int              m_version = WikiPageProvider.LATEST_VERSION;
-    private String           m_author = null;
-    private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
-
-    private Node             m_node = null;
-    
     /**
      *  "Summary" is a short summary of the page.  It is a String.
      */
@@ -78,54 +56,13 @@ public class WikiPage
     /** A special variable name for storing a changenote. */
     public static final String CHANGENOTE = "changenote";
     
-    private Acl m_accessList = null;
-    
-    /**
-     *  Use {@link WikiEngine#createPage(String)} instead.
-     *  @deprecated
-     */
-    public WikiPage( WikiEngine engine, String path )
-    {
-        m_engine = engine;
-        m_name   = WikiName.valueOf( path );
-    }
 
-    /** 
-     * Use {@link WikiEngine#createPage(WikiName)} instead. 
-     * @deprecated 
-     */
-    public WikiPage( WikiEngine engine, WikiName name )
-    {
-        m_engine = engine;
-        m_name   = name;
-    }
-    
-    public WikiPage( WikiEngine engine, Node nd ) throws WikiException, RepositoryException
-    {
-        m_engine = engine;
-        m_name   = ContentManager.getWikiPath( nd.getPath() );
-    }
-    
-    // FIXME: This should be a part of the constructor
-    public void setJCRNode(Node nd)
-    {
-        m_node = nd;
-    }
-    
-    public Node getJCRNode()
-    {
-        return m_node;
-    }
-    
     /**
      *  Returns the name of the page.
      *  
      *  @return The page name.
      */
-    public String getName()
-    {
-        return m_name.getPath();
-    }
+    public String getName();
     
     /**
      * Returns the full, qualified, name of the WikiPage that includes the wiki name.
@@ -133,10 +70,7 @@ public class WikiPage
      * {@link com.ecyrd.jspwiki.ui.stripes.HandlerPermission} annotations.
      * @return the qualified page name, for example <code>mywiki:Main</code>
      */
-    public String getQualifiedName()
-    {
-        return m_name.toString();
-    }
+    public String getQualifiedName();
 
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
@@ -148,10 +82,7 @@ public class WikiPage
      *  @param key The key using which the attribute is fetched
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
-    public Object getAttribute( String key )
-    {
-        return m_attributes.get( key );
-    }
+    public Object getAttribute( String key );
 
     /**
      *  Sets an metadata attribute.
@@ -160,10 +91,7 @@ public class WikiPage
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */
-    public void setAttribute( String key, Object attribute )
-    {
-        m_attributes.put( key, attribute );
-    }
+    public void setAttribute( String key, Object attribute );
 
     /**
      * Returns the full attributes Map, in case external code needs
@@ -172,10 +100,7 @@ public class WikiPage
      * @return The attribute Map.  Please note that this is a direct
      *         reference, not a copy.
      */
-    public Map getAttributes() 
-    {
-        return m_attributes;
-    }
+    public Map getAttributes();
 
     /**
      *  Removes an attribute from the page, if it exists.
@@ -184,20 +109,14 @@ public class WikiPage
      *  @return If the attribute existed, returns the object.
      *  @since 2.1.111
      */
-    public Object removeAttribute( String key )
-    {
-        return m_attributes.remove( key );
-    }
+    public Object removeAttribute( String key );
 
     /**
      *  Returns the date when this page was last modified.
      *  
      *  @return The last modification date
      */
-    public Date getLastModified()
-    {
-        return m_lastModified;
-    }
+    public Date getLastModified();
 
     /**
      *  Sets the last modification date.  In general, this is only
@@ -205,10 +124,7 @@ public class WikiPage
      *  
      *  @param date The date
      */
-    public void setLastModified( Date date )
-    {
-        m_lastModified = date;
-    }
+    public void setLastModified( Date date );
 
     /**
      *  Sets the page version.  In general, this is only changed
@@ -216,20 +132,14 @@ public class WikiPage
      *  
      *  @param version The version number
      */
-    public void setVersion( int version )
-    {
-        m_version = version;
-    }
+    public void setVersion( int version );
 
     /**
      *  Returns the version that this WikiPage instance represents.
      *  
      *  @return the version number of this page.
      */
-    public int getVersion()
-    {
-        return m_version;
-    }
+    public int getVersion();
 
     /**
      *  Returns the size of the page.
@@ -237,10 +147,7 @@ public class WikiPage
      *  @return the size of the page. 
      *  @since 2.1.109
      */
-    public long getSize()
-    {
-        return m_fileSize;
-    }
+    public long getSize();
 
     /**
      *  Sets the size.  Typically called by the provider only.
@@ -248,10 +155,7 @@ public class WikiPage
      *  @param size The size of the page.
      *  @since 2.1.109
      */
-    public void setSize( long size )
-    {
-        m_fileSize = size;
-    }
+    public void setSize( long size );
 
     /**
      *  Returns the Acl for this page.  May return <code>null</code>, 
@@ -261,10 +165,7 @@ public class WikiPage
      *  @return The access control list.  May return null, if there is 
      *          no acl.
      */
-    public Acl getAcl()
-    {
-        return m_accessList;
-    }
+    public Acl getAcl();
 
     /**
      * Sets the Acl for this page. Note that method does <em>not</em>
@@ -274,30 +175,21 @@ public class WikiPage
      * {@link com.ecyrd.jspwiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
      * @param acl The Acl to set
      */
-    public void setAcl( Acl acl )
-    {
-        m_accessList = acl;
-    }
+    public void setAcl( Acl acl );
 
     /**
      *  Sets the author of the page.  Typically called only by the provider.
      *  
      *  @param author The author name.
      */
-    public void setAuthor( String author )
-    {
-        m_author = author;
-    }
+    public void setAuthor( String author );
 
     /**
      *  Returns author name, or null, if no author has been defined.
      *  
      *  @return Author name, or possibly null.
      */
-    public String getAuthor()
-    {
-        return m_author;
-    }
+    public String getAuthor();
     
     /**
      *  Returns the wiki nanme for this page
@@ -305,22 +197,12 @@ public class WikiPage
      *  @return The name of the wiki.
      */
     // FIXME: Should we rename this method?
-    public String getWiki()
-    {
-        return m_name.getSpace();
-    }
+    public String getWiki();
 
     /**
      *  This method will remove all metadata from the page.
      */
-    public void invalidateMetadata()
-    {        
-        m_hasMetadata = false;
-        setAcl( null );
-        m_attributes.clear();
-    }
-
-    private boolean m_hasMetadata = false;
+    public void invalidateMetadata();
 
     /**
      *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed.
@@ -329,28 +211,12 @@ public class WikiPage
      *  
      *  @return true, if the page has metadata.
      */
-    public boolean hasMetadata()
-    {
-        return m_hasMetadata;
-    }
+    public boolean hasMetadata();
 
     /**
      *  Sets the metadata flag to true.  Never call.
      */
-    public void setHasMetadata()
-    {
-        m_hasMetadata = true;
-    }
-
-    /**
-     *  Returns a debug-suitable version of the page.
-     *  
-     *  @return A debug string.
-     */
-    public String toString()
-    {
-        return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
-    }
+    public void setHasMetadata();
 
     /**
      *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
@@ -360,37 +226,7 @@ public class WikiPage
      *  
      *  @return A deep clone of the WikiPage
      */
-    public Object clone()
-    {
-        WikiPage p = new WikiPage( m_engine, m_name );
-            
-        p.m_node         = m_node;
-        p.m_author       = m_author;
-        p.m_version      = m_version;
-        p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
-
-        p.m_fileSize     = m_fileSize;
-
-        for( Map.Entry<String,Object> entry : m_attributes.entrySet() )
-        {
-            p.m_attributes.put( entry.getKey(), 
-                                entry.getValue() );
-        }
-
-        if( m_accessList != null )
-        {
-            p.m_accessList = new AclImpl();
-            
-            for( Enumeration entries = m_accessList.entries(); entries.hasMoreElements(); )
-            {
-                AclEntry e = (AclEntry)entries.nextElement();
-            
-                p.m_accessList.addEntry( e );
-            }
-        }
-            
-        return p;
-    }
+    public Object clone();
     
     /**
      *  Compares a page with another.  The primary sorting order
@@ -400,100 +236,11 @@ public class WikiPage
      *  @param o The object to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( Object o )
-    {
-        int res = 0;
-        if( o instanceof WikiPage )
-        {
-            WikiPage c = (WikiPage)o;
-        
-            res = this.getName().compareTo(c.getName());
-            
-            if( res == 0 ) res = this.getVersion()-c.getVersion();
-        }
-            
-        return res;
-    }
+    public int compareTo( Object o );
     
-    /**
-     *  A page is equal to another page if its name and version are equal.
-     *  
-     *  {@inheritDoc}
-     */
-    // TODO: I have a suspicion that defining this method causes some problems
-    //       with page attributes and caching.  So as of 2.7.32, it's disabled.
-    /*
-    public boolean equals( Object o )
-    {
-        if( o != null && o instanceof WikiPage )
-        {
-            WikiPage oo = (WikiPage) o;
-        
-            if( oo.getName().equals( getName() ) )
-            {
-                if( oo.getVersion() == getVersion() )
-                {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    */
-    /**
-     *  {@inheritDoc}
-     */
-    public int hashCode()
-    {
-        return m_name.hashCode() * m_version;
-    }
+    public void save() throws WikiException;
+    
+    public String getContentAsString() throws WikiException;
 
-    public void save() throws WikiException
-    {
-        try
-        {
-            if( m_node.isNew() )
-                m_node.getParent().save();
-            else
-                m_node.save();
-        }
-        catch( RepositoryException e )
-        {
-            throw new WikiException("Save failed",e);
-        }
-    }
-    
-    private static final String ATTR_CONTENT = "wiki:content";
-    
-    public String getContentAsString() throws WikiException
-    {
-        try
-        {
-            Property p = m_node.getProperty( ATTR_CONTENT );
-                
-            return p.getString();
-        }
-        catch( PathNotFoundException e )
-        {
-        }
-        catch( RepositoryException e )
-        {
-            throw new WikiException("Unable to get property",e);
-        }
-        
-        return null;
-    }
-
-    public void setContent( String content ) throws WikiException
-    {
-        try
-        {
-            m_node.setProperty( ATTR_CONTENT, content );
-        }
-        catch( RepositoryException e )
-        {
-            throw new WikiException("Unable to set content",e);
-        }
-    }
+    public void setContent( String content ) throws WikiException;
 }

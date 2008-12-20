@@ -18,8 +18,8 @@
     WikiContext wikiContext = wiki.createContext( request, WikiContext.DELETE );
     String pagereq = wikiContext.getPage().getName();
 
-    WikiPage wikipage      = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    JCRWikiPage wikipage      = wikiContext.getPage();
+    JCRWikiPage latestversion = wiki.getPage( pagereq );
 
     String delete = request.getParameter( "delete" );
     String deleteall = request.getParameter( "delete-all" );
@@ -49,17 +49,17 @@
         
         for( Enumeration params = request.getParameterNames(); params.hasMoreElements(); )
         {
-            String paramName = (String)params.nextElement();
-            
-            if( paramName.startsWith("delver") )
-            {
-                int version = Integer.parseInt( paramName.substring(7) );
-                
-                WikiPage p = wiki.getPage( pagereq, version );
-                
-                log.debug("Deleting version "+version);
-                wiki.deleteVersion( p );
-            }
+    String paramName = (String)params.nextElement();
+    
+    if( paramName.startsWith("delver") )
+    {
+        int version = Integer.parseInt( paramName.substring(7) );
+        
+        JCRWikiPage p = wiki.getPage( pagereq, version );
+        
+        log.debug("Deleting version "+version);
+        wiki.deleteVersion( p );
+    }
         }
         
         response.sendRedirect(wiki.getURL( WikiContext.INFO, redirTo, null, false ));
@@ -70,7 +70,7 @@
     // FIXME: not so.
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
+                                                    wikiContext.getTemplate(),
+                                                    "EditTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

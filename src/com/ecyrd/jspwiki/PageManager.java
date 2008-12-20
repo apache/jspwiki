@@ -251,9 +251,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     public WikiPage getPageInfo( String pageName, int version )
         throws ProviderException
     {
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, 
-                                                                               null, 
-                                                                               new WikiPage(m_engine,pageName) );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
         
         try
         {
@@ -277,9 +275,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     public List getVersionHistory( String pageName )
         throws ProviderException
     {
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, 
-                                                                               null, 
-                                                                               new WikiPage(m_engine,pageName) );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
 
         return m_engine.getContentManager().getVersionHistory( context, pageName );
     }
@@ -324,9 +320,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     public boolean pageExists( String pageName )
         throws ProviderException
     {
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, 
-                                                                           null, 
-                                                                           new WikiPage(m_engine,pageName) );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
 
         return m_engine.getContentManager().pageExists( ctx, pageName );
     }
@@ -343,9 +337,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     public boolean pageExists( String pageName, int version )
         throws ProviderException
     {
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, 
-                                                                           null, 
-                                                                           new WikiPage(m_engine,pageName) );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
 
         try
         {

@@ -313,7 +313,7 @@ public class ContentManager
                 
                 // Hack to make sure we don't add the space root node. 
                 if( n.getDepth() != 2 )
-                    result.add( new WikiPage(ctx.getEngine(), n ) );
+                    result.add( new JCRWikiPage(ctx.getEngine(), n ) );
             }
         }
         catch( RepositoryException e )
@@ -344,9 +344,7 @@ public class ContentManager
             throw new WikiException("Illegal page name");
         }
 
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, 
-                                                                           null, 
-                                                                           new WikiPage(m_engine,path) );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage(path) );
         WikiPage p = getPage( ctx, path, version );
         
         return p.getContentAsString();
@@ -550,7 +548,7 @@ public class ContentManager
         throws ProviderException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
-        WikiPage base = getPage(ctx,path);
+        JCRWikiPage base = getPage(ctx,path);
 
         Node baseNode = base.getJCRNode();
         
@@ -562,7 +560,7 @@ public class ContentManager
             {
                 Version v = vi.nextVersion();
                 
-                result.add( new WikiPage(m_engine,v) );
+                result.add( new JCRWikiPage(m_engine,v) );
             }
         }
         catch( RepositoryException e )
@@ -680,12 +678,13 @@ public class ContentManager
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
+        JCRWikiPage jcrPage = (JCRWikiPage)page;
         try
         {
-            page.getJCRNode().remove();
-            page.save();
+            jcrPage.getJCRNode().remove();
+            jcrPage.save();
             
-            fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
+            fireEvent( WikiPageEvent.PAGE_DELETED, jcrPage.getName() );
         }
         catch( RepositoryException e )
         {
@@ -708,7 +707,7 @@ public class ContentManager
         VersionHistory vh;
         try
         {
-            Node nd = page.getJCRNode();
+            Node nd = ((JCRWikiPage)page).getJCRNode();
             
             // Remove version history
             if( nd.isNodeType( "mix:versionable" ) )
@@ -1004,7 +1003,7 @@ public class ContentManager
      *  @param contentType
      *  @return
      */
-    public WikiPage addPage( WikiContext context, String path, String contentType ) throws WikiException
+    public JCRWikiPage addPage( WikiContext context, String path, String contentType ) throws WikiException
     {
         try
         {
@@ -1012,8 +1011,7 @@ public class ContentManager
         
             Node nd = session.getRootNode().addNode( getJCRPath(null, path) );
             
-            WikiPage page = new WikiPage(m_engine, path);
-            page.setJCRNode( nd );
+            JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
             return page;
         }
@@ -1029,15 +1027,14 @@ public class ContentManager
      *  @param path
      *  @return
      */
-    public WikiPage getPage( WikiContext context, String path ) throws ProviderException
+    public JCRWikiPage getPage( WikiContext context, String path ) throws ProviderException
     {
         try
         {
             Session session = getJCRSession( context );
         
             Node nd = session.getRootNode().getNode( getJCRPath(context, path) );
-            WikiPage page = new WikiPage(m_engine, path);
-            page.setJCRNode( nd );
+            JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
             return page;
         }
@@ -1049,9 +1046,13 @@ public class ContentManager
         {
             throw new ProviderException( "Unable to get a page", e );
         }
+        catch( WikiException e )
+        {
+            throw new ProviderException("Unable to get a  page",e);
+        }
     }
 
-    public WikiPage getPage( WikiContext context, String path, int version ) throws WikiException
+    public JCRWikiPage getPage( WikiContext context, String path, int version ) throws WikiException
     {
         try
         {
@@ -1063,8 +1064,7 @@ public class ContentManager
             
             Version v = vh.getVersion( Integer.toString( version ) );
             
-            WikiPage page = new WikiPage(m_engine, path);
-            page.setJCRNode( v );
+            JCRWikiPage page = new JCRWikiPage(m_engine, v);
             
             return page;
         }

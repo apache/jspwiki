@@ -4,8 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%
-  WikiContext c = WikiContextFactory.findContext( pageContext );
-  WikiPage wikipage = c.getPage();
+    WikiContext c = WikiContextFactory.findContext( pageContext );
+  JCRWikiPage wikipage = c.getPage();
 %>
 <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
 <div id='actionsBottom' class="pageactions"> 

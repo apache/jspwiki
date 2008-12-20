@@ -2,9 +2,10 @@
 
         * 3.0.0-svn-35
         
-        * First step in refactoring WikiPage into an interface.  The WikiPage
+        * First step in refactoring WikiPage into a proper interface.  The WikiPage
         constructors are now deprecated, and most of the code now uses 
-        WikiEngine.createPage().
+        WikiEngine.createPage().  Also, the WikiPage class is now an interface,
+        though it still retains some methods which should not be in the interface.
         
         * Also created a WikiContextFactory.newViewContext(WikiPage) to get rid
         of all the null arguments.

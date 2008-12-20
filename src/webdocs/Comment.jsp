@@ -60,8 +60,8 @@
     String remember = request.getParameter("remember");
     String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
-    WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPage( pagereq );
+    JCRWikiPage wikipage = wikiContext.getPage();
+    JCRWikiPage latestversion = wiki.getPage( pagereq );
     if( latestversion == null )
     {
         latestversion = wikiContext.getPage();
@@ -111,7 +111,7 @@
 
         //  Modifications are written here before actual saving
 
-        WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
+        JCRWikiPage modifiedPage = (JCRWikiPage)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -121,7 +121,7 @@
         
         if( !SpamFilter.checkHash(wikiContext,pageContext) )
         {
-            return;
+    return;
         }
         
         //
@@ -139,9 +139,9 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote != null )
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+    modifiedPage.setAttribute( JCRWikiPage.CHANGENOTE, changenote );
         else
-            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
+    modifiedPage.removeAttribute( JCRWikiPage.CHANGENOTE );
         
         //
         //  Build comment part
@@ -156,7 +156,7 @@
         //
         if( pageText.length() > 0 )
         {
-            pageText.append( "\n\n----\n\n" );
+    pageText.append( "\n\n----\n\n" );
         }
         
         String commentText = EditorManager.getEditedText(pageContext);
@@ -175,57 +175,57 @@
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 )
         {
-            String signature = author;
+    String signature = author;
 
-            if( link != null && link.length() > 0 )
-            {
-                link = HttpUtil.guessValidURI( link );
+    if( link != null && link.length() > 0 )
+    {
+        link = HttpUtil.guessValidURI( link );
 
-                signature = "["+author+"|"+link+"]";
-            }
+        signature = "["+author+"|"+link+"]";
+    }
 
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
+    Calendar cal = Calendar.getInstance();
+    SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
 
-            pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
+    pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
 
-            //SimpleDateFormat fmt = new SimpleDateFormat( "YYYY-MM-DDThh:mm" ); //ISO-8601 format
-            //pageText.append("\n\n--"+signature+", [{Date value='"+fmt.format(cal.getTime())+"' }]");
+    //SimpleDateFormat fmt = new SimpleDateFormat( "YYYY-MM-DDThh:mm" ); //ISO-8601 format
+    //pageText.append("\n\n--"+signature+", [{Date value='"+fmt.format(cal.getTime())+"' }]");
         }
 
         if( TextUtil.isPositive(remember) )
         {
-            if( link != null )
-            {
-                Cookie linkcookie = new Cookie("link", link);
-                linkcookie.setMaxAge(1001*24*60*60);
-                response.addCookie( linkcookie );
-            }
+    if( link != null )
+    {
+        Cookie linkcookie = new Cookie("link", link);
+        linkcookie.setMaxAge(1001*24*60*60);
+        response.addCookie( linkcookie );
+    }
 
-            CookieAssertionLoginModule.setUserCookie( response, author );
+    CookieAssertionLoginModule.setUserCookie( response, author );
         }
         else
         {
-            session.removeAttribute("link");
-            session.removeAttribute("author");
+    session.removeAttribute("link");
+    session.removeAttribute("author");
         }
 
         try
         {
-            wikiContext.setPage( modifiedPage );
-            wiki.saveText( wikiContext, pageText.toString() );
+    wikiContext.setPage( modifiedPage );
+    wiki.saveText( wikiContext, pageText.toString() );
         }
         catch( DecisionRequiredException e )
         {
         	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
-            response.sendRedirect( redirect );
-            return;
+    response.sendRedirect( redirect );
+    return;
         }
         catch( RedirectException e )
         {
-            session.setAttribute( VariableManager.VAR_MSG, e.getMessage() );
-            response.sendRedirect( e.getRedirect() );
-            return;
+    session.setAttribute( VariableManager.VAR_MSG, e.getMessage() );
+    response.sendRedirect( e.getRedirect() );
+    return;
         }
         response.sendRedirect(wiki.getViewURL(pagereq));
         return;
@@ -244,8 +244,8 @@
 
         if( lock != null )
         {
-            wiki.getPageManager().unlockPage( lock );
-            session.removeAttribute( "lock-"+pagereq );
+    wiki.getPageManager().unlockPage( lock );
+    session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wiki.getViewURL(pagereq) );
         return;
@@ -264,8 +264,8 @@
     if( d != null ) lastchange = d.getTime();
 
     pageContext.setAttribute( "lastchange",
-                              Long.toString( lastchange ),
-                              PageContext.REQUEST_SCOPE );
+                      Long.toString( lastchange ),
+                      PageContext.REQUEST_SCOPE );
 
     //  This is a hack to get the preview to work.
     // pageContext.setAttribute( "comment", Boolean.TRUE, PageContext.REQUEST_SCOPE );
@@ -274,7 +274,7 @@
     //  Attempt to lock the page.
     //
     PageLock lock = wiki.getPageManager().lockPage( wikipage,
-                                                    storedUser );
+                                            storedUser );
 
     if( lock != null )
     {
@@ -287,7 +287,6 @@
     response.setDateHeader( "Expires", new Date().getTime() );
     response.setDateHeader( "Last-Modified", new Date().getTime() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
-
+                                                    wikiContext.getTemplate(),
+                                                    "EditTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

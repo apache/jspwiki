@@ -29,10 +29,10 @@
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
-  String clone = request.getParameter( "clone" ); 
+    String clone = request.getParameter( "clone" ); 
   if( clone != null )
   {
-    WikiPage p = engine.getPage( clone );
+    JCRWikiPage p = engine.getPage( clone );
     if( p != null )
     {
         AuthorizationManager mgr = engine.getAuthorizationManager();
@@ -42,7 +42,7 @@
         {            
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPureText( p );
+    usertext = engine.getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }

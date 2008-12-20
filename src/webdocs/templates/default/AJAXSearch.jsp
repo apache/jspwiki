@@ -25,7 +25,7 @@
   WikiEngine wiki;
 %>
 <%
-  /* ********************* actual start ********************* */
+    /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
@@ -47,7 +47,7 @@
       {
         SearchResult r = (SearchResult)i.next();
     
-        WikiPage p = r.getPage();
+        JCRWikiPage p = r.getPage();
     
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
@@ -55,7 +55,7 @@
         {            
           if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) )
           {
-            items.add( r );
+    items.add( r );
           }
         }
         catch( Exception e ) { log.error( "Searching for page "+p, e ); }

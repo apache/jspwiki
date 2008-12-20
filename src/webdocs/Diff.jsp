@@ -32,7 +32,7 @@
     // FIXME: There is a set of unnecessary conversions here: InsertDiffTag
     //        does the String->int conversion anyway.
 
-    WikiPage wikipage = wikiContext.getPage();
+    JCRWikiPage wikipage = wikiContext.getPage();
 
     String srev1 = request.getParameter("r1");
     String srev2 = request.getParameter("r2");
@@ -54,23 +54,23 @@
 
         if( lastver > 1 )
         {
-            ver2 = lastver-1;
+    ver2 = lastver-1;
         }
     }
 
     pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION,
-                              new Integer(ver1),
-                              PageContext.REQUEST_SCOPE );
+                      new Integer(ver1),
+                      PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( InsertDiffTag.ATTR_NEWVERSION,
-                              new Integer(ver2),
-                              PageContext.REQUEST_SCOPE );
+                      new Integer(ver2),
+                      PageContext.REQUEST_SCOPE );
 
     // log.debug("Request for page diff for '"+pagereq+"' from "+request.getRemoteAddr()+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+                                                    wikiContext.getTemplate(),
+                                                    "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 <% } finally { w.exitState(); } %>
