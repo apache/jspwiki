@@ -71,10 +71,7 @@ public class WikiPage
     private Acl m_accessList = null;
     
     /**
-     *  Create a new WikiPage using a given engine and name.
-     *  
-     *  @param engine the WikiEngine that owns this page
-     *  @param path the path of the page
+     *  Use {@link WikiEngine#createPage(String)} instead.
      *  @deprecated
      */
     public WikiPage( WikiEngine engine, String path )
@@ -83,7 +80,10 @@ public class WikiPage
         m_name   = WikiName.valueOf( path );
     }
 
-    /** @deprecated */
+    /** 
+     * Use {@link WikiEngine#createPage(WikiName)} instead. 
+     * @deprecated 
+     */
     public WikiPage( WikiEngine engine, WikiName name )
     {
         m_engine = engine;
