@@ -221,7 +221,7 @@ public class RCSFileProviderTest extends TestCase
     {
         WikiPage p = engine.createPage( NAME1 );
         p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        WikiContext context = engine.getWikiContextFactory().newViewContext(null, null, p);
+        WikiContext context = engine.getWikiContextFactory().newViewContext(p);
         
         engine.saveText( context, "test" );
         
@@ -234,7 +234,7 @@ public class RCSFileProviderTest extends TestCase
         throws Exception
     {
         WikiPage p = engine.createPage( NAME1 );
-        WikiContext context = engine.getWikiContextFactory().newViewContext(null, null, p);
+        WikiContext context = engine.getWikiContextFactory().newViewContext(p);
 
         context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
         engine.saveText( context, "test" );

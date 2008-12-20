@@ -181,7 +181,7 @@ public class DefaultAclManager implements AclManager
                 //
                 //  Or, try parsing the page
                 //
-                WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
+                WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( page );
 
                 ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
 

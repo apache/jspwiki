@@ -202,8 +202,7 @@ public class ContextualDiffProviderTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         TestEngine engine = new TestEngine(props);
         
-        WikiContext ctx = engine.getWikiContextFactory().newViewContext( null, null, 
-                                                                         engine.createPage( WikiName.valueOf( "Dummy" ) ) );
+        WikiContext ctx = engine.getWikiContextFactory().newViewContext( engine.createPage( "Dummy" ) );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
         assertEquals(expectedDiff, actualDiff);

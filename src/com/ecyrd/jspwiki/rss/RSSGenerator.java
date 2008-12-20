@@ -232,7 +232,7 @@ public class RSSGenerator
         StringBuilder buf = new StringBuilder();
         String author = getAuthor(page);
 
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( page );
         if( page.getVersion() > 1 )
         {
             String diff = m_engine.getDiff( ctx,

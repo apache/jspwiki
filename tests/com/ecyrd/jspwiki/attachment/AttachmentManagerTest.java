@@ -104,8 +104,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                       null, null, 
-                                                       m_engine.createPage( WikiName.valueOf( NAME1 ) )), 
+                                                       m_engine.createPage( NAME1 )), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -135,8 +134,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, m_engine.getPage( NAME1 )), 
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage( NAME1 )), 
                                                        "test file.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -166,8 +164,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, m_engine.getPage(NAME1)), 
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage(NAME1)), 
                                                        "test1.txt", 1 );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -201,8 +198,7 @@ public class AttachmentManagerTest extends TestCase
         att.setAuthor( "FooBar" );
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, m_engine.getPage(NAME1)), 
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage(NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -227,8 +223,7 @@ public class AttachmentManagerTest extends TestCase
         // Check that first author did not disappear
         //
 
-        Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, m_engine.getPage(NAME1)), 
+        Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage(NAME1)), 
                                                        "test1.txt",
                                                        1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
@@ -262,8 +257,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, m_engine.getPage( NAME1 )),
+        Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage( NAME1 )),
                                                        "test1" );
 
         assertNotNull( "attachment disappeared", att2 );

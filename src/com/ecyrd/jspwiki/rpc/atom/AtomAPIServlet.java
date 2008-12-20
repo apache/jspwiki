@@ -285,7 +285,7 @@ public class AtomAPIServlet extends HttpServlet
 
             String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
 
-            WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
 
             String title = TextUtil.replaceEntities(BlogUtil.getSiteName(context));
 

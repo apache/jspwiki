@@ -1505,7 +1505,7 @@ public class WikiEngine
     {
         WikiPage page = getPage( pagename, version );
 
-        WikiContext context = m_contextFactory.newViewContext( null, null, page );
+        WikiContext context = m_contextFactory.newViewContext( page );
 
         String res = getHTML( context, page );
 
@@ -1574,7 +1574,7 @@ public class WikiEngine
     {
         LinkCollector localCollector = new LinkCollector();
 
-        textToHTML( m_contextFactory.newViewContext( null, null, page ),
+        textToHTML( m_contextFactory.newViewContext( page ),
                     pagedata,
                     localCollector,
                     null,
