@@ -1,3 +1,9 @@
+2008-12-20 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-37
+        
+        * JSPWIKI-291 Replace ORO regexp library with Java 5 regexps
+
 2008-12-20  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-36

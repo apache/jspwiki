@@ -23,11 +23,12 @@ package com.ecyrd.jspwiki.plugin;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;
@@ -37,6 +38,7 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.RegExpUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
@@ -99,7 +101,7 @@ public abstract class AbstractReferralPlugin
     protected           String   m_separator = ""; // null not blank
     protected           String   m_after = "\\\\";
 
-    protected           Pattern[]  m_exclude;
+    protected           Pattern[] m_exclude;
     protected           Pattern[]  m_include;
     
     protected           String m_show = "pages";
@@ -155,18 +157,18 @@ public abstract class AbstractReferralPlugin
         {
             try
             {
-                PatternCompiler pc = new GlobCompiler();
-
                 String[] ptrns = StringUtils.split( s, "," );
 
                 m_exclude = new Pattern[ptrns.length];
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
-                    m_exclude[i] = pc.compile( ptrns[i] );
+                    m_exclude[i] = Pattern
+                        .compile( RegExpUtil.globToPerl5( ptrns[i].toCharArray(),
+                                                                        RegExpUtil.DEFAULT_MASK ) );
                 }
             }
-            catch( MalformedPatternException e )
+            catch( PatternSyntaxException e )
             {
                 throw new PluginException("Exclude-parameter has a malformed pattern: "+e.getMessage());
             }
@@ -179,18 +181,18 @@ public abstract class AbstractReferralPlugin
         {
             try
             {
-                PatternCompiler pc = new GlobCompiler();
-
                 String[] ptrns = StringUtils.split( s, "," );
 
                 m_include = new Pattern[ptrns.length];
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
-                    m_include[i] = pc.compile( ptrns[i] );
+                    m_include[i] = Pattern
+                        .compile( RegExpUtil.globToPerl5( ptrns[i].toCharArray(),
+                                                                        RegExpUtil.DEFAULT_MASK ) );
                 }
             }
-            catch( MalformedPatternException e )
+            catch( PatternSyntaxException e )
             {
                 throw new PluginException("Include-parameter has a malformed pattern: "+e.getMessage());
             }
@@ -235,8 +237,6 @@ public abstract class AbstractReferralPlugin
     {
         ArrayList<String> result = new ArrayList<String>();
 
-        PatternMatcher pm = new Perl5Matcher();
-
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
             String pageName = (String) i.next();
@@ -253,7 +253,8 @@ public abstract class AbstractReferralPlugin
             {
                 for( int j = 0; j < m_include.length; j++ )
                 {
-                    if( pm.matches( pageName, m_include[j] ) )
+                    Matcher matcher = m_include[j].matcher( pageName );
+                    if( matcher.matches() )
                     {
                         includeThis = true;
                         break;
@@ -265,7 +266,8 @@ public abstract class AbstractReferralPlugin
             {
                 for( int j = 0; j < m_exclude.length; j++ )
                 {
-                    if( pm.matches( pageName, m_exclude[j] ) )
+                    Matcher matcher = m_exclude[j].matcher( pageName );
+                    if( matcher.matches() )
                     {
                         includeThis = false;
                         break; // The inner loop, continue on the next item
@@ -277,7 +279,7 @@ public abstract class AbstractReferralPlugin
             {
                 result.add( pageName );
                 //
-                //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
+                //  if we want to show the last modified date of the most recently changed page, we keep a "high watermark" here:
                 WikiPage page = null;
                 if( m_lastModified )
                 {

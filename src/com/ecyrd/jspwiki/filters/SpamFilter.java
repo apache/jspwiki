@@ -22,6 +22,10 @@ package com.ecyrd.jspwiki.filters;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +39,6 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.ModuleData;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
@@ -143,9 +146,6 @@ public class SpamFilter
     private String          m_errorPage          = "RejectedMessage";
     private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
 
-    private PatternMatcher  m_matcher = new Perl5Matcher();
-    private PatternCompiler m_compiler = new Perl5Compiler();
-
     private Collection<Pattern> m_spamPatterns = null;
 
     private Date            m_lastRebuild = new Date( 0L );
@@ -240,9 +240,9 @@ public class SpamFilter
 
         try
         {
-            m_urlPattern = m_compiler.compile( URL_REGEXP );
+            m_urlPattern = Pattern.compile( URL_REGEXP );
         }
-        catch( MalformedPatternException e )
+        catch( PatternSyntaxException e )
         {
             log.error("Internal error: Someone put in a faulty pattern.",e);
             throw new InternalWikiException("Faulty pattern.");
@@ -367,9 +367,9 @@ public class SpamFilter
 
                 try
                 {
-                    compiledpatterns.add( m_compiler.compile( pattern ) );
+                    compiledpatterns.add( Pattern.compile( pattern ) );
                 }
-                catch( MalformedPatternException e )
+                catch( PatternSyntaxException e )
                 {
                     log.debug( "Malformed spam filter pattern "+pattern );
 
@@ -414,9 +414,9 @@ public class SpamFilter
 
                     try
                     {
-                        compiledpatterns.add( m_compiler.compile( line ) );
+                        compiledpatterns.add( Pattern.compile( line ) );
                     }
-                    catch( MalformedPatternException e )
+                    catch( PatternSyntaxException e )
                     {
                         log.debug( "Malformed spam filter pattern "+line );
                     }
@@ -520,11 +520,12 @@ public class SpamFilter
             String tstChange = change;
             int    urlCounter = 0;
 
-            while( m_matcher.contains(tstChange,m_urlPattern) )
+            Matcher matcher = m_urlPattern.matcher( tstChange );
+            while( matcher.find() )
             {
-                MatchResult m = m_matcher.getMatch();
+                MatchResult m = matcher.toMatchResult();
 
-                tstChange = tstChange.substring( m.endOffset(0) );
+                tstChange = tstChange.substring( m.end(0) );
 
                 urlCounter++;
             }
@@ -853,16 +854,17 @@ public class SpamFilter
         {
             // log.debug("Attempting to match page contents with "+p.getPattern());
 
-            if( m_matcher.contains( change, p ) )
+            Matcher matcher = p.matcher( change );
+            if( matcher.find( ) )
             {
                 //
                 //  Spam filter has a match.
                 //
-                String uid = log( context, REJECT, REASON_REGEXP+"("+p.getPattern()+")", change);
+                String uid = log( context, REJECT, REASON_REGEXP+"("+p.pattern()+")", change);
 
-                log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.getPattern()+"'");
+                log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.pattern()+"'");
 
-                checkStrategy( context, REASON_REGEXP, "Herb says '"+p.getPattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")");
+                checkStrategy( context, REASON_REGEXP, "Herb says '"+p.pattern()+"' is a bad spam word and I trust Herb! (Incident code "+uid+")");
             }
         }
     }

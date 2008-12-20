@@ -32,7 +32,6 @@ import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.content.WikiName;
 
 public class ReferringPagesPluginTest extends TestCase
 {

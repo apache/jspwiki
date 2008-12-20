@@ -24,6 +24,10 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.sourceforge.stripes.util.ResolverUtil;
 
@@ -31,7 +35,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.ecs.xhtml.*;
 import org.apache.jspwiki.api.ModuleData;
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;
@@ -208,13 +211,11 @@ public class PluginManager extends ModuleManager
         m_searchPath.add( DEFAULT_PACKAGE );
         m_searchPath.add( DEFAULT_FORMS_PACKAGE );
 
-        PatternCompiler compiler = new Perl5Compiler();
-
         try
         {
-            m_pluginPattern = compiler.compile( PLUGIN_INSERT_PATTERN );
+            m_pluginPattern = Pattern.compile( PLUGIN_INSERT_PATTERN );
         }
-        catch( MalformedPatternException e )
+        catch( PatternSyntaxException e )
         {
             log.error("Internal error: someone messed with pluginmanager patterns.", e );
             throw new InternalWikiException( "PluginManager patterns are broken" );
@@ -564,19 +565,18 @@ public class PluginManager extends ModuleManager
 
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         Object[] obArgs = { commandline };
-        PatternMatcher  matcher  = new Perl5Matcher();
+        Matcher  matcher  = m_pluginPattern.matcher( commandline );
 
         try
         {
-            if( matcher.contains( commandline, m_pluginPattern ) )
+            if( matcher.find( ) )
             {
-                MatchResult res = matcher.getMatch();
+                MatchResult res = matcher.toMatchResult();
 
-                String plugin   = res.group(2);
-                String args     = commandline.substring(res.endOffset(0),
-                                                        commandline.length() -
-                                                        (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
-                Map arglist     = parseArgs( args );
+                String plugin = res.group( 2 );
+                String args = commandline.substring( res.end(), commandline.length()
+                                                                - (commandline.charAt( commandline.length() - 1 ) == '}' ? 1 : 0) );
+                Map arglist = parseArgs( args );
 
                 return execute( context, plugin, arglist );
             }
@@ -613,18 +613,18 @@ public class PluginManager extends ModuleManager
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {
-        PatternMatcher  matcher  = new Perl5Matcher();
+        Matcher  matcher  = m_pluginPattern.matcher( commandline );
 
         try
         {
-            if( matcher.contains( commandline, m_pluginPattern ) )
+            if( matcher.find() )
             {
-                MatchResult res = matcher.getMatch();
+                MatchResult res = matcher.toMatchResult();
 
                 String plugin   = res.group(2);
-                String args     = commandline.substring(res.endOffset(0),
-                                                        commandline.length() -
-                                                        (commandline.charAt(commandline.length()-1) == '}' ? 1 : 0 ) );
+                String args = commandline.substring( res.end( 0 ),
+                                                     commandline.length()
+                                                         - (commandline.charAt( commandline.length() - 1 ) == '}' ? 1 : 0) );
                 Map<String, Object> arglist = parseArgs( args );
 
                 // set wikitext bounds of plugin as '_bounds' parameter, e.g., [345,396]

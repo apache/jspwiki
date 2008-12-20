@@ -672,7 +672,7 @@
   <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
           description="Runs the JUnit tests.">
 
-    <junit printsummary="yes" haltonfailure="no" fork="yes">
+    <junit printsummary="yes" haltonfailure="no" fork="yes" maxmemory="128m">
         <classpath>
            <path refid="path.tests" />
         </classpath>

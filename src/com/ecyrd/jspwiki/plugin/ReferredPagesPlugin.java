@@ -21,9 +21,10 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;
@@ -37,7 +38,6 @@ import com.ecyrd.jspwiki.util.TextUtil;
  *  <p>Parameters</p>
  *  <ul>
  *    <li><b>name</b> - Name of the root page. Default name of calling page
- *    <li><b>type</b> - local|externalattachment
  *    <li><b>depth</b> - How many levels of pages to be parsed.
  *    <li><b>include</b> - Include only these pages. (eg. include='UC.*|BP.*' )
  *    <li><b>exclude</b> - Exclude with this pattern. (eg. exclude='LeftMenu' )
@@ -53,7 +53,6 @@ public class ReferredPagesPlugin implements WikiPlugin
     private int            m_depth;
     private HashSet<String> m_exists  = new HashSet<String>();
     private StringBuilder   m_result  = new StringBuilder(1024);
-    private PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern        m_includePattern;
     private Pattern        m_excludePattern;
     private boolean m_formatCompact  = true;
@@ -65,9 +64,6 @@ public class ReferredPagesPlugin implements WikiPlugin
     /** The parameter name for the depth.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DEPTH   = "depth";
 
-    /** The parameter name for the type of the references.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_TYPE    = "type";
-    
     /** The parameter name for the included pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE = "include";
     
@@ -136,19 +132,18 @@ public class ReferredPagesPlugin implements WikiPlugin
         // glob compiler :  * is 0..n instance of any char  -- more convenient as input
         // perl5 compiler : .* is 0..n instances of any char -- more powerful
         //PatternCompiler g_compiler = new GlobCompiler();
-        PatternCompiler compiler = new Perl5Compiler();
 
         try
         {
-            m_includePattern = compiler.compile(includePattern);
+            m_includePattern = Pattern.compile( includePattern );
 
-            m_excludePattern = compiler.compile(excludePattern);
+            m_excludePattern = Pattern.compile( excludePattern );
         }
-        catch( MalformedPatternException e )
+        catch( PatternSyntaxException e )
         {
             if (m_includePattern == null )
             {
-                throw new PluginException("Illegal include pattern detected.");
+                throw new PluginException( "Illegal include pattern detected." );
             }
             else if (m_excludePattern == null )
             {
@@ -214,8 +209,8 @@ public class ReferredPagesPlugin implements WikiPlugin
             if( !m_engine.pageExists( link ) ) continue; // hide links to non
                                                          // existing pages
 
-            if(  m_matcher.matches( link , m_excludePattern ) ) continue;
-            if( !m_matcher.matches( link , m_includePattern ) ) continue;
+            if( m_excludePattern.matcher( link ).find()) continue;
+            if( !m_includePattern.matcher( link ).find() ) continue;
 
             if( m_exists.contains( link ) )
             {

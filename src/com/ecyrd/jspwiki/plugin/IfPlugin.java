@@ -23,11 +23,12 @@ package com.ecyrd.jspwiki.plugin;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.ModuleData;
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiProvider;
@@ -269,16 +270,13 @@ public class IfPlugin implements WikiPlugin
     private static boolean doMatch( String content, String pattern )
         throws PluginException
     {
-        PatternCompiler compiler = new Perl5Compiler();
-        PatternMatcher  matcher  = new Perl5Matcher();
-
         try
         {
-            Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
+            Pattern matchPattern = Pattern.compile( pattern );
             // m_exceptPattern = compiler.compile( exceptPattern, Perl5Compiler.SINGLELINE_MASK );
-            return matcher.matches( content, matchp );
+            return matchPattern.matcher( content ).matches();
         }
-        catch( MalformedPatternException e )
+        catch( PatternSyntaxException e )
         {
             throw new PluginException("Faulty pattern "+pattern);
         }
