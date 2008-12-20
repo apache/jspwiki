@@ -21,12 +21,10 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.io.*;
-import java.util.Properties;
-import java.util.Collection;
-import java.util.Date;
-import java.util.TreeSet;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.search.QueryItem;
@@ -35,8 +33,6 @@ import com.ecyrd.jspwiki.search.SearchResult;
 import com.ecyrd.jspwiki.search.SearchResultComparator;
 import com.ecyrd.jspwiki.util.FileUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
-
-import com.ecyrd.jspwiki.*;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.
@@ -447,7 +443,7 @@ public abstract class AbstractFileProvider
             return null;
         }
 
-        WikiPage p = new WikiPage( m_engine, page );
+        WikiPage p = m_engine.createPage( WikiName.valueOf( page ) );
         p.setLastModified( new Date(file.lastModified()) );
 
         return p;

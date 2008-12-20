@@ -84,7 +84,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
         
         m_engine.renamePage(context, "TestPage", "FooTest", false);
         
@@ -110,7 +110,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
         
         m_engine.renamePage(context, "TestPage", "FooTest", true);
         
@@ -135,7 +135,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -159,7 +159,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -183,7 +183,7 @@ public class PageRenamerTest extends TestCase
      
         WikiPage p = m_engine.getPage("TestPage");
      
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
      
         m_engine.renamePage(context, "TestPage", "FooTest", true);
      
@@ -210,7 +210,7 @@ public class PageRenamerTest extends TestCase
         
         WikiPage p = m_engine.getPage("TestPage");
         
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
      
         m_engine.renamePage(context, "Test", "TestPage", true);
         
@@ -229,7 +229,7 @@ public class PageRenamerTest extends TestCase
         m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
         WikiPage p = m_engine.getPage("TestPage");
  
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
  
         m_engine.renamePage(context, "TestPage", "FooTest", true);
  
@@ -307,7 +307,7 @@ public class PageRenamerTest extends TestCase
     {
         WikiPage p = m_engine.getPage(src);
 
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
         
         m_engine.renamePage(context, src, dst, true);
     }

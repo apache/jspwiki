@@ -33,7 +33,6 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 
 public class InputValidatorTest extends TestCase
 {
@@ -48,7 +47,7 @@ public class InputValidatorTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         testEngine = new TestEngine( props );
-        WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null, new WikiPage(testEngine,"dummyPage") );
+        WikiContext context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage("dummyPage") );
         val = new InputValidator( TEST, context );
     }
 

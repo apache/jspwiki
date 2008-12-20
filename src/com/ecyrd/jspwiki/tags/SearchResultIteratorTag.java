@@ -105,7 +105,7 @@ public class SearchResultIteratorTag
             
             // Create a wiki context for the result
             WikiEngine engine = m_wikiContext.getEngine();
-            WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, r.getPage() );
+            WikiContext context = engine.getWikiContextFactory().newViewContext( r.getPage() );
             
             // Stash it in the page context
             pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,

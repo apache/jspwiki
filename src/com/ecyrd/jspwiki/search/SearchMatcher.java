@@ -21,8 +21,8 @@
 package com.ecyrd.jspwiki.search;
 
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -157,7 +157,7 @@ public class SearchMatcher
          */
         public SearchResultImpl( String name, int score )
         {
-            m_page  = new WikiPage( m_engine, name );
+            m_page  = m_engine.getPage( name );
             m_score = score;
         }
 

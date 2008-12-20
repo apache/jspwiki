@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.content.WikiName;
 
 public class ContextualDiffProviderTest extends TestCase
 {
@@ -201,7 +202,7 @@ public class ContextualDiffProviderTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         TestEngine engine = new TestEngine(props);
         
-        WikiContext ctx = engine.getWikiContextFactory().newViewContext( null, null, new WikiPage(engine,"Dummy") );
+        WikiContext ctx = engine.getWikiContextFactory().newViewContext( engine.createPage( "Dummy" ) );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
         assertEquals(expectedDiff, actualDiff);

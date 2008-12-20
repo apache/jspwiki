@@ -70,7 +70,7 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLetters()
         throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
+        WikiPage page = m_engine.createPage("\u00c5\u00e4Test");
 
         m_provider.putPageText( page, "test" );
         
@@ -87,7 +87,7 @@ public class FileSystemProviderTest extends TestCase
     public void testScandinavianLettersUTF8()
         throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
+        WikiPage page = m_engine.createPage("\u00c5\u00e4Test");
 
         m_providerUTF8.putPageText( page, "test\u00d6" );
 
@@ -108,7 +108,7 @@ public class FileSystemProviderTest extends TestCase
     public void testSlashesInPageNamesUTF8()
          throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, "Test/Foobar");
+        WikiPage page = m_engine.createPage("Test/Foobar");
 
         m_providerUTF8.putPageText( page, "test" );
         
@@ -125,7 +125,7 @@ public class FileSystemProviderTest extends TestCase
     public void testSlashesInPageNames()
          throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, "Test/Foobar");
+        WikiPage page = m_engine.createPage("Test/Foobar");
 
         m_provider.putPageText( page, "test" );
    
@@ -142,7 +142,7 @@ public class FileSystemProviderTest extends TestCase
     public void testDotsInBeginning()
        throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, ".Test");
+        WikiPage page = m_engine.createPage(".Test");
 
         m_provider.putPageText( page, "test" );
 
@@ -160,7 +160,7 @@ public class FileSystemProviderTest extends TestCase
     {
         try
         {
-            WikiPage page = new WikiPage(m_engine, "\u00c5\u00e4Test");
+            WikiPage page = m_engine.createPage("\u00c5\u00e4Test");
             page.setAuthor("Min\u00e4");
 
             m_provider.putPageText( page, "test" );
@@ -255,7 +255,7 @@ public class FileSystemProviderTest extends TestCase
     {
         String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        WikiPage p = new WikiPage(m_engine,"Test");
+        WikiPage p = m_engine.createPage("Test");
         p.setAuthor("AnonymousCoward");
         
         m_provider.putPageText( p, "v1" );

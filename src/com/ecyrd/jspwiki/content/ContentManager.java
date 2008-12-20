@@ -86,7 +86,7 @@ import com.ecyrd.jspwiki.workflow.Workflow;
 
 public class ContentManager
 {
-    protected static final String DEFAULT_SPACE = "Main";
+    public static final String DEFAULT_SPACE = "Main";
     
     private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE;
 

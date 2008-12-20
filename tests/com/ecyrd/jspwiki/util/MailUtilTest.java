@@ -32,8 +32,6 @@ import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
-import com.ecyrd.jspwiki.util.MailUtil;
 
 /**
  * This test is not integrated into any TestSuite yet, because I don't know how
@@ -72,7 +70,7 @@ public class MailUtilTest extends TestCase
         
         TestEngine testEngine = new TestEngine( m_props );
         
-        m_context = testEngine.getWikiContextFactory().newViewContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
+        m_context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( PAGE_NAME ) );
     }
 
     public void tearDown()

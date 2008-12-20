@@ -26,6 +26,7 @@ import java.util.*;
 import org.apache.jspwiki.api.PluginException;
 
 import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -154,10 +155,11 @@ public class WeblogEntryPlugin implements WikiPlugin
 
         while( idx < MAX_BLOG_ENTRIES )
         {
-            WikiPage page = new WikiPage( mgr.getEngine(),
-                                          WeblogPlugin.makeEntryPage( baseName, 
-                                                                      date, 
-                                                                      Integer.toString(idx) ) );
+            String name = WeblogPlugin.makeEntryPage( baseName, 
+                                                      date, 
+                                                      Integer.toString(idx) );
+            WikiPage page = mgr.getEngine().createPage( WikiName.valueOf(name) );
+                                          
             PageLock lock = mgr.getCurrentLock( page );
 
             if( lock == null )

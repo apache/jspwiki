@@ -33,6 +33,7 @@ import org.apache.jspwiki.api.WikiException;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
@@ -167,7 +168,7 @@ public class BugReportHandler
             String pageName = findNextPage( context, title,
                                             (String)params.get( PARAM_PAGE ) );
 
-            WikiPage newPage = new WikiPage( context.getEngine(), pageName );
+            WikiPage newPage = context.getEngine().createPage( WikiName.valueOf(pageName) );
             WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
 

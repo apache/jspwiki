@@ -50,10 +50,10 @@ public class CounterProvider
     public void initialize( WikiEngine engine, Properties props )
     {
         m_pages = new WikiPage[]
-                  { new WikiPage(engine, "Foo"),
-                    new WikiPage(engine, "Bar"),
-                    new WikiPage(engine, "Blat"),
-                    new WikiPage(engine, "Blaa") };
+                  { engine.createPage("Foo"),
+                    engine.createPage("Bar"),
+                    engine.createPage("Blat"),
+                    engine.createPage("Blaa") };
         
         m_initCalls++;
         

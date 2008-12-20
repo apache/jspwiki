@@ -1,3 +1,14 @@
+2008-12-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-35
+        
+        * First step in refactoring WikiPage into an interface.  The WikiPage
+        constructors are now deprecated, and most of the code now uses 
+        WikiEngine.createPage().
+        
+        * Also created a WikiContextFactory.newViewContext(WikiPage) to get rid
+        of all the null arguments.
+
 2008-12-19  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-34

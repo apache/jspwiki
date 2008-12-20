@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Collection;
 import java.util.Iterator;
+
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -142,7 +144,7 @@ public class AtomAPIServlet extends HttpServlet
             String pageName = plugin.getNewEntryPage( m_engine, blogid );
             String username = author.getName();
 
-            WikiPage entryPage = new WikiPage( m_engine, pageName );
+            WikiPage entryPage = m_engine.createPage( WikiName.valueOf( pageName ) );
             entryPage.setAuthor( username );
 
             WikiContext context = m_engine.getWikiContextFactory().newViewContext( request, response, entryPage );
@@ -283,7 +285,7 @@ public class AtomAPIServlet extends HttpServlet
 
             String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
 
-            WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
+            WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
 
             String title = TextUtil.replaceEntities(BlogUtil.getSiteName(context));
 

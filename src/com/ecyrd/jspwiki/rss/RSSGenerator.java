@@ -30,6 +30,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.TextUtil;
 
@@ -231,7 +232,7 @@ public class RSSGenerator
         StringBuilder buf = new StringBuilder();
         String author = getAuthor(page);
 
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( page );
         if( page.getVersion() > 1 )
         {
             String diff = m_engine.getDiff( ctx,
@@ -281,7 +282,7 @@ public class RSSGenerator
     public String generate() throws WikiException
     {
         WikiContext context = m_engine.getWikiContextFactory().newContext(null,null,WikiContext.RSS);
-        context.setPage( new WikiPage( m_engine, "__DUMMY" ) );
+        context.setPage( m_engine.createPage( WikiName.valueOf( "__DUMMY" ) ) );
         Feed feed = new RSS10Feed( context );
 
         String result = generateFullWikiRSS( context, feed );

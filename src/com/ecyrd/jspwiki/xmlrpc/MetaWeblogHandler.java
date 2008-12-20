@@ -37,6 +37,7 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.plugin.WeblogEntryPlugin;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.providers.ProviderException;
@@ -266,10 +267,10 @@ public class MetaWeblogHandler
 
             String pageName = plugin.getNewEntryPage( engine, blogid );
 
-            WikiPage entryPage = new WikiPage( engine, pageName );
+            WikiPage entryPage = engine.createPage( WikiName.valueOf( pageName ) );
             entryPage.setAuthor( username );
 
-            WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
+            WikiContext context = engine.getWikiContextFactory().newViewContext( entryPage );
 
             StringBuilder text = new StringBuilder();
             text.append( "!"+content.get("title") );
@@ -366,7 +367,7 @@ public class MetaWeblogHandler
             WikiPage entryPage = (WikiPage)page.clone();
             entryPage.setAuthor( username );
 
-            WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, entryPage );
+            WikiContext context = engine.getWikiContextFactory().newViewContext( entryPage );
 
             StringBuilder text = new StringBuilder();
             text.append( "!"+content.get("title") );

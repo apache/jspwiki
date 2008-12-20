@@ -44,6 +44,7 @@ public class Attachment
      *  @param parentPage The page which will contain this attachment.
      *  @param fileName   The file name for the attachment.
      */
+    @SuppressWarnings("deprecation")
     public Attachment( WikiEngine engine, String parentPage, String fileName )
     {
         super( engine, parentPage+"/"+fileName );

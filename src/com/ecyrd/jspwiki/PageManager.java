@@ -20,35 +20,17 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.io.IOException;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
 
-import com.ecyrd.jspwiki.auth.WikiPrincipal;
-import com.ecyrd.jspwiki.auth.WikiSecurityException;
-import com.ecyrd.jspwiki.auth.acl.Acl;
-import com.ecyrd.jspwiki.auth.acl.AclEntry;
-import com.ecyrd.jspwiki.auth.acl.AclEntryImpl;
-import com.ecyrd.jspwiki.auth.user.UserProfile;
-import com.ecyrd.jspwiki.event.*;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.event.WikiEvent;
+import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.modules.ModuleManager;
-import com.ecyrd.jspwiki.providers.CachingProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
-import com.ecyrd.jspwiki.providers.RepositoryModifiedException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
-import com.ecyrd.jspwiki.util.ClassUtil;
-import com.ecyrd.jspwiki.util.TextUtil;
-import com.ecyrd.jspwiki.util.WikiBackgroundThread;
-import com.ecyrd.jspwiki.workflow.Outcome;
-import com.ecyrd.jspwiki.workflow.Task;
-import com.ecyrd.jspwiki.workflow.Workflow;
 
 /**
  *  Manages the WikiPages.  This class functions as an unified interface towards

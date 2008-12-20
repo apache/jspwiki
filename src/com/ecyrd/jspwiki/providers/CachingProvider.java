@@ -688,7 +688,7 @@ public class CachingProvider
             {
                 String data = m_provider.getPageText(page.getName(), page.getVersion());
 
-                WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, page );
+                WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( page );
                 MarkupParser parser = mgr.getParser( ctx, data );
 
                 parser.parse();

@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.util.FileUtil;
@@ -500,7 +502,7 @@ public class RCSFileProvider
             {
                 if( matcher.contains( line, revpattern ) )
                 {
-                    info = new WikiPage( m_engine, page );
+                    info = m_engine.createPage( WikiName.valueOf( page ) );
 
                     MatchResult result = matcher.getMatch();
 

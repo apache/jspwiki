@@ -22,6 +22,8 @@ import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
+import com.ecyrd.jspwiki.content.ContentManager;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.MarkupParser;
@@ -128,12 +130,7 @@ public final class WikiContextFactory
         {
             // If the page supplied was blank, default to the front page to
             // avoid NPEs
-            page = engine.getPage( engine.getFrontPage() );
-            // Front page does not exist?
-            if( page == null )
-            {
-                page = new WikiPage( engine, engine.getFrontPage() );
-            }
+            page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
             context.setPage( page );
         }
         request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
@@ -362,6 +359,17 @@ public final class WikiContextFactory
         return ctx;
     }
 
+    /**
+     *  Provides a clean shortcut to newViewContext(null,null,page).
+     * 
+     *  @param page The WikiPage object for this page.
+     *  @return A new WikiPage.
+     */
+    public WikiActionBeanContext newViewContext( WikiPage page )
+    {
+        return newViewContext( null, null, page );
+    }
+    
     /**
      * Searches a set of named packages for WikiActionBean implementations, and
      * returns any it finds.
@@ -614,7 +622,7 @@ public final class WikiContextFactory
         if( wikipage == null )
         {
             page = MarkupParser.cleanLink( page );
-            wikipage = new WikiPage( m_engine, page );
+            wikipage = m_engine.createPage( WikiName.valueOf( page ) );
         }
         return wikipage;
     }
