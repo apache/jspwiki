@@ -117,7 +117,7 @@ public class HandlerInfo
         // Identify the wiki request context identified by @WikiRequestContext
         // (if supplied)
         WikiRequestContext requestContext = method.getAnnotation( WikiRequestContext.class );
-        String defaultRequestContext = m_handlerMethod.getClass().getName() + "." + eventHandler;
+        String defaultRequestContext = m_beanClass.getName() + "." + eventHandler;
         m_requestContext = requestContext != null ? requestContext.value() : defaultRequestContext;
 
         // Store the Stripes event handler name
