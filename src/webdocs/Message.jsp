@@ -5,12 +5,12 @@
 <%@ page import="com.ecyrd.jspwiki.action.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.stripes.*" %>
 <%@ page import="com.ecyrd.jspwiki.tags.WikiTagBase" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.MessageActionBean" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.MessageActionBean" id="wikiActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiContext wikiContext = WikiContextFactory.findContext( pageContext );

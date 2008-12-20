@@ -1,4 +1,4 @@
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ page import="com.ecyrd.jspwiki.log.Logger" %>
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
@@ -15,7 +15,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.search.SearchResult" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" id="wikiActionBean" />
 <%! 
   public void jspInit()
   {

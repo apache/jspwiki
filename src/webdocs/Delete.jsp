@@ -4,9 +4,9 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.DeleteActionBean" event="delete" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.DeleteActionBean" event="delete" id="wikiActionBean" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki");

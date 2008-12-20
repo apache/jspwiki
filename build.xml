@@ -338,6 +338,7 @@
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
+         <metainf dir="etc" includes="jspwiki.tld" />
       </jar>
   </target>
 
@@ -430,7 +431,7 @@
          <include name="commons-logging.properties" />
          <include name="jspwiki.policy" />
          <include name="jspwiki.properties" />
-         <include name="*.tld" />
+         <include name="oscache.tld" />
          <include name="userdatabase.xml" />
          <include name="groupdatabase.xml" />
        </webinf>
@@ -857,7 +858,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="dtd/**" />
           <include name="commons-logging.properties" />
           <include name="jspwiki.policy" />
-          <include name="*.tld" />
+          <include name="oscache.tld" />
         </fileset>
         <fileset dir="tests/etc" includes="userdatabase.xml groupdatabase.xml" />
       </copy>

@@ -1,4 +1,4 @@
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <wiki:TabbedSection defaultTab="${param.tab}">
 
   <wiki:Tab id="prefs" titleKey="prefs.tab.prefs" accesskey="p">

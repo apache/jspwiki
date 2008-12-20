@@ -6,6 +6,8 @@
         code so that it is much simpler, and leverages Stripes. UserPreferences.jsp and
         the collaborating UserPreferencesActionBean, in particular, are excellent
         examples of what the JSPs will look like when we are done migrating everything.
+        A few bugs remain. Removed jspwiki & stripes TLDs from WEB-INF; they are
+        both in their respective jars' META-INF directories now.
 
 2008-12-19 Harry Metske <metskem@apache.org>
 
