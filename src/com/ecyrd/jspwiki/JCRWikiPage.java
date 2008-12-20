@@ -34,15 +34,17 @@ import com.ecyrd.jspwiki.providers.WikiPageProvider;
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
+ *  
+ *  @since 3.0
  */
 
 // FIXME: We need to rethink how metadata is being used - probably the 
 //        author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
 
-public class WikiPage
+public class JCRWikiPage
     implements Cloneable,
-               Comparable
+               Comparable, WikiPage
 {
     private static final long serialVersionUID = 1L;
 
@@ -54,27 +56,13 @@ public class WikiPage
     private String           m_author = null;
     private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
 
-    /**
-     *  "Summary" is a short summary of the page.  It is a String.
-     */
-    public static final String DESCRIPTION = "summary";
-
-    /** A special variable name for storing a page alias. */
-    public static final String ALIAS = "alias";
-    
-    /** A special variable name for storing a redirect note */
-    public static final String REDIRECT = "redirect";
-
-    /** A special variable name for storing a changenote. */
-    public static final String CHANGENOTE = "changenote";
-    
     private Acl m_accessList = null;
     
     /**
      *  Use {@link WikiEngine#createPage(String)} instead.
      *  @deprecated
      */
-    public WikiPage( WikiEngine engine, String path )
+    public JCRWikiPage( WikiEngine engine, String path )
     {
         m_engine = engine;
         m_name   = WikiName.valueOf( path );
@@ -84,198 +72,142 @@ public class WikiPage
      * Use {@link WikiEngine#createPage(WikiName)} instead. 
      * @deprecated 
      */
-    public WikiPage( WikiEngine engine, WikiName name )
+    public JCRWikiPage( WikiEngine engine, WikiName name )
     {
         m_engine = engine;
         m_name   = name;
     }
 
-    /**
-     *  Returns the name of the page.
-     *  
-     *  @return The page name.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getName()
      */
     public String getName()
     {
         return m_name.getPath();
     }
     
-    /**
-     * Returns the full, qualified, name of the WikiPage that includes the wiki name.
-     * Used by the {@link com.ecyrd.jspwiki.ui.stripes.HandlerInfo} class and
-     * {@link com.ecyrd.jspwiki.ui.stripes.HandlerPermission} annotations.
-     * @return the qualified page name, for example <code>mywiki:Main</code>
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getQualifiedName()
      */
     public String getQualifiedName()
     {
         return m_name.toString();
     }
 
-    /**
-     *  A WikiPage may have a number of attributes, which might or might not be 
-     *  available.  Typically attributes are things that do not need to be stored
-     *  with the wiki page to the page repository, but are generated
-     *  on-the-fly.  A provider is not required to save them, but they
-     *  can do that if they really want.
-     *
-     *  @param key The key using which the attribute is fetched
-     *  @return The attribute.  If the attribute has not been set, returns null.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getAttribute(java.lang.String)
      */
     public Object getAttribute( String key )
     {
         return m_attributes.get( key );
     }
 
-    /**
-     *  Sets an metadata attribute.
-     *  
-     *  @see #getAttribute(String)
-     *  @param key The key for the attribute used to fetch the attribute later on.
-     *  @param attribute The attribute value
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setAttribute(java.lang.String, java.lang.Object)
      */
     public void setAttribute( String key, Object attribute )
     {
         m_attributes.put( key, attribute );
     }
 
-    /**
-     * Returns the full attributes Map, in case external code needs
-     * to iterate through the attributes.
-     * 
-     * @return The attribute Map.  Please note that this is a direct
-     *         reference, not a copy.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getAttributes()
      */
     public Map getAttributes() 
     {
         return m_attributes;
     }
 
-    /**
-     *  Removes an attribute from the page, if it exists.
-     *  
-     *  @param  key The key for the attribute
-     *  @return If the attribute existed, returns the object.
-     *  @since 2.1.111
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#removeAttribute(java.lang.String)
      */
     public Object removeAttribute( String key )
     {
         return m_attributes.remove( key );
     }
 
-    /**
-     *  Returns the date when this page was last modified.
-     *  
-     *  @return The last modification date
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getLastModified()
      */
     public Date getLastModified()
     {
         return m_lastModified;
     }
 
-    /**
-     *  Sets the last modification date.  In general, this is only
-     *  changed by the provider.
-     *  
-     *  @param date The date
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setLastModified(java.util.Date)
      */
     public void setLastModified( Date date )
     {
         m_lastModified = date;
     }
 
-    /**
-     *  Sets the page version.  In general, this is only changed
-     *  by the provider.
-     *  
-     *  @param version The version number
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setVersion(int)
      */
     public void setVersion( int version )
     {
         m_version = version;
     }
 
-    /**
-     *  Returns the version that this WikiPage instance represents.
-     *  
-     *  @return the version number of this page.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getVersion()
      */
     public int getVersion()
     {
         return m_version;
     }
 
-    /**
-     *  Returns the size of the page.
-     *  
-     *  @return the size of the page. 
-     *  @since 2.1.109
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getSize()
      */
     public long getSize()
     {
         return m_fileSize;
     }
 
-    /**
-     *  Sets the size.  Typically called by the provider only.
-     *  
-     *  @param size The size of the page.
-     *  @since 2.1.109
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setSize(long)
      */
     public void setSize( long size )
     {
         m_fileSize = size;
     }
 
-    /**
-     *  Returns the Acl for this page.  May return <code>null</code>, 
-     *  in case there is no Acl defined, or it has not
-     *  yet been set by {@link #setAcl(Acl)}.
-     *  
-     *  @return The access control list.  May return null, if there is 
-     *          no acl.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getAcl()
      */
     public Acl getAcl()
     {
         return m_accessList;
     }
 
-    /**
-     * Sets the Acl for this page. Note that method does <em>not</em>
-     * persist the Acl itself to back-end storage or in page markup;
-     * it merely sets the internal field that stores the Acl. To
-     * persist the Acl, callers should invoke 
-     * {@link com.ecyrd.jspwiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
-     * @param acl The Acl to set
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setAcl(com.ecyrd.jspwiki.auth.acl.Acl)
      */
     public void setAcl( Acl acl )
     {
         m_accessList = acl;
     }
 
-    /**
-     *  Sets the author of the page.  Typically called only by the provider.
-     *  
-     *  @param author The author name.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setAuthor(java.lang.String)
      */
     public void setAuthor( String author )
     {
         m_author = author;
     }
 
-    /**
-     *  Returns author name, or null, if no author has been defined.
-     *  
-     *  @return Author name, or possibly null.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getAuthor()
      */
     public String getAuthor()
     {
         return m_author;
     }
     
-    /**
-     *  Returns the wiki nanme for this page
-     *  
-     *  @return The name of the wiki.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#getWiki()
      */
     // FIXME: Should we rename this method?
     public String getWiki()
@@ -283,8 +215,8 @@ public class WikiPage
         return m_name.getSpace();
     }
 
-    /**
-     *  This method will remove all metadata from the page.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#invalidateMetadata()
      */
     public void invalidateMetadata()
     {        
@@ -295,47 +227,36 @@ public class WikiPage
 
     private boolean m_hasMetadata = false;
 
-    /**
-     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed.
-     *  Note that this method is a kludge to support our pre-3.0 metadata system, and as such
-     *  will go away with the new API.
-     *  
-     *  @return true, if the page has metadata.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#hasMetadata()
      */
     public boolean hasMetadata()
     {
         return m_hasMetadata;
     }
 
-    /**
-     *  Sets the metadata flag to true.  Never call.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#setHasMetadata()
      */
     public void setHasMetadata()
     {
         m_hasMetadata = true;
     }
 
-    /**
-     *  Returns a debug-suitable version of the page.
-     *  
-     *  @return A debug string.
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#toString()
      */
     public String toString()
     {
         return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
     }
 
-    /**
-     *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
-     *  they're immutable.  Attributes are not cloned, only the internal
-     *  HashMap (so if you modify the contents of a value of an attribute,
-     *  these will reflect back to everyone).
-     *  
-     *  @return A deep clone of the WikiPage
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#clone()
      */
     public Object clone()
     {
-        WikiPage p = new WikiPage( m_engine, m_name );
+        JCRWikiPage p = new JCRWikiPage( m_engine, m_name );
             
         p.m_author       = m_author;
         p.m_version      = m_version;
@@ -364,13 +285,8 @@ public class WikiPage
         return p;
     }
     
-    /**
-     *  Compares a page with another.  The primary sorting order
-     *  is according to page name, and if they have the same name,
-     *  then according to the page version.
-     *  
-     *  @param o The object to compare against
-     *  @return -1, 0 or 1
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#compareTo(java.lang.Object)
      */
     public int compareTo( Object o )
     {
@@ -413,8 +329,8 @@ public class WikiPage
         return false;
     }
     */
-    /**
-     *  {@inheritDoc}
+    /* (non-Javadoc)
+     * @see com.ecyrd.jspwiki.WikiPage#hashCode()
      */
     public int hashCode()
     {

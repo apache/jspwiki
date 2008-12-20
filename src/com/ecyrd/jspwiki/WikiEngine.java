@@ -1887,7 +1887,7 @@ public class WikiEngine
     @SuppressWarnings("deprecation")
     public WikiPage createPage( WikiName name )
     {
-        return new WikiPage( this, name );
+        return new JCRWikiPage( this, name );
     }
     
     /**
