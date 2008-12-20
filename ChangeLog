@@ -1,3 +1,9 @@
+2008-12-20  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-36
+
+        * Fixed some failing unit tests due to prefs refactoring.
+
 2008-12-20  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-35
