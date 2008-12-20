@@ -1,7 +1,7 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ViewActionBean" event="view" />
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ViewActionBean" event="view" id="wikiActionBean" />
 
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );

@@ -1,3 +1,20 @@
+2008-12-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-34
+        
+        * Migrated UserPreferences.jsp and related; completely overhauled Preferences
+        code so that it is much simpler, and leverages Stripes. UserPreferences.jsp and
+        the collaborating UserPreferencesActionBean, in particular, are excellent
+        examples of what the JSPs will look like when we are done migrating everything.
+        A few bugs remain. Removed jspwiki & stripes TLDs from WEB-INF; they are
+        both in their respective jars' META-INF directories now.
+
+2008-12-19 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-33
+        
+        * JSPWIKI-451 Russian translation, thanks to Andrew Rikhlivsky
+
 2008-12-17  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-32

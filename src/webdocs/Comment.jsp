@@ -13,12 +13,12 @@
 <%@ page import="com.ecyrd.jspwiki.preferences.Preferences.TimeFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 

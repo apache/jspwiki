@@ -26,7 +26,7 @@ What JSP authors must do:
 Include these lines for all top-level JSPs:
 
 <%@ page import="com.ecyrd.jspwiki.action.*" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 
 WikiContext Creation
 --------------------

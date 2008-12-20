@@ -2,9 +2,9 @@
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.UploadActionBean" event="upload" />
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.UploadActionBean" event="upload" id="wikiActionBean" />
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>

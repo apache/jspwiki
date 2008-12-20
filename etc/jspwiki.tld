@@ -4,14 +4,12 @@
 
 <!--
      JSPWiki tag libraries are defined here.
-
-     Note that we support only the 1.1 spec for now,
-     simply because there is no reason to break compatibility.
  -->
 <taglib>
-  <tlibversion>1.0</tlibversion>
-  <jspversion>1.1</jspversion>
+  <tlibversion>3.0</tlibversion>
+  <jspversion>2.0</jspversion>
   <shortname>jspwiki</shortname>
+  <uri>http://jakarta.apache.org/jspwiki.tld</uri>
 
   <tag>
     <name>AdminBeanIterator</name>

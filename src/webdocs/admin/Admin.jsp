@@ -5,7 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.ui.TemplateManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 

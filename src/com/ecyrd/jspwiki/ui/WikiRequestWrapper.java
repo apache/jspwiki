@@ -21,6 +21,9 @@
 package com.ecyrd.jspwiki.ui;
 
 import java.security.Principal;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -29,11 +32,17 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  * Servlet request wrapper that encapsulates an incoming HTTP request and
  * overrides its security methods so that the request returns JSPWiki-specific
- * values.
+ * values. It also ensures that the user's {@link java.util.Locale} preference
+ * is respected by ensuring that the {@link #getLocale()} returns a preferred
+ * Locale matching what the user supplies in the
+ * {@link com.ecyrd.jspwiki.preferences.Preferences#PREFS_LOCALE} cookie. This
+ * Locale will also be returned at the top of the enumeration returned by
+ * {@link #getLocales()}.
  * 
  * @author Andrew Jaquith
  * @since 2.8
@@ -42,20 +51,56 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
 {
     private final WikiSession m_session;
 
+    private final Locale m_locale;
+
     /**
      * Constructs a new wrapped request.
      * 
-     * @param engine
-     *            the wiki engine
-     * @param request
-     *            the request to wrap
+     * @param engine the wiki engine
+     * @param request the request to wrap
      */
-    public WikiRequestWrapper(WikiEngine engine, HttpServletRequest request)
+    public WikiRequestWrapper( WikiEngine engine, HttpServletRequest request )
     {
-        super(request);
+        super( request );
 
         // Get and stash a reference to the current WikiSession
-        m_session = SessionMonitor.getInstance(engine).find(request.getSession());
+        m_session = SessionMonitor.getInstance( engine ).find( request.getSession() );
+
+        // Figure out the user's preferred Locale based on the cookie value, if supplied
+        Locale locale = Preferences.getLocale( request );
+        m_locale = request.getLocale().equals( locale ) ? null : locale;
+    }
+
+    /**
+     * {@inheritDoc}. If the user supplied a preferred locale via the cookie
+     * value {@link com.ecyrd.jspwiki.preferences.Preferences#PREFS_LOCALE},
+     * that value is returned in preference.
+     */
+    public Locale getLocale()
+    {
+        return m_locale == null ? super.getLocale() : m_locale;
+    }
+
+    /**
+     * {@inheritDoc}. If the user supplied a preferred locale via the cookie
+     * value {@link com.ecyrd.jspwiki.preferences.Preferences#PREFS_LOCALE},
+     * that value is returned as the first item in the array.
+     */
+    public Enumeration getLocales()
+    {
+        Enumeration requestLocales = super.getLocales();
+        if( m_locale == null )
+        {
+            return requestLocales;
+        }
+
+        Vector<Locale> locales = new Vector<Locale>();
+        locales.add( m_locale );
+        for( Enumeration e = requestLocales; e.hasMoreElements(); )
+        {
+            locales.add( (Locale)e.nextElement() );
+        }
+        return locales.elements();
     }
 
     /**
@@ -69,12 +114,12 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
      */
     public String getRemoteUser()
     {
-        if (super.getRemoteUser() != null)
+        if( super.getRemoteUser() != null )
         {
             return super.getRemoteUser();
         }
 
-        if (m_session.isAuthenticated())
+        if( m_session.isAuthenticated() )
         {
             return m_session.getLoginPrincipal().getName();
         }
@@ -92,12 +137,12 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
      */
     public Principal getUserPrincipal()
     {
-        if (super.getUserPrincipal() != null)
+        if( super.getUserPrincipal() != null )
         {
             return super.getUserPrincipal();
         }
 
-        if (m_session.isAuthenticated())
+        if( m_session.isAuthenticated() )
         {
             return m_session.getLoginPrincipal();
         }
@@ -113,22 +158,22 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
      * ASSERTED, AUTHENTICATED) returned by {@link WikiSession#getRoles()} and
      * checks to see if any of these principals' names match the supplied role.
      */
-    public boolean isUserInRole(String role)
+    public boolean isUserInRole( String role )
     {
-        boolean hasContainerRole = super.isUserInRole(role);
-        if (hasContainerRole)
+        boolean hasContainerRole = super.isUserInRole( role );
+        if( hasContainerRole )
         {
             return true;
         }
 
         // Iterate through all of the built-in roles and look for a match
         Principal[] principals = m_session.getRoles();
-        for (int i = 0; i < principals.length; i++)
+        for( int i = 0; i < principals.length; i++ )
         {
-            if (principals[i] instanceof Role)
+            if( principals[i] instanceof Role )
             {
                 Role principal = (Role) principals[i];
-                if (Role.isBuiltInRole(principal) && principal.getName().equals(role))
+                if( Role.isBuiltInRole( principal ) && principal.getName().equals( role ) )
                 {
                     return true;
                 }

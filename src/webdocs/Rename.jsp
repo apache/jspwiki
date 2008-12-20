@@ -3,13 +3,13 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="org.apache.jspwiki.api.WikiException" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.RenameActionBean" event="rename" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.RenameActionBean" event="rename" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>

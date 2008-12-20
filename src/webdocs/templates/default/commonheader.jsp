@@ -1,4 +1,4 @@
-<%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
@@ -37,12 +37,6 @@
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js' />"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-commonstyles.js' />"></script>
 <wiki:IncludeResources type="script" />
-
-<%-- COOKIE read client preferences --%>
-<%
-   Preferences.setupPreferences(pageContext);
- %>
-
 <meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
 <meta name="wikiBaseUrl" content='<wiki:BaseURL/>' />
 <meta name="wikiPageUrl" content='<wiki:Link format="url" page="#$%" />' />

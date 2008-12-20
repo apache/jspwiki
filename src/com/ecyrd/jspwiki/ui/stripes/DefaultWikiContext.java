@@ -34,7 +34,6 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.permissions.AllPermission;
-import com.ecyrd.jspwiki.preferences.Preferences;
 
 /**
  * <p>
@@ -134,8 +133,8 @@ public class DefaultWikiContext implements WikiContext
     }
 
     /**
-     * Locates the i18n ResourceBundle given. This method interprets the request
-     * locale, and uses that to figure out which language the user wants.
+     * Locates the i18n ResourceBundle, based on the {@link java.util.Locale} object
+     * returned by {@link javax.servlet.http.HttpServletRequest#getLocale()}.
      * 
      * @see com.ecyrd.jspwiki.i18n.InternationalizationManager
      * @param bundle The name of the bundle you are looking for.
@@ -146,7 +145,7 @@ public class DefaultWikiContext implements WikiContext
     // something...
     public ResourceBundle getBundle( String bundle ) throws MissingResourceException
     {
-        Locale loc = Preferences.getLocale( this );
+        Locale loc = getHttpRequest().getLocale();
 
         ResourceBundle b = m_engine.getInternationalizationManager().getBundle( bundle, loc );
 
