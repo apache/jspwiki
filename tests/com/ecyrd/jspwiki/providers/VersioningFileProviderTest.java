@@ -291,7 +291,7 @@ public class VersioningFileProviderTest extends TestCase
     public void testChangeNote()
         throws Exception
     {
-        WikiPage p = new WikiPage( engine, NAME1 );
+        WikiPage p = engine.createPage( NAME1 );
         p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
         WikiContext context = engine.getWikiContextFactory().newViewContext(null, null, p);
         
@@ -305,7 +305,7 @@ public class VersioningFileProviderTest extends TestCase
     public void testChangeNoteOldVersion()
         throws Exception
     {
-        WikiPage p = new WikiPage( engine, NAME1 );
+        WikiPage p = engine.createPage( NAME1 );
         
         
         WikiContext context = engine.getWikiContextFactory().newViewContext(null, null, p);
@@ -327,7 +327,7 @@ public class VersioningFileProviderTest extends TestCase
 
     public void testChangeNoteOldVersion2() throws Exception
     {
-        WikiPage p = new WikiPage( engine, NAME1 );
+        WikiPage p = engine.createPage( NAME1 );
     
         WikiContext context = engine.getWikiContextFactory().newViewContext( null, null, p );
 

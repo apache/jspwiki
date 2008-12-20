@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.FileUtil;
 
@@ -104,7 +104,8 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                       null, null, new WikiPage(m_engine, NAME1)), 
+                                                       null, null, 
+                                                       m_engine.createPage( WikiName.valueOf( NAME1 ) )), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -135,7 +136,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, m_engine.getPage( NAME1 )), 
                                                        "test file.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -166,7 +167,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, m_engine.getPage(NAME1)), 
                                                        "test1.txt", 1 );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -201,7 +202,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );        
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, m_engine.getPage(NAME1)), 
                                                        "test1.txt" );
 
         assertNotNull( "attachment disappeared", att2 );
@@ -227,7 +228,7 @@ public class AttachmentManagerTest extends TestCase
         //
 
         Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, new WikiPage(m_engine, NAME1)), 
+                                                                          null, null, m_engine.getPage(NAME1)), 
                                                        "test1.txt",
                                                        1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
@@ -243,7 +244,7 @@ public class AttachmentManagerTest extends TestCase
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        Collection c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
+        Collection c = m_manager.listAttachments( m_engine.getPage(NAME1) );
 
         assertEquals( "Length", 1, c.size() );
 
@@ -262,7 +263,7 @@ public class AttachmentManagerTest extends TestCase
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         Attachment att2 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(
-                                                                          null, null, new WikiPage(m_engine, NAME1)),
+                                                                          null, null, m_engine.getPage( NAME1 )),
                                                        "test1" );
 
         assertNotNull( "attachment disappeared", att2 );

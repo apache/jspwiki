@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
@@ -69,7 +69,7 @@ public class CounterPluginTest extends TestCase
                ServletException
     {
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
-                                               new WikiPage(testEngine, "TestPage") );
+                                                                                 testEngine.createPage( WikiName.valueOf( "TestPage" ) ) );
         
         MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );
         

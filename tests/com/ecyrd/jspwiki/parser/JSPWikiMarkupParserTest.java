@@ -40,6 +40,7 @@ import stress.Benchmark;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
 import com.ecyrd.jspwiki.util.TextUtil;
@@ -99,7 +100,7 @@ public class JSPWikiMarkupParserTest extends TestCase
             NoRequiredPropertyException,
             ServletException
     {
-        return translate( new WikiPage(testEngine, PAGE_NAME), src );
+        return translate( testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
 
     private String translate( WikiEngine e, String src )
@@ -107,7 +108,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                NoRequiredPropertyException,
                ServletException
     {
-        return translate( e, new WikiPage(testEngine, PAGE_NAME), src );
+        return translate( e, e.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
 
 
@@ -145,7 +146,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         TestEngine testEngine2 = new TestEngine( props );
 
         WikiContext context = testEngine2.getWikiContextFactory().newViewContext( null, null,
-                                               new WikiPage(testEngine2, PAGE_NAME) );
+                                                                                  testEngine2.createPage( WikiName.valueOf( PAGE_NAME ) ));
         JSPWikiMarkupParser r = new JSPWikiMarkupParser( context,
                                                          new BufferedReader( new StringReader(src)) );
 
@@ -1199,7 +1200,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
         testEngine = new TestEngine( props );
 
-        WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+        WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String out = translate( testEngine, page, src );
 
@@ -1214,7 +1215,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
         testEngine = new TestEngine( props );
 
-        WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+        WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String out = translate( testEngine, page, src );
 
@@ -2246,7 +2247,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name=foo}]";
 
-        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2260,7 +2261,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name = foo}]";
 
-        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2274,7 +2275,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name= Janne Jalkanen}]";
 
-        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2288,7 +2289,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
 
-        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2303,7 +2304,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
 
-        WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2323,7 +2324,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
-                                               new WikiPage(testEngine,PAGE_NAME) );
+                                                                                 testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
                                                   new BufferedReader( new StringReader(src)) );
@@ -2346,7 +2347,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "["+PAGE_NAME+"/Test.txt]";
 
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
-                                               new WikiPage(testEngine,PAGE_NAME) );
+                                                                                 testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ) );
 
         MarkupParser p = new JSPWikiMarkupParser( context,
                                                   new BufferedReader( new StringReader(src)) );
@@ -2380,7 +2381,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
             String src = "[TestAtt.txt]";
             WikiContext context = testEngine.getWikiContextFactory().newViewContext( null, null,
-                                                   new WikiPage(testEngine,PAGE_NAME) );
+                                                                                     testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ) );
 
             MarkupParser p = new JSPWikiMarkupParser( context,
                                                       new BufferedReader( new StringReader(src)) );

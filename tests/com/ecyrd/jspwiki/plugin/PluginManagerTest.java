@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.plugin.PluginManager.WikiPluginInfo;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
@@ -58,7 +58,8 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
-        context = engine.getWikiContextFactory().newViewContext( null, null, new WikiPage(engine, "Testpage") );
+        context = engine.getWikiContextFactory().newViewContext( null, null, 
+                                                                 engine.createPage( WikiName.valueOf( "Testpage" ) ) );
         manager = new PluginManager( engine, props );
     }
 

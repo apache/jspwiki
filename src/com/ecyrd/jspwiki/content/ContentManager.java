@@ -26,5 +26,5 @@ package com.ecyrd.jspwiki.content;
  */
 public class ContentManager
 {
-    protected static final String DEFAULT_SPACE = "Main";
+    public static final String DEFAULT_SPACE = "Main";
 }

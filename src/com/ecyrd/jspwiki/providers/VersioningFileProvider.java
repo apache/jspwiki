@@ -27,6 +27,9 @@ import java.util.Properties;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ecyrd.jspwiki.content.ContentManager;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.util.FileUtil;
@@ -551,7 +554,7 @@ public class VersioningFileProvider
 
             if( file.exists() )
             {
-                p = new WikiPage( m_engine, page );
+                p = m_engine.createPage( new WikiName(ContentManager.DEFAULT_SPACE, page) );
 
                 p.setLastModified( new Date(file.lastModified()) );
                 p.setVersion( version );

@@ -29,6 +29,7 @@ import java.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.WikiException;
 
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -499,7 +500,7 @@ public class AttachmentManager
         m_engine.getReferenceManager().updateReferences( att.getName(),
                                                          new java.util.Vector() );
 
-        WikiPage parent = new WikiPage( m_engine, att.getParentName() );
+        WikiPage parent = m_engine.createPage( WikiName.valueOf( att.getParentName() ) );
         m_engine.updateReferences( parent );
 
         m_engine.getSearchManager().reindexPage( att );
@@ -622,7 +623,7 @@ public class AttachmentManager
         if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith(".jspf") )
         {
             log.info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this" +
-            		" can trigger unwanted security side effects, so we're preventing it." );
+                      " can trigger unwanted security side effects, so we're preventing it." );
             //
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );

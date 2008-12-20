@@ -31,6 +31,7 @@ import com.ecyrd.jspwiki.providers.*;
 import com.ecyrd.jspwiki.util.FileUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
 import com.ecyrd.jspwiki.attachment.*;
+import com.ecyrd.jspwiki.content.WikiName;
 
 public class WikiEngineTest extends TestCase
 {
@@ -144,7 +145,7 @@ public class WikiEngineTest extends TestCase
     public void testNonExistantPage2()
         throws Exception
     {
-        WikiPage page = new WikiPage(m_engine, "Test1");
+        WikiPage page = m_engine.createPage( WikiName.valueOf( "Test1" ) );
 
         assertEquals( "Page already exists",
                       false,
@@ -280,7 +281,7 @@ public class WikiEngineTest extends TestCase
     {
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
-        Object[] result = m_engine.scanWikiLinks( new WikiPage(m_engine, "Test"), src ).toArray();
+        Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiName.valueOf( "Test" ) ), src ).toArray();
         
         assertEquals( "item 0", "Foobar", result[0] );
         assertEquals( "item 1", "This is a link", result[1] );
@@ -929,7 +930,7 @@ public class WikiEngineTest extends TestCase
     
     public void testChangeNoteOldVersion2() throws Exception
     {
-        WikiPage p = new WikiPage( m_engine, NAME1 );
+        WikiPage p = m_engine.createPage( WikiName.valueOf( NAME1 ) );
     
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( null, null, p );
 

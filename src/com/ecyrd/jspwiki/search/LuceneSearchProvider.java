@@ -50,6 +50,7 @@ import org.apache.lucene.store.FSDirectory;
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
@@ -639,7 +640,7 @@ public class LuceneSearchProvider implements SearchProvider
                 else
                 {
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
-                    pageRemoved(new WikiPage( m_engine, pageName ));
+                    pageRemoved(m_engine.createPage( WikiName.valueOf( pageName ) ));
                 }
             }
         }

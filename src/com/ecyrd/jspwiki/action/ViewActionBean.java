@@ -10,6 +10,7 @@ import org.apache.jspwiki.api.WikiException;
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
+import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.ui.stripes.HandlerPermission;
@@ -91,7 +92,7 @@ public class ViewActionBean extends AbstractPageActionBean
                 page = engine.getPage( engine.getFrontPage() );
                 if ( page == null )
                 {
-                    page = new WikiPage( engine, engine.getFrontPage() );
+                    page = engine.getFrontPage(ContentManager.DEFAULT_SPACE);
                 }
                 setPage(page);
                 return null;

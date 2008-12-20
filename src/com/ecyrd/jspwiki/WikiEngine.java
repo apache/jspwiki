@@ -51,6 +51,7 @@ import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 import com.ecyrd.jspwiki.content.PageRenamer;
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
 import com.ecyrd.jspwiki.event.WikiEngineEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -895,12 +896,34 @@ public class WikiEngine
      *
      *  @return The front page name.
      */
-
+    // FIXME: This method should return a WikiPage
+    // FIXME: This method should return the FQN of the defaultspace:frontpage page of the wiki.
     public String getFrontPage()
     {
         return m_frontPage;
     }
 
+    /**
+     *  Returns the default front page for a particular space.  Always returns
+     *  a valid WikiPage, even if the front page does not exist.
+     *  
+     *  @param space The space to get the front page for.
+     *  @return A FQN of the page.
+     *  @since 3.0
+     */
+    // FIXME: Does not yet support spaces
+    public WikiPage getFrontPage( String space )
+    {
+        WikiPage p = getPage( m_frontPage );
+        
+        if( p == null )
+        {
+            p = createPage( new WikiName(space,m_frontPage) );
+        }
+        
+        return p;
+    }
+    
     /**
      *  Returns the ServletContext that this particular WikiEngine was
      *  initialized with.  <B>It may return null</B>, if the WikiEngine is not
@@ -1854,6 +1877,31 @@ public class WikiEngine
         return results;
     }
 
+    /**
+     *  Creates a new WikiPage object.
+     *  
+     *  @param name The WikiName of the object to create
+     *  @return A new WikiPage object.
+     *  @since 3.0
+     */
+    @SuppressWarnings("deprecation")
+    public WikiPage createPage( WikiName name )
+    {
+        return new WikiPage( this, name );
+    }
+    
+    /**
+     *  A shortcut for createPage( WikiName.valueOf(fqn) );
+     *  
+     *  @param fqn The fully qualified name of a wikipage.
+     *  @return A new page.
+     *  @since 3.0
+     */
+    public WikiPage createPage( String fqn )
+    {
+        return createPage( WikiName.valueOf( fqn ) );
+    }
+    
     /**
      *  Finds the corresponding WikiPage object based on the page name.  It always finds
      *  the latest version of a page.

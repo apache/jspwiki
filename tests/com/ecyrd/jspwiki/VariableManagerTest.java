@@ -21,9 +21,14 @@
 
 package com.ecyrd.jspwiki;
 
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import com.ecyrd.jspwiki.content.WikiName;
 
 public class VariableManagerTest extends TestCase
 {
@@ -47,7 +52,8 @@ public class VariableManagerTest extends TestCase
 
             m_variableManager = new VariableManager( props );
             TestEngine testEngine = new TestEngine( props );
-            m_context = testEngine.getWikiContextFactory().newViewContext( null, null, new WikiPage( testEngine, PAGE_NAME ) );
+            m_context = testEngine.getWikiContextFactory().newViewContext( null, null, 
+                                                                           testEngine.createPage(WikiName.valueOf(PAGE_NAME)) );
 
         }
         catch( IOException e ) {}

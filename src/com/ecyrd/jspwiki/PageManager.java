@@ -271,7 +271,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
                 //
                 //  Make sure that it no longer exists in internal data structures either.
                 //
-                WikiPage dummy = new WikiPage(m_engine,pageName);
+                WikiPage dummy = m_engine.createPage(pageName);
                 m_engine.getSearchManager().pageRemoved(dummy);
                 m_engine.getReferenceManager().pageRemoved(dummy);
             }
@@ -463,7 +463,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
             }
             else
             {
-                m_engine.getReferenceManager().pageRemoved( new WikiPage(m_engine,pageName) );
+                m_engine.getReferenceManager().pageRemoved( m_engine.createPage(pageName) );
             }
         }
 

@@ -50,7 +50,7 @@ public class RPCHandlerTest extends TestCase
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( null, null, new WikiPage(m_engine, "Dummy") );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage("Dummy") );
         m_handler.initialize( ctx );
     }
 

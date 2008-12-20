@@ -87,7 +87,7 @@ public class VerySimpleProvider implements WikiPageProvider
         m_latestReq  = page;
         m_latestVers = version;
 
-        WikiPage p = new WikiPage( m_engine, page );
+        WikiPage p = m_engine.createPage( page );
         p.setVersion( 5 );
         p.setAuthor( AUTHOR );
         p.setLastModified( new Date(0L) );

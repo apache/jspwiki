@@ -28,8 +28,6 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.jspwiki.api.WikiException;
-
 import net.sourceforge.stripes.controller.DispatcherServlet;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
@@ -37,8 +35,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.WikiException;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -46,6 +43,9 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.content.WikiName;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.providers.AbstractFileProvider;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
 import com.ecyrd.jspwiki.providers.FileSystemProvider;
@@ -348,7 +348,7 @@ public class TestEngine extends WikiEngine
                 Users.ADMIN_PASS );
 
         // Create page and wiki context
-        WikiPage page = new WikiPage( this, pageName );
+        WikiPage page = createPage( WikiName.valueOf( pageName ) );
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
@@ -364,7 +364,7 @@ public class TestEngine extends WikiEngine
                 Users.JANNE_PASS );
 
         // Create page and wiki context
-        WikiPage page = new WikiPage( this, pageName );
+        WikiPage page = createPage( WikiName.valueOf( pageName ) );
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }

@@ -75,6 +75,7 @@ public class WikiPage
      *  
      *  @param engine the WikiEngine that owns this page
      *  @param path the path of the page
+     *  @deprecated
      */
     public WikiPage( WikiEngine engine, String path )
     {
@@ -82,6 +83,7 @@ public class WikiPage
         m_name   = WikiName.valueOf( path );
     }
 
+    /** @deprecated */
     public WikiPage( WikiEngine engine, WikiName name )
     {
         m_engine = engine;

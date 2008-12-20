@@ -47,6 +47,7 @@ import com.ecyrd.jspwiki.util.TextUtil;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
+import com.ecyrd.jspwiki.content.WikiName;
 
 /**
  *  Provides basic, versioning attachments.
@@ -557,7 +558,7 @@ public class BasicAttachmentProvider
             String pageId = unmangleName( pagesWithAttachments[i] );
             pageId = pageId.substring( 0, pageId.length()-DIR_EXTENSION.length() );
             
-            Collection c = listAttachments( new WikiPage( m_engine, pageId ) );
+            Collection c = listAttachments( m_engine.createPage( WikiName.valueOf( pageId ) ) );
 
             for( Iterator it = c.iterator(); it.hasNext(); )
             {
@@ -653,7 +654,7 @@ public class BasicAttachmentProvider
 
             for( int i = latest; i >= 1; i-- )
             {
-                Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ), 
+                Attachment a = getAttachmentInfo( m_engine.createPage( WikiName.valueOf( att.getParentName() ) ), 
                                                   att.getFileName(), i );
 
                 if( a != null )
