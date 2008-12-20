@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
 <%-- Powered by jswpwiki-common.js//SearchBox --%>
 

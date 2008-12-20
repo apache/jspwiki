@@ -533,7 +533,7 @@ public class JspParserTest extends TestCase
         assertEquals( 2, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "uri", attribute.getName() );
-        assertEquals( "/WEB-INF/stripes.tld", attribute.getValue() );
+        assertEquals( "http://stripes.sourceforge.net/stripes.tld", attribute.getValue() );
         attribute = ((Tag) node).getAttributes().get( 1 );
         assertEquals( "prefix", attribute.getName() );
         assertEquals( "stripes", attribute.getValue() );

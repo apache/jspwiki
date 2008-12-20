@@ -13,7 +13,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.search.SearchResult" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" />
 <%! 

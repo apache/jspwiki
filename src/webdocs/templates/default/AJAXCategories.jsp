@@ -1,6 +1,6 @@
 <%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ViewActionBean" event="view" />
 <%! 
   public void jspInit()

@@ -15,6 +15,8 @@ import net.sourceforge.stripes.action.UrlBinding;
  */
 public class StripesJspTransformer extends AbstractJspTransformer
 {
+    private static final String STRIPES_TAGLIB_URI = "http://stripes.sourceforge.net/stripes.tld";
+    
     private Map<Class<? extends ActionBean>, Set<String>> beanProperties = new HashMap<Class<? extends ActionBean>, Set<String>>();
 
     private Map<String, Class<? extends ActionBean>> beanBindings = new HashMap<String, Class<? extends ActionBean>>();
@@ -163,7 +165,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
      * the <code>prefix</code> set to <code>stripes</code>; any
      * <code>uri</code> value is acceptable. If the taglib declaration is
      * added, it is given the prefix <code>stripes</code> and the URI
-     * <code>/WEB-INF/stripes.tld</code>.
+     * <code>http://stripes.sourceforge.net/stripes.tld</code>.
      * 
      * @param doc the JspDocument to process
      * @return <code>true</code> if the Stripes taglib declaration was
@@ -175,8 +177,20 @@ public class StripesJspTransformer extends AbstractJspTransformer
         List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
         if( nodes.size() == 0 )
         {
-            doc.addTaglibDirective( "/WEB-INF/stripes.tld", "stripes" );
+            doc.addTaglibDirective( STRIPES_TAGLIB_URI, "stripes" );
             return true;
+        }
+        for ( Tag tag : nodes )
+        {
+            Attribute attr = tag.getAttribute( "uri" );
+            if ( attr == null )
+            {
+                tag.addAttribute( new Attribute( doc, "uri", STRIPES_TAGLIB_URI ) );
+            }
+            else if ( !STRIPES_TAGLIB_URI.equals( attr.getValue() ) )
+            {
+                attr.setValue( STRIPES_TAGLIB_URI );
+            }
         }
         return true;
     }

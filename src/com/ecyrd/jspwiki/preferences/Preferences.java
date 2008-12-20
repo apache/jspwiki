@@ -24,272 +24,165 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
-
-import org.apache.commons.lang.StringUtils;
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.PropertyReader;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.action.WikiContextFactory;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
-import com.ecyrd.jspwiki.util.HttpUtil;
-import com.ecyrd.jspwiki.util.TextUtil;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.ui.stripes.LocaleConverter;
 
 /**
- *  Represents an object which is used to store user preferences.
- *  
+ * <p>
+ * Represents user preferences for language, timezone, preferred template skin
+ * and other customizable user interface items. Preferences are initialized by
+ * JSPWiki by reading a series of cookies from the user's HTTP request. This
+ * happens once per request, during the execution of
+ * {@link com.ecyrd.jspwiki.ui.WikiServletFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}.
+ * The method {@link #setupPreferences(HttpServletRequest)} performs the actual
+ * initialization.
+ * <p>
+ * After initialization, Preferences are stashed in the user's session as an
+ * attribute named {@link #SESSIONPREFS}. Preferences may be subsequently
+ * changed by calling
+ * {@link com.ecyrd.jspwiki.action.UserPreferencesActionBean#save()} with
+ * appropriate parameters, generally from a JSP.
+ * </p>
  */
-public class Preferences
-    extends HashMap<String,String>
+public class Preferences extends HashMap<String, String>
 {
-    private static final long serialVersionUID = 1L;
-    
     /**
-     *  The name under which a Preferences object is stored in the HttpSession.
-     *  Its value is {@value}.
-     */
-    public static final String SESSIONPREFS = "prefs";
-     
-    private static Logger log = LoggerFactory.getLogger( Preferences.class );
-    
-    /**
-     *  This is an utility method which is called to make sure that the
-     *  JSP pages do have proper access to any user preferences.  It should be
-     *  called from the commonheader.jsp.
-     *  <p>
-     *  This method reads user cookie preferences and mixes them up with any
-     *  default preferences (and in the future, any user-specific preferences)
-     *  and puts them all in the session, so that they do not have to be rewritten
-     *  again.
-     *  <p>
-     *  This method will remember if the user has already changed his prefs.
-     *  
-     *  @param pageContext The JSP PageContext.
-     */
-    public static void setupPreferences( PageContext pageContext )
-    {
-        HttpSession session = pageContext.getSession();
-
-        if( session.getAttribute( SESSIONPREFS ) == null )
-        {
-            reloadPreferences( pageContext );
-        }
-    }
-    
-    /**
-     *  Reloads the preferences from the PageContext into the WikiContext.
-     *  
-     *  @param pageContext The page context.
-     */
-    // FIXME: The way that date preferences are chosen is currently a bit wacky: it all
-    //        gets saved to the cookie based on the browser state with which the user
-    //        happened to first arrive to the site with.  This, unfortunately, means that
-    //        even if the user changes e.g. language preferences (like in a web cafe),
-    //        the old preferences still remain in a site cookie.
-    public static void reloadPreferences( PageContext pageContext )
-    {
-        Preferences prefs = new Preferences();
-        Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        WikiContext ctx = WikiContextFactory.findContext( pageContext );
-        
-        prefs.put("SkinName", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.skinname", "PlainVanilla" ) );
-        prefs.put("DateFormat", 
-                  TextUtil.getStringProperty( props, 
-                                              "jspwiki.defaultprefs.template.dateformat", 
-                                              ctx.getEngine().getInternationalizationManager().get( InternationalizationManager.CORE_BUNDLE, 
-                                                                                                    getLocale( ctx ), 
-                                                                                                    "common.datetimeformat" ) ) );
-
-        prefs.put("TimeZone", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.timezone", 
-                                                          java.util.TimeZone.getDefault().getID() ) );
-
-        prefs.put("Orientation", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.orientation", "fav-left" ) );
-        
-        prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language",
-                                                          getLocale( ctx ).toString() ) );
-
-        prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting",
-                                                          "" ) );
-
-        // FIXME: "editor" property does not get registered, may be related with http://bugs.jspwiki.org/show_bug.cgi?id=117
-        // disabling it until knowing why it's happening
-        // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
-        prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
-                
-        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
-
-        pageContext.getSession().setAttribute( SESSIONPREFS, prefs );        
-    }
-
- 
-    /**
-     *  Parses new-style preferences stored as JSON objects and stores them
-     *  in the session.  Everything in the cookie is stored.
-     *  
-     *  @param request
-     *  @param prefs The default hashmap of preferences
-     *  
-     */
-    private static void parseJSONPreferences( HttpServletRequest request, Preferences prefs )
-    {
-        //FIXME: urlDecodeUTF8 should better go in HttpUtil ??
-        String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
-        
-        if( prefVal != null )
-        {
-            try
-            {
-                JSONObject jo = new JSONObject( prefVal );
-    
-                for( Iterator i = jo.keys(); i.hasNext(); )
-                {
-                    String key = TextUtil.replaceEntities( (String)i.next() );
-                    prefs.put(key, jo.getString(key) );
-                }
-            }
-            catch( JSONException e )
-            {
-            }
-        }
-    }
-
-    /**
-     *  Returns a preference value programmatically.
-     *  FIXME
-     *  
-     *  @param wikiContext
-     *  @param name
-     *  @return the preference value
-     */
-    public static String getPreference( WikiContext wikiContext, String name )
-    {
-        HttpServletRequest request = wikiContext.getHttpRequest();
-        if ( request == null ) return null;
-        
-        Preferences prefs = (Preferences)request.getSession().getAttribute( SESSIONPREFS );
-        
-        if( prefs != null )
-            return prefs.get( name );
-        
-        return null;
-    }
-    /**
-     *  Returns a preference value programmatically.
-     *  FIXME
-     *  
-     *  @param pageContext
-     *  @param name
-     *  @return the preference value
-     */
-    public static String getPreference( PageContext pageContext, String name )
-    {
-        Preferences prefs = (Preferences)pageContext.getSession().getAttribute( SESSIONPREFS );
-        
-        if( prefs != null )
-            return prefs.get( name );
-        
-        return null;
-    }
-
-    
-    /**
-     * Get Locale according to user-preference settings or the Stripes ActionBeanContext.
+     * <p>
+     * Enumeration of three different date formats that JSPWiki supports.
+     * </p>
+     * <ul>
+     * <li>TIME: A time format, without date</li>
+     * <li>DATE: A date format, without a time</li>
+     * <li>DATETIME: A date format, with a time</li>
+     * </ul>
      * 
-     * @param context The context to examine.
-     * @return a Locale object.
      * @since 2.8
      */
-    public static Locale getLocale(WikiContext context)
+    public enum TimeFormat
     {
-        Locale loc = null;
-        
-        String langSetting = Preferences.getPreference( context, "Language" );
-        
-        //
-        // parse language and construct valid Locale object
-        //
-        if( langSetting != null)
-        {
-            String language = "";
-            String country  = "";
-            String variant  = "";
-            
-            String[] res = StringUtils.split( langSetting, "-_" );
-            
-            if( res.length > 2 ) variant = res[2];
-            if( res.length > 1 ) country = res[1];
-            
-            if( res.length > 0 )
-            {
-                language = res[0];
-            
-                loc = new Locale( language, country, variant );
-            }
-        }
-        
-        // otherwise try to find out the browser's preferred language setting, or use the JVM's default
-        if( loc == null)
-        {    
-            HttpServletRequest request = context.getHttpRequest();
-            loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
-        }
+        /** Time only; no date. */
+        TIME,
 
-        //log.info( "using locale "+loc.toString() );
-        return loc;
+        /** Date only; no time. */
+        DATE,
+
+        /** Date plus time. */
+        DATETIME
     }
 
     /**
-     *  Get SimpleTimeFormat according to user browser locale and preferred time
-     *  formats. If not found, it will revert to whichever format is set for the
-     *  default
+     * Enumeration of the orientation formats for favorites.
+     */
+    public enum Orientation
+    {
+        /** Favorites to the left. */
+        LEFT,
+        /** Favorites to the right. */
+        RIGHT
+    }
+
+    /**
+     * Cookie name for the user's preference for displaying dates and times.
+     */
+    public static final String PREFS_TIME_FORMAT = "TimeFormat";
+
+    /**
+     * Cookie name for the user's preference for displaying time zones.
+     */
+    public static final String PREFS_TIME_ZONE = "TimeZone";
+
+    /**
+     * Cookie name for the user's preference for text orientation.
+     */
+    public static final String PREFS_ORIENTATION = "Orientation";
+
+    /**
+     * Cookie name for the user's preference for section editing (on/off).
+     */
+    public static final String PREFS_SECTION_EDITING = "SectionEditing";
+
+    /**
+     * Cookie name for the user's preferred {@link com.ecyrd.jspwiki.ui.Editor}.
+     */
+    public static final String PREFS_EDITOR = "Editor";
+
+    /**
+     * The name under which a Preferences object is stored in the HttpSession.
+     * Its value is {@value}.
+     */
+    public static final String SESSIONPREFS = "prefs";
+
+    /**
+     * Cookie name for the user's preferred {@link java.util.Locale}.
+     */
+    public static final String PREFS_LOCALE = "Locale";
+
+    /**
+     * Cookie name for the user's preferred template skin.
+     */
+    public static final String PREFS_SKIN = "SkinName";
+
+    private static final long serialVersionUID = 2L;
+
+    private static Logger log = LoggerFactory.getLogger( Preferences.class );
+
+    private static final LocaleConverter LOCALE_CONVERTER = new LocaleConverter();
+
+    /**
+     * Get SimpleTimeFormat according to user browser locale and preferred time
+     * formats. If not found, it will revert to whichever format is set for the
+     * default
      * 
-     *  @param context WikiContext to use for rendering.
-     *  @param tf Which version of the dateformat you are looking for?
-     *  @return A SimpleTimeFormat object which you can use to render
-     *  @since 2.8
+     * @param context WikiContext to use for rendering.
+     * @param tf Which version of the dateformat you are looking for?
+     * @return A SimpleTimeFormat object which you can use to render
+     * @since 2.8
      */
     public static SimpleDateFormat getDateFormat( WikiContext context, TimeFormat tf )
     {
         InternationalizationManager imgr = context.getEngine().getInternationalizationManager();
-        Locale clientLocale = Preferences.getLocale( context );
-        String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
+        Locale clientLocale = getLocale( context.getHttpRequest() );
+        String prefTimeZone = Preferences.getPreference( context, PREFS_TIME_ZONE );
         String prefDateFormat;
-        
-        log.debug("Checking for preferences...");
-        
+
+        log.debug( "Checking for preferences..." );
+
         switch( tf )
         {
             case DATETIME:
-                prefDateFormat = Preferences.getPreference( context, "DateFormat" );
-                log.debug("Preferences fmt = "+prefDateFormat);
-                if( prefDateFormat == null ) 
+                prefDateFormat = Preferences.getPreference( context, PREFS_TIME_FORMAT );
+                log.debug( "Preferences fmt = " + prefDateFormat );
+                if( prefDateFormat == null )
                 {
-                    prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE, 
-                                               clientLocale, 
-                                               "common.datetimeformat" );
-                    log.debug("Using locale-format = "+prefDateFormat);
+                    prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE, clientLocale, "common.datetimeformat" );
+                    log.debug( "Using locale-format = " + prefDateFormat );
                 }
                 break;
-                
+
             case TIME:
                 prefDateFormat = imgr.get( "common.timeformat" );
                 break;
-                
+
             case DATE:
                 prefDateFormat = imgr.get( "common.dateformat" );
                 break;
-                
+
             default:
                 throw new InternalWikiException( "Got a TimeFormat for which we have no value!" );
         }
-        
+
         try
         {
             SimpleDateFormat fmt = new SimpleDateFormat( prefDateFormat, clientLocale );
@@ -312,41 +205,216 @@ public class Preferences
     }
 
     /**
-     *  A simple helper function to render a date based on the user preferences.
-     *  This is useful for example for all plugins.
-     *  
-     *  @param context  The context which is used to get the preferences
-     *  @param date     The date to render.
-     *  @param tf       In which format the date should be rendered.
-     *  @return A ready-rendered date.
-     *  @since 2.8
+     * Returns the user's preferred {@link java.util.Locale} according the
+     * contents of the cookie value {@link #PREFS_LOCALE}, or alternatively the
+     * Locale supplied by the HTTP request object.
+     * 
+     * @param request the HTTP request
+     * @return a Locale object.
+     * @since 2.8
+     */
+    public static Locale getLocale( HttpServletRequest request )
+    {
+        String localePref = getCookieValue( request, PREFS_LOCALE, request.getLocale().toString() );
+        Locale locale = LOCALE_CONVERTER.convert( localePref, Locale.class, null );
+
+        // Otherwise use the JVM's default
+        if( locale == null )
+        {
+            locale = Locale.getDefault();
+        }
+        return locale;
+    }
+
+    /**
+     * Returns a preference value from the Preferences object stored in the
+     * user's session.
+     * 
+     * @param session the HTTP session
+     * @param name the name of the preference to retrieve
+     * @return the preference value, or <code>null</code> if not found
+     */
+    public static String getPreference( HttpSession session, String name )
+    {
+        Preferences prefs = (Preferences) session.getAttribute( SESSIONPREFS );
+        if( prefs != null )
+        {
+            return prefs.get( name );
+        }
+        return null;
+    }
+
+    /**
+     * Returns a preference value from the Preferences object stored in the
+     * user's session.
+     * 
+     * @param pageContext the page context
+     * @param name the name of the preference to retrieve
+     * @return the preference value, or <code>null</code> if not found
+     */
+    public static String getPreference( PageContext pageContext, String name )
+    {
+        return getPreference( pageContext.getSession(), name );
+    }
+
+    /**
+     * Returns a preference value from the Preferences object stored in the
+     * user's session.
+     * 
+     * @param wikiContext the wiki context
+     * @param name the name of the preference to retrieve
+     * @return the preference value, or <code>null</code> if not found
+     */
+    public static String getPreference( WikiContext wikiContext, String name )
+    {
+        return getPreference( wikiContext.getHttpRequest().getSession(), name );
+    }
+
+    /**
+     * Saves a preference value as a cookie. If <code>key</code> or
+     * <code>value</code> is <code>null</code>, the cookie is not set.
+     * 
+     * @param session the HTTP session
+     * @param response the HTTP response
+     * @param key the cookie name
+     * @param value the cookie value
+     */
+    public static void setPreference( HttpSession session, HttpServletResponse response, String key, String value )
+    {
+        if( key != null && value != null )
+        {
+            Cookie cookie = new Cookie( key, value );
+            response.addCookie( cookie );
+            Preferences prefs = (Preferences) session.getAttribute( SESSIONPREFS );
+            if( prefs != null )
+            {
+                prefs.put( key, value );
+            }
+        }
+    }
+
+    /**
+     * A simple helper function to render a date based on the user preferences.
+     * This is useful for example for all plugins.
+     * 
+     * @param context The context which is used to get the preferences
+     * @param date The date to render.
+     * @param tf In which format the date should be rendered.
+     * @return A ready-rendered date.
+     * @since 2.8
      */
     public static String renderDate( WikiContext context, Date date, TimeFormat tf )
     {
         DateFormat df = getDateFormat( context, tf );
-        
+
         return df.format( date );
     }
 
     /**
-     *  Is used to choose between the different date formats that JSPWiki supports.
-     *  <ul>
-     *   <li>TIME: A time format, without  date</li>
-     *   <li>DATE: A date format, without a time</li>
-     *   <li>DATETIME: A date format, with a time</li>
-     *  </ul>
-     *  
-     *  @since 2.8
+     * <p>
+     * This method checks to see if user preferences have been loaded from
+     * request cookies, and if not, loads them. This method is called from three
+     * places: from
+     * {@link com.ecyrd.jspwiki.ui.stripes.WikiInterceptor#intercept(net.sourceforge.stripes.controller.ExecutionContext)},
+     * {@link com.ecyrd.jspwiki.action.WikiContextFactory#newContext(HttpServletRequest, javax.servlet.http.HttpServletResponse, String)}
+     * and
+     * {@link com.ecyrd.jspwiki.action.WikiContextFactory#newViewContext(HttpServletRequest, javax.servlet.http.HttpServletResponse, com.ecyrd.jspwiki.WikiPage)}.
+     * </p>
+     * <p>
+     * Every user preference is read from a unique cookie. This method parses
+     * each value from the respective cookie, and applies a default value if the
+     * cookie is not found in the request. Once all preference values are
+     * parsed, this method stashes the Preferences object in the user's
+     * HTTPSession so that as an attribute named {@link #SESSIONPREFS}, so that
+     * it can be recalled later. So that JSPWiki does not waste excessive cycles
+     * parsing preference cookies on every request, if this method finds the
+     * SESSIONPREFS already present in the session, it returns silently without
+     * doing any more work.
+     * </p>
+     * <p>
+     * To change user preference values after the initial parse, users normally
+     * invoke {@link com.ecyrd.jspwiki.action.UserPreferencesActionBean#save()}.
+     * </p>
+     * 
+     * @param request the HTTP request
      */
-    public enum TimeFormat
+    public static void setupPreferences( HttpServletRequest request )
     {
-        /** A time format, no date. */
-        TIME,
-        
-        /** A date format, no time. */
-        DATE,
-        
-        /** A date+time format. */
-        DATETIME
+        HttpSession session = request.getSession();
+
+        if( session.getAttribute( SESSIONPREFS ) != null )
+        {
+            return;
+        }
+
+        // Ok, set up the preferences now
+        WikiEngine engine = WikiEngine.getInstance( session.getServletContext(), null );
+        Preferences prefs = new Preferences();
+        Properties props = PropertyReader.loadWebAppProps( session.getServletContext() );
+        Locale locale = request.getLocale();
+
+        // FIXME: "editor" property does not get registered, may be related with
+        // http://bugs.jspwiki.org/show_bug.cgi?id=117
+        // disabling it until knowing why it's happening
+        // FIXME: editormanager reads jspwiki.editor -- which of both properties
+        // should continue
+        String defaultValue = props.getProperty( "jspwiki.defaultprefs.template.editor", "plain" );
+        prefs.put( PREFS_EDITOR, getCookieValue( request, PREFS_EDITOR, defaultValue ) );
+
+        // Init the Locale
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.language", locale.toString() );
+        prefs.put( PREFS_LOCALE, getCookieValue( request, PREFS_LOCALE, defaultValue ) );
+
+        // Init the orientation
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.orientation", Orientation.LEFT.name() );
+        prefs.put( PREFS_ORIENTATION, getCookieValue( request, PREFS_ORIENTATION, defaultValue ) );
+
+        // Init section editing
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.sectionediting", "false" );
+        prefs.put( PREFS_SECTION_EDITING, getCookieValue( request, PREFS_SECTION_EDITING, defaultValue ) );
+
+        // Init the template skin
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.skinname", "PlainVanilla" );
+        prefs.put( PREFS_SKIN, getCookieValue( request, PREFS_SKIN, defaultValue ) );
+
+        // Init the date format
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.dateformat", engine.getInternationalizationManager()
+            .get( InternationalizationManager.CORE_BUNDLE, locale, "common.datetimeformat" ) );
+        prefs.put( PREFS_TIME_FORMAT, getCookieValue( request, PREFS_TIME_FORMAT, defaultValue ) );
+
+        // Init the time zone
+        defaultValue = props.getProperty( "jspwiki.defaultprefs.template.timezone", java.util.TimeZone.getDefault().getID() );
+        prefs.put( PREFS_TIME_ZONE, getCookieValue( request, PREFS_TIME_ZONE, defaultValue ) );
+
+        // We're done here...
+        session.setAttribute( SESSIONPREFS, prefs );
+    }
+
+    private static String getCookieValue( HttpServletRequest request, String key, String defaultValue )
+    {
+        String cookieValue = null;
+        Cookie[] cookies = request.getCookies();
+        if( cookies != null )
+        {
+            for( Cookie cookie : request.getCookies() )
+            {
+                if( key.equals( cookie.getName() ) )
+                {
+                    cookieValue = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        return cookieValue == null ? defaultValue : cookieValue;
+    }
+
+    public static void main( String[] args )
+    {
+        Orientation r = Orientation.LEFT;
+        System.out.println( r.toString() );
+        System.out.println( r.name() );
+        r = Orientation.valueOf( "LEFT" );
+        System.out.println( r.name() );
+        r = Orientation.valueOf( "foo" );
     }
 }

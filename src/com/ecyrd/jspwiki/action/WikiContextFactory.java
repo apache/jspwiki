@@ -3,7 +3,10 @@ package com.ecyrd.jspwiki.action;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +25,6 @@ import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.parser.MarkupParser;
-import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.tags.WikiTagBase;
 import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
@@ -87,22 +89,6 @@ public final class WikiContextFactory
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         WikiContext context = (WikiContext) request.getAttribute( WikiTagBase.ATTR_CONTEXT );
         return context;
-    }
-
-    /**
-     * Returns the locale of the HTTP request if available, otherwise returns
-     * the default Locale of the server.
-     * 
-     * @return A valid locale object
-     * @param context The WikiContext
-     */
-    public static Locale getLocale( WikiContext context )
-    {
-        return Preferences.getLocale( context );
-        /*
-         * HttpServletRequest request = context.getHttpRequest(); return (
-         * request != null ) ? request.getLocale() : Locale.getDefault();
-         */
     }
 
     /**

@@ -73,7 +73,7 @@ public class StripesJspTransformerTest extends TestCase
         attribute = ((Tag) node).getAttribute( "prefix" );
         assertEquals( "stripes", attribute.getValue() );
         attribute = ((Tag) node).getAttribute( "uri" );
-        assertEquals( "/WEB-INF/stripes.tld", attribute.getValue() );
+        assertEquals( "http://stripes.sourceforge.net/stripes.tld", attribute.getValue() );
 
         // Verify linebreak
         node = doc.getNodes().get( 1 );
@@ -228,7 +228,7 @@ public class StripesJspTransformerTest extends TestCase
 
     public void testNoAddStripesTaglib() throws Exception
     {
-        String s = "<%@ taglib uri=\"/WEB-INF/stripes.tld\" prefix=\"stripes\" %>\n<foo/>";
+        String s = "<%@ taglib uri=\"http://stripes.sourceforge.net/stripes.tld\" prefix=\"stripes\" %>\n<foo/>";
         JspDocument doc = new JspParser().parse( s );
         assertEquals( 3, doc.getNodes().size() );
         m_transformer.transform( m_sharedState, doc );

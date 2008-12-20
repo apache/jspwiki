@@ -5,7 +5,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%
     String postURL = "";

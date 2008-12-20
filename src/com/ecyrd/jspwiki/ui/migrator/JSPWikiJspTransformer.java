@@ -231,6 +231,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
         {
             tag.addAttribute( new Attribute( doc, "event", event ) );
         }
+        tag.addAttribute( new Attribute( doc, "id", "wikiActionBean" ) );
 
         // Create linebreak
         Text linebreak = new Text( doc );

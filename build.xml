@@ -306,6 +306,7 @@
       </classpath>
       <arg value="src/webdocs" />
       <arg value="build/migrated" />
+      <sysproperty key="stripes.migrator.migrateForms" value="${stripes.migrator.migrateForms}" />
     </java>
   </target>
 

@@ -13,7 +13,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%!
   String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)

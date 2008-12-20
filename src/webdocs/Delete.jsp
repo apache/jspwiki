@@ -5,7 +5,7 @@
 <%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.DeleteActionBean" event="delete" />
 
 <%! 

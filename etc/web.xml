@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
@@ -59,8 +58,8 @@
          <param-name>ActionResolver.Packages</param-name>
          <param-value>com.ecyrd.jspwiki.action</param-value>
       </init-param>
-      <!-- Tell Stripes to auto-discover custom extension classes from the "action"
-           package also. Extensions JSPWiki uses includes WikiActionBeanContext,
+      <!-- Tell Stripes to auto-discover custom extensions from the "ui.stripes"
+           package. Extensions JSPWiki uses includes WikiActionBeanContext,
            WikiRuntimeConfiguration, WikiInterceptor and the various TypeConverter
            implementations for JSPWiki-specific types. -->
       <init-param>
@@ -79,7 +78,7 @@
       <!-- Locales supported by this wiki -->
       <init-param>
          <param-name>LocalePicker.Locales</param-name>
-         <param-value>en:UTF8,de:UTF8,es:UTF8,fi:UTF8,it:UTF8,ln:UTF8,zh_CN:UTF8,</param-value>
+         <param-value>en:UTF8,de:UTF8,es:UTF8,fi:UTF8,fr:UTF8,it:UTF8,nl:UTF8,ru:UTF8,zh_CN:UTF8</param-value>
       </init-param>
       <!-- Library for parsing multi-part file uploads -->
       <init-param>
@@ -128,18 +127,24 @@
        <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/JSON-RPC</url-pattern>
    </filter-mapping> 
-    <filter-mapping>
-        <filter-name>StripesFilter</filter-name>
-        <url-pattern>*.jsp</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>StripesFilter</filter-name>
-        <servlet-name>StripesDispatcher</servlet-name>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>*.jsp</url-pattern>
+   </filter-mapping> 
+   <filter-mapping>
+       <filter-name>WikiServletFilter</filter-name>
+       <url-pattern>*.action</url-pattern>
+   </filter-mapping> 
+   <filter-mapping>
+       <filter-name>StripesFilter</filter-name>
+       <url-pattern>*.jsp</url-pattern>
+       <dispatcher>REQUEST</dispatcher>
+   </filter-mapping>
+   <filter-mapping>
+       <filter-name>StripesFilter</filter-name>
+       <servlet-name>StripesDispatcher</servlet-name>
+       <dispatcher>REQUEST</dispatcher>
+   </filter-mapping>
 
    <!--
    <filter-mapping>
@@ -153,7 +158,7 @@
    -->
 
    <!--
-       HttpSessionListener used for managing WikiSession's.
+       HttpSessionListener used for managing WikiSessions.
      -->
    <listener>
       <listener-class>com.ecyrd.jspwiki.auth.SessionMonitor</listener-class>
@@ -318,22 +323,6 @@
      <error-code>403</error-code>
      <location>/error/Forbidden.html</location>
    </error-page>
-   
-   <!-- Taglibs -->
-   <!--
-   <taglib>
-     <taglib-location>/WEB-INF/jstl-core.tld</taglib-location>
-     <taglib-uri>http://java.sun.com/jstl/core</taglib-uri>
-   </taglib>
-   <taglib>
-     <taglib-location>/WEB-INF/jstl-fmt.tld</taglib-location>
-     <taglib-uri>http://java.sun.com/jstl/fmt</taglib-uri>
-   </taglib>
-   -->
-   <taglib>
-     <taglib-location>/WEB-INF/stripes.tld</taglib-location>
-     <taglib-uri>http://stripes.sourceforge.net/stripes.tld</taglib-uri>
-   </taglib>
 
    <!--  REMOVE ME TO ENABLE JDBC DATABASE
    <resource-ref>

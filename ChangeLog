@@ -1,3 +1,12 @@
+2008-12-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-34
+        
+        * Migrated UserPreferences.jsp and related; completely overhauled Preferences
+        code so that it is much simpler, and leverages Stripes. UserPreferences.jsp and
+        the collaborating UserPreferencesActionBean, in particular, are excellent
+        examples of what the JSPs will look like when we are done migrating everything.
+
 2008-12-19 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-33

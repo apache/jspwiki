@@ -73,8 +73,8 @@ public class WikiPage
     /**
      *  Create a new WikiPage using a given engine and name.
      *  
-     *  @param engine The WikiEngine that owns this page.
-     *  @param name   The path of the page.
+     *  @param engine the WikiEngine that owns this page
+     *  @param path the path of the page
      */
     public WikiPage( WikiEngine engine, String path )
     {

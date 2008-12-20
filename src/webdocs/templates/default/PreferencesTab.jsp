@@ -13,17 +13,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
 
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%
-  //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
-  WikiContext c = WikiContextFactory.findContext( pageContext );
-  TemplateManager t = c.getEngine().getTemplateManager();
-  pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
-  pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
-  pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );
-  pageContext.setAttribute( "timezones", t.listTimeZones(pageContext) );
-%>
 
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
@@ -33,20 +24,13 @@
   </div>
 </c:if>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>" 
-       class="wikiform" 
-          id="setCookie"
-      method="post" accept-charset="<wiki:ContentEncoding />"
-    onsubmit="WikiPreferences.savePrefs(); return Wiki.submitOnce(this);" >
+<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
 <table>
-
   <tr>
-  <td><label for="assertedName"><fmt:message key="prefs.assertedname" /></label></td>
+  <td><stripes:label for="assertedName" name="prefs.assertedname" /></td>
   <td> 
-  <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='wikiname' />" />
-  <%-- CHECK THIS
-  <input type="text" id="assertedName" name="assertedName" size="20" value="<wiki:UserProfile property='loginname'/>" />
-  --%>
+    <stripes:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></stripes:text>
+    <stripes:errors field="assertedName" />
   </td>
   </tr>
   <wiki:UserCheck status="anonymous">
@@ -57,8 +41,8 @@
     <fmt:message key="prefs.assertedname.description">
       <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
       <fmt:param>
-        <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='tab' value='register'/></wiki:Link>">
-          <fmt:message key="prefs.assertedname.create"/>
+        <a href="<wiki:Link jsp='Login.jsp' format='url'></wiki:Link>">
+          <fmt:message key="prefs.assertedname.create" />
         </a>
       </fmt:param>
     </fmt:message>
@@ -68,89 +52,83 @@
   </wiki:UserCheck>
 
   <tr>
-  <td><label for="editor"><fmt:message key="edit.chooseeditor" /></label></td>
+  <td><stripes:label for="editor" name="edit.chooseeditor" /></td>
   <td>
     <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
         <option <%=edt.isSelected()%>value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
-  </select>
+    </select>
+    <stripes:errors field="editor" />
   </td>
   </tr>
   
   <tr>
-  <td><label for="prefSectionEditing"><fmt:message key="prefs.user.sectionediting" /></label></td>
+  <td><stripes:label for="sectionEditing" name="prefs.user.sectionediting" /></td>
   <td>
-  <input id="prefSectionEditing" name="prefSectionEditing" 
-       type="checkbox" <c:if test='${"on" == prefs.SectionEditing}'>checked="checked"</c:if> ></input>
-  <fmt:message key="prefs.user.sectionediting.text"/>
+    <stripes:checkbox id="sectionEditing" name="sectionEditing" checked="true" />
+    <stripes:errors field="sectionEditing" />
+    <fmt:message key="prefs.user.sectionediting.text" />
   </td>
   </tr>
   
   <tr>
-  <td><label for="prefSkin"><fmt:message key="prefs.user.skin" /></label></td>
+  <td><stripes:label for="skin" name="prefs.user.skin" /></td>
   <td>
-  <select id="prefSkin" name="prefSkin">
-    <c:forEach items="${skins}" var="i">
-      <option value='<c:out value='${i}' />' <c:if test='${i == prefs.SkinName}'>selected="selected"</c:if> ><c:out value="${i}" /></option>
-    </c:forEach>
-  </select>
+    <stripes:select id="skin" name="skin">
+      <stripes:options-collection collection="${skins}" />
+    </stripes:select>
+    <stripes:errors field="skin" />
   </td>
   </tr>
 
-
-  <c:if test='${not empty languages}'>
-  <c:set var="prefLanguage"><c:out value="${prefs.Language}" default="<%=request.getLocale().toString()%>" /></c:set>
-  <tr>
-  <td><label for="prefLanguage"><fmt:message key="prefs.user.language" /></label></td>
-  <td>
-  <select id="prefLanguage" name="prefLanguage">
-    <c:forEach items='${languages}' var='lg'>
-      <option value="<c:out value='${lg.key}' />" <c:if test='${fn:startsWith(prefLanguage,lg.key)}'>selected="selected"</c:if> ><c:out value="${lg.value}" /></option>
-    </c:forEach>
-  </select>
-  </td>
-  </tr>
+  <c:if test='${not empty locales}'>
+    <tr>
+      <td><stripes:label for="locale" name="prefs.user.language" /></td>
+      <td>
+        <stripes:select name="locale">
+          <stripes:options-map map="${locales}" />
+        </stripes:select>
+        <stripes:errors field="language" />
+      </td>
+    </tr>
   </c:if>
 
   <tr>
-  <td><label for="prefOrientation"><fmt:message key="prefs.user.orientation" /></label></td>
-  <td>
-  <select id="prefOrientation" name="prefOrientation" onclick="Wiki.changeOrientation();">
-      <option value='fav-left' <c:if test='${"fav-left" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.left" /></option>
-      <option value='fav-right' <c:if test='${"fav-right" == prefs.Orientation}'>selected="selected"</c:if> ><fmt:message key="prefs.user.orientation.right" /></option>
-  </select>
-  </td>
+    <td><stripes:label for="orientation" name="prefs.user.orientation" /></td>
+    <td>
+      <stripes:select id="orientation" name="orientation">
+        <stripes:options-enumeration enum="com.ecyrd.jspwiki.preferences.Preferences.Orientation" />
+      </stripes:select>
+      <stripes:errors field="orientation" />
+    </td>
   </tr>
 
   <tr>
-  <td><label for="prefTimeFormat"><fmt:message key="prefs.user.timeformat" /></label></td>
-  <td>
-  <select id="prefTimeFormat" name="prefTimeFormat">
-    <c:forEach items='${timeformats}' var='tf'>
-      <option value='<c:out value="${tf.key}" />' <c:if test='${tf.key == prefs.DateFormat}'>selected="selected"</c:if> ><c:out value="${tf.value}" /></option>
-    </c:forEach>
-  </select>
-  </td>
+    <td><stripes:label for="timeFormat" name="prefs.user.timeformat" /></td>
+    <td>
+      <stripes:select id="timeFormat" name="timeFormat">
+        <stripes:options-map map="${timeformats}" />
+      </stripes:select>
+      <stripes:errors field="timeFormat" />
+    </td>
   </tr>
 
   <tr>
-  <td><label for="prefTimeZone"><fmt:message key="prefs.user.timezone" /></label></td>
-  <td>
-  <select id='prefTimeZone' name='prefTimeZone'>
-    <c:forEach items='${timezones}' var='tz'>
-      <option value='<c:out value="${tz.key}" />' <c:if test='${tz.key == prefs.TimeZone}'>selected="selected"</c:if> ><c:out value="${tz.value}" /></option>
-    </c:forEach>
-  </select>
-  </td>
+    <td><stripes:label for="timeZone" name="prefs.user.timezone" /></td>
+    <td>
+      <stripes:select id="timeZone" name="timeZone">
+        <stripes:options-map map="${timezones}" />
+      </stripes:select>
+      <stripes:errors field="timeZone" />
+    </td>
   </tr>
 
   <%--
   <tr>
-  <td><label for="prefShowQuickLinks">Show Quick Links</label></td>
+  <td><label for="showQuickLinks">Show Quick Links</label></td>
   <td>
-  <input class='checkbox' type='checkbox' id='prefShowQuickLinks' name='prefShowQuickLinks' 
-         <c:if test='${"on" == prefs.SectionEdit}'>selected="selected"</c:if> />
+    <stripes:checkbox id="showQuickLinks" name="showQuickLinks" checked="true" />
          <span class="quicklinks"><span 
                class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
                class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 
@@ -161,40 +139,32 @@
   </tr>
 
   <tr>
-  <td><label for="prefShowCalendar">Show Calendar</label></td>
+  <td><label for="showCalendar">Show Calendar</label></td>
   <td>
-    <input class='checkbox' type='checkbox' id='prefShowCalendar' name='prefShowCalendar' 
-            <%= (prefShowCalendar.equals("yes") ? "checked='checked'": "") %> >
+    <stripes:checkbox id="showCalendar" name="showCalendar" checked="true" />
   </td>
   </tr>
   --%>
- <tr>
-  <td>&nbsp;</td>
-  <td>
-    <input type="submit" name="ok" value="<fmt:message key='prefs.save.prefs.submit' />" accesskey="s" />
-    <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-    <input type="hidden" name="action" value="setAssertedName" />
-    <div class="formhelp"><fmt:message key='prefs.cookies' /></div>
-  </td>
+  <tr>
+    <td>&nbsp;</td>
+    <td>
+      <stripes:submit name="save" accesskey="s"><fmt:message key='prefs.save.prefs.submit' /></stripes:submit>
+      <stripes:hidden name="redirect"><wiki:Variable var='redirect' default='' /></stripes:hidden>
+      <div class="formhelp"><fmt:message key='prefs.cookies' /></div>
+    </td>
   </tr>
 
 </table>
-</form>
+</stripes:form>
   
 <!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
 <h3><fmt:message key='prefs.clear.heading' /></h3>
 
-<form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"
-          id="clearCookie"
-    onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );" 
-      method="post" accept-charset="<wiki:ContentEncoding />" >
+<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
   <div>
-  <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit' />" />
-  <input type="hidden" name="action" value="clearAssertedName" />
+    <stripes:submit name="clearAssertedName"><fmt:message key='prefs.clear.submit' /></stripes:submit>
   </div>
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>
-
-</form>
-<%--/wiki:UserCheck--%>
+</stripes:form>

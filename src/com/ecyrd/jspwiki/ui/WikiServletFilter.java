@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
+import com.ecyrd.jspwiki.preferences.Preferences;
+
 import org.slf4j.MDC;
 
 import com.ecyrd.jspwiki.WikiContext;
@@ -128,6 +130,9 @@ public class WikiServletFilter implements Filter
         
         // If we haven't done so, wrap the request
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        // Set up user preferences
+        Preferences.setupPreferences( httpRequest );
         
         // Set the character encoding
         httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
@@ -154,8 +159,11 @@ public class WikiServletFilter implements Filter
             // Prepare the WikiSession
             try
             {
+                // Execute the login stack
                 m_engine.getAuthenticationManager().login( httpRequest );
                 WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
+                
+                // Wrap the request
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
                 if ( log.isDebugEnabled() )
                 {

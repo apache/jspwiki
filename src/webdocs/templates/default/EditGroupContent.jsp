@@ -9,7 +9,7 @@
 <%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="/WEB-INF/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
 <%!

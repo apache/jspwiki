@@ -156,7 +156,7 @@ public class JspDocument
      * directive in the document.
      * 
      * @param uri the URI of the taglib to add,
-     *            <em>e.g.,</em><code>/WEB-INF/stripes.tld</code>
+     *            <em>e.g.,</em><code>http://stripes.sourceforge.net/stripes.tld</code>
      * @param prefix the prefix for the tablib,
      *            <em>e.g.,</em><code>stripes</code>
      */
