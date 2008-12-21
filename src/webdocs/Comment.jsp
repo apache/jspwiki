@@ -18,6 +18,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");

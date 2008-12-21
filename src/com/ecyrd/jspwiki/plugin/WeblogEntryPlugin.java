@@ -24,8 +24,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
-import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.PageLock;
+import com.ecyrd.jspwiki.PageManager;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
@@ -69,7 +74,7 @@ public class WeblogEntryPlugin implements WikiPlugin
      *  @throws ProviderException If something goes wrong.
      */
     public String getNewEntryPage( WikiEngine engine, String blogName )
-        throws ProviderException
+        throws WikiException
     {
         SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
         String today = fmt.format( new Date() );
@@ -117,7 +122,7 @@ public class WeblogEntryPlugin implements WikiPlugin
     private int findFreeEntry( PageManager mgr,
                                String baseName,
                                String date )
-        throws ProviderException
+        throws WikiException
     {
         Collection everyone = mgr.getAllPages();
         int max = 0;

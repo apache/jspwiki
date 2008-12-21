@@ -5,6 +5,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <%--CHECK why is this needed --%>
 <%
     WikiContext c = WikiContextFactory.findContext( pageContext );

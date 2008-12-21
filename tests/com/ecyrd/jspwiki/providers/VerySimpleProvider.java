@@ -21,7 +21,11 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
-import com.ecyrd.jspwiki.*;
+
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
+
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.search.QueryItem;
 
 /**
@@ -87,10 +91,19 @@ public class VerySimpleProvider implements WikiPageProvider
         m_latestReq  = page;
         m_latestVers = version;
 
-        WikiPage p = m_engine.createPage( page );
-        p.setVersion( 5 );
-        p.setAuthor( AUTHOR );
-        p.setLastModified( new Date(0L) );
+        WikiPage p = null;
+        try
+        {
+            p = m_engine.createPage( page );
+            p.setVersion( 5 );
+            p.setAuthor( AUTHOR );
+            p.setLastModified( new Date(0L) );
+        }
+        catch( WikiException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return p;
     }
 

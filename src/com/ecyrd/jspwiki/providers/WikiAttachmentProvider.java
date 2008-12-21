@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.search.QueryItem;

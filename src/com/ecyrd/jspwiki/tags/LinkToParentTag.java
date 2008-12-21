@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.attachment.Attachment;
 
 /**

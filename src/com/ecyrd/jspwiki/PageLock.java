@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.jspwiki.api.WikiPage;
+
 /**
  *  Describes a lock acquired by an user on a page.  For the most part,
  *  the regular developer does not have to instantiate this class.

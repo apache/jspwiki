@@ -30,6 +30,7 @@ import java.util.Iterator;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.jspwiki.api.WikiPage;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
@@ -38,7 +39,6 @@ import org.jdom.output.XMLOutputter;
 import com.ecyrd.jspwiki.Release;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.providers.ProviderException;
 

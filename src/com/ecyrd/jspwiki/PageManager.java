@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
+import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.event.WikiEvent;
 import com.ecyrd.jspwiki.event.WikiEventListener;
 import com.ecyrd.jspwiki.modules.ModuleManager;
@@ -125,13 +127,20 @@ public class PageManager extends ModuleManager implements WikiEventListener
      *  faster.  This method may cause repository access.
      *  
      *  @return A Collection of WikiPage objects.
-     *  @throws ProviderException If the backend has problems.
+     * @throws WikiException 
      */
     public Collection getAllPages()
         throws ProviderException
     {
-        return m_engine.getContentManager().getAllPages( m_engine.getWikiContextFactory().newEmptyContext(), 
-                                                         null );
+        try
+        {
+            return m_engine.getContentManager().getAllPages( m_engine.getWikiContextFactory().newEmptyContext(), 
+                                                             null );
+        }
+        catch( WikiException e )
+        {
+            throw new ProviderException("",e);
+        }
     }
 
     /**
@@ -255,7 +264,9 @@ public class PageManager extends ModuleManager implements WikiEventListener
         
         try
         {
-            return m_engine.getContentManager().getPage( context, pageName, version );
+            return m_engine.getContentManager().getPage( context, 
+                                                         WikiName.valueOf(pageName), 
+                                                         version );
         }
         catch( WikiException e )
         {
@@ -277,7 +288,8 @@ public class PageManager extends ModuleManager implements WikiEventListener
     {
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
 
-        return m_engine.getContentManager().getVersionHistory( context, pageName );
+        return m_engine.getContentManager().getVersionHistory( context, 
+                                                               WikiName.valueOf(pageName) );
     }
 
     /**
@@ -304,7 +316,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         {
             return getAllPages().size();
         }
-        catch( ProviderException e )
+        catch( WikiException e )
         {
             return -1;
         }
@@ -322,7 +334,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
     {
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( new JCRWikiPage(m_engine,pageName) );
 
-        return m_engine.getContentManager().pageExists( ctx, pageName );
+        return m_engine.getContentManager().pageExists( ctx, WikiName.valueOf(pageName) );
     }
 
     /**
@@ -341,7 +353,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
 
         try
         {
-            return m_engine.getContentManager().pageExists( ctx, pageName, version );
+            return m_engine.getContentManager().pageExists( ctx, WikiName.valueOf(pageName), version );
         }
         catch( WikiException e )
         {

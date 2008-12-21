@@ -30,8 +30,9 @@ import java.text.ParseException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.util.TextUtil;

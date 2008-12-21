@@ -23,10 +23,15 @@ package com.ecyrd.jspwiki.providers;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
+
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.PageManager;
+import com.ecyrd.jspwiki.WikiContext;
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
-
-import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.render.RenderingManager;
 import com.ecyrd.jspwiki.search.QueryItem;
@@ -196,6 +201,11 @@ public class CachingProvider
         {
             log.error("Illegal access to provider class "+classname,e);
             throw new IllegalArgumentException("illegal provider class");
+        }
+        catch( WikiException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

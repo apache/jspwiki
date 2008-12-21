@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 
 /**

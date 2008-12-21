@@ -22,13 +22,14 @@ package com.ecyrd.jspwiki.action;
 
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 public class ViewActionBeanTest extends TestCase
 {

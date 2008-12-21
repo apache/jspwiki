@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 
 /**
  *  Writes the version number of the next version of the page.

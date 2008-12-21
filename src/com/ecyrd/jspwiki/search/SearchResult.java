@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.search;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
 
 /**
  *  Defines a search result.

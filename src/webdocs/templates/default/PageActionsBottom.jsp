@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <%
     WikiContext c = WikiContextFactory.findContext( pageContext );
   JCRWikiPage wikipage = c.getPage();

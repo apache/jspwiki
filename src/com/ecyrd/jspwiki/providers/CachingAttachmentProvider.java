@@ -24,12 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
-import com.ecyrd.jspwiki.*;
+import com.ecyrd.jspwiki.NoRequiredPropertyException;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.attachment.AttachmentManager;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.search.QueryItem;
 import com.ecyrd.jspwiki.util.ClassUtil;
 import com.opensymphony.oscache.base.Cache;
@@ -136,6 +140,11 @@ public class CachingAttachmentProvider
         {
             log.error("Illegal access to provider class "+classname,e);
             throw new IllegalArgumentException("illegal provider class");
+        }
+        catch( WikiException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
     }

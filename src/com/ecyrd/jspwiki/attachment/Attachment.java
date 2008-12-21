@@ -20,9 +20,10 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.JCRWikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Describes an attachment.  Attachments are actually derivatives of

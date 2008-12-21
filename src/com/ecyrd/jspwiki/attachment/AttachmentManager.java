@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
@@ -88,10 +89,11 @@ public class AttachmentManager
      *  @param engine The wikiengine that owns this attachment manager.
      *  @param props  A list of properties from which the AttachmentManager will seek
      *  its configuration.  Typically this is the "jspwiki.properties".
+     * @throws WikiException 
      */
 
     // FIXME: Perhaps this should fail somehow.
-    public AttachmentManager( WikiEngine engine, Properties props )
+    public AttachmentManager( WikiEngine engine, Properties props ) throws WikiException
     {
         String classname;
 
@@ -446,11 +448,11 @@ public class AttachmentManager
      *  @param source A file to read from.
      *
      *  @throws IOException If writing the attachment failed.
-     *  @throws ProviderException If something else went wrong.
+     * @throws WikiException 
      */
     public void storeAttachment( Attachment att, File source )
         throws IOException,
-               ProviderException
+               WikiException
     {
         FileInputStream in = null;
 
@@ -474,11 +476,11 @@ public class AttachmentManager
      *  @param in  InputStream from which the attachment contents will be read.
      *
      *  @throws IOException If writing the attachment failed.
-     *  @throws ProviderException If something else went wrong.
+     * @throws WikiException 
      */
     public void storeAttachment( Attachment att, InputStream in )
         throws IOException,
-               ProviderException
+               WikiException
     {
         if( m_provider == null )
         {

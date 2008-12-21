@@ -20,10 +20,10 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
+
+import org.apache.jspwiki.api.WikiPage;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -365,7 +365,7 @@ public class JCRWikiPage
     {
         return m_name.hashCode() * m_version;
     }
-    
+
     public void save() throws WikiException
     {
         try

@@ -30,16 +30,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.util.FileUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
-
-import org.apache.oro.text.regex.*;
 
 import com.ecyrd.jspwiki.*;
 
@@ -136,8 +140,7 @@ public class RCSFileProvider
     public WikiPage getPageInfo( String page, int version )
         throws ProviderException
     {
-        PatternMatcher  matcher  = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
+        Matcher  matcher  = null;
         BufferedReader  stdout   = null;
 
         WikiPage info = super.getPageInfo( page, version );
@@ -156,20 +159,21 @@ public class RCSFileProvider
             stdout = new BufferedReader( new InputStreamReader(process.getInputStream() ) );
 
             String line;
-            Pattern headpattern = compiler.compile( PATTERN_REVISION );
+            Pattern headpattern = Pattern.compile( PATTERN_REVISION );
             // This complicated pattern is required, since on Linux RCS adds
             // quotation marks, but on Windows, it does not.
-            Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
-            Pattern datepattern = compiler.compile( PATTERN_DATE );
-            Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
+            Pattern userpattern = Pattern.compile( PATTERN_AUTHOR );
+            Pattern datepattern = Pattern.compile( PATTERN_DATE );
+            Pattern notepattern = Pattern.compile( PATTERN_CHANGENOTE );
 
             boolean found = false;
 
             while( (line = stdout.readLine()) != null )
             {
-                if( matcher.contains( line, headpattern ) )
+                matcher = headpattern.matcher( line ); 
+                if( matcher.find() )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
                     try
                     {
@@ -187,9 +191,11 @@ public class RCSFileProvider
                         // Just continue reading through
                     }
                 }
-                else if( matcher.contains( line, datepattern ) && found )
+                else
+                    matcher = datepattern.matcher( line );
+                    if( matcher.find() && found )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
                     Date d = parseDate( result.group(1) );
 
                     if( d != null )
@@ -209,17 +215,19 @@ public class RCSFileProvider
                     break;
                 }
 
-                if( found && matcher.contains( line, userpattern ) )
+                matcher = userpattern.matcher( line );
+                if( found && matcher.find() )
                 {
-                    MatchResult result = matcher.getMatch();
-                    info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
+                    MatchResult result = matcher.toMatchResult();
+                    info.setAuthor( TextUtil.urlDecodeUTF8( result.group( 1 ) ) );
                 }
 
-                if( found && matcher.contains( line, notepattern ) )
+                matcher = notepattern.matcher( line );
+                if( found && matcher.find() )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
-                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );
+                    info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8( result.group( 1 ) ) );
                 }
             }
 
@@ -279,8 +287,7 @@ public class RCSFileProvider
 
         try
         {
-            PatternMatcher  matcher           = new Perl5Matcher();
-            PatternCompiler compiler          = new Perl5Compiler();
+            Matcher  matcher           = null;;
             int             checkedOutVersion = -1;
             String          line;
             String          cmd               = m_checkoutVersionCommand;
@@ -296,13 +303,14 @@ public class RCSFileProvider
 
             stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-            Pattern headpattern = compiler.compile( PATTERN_REVISION );
+            Pattern headpattern = Pattern.compile( PATTERN_REVISION );
 
             while( (line = stderr.readLine()) != null )
             {
-                if( matcher.contains( line, headpattern ) )
+                matcher = headpattern.matcher( line );
+                if( matcher.find() )
                 {
-                    MatchResult mr = matcher.getMatch();
+                    MatchResult mr = matcher.toMatchResult();
                     checkedOutVersion = Integer.parseInt( mr.group(1) );
                 }
             }
@@ -343,7 +351,7 @@ public class RCSFileProvider
             }
 
         }
-        catch( MalformedPatternException e )
+        catch( PatternSyntaxException e )
         {
             throw new InternalWikiException("Malformed pattern in RCSFileProvider!");
         }
@@ -467,8 +475,7 @@ public class RCSFileProvider
     // FIXME: Put the rcs date formats into properties as well.
     public List getVersionHistory( String page )
     {
-        PatternMatcher matcher = new Perl5Matcher();
-        PatternCompiler compiler = new Perl5Compiler();
+        Matcher matcher =null;
         BufferedReader stdout  = null;
 
         log.debug("Getting RCS version history");
@@ -477,13 +484,13 @@ public class RCSFileProvider
 
         try
         {
-            Pattern revpattern  = compiler.compile( PATTERN_REVISION );
-            Pattern datepattern = compiler.compile( PATTERN_DATE );
+            Pattern revpattern  = Pattern.compile( PATTERN_REVISION );
+            Pattern datepattern = Pattern.compile( PATTERN_DATE );
             // This complicated pattern is required, since on Linux RCS adds
             // quotation marks, but on Windows, it does not.
-            Pattern userpattern = compiler.compile( PATTERN_AUTHOR );
+            Pattern userpattern = Pattern.compile( PATTERN_AUTHOR );
 
-            Pattern notepattern = compiler.compile( PATTERN_CHANGENOTE );
+            Pattern notepattern = Pattern.compile( PATTERN_CHANGENOTE );
 
             String cmd = TextUtil.replaceString( m_fullLogCommand,
                                                  "%s",
@@ -500,11 +507,12 @@ public class RCSFileProvider
 
             while( (line = stdout.readLine()) != null )
             {
-                if( matcher.contains( line, revpattern ) )
+                matcher =revpattern.matcher( line ); 
+                if( matcher.find() )
                 {
                     info = m_engine.createPage( WikiName.valueOf( page ) );
 
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
                     int vernum = Integer.parseInt( result.group(1) );
                     info.setVersion( vernum );
@@ -512,25 +520,28 @@ public class RCSFileProvider
                     list.add( info );
                 }
 
-                if( matcher.contains( line, datepattern ) && info != null )
+                matcher = datepattern.matcher( line );
+                if( matcher.find() && info != null )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
                     Date d = parseDate( result.group(1) );
 
                     info.setLastModified( d );
                 }
 
-                if( matcher.contains( line, userpattern ) && info != null )
+                matcher = userpattern.matcher( line );
+                if( matcher.find() && info != null )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
                     info.setAuthor( TextUtil.urlDecodeUTF8(result.group(1)) );
                 }
 
-                if( matcher.contains( line, notepattern ) && info != null )
+                matcher = notepattern.matcher( line );
+                if( matcher.find() && info != null )
                 {
-                    MatchResult result = matcher.getMatch();
+                    MatchResult result = matcher.toMatchResult();
 
                     info.setAttribute( WikiPage.CHANGENOTE, TextUtil.urlDecodeUTF8(result.group(1)) );
                 }

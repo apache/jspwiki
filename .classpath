@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="tests/lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/sandler.jar"/>
 	<classpathentry kind="lib" path="lib/oscache.jar"/>
-	<classpathentry kind="lib" path="lib/oro.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
 	<classpathentry kind="lib" path="lib/lucene.jar"/>
 	<classpathentry kind="lib" path="tests/lib/junit.jar"/>

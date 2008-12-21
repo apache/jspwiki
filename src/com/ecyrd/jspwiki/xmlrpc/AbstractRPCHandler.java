@@ -23,11 +23,11 @@ package com.ecyrd.jspwiki.xmlrpc;
 import java.security.Permission;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
 import org.apache.xmlrpc.AuthenticationFailed;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;

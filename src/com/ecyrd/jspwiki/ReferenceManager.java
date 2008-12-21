@@ -26,6 +26,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

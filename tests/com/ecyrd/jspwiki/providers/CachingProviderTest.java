@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.StringReader;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.FileUtil;
 

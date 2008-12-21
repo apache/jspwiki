@@ -36,6 +36,7 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;
@@ -320,9 +321,10 @@ public class TestEngine extends WikiEngine
      * @param pageName
      * @param attachmentName
      * @param data
+     * @throws WikiException 
      */
     public void addAttachment( String pageName, String attachmentName, byte[] data )
-        throws ProviderException, IOException
+        throws IOException, WikiException
     {
         Attachment att = new Attachment(this,pageName,attachmentName);
 

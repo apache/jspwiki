@@ -22,12 +22,12 @@ package com.ecyrd.jspwiki.xmlrpc;
 
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.LinkCollector;
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;

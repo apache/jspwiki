@@ -26,8 +26,8 @@ import java.security.PermissionCollection;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jspwiki.api.WikiPage;
 
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  * <p>

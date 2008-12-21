@@ -39,6 +39,7 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.action.WikiContextFactory;
@@ -913,10 +914,11 @@ public class WikiEngine
      *  
      *  @param space The space to get the front page for.
      *  @return A FQN of the page.
+     * @throws WikiException 
      *  @since 3.0
      */
     // FIXME: Does not yet support spaces
-    public WikiPage getFrontPage( String space )
+    public WikiPage getFrontPage( String space ) throws WikiException
     {
         WikiPage p = getPage( m_frontPage );
         
@@ -1850,7 +1852,7 @@ public class WikiEngine
 
             return sortedPages;
         }
-        catch( ProviderException e )
+        catch( WikiException e )
         {
             log.error( "Unable to fetch all pages: ",e);
             return null;
@@ -1886,12 +1888,24 @@ public class WikiEngine
      *  
      *  @param name The WikiName of the object to create
      *  @return A new WikiPage object.
+     *  @throws WikiException 
      *  @since 3.0
      */
     @SuppressWarnings("deprecation")
-    public WikiPage createPage( WikiName name )
+    public WikiPage createPage( WikiName name ) throws ProviderException
     {
-        return new JCRWikiPage( this, name );
+        WikiPage p;
+        try
+        {
+            p = m_contentManager.addPage( getWikiContextFactory().newEmptyContext(), 
+                                          name, 
+                                          ContentManager.JSPWIKI_CONTENT_TYPE );
+        }
+        catch( WikiException e )
+        {
+            throw new ProviderException("",e); // FIXME
+        }
+        return p;
     }
     
     /**
@@ -1899,9 +1913,10 @@ public class WikiEngine
      *  
      *  @param fqn The fully qualified name of a wikipage.
      *  @return A new page.
+     *  @throws WikiException 
      *  @since 3.0
      */
-    public WikiPage createPage( String fqn )
+    public WikiPage createPage( String fqn ) throws WikiException
     {
         return createPage( WikiName.valueOf( fqn ) );
     }

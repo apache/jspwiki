@@ -25,6 +25,8 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.FileUtil;
 

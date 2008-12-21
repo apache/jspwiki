@@ -27,6 +27,8 @@ import java.util.Properties;
 
 import javax.servlet.ServletException;
 
+import org.apache.jspwiki.api.WikiException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -34,7 +36,6 @@ import junit.framework.TestSuite;
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
@@ -65,8 +66,7 @@ public class CounterPluginTest extends TestCase
 
     private String translate( String src )
         throws IOException,
-               NoRequiredPropertyException,
-               ServletException
+               ServletException, WikiException
     {
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( "TestPage" ) );
         

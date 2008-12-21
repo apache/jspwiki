@@ -43,6 +43,7 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
@@ -835,7 +836,7 @@ public class AttachmentServlet
             {
                 m_engine.getAttachmentManager().storeAttachment( att, data );
             } 
-            catch (ProviderException pe) 
+            catch (WikiException pe) 
             {
                 // this is a kludge, the exception that is caught here contains the i18n key
                 // here we have the context available, so we can internationalize it properly :

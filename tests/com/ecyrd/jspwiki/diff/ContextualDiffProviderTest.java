@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.content.WikiName;
 
 public class ContextualDiffProviderTest extends TestCase
 {

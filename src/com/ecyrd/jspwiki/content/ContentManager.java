@@ -38,6 +38,7 @@ import javax.naming.NamingException;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
@@ -345,7 +346,7 @@ public class ContentManager
         }
 
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage(path) );
-        WikiPage p = getPage( ctx, path, version );
+        WikiPage p = getPage( ctx, WikiName.valueOf( path ), version );
         
         return p.getContentAsString();
     }
@@ -544,7 +545,7 @@ public class ContentManager
      *  @throws ProviderException If the repository fails.
      */
 
-    public List<WikiPage> getVersionHistory( WikiContext ctx, String path )
+    public List<WikiPage> getVersionHistory( WikiContext ctx, WikiName path )
         throws ProviderException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
@@ -615,10 +616,10 @@ public class ContentManager
      *  @throws ProviderException If the backend fails or the name is illegal.
      */
  
-    public boolean pageExists( WikiContext ctx, String wikiPath )
+    public boolean pageExists( WikiContext ctx, WikiName wikiPath )
         throws ProviderException
     {
-        if( wikiPath == null || wikiPath.length() == 0 )
+        if( wikiPath == null )
         {
             throw new ProviderException("Illegal page name");
         }
@@ -627,7 +628,7 @@ public class ContentManager
         {
             Session session = getJCRSession( ctx );
             
-            String jcrPath = getJCRPath( ctx, wikiPath ); 
+            String jcrPath = getJCRPath( wikiPath ); 
             
             return session.getRootNode().hasNode( jcrPath );
         }
@@ -646,10 +647,10 @@ public class ContentManager
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
      *  @throws ProviderException If backend fails or name is illegal
      */
-    public boolean pageExists( WikiContext ctx, String path, int version )
+    public boolean pageExists( WikiContext ctx, WikiName path, int version )
         throws WikiException
     {
-        if( path == null || path.length() == 0 )
+        if( path == null )
         {
             throw new WikiException("Illegal page name");
         }
@@ -659,7 +660,7 @@ public class ContentManager
         {
             session = getJCRSession( ctx );
             
-            return session.itemExists( getJCRPath( ctx, path ) );
+            return session.itemExists( getJCRPath( path ) );
         }
         catch( RepositoryException e )
         {
@@ -936,44 +937,15 @@ public class ContentManager
      *  @param wikiName The WikiName.
      *  @return A full JCR path
      */
-    protected static String getJCRPath( WikiContext ctx, String wikiName )
+    protected static String getJCRPath( WikiName wikiName )
     {
         String spaceName;
         String spacePath;
         
-        int colon = wikiName.indexOf(':');
-        
-        if( colon != -1 )
-        {
-            // This is a FQN
-            spaceName = wikiName.substring( 0, colon );
-            spacePath = wikiName.substring( colon+1 );
-        }
-        else if( ctx != null )
-        {
-            WikiPage contextPage = ctx.getPage();
-            
-            // Not an FQN, the wiki name is missing, so we'll use the context to figure it out
-            spaceName = contextPage.getWiki();
-            
-            // If the wikipath starts with "/", we assume it is an absolute path within this
-            // wiki space.  Otherwise, it must be relative to the current path.
-            if( wikiName.startsWith( "/" ) )
-            {
-                spacePath = wikiName;
-            }
-            else
-            {
-                spacePath = contextPage.getName()+"/"+wikiName;
-            }
-        }
-        else
-        {
-            spaceName = DEFAULT_SPACE;
-            spacePath = wikiName;
-        }
-        
-        return "/pages/"+spaceName+"/"+spacePath;
+        spaceName = wikiName.getSpace();
+        spacePath = wikiName.getPath();
+               
+        return "/"+JCR_PAGES_NODE+"/"+spaceName+"/"+spacePath;
     }
 
     // FIXME: Should be protected - fix once WikiPage moves to content-package
@@ -1003,13 +975,13 @@ public class ContentManager
      *  @param contentType
      *  @return
      */
-    public JCRWikiPage addPage( WikiContext context, String path, String contentType ) throws WikiException
+    public JCRWikiPage addPage( WikiContext context, WikiName path, String contentType ) throws WikiException
     {
         try
         {
             Session session = getJCRSession( context );
         
-            Node nd = session.getRootNode().addNode( getJCRPath(null, path) );
+            Node nd = session.getRootNode().addNode( getJCRPath(path) );
             
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
@@ -1027,13 +999,13 @@ public class ContentManager
      *  @param path
      *  @return
      */
-    public JCRWikiPage getPage( WikiContext context, String path ) throws ProviderException
+    public JCRWikiPage getPage( WikiContext context, WikiName path ) throws ProviderException
     {
         try
         {
             Session session = getJCRSession( context );
         
-            Node nd = session.getRootNode().getNode( getJCRPath(context, path) );
+            Node nd = session.getRootNode().getNode( getJCRPath(path) );
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
             return page;
@@ -1052,13 +1024,13 @@ public class ContentManager
         }
     }
 
-    public JCRWikiPage getPage( WikiContext context, String path, int version ) throws WikiException
+    public JCRWikiPage getPage( WikiContext context, WikiName path, int version ) throws WikiException
     {
         try
         {
             Session session = getJCRSession( context );
         
-            Node nd = session.getRootNode().getNode( getJCRPath(null, path) );
+            Node nd = session.getRootNode().getNode( getJCRPath(path) );
 
             VersionHistory vh = nd.getVersionHistory();
             
@@ -1126,7 +1098,7 @@ public class ContentManager
                 log.info( "Profile name change for '" + newPrincipal.toString() +
                           "' caused " + pagesChanged + " page ACLs to change also." );
             }
-            catch ( ProviderException e )
+            catch ( WikiException e )
             {
                 // Oooo! This is really bad...
                 log.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage() );

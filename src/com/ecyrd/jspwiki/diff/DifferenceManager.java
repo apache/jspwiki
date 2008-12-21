@@ -24,6 +24,8 @@ package com.ecyrd.jspwiki.diff;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -54,8 +56,9 @@ public class DifferenceManager
      *  
      *  @param engine The WikiEngine.
      *  @param props A set of properties.
+     * @throws WikiException 
      */
-    public DifferenceManager(WikiEngine engine, Properties props)
+    public DifferenceManager(WikiEngine engine, Properties props) throws WikiException
     {
         loadProvider(props);
 
@@ -94,7 +97,7 @@ public class DifferenceManager
     }
 
 
-    private void initializeProvider(WikiEngine engine, Properties props)
+    private void initializeProvider(WikiEngine engine, Properties props) throws WikiException
     {
         try
         {

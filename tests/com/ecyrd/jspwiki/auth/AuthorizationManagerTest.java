@@ -31,6 +31,7 @@ import junit.framework.TestSuite;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;

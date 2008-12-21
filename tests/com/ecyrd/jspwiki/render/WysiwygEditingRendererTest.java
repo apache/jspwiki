@@ -28,9 +28,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 
@@ -55,7 +57,7 @@ public class WysiwygEditingRendererTest extends TestCase
         TestEngine.deleteTestPage( "This Pagename Has Spaces" );
     }
 
-    private String render(String s) throws IOException
+    private String render(String s) throws IOException, WikiException
     {
         WikiPage dummyPage = m_testEngine.createPage("TestPage");
         WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( dummyPage );

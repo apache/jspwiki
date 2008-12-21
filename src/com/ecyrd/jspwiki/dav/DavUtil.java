@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.ecs.XhtmlDocument;
 import org.apache.ecs.xhtml.li;
 import org.apache.ecs.xhtml.ul;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *

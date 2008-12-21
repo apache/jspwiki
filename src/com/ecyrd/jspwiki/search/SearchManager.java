@@ -26,6 +26,7 @@ import java.util.*;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.event.WikiEvent;
@@ -219,6 +220,11 @@ public class SearchManager
             e.printStackTrace();
         }
         catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( WikiException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace();

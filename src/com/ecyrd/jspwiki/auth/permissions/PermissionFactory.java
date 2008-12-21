@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.auth.permissions;
 
 import java.util.WeakHashMap;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 
 /**
  *  Provides a factory for Permission objects.  Since the Permissions are immutable,

@@ -22,6 +22,9 @@ package com.ecyrd.jspwiki;
 
 import java.io.Serializable;
 import java.util.*;
+
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

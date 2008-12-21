@@ -100,19 +100,17 @@ public final class LoggerFactory
      * @return A Logger instance. 
      */
     public static final synchronized Logger getLogger( String loggerName )
-    {
-        if( c_isLoggerFactoryClosed )
-        {
-            return null;
-        }
-        
+    {        
         if( c_registeredLoggers.get( loggerName ) == null )
         {
             LoggerImpl logger = new LoggerImpl( loggerName );
             c_registeredLoggers.put( loggerName, logger );
             if( c_isLog4jPresent )
             {
-                registerLoggerMBean( loggerName );
+                if( !c_isLoggerFactoryClosed )
+                {
+                    registerLoggerMBean( loggerName );
+                }
             }
             return logger;
         }

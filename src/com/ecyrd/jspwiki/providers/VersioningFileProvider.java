@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;

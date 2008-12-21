@@ -25,6 +25,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
@@ -32,8 +36,7 @@ import javax.xml.transform.Result;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.PluginException;
-import org.apache.oro.text.GlobCompiler;
-import org.apache.oro.text.regex.*;
+import org.apache.jspwiki.api.WikiPage;
 import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;
@@ -49,6 +52,7 @@ import com.ecyrd.jspwiki.plugin.WikiPlugin;
 import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.CleanTextRenderer;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.RegExpUtil;
 import com.ecyrd.jspwiki.util.TextUtil;
 
 /**
@@ -115,8 +119,6 @@ public class JSPWikiMarkupParser
     /** Parser for extended link functionality. */
     private LinkParser     m_linkParser = new LinkParser();
 
-    private PatternMatcher m_inlineMatcher = new Perl5Matcher();
-
     /** Keeps track of any plain text that gets put in the Text nodes */
     private StringBuilder  m_plainTextBuf = new StringBuilder(20);
 
@@ -167,11 +169,19 @@ public class JSPWikiMarkupParser
 
     private boolean                m_useRelNofollow      = false;
 
-    private PatternCompiler        m_compiler = new Perl5Compiler();
+//    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
+    private static final String    ALNUM = "\\p{javaLetterOrDigit}";
+    private static final String    NOT_ALNUM = "\\P{javaLetterOrDigit}";
+    private static final String    UPPER = "\\p{Lu}";
+    private static final String    LOWER = "\\p{Ll}";
+    
+    static final String WIKIWORD_REGEX = "(^|["+NOT_ALNUM+"]+)("+
+                                         UPPER+"+"
+                                         +LOWER+"+"
+                                         +UPPER+"+"
+                                         +ALNUM+"*"
+                                         +"|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
 
-    static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
-
-    private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
 
     private int                    m_rowNum              = 1;
@@ -256,7 +266,6 @@ public class JSPWikiMarkupParser
     @SuppressWarnings("unchecked")
     private void initialize()
     {
-        PatternCompiler compiler         = new GlobCompiler();
         List<Pattern>   compiledpatterns;
 
         //
@@ -278,10 +287,10 @@ public class JSPWikiMarkupParser
             {
                 try
                 {
-                    compiledpatterns.add( compiler.compile( (String)i.next(),
-                                                            GlobCompiler.DEFAULT_MASK|GlobCompiler.READ_ONLY_MASK ) );
+                    compiledpatterns.add( Pattern.compile( RegExpUtil
+                        .globToPerl5( ((String) i.next()).toCharArray(), RegExpUtil.DEFAULT_MASK|RegExpUtil.READ_ONLY_MASK ) ) );
                 }
-                catch( MalformedPatternException e )
+                catch( PatternSyntaxException e )
                 {
                     log.error("Malformed pattern in properties: ", e );
                 }
@@ -297,10 +306,9 @@ public class JSPWikiMarkupParser
         {
             try
             {
-                m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX,
-                                                         Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
+                m_camelCasePattern = Pattern.compile( WIKIWORD_REGEX, RegExpUtil.DEFAULT_MASK | RegExpUtil.READ_ONLY_MASK );
             }
-            catch( MalformedPatternException e )
+            catch( PatternSyntaxException e )
             {
                 log.error("Internal error: Someone put in a faulty pattern.",e);
                 throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader");
@@ -694,7 +702,8 @@ public class JSPWikiMarkupParser
 
             for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
             {
-                if( m_inlineMatcher.matches( link, (Pattern) i.next() ) )
+                Matcher matcher = ((Pattern) i.next()).matcher( link );
+                if( matcher.matches() )
                     return true;
             }
         }
@@ -801,24 +810,24 @@ public class JSPWikiMarkupParser
 
                 if( m_camelCaseLinks && !m_isEscaping && buf.length() > 3 )
                 {
-                    // System.out.println("Buffer="+buf);
-
-                    while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) )
+                    Matcher camelCaseMatcher = null;
+                    while (( camelCaseMatcher =  m_camelCasePattern.matcher( buf )).find())
                     {
-                        MatchResult result = m_camelCaseMatcher.getMatch();
+                        MatchResult result = camelCaseMatcher.toMatchResult();
+                        
+                        String firstPart = buf.substring( 0, result.start() );
+                        String prefix = result.group( 1 );
 
-                        String firstPart = buf.substring(0,result.beginOffset(0));
-                        String prefix = result.group(1);
+                        if( prefix == null )
+                            prefix = "";
 
-                        if( prefix == null ) prefix = "";
-
-                        String camelCase = result.group(2);
-                        String protocol  = result.group(3);
-                        String uri       = protocol+result.group(4);
-                        buf              = buf.substring(result.endOffset(0));
+                        String camelCase = result.group( 2 );
+                        String protocol = result.group( 3 );
+                        String uri = protocol + result.group( 4 );
+                        buf = buf.substring( result.end() );
 
                         m_currentElement.addContent( firstPart );
-
+                        result.group( 2 );
                         //
                         //  Check if the user does not wish to do URL or WikiWord expansion
                         //
@@ -855,15 +864,11 @@ public class JSPWikiMarkupParser
                                 uri = uri.substring(0,uri.length()-1);
                                 buf = c + buf;
                             }
-                            // System.out.println("URI match "+uri);
                             m_currentElement.addContent( prefix );
                             makeDirectURILink( uri );
                         }
                         else
                         {
-                            // System.out.println("Matched: '"+camelCase+"'");
-                            // System.out.println("Split to '"+firstPart+"', and '"+buf+"'");
-                            // System.out.println("prefix="+prefix);
                             m_currentElement.addContent( prefix );
 
                             makeCamelCaseLink( camelCase );
@@ -1343,7 +1348,6 @@ public class JSPWikiMarkupParser
         else if( ( linkExists( possiblePage ) ) != null &&
                  hasLinkText )
         {
-            // System.out.println("Orig="+link+", Matched: "+matchedLink);
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
 
             return makeLink( IMAGEWIKILINK, reallink, link, null, null );
@@ -3015,6 +3019,4 @@ public class JSPWikiMarkupParser
 
     }
 
-
 }
-

@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki;
 import java.util.Properties;
 import java.io.IOException;
 
+import org.apache.jspwiki.api.WikiException;
+
 /**
  *  A generic Wiki provider for all sorts of things that the Wiki can
  *  store.
@@ -43,10 +45,11 @@ public interface WikiProvider
      *  @param properties A set of properties used to initialize this provider
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem
+     * @throws WikiException 
      */
     public void initialize( WikiEngine engine, Properties properties ) 
         throws NoRequiredPropertyException,
-               IOException;
+               IOException, WikiException;
 
     /**
      *  Return a valid HTML string for information.  May

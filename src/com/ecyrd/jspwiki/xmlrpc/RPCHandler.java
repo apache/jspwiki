@@ -27,6 +27,7 @@ import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.util.TextUtil;
 
+import org.apache.jspwiki.api.WikiPage;
 import org.apache.xmlrpc.XmlRpcException;
 
 import com.ecyrd.jspwiki.*;

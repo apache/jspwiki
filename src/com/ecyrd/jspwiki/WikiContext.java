@@ -26,6 +26,8 @@ import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.action.*;
 import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 

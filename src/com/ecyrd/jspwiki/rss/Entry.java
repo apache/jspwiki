@@ -20,7 +20,7 @@
  */
 package com.ecyrd.jspwiki.rss;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
 
 /**
  *  Represents an entry, that is, an unit of change, in a Feed.

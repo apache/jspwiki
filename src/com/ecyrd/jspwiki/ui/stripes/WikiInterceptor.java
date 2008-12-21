@@ -48,7 +48,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
  * {@link com.ecyrd.jspwiki.WikiSession}</li>
  * <li><code>wikiActionBean</code> - the
  * {@link com.ecyrd.jspwiki.action.WikiActionBean} injected by Stripes</li>
- * <li><code>wikiPage</code> - the {@link com.ecyrd.jspwiki.WikiPage}
+ * <li><code>wikiPage</code> - the {@link org.apache.jspwiki.api.WikiPage}
  * associated with the WikiActionBean, or the "front page" if the WikiActionBean
  * is not a WikiContext</li>
  * </ul>

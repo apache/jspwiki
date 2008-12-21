@@ -23,7 +23,8 @@ package com.ecyrd.jspwiki.search;
 import java.io.IOException;
 import java.util.Collection;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 

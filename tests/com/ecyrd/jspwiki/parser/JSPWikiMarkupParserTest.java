@@ -32,6 +32,7 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -42,6 +43,7 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.BasicAttachmentProvider;
+import com.ecyrd.jspwiki.providers.ProviderException;
 import com.ecyrd.jspwiki.render.XHTMLRenderer;
 import com.ecyrd.jspwiki.util.TextUtil;
 
@@ -98,7 +100,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     private String translate( String src )
     throws IOException,
             NoRequiredPropertyException,
-            ServletException
+            ServletException, ProviderException
     {
         return translate( testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
@@ -106,7 +108,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     private String translate( WikiEngine e, String src )
         throws IOException,
                NoRequiredPropertyException,
-               ServletException
+               ServletException, ProviderException
     {
         return translate( e, e.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }

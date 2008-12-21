@@ -7,6 +7,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="com.ecyrd.jspwiki.auth.*" %>
 <%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>

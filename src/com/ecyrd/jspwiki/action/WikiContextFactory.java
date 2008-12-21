@@ -19,6 +19,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.util.ResolverUtil;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
@@ -113,8 +114,9 @@ public final class WikiContextFactory
      * 
      * @param request the HTTP request
      * @param context the WikiContext to save
+     * @throws WikiException 
      */
-    public static void saveContext( HttpServletRequest request, WikiContext context )
+    public static void saveContext( HttpServletRequest request, WikiContext context ) throws WikiException
     {
         // Stash WikiEngine as a request attribute (can be
         // used later as ${wikiEngine} in EL markup)
@@ -604,8 +606,9 @@ public final class WikiContextFactory
      * @param page the name of the page to look up; this page <em>must</em>
      *            exist
      * @return the wiki page
+     * @throws WikiException 
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, String page )
+    protected final WikiPage resolvePage( HttpServletRequest request, String page ) throws WikiException
     {
         // See if the user included a version parameter
         WikiPage wikipage;
@@ -651,10 +654,11 @@ public final class WikiContextFactory
      *  page.
      *  
      *  @return A valid WikiContext.
+     * @throws WikiException 
      */
     // TODO: Should this be better called "newVirtualContext()" or something?  "Empty" is not
     //       very descriptive.
-    public WikiContext newEmptyContext()
+    public WikiContext newEmptyContext() throws WikiException
     {
         WikiPage page = m_engine.createPage( "__DUMMY__");
         return newViewContext( null, null, page );

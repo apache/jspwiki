@@ -22,11 +22,13 @@ package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
+
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.search.QueryItem;
-
-import com.ecyrd.jspwiki.*;
 
 /**
  *  A provider who counts the hits to different parts.
@@ -47,7 +49,7 @@ public class CounterProvider
     String m_defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
 
-    public void initialize( WikiEngine engine, Properties props )
+    public void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_pages = new WikiPage[]
                   { engine.createPage("Foo"),
