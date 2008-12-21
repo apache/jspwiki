@@ -25,6 +25,8 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import junit.framework.*;
 import java.util.*;
+
+import org.apache.jspwiki.api.WikiPage;
 import org.apache.xmlrpc.*;
 import com.ecyrd.jspwiki.xmlrpc.RPCHandler;
 

@@ -39,7 +39,7 @@ import java.security.Permission;
  * </code>
  * </blockquote>
  * <p>These examples assume that the ActionBeans they annotate contain the appropriate properties;
- * in this case, <code>page</code> is assumed to be a {@link com.ecyrd.jspwiki.WikiPage} property,
+ * in this case, <code>page</code> is assumed to be a {@link org.apache.jspwiki.api.WikiPage} property,
  * and <code>context</code> is assumed to be a {@link com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext}
  * property.</p>
  * <p>This Annotation class does not parse, process or instantiate Permissions; it merely specifies

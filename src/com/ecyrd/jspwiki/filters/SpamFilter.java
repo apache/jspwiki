@@ -37,6 +37,8 @@ import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.ModuleData;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

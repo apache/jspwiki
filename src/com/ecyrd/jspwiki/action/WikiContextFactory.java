@@ -19,6 +19,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.util.ResolverUtil;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.auth.SessionMonitor;

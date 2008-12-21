@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.parser.JSPWikiMarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
 

@@ -1,8 +1,9 @@
 package com.ecyrd.jspwiki.action;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import net.sourceforge.stripes.validation.Validate;
 
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  * Abstract WikiActionBean subclass used by all ActionBeans that use and process

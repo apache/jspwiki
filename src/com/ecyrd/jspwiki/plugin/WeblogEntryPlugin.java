@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.content.WikiName;

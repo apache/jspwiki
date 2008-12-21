@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.jspwiki.api.WikiPage;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.dav.DavPath;
 import com.ecyrd.jspwiki.dav.DavProvider;
 import com.ecyrd.jspwiki.dav.WikiDavProvider;

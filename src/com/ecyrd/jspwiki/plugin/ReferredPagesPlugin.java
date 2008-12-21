@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;

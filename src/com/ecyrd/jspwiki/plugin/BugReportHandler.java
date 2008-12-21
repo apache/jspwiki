@@ -29,10 +29,10 @@ import java.util.*;
 
 import org.apache.jspwiki.api.PluginException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.filters.RedirectException;
 import com.ecyrd.jspwiki.log.Logger;

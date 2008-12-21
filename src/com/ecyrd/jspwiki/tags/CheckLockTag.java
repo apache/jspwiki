@@ -23,12 +23,13 @@ package com.ecyrd.jspwiki.tags;
 import java.io.IOException;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.PageManager;
 import com.ecyrd.jspwiki.PageLock;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 import javax.servlet.http.HttpSession;
+
+import org.apache.jspwiki.api.WikiPage;
 
 /**
  *  Checks whether the page is locked for editing.  If the mode matches,

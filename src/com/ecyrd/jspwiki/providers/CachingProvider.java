@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki.providers;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 

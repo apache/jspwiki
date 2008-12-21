@@ -17,6 +17,8 @@ package com.ecyrd.jspwiki.ui.stripes;
 import java.util.Collection;
 import java.util.Locale;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.SimpleError;
@@ -24,12 +26,11 @@ import net.sourceforge.stripes.validation.TypeConverter;
 import net.sourceforge.stripes.validation.ValidationError;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
  * Stripes type converter that converts a WikiPage name, expressed as a String,
- * into an {@link com.ecyrd.jspwiki.WikiPage} object. This converter is looked
+ * into an {@link org.apache.jspwiki.api.WikiPage} object. This converter is looked
  * up and returned by the Stripes
  * {@link net.sourceforge.stripes.validation.TypeConverterFactory} for HTTP
  * request parameters that need to be bound to ActionBean properties of type
@@ -53,7 +54,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
      * 
      * @param pageName the name of the WikiPage to retrieve
      * @param targetType the type to return, which will always be of type
-     *            {@link com.ecyrd.jspwiki.WikiPage}
+     *            {@link org.apache.jspwiki.api.WikiPage}
      * @param errors the current Collection of validation errors for this field
      * @return the
      */

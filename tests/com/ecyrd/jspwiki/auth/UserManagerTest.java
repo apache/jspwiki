@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiPage;
 
 import junit.framework.TestCase;
 

@@ -22,10 +22,10 @@ package com.ecyrd.jspwiki.parser;
 
 import java.lang.ref.WeakReference;
 
+import org.apache.jspwiki.api.WikiPage;
 import org.jdom.Document;
 
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Stores the DOM tree of a rendered WikiPage.  This class

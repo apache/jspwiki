@@ -36,6 +36,7 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.attachment.Attachment;

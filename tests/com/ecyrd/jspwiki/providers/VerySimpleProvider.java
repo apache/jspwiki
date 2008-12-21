@@ -21,6 +21,9 @@
 package com.ecyrd.jspwiki.providers;
 
 import java.util.*;
+
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.search.QueryItem;
 

@@ -20,10 +20,10 @@
  */
 package com.ecyrd.jspwiki;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
+
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
@@ -335,5 +335,47 @@ public class JCRWikiPage
     public int hashCode()
     {
         return m_name.hashCode() * m_version;
+    }
+
+    public InputStream getContentAsStream()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getContentAsString()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public String getContentType()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Set<String> getReferrers()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void setContent( String content )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setContent( InputStream in )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setContentType( String contentType )
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

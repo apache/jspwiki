@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.security.Permission;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jspwiki.api.WikiPage;
 
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.WikiProvider;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.action.GroupActionBean;

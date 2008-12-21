@@ -37,6 +37,8 @@ import java.util.regex.PatternSyntaxException;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;

@@ -28,6 +28,7 @@ import java.util.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;

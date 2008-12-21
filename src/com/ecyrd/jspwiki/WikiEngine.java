@@ -39,6 +39,7 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.jspwiki.api.FilterException;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.action.WikiActionBean;
 import com.ecyrd.jspwiki.action.WikiContextFactory;

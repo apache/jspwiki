@@ -22,8 +22,9 @@ package com.ecyrd.jspwiki.auth.acl;
 
 import java.util.Properties;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
 
 /**

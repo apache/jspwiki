@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki.providers;
 import java.io.*;
 import java.util.*;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;

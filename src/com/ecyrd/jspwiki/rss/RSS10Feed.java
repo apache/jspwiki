@@ -25,10 +25,10 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import org.apache.ecs.xml.XML;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Provides an implementation of an RSS 1.0 feed.  In addition, this class is

@@ -22,9 +22,10 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.plugin.WeblogPlugin;
 import com.ecyrd.jspwiki.util.BlogUtil;
 import com.ecyrd.jspwiki.util.TextUtil;

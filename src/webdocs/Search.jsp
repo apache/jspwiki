@@ -9,6 +9,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" id="wikiActionBean" />
 
 <%! 

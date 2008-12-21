@@ -36,6 +36,7 @@ import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 import org.intabulas.sandler.*;
 import org.intabulas.sandler.exceptions.*;
 import org.intabulas.sandler.elements.*;

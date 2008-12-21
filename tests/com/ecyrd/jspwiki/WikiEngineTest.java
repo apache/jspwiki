@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.providers.*;
 import com.ecyrd.jspwiki.util.FileUtil;

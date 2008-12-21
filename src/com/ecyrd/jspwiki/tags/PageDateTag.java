@@ -24,7 +24,8 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 

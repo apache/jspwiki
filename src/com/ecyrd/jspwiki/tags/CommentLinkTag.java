@@ -24,9 +24,10 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.InternalWikiException;
 import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.

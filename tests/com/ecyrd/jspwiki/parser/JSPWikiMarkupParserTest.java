@@ -32,6 +32,7 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

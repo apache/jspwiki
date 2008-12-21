@@ -28,6 +28,7 @@ import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;

@@ -25,8 +25,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 
 /**
  * SearchMatcher performs the task of matching a search query to a page's

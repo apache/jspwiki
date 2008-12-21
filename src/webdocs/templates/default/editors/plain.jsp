@@ -8,6 +8,7 @@
 <%@ page import="com.ecyrd.jspwiki.ui.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.*" %>
 <%@ page import="com.ecyrd.jspwiki.rpc.json.*" %>
+<%@ page import="org.apache.jspwiki.api.WikiPage" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>

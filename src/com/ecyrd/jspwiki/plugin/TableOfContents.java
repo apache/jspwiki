@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.log.Logger;

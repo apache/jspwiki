@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.jspwiki.api.WikiException;
+import org.apache.jspwiki.api.WikiPage;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

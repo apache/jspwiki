@@ -22,7 +22,8 @@ package com.ecyrd.jspwiki.tags;
 
 import java.io.IOException;
 
-import com.ecyrd.jspwiki.WikiPage;
+import org.apache.jspwiki.api.WikiPage;
+
 
 /**
  *  Outputs the version number of the previous version of this page.

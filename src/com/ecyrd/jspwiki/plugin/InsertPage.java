@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.AuthorizationManager;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;

@@ -25,13 +25,13 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.jspwiki.api.WikiPage;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.providers.ProviderException;

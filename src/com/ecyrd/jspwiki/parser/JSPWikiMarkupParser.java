@@ -36,6 +36,7 @@ import javax.xml.transform.Result;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jspwiki.api.PluginException;
+import org.apache.jspwiki.api.WikiPage;
 import org.jdom.*;
 
 import com.ecyrd.jspwiki.*;

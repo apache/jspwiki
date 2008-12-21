@@ -24,9 +24,10 @@ import java.util.Collection;
 
 import javax.management.NotCompliantMBeanException;
 
+import org.apache.jspwiki.api.WikiPage;
+
 import com.ecyrd.jspwiki.WikiContext;
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.search.SearchManager;
 import com.ecyrd.jspwiki.ui.admin.SimpleAdminBean;
 import com.ecyrd.jspwiki.ui.progress.ProgressItem;
