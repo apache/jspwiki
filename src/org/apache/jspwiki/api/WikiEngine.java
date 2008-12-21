@@ -47,7 +47,7 @@ public interface WikiEngine
     public WikiRenderer getRenderer( String type );
     
     /**
-     *  Get a configuration parameter.
+     *  Gets a configuration parameter.
      */
     
     public String getConfigParameter( String key );

@@ -45,7 +45,7 @@ import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
  *  {@link WikiSession} object with the user's HttpSession. The
  *  WikiSession contains information about the user's authentication
  *  status, and is consulted by {@link #getCurrentUser()}.
- *  object</p>
+ *  method</p>
  *  <p>Do not cache the page object that you get from the WikiContext; always
  *  use getPage()!</p>
  *
@@ -287,7 +287,7 @@ public interface WikiContext
      *  A shortcut to generate a VIEW url.
      *
      *  @param page The page to which to link.
-     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     *  @return A URL to the page.  This honours the current absolute/relative setting.
      */
     public String getViewURL( String page );
 
@@ -296,7 +296,7 @@ public interface WikiContext
      *
      *  @param context e.g. WikiContext.EDIT
      *  @param page The page to which to link
-     *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
+     *  @return A URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
     public String getURL( String context,
                           String page );
@@ -310,7 +310,7 @@ public interface WikiContext
      *  @param page    The page to which to link
      *  @param params  A list of parameters, separated with "&amp;"
      *
-     *  @return An URL to the given context and page.
+     *  @return A URL to the given context and page.
      */
     public String getURL( String context,
                           String page,

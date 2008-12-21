@@ -136,7 +136,7 @@ public interface WikiSession
      * with type designator <code>WIKI_NAME</code> or (alternatively)
      * <code>FULL_NAME</code> is the primary Principal.</li>
      *   <li>For all other cases, the first Principal in the Subject's principal
-     *       collection that that isn't of type Role or GroupPrincipal is the primary.</li>
+     *       collection that isn't of type Role or GroupPrincipal is the primary.</li>
      * </ol>
      * If no primary user Principal is found, this method returns
      * {@link com.ecyrd.jspwiki.auth.WikiPrincipal#GUEST}.
@@ -229,7 +229,7 @@ public interface WikiSession
 
     /**
      * Returns <code>true</code> if the WikiSession's Subject
-     * possess a supplied Principal. This method eliminates the need
+     * possesses the supplied Principal. This method eliminates the need
      * to externally request and inspect the JAAS subject.
      * @param principal the Principal to test
      * @return the result

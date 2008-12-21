@@ -30,7 +30,7 @@ import java.util.Properties;
  *  <p>
  *  Note that the WikiContext.getPage() method always returns the context
  *  in which text is rendered, i.e. the original request.  Thus the content
- *  may actually be different content than what what the wikiContext.getPage()
+ *  may actually be different content than what the wikiContext.getPage()
  *  implies!  This happens often if you are for example including multiple
  *  pages on the same page.
  *  <p>
@@ -47,7 +47,7 @@ public interface PageFilter
      *  Is called whenever the a new PageFilter is instantiated and
      *  reset.
      *  
-     *  @param engine The WikiEngine whic owns this PageFilter
+     *  @param engine The WikiEngine which owns this PageFilter
      *  @param properties The properties ripped from filters.xml.
      *  @throws FilterException If the filter could not be initialized. If this is thrown,
      *                          the filter is not added to the internal queues.
@@ -107,13 +107,13 @@ public interface PageFilter
      *  @param wikiContext The WikiContext
      *  @param content The content which was just stored.
      *  @throws FilterException If something goes wrong.  As the page is already saved,
-     *                          This is just logged.
+     *                          this is just logged.
      */
     public void postSave( WikiContext wikiContext, String content )
         throws FilterException;
 
     /**
-     *  Called for every filter, e.g. on wiki eingine shutdown. Use this if you have to 
+     *  Called for every filter, e.g. on wiki engine shutdown. Use this if you have to 
      *  clean up or close global resources you allocated in the initialize() method.
      * 
      *  @param engine The WikiEngine which owns this filter.

@@ -73,7 +73,7 @@ public interface WikiPage
      *  on-the-fly.  A provider is not required to save them, but they
      *  can do that if they really want.
      *
-     *  @param key The key using which the attribute is fetched
+     *  @param key The key to use for fetching the attribute
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
     public Object getAttribute( String key );
@@ -162,7 +162,7 @@ public interface WikiPage
     public Acl getAcl();
 
     /**
-     * Sets the Acl for this page. Note that method does <em>not</em>
+     * Sets the Acl for this page. Note that this method does <em>not</em>
      * persist the Acl itself to back-end storage or in page markup;
      * it merely sets the internal field that stores the Acl. To
      * persist the Acl, callers should invoke 
@@ -186,7 +186,7 @@ public interface WikiPage
     public String getAuthor();
     
     /**
-     *  Returns the wiki nanme for this page
+     *  Returns the wiki name for this page
      *  
      *  @return The name of the wiki.
      */

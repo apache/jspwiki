@@ -22,7 +22,7 @@ package org.apache.jspwiki.api;
 
 /**
  *  Provides a generic PluginException.  This is the kind of
- *  an exception that the plugins should throw.
+ *  exception that the plugins should throw.
  */
 public class PluginException
     extends WikiException
