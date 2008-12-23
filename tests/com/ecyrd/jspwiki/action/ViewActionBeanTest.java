@@ -65,8 +65,8 @@ public class ViewActionBeanTest extends TestCase
         ViewActionBean bean = trip.getActionBean(ViewActionBean.class);
         assertEquals( page, bean.getPage() );
         
-        // ...and the destination should be Wiki.jsp (aka /View.action)
-        assertEquals("/Wiki.action", trip.getDestination() );
+        // ...and the destination should be Wiki.jsp (aka display JSP)
+        assertEquals("/Wiki.jsp", trip.getDestination() );
     }
     
     public void testViewNoParameter() throws Exception {
@@ -84,8 +84,8 @@ public class ViewActionBeanTest extends TestCase
         page = m_engine.getPage("Main");
         assertEquals( page, bean.getPage() );
         
-        // ...and the destination should be Wiki.jsp (aka /View.action)
-        assertEquals("/Wiki.action", trip.getDestination() );
+        // ...and the destination should be Wiki.jsp (aka display JSP)
+        assertEquals("/Wiki.jsp", trip.getDestination() );
     }
     
     public void testSpecialPage() throws Exception {

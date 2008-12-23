@@ -63,7 +63,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
     {
         HttpServletResponse response = getContext().getResponse();
         CookieAssertionLoginModule.clearUserCookie( response );
-        return new RedirectResolution( "/Logout.jsp" );
+        return new RedirectResolution( LoginActionBean.class, "logout" );
     }
 
     /**
@@ -87,12 +87,10 @@ public class UserPreferencesActionBean extends AbstractActionBean
         }
         if( m_redirect != null )
         {
-            RedirectResolution r = new RedirectResolution( ViewActionBean.class );
-            r.addParameter( "page", m_redirect );
             log.info( "Redirecting user to wiki page " + m_redirect );
-            return r;
+            return new RedirectResolution( ViewActionBean.class ).addParameter( "page", m_redirect );
         }
-        return new RedirectResolution( "/" );
+        return new RedirectResolution( ViewActionBean.class );
     }
 
     /**
@@ -105,7 +103,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
     public Resolution editFavorites()
     {
         Principal principal = getContext().getCurrentUser();
-        return new RedirectResolution( "/Edit.jsp?" + principal.getName() + "Favorites" );
+        return new RedirectResolution( EditActionBean.class ).addParameter( "page", principal.getName() + "Favorites" );
     }
 
     /**

@@ -24,6 +24,7 @@ import net.sourceforge.stripes.validation.ValidationError;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
+import com.ecyrd.jspwiki.auth.WikiSecurityException;
 import com.ecyrd.jspwiki.auth.authorize.Group;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
 
@@ -66,11 +67,16 @@ public class GroupTypeConverter implements TypeConverter<Group>
         Group group = null;
         try
         {
-            group = mgr.getGroup( groupName );
+            group = mgr.getGroup( groupName, true );
         }
         catch( NoSuchPrincipalException e )
         {
-            errors.add( new LocalizableError( "group.doesnotexist", groupName ) );
+            // Should never happen
+        }
+        catch( WikiSecurityException e )
+        {
+            // Illegal group name
+            errors.add( new LocalizableError( "editgroup.illegalname" ) );
         }
         return group;
     }

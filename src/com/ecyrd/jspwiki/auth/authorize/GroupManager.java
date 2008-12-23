@@ -105,8 +105,60 @@ public final class GroupManager implements Authorizer, WikiEventListener
     }
 
     /**
+     * <p>
+     * Finds or creates a Group in the GroupDatabase. The Group will either be a
+     * copy of an existing Group (if one can be found), or a new, unregistered
+     * Group (if not). Optionally, this method can throw a WikiSecurityException
+     * if the Group does not yet exist in the GroupManager cache.
+     * </p>
+     * <p>
+     * This method does not commit the new Group to the GroupManager cache. To
+     * do that, use {@link #setGroup(WikiSession, Group)}.
+     * </p>
+     * 
+     * @param name the name of the group to look up (or create)
+     * @param create whether this method should create a new, empty Group if one
+     *            with the requested name is not found. If <code>false</code>,
+     *            groups that do not exist will cause a
+     *            <code>NoSuchPrincipalException</code> to be thrown
+     * @return a new or existing Group. If the Group has not previously been
+     *         saved to the GroupDatabase and <code>create</code> is
+     *         <code>true</code>, it will contain no members.
+     * @throws WikiSecurityException if the group name isn't allowed
+     * @throws NoSuchPrincipalException if the group isn't found, and
+     *             <code>create</code> is <code>false</code>
+     * @see com.ecyrd.jspwiki.auth.authorize.Group#RESTRICTED_GROUPNAMES
+     */
+    public Group getGroup( String name, boolean create ) throws NoSuchPrincipalException, WikiSecurityException
+    {
+        // Certain names are forbidden
+        if ( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) )
+        {
+            throw new WikiSecurityException( "Illegal group name: " + name );
+        }
+        
+        Group group = m_groups.get( new GroupPrincipal( name ) );
+        
+        // If not found...
+        if( group == null )
+        {
+            if( create )
+            {
+                group = new Group( name, m_engine.getApplicationName() );
+            }
+            else
+            {
+                throw new NoSuchPrincipalException( "Group " + name + " not found." );
+            }
+        }
+        
+        return group;
+    }
+    
+    /**
      * Returns the Group matching a given name. If the group cannot be found,
      * this method throws a <code>NoSuchPrincipalException</code>.
+     * 
      * @param name the name of the group to find
      * @return the group
      * @throws NoSuchPrincipalException if the group cannot be found

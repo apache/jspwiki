@@ -1,3 +1,11 @@
+2008-12-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-39
+
+        * GroupActionBean finished, with unit tests. JSPs not yet. Fixed most of
+        the ActionBean unit tests that were failing elsewhere in the .action
+        package; down to just 4. Significant overhaul of the .action package.html Javadoc.
+
 2008-12-21  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-38

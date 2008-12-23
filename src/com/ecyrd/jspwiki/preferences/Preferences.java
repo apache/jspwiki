@@ -318,7 +318,7 @@ public class Preferences extends HashMap<String, String>
      * {@link com.ecyrd.jspwiki.ui.stripes.WikiInterceptor#intercept(net.sourceforge.stripes.controller.ExecutionContext)},
      * {@link com.ecyrd.jspwiki.action.WikiContextFactory#newContext(HttpServletRequest, javax.servlet.http.HttpServletResponse, String)}
      * and
-     * {@link com.ecyrd.jspwiki.action.WikiContextFactory#newViewContext(HttpServletRequest, javax.servlet.http.HttpServletResponse, com.ecyrd.jspwiki.WikiPage)}.
+     * {@link com.ecyrd.jspwiki.action.WikiContextFactory#newViewContext(HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.jspwiki.api.WikiPage)}.
      * </p>
      * <p>
      * Every user preference is read from a unique cookie. This method parses

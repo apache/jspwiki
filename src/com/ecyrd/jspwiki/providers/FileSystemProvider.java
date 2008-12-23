@@ -28,8 +28,6 @@ import org.apache.jspwiki.api.WikiPage;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
-import com.ecyrd.jspwiki.*;
-
 /**
  *  Provides a simple directory based repository for Wiki pages.
  *  <P>

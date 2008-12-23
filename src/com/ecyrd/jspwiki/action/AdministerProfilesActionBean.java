@@ -103,6 +103,6 @@ public class AdministerProfilesActionBean extends AbstractActionBean
             }
         }
 
-        return new RedirectResolution( "/AdministerProfiles.jsp" );
+        return new RedirectResolution( AdministerProfilesActionBean.class );
     }
 }

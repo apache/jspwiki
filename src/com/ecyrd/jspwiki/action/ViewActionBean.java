@@ -72,9 +72,7 @@ public class ViewActionBean extends AbstractPageActionBean
 
                     // Ok, it really doesn't exist. Send 'em to the "Create new page?" JSP
                     log.info("User supplied page name '" + pageName + "' that doesn't exist; redirecting to create pages JSP." );
-                    resolution = new RedirectResolution(NewPageActionBean.class);
-                    resolution.addParameter("page", pageName);
-                    return resolution;
+                    return new RedirectResolution(NewPageActionBean.class).addParameter("page", pageName);
                 }
             }
         }

@@ -13,7 +13,7 @@ import com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext;
  * 
  * @author Andrew Jaquith
  */
-public abstract class AbstractActionBean implements WikiActionBean
+abstract class AbstractActionBean implements WikiActionBean
 {
     private WikiActionBeanContext m_context = null;
 
@@ -33,7 +33,7 @@ public abstract class AbstractActionBean implements WikiActionBean
      * 
      * @throws IllegalStateException
      */
-    public WikiActionBeanContext getContext()
+    public final WikiActionBeanContext getContext()
     {
         return m_context;
     }
@@ -42,7 +42,7 @@ public abstract class AbstractActionBean implements WikiActionBean
      * Sets the Stripes ActionBeanContext associated with this WikiContext. It
      * will also update the cached HttpRequest.
      */
-    public void setContext( ActionBeanContext context )
+    public final void setContext( ActionBeanContext context )
     {
         m_context = ((WikiActionBeanContext) context);
     }

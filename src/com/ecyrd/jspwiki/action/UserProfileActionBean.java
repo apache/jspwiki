@@ -4,7 +4,6 @@ import java.security.Principal;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
-import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.validation.*;
 
 import com.ecyrd.jspwiki.WikiEngine;
@@ -107,9 +106,7 @@ public class UserProfileActionBean extends AbstractActionBean
         // Not so fast, Swifty Lazar! What if someone must approve the profile?
         catch( DecisionRequiredException e )
         {
-            UrlBuilder builder = new UrlBuilder( this.getContext().getLocale(), ViewActionBean.class, false );
-            builder.addParameter( "page", "ApprovalRequiredForUserProfiles" );
-            return new RedirectResolution( builder.toString() );
+            return new RedirectResolution( ViewActionBean.class ).addParameter( "page", "ApprovalRequiredForUserProfiles" );
         }
 
         // Any other errors are either UI or config problems, so let the user
@@ -125,18 +122,21 @@ public class UserProfileActionBean extends AbstractActionBean
             // Set user cookie
             Principal principal = getContext().getWikiSession().getUserPrincipal();
             CookieAssertionLoginModule.setUserCookie( getContext().getResponse(), principal.getName() );
-            UrlBuilder builder = new UrlBuilder( getContext().getLocale(), "/Wiki.jsp", false );
+            RedirectResolution r = new RedirectResolution( ViewActionBean.class );
             if( m_redirect != null )
             {
-                builder.addParameter( "page", m_redirect );
+                r.addParameter( "page", m_redirect );
             }
-            return new RedirectResolution( builder.toString() );
+            return r;
         }
 
         // Otherwise, send user to source page
-        UrlBuilder builder = new UrlBuilder( this.getContext().getLocale(), context.getSourcePage(), false );
-        builder.addParameter( "tab", "profile" );
-        return new RedirectResolution( builder.toString() );
+        RedirectResolution r = new RedirectResolution( ViewActionBean.class );
+        if ( m_redirect != null )
+        {
+            r.addParameter( "page", m_redirect );
+        }
+        return r;
     }
 
     public void setPasswordAgain( String password )

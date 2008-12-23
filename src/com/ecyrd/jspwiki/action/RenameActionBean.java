@@ -23,7 +23,7 @@ import com.ecyrd.jspwiki.ui.stripes.WikiRequestContext;
 
 /**
  * <p>
- * Renames a wiki page. This ActionBean parses and extracts two request
+ * Renames a {@link org.apache.jspwiki.api.WikiPage}. This ActionBean parses and extracts two request
  * parameters:
  * </p>
  * <h3>Request parameters</h3>
@@ -113,9 +113,8 @@ public class RenameActionBean extends AbstractPageActionBean
                   + request.getRemoteAddr() + " by " + request.getRemoteUser() );
         String renamedTo = engine.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );
-        RedirectResolution r = new RedirectResolution( ViewActionBean.class );
-        r.addParameter( "page", renamedTo );
-        return r;
+        
+        return new RedirectResolution( ViewActionBean.class ).addParameter( "page", renamedTo );
     }
 
     /**

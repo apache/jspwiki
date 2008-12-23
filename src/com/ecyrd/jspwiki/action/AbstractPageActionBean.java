@@ -1,17 +1,20 @@
 package com.ecyrd.jspwiki.action;
 
-import org.apache.jspwiki.api.WikiPage;
-
 import net.sourceforge.stripes.validation.Validate;
 
+import org.apache.jspwiki.api.WikiPage;
 
 /**
- * Abstract WikiActionBean subclass used by all ActionBeans that use and process
- * WikiPages using the <code>page</code> request parameter. In particular,
- * this subclass contains special processing logic that sets the page property
- * of the underlying {@link com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext}
- * when the {@link #setPage(WikiPage)} method is called by the Stripes
- * controller.
+ * Abstract {@link WikiActionBean} subclass used by all ActionBeans that use and
+ * process {@link org.apache.jspwiki.api.WikiPage} objects bound to the
+ * <code>page</code> request parameter. In particular, this subclass contains
+ * special processing logic that ensures that, the <code>page</code>
+ * properties of this object and its related
+ * {@link com.ecyrd.jspwiki.WikiContext} are set to the same value. When
+ * {@link #setPage(WikiPage)} is called by, for example, the Stripes controller,
+ * the underlying
+ * {@link com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext#setPage(WikiPage)}
+ * method is called also.
  */
 public class AbstractPageActionBean extends AbstractActionBean
 {

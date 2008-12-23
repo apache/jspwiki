@@ -20,8 +20,6 @@
  */
 package com.ecyrd.jspwiki.attachment;
 
-import org.apache.jspwiki.api.WikiPage;
-
 import com.ecyrd.jspwiki.JCRWikiPage;
 import com.ecyrd.jspwiki.WikiEngine;
 
