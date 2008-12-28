@@ -13,7 +13,7 @@ NEW FEATURES
 
 * JSPWiki now requires JDK 1.5 to run.
 
-* Simplified Chinese, Dutch and Italian localizations added!
+* Simplified Chinese, Dutch, Russian and Italian localizations added!
 
 * Logging by JSPWiki is now done with slf4j, see http://www.slf4j.org for details.
   You can now decide at runtime which logging implementation you want, just pick
@@ -22,6 +22,8 @@ NEW FEATURES
   you have a good reason.
   The log4j configuration statements have been moved to a separate file log4j.properties, 
   this file should be on your CLASSPATH, by default it is placed in WEB-INF/classes
+  
+* A new plugin was added that shows you all plugins that are available: PluginIndexPlugin
 
 The full log of any issues fixed can be found at:
 

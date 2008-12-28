@@ -103,47 +103,6 @@ jspwiki.groupdatabase.member=member
 jspwiki.groupdatabase.modified=modified
 jspwiki.groupdatabase.modifier=modifier
 
-#
-#  Configure logs.
-#
-#  Send mail on alerts
-#
-#
-#  Log only interesting stuff on screen.
-#
-#log4j.appender.console = org.apache.log4j.ConsoleAppender
-#log4j.appender.console.Threshold = WARN
- 
-#log4j.appender.console.layout = org.apache.log4j.PatternLayout
-#log4j.appender.console.layout.ConversionPattern = %-5p: %m%n
-
-#
-#  Log everything into a file.
-log4j.rootCategory=INFO,FileLog
-log4j.logger.com.ecyrd.jspwiki=INFO, FileLog
-log4j.logger.org.mortbay=INFO, TestContainerLog
-log4j.logger.SecurityLog=INFO, SecurityAppender
-
-log4j.appender.FileLog = org.apache.log4j.RollingFileAppender
-log4j.appender.FileLog.MaxFileSize    = 10MB
-log4j.appender.FileLog.MaxBackupIndex = 14
-log4j.appender.FileLog.File = @tests.logfile@
-log4j.appender.FileLog.layout = org.apache.log4j.PatternLayout
-log4j.appender.FileLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
-
-log4j.appender.SecurityAppender = org.apache.log4j.RollingFileAppender
-log4j.appender.SecurityAppender.MaxFileSize    = 10MB
-log4j.appender.SecurityAppender.MaxBackupIndex = 14
-log4j.appender.SecurityAppender.File = @securitylog@
-log4j.appender.SecurityAppender.layout = org.apache.log4j.PatternLayout
-log4j.appender.SecurityAppender.layout.ConversionPattern=%d %p - %m%n
-
-log4j.appender.TestContainerLog = org.apache.log4j.RollingFileAppender
-log4j.appender.TestContainerLog.MaxFileSize    = 10MB
-log4j.appender.TestContainerLog.MaxBackupIndex = 14
-log4j.appender.TestContainerLog.layout = org.apache.log4j.PatternLayout
-log4j.appender.TestContainerLog.layout.ConversionPattern=%d [%t] %p %c %x - %m%n
-
 # JavaMail properties
 mail.smtp.host = 127.0.0.1
 mail.smtp.port = 25

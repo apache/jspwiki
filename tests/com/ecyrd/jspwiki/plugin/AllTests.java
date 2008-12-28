@@ -41,6 +41,7 @@ public class AllTests extends TestCase
         suite.addTest( CounterPluginTest.suite() );
         suite.addTest( GroupsTest.suite() );
         suite.addTest( InsertPageTest.suite() );
+        suite.addTest( PluginIndexPluginTest.suite() );
         suite.addTest( PluginManagerTest.suite() );
         suite.addTest( ReferringPagesPluginTest.suite() );
         suite.addTest( TableOfContentsTest.suite() );
