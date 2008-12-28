@@ -1,0 +1,14 @@
+<web-app xmlns="http://geronimo.apache.org/xml/ns/j2ee/web-2.0.1"
+	xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+	<sys:environment>
+		<sys:moduleId>
+			<sys:groupId>default</sys:groupId>
+			<sys:artifactId>JSPWiki</sys:artifactId>
+			<sys:type>war</sys:type>
+		</sys:moduleId>
+		<sys:hidden-classes>
+			<sys:filter>org.jaxen</sys:filter>
+			<sys:filter>org.jdom</sys:filter>
+		</sys:hidden-classes>
+	</sys:environment>
+</web-app>

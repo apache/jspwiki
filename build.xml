@@ -426,9 +426,9 @@
        <lib file="${jarfile}" />
        <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
        <webinf dir="etc">
+        <include name="geronimo-web.xml" />
          <include name="dtd/**" />
          <include name="jsp/**" />
-         <include name="commons-logging.properties" />
          <include name="jspwiki.policy" />
          <include name="jspwiki.properties" />
          <include name="oscache.tld" />
