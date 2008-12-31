@@ -143,24 +143,24 @@ public class LoggerImpl implements com.ecyrd.jspwiki.log.Logger, Serializable
     /** {@inheritDoc} */
     public boolean isErrorEnabled()
     {
-        return m_slf4jLogger.isErrorEnabled();
+        return m_slf4jLogger == null ? false : m_slf4jLogger.isErrorEnabled();
     }
 
     /** {@inheritDoc} */
     public boolean isWarnEnabled()
     {
-        return m_slf4jLogger.isWarnEnabled();
+        return m_slf4jLogger == null ? false : m_slf4jLogger.isWarnEnabled();
     }
 
     /** {@inheritDoc} */
     public boolean isInfoEnabled()
     {
-        return m_slf4jLogger.isInfoEnabled();
+        return m_slf4jLogger == null ? false : m_slf4jLogger.isInfoEnabled();
     }
 
     /** {@inheritDoc} */
     public boolean isDebugEnabled()
     {
-        return m_slf4jLogger.isDebugEnabled();
+        return m_slf4jLogger == null ? false : m_slf4jLogger.isDebugEnabled();
     }
 }
