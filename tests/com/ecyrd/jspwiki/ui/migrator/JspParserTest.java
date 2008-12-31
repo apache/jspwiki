@@ -340,12 +340,12 @@ public class JspParserTest extends TestCase
         JspParser parser = new JspParser();
         JspDocument doc = parser.parse( s );
 
-        // Should result in 18 nodes parsed (10 tags/directives + 8
+        // Should result in 14 nodes parsed (7 tags/directives + 7
         // text/whitespace nodes
         Node node;
         Node attribute;
         List<Node> nodes = doc.getNodes();
-        assertEquals( 20, nodes.size() );
+        assertEquals( 14, nodes.size() );
         int i = 0;
 
         // Test line 1 aka nodes 0+1
@@ -353,182 +353,11 @@ public class JspParserTest extends TestCase
         assertEquals( 1, node.getLine() );
         assertEquals( 1, node.getColumn() );
         assertEquals( 0, node.getStart() );
-        assertEquals( 49, node.getEnd() );
+        assertEquals( 79, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "page", node.getName() );
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "import", attribute.getName() );
-        assertEquals( "com.ecyrd.jspwiki.log.Logger", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 1, node.getLine() );
-        assertEquals( 50, node.getColumn() );
-        assertEquals( 49, node.getStart() );
-        assertEquals( 50, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test line 2 aka nodes 2+3
-        node = nodes.get( i );
-        assertEquals( 2, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 50, node.getStart() );
-        assertEquals( 106, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "page", node.getName() );
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "import", attribute.getName() );
-        assertEquals( "com.ecyrd.jspwiki.log.LoggerFactory", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 2, node.getLine() );
-        assertEquals( 57, node.getColumn() );
-        assertEquals( 106, node.getStart() );
-        assertEquals( 107, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test line 3 aka nodes 4+5
-        node = nodes.get( i );
-        assertEquals( 3, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 107, node.getStart() );
-        assertEquals( 147, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "page", node.getName() );
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "import", attribute.getName() );
-        assertEquals( "com.ecyrd.jspwiki.*", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 3, node.getLine() );
-        assertEquals( 41, node.getColumn() );
-        assertEquals( 147, node.getStart() );
-        assertEquals( 148, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test line 4 aka nodes 6+7
-        node = nodes.get( i );
-        assertEquals( 4, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 148, node.getStart() );
-        assertEquals( 195, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "page", node.getName() );
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "import", attribute.getName() );
-        assertEquals( "com.ecyrd.jspwiki.action.*", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 4, node.getLine() );
-        assertEquals( 48, node.getColumn() );
-        assertEquals( 195, node.getStart() );
-        assertEquals( 196, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test line 5 aka nodes 8+9
-        node = nodes.get( i );
-        assertEquals( 5, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 196, node.getStart() );
-        assertEquals( 230, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "page", node.getName() );
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "errorPage", attribute.getName() );
-        assertEquals( "/Error.jsp", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 5, node.getLine() );
-        assertEquals( 35, node.getColumn() );
-        assertEquals( 230, node.getStart() );
-        assertEquals( 231, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-        
-        // Test line 6 aka nodes 10+11
-        node = nodes.get( i );
-        assertEquals( 6, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 231, node.getStart() );
-        assertEquals( 285, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "taglib", node.getName() );
-        assertEquals( 2, ((Tag) node).getAttributes().size() );
-        attribute = ((Tag) node).getAttributes().get( 0 );
-        assertEquals( "uri", attribute.getName() );
-        assertEquals( "/WEB-INF/jspwiki.tld", attribute.getValue() );
-        attribute = ((Tag) node).getAttributes().get( 1 );
-        assertEquals( "prefix", attribute.getName() );
-        assertEquals( "wiki", attribute.getValue() );
-        i++;
-        node = nodes.get( i );
-        assertEquals( 6, node.getLine() );
-        assertEquals( 55, node.getColumn() );
-        assertEquals( 285, node.getStart() );
-        assertEquals( 286, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test line 7 aka nodes 12+13
-        node = nodes.get( i );
-        assertEquals( 7, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 286, node.getStart() );
-        assertEquals( 343, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
+        assertEquals( 6, node.getSiblings().size() );
         assertEquals( "taglib", node.getName() );
         assertEquals( 2, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
@@ -539,109 +368,177 @@ public class JspParserTest extends TestCase
         assertEquals( "stripes", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 7, node.getLine() );
-        assertEquals( 58, node.getColumn() );
-        assertEquals( 343, node.getStart() );
-        assertEquals( 344, node.getEnd() );
+        assertEquals( 1, node.getLine() );
+        assertEquals( 80, node.getColumn() );
+        assertEquals( 79, node.getStart() );
+        assertEquals( 80, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
+        assertEquals( 6, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 8 aka nodes 14+15
+        // Test line 2 aka nodes 2+3
         node = nodes.get( i );
-        assertEquals( 8, node.getLine() );
+        assertEquals( 2, node.getLine() );
         assertEquals( 1, node.getColumn() );
-        assertEquals( 344, node.getStart() );
-        assertEquals( 422, node.getEnd() );
+        assertEquals( 80, node.getStart() );
+        assertEquals( 191, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
+        assertEquals( 6, node.getSiblings().size() );
         assertEquals( "stripes:useActionBean", node.getName() );
-
-        // Node 14 should have 1 attribute:
-        // beanclass="com.ecyrd.jspwiki.action.LoginActionBean"
-        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        assertEquals( 3, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "beanclass", attribute.getName() );
-        assertEquals( NodeType.ATTRIBUTE, attribute.getType() );
         assertEquals( "com.ecyrd.jspwiki.action.LoginActionBean", attribute.getValue() );
-        assertEquals( 'c', ((Tag) node).getAttributes().get( 0 ).getValue().charAt( 0 ) );
         i++;
-
-        // Test line 8, node 15 (line break)
         node = nodes.get( i );
-        assertEquals( 8, node.getLine() );
-        assertEquals( 79, node.getColumn() );
-        assertEquals( 422, node.getStart() );
-        assertEquals( 423, node.getEnd() );
+        assertEquals( 2, node.getLine() );
+        assertEquals( 112, node.getColumn() );
+        assertEquals( 191, node.getStart() );
+        assertEquals( 192, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
+        assertEquals( 6, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test lines 9-20 aka nodes 16+17
+        // Test line 3 aka nodes 4+5
         node = nodes.get( i );
-        assertEquals( 9, node.getLine() );
+        assertEquals( 3, node.getLine() );
         assertEquals( 1, node.getColumn() );
-        assertEquals( 423, node.getStart() );
-        assertEquals( 842, node.getEnd() );
-        assertEquals( NodeType.JSP_DECLARATION, node.getType() );
+        assertEquals( 192, node.getStart() );
+        assertEquals( 256, node.getEnd() );
+        assertEquals( 4, node.getChildren().size() );
+        assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
+        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( "stripes:layout-render", node.getName() );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
+        assertEquals( "name", attribute.getName() );
+        assertEquals( "/templates/default/ViewLayout.jsp", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 20, node.getLine() );
-        assertEquals( 3, node.getColumn() );
-        assertEquals( 842, node.getStart() );
-        assertEquals( 843, node.getEnd() );
+        assertEquals( 3, node.getLine() );
+        assertEquals( 65, node.getColumn() );
+        assertEquals( 256, node.getStart() );
+        assertEquals( 259, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 3, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 21-34 aka node 18
+        // Test line 4 aka nodes 6+7
         node = nodes.get( i );
-        assertEquals( 21, node.getLine() );
-        assertEquals( 1, node.getColumn() );
-        assertEquals( 843, node.getStart() );
-        assertEquals( 1583, node.getEnd() );
-        assertEquals( 0, node.getChildren().size() );
-        assertEquals( NodeType.SCRIPTLET, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "(TEXT)", node.getName() );
-        i++;
-
-        // Test second tag on line 34 aka node 19
-        node = nodes.get( i );
-        assertEquals( 34, node.getLine() );
+        assertEquals( 4, node.getLine() );
         assertEquals( 3, node.getColumn() );
-        assertEquals( 1583, node.getStart() );
-        assertEquals( 1623, node.getEnd() );
+        assertEquals( 259, node.getStart() );
+        assertEquals( 300, node.getEnd() );
+        assertEquals( 3, node.getChildren().size() );
+        assertEquals( NodeType.START_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 3, node.getSiblings().size() );
+        assertEquals( "stripes:layout-component", node.getName() );
+        assertEquals( 1, ((Tag) node).getAttributes().size() );
+        attribute = ((Tag) node).getAttributes().get( 0 );
+        assertEquals( "name", attribute.getName() );
+        assertEquals( "content", attribute.getValue() );
+        i++;
+        node = nodes.get( i );
+        assertEquals( 4, node.getLine() );
+        assertEquals( 44, node.getColumn() );
+        assertEquals( 300, node.getStart() );
+        assertEquals( 305, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 2, node.getSiblings().size() );
+        assertEquals( "(TEXT)", node.getName() );
+        i++;
+
+        // Test line 5 aka nodes 8+9
+        node = nodes.get( i );
+        assertEquals( 5, node.getLine() );
+        assertEquals( 5, node.getColumn() );
+        assertEquals( 305, node.getStart() );
+        assertEquals( 363, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
-        assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 19, node.getSiblings().size() );
-        assertEquals( "wiki:Include", node.getName() );
-
-        // AbstractNode 19 should have 1 attribute: page="<%=contentPage%>"
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 2, node.getSiblings().size() );
+        assertEquals( "jsp:include", node.getName() );
         assertEquals( 1, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
         assertEquals( "page", attribute.getName() );
-        assertEquals( NodeType.ATTRIBUTE, attribute.getType() );
-        assertEquals( "<%=contentPage%>", attribute.getValue() );
-        assertEquals( 1, attribute.getChildren().size() );
-        assertEquals( NodeType.JSP_EXPRESSION, attribute.getChildren().get( 0 ).getType() );
-        assertEquals( "contentPage", attribute.getChildren().get( 0 ).getValue() );
+        assertEquals( "/templates/default/LoginContent.jsp", attribute.getValue() );
+        i++;
+        node = nodes.get( i );
+        assertEquals( 5, node.getLine() );
+        assertEquals( 63, node.getColumn() );
+        assertEquals( 363, node.getStart() );
+        assertEquals( 366, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 2, node.getSiblings().size() );
+        assertEquals( "(TEXT)", node.getName() );
+        i++;
+        
+        // Test line 6 aka nodes 10+11
+        node = nodes.get( i );
+        assertEquals( 6, node.getLine() );
+        assertEquals( 3, node.getColumn() );
+        assertEquals( 366, node.getStart() );
+        assertEquals( 393, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.END_TAG, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 3, node.getSiblings().size() );
+        assertEquals( "stripes:layout-component", node.getName() );
+        assertEquals( 0, ((Tag) node).getAttributes().size() );
+        i++;
+        node = nodes.get( i );
+        assertEquals( 6, node.getLine() );
+        assertEquals( 30, node.getColumn() );
+        assertEquals( 393, node.getStart() );
+        assertEquals( 394, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( NodeType.START_TAG, node.getParent().getType() );
+        assertEquals( 3, node.getSiblings().size() );
+        assertEquals( "(TEXT)", node.getName() );
+        i++;
+
+        // Test line 7 aka nodes 12+13
+        node = nodes.get( i );
+        assertEquals( 7, node.getLine() );
+        assertEquals( 1, node.getColumn() );
+        assertEquals( 394, node.getStart() );
+        assertEquals( 418, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.END_TAG, node.getType() );
+        assertEquals( NodeType.ROOT, node.getParent().getType() );
+        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( "stripes:layout-render", node.getName() );
+        assertEquals( 0, ((Tag) node).getAttributes().size() );
+        i++;
+        node = nodes.get( i );
+        assertEquals( 7, node.getLine() );
+        assertEquals( 25, node.getColumn() );
+        assertEquals( 418, node.getStart() );
+        assertEquals( 419, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( NodeType.ROOT, node.getParent().getType() );
+        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( "(TEXT)", node.getName() );
         i++;
     }
 

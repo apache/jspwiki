@@ -32,9 +32,9 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 
 import com.ecyrd.jspwiki.TestEngine;
 import com.ecyrd.jspwiki.action.GroupActionBean;
+import com.ecyrd.jspwiki.action.ViewActionBean;
 import com.ecyrd.jspwiki.auth.permissions.GroupPermission;
 import com.ecyrd.jspwiki.auth.permissions.WikiPermission;
-import com.ecyrd.jspwiki.ui.stripes.HandlerInfo;
 
 public class HandlerInfoTest extends TestCase
 {
@@ -66,7 +66,7 @@ public class HandlerInfoTest extends TestCase
     public void testPermissionAnnotations() throws Exception
     {
         Map<Method, HandlerInfo> map = HandlerInfo.getHandlerInfoCollection( GroupActionBean.class );
-        assertEquals( 4, map.size() );
+        assertEquals( 5, map.size() );
 
         Method method = GroupActionBean.class.getMethod( "view", new Class[0] );
         assertTrue( map.containsKey( method ) );
@@ -86,6 +86,15 @@ public class HandlerInfoTest extends TestCase
         assertEquals( "edit", handlerInfo.getPermissionActions() );
         assertNull( handlerInfo.getActionsExpression() );
 
+        method = GroupActionBean.class.getMethod( "saveNew", new Class[0] );
+        assertTrue( map.containsKey( method ) );
+        handlerInfo = map.get( method );
+        assertEquals( WikiPermission.class, handlerInfo.getPermissionClass() );
+        assertEquals( "*", handlerInfo.getPermissionTarget() );
+        assertNull( handlerInfo.getPermissionTargetExpression() );
+        assertEquals( WikiPermission.CREATE_GROUPS_ACTION, handlerInfo.getPermissionActions() );
+        assertNull( handlerInfo.getActionsExpression() );
+        
         method = GroupActionBean.class.getMethod( "delete", new Class[0] );
         assertTrue( map.containsKey( method ) );
         handlerInfo = map.get( method );
@@ -99,9 +108,9 @@ public class HandlerInfoTest extends TestCase
         assertTrue( map.containsKey( method ) );
         handlerInfo = map.get( method );
         assertEquals( WikiPermission.class, handlerInfo.getPermissionClass() );
-        assertEquals( WikiPermission.CREATE_GROUPS_ACTION, handlerInfo.getPermissionTarget() );
+        assertEquals( "*", handlerInfo.getPermissionTarget() );
         assertNull( handlerInfo.getPermissionTargetExpression() );
-        assertNull( handlerInfo.getPermissionActions() );
+        assertEquals( WikiPermission.CREATE_GROUPS_ACTION, handlerInfo.getPermissionActions() );
         assertNull( handlerInfo.getActionsExpression() );
     }
 
@@ -173,22 +182,25 @@ public class HandlerInfoTest extends TestCase
     public void testNotEvaluatedPermissionAnnotation() throws Exception
     {
         MockRoundtrip trip;
-        GroupActionBean bean;
+        ViewActionBean bean;
         Method method;
         HandlerInfo handlerInfo;
         Permission perm;
 
-        // Set up a new GroupActionBean with the non-existent group Foo
-        trip = m_engine.guestTrip( "/Group.action" );
-        trip.addParameter( "group", "Foo" );
+        // Set up a new ViewActionBean with the non-existent page Foobar
+        trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.addParameter( "page", "Foobar" );
         trip.execute( "view" );
-        bean = trip.getActionBean( GroupActionBean.class );
+        bean = trip.getActionBean( ViewActionBean.class );
         assertNotNull( bean );
+        
+        // The Page should not exist
+        assertNull( bean.getPage() );
 
-        // The view handler should NOT return a "view" GroupPermission (because
+        // The view handler should NOT return a "view" PagePermission (because
         // EL can't evaluate)
-        method = GroupActionBean.class.getMethod( "view", new Class[0] );
-        Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( GroupActionBean.class );
+        method = ViewActionBean.class.getMethod( "view", new Class[0] );
+        Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( ViewActionBean.class );
         handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
         perm = handlerInfo.getPermission( bean );

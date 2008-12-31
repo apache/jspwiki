@@ -77,7 +77,6 @@ public class UserPreferencesActionBean extends AbstractActionBean
     @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PREFERENCES_ACTION )
     public Resolution createAssertedName()
     {
-        // FIXME: should reload preferences (see Preferences.reloadPreferences)
         if( !getContext().getWikiSession().isAuthenticated() )
         {
             HttpServletRequest request = getContext().getRequest();

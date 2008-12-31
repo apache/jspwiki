@@ -169,7 +169,7 @@ public class LoginActionBeanTest extends TestCase
         // Log in
         trip.setParameter( "j_username", Users.JANNE );
         trip.setParameter( "j_password", Users.JANNE_PASS );
-        trip.setParameter( "j_remember", "true" );
+        trip.setParameter( "remember", "true" );
         trip.execute( "login" );
 
         // Verify we logged in correctly
