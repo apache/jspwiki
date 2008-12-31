@@ -34,7 +34,7 @@ public class HistoryIteratorInfo extends TagExtraInfo
     public VariableInfo[] getVariableInfo(TagData data)
     {
         VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
-                                                 "com.ecyrd.jspwiki.WikiPage",
+                                                 "org.apache.jspwiki.api.WikiPage",
                                                  true,
                                                  VariableInfo.NESTED )
         };
