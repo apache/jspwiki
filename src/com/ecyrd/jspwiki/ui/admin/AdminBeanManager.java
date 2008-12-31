@@ -115,6 +115,12 @@ public class AdminBeanManager implements WikiEventListener
                     m_mbeanServer.registerMBean( ab, name );
                     log.info("Registered new admin bean "+ab.getTitle());
                 }
+                else
+                {
+                    throw new RuntimeException( "JMX bean named " + name +
+                                                " is already registered. Hint: are you running 2 webapps with the same " +
+                                                WikiEngine.PROP_APPNAME + "?" );
+                }
             }
 
             m_allBeans.add( ab );
@@ -147,7 +153,7 @@ public class AdminBeanManager implements WikiEventListener
         String component = getJMXTitleString( ab.getType() );
         String title     = ab.getTitle();
 
-        ObjectName name = new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
+        ObjectName name = new ObjectName( Release.APPNAME + ":wiki=" + m_engine.getApplicationName() + ",component="+component+",name="+title );
         return name;
     }
 
