@@ -1,3 +1,43 @@
+2008-12-31  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-41
+
+        * Group.jsp, DeleteGroup.jsp, EditGroup.jsp and content JSPs refactored to use
+        Stripes tags. GroupTab.jsp eliminated from Preferences screen. We will re-do this,
+        later. Separated Login/create profile/lost password into separate JSPs (was causing
+        havoc with form submits).
+
+        * [JSPWIKI-452]. JMX beans now register themselves using the wiki name as part of
+        the MBean name, which means more than 1 webapp can co-exist.
+
+        * [JSPWIKI-351] Stripes-related labels, field names and validation errors moved to
+        CoreResources i18n files, and removed from templates/default. Message keys
+        were renamed to match Stripes field names where practical.
+
+        * [JSPWIKI-464] AuthenticationManager now handles LoginExceptions more
+        gracefully and propagates them to the original caller instead of wrapping
+        them in WikiSecurityExceptions.
+
+        * Bug fix: Fixed potential NPEs in LoggerImpl.
+
+        * Bug fix: SessionMonitor now calls WikiEngine.shutdown() when the webapp context
+        is unloaded. It didn't before, which meant containers would accumulate threads
+        and eventually exhaust memory.
+        
+        * Bug fix: TemplateManager.listLocales() was replaced with a new implementation
+        that does not assume resources are loaded from JARs. This was blowing up
+        Stripes unit tests when they ran in Eclipse. Now, we brute-force all possible
+        locales by calling the (safer) ClassLoader.getResource() with permuted
+        CoreResources_*.properties file names. Absurdly simple and foolproof.
+        
+        * Bug fix: to prevent potential name clashes, removed API version of WikiContext
+        until we figure out what we're doing. In the interim, there should be only one.
+        
+        * Bug fix: exclusion of log4j.jar from Eclipse classpath was causing IDE-run
+        unit tests to crash and burn. Re-added.
+        
+        * Happy New Year everyone!
+
 2008-12-28  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-40
