@@ -22,10 +22,9 @@ package com.ecyrd.jspwiki.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -120,27 +119,15 @@ public class TemplateManager extends ModuleManager
     public static final String DEFAULT_TEMPLATE = "default";
 
     /** Name of the file that contains the properties. */
-
     public static final String PROPERTYFILE = "template.properties";
 
-    /** Location of I18N Resource bundles, and path prefix and suffixes */
-
-    public static final String I18NRESOURCE_PATH = "/WEB-INF/lib/JSPWiki.jar";
-
-    public static final String I18NRESOURCE_PREFIX = "templates/default_";
-
-    public static final String I18NRESOURCE_SUFFIX = ".properties";
-
     /** I18N string to mark the default locale */
-
     public static final String I18NDEFAULT_LOCALE = "prefs.user.language.default";
 
     /** I18N string to mark the server timezone */
-
     public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
 
     /** Prefix of the default timeformat properties. */
-
     public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
 
     /**
@@ -156,8 +143,10 @@ public class TemplateManager extends ModuleManager
     /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
 
-    private WikiEngine m_engine;
+    private static final Map<Locale,String> LOCALES;
 
+    private WikiEngine m_engine;
+    
     /**
      * List of time zones, used by {@link #listTimeZones(HttpServletRequest)}.
      */
@@ -165,6 +154,7 @@ public class TemplateManager extends ModuleManager
 
     static
     {
+        // Init time zones
         List<TimeZone> zones = new ArrayList<TimeZone>();
         String[] ids = { "Pacific/Midway", "Pacific/Honolulu", "America/Anchorage", "PST", "MST", "CST", "EST", "America/Caracas",
                         "Brazil/East", "Atlantic/South_Georgia", "Atlantic/Cape_Verde", "Etc/Greenwich", "CET", "ART", "EAT",
@@ -176,6 +166,19 @@ public class TemplateManager extends ModuleManager
             zones.add( zone );
         }
         TIME_ZONES = Collections.unmodifiableList( zones );
+        
+        // Init locales
+        Locale[] locales = Locale.getAvailableLocales();
+        Map<Locale,String> foundLocales = new HashMap<Locale,String>();
+        for ( Locale locale : locales )
+        {
+            URL url = TemplateManager.class.getClassLoader().getResource( "CoreResources_" + locale.toString() + ".properties" );
+            if ( url != null )
+            {
+                foundLocales.put( locale, locale.getDisplayName( locale ) );
+            }
+        }
+        LOCALES = Collections.unmodifiableMap( foundLocales );
     }
 
     /**
@@ -461,49 +464,7 @@ public class TemplateManager extends ModuleManager
      */
     public Map<Locale, String> listLocales( HttpServletRequest request )
     {
-        LinkedHashMap<Locale, String> resultMap = new LinkedHashMap<Locale, String>();
-
-        JarInputStream jarStream = null;
-
-        try
-        {
-            JarEntry entry;
-            InputStream inputStream = request.getSession().getServletContext().getResourceAsStream( I18NRESOURCE_PATH );
-            jarStream = new JarInputStream( inputStream );
-
-            while ( (entry = jarStream.getNextJarEntry()) != null )
-            {
-                String name = entry.getName();
-
-                if( !entry.isDirectory() && name.startsWith( I18NRESOURCE_PREFIX ) && name.endsWith( I18NRESOURCE_SUFFIX ) )
-                {
-                    name = name.substring( I18NRESOURCE_PREFIX.length(), name.lastIndexOf( I18NRESOURCE_SUFFIX ) );
-                    Locale locale = new Locale( name.substring( 0, 2 ), ((name.indexOf( "_" ) == -1) ? "" : name.substring( 3, 5 )) );
-                    resultMap.put( locale, locale.getDisplayName( locale ) );
-                }
-            }
-        }
-        catch( IOException ioe )
-        {
-            if( log.isDebugEnabled() )
-                log.debug( "Could not search jar file '" + I18NRESOURCE_PATH + "'for properties files due to an IOException: \n"
-                           + ioe.getMessage() );
-        }
-        finally
-        {
-            if( jarStream != null )
-            {
-                try
-                {
-                    jarStream.close();
-                }
-                catch( IOException e )
-                {
-                }
-            }
-        }
-
-        return resultMap;
+        return LOCALES;
     }
 
     /**
