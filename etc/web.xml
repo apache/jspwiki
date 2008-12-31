@@ -69,11 +69,11 @@
       <!-- We override Stripes' normal resource bundle to use ours instead. -->
       <init-param>
          <param-name>LocalizationBundleFactory.FieldNameBundle</param-name>
-         <param-value>templates.default</param-value>
+         <param-value>CoreResources</param-value>
       </init-param>
       <init-param>
          <param-name>LocalizationBundleFactory.ErrorMessageBundle</param-name>
-         <param-value>templates.default</param-value>
+         <param-value>CoreResources</param-value>
       </init-param>
       <!-- Locales supported by this wiki -->
       <init-param>

@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import javax.mail.AuthenticationFailedException;
 import javax.mail.SendFailedException;
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,8 +36,6 @@ import com.ecyrd.jspwiki.util.TextUtil;
 public class LoginActionBean extends AbstractActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( LoginActionBean.class );
-
-    private static final String DEFAULT_TAB = "logincontent";
 
     /**
      * Sets cookies and redirects the user to a wiki page after a successful
@@ -77,8 +76,6 @@ public class LoginActionBean extends AbstractActionBean
 
     private String m_redirect = null;
 
-    private String m_tab = DEFAULT_TAB;
-
     /**
      * Returns the e-mail address.
      * 
@@ -104,11 +101,6 @@ public class LoginActionBean extends AbstractActionBean
         return m_username;
     }
 
-    public String getTab()
-    {
-        return m_tab;
-    }
-
     public String getRedirect()
     {
         return m_redirect;
@@ -119,7 +111,6 @@ public class LoginActionBean extends AbstractActionBean
     {
         WikiSession wikiSession = getContext().getWikiSession();
         ValidationErrors errors = getContext().getValidationErrors();
-        ResourceBundle rb = getContext().getBundle( "CoreResources" );
 
         log.debug( "Attempting to authenticate user " + m_username );
 
@@ -128,13 +119,16 @@ public class LoginActionBean extends AbstractActionBean
         {
             if( !getContext().getEngine().getAuthenticationManager().login( wikiSession, m_username, m_password ) )
             {
-                log.info( "Failed to authenticate user " + m_username );
-                errors.addGlobalError( new SimpleError( rb.getString( "login.error.password" ) ) );
             }
+        }
+        catch ( LoginException e )
+        {
+            log.info( "Failed to authenticate user " + m_username );
+            errors.addGlobalError( new LocalizableError( "login.error.password" ) );
         }
         catch( WikiSecurityException e )
         {
-            errors.addGlobalError( new SimpleError( rb.getString( "login.error" ), e.getMessage() ) );
+            errors.addGlobalError( new LocalizableError( "login.error", e.getMessage() ) );
         }
     }
 
@@ -187,27 +181,8 @@ public class LoginActionBean extends AbstractActionBean
         m_password = password;
     }
 
-    /**
-     * Sets the <code>tab</code> parameter for the source page. The value
-     * supplied to this method is also added to the source page resolution
-     * returned by
-     * {@link com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext#getSourcePageResolution()}.
-     * 
-     * @param tab the tab value
-     */
     @Validate()
-    public void setTab( String tab )
-    {
-        m_tab = tab;
-        Resolution r = getContext().getSourcePageResolution();
-        if( r instanceof OnwardResolution )
-        {
-            ((OnwardResolution) r).addParameter( "tab", tab );
-        }
-    }
-
-    @Validate()
-    public void setRmember( boolean remember )
+    public void setRemember( boolean remember )
     {
         m_remember = remember;
     }
@@ -240,14 +215,13 @@ public class LoginActionBean extends AbstractActionBean
     public Resolution view()
     {
         ValidationErrors errors = getContext().getValidationErrors();
-        ResourceBundle rb = getContext().getBundle( "CoreResources" );
 
         // If user got here and is already authenticated, it means
         // they just aren't allowed access to what they asked for.
         // Weepy tears and hankies all 'round.
         if( getContext().getWikiSession().isAuthenticated() )
         {
-            errors.addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
+            errors.addGlobalError( new LocalizableError( "login.error.noaccess" ) );
             return new RedirectResolution( MessageActionBean.class );
         }
 
@@ -262,7 +236,7 @@ public class LoginActionBean extends AbstractActionBean
             Object seen = session.getAttribute( "_redirect" );
             if( seen != null )
             {
-                getContext().getValidationErrors().addGlobalError( new SimpleError( rb.getString( "login.error.noaccess" ) ) );
+                getContext().getValidationErrors().addGlobalError( new LocalizableError( "login.error.noaccess" ) );
                 return new RedirectResolution( MessageActionBean.class );
             }
             session.setAttribute( "_redirect", "I love Outi" ); // Any marker
@@ -362,9 +336,7 @@ public class LoginActionBean extends AbstractActionBean
             wikiSession.addMessage( "resetpw", message );
         }
 
-        ForwardResolution r = new ForwardResolution( "/LoginForm.jsp" );
-        r.addParameter( "tab", "lostpassword" );
-        return r;
+        return new ForwardResolution( "/LostPassword.jsp" );
     }
 
 }

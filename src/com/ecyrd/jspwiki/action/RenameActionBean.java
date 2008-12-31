@@ -9,10 +9,7 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.validation.SimpleError;
-import net.sourceforge.stripes.validation.Validate;
-import net.sourceforge.stripes.validation.ValidationErrors;
-import net.sourceforge.stripes.validation.ValidationMethod;
+import net.sourceforge.stripes.validation.*;
 
 import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.permissions.PagePermission;
@@ -165,7 +162,7 @@ public class RenameActionBean extends AbstractPageActionBean
     {
         if( getContext().getEngine().pageExists( m_renameTo ) )
         {
-            errors.add( "renameTo", new SimpleError( "The page name '" + m_renameTo + "' already exists. Choose another." ) );
+            errors.add( "renameTo", new LocalizableError( "rename.exists" ) );
         }
     }
 
