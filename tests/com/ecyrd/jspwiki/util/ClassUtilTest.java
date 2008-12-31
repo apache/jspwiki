@@ -36,9 +36,9 @@ public class ClassUtilTest extends TestCase
     public void testFindClass()
         throws Exception
     {
-        Class foo = ClassUtil.findClass( "com.ecyrd.jspwiki", "WikiPage" );
+        Class foo = ClassUtil.findClass( "com.ecyrd.jspwiki.api", "WikiPage" );
 
-        assertEquals( foo.getName(), "com.ecyrd.jspwiki.WikiPage" );
+        assertEquals( foo.getName(), "com.ecyrd.jspwiki.api.WikiPage" );
     }
 
     /**
