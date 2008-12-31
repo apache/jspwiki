@@ -22,13 +22,12 @@ package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.callback.*;
 
+import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * Handles logins made from inside the wiki application, rather than via the web
@@ -42,6 +41,8 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  */
 public class WikiCallbackHandler implements CallbackHandler
 {
+    private static final Logger log = LoggerFactory.getLogger(WikiCallbackHandler.class);
+
     private final UserDatabase m_database;
 
     private final String       m_password;
@@ -83,6 +84,18 @@ public class WikiCallbackHandler implements CallbackHandler
             else if ( callback instanceof PasswordCallback )
             {
                 ( (PasswordCallback) callback ).setPassword( m_password.toCharArray() );
+            }
+            else if( callbacks[i] instanceof TextOutputCallback )
+            {
+                TextOutputCallback textOutputCb = (TextOutputCallback) callbacks[i];
+                String loginResult = textOutputCb.getMessage();
+                if(  textOutputCb.getMessageType() == TextOutputCallback.ERROR )
+                {
+                    log.error( loginResult );
+                    throw new IOException( loginResult );
+                }
+
+                log.info( loginResult );
             }
             else
             {

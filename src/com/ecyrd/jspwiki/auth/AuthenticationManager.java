@@ -277,6 +277,7 @@ public final class AuthenticationManager
 
         // If user not authenticated, check if container logged them in, or if
         // there's an authentication cookie
+        Set<Principal> principals = null;
         if ( !session.isAuthenticated() )
         {
             // Create a callback handler
@@ -290,15 +291,31 @@ public final class AuthenticationManager
                 throw new WikiSecurityException( e.getMessage() );
             }
             
-            // Execute the container login module, then (if that fails) the cookie auth module
-            Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
-            if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
+            // Execute the container login module
+            try
             {
-                principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
+                principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
+            }
+            catch ( LoginException e )
+            {
+                // Container credentials not supplied in request. Ok, try the auth cookie!
+            }
+            
+            // Execute the cookie authentication module (if allowed)
+            if ( ( principals == null || principals.size() == 0 ) && authenticationMgr.allowsCookieAuthentication() )
+            {
+                try
+                {
+                    principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
+                }
+                catch( LoginException e )
+                {
+                    // Authentication cookie not supplied in request. Ok, try the assertion cookie!
+                }
             }
             
             // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
-            if ( principals.size() > 0 )
+            if ( principals != null && principals.size() > 0 )
             {
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
                 for ( Principal principal : principals )
@@ -312,18 +329,34 @@ public final class AuthenticationManager
         if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() )
         {
             // Execute the cookie assertion login module
-            Set<Principal> principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
-            if ( principals.size() > 0 )
+            try
             {
-                fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
+                principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
+                if ( principals != null && principals.size() > 0 )
+                {
+                    fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
+                }
+            }
+            catch( LoginException e )
+            {
+                // Assertion cookie not supplied in request. Ok, use the IP address!
             }
         }
 
         // If user still anonymous, use the remote address
-        if (session.isAnonymous() )
+        if ( session.isAnonymous() )
         {
-            Set<Principal> principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
-            if ( principals.size() > 0 )
+            try
+            {
+                principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
+            }
+            catch( LoginException e )
+            {
+                // If the anonymous login didn't succeed, we have a genuine configuration problem!
+                e.printStackTrace();
+                throw new WikiSecurityException( e.getMessage() );
+            }
+            if ( principals != null && principals.size() > 0 )
             {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
                 return true;
@@ -344,15 +377,21 @@ public final class AuthenticationManager
      * class will be used. When the LoginModule's <code>initialize</code> method is invoked,
      * an options Map populated by properties keys prefixed by {@link #PREFIX_LOGIN_MODULE_OPTIONS}
      * will be passed as a parameter.
-     * @param session the current wiki session; may not be null.
+     * @param session the current wiki session; may not be <code>null</code>.
      * @param username The user name. This is a login name, not a WikiName. In
      *            most cases they are the same, but in some cases, they might
      *            not be.
      * @param password the password
-     * @return true, if the username/password is valid
-     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
+     * @return <code>true</code> if the username/password is valid; <code>false</code>
+     *             if the LoginModule should be ignored, or the WikiSession was <code>null</code>
+     * @throws LoginException
+     *             if the LoginModule's <code>login()</code> or <code>commit()</code> phases
+     *             failed for any reason, including invalid credentials.
+     * @throws WikiSecurityException
+     *             if the login failed for any other reason. The root-cause exception can
+     *             be retrieved via {@link java.lang.Throwable#getCause()}
      */
-    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
+    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException, LoginException
     {
         if ( session == null )
         {
@@ -374,7 +413,7 @@ public final class AuthenticationManager
         
         // Execute the user's specified login module
         Set<Principal> principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
-        if (principals.size() > 0)
+        if ( principals.size() > 0 )
         {
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
             for ( Principal principal : principals )
@@ -511,6 +550,8 @@ public final class AuthenticationManager
      * then its {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}
      * method is called. The parameters passed to <code>initialize</code> is a 
      * dummy Subject, an empty shared-state Map, and an options Map the caller supplies.
+     * If login succeeds, this method will return the Set of Principals. If it fails for any reason,
+     * including invalid credentials, it will throw a {@link javax.security.auth.login.LoginException}.
      * 
      * @param clazz
      *            the LoginModule class to instantiate
@@ -519,10 +560,14 @@ public final class AuthenticationManager
      * @param options
      *            a Map of key/value strings for initializing the LoginModule
      * @return the set of Principals returned by the JAAS method {@link Subject#getPrincipals()}
+     * @throws LoginException
+     *             if the LoginModule's <code>login()</code> or <code>commit()</code> phases
+     *             failed for any reason, including invalid credentials.
      * @throws WikiSecurityException
-     *             if the LoginModule could not be instantiated for any reason
+     *             if the LoginModule could not be instantiated. The root-cause exception can
+     *             be retrieved via {@link java.lang.Throwable#getCause()}
      */
-    protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException
+    protected Set<Principal> doJAASLogin(Class<? extends LoginModule> clazz, CallbackHandler handler, Map<String,String> options) throws WikiSecurityException, LoginException
     {
         // Instantiate the login module
         LoginModule loginModule = null;
@@ -530,13 +575,13 @@ public final class AuthenticationManager
         {
             loginModule = clazz.newInstance();
         }
-        catch (InstantiationException e)
+        catch ( InstantiationException e )
         {
-            throw new WikiSecurityException(e.getMessage());
+            throw new WikiSecurityException( e.getMessage(), e );
         }
-        catch (IllegalAccessException e)
+        catch ( IllegalAccessException e )
         {
-            throw new WikiSecurityException(e.getMessage());
+            throw new WikiSecurityException( e.getMessage(), e );
         }
 
         // Initialize the LoginModule
@@ -544,23 +589,15 @@ public final class AuthenticationManager
         loginModule.initialize( subject, handler, EMPTY_MAP, options );
 
         // Try to log in:
-        boolean loginSucceeded = false;
         boolean commitSucceeded = false;
-        try
+        boolean loginSucceeded = loginModule.login();
+        if ( loginSucceeded )
         {
-            loginSucceeded = loginModule.login();
-            if (loginSucceeded)
-            {
-                commitSucceeded = loginModule.commit();
-            }
-        }
-        catch (LoginException e)
-        {
-            // Login or commit failed! No principal for you!
+            commitSucceeded = loginModule.commit();
         }
 
         // If we successfully logged in & committed, return all the principals
-        if (loginSucceeded && commitSucceeded)
+        if ( loginSucceeded && commitSucceeded )
         {
             return subject.getPrincipals();
         }

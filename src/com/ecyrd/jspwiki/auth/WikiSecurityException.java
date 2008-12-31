@@ -23,23 +23,32 @@ package com.ecyrd.jspwiki.auth;
 import org.apache.jspwiki.api.WikiException;
 
 /**
- *  Indicates an authentication or authorization
- *  error or exception.
- *
- *  @author Erik Bunn
- *  @since 2.0
+ * Indicates an authentication or authorization error or exception.
+ * 
+ * @author Erik Bunn
+ * @since 2.0
  */
-public class WikiSecurityException
-    extends WikiException
+public class WikiSecurityException extends WikiException
 {
     private static final long serialVersionUID = 3617293441285764405L;
 
     /**
-     *  Constructs an exception.
-     *  @param msg the message to supply to the exception
+     * Constructs an exception.
+     * 
+     * @param msg the message to supply to the exception
      */
     public WikiSecurityException( String msg )
     {
-        super(msg);
+        super( msg );
+    }
+
+    /**
+     * Constructs an exception with a root cause.
+     * @param msg the message to supply to the exception
+     * @param cause the root cause
+     */
+    public WikiSecurityException( String msg, Throwable cause )
+    {
+        super( msg, cause );
     }
 }

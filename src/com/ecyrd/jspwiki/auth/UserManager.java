@@ -28,6 +28,7 @@ import java.util.*;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.jspwiki.api.WikiException;
@@ -371,7 +372,7 @@ public final class UserManager
                     mgr.login( session, profile.getLoginName(), profile.getPassword() );
                 }
             }
-            catch ( WikiException e )
+            catch ( LoginException e )
             {
                 throw new WikiSecurityException( e.getMessage() );
             }

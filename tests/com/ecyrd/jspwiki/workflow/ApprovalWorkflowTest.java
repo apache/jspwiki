@@ -180,7 +180,7 @@ public class ApprovalWorkflowTest extends TestCase
         assertEquals( notification, w.getHistory().get( 2 ) );
     }
 
-    public void testSaveWikiPageWithApproval() throws WikiException
+    public void testSaveWikiPageWithApproval() throws Exception
     {
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
@@ -212,7 +212,7 @@ public class ApprovalWorkflowTest extends TestCase
         m_engine.deletePage( pageName );
     }
 
-    public void testSaveWikiPageWithRejection() throws WikiException
+    public void testSaveWikiPageWithRejection() throws Exception
     {
         // Create a sample test page and try to save it
         String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();

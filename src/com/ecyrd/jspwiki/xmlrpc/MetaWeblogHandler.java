@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki.xmlrpc;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
+import javax.security.auth.login.LoginException;
+
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -103,6 +105,10 @@ public class MetaWeblogHandler
             }
         }
         catch( WikiSecurityException e )
+        {
+            throw new XmlRpcException( 1, e.getMessage(), e );
+        }
+        catch( LoginException e )
         {
             throw new XmlRpcException( 1, e.getMessage(), e );
         }

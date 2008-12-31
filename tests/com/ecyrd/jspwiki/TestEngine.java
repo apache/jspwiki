@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,7 +83,7 @@ public class TestEngine extends WikiEngine
      * @return the wiki session
      * @throws WikiSecurityException 
      */
-    public WikiSession adminSession() throws WikiSecurityException
+    public WikiSession adminSession() throws WikiSecurityException, LoginException
     {
         if ( m_adminWikiSession == null )
         {
@@ -118,7 +119,7 @@ public class TestEngine extends WikiEngine
      * @return the wiki session
      * @throws WikiSecurityException 
      */
-    public WikiSession janneSession() throws WikiSecurityException
+    public WikiSession janneSession() throws WikiSecurityException, LoginException
     {
         if ( m_janneWikiSession == null )
         {
@@ -344,9 +345,16 @@ public class TestEngine extends WikiEngine
         // Build new request and associate our admin session
         MockHttpServletRequest request = newHttpRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession,
-                Users.ADMIN,
-                Users.ADMIN_PASS );
+        try
+        {
+            this.getAuthenticationManager().login( wikiSession,
+                    Users.ADMIN,
+                    Users.ADMIN_PASS );
+        }
+        catch( LoginException e )
+        {
+            throw new WikiException( e.getMessage(), e );
+        }
 
         // Create page and wiki context
         WikiPage page = createPage( WikiName.valueOf( pageName ) );
@@ -360,9 +368,16 @@ public class TestEngine extends WikiEngine
         // Build new request and associate our Janne session
         MockHttpServletRequest request = newHttpRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession,
-                Users.JANNE,
-                Users.JANNE_PASS );
+        try
+        {
+            this.getAuthenticationManager().login( wikiSession,
+                    Users.JANNE,
+                    Users.JANNE_PASS );
+        }
+        catch( LoginException e )
+        {
+            throw new WikiException( e.getMessage(), e );
+        }
 
         // Create page and wiki context
         WikiPage page = createPage( WikiName.valueOf( pageName ) );
@@ -443,7 +458,7 @@ public class TestEngine extends WikiEngine
      * @return the initialized round trip
      * @throws WikiSecurityException
      */
-    public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException
+    public MockRoundtrip authenticatedTrip( String user, String password, Class<? extends WikiActionBean> beanClass ) throws WikiSecurityException, LoginException
     {
         MockServletContext servletContext = (MockServletContext)getServletContext();
         if ( servletContext.getFilters().size() == 0 )
