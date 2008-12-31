@@ -12,11 +12,5 @@
   </wiki:Tab>
   </wiki:Permission>
   </wiki:UserCheck>
-  
-  <wiki:Permission permission="createGroups"> <!-- FIXME check right permissions -->
-  <wiki:Tab id="group" titleKey="group.tab" accesskey="g">
-    <wiki:Include page="GroupTab.jsp" />
-  </wiki:Tab>
-  </wiki:Permission>
 
 </wiki:TabbedSection>

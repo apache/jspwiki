@@ -11,7 +11,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit" id="wikiActionBean" />
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit" executeResolution="true" id="wikiActionBean" />
 
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");

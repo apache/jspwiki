@@ -1,44 +1,7 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.NoSuchPrincipalException" %>
-<%@ page import="com.ecyrd.jspwiki.auth.WikiSecurityException" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
-<%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%! 
-    Logger log = LoggerFactory.getLogger("JSPWiki"); 
-%>
-
-<%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW_GROUP );
-    
-    // Extract the current user, group name, members
-    WikiSession wikiSession = wikiContext.getWikiSession();
-    GroupManager groupMgr = wiki.getGroupManager();
-    Group group = null;
-    try 
-    {
-        group = groupMgr.parseGroup( wikiContext, false );
-        pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
-    }
-    catch ( NoSuchPrincipalException e )
-    {
-        // New group; let GroupContent print out the message...
-    }
-    catch ( WikiSecurityException e )
-    {
-        wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
-    }
-    
-    // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
-
-%><wiki:Include page="<%=contentPage%>" />
-
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.GroupActionBean" event="view" executeResolution="true" id="wikiActionBean" />
+<stripes:layout-render name="/templates/default/ViewLayout.jsp">
+  <stripes:layout-component name="content">
+    <jsp:include page="/templates/default/GroupContent.jsp" />
+  </stripes:layout-component>
+</stripes:layout-render>
