@@ -23,6 +23,8 @@ package com.ecyrd.jspwiki.auth;
 import java.security.Principal;
 import java.util.*;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -45,7 +47,7 @@ import com.ecyrd.jspwiki.rpc.json.JSONRPCManager;
  *  web.xml for the wiki web application.
  *  </p>
  */
-public class SessionMonitor implements HttpSessionListener
+public class SessionMonitor implements HttpSessionListener, ServletContextListener
 {
     private static Logger log = LoggerFactory.getLogger( SessionMonitor.class );
 
@@ -281,6 +283,30 @@ public class SessionMonitor implements HttpSessionListener
                            storedSession.getLoginPrincipal(),
                            storedSession );
             }
+        }
+    }
+
+    /**
+     * No-op.
+     * @param sce the servlet context event
+     */
+    public void contextInitialized( ServletContextEvent sce )
+    {
+    }
+
+    /**
+     * When the servlet context is destroyed, this method
+     * obtains the associated WikiEngine and executes its
+     * {@link com.ecyrd.jspwiki.WikiEngine#shutdown()}
+     * method.
+     * @param sce the servlet context event
+     */
+    public void contextDestroyed( ServletContextEvent sce )
+    {
+        WikiEngine engine = WikiEngine.getInstance( sce.getServletContext(), null );
+        if ( engine != null )
+        {
+            engine.shutdown();
         }
     }
 }
