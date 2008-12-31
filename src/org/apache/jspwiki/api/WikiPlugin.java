@@ -22,6 +22,8 @@ package org.apache.jspwiki.api;
 
 import java.util.Map;
 
+import com.ecyrd.jspwiki.WikiContext;
+
 /**
  *  Defines an interface for plugins.  Any instance of a wiki plugin
  *  should implement this interface.

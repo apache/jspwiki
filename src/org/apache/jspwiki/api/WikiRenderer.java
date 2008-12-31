@@ -22,6 +22,8 @@ package org.apache.jspwiki.api;
 
 import java.io.InputStream;
 
+import com.ecyrd.jspwiki.WikiContext;
+
 /**
  *  The WikiRenderer interface provides access to the JSPWiki rendering
  *  engine.  The job of the WikiRenderer is to grab content in a
