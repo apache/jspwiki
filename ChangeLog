@@ -202,7 +202,7 @@
         * 3.0.0-svn-22
         
         * Moved WikiException, FilterException & PluginException to the 
-        org.apache.jzpwiki.api package.  This is a part of the overall 
+        org.apache.jspwiki.api package.  This is a part of the overall 
         transition to have a stable API.
 
         * [JSPWIKI-291] Added patch from Thomas Engelschmidt to replace ORO
