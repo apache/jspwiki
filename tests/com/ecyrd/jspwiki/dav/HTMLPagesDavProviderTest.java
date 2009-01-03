@@ -35,7 +35,7 @@ public class HTMLPagesDavProviderTest extends TestCase
 
     Properties props = new Properties();
 
-    TestEngine engine;
+    private TestEngine m_engine = null;
 
     HTMLPagesDavProvider m_provider;
         
@@ -43,20 +43,22 @@ public class HTMLPagesDavProviderTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine(props);
+        m_engine = new TestEngine(props);
 
-        m_provider = new HTMLPagesDavProvider(engine);
+        m_provider = new HTMLPagesDavProvider(m_engine);
     }
 
     protected void tearDown() throws Exception
     {
         TestEngine.deleteTestPage("TestPage");
+        
+        m_engine.shutdown();
     }
 
     public void testGetPageURL()
     throws Exception
     {
-        engine.saveText("TestPage", "foobar");
+        m_engine.saveText("TestPage", "foobar");
             
         DavItem di = m_provider.getItem( new DavPath("t/TestPage.html") );
             
@@ -67,7 +69,7 @@ public class HTMLPagesDavProviderTest extends TestCase
     public void testDirURL()
     throws Exception
     {
-        engine.saveText("TestPage", "foobar");
+        m_engine.saveText("TestPage", "foobar");
         
         DavItem di = m_provider.getItem( new DavPath("") );
         
@@ -79,7 +81,7 @@ public class HTMLPagesDavProviderTest extends TestCase
     public void testDirURL2()
     throws Exception
     {
-        engine.saveText("TestPage", "foobar");
+        m_engine.saveText("TestPage", "foobar");
 
         DavItem di = m_provider.getItem( new DavPath("t/") );
 

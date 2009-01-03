@@ -47,6 +47,12 @@ public class CreoleRendererTest extends TestCase
         super.setUp();
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_testEngine.shutdown();
+    }
+
     private String render(String s) throws IOException
     {
         WikiPage dummyPage = m_testEngine.createPage("TestPage");

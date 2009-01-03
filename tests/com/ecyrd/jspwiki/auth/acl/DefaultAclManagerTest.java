@@ -70,6 +70,8 @@ public class DefaultAclManagerTest
         catch ( ProviderException e )
         {
         }
+        
+        m_engine.shutdown();
     }
 
     public void testGetPermissions()

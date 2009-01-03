@@ -49,6 +49,8 @@ public class PluginIndexPluginTest extends TestCase
     public void tearDown()
     {
         TestEngine.emptyWorkDir();
+        
+        engine.shutdown();
     }
 
     public static Test suite()

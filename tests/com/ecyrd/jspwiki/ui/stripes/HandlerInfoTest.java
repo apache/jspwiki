@@ -55,6 +55,12 @@ public class HandlerInfoTest extends TestCase
         }
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     public void testGetRequestContext() throws Exception
     {
         assertEquals( "createGroup", HandlerInfo.getHandlerInfo( GroupActionBean.class, "create" ).getRequestContext() );

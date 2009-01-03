@@ -35,7 +35,11 @@ import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.util.FileUtil;
 
 public class CachingProviderTest extends TestCase
+
 {
+    private Properties props = new Properties();
+    private TestEngine m_engine = null;
+
     public CachingProviderTest( String s )
     {
         super( s );
@@ -44,6 +48,9 @@ public class CachingProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
+        props.load( TestEngine.findTestProperties() );
+        m_engine = new TestEngine( props );
+
         TestEngine.emptyWorkDir();
     }
 
@@ -51,6 +58,8 @@ public class CachingProviderTest extends TestCase
     {
         TestEngine.emptyWorkDir();
         TestEngine.deleteTestPage("Testi");
+        
+        m_engine.shutdown();
     }
 
     /**
@@ -66,9 +75,10 @@ public class CachingProviderTest extends TestCase
         props.setProperty( "jspwiki.pageProvider", "com.ecyrd.jspwiki.providers.CounterProvider" );
         props.setProperty( "jspwiki.cachingProvider.capacity", "100" );
 
-        TestEngine engine = new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
 
-        CounterProvider p = (CounterProvider)((CachingProvider)engine.getPageManager().getProvider()).getRealProvider();
+        CounterProvider p = (CounterProvider)((CachingProvider)m_engine.getPageManager().getProvider()).getRealProvider();
 
         assertEquals("init", 1, p.m_initCalls);
         assertEquals("getAllPages", 1, p.m_getAllPagesCalls);
@@ -76,7 +86,7 @@ public class CachingProviderTest extends TestCase
         assertEquals("getPage", 2, p.m_getPageCalls); // These two are for non-existant pages (with and without s)
         assertEquals("getPageText", 4, p.m_getPageTextCalls);
 
-        engine.getPage( "Foo" );
+        m_engine.getPage( "Foo" );
 
         assertEquals("pageExists2", 0, p.m_pageExistsCalls);
         assertEquals("getPage2", 2, p.m_getPageCalls);
@@ -90,7 +100,8 @@ public class CachingProviderTest extends TestCase
 
         props.setProperty( "jspwiki.cachingProvider.cacheCheckInterval", "2" );
         
-        TestEngine engine = new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
         
         String dir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
         
@@ -103,10 +114,10 @@ public class CachingProviderTest extends TestCase
         
         Thread.sleep( 4000L ); // Make sure we wait long enough
         
-        WikiPage p = engine.getPage( "Testi" );
+        WikiPage p = m_engine.getPage( "Testi" );
         assertNotNull( "page did not exist?", p );
         
-        String text = engine.getText( "Testi");
+        String text = m_engine.getText( "Testi");
         assertEquals("text", "[fuufaa]", text );
         
         // TODO: ReferenceManager check as well

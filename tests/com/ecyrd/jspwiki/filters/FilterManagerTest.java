@@ -30,7 +30,7 @@ public class FilterManagerTest extends TestCase
 {
     Properties props = new Properties();
 
-    TestEngine engine;
+    private TestEngine m_engine = null;
 
     public FilterManagerTest( String s )
     {
@@ -41,18 +41,19 @@ public class FilterManagerTest extends TestCase
         throws Exception
     {
         props.load( TestEngine.findTestProperties() );
-        engine = new TestEngine(props);
+        m_engine = new TestEngine(props);
     }
 
     public void tearDown()
     {
+        m_engine.shutdown();
     }
 
     @SuppressWarnings("deprecation")
     public void testInitFilters()
         throws Exception
     {
-        FilterManager m = new FilterManager( engine, props );
+        FilterManager m = new FilterManager( m_engine, props );
 
         List l = m.getFilterList();
 
@@ -71,7 +72,7 @@ public class FilterManagerTest extends TestCase
     public void testInitParams()
         throws Exception
     {
-        FilterManager m = new FilterManager( engine, props );
+        FilterManager m = new FilterManager( m_engine, props );
 
         List l = m.getFilterList();
 

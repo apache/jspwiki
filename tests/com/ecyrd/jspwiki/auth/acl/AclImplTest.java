@@ -53,6 +53,8 @@ public class AclImplTest extends TestCase
     private GroupManager m_groupMgr;
 
     private WikiSession  m_session;
+    
+    private TestEngine m_engine  = null;
 
     public AclImplTest( String s )
     {
@@ -69,9 +71,9 @@ public class AclImplTest extends TestCase
         super.setUp();
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        TestEngine engine  = new TestEngine( props );
-        m_groupMgr = engine.getGroupManager();
-        m_session = WikiSessionTest.adminSession( engine );
+        m_engine  = new TestEngine( props );
+        m_groupMgr = m_engine.getGroupManager();
+        m_session = WikiSessionTest.adminSession( m_engine );
 
         m_acl = new AclImpl();
         m_aclGroup = new AclImpl();
@@ -136,6 +138,8 @@ public class AclImplTest extends TestCase
     {
         m_groupMgr.removeGroup( "FooGroup" );
         m_groupMgr.removeGroup( "BarGroup" );
+        
+        m_engine.shutdown();
     }
 
     private boolean inArray( Object[] array, Object key )

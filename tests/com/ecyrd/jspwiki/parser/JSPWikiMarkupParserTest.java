@@ -53,7 +53,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     static final String PAGE_NAME = "testpage";
 
-    TestEngine testEngine;
+    private TestEngine testEngine;
 
 
     public JSPWikiMarkupParserTest( String s )
@@ -73,6 +73,8 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void tearDown()
     {
         deleteCreatedPages();
+        
+        testEngine.shutdown();
     }
 
     private void newPage( String name )
@@ -144,6 +146,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
+        testEngine.shutdown();
         TestEngine testEngine2 = new TestEngine( props );
 
         WikiContext context = testEngine2.getWikiContextFactory().newViewContext( testEngine2.createPage( PAGE_NAME ) );
@@ -690,7 +693,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         props.setProperty( "jspwiki.encoding", "ISO-8859-1" );
 
-        //TODO
+        testEngine.shutdown();
         TestEngine testEngine2 = new TestEngine( props );
 
         testEngine2.saveText( "Test", "foo ");
@@ -714,41 +717,37 @@ public class JSPWikiMarkupParserTest extends TestCase
     public void testAttachmentLink3()
     throws Exception
     {
-        TestEngine testEngine2 = new TestEngine( props );
-
-        testEngine2.saveText( "TestPage", "foo ");
+        testEngine.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
 
-        Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
 
-        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
         String src = "[Test page/TestAtt.txt]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test page/TestAtt.txt</a>"+
                       "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
-                      translate(testEngine2,src));
+                      translate(testEngine,src));
     }
 
     public void testAttachmentLink4()
     throws Exception
     {
-        TestEngine testEngine2 = new TestEngine( props );
-
-        testEngine2.saveText( "TestPage", "foo ");
+        testEngine.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
 
-        Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
+        Attachment att = new Attachment( testEngine, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
 
-        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
-        String src = "["+testEngine2.beautifyTitle("TestPage/TestAtt.txt")+"]";
+        String src = "["+testEngine.beautifyTitle("TestPage/TestAtt.txt")+"]";
 
         assertEquals( "<a class=\"attachment\" href=\"/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
                       "<a href=\"/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",
-                      translate(testEngine2,src));
+                      translate(testEngine,src));
     }
 
     public void testNoHyperlink()
@@ -1198,6 +1197,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "<p>";
 
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
+        testEngine.shutdown();
         testEngine = new TestEngine( props );
 
         WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
@@ -1213,6 +1213,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         String src = "{{{ <br /> }}}";
 
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
+        testEngine.shutdown();
         testEngine = new TestEngine( props );
 
         WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );

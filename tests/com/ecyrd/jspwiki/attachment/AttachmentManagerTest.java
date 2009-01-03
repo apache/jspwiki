@@ -86,6 +86,8 @@ public class AttachmentManagerTest extends TestCase
         TestEngine.deleteAttachments(NAMEU);
 
         TestEngine.emptyWorkDir();
+        
+        m_engine.shutdown();
     }
 
     public void testEnabled()        

@@ -72,7 +72,8 @@ public class WikiEngineTest extends TestCase
                            Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
 
         TestEngine.emptyWorkDir();
-        m_engine = new TestEngine(props);        
+        
+        m_engine = new TestEngine(props);
     }
 
     public void tearDown()
@@ -87,6 +88,8 @@ public class WikiEngineTest extends TestCase
         }
 
         TestEngine.emptyWorkDir();
+        
+        m_engine.shutdown();
     }
     
     public void testNonExistantDirectory()
@@ -100,7 +103,8 @@ public class WikiEngineTest extends TestCase
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
                            newdir );
 
-        new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
 
         File f = new File( newdir );
 
@@ -108,16 +112,16 @@ public class WikiEngineTest extends TestCase
         assertTrue( "isn't a dir", f.isDirectory() );
 
         f.delete();
+        
     }
 
-    public void testNonExistantDirProperty()
-        throws Exception
+    public void testNonExistantDirProperty() throws Exception
     {
         props.remove( FileSystemProvider.PROP_PAGEDIR );
-
         try
         {
-            new TestEngine( props );
+            m_engine.shutdown();
+            m_engine = new TestEngine( props );
 
             fail( "Wiki did not warn about missing property." );
         }
@@ -264,17 +268,16 @@ public class WikiEngineTest extends TestCase
                       m_engine.encodeName(name) );
     }
 
-    public void testEncodeNameUTF8()
-        throws Exception
+    public void testEncodeNameUTF8() throws Exception
     {
         String name = "\u0041\u2262\u0391\u002E";
 
         props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
 
-        WikiEngine engine = new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
 
-        assertEquals( "A%E2%89%A2%CE%91.",
-                      engine.encodeName(name) );
+        assertEquals( "A%E2%89%A2%CE%91.", m_engine.encodeName( name ) );
     }
 
     public void testReadLinks()
@@ -351,77 +354,73 @@ public class WikiEngineTest extends TestCase
     }
     */
 
-    public void testLatestGet()
-        throws Exception
+    public void testLatestGet() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", 
-                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.pageProvider", "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
 
-        WikiEngine engine = new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
 
-        WikiPage p = engine.getPage( "test", -1 );
+        WikiPage p = m_engine.getPage( "test", -1 );
 
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+        VerySimpleProvider vsp = (VerySimpleProvider) m_engine.getPageManager().getProvider();
 
         assertEquals( "wrong page", "test", vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
+        assertNotNull( "null", p );
     }
 
-    public void testLatestGet2()
-        throws Exception
+    public void testLatestGet2() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", 
-                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
+            props.setProperty( "jspwiki.pageProvider", "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+            props.setProperty( "jspwiki.usePageCache", "false" );
 
-        WikiEngine engine = new TestEngine( props );
+            m_engine.shutdown();
+            m_engine = new TestEngine( props );
 
-        String p = engine.getText( "test", -1 );
+            String p = m_engine.getText( "test", -1 );
 
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+            VerySimpleProvider vsp = (VerySimpleProvider) m_engine.getPageManager().getProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
-    }
+            assertEquals( "wrong page", "test", vsp.m_latestReq );
+            assertEquals( "wrong version", -1, vsp.m_latestVers );
+            assertNotNull( "null", p );
+        }
 
-    public void testLatestGet3()
-        throws Exception
+    public void testLatestGet3() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", 
-                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
+            props.setProperty( "jspwiki.pageProvider", "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+            props.setProperty( "jspwiki.usePageCache", "false" );
 
-        WikiEngine engine = new TestEngine( props );
+            m_engine.shutdown();
+            m_engine = new TestEngine( props );
 
-        String p = engine.getHTML( "test", -1 );
+            String p = m_engine.getHTML( "test", -1 );
 
-        VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+            VerySimpleProvider vsp = (VerySimpleProvider) m_engine.getPageManager().getProvider();
 
-        assertEquals( "wrong page", "test", vsp.m_latestReq );
-        assertEquals( "wrong version", 5, vsp.m_latestVers );
-        assertNotNull("null", p);
-    }
+            assertEquals( "wrong page", "test", vsp.m_latestReq );
+            assertEquals( "wrong version", 5, vsp.m_latestVers );
+            assertNotNull( "null", p );
+        }
 
-    public void testLatestGet4()
-        throws Exception
+    public void testLatestGet4() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", 
-                           "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
+        props.setProperty( "jspwiki.pageProvider", "com.ecyrd.jspwiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "true" );
 
-        WikiEngine engine = new TestEngine( props );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
 
-        String p = engine.getHTML( VerySimpleProvider.PAGENAME, -1 );
+        String p = m_engine.getHTML( VerySimpleProvider.PAGENAME, -1 );
 
-        CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
+        CachingProvider cp = (CachingProvider) m_engine.getPageManager().getProvider();
         VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 
         assertEquals( "wrong page", VerySimpleProvider.PAGENAME, vsp.m_latestReq );
         assertEquals( "wrong version", -1, vsp.m_latestVers );
-        assertNotNull("null", p);
+        assertNotNull( "null", p );
     }
 
     /**
@@ -696,49 +695,50 @@ public class WikiEngineTest extends TestCase
         assertNull( "referrers", refs );
     }
     
-    public void testDeleteVersion()
-        throws Exception
+    public void testDeleteVersion() throws Exception
     {
         props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
-        
-        TestEngine engine = new TestEngine( props );
-        engine.saveText( NAME1, "Test1" );
-        engine.saveText( NAME1, "Test2" );
-        engine.saveText( NAME1, "Test3" );
 
-        WikiPage page = engine.getPage( NAME1, 3 );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
+        m_engine.saveText( NAME1, "Test1" );
+        m_engine.saveText( NAME1, "Test2" );
+        m_engine.saveText( NAME1, "Test3" );
 
-        engine.deleteVersion( page );
-        
-        assertNull( "got page", engine.getPage( NAME1, 3 ) );
-        
-        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
-        
+        WikiPage page = m_engine.getPage( NAME1, 3 );
+
+        m_engine.deleteVersion( page );
+
+        assertNull( "got page", m_engine.getPage( NAME1, 3 ) );
+
+        String content = m_engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+
         assertEquals( "content", "Test2", content.trim() );
     }
 
-    public void testDeleteVersion2()
-        throws Exception
+    public void testDeleteVersion2() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
-    
-        TestEngine engine = new TestEngine( props );
-        engine.saveText( NAME1, "Test1" );
-        engine.saveText( NAME1, "Test2" );
-        engine.saveText( NAME1, "Test3" );
+            props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
 
-        WikiPage page = engine.getPage( NAME1, 1 );
-        
-        engine.deleteVersion( page );
-        
-        assertNull( "got page", engine.getPage( NAME1, 1 ) );
-        
-        String content = engine.getText( NAME1, WikiProvider.LATEST_VERSION );
-        
-        assertEquals( "content", "Test3", content.trim() );
-        
-        assertEquals( "content1", "", engine.getText(NAME1, 1).trim() );
-    }
+            m_engine.shutdown();
+            m_engine = new TestEngine( props );
+            m_engine.saveText( NAME1, "Test1" );
+            m_engine.saveText( NAME1, "Test2" );
+            m_engine.saveText( NAME1, "Test3" );
+
+            WikiPage page = m_engine.getPage( NAME1, 1 );
+
+            m_engine.deleteVersion( page );
+
+            assertNull( "got page", m_engine.getPage( NAME1, 1 ) );
+
+            String content = m_engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+
+            assertEquals( "content", "Test3", content.trim() );
+
+            assertEquals( "content1", "", m_engine.getText( NAME1, 1 ).trim() );
+        }
+    
     
     /**
      *  Assumes that CachingProvider is in use.
@@ -853,34 +853,35 @@ public class WikiEngineTest extends TestCase
     }
 
     /**
-     *  Tests BugReadingOfVariableNotWorkingForOlderVersions
+     * Tests BugReadingOfVariableNotWorkingForOlderVersions
+     * 
      * @throws Exception
      */
-    public void testOldVersionVars()
-        throws Exception
-    {   
-        Properties pr = new Properties();
-        pr.load( TestEngine.findTestProperties("/jspwiki_vers.properties"));
-        
-        pr.setProperty( PageManager.PROP_USECACHE, "true" );
-        
-        TestEngine engine = new TestEngine( pr );
-        
-        engine.saveText( NAME1, "[{SET foo=bar}]" );
-    
-        engine.saveText( NAME1, "[{SET foo=notbar}]");
-    
-        WikiPage v1 = engine.getPage( NAME1, 1 );
-        
-        WikiPage v2 = engine.getPage( NAME1, 2 );
-        
-        assertEquals( "V1", "bar", v1.getAttribute("foo") );
-        
-        // FIXME: The following must run as well
-        assertEquals( "V2", "notbar", v2.getAttribute("foo") );
-        
-        engine.deletePage( NAME1 );
-    }
+    public void testOldVersionVars() throws Exception
+    {
+            Properties pr = new Properties();
+            pr.load( TestEngine.findTestProperties( "/jspwiki_vers.properties" ) );
+
+            pr.setProperty( PageManager.PROP_USECACHE, "true" );
+
+            m_engine.shutdown();
+            m_engine = new TestEngine( pr );
+
+            m_engine.saveText( NAME1, "[{SET foo=bar}]" );
+
+            m_engine.saveText( NAME1, "[{SET foo=notbar}]" );
+
+            WikiPage v1 = m_engine.getPage( NAME1, 1 );
+
+            WikiPage v2 = m_engine.getPage( NAME1, 2 );
+
+            assertEquals( "V1", "bar", v1.getAttribute( "foo" ) );
+
+            // FIXME: The following must run as well
+            assertEquals( "V2", "notbar", v2.getAttribute( "foo" ) );
+
+            m_engine.deletePage( NAME1 );
+        }
     
     public void testSpacedNames1()
         throws Exception

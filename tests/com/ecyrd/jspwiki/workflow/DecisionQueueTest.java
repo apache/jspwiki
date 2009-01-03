@@ -71,6 +71,12 @@ public class DecisionQueueTest extends TestCase
         m_queue.add(d3);
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     public void testAdd()
     {
         Decision[] decisions = m_queue.decisions();

@@ -73,6 +73,8 @@ public class PageRenamerTest extends TestCase
         TestEngine.deleteTestPage("Link two");
 
         TestEngine.emptyWorkDir();
+        
+        m_engine.shutdown();
     }
 
     public void testSimpleRename()

@@ -47,6 +47,8 @@ public class InsertPageTest extends TestCase
         TestEngine.deleteTestPage( "Test_Page" );
         TestEngine.deleteTestPage( "TestPage" );
         TestEngine.deleteTestPage( "Test Page" );
+        
+        testEngine.shutdown();
     }
 
     public void testRecursive() throws Exception

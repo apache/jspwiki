@@ -61,6 +61,11 @@ public class LoginActionBeanTest extends TestCase
         }
     }
 
+    public void tearDown()
+    {
+        m_engine.shutdown();
+    }
+
     public void testLogin() throws Exception
     {
         MockRoundtrip trip;

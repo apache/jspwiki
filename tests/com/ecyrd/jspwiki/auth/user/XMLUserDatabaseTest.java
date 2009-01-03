@@ -29,7 +29,6 @@ import org.apache.commons.lang.ArrayUtils;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
@@ -45,6 +44,8 @@ public class XMLUserDatabaseTest extends TestCase
 {
 
   private XMLUserDatabase m_db;
+  
+  private TestEngine m_engine = null;
 
   /**
    * @see junit.framework.TestCase#setUp()
@@ -55,9 +56,15 @@ public class XMLUserDatabaseTest extends TestCase
       Properties props = new Properties();
       props.load( TestEngine.findTestProperties() );
       props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-      WikiEngine engine  = new TestEngine(props);
+      m_engine  = new TestEngine(props);
       m_db = new XMLUserDatabase();
-      m_db.initialize(engine, props);
+      m_db.initialize(m_engine, props);
+  }
+  
+  protected void tearDown() throws Exception
+  {
+      super.tearDown();
+      m_engine.shutdown();
   }
 
   public void testDeleteByLoginName() throws WikiSecurityException

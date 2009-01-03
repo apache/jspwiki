@@ -66,6 +66,8 @@ public class GroupActionBeanTest extends TestCase
     public void tearDown()
     {
         deleteGroup( "TestGroup" );
+        
+        m_engine.shutdown();
     }
 
     public void testView() throws Exception

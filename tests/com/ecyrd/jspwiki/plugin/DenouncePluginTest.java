@@ -82,6 +82,7 @@ public class DenouncePluginTest extends TestCase {
         TestEngine.deleteTestPage("TestPage");
         TestEngine.deleteTestPage("Foobar");
         TestEngine.emptyWorkDir();
+        engine.shutdown();
     }
 
     public void testSLURPBot() throws Exception {

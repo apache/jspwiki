@@ -49,6 +49,8 @@ public class JDBCGroupDatabaseTest extends TestCase
     private JDBCGroupDatabase m_db  = null;
 
     private String            m_wiki;
+    
+    private TestEngine m_engine = null;
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -59,8 +61,8 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        WikiEngine engine = new TestEngine( props );
-        m_wiki = engine.getApplicationName();
+        m_engine = new TestEngine( props );
+        m_wiki = m_engine.getApplicationName();
 
         // Set up the mock JNDI initial context
         TestJNDIContext.initialize();
@@ -87,7 +89,7 @@ public class JDBCGroupDatabaseTest extends TestCase
 
         // Initialize the user database
         m_db = new JDBCGroupDatabase();
-        m_db.initialize( engine, new Properties() );
+        m_db.initialize( m_engine, new Properties() );
     }
 
     public void tearDown() throws Exception
@@ -96,6 +98,8 @@ public class JDBCGroupDatabaseTest extends TestCase
         {
             m_conn.close();
         }
+        
+        m_engine.shutdown();
     }
 
     public void testDelete() throws WikiException

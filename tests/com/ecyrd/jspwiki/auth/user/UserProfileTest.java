@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 
 /**
  *  Tests the DefaultUserProfile class.
@@ -38,17 +37,20 @@ public class UserProfileTest extends TestCase
 {
     private UserDatabase m_db;
     
+    private TestEngine m_engine  = null;
+    
     public void setUp()
         throws Exception
     {
             Properties props = new Properties();
             props.load( TestEngine.findTestProperties() );
-            WikiEngine engine  = new TestEngine(props);
-            m_db = engine.getUserManager().getUserDatabase();
+            m_engine  = new TestEngine(props);
+            m_db = m_engine.getUserManager().getUserDatabase();
     }
 
     public void tearDown()
     {
+        m_engine.shutdown();
     }
     
     public void testSetAttribute()

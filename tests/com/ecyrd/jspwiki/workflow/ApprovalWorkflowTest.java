@@ -62,6 +62,11 @@ public class ApprovalWorkflowTest extends TestCase
         m_builder = WorkflowBuilder.getBuilder( m_engine );
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
 
     public void testBuildApprovalWorkflow() throws WikiException
     {

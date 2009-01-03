@@ -36,6 +36,8 @@ public class VariableManagerTest extends TestCase
     WikiContext     m_context;
 
     static final String PAGE_NAME = "TestPage";
+    
+    TestEngine testEngine = null;
 
     public VariableManagerTest( String s )
     {
@@ -51,7 +53,7 @@ public class VariableManagerTest extends TestCase
             props.load( TestEngine.findTestProperties() );
 
             m_variableManager = new VariableManager( props );
-            TestEngine testEngine = new TestEngine( props );
+            testEngine = new TestEngine( props );
             m_context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage(WikiName.valueOf(PAGE_NAME)) );
 
         }
@@ -60,6 +62,7 @@ public class VariableManagerTest extends TestCase
 
     public void tearDown()
     {
+        testEngine.shutdown();
     }
 
     public void testIllegalInsert1()

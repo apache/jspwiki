@@ -169,5 +169,11 @@ public class WebContainerLoginModuleTest extends TestCase
             assertTrue( false );
         }
     }
+    
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
 
 }

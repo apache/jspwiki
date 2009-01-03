@@ -58,6 +58,8 @@ public class MailUtilTest extends TestCase
     static final String TEST_RECEIVER = "someone@somewhere.org";
     static final String TEST_SENDER = "homer.simpson@burns.com";
     
+    private TestEngine m_engine= null;
+    
     public MailUtilTest( String s )
     {
         super( s );
@@ -68,13 +70,14 @@ public class MailUtilTest extends TestCase
     {
         m_props.load( TestEngine.findTestProperties() );
         
-        TestEngine testEngine = new TestEngine( m_props );
+        m_engine = new TestEngine( m_props );
         
-        m_context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( PAGE_NAME ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( PAGE_NAME ) );
     }
 
     public void tearDown()
     {
+        m_engine.shutdown();
     }
 
     /**

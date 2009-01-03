@@ -58,6 +58,12 @@ public class WorkflowManagerTest extends TestCase
         w.addMessageArgument("MyPage");
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     public void testStart() throws WikiException
     {
         // Once we start the workflow, it should show that it's started

@@ -47,6 +47,12 @@ public class DefaultURLConstructorTest extends TestCase
         props.load( TestEngine.findTestProperties() );
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        testEngine.shutdown();
+    }
+
     private URLConstructor getConstructor( String baseURL, String prefix )
         throws WikiException
     {

@@ -67,6 +67,8 @@ public class FileSystemProviderTest extends TestCase
     public void tearDown()
     {
         TestEngine.deleteAll( new File(m_pagedir) );
+        
+        m_engine.shutdown();
     }
 
     public void testScandinavianLetters()

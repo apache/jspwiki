@@ -50,6 +50,7 @@ public class PageManagerTest extends TestCase
 
     public void tearDown()
     {
+        engine.shutdown();
     }
 
     public void testPageCacheExists()

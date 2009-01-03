@@ -428,25 +428,11 @@ public class WikiEngine
         m_startTime  = new Date();
         m_properties = props;
 
-        //
-        //  Initialized log4j.  However, make sure that
-        //  we don't initialize it multiple times.  Also, if
-        //  all of the log4j statements have been removed from
-        //  the property file, we do not do any property setting
-        //  either.q
-        //
-//        if( !c_configured )
-//        {
-//            if( props.getProperty("log4j.rootCategory") != null )
-//            {
-//                PropertyConfigurator.configure( props );
-//            }
-//            c_configured = true;
-//        }
+        LoggerFactory.initialize( m_properties.getProperty( PROP_APPNAME ) );
 
         log.info("*******************************************");
         log.info(Release.APPNAME+" "+Release.getVersionString()+" starting. Whee!");
-
+        
         fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
         log.debug("Java version: "+System.getProperty("java.runtime.version"));

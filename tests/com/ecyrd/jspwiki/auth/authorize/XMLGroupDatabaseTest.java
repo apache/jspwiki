@@ -27,7 +27,6 @@ import org.apache.jspwiki.api.WikiException;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
@@ -43,6 +42,8 @@ public class XMLGroupDatabaseTest extends TestCase
   private XMLGroupDatabase m_db;
 
   private String           m_wiki;
+  
+  private TestEngine m_engine  = null;
 
   /**
    * @see junit.framework.TestCase#setUp()
@@ -52,10 +53,16 @@ public class XMLGroupDatabaseTest extends TestCase
       super.setUp();
       Properties props = new Properties();
       props.load( TestEngine.findTestProperties() );
-      WikiEngine engine  = new TestEngine( props );
+      m_engine  = new TestEngine( props );
       m_db = new XMLGroupDatabase();
-      m_db.initialize( engine, props );
-      m_wiki = engine.getApplicationName();
+      m_db.initialize( m_engine, props );
+      m_wiki = m_engine.getApplicationName();
+  }
+
+  protected void tearDown() throws Exception
+  {
+      super.tearDown();
+      m_engine.shutdown();
   }
 
   public void testDelete() throws WikiException

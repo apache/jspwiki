@@ -52,6 +52,11 @@ public class RenameActionBeanTest extends TestCase
             throw new RuntimeException("Could not set up TestEngine: " + e.getMessage());
         }
     }
+
+    public void tearDown()
+    {
+        m_engine.shutdown();
+    }
     
     public void testValidation() throws Exception {
         // Save test page

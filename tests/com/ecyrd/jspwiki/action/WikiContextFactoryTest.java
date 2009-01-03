@@ -62,6 +62,8 @@ public class WikiContextFactoryTest extends TestCase
     protected void tearDown() throws Exception
     {
         m_engine.deletePage( "TestPage" );
+        
+        m_engine.shutdown();
     }
     
     public void testNewActionBean() throws WikiException

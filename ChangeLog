@@ -1,3 +1,16 @@
+2009-01-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-43
+        
+        * JSPWIKI-452 - The LoggerFactory is now also multi-wiki-per-JVM capable
+        Fixed a lot JUnit tests, mostly adding a m_engine.shutdown() to the tearDown()
+        
+        Removed the NPE checks from LoggerImpl, the NPE's were a result of stopping
+        the webapp before stopping the background threads, this has been solved by
+        invoking engine.shutdown() from the SessionMonitor (thanks to Andrew).
+        
+        Cleanup of AdminBeanManager and WikiEngine
+
 2009-01-02  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-42

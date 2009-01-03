@@ -64,6 +64,8 @@ public class TableOfContentsTest extends TestCase
         super.tearDown();
         
         testEngine.deletePage( "Test" );
+        
+        testEngine.shutdown();
     }
 
     public void testHeadingVariables()

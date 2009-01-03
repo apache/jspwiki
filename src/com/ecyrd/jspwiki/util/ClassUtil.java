@@ -311,7 +311,7 @@ public final class ClassUtil
         {
             log.info( "You tried to instantiate an abstract class "+requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass + ", reason: " + e.getCause());
         }
     }
 

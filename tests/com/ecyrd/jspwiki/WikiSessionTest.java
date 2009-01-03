@@ -63,6 +63,7 @@ public class WikiSessionTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        m_engine.shutdown();
     }
 
     public void testRoles() throws Exception
@@ -202,6 +203,8 @@ public class WikiSessionTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.setProperty( AuthenticationManager.PROP_ALLOW_COOKIE_AUTH, "true");
+        
+        m_engine.shutdown();
         m_engine = new TestEngine( props );
         
         MockHttpServletRequest request;

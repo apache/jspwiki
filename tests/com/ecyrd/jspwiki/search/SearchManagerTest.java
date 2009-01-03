@@ -63,6 +63,8 @@ public class SearchManagerTest extends TestCase
         super.tearDown();
         
         TestEngine.deleteTestPage("TestPage");
+        
+        m_engine.shutdown();
     }
 
     public void testDefaultProvider()

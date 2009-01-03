@@ -49,6 +49,12 @@ public class ViewActionBeanTest extends TestCase
             throw new RuntimeException("Could not set up TestEngine: " + e.getMessage());
         }
     }
+
+    public void tearDown()
+    {
+        m_engine.shutdown();
+    }
+    
     
     public void testView() throws Exception {
         // Save page Main

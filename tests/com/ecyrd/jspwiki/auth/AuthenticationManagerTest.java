@@ -29,7 +29,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.WikiSessionTest;
 import com.ecyrd.jspwiki.auth.authorize.Group;
@@ -65,7 +64,13 @@ public class AuthenticationManagerTest extends TestCase
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
     }
-    
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     public void testIsUserPrincipal()
     {
         assertTrue( AuthenticationManager.isUserPrincipal( new WikiPrincipal( "Foo" ) ) );
@@ -83,8 +88,9 @@ public class AuthenticationManagerTest extends TestCase
         props.put( "jspwiki.loginModule.class", "com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" );
 
         // Init the engine and verify that we initialized with a custom auth login module
-        WikiEngine engine = new TestEngine( props );
-        AuthenticationManager authMgr= engine.getAuthenticationManager();
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
+        AuthenticationManager authMgr= m_engine.getAuthenticationManager();
         assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
     }
 
@@ -99,8 +105,9 @@ public class AuthenticationManagerTest extends TestCase
         props.put( "jspwiki.loginModule.options.key3", "value3" );
         
         // Init the engine and verify that we initialized with the correct options
-        WikiEngine engine = new TestEngine( props );
-        AuthenticationManager authMgr= engine.getAuthenticationManager();
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
+        AuthenticationManager authMgr= m_engine.getAuthenticationManager();
         Map<String,String> options = authMgr.m_loginModuleOptions;
         assertEquals( 3, options.size() );
         assertTrue( options.containsKey( "key1" ) );

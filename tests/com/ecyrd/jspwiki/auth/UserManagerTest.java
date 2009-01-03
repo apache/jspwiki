@@ -36,8 +36,6 @@ import com.ecyrd.jspwiki.auth.permissions.PermissionFactory;
 import com.ecyrd.jspwiki.auth.user.*;
 import com.ecyrd.jspwiki.workflow.*;
 
-
-
 /**
  * @author Andrew Jaquith
  */
@@ -76,6 +74,8 @@ public class UserManagerTest extends TestCase
     {
         groupManager.removeGroup( m_groupName );
     }
+    
+    m_engine.shutdown();
   }
 
   /** Call this setup program to use the save-profile workflow. */
@@ -89,6 +89,7 @@ public class UserManagerTest extends TestCase
       
       // Make sure we are using the XML user database
       props.put( XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml" );
+      m_engine.shutdown();
       m_engine  = new TestEngine( props );
       m_mgr = m_engine.getUserManager();
       m_db = m_mgr.getUserDatabase();

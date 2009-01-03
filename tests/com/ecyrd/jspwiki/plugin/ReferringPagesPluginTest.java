@@ -76,6 +76,8 @@ public class ReferringPagesPluginTest extends TestCase
         TestEngine.deleteTestPage( "Foobar5" );
         TestEngine.deleteTestPage( "Foobar6" );
         TestEngine.deleteTestPage( "Foobar7" );
+        
+        engine.shutdown();
     }
 
     private String mkLink( String page )

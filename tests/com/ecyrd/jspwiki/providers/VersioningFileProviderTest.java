@@ -65,6 +65,8 @@ public class VersioningFileProviderTest extends TestCase
         f = new File( files, "OLD" );
 
         TestEngine.deleteAll(f);
+        
+        engine.shutdown();
     }
 
     /**

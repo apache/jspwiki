@@ -59,8 +59,7 @@ public class AdminBeanManager implements WikiEventListener
 
     public AdminBeanManager( WikiEngine engine )
     {
-        log.info("Using JDK 1.5 Platform MBeanServer");
-        m_mbeanServer = MBeanServerFactory15.getServer();
+        m_mbeanServer = ManagementFactory.getPlatformMBeanServer();
 
         m_engine = engine;
 
@@ -253,20 +252,6 @@ public class AdminBeanManager implements WikiEventListener
         return null;
     }
 
-    /**
-     *  Provides a JDK 1.5-compliant version of the MBeanServerFactory. This
-     *  will simply bind to the platform MBeanServer.
-     */
-    private static final class MBeanServerFactory15
-    {
-        private MBeanServerFactory15()
-        {}
-
-        public static MBeanServer getServer()
-        {
-            return ManagementFactory.getPlatformMBeanServer();
-        }
-    }
 
     /**
      *  Returns the type identifier for a string type.

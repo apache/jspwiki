@@ -63,6 +63,7 @@ public class UndefinedPagesPluginTest extends TestCase
         TestEngine.deleteTestPage( "TestPage" );
         TestEngine.deleteTestPage( "Foobar" );
         TestEngine.emptyWorkDir();
+        engine.shutdown();
     }
 
     private String wikitize( String s )

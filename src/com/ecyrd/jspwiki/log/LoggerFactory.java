@@ -32,6 +32,8 @@ import javax.management.ObjectName;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.ecyrd.jspwiki.Release;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.parser.MarkupParser;
 
 /**
  * <p>
@@ -62,12 +64,8 @@ public final class LoggerFactory
     private static final String LOG4J_LOGGER_CLASS = "org.apache.log4j.Logger";
 
     private static HashMap<String, LoggerImpl> c_registeredLoggers = new HashMap<String, LoggerImpl>( 200 );
-
-    /**
-     *   @TODO  We need something here to make the Logger MBeans unique across the JVM, this will not work if you
-     *                     run multiple wiki's in the same JVM, same is true for other MBeans. 
-     */
-    private static final String OBJECTNAME_PREFIX = Release.APPNAME + ":component=Loggers,name=";
+    
+    private static String c_wikiName = null;
 
     static
     {
@@ -80,7 +78,19 @@ public final class LoggerFactory
     private LoggerFactory()
     {}
 
-
+    /**
+     * The wikiName should be passed to us as soon as possible.
+     * This means that we cannot register all LoggerMBeans because 
+     * some request for Loggers come in before we have the wikiName
+     * 
+     * @param wikiName the name of the Wiki, this is necessary if we run multiple
+     *                           wikis in the same JVM
+     */
+    public static void initialize( String wikiName )
+    {
+        c_wikiName = MarkupParser.cleanLink( wikiName );
+    }
+    
     /**
      *  Utility method for locating a Logger based on a Class.
      *  
@@ -156,11 +166,20 @@ public final class LoggerFactory
             Class mbeanClass = Class.forName( "org.apache.log4j.jmx.LoggerDynamicMBean" );
             Constructor constr = mbeanClass.getConstructor( loggerClass );
             Object dynMBean = constr.newInstance( arglist );
-            ObjectName mbeanName = new ObjectName( Release.APPNAME + ":component=Loggers,name=" + loggerName );
-            MBeanServer mbeanServer =  ManagementFactory.getPlatformMBeanServer();
-            if( !mbeanServer.isRegistered( mbeanName ) )
+            ObjectName mbeanName = new ObjectName( getObjectNamePrefix() + loggerName );
+            MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+            if( c_wikiName != null )
             {
-                mbeanServer.registerMBean( dynMBean, mbeanName );
+                if( !mbeanServer.isRegistered( mbeanName ) )
+                {
+                    mbeanServer.registerMBean( dynMBean, mbeanName );
+                }
+                else
+                {
+                    throw new RuntimeException( "JMX bean named " + getObjectNamePrefix() + loggerName
+                                                + " is already registered. Hint: are you running 2 webapps with the same "
+                                                + WikiEngine.PROP_APPNAME + "?" );
+                }
             }
         }
         catch( ClassNotFoundException cnfe )
@@ -189,7 +208,7 @@ public final class LoggerFactory
         {
             try
             {
-                ObjectName mbeanName = new ObjectName( OBJECTNAME_PREFIX + loggerName );
+                ObjectName mbeanName = new ObjectName( getObjectNamePrefix() + loggerName );
                 ManagementFactory.getPlatformMBeanServer().unregisterMBean( mbeanName );
             }
             catch( Exception e )
@@ -197,5 +216,10 @@ public final class LoggerFactory
                 // ignore this, we can't do anything about it
             }
         }
+    }
+    
+    private static String getObjectNamePrefix() 
+    {
+        return Release.APPNAME + ":wiki=" + c_wikiName + ",component=Loggers,name=";
     }
 }

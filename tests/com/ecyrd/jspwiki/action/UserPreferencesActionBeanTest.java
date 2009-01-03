@@ -55,6 +55,12 @@ public class UserPreferencesActionBeanTest extends TestCase
         }
     }
 
+    public void tearDown()
+    {
+        m_engine.shutdown();
+    }
+    
+
     public void testCreateAssertedName() throws Exception
     {
         MockRoundtrip trip;

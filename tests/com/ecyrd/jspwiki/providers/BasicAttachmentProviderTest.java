@@ -111,6 +111,8 @@ public class BasicAttachmentProviderTest extends TestCase
         TestEngine.deleteAll( f );
         
         TestEngine.emptyWorkDir();
+        
+        m_engine.shutdown();
     }
 
     public void testExtension()

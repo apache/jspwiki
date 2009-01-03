@@ -102,6 +102,12 @@ public class AuthorizationManagerTest extends TestCase
         m_session = WikiSessionTest.adminSession( m_engine );
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     /**
      * Tests the default policy. Anonymous users can read, Authenticated can
      * edit, etc. Uses the default tests/etc/jspwiki.policy file installed by
@@ -696,6 +702,7 @@ public class AuthorizationManagerTest extends TestCase
         props.put( AuthorizationManager.POLICY, "jspwiki-testUserPolicy.policy" );
         
         // Initialize the test engine
+        m_engine.shutdown();
         m_engine = new TestEngine( props );
         m_auth = m_engine.getAuthorizationManager();
         m_groupMgr = m_engine.getGroupManager();

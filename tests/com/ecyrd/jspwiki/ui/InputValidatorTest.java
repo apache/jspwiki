@@ -51,6 +51,12 @@ public class InputValidatorTest extends TestCase
         val = new InputValidator( TEST, context );
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        testEngine.shutdown();
+    }
+
     public void testUnsafePattern()
     {
         Pattern unsafe = InputValidator.UNSAFE_PATTERN;

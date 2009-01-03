@@ -58,6 +58,12 @@ public class WebContainerAuthorizerTest extends TestCase
         }
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     public void testConstraints() throws Exception
     {
         assertTrue( m_authorizer.isConstrained( "/Delete.jsp", new Role( "Admin" ) ) );

@@ -36,6 +36,8 @@ public class GroupTest extends TestCase
     Group m_group;
     String m_wiki;
     
+    WikiEngine m_engine  = null;
+    
     public GroupTest( String s )
     {
         super( s );
@@ -45,10 +47,16 @@ public class GroupTest extends TestCase
     {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        WikiEngine engine  = new TestEngine( props );
-        m_wiki = engine.getApplicationName();
+        m_engine  = new TestEngine( props );
+        m_wiki = m_engine.getApplicationName();
         
         m_group = new Group( "TestGroup", m_wiki );
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
     }
     
     public void testAdd1()

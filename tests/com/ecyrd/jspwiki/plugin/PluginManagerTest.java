@@ -64,6 +64,8 @@ public class PluginManagerTest extends TestCase
     public void tearDown() throws ProviderException
     {
         engine.deletePage("Testpage");
+        
+        engine.shutdown();
     }
 
     public void testSimpleInsert()

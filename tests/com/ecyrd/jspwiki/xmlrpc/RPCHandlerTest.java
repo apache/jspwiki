@@ -61,6 +61,8 @@ public class RPCHandlerTest extends TestCase
         TestEngine.deleteTestPage( NAME1 );
         TestEngine.deleteAttachments( NAME1 );
         TestEngine.emptyWorkDir();
+        
+        m_engine.shutdown();
     }
 
     public void testNonexistantPage()

@@ -60,6 +60,7 @@ public class CounterPluginTest extends TestCase
 
     public void tearDown()
     {
+        testEngine.shutdown();
     }
 
     private String translate( String src )

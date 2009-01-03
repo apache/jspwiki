@@ -92,6 +92,8 @@ public class ReferenceManagerTest extends TestCase
         engine.deletePage( "NewBug" );
         engine.deletePage( "BugOne" );
         engine.deletePage( "BugTwo" );
+        
+        engine.shutdown();
     }
 
     public void testNonExistant1()

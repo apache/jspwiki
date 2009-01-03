@@ -95,6 +95,8 @@ public class GroupManagerTest extends TestCase
         m_groupMgr.removeGroup( "Test" );
         m_groupMgr.removeGroup( "Test2" );
         m_groupMgr.removeGroup( "Test3" );
+        
+        m_engine.shutdown();
    }
 
     public void testParseGroup() throws WikiSecurityException

@@ -33,6 +33,23 @@ import com.ecyrd.jspwiki.*;
 
 public class ContextualDiffProviderTest extends TestCase
 {
+    private TestEngine m_engine = null;
+    
+    public void setUp() throws Exception
+    {
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        m_engine = new TestEngine(props);
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
+    
+    
     /**
      * Sets up some shorthand notation for writing test cases.
      * <p>
@@ -199,9 +216,10 @@ public class ContextualDiffProviderTest extends TestCase
         diff.initialize(null, props);
 
         props.load( TestEngine.findTestProperties() );
-        TestEngine engine = new TestEngine(props);
+        m_engine.shutdown();
+        m_engine = new TestEngine(props);
         
-        WikiContext ctx = engine.getWikiContextFactory().newViewContext( engine.createPage( "Dummy" ) );
+        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( "Dummy" ) );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
         assertEquals(expectedDiff, actualDiff);

@@ -33,7 +33,6 @@ import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
@@ -47,6 +46,8 @@ public class UserDatabaseLoginModuleTest extends TestCase
     UserDatabase db;
 
     Subject      subject;
+    
+    private TestEngine m_engine = null;
 
     public final void testLogin()
     {
@@ -122,7 +123,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-        WikiEngine m_engine  = new TestEngine(props);
+       m_engine  = new TestEngine(props);
         db = new XMLUserDatabase();
         subject = new Subject();
         try
@@ -136,4 +137,9 @@ public class UserDatabaseLoginModuleTest extends TestCase
         }
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
 }

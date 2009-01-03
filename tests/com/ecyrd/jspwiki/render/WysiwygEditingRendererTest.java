@@ -54,6 +54,8 @@ public class WysiwygEditingRendererTest extends TestCase
     {
         TestEngine.deleteTestPage( "WysiwygEditingRendererTest" );
         TestEngine.deleteTestPage( "This Pagename Has Spaces" );
+        
+        m_testEngine.shutdown();
     }
 
     private String render(String s) throws IOException

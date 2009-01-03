@@ -70,6 +70,8 @@ public class ReferredPagesPluginTest extends TestCase
         TestEngine.deleteTestPage( "IPointToTwoPages" );
         
         TestEngine.emptyWorkDir();
+        
+        engine.shutdown();
     }
 
     /**

@@ -76,6 +76,8 @@ public class RCSFileProviderTest extends TestCase
         f = new File( files, "RCS" );
 
         f.delete();
+        
+        engine.shutdown();
     }
 
     /**

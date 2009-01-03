@@ -35,7 +35,7 @@ public class AttachmentDavProviderTest extends TestCase
 {
     Properties props = new Properties();
 
-    TestEngine engine;
+    private TestEngine m_engine = null;
 
     AttachmentDavProvider m_provider;
     
@@ -43,24 +43,26 @@ public class AttachmentDavProviderTest extends TestCase
     {
         props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine(props);
+        m_engine = new TestEngine(props);
 
-        m_provider = new AttachmentDavProvider(engine);
+        m_provider = new AttachmentDavProvider(m_engine);
     }
 
     protected void tearDown() throws Exception
     {
         TestEngine.deleteAttachments( "TestPage" );
         TestEngine.deleteTestPage("TestPage");
+        
+        m_engine.shutdown();
     }
 
     public void testGetPageURL()
         throws Exception
     {
-        engine.saveText("TestPage", "foobar");
-        Attachment att = new Attachment(engine,"TestPage","deceit of the tribbles.txt");
+        m_engine.saveText("TestPage", "foobar");
+        Attachment att = new Attachment(m_engine,"TestPage","deceit of the tribbles.txt");
         
-        engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
+        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         
         DavItem di = m_provider.getItem( new DavPath("TestPage/deceit of the tribbles.txt") );
         
@@ -72,7 +74,7 @@ public class AttachmentDavProviderTest extends TestCase
     public void testDirURL()
         throws Exception
     {
-        engine.saveText("TestPage", "foobar");
+        m_engine.saveText("TestPage", "foobar");
     
         DavItem di = m_provider.getItem( new DavPath("") );
     
@@ -84,7 +86,7 @@ public class AttachmentDavProviderTest extends TestCase
     public void testDirURL2()
         throws Exception
     {
-        engine.saveText("TestPage", "foobar");
+        m_engine.saveText("TestPage", "foobar");
 
         DavItem di = m_provider.getItem( new DavPath("TestPage/") );
 

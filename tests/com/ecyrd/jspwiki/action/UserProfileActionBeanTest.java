@@ -54,6 +54,12 @@ public class UserProfileActionBeanTest extends TestCase
         }
     }
 
+    public void tearDown()
+    {
+        m_engine.shutdown();
+    }
+    
+
     public void testMissingParameters() throws Exception
     {
         MockRoundtrip trip;
