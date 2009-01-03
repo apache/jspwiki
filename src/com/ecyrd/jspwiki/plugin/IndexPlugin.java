@@ -42,11 +42,15 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  <ul>
  *    <li><b>include</b> - A regexp pattern for marking which pages should be included.</li>
  *    <li><b>exclude</b> - A regexp pattern for marking which pages should be excluded.</li>
+ *    <li><b>showAttachments</b> - Indicates if attachments should also be shown, the default is true.</li>
  *  </ul>
  */
 public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
 {
     private static Logger log = LoggerFactory.getLogger( IndexPlugin.class );
+    
+    /** The parameter name for setting the showAttachment.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW_ATTACHMENTS = "showAttachments";
     
     /**
      *  {@inheritDoc}
@@ -55,6 +59,12 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
     {
         String include = (String)params.get( PARAM_INCLUDE );
         String exclude = (String)params.get( PARAM_EXCLUDE );
+        String showAttachmentsString = (String) params.get( PARAM_SHOW_ATTACHMENTS );
+        boolean showAttachments = true;
+        if( "false".equals( showAttachmentsString ) )
+        {
+            showAttachments = false;
+        }
         
         List<String> pages;
         div masterDiv = new div();
@@ -66,7 +76,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
         indexDiv.setClass( "header" );
         try
         {
-            pages = listPages( context, include, exclude );
+            pages = listPages( context, include, exclude, showAttachments );
             Collections.sort( pages );
             
             char initialChar = ' ';
@@ -132,7 +142,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
      * @return A list containing page names which matched the filters.
      * @throws ProviderException
      */
-    private List<String> listPages( WikiContext context, String include, String exclude )
+    private List<String> listPages( WikiContext context, String include, String exclude, boolean showAttachments )
         throws ProviderException
     {
         Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
@@ -149,7 +159,17 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
             if( excludePtrn.matcher( pageName ).matches() ) continue;
             if( includePtrn.matcher( pageName ).matches() )
             {
-                result.add( pageName );
+                if( showAttachments )
+                {
+                    result.add( pageName );
+                }
+                else
+                {
+                    if( !pageName.contains( "/" ) )
+                    {
+                        result.add( pageName );
+                    }
+                }
             }
         }
         

@@ -23,7 +23,12 @@ NEW FEATURES
   The log4j configuration statements have been moved to a separate file log4j.properties, 
   this file should be on your CLASSPATH, by default it is placed in WEB-INF/classes
   
-* A new plugin was added that shows you all plugins that are available: PluginIndexPlugin
+* Plugins
+	
+	A new plugin was added that shows you all plugins that are available: PluginIndexPlugin
+	
+	The IndexPlugin has a new parameter (showAttachments=true/false), use false if you don't
+	want attachments to show up on the PageIndex page.
 
 The full log of any issues fixed can be found at:
 

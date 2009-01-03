@@ -1,5 +1,11 @@
 2009-01-03  Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-44
+        
+        * JSPWIKI-458 - IndexPlugin now has a new showAttachments parameter
+        
+2009-01-03  Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-43
         
         * JSPWIKI-452 - The LoggerFactory is now also multi-wiki-per-JVM capable
