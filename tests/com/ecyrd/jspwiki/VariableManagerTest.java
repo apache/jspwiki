@@ -22,6 +22,8 @@
 package com.ecyrd.jspwiki;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -188,6 +190,24 @@ public class VariableManagerTest extends TestCase
         String res = m_variableManager.expandVariables( m_context, "Testing {}, {{{}" );
 
         assertEquals( "Testing {}, {{{}", res );
+    }
+
+    public void testTimeStamp() throws Exception
+    {
+        // Yes I know there is a tiny chance that this fails if the minute
+        // passes by between here and the "new Date" in VariableManager
+        String format = "dd.MM.yyyy HH:mm";
+        SimpleDateFormat df = new SimpleDateFormat( format );
+        String dateString = df.format( new Date() );
+
+        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp=" + format + "}<<<<<" );
+        assertEquals( ">>>>>" + dateString + "<<<<<", res );
+
+        res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp}<<<<<" );
+        assertEquals( ">>>>>No dateformat was provided. <<<<<", res );
+
+        res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp=" + format + "INVALIDFORMAT}<<<<<" );
+        assertEquals( ">>>>>No valid dateformat was provided: dd.MM.yyyy HH:mmINVALIDFORMAT<<<<<", res );
     }
 
     public static Test suite()

@@ -22,6 +22,7 @@ package com.ecyrd.jspwiki;
 
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -331,6 +332,36 @@ public class VariableManager
                 if( s != null )
                 {
                     return s;
+                }
+            }
+
+            //
+            // handle the timestamp variable ( example: timestamp=yyyy-MM-dd)
+            //
+
+            if( varName.startsWith( "timeStamp" ) )
+            {
+                StringTokenizer tok = new StringTokenizer( varName, "=" );
+                int numTokens = tok.countTokens();
+                if( numTokens != 2 )
+                {
+                    return context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "varmgr.dateformat.noformat" );
+                }
+
+                @SuppressWarnings( "unused" )
+                String ignoreFirstToken = tok.nextToken();
+                String dateFormatString = tok.nextToken();
+
+                SimpleDateFormat dateFormat = null;
+                try
+                {
+                    dateFormat = new SimpleDateFormat( dateFormatString );
+                    return dateFormat.format( new Date( System.currentTimeMillis() ) );
+                }
+                catch( RuntimeException e )
+                {
+                    return context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "varmgr.dateformat.invalid" )
+                           + dateFormatString;
                 }
             }
             

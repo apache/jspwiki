@@ -1,4 +1,10 @@
-2009-01-03  Harry Metske <metskem@apache.org>
+2009-01-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-46
+        
+        * JSPWIKI-460 - Add current time stamp to WikiVariables (requested by NicolaFischer)
+        
+2009-01-05  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-45
         
