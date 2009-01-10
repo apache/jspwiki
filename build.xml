@@ -90,9 +90,6 @@
   <!-- The location of the JAR file for the test classes -->
   <property name="testjarfile" location="${code.build}/${ant.project.name}-test.jar" />
 
-  <!-- The location for the keystore used to sign the JAR; will be created if it doesn't exist. -->
-  <property name="jks.keystore" value="${basedir}/etc/jspwiki.jks" />
-
   <!-- Define a temporary directory, based on the system temporary directory,
        the user name, and the project name (defined above) -->
   <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${ant.project.name}" />
@@ -104,6 +101,11 @@
   <property name="tests.src" value="tests" />
   <property name="tests.build" value="tests/build" />
   <property name="tests.reports" value="tests/reports" />
+  
+  <!-- WAR properties -->
+  <condition property="war.compile.jsps">
+    <equals arg1="${compile.jsps}" arg2="true" casesensitive="false" trim="true" />
+  </condition>
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
@@ -296,7 +298,7 @@
     <exec executable="apt">
       <arg line="-classpath ${cp} -nocompile"/>
       <arg line="-factory net.sourceforge.stripes.tools.SiteStructureTool"/>
-      <arg line="-Astripes.output.file=sitemap.xml"/>
+      <arg line="-Astripes.output.file=${code.build}/sitemap.xml"/>
       <arg line="${srcfiles}"/>
     </exec>
     <!-- Migrate the JSPs -->
@@ -332,7 +334,7 @@
   	  <copy file="${code.i18n}/CoreResources.properties" tofile="${code.i18n}/CoreResources_en.properties"/>
 	  <copy file="${code.i18n}/templates/default.properties" tofile="${code.i18n}/templates/default_en.properties"/>
 	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
-      <jar jarfile="${jarfile}">
+      <jar jarfile="${jarfile}" index="true">
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="com/**/*.properties" />
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
@@ -343,7 +345,7 @@
   </target>
 
   <target name="jartests" depends="compiletests">
-    <jar jarfile="${testjarfile}" update="false">
+    <jar jarfile="${testjarfile}" update="false" index="true">
       <fileset dir="${tests.build}">
         <include name="**/*.class"/>
       </fileset>
@@ -351,47 +353,6 @@
         <include name="com/**/*.properties"/>
       </fileset>
     </jar>
-  </target>
-
-  <!--  Signs the JSPWiki JAR file with a self-issued digital certificate.
-        This should only be needed when your JVM starts with a global security
-        policy. By this we mean a standard J2SE policy that is set at JVM startup
-      	using the -Djava.security.policy=/some/policy/file VM argument. If this
-      	global policy file contains references to JSPWiki permission classes
-      	(PagePermission, GroupPermission, etc) **and** you set it before JSPWiki
-      	is loaded, **then** you must do four things:
-      	  0) run this target (signjar)
-      	  1) through 3) see below
-  -->
-
-  <target name="signjar" depends="jar,sign-init" description="Signs jar: for use with global JVM security policies">
-    <sign-jar jar="${jarfile}" />
-    <echo>
-  Congratulations -- you just signed your JAR file. We assume
-  you did this because you want to create a global security
-  policy for your entire JVM. That's fine, but please make
-  sure you configure your JVM (and container) correctly.
-  Normally, this means you should:
-
-    1) Copy ${jarfile} to a place where its classes will be
-       read at startup. (Example: for Tomcat, this is
-       $CATALINA_HOME/common/lib)
-
-    2) Copy the keystore from ${jks.keystore} to the same
-       location as your global policy. (Example: Tomcat's
-       policy is in $CATALINA_HOME/conf/catalina.policy,
-       so you would copy it to $CATALINA_HOME/conf.)
-
-    3) Add a reference to the keystore as the *first* line of
-       the global policy. It should read
-
-       keystore "jspwiki.jks";
-
-       ... or something similar.
-
-  If you have no idea what this is all about, we assume
-  that you ran this target just for fun. In that case, we
-  hope you enjoyed the experience.</echo>
   </target>
 
   <!--  Builds a Web Archive - basically a JAR file which
@@ -412,8 +373,21 @@
         4) Everything from the etc-directory go to the WEB-INF -directory
            of the WAR-file.
    -->
+   
+  <target name="war-init" depends="installinit">
+    <echo>Validating web.xml</echo>
+    <schemavalidate file="etc/web.xml">
+      <schema namespace="http://java.sun.com/xml/ns/j2ee"
+        file="etc/schema/web-app_2_4.xsd" />
+    </schemavalidate>
+    <!-- Clean up stuff from last time -->
+    <delete>
+      <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar"/>
+    </delete>
+    <copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true" />
+  </target>
 
-  <target name="war" depends="installinit,jar,compressedjs"
+  <target name="war" depends="war-init,jar,jar-jsp,compressedjs"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
@@ -421,97 +395,178 @@
     <delete file="${warfile}" />
 
     <war warfile="${warfile}"
-         webxml="etc/web.xml">
-       <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
-       <lib file="${jarfile}" />
-       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
-       <webinf dir="etc">
+         webxml="${code.build}/web.xml">
+      <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+      <lib file="${jarfile}" />
+      <lib file="${code.build}/JSPWiki-jsp.jar" />
+      <lib file="${code.build}/jasper-runtime-*.jar" />
+      <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
+     	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
+     	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
+      <webinf dir="etc">
         <include name="geronimo-web.xml" />
-         <include name="dtd/**" />
-         <include name="jsp/**" />
-         <include name="jspwiki.policy" />
-         <include name="jspwiki.properties" />
-         <include name="oscache.tld" />
-         <include name="userdatabase.xml" />
-         <include name="groupdatabase.xml" />
-       </webinf>
-       <classes dir="etc">
+        <include name="dtd/**" />
+        <include name="jsp/**" />
+        <include name="jspwiki.policy" />
+        <include name="jspwiki.properties" />
+        <include name="userdatabase.xml" />
+        <include name="groupdatabase.xml" />
+      </webinf>
+      <classes dir="etc">
        	<include name="oscache.properties" />
        	<include name="log4j.properties" />
-       </classes>
+      </classes>
     </war>
-
-    <war warfile="${warfile}"
-         webxml="etc/web.xml" update="true">
-      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
-      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
-    </war>
-
-   </target>
-
-    <!-- Defines a compression macro for the JS/CSS bits we want to transform
-         into something that saves a bit of space. -->
-    
-    <macrodef name="compressjs">
-        <attribute name="src"/>
-        <attribute name="args" default=""/>   
-        <sequential>
-            <java jar="tests/lib/yuicompressor-2.3.3.jar"
-                  output="${tmpdir}/compress/@{src}"
-                  fork="true">
-                <arg line="'${code.src}/@{src}' @{args}" />
-            </java>
-        </sequential>
-    </macrodef>
-    
-   <!-- We compress the Javascript using yahoo's yui compressor, 
-        which compresses both javascript and css files.
-        If you don't want to use the compressed stuff, just copy the default
-        .js files from the distro on top of the compressed ones from the WAR.
-    -->
-   <target name="compressedjs">
-        <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
-    
-        <compressjs src="webdocs/scripts/jspwiki-common.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
-        <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
-        <compressjs src="webdocs/scripts/prettify.js"/>
-
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
-
-        <compressjs src="webdocs/templates/default/jspwiki.css"
-                    args="--line-break 0" />
-    
-        <compressjs src="webdocs/templates/default/jspwiki_print.css"
-                    args="--line-break 0" />   	
-
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
-   	    <compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
-                args="--line-break 0" />
-
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
-   	    <compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
-                args="--line-break 0" />
-
-        <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
-        <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
-                args="--line-break 0" />
-
-   	    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
-        <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
-                args="--line-break 0" />
-   </target>
-
-  <target name="opened-war" depends="war"
-   description="Creates an opened JSPWiki war hierarchy into the build dir.">
-
-    <mkdir dir="${code.build}/${ant.project.name}" />
-    <unzip src="${warfile}"
-           dest="${code.build}/${ant.project.name}" />
 
   </target>
 
+  <!-- Builds a JAR file that contains pre-compiled JSPs for use
+       with a web container. Pre-compilation involves three steps:
+       1) Generating the .java files that correspond to JSPWiki's JSPs.
+          The generated classes are actually servlets.
+       2) Compiling the .java files and creating a jar.file,
+          which is added to the WAR's WEB-INF/lib directory
+       3) Injecting servlet mappings into the WEB-INF/web.xml
+          file so that requests for the JSPs are mapped to the
+          servlets generated in step 1.
+
+       To use JSP pre-compilation, set the "compile.jsps"
+       property in build.properties to "true".
+  -->
+  <target name="jar-jsp" depends="jar" if="war.compile.jsps">
+    <taskdef classname="org.apache.jasper.JspC" name="jasper2">
+      <classpath>
+        <path refid="path.base" />
+        <path refid="path.tests" />
+      </classpath>
+    </taskdef>
+    <!-- Generate Java source for each JSP -->
+    <mkdir dir="${code.build}/jsp/java" />
+    <jasper2
+      validateXml="false"
+      uriroot="${code.src}/webdocs"
+      outputDir="${code.build}/jsp/java"
+      poolingEnabled="false"
+      package="org.apache.jspwiki.jsp"
+      webXmlFragment="${code.build}/jsp/web-fragment.xml" />
+    <!-- Compile the generated Java sources -->
+    <mkdir dir="${code.build}/jsp/classes"/>
+    <javac srcdir="${code.build}/jsp/java" destdir="${code.build}/jsp/classes">
+      <classpath>
+        <path refid="path.base" />
+        <path refid="path.tests" />
+      </classpath>
+    </javac>
+    <!-- Inject JSP mappings into web.xml -->
+    <echo message="Adding JSP servlet mappings to web.xml" />
+    <loadfile property="generated-web.xml" srcFile="${code.build}/jsp/web-fragment.xml"/>
+    <copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true">
+      <filterset begintoken="&lt;!--" endtoken="--&gt;">
+        <filter token=" PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS " value="${generated-web.xml}" />
+      </filterset>
+    </copy>
+    <!-- Jar up the compiled class files -->
+    <jar jarfile="${code.build}/JSPWiki-jsp.jar" index="true">
+      <fileset dir="${code.build}/jsp/classes" includes="**/*.class" />
+    </jar>
+    <!-- Copy the Jasper runtime JAR -->
+    <copy toDir="${code.build}">
+      <fileset dir="tests/lib" includes="jasper-runtime-*.jar"/>
+    </copy>
+  </target>
+
+  <!-- Defines a compression macro for the JS/CSS bits we want to transform
+         into something that saves a bit of space. -->
+    
+  <macrodef name="compressjs">
+    <attribute name="src"/>
+    <attribute name="args" default=""/>   
+    <sequential>
+      <java jar="tests/lib/yuicompressor-2.3.3.jar"
+        output="${tmpdir}/compress/@{src}"
+        fork="true">
+        <arg line="'${code.src}/@{src}' @{args}" />
+      </java>
+    </sequential>
+  </macrodef>
+    
+  <!-- Generates a tarball containing all of JSPWiki's static
+       content. This is quite handy for environments that use
+       JSPWiki in conjunction with a front-end web server such
+       as Apache (via mod_jk/jk2 or mod_proxy). The target strips
+       out the static content (images, css, etc) and adds it to
+       a separate tar file that can be unpacked in one of
+       Apache's content directories.
+
+       To generate static content, set the properties
+       "static.user" and "static.group" in build.properties.
+       These should be set to the Unix runtime user and group
+       that should own the static files, for example the
+       user "apache" and "daemon" group. If the "static.user"
+       property is not supplied, war-tomcat skips the static
+       content generation step.
+
+       If not present, the target is skipped.
+       File permissions are owner and group read (440),
+       and for directories, owner and group read
+       and execute (550).
+  -->
+
+  <target name="staticzip" depends="war" if="static.user">
+    <property name="static.group" value="${static.user}" />
+    <tar destfile="${code.build}/${tar.static}" longfile="fail" compression="gzip">
+      <tarfileset dir="${war}" defaultexcludes="yes"
+        username="${static.user}" group="${static.group}"
+        mode="440" dirmode="550">
+        <include name="**/*.css" />
+        <include name="**/*.gif" />
+        <include name="**/*.htm" />
+        <include name="**/*.html" />
+        <include name="**/*.jpg" />
+        <include name="**/*.js" />
+        <include name="**/*.png" />
+      </tarfileset>
+    </tar>
+  </target>
+
+  <!-- We compress the Javascript using yahoo's yui compressor, 
+       which compresses both javascript and css files.
+       If you don't want to use the compressed stuff, just copy the default
+       .js files from the distro on top of the compressed ones from the WAR.
+  -->
+  <target name="compressedjs">
+    <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
+    
+    <compressjs src="webdocs/scripts/jspwiki-common.js"/>
+    <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
+    <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
+    <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
+    <compressjs src="webdocs/scripts/prettify.js"/>
+
+    <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
+
+    <compressjs src="webdocs/templates/default/jspwiki.css"
+      args="--line-break 0" />
+    
+    <compressjs src="webdocs/templates/default/jspwiki_print.css"
+      args="--line-break 0" />   	
+
+    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
+   	<compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
+      args="--line-break 0" />
+
+    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
+   	<compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
+      args="--line-break 0" />
+
+    <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
+    <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
+      args="--line-break 0" />
+
+   	<mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
+    <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
+      args="--line-break 0" />
+  </target>
 
   <!--
        Here goes some nice Ant magic...  We build the source
@@ -860,7 +915,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="dtd/**" />
           <include name="commons-logging.properties" />
           <include name="jspwiki.policy" />
-          <include name="oscache.tld" />
         </fileset>
         <fileset dir="tests/etc" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
@@ -953,245 +1007,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <arg line="${webtests.reports}/@{context}.html" />
       </java>
     </sequential>
-  </macrodef>
-
-  <!-- ============================================================== -->
-
-  <!-- Tomcat war pre-compilation -->
-
-  <!-- This target builds a WAR file that is specially pre-compiled
-       for use with Tomcat. By generating and pre-compiling JSPs
-       ahead of time (instead of having Tomcat do it on-the-fly
-       at runtime), we provide a slight runtime speed bump. In
-       addition, in security-conscious environments this means
-       that we can eliminate the need for the Jasper JSP compiler,
-       and can run Tomcat using just a JRE instead of a full JDK.
-
-       Pre-compilation involves three steps:
-       1) Generating the .java files that correspond to JSPWiki's JSPs.
-          The generated classes are actually servlets.
-       2) Compiling the .java files and creating a jar.file,
-          which is added to the WAR's WEB-INF/lib directory
-       3) Injecting servlet mappings into the WEB-INF/web.xml
-          file so that requests for the JSPs are mapped to the
-          servlets generated in step 1.
-
-       All of these steps are performed automatically by the
-       target "war-tomcat."
-
-       To use Tomcat pre-compilation, you need to specify
-       where Tomcat lives on your machine. This can be done
-       two ways:
-        1. Export the environment variable CATALINA_HOME, or:
-        2. Set the property "tomcat.home" in build.properties to
-           Tomcat's installation directory (e.g., /usr/local/tomcat)
-
-       NOTE: The Jasper compiler on older versions of Tomcat
-       (earlier than ~June 2004) is known to have bugs
-       that prevent the Ant "jasper2" task from running
-       successfully. So, you should probably try to use
-       a relatively recent build.
-
-       In addition to pre-compiling the servlets, "war-tomcat"
-       executes a sub-target that generates a tarball containing
-       all of JSPWiki's static content. This is quite handy for
-       environments that use Tomcat in conjunction with a front-end
-       web server such as Apache (via mod_jk/jk2 or mod_proxy).
-       The target strips out the static content (images, css, etc)
-       and adds it to a separate tar file that can be unpacked
-       in one of Apache's content directories.
-
-       To generate static content, set the properties
-       "static.user" and "static.group" in build.properties.
-       These should be set to the Unix runtime user and group
-       that should own the static files, for example the
-       user "apache" and "daemon" group. If the "static.user"
-       property is not supplied, war-tomcat skips the static
-       content generation step.
-  -->
-
-  <target name="war-tomcat"      depends="build-tomcat-war,staticzip"
-    description="Builds the WAR file for Tomcat (with pre-compiled JSPs)"/>
-
-  <target name="tomcat-init" depends="init">
-    <!-- Auto-detect whether Tomcat is available -->
-    <property name="war"               value="${code.build}/${ant.project.name}" />
-    <property name="war.tomcat"        value="${ant.project.name}-tomcat.war" />
-    <property name="tar.static"        value="${ant.project.name}-static.tar.gz" />
-    <check-property prop="env.CATALINA_HOME" />
-    <property name="tomcat.home" value="${env.CATALINA_HOME}" />
-    <echo message="Detected Tomcat: ${tomcat.home}" />
-
-    <!-- Set classpath for pre-compilation and deployment tasks -->
-    <path id="tomcat.classpath">
-      <pathelement location="${java.home}/../lib/tools.jar" />
-      <fileset dir="${tomcat.home}">
-        <!-- For Tomcat 5.5 -->
-        <include name="bin/commons-logging-api.jar" />
-        <include name="common/lib/*.jar" />
-        <include name="server/lib/*.jar" />
-        <!-- For Tomcat 6.0 -->
-        <include name="bin/tomcat-juli.jar" />
-        <include name="lib/*.jar" />
-      </fileset>
-    </path>
-  </target>
-
-  <!-- Use Jasper to generate Java class files for the JSPs.
-       Then compile and jar 'em up. Note that Tomcat's
-       Jasper task creates a web.xml "fragment" containing
-       the JSP-to-servlet mappings. We need to copy this into
-       our existing web.xml, which we do using a file
-       copy with token substitution.                       -->
-
-  <target name="compile-tomcat" depends="tomcat-init,opened-war">
-    <mkdir dir="${code.build}/jsp-java" />
-    <mkdir dir="${code.build}/jsp-classes"/>
-    <taskdef classname="org.apache.jasper.JspC" name="jasper2">
-      <classpath>
-        <path refid="tomcat.classpath" />
-        <path refid="path.base" />
-      </classpath>
-    </taskdef>
-    <jasper2
-      validateXml="false"
-      uriroot="${war}"
-      outputDir="${code.build}/jsp-java"
-      poolingEnabled="false"
-      webXmlFragment="${code.build}/web-fragment.xml" />
-    <javac srcdir="${code.build}/jsp-java" destdir="${code.build}/jsp-classes">
-      <classpath>
-        <path refid="tomcat.classpath" />
-        <path id="war.classpath">
-          <fileset dir="${war}/WEB-INF/lib">
-            <include name="*.jar" />
-          </fileset>
-        </path>
-      </classpath>
-    </javac>
-    <jar jarfile="${code.build}/jsp.jar">
-      <fileset dir="${code.build}/jsp-classes" includes="**/*.class" />
-    </jar>
-    <echo message="Adding JSP servlet mappings to web.xml" />
-    <loadfile property="generated-web.xml" srcFile="${code.build}/web-fragment.xml"/>
-    <copy file="${war}/WEB-INF/web.xml" toFile="${code.build}/web-merged.xml" overwrite="true">
-      <filterset begintoken="&lt;!--" endtoken="--&gt;">
-        <filter token=" PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS " value="${generated-web.xml}" />
-      </filterset>
-    </copy>
-  </target>
-
-  <!-- Create a new war file with the new JSP jar and amended web.xml -->
-
-  <target name="build-tomcat-war" depends="compile-tomcat">
-    <war warfile="${code.build}/${war.tomcat}" webxml="${code.build}/web-merged.xml" defaultexcludes="true">
-      <webinf dir="${war}/WEB-INF">
-        <exclude name="web.xml" />
-        <exclude name="lib/*" />
-      </webinf>
-      <lib dir="${war}/WEB-INF/lib" excludes="servlet-api.jar,j2ee.jar"/>
-      <lib dir="${code.build}" includes="jsp.jar" />
-      <fileset dir="${war}">
-        <exclude name="WEB-INF/**" />
-        <exclude name="**/*.jsp" />
-      </fileset>
-    </war>
-  </target>
-
-  <!-- Create a tarball containing the static content.
-       User must set at least ${static.user} and preferably ${static.group}.
-       If not present, the target is skipped.
-       File permissions are owner and group read (440),
-       and for directories, owner and group read
-       and execute (550). -->
-
-  <target name="staticzip" depends="build-tomcat-war" if="static.user">
-    <property name="static.group" value="${static.user}" />
-    <tar destfile="${code.build}/${tar.static}" longfile="fail" compression="gzip">
-      <tarfileset dir="${war}" defaultexcludes="yes"
-        username="${static.user}" group="${static.group}"
-        mode="440" dirmode="550">
-        <include name="**/*.css" />
-        <include name="**/*.gif" />
-        <include name="**/*.htm" />
-        <include name="**/*.html" />
-        <include name="**/*.jpg" />
-        <include name="**/*.js" />
-        <include name="**/*.png" />
-      </tarfileset>
-    </tar>
-  </target>
-
-  <!-- ============================================================== -->
-
-  <!-- Targets for signing JAR files -->
-
-  <!-- These targets collectively create a Java keystore for signing,
-       and automate the jar-signing process.
-  -->
-  <target name="sign-init" depends="installinit,jks-init,jks-create,jks-password" />
-
-  <target name="jks-init">
-    <property name="jks.alias" value="jspwiki" />
-    <available file="${jks.keystore}" property="jks.exists" />
-  </target>
-
-  <target name="jks-create" unless="jks.exists">
-    <echo>
-JSPWiki needs a digital certificate for code signing its JAR files.
-Since you don't appear to have one, we need to generate a new certificate.
-Once generated, it will be used to sign the JSPWiki.jar file. To create
-the certificate, we need to ask you for your name and a few other things.
-
-The certificate file will be generated at: ${jks.keystore}.
-You should copy this file to your container's configuration directory,
-or wherever your jspwiki.policy file lives.
-
-If something in this process goes wrong, you can simply delete
-${jks.keystore} and execute this target again... no harm done.
-To automate the JAR signing processs, you can add the property
-'jks.password' to your build.properties file.
-    </echo>
-    <input message="Your name (example: Simon Bar Sinister):" addproperty="jks.cn" />
-    <input message="Your organization (example: ecyrd.com):" addproperty="jks.o" />
-    <input message="Your country (example: US, FI, AU):" addproperty="jks.c" />
-    <input message="Keystore password (>6 characters):" addproperty="jks.password" />
-    <exec dir="${basedir}" executable="keytool" failonerror="true">
-      <arg value="-genkey"/>
-      <arg value="-keysize"/>
-      <arg value="1024"/>
-      <arg value="-alias"/>
-      <arg value="${jks.alias}"/>
-      <arg value="-keystore"/>
-      <arg value="${jks.keystore}"/>
-      <arg value="-storepass"/>
-      <arg value="${jks.password}"/>
-      <arg value="-dname"/>
-      <arg value="cn=${jks.cn}, ou=JSPWiki Code Signing Division, o=${jks.o}, c=${jks.c}"/>
-    </exec>
-  </target>
-
-  <target name="jks-password" unless="jks.password">
-    <input message="Keystore password:" addproperty="jks.password" />
-  </target>
-
-  <macrodef name="sign-jar">
-     <attribute name="jar"/>
-     <sequential>
-        <echo message="Signing code with this certificate: ${jks.keystore}" />
-        <exec dir="${basedir}" executable="keytool" failonerror="true">
-           <arg value="-list"/>
-           <arg value="-v"/>
-           <arg value="-alias"/>
-           <arg value="${jks.alias}"/>
-           <arg value="-keystore"/>
-           <arg value="${jks.keystore}"/>
-           <arg value="-storepass"/>
-           <arg value="${jks.password}"/>
-        </exec>
-        <signjar jar="@{jar}" alias="jspwiki" keystore="${jks.keystore}"
-        storepass="${jks.password}" verbose="false"/>
-     </sequential>
   </macrodef>
 
   <!-- ============================================================== -->
@@ -1467,7 +1282,7 @@ To automate the JAR signing processs, you can add the property
 
   <target name="i18n-jar-template" description="Jars a given i18n directory structure">
 	<input message="i18n template code to jar (ie: es_ES):" addproperty="i18n.template" />
-  	<jar jarfile="${code.build}/${ant.project.name}_${i18n.template}.jar">
+  	<jar jarfile="${code.build}/${ant.project.name}_${i18n.template}.jar" index="true">
 		<fileset dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}" includes="**/*.properties" />
 	</jar>
 	<echo message="Created ${code.build}/${ant.project.name}_${i18n.template}.jar. Drop it on your web/WEB-INF/lib folder and that should do the i18n trick" />

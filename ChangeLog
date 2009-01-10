@@ -1,3 +1,19 @@
+2009-01-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-41
+
+        * Header.jsp, PageActions*.jsp, UserBox.jsp, Footer.jsp refactored to use
+        Stripes tags. i18n messages have been renamed and moved to CoreResources.
+        SisterSites.jsp and rss.jsp now reference the oscache TLD buy URI, making
+        the need to copy it into the webapp unnecessary.
+
+        * Ant scripts now pre-compile JSPs when indicated by build.properties. This
+        is optional.  JSPs are compiled using the Jasper 5.5 jars supplied with our test
+        libs. The jasper-runtime jar is copied into WEB-INF/lib so that the JSPs will run.
+        Also, the Ant 'war' task now verifies web.xml against the servlet 2.4 schema
+        before compiling. Lastly, old crufty targets like Jar-signing and war-tomcat
+        are gone.
+
 2009-01-05  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-46
