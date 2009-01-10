@@ -27,7 +27,7 @@
 <stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
 <table>
   <tr>
-  <td><stripes:label for="assertedName" name="prefs.assertedname" /></td>
+  <td><stripes:label for="assertedName" /></td>
   <td> 
     <stripes:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></stripes:text>
     <stripes:errors field="assertedName" />
@@ -52,7 +52,7 @@
   </wiki:UserCheck>
 
   <tr>
-  <td><stripes:label for="editor" name="edit.chooseeditor" /></td>
+  <td><stripes:label for="editor" /></td>
   <td>
     <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
@@ -64,7 +64,7 @@
   </tr>
   
   <tr>
-  <td><stripes:label for="sectionEditing" name="prefs.user.sectionediting" /></td>
+  <td><stripes:label for="sectionEditing" /></td>
   <td>
     <stripes:checkbox id="sectionEditing" name="sectionEditing" checked="true" />
     <stripes:errors field="sectionEditing" />
@@ -73,7 +73,7 @@
   </tr>
   
   <tr>
-  <td><stripes:label for="skin" name="prefs.user.skin" /></td>
+  <td><stripes:label for="skin" /></td>
   <td>
     <stripes:select id="skin" name="skin">
       <stripes:options-collection collection="${skins}" />
@@ -84,28 +84,28 @@
 
   <c:if test='${not empty locales}'>
     <tr>
-      <td><stripes:label for="locale" name="prefs.user.language" /></td>
+      <td><stripes:label for="locale" /></td>
       <td>
         <stripes:select name="locale">
           <stripes:options-map map="${locales}" />
         </stripes:select>
-        <stripes:errors field="language" />
+        <stripes:errors field="locale" />
       </td>
     </tr>
   </c:if>
 
   <tr>
-    <td><stripes:label for="orientation" name="prefs.user.orientation" /></td>
+    <td><stripes:label for="orientation" /></td>
     <td>
       <stripes:select id="orientation" name="orientation">
-        <stripes:options-enumeration enum="com.ecyrd.jspwiki.preferences.Preferences.Orientation" />
+        <stripes:options-enumeration enum="com.ecyrd.jspwiki.preferences.Preferences.Orientation" label="name" />
       </stripes:select>
       <stripes:errors field="orientation" />
     </td>
   </tr>
 
   <tr>
-    <td><stripes:label for="timeFormat" name="prefs.user.timeformat" /></td>
+    <td><stripes:label for="timeFormat" /></td>
     <td>
       <stripes:select id="timeFormat" name="timeFormat">
         <stripes:options-map map="${timeformats}" />
@@ -115,7 +115,7 @@
   </tr>
 
   <tr>
-    <td><stripes:label for="timeZone" name="prefs.user.timezone" /></td>
+    <td><stripes:label for="timeZone" /></td>
     <td>
       <stripes:select id="timeZone" name="timeZone">
         <stripes:options-map map="${timezones}" />
@@ -148,7 +148,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>
-      <stripes:submit name="save" accesskey="s"><fmt:message key='prefs.save.prefs.submit' /></stripes:submit>
+      <stripes:submit name="save" accesskey="s" />
       <stripes:hidden name="redirect"><wiki:Variable var='redirect' default='' /></stripes:hidden>
       <div class="formhelp"><fmt:message key='prefs.cookies' /></div>
     </td>
@@ -164,7 +164,7 @@
 
 <stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
   <div>
-    <stripes:submit name="clearAssertedName"><fmt:message key='prefs.clear.submit' /></stripes:submit>
+    <stripes:submit name="clearAssertedName" />
   </div>
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>
 </stripes:form>

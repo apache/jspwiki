@@ -132,7 +132,7 @@ public class Preferences extends HashMap<String, String>
     /**
      * Cookie name for the user's preferred template skin.
      */
-    public static final String PREFS_SKIN = "SkinName";
+    public static final String PREFS_SKIN = "Skin";
 
     private static final long serialVersionUID = 2L;
 

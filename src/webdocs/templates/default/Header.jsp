@@ -1,19 +1,14 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%
-  WikiContext c = WikiContextFactory.findContext( pageContext );
-  String frontpage = c.getEngine().getFrontPage(); 
-%>
-
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <div id="header">
 
   <div class="titlebox"><wiki:InsertPage page="TitleBox" /></div>
 
-  <div class="applicationlogo" > 
-    <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
+  <div class="applicationlogo" >
+    <c:set var="frontPageTitle"><fmt:message key='actions.home.title' ><fmt:param><c:out value='${wikiEngine.frontPage}' /></fmt:param></fmt:message></c:set>
+    <stripes:link beanclass="com.ecyrd.jspwiki.action.ViewActionBean" title="${frontPageTitle}"><fmt:message key="actions.home" /></stripes:link>
   </div>
 
   <div class="companylogo"></div>

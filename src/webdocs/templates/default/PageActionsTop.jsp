@@ -1,26 +1,45 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <div id="actionsTop" class="pageactions"> 
   <ul>
-
+  
     <wiki:CheckRequestContext context='view|info|diff|upload|rename'>
-    <wiki:Permission permission="edit">
-	<li>
-        <wiki:PageType type="page">
-          <a href="<wiki:EditLink format='url' />" accesskey="e" class="action edit" title="<fmt:message key='actions.edit.title' />"><fmt:message key='actions.edit' /></a>
-        </wiki:PageType>
-        <wiki:PageType type="attachment">
-          <a href="<wiki:BaseURL/>Edit.jsp?page=<wiki:ParentPageName/>" accesskey="e" class="action edit" title="<fmt:message key='actions.editparent.title' />"><fmt:message key='actions.editparent' /></a>
-        </wiki:PageType>
-    </li>
-    </wiki:Permission>
+      <wiki:Permission permission="edit">
+      	<li>
+          <wiki:PageType type="page">
+            <c:set var="editTitle"><fmt:message key="actions.edit.title" /></c:set>
+            <stripes:link
+              beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit"
+              accesskey="e" class="action edit"
+              title="${editTitle}">
+              <fmt:message key='actions.edit' />
+              <stripes:param name="page" value="${wikiContext.page.name}" />
+            </stripes:link>
+          </wiki:PageType>
+          <wiki:PageType type="attachment">
+            <c:set var="editParentTitle"><fmt:message key="actions.editparent.title" /></c:set>
+            <stripes:link
+              beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit"
+              accesskey="e" class="action edit"
+              title="${editParentTitle}">
+              <fmt:message key='actions.edit' />
+              <stripes:param name="page"><wiki:ParentPageName/></stripes:param>
+            </stripes:link>
+          </wiki:PageType>
+        </li>
+      </wiki:Permission>
     </wiki:CheckRequestContext>
 
     <%-- converted to popup menu by jspwiki-common.js--%>
     <li id="morebutton">
-      <a href="<wiki:Link format='url' page='MoreMenu' />" class="action more"><fmt:message key="actions.more" /></a>
+      <stripes:link
+        beanclass="com.ecyrd.jspwiki.action.ViewActionBean"
+        class="action more">
+        <stripes:param name="page" value="MoreMenu" />
+        <fmt:message key="actions.more" />
+      </stripes:link>
     </li>
 
   </ul>

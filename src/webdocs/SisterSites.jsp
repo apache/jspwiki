@@ -4,7 +4,7 @@
 <%@ page import="java.text.*" %>
 <%@ page import="com.ecyrd.jspwiki.rss.*" %>
 <%@ page import="com.ecyrd.jspwiki.util.*" %>
-<%@ taglib uri="/WEB-INF/oscache.tld" prefix="oscache" %>
+<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="oscache" %>
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>

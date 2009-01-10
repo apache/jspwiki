@@ -124,7 +124,7 @@ public class LoginActionBean extends AbstractActionBean
         catch ( LoginException e )
         {
             log.info( "Failed to authenticate user " + m_username + ", reason: " + e.getMessage());
-            errors.addGlobalError( new SimpleError( e.getMessage() ) );
+            errors.addGlobalError( new LocalizableError( "login.error.password" ) );
         }
         catch( WikiSecurityException e )
         {

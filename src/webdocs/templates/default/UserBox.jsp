@@ -1,11 +1,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%
-  WikiContext c = WikiContextFactory.findContext( pageContext );
-%>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <div class="userbox">
 
   <wiki:UserCheck status="anonymous">
@@ -30,31 +26,41 @@
 
   <%-- action buttons --%>
   <wiki:UserCheck status="notAuthenticated">
-  <wiki:CheckRequestContext context='!login'>
-    <wiki:Permission permission="login">
-      <a href="<wiki:Link jsp='Login.jsp' format='url'><wiki:Param 
-         name='redirect' value='<%=c.getEngine().encodeName(c.getPage().getName())%>'/></wiki:Link>" 
-        class="action login"
-        title="<fmt:message key='actions.login.title'/>"><fmt:message key="actions.login"/></a>
-    </wiki:Permission>
-  </wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context='!login'>
+      <wiki:Permission permission="login">
+        <c:set var="loginTitle"><fmt:message key='actions.login.title' /></c:set>
+        <stripes:link
+          beanclass="com.ecyrd.jspwiki.action.LoginActionBean"
+          class="action login"
+          title="${loginTitle}">
+          <stripes:param name="redirect" value="${wikiContext.page.name}" />
+          <fmt:message key="actions.login"/>
+        </stripes:link>
+      </wiki:Permission>
+    </wiki:CheckRequestContext>
   </wiki:UserCheck>
   
   <wiki:UserCheck status="authenticated">
-   <a href="<wiki:Link jsp='Logout.jsp' format='url' />" 
-     class="action logout"
-     title="<fmt:message key='actions.logout.title'/>"><fmt:message key="actions.logout"/></a>
-   <%--onclick="return( confirm('<fmt:message key="actions.confirmlogout"/>') && (location=this.href) );"--%>
+    <c:set var="logoutTitle"><fmt:message key='actions.logout.title' /></c:set>
+    <stripes:link
+      beanclass="com.ecyrd.jspwiki.action.LoginActionBean" event="logout"
+      class="action logout"
+      title="${logoutTitle}">
+      <fmt:message key="actions.login"/>
+    </stripes:link>
   </wiki:UserCheck>
 
   <wiki:CheckRequestContext context='!prefs'>
-  <wiki:CheckRequestContext context='!preview'>
-    <a href="<wiki:Link jsp='UserPreferences.jsp' format='url' ><wiki:Param name='redirect'
-      value='<%=c.getEngine().encodeName(c.getPage().getName())%>'/></wiki:Link>"
-      class="action prefs" accesskey="p"
-      title="<fmt:message key='actions.prefs.title'/>"><fmt:message key="actions.prefs" />
-    </a>
-  </wiki:CheckRequestContext>
+    <wiki:CheckRequestContext context='!preview'>
+      <c:set var="prefsTitle"><fmt:message key='actions.prefs.title' /></c:set>
+      <stripes:link
+        beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean"
+        class="action prefs" accesskey="p"
+        title="${prefsTitle}">
+        <stripes:param name="redirect" value="${wikiContext.page.name}" />
+        <fmt:message key="actions.prefs"/>
+      </stripes:link>
+    </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
 
   <div class="clearbox"></div>
