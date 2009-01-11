@@ -1,6 +1,17 @@
+2009-01-11  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-48
+        
+        * Minor corrections to build.xml:
+           - replace all hardcoded "tests" with ${tests.src}
+           - renamed jar-jsp task to jar-compiled-jsps
+           - also add commons-el*.jar to WEB-INF/lib in war task
+           - also delete this file in war-init task an make this delete quite
+           - replaced deprecated warfile parm with destfile
+
 2009-01-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
-        * 3.0.0-svn-41
+        * 3.0.0-svn-47
 
         * Header.jsp, PageActions*.jsp, UserBox.jsp, Footer.jsp refactored to use
         Stripes tags. i18n messages have been renamed and moved to CoreResources.

@@ -99,8 +99,8 @@
        directory where the test results are written in. -->
 
   <property name="tests.src" value="tests" />
-  <property name="tests.build" value="tests/build" />
-  <property name="tests.reports" value="tests/reports" />
+  <property name="tests.build" value="${tests.src}/build" />
+  <property name="tests.reports" value="${tests.src}/reports" />
   
   <!-- WAR properties -->
   <condition property="war.compile.jsps">
@@ -109,12 +109,12 @@
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
-  <property name="webtests.reports"  value="${basedir}/tests/reports/selenium" />
-  <property name="webtests.build"    value="tests/build/webtests" />
+  <property name="webtests.reports"  value="${tests.src}/reports/selenium" />
+  <property name="webtests.build"    value="${tests.src}/build/webtests" />
   <property name="webtests.port"     value="10024" />
   <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
-  <property name="selenium-rc.jar"   value="tests/lib/selenium-server-1.0-beta1.jar" />
+  <property name="selenium-rc.jar"   value="${tests.src}/lib/selenium-server-1.0-beta1.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -158,7 +158,7 @@
      <fileset dir="lib">
         <include name="*.jar" />
      </fileset>
-     <fileset dir="tests/lib">
+     <fileset dir="${tests.src}/lib">
         <include name="*.jar" />
      </fileset>
      <pathelement path="${tests.src}/etc" />
@@ -184,16 +184,16 @@
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
-     <copy file="tests/etc/jspwiki.properties.tmpl" tofile="tests/etc/jspwiki.properties" />
-     <copy file="tests/etc/jspwiki_rcs.properties.tmpl" tofile="tests/etc/jspwiki_rcs.properties" />
-     <copy file="tests/etc/jspwiki_vers.properties.tmpl" tofile="tests/etc/jspwiki_vers.properties" />
+     <copy file="${tests.src}/etc/jspwiki.properties.tmpl" tofile="${tests.src}/etc/jspwiki.properties" />
+     <copy file="${tests.src}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests.src}/etc/jspwiki_rcs.properties" />
+     <copy file="${tests.src}/etc/jspwiki_vers.properties.tmpl" tofile="${tests.src}/etc/jspwiki_vers.properties" />
      <replace file="etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki.properties"
+     <replace file="${tests.src}/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki_rcs.properties"
+     <replace file="${tests.src}/etc/jspwiki_rcs.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="tests/etc/jspwiki_vers.properties"
+     <replace file="${tests.src}/etc/jspwiki_vers.properties"
               replacefilterfile="${build.properties}" />
   </target>
 
@@ -204,9 +204,9 @@
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
     <delete file="etc/jspwiki.properties" />
-    <delete file="tests/etc/jspwiki.properties" />
-    <delete file="tests/etc/jspwiki_rcs.properties" />
-    <delete file="tests/etc/jspwiki_vers.properties" />
+    <delete file="${tests.src}/etc/jspwiki.properties" />
+    <delete file="${tests.src}/etc/jspwiki_rcs.properties" />
+    <delete file="${tests.src}/etc/jspwiki_vers.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -381,25 +381,26 @@
         file="etc/schema/web-app_2_4.xsd" />
     </schemavalidate>
     <!-- Clean up stuff from last time -->
-    <delete>
-      <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar"/>
+    <delete quiet="true">
+      <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
     </delete>
     <copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true" />
   </target>
 
-  <target name="war" depends="war-init,jar,jar-jsp,compressedjs"
+  <target name="war" depends="war-init,jar,jar-compiled-jsps,compressedjs"
           description="Builds the WAR file for installation.">
 
     <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
 
     <delete file="${warfile}" />
 
-    <war warfile="${warfile}"
-         webxml="${code.build}/web.xml">
+    <war destfile="${warfile}"
+         webxml="${code.build}/web.xml" >
       <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
       <lib file="${jarfile}" />
       <lib file="${code.build}/JSPWiki-jsp.jar" />
       <lib file="${code.build}/jasper-runtime-*.jar" />
+      <lib file="${code.build}/commons-el-*.jar"  />
       <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
      	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
@@ -433,7 +434,7 @@
        To use JSP pre-compilation, set the "compile.jsps"
        property in build.properties to "true".
   -->
-  <target name="jar-jsp" depends="jar" if="war.compile.jsps">
+  <target name="jar-compiled-jsps" depends="jar" if="war.compile.jsps">
     <taskdef classname="org.apache.jasper.JspC" name="jasper2">
       <classpath>
         <path refid="path.base" />
@@ -471,7 +472,8 @@
     </jar>
     <!-- Copy the Jasper runtime JAR -->
     <copy toDir="${code.build}">
-      <fileset dir="tests/lib" includes="jasper-runtime-*.jar"/>
+      <fileset dir="${tests.src}/lib" includes="jasper-runtime-*.jar"/>
+      <fileset dir="${tests.src}/lib" includes="commons-el-*.jar"/>
     </copy>
   </target>
 
@@ -482,7 +484,7 @@
     <attribute name="src"/>
     <attribute name="args" default=""/>   
     <sequential>
-      <java jar="tests/lib/yuicompressor-2.3.3.jar"
+      <java jar="${tests.src}/lib/yuicompressor-2.3.3.jar"
         output="${tmpdir}/compress/@{src}"
         fork="true">
         <arg line="'${code.src}/@{src}' @{args}" />
@@ -665,13 +667,13 @@
 
   <target name="tests-init" depends="mkpropertyfile">
       <!-- Build up the /etc directory for testing -->
-      <delete file="tests/etc/userdatabase.xml" />
-      <delete file="tests/etc/userdatabase.xml.old" />
-      <copy file="tests/etc/userdatabase.xml.tmpl" toFile="tests/etc/userdatabase.xml"/>
-      <delete file="tests/etc/groupdatabase.xml" />
-      <delete file="tests/etc/groupdatabase.xml.old" />
-      <copy file="tests/etc/groupdatabase.xml.tmpl" toFile="tests/etc/groupdatabase.xml"/>
-      <mkdir dir="tests/etc/WEB-INF" />
+      <delete file="${tests.src}/etc/userdatabase.xml" />
+      <delete file="${tests.src}/etc/userdatabase.xml.old" />
+      <copy file="${tests.src}/etc/userdatabase.xml.tmpl" toFile="${tests.src}/etc/userdatabase.xml"/>
+      <delete file="${tests.src}/etc/groupdatabase.xml" />
+      <delete file="${tests.src}/etc/groupdatabase.xml.old" />
+      <copy file="${tests.src}/etc/groupdatabase.xml.tmpl" toFile="${tests.src}/etc/groupdatabase.xml"/>
+      <mkdir dir="${tests.src}/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
       <copy file="${basedir}/etc/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
@@ -693,15 +695,15 @@
       <replace file="${webtests.build}/web.xml.container"
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
       <copy file="${webtests.build}/web.xml.container"
-          tofile="tests/etc/WEB-INF/web.xml" overwrite="true" />
+          tofile="${tests.src}/etc/WEB-INF/web.xml" overwrite="true" />
 
       <!-- Copy the DTDs and jspwiki.properties to the test WEB-INF -->
-      <mkdir dir="tests/etc/WEB-INF/dtd" />
-      <copy toDir="tests/etc/WEB-INF/dtd">
+      <mkdir dir="${tests.src}/etc/WEB-INF/dtd" />
+      <copy toDir="${tests.src}/etc/WEB-INF/dtd">
         <fileset dir="${basedir}/etc/dtd/" />
       </copy>
       <copy file="${basedir}/etc/jspwiki.properties"
-          tofile="tests/etc/WEB-INF/jspwiki.properties" overwrite="true" />
+          tofile="${tests.src}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
   </target>
 
   <!-- This target runs the JUnit tests that are available
@@ -807,7 +809,7 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="tests/etc/jspwiki.properties"
+    <copy file="${tests.src}/etc/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
       <entry key="jspwiki.authorizer" value="com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer" />
@@ -883,7 +885,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <echo message="Creating Selenium test scripts..."/>
       <mkdir dir="@{context.dir}/selenium" />
       <copy flatten="true" toDir="@{context.dir}/selenium">
-        <fileset dir="tests/etc/selenium/tests/all" />
+        <fileset dir="${tests.src}/etc/selenium/tests/all" />
         <filterset>
           <filter token="selenium.context" value="@{context}" />
         </filterset>
@@ -916,7 +918,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="commons-logging.properties" />
           <include name="jspwiki.policy" />
         </fileset>
-        <fileset dir="tests/etc" includes="userdatabase.xml groupdatabase.xml" />
+        <fileset dir="${tests.src}/etc" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
       <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
       
@@ -1152,7 +1154,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
       <filterset>
-        <filtersfile file="tests/etc/jspwiki.properties" />
+        <filtersfile file="${tests.src}/etc/jspwiki.properties" />
         <filtersfile file="build.properties" />
       </filterset>
     </copy>
@@ -1219,8 +1221,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
   <target name="hsql-check-start" depends="db-properties">
     <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="tests/etc/db/hsql/server.properties" prefix="hsql" />
-    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from tests/etc/db/hsql/server.properties</fail>
+    <property file="${tests.src}/etc/db/hsql/server.properties" prefix="hsql" />
+    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from ${tests.src}/etc/db/hsql/server.properties</fail>
     <condition property="hsql.up">
       <socket server="localhost" port="${hsql.server.port}" />
     </condition>
@@ -1229,15 +1231,15 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
   <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
     description="Starts the Hypersonic database for testing.">
     <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="tests/etc/db/hsql/jspwiki.lck"/>
+    <delete file="${tests.src}/etc/db/hsql/jspwiki.lck"/>
     <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="tests/etc/db/hsql">
+      dir="${tests.src}/etc/db/hsql">
       <classpath>
         <pathelement location="${jdbc.driver.jar}" />
       </classpath>
     </java>
     <sleep seconds="5" />
-    <available file="tests/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
+    <available file="${tests.src}/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
     <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
    cd tests/etc/db/hsql
    java -cp ${jdbc.driver.jar} org.hsqldb.Server
@@ -1255,7 +1257,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       SHUTDOWN
     </sql>
     <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="tests/etc/db/hsql/jspwiki.lck" />
+    <delete file="${tests.src}/etc/db/hsql/jspwiki.lck" />
     <echo message="Done." />
   </target>
 
