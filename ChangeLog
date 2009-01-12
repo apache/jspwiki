@@ -1,3 +1,9 @@
+2009-01-12 Florian Holeczek <florianh@apache.org>
+
+        * 3.0.0-svn-49
+
+        * localization updates for German, cosmetic changes for English
+
 2009-01-11  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-48
@@ -329,7 +335,6 @@
         * 3.0.0-svn-15
 
         * german localization update for resources introduced in JSPWIKI-318
-
 
 2008-11-30 Florian Holeczek <florianh@apache.org>
 
