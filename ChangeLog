@@ -1,5 +1,15 @@
 2009-01-13  Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-52
+        
+        * moved a few messages to CoreResources
+        
+        * added missing Apache copyright templates
+        
+        * a few typos
+        
+2009-01-13  Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-51
         
         * JSPWIKI-468, remove keystore check from SecurityVerifier
