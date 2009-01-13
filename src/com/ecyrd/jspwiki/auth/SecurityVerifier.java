@@ -731,20 +731,6 @@ public final class SecurityVerifier
             PolicyReader policy = new PolicyReader( policyFile );
             m_session.addMessage( INFO_POLICY, "The security policy '" + policy.getFile() + "' exists." );
 
-            // See if there is a keystore that's valid
-            KeyStore ks = policy.getKeyStore();
-            if ( ks == null )
-            {
-                m_session.addMessage( WARNING_POLICY,
-                    "Policy file does not have a keystore... at least not one that we can locate. If your policy file " +
-                    "does not contain any 'signedBy' blocks, this is probably ok." );
-            }
-            else
-            {
-                m_session.addMessage( INFO_POLICY,
-                    "The security policy specifies a keystore, and we were able to locate it in the filesystem." );
-            }
-
             // Verify the file
             policy.read();
             List<Exception> errors = policy.getMessages();
