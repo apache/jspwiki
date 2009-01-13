@@ -116,9 +116,9 @@ public class AdminBeanManager implements WikiEventListener
                 }
                 else
                 {
-                    throw new RuntimeException( "JMX bean named " + name +
-                                                " is already registered. Hint: are you running 2 webapps with the same " +
-                                                WikiEngine.PROP_APPNAME + "?" );
+                    log.error( "JMX bean named " + name + 
+                               " is already registered. Hint: are you running 2 webapps with the same " +
+                               WikiEngine.PROP_APPNAME + "?" );
                 }
             }
 

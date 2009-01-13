@@ -1,4 +1,17 @@
-2009-01-12 Florian Holeczek <florianh@apache.org>
+202009-01-13  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-50
+
+        * Localized UserDatabaseLoginModule so that it throws errors in the
+        user's correct Locale.
+
+        * Changed the stop-the-presses RuntimeExceptions thrown by
+        AdminBeanManager to an (milder) error that is logged. Halting the
+        WikiEngine was proving to be too aggressive in test situations.
+
+        * Fixed b0rked jspwiki.css.
+
+09-01-12 Florian Holeczek <florianh@apache.org>
 
         * 3.0.0-svn-49
 

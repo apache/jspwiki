@@ -21,11 +21,12 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.security.auth.callback.*;
 
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
 
@@ -34,7 +35,7 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
  * container. This handler is instantiated in
  * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)}.
  * If container-managed authentication is used, the
- * {@link WebContainerCallbackHandler}is used instead. This callback handler is
+ * {@link WebContainerCallbackHandler} is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
  * @author Andrew Jaquith
  * @since 2.3
@@ -43,22 +44,26 @@ public class WikiCallbackHandler implements CallbackHandler
 {
     private static final Logger log = LoggerFactory.getLogger(WikiCallbackHandler.class);
 
-    private final UserDatabase m_database;
+    private final WikiEngine m_engine;
 
     private final String       m_password;
 
     private final String       m_username;
+    
+    private final Locale      m_locale;
 
     /**
      *  Create a new callback handler.
      *  
-     *  @param database The Userdatabase to use
-     *  @param username The username
-     *  @param password The password
+     *  @param engine the WikiEngine for this wiki
+     *  @param locale the Locale to use, for localizing messages
+     *  @param username the username
+     *  @param password the password
      */
-    public WikiCallbackHandler( UserDatabase database, String username, String password )
+    public WikiCallbackHandler( WikiEngine engine, Locale locale, String username, String password )
     {
-        m_database = database;
+        m_engine = engine;
+        m_locale = locale;
         m_username = username;
         m_password = password;
     }
@@ -73,9 +78,9 @@ public class WikiCallbackHandler implements CallbackHandler
         for( int i = 0; i < callbacks.length; i++ )
         {
             Callback callback = callbacks[i];
-            if ( callback instanceof UserDatabaseCallback )
+            if ( callback instanceof WikiEngineCallback )
             {
-                ( (UserDatabaseCallback) callback ).setUserDatabase( m_database );
+                ( (WikiEngineCallback) callback ).setEngine( m_engine );
             }
             else if ( callback instanceof NameCallback )
             {
@@ -84,6 +89,10 @@ public class WikiCallbackHandler implements CallbackHandler
             else if ( callback instanceof PasswordCallback )
             {
                 ( (PasswordCallback) callback ).setPassword( m_password.toCharArray() );
+            }
+            else if ( callback instanceof LocaleCallback )
+            {
+                ( (LocaleCallback) callback ).setLocale( m_locale );
             }
             else if( callbacks[i] instanceof TextOutputCallback )
             {

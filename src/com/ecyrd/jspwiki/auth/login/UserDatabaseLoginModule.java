@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -29,13 +30,14 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
-import com.ecyrd.jspwiki.log.Logger;
-import com.ecyrd.jspwiki.log.LoggerFactory;
-
+import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.auth.NoSuchPrincipalException;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
 import com.ecyrd.jspwiki.auth.user.UserProfile;
+import com.ecyrd.jspwiki.i18n.InternationalizationManager;
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
 
 /**
  * <p>
@@ -48,8 +50,13 @@ import com.ecyrd.jspwiki.auth.user.UserProfile;
  * username</li>
  * <li>{@link javax.security.auth.callback.PasswordCallback}- supplies the
  * password</li>
- * <li>{@link com.ecyrd.jspwiki.auth.login.UserDatabaseCallback}- supplies the
- * {@link com.ecyrd.jspwiki.auth.user.UserDatabase}</li>
+ * <li>{@link com.ecyrd.jspwiki.auth.login.LocaleCallback}- supplies the
+ * HTTP request, from which the user's {@link java.util.Locale} is obtained
+ * (used for constructing localized error messages)</li>
+ * <li>{@link com.ecyrd.jspwiki.auth.login.WikiEngineCallback}- supplies the
+ * {@link com.ecyrd.jspwiki.WikiEngine}, from which the
+ * {@link com.ecyrd.jspwiki.i18n.InternationalizationManager} is obtained
+ * (used for constructing localized error messages)</li>
  * </ol>
  * <p>
  * After authentication, a Principals based on the login name will be created
@@ -64,30 +71,48 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
     private static final Logger log = LoggerFactory.getLogger( UserDatabaseLoginModule.class );
 
     /**
-     * @see javax.security.auth.spi.LoginModule#login()
-     * 
-     * {@inheritDoc}
+     *      {@inheritDoc}
+     *      <p>Note: this method will throw a
+     *      {@link javax.security.auth.login.FailedLoginException} if the
+     *      username or password does not match what is contained in the
+     *      database. The text of this message will be looked up in the
+     *      {@link com.ecyrd.jspwiki.i18n.InternationalizationManager#CORE_BUNDLE}
+     *      using the key <code>login.error.password</code>. Any other
+     *      Exceptions thrown by this method will <em>not</em> be localized,
+     *      because they represent exceptional error conditions that should not
+     *      occur unless the wiki is configured incorrectly.</p>
      */
     public boolean login() throws LoginException
     {
-        UserDatabaseCallback ucb = new UserDatabaseCallback();
         NameCallback ncb = new NameCallback( "User name" );
         PasswordCallback pcb = new PasswordCallback( "Password", false );
-        Callback[] callbacks = new Callback[]
-        { ucb, ncb, pcb };
+        LocaleCallback lcb = new LocaleCallback();
+        WikiEngineCallback wcb = new WikiEngineCallback();
+        Callback[] callbacks = new Callback[] { ncb, pcb, lcb, wcb };
         try
         {
             m_handler.handle( callbacks );
-            UserDatabase db = ucb.getUserDatabase();
             String username = ncb.getName();
             String password = new String( pcb.getPassword() );
+            Locale locale = lcb.getLocale();
+            WikiEngine engine = wcb.getEngine();
+            UserDatabase db = engine.getUserManager().getUserDatabase();
+            InternationalizationManager i18n = engine.getInternationalizationManager();
 
             // Look up the user and compare the password hash
             if ( db == null )
             {
-                throw new FailedLoginException( "No user database: check the callback handler code!" );
+                throw new LoginException( "No user database: check the callback handler code!" );
             }
-            UserProfile profile = db.findByLoginName( username );
+            UserProfile profile;
+            try
+            {
+                profile = db.findByLoginName( username );
+            }
+            catch( NoSuchPrincipalException e )
+            {
+                throw new FailedLoginException( i18n.get( InternationalizationManager.CORE_BUNDLE, locale, "login.error.password" ) );
+            }
             String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) )
             {
@@ -101,7 +126,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 
                 return true;
             }
-            throw new FailedLoginException( "The username or password is incorrect." );
+            throw new FailedLoginException( i18n.get( InternationalizationManager.CORE_BUNDLE, locale, "login.error.password" ) );
         }
         catch( IOException e )
         {
@@ -114,10 +139,6 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             String message = "Unable to handle callback; disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
-        }
-        catch( NoSuchPrincipalException e )
-        {
-            throw new FailedLoginException( "The username or password is incorrect." );
         }
     }
 

@@ -407,14 +407,4 @@ public class Preferences extends HashMap<String, String>
         }
         return cookieValue == null ? defaultValue : cookieValue;
     }
-
-    public static void main( String[] args )
-    {
-        Orientation r = Orientation.LEFT;
-        System.out.println( r.toString() );
-        System.out.println( r.name() );
-        r = Orientation.valueOf( "LEFT" );
-        System.out.println( r.name() );
-        r = Orientation.valueOf( "foo" );
-    }
 }

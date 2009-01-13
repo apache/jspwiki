@@ -21,6 +21,7 @@
 package com.ecyrd.jspwiki.auth.login;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
         try
         {
             // Log in with a user that isn't in the database
-            CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
+            CallbackHandler handler = new WikiCallbackHandler( m_engine, Locale.getDefault(), "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
             module.initialize(subject, handler, 
                               new HashMap<String, Object>(), 
@@ -69,7 +70,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
             
             // Login with a user that IS in the database
             subject = new Subject();
-            handler = new WikiCallbackHandler( db, "janne", "myP@5sw0rd" );
+            handler = new WikiCallbackHandler( m_engine, Locale.getDefault(), "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
             module.initialize(subject, handler, 
                               new HashMap<String, Object>(), 
@@ -93,7 +94,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
     {
         try
         {
-            CallbackHandler handler = new WikiCallbackHandler( db, "user", "password" );
+            CallbackHandler handler = new WikiCallbackHandler( m_engine, Locale.getDefault(), "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
             module.initialize(subject, handler, 
                               new HashMap<String, Object>(), 

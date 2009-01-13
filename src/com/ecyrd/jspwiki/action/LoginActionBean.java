@@ -2,6 +2,7 @@ package com.ecyrd.jspwiki.action;
 
 import java.security.Principal;
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.mail.AuthenticationFailedException;
@@ -111,24 +112,28 @@ public class LoginActionBean extends AbstractActionBean
     {
         WikiSession wikiSession = getContext().getWikiSession();
         ValidationErrors errors = getContext().getValidationErrors();
+        Locale locale = getContext().getLocale();
 
         log.debug( "Attempting to authenticate user " + m_username );
 
         // Log the user in!
         try
         {
-            if( !getContext().getEngine().getAuthenticationManager().login( wikiSession, m_username, m_password ) )
+            if( !getContext().getEngine().getAuthenticationManager().login( wikiSession, locale, m_username, m_password ) )
             {
             }
         }
         catch ( LoginException e )
         {
+        	// Message is already localized
             log.info( "Failed to authenticate user " + m_username + ", reason: " + e.getMessage());
-            errors.addGlobalError( new LocalizableError( "login.error.password" ) );
+            errors.addGlobalError( new SimpleError( e.getMessage() ) );
         }
         catch( WikiSecurityException e )
         {
-            errors.addGlobalError( new LocalizableError( "login.error", e.getMessage() ) );
+        	// Message is already localized
+            log.info( "Failed to authenticate user " + m_username + ", reason: " + e.getMessage());
+            errors.addGlobalError( new SimpleError( e.getMessage() ) );
         }
     }
 

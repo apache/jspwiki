@@ -369,6 +369,27 @@ public final class AuthenticationManager
     
     /**
      * Attempts to perform a WikiSession login for the given username/password
+     * combination using JSPWiki's custom authentication mode, using the system default Locale.
+     * The operation is otherwise identical to {@link #login(WikiSession, Locale, String, String)}.
+     * @param session the current wiki session; may not be <code>null</code>.
+     * @param username The user name
+     * @param password the password
+     * @return <code>true</code> if the username/password is valid; <code>false</code>
+     *             if the LoginModule should be ignored, or the WikiSession was <code>null</code>
+     * @throws LoginException
+     *             if the LoginModule's <code>login()</code> or <code>commit()</code> phases
+     *             failed for any reason, including invalid credentials.
+     * @throws WikiSecurityException
+     *             if the login failed for any other reason. The root-cause exception can
+     *             be retrieved via {@link java.lang.Throwable#getCause()}
+     */
+    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException, LoginException
+    {
+        return login( session, Locale.getDefault(), username, password );
+    }
+
+    /**
+     * Attempts to perform a WikiSession login for the given username/password
      * combination using JSPWiki's custom authentication mode. In order to log in,
      * the JAAS LoginModule supplied by the WikiEngine property {@link #PROP_LOGIN_MODULE}
      * will be instantiated, and its
@@ -391,7 +412,7 @@ public final class AuthenticationManager
      *             if the login failed for any other reason. The root-cause exception can
      *             be retrieved via {@link java.lang.Throwable#getCause()}
      */
-    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException, LoginException
+    public final boolean login( WikiSession session, Locale locale, String username, String password ) throws WikiSecurityException, LoginException
     {
         if ( session == null )
         {
@@ -405,9 +426,9 @@ public final class AuthenticationManager
             delayLogin(username);
         }
         
-        UserManager userMgr = m_engine.getUserManager();
         CallbackHandler handler = new WikiCallbackHandler(
-                userMgr.getUserDatabase(),
+                m_engine,
+                locale,
                 username,
                 password );
         
