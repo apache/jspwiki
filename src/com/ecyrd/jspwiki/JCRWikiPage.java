@@ -23,11 +23,18 @@ package com.ecyrd.jspwiki;
 import java.io.InputStream;
 import java.util.*;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
+import org.apache.jspwiki.api.WikiException;
 import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
 import com.ecyrd.jspwiki.auth.acl.AclImpl;
+import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.providers.WikiPageProvider;
 
@@ -55,7 +62,8 @@ public class JCRWikiPage
     private int              m_version = WikiPageProvider.LATEST_VERSION;
     private String           m_author = null;
     private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
-
+    private Node             m_node;
+    
     private Acl m_accessList = null;
     
     /**
@@ -78,6 +86,20 @@ public class JCRWikiPage
         m_name   = name;
     }
 
+    public JCRWikiPage(WikiEngine engine, Node node)
+        throws RepositoryException, WikiException
+    {
+        m_engine = engine;
+        m_node   = node;
+        m_name   = ContentManager.getWikiPath( node.getPath() );
+    }
+    
+    
+    public Node getJCRNode()
+    {
+        return m_node;
+    }
+    
     /* (non-Javadoc)
      * @see com.ecyrd.jspwiki.WikiPage#getName()
      */
@@ -343,12 +365,6 @@ public class JCRWikiPage
         return null;
     }
 
-    public String getContentAsString()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public String getContentType()
     {
         // TODO Auto-generated method stub
@@ -360,17 +376,17 @@ public class JCRWikiPage
         // TODO Auto-generated method stub
         return null;
     }
-
-    public void setContent( String content )
+    
+    public void setContent( InputStream in ) throws WikiException
     {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void setContent( InputStream in )
-    {
-        // TODO Auto-generated method stub
-        
+        try
+        {
+            m_node.setProperty( ATTR_CONTENT, in );
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Unable to set content",e);
+        }
     }
 
     public void setContentType( String contentType )
@@ -378,4 +394,53 @@ public class JCRWikiPage
         // TODO Auto-generated method stub
         
     }
+    
+    public void save() throws WikiException
+    {
+        try
+        {
+            if( m_node.isNew() )
+                m_node.getParent().save();
+            else
+                m_node.save();
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Save failed",e);
+        }
+    }
+    
+    private static final String ATTR_CONTENT = "wiki:content";
+    
+    public String getContentAsString() throws WikiException
+    {
+        try
+        {
+            Property p = m_node.getProperty( ATTR_CONTENT );
+                
+            return p.getString();
+        }
+        catch( PathNotFoundException e )
+        {
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Unable to get property",e);
+        }
+        
+        return null;
+    }
+
+    public void setContent( String content ) throws WikiException
+    {
+        try
+        {
+            m_node.setProperty( ATTR_CONTENT, content );
+        }
+        catch( RepositoryException e )
+        {
+            throw new WikiException("Unable to set content",e);
+        }
+    }
+
 }

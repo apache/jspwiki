@@ -231,5 +231,10 @@ public interface WikiPage
      *  @return -1, 0 or 1
      */
     public int compareTo( Object o );
+ 
+    public String getContentAsString() throws WikiException;
+
+    public void save() throws WikiException;
     
+    public void setContent(String content) throws WikiException;
 }

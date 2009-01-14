@@ -45,6 +45,7 @@ import com.ecyrd.jspwiki.auth.AuthenticationManager;
 import com.ecyrd.jspwiki.auth.SessionMonitor;
 import com.ecyrd.jspwiki.auth.Users;
 import com.ecyrd.jspwiki.auth.WikiSecurityException;
+import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.log.Logger;
 import com.ecyrd.jspwiki.log.LoggerFactory;
@@ -492,5 +493,4 @@ public class TestEngine extends WikiEngine
         // Return the configured servlet context
         servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
     }
-    
 }

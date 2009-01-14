@@ -51,6 +51,7 @@ import com.ecyrd.jspwiki.auth.UserManager;
 import com.ecyrd.jspwiki.auth.acl.AclManager;
 import com.ecyrd.jspwiki.auth.acl.DefaultAclManager;
 import com.ecyrd.jspwiki.auth.authorize.GroupManager;
+import com.ecyrd.jspwiki.content.ContentManager;
 import com.ecyrd.jspwiki.content.PageRenamer;
 import com.ecyrd.jspwiki.content.WikiName;
 import com.ecyrd.jspwiki.diff.DifferenceManager;
@@ -204,6 +205,8 @@ public class WikiEngine
     /** Stores the ACL manager. */
     private AclManager       m_aclManager = null;
 
+    private ContentManager   m_contentManager;
+    
     /** Creates WikiContexts. */
     private WikiContextFactory m_contextFactory = null;
 
@@ -521,6 +524,7 @@ public class WikiEngine
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
 
+            m_contentManager    = (ContentManager)ClassUtil.getMappedObject(ContentManager.class.getName(), this );
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
             m_differenceManager = (DifferenceManager)ClassUtil.getMappedObject(DifferenceManager.class.getName(), this, props );
@@ -2068,6 +2072,7 @@ public class WikiEngine
      *  and managing WikiPages.
      *
      *  @return The current PageManager instance.
+     *  @deprecated
      */
     public PageManager getPageManager()
     {
@@ -2089,6 +2094,7 @@ public class WikiEngine
      *
      *  @since 1.9.31.
      *  @return The current AttachmentManager instance
+     *  @deprecated
      */
     public AttachmentManager getAttachmentManager()
     {
@@ -2419,6 +2425,17 @@ public class WikiEngine
         }
         return m_aclManager;
     }
+
+    /**
+     *  Returns the Content Manager in use.
+     *  
+     *  @return The Content Manager.
+     */
+    public ContentManager getContentManager()
+    {
+        return m_contentManager;
+    }
+    
 
     /**
      *  Returns the DifferenceManager so that texts can be compared.

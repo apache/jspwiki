@@ -38,6 +38,7 @@ public class AllTests extends TestCase
 
         suite.addTest( PageRenamerTest.suite() );
         suite.addTest( WikiNameTest.suite() );
+        suite.addTest( ContentManagerTest.suite() );
         
         return suite;
     }

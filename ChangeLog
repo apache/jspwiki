@@ -1,3 +1,14 @@
+2009-01-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-53
+        
+        * [JSPWIKI-421] Trying to keep up with the changes in the 
+        trunk was simply getting too much, so I went ahead and committed 
+        a part of the JCR code in what I hope to be non-invasive.  None of 
+        the old code yet uses the ContentManager; this is just in preparation 
+        for the meat.  However, it should highlight the WikiPage<->WikiContext
+        creation problem.
+        
 2009-01-13  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-52

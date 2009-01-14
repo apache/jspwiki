@@ -42,5 +42,7 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/jul-to-slf4j-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="lib/jcr-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/priha-0.1.12.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
