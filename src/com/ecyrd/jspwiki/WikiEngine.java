@@ -619,7 +619,7 @@ public class WikiEngine
         {
             // Final catch-all for everything
             
-            log.error( "JSPWiki could not start, due to an unknown exception when starting.",e );
+            log.error( "%1$s %2$s", "JSPWiki could not start, due to an unknown exception when starting.", e );
             throw new WikiException("Failed to start; please check log files for better information.");
         }
         
