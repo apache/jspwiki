@@ -40,6 +40,7 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiException;
 import com.ecyrd.jspwiki.WikiSession;
 import com.ecyrd.jspwiki.auth.authorize.Role;
+import com.ecyrd.jspwiki.auth.authorize.WebAuthorizer;
 import com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer;
 import com.ecyrd.jspwiki.auth.login.*;
 import com.ecyrd.jspwiki.event.WikiEventListener;
@@ -278,15 +279,7 @@ public final class AuthenticationManager
         if ( !session.isAuthenticated() )
         {
             // Create a callback handler
-            try
-            {
-                handler = new WebContainerCallbackHandler( m_engine, request, authorizationMgr.getAuthorizer() );
-            }
-            catch ( WikiSecurityException e )
-            {
-                e.printStackTrace();
-                throw new WikiSecurityException( e.getMessage() );
-            }
+            handler = new WebContainerCallbackHandler( m_engine, request );
             
             // Execute the container login module, then (if that fails) the cookie auth module
             Set<Principal> principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
@@ -303,6 +296,9 @@ public final class AuthenticationManager
                 {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
                 }
+                
+                // Add all appropriate Authorizer roles
+                injectAuthorizerRoles( session, authorizationMgr.getAuthorizer(), request );
             }
         }
 
@@ -379,6 +375,10 @@ public final class AuthenticationManager
             {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
             }
+            
+            // Add all appropriate Authorizer roles
+            injectAuthorizerRoles( session, m_engine.getAuthorizationManager().getAuthorizer(), null );
+            
             return true;
         }
         return false;
@@ -706,6 +706,49 @@ public final class AuthenticationManager
                         throw new IllegalArgumentException( "JAAS LoginModule key " + propName + " cannot be specified twice!" );
                     }
                     m_loginModuleOptions.put( optionKey, optionValue );
+                }
+            }
+        }
+    }
+    
+    /**
+     * After successful login, this method is called to inject authorized role Principals into the WikiSession.
+     * To determine which roles should be injected, the configured Authorizer
+     * is queried for the roles it knows about by calling  {@link com.ecyrd.jspwiki.auth.Authorizer#getRoles()}.
+     * Then, each role returned by the authorizer is tested by calling {@link com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+     * If this check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+     * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
+     * @param session the user's current WikiSession
+     * @param authorizer the WikiEngine's configured Authorizer
+     * @param request the user's HTTP session, which may be <code>null</code>
+     */
+    private final void injectAuthorizerRoles( WikiSession session, Authorizer authorizer, HttpServletRequest request )
+    {
+        // Test each role the authorizer knows about
+        for ( Principal role : authorizer.getRoles() )
+        {
+            // Test the Authorizer
+            if ( authorizer.isUserInRole( session, role ) )
+            {
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug("Added authorizer role " + role.getName() + "." );
+                }
+            }
+            
+            // If web authorizer, test the request.isInRole() method also
+            else if ( request != null && authorizer instanceof WebAuthorizer )
+            {
+                WebAuthorizer wa = (WebAuthorizer)authorizer;
+                if ( wa.isUserInRole( request, role ) )
+                {
+                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug("Added container role " + role.getName() + "." );
+                    }
                 }
             }
         }

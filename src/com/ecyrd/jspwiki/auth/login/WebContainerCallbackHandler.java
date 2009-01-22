@@ -28,7 +28,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.auth.Authorizer;
 
 /**
  * Handles logins made from within JSPWiki.
@@ -40,8 +39,6 @@ public final class WebContainerCallbackHandler implements CallbackHandler
 {
     private final HttpServletRequest m_request;
 
-    private final Authorizer         m_authorizer;
-
     private final WikiEngine         m_engine;
 
     /**
@@ -49,13 +46,11 @@ public final class WebContainerCallbackHandler implements CallbackHandler
      *  
      *  @param engine The WikiEngine
      *  @param request The request to look into
-     *  @param authorizer The authorizer which does all these things.
      */
-    public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request, Authorizer authorizer )
+    public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request )
     {
         m_engine  = engine;
         m_request = request;
-        m_authorizer = authorizer;
     }
 
     /**
@@ -71,10 +66,6 @@ public final class WebContainerCallbackHandler implements CallbackHandler
             if ( callback instanceof HttpRequestCallback )
             {
                 ( (HttpRequestCallback) callback ).setRequest( m_request );
-            }
-            else if ( callback instanceof AuthorizerCallback )
-            {
-                ( (AuthorizerCallback) callback ).setAuthorizer( m_authorizer );
             }
             else if( callback instanceof WikiEngineCallback )
             {

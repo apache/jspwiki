@@ -27,7 +27,22 @@ import com.ecyrd.jspwiki.WikiEngine;
 import com.ecyrd.jspwiki.WikiSession;
 
 /**
- * Interface for service providers of authorization information.
+ * Interface for service providers of authorization information. After a user
+ * successfully logs in, the
+ * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} consults the configured
+ * Authorizer to determine which additional
+ * {@link com.ecyrd.jspwiki.auth.authorize.Role} principals should be added to
+ * the user's WikiSession. To determine which roles should be injected, the
+ * Authorizer is queried for the roles it knows about by calling
+ * {@link com.ecyrd.jspwiki.auth.Authorizer#getRoles()}. Then, each role
+ * returned by the Authorizer is tested by calling
+ * {@link com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+ * If this check fails, and the Authorizer is of type WebAuthorizer,
+ * AuthenticationManager checks the role again by calling
+ * {@link com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+ * Any roles that pass the test are injected into the Subject by firing
+ * appropriate authentication events.
+ * 
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -35,19 +50,21 @@ public interface Authorizer
 {
 
     /**
-     * Returns an array of role Principals this Authorizer knows about.
-     * This method will always return an array; an implementing class may
-     * choose to return an zero-length array if it has no ability to identify
-     * the roles under its control.
+     * Returns an array of role Principals this Authorizer knows about. This
+     * method will always return an array; an implementing class may choose to
+     * return an zero-length array if it has no ability to identify the roles
+     * under its control.
+     * 
      * @return an array of Principals representing the roles
      */
     public Principal[] getRoles();
 
     /**
-     * Looks up and returns a role Principal matching a given String.
-     * If a matching role cannot be found, this method returns <code>null</code>.
-     * Note that it may not always be feasible for an Authorizer
-     * implementation to return a role Principal.
+     * Looks up and returns a role Principal matching a given String. If a
+     * matching role cannot be found, this method returns <code>null</code>.
+     * Note that it may not always be feasible for an Authorizer implementation
+     * to return a role Principal.
+     * 
      * @param role the name of the role to retrieve
      * @return the role Principal
      */
@@ -55,6 +72,7 @@ public interface Authorizer
 
     /**
      * Initializes the authorizer.
+     * 
      * @param engine the current wiki engine
      * @param props the wiki engine initialization properties
      * @throws WikiSecurityException if the Authorizer could not be initialized
@@ -67,10 +85,11 @@ public interface Authorizer
      * containing the subject and the desired role ( which may be a Role or a
      * Group). If either parameter is <code>null</code>, this method must
      * return <code>false</code>.
+     * 
      * @param session the current WikiSession
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role,
-     * <code>false</code> otherwise
+     *         <code>false</code> otherwise
      */
     public boolean isUserInRole( WikiSession session, Principal role );
 

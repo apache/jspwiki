@@ -1,3 +1,14 @@
+2009-01-21  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 2.8.2-svn-5
+
+        * [JSPWIKI-473] Fixed bug that was causing role checks using custom
+        Authorizers to fail. AuthenticationManager was not calling
+        Authorizer.isInRole(WikiSession, Principal), as it should have.
+        In addition to fixing the bug, we also now include a special test case
+        to verify that custom Authorizers work properly. Thanks to Steve
+        Dahl for reporting this issue.
+
 2008-12-19 Harry Metske <metskem@apache.org>
 
         * 2.8.2-svn-4

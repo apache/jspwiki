@@ -33,9 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.TestCase;
 
 import com.ecyrd.jspwiki.NoRequiredPropertyException;
-import com.ecyrd.jspwiki.TestAuthorizer;
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.auth.Authorizer;
 import com.ecyrd.jspwiki.auth.WikiPrincipal;
 import com.ecyrd.jspwiki.auth.authorize.Role;
 import com.ecyrd.jspwiki.auth.user.UserDatabase;
@@ -46,11 +44,9 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
  */
 public class AnonymousLoginModuleTest extends TestCase
 {
-    Authorizer authorizer;
+    UserDatabase m_db;
 
-    UserDatabase db;
-
-    Subject      subject;
+    Subject      m_subject;
 
     private TestEngine m_engine;
 
@@ -60,12 +56,12 @@ public class AnonymousLoginModuleTest extends TestCase
         try
         {
             // Test using IP address (AnonymousLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new AnonymousLoginModule();
-            module.initialize(subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>());
+            module.initialize( m_subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -83,14 +79,14 @@ public class AnonymousLoginModuleTest extends TestCase
         HttpServletRequest request = m_engine.newHttpRequest();
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new AnonymousLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -114,13 +110,11 @@ public class AnonymousLoginModuleTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
         m_engine = new TestEngine(props);
-        authorizer = new TestAuthorizer();
-        authorizer.initialize( m_engine, props );
-        db = new XMLUserDatabase();
-        subject = new Subject();
+        m_db = new XMLUserDatabase();
+        m_subject = new Subject();
         try
         {
-            db.initialize( m_engine, props );
+            m_db.initialize( m_engine, props );
         }
         catch( NoRequiredPropertyException e )
         {

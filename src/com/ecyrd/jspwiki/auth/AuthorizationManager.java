@@ -383,7 +383,7 @@ public final class AuthorizationManager
     /**
      * Initializes AuthorizationManager with an engine and set of properties.
      * Expects to find property 'jspwiki.authorizer' with a valid Authorizer
-     * implementation name to take care of group lookup operations.
+     * implementation name to take care of role lookup operations.
      * @param engine the wiki engine
      * @param properties the set of properties used to initialize the wiki engine
      * @throws WikiException if the AuthorizationManager cannot be initialized
