@@ -1,3 +1,9 @@
+2009-01-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-55
+        
+        * JSPWIKI-472, userdatabase.xml corrupted on EBCDIC platforms by CryptoUtil
+        
 2009-01-19 Florian Holeczek <florianh@apache.org>
 
         * 3.0.0-svn-54

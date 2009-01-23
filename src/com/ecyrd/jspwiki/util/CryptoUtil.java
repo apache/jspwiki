@@ -29,12 +29,16 @@ import java.util.Random;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.ecyrd.jspwiki.log.Logger;
+import com.ecyrd.jspwiki.log.LoggerFactory;
+
 /**
  * Hashes and verifies salted SHA-1 passwords, which are compliant with RFC
  * 2307.
  */
 public final class CryptoUtil
 {
+    private static final Logger log = LoggerFactory.getLogger( CryptoUtil.class );
 
     private static final String SSHA = "{SSHA}";
 
@@ -184,7 +188,17 @@ public final class CryptoUtil
             all[hash.length + i] = salt[i];
         }
         byte[] base64 = Base64.encodeBase64( all );
-        return SSHA + new String( base64 );
+        
+        String base64String = null;
+        try
+        {
+            base64String = SSHA + new String( base64, "UTF8" );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.error( "You do not have UTF-8!?!" );
+        }
+        return base64String;
     }
 
     /**
