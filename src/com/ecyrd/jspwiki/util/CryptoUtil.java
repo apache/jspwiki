@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 
 /**
  * Hashes and verifies salted SHA-1 passwords, which are compliant with RFC
@@ -35,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
  */
 public final class CryptoUtil
 {
+    private static final Logger log = Logger.getLogger( CryptoUtil.class );
 
     private static final String SSHA = "{SSHA}";
 
@@ -184,7 +186,17 @@ public final class CryptoUtil
             all[hash.length + i] = salt[i];
         }
         byte[] base64 = Base64.encodeBase64( all );
-        return SSHA + new String( base64 );
+        
+        String saltedString = null;
+        try
+        {
+            saltedString = SSHA + new String( base64, "UTF8" );
+        }
+        catch( UnsupportedEncodingException e )
+        {
+            log.fatal( "You do not have UTF-8!?!" );
+        }
+        return saltedString;
     }
 
     /**
