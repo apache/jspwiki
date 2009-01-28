@@ -29,6 +29,7 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite("JSP migration tests");
+        suite.addTest( BundleMigratorTest.suite() );
         suite.addTest( JspDocumentTest.suite() );
         suite.addTest( JspParserTest.suite() );
         suite.addTest( JSPWikiJspTransformerTest.suite() );

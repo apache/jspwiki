@@ -1,3 +1,12 @@
+2009-01-27  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-56
+
+        * Checked in BundleMigrator, which makes it easier to move, rename,
+        or delete resource bundle messages across a range of property files
+        with a single command. This necessitated changes to CommentedProperties,
+        because it was not properly parsing multi-line messages.
+
 2009-01-23  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-55

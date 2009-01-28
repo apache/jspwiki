@@ -39,7 +39,6 @@ public final class FileUtil
 {
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 4096;
-    private static final Logger   log         = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      *  Private constructor prevents instantiation.
@@ -118,6 +117,7 @@ public final class FileUtil
     {
         StringBuilder result = new StringBuilder();
 
+        Logger log = LoggerFactory.getLogger(FileUtil.class);
         log.info("Running simple command "+command+" in "+directory);
 
         Process process = Runtime.getRuntime().exec( command, null, new File(directory) );
@@ -293,6 +293,7 @@ public final class FileUtil
             }
             catch( Exception e )
             {
+                Logger log = LoggerFactory.getLogger(FileUtil.class);
                 log.error("Not able to close the stream while reading contents.");
             }
         }
