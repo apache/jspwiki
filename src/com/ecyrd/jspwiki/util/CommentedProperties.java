@@ -157,11 +157,14 @@ public class CommentedProperties extends Properties
 
     private void printProperty( StringBuilder b, Object key, Object value )
     {
+        // Escape any linebreak characters in the value string
+        String pattern = " *[\\n\\r]+";
+        String valueString = value.toString().replaceAll( pattern, " \\\\" + m_br );
         b.append( key.toString() );
         b.append( ' ' );
         b.append( '=' );
         b.append( ' ' );
-        b.append( value.toString() );
+        b.append( valueString );
         b.append( m_br );
     }
 

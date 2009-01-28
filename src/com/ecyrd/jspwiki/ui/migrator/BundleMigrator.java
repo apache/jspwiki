@@ -16,11 +16,11 @@ public class BundleMigrator
     {
         private final Map<Locale, File> m_bundleFiles = new HashMap<Locale, File>();
 
-        private final Map<Locale, Properties> m_bundleProps = new HashMap<Locale, Properties>();
+        private final Map<Locale, CommentedProperties> m_bundleProps = new HashMap<Locale, CommentedProperties>();
 
         private final File m_baseFile;
 
-        private Properties m_baseProps;
+        private CommentedProperties m_baseProps;
 
         /**
          * Constructs a new Bundle whose base file name is supplied. During
@@ -75,7 +75,7 @@ public class BundleMigrator
          *            will be returned
          * @return the file
          */
-        public Properties getProperties( Locale locale )
+        public CommentedProperties getProperties( Locale locale )
         {
             return locale == null ? m_baseProps : m_bundleProps.get( locale );
         }
@@ -91,7 +91,7 @@ public class BundleMigrator
             // Now load one for each Locale
             for( Map.Entry<Locale, File> entry : m_bundleFiles.entrySet() )
             {
-                Properties props = new CommentedProperties();
+                CommentedProperties props = new CommentedProperties();
                 props.load( new FileInputStream( entry.getValue() ) );
                 m_bundleProps.put( entry.getKey(), props );
             }
@@ -110,7 +110,7 @@ public class BundleMigrator
             // Now store each Locale's file
             for( Map.Entry<Locale, File> entry : m_bundleFiles.entrySet() )
             {
-                Properties props = m_bundleProps.get( entry.getKey() );
+                CommentedProperties props = m_bundleProps.get( entry.getKey() );
                 props.store( new FileOutputStream( entry.getValue() ), null );
             }
         }
@@ -172,10 +172,13 @@ public class BundleMigrator
         // Load the source and target bundles
         m_source.load();
         target.load();
+        String msg = "Copied from " + m_source.m_baseFile.getPath() + ".";
 
         // Copy the base property file's key first
-        Properties props = target.getProperties( null );
-        props.put( key, value );
+        CommentedProperties props = target.getProperties( null );
+        String comment = props.getComment( key );
+        comment = comment == null ? msg : comment + ". " + msg;
+        props.setProperty( key, value, comment );
 
         // Copy the key for each locale file
         Collection<Locale> locales = m_source.getLocales();
@@ -188,7 +191,9 @@ public class BundleMigrator
                 props = target.getProperties( locale );
                 if( props != null )
                 {
-                    props.put( key, value );
+                    comment = props.getComment( key );
+                    comment = comment == null ? msg : comment + ". " + msg;
+                    props.setProperty( key, value, comment );
                 }
             }
         }
@@ -237,7 +242,7 @@ public class BundleMigrator
         m_source.load();
 
         // Rename the base property file's key first
-        Properties props = m_source.getProperties( null );
+        CommentedProperties props = m_source.getProperties( null );
         props.remove( key );
 
         // Remove the key from each locale file
@@ -277,11 +282,14 @@ public class BundleMigrator
 
         // Load the source bundle
         m_source.load();
+        String msg = "Formerly named " + key + ".";
 
         // Rename the base property file's key first
-        Properties props = m_source.getProperties( null );
+        CommentedProperties props = m_source.getProperties( null );
+        String comment = props.getComment( key );
+        comment = comment == null ? msg : comment + ". " + msg;
         props.remove( key );
-        props.put( newKey, value );
+        props.setProperty( newKey, value, comment );
 
         // Rename the key in each locale file
         Collection<Locale> locales = m_source.getLocales();
@@ -291,8 +299,10 @@ public class BundleMigrator
             value = props.getProperty( key );
             if( value != null )
             {
+                comment = props.getComment( key );
+                comment = comment == null ? msg : comment + ". " + msg;
                 props.remove( key );
-                props.put( newKey, value );
+                props.setProperty( newKey, value, comment );
             }
         }
 

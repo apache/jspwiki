@@ -71,6 +71,33 @@ public class CommentedPropertiesTest extends TestCase
         assertTrue( m_props.toString().indexOf( "newProp = newValue2" ) != -1 );
     }
 
+    public void testSetMultilineProperty() throws Exception
+    {
+        CommentedProperties props = new CommentedProperties();
+        props.put( "foo", "This is a\r\nmultiline\nproperty\rwith 4 lines." );
+        File outFile = createFile( "test2.properties" );
+        OutputStream out = new FileOutputStream( outFile );
+        props.store( out, null );
+        
+        // Make sure that the line was escaped properly
+        String cr = System.getProperty( "line.separator" );
+        String propString = props.toString();
+        assertEquals( "foo = This is a \\" + cr +"multiline \\" + cr + "property \\" + cr + "with 4 lines.\n", propString );
+        
+        // Reload and make sure the property is parsed in as 1 line
+        props = new CommentedProperties();
+        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test2.properties" );
+        props.load( in );
+        assertEquals( "This is a multiline property with 4 lines.", props.get( "foo" ) );
+        
+        // Delete the test file
+        File file = getFile( "test2.properties" );
+        if( file != null && file.exists() )
+        {
+            file.delete();
+        }
+    }
+    
     public void testGetComment()
     {
         String cr = System.getProperty( "line.separator" );
