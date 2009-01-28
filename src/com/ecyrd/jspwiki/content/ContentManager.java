@@ -159,7 +159,6 @@ public class ContentManager
      *  Creates a new PageManager.
      *  
      *  @param engine WikiEngine instance
-     *  @param props Properties to use for initialization
      *  @throws WikiException If anything goes wrong, you get this.
      */
     public ContentManager( WikiEngine engine )
@@ -169,16 +168,16 @@ public class ContentManager
 
         m_expiryTime = TextUtil.parseIntParameter( engine.getWikiProperties().getProperty( PROP_LOCKEXPIRY ), 60 );
 
-        InitialContext ctx;
+        InitialContext context;
         try
         {
             //
             //  Attempt to locate the repository object from the JNDI using
             //  "java:comp/env/jcr/repository" name
             //
-            ctx = new InitialContext();
+            context = new InitialContext();
             
-            Context environment = (Context) ctx.lookup("java:comp/env");
+            Context environment = (Context) context.lookup("java:comp/env");
             m_repository = (Repository) environment.lookup("jcr/repository");
         }
         catch( NamingException e )
@@ -289,18 +288,19 @@ public class ContentManager
      *  please see {@link ReferenceManager#findCreated()}, which is probably a lot
      *  faster.  This method may cause repository access.
      *  
+     *  @param context The Wikicontext
      *  @param space Name of the Wiki space.  May be null, in which case gets all spaces
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
    
-    public Collection<WikiPage> getAllPages( WikiContext ctx, String space )
+    public Collection<WikiPage> getAllPages( WikiContext context, String space )
         throws ProviderException
     {
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
         try
         {
-            Session session = getJCRSession( ctx );
+            Session session = getJCRSession( context );
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
             
@@ -314,7 +314,7 @@ public class ContentManager
                 
                 // Hack to make sure we don't add the space root node. 
                 if( n.getDepth() != 2 )
-                    result.add( new JCRWikiPage(ctx.getEngine(), n ) );
+                    result.add( new JCRWikiPage(context.getEngine(), n ) );
             }
         }
         catch( RepositoryException e )
@@ -507,8 +507,8 @@ public class ContentManager
         
         if( page != null && !page.hasMetadata() )
         {
-            WikiContext ctx = new WikiContext(m_engine,page);
-            m_engine.textToHTML( ctx, getPageText(pageName,version) );
+            WikiContext context = new WikiContext(m_engine,page);
+            m_engine.textToHTML( context, getPageText(pageName,version) );
         }
         
         return page;
@@ -518,17 +518,18 @@ public class ContentManager
      *  Gets a version history of page.  Each element in the returned
      *  List is a WikiPage.
      *  
-     *  @param pageName The name of the page to fetch history for
+     *  @param context The {@link WikiContext} to use 
+     *  @param path The name of the page to fetch history for
      *  @return If the page does not exist, returns null, otherwise a List
      *          of WikiPages.
      *  @throws ProviderException If the repository fails.
      */
 
-    public List<WikiPage> getVersionHistory( WikiContext ctx, WikiName path )
+    public List<WikiPage> getVersionHistory( WikiContext context, WikiName path )
         throws ProviderException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
-        JCRWikiPage base = getPage(ctx,path);
+        JCRWikiPage base = getPage(context,path);
 
         Node baseNode = base.getJCRNode();
         
@@ -571,6 +572,9 @@ public class ContentManager
      *  it swallows the ProviderException and returns -1 instead of
      *  any problems.
      *  
+     *  @param context The {@link WikiContext} to use 
+     *  @param space Name of the Wiki space.  May be null, in which
+     *  case all spaces will be counted
      *  @return The number of pages, or -1, if there is an error.
      */
     // FIXME: Unfortunately this method is very slow, since it involves gobbling
@@ -590,12 +594,13 @@ public class ContentManager
     /**
      *  Returns true, if the page exists (any version).
      *  
-     *  @param wikiPath  Name of the page.
+     *  @param context The {@link WikiContext} to use 
+     *  @param wikiPath  the {@link WikiName} to check for
      *  @return A boolean value describing the existence of a page
-     *  @throws ProviderException If the backend fails or the name is illegal.
+     *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
  
-    public boolean pageExists( WikiContext ctx, WikiName wikiPath )
+    public boolean pageExists( WikiContext context, WikiName wikiPath )
         throws ProviderException
     {
         if( wikiPath == null )
@@ -605,7 +610,7 @@ public class ContentManager
 
         try
         {
-            Session session = getJCRSession( ctx );
+            Session session = getJCRSession( context );
             
             String jcrPath = getJCRPath( wikiPath ); 
             
@@ -621,15 +626,16 @@ public class ContentManager
      *  Checks for existence of a specific page and version.
      *  
      *  @since 2.3.29
-     *  @param pageName Name of the page
+     *  @param context The {@link WikiContext} to use 
+     *  @param wikiPath  the {@link WikiName} to check for
      *  @param version The version to check
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
-     *  @throws ProviderException If backend fails or name is illegal
+     *  @throws WikiException If the backend fails or the wikiPath is illegal.
      */
-    public boolean pageExists( WikiContext ctx, WikiName path, int version )
+    public boolean pageExists( WikiContext context, WikiName wikiPath, int version )
         throws WikiException
     {
-        if( path == null )
+        if( wikiPath == null )
         {
             throw new WikiException("Illegal page name");
         }
@@ -637,9 +643,9 @@ public class ContentManager
         Session session;
         try
         {
-            session = getJCRSession( ctx );
+            session = getJCRSession( context );
             
-            return session.itemExists( getJCRPath( path ) );
+            return session.itemExists( getJCRPath( wikiPath ) );
         }
         catch( RepositoryException e )
         {
@@ -651,7 +657,7 @@ public class ContentManager
      *  Deletes only a specific version of a WikiPage.
      *  
      *  @param page The page to delete.
-     *  @throws ProviderException if the page fails
+     *  @throws WikiException if the page fails
      */
     public void deleteVersion( WikiPage page )
         throws WikiException
@@ -676,7 +682,7 @@ public class ContentManager
      *  Deletes an entire page, all versions, all traces.
      *  
      *  @param page The WikiPage to delete
-     *  @throws ProviderException If the repository operation fails
+     *  @throws WikiException If the backend fails or the page is illegal.
      */
     
     public void deletePage( WikiPage page )
@@ -912,7 +918,6 @@ public class ContentManager
     /**
      *  Evaluates a WikiName in the context of the current page request.
      *  
-     *  @param ctx The current WikiContext.  May be null, in which case the wikiName must be a FQN.
      *  @param wikiName The WikiName.
      *  @return A full JCR path
      */
@@ -927,6 +932,13 @@ public class ContentManager
         return "/"+JCR_PAGES_NODE+"/"+spaceName+"/"+spacePath;
     }
 
+    /**
+     *  Evaluates a WikiName in the context of the current page request.
+     *  
+     *  @param jcrpath The JCR Path used to get the {@link WikiName}
+     *  @return The {@link WikiName} for the requested jcr path
+     *  @throws WikiException If the backend fails.
+     */
     // FIXME: Should be protected - fix once WikiPage moves to content-package
     public static WikiName getWikiPath( String jcrpath ) throws WikiException
     {
@@ -950,9 +962,11 @@ public class ContentManager
      *  Adds new content to the repository.  To update, get a page, modify
      *  it, then store it back using save().
      *  
-     *  @param path
-     *  @param contentType
-     *  @return
+     *  @param context The {@link WikiContext} to use 
+     *  @param path the WikiName
+     *  @param contentType the type of content
+     *  @return the {@link JCRWikiPage} 
+     *  @throws WikiException If the backend fails.
      */
     public JCRWikiPage addPage( WikiContext context, WikiName path, String contentType ) throws WikiException
     {
@@ -975,8 +989,10 @@ public class ContentManager
     /**
      *  Get content from the repository.
      *  
-     *  @param path
-     *  @return
+     *  @param context The {@link WikiContext} to use 
+     *  @param path the path
+     *  @return the {@link JCRWikiPage} 
+     *  @throws ProviderException If the backend fails.
      */
     public JCRWikiPage getPage( WikiContext context, WikiName path ) throws ProviderException
     {
