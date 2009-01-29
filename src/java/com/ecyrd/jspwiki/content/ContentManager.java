@@ -155,6 +155,8 @@ public class ContentManager
     
     private String m_workspaceName = DEFAULT_WORKSPACE; // FIXME: Make settable
     
+    private JCRSessionManager m_sessionManager = new JCRSessionManager();
+    
     /**
      *  Creates a new PageManager.
      *  
@@ -246,10 +248,14 @@ public class ContentManager
      */
     private void initialize() throws LoginException, RepositoryException 
     {
-        Session session = m_repository.login(m_workspaceName);
+        Object id = null;
         
         try
         {
+            id = m_sessionManager.createSession();
+            
+            Session session = m_sessionManager.getSession();
+            
             //
             //  Create the proper namespaces
             //
@@ -279,7 +285,7 @@ public class ContentManager
         }
         finally
         {
-            session.logout();
+            m_sessionManager.destroySession( id );
         }
     }
     
@@ -294,13 +300,15 @@ public class ContentManager
      *  @throws ProviderException If the backend has problems.
      */
    
-    public Collection<WikiPage> getAllPages( WikiContext context, String space )
+    public Collection<WikiPage> getAllPages( String space )
         throws ProviderException
     {
+        Object id = null;
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
         try
         {
-            Session session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            Session session = m_sessionManager.getSession();
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
             
@@ -314,7 +322,7 @@ public class ContentManager
                 
                 // Hack to make sure we don't add the space root node. 
                 if( n.getDepth() != 2 )
-                    result.add( new JCRWikiPage(context.getEngine(), n ) );
+                    result.add( new JCRWikiPage( getEngine(), n ) );
             }
         }
         catch( RepositoryException e )
@@ -324,6 +332,10 @@ public class ContentManager
         catch( WikiException e )
         {
             throw new ProviderException("getAllPages()",e);
+        }
+        finally
+        {
+            m_sessionManager.destroySession(id);
         }
         
         return result;
@@ -525,11 +537,11 @@ public class ContentManager
      *  @throws ProviderException If the repository fails.
      */
 
-    public List<WikiPage> getVersionHistory( WikiContext context, WikiName path )
+    public List<WikiPage> getVersionHistory( WikiName path )
         throws ProviderException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
-        JCRWikiPage base = getPage(context,path);
+        JCRWikiPage base = getPage(path);
 
         Node baseNode = base.getJCRNode();
         
@@ -579,11 +591,11 @@ public class ContentManager
      */
     // FIXME: Unfortunately this method is very slow, since it involves gobbling
     //        up the entire repo.
-    public int getTotalPageCount(WikiContext context, String space)
+    public int getTotalPageCount(String space)
     {
         try
         {
-            return getAllPages(context, space).size();
+            return getAllPages(space).size();
         }
         catch( ProviderException e )
         {
@@ -600,7 +612,7 @@ public class ContentManager
      *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
  
-    public boolean pageExists( WikiContext context, WikiName wikiPath )
+    public boolean pageExists( WikiName wikiPath )
         throws ProviderException
     {
         if( wikiPath == null )
@@ -608,9 +620,12 @@ public class ContentManager
             throw new ProviderException("Illegal page name");
         }
 
+        Object id = null;
+        
         try
         {
-            Session session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            Session session = m_sessionManager.getSession();
             
             String jcrPath = getJCRPath( wikiPath ); 
             
@@ -618,7 +633,11 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new ProviderException( "Unable to check for page existence",e);
+            throw new ProviderException( "Unable to check for page existence", e );
+        }
+        finally
+        {
+            m_sessionManager.destroySession( id );
         }
     }
     
@@ -632,7 +651,7 @@ public class ContentManager
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
      *  @throws WikiException If the backend fails or the wikiPath is illegal.
      */
-    public boolean pageExists( WikiContext context, WikiName wikiPath, int version )
+    public boolean pageExists( WikiName wikiPath, int version )
         throws WikiException
     {
         if( wikiPath == null )
@@ -640,16 +659,22 @@ public class ContentManager
             throw new WikiException("Illegal page name");
         }
 
-        Session session;
+        Object id = null;
         try
         {
-            session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            
+            Session session = m_sessionManager.getSession();
             
             return session.itemExists( getJCRPath( wikiPath ) );
         }
         catch( RepositoryException e )
         {
             throw new WikiException("Unable to check for page existence",e);
+        }
+        finally
+        {
+            m_sessionManager.destroySession( id );
         }
     }
 
@@ -900,20 +925,6 @@ public class ContentManager
             WikiEventManager.fireEvent(this,new WikiPageEvent(m_engine,type,pagename));
         }
     }
-
-    private Session getJCRSession( WikiContext context ) throws RepositoryException
-    {
-        Session session = (Session)context.getVariable( "jcrsession" );
-        
-        if( session == null )
-        {
-            session = m_repository.login(m_workspaceName);
-            
-            context.setVariable( "jcrsession", session );
-        }
-        
-        return session;
-    }
     
     /**
      *  Evaluates a WikiName in the context of the current page request.
@@ -968,11 +979,14 @@ public class ContentManager
      *  @return the {@link JCRWikiPage} 
      *  @throws WikiException If the backend fails.
      */
-    public JCRWikiPage addPage( WikiContext context, WikiName path, String contentType ) throws WikiException
+    public JCRWikiPage addPage( WikiName path, String contentType ) throws WikiException
     {
+        Object id = null;
+        
         try
         {
-            Session session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().addNode( getJCRPath(path) );
             
@@ -984,6 +998,10 @@ public class ContentManager
         {
             throw new WikiException( "Unable to add a page", e );
         }
+        finally
+        {
+            m_sessionManager.destroySession(id);
+        }
     }
 
     /**
@@ -994,11 +1012,13 @@ public class ContentManager
      *  @return the {@link JCRWikiPage} 
      *  @throws ProviderException If the backend fails.
      */
-    public JCRWikiPage getPage( WikiContext context, WikiName path ) throws ProviderException
+    public JCRWikiPage getPage( WikiName path ) throws ProviderException
     {
+        Object id = null;
         try
         {
-            Session session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
@@ -1017,13 +1037,21 @@ public class ContentManager
         {
             throw new ProviderException("Unable to get a  page",e);
         }
+        finally
+        {
+            m_sessionManager.destroySession( id );
+        }
     }
 
-    public JCRWikiPage getPage( WikiContext context, WikiName path, int version ) throws WikiException
+    public JCRWikiPage getPage( WikiName path, int version ) throws WikiException
     {
+        Object id = null;
+        
         try
         {
-            Session session = getJCRSession( context );
+            id = m_sessionManager.createSession();
+            
+            Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
 
@@ -1038,6 +1066,10 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new WikiException( "Unable to get a page", e );
+        }
+        finally
+        {
+            m_sessionManager.destroySession( id );
         }
     }
     
@@ -1072,8 +1104,7 @@ public class ContentManager
             {
                 int pagesChanged = 0;
                 // FIXME: This is a hack to make this thing compile, not work.
-                Collection pages = getAllPages( m_engine.getWikiContextFactory().newViewContext(null,null,null), 
-                                                null );
+                Collection pages = getAllPages( null );
                 for ( Iterator it = pages.iterator(); it.hasNext(); )
                 {
                     WikiPage page = (WikiPage)it.next();
@@ -1157,9 +1188,12 @@ public class ContentManager
 
     public WikiPage getDummyPage() throws WikiException
     {
+        Object id = null;
         try
         {
-            Session session = m_repository.login(m_workspaceName);
+            id = m_sessionManager.createSession();
+            
+            Session session = m_sessionManager.getSession();
             Node nd = session.getRootNode().addNode( "/pages/Main/Dummy" );
             return new JCRWikiPage( m_engine, nd );
         }
@@ -1167,6 +1201,84 @@ public class ContentManager
         {
             throw new WikiException("Unable to get dummy page",e);
         }
+        finally
+        {
+            m_sessionManager.destroySession( id );
+        }
     }
 
+    /**
+     *  Implements the ThreadLocal pattern for managing JCR Sessions.  It is the
+     *  responsibility for every user to get a Session, then close it.
+     *  <p>
+     *  Based on Hibernate ThreadLocal best practices.
+     */
+    private class JCRSessionManager
+    {
+        /** the per thread session **/
+        private final ThreadLocal<Session> currentSession = new ThreadLocal<Session>();
+        /** The constants for describing the ownerships **/
+        private final Owner trueOwner = new Owner(true);
+        private final Owner fakeOwner = new Owner(false);
+        
+        /**
+         *  This creates a session which can be fetched then with getSession().
+         *  
+         *  @return An ownership handle which must be passed to destroySession():
+         *  @throws LoginException
+         *  @throws RepositoryException
+         */
+        public Object createSession() throws LoginException, RepositoryException
+        {
+            Session session = currentSession.get();  
+            if(session == null)
+            {
+                session = m_repository.login(m_workspaceName); 
+                currentSession.set(session);
+                return trueOwner;
+            }
+            return fakeOwner;
+        }
+
+        /**
+         *  Closes the current session, if this caller is the owner.  Must be called
+         *  in your finally- block.
+         *  
+         *  @param ownership The ownership parameter from createSession()
+         */
+        public void destroySession(Object ownership) 
+        {
+            if( ownership != null && ((Owner)ownership).identity)
+            {
+                Session session = currentSession.get();
+                session.logout();
+                currentSession.set(null);
+            }
+        }
+ 
+        /**
+         *  Between createSession() and destroySession() you may get the Session object
+         *  with this call. Otherwise the end result is undefined.
+         *  
+         *  @return A valid Session object, if called between createSession and destroySession().
+         */
+        public Session getSession() 
+        {
+            return currentSession.get();
+        } 
+
+    }
+    
+    /**
+     * Internal class , for handling the identity. Hidden for the 
+     * developers
+     */
+    private static class Owner 
+    {
+        public Owner(boolean identity)
+        {
+            this.identity = identity;
+        }
+        boolean identity = false;        
+    }
 }

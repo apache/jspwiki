@@ -1,48 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/package.html|images/|webdocs/|wikipages/" kind="src" output="build" path="src"/>
-	<classpathentry excluding="etc/|build/|reports/|lib/" kind="src" output="tests/build" path="tests"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/ecs.jar"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
-	<classpathentry kind="lib" path="lib/akismet-java-1.02.jar"/>
-	<classpathentry kind="lib" path="lib/jabsorb-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/xmlrpc.jar"/>
-	<classpathentry kind="lib" path="lib/jrcs-diff.jar"/>
-	<classpathentry kind="lib" path="tests/lib/xercesImpl-2.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/sandler.jar"/>
-	<classpathentry kind="lib" path="lib/oscache.jar"/>
-	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
-	<classpathentry kind="lib" path="lib/lucene.jar"/>
-	<classpathentry kind="lib" path="tests/lib/junit.jar"/>
-	<classpathentry kind="lib" path="tests/etc"/>
-	<classpathentry kind="lib" path="lib/jaxen.jar"/>
-	<classpathentry kind="lib" path="tests/lib/xml-apis-1.0.b2.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-highlighter.jar"/>
-	<classpathentry kind="lib" path="lib/mail.jar"/>
-	<classpathentry kind="lib" path="lib/activation.jar"/>
-	<classpathentry kind="lib" path="etc/i18n"/>
-	<classpathentry kind="lib" path="lib/freshcookies-security-0.60.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-taglibs-jstl-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-tablibs-standard-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="tests/lib/commons-el-1.0.jar"/>
-	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jasper-compiler-5.5.25.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jasper-runtime-5.5.25.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="tests/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.5.0"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar"/>
-	<classpathentry kind="lib" path="tests/lib/jetty-servlet-5.1.14.jar"/>
+	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/selenium-server-1.0-beta1.jar"/>
-	<classpathentry kind="lib" path="lib/stripes-1.5.jar" sourcepath="/stripes-1.5/stripes/src"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/jul-to-slf4j-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="lib/jcr-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/priha-0.1.12.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="build/classes"/>
 </classpath>

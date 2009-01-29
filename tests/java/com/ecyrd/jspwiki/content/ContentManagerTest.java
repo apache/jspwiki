@@ -10,7 +10,6 @@ import org.apache.jspwiki.api.WikiException;
 import org.apache.jspwiki.api.WikiPage;
 
 import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiContext;
 
 public class ContentManagerTest extends TestCase
 {
@@ -32,8 +31,7 @@ public class ContentManagerTest extends TestCase
     @Override
     protected void tearDown() throws Exception
     {
-        WikiPage p = m_mgr.getPage( m_engine.createContext( null, WikiContext.VIEW ), 
-                                    WikiName.valueOf("Main:TestPage") );
+        WikiPage p = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
         
         if( p != null ) m_mgr.deletePage( p );
         
@@ -48,8 +46,7 @@ public class ContentManagerTest extends TestCase
     public void testBasicGet() throws Exception
     {
         String content = "Test Content";
-        WikiContext ctx = m_engine.createContext( null, WikiContext.VIEW );
-        WikiPage page = m_mgr.addPage( ctx, WikiName.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_mgr.addPage( WikiName.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
@@ -57,7 +54,7 @@ public class ContentManagerTest extends TestCase
         
         page.save();
         
-        WikiPage page2 = m_mgr.getPage( ctx, WikiName.valueOf("Main:TestPage") );
+        WikiPage page2 = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
         
         assertNotNull( "page2", page2 );
         
@@ -67,9 +64,8 @@ public class ContentManagerTest extends TestCase
     
     public void testBasicGetDefaultSpace() throws Exception
     {
-        WikiContext ctx = m_engine.createContext( null, WikiContext.VIEW );
         String content = "Test Content";
-        WikiPage page = m_mgr.addPage( ctx, WikiName.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_mgr.addPage( WikiName.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
@@ -77,7 +73,7 @@ public class ContentManagerTest extends TestCase
         
         page.save();
         
-        WikiPage page2 = m_mgr.getPage( ctx, WikiName.valueOf("TestPage") );
+        WikiPage page2 = m_mgr.getPage( WikiName.valueOf("TestPage") );
         
         assertNotNull( "page2", page2 );
         

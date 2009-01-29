@@ -73,11 +73,14 @@
   <property name="optimize" value="false" />
 
   <!-- This denotes the directory where the source code lies. -->
-  <property name="code.src" value="src" />
+  <property name="code.src" value="src/java" />
 
+  <!-- Denotes where all the stuff that goes into the webapp dir lives -->
+  <property name="code.web" value="src/WebContent" />
+	
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
-  <property name="code.build" value ="build" />
+  <property name="code.build" value ="build/classes" />
 
   <!-- The internationalization strings for the core JSPWiki classes -->
   <property name="code.i18n" value="etc/i18n" />
@@ -143,7 +146,7 @@
        add all the jar files in the "lib" -directory. -->
   <path id="path.base">
      <pathelement path="${code.build}" />
-     <fileset dir="lib">
+     <fileset dir="${code.web}/WEB-INF/lib">
         <include name="*.jar" />
      </fileset>
   </path>
@@ -155,7 +158,7 @@
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
 	<pathelement location="${java.home}/../lib/tools.jar" />
-     <fileset dir="lib">
+     <fileset dir="${code.web}/WEB-INF/lib">
         <include name="*.jar" />
      </fileset>
      <fileset dir="${tests.src}/lib">
@@ -183,11 +186,11 @@
 
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
-     <copy file="etc/jspwiki.properties.tmpl" tofile="etc/jspwiki.properties" />
+     <copy file="etc/jspwiki.properties.tmpl" tofile="${code.web}/WEB-INF/jspwiki.properties" />
      <copy file="${tests.src}/etc/jspwiki.properties.tmpl" tofile="${tests.src}/etc/jspwiki.properties" />
      <copy file="${tests.src}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests.src}/etc/jspwiki_rcs.properties" />
      <copy file="${tests.src}/etc/jspwiki_vers.properties.tmpl" tofile="${tests.src}/etc/jspwiki_vers.properties" />
-     <replace file="etc/jspwiki.properties"
+     <replace file="src/WebContent/WEB-INF/jspwiki.properties"
               replacefilterfile="${build.properties}" />
      <replace file="${tests.src}/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
@@ -203,7 +206,7 @@
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-    <delete file="etc/jspwiki.properties" />
+    <delete file="src/WebContent/WEB-INF/jspwiki.properties" />
     <delete file="${tests.src}/etc/jspwiki.properties" />
     <delete file="${tests.src}/etc/jspwiki_rcs.properties" />
     <delete file="${tests.src}/etc/jspwiki_vers.properties" />
@@ -340,7 +343,7 @@
          <fileset dir="${code.src}" includes="templates/**/*.properties" />
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
-         <metainf dir="etc" includes="jspwiki.tld" />
+         <metainf dir="${code.web}/WEB-INF" includes="jspwiki.tld" />
       </jar>
   </target>
 
@@ -376,7 +379,7 @@
    
   <target name="war-init" depends="installinit">
     <echo>Validating web.xml</echo>
-    <schemavalidate file="etc/web.xml">
+    <schemavalidate file="${code.web}/WEB-INF/web.xml">
       <schema namespace="http://java.sun.com/xml/ns/j2ee"
         file="etc/schema/web-app_2_4.xsd" />
     </schemavalidate>
@@ -384,7 +387,7 @@
     <delete quiet="true">
       <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
     </delete>
-    <copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true" />
+    <!--<copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true" /> -->
   </target>
 
   <target name="war" depends="war-init,jar,jar-compiled-jsps,compressedjs"
@@ -395,16 +398,16 @@
     <delete file="${warfile}" />
 
     <war destfile="${warfile}"
-         webxml="${code.build}/web.xml" >
-      <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+         webxml="${code.web}/WEB-INF/web.xml" >
+      <!-- <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/> -->
       <lib file="${jarfile}" />
       <lib file="${code.build}/JSPWiki-jsp.jar" />
       <lib file="${code.build}/jasper-runtime-*.jar" />
       <lib file="${code.build}/commons-el-*.jar"  />
-      <fileset dir="${code.src}/webdocs" includes="**" excludes="**/FCK/jsp" />
-     	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
-     	<fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
-      <webinf dir="etc">
+      <fileset dir="${code.web}" includes="**" excludes="**/FCK/jsp" />
+      <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
+      <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
+      <webinf dir="${code.web}/WEB-INF">
         <include name="geronimo-web.xml" />
         <include name="dtd/**" />
         <include name="jsp/**" />
@@ -413,10 +416,12 @@
         <include name="userdatabase.xml" />
         <include name="groupdatabase.xml" />
       </webinf>
+    	<!--
       <classes dir="etc">
        	<include name="oscache.properties" />
        	<include name="log4j.properties" />
       </classes>
+      -->
     </war>
 
   </target>
@@ -487,7 +492,7 @@
       <java jar="${tests.src}/lib/yuicompressor-2.3.3.jar"
         output="${tmpdir}/compress/@{src}"
         fork="true">
-        <arg line="'${code.src}/@{src}' @{args}" />
+        <arg line="'${code.web}/@{src}' @{args}" />
       </java>
     </sequential>
   </macrodef>
@@ -539,35 +544,35 @@
   <target name="compressedjs">
     <mkdir dir="${tmpdir}/compress/webdocs/scripts"/>
     
-    <compressjs src="webdocs/scripts/jspwiki-common.js"/>
-    <compressjs src="webdocs/scripts/jspwiki-edit.js"/>
-    <compressjs src="webdocs/scripts/jspwiki-prefs.js"/>
-    <compressjs src="webdocs/scripts/jspwiki-commonstyles.js"/>
-    <compressjs src="webdocs/scripts/prettify.js"/>
+    <compressjs src="/scripts/jspwiki-common.js"/>
+    <compressjs src="/scripts/jspwiki-edit.js"/>
+    <compressjs src="/scripts/jspwiki-prefs.js"/>
+    <compressjs src="/scripts/jspwiki-commonstyles.js"/>
+    <compressjs src="/scripts/prettify.js"/>
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default"/>
 
-    <compressjs src="webdocs/templates/default/jspwiki.css"
-      args="--line-break 0" />
+    <compressjs src="/templates/default/jspwiki.css"
+      			args="--line-break 0" />
     
-    <compressjs src="webdocs/templates/default/jspwiki_print.css"
-      args="--line-break 0" />   	
+    <compressjs src="/templates/default/jspwiki_print.css"
+      			args="--line-break 0" />   	
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
-   	<compressjs src="webdocs/templates/default/skins/OrderedList/skin.css"
-      args="--line-break 0" />
+   	<compressjs src="/templates/default/skins/OrderedList/skin.css"
+      			args="--line-break 0" />
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla"/>   	
-   	<compressjs src="webdocs/templates/default/skins/PlainVanilla/skin.css"
-      args="--line-break 0" />
+   	<compressjs src="/templates/default/skins/PlainVanilla/skin.css"
+      			args="--line-break 0" />
 
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/PlainVanilla 1024x768"/>   	
-    <compressjs src="webdocs/templates/default/skins/PlainVanilla 1024x768/skin.css"
-      args="--line-break 0" />
+    <compressjs src="/templates/default/skins/PlainVanilla 1024x768/skin.css"
+      			args="--line-break 0" />
 
    	<mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/Smart"/>   	
-    <compressjs src="webdocs/templates/default/skins/Smart/skin.css"
-      args="--line-break 0" />
+    <compressjs src="/templates/default/skins/Smart/skin.css"
+      			args="--line-break 0" />
   </target>
 
   <!--
@@ -676,7 +681,7 @@
       <mkdir dir="${tests.src}/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
-      <copy file="${basedir}/etc/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
+      <copy file="${code.web}/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
 
       <!-- For web unit tests, turn off SSL (self-signed certs b0rk
            the tests) and enable JDBC refs -->
@@ -702,7 +707,7 @@
       <copy toDir="${tests.src}/etc/WEB-INF/dtd">
         <fileset dir="${basedir}/etc/dtd/" />
       </copy>
-      <copy file="${basedir}/etc/jspwiki.properties"
+      <copy file="${code.web}/WEB-INF/jspwiki.properties"
           tofile="${tests.src}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
   </target>
 
@@ -952,7 +957,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Copy the JSPs -->
       <copy toDir="@{context.dir}/webapp">
-        <fileset dir="${code.src}/webdocs" includes="**" />
+        <fileset dir="${code.web}" includes="**" />
       </copy>
 
     </sequential>
@@ -1116,7 +1121,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
     <!-- Here's a neat trick: import the JDBC runtime props from jspwiki.properties -->
     <echo message="Getting JDBC runtime properties." />
-    <loadproperties srcFile="etc/jspwiki.properties">
+    <loadproperties srcFile="${code.web}/WEB-INF/jspwiki.properties">
       <filterchain>
         <linecontainsregexp>
           <regexp pattern="^[jspwiki.userdatabase|jspwiki.groupdatabase]"/>

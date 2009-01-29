@@ -1,3 +1,26 @@
+2009-01-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-58
+        
+        * Rather massive restructuring of the codebase; makes JSPWiki into
+        an Eclipse WTP project (tested on Ganymede; don't forget to run "ant init" first!)
+        
+        Modifications are:
+          - src now contains all of the source code.  Subdir "java" contains all
+            Java source code
+          - the old src/webdocs is now src/WebContent, and also contains the former
+            /lib and most of /etc/ - essentially everything that will be deployed
+            inside the webapp dir.
+          - tests also now live in tests/java/
+          - builds are done to build/classes
+       
+        Build.xml has been modified for basic compile cycle + tests, but the more
+        exotic things like precompiled jsps were not changed yet due to sudden
+        exhaustion.
+        
+        * Minor changes to ContentManager API; it is no longer dependent on
+        having a WikiContext.
+        
 2009-01-29  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-57
