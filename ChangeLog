@@ -1,3 +1,9 @@
+2009-01-29  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-57
+        
+        * JSPWIKI-460 - Add current time stamp to WikiVariables, offering 2
+         
 2009-01-27  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-56

@@ -36,6 +36,8 @@ import com.ecyrd.jspwiki.log.LoggerFactory;
 import com.ecyrd.jspwiki.filters.PageFilter;
 import com.ecyrd.jspwiki.i18n.InternationalizationManager;
 import com.ecyrd.jspwiki.modules.InternalModule;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Manages variables.  Variables are case-insensitive.  A list of all
@@ -336,32 +338,42 @@ public class VariableManager
             }
 
             //
-            // handle the timestamp variable ( example: timestamp=yyyy-MM-dd)
+            // handle the timestamp variable ( example: $timestamp format=yyyy-MM-dd)
             //
 
-            if( varName.startsWith( "timeStamp" ) )
+            if( varName.toLowerCase().startsWith( "timestamp" ) )
             {
-                StringTokenizer tok = new StringTokenizer( varName, "=" );
+                StringTokenizer tok= new StringTokenizer( varName, " " );
                 int numTokens = tok.countTokens();
-                if( numTokens != 2 )
+                if( numTokens == 1 )
                 {
-                    return context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "varmgr.dateformat.noformat" );
+                    // no (format) param was given, return the user default
+                    return Preferences.getDateFormat( context, TimeFormat.DATETIME ).format( new Date() );
                 }
 
-                @SuppressWarnings( "unused" )
-                String ignoreFirstToken = tok.nextToken();
-                String dateFormatString = tok.nextToken();
+                if( numTokens >= 2 )
+                {
+                    @SuppressWarnings( "unused" )
+                    String ignoreFirstToken = tok.nextToken();
+                    String parm1 = tok.nextToken( "=" ).trim();
+                    if( !parm1.startsWith( "format" ) )
+                    {
+                        return context.getBundle( InternationalizationManager.CORE_BUNDLE )
+                            .getString( "varmgr.dateformat.invalid.parm" ) + parm1;
+                    }
 
-                SimpleDateFormat dateFormat = null;
-                try
-                {
-                    dateFormat = new SimpleDateFormat( dateFormatString );
-                    return dateFormat.format( new Date( System.currentTimeMillis() ) );
-                }
-                catch( RuntimeException e )
-                {
-                    return context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "varmgr.dateformat.invalid" )
-                           + dateFormatString;
+                    String dateFormatString = tok.nextToken();
+                    SimpleDateFormat dateFormat = null;
+                    try
+                    {
+                        dateFormat = new SimpleDateFormat( dateFormatString );
+                        return dateFormat.format( new Date( ) );
+                    }
+                    catch( RuntimeException e )
+                    {
+                        return context.getBundle( InternationalizationManager.CORE_BUNDLE ).getString( "varmgr.dateformat.invalid.format" )
+                               + dateFormatString;
+                    }
                 }
             }
             

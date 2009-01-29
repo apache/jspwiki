@@ -31,6 +31,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import com.ecyrd.jspwiki.content.WikiName;
+import com.ecyrd.jspwiki.preferences.Preferences;
+import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 
 public class VariableManagerTest extends TestCase
 {
@@ -192,21 +194,42 @@ public class VariableManagerTest extends TestCase
         assertEquals( "Testing {}, {{{}", res );
     }
 
-    public void testTimeStamp() throws Exception
+    public void testTimeStamp1() throws Exception
     {
         // Yes I know there is a tiny chance that this fails if the minute
-        // passes by between here and the "new Date" in VariableManager
+        // passes by between here and the "new Date()" in VariableManager
+        //
         String format = "dd.MM.yyyy HH:mm";
         SimpleDateFormat df = new SimpleDateFormat( format );
         String dateString = df.format( new Date() );
-
-        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp=" + format + "}<<<<<" );
+        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp format=" + format + "}<<<<<" );
         assertEquals( ">>>>>" + dateString + "<<<<<", res );
+    }
 
-        res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp}<<<<<" );
-        assertEquals( ">>>>>No dateformat was provided. <<<<<", res );
+    public void testTimeStamp2() throws Exception
+    {
+        // test for default dateformat
+        //
+        String defaultDateFormat = Preferences.getDateFormat( m_context, TimeFormat.DATETIME ).format( new Date() );
 
-        res = m_variableManager.expandVariables( m_context, ">>>>>{$timeStamp=" + format + "INVALIDFORMAT}<<<<<" );
+        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp}<<<<<" );
+        assertEquals( ">>>>>" + defaultDateFormat + "<<<<<", res );
+    }
+
+    public void testTimeStamp3() throws Exception
+    {
+        // test with a wrong named parm
+        //
+        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp wrongparm=bla}<<<<<" );
+        assertEquals( ">>>>>Unrecognized parameter: wrongparm<<<<<", res );
+    }
+
+    public void testTimeStamp4() throws Exception
+    {
+        // tests with an invalid date format
+        //
+        String format = "dd.MM.yyyy HH:mm";
+        String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp format=" + format + "INVALIDFORMAT}<<<<<" );
         assertEquals( ">>>>>No valid dateformat was provided: dd.MM.yyyy HH:mmINVALIDFORMAT<<<<<", res );
     }
 
