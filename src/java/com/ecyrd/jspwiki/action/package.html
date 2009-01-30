@@ -29,7 +29,7 @@ in JSPWiki:</p>
 </ul>
 <p>For the impatient, here is the developer cheat sheet:</p>
 <ol>
-	<li>Move scriptlet code that extracts request parameters</a> into
+	<li>Move scriptlet code that extracts request parameters into
 	{@link net.sourceforge.stripes.action.ActionBean} getters and
 	setters.&nbsp;<a href="#1"><small>More...</small></a></li>
 	<li>Add <code><a
@@ -89,7 +89,7 @@ such as {@link
 com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext#getEngine()} and
 {@link
 com.ecyrd.jspwiki.ui.stripes.WikiActionBeanContext#getWikiSession()}.</p>
-WikiActionBeanContext also implements the {@link
+<p>WikiActionBeanContext also implements the {@link
 com.ecyrd.jspwiki.WikiContext} interface, so any methods that
 normally operate on WikiContext will work with WikiActionBeanContext
 also.
@@ -330,7 +330,7 @@ ActionBean the form should post to. The <code><a
 tag's <code>name</code> attribute supplies the event to execute, in this
 case <code>createAssertedName</code>, As you can see from the code
 snippet, the event name "createAssertedName" matches the value of the <code>@HandlerEvent</code>
-annotation.</code> .</p>
+annotation.</p>
 
 <blockquote><a name="5" /><strong>Guideline #5
 for JSPWiki developers</strong>: processing code that handles form POST

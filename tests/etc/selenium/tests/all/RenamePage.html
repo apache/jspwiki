@@ -20,13 +20,13 @@
 	<tr><td>store</td>	<td>${baseUrl}/Login.jsp</td>				<td>loginurl</td></tr>
     <tr><td>store</td>	<td>This page was created by the rename web unit tests.</td>	<td>PageContent</td></tr>
 
-	<!-- Login --!>
+	<!-- Login -->
     <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
     <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
     <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
     <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
 
-	<!-- Create a new page --!>
+	<!-- Create a new page -->
     <tr><td>open</td>	<td>${editurl}</td>	<td>&nbsp;</td></tr>
 
     <tr><td>verifyTitle</td>		<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
@@ -38,7 +38,7 @@
     <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>	
     
-	<!-- Rename Page --!>
+	<!-- Rename Page -->
     <tr><td>open</td>					<td>${infourl}</td>	<td>&nbsp;</td></tr>
     <tr><td>verifyTitle</td>			<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
     <tr><td>assertElementPresent</td>	<td>rename</td>			<td>&nbsp;</td></tr>	
@@ -48,7 +48,7 @@
 
     <tr><td>verifyTitle</td>	<td>JSPWiki: ${page}-renamed</td>	<td>&nbsp;</td></tr>
 
-    <!-- Log out --!>
+    <!-- Log out -->
     <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
 
 	</tbody>

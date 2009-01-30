@@ -1,3 +1,13 @@
+2009-01-30  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-59
+
+        * Minor tweaks to Eclipse project so that tests run.
+
+        * Improvements to CommentedProperties. Seems to mostly
+        work now, although opportunities for cosmetic improvements
+        remain.
+
 2009-01-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-58

@@ -38,7 +38,7 @@ public class CommentedProperties extends Properties
     private static final long serialVersionUID = 8057284636436329669L;
 
     /** Map with property names as keys, and comments as values. */
-    private Map<String, String> m_propertyComments = new HashMap<String, String>();
+    private Map<String, List<String>> m_propertyComments = new HashMap<String, List<String>>();
 
     /**
      * Ordered map with property names inserted in the order encountered in the
@@ -46,7 +46,7 @@ public class CommentedProperties extends Properties
      */
     private Set<Object> m_keys = new LinkedHashSet<Object>();
 
-    private String m_trailingComment = null;
+    private List<String> m_trailingComments = null;
 
     private final String m_br;
 
@@ -106,32 +106,45 @@ public class CommentedProperties extends Properties
 
     /**
      * {@inheritDoc}
+     * <p>
+     * <em>Notes specific to this implementation:</em>
+     * </p>
+     * <p>
+     * </p>
      */
     @Override
     public synchronized void store( OutputStream out, String comments ) throws IOException
     {
-        byte[] bytes = toString().getBytes( "ISO-8859-1" );
-        FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
-        out.flush();
+        BufferedWriter writer;
+        writer = new BufferedWriter( new OutputStreamWriter( out, "8859_1" ) );
+        writeProperties( writer, comments );
+        writer.flush();
     }
 
     /**
-     * {@inheritDoc}
+     * @param writer
+     * @param comments
      */
-    @Override
-    public synchronized String toString()
+    private void writeProperties( BufferedWriter writer, String comments ) throws IOException
     {
-        StringBuilder b = new StringBuilder();
+        if( comments != null )
+        {
+            writer.write( "# " );
+            writeText( writer, "# " + comments, EscapeMode.COMMENT );
+            writer.newLine();
+            writer.write( "# " + new Date().toString() );
+            writer.newLine();
+        }
+
         for( Object key : m_keys )
         {
             Object value = get( key );
-            String comment = m_propertyComments.get( key );
-            if( comment != null )
-            {
-                b.append( comment );
-                b.append( m_br );
-            }
-            printProperty( b, key, value );
+            List<String> commentList = m_propertyComments.get( key );
+            writeComments( writer, commentList );
+            writeText( writer, key, EscapeMode.KEY );
+            writer.write( '=' );
+            writeText( writer, value, EscapeMode.ENTRY );
+            writer.newLine();
         }
 
         // Now print the keys we did not encounter (i.e., were added after the
@@ -142,30 +155,142 @@ public class CommentedProperties extends Properties
             if( !m_keys.contains( key ) )
             {
                 Object value = entry.getValue();
-                printProperty( b, key, value );
+                writeText( writer, key, EscapeMode.KEY );
+                writer.write( '=' );
+                writeText( writer, value, EscapeMode.ENTRY );
+                writer.newLine();
             }
         }
 
         // Add any trailing comments
-        if( m_trailingComment != null )
-        {
-            b.append( m_trailingComment );
-            b.append( m_br );
-        }
-        return b.toString();
+        writeComments( writer, m_trailingComments );
     }
 
-    private void printProperty( StringBuilder b, Object key, Object value )
+    enum EscapeMode
     {
-        // Escape any linebreak characters in the value string
-        String pattern = " *[\\n\\r]+";
-        String valueString = value.toString().replaceAll( pattern, " \\\\" + m_br );
-        b.append( key.toString() );
-        b.append( ' ' );
-        b.append( '=' );
-        b.append( ' ' );
-        b.append( valueString );
-        b.append( m_br );
+        COMMENT, KEY, ENTRY;
+    }
+
+    private void writeComments( BufferedWriter writer, List<String> commentList ) throws IOException
+    {
+        if( commentList != null )
+        {
+            for( String comment : commentList )
+            {
+                if  ( BLANK_LINE_DETECTOR.matcher( comment ).matches() )
+                {
+                    writer.write( comment );
+                }
+                else
+                {
+                    writer.write( "#" );
+                    writeText( writer, comment, EscapeMode.COMMENT );
+                }
+                writer.newLine();
+            }
+        }
+    }
+    
+    private void writeText( BufferedWriter writer, Object entry, EscapeMode mode ) throws IOException
+    {
+        String e = entry.toString();
+        boolean leadingSpaces = true;
+        for( int i = 0; i < e.length(); i++ )
+        {
+            char ch = e.charAt( i );
+
+            // Escape linefeeds, newline, carriage returns and tabs
+            switch( ch )
+            {
+                case '\t': {
+                    leadingSpaces = false;
+                    writer.write( "\\t" );
+                    break;
+                }
+                case '\f': {
+                    leadingSpaces = false;
+                    writer.write( "\\f" );
+                    break;
+                }
+                case '\n': {
+                    leadingSpaces = false;
+                    if( mode != EscapeMode.COMMENT )
+                    {
+                        writer.write( "\\n" );
+                    }
+                    break;
+                }
+                case '\r': {
+                    leadingSpaces = false;
+                    if( mode != EscapeMode.COMMENT )
+                    {
+                        writer.write( "\\r" );
+                    }
+                    break;
+                }
+                case ' ': {
+                    if ( leadingSpaces || mode == EscapeMode.KEY )
+                    {
+                        writer.write( '\\' );
+                    }
+                    writer.write( ' ' );
+                    break;
+                }
+                case '\\':
+                case '#':
+                case '!':
+                case '=':
+                case ':':
+                {
+                    leadingSpaces = false;
+                    if ( mode == EscapeMode.KEY )
+                    {
+                        writer.write( '\\' );
+                    }
+                    writer.write( ch );
+                    break;
+                }
+                default: {
+                    leadingSpaces = false;
+                    if( ch < 32 || ch > 126 )
+                    {
+                        writer.write( '\\' );
+                        writer.write( 'u' );
+                        writer.write( HEX[(ch >>> 12) & 15] );
+                        writer.write( HEX[(ch >>> 8) & 15] );
+                        writer.write( HEX[(ch >>> 4) & 15] );
+                        writer.write( HEX[ch & 15] );
+                    }
+                    else
+                    {
+                        writer.write( ch );
+                    }
+                }
+            }
+        }
+    }
+
+    private char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized String toString()
+    {
+        StringWriter s = new StringWriter();
+        BufferedWriter writer;
+        writer = new BufferedWriter( s );
+        try
+        {
+            writeProperties( writer, null );
+            writer.flush();
+            return s.toString();
+        }
+        catch( IOException e )
+        {
+        }
+        return null;
     }
 
     /**
@@ -187,7 +312,7 @@ public class CommentedProperties extends Properties
         LineNumberReader reader = new LineNumberReader( new StringReader( propertyString ) );
         String line = null;
         boolean inProperty = false;
-        String comment = null;
+        List<String> commentList = new ArrayList<String>();
         while ( (line = reader.readLine()) != null )
         {
             // Trim line of leading/trailing whitespace
@@ -201,14 +326,14 @@ public class CommentedProperties extends Properties
                 boolean isWhitespace = BLANK_LINE_DETECTOR.matcher( text ).matches();
                 if( isComment )
                 {
-                    comment = comment == null ? text : comment + m_br + text;
+                    commentList.add( text.substring( 1 ) );
                     inProperty = false;
                 }
 
                 // If all whitespace and part of comment, append it
                 else if( isWhitespace && !inProperty )
                 {
-                    comment = comment == null ? text : comment + m_br + text;
+                    commentList.add( text );
                 }
 
                 // Otherwise, see if we're starting a new property key
@@ -219,13 +344,13 @@ public class CommentedProperties extends Properties
                     if( key != null )
                     {
                         String value = getProperty( key );
-                        if( value != null && comment != null )
+                        if( value != null && commentList.size() > 0 )
                         {
-                            m_propertyComments.put( key, comment );
+                            m_propertyComments.put( key, commentList );
                             m_keys.add( key );
                         }
                         inProperty = true;
-                        comment = null;
+                        commentList = new ArrayList<String>();
                     }
                 }
             }
@@ -233,7 +358,7 @@ public class CommentedProperties extends Properties
 
         // Any leftover comments are "trailing" comments that go at the end of
         // the file
-        m_trailingComment = comment;
+        m_trailingComments = commentList;
 
         reader.close();
     }
@@ -273,21 +398,39 @@ public class CommentedProperties extends Properties
      * Returns the comment for a supplied key, as parsed by the
      * {@link #load(Reader)} or {@link #load(InputStream)} methods, <em>or</em>
      * as supplied to the{@link #setProperty(String, String, String)} method.
+     * The leading <code>#</code> or <code>!</code> characters are not
+     * included.
      * 
      * @param key the key to look up
-     * @return the comment (including the trailing <code>!</code> or
-     *         <code>#</code> character, or <code>null</code> if not found
+     * @return the list of strings representing the comment, each item of which
+     *         represents a line, or <code>null</code> if not found
      */
     public String getComment( String key )
     {
-        return(m_propertyComments.get( key ));
+        StringBuffer b = new StringBuffer();
+        List<String> commentList = m_propertyComments.get( key );
+        if( commentList == null )
+        {
+            return null;
+        }
+        for( String comment : commentList )
+        {
+            b.append( comment );
+            if( commentList.indexOf( comment ) < commentList.size() - 1 )
+            {
+                b.append( m_br );
+            }
+        }
+        return b.toString();
     }
 
     /**
      * Sets a property value for a supplied key, and adds a comment that will be
      * written to disk when the {@link #store(OutputStream, String)} method is
      * called. This method behaves otherwise identically to
-     * {@link #setProperty(String, String)}.
+     * {@link #setProperty(String, String)}. The leading <code>#</code> or
+     * <code>!</code> characters should not be included unless it is meant to
+     * be part of the comment itself.
      * 
      * @param key the string key to store
      * @param value the property value associated with the key
@@ -302,11 +445,12 @@ public class CommentedProperties extends Properties
             if( comment != null )
             {
                 comment = comment.trim();
-                if( !comment.startsWith( "#" ) )
+                if( comment.length() > 0 )
                 {
-                    comment = "# " + comment;
+                    List<String> commentList = new ArrayList<String>();
+                    commentList.add( comment );
+                    m_propertyComments.put( key, commentList );
                 }
-                m_propertyComments.put( key, comment );
             }
             m_keys.add( key );
         }

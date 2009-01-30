@@ -63,12 +63,12 @@ public class CommentedPropertiesTest extends TestCase
         assertEquals( propsLen + 5, m_props.toString().length() );
         assertTrue( m_props.toString().indexOf( "newValue" ) != -1 );
 
-        // Create new property; should add 20 (7+3+9+1) bytes
+        // Create new property; should add 18 (7+1+9+1) bytes
         m_props.setProperty( "newProp", "newValue2" );
         m_props.containsKey( "newProp" );
         m_props.containsValue( "newValue2" );
-        assertEquals( propsLen + 5 + 20, m_props.toString().length() );
-        assertTrue( m_props.toString().indexOf( "newProp = newValue2" ) != -1 );
+        assertEquals( propsLen + 5 + 18, m_props.toString().length() );
+        assertTrue( m_props.toString().indexOf( "newProp=newValue2" ) != -1 );
     }
 
     public void testSetMultilineProperty() throws Exception
@@ -82,7 +82,7 @@ public class CommentedPropertiesTest extends TestCase
         // Make sure that the line was escaped properly
         String cr = System.getProperty( "line.separator" );
         String propString = props.toString();
-        assertEquals( "foo = This is a \\" + cr +"multiline \\" + cr + "property \\" + cr + "with 4 lines.\n", propString );
+        assertEquals( "foo=This is a \\" + cr +"multiline \\" + cr + "property \\" + cr + "with 4 lines.\n", propString );
         
         // Reload and make sure the property is parsed in as 1 line
         props = new CommentedProperties();
@@ -101,22 +101,22 @@ public class CommentedPropertiesTest extends TestCase
     public void testGetComment()
     {
         String cr = System.getProperty( "line.separator" );
-        assertEquals( "# This is a sample properties file with comments", m_props.getComment( "testProp1" ) );
-        assertEquals( "# This is a comment" + cr + "#   with two lines", m_props.getComment( "testProp2" ) );
-        assertEquals( "# This is a property with no value", m_props.getComment( "testProp3" ) );
-        assertEquals( "# Two final properties", m_props.getComment( "testProp4" ) );
+        assertEquals( "This is a sample properties file with comments", m_props.getComment( "testProp1" ) );
+        assertEquals( "This is a comment" + cr + "with two lines", m_props.getComment( "testProp2" ) );
+        assertEquals( "This is a property with no value", m_props.getComment( "testProp3" ) );
+        assertEquals( "Two final properties", m_props.getComment( "testProp4" ) );
         assertEquals( null, m_props.getComment( "testProp5" ) );
-        assertEquals( "# This is a property that spans more than 1 line", m_props.getComment( "testProp6" ) );
+        assertEquals( "This is a property that spans more than 1 line", m_props.getComment( "testProp6" ) );
     }
     
     public void testSetComment()
     {
         m_props.setProperty( "testProp7", "TestValue","This is a comment" );
         assertEquals( "TestValue", m_props.getProperty( "testProp7" ) );
-        assertEquals( "# This is a comment", m_props.getComment( "testProp7" ) );
+        assertEquals( "This is a comment", m_props.getComment( "testProp7" ) );
         
         // Make sure it was actually added to the string returned by toString()
-        assertTrue( m_props.toString().contains( "# This is a comment\ntestProp7 = TestValue" ) );
+        assertTrue( m_props.toString().contains( "# This is a comment\ntestProp7=TestValue" ) );
     }
     
     public void testMultilineProperties()
@@ -129,36 +129,36 @@ public class CommentedPropertiesTest extends TestCase
     {
         int propsLen = m_props.toString().length();
 
-        // Remove prop 1; length of stored string should be 16 (9+3+3+1) bytes
+        // Remove prop 1; length of stored string should be 14 (9+1+3+1) bytes
         // less for property
-        // and 49 bytes less for the comment above it. Total difference: 65
+        // and 49 bytes less for the comment above it. Total difference: 63
         // bytes
         m_props.remove( "testProp1" );
         assertFalse( m_props.containsKey( "testProp1" ) );
-        assertEquals( propsLen - 65, m_props.toString().length() );
+        assertEquals( propsLen - 63, m_props.toString().length() );
 
-        // Remove prop 2; length of stored string should be 55 (20+19+16) bytes
+        // Remove prop 2; length of stored string should be 53 (20+17+16) bytes
         // less
         m_props.remove( "testProp2" );
         assertFalse( m_props.containsKey( "testProp2" ) );
-        assertEquals( propsLen - 65 - 55, m_props.toString().length() );
+        assertEquals( propsLen - 63 - 53, m_props.toString().length() );
 
-        // Remove prop 3; length of stored string should be 48 (35+13) bytes
+        // Remove prop 3; length of stored string should be 46 (33+13) bytes
         // less
         m_props.remove( "testProp3" );
         assertFalse( m_props.containsKey( "testProp3" ) );
-        assertEquals( propsLen - 65 - 55 - 48, m_props.toString().length() );
+        assertEquals( propsLen - 63 - 53 - 46, m_props.toString().length() );
 
-        // Remove prop 4; length of stored string should be 44 (23+21) bytes
+        // Remove prop 4; length of stored string should be 44 (21+21) bytes
         // less
         m_props.remove( "testProp4" );
         assertFalse( m_props.containsKey( "testProp4" ) );
-        assertEquals( propsLen - 65 - 55 - 48 - 44, m_props.toString().length() );
+        assertEquals( propsLen - 63 - 53 - 46 - 42, m_props.toString().length() );
 
-        // Remove prop 5; length of stored string should be 21 bytes less
+        // Remove prop 5; length of stored string should be 19 bytes less
         m_props.remove( "testProp5" );
         assertFalse( m_props.containsKey( "testProp5" ) );
-        assertEquals( propsLen - 65 - 55 - 48 - 44 - 21, m_props.toString().length() );
+        assertEquals( propsLen - 63 - 53 - 46 - 42 - 19, m_props.toString().length() );
     }
 
     public void testStore() throws Exception
