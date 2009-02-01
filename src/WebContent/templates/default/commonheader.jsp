@@ -1,12 +1,12 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.preferences.*" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%--
    This file provides a common header which includes the important JSPWiki scripts and other files.
    You need to include this in your template, within <head> and </head>.  It is recommended that

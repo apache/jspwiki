@@ -1,15 +1,15 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="org.apache.jspwiki.api.WikiException" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.WikiException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.RenameActionBean" event="rename" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.RenameActionBean" event="rename" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>

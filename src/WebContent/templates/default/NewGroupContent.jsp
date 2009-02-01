@@ -2,15 +2,15 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.ResourceBundle" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.PrincipalComparator" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.Group" %>
-<%@ page import="com.ecyrd.jspwiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
+<%@ page import="org.apache.wiki.auth.authorize.Group" %>
+<%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%
   // Extract the group name and members
   String name = request.getParameter( "group" );

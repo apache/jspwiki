@@ -21,7 +21,8 @@
 import java.io.*;
 import java.util.*;
 
-import com.ecyrd.jspwiki.Release;
+import org.apache.wiki.Release;
+
 
 /**
  * Simple utility that shows you a sorted list of property differences between

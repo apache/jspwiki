@@ -306,7 +306,7 @@
       <arg line="${srcfiles}"/>
     </exec>
     <!-- Migrate the JSPs -->
-    <java classname="com.ecyrd.jspwiki.ui.migrator.JspMigrator" fork="yes" maxmemory="512m">
+    <java classname="org.apache.wiki.ui.migrator.JspMigrator" fork="yes" maxmemory="512m">
       <classpath>
          <path refid="path.tests" />
       </classpath>
@@ -798,7 +798,7 @@
            <path refid="path.tests" />
         </classpath>
         <sysproperty key="jspwiki.tests.auth" value="true" />
-        <arg value="com.ecyrd.jspwiki.AllTests" />
+        <arg value="org.apache.wiki.AllTests" />
      </java>
 
   </target>
@@ -808,7 +808,7 @@
        The webapps deployed to Jetty contain 2 sample users:
        - 'janne' with password 'myP@5sw0rd' and role of 'Authenticated'
        - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
-       These are the same as the test users in tests/com.ecyrd.jspwiki.auth.Users.
+       These are the same as the test users in tests/org.apache.wiki.auth.Users.
   -->
   <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,war">
     <mkdir dir="${webtests.temp}" />
@@ -818,9 +818,9 @@
     <copy file="${tests}/etc/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
-      <entry key="jspwiki.authorizer" value="com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer" />
-      <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.XMLUserDatabase" />
-      <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.XMLGroupDatabase" />
+      <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
+      <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.XMLUserDatabase" />
+      <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.XMLGroupDatabase" />
       <entry key="jspwiki.referenceStyle" value="relative" />
       <entry key="jspwiki.userdatabase.hashPrefix" value="false" />
       <entry key="log4j.appender.TestContainerLog.File" value="${basedir}/${webtests.build}/testcontainer.log" />
@@ -849,8 +849,8 @@
     <webtest-setup context="test-custom-jdbc"
       webxml="${webtests.build}/web.xml.custom">
       <propertyfile-entries>
-        <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
-        <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
+        <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
       </propertyfile-entries>
     </webtest-setup>
 
@@ -858,8 +858,8 @@
     <webtest-setup context="test-container-jdbc"
       webxml="${webtests.build}/web.xml.container">
       <propertyfile-entries>
-        <entry key="jspwiki.userdatabase" value="com.ecyrd.jspwiki.auth.user.JDBCUserDatabase" />
-        <entry key="jspwiki.groupdatabase" value="com.ecyrd.jspwiki.auth.authorize.JDBCGroupDatabase" />
+        <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.JDBCUserDatabase" />
+        <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.JDBCGroupDatabase" />
       </propertyfile-entries>
     </webtest-setup>
 
@@ -987,7 +987,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Start Jetty with our test context -->
       <echo message="Starting Jetty."/>
-      <java classname="com.ecyrd.jspwiki.web.TestContainer" fork="true" spawn="true">
+      <java classname="org.apache.wiki.web.TestContainer" fork="true" spawn="true">
         <classpath>
            <path refid="path.tests" />
         </classpath>
@@ -1034,7 +1034,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
        Don't worry about that. The JDBC-related test classes, by the way,
        are these:
 
-          com.ecyrd.jspwiki.auth.user.JDBCUserDatabaseTest
+          org.apache.wiki.auth.user.JDBCUserDatabaseTest
 
        To run JDBC-related unit tests, you need to:
 
@@ -1106,7 +1106,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           find it, for example CATALINA_HOME/common/lib
        5) Build JSPWiki, and start it up!
 
-       See the Javadoc for com.ecyrd.jspwiki.auth.user.JDBCUserDatabase
+       See the Javadoc for org.apache.wiki.auth.user.JDBCUserDatabase
        for details and examples.
   -->
 

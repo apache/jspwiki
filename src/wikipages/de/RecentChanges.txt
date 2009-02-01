@@ -2,4 +2,4 @@ Folgende Änderungen wurden an den Wikiseiten innerhalb der letzten 30 Tage vorg
 
 Dieser Server befindet sich in der Zeitzone ''[{INSERT CurrentTimePlugin format=zzzz}]'', wo es momentan der [{INSERT CurrentTimePlugin format='dd. MMMM yyyy \'um\' HH:mm \'Uhr\''}] ist.
 
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

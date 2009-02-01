@@ -1,8 +1,8 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%
   WikiContext c = WikiContextFactory.findContext( pageContext );
   int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();

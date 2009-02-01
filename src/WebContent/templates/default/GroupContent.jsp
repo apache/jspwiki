@@ -9,7 +9,7 @@
   <wiki:Permission permission="createGroups">
     <fmt:message key="group.createsuggestion">
       <fmt:param>
-        <stripes:link beanclass="com.ecyrd.jspwiki.action.GroupActionBean" event="create">
+        <stripes:link beanclass="org.apache.wiki.action.GroupActionBean" event="create">
           <stripes:param name="group" value="${wikiActionBean.name}" />
           <stripes:param name="group" value="${wikiActionBean.name}" />
           <fmt:message key="group.createit" />
@@ -58,7 +58,7 @@
 
   <wiki:Permission permission="deleteGroup">
     <c:set var="confirm" value="<fmt:message key='grp.deletegroup.confirm'/>" scope="page"/>
-    <stripes:form beanclass="com.ecyrd.jspwiki.action.GroupActionBean" class="wikiform"
+    <stripes:form beanclass="org.apache.wiki.action.GroupActionBean" class="wikiform"
       id="deleteGroup"
       onsubmit="return( confirm('${confirm}') && Wiki.submitOnce(this) );"
       method="POST" acceptcharset="UTF-8">
@@ -70,7 +70,7 @@
 
 <wiki:Permission permission="editGroup">
   <wiki:Tab id="editgroup" titleKey="actions.editgroup"
-           url="<stripes:link beanclass='com.ecyrd.jspwiki.action.GroupActionBean' event='edit'><stripes:param name='group' value='${wikiActionBean.name}' /></stripes:link>"
+           url="<stripes:link beanclass='org.apache.wiki.action.GroupActionBean' event='edit'><stripes:param name='group' value='${wikiActionBean.name}' /></stripes:link>"
            accesskey="e" >
   </wiki:Tab>
 </wiki:Permission>

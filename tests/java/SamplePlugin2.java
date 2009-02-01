@@ -20,11 +20,11 @@
  */
 import java.util.Map;
 
-import org.apache.jspwiki.api.PluginException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.PluginException;
+import org.apache.wiki.plugin.WikiPlugin;
 
-import com.ecyrd.jspwiki.WikiContext;
-import com.ecyrd.jspwiki.WikiEngine;
-import com.ecyrd.jspwiki.plugin.WikiPlugin;
 
 /**
  *  Implements a simple plugin that just returns its text.

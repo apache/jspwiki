@@ -1,12 +1,12 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.lang.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.jar.*" %>
 
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.preferences.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -14,7 +14,7 @@
 
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
@@ -24,7 +24,7 @@
   </div>
 </c:if>
 
-<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
+<stripes:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
 <table>
   <tr>
   <td><stripes:label for="assertedName" /></td>
@@ -98,7 +98,7 @@
     <td><stripes:label for="orientation" /></td>
     <td>
       <stripes:select id="orientation" name="orientation">
-        <stripes:options-enumeration enum="com.ecyrd.jspwiki.preferences.Preferences.Orientation" label="name" />
+        <stripes:options-enumeration enum="org.apache.wiki.preferences.Preferences.Orientation" label="name" />
       </stripes:select>
       <stripes:errors field="orientation" />
     </td>
@@ -162,7 +162,7 @@
 
 <h3><fmt:message key='prefs.clear.heading' /></h3>
 
-<stripes:form beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
+<stripes:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
   <div>
     <stripes:submit name="clearAssertedName" />
   </div>

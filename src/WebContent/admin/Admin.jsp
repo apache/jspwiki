@@ -1,12 +1,12 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.admin.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.admin.*" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>

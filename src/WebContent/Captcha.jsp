@@ -1,17 +1,17 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.commons.lang.time.StopWatch" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.ViewActionBean" event="view" id="wikiActionBean" />
+<stripes:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="view" id="wikiActionBean" />
 
 
 <%!

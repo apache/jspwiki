@@ -1,19 +1,19 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Iterator" %>
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.WikiContext" %>
-<%@ page import="com.ecyrd.jspwiki.WikiSession" %>
-<%@ page import="com.ecyrd.jspwiki.WikiEngine" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Decision" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.DecisionQueue" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.NoSuchOutcomeException" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Outcome" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.Workflow" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page import="org.apache.wiki.WikiSession" %>
+<%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.workflow.Decision" %>
+<%@ page import="org.apache.wiki.workflow.DecisionQueue" %>
+<%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
+<%@ page import="org.apache.wiki.workflow.Outcome" %>
+<%@ page import="org.apache.wiki.workflow.Workflow" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.WorkflowActionBean" event="view" id="wikiActionBean"/>
+<stripes:useActionBean beanclass="org.apache.wiki.action.WorkflowActionBean" event="view" id="wikiActionBean"/>
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 

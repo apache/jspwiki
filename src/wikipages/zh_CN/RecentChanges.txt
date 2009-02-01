@@ -2,4 +2,4 @@
 
 此服务器所在时区为 [{INSERT CurrentTimePlugin format=zzzz}]，目前的时间是 [{INSERT CurrentTimePlugin format='yyyy-MM-dd HH:mm'}]。
 
-[{INSERT com.ecyrd.jspwiki.plugin.RecentChangesPlugin since=30}]
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

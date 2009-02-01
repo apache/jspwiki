@@ -1,13 +1,13 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%--
         This is a special editor component for JSPWiki preview storage.
 --%>

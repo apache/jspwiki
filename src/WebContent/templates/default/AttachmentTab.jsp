@@ -1,14 +1,14 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.progress.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.ui.progress.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="java.security.Permission" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContextFactory.findContext( pageContext );

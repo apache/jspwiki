@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.AuthenticationManager" %>
-<%@ page import="com.ecyrd.jspwiki.ui.Installer" %>
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
+<%@ page import="org.apache.wiki.ui.Installer" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.InstallActionBean" event="install" id="wikiActionBean" />
+<stripes:useActionBean beanclass="org.apache.wiki.action.InstallActionBean" event="install" id="wikiActionBean" />
 
 
 <%!

@@ -13,7 +13,7 @@
 <wiki:Tab id="lostpassword" titleKey="login.lostpw.tab">
 
 <div class="center">
-<stripes:form beanclass="com.ecyrd.jspwiki.action.LoginActionBean" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
+<stripes:form beanclass="org.apache.wiki.action.LoginActionBean" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
   <stripes:param name="tab" value="lostpassword" />
   <h3><fmt:message key="login.lostpw.heading" /></h3>
 

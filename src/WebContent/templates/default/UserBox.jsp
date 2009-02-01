@@ -30,7 +30,7 @@
       <wiki:Permission permission="login">
         <c:set var="loginTitle"><fmt:message key='actions.login.title' /></c:set>
         <stripes:link
-          beanclass="com.ecyrd.jspwiki.action.LoginActionBean"
+          beanclass="org.apache.wiki.action.LoginActionBean"
           class="action login"
           title="${loginTitle}">
           <stripes:param name="redirect" value="${wikiContext.page.name}" />
@@ -43,7 +43,7 @@
   <wiki:UserCheck status="authenticated">
     <c:set var="logoutTitle"><fmt:message key='actions.logout.title' /></c:set>
     <stripes:link
-      beanclass="com.ecyrd.jspwiki.action.LoginActionBean" event="logout"
+      beanclass="org.apache.wiki.action.LoginActionBean" event="logout"
       class="action logout"
       title="${logoutTitle}">
       <fmt:message key="actions.login"/>
@@ -54,7 +54,7 @@
     <wiki:CheckRequestContext context='!preview'>
       <c:set var="prefsTitle"><fmt:message key='actions.prefs.title' /></c:set>
       <stripes:link
-        beanclass="com.ecyrd.jspwiki.action.UserPreferencesActionBean"
+        beanclass="org.apache.wiki.action.UserPreferencesActionBean"
         class="action prefs" accesskey="p"
         title="${prefsTitle}">
         <stripes:param name="redirect" value="${wikiContext.page.name}" />

@@ -1,16 +1,16 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="com.ecyrd.jspwiki.search.*" %>
+<%@ page import="org.apache.wiki.search.*" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.SearchActionBean" event="find" id="wikiActionBean" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWikiSearch");

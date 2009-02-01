@@ -1,20 +1,20 @@
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.util.Properties" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
-<%@ page import="com.ecyrd.jspwiki.render.*" %>
-<%@ page import="com.ecyrd.jspwiki.parser.JSPWikiMarkupParser" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.render.*" %>
+<%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
+<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.filters.*" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="org.apache.commons.lang.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%--
     This provides the FCK editor for JSPWiki.
 --%>

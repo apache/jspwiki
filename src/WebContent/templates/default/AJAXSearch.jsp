@@ -1,22 +1,22 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8" %>
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.ui.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="org.apache.commons.lang.*" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.permissions.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
+<%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.search.SearchResult" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.SearchActionBean" event="find" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.search.SearchResult" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.SearchActionBean" event="find" id="wikiActionBean" />
 <%! 
   public void jspInit()
   {

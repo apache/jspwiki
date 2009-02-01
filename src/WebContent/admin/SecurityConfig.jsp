@@ -1,13 +1,13 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.auth.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.NoneActionBean" event="none" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.NoneActionBean" event="none" id="wikiActionBean" />
 <%! 
   public void jspInit()
   {

@@ -1,1 +1,1 @@
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean" event="logout" executeResolution="true" id="wikiActionBean" />
+<stripes:useActionBean beanclass="org.apache.wiki.action.LoginActionBean" event="logout" executeResolution="true" id="wikiActionBean" />

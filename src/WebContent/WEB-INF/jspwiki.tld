@@ -13,8 +13,8 @@
 
   <tag>
     <name>AdminBeanIterator</name>
-    <tagclass>com.ecyrd.jspwiki.tags.AdminBeanIteratorTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.AdminBeanIteratorInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.AdminBeanIteratorTag</tagclass>
+    <teiclass>org.apache.wiki.tags.AdminBeanIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>id</name>
@@ -28,8 +28,8 @@
 
   <tag>
     <name>AttachmentsIterator</name>
-    <tagclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.AttachmentsIteratorInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.AttachmentsIteratorTag</tagclass>
+    <teiclass>org.apache.wiki.tags.AttachmentsIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>id</name>
@@ -38,19 +38,19 @@
 
   <tag>
     <name>Author</name>
-    <tagclass>com.ecyrd.jspwiki.tags.AuthorTag</tagclass>
+    <tagclass>org.apache.wiki.tags.AuthorTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>BaseURL</name>
-    <tagclass>com.ecyrd.jspwiki.tags.BaseURLTag</tagclass>
+    <tagclass>org.apache.wiki.tags.BaseURLTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>Breadcrumbs</name>
-    <tagclass>com.ecyrd.jspwiki.tags.BreadcrumbsTag</tagclass>
+    <tagclass>org.apache.wiki.tags.BreadcrumbsTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>maxpages</name>
@@ -64,7 +64,7 @@
 
   <tag>
     <name>Calendar</name>
-    <tagclass>com.ecyrd.jspwiki.tags.CalendarTag</tagclass>
+    <tagclass>org.apache.wiki.tags.CalendarTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>pageformat</name>
@@ -82,8 +82,8 @@
 
   <tag>
     <name>CheckLock</name>
-    <tagclass>com.ecyrd.jspwiki.tags.CheckLockTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.CheckLockInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.CheckLockTag</tagclass>
+    <teiclass>org.apache.wiki.tags.CheckLockInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>mode</name>
@@ -95,7 +95,7 @@
 
   <tag>
     <name>CheckRequestContext</name>
-    <tagclass>com.ecyrd.jspwiki.tags.CheckRequestContextTag</tagclass>
+    <tagclass>org.apache.wiki.tags.CheckRequestContextTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>context</name>
@@ -105,7 +105,7 @@
 
   <tag>
     <name>CheckVersion</name>
-    <tagclass>com.ecyrd.jspwiki.tags.CheckVersionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.CheckVersionTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>mode</name>
@@ -114,7 +114,7 @@
 
   <tag>
     <name>CommentLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.CommentLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.CommentLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -127,7 +127,7 @@
 
   <tag>
     <name>Content</name>
-    <tagclass>com.ecyrd.jspwiki.tags.ContentTag</tagclass>
+    <tagclass>org.apache.wiki.tags.ContentTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>view</name>
@@ -173,13 +173,13 @@
 
   <tag>
     <name>ContentEncoding</name>
-    <tagclass>com.ecyrd.jspwiki.tags.ContentEncodingTag</tagclass>
+    <tagclass>org.apache.wiki.tags.ContentEncodingTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>DiffLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.DiffLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.DiffLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -200,7 +200,7 @@
 
   <tag>
     <name>EditLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.EditLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.EditLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -225,14 +225,14 @@
 
   <tag>
     <name>Editor</name>
-    <tagclass>com.ecyrd.jspwiki.tags.EditorTag</tagclass>
+    <tagclass>org.apache.wiki.tags.EditorTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>EditorIterator</name>
-    <tagclass>com.ecyrd.jspwiki.tags.EditorIteratorTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.EditorIteratorInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.EditorIteratorTag</tagclass>
+    <teiclass>org.apache.wiki.tags.EditorIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>id</name>
@@ -241,20 +241,20 @@
 
   <tag>
     <name>FeedDiscovery</name>
-    <tagclass>com.ecyrd.jspwiki.tags.FeedDiscoveryTag</tagclass>
+    <tagclass>org.apache.wiki.tags.FeedDiscoveryTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>HasAttachments</name>
-    <tagclass>com.ecyrd.jspwiki.tags.HasAttachmentsTag</tagclass>
+    <tagclass>org.apache.wiki.tags.HasAttachmentsTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>HistoryIterator</name>
-    <tagclass>com.ecyrd.jspwiki.tags.HistoryIteratorTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.HistoryIteratorInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.HistoryIteratorTag</tagclass>
+    <teiclass>org.apache.wiki.tags.HistoryIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>id</name>
@@ -263,13 +263,13 @@
 
   <tag>
     <name>IfNoSearchResults</name>
-    <tagclass>com.ecyrd.jspwiki.tags.IfNoSearchResultsTag</tagclass>
+    <tagclass>org.apache.wiki.tags.IfNoSearchResultsTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>Include</name>
-    <tagclass>com.ecyrd.jspwiki.tags.IncludeTag</tagclass>
+    <tagclass>org.apache.wiki.tags.IncludeTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>page</name>
@@ -279,7 +279,7 @@
 
   <tag>
     <name>IncludeResources</name>
-    <tagclass>com.ecyrd.jspwiki.tags.IncludeResourcesTag</tagclass>
+    <tagclass>org.apache.wiki.tags.IncludeResourcesTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>type</name>
@@ -289,7 +289,7 @@
 
   <tag>
     <name>InsertDiff</name>
-    <tagclass>com.ecyrd.jspwiki.tags.InsertDiffTag</tagclass>
+    <tagclass>org.apache.wiki.tags.InsertDiffTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -299,7 +299,7 @@
 
   <tag>
     <name>InsertPage</name>
-    <tagclass>com.ecyrd.jspwiki.tags.InsertPageTag</tagclass>
+    <tagclass>org.apache.wiki.tags.InsertPageTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>page</name>
@@ -313,7 +313,7 @@
 
   <tag>
     <name>Link</name>
-    <tagclass>com.ecyrd.jspwiki.tags.LinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.LinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -378,7 +378,7 @@
 
   <tag>
     <name>LinkTo</name>
-    <tagclass>com.ecyrd.jspwiki.tags.LinkToTag</tagclass>
+    <tagclass>org.apache.wiki.tags.LinkToTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -407,7 +407,7 @@
 
   <tag>
     <name>LinkToParent</name>
-    <tagclass>com.ecyrd.jspwiki.tags.LinkToParentTag</tagclass>
+    <tagclass>org.apache.wiki.tags.LinkToParentTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -424,7 +424,7 @@
 
   <tag>
     <name>Messages</name>
-    <tagclass>com.ecyrd.jspwiki.tags.MessagesTag</tagclass>
+    <tagclass>org.apache.wiki.tags.MessagesTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>action</name>
@@ -446,13 +446,13 @@
 
   <tag>
     <name>NextVersion</name>
-    <tagclass>com.ecyrd.jspwiki.tags.NextVersionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.NextVersionTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>NoSuchPage</name>
-    <tagclass>com.ecyrd.jspwiki.tags.NoSuchPageTag</tagclass>
+    <tagclass>org.apache.wiki.tags.NoSuchPageTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -462,7 +462,7 @@
 
   <tag>
     <name>PageExists</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageExistsTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageExistsTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -472,7 +472,7 @@
 
   <tag>
     <name>PageInfoLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageInfoLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageInfoLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -494,7 +494,7 @@
 
   <tag>
     <name>PageDate</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageDateTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageDateTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
         <name>format</name>
@@ -504,19 +504,19 @@
 
   <tag>
     <name>PageName</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageNameTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageNameTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>PageSize</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageSizeTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageSizeTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>PageType</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageTypeTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageTypeTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>type</name>
@@ -526,13 +526,13 @@
 
   <tag>
     <name>PageVersion</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PageVersionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PageVersionTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>Param</name>
-    <tagclass>com.ecyrd.jspwiki.tags.ParamTag</tagclass>
+    <tagclass>org.apache.wiki.tags.ParamTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>name</name>
@@ -548,13 +548,13 @@
 
   <tag>
     <name>ParentPageName</name>
-    <tagclass>com.ecyrd.jspwiki.tags.ParentPageNameTag</tagclass>
+    <tagclass>org.apache.wiki.tags.ParentPageNameTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>Permission</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PermissionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PermissionTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>permission</name>
@@ -564,13 +564,13 @@
 
   <tag>
     <name>PreviousVersion</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PreviousVersionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PreviousVersionTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>Plugin</name>
-    <tagclass>com.ecyrd.jspwiki.tags.PluginTag</tagclass>
+    <tagclass>org.apache.wiki.tags.PluginTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>plugin</name>
@@ -586,7 +586,7 @@
 
   <tag>
     <name>RequestResource</name>
-    <tagclass>com.ecyrd.jspwiki.tags.RequestResourceTag</tagclass>
+    <tagclass>org.apache.wiki.tags.RequestResourceTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>type</name>
@@ -600,13 +600,13 @@
 
   <tag>
     <name>RSSLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.RSSLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.RSSLinkTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>RSSImageLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.RSSImageLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.RSSImageLinkTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>title</name>
@@ -620,7 +620,7 @@
 
   <tag>
     <name>RSSUserlandLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.RSSCoffeeCupLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.RSSCoffeeCupLinkTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>title</name>
@@ -630,8 +630,8 @@
 
   <tag>
     <name>SearchResultIterator</name>
-    <tagclass>com.ecyrd.jspwiki.tags.SearchResultIteratorTag</tagclass>
-    <teiclass>com.ecyrd.jspwiki.tags.SearchResultIteratorInfo</teiclass>
+    <tagclass>org.apache.wiki.tags.SearchResultIteratorTag</tagclass>
+    <teiclass>org.apache.wiki.tags.SearchResultIteratorInfo</teiclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>id</name>
@@ -654,19 +654,19 @@
 
   <tag>
     <name>SearchResults</name>
-    <tagclass>com.ecyrd.jspwiki.tags.SearchResultsTag</tagclass>
+    <tagclass>org.apache.wiki.tags.SearchResultsTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>SearchResultsSize</name>
-    <tagclass>com.ecyrd.jspwiki.tags.SearchResultsSizeTag</tagclass>
+    <tagclass>org.apache.wiki.tags.SearchResultsSizeTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>SetPagination</name>
-    <tagclass>com.ecyrd.jspwiki.tags.SetPaginationTag</tagclass>
+    <tagclass>org.apache.wiki.tags.SetPaginationTag</tagclass>
     <bodycontent>empty</bodycontent>
     <info>Returns pagination string and cache it in the pageContext</info>
     <attribute>
@@ -706,7 +706,7 @@
 
   <tag>
     <name>TabbedSection</name>
-    <tagclass>com.ecyrd.jspwiki.tags.TabbedSectionTag</tagclass>
+    <tagclass>org.apache.wiki.tags.TabbedSectionTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <info>A BodyTag for tabbed sections</info>
     <attribute>
@@ -718,7 +718,7 @@
 
   <tag>
     <name>Tab</name>
-    <tagclass>com.ecyrd.jspwiki.tags.TabTag</tagclass>
+    <tagclass>org.apache.wiki.tags.TabTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <info>A Tag for a tab, which is a child of tabbedSection</info>
     <attribute>
@@ -750,19 +750,19 @@
 
   <tag>
     <name>TemplateDir</name>
-    <tagclass>com.ecyrd.jspwiki.tags.TemplateDirTag</tagclass>
+    <tagclass>org.apache.wiki.tags.TemplateDirTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>Translate</name>
-    <tagclass>com.ecyrd.jspwiki.tags.TranslateTag</tagclass>
+    <tagclass>org.apache.wiki.tags.TranslateTag</tagclass>
     <bodycontent>JSP</bodycontent>
   </tag>
 
   <tag>
     <name>UploadLink</name>
-    <tagclass>com.ecyrd.jspwiki.tags.UploadLinkTag</tagclass>
+    <tagclass>org.apache.wiki.tags.UploadLinkTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>page</name>
@@ -775,13 +775,13 @@
 
   <tag>
     <name>UserName</name>
-    <tagclass>com.ecyrd.jspwiki.tags.UserNameTag</tagclass>
+    <tagclass>org.apache.wiki.tags.UserNameTag</tagclass>
     <bodycontent>empty</bodycontent>
   </tag>
 
   <tag>
     <name>UserCheck</name>
-    <tagclass>com.ecyrd.jspwiki.tags.UserCheckTag</tagclass>
+    <tagclass>org.apache.wiki.tags.UserCheckTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>status</name>
@@ -795,7 +795,7 @@
 
   <tag>
     <name>UserProfile</name>
-    <tagclass>com.ecyrd.jspwiki.tags.UserProfileTag</tagclass>
+    <tagclass>org.apache.wiki.tags.UserProfileTag</tagclass>
     <bodycontent>JSP</bodycontent>
     <attribute>
        <name>property</name>
@@ -805,7 +805,7 @@
 
   <tag>
     <name>Variable</name>
-    <tagclass>com.ecyrd.jspwiki.tags.VariableTag</tagclass>
+    <tagclass>org.apache.wiki.tags.VariableTag</tagclass>
     <bodycontent>empty</bodycontent>
     <attribute>
        <name>var</name>
@@ -821,7 +821,7 @@
 
   <tag>
       <name>Cookie</name>
-      <tagclass>com.ecyrd.jspwiki.tags.CookieTag</tagclass>
+      <tagclass>org.apache.wiki.tags.CookieTag</tagclass>
       <bodycontent>empty</bodycontent>
       <attribute>
           <name>name</name>

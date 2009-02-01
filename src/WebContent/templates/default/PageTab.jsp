@@ -1,11 +1,11 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.action.WikiContextFactory" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%--CHECK why is this needed --%>
 <%
 	WikiContext c = WikiContextFactory.findContext( pageContext );

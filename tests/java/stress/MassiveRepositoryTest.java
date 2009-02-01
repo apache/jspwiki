@@ -24,13 +24,14 @@ import java.io.File;
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.providers.CachingProvider;
+import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.util.TextUtil;
+
 import junit.framework.TestCase;
 
-import com.ecyrd.jspwiki.TestEngine;
-import com.ecyrd.jspwiki.WikiProvider;
-import com.ecyrd.jspwiki.providers.CachingProvider;
-import com.ecyrd.jspwiki.providers.FileSystemProvider;
-import com.ecyrd.jspwiki.util.TextUtil;
 
 public class MassiveRepositoryTest extends TestCase
 {

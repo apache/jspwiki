@@ -25,7 +25,7 @@ Add Stripes packages and imports to JSPs.
 What JSP authors must do:
 Include these lines for all top-level JSPs:
 
-<%@ page import="com.ecyrd.jspwiki.action.*" %>
+<%@ page import="org.apache.wiki.action.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 
 WikiContext Creation
@@ -39,7 +39,7 @@ For login, group, workflow and other contexts that do not operate on WikiPages, 
 
 ...with these:
 
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
+<stripes:useActionBean beanclass="org.apache.wiki.action.LoginActionBean"/>
 
 To retrieve the WikiActionBean later, scriptlet code should call this static method:
 
@@ -209,7 +209,7 @@ WikiActionBeans can be created in five ways:
 
 1) Injection by UseActionBeanTag due to <stripes:useActionBean> tag in JSP. This is the preferred way because it can be done with only a single changed line at the top of a top-level JSP:
 
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.____ActionBean"/>
+<stripes:useActionBean beanclass="org.apache.wiki.action.____ActionBean"/>
 
 Technically, the WikiActionBean is looked up by Stripes' configured ActionResolver (by default, the AnnotatedClassActionResolver); the bean itself is instantiated using its zero-argument constructor. Stripes guarantees that the following things happen after instantiation, as part of its ActionBeanResolution lifecycle stage:
 - The WikiActionBean's setActionBeanContext() method is called (by AnnotatedClassActionResolver); this causes a reference to a new WikiActionBeanContext to be set in the WikiActionBean
@@ -450,7 +450,7 @@ Consider replacing:
 with this:
 
       <div class="error">
-        <stripes:errors beanclass="com.ecyrd.jspwiki.action.LoginActionBean"/>
+        <stripes:errors beanclass="org.apache.wiki.action.LoginActionBean"/>
       </div>
 
 However, MessagesTag has been retrofitted to print Stripes errors for the current ActionBean in addition to the standard kind. So even though <stripes:errors> are preferred, <wiki:Messages> works for now (but should be considered deprecated). <wiki:Messages> tag re-factored so the set of Valididation for the current ActionBean are always appended to the messages list. This allows <wiki:message> to be used transparently in place of <stripes:errors>.

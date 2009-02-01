@@ -23,9 +23,11 @@ package stress;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.*;
-import com.ecyrd.jspwiki.util.FileUtil;
+
+import org.apache.wiki.*;
+import org.apache.wiki.providers.*;
+import org.apache.wiki.util.FileUtil;
+
 
 public final class StressTestSpeed extends TestCase
 {

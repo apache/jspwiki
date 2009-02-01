@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<stripes:form beanclass="com.ecyrd.jspwiki.action.UserProfileActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
+<stripes:form beanclass="org.apache.wiki.action.UserProfileActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
       <stripes:param name="tab" value="profile" />
 
       <h3>

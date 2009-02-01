@@ -11,7 +11,7 @@
           <wiki:PageType type="page">
             <c:set var="editTitle"><fmt:message key="actions.edit.title" /></c:set>
             <stripes:link
-              beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit"
+              beanclass="org.apache.wiki.action.EditActionBean" event="edit"
               accesskey="e" class="action edit"
               title="${editTitle}">
               <fmt:message key='actions.edit' />
@@ -21,7 +21,7 @@
           <wiki:PageType type="attachment">
             <c:set var="editParentTitle"><fmt:message key="actions.editparent.title" /></c:set>
             <stripes:link
-              beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit"
+              beanclass="org.apache.wiki.action.EditActionBean" event="edit"
               accesskey="e" class="action edit"
               title="${editParentTitle}">
               <fmt:message key='actions.edit' />
@@ -35,7 +35,7 @@
     <%-- converted to popup menu by jspwiki-common.js--%>
     <li id="morebutton">
       <stripes:link
-        beanclass="com.ecyrd.jspwiki.action.ViewActionBean"
+        beanclass="org.apache.wiki.action.ViewActionBean"
         class="action more">
         <stripes:param name="page" value="MoreMenu" />
         <fmt:message key="actions.more" />

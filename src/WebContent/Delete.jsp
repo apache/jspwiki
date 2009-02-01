@@ -1,13 +1,13 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.attachment.Attachment" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.DeleteActionBean" event="delete" id="wikiActionBean" />
+<stripes:useActionBean beanclass="org.apache.wiki.action.DeleteActionBean" event="delete" id="wikiActionBean" />
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki");

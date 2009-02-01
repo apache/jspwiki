@@ -1,17 +1,17 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.EditActionBean" event="edit" executeResolution="true" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="edit" executeResolution="true" id="wikiActionBean" />
 
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");

@@ -8,7 +8,7 @@
 
   <div class="applicationlogo" >
     <c:set var="frontPageTitle"><fmt:message key='actions.home.title' ><fmt:param><c:out value='${wikiEngine.frontPage}' /></fmt:param></fmt:message></c:set>
-    <stripes:link beanclass="com.ecyrd.jspwiki.action.ViewActionBean" title="${frontPageTitle}"><fmt:message key="actions.home" /></stripes:link>
+    <stripes:link beanclass="org.apache.wiki.action.ViewActionBean" title="${frontPageTitle}"><fmt:message key="actions.home" /></stripes:link>
   </div>
 
   <div class="companylogo"></div>

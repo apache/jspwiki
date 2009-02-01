@@ -1,25 +1,25 @@
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
-<%@ page import="com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.filters.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="com.ecyrd.jspwiki.htmltowiki.HtmlStringToWikiTranslator" %>
-<%@ page import="com.ecyrd.jspwiki.ui.EditorManager" %>
-<%@ page import="com.ecyrd.jspwiki.util.HttpUtil" %>
-<%@ page import="com.ecyrd.jspwiki.preferences.Preferences" %>
-<%@ page import="com.ecyrd.jspwiki.auth.login.CookieAssertionLoginModule" %>
-<%@ page import="com.ecyrd.jspwiki.workflow.DecisionRequiredException" %>
-<%@ page import="com.ecyrd.jspwiki.preferences.Preferences.TimeFormat" %>
+<%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
+<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="com.ecyrd.jspwiki.util.TextUtil" %>
-<%@ page import="org.apache.jspwiki.api.WikiPage" %>
-<stripes:useActionBean beanclass="com.ecyrd.jspwiki.action.CommentActionBean" event="comment" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
+<stripes:useActionBean beanclass="org.apache.wiki.action.CommentActionBean" event="comment" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 

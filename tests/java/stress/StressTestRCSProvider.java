@@ -24,10 +24,10 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.jspwiki.api.WikiPage;
+import org.apache.wiki.*;
+import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.*;
 
-import com.ecyrd.jspwiki.*;
-import com.ecyrd.jspwiki.providers.*;
 
 /**
  *  Does stress testing on the RCSProvider.

@@ -1,9 +1,9 @@
-<%@ page import="java.util.*,com.ecyrd.jspwiki.*" %>
-<%@ page import="com.ecyrd.jspwiki.log.Logger" %>
-<%@ page import="com.ecyrd.jspwiki.log.LoggerFactory" %>
+<%@ page import="java.util.*,org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.log.Logger" %>
+<%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="java.text.*" %>
-<%@ page import="com.ecyrd.jspwiki.rss.*" %>
-<%@ page import="com.ecyrd.jspwiki.util.*" %>
+<%@ page import="org.apache.wiki.rss.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
 <%@ taglib uri="http://www.opensymphony.com/oscache" prefix="oscache" %>
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
