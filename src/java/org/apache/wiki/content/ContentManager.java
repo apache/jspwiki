@@ -771,11 +771,11 @@ public class ContentManager
         {
             synchronized( m_pageLocks )
             {
-                Collection entries = m_pageLocks.values();
+                Collection<PageLock> entries = m_pageLocks.values();
 
                 Date now = new Date();
 
-                for( Iterator i = entries.iterator(); i.hasNext(); )
+                for( Iterator<PageLock> i = entries.iterator(); i.hasNext(); )
                 {
                     PageLock p = (PageLock) i.next();
 
@@ -1104,8 +1104,8 @@ public class ContentManager
             {
                 int pagesChanged = 0;
                 // FIXME: This is a hack to make this thing compile, not work.
-                Collection pages = getAllPages( null );
-                for ( Iterator it = pages.iterator(); it.hasNext(); )
+                Collection<WikiPage> pages = getAllPages( null );
+                for ( Iterator<WikiPage> it = pages.iterator(); it.hasNext(); )
                 {
                     WikiPage page = (WikiPage)it.next();
                     boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
@@ -1150,7 +1150,7 @@ public class ContentManager
         boolean pageChanged = false;
         if ( acl != null )
         {
-            Enumeration entries = acl.entries();
+            Enumeration<AclEntry> entries = acl.entries();
             Collection<AclEntry> entriesToAdd    = new ArrayList<AclEntry>();
             Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
             while ( entries.hasMoreElements() )
@@ -1161,7 +1161,7 @@ public class ContentManager
                     // Create new entry
                     AclEntry newEntry = new AclEntryImpl();
                     newEntry.setPrincipal( newPrincipal );
-                    Enumeration permissions = entry.permissions();
+                    Enumeration<Permission> permissions = entry.permissions();
                     while ( permissions.hasMoreElements() )
                     {
                         Permission permission = (Permission)permissions.nextElement();
@@ -1172,12 +1172,12 @@ public class ContentManager
                     entriesToAdd.add( newEntry );
                 }
             }
-            for ( Iterator ix = entriesToRemove.iterator(); ix.hasNext(); )
+            for ( Iterator<AclEntry> ix = entriesToRemove.iterator(); ix.hasNext(); )
             {
                 AclEntry entry = (AclEntry)ix.next();
                 acl.removeEntry( entry );
             }
-            for ( Iterator ix = entriesToAdd.iterator(); ix.hasNext(); )
+            for ( Iterator<AclEntry> ix = entriesToAdd.iterator(); ix.hasNext(); )
             {
                 AclEntry entry = (AclEntry)ix.next();
                 acl.addEntry( entry );
@@ -1216,10 +1216,10 @@ public class ContentManager
     private class JCRSessionManager
     {
         /** the per thread session **/
-        private final ThreadLocal<Session> currentSession = new ThreadLocal<Session>();
+        private final ThreadLocal<Session> m_currentSession = new ThreadLocal<Session>();
         /** The constants for describing the ownerships **/
-        private final Owner trueOwner = new Owner(true);
-        private final Owner fakeOwner = new Owner(false);
+        private final Owner m_trueOwner = new Owner(true);
+        private final Owner m_fakeOwner = new Owner(false);
         
         /**
          *  This creates a session which can be fetched then with getSession().
@@ -1230,14 +1230,14 @@ public class ContentManager
          */
         public Object createSession() throws LoginException, RepositoryException
         {
-            Session session = currentSession.get();  
+            Session session = m_currentSession.get();  
             if(session == null)
             {
                 session = m_repository.login(m_workspaceName); 
-                currentSession.set(session);
-                return trueOwner;
+                m_currentSession.set(session);
+                return m_trueOwner;
             }
-            return fakeOwner;
+            return m_fakeOwner;
         }
 
         /**
@@ -1248,11 +1248,11 @@ public class ContentManager
          */
         public void destroySession(Object ownership) 
         {
-            if( ownership != null && ((Owner)ownership).identity)
+            if( ownership != null && ((Owner)ownership).m_identity)
             {
-                Session session = currentSession.get();
+                Session session = m_currentSession.get();
                 session.logout();
-                currentSession.set(null);
+                m_currentSession.set(null);
             }
         }
  
@@ -1264,7 +1264,7 @@ public class ContentManager
          */
         public Session getSession() 
         {
-            return currentSession.get();
+            return m_currentSession.get();
         } 
 
     }
@@ -1277,8 +1277,8 @@ public class ContentManager
     {
         public Owner(boolean identity)
         {
-            this.identity = identity;
+            m_identity = identity;
         }
-        boolean identity = false;        
+        boolean m_identity = false;        
     }
 }
