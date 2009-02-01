@@ -97,13 +97,14 @@
        the user name, and the project name (defined above) -->
   <property name="tmpdir" value="${java.io.tmpdir}/${user.name}/${ant.project.name}" />
 
-  <!-- The following three properties define the location of the
-       test sources, the location of the test .class files and the
+  <!-- The following properties define the location of the
+       test resources, the location of the sources, the location of the .class files and the
        directory where the test results are written in. -->
 
-  <property name="tests.src" value="tests" />
-  <property name="tests.build" value="${tests.src}/build" />
-  <property name="tests.reports" value="${tests.src}/reports" />
+  <property name="tests" value="tests" />
+  <property name="tests.src" value="${tests}/java" />
+  <property name="tests.build" value="${tests}/build" />
+  <property name="tests.reports" value="${tests}/reports" />
   
   <!-- WAR properties -->
   <condition property="war.compile.jsps">
@@ -112,12 +113,12 @@
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
-  <property name="webtests.reports"  value="${tests.src}/reports/selenium" />
-  <property name="webtests.build"    value="${tests.src}/build/webtests" />
+  <property name="webtests.reports"  value="${tests}/reports/selenium" />
+  <property name="webtests.build"    value="${tests}/build/webtests" />
   <property name="webtests.port"     value="10024" />
   <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
-  <property name="selenium-rc.jar"   value="${tests.src}/lib/selenium-server-1.0-beta1.jar" />
+  <property name="selenium-rc.jar"   value="${tests}/lib/selenium-server-1.0-beta1.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -161,10 +162,10 @@
      <fileset dir="${code.web}/WEB-INF/lib">
         <include name="*.jar" />
      </fileset>
-     <fileset dir="${tests.src}/lib">
+     <fileset dir="${tests}/lib">
         <include name="*.jar" />
      </fileset>
-     <pathelement path="${tests.src}/etc" />
+     <pathelement path="${tests}/etc" />
   </path>
 
   <!-- The prefix to use when reading environment variables -->
@@ -187,16 +188,16 @@
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="${code.web}/WEB-INF/jspwiki.properties" />
-     <copy file="${tests.src}/etc/jspwiki.properties.tmpl" tofile="${tests.src}/etc/jspwiki.properties" />
-     <copy file="${tests.src}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests.src}/etc/jspwiki_rcs.properties" />
-     <copy file="${tests.src}/etc/jspwiki_vers.properties.tmpl" tofile="${tests.src}/etc/jspwiki_vers.properties" />
+     <copy file="${tests}/etc/jspwiki.properties.tmpl" tofile="${tests}/etc/jspwiki.properties" />
+     <copy file="${tests}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests}/etc/jspwiki_rcs.properties" />
+     <copy file="${tests}/etc/jspwiki_vers.properties.tmpl" tofile="${tests}/etc/jspwiki_vers.properties" />
      <replace file="src/WebContent/WEB-INF/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="${tests.src}/etc/jspwiki.properties"
+     <replace file="${tests}/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="${tests.src}/etc/jspwiki_rcs.properties"
+     <replace file="${tests}/etc/jspwiki_rcs.properties"
               replacefilterfile="${build.properties}" />
-     <replace file="${tests.src}/etc/jspwiki_vers.properties"
+     <replace file="${tests}/etc/jspwiki_vers.properties"
               replacefilterfile="${build.properties}" />
   </target>
 
@@ -207,9 +208,9 @@
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
     <delete file="src/WebContent/WEB-INF/jspwiki.properties" />
-    <delete file="${tests.src}/etc/jspwiki.properties" />
-    <delete file="${tests.src}/etc/jspwiki_rcs.properties" />
-    <delete file="${tests.src}/etc/jspwiki_vers.properties" />
+    <delete file="${tests}/etc/jspwiki.properties" />
+    <delete file="${tests}/etc/jspwiki_rcs.properties" />
+    <delete file="${tests}/etc/jspwiki_vers.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -248,7 +249,7 @@
        tests. -->
   <target name="compiletests" depends="init,compile"
           description="Builds the test code.">
-    <javac srcdir="${tests.src}"
+    <javac srcdir="${tests}"
            destdir="${tests.build}"
            debug="true"
            deprecation="${deprecation}"
@@ -352,7 +353,7 @@
       <fileset dir="${tests.build}">
         <include name="**/*.class"/>
       </fileset>
-      <fileset dir="${tests.src}">
+      <fileset dir="${tests}">
         <include name="com/**/*.properties"/>
       </fileset>
     </jar>
@@ -477,8 +478,8 @@
     </jar>
     <!-- Copy the Jasper runtime JAR -->
     <copy toDir="${code.build}">
-      <fileset dir="${tests.src}/lib" includes="jasper-runtime-*.jar"/>
-      <fileset dir="${tests.src}/lib" includes="commons-el-*.jar"/>
+      <fileset dir="${tests}/lib" includes="jasper-runtime-*.jar"/>
+      <fileset dir="${tests}/lib" includes="commons-el-*.jar"/>
     </copy>
   </target>
 
@@ -489,7 +490,7 @@
     <attribute name="src"/>
     <attribute name="args" default=""/>   
     <sequential>
-      <java jar="${tests.src}/lib/yuicompressor-2.3.3.jar"
+      <java jar="${tests}/lib/yuicompressor-2.3.3.jar"
         output="${tmpdir}/compress/@{src}"
         fork="true">
         <arg line="'${code.web}/@{src}' @{args}" />
@@ -672,13 +673,13 @@
 
   <target name="tests-init" depends="mkpropertyfile">
       <!-- Build up the /etc directory for testing -->
-      <delete file="${tests.src}/etc/userdatabase.xml" />
-      <delete file="${tests.src}/etc/userdatabase.xml.old" />
-      <copy file="${tests.src}/etc/userdatabase.xml.tmpl" toFile="${tests.src}/etc/userdatabase.xml"/>
-      <delete file="${tests.src}/etc/groupdatabase.xml" />
-      <delete file="${tests.src}/etc/groupdatabase.xml.old" />
-      <copy file="${tests.src}/etc/groupdatabase.xml.tmpl" toFile="${tests.src}/etc/groupdatabase.xml"/>
-      <mkdir dir="${tests.src}/etc/WEB-INF" />
+      <delete file="${tests}/etc/userdatabase.xml" />
+      <delete file="${tests}/etc/userdatabase.xml.old" />
+      <copy file="${tests}/etc/userdatabase.xml.tmpl" toFile="${tests}/etc/userdatabase.xml"/>
+      <delete file="${tests}/etc/groupdatabase.xml" />
+      <delete file="${tests}/etc/groupdatabase.xml.old" />
+      <copy file="${tests}/etc/groupdatabase.xml.tmpl" toFile="${tests}/etc/groupdatabase.xml"/>
+      <mkdir dir="${tests}/etc/WEB-INF" />
 
       <!-- Create web.xml files for testing -->
       <copy file="${code.web}/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
@@ -700,15 +701,15 @@
       <replace file="${webtests.build}/web.xml.container"
                token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
       <copy file="${webtests.build}/web.xml.container"
-          tofile="${tests.src}/etc/WEB-INF/web.xml" overwrite="true" />
+          tofile="${tests}/etc/WEB-INF/web.xml" overwrite="true" />
 
       <!-- Copy the DTDs and jspwiki.properties to the test WEB-INF -->
-      <mkdir dir="${tests.src}/etc/WEB-INF/dtd" />
-      <copy toDir="${tests.src}/etc/WEB-INF/dtd">
+      <mkdir dir="${tests}/etc/WEB-INF/dtd" />
+      <copy toDir="${tests}/etc/WEB-INF/dtd">
         <fileset dir="${basedir}/etc/dtd/" />
       </copy>
       <copy file="${code.web}/WEB-INF/jspwiki.properties"
-          tofile="${tests.src}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
+          tofile="${tests}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
   </target>
 
   <!-- This target runs the JUnit tests that are available
@@ -752,11 +753,11 @@
         </batchtest>
      </junit>
 
-  	 <junitreport todir="${tests.src}">
+  	 <junitreport todir="${tests}">
   	    <fileset dir="${tests.reports}">
   	       <include name="**/TEST-*.xml" />
   	    </fileset>
-  	    <report format="noframes" todir="${tests.src}" />
+  	    <report format="noframes" todir="${tests}" />
   	 </junitreport>
 
   </target>
@@ -774,17 +775,17 @@
         <formatter type="plain" />
         <formatter type="xml" usefile="yes" />
         <batchtest todir="${tests.reports}">
-           <fileset dir="${tests.src}">
+           <fileset dir="${tests}">
                 <include name="**/AuthorizationManagerTest.java" />
            </fileset>
         </batchtest>
      </junit>
 
-     <junitreport todir="${tests.src}">
+     <junitreport todir="${tests}">
         <fileset dir="${tests.reports}">
            <include name="**/TEST-*.xml" />
         </fileset>
-        <report format="noframes" todir="${tests.src}" />
+        <report format="noframes" todir="${tests}" />
      </junitreport>
 
   </target>
@@ -814,7 +815,7 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="${tests.src}/etc/jspwiki.properties"
+    <copy file="${tests}/etc/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
       <entry key="jspwiki.authorizer" value="com.ecyrd.jspwiki.auth.authorize.WebContainerAuthorizer" />
@@ -890,7 +891,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <echo message="Creating Selenium test scripts..."/>
       <mkdir dir="@{context.dir}/selenium" />
       <copy flatten="true" toDir="@{context.dir}/selenium">
-        <fileset dir="${tests.src}/etc/selenium/tests/all" />
+        <fileset dir="${tests}/etc/selenium/tests/all" />
         <filterset>
           <filter token="selenium.context" value="@{context}" />
         </filterset>
@@ -923,7 +924,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
           <include name="commons-logging.properties" />
           <include name="jspwiki.policy" />
         </fileset>
-        <fileset dir="${tests.src}/etc" includes="userdatabase.xml groupdatabase.xml" />
+        <fileset dir="${tests}/etc" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
       <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
       
@@ -1154,12 +1155,12 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
 
     <!-- Bulk-copy the table setup/teardown scripts -->
-    <property name="tests.db.scripts" value="${tests.src}/etc/db/${jdbc.driver.id}" />
+    <property name="tests.db.scripts" value="${tests}/etc/db/${jdbc.driver.id}" />
     <mkdir dir="${tests.db.scripts}" />
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
       <filterset>
-        <filtersfile file="${tests.src}/etc/jspwiki.properties" />
+        <filtersfile file="${tests}/etc/jspwiki.properties" />
         <filtersfile file="build.properties" />
       </filterset>
     </copy>
@@ -1177,7 +1178,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <property name="db.props.exist" value="true" />
 
     <!-- Dump all of the JDBC properties where our test scripts can find them -->
-    <echoproperties prefix="jdbc." destfile="${tests.src}/etc/db/jdbc.properties" />
+    <echoproperties prefix="jdbc." destfile="${tests}/etc/db/jdbc.properties" />
   </target>
 
   <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
@@ -1226,7 +1227,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
   <target name="hsql-check-start" depends="db-properties">
     <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="${tests.src}/etc/db/hsql/server.properties" prefix="hsql" />
+    <property file="${tests}/etc/db/hsql/server.properties" prefix="hsql" />
     <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from ${tests.src}/etc/db/hsql/server.properties</fail>
     <condition property="hsql.up">
       <socket server="localhost" port="${hsql.server.port}" />
