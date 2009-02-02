@@ -97,7 +97,7 @@ public final class LoggerFactory
      *  @param clazz The Class to find a Logger for.
      *  @return A Logger instance.
      */
-    public static final Logger getLogger( Class clazz )
+    public static final Logger getLogger( Class<?> clazz )
     {
         return getLogger( clazz.getName() );
     }
@@ -150,9 +150,9 @@ public final class LoggerFactory
             @SuppressWarnings("unused")
             Object slf4jLog4jImpl = Class.forName( SLF4J_LOG4J_ADAPTER_CLASS);
             //
-            Object log4jLogger = Class.forName(LOG4J_LOGGER_CLASS );
-            Class loggerClass = Class.forName(LOG4J_LOGGER_CLASS  );
-            Class[] parms = new Class[1];
+            Object log4jLogger = Class.forName( LOG4J_LOGGER_CLASS );
+            Class<?> loggerClass  = Class.forName( LOG4J_LOGGER_CLASS );
+            Class<?>[] parms = new Class[1];
             parms[0] = new String().getClass();
             Method getLoggerMethod = loggerClass.getMethod( "getLogger", parms );
             log4jLogger = getLoggerMethod.invoke( log4jLogger, loggerName );
@@ -163,8 +163,8 @@ public final class LoggerFactory
             //
             Object[] arglist = new Object[1];
             arglist[0] = log4jLogger;
-            Class mbeanClass = Class.forName( "org.apache.log4j.jmx.LoggerDynamicMBean" );
-            Constructor constr = mbeanClass.getConstructor( loggerClass );
+            Class<?> mbeanClass = Class.forName( "org.apache.log4j.jmx.LoggerDynamicMBean" );
+            Constructor<?> constr = mbeanClass.getConstructor( loggerClass );
             Object dynMBean = constr.newInstance( arglist );
             ObjectName mbeanName = new ObjectName( getObjectNamePrefix() + loggerName );
             MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();

@@ -29,7 +29,7 @@ import java.io.Serializable;
  *  
  *  @since 3.0
  */
-public class WikiName implements Serializable, Comparable
+public class WikiName implements Serializable, Comparable<WikiName>
 {
     private static final long serialVersionUID = 1L;
     private String m_space;
@@ -131,16 +131,34 @@ public class WikiName implements Serializable, Comparable
         return m_space+":"+m_path;
     }
 
+    /**
+     *  @{inheritDoc}
+     *  
+     *  @return {@inheritDoc}
+     */
     public int hashCode()
     {
         return m_space.hashCode() ^ m_path.hashCode();
     }
     
-    public int compareTo( Object o ) throws ClassCastException
+    /**
+     *  A WikiName is compared using it's toString() method.
+     *  
+     *  @param o The Object to compare against.
+     *  @return {@inheritDoc}
+     */
+    public int compareTo( WikiName o )
     {
-        return toString().compareTo( ((WikiName)o).toString() );
+        return toString().compareTo( o.toString() );
     }
     
+    /**
+     *  A WikiName is equal to another WikiName if the space and the path
+     *  match.
+     *  
+     *  @param o The Object to compare against.
+     *  @return True, if this WikiName is equal to another WikiName.
+     */
     public boolean equals( Object o )
     {
         if( o instanceof WikiName )
