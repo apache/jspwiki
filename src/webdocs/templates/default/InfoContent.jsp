@@ -165,9 +165,10 @@
   </wiki:CheckRequestContext>
   <%-- DIFF section --%>
 
-
+	<%--
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
-    <wiki:CheckVersion mode="notfirst">
+	--%>
+    
     <%-- if( itemcount > 1 ) { --%>
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
@@ -232,7 +233,6 @@
     </div>
     ${pagination}
     <%-- } /* itemcount > 1 */ --%>
-    </wiki:CheckVersion>
   </wiki:Tab>
 
   </wiki:TabbedSection>

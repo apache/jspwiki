@@ -1,3 +1,14 @@
+2009-02-02  Dirk Frederickx <dirk.frederickx@gmail.org>
+
+        * 2.8.2-svn-7
+        
+        * JSPWIKI-491, Icons in list of attachements were only shown when the
+        attachment type was lower-case
+
+		* JSPWIKI-486 Always show the information table, also in case there is 
+		only one version of the page.
+		
+ 
 2009-01-23  Harry Metske <metskem@apache.org>
 
         * 2.8.2-svn-6
