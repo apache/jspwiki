@@ -199,7 +199,9 @@
           </wiki:LinkTo>
         </td>
 
-        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+	    <td style="white-space:nowrap;" sortvalue="<fmt:formatDate value='<%= currentPage.getLastModified() %>' pattern='EEE, d MMM yyyy hh:mm:ss' />">
+        <fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+        </td>
         <td style="white-space:nowrap;text-align:right;">
           <c:set var="ff"><wiki:PageSize /></c:set>
           <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
@@ -358,7 +360,9 @@
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+	  <td style="white-space:nowrap;" sortvalue="<fmt:formatDate value='<%= att.getLastModified() %>' pattern='EEE, d MMM yyyy hh:mm:ss' />">
+	  <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+	  </td>
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.

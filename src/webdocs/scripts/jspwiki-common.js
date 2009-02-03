@@ -1318,7 +1318,7 @@ var Sortable =
 		this.DescendingTitle = "sort.descending".localize();
 		
 		$ES('.sortable table',page).each(function(table){
-			if( table.rows.length < 2 ) return;
+			if( table.rows.length <= 2 ) return;
 
 			$A(table.rows[0].cells).each(function(th){
 				th=$(th);
@@ -1375,42 +1375,70 @@ var Sortable =
 	},
 
 	guessDataType: function(rows, colidx){
+
 		var num=date=ip4=euro=kmgt=true;
+
 		rows.each(function(r,i){
-			var v = $getText(r.cells[colidx]).clean().toLowerCase();
+
+			var v = r.cells[colidx];
+			v = v.getAttribute('sortvalue') || $getText(v);
+			v = v.clean().toLowerCase();
+
 			if(num)  num  = !isNaN(parseFloat(v));
 			if(date) date = !isNaN(Date.parse(v));
 			if(ip4)  ip4  = v.test(/(?:\\d{1,3}\\.){3}\\d{1,3}/); //169.169.0.1
 			if(euro) euro = v.test(/^[£$€][0-9.,]+/);
 			if(kmgt) kmgt = v.test(/(?:[0-9.,]+)\s*(?:[kmgt])b/);  //2 MB, 4GB, 1.2kb, 8Tb
+
 		});
+
 		return (kmgt) ? 'kmgt': (euro) ? 'euro': (ip4) ? 'ip4': (date) ? 'date': (num) ? 'num': 'string';
+
 	},
 
 	convert: function(val, datatype){
-		switch(datatype){
-			case "num" : return parseFloat( val.match( Number.REparsefloat ) );
-			case "euro": return parseFloat( val.replace(/[^0-9.,]/g,'') );
-			case "date": return new Date( Date.parse( val ) );
+
+		switch( datatype ){
+
+			case "num" : 
+				return parseFloat( val.match( Number.REparsefloat ) );
+				
+			case "euro": 
+				return parseFloat( val.replace(/[^0-9.,]/g,'') );
+				
+			case "date": 
+				return new Date( Date.parse( val ) );
+				
 			case "ip4" : 
 				var octet = val.split( "." );
 				return parseInt(octet[0]) * 1000000000 + parseInt(octet[1]) * 1000000 + parseInt(octet[2]) * 1000 + parseInt(octet[3]);
+
 			case "kmgt":
 				var v = val.toString().toLowerCase().match(/([0-9.,]+)\s*([kmgt])b/);
 				if(!v) return 0;
 				var z=v[2];
 				z = (z=='m') ? 3 : (z=='g') ? 6 : (z=='t') ? 9 : 0;
 				return v[1].toFloat()*Math.pow(10,z);
-			default: return val.toString().toLowerCase();
+
+			default: 
+				return val.toString().toLowerCase();
+
 		}
+
 	},
 
-	createCompare: function(i, datatype) {
-		return function(row1, row2) {
-			var val1 = Sortable.convert( $getText(row1.cells[i]), datatype );
-			var val2 = Sortable.convert( $getText(row2.cells[i]), datatype );
+	createCompare: function( i, datatype ){
 
-			if(val1<val2){ return -1 } else if(val1>val2){ return 1 } else return 0;
+		return function( row1, row2 ){
+
+			//fixme: should cache the converted sortable values
+			var v1 = row1.cells[i],
+				v2 = row2.cells[i],
+				val1 = Sortable.convert( v1.getAttribute('sortvalue') || $getText(v1), datatype ),
+				val2 = Sortable.convert( v2.getAttribute('sortvalue') || $getText(v2), datatype );
+
+			return val1 - val2;
+			
 		}
 	}
 }

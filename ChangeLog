@@ -1,3 +1,15 @@
+2009-02-03  Dirk Frederickx <dirk.frederickx@gmail.org>
+
+        * 2.8.2-svn-8
+        
+        * JSPWIKI-480, sorting on timestamps (modified date) in
+        the Attachement tab and the Info tab was not always working,
+        as timeformats are depending on the user-preferences.
+        An invisible javascript parsable timeformat attribute is now 
+        added to the tables, independent of the user-preferred timeformat.
+        This attribute is used by the js sorting routines.
+
+
 2009-02-02  Dirk Frederickx <dirk.frederickx@gmail.org>
 
         * 2.8.2-svn-7

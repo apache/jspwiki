@@ -48,7 +48,9 @@
 
     </table>
   </form>
+
   <wiki:Messages div="error" />
+
 </wiki:Permission>
 <wiki:Permission permission="!upload">
 <div class="formhelp"><fmt:message key="attach.add.permission"/></div>
@@ -105,7 +107,9 @@
       <td style="text-align:center;">
         <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title'/>"><wiki:PageVersion /></a>
       </td>
-	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+	  <td style="white-space:nowrap;" sortvalue="<fmt:formatDate value='<%= att.getLastModified() %>' pattern='EEE, d MMM yyyy hh:mm:ss' />">
+	  <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+	  </td>
       <td><wiki:Author /></td>
       <wiki:Permission permission="delete">
       <td>
