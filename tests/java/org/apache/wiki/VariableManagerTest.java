@@ -225,7 +225,7 @@ public class VariableManagerTest extends TestCase
         // test with a wrong named parm
         //
         String res = m_variableManager.expandVariables( m_context, ">>>>>{$timestamp wrongparm=bla}<<<<<" );
-        assertEquals( ">>>>>Unrecognized parameter: wrongparm<<<<<", res );
+        assertEquals( ">>>>>Unrecognized parameter:wrongparm<<<<<", res );
     }
 
     public void testTimeStamp4() throws Exception
