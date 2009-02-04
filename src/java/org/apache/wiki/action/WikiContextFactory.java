@@ -452,7 +452,7 @@ public final class WikiContextFactory
      */
     private void initSpecialPageRedirects( Properties properties )
     {
-        for( Map.Entry entry : properties.entrySet() )
+        for( Map.Entry<Object,Object> entry : properties.entrySet() )
         {
             String key = (String) entry.getKey();
             if( key.startsWith( PROP_SPECIALPAGE ) )

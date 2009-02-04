@@ -136,7 +136,7 @@ public class JspDocument
      *  @return <code>true</code> if an import was actually added, <code>false</code>
      *  otherwise
      */
-    public boolean addPageImportDirective( Class clazz )
+    public boolean addPageImportDirective( Class<? extends Object> clazz )
     {
         // No need to add it if it's already there
         List<Tag> imports = getPageImport( clazz );
@@ -225,7 +225,7 @@ public class JspDocument
      * @param clazz the class, interface or other type to match
      * @return a list of all matching tags, which may be a zero-length list
      */
-    public List<Tag> getPageImport( Class clazz )
+    public List<Tag> getPageImport( Class<? extends Object> clazz )
     {
         if( clazz == null )
         {

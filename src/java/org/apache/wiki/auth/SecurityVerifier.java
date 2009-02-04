@@ -617,7 +617,7 @@ public final class SecurityVerifier
         }
         
         // See if we can find the LoginModule on the classpath
-        Class c = null;
+        Class<?> c = null;
         try
         {
             m_session.addMessage( INFO_JAAS, "The property '" + AuthenticationManager.PROP_LOGIN_MODULE +

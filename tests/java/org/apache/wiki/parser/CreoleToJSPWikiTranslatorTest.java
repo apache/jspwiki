@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
 public class CreoleToJSPWikiTranslatorTest extends TestCase
 {
 
-    public static final String TEST_PROPERTIES = "tests/com/ecyrd/jspwiki/parser/creole.properties";
+    public static final String TEST_PROPERTIES = "tests/java/org/apache/wiki/parser/creole.properties";
 
     public static void main(String[] args)
     {

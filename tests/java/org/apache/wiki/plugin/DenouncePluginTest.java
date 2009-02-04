@@ -56,7 +56,7 @@ public class DenouncePluginTest extends TestCase {
 
 
             ClassLoader loader = Denounce.class.getClassLoader();
-            InputStream in = loader.getResourceAsStream("com/ecyrd/jspwiki/plugin/denounce.properties");
+            InputStream in = loader.getResourceAsStream("org/apache/wiki/plugin/denounce.properties");
 
             if (in == null) {
                 throw new IOException("No property file found! (Check the installation, it should be there.)");

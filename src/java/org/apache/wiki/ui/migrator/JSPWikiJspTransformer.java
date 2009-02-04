@@ -66,6 +66,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public void transform( Map<String, Object> sharedState, JspDocument doc )
     {
         List<Node> nodes = doc.getNodes();
@@ -197,13 +198,13 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
      * @param doc the JspDocument to check
      * @param clazzes the classes to verify imports for
      */
-    private void verifyImports( JspDocument doc, Class... clazzes )
+    private void verifyImports( JspDocument doc, Class<? extends Object>... clazzes )
     {
         // Build the regex Pattern to search for, and a lookup Map
-        Map<String,Class> classNames = new HashMap<String,Class>();
+        Map<String,Class<? extends Object>> classNames = new HashMap<String,Class<? extends Object>>();
         StringBuilder s = new StringBuilder();
         s.append( '(' );
-        for ( Class clazz : clazzes )
+        for ( Class<? extends Object> clazz : clazzes )
         {
             classNames.put( clazz.getSimpleName(), clazz );
             s.append( clazz.getSimpleName() );
@@ -221,7 +222,7 @@ public class JSPWikiJspTransformer extends AbstractJspTransformer
             while( m.find() )
             {
                 String found= m.group( 1 ).trim();
-                Class foundClass = classNames.get( found );
+                Class<? extends Object> foundClass = classNames.get( found );
                 if ( foundClass != null )
                 {
                     if ( doc.addPageImportDirective( foundClass ) )

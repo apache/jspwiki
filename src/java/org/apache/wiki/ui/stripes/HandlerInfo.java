@@ -430,12 +430,12 @@ public class HandlerInfo
         {
             if( hasOneParameter )
             {
-                Constructor c = m_permissionClass.getConstructor( new Class[] { String.class } );
+                Constructor<?> c = m_permissionClass.getConstructor( new Class[] { String.class } );
                 perm = (Permission) c.newInstance( new Object[] { target } );
             }
             else
             {
-                Constructor c = m_permissionClass.getConstructor( new Class[] { String.class, String.class } );
+                Constructor<?> c = m_permissionClass.getConstructor( new Class[] { String.class, String.class } );
                 perm = (Permission) c.newInstance( new Object[] { target, actions } );
             }
         }
