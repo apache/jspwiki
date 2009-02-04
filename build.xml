@@ -191,7 +191,7 @@
      <copy file="${tests}/etc/jspwiki.properties.tmpl" tofile="${tests}/etc/jspwiki.properties" />
      <copy file="${tests}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests}/etc/jspwiki_rcs.properties" />
      <copy file="${tests}/etc/jspwiki_vers.properties.tmpl" tofile="${tests}/etc/jspwiki_vers.properties" />
-     <replace file="src/WebContent/WEB-INF/jspwiki.properties"
+     <replace file="${code.web}/WEB-INF/jspwiki.properties"
               replacefilterfile="${build.properties}" />
      <replace file="${tests}/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
@@ -207,7 +207,7 @@
     <delete dir="${tests.build}" />
     <delete dir="${code.build}" />
     <delete dir="${tests.reports}" />
-    <delete file="src/WebContent/WEB-INF/jspwiki.properties" />
+    <delete file="${code.web}/WEB-INF/jspwiki.properties" />
     <delete file="${tests}/etc/jspwiki.properties" />
     <delete file="${tests}/etc/jspwiki_rcs.properties" />
     <delete file="${tests}/etc/jspwiki_vers.properties" />
@@ -309,7 +309,7 @@
       <classpath>
          <path refid="path.tests" />
       </classpath>
-      <arg value="src/WebContent" />
+      <arg value="${code.web}" />
       <arg value="build/migrated" />
       <sysproperty key="stripes.migrator.migrateForms" value="${stripes.migrator.migrateForms}" />
     </java>
@@ -450,10 +450,10 @@
     <mkdir dir="${code.build}/jsp/java" />
     <jasper2
       validateXml="false"
-      uriroot="${code.src}/webdocs"
+      uriroot="${code.web}"
       outputDir="${code.build}/jsp/java"
       poolingEnabled="false"
-      package="org.apache.jspwiki.jsp"
+      package="org.apache.wiki.jsp"
       webXmlFragment="${code.build}/jsp/web-fragment.xml" />
     <!-- Compile the generated Java sources -->
     <mkdir dir="${code.build}/jsp/classes"/>
@@ -466,7 +466,7 @@
     <!-- Inject JSP mappings into web.xml -->
     <echo message="Adding JSP servlet mappings to web.xml" />
     <loadfile property="generated-web.xml" srcFile="${code.build}/jsp/web-fragment.xml"/>
-    <copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true">
+    <copy file="${code.web}/WEB-INF/web.xml" toFile="${code.build}/web.xml" overwrite="true">
       <filterset begintoken="&lt;!--" endtoken="--&gt;">
         <filter token=" PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS " value="${generated-web.xml}" />
       </filterset>
@@ -490,7 +490,7 @@
     <attribute name="args" default=""/>   
     <sequential>
       <java jar="${tests}/lib/yuicompressor-2.3.3.jar"
-        output="${tmpdir}/compress/@{src}"
+        output="${tmpdir}/compress/webdocs/@{src}"
         fork="true">
         <arg line="'${code.web}/@{src}' @{args}" />
       </java>
