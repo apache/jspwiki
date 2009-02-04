@@ -301,7 +301,7 @@
     <exec executable="apt">
       <arg line="-classpath ${cp} -nocompile"/>
       <arg line="-factory net.sourceforge.stripes.tools.SiteStructureTool"/>
-      <arg line="-Astripes.output.file=${code.build}/sitemap.xml"/>
+      <arg line="-Astripes.output.file=build/sitemap.xml"/>
       <arg line="${srcfiles}"/>
     </exec>
     <!-- Migrate the JSPs -->
@@ -309,7 +309,7 @@
       <classpath>
          <path refid="path.tests" />
       </classpath>
-      <arg value="src/webdocs" />
+      <arg value="src/WebContent" />
       <arg value="build/migrated" />
       <sysproperty key="stripes.migrator.migrateForms" value="${stripes.migrator.migrateForms}" />
     </java>
@@ -1236,15 +1236,15 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
   <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
     description="Starts the Hypersonic database for testing.">
     <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="${tests.src}/etc/db/hsql/jspwiki.lck"/>
+    <delete file="${tests}/etc/db/hsql/jspwiki.lck"/>
     <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="${tests.src}/etc/db/hsql">
+      dir="${tests}/etc/db/hsql">
       <classpath>
         <pathelement location="${jdbc.driver.jar}" />
       </classpath>
     </java>
     <sleep seconds="5" />
-    <available file="${tests.src}/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
+    <available file="${tests}/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
     <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
    cd tests/etc/db/hsql
    java -cp ${jdbc.driver.jar} org.hsqldb.Server
@@ -1262,7 +1262,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       SHUTDOWN
     </sql>
     <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="${tests.src}/etc/db/hsql/jspwiki.lck" />
+    <delete file="${tests}/etc/db/hsql/jspwiki.lck" />
     <echo message="Done." />
   </target>
 

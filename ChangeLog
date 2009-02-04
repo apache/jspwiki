@@ -1,3 +1,9 @@
+2009-02-04  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-61
+        
+        * Fixed a few failing unit tests; tweaked build.xml so tests run again.
+
 2009-01-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-60
