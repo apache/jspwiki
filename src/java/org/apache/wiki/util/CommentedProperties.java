@@ -177,7 +177,7 @@ public class CommentedProperties extends Properties
         {
             for( String comment : commentList )
             {
-                if  ( BLANK_LINE_DETECTOR.matcher( comment ).matches() )
+                if( BLANK_LINE_DETECTOR.matcher( comment ).matches() )
                 {
                     writer.write( comment );
                 }
@@ -190,7 +190,7 @@ public class CommentedProperties extends Properties
             }
         }
     }
-    
+
     private void writeText( BufferedWriter writer, Object entry, EscapeMode mode ) throws IOException
     {
         String e = entry.toString();
@@ -229,7 +229,7 @@ public class CommentedProperties extends Properties
                     break;
                 }
                 case ' ': {
-                    if ( leadingSpaces || mode == EscapeMode.KEY )
+                    if( (mode == EscapeMode.ENTRY && leadingSpaces) || mode == EscapeMode.KEY )
                     {
                         writer.write( '\\' );
                     }
@@ -240,10 +240,9 @@ public class CommentedProperties extends Properties
                 case '#':
                 case '!':
                 case '=':
-                case ':':
-                {
+                case ':': {
                     leadingSpaces = false;
-                    if ( mode == EscapeMode.KEY )
+                    if( mode == EscapeMode.KEY )
                     {
                         writer.write( '\\' );
                     }
@@ -399,7 +398,11 @@ public class CommentedProperties extends Properties
      * {@link #load(Reader)} or {@link #load(InputStream)} methods, <em>or</em>
      * as supplied to the{@link #setProperty(String, String, String)} method.
      * The leading <code>#</code> or <code>!</code> characters are not
-     * included.
+     * included, but everything after these characters, including whitespace, is
+     * returned. If the comment spans more than one line, the String returned
+     * will contain line separator characters separating each line. The line
+     * separator characters will be specific to the JRE platform in use, as
+     * returned by the System property <code>line.separator</code>.
      * 
      * @param key the key to look up
      * @return the list of strings representing the comment, each item of which

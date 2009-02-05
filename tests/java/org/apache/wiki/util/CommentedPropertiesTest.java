@@ -73,24 +73,23 @@ public class CommentedPropertiesTest extends TestCase
         assertTrue( m_props.toString().indexOf( "newProp=newValue2" ) != -1 );
     }
 
-    public void testSetMultilineProperty() throws Exception
+    public void testSetEscapedProperty() throws Exception
     {
         CommentedProperties props = new CommentedProperties();
-        props.put( "foo", "This is a\r\nmultiline\nproperty\rwith 4 lines." );
+        props.put( "foo", "This is an\r\nescaped\nline\rwith 4 separator characters." );
         File outFile = createFile( "test2.properties" );
         OutputStream out = new FileOutputStream( outFile );
         props.store( out, null );
         
         // Make sure that the line was escaped properly
-        String cr = System.getProperty( "line.separator" );
         String propString = props.toString();
-        assertEquals( "foo=This is a \\" + cr +"multiline \\" + cr + "property \\" + cr + "with 4 lines.\n", propString );
+        assertEquals( "foo=This is an\\r\\nescaped\\nline\\rwith 4 separator characters.\n", propString );
         
-        // Reload and make sure the property is parsed in as 1 line
+        // Reload and make sure the property is parsed in as 4 lines
         props = new CommentedProperties();
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test2.properties" );
         props.load( in );
-        assertEquals( "This is a multiline property with 4 lines.", props.get( "foo" ) );
+        assertEquals( "This is an\r\nescaped\nline\rwith 4 separator characters.", props.get( "foo" ) );
         
         // Delete the test file
         File file = getFile( "test2.properties" );
@@ -103,12 +102,12 @@ public class CommentedPropertiesTest extends TestCase
     public void testGetComment()
     {
         String cr = System.getProperty( "line.separator" );
-        assertEquals( "This is a sample properties file with comments", m_props.getComment( "testProp1" ) );
-        assertEquals( "This is a comment" + cr + "with two lines", m_props.getComment( "testProp2" ) );
-        assertEquals( "This is a property with no value", m_props.getComment( "testProp3" ) );
-        assertEquals( "Two final properties", m_props.getComment( "testProp4" ) );
+        assertEquals( " This is a sample properties file with comments", m_props.getComment( "testProp1" ) );
+        assertEquals( " This is a comment" + cr + "   with two lines", m_props.getComment( "testProp2" ) );
+        assertEquals( " This is a property with no value", m_props.getComment( "testProp3" ) );
+        assertEquals( " Two final properties", m_props.getComment( "testProp4" ) );
         assertEquals( null, m_props.getComment( "testProp5" ) );
-        assertEquals( "This is a property that spans more than 1 line", m_props.getComment( "testProp6" ) );
+        assertEquals( " This is a property that spans more than 1 line", m_props.getComment( "testProp6" ) );
     }
     
     public void testSetComment()
@@ -118,7 +117,7 @@ public class CommentedPropertiesTest extends TestCase
         assertEquals( "This is a comment", m_props.getComment( "testProp7" ) );
         
         // Make sure it was actually added to the string returned by toString()
-        assertTrue( m_props.toString().contains( "# This is a comment\ntestProp7=TestValue" ) );
+        assertTrue( m_props.toString().contains( "#This is a comment\ntestProp7=TestValue" ) );
     }
     
     public void testMultilineProperties()

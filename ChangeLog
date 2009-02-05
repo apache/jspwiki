@@ -1,3 +1,10 @@
+2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-62
+        
+        * Additional tweaks to CommentedProperties, and fixes to 4 more failing unit tests.
+       Removed some erroneous linebreaks in the Russian version of default.properties.
+
 2009-02-04  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-61
