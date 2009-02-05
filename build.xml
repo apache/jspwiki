@@ -35,18 +35,16 @@
     |   |___[jspwiki.properties and web.xml]
     |
     |___src
-    |   |___webdocs
+    |   |___WebContent
     |   |   |___[all .jsp files]
     |   |
-    |   |___com
+    |   |___java
     |       |___[...and the rest of the source code files]
     |
     |___docs
     |
-    |___lib
-    |
     |___tests
-        |___com
+        |___java
             |___[...and the rest of the test source code]
 
     $Id: build.xml,v 1.97 2007-12-22 22:00:31 jalkanen Exp $
@@ -339,8 +337,8 @@
 	  <copy file="${code.i18n}/plugin/PluginResources.properties" tofile="${code.i18n}/plugin/PluginResources_en.properties"/>
       <jar jarfile="${jarfile}" index="true">
          <fileset dir="${code.build}" includes="**/*.class" />
-         <fileset dir="${code.src}" includes="com/**/*.properties" />
-         <fileset dir="${code.src}" includes="templates/**/*.properties" />
+         <fileset dir="${code.src}" includes="org/**/*.properties" />
+         <!--fileset dir="${code.src}" includes="templates/**/*.properties" /-->
          <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
          <metainf dir="${code.web}/WEB-INF" includes="jspwiki.tld" />
@@ -398,24 +396,14 @@
     <delete file="${warfile}" />
 
     <war destfile="${warfile}"
-         webxml="${code.web}/WEB-INF/web.xml" >
-      <!-- <lib dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/> -->
+         webxml="${code.web}/WEB-INF/web.xml" duplicate="preserve">
       <lib file="${jarfile}" />
       <lib file="${code.build}/JSPWiki-jsp.jar" />
       <lib file="${code.build}/jasper-runtime-*.jar" />
       <lib file="${code.build}/commons-el-*.jar"  />
-      <fileset dir="${code.web}" includes="**" excludes="**/FCK/jsp" />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
-      <webinf dir="${code.web}/WEB-INF">
-        <include name="geronimo-web.xml" />
-        <include name="dtd/**" />
-        <include name="jsp/**" />
-        <include name="jspwiki.policy" />
-        <include name="jspwiki.properties" />
-        <include name="userdatabase.xml" />
-        <include name="groupdatabase.xml" />
-      </webinf>
+      <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar" />
     	<!--
       <classes dir="etc">
        	<include name="oscache.properties" />

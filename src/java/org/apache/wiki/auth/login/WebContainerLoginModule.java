@@ -145,10 +145,10 @@ public class WebContainerLoginModule extends AbstractLoginModule
 
     /**
      * If the current Authorizer is a
-     * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer},
+     * {@link org.apache.wiki.auth.authorize.WebAuthorizer},
      * this method iterates through each role returned by the
      * authorizer (via
-     * {@link com.ecyrd.jwpwiki.auth.authorize.WebAuthorizer#isUserInRole( HttpServletRequest, Role)})
+     * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole( HttpServletRequest, Role)})
      * and injects the appropriate ones into the Subject.
      * @param acb the authorizer callback
      * @param rcb the HTTP request
