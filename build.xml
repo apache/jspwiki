@@ -734,8 +734,8 @@
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
                 <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
-                <exclude name="com/ecyrd/jspwiki/web/*.*" />
-                <exclude name="com/ecyrd/jspwiki/TranslatorReaderTest*" />
+                <exclude name="org/apache/wiki/web/*.*" />
+                <exclude name="org/apache/wiki/TranslatorReaderTest*" />
            </fileset>
         </batchtest>
      </junit>
