@@ -156,6 +156,11 @@ public class PageRenamer
             updateReferrers( context, fromPage, toPage, referrers );
         }
 
+        //
+        //  re-index the page 
+        //
+        engine.getSearchManager().reindexPage(toPage);
+
 
         //
         //  Done, return the new name.
