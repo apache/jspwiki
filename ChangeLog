@@ -1,5 +1,14 @@
 2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
 
+        * 3.0.0-svn-63
+
+        * CommentedProperties no longer Unicode-escapes 8859-1 characters
+        between 161 and 255 decimal (aka accented Latin, plus umlauts galore).
+        This commit also includes the first test run of BundleMigrator, which has
+        had the effect of changing the formatting of the i18n files slightly.
+
+2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
         * 3.0.0-svn-62
         
         * Additional tweaks to CommentedProperties, and fixes to 4 more failing unit tests.

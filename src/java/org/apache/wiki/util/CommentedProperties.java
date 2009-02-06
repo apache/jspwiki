@@ -251,7 +251,7 @@ public class CommentedProperties extends Properties
                 }
                 default: {
                     leadingSpaces = false;
-                    if( ch < 32 || ch > 126 )
+                    if( ch < 32 || ( ch > 126 && ch < 160 ) || ch > 255 )
                     {
                         writer.write( '\\' );
                         writer.write( 'u' );

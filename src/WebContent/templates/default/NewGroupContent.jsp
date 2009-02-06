@@ -50,7 +50,7 @@
   <table class="wikitable">
     <!-- Name -->
     <tr>
-      <th><label><fmt:message key="newgroup.name" /></label></th>
+      <th><stripes:label name="newgroup.name" /></th>
       <td><input type="text" name="group" size="30" value="<%=name%>" />
       <div class="formhelp">
         <fmt:message key="newgroup.name.description" />
