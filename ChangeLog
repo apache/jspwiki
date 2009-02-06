@@ -1,3 +1,16 @@
+2009-02-06  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-64
+        
+        * JSPWIKI-477 Renamed pages are no longer in the Lucene index
+        * deletion of the ./lib directory
+        * deletion of the ./etc/dtd directory (containing web-app_2_3.dtd)
+        * more tweaks to build.xml
+               no duplicates in the warfile anymore now 
+               take the web.xml that has been filled with compiled jsp stuff
+               but still more improvements necessary
+               (should we have a priha.properties in WEB-INF/classes ?)
+
 2009-02-05  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-63

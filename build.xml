@@ -385,7 +385,7 @@
     <delete quiet="true">
       <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
     </delete>
-    <!--<copy file="etc/web.xml" toFile="${code.build}/web.xml" overwrite="true" /> -->
+    <copy file="${code.web}/WEB-INF/web.xml" toFile="${code.build}/web.xml" overwrite="false" />
   </target>
 
   <target name="war" depends="war-init,jar,jar-compiled-jsps,compressedjs"
@@ -396,20 +396,14 @@
     <delete file="${warfile}" />
 
     <war destfile="${warfile}"
-         webxml="${code.web}/WEB-INF/web.xml" duplicate="preserve">
+         webxml="${code.build}/web.xml" duplicate="preserve">
       <lib file="${jarfile}" />
       <lib file="${code.build}/JSPWiki-jsp.jar" />
       <lib file="${code.build}/jasper-runtime-*.jar" />
       <lib file="${code.build}/commons-el-*.jar"  />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
-      <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar" />
-    	<!--
-      <classes dir="etc">
-       	<include name="oscache.properties" />
-       	<include name="log4j.properties" />
-      </classes>
-      -->
+      <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml" />
     </war>
 
   </target>
