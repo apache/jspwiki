@@ -9,7 +9,9 @@
 	<classpathentry kind="lib" path="tests/lib/jetty-plus-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/jetty-jmx-5.1.14.jar"/>
 	<classpathentry kind="lib" path="tests/lib/selenium-server-1.0-beta1.jar"/>
-	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="tests/etc"/>
+	<classpathentry kind="lib" path="tests/build"/>
+	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="etc/i18n"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -32,7 +32,7 @@ import org.apache.wiki.api.PluginException;
 /**
  *  Plugin that enumerates the pages in the wiki that have not yet been defined.
  *  
- *  Parameters  (from AbstractReferralPlugin):
+ *  Parameters  (from AbstractFilteredPlugin):
  *  <ul>
  *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
  * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
@@ -40,7 +40,7 @@ import org.apache.wiki.api.PluginException;
  *
  */
 public class UndefinedPagesPlugin
-    extends AbstractReferralPlugin
+    extends AbstractFilteredPlugin
 {
     /**
      *  {@inheritDoc}

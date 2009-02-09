@@ -59,10 +59,10 @@ import org.apache.wiki.util.TextUtil;
  *  </ul>
  *  
  */
-public abstract class AbstractReferralPlugin
+public abstract class AbstractFilteredPlugin
     implements WikiPlugin
 {
-    private static Logger log = LoggerFactory.getLogger( AbstractReferralPlugin.class );
+    private static Logger log = LoggerFactory.getLogger( AbstractFilteredPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
@@ -97,6 +97,9 @@ public abstract class AbstractReferralPlugin
     /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LASTMODIFIED     = "showLastModified";
 
+    /** The parameter name for setting the showAttachment.  Value is <tt>{@value}</tt>. */
+    public static final String PARAM_SHOW_ATTACHMENTS = "showAttachments";
+
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
     protected           String   m_separator = ""; // null not blank
@@ -104,6 +107,7 @@ public abstract class AbstractReferralPlugin
 
     protected           Pattern[] m_exclude;
     protected           Pattern[]  m_include;
+    protected           boolean m_showAttachments = true;
     
     protected           String m_show = "pages";
     protected           boolean m_lastModified=false;
@@ -126,6 +130,12 @@ public abstract class AbstractReferralPlugin
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( (String)params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
         if( m_maxwidth < 0 ) m_maxwidth = 0;
+
+        String showAttachmentsString = (String) params.get( PARAM_SHOW_ATTACHMENTS );
+        if( "false".equals( showAttachmentsString ) )
+        {
+            m_showAttachments = false;
+        }
 
         String s = (String) params.get( PARAM_SEPARATOR );
 
@@ -236,11 +246,20 @@ public abstract class AbstractReferralPlugin
      */
     protected Collection filterCollection( Collection c )
     {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<Object> result = new ArrayList<Object>();
 
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
-            String pageName = (String) i.next();
+            String pageName = null;
+            Object objectje = i.next();
+            if( objectje instanceof WikiPage )
+            {
+                pageName = ((WikiPage) objectje).getName();
+            }
+            else
+            {
+                pageName = (String) objectje;
+            }
 
             //
             //  If include parameter exists, then by default we include only those
@@ -278,7 +297,21 @@ public abstract class AbstractReferralPlugin
 
             if( includeThis )
             {
-                result.add( pageName );
+                // show the page if it's not an attachment, or it's and
+                // attachment and show_attachment=true
+                boolean isAttachment = pageName.contains( "/" );
+                if( !isAttachment || (isAttachment && m_showAttachments) )
+                {
+                    if( objectje instanceof WikiPage )
+                    {
+                        result.add( objectje );
+                    }
+                    else
+                    {
+                        result.add( pageName );
+                    }
+                }
+                
                 //
                 //  if we want to show the last modified date of the most recently changed page, we keep a "high watermark" here:
                 WikiPage page = null;

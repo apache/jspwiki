@@ -1,3 +1,25 @@
+2009-02-09  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-65
+        
+        * JSPWIKI-496 RecentChanges plugin should filter pages.
+        The IndexPlugin, RecentChangesPlugin and ReferredPagesPlugin have been
+        refactored, they are now all subclasses of AbstractFilteredPlugin.
+        The AbstractFilteredPlugin is the new name for the old AbstractReferralPlugin.
+        As a result, you should now use Glob expressions instead of
+        Regular expressions for all plugins (ReferredPages and IndexPlugin were previously
+        using Regular Expressions, if you use the include/exclude parameters for those
+        plugins, you should convert them to Glob expressions.)
+        
+        * Added a new JUnit test for RecentChangesPlugin
+        
+        * Changed the build.xml (removed the copy of etc/dtd, which was deleted earlier)
+        
+        * added etc/i18n to the classpath and changed project setting "Allow output folders
+        as source folders", this makes it possible to run individual JUnit tests again.
+        Also profanity.properties and denounce.properties can now be found again during 
+        JUnit tests (saves a lot of stacktraces in stdout)
+
 2009-02-06  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-64

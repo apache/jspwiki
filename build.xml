@@ -684,11 +684,7 @@
       <copy file="${webtests.build}/web.xml.container"
           tofile="${tests}/etc/WEB-INF/web.xml" overwrite="true" />
 
-      <!-- Copy the DTDs and jspwiki.properties to the test WEB-INF -->
-      <mkdir dir="${tests}/etc/WEB-INF/dtd" />
-      <copy toDir="${tests}/etc/WEB-INF/dtd">
-        <fileset dir="${basedir}/etc/dtd/" />
-      </copy>
+      <!-- Copy jspwiki.properties to the test WEB-INF -->
       <copy file="${code.web}/WEB-INF/jspwiki.properties"
           tofile="${tests}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
   </target>

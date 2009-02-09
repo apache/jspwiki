@@ -59,7 +59,7 @@ public class ReferredPagesPluginTest extends TestCase
         engine.saveText( "SomeBodyPointsToMeToo", "Somebody points to this page too" );
         engine.saveText( "IPointToTwoPages", "Reference to [SomeBodyPointsToMe]  and   [SomeBodyPointsToMeToo]." );
 
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "IPointToSomeoneElse" ) );
+//        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "IPointToSomeoneElse" ) );
         manager = new PluginManager( engine, props );
     }
 
@@ -119,10 +119,10 @@ public class ReferredPagesPluginTest extends TestCase
         context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "IPointToTwoPages" ) );
 
         String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe.*'}" );
+                                      "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );
 
         assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[SomeBodyPointsToMe.*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n",
+                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[SomeBodyPointsToMe*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n",
                       res );
 
     }

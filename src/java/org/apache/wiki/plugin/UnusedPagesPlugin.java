@@ -35,7 +35,7 @@ import org.apache.wiki.util.TextUtil;
  * Plugin for displaying pages that are not linked to in other pages.
  * Uses the ReferenceManager.
  * <p>
- *  Parameters  (from AbstractReferralPlugin):
+ *  Parameters  (from AbstractFilteredPlugin):
  *  <ul>
  *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
  * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
@@ -43,7 +43,7 @@ import org.apache.wiki.util.TextUtil;
  *
  */
 public class UnusedPagesPlugin
-    extends AbstractReferralPlugin
+    extends AbstractFilteredPlugin
 {
     /**
      *  If set to "true", attachments are excluded from display.  Value is {@value}.

@@ -29,6 +29,9 @@ NEW FEATURES
 	
 	The IndexPlugin has a new parameter (showAttachments=true/false), use false if you don't
 	want attachments to show up on the PageIndex page.
+	
+	The IndexPlugin, RecentChangesPlugin and ReferredPagesPlugin are now subclasses of AbstractFilteredPlugin
+	and therefore inheret the parameters exclude and include, so you can now use these filters. 
 
 The full log of any issues fixed can be found at:
 

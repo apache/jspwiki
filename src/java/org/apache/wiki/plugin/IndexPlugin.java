@@ -21,8 +21,6 @@
 package org.apache.wiki.plugin;
 
 import java.util.*;
-import java.util.regex.Pattern;
-
 import org.apache.ecs.Element;
 import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
@@ -38,33 +36,18 @@ import org.apache.wiki.providers.ProviderException;
  *  <br>The default is to include all pages.
  *  <p>
  *  This is a complete rewrite of the old IndexPlugin under an Apache license.
- *  <p>Parameters (From AbstractReferralPlugin) : </p>
- *  <ul>
- *    <li><b>include</b> - A regexp pattern for marking which pages should be included.</li>
- *    <li><b>exclude</b> - A regexp pattern for marking which pages should be excluded.</li>
- *    <li><b>showAttachments</b> - Indicates if attachments should also be shown, the default is true.</li>
- *  </ul>
+ *  <p>Parameters (From AbstractFilteredPlugin) : </p>
  */
-public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
+public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
 {
     private static Logger log = LoggerFactory.getLogger( IndexPlugin.class );
-    
-    /** The parameter name for setting the showAttachment.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_SHOW_ATTACHMENTS = "showAttachments";
     
     /**
      *  {@inheritDoc}
      */
     public String execute( WikiContext context, Map params ) throws PluginException
     {
-        String include = (String)params.get( PARAM_INCLUDE );
-        String exclude = (String)params.get( PARAM_EXCLUDE );
-        String showAttachmentsString = (String) params.get( PARAM_SHOW_ATTACHMENTS );
-        boolean showAttachments = true;
-        if( "false".equals( showAttachmentsString ) )
-        {
-            showAttachments = false;
-        }
+        super.initialize( context, params );
         
         List<String> pages;
         div masterDiv = new div();
@@ -76,7 +59,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
         indexDiv.setClass( "header" );
         try
         {
-            pages = listPages( context, include, exclude, showAttachments );
+            pages = listPages( context );
             Collections.sort( pages );
             
             char initialChar = ' ';
@@ -134,45 +117,26 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
     }
 
     /**
-     *  Grabs a list of all pages and filters them according to the include/exclude patterns.
-     *  
+     * Grabs a list of all pages and filters them according to the
+     * include/exclude patterns and showAttachments parameter.
+     * 
      * @param context
-     * @param include
-     * @param exclude
-     * @return A list containing page names which matched the filters.
+     * @return A list containing page names
      * @throws ProviderException
      */
-    private List<String> listPages( WikiContext context, String include, String exclude, boolean showAttachments )
-        throws ProviderException
+    private List<String> listPages( WikiContext context ) throws ProviderException
     {
-        Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
-        Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // There are no control characters in page names
-        
+
         ArrayList<String> result = new ArrayList<String>();
-        
+
         Collection pages = context.getEngine().getReferenceManager().findCreated();
-        
+
+        pages = super.filterCollection( pages );
+
         for( Iterator i = pages.iterator(); i.hasNext(); )
         {
-            String pageName = (String) i.next();
-
-            if( excludePtrn.matcher( pageName ).matches() ) continue;
-            if( includePtrn.matcher( pageName ).matches() )
-            {
-                if( showAttachments )
-                {
-                    result.add( pageName );
-                }
-                else
-                {
-                    if( !pageName.contains( "/" ) )
-                    {
-                        result.add( pageName );
-                    }
-                }
-            }
+            result.add( (String) i.next() );
         }
-        
         return result;
     }
 

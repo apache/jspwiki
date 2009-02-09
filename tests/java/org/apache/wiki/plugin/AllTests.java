@@ -48,6 +48,7 @@ public class AllTests extends TestCase
         suite.addTest( UndefinedPagesPluginTest.suite() );
         suite.addTest( DenouncePluginTest.suite() );
         suite.addTest( ReferredPagesPluginTest.suite() );
+        suite.addTest( RecentChangesPluginTest.suite() );
 
         return suite;
     }

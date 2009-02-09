@@ -50,7 +50,7 @@ import org.apache.wiki.util.TextUtil;
  *  </ul>
  *  
  */
-public class RecentChangesPlugin
+public class RecentChangesPlugin extends AbstractFilteredPlugin
     implements WikiPlugin
 {
     /** Parameter name for the separator format.  Value is <tt>{@value}</tt>. */
@@ -81,8 +81,7 @@ public class RecentChangesPlugin
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
-        int      since    = TextUtil.parseIntParameter( (String) params.get("since"),
-                                                        DEFAULT_DAYS );
+        int since = TextUtil.parseIntParameter( (String) params.get( "since" ), DEFAULT_DAYS );
         int      spacing  = 4;
         boolean  showAuthor = true;
         boolean  showChangenote = true;
@@ -109,6 +108,8 @@ public class RecentChangesPlugin
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
         Collection   changes = engine.getRecentChanges();
+        super.initialize( context, params );
+        changes = super.filterCollection( changes );
 
         if( changes != null )
         {

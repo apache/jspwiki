@@ -46,7 +46,7 @@ import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
  * @author Harry Metske
  */
 @ModuleData( author = "Harry Metske", minVersion = "3.0", maxVersion = "1000000", minAPIVersion = "2.8" )
-public class PluginIndexPlugin extends AbstractReferralPlugin implements WikiPlugin
+public class PluginIndexPlugin extends AbstractFilteredPlugin implements WikiPlugin
 {
     /** Parameter name for the details parameter. Value is <tt>{@value}</tt>. */
     public static final String PARAM_DETAILS = "details";

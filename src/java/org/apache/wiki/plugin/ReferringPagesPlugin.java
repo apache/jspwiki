@@ -44,7 +44,7 @@ import org.apache.wiki.util.TextUtil;
  *  <li><b>page</b> - Which page to get the table of contents from.</li>
  *  </ul>
  *  
- *  From AbstractReferralPlugin:
+ *  From AbstractFilteredPlugin:
  *  <ul>
  *  <li><b>separator</b> - How to separate generated links; default is a wikitext line break,
  *             producing a vertical list.</li>
@@ -52,7 +52,7 @@ import org.apache.wiki.util.TextUtil;
  *  </ul>
  */
 public class ReferringPagesPlugin
-    extends AbstractReferralPlugin
+    extends AbstractFilteredPlugin
 {
     private static Logger log = LoggerFactory.getLogger( ReferringPagesPlugin.class );
 

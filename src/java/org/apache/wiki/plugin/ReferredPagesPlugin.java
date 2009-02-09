@@ -21,8 +21,6 @@
 package org.apache.wiki.plugin;
 
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
@@ -47,15 +45,13 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @author Dirk Frederickx
  */
-public class ReferredPagesPlugin implements WikiPlugin
+public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiPlugin
 {
     private static Logger log = LoggerFactory.getLogger( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
     private HashSet<String> m_exists  = new HashSet<String>();
     private StringBuilder   m_result  = new StringBuilder(1024);
-    private Pattern        m_includePattern;
-    private Pattern        m_excludePattern;
     private boolean m_formatCompact  = true;
     private boolean m_formatSort     = false;
 
@@ -64,12 +60,6 @@ public class ReferredPagesPlugin implements WikiPlugin
 
     /** The parameter name for the depth.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_DEPTH   = "depth";
-
-    /** The parameter name for the included pages.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_INCLUDE = "include";
-    
-    /** The parameter name for the excluded pages.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_EXCLUDE = "exclude";
     
     /** The parameter name for the format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT  = "format";
@@ -87,6 +77,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         throws PluginException
     {
         m_engine = context.getEngine();
+        super.initialize( context, params );
 
         WikiPage         page   = context.getPage();
         if( page == null ) return "";
@@ -134,28 +125,6 @@ public class ReferredPagesPlugin implements WikiPlugin
         // perl5 compiler : .* is 0..n instances of any char -- more powerful
         //PatternCompiler g_compiler = new GlobCompiler();
 
-        try
-        {
-            m_includePattern = Pattern.compile( includePattern );
-
-            m_excludePattern = Pattern.compile( excludePattern );
-        }
-        catch( PatternSyntaxException e )
-        {
-            if (m_includePattern == null )
-            {
-                throw new PluginException( "Illegal include pattern detected." );
-            }
-            else if (m_excludePattern == null )
-            {
-                throw new PluginException("Illegal exclude pattern detected.");
-            }
-            else
-            {
-                throw new PluginException("Illegal internal pattern detected.");
-            }
-        }
-
         // go get all referred links
         getReferredPages(context,rootname, 0);
 
@@ -179,9 +148,13 @@ public class ReferredPagesPlugin implements WikiPlugin
 
         ReferenceManager mgr = m_engine.getReferenceManager();
 
-        Collection<String> allPages = mgr.findRefersTo( pagename );
+        Collection<String> pages = mgr.findRefersTo( pagename );
+        if( pages != null )
+        {
+            pages = super.filterCollection( pages );
+        }
 
-        handleLinks( context, allPages, ++depth, pagename );
+        handleLinks( context, pages, ++depth, pagename );
     }
 
     private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename)
@@ -209,9 +182,6 @@ public class ReferredPagesPlugin implements WikiPlugin
 
             if( !m_engine.pageExists( link ) ) continue; // hide links to non
                                                          // existing pages
-
-            if( m_excludePattern.matcher( link ).find()) continue;
-            if( !m_includePattern.matcher( link ).find() ) continue;
 
             if( m_exists.contains( link ) )
             {
