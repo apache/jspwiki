@@ -1,3 +1,9 @@
+2009-02-09  Harry Metske <metskem@apache.org>
+
+        * 2.8.2-svn-10
+        
+        * JSPWIKI-496 RecentChangesPlugin should filter pages
+
 2009-02-06  Harry Metske <metskem@apache.org>
 
         * 2.8.2-svn-9

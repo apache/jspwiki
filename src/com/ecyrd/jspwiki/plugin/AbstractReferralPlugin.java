@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.*;
-
 import com.ecyrd.jspwiki.*;
 import com.ecyrd.jspwiki.parser.MarkupParser;
 import com.ecyrd.jspwiki.parser.WikiDocument;
@@ -230,13 +229,22 @@ public abstract class AbstractReferralPlugin
      */
     protected Collection filterCollection( Collection c )
     {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<Object> result = new ArrayList<Object>();
 
         PatternMatcher pm = new Perl5Matcher();
 
         for( Iterator i = c.iterator(); i.hasNext(); )
         {
-            String pageName = (String) i.next();
+            String pageName = null;
+            Object objectje = i.next();
+            if( objectje instanceof WikiPage )
+            {
+                pageName = ((WikiPage) objectje).getName();
+            }
+            else
+            {
+                pageName = (String) objectje;
+            }
 
             //
             //  If include parameter exists, then by default we include only those
@@ -272,7 +280,14 @@ public abstract class AbstractReferralPlugin
 
             if( includeThis )
             {
-                result.add( pageName );
+                if( objectje instanceof WikiPage )
+                {
+                    result.add( objectje );
+                }
+                else
+                {
+                    result.add( pageName );
+                }
                 //
                 //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
                 WikiPage page = null;
