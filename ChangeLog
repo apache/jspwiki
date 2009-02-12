@@ -1,3 +1,10 @@
+2008-02-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.2-svn-11
+        
+        * JSPWIKI-500: Spam containing only deletions is no longer sent
+        to Akismet.
+
 2009-02-09  Harry Metske <metskem@apache.org>
 
         * 2.8.2-svn-10
