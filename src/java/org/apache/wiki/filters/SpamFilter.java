@@ -306,7 +306,7 @@ public class SpamFilter
         cleanBanList();
         refreshBlacklists(context);
 
-        String change = getChange( context, content );
+        Change change = getChange( context, content );
 
         if(!ignoreThisUser(context))
         {
@@ -326,7 +326,7 @@ public class SpamFilter
             }
         }
 
-        log( context, ACCEPT, "-", change );
+        log( context, ACCEPT, "-", change.toString() );
         return content;
     }
 
@@ -441,7 +441,7 @@ public class SpamFilter
      *  @param content
      *  @throws RedirectException
      */
-    private synchronized void checkSinglePageChange( WikiContext context, String content, String change )
+    private synchronized void checkSinglePageChange( WikiContext context, String content, Change change )
         throws RedirectException
     {
         HttpServletRequest req = context.getHttpRequest();
@@ -452,7 +452,7 @@ public class SpamFilter
             int hostCounter = 0;
             int changeCounter = 0;
 
-            log.debug("Change is "+change);
+            log.debug("Change is "+change.m_change);
 
             long time = System.currentTimeMillis()-60*1000L; // 1 minute
 
@@ -498,7 +498,7 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change );
+                String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
                 log.info( "SPAM:TooManyModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many modifications/minute" );
                 checkStrategy( context, REASON_TOO_MANY_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")" );
             }
@@ -509,7 +509,7 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change );
+                String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
 
                 log.info("SPAM:SimilarModifications ("+uid+"). Added host "+addr+" to temporary ban list for doing too many similar modifications" );
                 checkStrategy( context, REASON_SIMILAR_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
@@ -519,7 +519,7 @@ public class SpamFilter
             //  Calculate the number of links in the addition.
             //
 
-            String tstChange = change;
+            String tstChange = change.toString();
             int    urlCounter = 0;
 
             Matcher matcher = m_urlPattern.matcher( tstChange );
@@ -538,7 +538,7 @@ public class SpamFilter
 
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change );
+                String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
 
                 log.info("SPAM:TooManyUrls ("+uid+"). Added host "+addr+" to temporary ban list for adding too many URLs" );
                 checkStrategy( context, REASON_TOO_MANY_URLS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")" );
@@ -575,7 +575,7 @@ public class SpamFilter
      * @param change
      * @throws RedirectException
      */
-    private void checkAkismet( WikiContext context, String change )
+    private void checkAkismet( WikiContext context, Change change )
         throws RedirectException
     {
         if( m_akismetAPIKey != null )
@@ -596,6 +596,15 @@ public class SpamFilter
 
             HttpServletRequest req = context.getHttpRequest();
 
+            //
+            //  Akismet will mark all empty statements as spam, so we'll just
+            //  ignore them.
+            //
+            if( change.m_adds == 0 && change.m_removals > 0 )
+            {
+                return;
+            }
+            
             if( req != null && m_akismet != null )
             {
                 log.debug("Calling Akismet to check for spam...");
@@ -620,7 +629,7 @@ public class SpamFilter
                                                          commentAuthor,
                                                          commentAuthorEmail,
                                                          commentAuthorURL,
-                                                         change,
+                                                         change.toString(),
                                                          null );
 
                 sw.stop();
@@ -633,7 +642,7 @@ public class SpamFilter
 
                     // m_temporaryBanList.add( host );
 
-                    String uid = log( context, REJECT, REASON_AKISMET, change );
+                    String uid = log( context, REJECT, REASON_AKISMET, change.toString() );
 
                     log.info("SPAM:Akismet ("+uid+"). Akismet thinks this change is spam; added host to temporary ban list.");
 
@@ -662,7 +671,7 @@ public class SpamFilter
      *  @param change
      * @throws RedirectException
      */
-    private void checkBotTrap( WikiContext context, String change ) throws RedirectException
+    private void checkBotTrap( WikiContext context, Change change ) throws RedirectException
     {
         HttpServletRequest request = context.getHttpRequest();
 
@@ -671,7 +680,7 @@ public class SpamFilter
             String unspam = request.getParameter( getBotFieldName() );
             if( unspam != null && unspam.length() > 0 )
             {
-                String uid = log( context, REJECT, REASON_BOT_TRAP, change );
+                String uid = log( context, REJECT, REASON_BOT_TRAP, change.toString() );
 
                 log.info("SPAM:BotTrap ("+uid+").  Wildly behaving bot detected.");
 
@@ -681,7 +690,7 @@ public class SpamFilter
         }
     }
 
-    private void checkUTF8( WikiContext context, String change ) throws RedirectException
+    private void checkUTF8( WikiContext context, Change change ) throws RedirectException
     {
         HttpServletRequest request = context.getHttpRequest();
 
@@ -691,7 +700,7 @@ public class SpamFilter
 
             if( utf8field != null && !utf8field.equals("\u3041") )
             {
-                String uid = log( context, REJECT, REASON_UTF8_TRAP, change );
+                String uid = log( context, REJECT, REASON_UTF8_TRAP, change.toString() );
 
                 log.info("SPAM:UTF8Trap ("+uid+").  Wildly posting dumb bot detected.");
 
@@ -726,7 +735,7 @@ public class SpamFilter
      *  @throws RedirectException
      */
 
-    private void checkBanList( WikiContext context, String change )
+    private void checkBanList( WikiContext context, Change change )
         throws RedirectException
     {
         HttpServletRequest req = context.getHttpRequest();
@@ -745,7 +754,7 @@ public class SpamFilter
                 {
                     long timeleft = (host.getReleaseTime() - now) / 1000L;
 
-                    log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change );
+                    log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change.m_change );
 
                     checkStrategy( context, REASON_IP_BANNED_TEMPORARILY, "You have been temporarily banned from modifying this wiki. ("+timeleft+" seconds of ban left)");
                 }
@@ -838,7 +847,7 @@ public class SpamFilter
      *  @param change
      *  @throws RedirectException
      */
-    private void checkPatternList(WikiContext context, String content, String change) throws RedirectException
+    private void checkPatternList(WikiContext context, String content, Change change) throws RedirectException
     {
         //
         //  If we have no spam patterns defined, or we're trying to save
@@ -849,20 +858,22 @@ public class SpamFilter
             return;
         }
 
+        String ch = change.toString();
+        
         if( context.getHttpRequest() != null )
-            change += context.getHttpRequest().getRemoteAddr();
+            ch += context.getHttpRequest().getRemoteAddr();
 
         for( Pattern p : m_spamPatterns )
         {
             // log.debug("Attempting to match page contents with "+p.getPattern());
 
-            Matcher matcher = p.matcher( change );
+            Matcher matcher = p.matcher( ch );
             if( matcher.find( ) )
             {
                 //
                 //  Spam filter has a match.
                 //
-                String uid = log( context, REJECT, REASON_REGEXP+"("+p.pattern()+")", change);
+                String uid = log( context, REJECT, REASON_REGEXP+"("+p.pattern()+")", change.toString());
 
                 log.info("SPAM:Regexp ("+uid+"). Content matches the spam filter '"+p.pattern()+"'");
 
@@ -871,6 +882,13 @@ public class SpamFilter
         }
     }
 
+    private void checkPatternList(WikiContext context, String content, String change ) throws RedirectException
+    {
+        Change c = new Change();
+        c.m_change = change;
+        checkPatternList(context,content,c);
+    }
+ 
     /**
      *  Creates a simple text string describing the added content.
      *
@@ -878,13 +896,15 @@ public class SpamFilter
      *  @param newText
      *  @return Empty string, if there is no change.
      */
-    private static String getChange( WikiContext context, String newText )
+    private static Change getChange( WikiContext context, String newText )
     {
         WikiPage page = context.getPage();
         StringBuffer change = new StringBuffer();
         WikiEngine engine = context.getEngine();
         // Get current page version
 
+        Change ch = new Change();
+        
         try
         {
             String oldText = engine.getPureText(page.getName(), WikiProvider.LATEST_VERSION);
@@ -895,10 +915,9 @@ public class SpamFilter
 
             if( rev == null || rev.size() == 0 )
             {
-                return "";
+                return ch;
             }
-
-
+            
             for( int i = 0; i < rev.size(); i++ )
             {
                 Delta d = rev.getDelta(i);
@@ -906,10 +925,16 @@ public class SpamFilter
                 if( d instanceof AddDelta )
                 {
                     d.getRevised().toString( change, "", "\r\n" );
+                    ch.m_adds++;
                 }
                 else if( d instanceof ChangeDelta )
                 {
                     d.getRevised().toString( change, "", "\r\n" );
+                    ch.m_adds++;
+                }
+                else if( d instanceof DeleteDelta )
+                {
+                    ch.m_removals++;
                 }
             }
         }
@@ -938,7 +963,8 @@ public class SpamFilter
             change.append("\r\n"+page.getAuthor());
         }
 
-        return change.toString();
+        ch.m_change = change.toString();
+        return ch;
     }
 
     /**
@@ -1110,9 +1136,9 @@ public class SpamFilter
         {
             if( pageContext.getAttribute( hashName ) == null )
             {
-                String change = getChange( context, EditorManager.getEditedText( pageContext ) );
+                Change change = getChange( context, EditorManager.getEditedText( pageContext ) );
 
-                log( context, REJECT, "MissingHash", change );
+                log( context, REJECT, "MissingHash", change.m_change );
 
                 String redirect = context.getURL(WikiContext.VIEW,"SessionExpired");
                 ((HttpServletResponse)pageContext.getResponse()).sendRedirect( redirect );
@@ -1155,7 +1181,7 @@ public class SpamFilter
         private  long m_addedTime = System.currentTimeMillis();
         private  long m_releaseTime;
         private  String m_address;
-        private  String m_change;
+        private  Change m_change;
 
         public String getAddress()
         {
@@ -1172,17 +1198,42 @@ public class SpamFilter
             return m_addedTime;
         }
 
-        public String getChange()
+        public Change getChange()
         {
             return m_change;
         }
 
-        public Host( String ipaddress, String change )
+        public Host( String ipaddress, Change change )
         {
             m_address = ipaddress;
             m_change  = change;
 
             m_releaseTime = System.currentTimeMillis() + m_banTime * 60 * 1000L;
+        }
+    }
+    
+    private static class Change
+    {
+        public String m_change;
+        public int    m_adds;
+        public int    m_removals;
+        
+        public String toString()
+        {
+            return m_change;
+        }
+        
+        public boolean equals(Object o)
+        {
+            if( o instanceof Change )
+                return m_change.equals( ((Change)o).m_change);
+            
+            return false;
+        }
+        
+        public int hashCode()
+        {
+            return m_change.hashCode()+17;
         }
     }
 }

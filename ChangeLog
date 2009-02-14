@@ -1,3 +1,9 @@
+2009-02-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-69
+        
+        * JSPWIKI-500: SpamFilter no longer calls Akismet on deletions.
+
 2009-02-14  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-68
