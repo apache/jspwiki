@@ -1,3 +1,12 @@
+2009-02-14  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-68
+        solved java.util.MissingResourceException: Could not find an error message with key: common.nopage
+	               at net.sourceforge.stripes.validation.LocalizableError.getMessageTemplate(LocalizableError.java:109)
+        by running Andrew's wonderfull BundleMigrator with the options :
+        "copy src/WebContent/WEB-INF/classes/templates/default common.nopage \
+         src/WebContent/WEB-INF/classes/CoreResources" 
+
 2009-02-14  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-67
