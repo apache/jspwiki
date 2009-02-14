@@ -56,7 +56,7 @@ public class DenouncePluginTest extends TestCase {
 
 
             ClassLoader loader = Denounce.class.getClassLoader();
-            InputStream in = loader.getResourceAsStream("org/apache/wiki/plugin/denounce.properties");
+            InputStream in = loader.getResourceAsStream("DenouncePlugin.properties");
 
             if (in == null) {
                 throw new IOException("No property file found! (Check the installation, it should be there.)");
@@ -70,7 +70,7 @@ public class DenouncePluginTest extends TestCase {
 
     }
 
-    private void setupHTTPRequest(String host, String header) {
+    private void setupHTTPRequest(String header) {
         MockHttpServletRequest request = engine.newHttpRequest();
         if (header != null)
             request.addHeader("User-Agent", header);
@@ -89,41 +89,41 @@ public class DenouncePluginTest extends TestCase {
     }
 
     public void testSLURPBot() throws Exception {
-        setupHTTPRequest(null, "Slurp/2.1");
+        setupHTTPRequest("Slurp/2.1");
         String res = manager.execute(context, pluginCmdLine);
         assertEquals(getDenounceText(), res);
         //
-        setupHTTPRequest(null, "ETSlurp/");
+        setupHTTPRequest("ETSlurp/");
         res = manager.execute(context, pluginCmdLine);
         assertEquals(getDenounceText(), res);
 
-        setupHTTPRequest(null, "Slurp");
+        setupHTTPRequest("Slurp");
         res = manager.execute(context, pluginCmdLine);
         assertFalse(getDenounceText().equalsIgnoreCase(res));
 
     }
       public void testGoogleBotWithWrongCase() throws Exception {
-        setupHTTPRequest(null, "gOOglebot/2.1");
+        setupHTTPRequest("gOOglebot/2.1");
         String res = manager.execute(context, pluginCmdLine);
         assertFalse(getDenounceText().equalsIgnoreCase(res));
       }
     public void testGoogleBot() throws Exception {
-        setupHTTPRequest(null, "Googlebot/2.1");
+        setupHTTPRequest("Googlebot/2.1");
         String res = manager.execute(context, pluginCmdLine);
         assertEquals(getDenounceText(), res);
         //
-        setupHTTPRequest(null, "ETSGooglebot/2.1");
+        setupHTTPRequest("ETSGooglebot/2.1");
         res = manager.execute(context, pluginCmdLine);
         assertEquals(getDenounceText(), res);
 
-        setupHTTPRequest(null, "ETSGooglebot");
+        setupHTTPRequest("ETSGooglebot");
         res = manager.execute(context, pluginCmdLine);
         assertEquals(getDenounceText(), res);
 
     }
 
     public void testPlugin() throws Exception {
-        setupHTTPRequest(null, null);
+        setupHTTPRequest(null);
 
         String res = manager.execute(context, pluginCmdLine);
 
