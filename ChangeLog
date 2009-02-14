@@ -1,3 +1,17 @@
+2009-02-14  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-67
+        
+        * Re-worked build.xml so that nearly all built artifacts, including
+        for tests and webtests, are now produced in the "build" directory.
+        Minor additional tweaks to prevent test classes from being included
+        in JSPWiki.jar, which was messing up webapp tests. Added priha.properties
+        to the WAR. Webtests are still broken, but less so than before.
+        Upgraded Selenium-RC to 1.0b2; if webtests can be actually made
+        to work, at least we will now be able to use them with Firefox 3.
+        
+        * Happy Valentine's Day! Make sure to hug the one you love today. 
+
 2009-02-14  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-66

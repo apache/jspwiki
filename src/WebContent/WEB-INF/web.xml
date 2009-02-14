@@ -364,6 +364,15 @@
    </resource-ref>
    REMOVE ME TO ENABLE JAVAMAIL  -->
 
+   <!--  REMOVE ME TO ENABLE JCR REPOSITORY
+   <resource-ref>
+     <description>Resource reference to a container-managed JCR repository.</description>
+     <res-ref-name>jcr/repository</res-ref-name>
+     <res-type>javax.jcr.Repository</res-type>
+     <res-auth>Container</res-auth>
+   </resource-ref>
+   REMOVE ME TO ENABLE JCR REPOSITORY  -->
+
    <!--
        CONTAINER-MANAGED AUTHENTICATION & AUTHORIZATION
     

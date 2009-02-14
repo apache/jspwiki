@@ -78,7 +78,8 @@
 	
   <!-- The class files are actually put in this directory.  It is
        a good habit to keep .class -files separate from the .java -files. -->
-  <property name="code.build" value ="build/classes" />
+  <property name="build" location="build" />
+  <property name="code.build" value ="${build}/classes" />
 
   <!-- The internationalization strings for the core JSPWiki classes -->
   <property name="code.i18n" value="${code.web}/WEB-INF/classes" />
@@ -86,10 +87,7 @@
   <property name="tmplt.i18n.dir" value="i18n_templates" />
 
   <!-- The location for the JAR file for the core JSPWiki classes -->
-  <property name="jarfile" value="${code.build}/${ant.project.name}.jar" />
-
-  <!-- The location of the JAR file for the test classes -->
-  <property name="testjarfile" location="${code.build}/${ant.project.name}-test.jar" />
+  <property name="jarfile" value="${build}/${ant.project.name}.jar" />
 
   <!-- Define a temporary directory, based on the system temporary directory,
        the user name, and the project name (defined above) -->
@@ -101,18 +99,24 @@
 
   <property name="tests" value="tests" />
   <property name="tests.src" value="${tests}/java" />
-  <property name="tests.build" value="${tests}/build" />
-  <property name="tests.reports" value="${tests}/reports" />
+  <property name="tests.build" value="${build}/tests/classes" />
+  <property name="tests.reports" value="${build}/tests/reports" />
   
+  <!-- The location of the JAR file for the test classes -->
+  <property name="testjarfile" location="${build}/${ant.project.name}-tests.jar" />
+
   <!-- WAR properties -->
+  <property name="warfile" value="${build}/${ant.project.name}.war" />
   <condition property="war.compile.jsps">
     <equals arg1="${compile.jsps}" arg2="true" casesensitive="false" trim="true" />
   </condition>
+  <property name="war.build"  value="${build}/war" />
+
   
   <!-- Web unit test properties -->
   <property name="webtests.browser"  value="*firefox" />
-  <property name="webtests.reports"  value="${tests}/reports/selenium" />
-  <property name="webtests.build"    value="${tests}/build/webtests" />
+  <property name="webtests.build"    value="${build}/webtests" />
+  <property name="webtests.reports"  value="${webtests.build}/reports" />
   <property name="webtests.port"     value="10024" />
   <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
@@ -156,7 +160,7 @@
   <path id="path.tests">
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
-	<pathelement location="${java.home}/../lib/tools.jar" />
+	   <pathelement location="${java.home}/../lib/tools.jar" />
      <fileset dir="${code.web}/WEB-INF/lib">
         <include name="*.jar" />
      </fileset>
@@ -203,9 +207,8 @@
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
+    <delete dir="${build}" />
     <delete dir="${tests.build}" />
-    <delete dir="${code.build}" />
-    <delete dir="${tests.reports}" />
     <delete file="${code.web}/WEB-INF/jspwiki.properties" />
     <delete file="${tests}/etc/jspwiki.properties" />
     <delete file="${tests}/etc/jspwiki_rcs.properties" />
@@ -340,7 +343,7 @@
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="org/**/*.properties" />
          <!--fileset dir="${code.src}" includes="templates/**/*.properties" /-->
-         <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
+         <fileset dir="etc" includes="ini/*.xml ini/*.properties priha.properties" />
          <metainf dir="${code.web}/WEB-INF" includes="jspwiki.tld" />
       </jar>
   </target>
@@ -376,6 +379,7 @@
    -->
    
   <target name="war-init" depends="installinit">
+    <mkdir dir="${war.build}" />
     <echo>Validating web.xml</echo>
     <schemavalidate file="${code.web}/WEB-INF/web.xml">
       <schema namespace="http://java.sun.com/xml/ns/j2ee"
@@ -383,29 +387,25 @@
     </schemavalidate>
     <!-- Clean up stuff from last time -->
     <delete quiet="true">
-      <fileset dir="${code.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
+      <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
     </delete>
-    <copy file="${code.web}/WEB-INF/web.xml" toFile="${code.build}/web.xml" overwrite="false" />
+    <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="false" />
   </target>
 
   <target name="war" depends="war-init,jar,jar-compiled-jsps,compressedjs"
           description="Builds the WAR file for installation.">
-
-    <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
-
     <delete file="${warfile}" />
-
     <war destfile="${warfile}"
-         webxml="${code.build}/web.xml" duplicate="preserve">
+         webxml="${war.build}/web.xml" duplicate="preserve">
       <lib file="${jarfile}" />
-      <lib file="${code.build}/JSPWiki-jsp.jar" />
-      <lib file="${code.build}/jasper-runtime-*.jar" />
-      <lib file="${code.build}/commons-el-*.jar"  />
+      <lib file="${war.build}/JSPWiki-jsp.jar" />
+      <lib file="${war.build}/jasper-runtime-*.jar" />
+      <lib file="${war.build}/commons-el-*.jar"  />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
-      <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml" />
+      <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml WEB-INF/jspwiki.tld" />
     </war>
-
+    <copy file="${warfile}" toDir="${install.fulldir}" />
   </target>
 
   <!-- Builds a JAR file that contains pre-compiled JSPs for use
@@ -429,17 +429,17 @@
       </classpath>
     </taskdef>
     <!-- Generate Java source for each JSP -->
-    <mkdir dir="${code.build}/jsp/java" />
+    <mkdir dir="${war.build}/java" />
     <jasper2
       validateXml="false"
       uriroot="${code.web}"
-      outputDir="${code.build}/jsp/java"
+      outputDir="${war.build}/java"
       poolingEnabled="false"
       package="org.apache.wiki.jsp"
-      webXmlFragment="${code.build}/jsp/web-fragment.xml" />
+      webXmlFragment="${war.build}/web-fragment.xml" />
     <!-- Compile the generated Java sources -->
-    <mkdir dir="${code.build}/jsp/classes"/>
-    <javac srcdir="${code.build}/jsp/java" destdir="${code.build}/jsp/classes">
+    <mkdir dir="${war.build}/classes"/>
+    <javac srcdir="${war.build}/java" destdir="${war.build}/classes">
       <classpath>
         <path refid="path.base" />
         <path refid="path.tests" />
@@ -447,18 +447,18 @@
     </javac>
     <!-- Inject JSP mappings into web.xml -->
     <echo message="Adding JSP servlet mappings to web.xml" />
-    <loadfile property="generated-web.xml" srcFile="${code.build}/jsp/web-fragment.xml"/>
-    <copy file="${code.web}/WEB-INF/web.xml" toFile="${code.build}/web.xml" overwrite="true">
+    <loadfile property="generated-web.xml" srcFile="${war.build}/web-fragment.xml"/>
+    <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="true">
       <filterset begintoken="&lt;!--" endtoken="--&gt;">
         <filter token=" PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS " value="${generated-web.xml}" />
       </filterset>
     </copy>
     <!-- Jar up the compiled class files -->
-    <jar jarfile="${code.build}/JSPWiki-jsp.jar" index="true">
-      <fileset dir="${code.build}/jsp/classes" includes="**/*.class" />
+    <jar jarfile="${war.build}/JSPWiki-jsp.jar" index="true">
+      <fileset dir="${war.build}/classes" includes="**/*.class" />
     </jar>
     <!-- Copy the Jasper runtime JAR -->
-    <copy toDir="${code.build}">
+    <copy toDir="${war.build}">
       <fileset dir="${tests}/lib" includes="jasper-runtime-*.jar"/>
       <fileset dir="${tests}/lib" includes="commons-el-*.jar"/>
     </copy>
@@ -503,7 +503,7 @@
 
   <target name="staticzip" depends="war" if="static.user">
     <property name="static.group" value="${static.user}" />
-    <tar destfile="${code.build}/${tar.static}" longfile="fail" compression="gzip">
+    <tar destfile="${build}/${tar.static}" longfile="fail" compression="gzip">
       <tarfileset dir="${war}" defaultexcludes="yes"
         username="${static.user}" group="${static.group}"
         mode="440" dirmode="550">
@@ -923,12 +923,17 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Copy the classes -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
         <fileset dir="etc" includes="oscache.properties" />
-        <fileset dir="etc" includes="log4j.properties" />
+      </copy>
+      <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
+        <fileset dir="${tests}/etc" includes="log4j.properties" />
+        <filterset>
+          <filter token="logfile" value="@{context.dir}/jetty.log" />
+        </filterset>
       </copy>
 
       <!-- Copy the libraries -->
       <copy toDir="@{context.dir}/webapp/WEB-INF/lib">
-        <fileset dir="lib" includes="*.jar" excludes="servlet-api.jar jsp-api.jar"/>
+        <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml" />
         <fileset file="${jarfile}"/>
         <fileset file="${jdbc.driver.jar}"/>
       </copy>
@@ -964,11 +969,12 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
       <!-- Start Jetty with our test context -->
       <echo message="Starting Jetty."/>
-      <java classname="org.apache.wiki.web.TestContainer" fork="true" spawn="true">
+      <java classname="org.apache.wiki.web.TestContainer" fork="false" spawn="false">
         <classpath>
            <path refid="path.tests" />
         </classpath>
         <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
+        <sysproperty key="log4j.configuration" value="log4j.properties" />
         <!--
         <jvmarg value="-Xdebug" />
         <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
@@ -1267,10 +1273,10 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
   <target name="i18n-jar-template" description="Jars a given i18n directory structure">
 	<input message="i18n template code to jar (ie: es_ES):" addproperty="i18n.template" />
-  	<jar jarfile="${code.build}/${ant.project.name}_${i18n.template}.jar" index="true">
+  	<jar jarfile="${build}/${ant.project.name}_${i18n.template}.jar" index="true">
 		<fileset dir="${tmplt.i18n.dir}/${ant.project.name}_${i18n.template}" includes="**/*.properties" />
 	</jar>
-	<echo message="Created ${code.build}/${ant.project.name}_${i18n.template}.jar. Drop it on your web/WEB-INF/lib folder and that should do the i18n trick" />
+	<echo message="Created ${build}/${ant.project.name}_${i18n.template}.jar. Drop it on your web/WEB-INF/lib folder and that should do the i18n trick" />
 	<echo message="You can also upload the jar to http://jspwiki.org/wiki/ContributedLocalizations or to any page linked to it to make it available for everyone!" />
   </target>
 

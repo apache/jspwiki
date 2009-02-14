@@ -28,6 +28,13 @@ jspwiki.applicationName = @appname@
 jspwiki.baseURL=
 
 #
+#  What Java Content Rrepository should JSPWiki use to store content?
+#  This value will be consulted only if JSPWiki cannot locate 
+#  a container-managed JCR under the JNDI name jcr/repository.
+#  Valid values are 'priha' and 'jackrabbit'.
+jspwiki.repository = priha
+
+#
 #  Which page provider class to use.  Possibilities are:
 #
 #    RCSFileProvider        - for simple RCS-based file storage
