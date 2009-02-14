@@ -26,7 +26,7 @@ public class FileSystemProviderTest extends TestCase
     public void setUp()
         throws Exception
     {
-        m_pagedir = System.getProperties().getProperty("java.io.tmpdir");
+        m_pagedir = System.getProperties().getProperty("java.io.tmpdir") + File.separatorChar + "jspwiki.test.pages";
 
         Properties props2 = new Properties();
 
