@@ -38,7 +38,7 @@ import org.apache.wiki.log.LoggerFactory;
 
 /**
  *  Denounces a link by removing it from any search engine. 
- *  <br> The bots are listed in org/apache/wiki/plugin/denounce.properties.
+ *  <br> The bots are listed in DenouncePlugin.properties.
  *  
  *  <p>Parameters : </p>
  *  <ul>
@@ -57,7 +57,7 @@ public class Denounce implements WikiPlugin
     /** Parameter name for setting the text.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TEXT = "text";
 
-    private static final String PROPERTYFILE = "org/apache/wiki/plugin/denounce.properties";
+    private static final String PROPERTYFILE = "DenouncePlugin.properties";
     private static final String PROP_AGENTPATTERN   = "denounce.agentpattern.";
     private static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
     private static final String PROP_REFERERPATTERN = "denounce.refererpattern.";

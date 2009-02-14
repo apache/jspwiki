@@ -81,7 +81,7 @@
   <property name="code.build" value ="build/classes" />
 
   <!-- The internationalization strings for the core JSPWiki classes -->
-  <property name="code.i18n" value="etc/i18n" />
+  <property name="code.i18n" value="${code.web}/WEB-INF/classes" />
   <!-- The i18n location in which 18n templates are created -->
   <property name="tmplt.i18n.dir" value="i18n_templates" />
 
@@ -163,6 +163,7 @@
      <fileset dir="${tests}/lib">
         <include name="*.jar" />
      </fileset>
+     <pathelement path="${code.i18n}"/>
      <pathelement path="${tests}/etc" />
   </path>
 
@@ -339,7 +340,6 @@
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="org/**/*.properties" />
          <!--fileset dir="${code.src}" includes="templates/**/*.properties" /-->
-         <fileset dir="${code.i18n}" />
          <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
          <metainf dir="${code.web}/WEB-INF" includes="jspwiki.tld" />
       </jar>

@@ -12,6 +12,5 @@
 	<classpathentry kind="lib" path="tests/etc"/>
 	<classpathentry kind="lib" path="tests/build"/>
 	<classpathentry kind="lib" path="tests/lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="etc/i18n"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

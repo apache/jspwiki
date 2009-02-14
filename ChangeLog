@@ -1,3 +1,16 @@
+2009-02-14  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-66
+        
+        * moved contents of etc/i18n to src/WebContent/WEB-INF/classes,
+           deleted etc/i18n
+        * moved src/java/org/apache/wiki/plugin/denounce.properties and 
+           src/java/org/apache/wiki/filters/profanity.properties
+           to
+           src/WebContent/WEB-INF/classes/DenouncePlugin.properties and
+           src/WebContent/WEB-INF/classes/ProfanityFilter.properties
+        * minor accompanying tweak to build.xml
+
 2009-02-09  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-65

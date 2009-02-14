@@ -64,7 +64,7 @@ public class DenouncePluginTest extends TestCase {
             denounceProps = new Properties();
             denounceProps.load(in);
         } catch (IOException e) {
-            fail("failed to load denounce.properties");
+            fail("failed to load DenouncePlugin.properties");
         }
 
 

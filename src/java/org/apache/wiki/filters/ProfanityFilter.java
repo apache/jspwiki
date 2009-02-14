@@ -36,7 +36,7 @@ import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class is an example of how to have a simple filter.  It removes
- *  all nasty words located at <code>profanity.properties</code> file, inside 
+ *  all nasty words located at <code>ProfanityFilter.properties</code> file, inside 
  *  <code>com/ecyrd/jspwiki/filters</code> package. The search of profanities
  *  is case unsensitive.
  *
@@ -46,7 +46,7 @@ public class ProfanityFilter extends BasicPageFilter
 {
     private static Logger     log = LoggerFactory.getLogger(ProfanityFilter.class);
     
-    private static final String PROPERTYFILE = "org/apache/wiki/filters/profanity.properties";
+    private static final String PROPERTYFILE = "ProfanityFilter.properties";
     private static String[] c_profanities = new String[0];
     
     static 
