@@ -696,7 +696,7 @@ public final class TextUtil
     /**
      *  Gets the given section (separated with "----") from the page text.
      *  Note that the first section is always #1.  If a page has no section markers,
-     *  them there is only a single section, #1.
+     *  then there is only a single section, #1.
      *
      *  @param pagedata WikiText to parse.
      *  @param section  Which section to get.
@@ -719,6 +719,11 @@ public final class TextUtil
             }
 
             start += 4; // Skip this "----"
+            // allow additional dashes, treat it as if it was a correct 4-dash
+            while (start < pagedata.length() && pagedata.charAt(start) == '-')
+            {
+                start++;
+            }
 
             previous = start;
         }

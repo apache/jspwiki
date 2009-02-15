@@ -326,6 +326,13 @@ public class TextUtilTest extends TestCase
         catch( IllegalArgumentException e ) {}
     }
 
+    public void testGetSectionWithMoreThanFourDashes() throws Exception
+    {
+        String src = "----------------\nSecond section\n----";
+
+        assertEquals("section 2", "\nSecond section\n", TextUtil.getSection(src, 2));
+    }
+
     public void testBooleanParameter()
        throws Exception
     {
