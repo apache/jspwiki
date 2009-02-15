@@ -87,6 +87,9 @@ import org.priha.util.ConfigurationException;
 
 public class ContentManager
 {
+    /**
+     *  The name of the default WikiSpace.
+     */
     public static final String DEFAULT_SPACE = "Main";
     
     private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE;
@@ -197,6 +200,8 @@ public class ContentManager
             {
                 try
                 {
+                    // FIXME: Should really use reflection to find this class - this requires
+                    //        an unnecessary compile-time presence of priha.jar.
                     m_repository = RepositoryManager.getRepository();
                 }
                 catch( ConfigurationException e1 )
@@ -233,7 +238,9 @@ public class ContentManager
         
         try
         {
+            Object foo = acquire();
             initialize();
+            release(foo);
         }
         catch( RepositoryException e )
         {
@@ -248,45 +255,52 @@ public class ContentManager
      */
     private void initialize() throws LoginException, RepositoryException 
     {
-        Object id = null;
+        Session session = m_sessionManager.getSession();
+            
+        //
+        //  Create the proper namespaces
+        //
+            
+        session.getWorkspace().getNamespaceRegistry().registerNamespace( "wiki", NS_JSPWIKI );
+            
+        Node root = session.getRootNode();
         
+        //
+        // Create main page directory
+        //
+        if( !root.hasNode( JCR_PAGES_NODE ) )
+        {
+            root.addNode( JCR_PAGES_NODE );
+        }
+        
+        //
+        //  Make sure at least the default "Main" wikispace exists.
+        //
+            
+        if( !root.hasNode( JCR_DEFAULT_SPACE ) )
+        {
+            root.addNode( JCR_DEFAULT_SPACE );
+        }
+            
+        session.save();
+
+    }
+    
+    public Object acquire() throws ProviderException
+    {
         try
         {
-            id = m_sessionManager.createSession();
-            
-            Session session = m_sessionManager.getSession();
-            
-            //
-            //  Create the proper namespaces
-            //
-            
-            session.getWorkspace().getNamespaceRegistry().registerNamespace( "wiki", NS_JSPWIKI );
-            
-            Node root = session.getRootNode();
-        
-            //
-            // Create main page directory
-            //
-            if( !root.hasNode( JCR_PAGES_NODE ) )
-            {
-                root.addNode( JCR_PAGES_NODE );
-            }
-        
-            //
-            //  Make sure at least the default "Main" wikispace exists.
-            //
-            
-            if( !root.hasNode( JCR_DEFAULT_SPACE ) )
-            {
-                root.addNode( JCR_DEFAULT_SPACE );
-            }
-            
-            session.save();
+            return m_sessionManager.createSession();
         }
-        finally
+        catch( Exception e )
         {
-            m_sessionManager.destroySession( id );
+            throw new ProviderException( "Unable to create a JCR session", e );
         }
+    }
+    
+    public void release( Object id )
+    {
+        m_sessionManager.destroySession( id );
     }
     
     /**
@@ -303,11 +317,9 @@ public class ContentManager
     public Collection<WikiPage> getAllPages( String space )
         throws ProviderException
     {
-        Object id = null;
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
         try
         {
-            id = m_sessionManager.createSession();
             Session session = m_sessionManager.getSession();
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
@@ -332,10 +344,6 @@ public class ContentManager
         catch( WikiException e )
         {
             throw new ProviderException("getAllPages()",e);
-        }
-        finally
-        {
-            m_sessionManager.destroySession(id);
         }
         
         return result;
@@ -620,11 +628,8 @@ public class ContentManager
             throw new ProviderException("Illegal page name");
         }
 
-        Object id = null;
-        
         try
         {
-            id = m_sessionManager.createSession();
             Session session = m_sessionManager.getSession();
             
             String jcrPath = getJCRPath( wikiPath ); 
@@ -634,10 +639,6 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new ProviderException( "Unable to check for page existence", e );
-        }
-        finally
-        {
-            m_sessionManager.destroySession( id );
         }
     }
     
@@ -659,11 +660,8 @@ public class ContentManager
             throw new WikiException("Illegal page name");
         }
 
-        Object id = null;
         try
         {
-            id = m_sessionManager.createSession();
-            
             Session session = m_sessionManager.getSession();
             
             return session.itemExists( getJCRPath( wikiPath ) );
@@ -671,10 +669,6 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new WikiException("Unable to check for page existence",e);
-        }
-        finally
-        {
-            m_sessionManager.destroySession( id );
         }
     }
 
@@ -981,11 +975,8 @@ public class ContentManager
      */
     public JCRWikiPage addPage( WikiName path, String contentType ) throws WikiException
     {
-        Object id = null;
-        
         try
         {
-            id = m_sessionManager.createSession();
             Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().addNode( getJCRPath(path) );
@@ -997,10 +988,6 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new WikiException( "Unable to add a page", e );
-        }
-        finally
-        {
-            m_sessionManager.destroySession(id);
         }
     }
 
@@ -1014,10 +1001,8 @@ public class ContentManager
      */
     public JCRWikiPage getPage( WikiName path ) throws ProviderException
     {
-        Object id = null;
         try
         {
-            id = m_sessionManager.createSession();
             Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
@@ -1037,20 +1022,12 @@ public class ContentManager
         {
             throw new ProviderException("Unable to get a  page",e);
         }
-        finally
-        {
-            m_sessionManager.destroySession( id );
-        }
     }
 
     public JCRWikiPage getPage( WikiName path, int version ) throws WikiException
     {
-        Object id = null;
-        
         try
         {
-            id = m_sessionManager.createSession();
-            
             Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
@@ -1066,10 +1043,6 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new WikiException( "Unable to get a page", e );
-        }
-        finally
-        {
-            m_sessionManager.destroySession( id );
         }
     }
     
@@ -1188,11 +1161,8 @@ public class ContentManager
 
     public WikiPage getDummyPage() throws WikiException
     {
-        Object id = null;
         try
         {
-            id = m_sessionManager.createSession();
-            
             Session session = m_sessionManager.getSession();
             Node nd = session.getRootNode().addNode( "/pages/Main/Dummy" );
             return new JCRWikiPage( m_engine, nd );
@@ -1200,10 +1170,6 @@ public class ContentManager
         catch( RepositoryException e )
         {
             throw new WikiException("Unable to get dummy page",e);
-        }
-        finally
-        {
-            m_sessionManager.destroySession( id );
         }
     }
 
@@ -1258,13 +1224,18 @@ public class ContentManager
  
         /**
          *  Between createSession() and destroySession() you may get the Session object
-         *  with this call. Otherwise the end result is undefined.
+         *  with this call.
          *  
          *  @return A valid Session object, if called between createSession and destroySession().
+         *  @throws IllegalStateException If the object has not been acquired with createSession()
          */
-        public Session getSession() 
+        public Session getSession() throws IllegalStateException
         {
-            return m_currentSession.get();
+            Session s = m_currentSession.get();
+            
+            if( s == null ) throw new IllegalStateException("You have not yet opened a Session");
+            
+            return s;
         } 
 
     }
