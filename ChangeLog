@@ -1,3 +1,11 @@
+2008-02-15  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-70
+        
+        * JSPWIKI-503 - InsertPage plugin carries dashes from section
+         breaks into output, thanks to Jonathan Sobel
+         Also added an extra JUnit test for this.
+        
 2009-02-14  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-69
