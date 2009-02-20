@@ -100,7 +100,7 @@ public class AttachmentDavProviderTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( RawPagesDavProviderTest.class );
+        return new TestSuite( AttachmentDavProviderTest.class );
     }
 
 
