@@ -350,9 +350,9 @@ public class DefaultWikiContext implements WikiContext
     {
         boolean admin = false;
 
-        WikiEngine m_engine = getEngine();
-        admin = m_engine.getAuthorizationManager().checkPermission( getWikiSession(),
-                                                                    new AllPermission( m_engine.getApplicationName() ) );
+        WikiEngine engine = getEngine();
+        admin = engine.getAuthorizationManager().checkPermission( getWikiSession(),
+                                                                  new AllPermission( engine.getApplicationName() ) );
 
         return admin;
     }
@@ -404,8 +404,6 @@ public class DefaultWikiContext implements WikiContext
      * (VIEW, EDIT, etc.)
      * 
      * @param arg The request context (one of the predefined contexts.)
-     * @throws IllegalStateException if the WikiEngine for this WikiContext has
-     *             not been previously set
      */
     public void setRequestContext( String arg )
     {
