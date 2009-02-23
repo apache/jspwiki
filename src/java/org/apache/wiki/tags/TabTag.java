@@ -21,19 +21,17 @@
 
 package org.apache.wiki.tags;
 
-import java.util.Locale;
-
 import javax.servlet.jsp.JspTagException;
 
-import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.tags.TabbedSectionTag.TabCollection;
 import org.apache.wiki.util.TextUtil;
-
 
 /**
  * <p>
- * Generates single tabbed page layout. Works together with the tabbedSection
- * javascript. Note that if you do not specify an url, the body contents of the
- * tag are loaded by the tag itself.
+ * Generates single tabbed page layout, when nested under a
+ * {@link TabbedSection} tag. Works together with the tabbedSection javascript.
+ * Note that if you do not specify an url, the body contents of the tag are
+ * loaded by the tag itself.
  * </p>
  * <p>
  * <b>Attributes</b>
@@ -63,64 +61,135 @@ import org.apache.wiki.util.TextUtil;
 public class TabTag extends WikiTagBase
 {
     private static final long serialVersionUID = -8534125226484616489L;
+    
+    private final TabInfo m_tabInfo = new TabInfo();
 
-    private String m_accesskey;
+    /**
+     * Lightweight class that holds information about TabTags.
+     */
+    public static class TabInfo 
+    {
+        private String m_id = null;
+        
+        private String m_accesskey = null;
 
-    private String m_outputTitle;
+        private String m_tabTitle = null;
 
-    private String m_tabTitle;
+        private String m_tabTitleKey = null;
 
-    private String m_tabTitleKey;
+        private String m_url = null;
+        
+        /**
+         * Sets the id.
+         * @param id
+         */
+        public void setId( String id )
+        {
+            m_id = id;
+        }
+        
+        /**
+         * Sets the tab access key.
+         * 
+         * @param accessKey the access key
+         */
+        public void setAccesskey( String accessKey )
+        {
+            m_accesskey = TextUtil.replaceEntities( accessKey ); // take only the
+            // first char
+        }
 
-    private String m_url;
+        /**
+         * Sets the tab title.
+         * 
+         * @param title the tab title
+         */
+        public void setTitle( String title )
+        {
+            m_tabTitle = TextUtil.replaceEntities( title );
+        }
 
+        /**
+         * Sets the tab title key.
+         * 
+         * @param key the tab title key
+         */
+        public void setTitleKey( String key )
+        {
+            m_tabTitleKey = TextUtil.replaceEntities( key );
+        }
+
+        /**
+         * Sets the tab URL.
+         * 
+         * @param url the URL
+         */
+        public void setUrl( String url )
+        {
+            m_url = TextUtil.replaceEntities( url );
+        }
+        
+        /**
+         * Returns the ID for this tab.
+         * @return
+         */
+        public String getId()
+        {
+            return m_id;
+        }
+        
+        /**
+         * Returns the URL for this tab, if supplied.
+         * 
+         * @return the URL
+         */
+        public String getUrl()
+        {
+            return m_url;
+        }
+
+        /**
+         * Returns the tab access key.
+         * 
+         * @return the access key
+         */
+        public String getAccesskey()
+        {
+            return m_accesskey;
+        }
+        
+        /**
+         * Returns the tab title.
+         * @return the title
+         */
+        public String getTitle()
+        {
+            return m_tabTitle;
+        }
+        
+        /**
+         * Returns the i18n key used to generate the tab title.
+         * @return the title key
+         */
+        public String getTitleKey()
+        {
+            return m_tabTitleKey;
+        }
+    }
+
+    protected TabInfo getTabInfo()
+    {
+        return m_tabInfo;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public int doEndTag() throws javax.servlet.jsp.JspTagException
     {
-        TabbedSectionTag parent = getParentTag( TabbedSectionTag.class );
-
-        StringBuilder sb = new StringBuilder();
-
-        if( parent.isStateFindDefaultTab() )
-        {
-            // inform the parent of each tab
-            parent.validateDefaultTab( getId() );
-        }
-        else if( parent.isStateGenerateTabBody() )
-        {
-            sb.append( "</div>\n" );
-        }
-        else if( parent.isStateGenerateTabMenu() )
-        {
-            sb.append( "<a" );
-
-            if( parent.validateDefaultTab( getId() ) )
-            {
-                sb.append( " class=\"activetab\"" );
-            }
-
-            sb.append( " id=\"menu-" + getId() + "\"" );
-
-            if( m_url != null )
-            {
-                sb.append( " href='" + m_url + "'" );
-            }
-
-            if( handleAccesskey() )
-            {
-                sb.append( " accesskey=\"" + m_accesskey + "\"" );
-            }
-
-            sb.append( " >" );
-            sb.append( m_outputTitle );
-            sb.append( "</a>" );
-        }
-
         try
         {
-            pageContext.getOut().write( sb.toString() );
+            pageContext.getOut().write( "</div>\n" );
         }
         catch( java.io.IOException e )
         {
@@ -136,12 +205,10 @@ public class TabTag extends WikiTagBase
     public void doFinally()
     {
         super.doFinally();
-
-        m_accesskey = null;
-        m_outputTitle = null;
-        m_tabTitle = null;
-        m_tabTitleKey = null;
-        m_url = null;
+        m_tabInfo.m_accesskey = null;
+        m_tabInfo.m_tabTitle = null;
+        m_tabInfo.m_tabTitleKey = null;
+        m_tabInfo.m_url = null;
     }
 
     /**
@@ -149,8 +216,6 @@ public class TabTag extends WikiTagBase
      */
     public int doWikiStartTag() throws JspTagException
     {
-        TabbedSectionTag parent = getParentTag( TabbedSectionTag.class );
-
         //
         // Sanity checks
         //
@@ -158,43 +223,22 @@ public class TabTag extends WikiTagBase
         {
             throw new JspTagException( "Tab Tag without \"id\" attribute" );
         }
-        if( m_tabTitle == null && m_tabTitleKey == null )
+        if( m_tabInfo.m_tabTitle == null && m_tabInfo.m_tabTitleKey == null )
         {
             throw new JspTagException( "Tab Tag without \"tabTitle\" or \"tabTitleKey\" attribute" );
         }
-        if( parent == null )
-        {
-            throw new JspTagException( "Tab Tag without parent \"TabbedSection\" Tag" );
-        }
 
-        // Generate the actual title
-        if( m_tabTitleKey != null )
-        {
-            Locale locale = m_wikiContext.getHttpRequest().getLocale();
-            InternationalizationManager i18n = m_wikiContext.getEngine().getInternationalizationManager();
-            m_outputTitle = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, locale, m_tabTitleKey );
-        }
-        if ( m_outputTitle == null )
-        {
-           m_outputTitle = m_tabTitle;
-        }
+        // Add tab to TabCollection so parent TabbedSection can get it later
+        TabCollection tc = TabbedSectionTag.getTabContext( getPageContext().getRequest() );
+        tc.addTab( this );
 
-        if( !parent.isStateGenerateTabBody() )
-            return SKIP_BODY;
-
-        StringBuilder sb = new StringBuilder( 32 );
-
-        sb.append( "<div id=\"" + getId() + "\"" );
-
-        if( !parent.validateDefaultTab( getId() ) )
-        {
-            sb.append( " class=\"hidetab\"" );
-        }
-        sb.append( " >\n" );
-
+        // Generate the opening <div id=foo> tag, always with "hidetab" class
+        // (TabbedSection#doAfterBody will fix this later...)
         try
         {
-            pageContext.getOut().write( sb.toString() );
+            pageContext.getOut().write( "<div id=\"" );
+            pageContext.getOut().write( getId() );
+            pageContext.getOut().write( "\" class=\"hidetab\">\n" );
         }
         catch( java.io.IOException e )
         {
@@ -203,7 +247,17 @@ public class TabTag extends WikiTagBase
 
         return EVAL_BODY_INCLUDE;
     }
-
+    
+    /**
+     * {@inheritDoc}. Also sets the ID for the embedded {@link TabInfo object}.
+     */
+    @Override
+    public void setId( String id )
+    {
+        super.setId( id );
+        m_tabInfo.setId( id );
+    }
+    
     /**
      * Sets the tab access key.
      * 
@@ -211,8 +265,7 @@ public class TabTag extends WikiTagBase
      */
     public void setAccesskey( String accessKey )
     {
-        m_accesskey = TextUtil.replaceEntities( accessKey ); // take only the
-        // first char
+        m_tabInfo.setAccesskey( accessKey );
     }
 
     /**
@@ -222,7 +275,7 @@ public class TabTag extends WikiTagBase
      */
     public void setTitle( String title )
     {
-        m_tabTitle = TextUtil.replaceEntities( title );
+        m_tabInfo.setTitle( title );
     }
 
     /**
@@ -232,7 +285,7 @@ public class TabTag extends WikiTagBase
      */
     public void setTitleKey( String key )
     {
-        m_tabTitleKey = TextUtil.replaceEntities( key );
+        m_tabInfo.setTitleKey( key );
     }
 
     /**
@@ -242,21 +295,6 @@ public class TabTag extends WikiTagBase
      */
     public void setUrl( String url )
     {
-        m_url = TextUtil.replaceEntities( url );
-    }
-
-    // insert <u> ..accesskey.. </u> in title
-    private boolean handleAccesskey()
-    {
-        if( (m_outputTitle == null) || (m_accesskey == null) )
-            return false;
-
-        int pos = m_outputTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
-        if( pos > -1 )
-        {
-            m_outputTitle = m_outputTitle.substring( 0, pos ) + "<span class='accesskey'>" + m_outputTitle.charAt( pos )
-                            + "</span>" + m_outputTitle.substring( pos + 1 );
-        }
-        return true;
+        m_tabInfo.setUrl( url );
     }
 }

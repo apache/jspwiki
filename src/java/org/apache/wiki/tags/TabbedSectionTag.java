@@ -20,121 +20,188 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.tags.TabTag.TabInfo;
 
 /**
- *  Generates tabbed page section: container for the Tab tag.
- *  Works together with the tabbedSection javacript.
- *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>defaultTab - Page name to refer to.  Default is the current page.
- *  </UL>
- *
- *  @author Dirk Frederickx
- *  @since v2.3.63
+ * <p>
+ * Generates a container for page tabs, as defined by collaborating
+ * {@link TabTag} tags. Works together with the tabbedSection JavaScript. The
+ * output of the two collaborating tags is two sets of <code>&lt;div&gt;</code>
+ * elements. The first one will have a class of <code>tabmenu</code>, and
+ * includes the tab names, accessibility keys and and URL that contains the
+ * tab's contents (if specified). The second <code>&lt;div&gt;</code>, of
+ * class <code>tabs</code>, contains additional nested
+ * <code>&lt;div&gt;</code> elements that contain the actual tab content, if
+ * any was enclosed by the <code>wiki:Tab</code> tags.
+ * </p>
+ * <p>
+ * For example, consider the following tags as defined on a JSP:
+ * </p>
+ * <blockquote><code>
+ * &lt;wiki:TabbedSection defaultTab="pagecontent"&gt;<br/>
+ * &nbsp;&nbsp;&lt;wiki:Tab id="pagecontent" title="View" accesskey="V"&gt;<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;This is the main tab.&lt;/p&gt;<br/>
+ * &nbsp;&nbsp;&lt;/wiki:Tab&gt;<br/>
+ * &nbsp;&nbsp;&lt;wiki:Tab id="info" title="Info" accesskey="I" url="/PageInfo.jsp?page=Main" /&gt;<br/>
+ * &lt;/wiki:TabbedSection&gt;
+ * </code></blockquote>
+ * <p>
+ * This will cause the following HTML to be generated when the page contents are
+ * returned to the browser:
+ * </p>
+ * <blockquote><code>
+ * &lt;div class="tabmenu"&gt;<br/>
+ * &nbsp;&nbsp;&lt;a class="activetab" id="menu-pagecontent" accesskey="v" &gt;&lt;span class='accesskey'&gt;V&lt;/span&gt;iew&lt;/a&gt;<br/>
+ * &nbsp;&nbsp;&lt;a id="menu-info" href='<var>web-context</var>/PageInfo.jsp?page=Main' accesskey="i" &gt;&lt;span class='accesskey'&gt;I&lt;/span&gt;nfo&lt;/a&gt;<br/>
+ * &lt;/div&gt;<br/>
+ * &lt;div class="tabs"&gt;<br/>
+ * &nbsp;&nbsp;&lt;div id="pagecontent"&gt;<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;This is the main tab.&lt;/p&gt;<br/>
+ * &nbsp;&nbsp;&lt;/div&gt;<br/>
+ * &nbsp;&nbsp;&lt;div id="info" class="hidetab" /&gt;<br/>
+ * &nbsp;&nbsp;&lt;div style="clear:both;" &gt;&lt;/div&gt;<br/>
+ * &lt;/div&gt;
+ * </code></blockquote>
+ * <h3>Attributes</h3>
+ * <ul>
+ * <li>defaultTab - Page name to refer to. Default is the first tab.</li>
+ * </ul>
+ * 
+ * @author Dirk Frederickx
+ * @author Andrew Jaquith
+ * @since v2.3.63
  */
-// FIXME: Needs a bit more of explaining how this tag works.
 public class TabbedSectionTag extends BodyTagSupport
 {
-    private static final long serialVersionUID = 1702437933960026481L;
-    private String       m_defaultTabId;
-    private String       m_firstTabId;
-    private boolean      m_defaultTabFound = false;
+    private static final long serialVersionUID = 2702437933960026481L;
 
-    private StringBuffer m_buffer = new StringBuffer(BUFFER_SIZE);
-
-    private static final int FIND_DEFAULT_TAB = 0;
-    private static final int GENERATE_TABMENU = 1;
-    private static final int GENERATE_TABBODY = 2;
-
-    private static final int BUFFER_SIZE      = 1024;
-
-    private              int m_state            = FIND_DEFAULT_TAB;
+    private WikiEngine m_engine;
 
     /**
-     *  {@inheritDoc}
+     * Returns the TabCollection for the current HttpServletRequest. This
+     * method is always guaranteed to return a valid TabCollection.
+     * 
+     * @param request the servlet request
+     * @return the TabCollection
+     */
+    public static TabCollection getTabContext( ServletRequest request )
+    {
+        TabCollection tc = (TabCollection) request.getAttribute( ATTR_TABS );
+        if( tc == null )
+        {
+            tc = new TabCollection();
+            request.setAttribute( ATTR_TABS, tc );
+        }
+        return tc;
+    }
+    
+    private static final String ATTR_TABS = "JSPWiki.TabbedSection.Tags";
+
+    /**
+     * Holds the current set of related {@link TabbedSection} and {@link TabTag}
+     * tags. One TabCollection is created for each HTTPServletRequest, rather than
+     * per PageContext, because the tags could span multiple pages.
+     */
+    public static class TabCollection
+    {
+        /**
+         * Private constructor to prevent direct instantiation.
+         */
+        private TabCollection()
+        {
+            super();
+        }
+
+        private final List<TabTag.TabInfo> m_tabs = new ArrayList<TabTag.TabInfo>();
+
+        /**
+         * Adds a child TabTag to the TabCollection. When the TabbedSection tag
+         * generates its menu and tab &lt;div&gt; elements, they will be
+         * generated in the order added. The tab added will be stored as a
+         * defensive copy, so that calls to
+         * {@link javax.servlet.jsp.tagext.Tag#release()} won't null out the
+         * cached copies.
+         * 
+         * @param tab the tab to add
+         */
+        public void addTab( TabTag tab ) throws JspTagException
+        {
+            if( tab == null )
+            {
+                throw new JspTagException( "Cannot add null TabTag." );
+            }
+
+            TabInfo tabInfo = new TabInfo();
+            tabInfo.setAccesskey( tab.getTabInfo().getAccesskey() );
+            tabInfo.setId( tab.getTabInfo().getId() );
+            tabInfo.setTitle( tab.getTabInfo().getTitle() );
+            tabInfo.setTitleKey( tab.getTabInfo().getTitleKey() );
+            tabInfo.setUrl( tab.getTabInfo().getUrl() );
+            m_tabs.add( tabInfo );
+        }
+
+        /**
+         * Returns the list TabTag objects known to this TabCollection.
+         * 
+         * @return the list of tab
+         */
+        public List<TabTag.TabInfo> getTabs()
+        {
+            return m_tabs;
+        }
+
+        /**
+         * Releases the TabCollection by clearing the internally cached list of
+         * TabTag objects. This method is called by
+         * {@link TabbedSectionTag#doEndTag()}.
+         */
+        public void release()
+        {
+            m_tabs.clear();
+        }
+
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void release()
     {
         super.release();
-        m_defaultTabId = m_firstTabId = null;
-        m_defaultTabFound = false;
-        m_buffer = new StringBuffer();
-        m_state = FIND_DEFAULT_TAB;
+        m_defaultTabID = null;
     }
 
     /**
-     *  Set the id of the default tab (the tab which should be shown when
-     *  the page is first loaded).
-     *  
-     *  @param anDefaultTabId ID attribute of the default tab.
-     */
-    public void setDefaultTab(String anDefaultTabId)
-    {
-        m_defaultTabId = anDefaultTabId;
-    }
-
-    // FIXME: I don't really understand what this does - so Dirk, please
-    //        add some documentation.
-    public boolean validateDefaultTab( String aTabId )
-    {
-        if( m_firstTabId == null ) m_firstTabId = aTabId;
-        if( aTabId.equals( m_defaultTabId ) ) m_defaultTabFound = true;
-
-        return aTabId.equals( m_defaultTabId );
-    }
-
-    /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public int doStartTag() throws JspTagException
     {
+        m_engine = WikiEngine.getInstance( ((HttpServletRequest) pageContext.getRequest()).getSession().getServletContext(), null );
         return EVAL_BODY_BUFFERED; /* always look inside */
     }
 
     /**
-     *  Returns true, if the tab system is currently trying to
-     *  figure out which is the default tab.
-     *  
-     *  @return True, if finding the default tab.
-     */
-    public boolean isStateFindDefaultTab()
-    {
-        return m_state == FIND_DEFAULT_TAB;
-    }
-
-    /**
-     *  Returns true, if the tab system is currently generating
-     *  the tab menu.
-     *  
-     *  @return True, if currently generating the menu itself.
-     */
-    public boolean isStateGenerateTabMenu()
-    {
-        return m_state == GENERATE_TABMENU;
-    }
-
-    /**
-     *  Returns true, if the tab system is currently generating
-     *  the tab body.
-     *  
-     *  @return True, if the tab system is currently generating the tab body.
-     */
-    public boolean isStateGenerateTabBody()
-    {
-        return m_state == GENERATE_TABBODY;
-    }
-
-
-    /**
-     *  The tabbed section iterates 3 time through the underlying Tab tags
-     * - first it identifies the default tab (displayed by default)
-     * - second it generates the tabmenu markup (displays all tab-titles)
-     * - finally it generates the content of each tab.
+     * The tabbed section iterates 3 time through the underlying Tab tags -
+     * first it identifies the default tab (displayed by default) - second it
+     * generates the tabmenu markup (displays all tab-titles) - finally it
+     * generates the content of each tab.
      * 
      * @return {@inheritDoc}
      * @throws {@inheritDoc}
@@ -142,66 +209,152 @@ public class TabbedSectionTag extends BodyTagSupport
     @Override
     public int doAfterBody() throws JspTagException
     {
-        if( isStateFindDefaultTab() )
+        // Stash the tag body (previously evaluated)
+        BodyContent body = getBodyContent();
+        String bodyString = body.getString();
+
+        // Figure out the active (default) tab
+        TabCollection tc = getTabContext( pageContext.getRequest() );
+        List<TabTag.TabInfo> tabs = tc.getTabs();
+
+        try
         {
-            if( !m_defaultTabFound )
+            // Generate menu divs; output to enclosing writer
+            body.clear();
+            JspWriter writer = this.getPreviousOut();
+
+            writer.append( "<div class=\"tabmenu\">\n" );
+            for( TabTag.TabInfo tab : tabs )
             {
-                m_defaultTabId = m_firstTabId;
+                // Is this the default tab?
+                if( tab.getId().equals( m_defaultTabID ) )
+                {
+                    m_defaultTabID = tab.getId();
+                }
+
+                // If default tag still not 't set, use the first one
+                if( m_defaultTabID == null || m_defaultTabID.length() == 0 )
+                {
+                    m_defaultTabID = tab.getId();
+                }
+
+                // Generate each menu item div
+                writeTabMenuItem( writer, tab );
             }
-            m_state = GENERATE_TABMENU;
-            return EVAL_BODY_BUFFERED;
+            writer.append( "</div>\n" );
+
+            // Output the opening "tabs" div
+            writer.append( "<div class=\"tabs\">" );
+
+            // Remove the "hidden" class from the active tab
+            String activeTabDiv = "<div id=\"" + m_defaultTabID + "\" class=\"hidetab\">";
+            bodyString = bodyString.replace( activeTabDiv, "<div id=\"" + m_defaultTabID + "\">" );
+
+            // Write back the stashed tag body
+            writer.append( bodyString );
+
+            // Append our closing div tags
+            writer.append( "  <div style=\"clear:both;\" ></div>\n</div>\n" );
         }
-        else if( isStateGenerateTabMenu() )
+        catch( IOException e )
         {
-            if( bodyContent != null )
-            {
-                m_buffer.append( "<div class=\"tabmenu\">" );
-                m_buffer.append( bodyContent.getString() );
-                bodyContent.clearBody();
-                m_buffer.append( "</div>\n" );
-            }
-            m_state = GENERATE_TABBODY;
-            return EVAL_BODY_BUFFERED;
+            throw new JspTagException( e );
         }
-        else if( isStateGenerateTabBody() )
-        {
-            if( bodyContent != null )
-            {
-                m_buffer.append( "<div class=\"tabs\">" );
-                m_buffer.append( bodyContent.getString() );
-                bodyContent.clearBody();
-                m_buffer.append( "<div style=\"clear:both;\" ></div>\n</div>\n" );
-            }
-            return SKIP_BODY;
-        }
+
         return SKIP_BODY;
     }
 
-    /**
-     *  {@inheritDoc}
-     */
-    @Override
-    public int doEndTag() throws JspTagException
+    public int doEndTag() throws JspException
     {
-        try
+        // Clear the TabCollection for the next caller
+        TabCollection tc = getTabContext( pageContext.getRequest() );
+        tc.release();
+
+        return super.doEndTag();
+    }
+
+    /**
+     * Outputs a single menu item <code>div</code> element for a supplied tag.
+     * 
+     * @param writer the JspWriter to write the output to
+     * @param tab the TabInfo object containing information about the tab
+     * @throws IOException
+     */
+    private void writeTabMenuItem( JspWriter writer, TabTag.TabInfo tab ) throws IOException
+    {
+        writer.append( "  <a" );
+
+        // Generate the ID
+        writer.append( " id=\"menu-" + tab.getId() + "\"" );
+
+        // Active tab?
+        if( tab.getId().equals( m_defaultTabID ) )
         {
-            if( m_buffer.length() > 0 )
-            {
-                getPreviousOut().write( m_buffer.toString() );
-            }
-        }
-        catch(java.io.IOException e)
-        {
-            throw new JspTagException( "IO Error: " + e.getMessage() );
+            writer.append( " class=\"activetab\"" );
         }
 
-        //now reset some stuff for the next run -- ugh.
-        m_buffer    = new StringBuffer(BUFFER_SIZE);
-        m_state = FIND_DEFAULT_TAB;
-        m_defaultTabId    = null;
-        m_firstTabId      = null;
-        m_defaultTabFound = false;
-        return EVAL_PAGE;
+        // Generate the URL, if supplied
+        if( tab.getUrl() != null )
+        {
+            writer.append( " href='" + tab.getUrl() + "'" );
+        }
+
+        // Generate the tab title
+        String tabTitle = null;
+        if( tab.getTitleKey() != null )
+        {
+            Locale locale = pageContext.getRequest().getLocale();
+            InternationalizationManager i18n = m_engine.getInternationalizationManager();
+            tabTitle = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, locale, tab.getTitleKey() );
+        }
+        if( tabTitle == null )
+        {
+            tabTitle = tab.getTitle();
+        }
+        writer.append( ">" );
+
+        // Output the tab title
+        String accesskey = tab.getAccesskey();
+        if( tabTitle != null )
+        {
+            // Generate the access key, if supplied
+            if( accesskey != null )
+            {
+                int pos = tabTitle.toLowerCase().indexOf( accesskey.toLowerCase() );
+                if( pos > -1 )
+                {
+                    tabTitle = tabTitle.substring( 0, pos ) + "<span class='accesskey'>" + tabTitle.charAt( pos ) + "</span>"
+                               + tabTitle.substring( pos + 1 );
+                }
+            }
+            writer.append( tabTitle );
+        }
+
+        // Output the closing tag
+        writer.append( "</a>\n" );
+    }
+
+    private String m_defaultTabID = null;
+
+    /**
+     * Returns the default tab ID.
+     * 
+     * @return the tab ID
+     */
+    protected String getDefaultTab()
+    {
+        return m_defaultTabID;
+    }
+
+    /**
+     * Sets the id of the default tab. If not set, the first {@link TabTag}
+     * element encountered will be used as the default.
+     * 
+     * @param defaultTab the id of tab to use as the default
+     */
+    public void setDefaultTab( String defaultTab )
+    {
+        m_defaultTabID = defaultTab;
     }
 
 }
