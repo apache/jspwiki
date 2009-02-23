@@ -1,10 +1,32 @@
-2008-02-19  Harry Metske <metskem@apache.org>
+2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-72
+        
+        * Re-wrote TabbedSectionTab and TabTag so that they operate
+        across included or nested JSPs.
+
+        * Significant rework on the view-page JSP Wiki.jsp and
+        related tabs. The attachments tab now has its own JSP
+        (Attachments.jsp); Upload.jsp was deleted. InfoContent.jsp
+        was deleted and split into 2 sub-pages; PageInfoTab.jsp
+        (for wikipages) and AttachmentInfoTab (for attachments).
+        These last 2 names may change. Uploading, for now, is
+        disabled but will be restored in my next checkin, with
+        (get this) multi-file upload.
+        
+        * Fixed omitted line in test properties files for rcs/vers
+        that was preventing GroupManager from starting.
+
+        * Moved contents of CommentActionBean into EditActionBean;
+        moderate nips/tucks on 5 ActionBean classes.
+
+2009-02-19  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-71
         
         * JSPWIKI-508 - Simplified Chinese translation updated, thanks to David Gao
 
-2008-02-15  Harry Metske <metskem@apache.org>
+2009-02-15  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-70
         
