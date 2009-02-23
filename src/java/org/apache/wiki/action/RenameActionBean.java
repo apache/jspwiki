@@ -76,19 +76,8 @@ public class RenameActionBean extends AbstractPageActionBean
 
     private boolean m_changeReferences = false;
     
-    private WikiPage m_page = null;
-
     private String m_renameTo = null;
 
-    /**
-     * Returns the WikiPage; defaults to <code>null</code>.
-     * @return the page
-     */
-    public WikiPage getPage()
-    {
-        return m_page;
-    }
-    
     /**
      * Returns the proposed new name for the page; defaults to <code>null</code>
      * if not set.
@@ -120,7 +109,7 @@ public class RenameActionBean extends AbstractPageActionBean
      * @throws WikiException if the page cannot be renamed
      */
     @HandlesEvent( "rename" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.RENAME_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.RENAME_ACTION )
     @WikiRequestContext( "rename" )
     public Resolution rename() throws WikiException
     {
@@ -155,8 +144,7 @@ public class RenameActionBean extends AbstractPageActionBean
     @Validate( required = true )
     public void setPage( WikiPage page )
     {
-        m_page = page;
-        getContext().setPage( page );
+        super.setPage( page );
     }
     
     /**

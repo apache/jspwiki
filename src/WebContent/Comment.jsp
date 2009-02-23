@@ -19,7 +19,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.CommentActionBean" event="comment" id="wikiActionBean" />
+<stripes:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="comment" id="wikiActionBean" />
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 

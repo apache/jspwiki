@@ -24,13 +24,6 @@
 <wiki:IncludeResources type="stylesheet" />
 <wiki:IncludeResources type="inlinecss" />
 
-<%-- display the more-menu inside the leftmenu, when javascript is not avail --%>
-<noscript>
-<style type="text/css">
-#hiddenmorepopup { display:block; }
-</style>
-</noscript>
-
 <%-- JAVASCRIPT --%>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js' />"></script>
 <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js' />"></script>

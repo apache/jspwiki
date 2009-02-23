@@ -1,11 +1,9 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <stripes:layout-definition>
-
-<html id="top" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>
       <wiki:CheckRequestContext context="edit">
@@ -21,8 +19,8 @@
       </fmt:message>
       </wiki:CheckRequestContext>
     </title>
-    <meta name="robots" content="noindex,follow" />
     <wiki:Include page="commonheader.jsp" />
+    <meta name="robots" content="noindex,follow" />
   </head>
 
   <body class="${wikiContext.requestContext}">

@@ -27,7 +27,6 @@ import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.TypeConverter;
 import net.sourceforge.stripes.validation.ValidationError;
 
-
 /**
  * Stripes type converter that converts a WikiPage name, expressed as a String,
  * into an {@link org.apache.wiki.api.WikiPage} object. This converter is looked
@@ -43,10 +42,10 @@ import net.sourceforge.stripes.validation.ValidationError;
 public class WikiPageTypeConverter implements TypeConverter<WikiPage>
 {
     /**
-     * Converts a named wiki page into a valid WikiPage object by retrieving it
-     * via the WikiEngine. If the exact page is not found, plural variations
-     * will be tried. If the page cannot be found (perhaps because it does not
-     * exist), this method will add a validation error to the supplied
+     * Converts a named wiki page into a valid WikiPage object by retrieving the
+     * latest version via the WikiEngine. If the exact page is not found, plural
+     * variations will be tried. If the page cannot be found (perhaps because it
+     * does not exist), this method will add a validation error to the supplied
      * Collection of errors and return <code>null</code>. The error will be
      * of type {@link net.sourceforge.stripes.validation.LocalizableError} and
      * will have a message key of <code>common.nopage</code> and a single

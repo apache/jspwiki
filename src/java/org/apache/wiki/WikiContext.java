@@ -100,7 +100,7 @@ public interface WikiContext
     public static final String    UPLOAD   = HandlerInfo.getHandlerInfo( UploadActionBean.class, "upload" ).getRequestContext();
 
     /** User is commenting something. */
-    public static final String    COMMENT  = HandlerInfo.getHandlerInfo( CommentActionBean.class, "comment" ).getRequestContext();
+    public static final String    COMMENT  = HandlerInfo.getHandlerInfo( EditActionBean.class, "comment" ).getRequestContext();
 
     /** User is searching for content. */
     public static final String    FIND     = HandlerInfo.getHandlerInfo( SearchActionBean.class, "find" ).getRequestContext();

@@ -38,6 +38,28 @@ import net.sourceforge.stripes.action.*;
 @UrlBinding( "/Edit.jsp" )
 public class EditActionBean extends AbstractPageActionBean
 {
+    @HandlesEvent("comment")
+    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.COMMENT_ACTION)
+    @WikiRequestContext("comment")
+    public Resolution comment()
+    {
+        return null;
+    }
+
+    /**
+     * Event that diffs the current state of the edited page and forwards the
+     * user to the diff JSP.
+     * 
+     * @return a forward resolution back to the preview page.
+     */
+    @HandlesEvent( "diff" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @WikiRequestContext( "diff" )
+    public Resolution diff()
+    {
+        return new ForwardResolution( "/Diff.jsp" );
+    }
+
     @DefaultHandler
     @HandlesEvent( "edit" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.EDIT_ACTION )
@@ -68,19 +90,5 @@ public class EditActionBean extends AbstractPageActionBean
         request.setAttribute( "lastchange", lastchange );
 
         return new ForwardResolution( "/Preview.jsp" );
-    }
-
-    /**
-     * Event that diffs the current state of the edited page and forwards the
-     * user to the diff JSP.
-     * 
-     * @return a forward resolution back to the preview page.
-     */
-    @WikiRequestContext( "diff" )
-    @HandlesEvent( "diff" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
-    public Resolution diff()
-    {
-        return new ForwardResolution( "/Diff.jsp" );
     }
 }

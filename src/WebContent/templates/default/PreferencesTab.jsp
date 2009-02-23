@@ -1,20 +1,10 @@
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.lang.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="java.io.*" %>
-<%@ page import="java.util.jar.*" %>
-
-<%@ page import="org.apache.wiki.ui.*" %>
-<%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
-
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 
 <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
@@ -24,13 +14,13 @@
   </div>
 </c:if>
 
-<stripes:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
+<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
 <table>
   <tr>
-  <td><stripes:label for="assertedName" /></td>
+  <td><s:label for="assertedName" /></td>
   <td> 
-    <stripes:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></stripes:text>
-    <stripes:errors field="assertedName" />
+    <s:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></s:text>
+    <s:errors field="assertedName" />
   </td>
   </tr>
   <wiki:UserCheck status="anonymous">
@@ -52,75 +42,75 @@
   </wiki:UserCheck>
 
   <tr>
-  <td><stripes:label for="editor" /></td>
+  <td><s:label for="editor" /></td>
   <td>
     <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
         <option <%=edt.isSelected()%>value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
     </select>
-    <stripes:errors field="editor" />
+    <s:errors field="editor" />
   </td>
   </tr>
   
   <tr>
-  <td><stripes:label for="sectionEditing" /></td>
+  <td><s:label for="sectionEditing" /></td>
   <td>
-    <stripes:checkbox id="sectionEditing" name="sectionEditing" checked="true" />
-    <stripes:errors field="sectionEditing" />
+    <s:checkbox id="sectionEditing" name="sectionEditing" checked="true" />
+    <s:errors field="sectionEditing" />
     <fmt:message key="prefs.user.sectionediting.text" />
   </td>
   </tr>
   
   <tr>
-  <td><stripes:label for="skin" /></td>
+  <td><s:label for="skin" /></td>
   <td>
-    <stripes:select id="skin" name="skin">
-      <stripes:options-collection collection="${skins}" />
-    </stripes:select>
-    <stripes:errors field="skin" />
+    <s:select id="skin" name="skin">
+      <s:options-collection collection="${skins}" />
+    </s:select>
+    <s:errors field="skin" />
   </td>
   </tr>
 
   <c:if test='${not empty locales}'>
     <tr>
-      <td><stripes:label for="locale" /></td>
+      <td><s:label for="locale" /></td>
       <td>
-        <stripes:select name="locale">
-          <stripes:options-map map="${locales}" />
-        </stripes:select>
-        <stripes:errors field="locale" />
+        <s:select name="locale">
+          <s:options-map map="${locales}" />
+        </s:select>
+        <s:errors field="locale" />
       </td>
     </tr>
   </c:if>
 
   <tr>
-    <td><stripes:label for="orientation" /></td>
+    <td><s:label for="orientation" /></td>
     <td>
-      <stripes:select id="orientation" name="orientation">
-        <stripes:options-enumeration enum="org.apache.wiki.preferences.Preferences.Orientation" label="name" />
-      </stripes:select>
-      <stripes:errors field="orientation" />
+      <s:select id="orientation" name="orientation">
+        <s:options-enumeration enum="org.apache.wiki.preferences.Preferences.Orientation" label="name" />
+      </s:select>
+      <s:errors field="orientation" />
     </td>
   </tr>
 
   <tr>
-    <td><stripes:label for="timeFormat" /></td>
+    <td><s:label for="timeFormat" /></td>
     <td>
-      <stripes:select id="timeFormat" name="timeFormat">
-        <stripes:options-map map="${timeformats}" />
-      </stripes:select>
-      <stripes:errors field="timeFormat" />
+      <s:select id="timeFormat" name="timeFormat">
+        <s:options-map map="${timeformats}" />
+      </s:select>
+      <s:errors field="timeFormat" />
     </td>
   </tr>
 
   <tr>
-    <td><stripes:label for="timeZone" /></td>
+    <td><s:label for="timeZone" /></td>
     <td>
-      <stripes:select id="timeZone" name="timeZone">
-        <stripes:options-map map="${timezones}" />
-      </stripes:select>
-      <stripes:errors field="timeZone" />
+      <s:select id="timeZone" name="timeZone">
+        <s:options-map map="${timezones}" />
+      </s:select>
+      <s:errors field="timeZone" />
     </td>
   </tr>
 
@@ -128,7 +118,7 @@
   <tr>
   <td><label for="showQuickLinks">Show Quick Links</label></td>
   <td>
-    <stripes:checkbox id="showQuickLinks" name="showQuickLinks" checked="true" />
+    <s:checkbox id="showQuickLinks" name="showQuickLinks" checked="true" />
          <span class="quicklinks"><span 
                class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
                class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 
@@ -141,30 +131,30 @@
   <tr>
   <td><label for="showCalendar">Show Calendar</label></td>
   <td>
-    <stripes:checkbox id="showCalendar" name="showCalendar" checked="true" />
+    <s:checkbox id="showCalendar" name="showCalendar" checked="true" />
   </td>
   </tr>
   --%>
   <tr>
     <td>&nbsp;</td>
     <td>
-      <stripes:submit name="save" accesskey="s" />
-      <stripes:hidden name="redirect"><wiki:Variable var='redirect' default='' /></stripes:hidden>
+      <s:submit name="save" accesskey="s" />
+      <s:hidden name="redirect"><wiki:Variable var='redirect' default='' /></s:hidden>
       <div class="formhelp"><fmt:message key='prefs.cookies' /></div>
     </td>
   </tr>
 
 </table>
-</stripes:form>
+</s:form>
   
 <!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
 <h3><fmt:message key='prefs.clear.heading' /></h3>
 
-<stripes:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
+<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
   <div>
-    <stripes:submit name="clearAssertedName" />
+    <s:submit name="clearAssertedName" />
   </div>
   <div class="formhelp"><fmt:message key="prefs.clear.description" /></div>
-</stripes:form>
+</s:form>

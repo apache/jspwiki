@@ -2,7 +2,7 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
@@ -68,23 +68,14 @@
 
   <% if( ! blogcommentpage.equals("") ) { %>
   <wiki:PageExists page="<%= blogcommentpage%>">
-	<div class="weblogcommentstitle"><fmt:message key="blog.commenttitle" /></div>
+  	<div class="weblogcommentstitle"><fmt:message key="blog.commenttitle" /></div>
     <div class="weblogcomments"><wiki:InsertPage page="<%= blogcommentpage%>" /></div>
   </wiki:PageExists>
   <% }; %>
   <div class="information">	
-	<wiki:Link page="<%= mainblogpage %>"><fmt:message key="blog.backtomain" /></wiki:Link>&nbsp; &nbsp;
-	<wiki:Link context="comment" page="<%= blogcommentpage%>"><fmt:message key="blog.addcomments" /></wiki:Link>
+	  <wiki:Link page="<%= mainblogpage %>"><fmt:message key="blog.backtomain" /></wiki:Link>&nbsp; &nbsp;
+	  <wiki:Link context="comment" page="<%= blogcommentpage%>"><fmt:message key="blog.addcomments" /></wiki:Link>
   </div>
 
 </wiki:PageExists>
 <% }; %>
-
-<wiki:NoSuchPage>
-  <%-- FIXME: Should also note when a wrong version has been fetched. --%>
-  <div class="information">
-  <fmt:message key="common.nopage">
-    <fmt:param><wiki:EditLink><fmt:message key="common.createit" /></wiki:EditLink></fmt:param>
-  </fmt:message>
-  </div>
-</wiki:NoSuchPage>

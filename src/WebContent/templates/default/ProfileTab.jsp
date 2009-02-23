@@ -1,10 +1,10 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<stripes:form beanclass="org.apache.wiki.action.UserProfileActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
-      <stripes:param name="tab" value="profile" />
+<s:form beanclass="org.apache.wiki.action.UserProfileActionBean" id="editProfile" class="wikiform" method="post" acceptcharset="UTF-8">
+      <s:param name="tab" value="profile" />
 
       <h3>
       <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile" /></wiki:UserProfile>
@@ -21,11 +21,11 @@
 
      <!-- Login name -->
      <tr>
-       <td><stripes:label for="profile.loginName" /></td>
+       <td><s:label for="profile.loginName" /></td>
        <td>
          <wiki:UserProfile property="canChangeLoginName">
-           <stripes:text name="profile.loginName" id="loginName" size="20"><wiki:UserProfile property="loginname" /></stripes:text>
-           <stripes:errors field="profile.loginName" />
+           <s:text name="profile.loginName" id="loginName" size="20"><wiki:UserProfile property="loginname" /></s:text>
+           <s:errors field="profile.loginName" />
          </wiki:UserProfile>
          <wiki:UserProfile property="!canChangeLoginName">
            <!-- If user can't change their login name, it's because the container manages the login -->
@@ -40,40 +40,40 @@
        </td>
      </tr>
 
-     <!-- Password; not displayed if container auth used -->
+     <!-- Password; not displayed if container authentication used -->
      <wiki:UserProfile property="canChangePassword">
        <tr>
-         <td><stripes:label for="profile.password" /></td>
+         <td><s:label for="profile.password" /></td>
          <td>
-           <stripes:password name="profile.password" id="password" size="20" value="" />
-           <stripes:errors field="profile.password" />
+           <s:password name="profile.password" id="password" size="20" value="" />
+           <s:errors field="profile.password" />
           </td>
         </tr>
         <tr>
-          <td><stripes:label for="passwordAgain" /></td>
+          <td><s:label for="passwordAgain" /></td>
           <td>
-           <stripes:password name="passwordAgain" id="passwordAgain" size="20" value="" />
-           <stripes:errors field="profile.passwordAgain" />
+           <s:password name="passwordAgain" id="passwordAgain" size="20" value="" />
+           <s:errors field="profile.passwordAgain" />
          </td>
        </tr>
      </wiki:UserProfile>
 
      <!-- Full name -->
      <tr>
-       <td><stripes:label for="profile.fullname" /></td>
+       <td><s:label for="profile.fullname" /></td>
        <td>
-         <stripes:text name="profile.fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></stripes:text>
-          <stripes:errors field="profile.fullname" />
+         <s:text name="profile.fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></s:text>
+          <s:errors field="profile.fullname" />
          <div class="formhelp"><fmt:message key="prefs.fullname.description" /></div>
        </td>
      </tr>
 
      <!-- E-mail -->
      <tr>
-       <td><stripes:label for="profile.email" name="email" /></td>
+       <td><s:label for="profile.email" name="email" /></td>
        <td>
-         <stripes:text name="profile.email" id="email" size="20"><wiki:UserProfile property="email" /></stripes:text>
-         <stripes:errors field="profile.email" />
+         <s:text name="profile.email" id="email" size="20"><wiki:UserProfile property="email" /></s:text>
+         <s:errors field="profile.email" />
          <div class="formhelp"><fmt:message key="prefs.email.description" /></div>
        </td>
      </tr>
@@ -111,11 +111,11 @@
      <tr>
        <td>&nbsp;</td>
        <td>
-       <stripes:submit name="save" />
+       <s:submit name="save" />
        <wiki:UserCheck status="assertionsAllowed">
           <div class="formhelp"><fmt:message key="prefs.cookie.info" /></div>
         </wiki:UserCheck>
        </td>
      </tr>
    </table>
-</stripes:form>
+</s:form>

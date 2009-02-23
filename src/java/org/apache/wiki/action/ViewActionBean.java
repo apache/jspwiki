@@ -36,17 +36,18 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
-
 /**
  * Displays the wiki page a users requested, resolving special page names and
  * redirecting if needed.
+ * 
  * @author Andrew Jaquith
- *
  */
-@UrlBinding("/Wiki.action")
+@UrlBinding( "/Wiki.action" )
 public class ViewActionBean extends AbstractPageActionBean
 {
-    private Logger log = LoggerFactory.getLogger(ViewActionBean.class);
+    private Logger log = LoggerFactory.getLogger( ViewActionBean.class );
+
+    private String m_renameTo = null;
 
     public ViewActionBean()
     {
@@ -54,120 +55,166 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * <p>After the binding and validation  {@link LifecycleStage#BindingAndValidation}
-     * lifecycle stage executes, this method determines whether the
-     * page name specified in the request is actually a special page and
-     * redirects the user if needed. If no page was specified in the request, this method
-     * sets the wiki page to the main page.</p>
-     * <p>For cases where the user specifies a page, JSPWiki needs to determine
-     * what page the user is really going to; that is, either an existing page, an alias
-     * for one, or a "special page" reference. This method considers
-     * special page names from <code>jspwiki.properties</code>, and possible aliases.
-     * To determine whether the page is a special page, this method calls
-     *  {@link org.apache.wiki.action.WikiContextFactory#getSpecialPageResolution(String)}.
-     *  @return a {@link net.sourceforge.stripes.action.RedirectResolution} to the special
-     *  page's real URL, if a special page was specified, or <code>null</code> otherwise
+     * Handler that forwards to the page information display JSP
+     * <code>/Attachments.jsp</code>.
+     * 
+     * @return a forward to the content template
      */
-    @After(stages=LifecycleStage.BindingAndValidation)
+    @HandlesEvent( "attachments" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    public Resolution attachments()
+    {
+        return new ForwardResolution( "/Attachments.jsp" );
+    }
+
+    /**
+     * Returns the name to rename the page to, or <code>null</code> if not
+     * supplied.
+     * 
+     * @return the name to, if one was supplied as a parameter
+     */
+    public String getRenameTo()
+    {
+        return m_renameTo;
+    }
+
+    /**
+     * Handler that forwards to the page information display JSP
+     * <code>/PageInfo.jsp</code>.
+     * 
+     * @return a forward to the content template
+     */
+    @HandlesEvent( "info" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @WikiRequestContext( "info" )
+    public Resolution info()
+    {
+        return new ForwardResolution( "/PageInfo.jsp" );
+    }
+    
+    /**
+     * <p>
+     * After the binding and validation
+     * {@link LifecycleStage#BindingAndValidation} lifecycle stage executes,
+     * this method determines whether the page name specified in the request is
+     * actually a special page and redirects the user if needed. If no page was
+     * specified in the request, this method sets the wiki page to the main
+     * page.
+     * </p>
+     * <p>
+     * For cases where the user specifies a page, JSPWiki needs to determine
+     * what page the user is really going to; that is, either an existing page,
+     * an alias for one, or a "special page" reference. This method considers
+     * special page names from <code>jspwiki.properties</code>, and possible
+     * aliases. To determine whether the page is a special page, this method
+     * calls
+     * {@link org.apache.wiki.action.WikiContextFactory#getSpecialPageResolution(String)}.
+     * 
+     * @return a {@link net.sourceforge.stripes.action.RedirectResolution} to
+     *         the special page's real URL, if a special page was specified, or
+     *         <code>null</code> otherwise
+     */
+    @After( stages = LifecycleStage.BindingAndValidation )
     public Resolution resolvePage() throws WikiException
     {
         WikiPage page = getPage();
         ValidationErrors errors = this.getContext().getValidationErrors();
         WikiEngine engine = getContext().getEngine();
-        
+
         // The user supplied a page that doesn't exist
-        if ( errors.get("page" )!= null )
+        if( errors.get( "page" ) != null )
         {
-            for (ValidationError pageParamError : errors.get("page"))
+            for( ValidationError pageParamError : errors.get( "page" ) )
             {
-                if ( "page".equals(pageParamError.getFieldName()) )
+                if( "page".equals( pageParamError.getFieldName() ) )
                 {
                     String pageName = pageParamError.getFieldValue();
-                    
+
                     // Is it a special page?
-                    RedirectResolution resolution = getContext().getEngine().getWikiContextFactory().getSpecialPageResolution( pageName );
-                    if ( resolution != null )
+                    RedirectResolution resolution = getContext().getEngine().getWikiContextFactory()
+                        .getSpecialPageResolution( pageName );
+                    if( resolution != null )
                     {
                         return resolution;
                     }
 
-                    // Ok, it really doesn't exist. Send 'em to the "Create new page?" JSP
-                    log.info("User supplied page name '" + pageName + "' that doesn't exist; redirecting to create pages JSP." );
-                    return new RedirectResolution(NewPageActionBean.class).addParameter("page", pageName);
+                    // Ok, it really doesn't exist. Send 'em to the "Create new
+                    // page?" JSP
+                    log.info( "User supplied page name '" + pageName + "' that doesn't exist; redirecting to create pages JSP." );
+                    return new RedirectResolution( NewPageActionBean.class ).addParameter( "page", pageName );
                 }
             }
         }
 
         // If page not supplied, try retrieving the front page to avoid NPEs
-        if (page == null)
+        if( page == null )
         {
-            if ( log.isDebugEnabled() )
+            if( log.isDebugEnabled() )
             {
-                log.debug("User did not supply a page name: defaulting to front page.");
+                log.debug( "User did not supply a page name: defaulting to front page." );
             }
-            if ( engine != null )
+            if( engine != null )
             {
                 // Bind the front page to the action bean
                 page = engine.getPage( engine.getFrontPage() );
-                if ( page == null )
+                if( page == null )
                 {
-                    page = engine.getFrontPage(ContentManager.DEFAULT_SPACE);
+                    page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
                 }
-                setPage(page);
+                setPage( page );
                 return null;
             }
         }
 
         // If page still missing, it's an error condition
-        if ( page == null )
+        if( page == null )
         {
-            throw new WikiException("Page not supplied, and WikiEngine does not define a front page! This is highly unusual.") ;
+            throw new WikiException( "Page not supplied, and WikiEngine does not define a front page! This is highly unusual." );
         }
-        
+
         // Is there an ALIAS attribute in the wiki pge?
-        String specialUrl = (String)page.getAttribute( WikiPage.ALIAS );
+        String specialUrl = (String) page.getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
-        
+
         // Is there a REDIRECT attribute in the wiki page?
-        specialUrl = (String)page.getAttribute( WikiPage.REDIRECT );
+        specialUrl = (String) page.getAttribute( WikiPage.REDIRECT );
         if( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
-        
-        // If we got this far, it means the user supplied a page parameter, AND it exists
+
+        // If we got this far, it means the user supplied a page parameter, AND
+        // it exists
         return null;
     }
 
     /**
-     * Default handler that simply forwards the user back to the display JSP <code>/Wiki.jsp</code>. 
-     * Every ActionBean needs a default handler to function properly, so we use
-     * this (very simple) one.
+     * Sets the name to rename the page to
+     * 
+     * @param renameTo the page name to use
+     */
+    public void setRenameTo( String renameTo )
+    {
+        m_renameTo = renameTo;
+    }
+
+    /**
+     * Default handler that simply forwards the user back to the display JSP
+     * <code>/Wiki.jsp</code>. Every ActionBean needs a default handler to
+     * function properly, so we use this (very simple) one.
+     * 
      * @return a forward to the content template
      */
     @DefaultHandler
     @DontValidate
-    @HandlesEvent("view")
-    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
-    @WikiRequestContext("view")
+    @HandlesEvent( "view" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @WikiRequestContext( "view" )
     public Resolution view()
     {
-        return new ForwardResolution( "/Wiki.jsp");
+        return new ForwardResolution( "/Wiki.jsp" );
     }
-    
-    /**
-     * Handler that forwards to the page information display JSP <code>/PageInfo.jsp</code>.
-     * @return a forward to the content template
-     */
-    @HandlesEvent("info")
-    @HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)
-    @WikiRequestContext("info")
-    public Resolution info()
-    {
-        return new ForwardResolution( "/PageInfo.jsp");
-    }
-
 }

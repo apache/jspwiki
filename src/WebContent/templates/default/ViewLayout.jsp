@@ -1,11 +1,9 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:layout-definition>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<stripes:layout-definition>
-
-<html id="top" xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>
       <fmt:message key="view.title.view">
@@ -26,6 +24,7 @@
   </head>
 
   <body class="view">
+
     <div id="wikibody" class="${prefs.Orientation}">
      
       <wiki:Include page="Header.jsp" />
@@ -33,7 +32,7 @@
       <div id="content">
         <div id="page">
           <wiki:Include page="PageActionsTop.jsp" />
-          <stripes:layout-component name="content" />
+          <s:layout-component name="content" />
           <wiki:Include page="PageActionsBottom.jsp" />
         </div>
         <wiki:Include page="Favorites.jsp" />
@@ -47,4 +46,4 @@
 
 </html>
 
-</stripes:layout-definition>
+</s:layout-definition>

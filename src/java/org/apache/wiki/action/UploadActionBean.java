@@ -21,23 +21,49 @@
 
 package org.apache.wiki.action;
 
+import java.util.List;
+
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.log.Logger;
+import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
+import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
-
 @UrlBinding( "/Upload.jsp" )
 public class UploadActionBean extends AbstractActionBean
 {
+    private Logger log = LoggerFactory.getLogger( UploadActionBean.class );
+
+    private List<FileBean> m_newAttachments;
+
+    /**
+     * Sets the set of new attachments that should be saved when the
+     * {@link #upload()} event is executed.
+     * 
+     * @param newAttachments the new files to attach
+     */
+    public void setNewAttachments( List<FileBean> newAttachments )
+    {
+        m_newAttachments = newAttachments;
+    }
+
+    /**
+     * Handler method that uploads a new attachment to the ViewActionBean.
+     * 
+     * @return
+     */
     @HandlesEvent( "upload" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.name}", actions = PagePermission.UPLOAD_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "upload" )
     public Resolution upload()
     {
+        log.debug( "Executed upload; " + m_newAttachments.size() + " attachments found." );
         return null;
     }
+
 }

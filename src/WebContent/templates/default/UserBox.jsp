@@ -46,7 +46,7 @@
       beanclass="org.apache.wiki.action.LoginActionBean" event="logout"
       class="action logout"
       title="${logoutTitle}">
-      <fmt:message key="actions.login"/>
+      <fmt:message key="actions.logout"/>
     </stripes:link>
   </wiki:UserCheck>
 

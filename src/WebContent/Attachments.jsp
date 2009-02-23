@@ -1,6 +1,11 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="view" executeResolution="true" id="wikiActionBean" />
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.action.WikiContextFactory" %>
+<%@ page import="org.apache.wiki.attachment.*" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="attachments" executeResolution="true" id="wikiActionBean" />
 <s:layout-render name="/templates/default/ViewLayout.jsp">
 
   <s:layout-component name="content">
@@ -10,7 +15,7 @@
       </fmt:message>
     </wiki:NoSuchPage>
     <wiki:PageExists>
-      <jsp:include page="/templates/default/PageContent.jsp" />
+      <jsp:include page="/templates/default/AttachmentTab.jsp" />
     </wiki:PageExists>
   </s:layout-component>
   
