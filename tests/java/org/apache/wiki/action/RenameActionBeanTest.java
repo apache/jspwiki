@@ -221,6 +221,24 @@ public class RenameActionBeanTest extends TestCase
         m_engine.deletePage( "ReferstoTest" );
     }
     
+    public void testRenameToSameName() throws Exception {
+        MockRoundtrip trip;
+        ValidationErrors errors;
+        
+        // Try renaming to 'TestRenamed' to same name; should fail
+        m_engine.saveText("Test", "This is a test.");
+        trip = m_engine.authenticatedTrip( Users.ADMIN,Users.ADMIN_PASS, RenameActionBean.class );
+        trip.setParameter("page", "Test");
+        trip.setParameter("renameTo", "Test");
+        trip.execute("rename");
+        errors = trip.getValidationErrors();
+        assertEquals( 1, errors.size() );
+        m_engine.deletePage( "Test" );
+        
+        // Clean up
+        m_engine.deletePage( "Test" );
+    }
+    
     public static Test suite()
     {
         return new TestSuite( RenameActionBeanTest.class );

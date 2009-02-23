@@ -36,6 +36,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("ActionBean tests");
 
+        suite.addTest( DeleteActionBeanTest.suite() );
         suite.addTest( GroupActionBeanTest.suite() );
         suite.addTest( LoginActionBeanTest.suite() );
         suite.addTest( RenameActionBeanTest.suite() );
