@@ -36,7 +36,7 @@ public class LinkCollector
      * Returns a List of Strings representing links.
      * @return the link collection
      */
-    public Collection getLinks()
+    public Collection<String> getLinks()
     {
         return m_items;
     }

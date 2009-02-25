@@ -405,7 +405,7 @@ public class JSPWikiMarkupParser
      */
 
     // FIXME: Does not belong here; should be elsewhere
-    public static Collection getImagePatterns( WikiEngine engine )
+    public static Collection<String> getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
         ArrayList<String>  ptrnlist = new ArrayList<String>();

@@ -1039,7 +1039,7 @@ public class WikiEngine
      *
      *  @return A Collection of Strings.
      */
-    public Collection getAllInterWikiLinks()
+    public Collection<String> getAllInterWikiLinks()
     {
         Vector<String> v = new Vector<String>();
 
@@ -1062,7 +1062,7 @@ public class WikiEngine
      *  @return A Collection of Strings with a regexp pattern.
      */
 
-    public Collection getAllInlinedImagePatterns()
+    public Collection<String> getAllInlinedImagePatterns()
     {
         return JSPWikiMarkupParser.getImagePatterns( this );
     }
@@ -1554,14 +1554,14 @@ public class WikiEngine
     }
 
     /**
-     *  Reads a WikiPageful of data from a String and returns all links
+     *  Reads a WikiPage full of data from a String and returns all links
      *  internal to this Wiki in a Collection.
      *
      *  @param page The WikiPage to scan
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public Collection scanWikiLinks( WikiPage page, String pagedata )
+    public Collection<String> scanWikiLinks( WikiPage page, String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();
 
@@ -1823,7 +1823,7 @@ public class WikiEngine
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
     @SuppressWarnings("unchecked")
-    public Collection getRecentChanges()
+    public Collection<WikiPage> getRecentChanges()
     {
         try
         {

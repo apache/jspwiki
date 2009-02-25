@@ -49,6 +49,8 @@ public class AllTests extends TestCase
         suite.addTest( DenouncePluginTest.suite() );
         suite.addTest( ReferredPagesPluginTest.suite() );
         suite.addTest( RecentChangesPluginTest.suite() );
+        suite.addTest( IndexPluginTest.suite() );
+        suite.addTest( InterWikiLinksPluginTest.suite() );
 
         return suite;
     }

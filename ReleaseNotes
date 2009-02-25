@@ -11,7 +11,7 @@ Please report any issues you can find at http://issues.apache.org/JIRA/
 NEW FEATURES
 ============
 
-* JSPWiki now requires JDK 1.5 to run.
+* JSPWiki now requires at least JDK 1.5 to run.
 
 * Simplified Chinese, Dutch, Russian and Italian localizations added!
 
@@ -25,7 +25,9 @@ NEW FEATURES
   
 * Plugins
 	
-	A new plugin was added that shows you all plugins that are available: PluginIndexPlugin
+	New plugins were added:
+	- The PluginIndexPlugin shows you all plugins that are available.
+	- The InterWikiLinksPlugin shows you all defined InterWikiLinks in a customizable manner.
 	
 	The IndexPlugin has a new parameter (showAttachments=true/false), use false if you don't
 	want attachments to show up on the PageIndex page.

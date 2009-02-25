@@ -1,3 +1,11 @@
+2009-02-25  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-73
+        
+        * JSPWIKI-505 - New Plugin: InterWikiLinksPlugin, thanks to Wouter Van daele
+        
+        * strong typing for some Collections returned by WikiEngine and a few others
+
 2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-72
