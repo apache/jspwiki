@@ -1,3 +1,17 @@
+2009-02-26  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-74
+        
+        * localized messages in all plugin
+        
+        * updated Dutch translation
+        
+        * reformatted the IfPlugin
+        
+        * added a few strong typing
+        
+        * fixed the TranslationsCheck (location of i18n files were changed)
+        
 2009-02-25  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-73

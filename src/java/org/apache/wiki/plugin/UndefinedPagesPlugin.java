@@ -39,14 +39,12 @@ import org.apache.wiki.api.PluginException;
  * </ul>
  *
  */
-public class UndefinedPagesPlugin
-    extends AbstractFilteredPlugin
+public class UndefinedPagesPlugin extends AbstractFilteredPlugin
 {
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,String> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
@@ -64,7 +62,9 @@ public class UndefinedPagesPlugin
         
         if (m_lastModified)
         {
-            throw new PluginException("parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin");
+            throw new PluginException( context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE )
+                .getString( "plugin.undefined.parm.invalid" )
+                                       + " : " + PARAM_LASTMODIFIED );
         }
         
         if (m_show.equals(PARAM_SHOW_VALUE_COUNT))

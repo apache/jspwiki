@@ -229,7 +229,7 @@ public class TableOfContents
             catch(Exception e) 
             {
                 log.error("Could not construct table of contents: Filter Error", e);
-                throw new PluginException("Unable to construct table of contents (see logs)");
+                throw new PluginException( rb.getString( "tableofcontents.unable.construct" ) );
             }
             
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
@@ -244,7 +244,7 @@ public class TableOfContents
         catch( IOException e )
         {
             log.error("Could not construct table of contents", e);
-            throw new PluginException("Unable to construct table of contents (see logs)");
+            throw new PluginException( rb.getString( "tableofcontents.unable.construct" ) );
         }
 
         sb.append("</div>\n</div>\n");

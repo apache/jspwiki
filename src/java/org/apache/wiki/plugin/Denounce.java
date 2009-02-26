@@ -132,7 +132,7 @@ public class Denounce implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,String> params )
         throws PluginException
     {
         String link = (String) params.get( PARAM_LINK );
@@ -141,7 +141,9 @@ public class Denounce implements WikiPlugin
 
         if( link == null )
         {
-            throw new PluginException("Denounce: No parameter "+PARAM_LINK+" defined!");
+            throw new PluginException( context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE )
+                .getString( "plugin.denounce.no.parameter" )
+                                       + PARAM_LINK );
         }
 
         HttpServletRequest request = context.getHttpRequest();
@@ -165,9 +167,9 @@ public class Denounce implements WikiPlugin
     /**
      *  Returns true, if the path is found among the referers.
      */
-    private boolean matchPattern( List list, String path )
+    private boolean matchPattern( List<Pattern> list, String path )
     {
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        for( Iterator<Pattern> i = list.iterator(); i.hasNext(); )
         {
             Pattern pattern = (Pattern)i.next();
             if (pattern.matcher(path).find())

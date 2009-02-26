@@ -556,14 +556,11 @@ public class PluginManager extends ModuleManager
      *  
      *  @throws PluginException From the plugin itself, it propagates, waah!
      */
-    public String execute( WikiContext context,
-                           String commandline )
-        throws PluginException
+    public String execute( WikiContext context, String commandline ) throws PluginException
     {
         if( !m_pluginsEnabled )
             return "";
 
-        ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         Object[] obArgs = { commandline };
         Matcher  matcher  = m_pluginPattern.matcher( commandline );
 
@@ -585,12 +582,14 @@ public class PluginManager extends ModuleManager
         {
             String msg =  "Missing parameter in plugin definition: "+commandline;
             log.warn( msg, e );
+            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.missingparameter" ), obArgs ) );
         }
         catch( IOException e )
         {
             String msg = "Zyrf.  Problems with parsing arguments: "+commandline;
             log.warn( msg, e );
+            ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.parsingarguments" ), obArgs ) );
         }
 
@@ -649,13 +648,15 @@ public class PluginManager extends ModuleManager
         {
             String msg =  "Missing parameter in plugin definition: "+commandline;
             log.warn( msg, e );
-            throw new PluginException( msg );
+            ResourceBundle rb = context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+            throw new PluginException( rb.getString( "plugin.error.missingparameter" ) );
         }
         catch( IOException e )
         {
             String msg = "Zyrf.  Problems with parsing arguments: "+commandline;
             log.warn( msg, e );
-            throw new PluginException( msg );
+            ResourceBundle rb = context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+            throw new PluginException( rb.getString( "plugin.error.parsingarguments" ) );
         }
 
         return null;

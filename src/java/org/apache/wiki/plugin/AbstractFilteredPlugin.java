@@ -123,7 +123,7 @@ public abstract class AbstractFilteredPlugin
      * @throws PluginException if any of the plugin parameters are malformed
      */
     // FIXME: The compiled pattern strings should really be cached somehow.
-    public void initialize( WikiContext context, Map params )
+    public void initialize( WikiContext context, Map<String,String> params )
         throws PluginException
     {
         m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
@@ -181,7 +181,9 @@ public abstract class AbstractFilteredPlugin
             }
             catch( PatternSyntaxException e )
             {
-                throw new PluginException("Exclude-parameter has a malformed pattern: "+e.getMessage());
+                throw new PluginException( context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE )
+                    .getString( "plugin.abstract.excludeparm.malformed" )
+                                           + e.getMessage() );
             }
         }
 
@@ -205,7 +207,9 @@ public abstract class AbstractFilteredPlugin
             }
             catch( PatternSyntaxException e )
             {
-                throw new PluginException("Include-parameter has a malformed pattern: "+e.getMessage());
+                throw new PluginException( context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE )
+                    .getString( "plugin.abstract.includeparm.malformed" )
+                                           + e.getMessage() );
             }
         }
 
@@ -232,7 +236,8 @@ public abstract class AbstractFilteredPlugin
                 }
                 else
                 {
-                    throw new PluginException( "showLastModified=true is only valid if show=count is also specified" );
+                    throw new PluginException( context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE )
+                        .getString( "plugin.abstract.showLastModified" ) );
                 }
             }
         }
@@ -346,14 +351,14 @@ public abstract class AbstractFilteredPlugin
      *  @param numItems How many items to show.
      *  @return The WikiText
      */
-    protected String wikitizeCollection( Collection links, String separator, int numItems )
+    protected String wikitizeCollection( Collection<String> links, String separator, int numItems )
     {
         if( links == null || links.isEmpty() )
             return "";
 
         StringBuilder output = new StringBuilder();
 
-        Iterator it     = links.iterator();
+        Iterator<String> it     = links.iterator();
         int      count  = 0;
 
         //

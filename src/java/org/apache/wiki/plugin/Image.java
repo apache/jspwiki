@@ -21,6 +21,7 @@
 package org.apache.wiki.plugin;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -101,6 +102,7 @@ public class Image
     public String execute( WikiContext context, Map params )
         throws PluginException
     {
+        ResourceBundle rb =  context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         WikiEngine engine = context.getEngine();
         String src     = getCleanParameter( params, PARAM_SRC );
         String align   = getCleanParameter( params, PARAM_ALIGN );
@@ -117,7 +119,8 @@ public class Image
 
         if( src == null )
         {
-            throw new PluginException("Parameter 'src' is required for Image plugin");
+            throw new PluginException( rb.getString( " plugin.image.parmsrc.req.1" ) + " 'src' "
+                                       + rb.getString( " plugin.image.parmsrc.req.2" ) );
         }
 
         if( cssclass == null ) cssclass = "imageplugin";
@@ -139,7 +142,7 @@ public class Image
         }
         catch( ProviderException e )
         {
-            throw new PluginException( "Attachment info failed: "+e.getMessage() );
+            throw new PluginException( rb.getString( "plugin.image.attachinfo.failed" ) + e.getMessage() );
         }
 
         StringBuilder result = new StringBuilder();

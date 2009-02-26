@@ -185,7 +185,7 @@ public class BugReportHandler
         {
             log.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
 
-            throw new PluginException("Saving not allowed, reason: "+e.getMessage());
+            throw new PluginException( rb.getString( "bugreporthandler.savenotallowed" ) + e.getMessage() );
         }
         catch( WikiException e )
         {

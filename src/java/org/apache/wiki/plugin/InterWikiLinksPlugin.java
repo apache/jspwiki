@@ -22,6 +22,7 @@ package org.apache.wiki.plugin;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
@@ -80,6 +81,7 @@ public class InterWikiLinksPlugin implements WikiPlugin
      */
     public String execute( WikiContext context, Map<String, String> params ) throws PluginException
     {
+        ResourceBundle rb = context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         try
         {
             StringBuffer sb = new StringBuffer();
@@ -180,7 +182,7 @@ public class InterWikiLinksPlugin implements WikiPlugin
         catch( Exception e )
         {
             log.error( "Could not construct InterwikiLinks plugin output, reason: ", e );
-            throw new PluginException( "Unable to construct InterwikiLinks plugin output (see logs)" );
+            throw new PluginException( rb.getString( "plugin.interwikilinks.noconstruct" ) );
         }
     }
 

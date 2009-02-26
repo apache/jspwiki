@@ -97,7 +97,7 @@ public class UndefinedPagesPluginTest extends TestCase
         assertEquals("1", result);
 
         // test if the proper exception is thrown:
-        String expectedExceptionString = "parameter showLastModified is not valid for the UndefinedPagesPlugin";
+        String expectedExceptionString = "parameter is not valid for the UndefinedPagesPlugin : showLastModified";
         String exceptionString = null;
         try
         {
