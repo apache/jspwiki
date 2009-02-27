@@ -1,3 +1,9 @@
+2009-02-27  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-75
+        
+        * JSPWIKI-414 - denounce plugin localized, the denouncetext is now in PluginResources.properties
+        
 2009-02-26  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-74

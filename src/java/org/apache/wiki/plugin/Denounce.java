@@ -1,7 +1,5 @@
-/* 
+/*
     JSPWiki - a JSP-based WikiWiki clone.
-
-    Copyright (C) 2003 Janne Jalkanen (Janne.Jalkanen@iki.fi)
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -18,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.    
  */
 package org.apache.wiki.plugin;
 
@@ -90,8 +88,6 @@ public class Denounce implements WikiPlugin
             Properties props = new Properties();
             props.load( in );
 
-            c_denounceText = props.getProperty( PROP_DENOUNCETEXT, c_denounceText );
-
             for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
             {
                 String name = (String) e.nextElement();
@@ -135,6 +131,8 @@ public class Denounce implements WikiPlugin
     public String execute( WikiContext context, Map<String,String> params )
         throws PluginException
     {
+        c_denounceText = context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE ).getString( "plugin.denounce.denouncetext" );
+
         String link = (String) params.get( PARAM_LINK );
         String text = (String) params.get( PARAM_TEXT );
         boolean linkAllowed = true;
