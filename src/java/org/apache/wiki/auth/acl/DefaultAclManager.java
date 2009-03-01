@@ -247,7 +247,6 @@ public class DefaultAclManager implements AclManager
      * @param acl the ACL
      * @return the ACL string
      */
-    @SuppressWarnings("unchecked")
     protected static String printAcl( Acl acl )
     {
         // Extract the ACL entries into a Map with keys == permissions, values == principals
