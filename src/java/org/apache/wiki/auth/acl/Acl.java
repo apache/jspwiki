@@ -74,7 +74,7 @@ public interface Acl
      * enumeration is of type AclEntry.
      * @return an enumeration of the entries in this ACL.
      */
-    public Enumeration entries();
+    public Enumeration<AclEntry> entries();
 
     /**
      * Returns <code>true</code>, if this Acl is empty.

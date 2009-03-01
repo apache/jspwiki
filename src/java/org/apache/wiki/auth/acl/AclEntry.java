@@ -80,7 +80,7 @@ public interface AclEntry
      * Returns an enumeration of the permissions in this ACL entry.
      * @return an enumeration of the permissions
      */
-    public Enumeration permissions();
+    public Enumeration<Permission> permissions();
 
     /**
      * Removes the specified permission from this ACL entry.
