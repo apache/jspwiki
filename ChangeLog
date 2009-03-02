@@ -1,3 +1,9 @@
+2009-03-02  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-76
+        
+        * JSPWIKI-513 Remove DAV support
+        
 2009-02-27  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-75

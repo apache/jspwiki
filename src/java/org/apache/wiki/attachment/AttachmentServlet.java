@@ -47,12 +47,6 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.dav.AttachmentDavProvider;
-import org.apache.wiki.dav.DavPath;
-import org.apache.wiki.dav.DavProvider;
-import org.apache.wiki.dav.WebdavServlet;
-import org.apache.wiki.dav.methods.DavMethod;
-import org.apache.wiki.dav.methods.PropFindMethod;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
@@ -79,7 +73,6 @@ import org.apache.wiki.util.TextUtil;
  *  @since 1.9.45.
  */
 public class AttachmentServlet
-    extends WebdavServlet
 {
     private static final int BUFFER_SIZE = 8192;
 
@@ -95,8 +88,6 @@ public class AttachmentServlet
     protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
 
     private String m_tmpDir;
-
-    private DavProvider m_attachmentProvider;
 
     /**
      *  The maximum size that an attachment can be.
@@ -125,12 +116,9 @@ public class AttachmentServlet
     public void init( ServletConfig config )
         throws ServletException
     {
-        super.init( config );
-
         m_engine         = WikiEngine.getInstance( config );
         Properties props = m_engine.getWikiProperties();
-
-        m_attachmentProvider = new AttachmentDavProvider( m_engine );
+        
         m_tmpDir         = m_engine.getWorkDir()+File.separator+"attach-tmp";
 
         m_maxSize        = TextUtil.getIntegerProperty( props,
@@ -191,25 +179,6 @@ public class AttachmentServlet
     }
 
     /**
-     *  Implements the PROPFIND method.
-     *  
-     *  @param req The servlet request
-     *  @param res The servlet response
-     *  @throws IOException If input/output fails
-     *  @throws ServletException If the servlet has issues
-     */
-    public void doPropFind( HttpServletRequest req, HttpServletResponse res )
-        throws IOException, ServletException
-    {
-        DavMethod dm = new PropFindMethod( m_attachmentProvider );
-
-        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
-
-        DavPath path = new DavPath( p );
-
-        dm.execute( req, res, path );
-    }
-    /**
      *  Implements the OPTIONS method.
      *  
      *  @param req The servlet request
@@ -218,8 +187,7 @@ public class AttachmentServlet
 
     protected void doOptions( HttpServletRequest req, HttpServletResponse res )
     {
-        res.setHeader( "DAV", "1" ); // We support only Class 1
-        res.setHeader( "Allow", "GET, PUT, POST, OPTIONS, PROPFIND, PROPPATCH, MOVE, COPY, DELETE");
+        res.setHeader( "Allow", "GET, PUT, POST, OPTIONS");
         res.setStatus( HttpServletResponse.SC_OK );
     }
 
@@ -497,60 +465,6 @@ public class AttachmentServlet
         }
     }
 
-    /**
-     *  {@inheritDoc}
-     */
-    public void doPut( HttpServletRequest req, HttpServletResponse res )
-        throws IOException, ServletException
-    {
-        String errorPage = m_engine.getURL( WikiContext.ERROR, "", null, false ); // If something bad happened, Upload should be able to take care of most stuff
-
-        String p = new String(req.getPathInfo().getBytes("ISO-8859-1"), "UTF-8");
-        DavPath path = new DavPath( p );
-
-        try
-        {
-            InputStream data = req.getInputStream();
-
-            WikiContext context;
-            try
-            {
-                context = m_engine.getWikiContextFactory().newContext( req, res, WikiContext.UPLOAD );
-            }
-            catch( WikiException e )
-            {
-                throw new ServletException( e );
-            }
-
-            String wikipage = path.get( 0 );
-
-            errorPage = context.getURL( WikiContext.UPLOAD,
-                                        wikipage );
-
-            String changeNote = null; // FIXME: Does not quite work
-
-            boolean created = executeUpload( context, data,
-                                             path.getName(),
-                                             errorPage, wikipage,
-                                             changeNote,
-                                             req.getContentLength() );
-
-            if( created )
-                res.sendError( HttpServletResponse.SC_CREATED );
-            else
-                res.sendError( HttpServletResponse.SC_OK );
-        }
-        catch( ProviderException e )
-        {
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           e.getMessage() );
-        }
-        catch( RedirectException e )
-        {
-            res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                           e.getMessage() );
-        }
-    }
 
     /**
      *  Validates the next page to be on the same server as this webapp.
