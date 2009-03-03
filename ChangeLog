@@ -1,3 +1,11 @@
+2009-03-03  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-77
+        
+        * Get rid of all javadoc warnings
+        
+        * added  forkmode="once" maxmemory="512m" to build.xml's tests target
+        
 2009-03-02  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-76

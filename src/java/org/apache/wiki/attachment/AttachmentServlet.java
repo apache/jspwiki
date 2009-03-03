@@ -33,6 +33,7 @@ import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,7 +73,7 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 1.9.45.
  */
-public class AttachmentServlet
+public class AttachmentServlet extends HttpServlet
 {
     private static final int BUFFER_SIZE = 8192;
 

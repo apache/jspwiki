@@ -308,7 +308,6 @@ public class ContentManager
      *  please see {@link ReferenceManager#findCreated()}, which is probably a lot
      *  faster.  This method may cause repository access.
      *  
-     *  @param context The Wikicontext
      *  @param space Name of the Wiki space.  May be null, in which case gets all spaces
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
@@ -538,7 +537,6 @@ public class ContentManager
      *  Gets a version history of page.  Each element in the returned
      *  List is a WikiPage.
      *  
-     *  @param context The {@link WikiContext} to use 
      *  @param path The name of the page to fetch history for
      *  @return If the page does not exist, returns null, otherwise a List
      *          of WikiPages.
@@ -592,7 +590,6 @@ public class ContentManager
      *  it swallows the ProviderException and returns -1 instead of
      *  any problems.
      *  
-     *  @param context The {@link WikiContext} to use 
      *  @param space Name of the Wiki space.  May be null, in which
      *  case all spaces will be counted
      *  @return The number of pages, or -1, if there is an error.
@@ -614,7 +611,6 @@ public class ContentManager
     /**
      *  Returns true, if the page exists (any version).
      *  
-     *  @param context The {@link WikiContext} to use 
      *  @param wikiPath  the {@link WikiName} to check for
      *  @return A boolean value describing the existence of a page
      *  @throws ProviderException If the backend fails or the wikiPath is illegal.
@@ -646,7 +642,6 @@ public class ContentManager
      *  Checks for existence of a specific page and version.
      *  
      *  @since 2.3.29
-     *  @param context The {@link WikiContext} to use 
      *  @param wikiPath  the {@link WikiName} to check for
      *  @param version The version to check
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
@@ -967,7 +962,6 @@ public class ContentManager
      *  Adds new content to the repository.  To update, get a page, modify
      *  it, then store it back using save().
      *  
-     *  @param context The {@link WikiContext} to use 
      *  @param path the WikiName
      *  @param contentType the type of content
      *  @return the {@link JCRWikiPage} 
@@ -994,7 +988,6 @@ public class ContentManager
     /**
      *  Get content from the repository.
      *  
-     *  @param context The {@link WikiContext} to use 
      *  @param path the path
      *  @return the {@link JCRWikiPage} 
      *  @throws ProviderException If the backend fails.

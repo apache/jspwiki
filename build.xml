@@ -283,7 +283,6 @@
       <link href="http://www.jdom.org/docs/apidocs/"/>
       <link href="http://stripes.sourceforge.net/docs/current/javadoc/"/>
       <classpath refid="path.base" />
-      <classpath refid="path.tests" />   
     </javadoc>
 
   </target>
@@ -712,7 +711,7 @@
   <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
           description="Runs the JUnit tests.">
 
-    <junit printsummary="yes" haltonfailure="no" fork="yes" maxmemory="128m">
+    <junit printsummary="yes" haltonfailure="no" fork="yes" forkmode="once" maxmemory="512m">
         <classpath>
            <path refid="path.tests" />
         </classpath>

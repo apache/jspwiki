@@ -132,9 +132,9 @@ public class WikiName implements Serializable, Comparable<WikiName>
     }
 
     /**
-     *  @{inheritDoc}
+     *  {@inheritDoc}
      *  
-     *  @return {@inheritDoc}
+     *  @return int 
      */
     public int hashCode()
     {
@@ -145,7 +145,7 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  A WikiName is compared using it's toString() method.
      *  
      *  @param o The Object to compare against.
-     *  @return {@inheritDoc}
+     *  @return int
      */
     public int compareTo( WikiName o )
     {

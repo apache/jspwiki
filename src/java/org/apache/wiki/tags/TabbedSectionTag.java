@@ -113,7 +113,7 @@ public class TabbedSectionTag extends BodyTagSupport
     private static final String ATTR_TABS = "JSPWiki.TabbedSection.Tags";
 
     /**
-     * Holds the current set of related {@link TabbedSection} and {@link TabTag}
+     * Holds the current set of related {@link TabbedSectionTag} and {@link TabTag}
      * tags. One TabCollection is created for each HTTPServletRequest, rather than
      * per PageContext, because the tags could span multiple pages.
      */

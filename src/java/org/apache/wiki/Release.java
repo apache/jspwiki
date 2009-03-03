@@ -77,7 +77,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "76";
+    public static final String     BUILD         = "77";
     
     /**
      *  This is the generic version string you should use

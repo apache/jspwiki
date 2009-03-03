@@ -29,7 +29,7 @@ import org.apache.wiki.util.TextUtil;
 /**
  * <p>
  * Generates single tabbed page layout, when nested under a
- * {@link TabbedSection} tag. Works together with the tabbedSection javascript.
+ * {@link TabbedSectionTag}. Works together with the tabbedSection javascript.
  * Note that if you do not specify an url, the body contents of the tag are
  * loaded by the tag itself.
  * </p>
@@ -131,7 +131,7 @@ public class TabTag extends WikiTagBase
         
         /**
          * Returns the ID for this tab.
-         * @return
+         * @return id
          */
         public String getId()
         {
