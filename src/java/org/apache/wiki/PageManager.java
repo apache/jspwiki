@@ -36,18 +36,10 @@ import org.apache.wiki.providers.WikiPageProvider;
 
 
 /**
- *  Manages the WikiPages.  This class functions as an unified interface towards
- *  the page providers.  It handles initialization and management of the providers,
- *  and provides utility methods for accessing the contents.
- *  <p>
- *  Saving a page is a two-stage Task; first the pre-save operations and then the
- *  actual save.  See the descriptions of the tasks for further information.
- *
- *  @since 2.0
+ * Use ContentManager instead.
+ * 
+ * @deprecated
  */
-// FIXME: This class currently only functions just as an extra layer over providers,
-//        complicating things.  We need to move more provider-specific functionality
-//        from WikiEngine (which is too big now) into this class.
 public class PageManager extends ModuleManager
 {
     private static final long serialVersionUID = 1L;
