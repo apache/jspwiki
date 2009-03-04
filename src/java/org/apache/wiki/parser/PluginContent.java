@@ -68,8 +68,7 @@ public class PluginContent extends Text
      *  @param pluginName The FQN of a plugin.
      *  @param parameters A Map of parameters.
      */
-    @SuppressWarnings("unchecked")
-    public PluginContent( String pluginName, Map parameters )
+    public PluginContent( String pluginName, Map<String, Object> parameters )
     {
         m_pluginName = pluginName;
         m_params     = parameters;
@@ -101,7 +100,7 @@ public class PluginContent extends Text
      *  
      *  @return The parameter map.
      */
-    public Map getParameters()
+    public Map<String, Object> getParameters()
     {
         return m_params;
     }
@@ -181,7 +180,7 @@ public class PluginContent extends Text
                 //
                 //  Parse any variable instances from the string
                 //
-                for( Map.Entry e : m_params.entrySet() )
+                for( Map.Entry<String,Object> e : m_params.entrySet() )
                 {
                     Object val = e.getValue();
                 
