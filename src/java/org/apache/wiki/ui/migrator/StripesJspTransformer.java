@@ -38,11 +38,11 @@ public class StripesJspTransformer extends AbstractJspTransformer
 {
     private static final String STRIPES_TAGLIB_URI = "http://stripes.sourceforge.net/stripes.tld";
     
-    private Map<Class<? extends ActionBean>, Set<String>> beanProperties = new HashMap<Class<? extends ActionBean>, Set<String>>();
+    private Map<Class<? extends ActionBean>, Set<String>> m_beanProperties = new HashMap<Class<? extends ActionBean>, Set<String>>();
 
-    private Map<String, Class<? extends ActionBean>> beanBindings = new HashMap<String, Class<? extends ActionBean>>();
+    private Map<String, Class<? extends ActionBean>> m_beanBindings = new HashMap<String, Class<? extends ActionBean>>();
     
-    private boolean migrateForms = false;
+    private boolean m_migrateForms = false;
     
     /**
      * {@inheritDoc}
@@ -50,7 +50,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
     public void initialize( JspMigrator migrator, Set<Class<? extends ActionBean>> beanClasses, Map<String, Object> sharedState )
     {
         // What features should we use?
-        migrateForms = migrator.getFeature( JspMigrator.MIGRATE_FORMS );
+        m_migrateForms = migrator.getFeature( JspMigrator.MIGRATE_FORMS );
         
         // Fetch the URL bindings
         initUrlBindingCache( beanClasses );
@@ -73,7 +73,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
             UrlBinding binding = beanClass.getAnnotation( UrlBinding.class );
             if( binding != null && binding.value() != null )
             {
-                beanBindings.put( binding.value(), beanClass );
+                m_beanBindings.put( binding.value(), beanClass );
             }
         }
     }
@@ -112,7 +112,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 }
                 if( properties.size() > 0 )
                 {
-                    beanProperties.put( beanClass, properties );
+                    m_beanProperties.put( beanClass, properties );
                 }
             }
             catch( IntrospectionException e )
@@ -139,24 +139,24 @@ public class StripesJspTransformer extends AbstractJspTransformer
                 Tag tag = (Tag) node;
 
                 // Change <form> to <stripes:form>
-                if( migrateForms && "form".equals( tag.getName() ) )
+                if( m_migrateForms && "form".equals( tag.getName() ) )
                 {
                     migrated = migrateFormTag( tag ) || migrated;
                 }
 
                 // Change <input type="*"> tags to <stripes:*>
-                else if( migrateForms && "input".equals( tag.getName() ) )
+                else if( m_migrateForms && "input".equals( tag.getName() ) )
                 {
                     migrated = migrateInputTag( tag ) || migrated;
                 }
 
                 // Change <textarea> to <stripes:textarea>
-                else if( migrateForms && "textarea".equals( tag.getName() ) )
+                else if( m_migrateForms && "textarea".equals( tag.getName() ) )
                 {
                     migrated = migrateTextArea( tag ) || migrated;
                 }
 
-                else if( migrateForms && "label".equals( tag.getName() ) )
+                else if( m_migrateForms && "label".equals( tag.getName() ) )
                 {
                     migrated = migrateLabel( tag ) || migrated;
                 }
@@ -192,7 +192,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
      * @return <code>true</code> if the Stripes taglib declaration was
      * actually added, <code>false</code> if it already exists
      */
-    static protected boolean addStripesTaglib( JspDocument doc )
+    protected static boolean addStripesTaglib( JspDocument doc )
     {
         // Add the Stripes taglib declaration if it's not there already
         List<Tag> nodes = doc.getTaglibDirective( "*", "stripes" );
@@ -269,7 +269,7 @@ public class StripesJspTransformer extends AbstractJspTransformer
                              && "fmt.message".equals( children.get( 0 ).getName() )
                              && "fmt.message".equals( children.get( 1 ).getName() );
 
-        if( ( hasOneTag || hasTwoTags ) )
+        if( hasOneTag || hasTwoTags )
         {
             if ( tag.hasAttribute( "name" ) )
             {
