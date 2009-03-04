@@ -1,3 +1,10 @@
+2009-02-14  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-78
+        
+        * JSPWIKI-421: First commit. PageManager removed from use;
+        AttachmentManager not yet migrated.
+
 2009-03-03  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-77

@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.content.WikiName;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -65,7 +67,7 @@ public interface WikiPage
      * {@link org.apache.wiki.ui.stripes.HandlerPermission} annotations.
      * @return the qualified page name, for example <code>mywiki:Main</code>
      */
-    public String getQualifiedName();
+    public WikiName getQualifiedName();
 
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
@@ -233,9 +235,9 @@ public interface WikiPage
      */
     public int compareTo( Object o );
  
-    public String getContentAsString() throws WikiException;
+    public String getContentAsString() throws ProviderException;
 
-    public void save() throws WikiException;
+    public void save() throws ProviderException;
     
-    public void setContent(String content) throws WikiException;
+    public void setContent(String content) throws ProviderException;
 }

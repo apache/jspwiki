@@ -20,13 +20,14 @@
  */
 package org.apache.wiki;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
+import javax.jcr.*;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
@@ -35,12 +36,12 @@ import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.WikiName;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
 
 
 /**
- *  Simple wrapper class for the Wiki page attributes.  The Wiki page
- *  content is moved around in Strings, though.
+ *  JCR-backed implementation of the WikiPage.
  *  
  *  @since 3.0
  */
@@ -55,16 +56,15 @@ public class JCRWikiPage
 {
     private static final long serialVersionUID = 1L;
 
+    private static final String LASTMODIFIED = "wiki:lastModified";
+
+    private static final String AUTHOR       = "wiki:author";
+
+    private static final String ACL = "wiki:acl";
+
     private       WikiName   m_name;
     private       WikiEngine m_engine;
-    private Date             m_lastModified;
-    private long             m_fileSize = -1;
-    private int              m_version = WikiPageProvider.LATEST_VERSION;
-    private String           m_author = null;
-    private final HashMap<String,Object> m_attributes = new HashMap<String,Object>();
-    private Node             m_node;
-    
-    private Acl m_accessList = null;
+    private String           m_jcrPath = null;
     
     /**
      *  Use {@link WikiEngine#createPage(String)} instead.
@@ -72,8 +72,7 @@ public class JCRWikiPage
      */
     public JCRWikiPage( WikiEngine engine, String path )
     {
-        m_engine = engine;
-        m_name   = WikiName.valueOf( path );
+        this( engine, WikiName.valueOf( path ) );
     }
 
     /** 
@@ -82,22 +81,22 @@ public class JCRWikiPage
      */
     public JCRWikiPage( WikiEngine engine, WikiName name )
     {
-        m_engine = engine;
-        m_name   = name;
+        m_engine  = engine;
+        m_name    = name;
+        m_jcrPath = ContentManager.getJCRPath( name );
     }
 
     public JCRWikiPage(WikiEngine engine, Node node)
-        throws RepositoryException, WikiException
+        throws RepositoryException, ProviderException
     {
-        m_engine = engine;
-        m_node   = node;
-        m_name   = ContentManager.getWikiPath( node.getPath() );
+        m_engine  = engine;
+        m_jcrPath = node.getPath();
+        m_name    = ContentManager.getWikiPath( node.getPath() );
     }
-    
-    
-    public Node getJCRNode()
+        
+    public Node getJCRNode() throws RepositoryException
     {
-        return m_node;
+        return m_engine.getContentManager().getJCRNode(m_jcrPath);
     }
     
     /* (non-Javadoc)
@@ -111,9 +110,9 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getQualifiedName()
      */
-    public String getQualifiedName()
+    public WikiName getQualifiedName()
     {
-        return m_name.toString();
+        return m_name;
     }
 
     /* (non-Javadoc)
@@ -121,23 +120,58 @@ public class JCRWikiPage
      */
     public Object getAttribute( String key )
     {
-        return m_attributes.get( key );
+        try
+        {
+            Property property = getJCRNode().getProperty( key );
+            
+            return getValue( property );
+        }
+        catch( ItemNotFoundException e ) {}
+        catch( RepositoryException e ) {} // FIXME: Should log this at least.
+        
+        return null;
+    }
+
+    private Object getValue( Property property ) throws RepositoryException, ValueFormatException
+    {
+        switch( property.getType() )
+        {
+            case PropertyType.STRING:
+                return property.getString();
+        }
+        
+        return property.getString();
     }
 
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#setAttribute(java.lang.String, java.lang.Object)
      */
-    public void setAttribute( String key, Object attribute )
+    public void setAttribute( String key, String attribute )
     {
-        m_attributes.put( key, attribute );
+        try
+        {
+            getJCRNode().setProperty( key, attribute );
+        }
+        catch(RepositoryException e) {} // FIXME: Should log
     }
 
+    public void setAttribute( String key, Date attribute )
+    {
+        try
+        {
+            Calendar c = Calendar.getInstance();
+            c.setTime( attribute );
+            getJCRNode().setProperty( key, c );
+        }
+        catch(RepositoryException e) {} // FIXME: Should log        
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getAttributes()
      */
     public Map getAttributes() 
     {
-        return m_attributes;
+        return null; // FIXME: m_attributes;
     }
 
     /* (non-Javadoc)
@@ -145,7 +179,18 @@ public class JCRWikiPage
      */
     public Object removeAttribute( String key )
     {
-        return m_attributes.remove( key );
+        try
+        {
+            Property p = getJCRNode().getProperty( key );
+            
+            Object value = getValue(p);
+            p.remove();
+        
+            return value;
+        }
+        catch(RepositoryException e) {}
+        
+        return null;
     }
 
     /* (non-Javadoc)
@@ -153,7 +198,15 @@ public class JCRWikiPage
      */
     public Date getLastModified()
     {
-        return m_lastModified;
+        try
+        {
+            return getJCRNode().getProperty( LASTMODIFIED ).getDate().getTime();
+        }
+        catch( RepositoryException e )
+        {
+            // FIXME: Should rethrow
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -161,15 +214,7 @@ public class JCRWikiPage
      */
     public void setLastModified( Date date )
     {
-        m_lastModified = date;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setVersion(int)
-     */
-    public void setVersion( int version )
-    {
-        m_version = version;
+        setAttribute( LASTMODIFIED, date );
     }
 
     /* (non-Javadoc)
@@ -177,7 +222,8 @@ public class JCRWikiPage
      */
     public int getVersion()
     {
-        return m_version;
+        return -1;
+        //return getJCRNode().getBaseVersion().
     }
 
     /* (non-Javadoc)
@@ -185,15 +231,13 @@ public class JCRWikiPage
      */
     public long getSize()
     {
-        return m_fileSize;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setSize(long)
-     */
-    public void setSize( long size )
-    {
-        m_fileSize = size;
+        try
+        {
+            return getJCRNode().getProperty( ATTR_CONTENT ).getLength();
+        }
+        catch(RepositoryException e){}
+        
+        return -1;
     }
 
     /* (non-Javadoc)
@@ -201,7 +245,50 @@ public class JCRWikiPage
      */
     public Acl getAcl()
     {
-        return m_accessList;
+        ObjectInputStream in = null;
+        
+        try
+        {
+            Property acl = getJCRNode().getProperty( ACL );
+            
+            in = new ObjectInputStream( acl.getStream() );
+            
+            Acl a = (Acl) in.readObject();
+            
+            return a;
+        }
+        catch( PathNotFoundException e )
+        {
+            // No ACL, so this is ok.
+        }
+        catch( RepositoryException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( IOException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( ClassNotFoundException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally
+        {
+            if( in != null )
+                try
+                {
+                    in.close();
+                }
+                catch( IOException e )
+                {
+                }
+        }
+        
+        return null;
     }
 
     /* (non-Javadoc)
@@ -209,7 +296,49 @@ public class JCRWikiPage
      */
     public void setAcl( Acl acl )
     {
-        m_accessList = acl;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        ObjectOutputStream oout;
+        try
+        {
+            oout = new ObjectOutputStream(out);
+            oout.writeObject( acl );
+        
+            oout.close();
+        
+            getJCRNode().setProperty( ACL, new ByteArrayInputStream(out.toByteArray()) );
+        }
+        catch( IOException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( ValueFormatException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( VersionException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( LockException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( ConstraintViolationException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( RepositoryException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
 
     /* (non-Javadoc)
@@ -217,7 +346,7 @@ public class JCRWikiPage
      */
     public void setAuthor( String author )
     {
-        m_author = author;
+        setAttribute( AUTHOR, author );
     }
 
     /* (non-Javadoc)
@@ -225,7 +354,7 @@ public class JCRWikiPage
      */
     public String getAuthor()
     {
-        return m_author;
+        return (String)getAttribute( AUTHOR );
     }
     
     /* (non-Javadoc)
@@ -238,39 +367,11 @@ public class JCRWikiPage
     }
 
     /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#invalidateMetadata()
-     */
-    public void invalidateMetadata()
-    {        
-        m_hasMetadata = false;
-        setAcl( null );
-        m_attributes.clear();
-    }
-
-    private boolean m_hasMetadata = false;
-
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#hasMetadata()
-     */
-    public boolean hasMetadata()
-    {
-        return m_hasMetadata;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setHasMetadata()
-     */
-    public void setHasMetadata()
-    {
-        m_hasMetadata = true;
-    }
-
-    /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#toString()
      */
     public String toString()
     {
-        return "WikiPage ["+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+        return "WikiPage ["+m_name+",ver="+getVersion()+",mod="+getLastModified()+"]";
     }
 
     /* (non-Javadoc)
@@ -279,30 +380,6 @@ public class JCRWikiPage
     public Object clone()
     {
         JCRWikiPage p = new JCRWikiPage( m_engine, m_name );
-            
-        p.m_author       = m_author;
-        p.m_version      = m_version;
-        p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
-
-        p.m_fileSize     = m_fileSize;
-
-        for( Map.Entry<String,Object> entry : m_attributes.entrySet() )
-        {
-            p.m_attributes.put( entry.getKey(), 
-                                entry.getValue() );
-        }
-
-        if( m_accessList != null )
-        {
-            p.m_accessList = new AclImpl();
-            
-            for( Enumeration entries = m_accessList.entries(); entries.hasMoreElements(); )
-            {
-                AclEntry e = (AclEntry)entries.nextElement();
-            
-                p.m_accessList.addEntry( e );
-            }
-        }
             
         return p;
     }
@@ -356,7 +433,7 @@ public class JCRWikiPage
      */
     public int hashCode()
     {
-        return m_name.hashCode() * m_version;
+        return m_name.hashCode() * getVersion();
     }
 
     public InputStream getContentAsStream()
@@ -381,7 +458,7 @@ public class JCRWikiPage
     {
         try
         {
-            m_node.setProperty( ATTR_CONTENT, in );
+            getJCRNode().setProperty( ATTR_CONTENT, in );
         }
         catch( RepositoryException e )
         {
@@ -395,28 +472,29 @@ public class JCRWikiPage
         
     }
     
-    public void save() throws WikiException
+    public void save() throws ProviderException
     {
         try
         {
-            if( m_node.isNew() )
-                m_node.getParent().save();
+            Node nd = getJCRNode();
+            if( nd.isNew() )
+                nd.getParent().save();
             else
-                m_node.save();
+                nd.save();
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Save failed",e);
+            throw new ProviderException("Save failed",e);
         }
     }
     
     private static final String ATTR_CONTENT = "wiki:content";
     
-    public String getContentAsString() throws WikiException
+    public String getContentAsString() throws ProviderException
     {
         try
         {
-            Property p = m_node.getProperty( ATTR_CONTENT );
+            Property p = getJCRNode().getProperty( ATTR_CONTENT );
                 
             return p.getString();
         }
@@ -425,22 +503,59 @@ public class JCRWikiPage
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Unable to get property",e);
+            throw new ProviderException("Unable to get property",e);
         }
         
         return null;
     }
 
-    public void setContent( String content ) throws WikiException
+    public void setContent( String content ) throws ProviderException
     {
         try
         {
-            m_node.setProperty( ATTR_CONTENT, content );
+            getJCRNode().setProperty( ATTR_CONTENT, content );
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Unable to set content",e);
+            throw new ProviderException("Unable to set content",e);
         }
+    }
+
+    // FIXME: The following are obsolete and must go.
+    public boolean hasMetadata()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void invalidateMetadata()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setAttribute( String key, Object attribute )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setHasMetadata()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setSize( long size )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setVersion( int version )
+    {
+        // TODO Auto-generated method stub
+        
     }
 
 }

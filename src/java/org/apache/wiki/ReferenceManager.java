@@ -412,157 +412,21 @@ public class ReferenceManager
     /**
      *  Reads the serialized data from the disk back to memory.
      *  Returns the date when the data was last written on disk
+     *  @deprecated to be removed
      */
     private synchronized long unserializeAttrsFromDisk(WikiPage p)
         throws IOException,
                ClassNotFoundException
     {
-        ObjectInputStream in = null;
-        long saved = 0L;
-
-        try
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-
-            //
-            //  Find attribute cache, and check if it exists
-            //
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-
-            f = new File( f, getHashFileName(p.getName()) );
-
-            if( !f.exists() )
-            {
-                return 0L;
-            }
-
-            log.debug("Deserializing attributes for "+p.getName());
-
-            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
-
-            long ver     = in.readLong();
-
-            if( ver != serialVersionUID )
-            {
-                log.debug("File format has changed; cannot deserialize.");
-                return 0L;
-            }
-
-            saved        = in.readLong();
-
-            String name  = in.readUTF();
-
-            if( !name.equals(p.getName()) )
-            {
-                log.debug("File name does not match ("+name+"), skipping...");
-                return 0L; // Not here
-            }
-
-            long entries = in.readLong();
-
-            for( int i = 0; i < entries; i++ )
-            {
-                String key   = in.readUTF();
-                Object value = in.readObject();
-
-                p.setAttribute( key, value );
-
-                log.debug("   attr: "+key+"="+value);
-            }
-
-            in.close();
-
-            sw.stop();
-            log.debug("Read serialized data for "+name+" successfully in "+sw);
-            p.setHasMetadata();
-        }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.error("No MD5!?!");
-        }
-        finally
-        {
-            if( in != null ) in.close();
-        }
-
-        return saved;
+        return 0L;
     }
 
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
+     *  @deprecated To be removed
      */
     private synchronized void serializeAttrsToDisk( WikiPage p )
     {
-        ObjectOutputStream out = null;
-        StopWatch sw = new StopWatch();
-        sw.start();
-
-        try
-        {
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-
-            if( !f.exists() ) f.mkdirs();
-
-            //
-            //  Create a digest for the name
-            //
-            f = new File( f, getHashFileName(p.getName()) );
-
-            // FIXME: There is a concurrency issue here...
-            Set entries = p.getAttributes().entrySet();
-
-            if( entries.size() == 0 ) 
-            {
-                //  Nothing to serialize, therefore we will just simply remove the
-                //  serialization file so that the next time we boot, we don't
-                //  deserialize old data.
-                f.delete();
-                return;
-            }
-
-            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
-
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-
-            out.writeUTF( p.getName() );
-            out.writeLong( entries.size() );
-
-            for( Iterator i = entries.iterator(); i.hasNext(); )
-            {
-                Map.Entry e = (Map.Entry) i.next();
-
-                if( e.getValue() instanceof Serializable )
-                {
-                    out.writeUTF( (String)e.getKey() );
-                    out.writeObject( e.getValue() );
-                }
-            }
-
-            out.close();
-
-        }
-        catch( IOException e )
-        {
-            log.error("Unable to serialize!");
-
-            try
-            {
-                if( out != null ) out.close();
-            }
-            catch( IOException ex ) {}
-        }
-        catch( NoSuchAlgorithmException e )
-        {
-            log.error("No MD5 algorithm!?!");
-        }
-        finally
-        {
-            sw.stop();
-
-            log.debug("serialization for "+p.getName()+" done - took "+sw);
-        }
     }
 
     /**

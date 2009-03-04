@@ -46,10 +46,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
-import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -85,7 +82,7 @@ import org.priha.util.ConfigurationException;
  *  @since 3.0
  */
 
-public class ContentManager
+public class ContentManager implements WikiEventListener
 {
     /**
      *  The name of the default WikiSpace.
@@ -166,6 +163,7 @@ public class ContentManager
      *  @param engine WikiEngine instance
      *  @throws WikiException If anything goes wrong, you get this.
      */
+    @SuppressWarnings("unchecked")
     public ContentManager( WikiEngine engine )
         throws WikiException
     {
@@ -238,14 +236,14 @@ public class ContentManager
         
         try
         {
-            Object foo = acquire();
             initialize();
-            release(foo);
         }
         catch( RepositoryException e )
         {
             throw new WikiException("Failed to initialize the repository content",e);
         }
+        
+        log.info("ContentManager initialized!");
     }
 
     /**
@@ -286,6 +284,17 @@ public class ContentManager
 
     }
     
+    /**
+     *  Discards all unsaved modifications made to this repository.
+     *  
+     *  @throws RepositoryException 
+     */
+    public void discardModifications() throws RepositoryException
+    {
+        m_sessionManager.getSession().refresh( false );
+    }
+        
+    /*
     public Object acquire() throws ProviderException
     {
         try
@@ -302,6 +311,7 @@ public class ContentManager
     {
         m_sessionManager.destroySession( id );
     }
+    */
     
     /**
      *  Returns all pages in some random order.  If you need just the page names, 
@@ -549,10 +559,10 @@ public class ContentManager
         List<WikiPage> result = new ArrayList<WikiPage>();
         JCRWikiPage base = getPage(path);
 
-        Node baseNode = base.getJCRNode();
-        
         try
         {
+            Node baseNode = base.getJCRNode();
+            
             VersionHistory vh = baseNode.getVersionHistory();
             
             for( VersionIterator vi = vh.getAllVersions(); vi.hasNext(); )
@@ -648,11 +658,11 @@ public class ContentManager
      *  @throws WikiException If the backend fails or the wikiPath is illegal.
      */
     public boolean pageExists( WikiName wikiPath, int version )
-        throws WikiException
+        throws ProviderException
     {
         if( wikiPath == null )
         {
-            throw new WikiException("Illegal page name");
+            throw new ProviderException("Illegal page name");
         }
 
         try
@@ -663,7 +673,7 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Unable to check for page existence",e);
+            throw new ProviderException("Unable to check for page existence",e);
         }
     }
 
@@ -674,7 +684,7 @@ public class ContentManager
      *  @throws WikiException if the page fails
      */
     public void deleteVersion( WikiPage page )
-        throws WikiException
+        throws ProviderException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -688,7 +698,7 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Unable to delete a page",e);
+            throw new ProviderException("Unable to delete a page",e);
         }
     }
     
@@ -700,7 +710,7 @@ public class ContentManager
      */
     
     public void deletePage( WikiPage page )
-        throws WikiException
+        throws ProviderException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -733,7 +743,7 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Deletion of pages failed.",e);
+            throw new ProviderException("Deletion of pages failed.",e);
         }
     }
 
@@ -921,7 +931,7 @@ public class ContentManager
      *  @param wikiName The WikiName.
      *  @return A full JCR path
      */
-    protected static String getJCRPath( WikiName wikiName )
+    public static String getJCRPath( WikiName wikiName )
     {
         String spaceName;
         String spacePath;
@@ -940,7 +950,7 @@ public class ContentManager
      *  @throws WikiException If the backend fails.
      */
     // FIXME: Should be protected - fix once WikiPage moves to content-package
-    public static WikiName getWikiPath( String jcrpath ) throws WikiException
+    public static WikiName getWikiPath( String jcrpath ) throws ProviderException
     {
         if( jcrpath.startsWith("/"+JCR_PAGES_NODE+"/") )
         {
@@ -955,7 +965,7 @@ public class ContentManager
             }
         }
         
-        throw new WikiException("This is not a valid JSPWiki JCR path: "+jcrpath);
+        throw new ProviderException("This is not a valid JSPWiki JCR path: "+jcrpath);
     }
     
     /**
@@ -967,7 +977,7 @@ public class ContentManager
      *  @return the {@link JCRWikiPage} 
      *  @throws WikiException If the backend fails.
      */
-    public JCRWikiPage addPage( WikiName path, String contentType ) throws WikiException
+    public JCRWikiPage addPage( WikiName path, String contentType ) throws ProviderException
     {
         try
         {
@@ -981,7 +991,7 @@ public class ContentManager
         }
         catch( RepositoryException e )
         {
-            throw new WikiException( "Unable to add a page", e );
+            throw new ProviderException( "Unable to add a page", e );
         }
     }
 
@@ -1017,25 +1027,36 @@ public class ContentManager
         }
     }
 
-    public JCRWikiPage getPage( WikiName path, int version ) throws WikiException
+    public JCRWikiPage getPage( WikiName path, int version ) throws ProviderException
     {
         try
         {
+            JCRWikiPage page = null;
             Session session = m_sessionManager.getSession();
         
             Node nd = session.getRootNode().getNode( getJCRPath(path) );
 
-            VersionHistory vh = nd.getVersionHistory();
+            try
+            {
+                VersionHistory vh = nd.getVersionHistory();
             
-            Version v = vh.getVersion( Integer.toString( version ) );
+                Version v = vh.getVersion( Integer.toString( version ) );
             
-            JCRWikiPage page = new JCRWikiPage(m_engine, v);
+                page = new JCRWikiPage(m_engine, v);
+            }
+            catch( UnsupportedRepositoryOperationException e )
+            {
+                // No version history yet
+                
+                if( version == WikiProvider.LATEST_VERSION || version == 1)
+                    page = new JCRWikiPage( m_engine, nd );
+            }
             
             return page;
         }
         catch( RepositoryException e )
         {
-            throw new WikiException( "Unable to get a page", e );
+            throw new ProviderException( "Unable to get a page", e );
         }
     }
     
@@ -1221,12 +1242,18 @@ public class ContentManager
          *  
          *  @return A valid Session object, if called between createSession and destroySession().
          *  @throws IllegalStateException If the object has not been acquired with createSession()
+         * @throws RepositoryException 
+         * @throws LoginException 
          */
-        public Session getSession() throws IllegalStateException
+        public Session getSession() throws LoginException, RepositoryException
         {
             Session s = m_currentSession.get();
             
-            if( s == null ) throw new IllegalStateException("You have not yet opened a Session");
+            if( s == null ) 
+            {
+                createSession();
+                s = m_currentSession.get();
+            }
             
             return s;
         } 
@@ -1244,5 +1271,10 @@ public class ContentManager
             m_identity = identity;
         }
         boolean m_identity = false;        
+    }
+
+    public Node getJCRNode( String path ) throws RepositoryException
+    {
+        return (Node)m_sessionManager.getSession().getItem( path );
     }
 }

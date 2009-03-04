@@ -1751,8 +1751,8 @@ public class WikiEngine
         // If submitter is authenticated, any reject messages will appear in his/her workflow inbox.
         WorkflowBuilder builder = WorkflowBuilder.getBuilder( this );
         Principal submitter = context.getCurrentUser();
-        Task prepTask = new PageManager.PreSaveWikiPageTask( context, proposedText );
-        Task completionTask = new PageManager.SaveWikiPageTask();
+        Task prepTask = new ContentManager.PreSaveWikiPageTask( context, proposedText );
+        Task completionTask = new ContentManager.SaveWikiPageTask();
         String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         Fact[] facts = new Fact[5];

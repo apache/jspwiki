@@ -117,7 +117,7 @@ public final class UserManager
 
         // Attach the PageManager as a listener
         // TODO: it would be better if we did this in PageManager directly
-        addWikiEventListener( engine.getPageManager() );
+        addWikiEventListener( engine.getContentManager() );
 
         JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
     }

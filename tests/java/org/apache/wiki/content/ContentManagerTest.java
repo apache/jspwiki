@@ -17,7 +17,6 @@ public class ContentManagerTest extends TestCase
 {
     ContentManager m_mgr;
     TestEngine     m_engine;
-    Object         m_owner;
     
     @Override
     protected void setUp() throws Exception
@@ -30,7 +29,6 @@ public class ContentManagerTest extends TestCase
         m_engine = new TestEngine(props);
         
         m_mgr = m_engine.getContentManager();
-        m_owner = m_mgr.acquire();
     }
 
     @Override
@@ -40,7 +38,6 @@ public class ContentManagerTest extends TestCase
         
         if( p != null ) m_mgr.deletePage( p );
         
-        m_mgr.release( m_owner );
         super.tearDown();
     }
 
