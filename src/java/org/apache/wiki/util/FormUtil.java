@@ -52,10 +52,10 @@ public final class FormUtil
      * @param key the key to look up
      * @return the List of keys
      */
-    public static List getValues( Map params, String key )
+    public static List<Object> getValues( Map<String,Object> params, String key )
     {
         if( params == null || key == null )
-            return new ArrayList(0);
+            return new ArrayList<Object>(0);
 
         Object entry = params.get( key );
         if( entry != null )
@@ -87,7 +87,8 @@ public final class FormUtil
      * @return ArrayList, containing the values corresponding to the
      *          keyPrefix, in order.
      */
-    public static ArrayList getNumberedValues( Map params, String keyPrefix )
+    public static ArrayList<Object> getNumberedValues( Map<String,Object> params, 
+                                                       String keyPrefix )
     {
         ArrayList<Object> rval = new ArrayList<Object>();
         if( params == null || 
@@ -136,17 +137,18 @@ public final class FormUtil
      * @param filterPrefix the prefix
      * @return the Map containing parsed key/value pairs
      */
-    public static Map requestToMap( HttpServletRequest req, 
-                                    String filterPrefix )
+    @SuppressWarnings("unchecked")
+    public static Map<String,String> requestToMap( HttpServletRequest req, 
+                                                   String filterPrefix )
     {
         HashMap<String,String> params = new HashMap<String,String>();
         
         if( filterPrefix == null ) filterPrefix = "";
         
-        Enumeration en = req.getParameterNames();
+        Enumeration<String> en = req.getParameterNames();
         while( en.hasMoreElements() )
         {
-            String param = (String)en.nextElement();
+            String param = en.nextElement();
             
             if( param.startsWith( filterPrefix ) )
             {
