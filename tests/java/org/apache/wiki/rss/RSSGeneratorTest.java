@@ -29,21 +29,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
-import org.apache.wiki.providers.FileSystemProvider;
-import org.apache.wiki.rss.Feed;
-import org.apache.wiki.rss.RSS10Feed;
-import org.apache.wiki.rss.RSS20Feed;
-import org.apache.wiki.rss.RSSGenerator;
-
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.wiki.providers.AbstractFileProvider;
 
 /**
  *
@@ -70,7 +65,7 @@ public class RSSGeneratorTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        TestEngine.deleteAll( new File(props.getProperty( FileSystemProvider.PROP_PAGEDIR )) );
+        TestEngine.deleteAll( new File(props.getProperty( AbstractFileProvider.PROP_PAGEDIR )) );
         
         m_testEngine.shutdown();
     }

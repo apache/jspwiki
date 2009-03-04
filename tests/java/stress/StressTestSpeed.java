@@ -56,13 +56,13 @@ public final class StressTestSpeed extends TestCase
 
     public void tearDown()
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-        File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File f = new File( files, NAME1+".txt" );
 
         f.delete();
 
-        f = new File( files+File.separator+"RCS", NAME1+FileSystemProvider.FILE_EXT+",v" );
+        f = new File( files+File.separator+"RCS", NAME1+".txt,v" );
 
         f.delete();
 

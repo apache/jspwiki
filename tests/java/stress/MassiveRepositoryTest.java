@@ -24,13 +24,13 @@ import java.io.File;
 import java.util.Properties;
 import java.util.Random;
 
+import junit.framework.TestCase;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.CachingProvider;
-import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
-
-import junit.framework.TestCase;
 
 
 public class MassiveRepositoryTest extends TestCase
@@ -47,7 +47,7 @@ public class MassiveRepositoryTest extends TestCase
         props.setProperty( CachingProvider.PROP_CACHECAPACITY, "1000" );
 
         
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
         // Remove file
         File f = new File( files );
@@ -61,7 +61,7 @@ public class MassiveRepositoryTest extends TestCase
     {
         super.tearDown();
         
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
         // Remove file
         File f = new File( files );

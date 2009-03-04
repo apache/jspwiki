@@ -56,7 +56,6 @@ public class AllTests extends TestCase
         suite.addTest( org.apache.wiki.htmltowiki.AllTests.suite() );
         suite.addTest( org.apache.wiki.parser.AllTests.suite() );
         suite.addTest( org.apache.wiki.plugin.AllTests.suite() );
-        suite.addTest( org.apache.wiki.providers.AllTests.suite() );
         suite.addTest( org.apache.wiki.render.AllTests.suite() );
         suite.addTest( org.apache.wiki.rss.AllTests.suite() );
         suite.addTest( org.apache.wiki.search.AllTests.suite() );

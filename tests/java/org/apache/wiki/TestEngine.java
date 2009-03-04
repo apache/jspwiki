@@ -36,10 +36,6 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
@@ -48,13 +44,11 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
-import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.WikiServletFilter;
 import org.apache.wiki.util.FileUtil;
@@ -262,9 +256,9 @@ public class TestEngine extends WikiEngine
         try
         {
             properties.load( findTestProperties() );
-            String files = properties.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-            File f = new File( files, mangleName(name)+FileSystemProvider.FILE_EXT );
+            File f = new File( files, mangleName(name)+".txt" );
 
             f.delete();
 

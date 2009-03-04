@@ -29,15 +29,18 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.*;
+import org.apache.wiki.PageManager;
+import org.apache.wiki.PropertyReader;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.*;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
-import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.CommentedProperties;
 import org.apache.wiki.util.TextUtil;
 
@@ -59,7 +62,7 @@ public class Installer
     public static final String BASE_URL = WikiEngine.PROP_BASEURL;
     public static final String STORAGE_DIR = BasicAttachmentProvider.PROP_STORAGEDIR;
     public static final String LOG_DIR = "log4j.appender.FileLog.File";
-    public static final String PAGE_DIR = FileSystemProvider.PROP_PAGEDIR;
+    public static final String PAGE_DIR = AbstractFileProvider.PROP_PAGEDIR;
     public static final String WORK_DIR = WikiEngine.PROP_WORKDIR;
     public static final String ADMIN_GROUP = "Admin";
     private final WikiSession m_session;

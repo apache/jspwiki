@@ -21,13 +21,18 @@
 
 package org.apache.wiki;
 
-import junit.framework.*;
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
-import org.apache.wiki.ReferenceManager;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.providers.AbstractFileProvider;
 
 
 /**
@@ -61,7 +66,7 @@ public class ReferenceManagerTest extends TestCase
             if( refmgrfile.exists() ) refmgrfile.delete();
         }
 
-        String fileDir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String fileDir = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
         
         if( fileDir != null )
         {

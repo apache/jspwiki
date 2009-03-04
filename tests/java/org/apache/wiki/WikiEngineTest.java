@@ -66,11 +66,6 @@ public class WikiEngineTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-        // We'll need a shorter-than-default consistency check for
-        // the page-changed checks. This will cause additional load
-        // to the file system, though.
-        props.setProperty( CachingProvider.PROP_CACHECHECKINTERVAL, 
-                           Long.toString(PAGEPROVIDER_RESCAN_PERIOD) );
 
         TestEngine.emptyWorkDir();
         
@@ -79,7 +74,7 @@ public class WikiEngineTest extends TestCase
 
     public void tearDown()
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
         if( files != null )
         {
@@ -101,7 +96,7 @@ public class WikiEngineTest extends TestCase
 
         String newdir = tmpdir + File.separator + dirname;
 
-        props.setProperty( FileSystemProvider.PROP_PAGEDIR, 
+        props.setProperty( AbstractFileProvider.PROP_PAGEDIR, 
                            newdir );
 
         m_engine.shutdown();
@@ -118,7 +113,7 @@ public class WikiEngineTest extends TestCase
 
     public void testNonExistantDirProperty() throws Exception
     {
-        props.remove( FileSystemProvider.PROP_PAGEDIR );
+        props.remove( AbstractFileProvider.PROP_PAGEDIR );
         try
         {
             m_engine.shutdown();
@@ -355,6 +350,7 @@ public class WikiEngineTest extends TestCase
     }
     */
 
+    /*
     public void testLatestGet() throws Exception
     {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
@@ -423,7 +419,8 @@ public class WikiEngineTest extends TestCase
         assertEquals( "wrong version", -1, vsp.m_latestVers );
         assertNotNull( "null", p );
     }
-
+*/
+    
     /**
      *  Checks, if ReferenceManager is informed of new attachments.
      */
@@ -458,7 +455,7 @@ public class WikiEngineTest extends TestCase
         finally
         { 
             // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
@@ -531,7 +528,7 @@ public class WikiEngineTest extends TestCase
         finally
         { 
             // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
@@ -568,7 +565,7 @@ public class WikiEngineTest extends TestCase
         finally
         { 
             // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
@@ -605,9 +602,9 @@ public class WikiEngineTest extends TestCase
         finally
         { 
             // do cleanup
-            String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+            String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
-            new File( files, "TestPage2"+FileSystemProvider.FILE_EXT ).delete();
+            new File( files, "TestPage2.txt" ).delete();
         }
     }    
 
@@ -619,8 +616,8 @@ public class WikiEngineTest extends TestCase
     {
         m_engine.saveText( NAME1, "Test" );
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+".txt" );
 
         assertTrue( "Didn't create it!", saved.exists() );
 
@@ -641,8 +638,8 @@ public class WikiEngineTest extends TestCase
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+".txt" );
 
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
         File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
@@ -668,8 +665,8 @@ public class WikiEngineTest extends TestCase
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
         
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        File saved = new File( files, NAME1+".txt" );
 
         String atts = props.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
         File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
@@ -758,9 +755,9 @@ public class WikiEngineTest extends TestCase
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, NAME1+".txt" );
 
         assertTrue( "No file!", saved.exists() );
 
@@ -799,9 +796,9 @@ public class WikiEngineTest extends TestCase
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, NAME1+".txt" );
 
         assertTrue( "No file!", saved.exists() );
 
@@ -835,9 +832,9 @@ public class WikiEngineTest extends TestCase
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
 
-        File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
+        File saved = new File( files, NAME1+".txt" );
 
         assertTrue( "No file!", saved.exists() );
 
