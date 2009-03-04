@@ -168,7 +168,7 @@ public class LinkParser
     private static final String TARGET = "target";
     private static final String DELIMS = " \t\n\r\f=";
 
-    private static final List m_EMPTY = new ArrayList();
+    private static final List<Attribute> m_EMPTY = new ArrayList<Attribute>();
 
     // ............
 
@@ -519,7 +519,7 @@ public class LinkParser
          *  
          *  @return Iterator over the attributes.
          */
-        public Iterator getAttributes()
+        public Iterator<Attribute> getAttributes()
         {
             return m_attribs != null
                     ? m_attribs.iterator()
@@ -548,10 +548,10 @@ public class LinkParser
             {
                 sb.append( ' ' );
                 sb.append( '|' );
-                Iterator it = getAttributes();
+                Iterator<Attribute> it = getAttributes();
                 while ( it.hasNext() )
                 {
-                    Attribute a = (Attribute)it.next();
+                    Attribute a = it.next();
                     sb.append( ' ' );
                     sb.append( a.getName() );
                     sb.append( '=' );
