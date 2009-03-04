@@ -65,6 +65,9 @@ public final class PropertyReader
      */
     public static final String  DEFAULT_PROPERTYFILE = "/WEB-INF/jspwiki.properties";
 
+    private static final String SECONDARY_PROPERTYFILE = "/jspwiki.properties";
+    
+    
     private static final String PARAM_VAR_DECLARATION = "var.";
     private static final String PARAM_VAR_IDENTIFIER  = "$";
 
@@ -133,6 +136,9 @@ public final class PropertyReader
                         +" defined for this context, using default from "+DEFAULT_PROPERTYFILE);
                 //  Use the default property file.
                 propertyStream = context.getResourceAsStream(DEFAULT_PROPERTYFILE);
+                
+                if( propertyStream == null )
+                    propertyStream = context.getResourceAsStream( SECONDARY_PROPERTYFILE );
             }
             else
             {
