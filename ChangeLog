@@ -1,4 +1,10 @@
-2009-02-14  Janne Jalkanen <jalkanen@apache.org>
+2009-03-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-79
+        
+        * Removed most PageProviders and related tests as obsolete.
+
+2009-03-04  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-78
         
