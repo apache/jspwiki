@@ -26,7 +26,6 @@ import java.util.Properties;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -242,7 +241,7 @@ public class PageRenamerTest extends TestCase
                       "[FooTest/foo.txt] [linktext|FooTest/bar.jpg]", 
                       data.trim() );
 
-        Attachment att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/foo.txt");
+        WikiPage att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/foo.txt");
         assertNotNull("footext",att);
         
         att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/bar.jpg");

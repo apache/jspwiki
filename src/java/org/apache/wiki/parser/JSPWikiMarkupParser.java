@@ -38,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
@@ -367,8 +366,6 @@ public class JSPWikiMarkupParser
         {
             disableAccessRules();
         }
-
-        m_context.getPage().setHasMetadata();
     }
 
     /**
@@ -1671,7 +1668,7 @@ public class JSPWikiMarkupParser
     private String findAttachment( String linktext )
     {
         AttachmentManager mgr = m_engine.getAttachmentManager();
-        Attachment att = null;
+        WikiPage att = null;
 
         try
         {

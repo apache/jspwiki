@@ -28,7 +28,6 @@ import javax.servlet.jsp.PageContext;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -92,7 +91,7 @@ public class AttachmentsIteratorTag
 
                 if( m_iterator.hasNext() )
                 {
-                    Attachment  att = (Attachment) m_iterator.next();
+                    WikiPage  att = (WikiPage) m_iterator.next();
 
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );
@@ -146,7 +145,7 @@ public class AttachmentsIteratorTag
 
         if( m_iterator != null && m_iterator.hasNext() )
         {
-            Attachment att = (Attachment) m_iterator.next();
+            WikiPage att = (WikiPage) m_iterator.next();
 
             WikiContext context = (WikiContext)m_wikiContext.clone();
             context.setPage( att );

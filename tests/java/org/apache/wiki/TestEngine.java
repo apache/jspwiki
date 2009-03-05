@@ -48,7 +48,6 @@ import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
-import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.WikiServletFilter;
 import org.apache.wiki.util.FileUtil;
@@ -281,21 +280,7 @@ public class TestEngine extends WikiEngine
      */
     public static void deleteAttachments( String page )
     {
-        Properties properties = new Properties();
-
-        try
-        {
-            properties.load( findTestProperties() );
-            String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
-
-            File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
-
-            deleteAll( f );
-        }
-        catch( Exception e )
-        {
-            log.error("Could not remove attachments.",e);
-        }
+        // FIXME: Does not work atm.
     }
 
     /**
@@ -325,9 +310,11 @@ public class TestEngine extends WikiEngine
     public void addAttachment( String pageName, String attachmentName, byte[] data )
         throws ProviderException, IOException
     {
-        Attachment att = new Attachment(this,pageName,attachmentName);
+        Attachment att = getContentManager().addPage( WikiName.valueOf( pageName ).resolve( attachmentName ), "application/octet-stream" );
 
-        getAttachmentManager().storeAttachment(att, new ByteArrayInputStream(data));
+        att.setContent( new ByteArrayInputStream(data) );
+
+        att.save();
     }
 
     /**

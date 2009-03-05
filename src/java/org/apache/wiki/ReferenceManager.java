@@ -188,7 +188,7 @@ public class ReferenceManager
 
         for( Iterator atti = attachments.iterator(); atti.hasNext(); )
         {
-            res.add( ((Attachment)(atti.next())).getName() );
+            res.add( ((WikiPage)(atti.next())).getName() );
         }
 
         internalUpdateReferences( page.getName(), res );

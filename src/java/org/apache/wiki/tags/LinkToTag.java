@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 
@@ -80,7 +81,7 @@ public class LinkToTag
 
     
     public int doWikiStartTag()
-        throws IOException
+        throws IOException, WikiException
     {
         String     pageName = m_pageName;
         boolean    isattachment = false;

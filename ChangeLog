@@ -1,3 +1,16 @@
+2009-03-06  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-80
+        
+        * JSPWIKI-421 Migrated AttachmentManager to use ContentManager.
+        
+        * Attachment is now an interface
+        
+        * Commented out quite a lot of test code which was directly
+        instantiating Attachment - these needs to be fixed.
+        
+        * Removed BasicAttachmentProvider and CachingAttachmentProvider.
+        
 2009-03-04  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-79

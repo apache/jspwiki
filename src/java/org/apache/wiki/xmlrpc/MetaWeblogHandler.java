@@ -331,9 +331,13 @@ public class MetaWeblogHandler
 
         try
         {
-            Attachment att = new Attachment( engine, blogid, name );
+            Attachment att = engine.getContentManager().addPage( WikiName.valueOf( blogid ).resolve( name ),
+                                                                 "application/octet-stream"); //FIXME! Needs a better guess
             att.setAuthor( username );
-            attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
+
+            att.setContent( new ByteArrayInputStream( data ) );
+            
+            att.save();
 
             url = engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
         }

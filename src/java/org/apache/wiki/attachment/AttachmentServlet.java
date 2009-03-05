@@ -48,6 +48,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
@@ -56,6 +57,7 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
+import org.bouncycastle.asn1.ocsp.Request;
 
 
 
@@ -724,7 +726,10 @@ public class AttachmentServlet extends HttpServlet
 
         if( att == null )
         {
-            att = new Attachment( m_engine, parentPage, filename );
+            String contentType = "application/octet-stream"; // FIXME: This is not a good guess
+            WikiName path = context.getPage().getQualifiedName().resolve(filename);
+            
+            att = m_engine.getContentManager().addPage( path, contentType );
             created = true;
         }
         att.setSize( contentLength );

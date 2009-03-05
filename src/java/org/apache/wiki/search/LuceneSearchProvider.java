@@ -209,7 +209,7 @@ public class LuceneSearchProvider implements SearchProvider
                     writer = new IndexWriter( m_luceneDirectory,
                                               getLuceneAnalyzer(),
                                               true );
-                    Collection allPages = m_engine.getPageManager().getAllPages();
+                    Collection<WikiPage> allPages = m_engine.getContentManager().getAllPages(null);
 
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
                     {
@@ -217,30 +217,12 @@ public class LuceneSearchProvider implements SearchProvider
                         
                         try
                         {
-                            String text = m_engine.getPageManager().getPageText( page.getName(),
-                                                                                 WikiProvider.LATEST_VERSION );
+                            String text = page.getContentAsString();
                             luceneIndexPage( page, text, writer );
                         }
                         catch( Exception e )
                         {
                             log.info("Unable to index page, continuing to next: "+page.getName(),e );
-                        }
-                    }
-
-                    Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
-                    for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
-                    {
-                        Attachment att = (Attachment) iterator.next();
-                        
-                        try
-                        {
-                            String text = getAttachmentContent( att.getName(),
-                                                                WikiProvider.LATEST_VERSION );
-                            luceneIndexPage( att, text, writer );
-                        }
-                        catch( Exception e )
-                        {
-                            log.info("Unable to index attachment, continuing to next: "+att.getName(),e );                            
                         }
                     }
 
@@ -477,7 +459,7 @@ public class LuceneSearchProvider implements SearchProvider
 
             for( Iterator it = attachments.iterator(); it.hasNext(); )
             {
-                Attachment att = (Attachment) it.next();
+                WikiPage att = (WikiPage) it.next();
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames,

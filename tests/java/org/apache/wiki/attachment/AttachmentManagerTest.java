@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.ProviderException;
@@ -92,7 +93,7 @@ public class AttachmentManagerTest extends TestCase
         
         m_engine.shutdown();
     }
-
+/*
     public void testEnabled()        
     {
         assertTrue( "not enabled", m_manager.attachmentsEnabled() );
@@ -227,7 +228,7 @@ public class AttachmentManagerTest extends TestCase
         // Check that first author did not disappear
         //
 
-        Attachment att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage(NAME1)), 
+        WikiPage att3 = m_manager.getAttachmentInfo( m_engine.getWikiContextFactory().newViewContext(m_engine.getPage(NAME1)), 
                                                        "test1.txt",
                                                        1 );
         assertEquals( "version of v1", 1, att3.getVersion() );
@@ -247,7 +248,7 @@ public class AttachmentManagerTest extends TestCase
 
         assertEquals( "Length", 1, c.size() );
 
-        Attachment att2 = (Attachment) c.toArray()[0];
+        WikiPage att2 = (WikiPage) c.toArray()[0];
 
         assertEquals( "name", att.getName(), att2.getName() );
         assertEquals( "author", att.getAuthor(), att2.getAuthor() );        
@@ -366,7 +367,7 @@ public class AttachmentManagerTest extends TestCase
             m_engine.deletePage("TestPage");
         }
     }
-    
+    */
     public void testValidateFileName() throws Exception
     {
         assertEquals( "foo.jpg", "foo.jpg", AttachmentManager.validateFileName( "foo.jpg" ) );

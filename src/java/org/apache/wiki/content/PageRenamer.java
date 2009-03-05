@@ -126,12 +126,12 @@ public class PageRenamer
         //
         
         engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
-        
+        /*
         if( engine.getAttachmentManager().attachmentsEnabled() )
         {
             engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
         }
-
+*/
         //
         //  Add a comment to the page notifying what changed.  This adds a new revision
         //  to the repo with no actual change.
@@ -239,7 +239,7 @@ public class PageRenamer
         {
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
 
-            for( Attachment att : attachments  )
+            for( WikiPage att : attachments  )
             {
                 Collection<String> c = engine.getReferenceManager().findReferrers(att.getName());
 

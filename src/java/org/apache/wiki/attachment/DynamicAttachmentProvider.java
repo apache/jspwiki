@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -49,6 +50,6 @@ public interface DynamicAttachmentProvider
      *  @throws ProviderException If something goes wrong internally
      *  @throws IOException If something goes wrong when reading the data
      */
-    public InputStream getAttachmentData( WikiContext context, Attachment att )
+    public InputStream getAttachmentData( WikiContext context, WikiPage att )
         throws ProviderException, IOException;
 }

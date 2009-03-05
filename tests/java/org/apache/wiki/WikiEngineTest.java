@@ -424,6 +424,7 @@ public class WikiEngineTest extends TestCase
     /**
      *  Checks, if ReferenceManager is informed of new attachments.
      */
+    /*
     public void testAttachmentRefs()
         throws Exception
     {
@@ -459,7 +460,7 @@ public class WikiEngineTest extends TestCase
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
-
+*/
     /**
      *  Is ReferenceManager updated properly if a page references 
      *  its own attachments?
@@ -479,7 +480,7 @@ public class WikiEngineTest extends TestCase
 
       However, doing this in a relatively sane timeframe can be a problem.
     */
-
+/*
     public void testAttachmentRefs2()
         throws Exception
     {
@@ -532,10 +533,11 @@ public class WikiEngineTest extends TestCase
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
-
+*/
     /** 
      *  Checks, if ReferenceManager is informed if a link to an attachment is added.
      */
+    /*
     public void testAttachmentRefs3()
         throws Exception
     {
@@ -569,10 +571,11 @@ public class WikiEngineTest extends TestCase
             TestEngine.deleteAll( new File( files, NAME1+BasicAttachmentProvider.DIR_EXTENSION ) );
         }
     }
-    
+    */
     /** 
      *  Checks, if ReferenceManager is informed if a third page references an attachment.
      */
+    /*
     public void testAttachmentRefs4()
         throws Exception
     {
@@ -608,7 +611,7 @@ public class WikiEngineTest extends TestCase
         }
     }    
 
-
+*/
     
 
     public void testDeletePage()
@@ -628,7 +631,7 @@ public class WikiEngineTest extends TestCase
         assertFalse( "Page has not been removed!", saved.exists() );
     }
 
-
+/*
     public void testDeletePageAndAttachments()
         throws Exception
     {
@@ -692,7 +695,7 @@ public class WikiEngineTest extends TestCase
         
         assertNull( "referrers", refs );
     }
-    
+   */ 
     public void testDeleteVersion() throws Exception
     {
         props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );

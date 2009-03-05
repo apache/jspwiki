@@ -102,6 +102,21 @@ public class WikiName implements Serializable, Comparable<WikiName>
     }
     
     /**
+     *  Returns the WikiName of the parent.
+     *  
+     *  @return A Valid WikiName or null, if there is no parent.
+     */
+    // FIXME: Would it make more sense to throw an exception?
+    public WikiName getParent()
+    {
+        int slash = m_path.lastIndexOf( '/' );
+        
+        if( slash == -1 ) return null;
+        
+        return new WikiName( m_space, m_path.substring( 0, slash ) );
+    }
+    
+    /**
      *  Resolves a path with respect to this WikiName.  This is typically used
      *  when figuring out where a subpage should be pointing at.
      *  

@@ -31,6 +31,7 @@ import javax.jcr.version.VersionException;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
@@ -52,7 +53,7 @@ import org.apache.wiki.providers.WikiPageProvider;
 
 public class JCRWikiPage
     implements Cloneable,
-               Comparable, WikiPage
+               Comparable, WikiPage, Attachment
 {
     private static final long serialVersionUID = 1L;
 
@@ -454,7 +455,7 @@ public class JCRWikiPage
         return null;
     }
     
-    public void setContent( InputStream in ) throws WikiException
+    public void setContent( InputStream in ) throws ProviderException
     {
         try
         {
@@ -462,7 +463,7 @@ public class JCRWikiPage
         }
         catch( RepositoryException e )
         {
-            throw new WikiException("Unable to set content",e);
+            throw new ProviderException("Unable to set content",e);
         }
     }
 
@@ -521,26 +522,8 @@ public class JCRWikiPage
         }
     }
 
-    // FIXME: The following are obsolete and must go.
-    public boolean hasMetadata()
-    {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    public void invalidateMetadata()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
+ 
     public void setAttribute( String key, Object attribute )
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void setHasMetadata()
     {
         // TODO Auto-generated method stub
         
@@ -558,4 +541,60 @@ public class JCRWikiPage
         
     }
 
+    public WikiPage getParent() throws ProviderException
+    {
+        return m_engine.getContentManager().getPage( m_name.getParent() );
+    }
+
+    public String getFileName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public boolean isCacheable()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void setCacheable( boolean value )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setFileName( String name )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public boolean isAttachment()
+    {
+        if( getContentType().equals( ContentManager.JSPWIKI_CONTENT_TYPE ) ) return false;
+        
+        return true;
+    }
+
+    public List<WikiPage> getChildren() throws ProviderException
+    {
+        ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
+        
+        try
+        {
+            NodeIterator iter = getJCRNode().getNodes();
+        
+            while( iter.hasNext() )
+            {
+                pages.add( new JCRWikiPage( m_engine, iter.nextNode() ) );
+            }
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to list children",e);
+        }
+        
+        return pages;
+    }
 }

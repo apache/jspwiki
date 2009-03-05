@@ -455,15 +455,12 @@ public class VariableManager
 
         public String getAttachmentprovider()
         {
-            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
-            return (p != null) ? p.getClass().getName() : "-";
+            return "DEPRECATED";
         }
 
         public String getAttachmentproviderdescription()
         {
-            WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
-
-            return (p != null) ? p.getProviderInfo() : "-";
+            return "DEPRECATED";
         }
 
         public String getInterwikilinks()

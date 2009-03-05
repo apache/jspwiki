@@ -158,8 +158,9 @@ public class DefaultAclManager implements AclManager
      * @param page the page
      * @since 2.2.121
      * @return the Acl representing permissions for the page
+     * @throws WikiSecurityException If something goes wrong.
      */
-    public Acl getPermissions( WikiPage page )
+    public Acl getPermissions( WikiPage page ) throws WikiSecurityException
     {
         //
         //  Does the page already have cached ACLs?
@@ -174,7 +175,15 @@ public class DefaultAclManager implements AclManager
             //
             if( page instanceof Attachment )
             {
-                WikiPage parent = m_engine.getPage( ((Attachment)page).getParentName() );
+                WikiPage parent;
+                try
+                {
+                    parent = page.getParent();
+                }
+                catch( ProviderException e )
+                {
+                    throw new WikiSecurityException("Unable to get parent page to check for permissions");
+                }
 
                 acl = getPermissions( parent );
             }

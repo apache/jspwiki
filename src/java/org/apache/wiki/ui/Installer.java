@@ -40,7 +40,6 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.providers.AbstractFileProvider;
-import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.util.CommentedProperties;
 import org.apache.wiki.util.TextUtil;
 
@@ -60,7 +59,6 @@ public class Installer
     public static final String INSTALL_ERROR = "Installer.Error";
     public static final String APP_NAME = WikiEngine.PROP_APPNAME;
     public static final String BASE_URL = WikiEngine.PROP_BASEURL;
-    public static final String STORAGE_DIR = BasicAttachmentProvider.PROP_STORAGEDIR;
     public static final String LOG_DIR = "log4j.appender.FileLog.File";
     public static final String PAGE_DIR = AbstractFileProvider.PROP_PAGEDIR;
     public static final String WORK_DIR = WikiEngine.PROP_WORKDIR;
@@ -251,7 +249,6 @@ public class Installer
         parseProperty( AuthenticationManager.PROP_SECURITY, nullValue );
         
         // Set a few more default properties, for easy setup
-        m_props.setProperty( STORAGE_DIR, m_props.getProperty( PAGE_DIR ) );
         m_props.setProperty( PageManager.PROP_PAGEPROVIDER, "VersioningFileProvider" );
         m_props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
     }

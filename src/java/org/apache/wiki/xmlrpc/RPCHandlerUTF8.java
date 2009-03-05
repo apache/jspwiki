@@ -53,7 +53,7 @@ public class RPCHandlerUTF8
     {
         checkPermission( PagePermission.VIEW );
         
-        Collection pages = m_engine.getRecentChanges();
+        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
         Vector<String> result = new Vector<String>();
 
         for( Iterator i = pages.iterator(); i.hasNext(); )
@@ -108,7 +108,7 @@ public class RPCHandlerUTF8
     {
         checkPermission( PagePermission.VIEW );
         
-        Collection pages = m_engine.getRecentChanges();
+        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
         Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
 
         Calendar cal = Calendar.getInstance();

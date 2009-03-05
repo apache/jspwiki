@@ -221,7 +221,19 @@ public final class AuthorizationManager
         //
         String pageName = ((PagePermission)permission).getPage();
         WikiPage page = m_engine.getPage( pageName );
-        Acl acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
+        Acl acl;
+        try
+        {
+            acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
+        }
+        catch( WikiSecurityException e )
+        {
+            // In case the AclManager fails, we'll assume that something
+            // bad has happened and default to no access.
+            fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
+            return false;
+        }
+        
         if ( page == null ||  acl == null || acl.isEmpty() )
         {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );

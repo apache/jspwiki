@@ -20,7 +20,9 @@
  */
 package org.apache.wiki.attachment;
 
+import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.content.WikiName;
 
 /**
  *  A DynamicAttachment is an attachment which does not really exist, but is
@@ -71,7 +73,7 @@ import org.apache.wiki.WikiEngine;
  *
  *  @since 2.5.34
  */
-public class DynamicAttachment extends Attachment
+public class DynamicAttachment extends JCRWikiPage implements Attachment
 {
     private DynamicAttachmentProvider m_provider  = null;
 
@@ -88,7 +90,7 @@ public class DynamicAttachment extends Attachment
                              String fileName,
                              DynamicAttachmentProvider provider)
     {
-        super(engine, parentPage, fileName);
+        super(engine, WikiName.valueOf( parentPage ).resolve( fileName ) );
         m_provider = provider;
     }
 

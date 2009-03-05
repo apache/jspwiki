@@ -22,6 +22,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 
@@ -42,8 +43,12 @@ public class LinkToParentTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
+    @Override
     public int doWikiStartTag()
-        throws IOException
+        throws IOException, WikiException
     {
         WikiPage p = m_wikiContext.getPage();
 
@@ -53,7 +58,7 @@ public class LinkToParentTag
         //
         if( p instanceof Attachment )
         {
-            setPage( ((Attachment)p).getParentName() );
+            setPage( p.getParent().getName() );
         }
         else
         {

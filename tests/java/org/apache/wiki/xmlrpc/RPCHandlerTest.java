@@ -92,7 +92,7 @@ public class RPCHandlerTest extends TestCase
 
         assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
     }
-
+/*
     public void testRecentChangesWithAttachments()
         throws Exception
     {
@@ -109,7 +109,7 @@ public class RPCHandlerTest extends TestCase
 
         assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
     }
-
+*/
     public void testPageInfo()
         throws Exception
     {
@@ -160,7 +160,7 @@ public class RPCHandlerTest extends TestCase
         assertEquals( "href", "http://localhost/Edit.jsp?page=Foobar", linkinfo.get("href") );
     }
 
-
+/*
     public void testListLinksWithAttachments()
         throws Exception
     {
@@ -191,7 +191,7 @@ public class RPCHandlerTest extends TestCase
         assertEquals( "att type", "local", linkinfo.get("type") );
         assertEquals( "att href", "http://localhost/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href") );
     }
-
+*/
     private Date getCalendarTime( Date modifiedDate )
     {
         Calendar cal = Calendar.getInstance();

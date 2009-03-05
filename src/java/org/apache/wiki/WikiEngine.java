@@ -684,7 +684,6 @@ public class WikiEngine
         {
             ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
             pages.addAll( m_pageManager.getAllPages() );
-            pages.addAll( m_attachmentManager.getAllAttachments() );
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
@@ -1126,7 +1125,7 @@ public class WikiEngine
                     return TextUtil.beautifyString( title );
                 }
 
-                String parent = TextUtil.beautifyString( att.getParentName() );
+                String parent = TextUtil.beautifyString( att.getParent().getName() );
 
                 return parent + "/" + att.getFileName();
             }
@@ -1167,7 +1166,7 @@ public class WikiEngine
      */
     public boolean pageExists( String page )
     {
-        Attachment att = null;
+        WikiPage att = null;
 
         try
         {
@@ -1212,22 +1211,7 @@ public class WikiEngine
             //  Go and check if this particular version of this page
             //  exists.
             //
-            isThere = m_pageManager.pageExists( finalName, version );
-        }
-
-        if( isThere == false )
-        {
-            //
-            //  Go check if such an attachment exists.
-            //
-            try
-            {
-                isThere = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page, version ) != null;
-            }
-            catch( ProviderException e )
-            {
-                log.debug("pageExists() failed to find attachments",e);
-            }
+            isThere = m_contentManager.pageExists( WikiName.valueOf( finalName ), version );
         }
 
         return isThere;
@@ -1823,17 +1807,15 @@ public class WikiEngine
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
     @SuppressWarnings("unchecked")
-    public Collection<WikiPage> getRecentChanges()
+    public Collection<WikiPage> getRecentChanges(String space)
     {
         try
         {
-            Collection<WikiPage>   pages = m_pageManager.getAllPages();
-            Collection<Attachment>  atts = m_attachmentManager.getAllAttachments();
+            Collection<WikiPage>   pages = m_contentManager.getAllPages(space);
 
             TreeSet<WikiPage> sortedPages = new TreeSet<WikiPage>( new PageTimeComparator() );
 
             sortedPages.addAll( pages );
-            sortedPages.addAll( atts );
 
             return sortedPages;
         }
@@ -2272,7 +2254,7 @@ public class WikiEngine
     {
         if( page instanceof Attachment )
         {
-            m_attachmentManager.deleteVersion( (Attachment) page );
+            m_attachmentManager.deleteVersion( (WikiPage) page );
         }
         else
         {

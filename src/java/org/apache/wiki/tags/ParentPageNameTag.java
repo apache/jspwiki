@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -43,7 +44,7 @@ public class ParentPageNameTag
      */
     @Override
     public final int doWikiStartTag()
-        throws IOException
+        throws IOException, ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
@@ -52,7 +53,7 @@ public class ParentPageNameTag
         {
             if( page instanceof Attachment )
             {
-                pageContext.getOut().print( engine.beautifyTitle( ((Attachment)page).getParentName()) );
+                pageContext.getOut().print( engine.beautifyTitle( page.getParent().getName()) );
             }
             else
             {

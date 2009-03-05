@@ -203,7 +203,7 @@ public class RSSGenerator
         return author;
     }
 
-    private String getAttachmentDescription( Attachment att )
+    private String getAttachmentDescription( WikiPage att )
     {
         String author = getAuthor(att);
         StringBuilder sb = new StringBuilder();
@@ -218,12 +218,21 @@ public class RSSGenerator
         }
 
         sb.append("<br /><hr /><br />");
-        sb.append( "Parent page: <a href=\""+
-                   m_engine.getURL( WikiContext.VIEW, att.getParentName(), null, true ) +
-                   "\">"+att.getParentName()+"</a><br />" );
-        sb.append( "Info page: <a href=\""+
-                   m_engine.getURL( WikiContext.INFO, att.getName(), null, true ) +
-                   "\">"+att.getName()+"</a>" );
+        
+        try
+        {
+            sb.append( "Parent page: <a href=\""+
+                       m_engine.getURL( WikiContext.VIEW, att.getParent().getName(), null, true ) +
+                       "\">"+att.getParent().getName()+"</a><br />" );
+            sb.append( "Info page: <a href=\""+
+                       m_engine.getURL( WikiContext.INFO, att.getParent().getName(), null, true ) +
+                       "\">"+att.getName()+"</a>" );
+
+        }
+        catch( ProviderException e )
+        {
+            log.debug( "Unable to load parent", e );
+        }
 
         return sb.toString();
     }
@@ -258,7 +267,7 @@ public class RSSGenerator
 
         if( page instanceof Attachment )
         {
-            res = getAttachmentDescription( (Attachment)page );
+            res = getAttachmentDescription( (WikiPage)page );
         }
         else
         {
@@ -401,7 +410,7 @@ public class RSSGenerator
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        Collection changed = m_engine.getRecentChanges();
+        Collection changed = m_engine.getRecentChanges(wikiContext.getPage().getWiki());
 
         WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;

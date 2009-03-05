@@ -27,7 +27,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.PluginException;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
@@ -133,7 +133,7 @@ public class Image
         try
         {
             AttachmentManager mgr = engine.getAttachmentManager();
-            Attachment        att = mgr.getAttachmentInfo( context, src );
+            WikiPage        att = mgr.getAttachmentInfo( context, src );
 
             if( att != null )
             {

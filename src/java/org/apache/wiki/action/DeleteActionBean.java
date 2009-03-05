@@ -88,7 +88,7 @@ public class DeleteActionBean extends AbstractPageActionBean
         // If attachment deleted; always redirect to parent page
         if( m_page instanceof Attachment )
         {
-            String redirPage = ((Attachment) m_page).getParentName();
+            String redirPage = m_page.getParent().getName();
             return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", redirPage );
         }
 

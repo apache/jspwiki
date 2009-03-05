@@ -80,7 +80,7 @@ public abstract class AbstractRPCHandler
     public Vector getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges();
+        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
         Vector<Hashtable<?, ?>> result    = new Vector<Hashtable<?, ?>>();
 
         // Transform UTC into local time.

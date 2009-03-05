@@ -20,9 +20,12 @@
  */
 package org.apache.wiki.api;
 
+import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.ProviderException;
@@ -197,25 +200,6 @@ public interface WikiPage
     public String getWiki();
 
     /**
-     *  This method will remove all metadata from the page.
-     */
-    public void invalidateMetadata();
-
-    /**
-     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed.
-     *  Note that this method is a kludge to support our pre-3.0 metadata system, and as such
-     *  will go away with the new API.
-     *  
-     *  @return true, if the page has metadata.
-     */
-    public boolean hasMetadata();
-
-    /**
-     *  Sets the metadata flag to true.  Never call.
-     */
-    public void setHasMetadata();
-
-    /**
      *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
      *  they're immutable.  Attributes are not cloned, only the internal
      *  HashMap (so if you modify the contents of a value of an attribute,
@@ -237,7 +221,26 @@ public interface WikiPage
  
     public String getContentAsString() throws ProviderException;
 
+    public InputStream getContentAsStream() throws ProviderException;
+    
     public void save() throws ProviderException;
     
     public void setContent(String content) throws ProviderException;
+
+    public void setContent( InputStream in ) throws ProviderException;
+
+    /**
+     *  Returns the parent of the page. May be null, if this is already
+     *  a top-level page.
+     * @throws ProviderException 
+     */
+    public WikiPage getParent() throws ProviderException;
+
+    /**
+     *  Returns a list of all subpages and attachments of this WikiPage.
+     *  
+     *  @return
+     * @throws ProviderException
+     */
+    public List<WikiPage> getChildren() throws ProviderException;
 }

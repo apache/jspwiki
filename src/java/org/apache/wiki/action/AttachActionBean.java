@@ -21,7 +21,7 @@
 
 package org.apache.wiki.action;
 
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
@@ -35,7 +35,7 @@ import net.sourceforge.stripes.action.UrlBinding;
 @UrlBinding("/attach/{page}/{attachment}")
 public class AttachActionBean extends AbstractPageActionBean
 {
-    private Attachment m_attachment;
+    private WikiPage m_attachment;
     
     @DefaultHandler
     @HandlesEvent("upload")
@@ -46,12 +46,12 @@ public class AttachActionBean extends AbstractPageActionBean
         return null;
     }
 
-    public Attachment getAttachment()
+    public WikiPage getAttachment()
     {
         return m_attachment;
     }
 
-    public void setAttachment( Attachment attachment )
+    public void setAttachment( WikiPage attachment )
     {
         this.m_attachment = attachment;
     }

@@ -24,17 +24,17 @@ import java.security.Principal;
 import java.util.Properties;
 import java.util.regex.Matcher;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.acl.*;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.providers.ProviderException;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 public class DefaultAclManagerTest
@@ -75,7 +75,7 @@ public class DefaultAclManagerTest
         m_engine.shutdown();
     }
 
-    public void testGetPermissions()
+    public void testGetPermissions() throws WikiSecurityException
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
@@ -178,7 +178,7 @@ public class DefaultAclManagerTest
         assertFalse( m.find() );
     }
 
-    public void testPrintAcl()
+    public void testPrintAcl() throws WikiSecurityException
     {
         // Verify that the printed Acl for the test page is OK
         WikiPage page = m_engine.getPage( "TestAclPage" );
