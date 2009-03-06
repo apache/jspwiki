@@ -27,7 +27,7 @@
     <div id="addattachment">
       <h3><fmt:message key="attach.add" /></h3>
       <wiki:Permission permission="upload">
-        <s:form beanclass="org.apache.wiki.action.ViewActionBean" class="wikiform" id="uploadform" acceptcharset="UTF-8">
+        <s:form beanclass="org.apache.wiki.action.UploadActionBean" class="wikiform" id="uploadform" acceptcharset="UTF-8">
           <s:param name="progressid" value="<%=progressId%>" />
           <s:param name="page" value="${wikiActionBean.page.name}" />
           <table>
@@ -35,8 +35,13 @@
             <td colspan="2"><div class="formhelp"><fmt:message key="attach.add.info" /></div></td>
           </tr>
           <tr>
+            <td span="2"><s:errors field="newAttachments" /></td>
+          </tr>
+          <tr>
             <td><s:label for="attachfile0" name="attach.add.selectfile" /></td>
-            <td><s:file name="newAttachments[0]" id="attachfile0" /></td>
+            <td><s:file name="newAttachments[0]" id="attachfile0" /><br/>
+              <s:file name="newAttachments[1]" id="attachfile1" /><br/>
+              <s:file name="newAttachments[2]" id="attachfile2" /></td>
           </tr>
           <tr>
             <td><s:label for="attachnote" name="attach.add.changenote" /></td>
@@ -53,7 +58,6 @@
       
           </table>
         </s:form>
-        <wiki:Messages div="error" />
       </wiki:Permission>
       <wiki:Permission permission="!upload">
         <div class="formhelp"><fmt:message key="attach.add.permission" /></div>

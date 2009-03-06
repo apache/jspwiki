@@ -350,10 +350,10 @@ a.tool:hover {
 }
 
 /* +++ 475 PageContent.jsp +++ */
-#sneakpreviewheader {
+#livepreviewheader {
 	background-color:#3f464a;
 } 
-#sneakpreview {
+#livepreview {
 	background:transparent !important;
 }
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */

@@ -1177,14 +1177,14 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
-#sneakpreviewheader {
+#livepreviewheader {
 	clear:both;
 	font-size:110%;
 	background-color:#ddd;
 	padding:0.5em;
 	margin:0.5em 0;
 }  
-#sneakpreview {
+#livepreview {
 }  
 #previewcontent {
 }  

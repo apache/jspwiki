@@ -28,7 +28,7 @@ import org.apache.wiki.ui.TemplateManager;
  *  tiny marker into the stream, and then a ServletFilter will take
  *  care of the actual inclusion.
  *  
- *
+*  @deprecated use the Stripes <code>layout-component</code> tags instead
  */
 public class IncludeResourcesTag extends WikiTagBase
 {

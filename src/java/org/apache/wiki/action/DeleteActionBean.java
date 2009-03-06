@@ -108,15 +108,6 @@ public class DeleteActionBean extends AbstractPageActionBean
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Validate( required = true )
-    public void setPage( WikiPage page )
-    {
-        super.setPage( page );
-    }
-    
-    /**
      * Sets the version to delete. If not set, all versions of the page or
      * attachment will be deleted.
      * 

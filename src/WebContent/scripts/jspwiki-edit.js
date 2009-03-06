@@ -496,7 +496,7 @@ var EditTools =
 				var ta = this.textarea,
 					isOn = checkbox.checked;
 
-				$('sneakpreview').empty();
+				$('livepreview').empty();
 				ta.removeEvents('preview');
 				Wiki.prefs.set('autopreview',isOn);
 
@@ -506,7 +506,7 @@ var EditTools =
     },
 
 	refreshPreview: function(){
-    	var	preview = $('sneakpreview');
+    	var	preview = $('livepreview');
 
 		$('previewSpin').show();
 		new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page="+Wiki.PageName, { 

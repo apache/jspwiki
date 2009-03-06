@@ -6,7 +6,7 @@
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="attachments" executeResolution="true" id="wikiActionBean" />
-<s:layout-render name="/templates/default/ViewLayout.jsp">
+<s:layout-render name="/templates/default/DefaultLayout.jsp">
 
   <s:layout-component name="content">
     <wiki:NoSuchPage>

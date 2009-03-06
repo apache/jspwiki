@@ -27,6 +27,7 @@ import org.apache.wiki.ui.TemplateManager;
  *  any of the request types defined there.
  *
  *  @see TemplateManager
+ *  @deprecated use the Stripes <code>layout-component</code> tags instead
  */
 public class RequestResourceTag extends WikiTagBase
 {

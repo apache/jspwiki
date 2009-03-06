@@ -40,6 +40,7 @@ import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.TextUtil;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -80,6 +81,16 @@ public class AttachmentManager
     private WikiEngine             m_engine;
 
     /**
+     *  List of attachment types which are allowed.
+     */
+    private String[] m_allowedPatterns;
+
+    /**
+     *  List of attachment types which are forbidden.
+     */
+    private String[] m_forbiddenPatterns;
+    
+    /**
      *  Creates a new AttachmentManager.  Note that creation will never fail,
      *  but it's quite likely that attachments do not function.
      *  <p>
@@ -96,6 +107,7 @@ public class AttachmentManager
     public AttachmentManager( WikiEngine engine, Properties props )
     {
         m_engine = engine;
+        initFileRestrictions();
     }
 
     /**
@@ -376,7 +388,7 @@ public class AttachmentManager
      *          disabled.
      *  @throws ProviderException If the provider fails for some reason.
      */
-    public List getVersionHistory( String attachmentName )
+    public List<WikiPage> getVersionHistory( String attachmentName )
         throws ProviderException
     {
         return m_engine.getContentManager().getVersionHistory( WikiName.valueOf(attachmentName) );
@@ -407,14 +419,14 @@ public class AttachmentManager
     }
 
     /**
-     *  Validates the filename and makes sure it is legal.  It trims and splits
-     *  and replaces bad characters.
+     *  Cleans an attachment filename by trimming and replacing bad characters.
+     *  If a file path is supplied, only the trailing file name will be returned.
      *  
-     *  @param filename
+     *  @param filename the filename to cleanse
      *  @return A validated name with annoying characters replaced.
      *  @throws WikiException If the filename is not legal (e.g. empty)
      */
-    static String validateFileName( String filename )
+    public static String cleanFileName( String filename )
         throws WikiException
     {
         if( filename == null || filename.trim().length() == 0 )
@@ -456,5 +468,70 @@ public class AttachmentManager
         filename = StringUtils.replaceChars( filename, "#?\"'", "____" );
     
         return filename;
+    }
+
+    /**
+     * Determines whether a supplied attachment is allowed to be
+     * uploaded, based on the file name. The list of files types allowed for uploading
+     * are contained in <code>jspwiki.properties</code> property
+     * {@link #PROP_ALLOWEDEXTENSIONS}. The list of denied file types are
+     * contained in {@link #PROP_FORDBIDDENEXTENSIONS}. If an extension is
+     * included in both lists, the forbidden list wins.
+     * @param name the proposed file name
+     * @return <code>true</code> if a supplied attachment file name is
+     * allowed to be uploaded; <code>false</code> otherwise.
+     */
+    public boolean isFileTypeAllowed( String name )
+    {
+        if( name == null || name.length() == 0 ) return false;
+
+        name = name.toLowerCase();
+
+        for( int i = 0; i < m_forbiddenPatterns.length; i++ )
+        {
+            if( name.endsWith(m_forbiddenPatterns[i]) && m_forbiddenPatterns[i].length() > 0 )
+                return false;
+        }
+
+        for( int i = 0; i < m_allowedPatterns.length; i++ )
+        {
+            if( name.endsWith(m_allowedPatterns[i]) && m_allowedPatterns[i].length() > 0 )
+                return true;
+        }
+
+        return m_allowedPatterns.length == 0;
+    }
+    
+    private void initFileRestrictions()
+    {
+        Properties props = m_engine.getWikiProperties();
+
+        String allowed = TextUtil.getStringProperty( props,
+                                                     AttachmentManager.PROP_ALLOWEDEXTENSIONS,
+                                                     null );
+
+        if( allowed != null && allowed.length() > 0 )
+        {
+            m_allowedPatterns = allowed.toLowerCase().split("\\s");
+        }
+        else
+        {
+            m_allowedPatterns = new String[0];
+        }
+
+        String forbidden = TextUtil.getStringProperty( props,
+                                                       AttachmentManager.PROP_FORDBIDDENEXTENSIONS,
+                                                       null );
+
+        if( forbidden != null && forbidden.length() > 0 )
+        {
+            m_forbiddenPatterns = forbidden.toLowerCase().split("\\s");
+        }
+        else
+        {
+            m_forbiddenPatterns = new String[0];
+        }
+
+        log.debug( "AttachmentManager initialized with allowed/denied file patterns." );
     }
 }

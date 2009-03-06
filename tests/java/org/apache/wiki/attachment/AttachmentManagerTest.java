@@ -370,9 +370,9 @@ public class AttachmentManagerTest extends TestCase
     */
     public void testValidateFileName() throws Exception
     {
-        assertEquals( "foo.jpg", "foo.jpg", AttachmentManager.validateFileName( "foo.jpg" ) );
+        assertEquals( "foo.jpg", "foo.jpg", AttachmentManager.cleanFileName( "foo.jpg" ) );
         
-        assertEquals( "C:\\Windows\\test.jpg", "test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test.jpg" ));
+        assertEquals( "C:\\Windows\\test.jpg", "test.jpg", AttachmentManager.cleanFileName( "C:\\Windows\\test.jpg" ));
     }
     
     public static Test suite()

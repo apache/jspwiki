@@ -1,7 +1,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="info" executeResolution="true" id="wikiActionBean" />
-<s:layout-render name="/templates/default/ViewLayout.jsp">
+<s:layout-render name="/templates/default/DefaultLayout.jsp">
 
   <s:layout-component name="content">
     <wiki:NoSuchPage>

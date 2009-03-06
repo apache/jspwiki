@@ -23,6 +23,7 @@ package org.apache.wiki.ui;
 import java.net.URL;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.wiki.NoSuchVariableException;
@@ -283,6 +284,31 @@ public class EditorManager extends ModuleManager
         if( usertext == null )
         {
             usertext = (String)ctx.findAttribute( ATTR_EDITEDTEXT );
+        }
+
+        return usertext;
+    }
+
+    /**
+     * Convenience method that examines the current context and attempts to
+     * figure out whether the edited text is in the HTTP request parameters or
+     * somewhere in the session. The request parameter
+     * {@link EditorManager#REQ_EDITEDTEXT} is checked first; then, the session
+     * attribute {@link EditorManager#ATTR_EDITEDTEXT}. This method is similar
+     * in most respects to {@link #getEditedText(PageContext)}
+     * except that this method does not consult the PageContext (because it has
+     * no access to it).
+     * 
+     * @return the edited text, if present in the session page context or as a
+     *         parameter
+     */
+    public static String getEditedText( HttpServletRequest request )
+    {
+        String usertext = request.getParameter( EditorManager.REQ_EDITEDTEXT );
+
+        if( usertext == null )
+        {
+            usertext = request.getSession().getAttribute( EditorManager.ATTR_EDITEDTEXT ).toString();
         }
 
         return usertext;

@@ -32,11 +32,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import net.sf.akismet.Akismet;
+import net.sourceforge.stripes.action.RedirectResolution;
+import net.sourceforge.stripes.action.Resolution;
 
 import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.*;
+import org.apache.wiki.action.ViewActionBean;
+import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.WikiPage;
@@ -46,6 +50,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.EditorManager;
+import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -1111,6 +1116,39 @@ public class SpamFilter
         return hash != null ? hash : c_hashName;
     }
 
+    /**
+     *  <p>This method checks if the hash value is still valid, i.e. if it exists at all. This
+     *  can occur in two cases: either this is a spam bot which is not adaptive, or it is
+     *  someone who has been editing one page for too long, and their session has expired.</p>
+     *  <p>If the hash is not valid, this method returns a Stripes
+     *  {@link net.sourceforge.stripes.action.RedirectResolution} that directs
+     *  users to wiki page "SessionExpired" and logs the incident in the spam log
+     *  (it may or may not be spam, but it's rather likely that it is).</p>
+     *  <p>If the hash is valid, this method simply returns <code>null</code>.</p>
+     *  <p>Other than the differences in the method parameters and return syntax, this
+     *  method operates in every other respect identically to
+     *  {@link #checkHash(WikiContext, PageContext)}</p>
+     *
+     *  @param actionBean the WikiActionBean representing the editing activity and page.
+     *  @return <code>null</code> if hash is okay, or a RedirectResolution if not.
+     *  @since 3.0
+     */
+    public static final Resolution checkHash( WikiActionBean actionBean )
+    {
+        WikiActionBeanContext context = actionBean.getContext();
+        String hashName = getHashFieldName( context.getRequest() );
+
+        if( context.getRequest().getParameter(hashName) == null )
+        {
+            Change change = getChange( context, EditorManager.getEditedText( context.getRequest() ) );
+
+            log( context, REJECT, "MissingHash", change.m_change );
+
+            return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "name", "SessionExpired");
+        }
+
+        return null;
+    }
 
     /**
      *  This method checks if the hash value is still valid, i.e. if it exists at all. This

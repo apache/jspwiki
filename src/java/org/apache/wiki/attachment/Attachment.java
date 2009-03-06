@@ -20,8 +20,6 @@
  */
 package org.apache.wiki.attachment;
 
-import java.io.InputStream;
-
 import org.apache.wiki.api.WikiPage;
 
 /**

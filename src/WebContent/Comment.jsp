@@ -16,10 +16,16 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="comment" id="wikiActionBean" />
+<s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="comment" id="wikiActionBean" />
+<s:layout-component name="head.title">
+  <fmt:message key="comment.title.comment">
+    <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+    <fmt:param><wiki:PageName/></fmt:param>
+  </fmt:message>
+</s:layout-component>
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 

@@ -598,6 +598,7 @@ public class TemplateManager extends ModuleManager
      * @param context the wiki context
      * @param type the marker
      * @return the generated marker comment
+     * @deprecated use the Stripes <code>layout-component</code> tags instead
      */
     public static String getMarker( WikiContext context, String type )
     {
@@ -620,6 +621,7 @@ public class TemplateManager extends ModuleManager
      * @return Javascript snippet which defines the LocaliedStrings array
      * @author Dirk Frederickx
      * @since 2.5.108
+     * @deprecated use the Stripes <code>layout-component</code> tags instead
      */
     private static String getJSLocalizedStrings( WikiContext context )
     {
@@ -679,6 +681,7 @@ public class TemplateManager extends ModuleManager
      * @param ctx The current wiki context
      * @param type What kind of a request should be added?
      * @param resource The resource to add.
+     * @deprecated use the Stripes <code>layout-component</code> tags instead
      */
     @SuppressWarnings( "unchecked" )
     public static void addResourceRequest( WikiContext ctx, String type, String resource )
@@ -738,8 +741,8 @@ public class TemplateManager extends ModuleManager
      * @param ctx WikiContext
      * @param type The resource request type
      * @return a String array for the resource requests
+     * @deprecated use the Stripes <code>layout-component</code> tags instead
      */
-
     @SuppressWarnings( "unchecked" )
     public static String[] getResourceRequests( WikiContext ctx, String type )
     {
@@ -763,6 +766,7 @@ public class TemplateManager extends ModuleManager
      * 
      * @param ctx the wiki context
      * @return the array of types requested
+     * @deprecated use the Stripes <code>layout-component</code> tags instead
      */
     @SuppressWarnings( "unchecked" )
     public static String[] getResourceTypes( WikiContext ctx )

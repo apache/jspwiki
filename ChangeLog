@@ -1,3 +1,14 @@
+2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-81
+        
+        * Checked in Stripsified Edit.jsp. Spam detection does NOT
+        work yet. Attachment uploading now supports up to 5 uploads
+        courtesy of Stripes. AttachmentServlet's days are
+        numbered. Merged Janne's JCR checkins into my new code; some
+        inconsistencies still need to be ironed out. "Sneak preview"
+        has hereby been renamed "live preview".
+
 2009-03-06  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-80

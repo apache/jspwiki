@@ -666,7 +666,7 @@ public class AttachmentServlet extends HttpServlet
 
         try
         {
-            filename = AttachmentManager.validateFileName( filename );
+            filename = AttachmentManager.cleanFileName( filename );
         }
         catch( WikiException e )
         {

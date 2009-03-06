@@ -30,10 +30,9 @@ import org.apache.wiki.api.WikiPage;
  * process {@link org.apache.wiki.api.WikiPage} objects bound to the
  * <code>page</code> request parameter. In particular, this subclass contains
  * special processing logic that ensures that, the <code>page</code>
- * properties of this object and its related
- * {@link org.apache.wiki.WikiContext} are set to the same value. When
- * {@link #setPage(WikiPage)} is called by, for example, the Stripes controller,
- * the underlying
+ * properties of this object and its related {@link org.apache.wiki.WikiContext}
+ * are set to the same value. When {@link #setPage(WikiPage)} is called by, for
+ * example, the Stripes controller, the underlying
  * {@link org.apache.wiki.ui.stripes.WikiActionBeanContext#setPage(WikiPage)}
  * method is called also.
  */
@@ -55,10 +54,14 @@ public class AbstractPageActionBean extends AbstractActionBean
      * Sets the WikiPage property for this ActionBean, and also sets the
      * WikiActionBeanContext's page property to the same value by calling
      * {@link org.apache.wiki.ui.stripes.WikiActionBeanContext#setPage(WikiPage)}.
+     * Note that because of the {@link Validate} annotation, the
+     * <code>page</code> field will be required by any executing event handler
+     * method. To change this property, subclasses should override this method
+     * and supply a <code>Validate( required = false )</code> annotation.
      * 
      * @param page the wiki page.
      */
-    @Validate( required = false )
+    @Validate( required = true )
     public void setPage( WikiPage page )
     {
         m_page = page;

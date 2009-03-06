@@ -23,20 +23,22 @@ package org.apache.wiki.action;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sourceforge.stripes.action.HandlesEvent;
+import net.sourceforge.stripes.action.RedirectResolution;
+import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.validation.LocalizableError;
+import net.sourceforge.stripes.validation.Validate;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
+
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
-
-import net.sourceforge.stripes.action.HandlesEvent;
-import net.sourceforge.stripes.action.RedirectResolution;
-import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.validation.*;
 
 
 /**
@@ -137,16 +139,6 @@ public class RenameActionBean extends AbstractPageActionBean
         m_changeReferences = changeReferences;
     }
 
-    /**
-     * Sets the page.
-     * @param page the wiki page.
-     */
-    @Validate( required = true )
-    public void setPage( WikiPage page )
-    {
-        super.setPage( page );
-    }
-    
     /**
      * Sets the new name for the page, which will be set when the
      * {@link #rename()} handler is executed.

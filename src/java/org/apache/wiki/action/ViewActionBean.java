@@ -23,6 +23,7 @@ package org.apache.wiki.action;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
+import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
@@ -191,6 +192,17 @@ public class ViewActionBean extends AbstractPageActionBean
         return null;
     }
 
+    /**
+     * {@inheritDoc}. This method overrides the superclass method
+     * by disabling validation of the <code>page</code> field.
+     */
+    @Override
+    @Validate( required = false )
+    public void setPage( WikiPage page )
+    {
+        super.setPage( page );
+    }
+    
     /**
      * Sets the name to rename the page to
      * 
