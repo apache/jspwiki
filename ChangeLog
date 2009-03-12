@@ -1,3 +1,10 @@
+2009-03-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-82
+        
+        * Fixed issue in ContentManager.getPage() not properly
+        catching exceptions.
+
 2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-81

@@ -655,7 +655,7 @@ public class ContentManager implements WikiEventListener
      *  @param wikiPath  the {@link WikiName} to check for
      *  @param version The version to check
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
-     *  @throws WikiException If the backend fails or the wikiPath is illegal.
+     *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
     public boolean pageExists( WikiName wikiPath, int version )
         throws ProviderException
@@ -681,7 +681,7 @@ public class ContentManager implements WikiEventListener
      *  Deletes only a specific version of a WikiPage.
      *  
      *  @param page The page to delete.
-     *  @throws WikiException if the page fails
+     *  @throws ProviderException if the page fails
      */
     public void deleteVersion( WikiPage page )
         throws ProviderException
@@ -706,7 +706,7 @@ public class ContentManager implements WikiEventListener
      *  Deletes an entire page, all versions, all traces.
      *  
      *  @param page The WikiPage to delete
-     *  @throws WikiException If the backend fails or the page is illegal.
+     *  @throws ProviderException If the backend fails or the page is illegal.
      */
     
     public void deletePage( WikiPage page )
@@ -947,7 +947,7 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param jcrpath The JCR Path used to get the {@link WikiName}
      *  @return The {@link WikiName} for the requested jcr path
-     *  @throws WikiException If the backend fails.
+     *  @throws ProviderException If the backend fails.
      */
     // FIXME: Should be protected - fix once WikiPage moves to content-package
     public static WikiName getWikiPath( String jcrpath ) throws ProviderException
@@ -975,7 +975,7 @@ public class ContentManager implements WikiEventListener
      *  @param path the WikiName
      *  @param contentType the type of content
      *  @return the {@link JCRWikiPage} 
-     *  @throws WikiException If the backend fails.
+     *  @throws ProviderException If the backend fails.
      */
     public JCRWikiPage addPage( WikiName path, String contentType ) throws ProviderException
     {
@@ -1053,6 +1053,11 @@ public class ContentManager implements WikiEventListener
             }
             
             return page;
+        }
+        catch( PathNotFoundException e )
+        {
+            // Page was not found at all.
+            return null;
         }
         catch( RepositoryException e )
         {
