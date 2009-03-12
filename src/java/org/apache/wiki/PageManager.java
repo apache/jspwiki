@@ -144,7 +144,11 @@ public class PageManager extends ModuleManager
     public String getPageText( String pageName, int version )
         throws ProviderException
     {
-        return m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version ).getContentAsString();
+        WikiPage p = m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version );
+        
+        if( p != null ) return p.getContentAsString();
+        
+        return null;
     }
 
     /**
@@ -278,7 +282,14 @@ public class PageManager extends ModuleManager
      */
     public int getTotalPageCount()
     {
-        return m_engine.getContentManager().getTotalPageCount( null );
+        try
+        {
+            return m_engine.getContentManager().getTotalPageCount( null );
+        }
+        catch( ProviderException e )
+        {
+            return -1;
+        }
     }
 
     /**

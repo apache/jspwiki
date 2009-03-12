@@ -4,6 +4,10 @@
         
         * Fixed issue in ContentManager.getPage() not properly
         catching exceptions.
+        
+        * ContentManager now throws a PageNotFoundException when
+        a page cannot be found, instead of returning null. This is
+        to reduce the amount of NPEs that might otherwise appear.
 
 2009-02-22  Andrew Jaquith <ajaquith AT apache DOT org>
 

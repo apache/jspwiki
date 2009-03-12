@@ -72,6 +72,11 @@ import org.priha.util.ConfigurationException;
  *  and "jackrabbit" for <a href="http://jackrabbit.apache.org">Apache Jackrabbit</a>.
  *  <p>
  *  If there is no property defined, defaults to "priha".
+ *  <p>
+ *  The methods in this class always return valid values. In case they cannot
+ *  be acquired by some means, it throws an Exception.  This is different from
+ *  the way the old PageManager used to work, so you can go ahead and get rid
+ *  of all the null-checks from your old code.
  *
  *  FIXME:
  *    * This class is currently designed to be a drop-in replacement for PageManager.
@@ -554,7 +559,7 @@ public class ContentManager implements WikiEventListener
      */
 
     public List<WikiPage> getVersionHistory( WikiName path )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
         JCRWikiPage base = getPage(path);
@@ -571,6 +576,10 @@ public class ContentManager implements WikiEventListener
                 
                 result.add( new JCRWikiPage(m_engine,v) );
             }
+        }
+        catch( PathNotFoundException e )
+        {
+            throw new PageNotFoundException(path);
         }
         catch( RepositoryException e )
         {
@@ -602,21 +611,14 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param space Name of the Wiki space.  May be null, in which
      *  case all spaces will be counted
-     *  @return The number of pages, or -1, if there is an error.
+     *  @return The number of pages.
+     *  @throws ProviderException If there was an error.
      */
     // FIXME: Unfortunately this method is very slow, since it involves gobbling
     //        up the entire repo.
-    public int getTotalPageCount(String space)
+    public int getTotalPageCount(String space) throws ProviderException
     {
-        try
-        {
-            return getAllPages(space).size();
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to count pages: ",e );
-            return -1;
-        }
+        return getAllPages(space).size();
     }
     /**
      *  Returns true, if the page exists (any version).
@@ -625,7 +627,6 @@ public class ContentManager implements WikiEventListener
      *  @return A boolean value describing the existence of a page
      *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
- 
     public boolean pageExists( WikiName wikiPath )
         throws ProviderException
     {
@@ -682,9 +683,10 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param page The page to delete.
      *  @throws ProviderException if the page fails
+     *  @throws PageNotFoundException If the page in question does not exist.
      */
     public void deleteVersion( WikiPage page )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -695,6 +697,10 @@ public class ContentManager implements WikiEventListener
             jcrPage.save();
             
             fireEvent( WikiPageEvent.PAGE_DELETED, jcrPage.getName() );
+        }
+        catch( PathNotFoundException e )
+        {
+            throw new PageNotFoundException(page.getQualifiedName());
         }
         catch( RepositoryException e )
         {
@@ -707,10 +713,11 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param page The WikiPage to delete
      *  @throws ProviderException If the backend fails or the page is illegal.
+     *  @throws PageNotFoundException If the page has already disappeared.
      */
     
     public void deletePage( WikiPage page )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -740,6 +747,10 @@ public class ContentManager implements WikiEventListener
             nd.getParent().save();
             
             fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
+        }
+        catch( PathNotFoundException e )
+        {
+            throw new PageNotFoundException(page.getQualifiedName());
         }
         catch( RepositoryException e )
         {
@@ -1001,8 +1012,9 @@ public class ContentManager implements WikiEventListener
      *  @param path the path
      *  @return the {@link JCRWikiPage} 
      *  @throws ProviderException If the backend fails.
+     *  @throws PageNotFoundException If the page does not exist.
      */
-    public JCRWikiPage getPage( WikiName path ) throws ProviderException
+    public JCRWikiPage getPage( WikiName path ) throws ProviderException, PageNotFoundException
     {
         try
         {
@@ -1015,7 +1027,7 @@ public class ContentManager implements WikiEventListener
         }
         catch( PathNotFoundException e )
         {
-            return null;
+            throw new PageNotFoundException( path );
         }
         catch( RepositoryException e )
         {
@@ -1027,7 +1039,7 @@ public class ContentManager implements WikiEventListener
         }
     }
 
-    public JCRWikiPage getPage( WikiName path, int version ) throws ProviderException
+    public JCRWikiPage getPage( WikiName path, int version ) throws ProviderException, PageNotFoundException
     {
         try
         {
@@ -1056,8 +1068,7 @@ public class ContentManager implements WikiEventListener
         }
         catch( PathNotFoundException e )
         {
-            // Page was not found at all.
-            return null;
+            throw new PageNotFoundException( path );
         }
         catch( RepositoryException e )
         {
