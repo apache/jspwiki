@@ -437,8 +437,8 @@ public final class WikiContextFactory
                 else
                 {
                     m_contextMap.put( requestContext, handler );
-                    log.info( "Discovered request context '" + requestContext + "' for WikiActionBean="
-                              + beanClass.getCanonicalName() + ",event=" + handler.getEventName() );
+                    log.debug( "Discovered request context '" + requestContext + "' for WikiActionBean="
+                               + beanClass.getCanonicalName() + ",event=" + handler.getEventName() );
                 }
             }
         }
