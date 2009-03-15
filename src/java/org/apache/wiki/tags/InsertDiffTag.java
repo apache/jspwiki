@@ -27,6 +27,8 @@ import javax.servlet.jsp.PageContext;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -91,8 +93,19 @@ public class InsertDiffTag
         }
         else
         {
-            ctx = (WikiContext)m_wikiContext.clone();
-            ctx.setPage( engine.getPage(m_pageName) );
+            try
+            {
+                ctx = (WikiContext)m_wikiContext.clone();
+                ctx.setPage( engine.getPage(m_pageName) );
+            }
+            catch(PageNotFoundException e)
+            {
+                return SKIP_BODY;
+            }
+            catch( ProviderException e )
+            {
+                throw new IOException( "Unable to get page "+e.getMessage() );
+            }
         }
 
         Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,

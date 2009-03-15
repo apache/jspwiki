@@ -36,6 +36,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -63,6 +64,10 @@ public class MetaWeblogHandler
     private static Logger log = LoggerFactory.getLogger( MetaWeblogHandler.class ); 
 
     private WikiContext m_context;
+    
+    private static final int ERR_NOTFOUND      = 404;
+    private static final int ERR_SERVER_ERROR  = 500;
+    private static final int ERR_UNAUTHORIZED  = 401;
     
     /**
      *  {@inheritDoc}
@@ -96,21 +101,21 @@ public class MetaWeblogHandler
             {
                 if( !mgr.checkPermission( m_context.getWikiSession(), PermissionFactory.getPagePermission( page, permission ) ))
                 {
-                    throw new XmlRpcException( 1, "No permission" );
+                    throw new XmlRpcException( ERR_UNAUTHORIZED, "No permission" );
                 }   
             }
             else
             {
-                throw new XmlRpcException( 1, "Unknown login" );
+                throw new XmlRpcException( ERR_UNAUTHORIZED, "Unknown login" );
             }
         }
         catch( WikiSecurityException e )
         {
-            throw new XmlRpcException( 1, e.getMessage(), e );
+            throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage(), e );
         }
         catch( LoginException e )
         {
-            throw new XmlRpcException( 1, e.getMessage(), e );
+            throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage(), e );
         }
         return;
     }
@@ -130,13 +135,25 @@ public class MetaWeblogHandler
                                     String password )
         throws XmlRpcException
     {
-        WikiPage page = m_context.getEngine().getPage( blogid );
+        WikiPage page;
+        try
+        {
+            page = m_context.getEngine().getPage( blogid );
 
-        checkPermissions( page, username, password, "view" );
+            checkPermissions( page, username, password, "view" );
 
-        Hashtable ht = new Hashtable();
+            Hashtable ht = new Hashtable();
 
-        return ht;
+            return ht;
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException(ERR_NOTFOUND,"No such page");
+        }
+        catch( ProviderException e )
+        {
+            throw new XmlRpcException(ERR_SERVER_ERROR,"No such page");
+        }
     }
 
     private String getURL( String page )
@@ -153,35 +170,46 @@ public class MetaWeblogHandler
      *  @param page The actual entry page
      *  @return A metaWeblog entry struct.
      */
-    private Hashtable<String,Object> makeEntry( WikiPage page )
+    private Hashtable<String,Object> makeEntry( WikiPage page ) throws XmlRpcException
     {
         Hashtable<String, Object> ht = new Hashtable<String, Object>();
 
-        WikiPage firstVersion = m_context.getEngine().getPage( page.getName(), 1 );
-
-        ht.put("dateCreated", firstVersion.getLastModified());
-        ht.put("link", getURL(page.getName()));
-        ht.put("permaLink", getURL(page.getName()));
-        ht.put("postid", page.getName());
-        ht.put("userid", page.getAuthor());
-
-        String pageText = m_context.getEngine().getText(page.getName());
-        String title = "";
-        int firstLine = pageText.indexOf('\n');
-
-        if( firstLine > 0 )
+        try
         {
-            title = pageText.substring( 0, firstLine );
-        }
+            WikiPage firstVersion = m_context.getEngine().getPage( page.getName(), 1 );
+
+            ht.put("dateCreated", firstVersion.getLastModified());
+            ht.put("link", getURL(page.getName()));
+            ht.put("permaLink", getURL(page.getName()));
+            ht.put("postid", page.getName());
+            ht.put("userid", page.getAuthor());
+
+            String pageText = m_context.getEngine().getText(page.getName());
+            String title = "";
+            int firstLine = pageText.indexOf('\n');
+
+            if( firstLine > 0 )
+            {
+                title = pageText.substring( 0, firstLine );
+            }
             
-        if( title.trim().length() == 0 ) title = page.getName();
+            if( title.trim().length() == 0 ) title = page.getName();
 
-        // Remove wiki formatting
-        while( title.startsWith("!") ) title = title.substring(1);
+            // Remove wiki formatting
+            while( title.startsWith("!") ) title = title.substring(1);
 
-        ht.put("title", title);
-        ht.put("description", pageText);
-
+            ht.put("title", title);
+            ht.put("description", pageText);
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException(ERR_NOTFOUND,"Not found");
+        }
+        catch( ProviderException e )
+        {
+            throw new XmlRpcException(ERR_SERVER_ERROR,e.getMessage());
+        }
+        
         return ht;
     }
 
@@ -210,12 +238,12 @@ public class MetaWeblogHandler
 
         log.info( "metaWeblog.getRecentPosts() called");
 
-        WikiPage page = m_context.getEngine().getPage( blogid );
-
-        checkPermissions( page, username, password, "view" );
-
         try
         {
+            WikiPage page = m_context.getEngine().getPage( blogid );
+
+            checkPermissions( page, username, password, "view" );
+
             WeblogPlugin plugin = new WeblogPlugin();
 
             List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine().getPageManager(), 
@@ -234,11 +262,15 @@ public class MetaWeblogHandler
             }
 
         }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException( ERR_NOTFOUND, e.getMessage() );
+        }
         catch( ProviderException e )
         {
             log.error( "Failed to list recent posts", e );
 
-            throw new XmlRpcException( 0, e.getMessage() );
+            throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage() );
         }
 
         return result;
@@ -265,11 +297,11 @@ public class MetaWeblogHandler
         log.info("metaWeblog.newPost() called");
         WikiEngine engine = m_context.getEngine();
         
-        WikiPage page = engine.getPage( blogid );
-        checkPermissions( page, username, password, "createPages" );
-
         try
         {
+            WikiPage page = engine.getPage( blogid );
+            checkPermissions( page, username, password, "createPages" );
+            
             WeblogEntryPlugin plugin = new WeblogEntryPlugin();
 
             String pageName = plugin.getNewEntryPage( engine, blogid );
@@ -288,10 +320,14 @@ public class MetaWeblogHandler
 
             engine.saveText( context, text.toString() );
         }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException( ERR_NOTFOUND, "Not found" );
+        }
         catch( Exception e )
         {
             log.error("Failed to create weblog entry",e);
-            throw new XmlRpcException( 0, "Failed to create weblog entry: "+e.getMessage() );
+            throw new XmlRpcException( ERR_SERVER_ERROR, "Failed to create weblog entry: "+e.getMessage() );
         }
 
         return ""; // FIXME:
@@ -321,16 +357,15 @@ public class MetaWeblogHandler
 
         log.info("metaWeblog.newMediaObject() called");
 
-        WikiPage page = engine.getPage( blogid );
-        checkPermissions( page, username, password, "upload" );
-
-        String name = (String) content.get( "name" );
-        byte[] data = (byte[]) content.get( "bits" );
-
-        AttachmentManager attmgr = engine.getAttachmentManager();
-
         try
         {
+            WikiPage page = engine.getPage( blogid );
+            checkPermissions( page, username, password, "upload" );
+
+            String name = (String) content.get( "name" );
+            byte[] data = (byte[]) content.get( "bits" );
+
+            AttachmentManager attmgr = engine.getAttachmentManager();
             Attachment att = engine.getContentManager().addPage( WikiName.valueOf( blogid ).resolve( name ),
                                                                  "application/octet-stream"); //FIXME! Needs a better guess
             att.setAuthor( username );
@@ -341,10 +376,14 @@ public class MetaWeblogHandler
 
             url = engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
         }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException( ERR_NOTFOUND, "Not found" );
+        }
         catch( Exception e )
         {
             log.error( "Failed to upload attachment", e );
-            throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );
+            throw new XmlRpcException( ERR_SERVER_ERROR, "Failed to upload media object: "+e.getMessage() );
         }
 
         Hashtable<String, Object> result = new Hashtable<String, Object>();
@@ -369,12 +408,12 @@ public class MetaWeblogHandler
         WikiEngine engine = m_context.getEngine();
         log.info("metaWeblog.editPost("+postid+") called");
 
-        // FIXME: Is postid correct?  Should we determine it from the page name?
-        WikiPage page = engine.getPage( postid );
-        checkPermissions( page, username, password, "edit" );
-
         try
         {
+            // FIXME: Is postid correct?  Should we determine it from the page name?
+            WikiPage page = engine.getPage( postid );
+            checkPermissions( page, username, password, "edit" );
+
             WikiPage entryPage = (WikiPage)page.clone();
             entryPage.setAuthor( username );
 
@@ -389,10 +428,14 @@ public class MetaWeblogHandler
 
             engine.saveText( context, text.toString() );
         }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException( ERR_NOTFOUND, "Not found" );
+        }
         catch( Exception e )
         {
             log.error("Failed to create weblog entry",e);
-            throw new XmlRpcException( 0, "Failed to update weblog entry: "+e.getMessage() );
+            throw new XmlRpcException( ERR_SERVER_ERROR, "Failed to update weblog entry: "+e.getMessage() );
         }
 
         return true;
@@ -409,10 +452,22 @@ public class MetaWeblogHandler
     {
         String wikiname = "FIXME";
 
-        WikiPage page = m_context.getEngine().getPage( wikiname );
+        try
+        {
+            WikiPage page;
+            page = m_context.getEngine().getPage( wikiname );
 
-        checkPermissions( page, username, password, "view" );
+            checkPermissions( page, username, password, "view" );
 
-        return makeEntry( page );
+            return makeEntry( page );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new XmlRpcException(ERR_NOTFOUND,"Not found");
+        }
+        catch( ProviderException e )
+        {
+            throw new XmlRpcException(ERR_SERVER_ERROR,e.getMessage());
+        }
     }
 }

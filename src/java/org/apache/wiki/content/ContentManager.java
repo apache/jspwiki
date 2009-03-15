@@ -907,7 +907,9 @@ public class ContentManager implements WikiEventListener
             WikiPage page = context.getPage();
 
             // Let the rest of the engine handle actual saving.
-            engine.getPageManager().putPageText( page, proposedText );
+            page.setContent( proposedText );
+            
+            page.save();
 
             // Refresh the context for post save filtering.
             engine.getPage( page.getName() );

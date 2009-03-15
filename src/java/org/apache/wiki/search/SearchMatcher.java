@@ -27,6 +27,7 @@ import java.io.StringReader;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -38,7 +39,6 @@ import org.apache.wiki.api.WikiPage;
  * @since 2.1.5
  * @author ebu at ecyrd dot com
  */
-// FIXME: Move to the "search" -package in 3.0
 public class SearchMatcher
 {
     private QueryItem[] m_queries;
@@ -134,7 +134,15 @@ public class SearchMatcher
 
         if( totalscore > 0 )
         {
-            return new SearchResultImpl( wikiname, totalscore );
+            try
+            {
+                return new SearchResultImpl( m_engine.getPage( wikiname ), totalscore );
+            }
+            catch( ProviderException e )
+            {
+                // FIXME: Should really log this
+                return null;
+            }
         }
 
         return null;
@@ -156,9 +164,9 @@ public class SearchMatcher
          *  @param name Page Name
          *  @param score A score from 0+
          */
-        public SearchResultImpl( String name, int score )
+        public SearchResultImpl( WikiPage page, int score )
         {
-            m_page  = m_engine.getPage( name );
+            m_page  = page;
             m_score = score;
         }
 

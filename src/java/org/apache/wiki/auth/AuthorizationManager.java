@@ -43,11 +43,13 @@ import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 import org.freshcookies.security.policy.PolicyException;
@@ -219,12 +221,53 @@ public final class AuthorizationManager
         //
         // If the page or ACL is null, it's allowed.
         //
-        String pageName = ((PagePermission)permission).getPage();
-        WikiPage page = m_engine.getPage( pageName );
-        Acl acl;
         try
         {
-            acl = ( page == null) ? null : m_engine.getAclManager().getPermissions( page );
+            String pageName = ((PagePermission)permission).getPage();
+            WikiPage page = m_engine.getPage( pageName );
+            Acl acl;
+
+            acl = m_engine.getAclManager().getPermissions( page );
+        
+            if ( page == null || acl == null || acl.isEmpty() )
+            {
+                fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+                return true;
+            }
+
+            //
+            //  Next, iterate through the Principal objects assigned
+            //  this permission. If the context's subject possesses
+            //  any of these, the action is allowed.
+            //
+            
+            Principal[] aclPrincipals = acl.findPrincipals( permission );
+
+            log.debug( "Checking ACL entries..." );
+            log.debug( "Acl for this page is: " + acl );
+            log.debug( "Checking for principal: " + String.valueOf( aclPrincipals ) );
+            log.debug( "Permission: " + permission );
+
+            for( Principal aclPrincipal : aclPrincipals )
+            {
+                // If the ACL principal we're looking at is unresolved,
+                // try to resolve it here & correct the Acl
+                if ( aclPrincipal instanceof UnresolvedPrincipal )
+                {
+                    AclEntry aclEntry = acl.getEntry( aclPrincipal );
+                    aclPrincipal = resolvePrincipal( aclPrincipal.getName() );
+                    if ( aclEntry != null && !( aclPrincipal instanceof UnresolvedPrincipal ) )
+                    {
+                        aclEntry.setPrincipal( aclPrincipal );
+                    }
+                }
+
+                if ( hasRoleOrPrincipal( session, aclPrincipal ) )
+                {
+                    fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+                    return true;
+                }
+            }
         }
         catch( WikiSecurityException e )
         {
@@ -233,45 +276,18 @@ public final class AuthorizationManager
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
             return false;
         }
-        
-        if ( page == null ||  acl == null || acl.isEmpty() )
+        catch( PageNotFoundException e )
         {
+            // Page does not exist, so this is kinda fine.
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
-            return true;
+            return true;            
         }
-
-        //
-        //  Next, iterate through the Principal objects assigned
-        //  this permission. If the context's subject possesses
-        //  any of these, the action is allowed.
-
-        Principal[] aclPrincipals = acl.findPrincipals( permission );
-
-        log.debug( "Checking ACL entries..." );
-        log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + String.valueOf( aclPrincipals ) );
-        log.debug( "Permission: " + permission );
-
-        for( Principal aclPrincipal : aclPrincipals )
+        catch( ProviderException e )
         {
-            // If the ACL principal we're looking at is unresolved,
-            // try to resolve it here & correct the Acl
-            if ( aclPrincipal instanceof UnresolvedPrincipal )
-            {
-                AclEntry aclEntry = acl.getEntry( aclPrincipal );
-                aclPrincipal = resolvePrincipal( aclPrincipal.getName() );
-                if ( aclEntry != null && !( aclPrincipal instanceof UnresolvedPrincipal ) )
-                {
-                    aclEntry.setPrincipal( aclPrincipal );
-                }
-            }
-
-            if ( hasRoleOrPrincipal( session, aclPrincipal ) )
-            {
-                fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
-                return true;
-            }
+            // Something bad happened.  We log and default out.
+            log.info( "Unable to get ACL on page", e );
         }
+        
         fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
         return false;
     }

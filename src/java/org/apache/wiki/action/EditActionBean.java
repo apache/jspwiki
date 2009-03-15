@@ -26,6 +26,7 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.action.*;
@@ -38,11 +39,13 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
@@ -137,35 +140,44 @@ public class EditActionBean extends AbstractPageActionBean
 
         log.info( "Editing page " + pagereq + ". User=" + user.getName() + ", host=" + request.getRemoteAddr() );
 
-        // If page is locked, make sure we tell the user
-        List<Message> messages = wikiContext.getMessages();
-        WikiEngine engine = wikiContext.getEngine();
-        PageManager mgr = engine.getPageManager();
-        PageLock lock = mgr.getCurrentLock( m_page );
-        if( lock != null )
+        try
         {
-            messages.add( new LocalizableMessage( "edit.locked", lock.getLocker(), lock.getTimeLeft() ) );
-        }
+            // If page is locked, make sure we tell the user
+            List<Message> messages = wikiContext.getMessages();
+            WikiEngine engine = wikiContext.getEngine();
+            PageManager mgr = engine.getPageManager();
+            PageLock lock = mgr.getCurrentLock( m_page );
+            if( lock != null )
+            {
+                messages.add( new LocalizableMessage( "edit.locked", lock.getLocker(), lock.getTimeLeft() ) );
+            }
         
-        // If user is not editing the latest one, tell user also
-        ValidationErrors errors = getContext().getValidationErrors();
-        WikiPage latest = engine.getPage( m_page.getName() );
-        if( latest.getVersion() != m_page.getVersion() )
-        {
-            errors.addGlobalError( new LocalizableError( "edit.restoring", m_page.getVersion() ) );
+            // If user is not editing the latest one, tell user also
+            ValidationErrors errors = getContext().getValidationErrors();
+            WikiPage latest = engine.getPage( m_page.getName() );
+            if( latest.getVersion() != m_page.getVersion() )
+            {
+                errors.addGlobalError( new LocalizableError( "edit.restoring", m_page.getVersion() ) );
+            }
+
+            // Attempt to lock the page.
+            lock = mgr.lockPage( m_page, user.getName() );
+            if( lock != null )
+            {
+                session.setAttribute( "lock-" + pagereq, lock );
+            }
+
+            // Load the page text
+            m_text = m_page.getContentAsString();
+
+            return new ForwardResolution( "/Edit.jsp" );
         }
-
-        // Attempt to lock the page.
-        lock = mgr.lockPage( m_page, user.getName() );
-        if( lock != null )
+        catch( ProviderException e )
         {
-            session.setAttribute( "lock-" + pagereq, lock );
+            // This shouldn't be happening
+            log.error("Unable to get page",e);
+            return new ErrorResolution( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
         }
-
-        // Load the page text
-        m_text = engine.getPureText( m_page );
-
-        return new ForwardResolution( "/Edit.jsp" );
     }
 
     /**

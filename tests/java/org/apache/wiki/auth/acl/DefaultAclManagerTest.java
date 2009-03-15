@@ -75,7 +75,7 @@ public class DefaultAclManagerTest
         m_engine.shutdown();
     }
 
-    public void testGetPermissions() throws WikiSecurityException
+    public void testGetPermissions() throws ProviderException, WikiSecurityException
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
@@ -178,7 +178,7 @@ public class DefaultAclManagerTest
         assertFalse( m.find() );
     }
 
-    public void testPrintAcl() throws WikiSecurityException
+    public void testPrintAcl() throws Exception
     {
         // Verify that the printed Acl for the test page is OK
         WikiPage page = m_engine.getPage( "TestAclPage" );

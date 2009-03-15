@@ -36,6 +36,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
@@ -541,7 +542,7 @@ public class JCRWikiPage
         
     }
 
-    public WikiPage getParent() throws ProviderException
+    public WikiPage getParent() throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getPage( m_name.getParent() );
     }

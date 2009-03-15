@@ -28,15 +28,19 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.*;
+import org.apache.wiki.StringTransmutator;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.RegExpUtil;
 import org.apache.wiki.util.TextUtil;
@@ -322,9 +326,10 @@ public abstract class AbstractFilteredPlugin
                 WikiPage page = null;
                 if( m_lastModified )
                 {
-                    page = m_engine.getPage( pageName );
-                    if( page != null )
+                    try
                     {
+                        page = m_engine.getPage( pageName );
+
                         Date lastModPage = page.getLastModified();
                         if( log.isDebugEnabled() )
                         {
@@ -335,7 +340,11 @@ public abstract class AbstractFilteredPlugin
                             m_dateLastModified = lastModPage;
                         }
                     }
-
+                    catch( PageNotFoundException e ) {}
+                    catch( ProviderException e )
+                    {
+                        log.debug( "Error while getting page data", e );
+                    }
                 }
             }
         }

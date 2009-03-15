@@ -27,6 +27,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -237,7 +238,7 @@ public class RSSGenerator
         return sb.toString();
     }
 
-    private String getPageDescription( WikiPage page )
+    private String getPageDescription( WikiPage page ) throws PageNotFoundException, ProviderException
     {
         StringBuilder buf = new StringBuilder();
         String author = getAuthor(page);
@@ -263,15 +264,24 @@ public class RSSGenerator
 
     private String getEntryDescription( WikiPage page )
     {
-        String res;
+        String res = "";
 
-        if( page instanceof Attachment )
+        try
         {
-            res = getAttachmentDescription( (WikiPage)page );
+            if( page instanceof Attachment )
+            {
+                res = getAttachmentDescription( (WikiPage)page );
+            }
+            else
+            {
+                res = getPageDescription( page );
+            }
         }
-        else
+        catch( ProviderException e )
         {
-            res = getPageDescription( page );
+            // FIXME: We should check if returning a plain empty string is ok,
+            //        as this just gobbles up the actual error.
+            log.error( "Unable to get description", e );
         }
 
         return res;

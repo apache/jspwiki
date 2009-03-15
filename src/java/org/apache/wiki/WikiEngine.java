@@ -51,6 +51,7 @@ import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.diff.DifferenceManager;
@@ -899,10 +900,11 @@ public class WikiEngine
      *  
      *  @param space The space to get the front page for.
      *  @return A FQN of the page.
+     * @throws ProviderException 
      *  @since 3.0
      */
     // FIXME: Does not yet support spaces
-    public WikiPage getFrontPage( String space )
+    public WikiPage getFrontPage( String space ) throws ProviderException
     {
         WikiPage p = getPage( m_frontPage );
         
@@ -1461,8 +1463,11 @@ public class WikiEngine
      *
      *  @param page WikiName of the page to convert.
      *  @return HTML-rendered version of the page.
+     * @throws ProviderException 
+     * @throws PageNotFoundException 
      */
-    public String getHTML( String page )
+    public String getHTML( String page ) 
+        throws PageNotFoundException, ProviderException
     {
         return getHTML( page, WikiPageProvider.LATEST_VERSION );
     }
@@ -1475,8 +1480,11 @@ public class WikiEngine
      *  @param pagename WikiName of the page to convert.
      *  @param version Version number to fetch
      *  @return HTML-rendered page text.
+     * @throws ProviderException 
+     * @throws PageNotFoundException 
      */
-    public String getHTML( String pagename, int version )
+    public String getHTML( String pagename, int version ) 
+        throws PageNotFoundException, ProviderException
     {
         WikiPage page = getPage( pagename, version );
 
@@ -1740,16 +1748,16 @@ public class WikiEngine
         String diffText = m_differenceManager.makeDiff( context, oldText, proposedText );
         boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         Fact[] facts = new Fact[5];
-        facts[0] = new Fact( PageManager.FACT_PAGE_NAME, page.getName() );
-        facts[1] = new Fact( PageManager.FACT_DIFF_TEXT, diffText );
-        facts[2] = new Fact( PageManager.FACT_PROPOSED_TEXT, proposedText );
-        facts[3] = new Fact( PageManager.FACT_CURRENT_TEXT, oldText);
-        facts[4] = new Fact( PageManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
-        String rejectKey = isAuthenticated ? PageManager.SAVE_REJECT_MESSAGE_KEY : null;
+        facts[0] = new Fact( ContentManager.FACT_PAGE_NAME, page.getName() );
+        facts[1] = new Fact( ContentManager.FACT_DIFF_TEXT, diffText );
+        facts[2] = new Fact( ContentManager.FACT_PROPOSED_TEXT, proposedText );
+        facts[3] = new Fact( ContentManager.FACT_CURRENT_TEXT, oldText);
+        facts[4] = new Fact( ContentManager.FACT_IS_AUTHENTICATED, Boolean.valueOf( isAuthenticated ) );
+        String rejectKey = isAuthenticated ? ContentManager.SAVE_REJECT_MESSAGE_KEY : null;
         Workflow workflow = builder.buildApprovalWorkflow( submitter,
-                                                           PageManager.SAVE_APPROVER,
+                                                           ContentManager.SAVE_APPROVER,
                                                            prepTask,
-                                                           PageManager.SAVE_DECISION_MESSAGE_KEY,
+                                                           ContentManager.SAVE_DECISION_MESSAGE_KEY,
                                                            facts,
                                                            completionTask,
                                                            rejectKey );
@@ -1855,12 +1863,13 @@ public class WikiEngine
      *  
      *  @param name The WikiName of the object to create
      *  @return A new WikiPage object.
+     *  @throws ProviderException 
      *  @since 3.0
      */
     @SuppressWarnings("deprecation")
-    public WikiPage createPage( WikiName name )
+    public WikiPage createPage( WikiName name ) throws ProviderException
     {
-        return new JCRWikiPage( this, name );
+        return m_contentManager.addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );
     }
     
     /**
@@ -1868,9 +1877,10 @@ public class WikiEngine
      *  
      *  @param fqn The fully qualified name of a wikipage.
      *  @return A new page.
+     *  @throws ProviderException 
      *  @since 3.0
      */
-    public WikiPage createPage( String fqn )
+    public WikiPage createPage( String fqn ) throws ProviderException
     {
         return createPage( WikiName.valueOf( fqn ) );
     }
@@ -1881,9 +1891,12 @@ public class WikiEngine
      *
      *  @param pagereq The name of the page to look for.
      *  @return A WikiPage object, or null, if the page by the name could not be found.
+     * @throws ProviderException 
+     * @throws PageNotFoundException 
      */
 
-    public WikiPage getPage( String pagereq )
+    public WikiPage getPage( String pagereq ) 
+        throws PageNotFoundException, ProviderException
     {
         return getPage( pagereq, WikiProvider.LATEST_VERSION );
     }
@@ -1896,29 +1909,18 @@ public class WikiEngine
      *  in which case it will look for the latest version (and this method then becomes
      *  the equivalent of getPage(String).
      *
-     *  @return A WikiPage object, or null, if the page could not be found; or if there
-     *  is no such version of the page.
+     *  @return A WikiPage object
+     *  @throws ProviderException 
+     *  @throws PageNotFoundException If the page cannot be found. 
      *  @since 1.6.7.
      */
 
-    public WikiPage getPage( String pagereq, int version )
+    public WikiPage getPage( String pagereq, int version ) 
+        throws PageNotFoundException, ProviderException
     {
-        try
-        {
-            WikiPage p = m_pageManager.getPageInfo( pagereq, version );
-
-            if( p == null )
-            {
-                p = m_attachmentManager.getAttachmentInfo( (WikiContext)null, pagereq );
-            }
-
-            return p;
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to fetch page info",e);
-            return null;
-        }
+        WikiPage p = m_contentManager.getPage( WikiName.valueOf( pagereq ), version );
+        
+        return p;
     }
 
 
@@ -1929,27 +1931,14 @@ public class WikiEngine
      *  @param page Name of the page to look for
      *  @return an ordered List of WikiPages, each corresponding to a different
      *          revision of the page.
+     * @throws ProviderException 
+     * @throws PageNotFoundException 
      */
 
-    public List getVersionHistory( String page )
+    public List<WikiPage> getVersionHistory( String page ) 
+        throws PageNotFoundException, ProviderException
     {
-        List c = null;
-
-        try
-        {
-            c = m_pageManager.getVersionHistory( page );
-
-            if( c == null )
-            {
-                c = m_attachmentManager.getVersionHistory( page );
-            }
-        }
-        catch( ProviderException e )
-        {
-            log.error("FIXME");
-        }
-
-        return c;
+        return m_contentManager.getVersionHistory( WikiName.valueOf( page ) );
     }
 
     /**

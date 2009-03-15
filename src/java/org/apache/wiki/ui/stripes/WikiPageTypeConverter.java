@@ -61,21 +61,20 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
     {
         WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
         WikiEngine engine = config.getEngine();
-        WikiPage page = engine.getPage( pageName );
-        if( page == null )
+        WikiPage page = null;
+        try
         {
-            try
+            page = engine.getPage( pageName );
+
+            String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
+            if( finalName == null || engine.getPage( finalName ) == null )
             {
-                String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
-                if( finalName == null || engine.getPage( finalName ) == null )
-                {
-                    errors.add( new LocalizableError( "common.nopage", pageName ) );
-                }
+                errors.add( new LocalizableError( "common.nopage", pageName ) );
             }
-            catch( ProviderException e )
-            {
-                errors.add( new SimpleError( e.getMessage() ) );
-            }
+        }
+        catch( ProviderException e )
+        {
+            errors.add( new SimpleError( e.getMessage() ) );
         }
         return page;
     }

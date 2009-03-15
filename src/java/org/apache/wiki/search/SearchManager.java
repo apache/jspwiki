@@ -28,6 +28,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -330,8 +331,20 @@ public class SearchManager
         //  Makes sure that we're indexing the latest version of this
         //  page.
         //
-        WikiPage p = m_engine.getPage( wikiContext.getPage().getName() );
-        reindexPage( p );
+        WikiPage p;
+        try
+        {
+            p = m_engine.getPage( wikiContext.getPage().getName() );
+            reindexPage( p );
+        }
+        catch( PageNotFoundException e )
+        {
+            // Swallow quietly; something went wrong but no point making fuss about it.
+        }
+        catch( ProviderException e )
+        {
+            log.info("Could not reindex a page",e);
+        }
     }
 
     /**
@@ -355,10 +368,18 @@ public class SearchManager
         {
             String pageName = ((WikiPageEvent) event).getPageName();
 
-            WikiPage p = m_engine.getPage( pageName );
-            if( p != null )
+            try
             {
+                WikiPage p = m_engine.getPage( pageName );
                 pageRemoved( p );
+            }
+            catch( PageNotFoundException e )
+            {
+                throw new InternalWikiException("Page removed already!?!");
+            }
+            catch( ProviderException e ) 
+            {
+                // FIXME: How should it deal with this?
             }
         }
     }

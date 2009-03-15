@@ -29,6 +29,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CreoleRenderer;
 
 import junit.framework.Test;
@@ -54,7 +55,7 @@ public class CreoleRendererTest extends TestCase
         m_testEngine.shutdown();
     }
 
-    private String render(String s) throws IOException
+    private String render(String s) throws IOException, ProviderException
     {
         WikiPage dummyPage = m_testEngine.createPage("TestPage");
         WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( dummyPage );

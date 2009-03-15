@@ -44,7 +44,8 @@ public abstract class AbstractRPCHandler
     /** Error code: no such page. */
     public static final int ERR_NOPAGE       = 1;
     public static final int ERR_NOPERMISSION = 2;
-
+    public static final int ERR_SERVER_ERROR = 3;
+    
     /**
      *  Link to a local wiki page.
      */

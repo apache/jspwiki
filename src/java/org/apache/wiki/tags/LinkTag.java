@@ -32,6 +32,7 @@ import javax.servlet.jsp.tagext.BodyTag;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
@@ -345,7 +346,8 @@ public class LinkTag
         return addTo + buf.toString();
     }
 
-    private String makeBasicURL( String context, String page, String parms, boolean absolute )
+    private String makeBasicURL( String context, String page, String parms, boolean absolute ) 
+        throws PageNotFoundException, ProviderException
     {
         String url;
         WikiEngine engine = m_wikiContext.getEngine();

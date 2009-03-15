@@ -33,6 +33,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.WikiRenderer;
 import org.apache.wiki.render.XHTMLRenderer;
 
@@ -67,7 +68,7 @@ public class CounterPluginTest extends TestCase
     private String translate( String src )
         throws IOException,
                NoRequiredPropertyException,
-               ServletException
+               ServletException, ProviderException
     {
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( "TestPage" ) );
         

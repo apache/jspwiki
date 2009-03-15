@@ -34,6 +34,7 @@ import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -150,10 +151,19 @@ public class PermissionTag
             //
             if( EDIT.equals(permission) )
             {
-                WikiPage latest = m_wikiContext.getEngine().getPage( page.getName() );
-                if( page.getVersion() != WikiProvider.LATEST_VERSION &&
-                    latest.getVersion() != page.getVersion() )
+                try
                 {
+                    WikiPage latest = m_wikiContext.getEngine().getPage( page.getName() );
+                    if( page.getVersion() != WikiProvider.LATEST_VERSION &&
+                        latest.getVersion() != page.getVersion() )
+                    {
+                        return false;
+                    }
+                }
+                catch( ProviderException e )
+                {
+                    // FIXME: What is the correct action here?
+                    log.error( "Failed to find latest version", e );
                     return false;
                 }
             }

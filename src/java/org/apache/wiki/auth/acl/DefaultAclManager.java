@@ -34,6 +34,7 @@ import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -166,10 +167,26 @@ public class DefaultAclManager implements AclManager
         //  Does the page already have cached ACLs?
         //
         Acl acl = page.getAcl();
-        log.debug( "page="+page.getName()+"\n"+acl );
+        if( log.isDebugEnabled() ) log.debug( "page="+page.getName()+"\n"+acl );
 
         if( acl == null )
         {
+            try
+            {
+                acl = getPermissions(page.getParent());
+            }
+            catch( PageNotFoundException e )
+            {
+                // There is no parent
+                return new AclImpl();
+            }
+            catch( ProviderException e )
+            {
+                throw new WikiSecurityException("Unable to get parent page to check for permissions.");
+            }
+        }
+        // FIXME: Check if the above is sufficient; may be that parsing still needs to be done here
+/*
             //
             //  If null, try the parent.
             //
@@ -208,7 +225,7 @@ public class DefaultAclManager implements AclManager
                 }
             }
         }
-
+*/
         return acl;
     }
 

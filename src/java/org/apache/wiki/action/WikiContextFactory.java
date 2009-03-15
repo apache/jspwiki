@@ -44,6 +44,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -52,6 +53,7 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.stripes.HandlerInfo;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
+import org.apache.wiki.ui.stripes.WikiInterceptor;
 import org.apache.wiki.url.StripesURLConstructor;
 import org.apache.wiki.util.TextUtil;
 
@@ -152,8 +154,10 @@ public final class WikiContextFactory
         {
             // If the page supplied was blank, default to the front page to
             // avoid NPEs
-            page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-            context.setPage( page );
+            // FIXME: I don't think this should ever happen
+            throw new InternalWikiException("saveContext with null wikipage");
+            //page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
+            //context.setPage( page );
         }
         request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
     }
@@ -627,10 +631,9 @@ public final class WikiContextFactory
      *            exist
      * @return the wiki page
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, String page )
+    protected final WikiPage resolvePage( HttpServletRequest request, String page ) throws PageNotFoundException, ProviderException
     {
         // See if the user included a version parameter
-        WikiPage wikipage;
         int version = WikiProvider.LATEST_VERSION;
         String rev = request.getParameter( "version" );
 
@@ -639,14 +642,15 @@ public final class WikiContextFactory
             version = Integer.parseInt( rev );
         }
 
-        wikipage = m_engine.getPage( page, version );
-
-        if( wikipage == null )
+        try
+        {
+            return m_engine.getPage( page, version );
+        }
+        catch( PageNotFoundException e )
         {
             page = MarkupParser.cleanLink( page );
-            wikipage = m_engine.createPage( WikiName.valueOf( page ) );
+            return m_engine.createPage( WikiName.valueOf( page ) );
         }
-        return wikipage;
     }
 
     /**

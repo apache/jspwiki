@@ -21,10 +21,15 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
+
 import javax.servlet.jsp.JspWriter;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -113,51 +118,58 @@ public class DiffLinkTag
             return SKIP_BODY;
         }
 
-        if( VER_LATEST.equals(getVersion()) )
+        try
         {
-            WikiPage latest = engine.getPage( pageName, 
-                                              WikiProvider.LATEST_VERSION );
-
-            if( latest == null )
+            if( VER_LATEST.equals(getVersion()) )
             {
-                // This may occur if matchEnglishPlurals is on, and we access the wrong page name
-                return SKIP_BODY;
+                WikiPage latest = engine.getPage( pageName, 
+                                                  WikiProvider.LATEST_VERSION );
+                r1 = latest.getVersion();
             }
-            r1 = latest.getVersion();
-        }
-        else if( VER_PREVIOUS.equals(getVersion()) )
-        {
-            r1 = m_wikiContext.getPage().getVersion() - 1;
-            r1 = (r1 < 1 ) ? 1 : r1;
-        }
-        else if( VER_CURRENT.equals(getVersion()) )
-        {
-            r1 = m_wikiContext.getPage().getVersion();
-        }
-        else
-        {
-            r1 = Integer.parseInt( getVersion() );
-        }
+            else if( VER_PREVIOUS.equals(getVersion()) )
+            {
+                r1 = m_wikiContext.getPage().getVersion() - 1;
+                r1 = (r1 < 1 ) ? 1 : r1;
+            }
+            else if( VER_CURRENT.equals(getVersion()) )
+            {
+                r1 = m_wikiContext.getPage().getVersion();
+            }
+            else
+            {
+                r1 = Integer.parseInt( getVersion() );
+            }
 
-        if( VER_LATEST.equals(getNewVersion()) )
-        {
-            WikiPage latest = engine.getPage( pageName,
-                                              WikiProvider.LATEST_VERSION );
+            if( VER_LATEST.equals(getNewVersion()) )
+            {
+                WikiPage latest = engine.getPage( pageName,
+                                                  WikiProvider.LATEST_VERSION );
 
-            r2 = latest.getVersion();
+                r2 = latest.getVersion();
+            }
+            else if( VER_PREVIOUS.equals(getNewVersion()) )
+            {
+                r2 = m_wikiContext.getPage().getVersion() - 1;
+                r2 = (r2 < 1 ) ? 1 : r2;
+            }
+            else if( VER_CURRENT.equals(getNewVersion()) )
+            {
+                r2 = m_wikiContext.getPage().getVersion();
+            }
+            else
+            {
+                r2 = Integer.parseInt( getNewVersion() );
+            }
         }
-        else if( VER_PREVIOUS.equals(getNewVersion()) )
+        catch( PageNotFoundException e )
         {
-            r2 = m_wikiContext.getPage().getVersion() - 1;
-            r2 = (r2 < 1 ) ? 1 : r2;
+            // This may occur if matchEnglishPlurals is on, and we access the wrong page name
+            return SKIP_BODY;
         }
-        else if( VER_CURRENT.equals(getNewVersion()) )
+        catch( ProviderException e )
         {
-            r2 = m_wikiContext.getPage().getVersion();
-        }
-        else
-        {
-            r2 = Integer.parseInt( getNewVersion() );
+            log.error( "Unable to get page data", e );
+            return SKIP_BODY;
         }
 
         String url = m_wikiContext.getURL( WikiContext.DIFF,

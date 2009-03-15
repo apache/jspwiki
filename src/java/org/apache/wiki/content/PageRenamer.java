@@ -196,33 +196,37 @@ public class PageRenamer
                 pageName = toPage.getName();
             }
             
-            WikiPage p = engine.getPage( pageName );
-            
-            String sourceText = engine.getPureText( p );
-            
-            String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
-            
-            if( m_camelCase )
-                newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
-            
-            if( !sourceText.equals( newText ) )
+            try
             {
-                p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
-                p.setAuthor( context.getCurrentUser().getName() );
-         
-                try
+                WikiPage p = engine.getPage( pageName );
+            
+                String sourceText = engine.getPureText( p );
+            
+                String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
+            
+                if( m_camelCase )
+                    newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
+            
+                if( !sourceText.equals( newText ) )
                 {
+                    p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
+                    p.setAuthor( context.getCurrentUser().getName() );
+         
                     engine.getPageManager().putPageText( p, newText );
                     engine.updateReferences( p );
                 }
-                catch( ProviderException e )
-                {
-                    //
-                    //  We fail with an error, but we will try to continue to rename
-                    //  other referrers as well.
-                    //
-                    log.error("Unable to perform rename.",e);
-                }
+            }
+            catch( PageNotFoundException e )
+            {
+                // Just continue
+            }
+            catch( ProviderException e )
+            {
+                //
+                //  We fail with an error, but we will try to continue to rename
+                //  other referrers as well.
+                //
+                log.error("Unable to perform rename.",e);
             }
         }
     }

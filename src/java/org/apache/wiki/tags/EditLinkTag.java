@@ -26,6 +26,8 @@ import javax.servlet.jsp.JspWriter;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -110,7 +112,19 @@ public class EditLinkTag
                 if( page == null )
                 {
                     // No page, so go fetch according to page name.
-                    page = engine.getPage( m_pageName );
+                    try
+                    {
+                        page = engine.getPage( m_pageName );
+                    }
+                    catch( PageNotFoundException e )
+                    {
+                        return SKIP_BODY;
+                    }
+                    catch( ProviderException e )
+                    {
+                        log.error( "Unable to fetch page", e );
+                        return SKIP_BODY;
+                    }
                 }
                 
                 if( page != null )

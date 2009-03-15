@@ -1,3 +1,14 @@
+2009-03-15  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-83
+        
+        * The WikiEngine interface now also properly propagates
+        PageNotFoundException upwards so that it's actually useful
+        for other components.  This meant quite a few small changes
+        and tweaks around the code, not all of which might make sense.
+        Please check your code for FIXME tags added by me if there's
+        something special you want to do in the error situation.
+        
 2009-03-12  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-82

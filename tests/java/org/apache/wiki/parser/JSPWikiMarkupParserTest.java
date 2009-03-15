@@ -38,6 +38,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.WikiName;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.util.TextUtil;
 
@@ -99,7 +100,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     private String translate( String src )
     throws IOException,
             NoRequiredPropertyException,
-            ServletException
+            ServletException, ProviderException
     {
         return translate( testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
@@ -107,7 +108,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     private String translate( WikiEngine e, String src )
         throws IOException,
                NoRequiredPropertyException,
-               ServletException
+               ServletException, ProviderException
     {
         return translate( e, e.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }

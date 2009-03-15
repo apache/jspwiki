@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.ProviderException;
 
@@ -230,11 +231,12 @@ public interface WikiPage
     public void setContent( InputStream in ) throws ProviderException;
 
     /**
-     *  Returns the parent of the page. May be null, if this is already
-     *  a top-level page.
-     * @throws ProviderException 
+     *  Returns the parent of the page. 
+     *  
+     *  @throws ProviderException
+     *  @throws PageNotFoundException in case there is no parent page. 
      */
-    public WikiPage getParent() throws ProviderException;
+    public WikiPage getParent() throws PageNotFoundException, ProviderException;
 
     /**
      *  Returns a list of all subpages and attachments of this WikiPage.

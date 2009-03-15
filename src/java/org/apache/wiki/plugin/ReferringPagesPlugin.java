@@ -29,8 +29,10 @@ import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -86,10 +88,10 @@ public class ReferringPagesPlugin
             pageName = context.getPage().getName();
         }
 
-        WikiPage page = context.getEngine().getPage( pageName );
-        
-        if( page != null )
+        try
         {
+            WikiPage page = context.getEngine().getPage( pageName );
+        
             Collection   links  = refmgr.findReferrers( page.getName() );
             String       wikitext = "";
 
@@ -148,7 +150,13 @@ public class ReferringPagesPlugin
             
             return result.toString();
         }
-
+        catch( PageNotFoundException e )
+        {} // Fine
+        catch( ProviderException e )
+        {
+            throw new PluginException("Unable to get the latest page",e);
+        }
+        
         return "";
     }
 

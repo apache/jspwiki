@@ -59,7 +59,7 @@ public class WysiwygEditingRendererTest extends TestCase
         m_testEngine.shutdown();
     }
 
-    private String render(String s) throws IOException
+    private String render(String s) throws Exception
     {
         WikiPage dummyPage = m_testEngine.createPage("TestPage");
         WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( dummyPage );
