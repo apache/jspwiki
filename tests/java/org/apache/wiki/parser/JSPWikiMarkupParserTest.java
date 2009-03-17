@@ -2337,7 +2337,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         p.parse();
 
-        Collection links = coll.getLinks();
+        Collection<String> links = coll.getLinks();
 
         assertEquals( "no links found", 1, links.size() );
         assertEquals( "wrong link", "Test", links.iterator().next() );
@@ -2359,7 +2359,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         p.parse();
 
-        Collection links = coll.getLinks();
+        Collection<String> links = coll.getLinks();
 
         assertEquals( "no links found", 1, links.size() );
         assertEquals( "wrong link", PAGE_NAME+"/Test.txt",
