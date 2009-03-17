@@ -5,7 +5,7 @@
 <s:layout-render name="/templates/default/DefaultLayout.jsp">
 
   <%-- Page title should say Edit: + pagename --%>
-  <s:layout-component name="head.title">
+  <s:layout-component name="headTitle">
     <fmt:message key="edit.title.edit">
       <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
       <fmt:param><wiki:PageName/></fmt:param>

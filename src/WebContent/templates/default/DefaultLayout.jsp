@@ -13,7 +13,7 @@
         Stripes <s:layout-component name="foo"> elements. Named components
         that can be overridden include:
         
-          head.title          : The HTML page title, which will be rendered
+          headTitle           : The HTML page title, which will be rendered
                                 in the <title> element. Default=wiki: pagename
           stylesheet          : Link tags to external stylesheets. Default=blank
           inlinecss           : Inline stylesheets. Default=blank
@@ -40,7 +40,7 @@
 
          Title: by default, use the "view page" title
     --%>
-    <s:layout-component name="head.title">
+    <s:layout-component name="headTitle">
       <fmt:message key="view.title.view">
         <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
         <fmt:param><wiki:PageName/></fmt:param>

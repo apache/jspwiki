@@ -705,6 +705,13 @@
   </tag>
 
   <tag>
+    <name>SpamProtect</name>
+    <tagclass>org.apache.wiki.tags.SpamProtectTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>Injects hidden fields used to detect potential spam.</info>
+  </tag>
+
+  <tag>
     <name>TabbedSection</name>
     <tagclass>org.apache.wiki.tags.TabbedSectionTag</tagclass>
     <bodycontent>JSP</bodycontent>

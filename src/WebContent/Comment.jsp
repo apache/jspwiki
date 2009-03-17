@@ -20,7 +20,7 @@
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
 <s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="comment" id="wikiActionBean" />
-<s:layout-component name="head.title">
+<s:layout-component name="headTitle">
   <fmt:message key="comment.title.comment">
     <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
     <fmt:param><wiki:PageName/></fmt:param>

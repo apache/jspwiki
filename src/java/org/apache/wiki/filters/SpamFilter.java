@@ -34,6 +34,7 @@ import javax.servlet.jsp.PageContext;
 import net.sf.akismet.Akismet;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.util.CryptoUtil;
 
 import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
@@ -46,6 +47,7 @@ import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -199,7 +201,7 @@ public class SpamFilter
 
     private boolean         m_stopAtFirstMatch = true;
 
-    private static String   c_hashName;
+    private static String   c_hashFieldName;
     private static long     c_lastUpdate;
 
     /** The HASH_DELAY value is a maximum amount of time that an user can keep
@@ -778,8 +780,17 @@ public class SpamFilter
     {
         try
         {
-            WikiPage source = context.getEngine().getPage( m_forbiddenWordsPage );
-            Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+            WikiPage source = null;
+            Attachment att = null;
+            try
+            {
+                source = context.getEngine().getPage( m_forbiddenWordsPage );
+                att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+            }
+            catch( PageNotFoundException e )
+            {
+                // No worries
+            }
 
             boolean rebuild = false;
 
@@ -1100,20 +1111,20 @@ public class SpamFilter
 
             if( hash == null )
             {
-                hash = c_hashName;
+                hash = c_hashFieldName;
 
                 request.getSession().setAttribute( "_hash", hash );
             }
         }
 
-        if( c_hashName == null || c_lastUpdate < (System.currentTimeMillis() - HASH_DELAY*60*60*1000) )
+        if( c_hashFieldName == null || c_lastUpdate < (System.currentTimeMillis() - HASH_DELAY*60*60*1000) )
         {
-            c_hashName = getUniqueID().toLowerCase();
+            c_hashFieldName = getUniqueID().toLowerCase();
 
             c_lastUpdate = System.currentTimeMillis();
         }
 
-        return hash != null ? hash : c_hashName;
+        return hash != null ? hash : c_hashFieldName;
     }
 
     /**
@@ -1133,21 +1144,65 @@ public class SpamFilter
      *  @return <code>null</code> if hash is okay, or a RedirectResolution if not.
      *  @since 3.0
      */
-    public static final Resolution checkHash( WikiActionBean actionBean )
+    public static final Resolution validateSpamParams( WikiActionBean actionBean )
     {
         WikiActionBeanContext context = actionBean.getContext();
-        String hashName = getHashFieldName( context.getRequest() );
+        HttpServletRequest request = (HttpServletRequest)context.getRequest();
 
-        if( context.getRequest().getParameter(hashName) == null )
+        // Recover the encrypted parameter and then validate the trap and token fields
+        boolean spamParamsValid = false;
+        String encryptedParam = request.getParameter( SpamInterceptor.REQ_SPAM_PARAM );
+        if ( encryptedParam != null )
+        {
+            String payload = CryptoUtil.decrypt( encryptedParam );
+            if ( payload != null )
+            {
+                String[] spamParams = payload.split( "\n" );
+                if ( spamParams.length != 2 )
+                {
+                    String trapParam = request.getParameter( spamParams[0] );
+                    String tokenParam = request.getParameter( spamParams[1] );
+                    
+                    // Trap parameter should be blank/null
+                    if ( trapParam == null || trapParam.length() == 0 )
+                    {
+                        
+                        // Token parameter should simply be the session ID
+                        if ( tokenParam != null && request.getSession().getId().equals( tokenParam ))
+                        {
+                            // If we got here, everything validated ok!
+                            spamParamsValid = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if( !spamParamsValid )
         {
             Change change = getChange( context, EditorManager.getEditedText( context.getRequest() ) );
-
             log( context, REJECT, "MissingHash", change.m_change );
-
             return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "name", "SessionExpired");
         }
-
         return null;
+        
+    }
+    
+    public static Resolution validateUTF8Param( WikiActionBean actionBean )
+    {
+        WikiActionBeanContext context = actionBean.getContext();
+        HttpServletRequest request = context.getHttpRequest();
+        if ( request != null )
+        {
+            String utf8field = request.getParameter( SpamInterceptor.REQ_ENCODING_CHECK );
+            if( utf8field != null && utf8field.equals("\u3041") )
+            {
+                return null;
+            }
+        }
+        String uid = log( context, REJECT, REASON_UTF8_TRAP, request.getRemoteAddr()  );
+        log.info("SPAM:UTF8Trap ("+uid+").  Wildly posting dumb bot detected.");
+        return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "name", "SessionExpired");
     }
 
     /**

@@ -2,21 +2,29 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%--
         This is a plain editor for JSPWiki.
 --%>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
   
+  <%-- Print any validation errors --%>
+  <s:errors />
+  
   <s:form beanclass="org.apache.wiki.action.EditActionBean" class="wikiform"
     id="editform" method="post" acceptcharset="UTF-8" enctype="application/x-www-form-urlencoded" >
     
+    <%-- If any conflicts, print the conflicting text here --%>
+    <c:if test="${not empty wikiActionBean.conflictText}">
+      <p>
+        <s:label for="conflictText" />
+        <s:textarea name="conflictText" readonly="true" />
+      </p>
+    </c:if>
+  
     <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
     <p id="submitbuttons">
       <s:hidden name="page"><wiki:Variable var='pagename' /></s:hidden>
-      <s:hidden name="<%=SpamFilter.getHashFieldName(request)%>"><c:out value="${lastchange}" /></s:hidden>
-      <%=SpamFilter.insertInputFields( pageContext )%>
       <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
       <wiki:CheckRequestContext context='edit'>
         <s:submit name="save" accesskey="s" title="${saveTitle}" />
@@ -31,12 +39,7 @@
       <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
       <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
     </p>
-    
-    <%-- This following field is only for the SpamFilter to catch bots which are just
-         randomly filling all fields and submitting. Normal user should never see this field,
-         nor type anything in it. --%>
-    <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" /></div>
-    
+
     <%-- Fields for changenote, renaming etc. --%>
     <table>
       <tr>
@@ -158,6 +161,8 @@
     </div>
     <div id="livepreview"></div>
 
+    <%-- Spam detection fields --%>
+    <wiki:SpamProtect />
   </s:form>
   
 </div>
