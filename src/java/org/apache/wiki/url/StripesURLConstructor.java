@@ -28,9 +28,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import net.sourceforge.stripes.action.ActionBean;
-import net.sourceforge.stripes.controller.UrlBinding;
-import net.sourceforge.stripes.controller.UrlBindingFactory;
-import net.sourceforge.stripes.controller.UrlBindingParameter;
+import net.sourceforge.stripes.config.Configuration;
+import net.sourceforge.stripes.controller.*;
 import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.util.bean.ParseException;
 
@@ -43,6 +42,7 @@ import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerInfo;
+import org.apache.wiki.ui.stripes.WikiRuntimeConfiguration;
 
 
 /**
@@ -64,6 +64,8 @@ public class StripesURLConstructor extends DefaultURLConstructor
      * Note that the trailing slash is removed.
      */
     private String m_pathPrefix;
+
+    private UrlBindingFactory m_urlBindingFactory;
 
     /**
      * Contains the base URL of the JSPWiki Web application before the
@@ -111,7 +113,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
         {
             HandlerInfo handler = m_engine.getWikiContextFactory().findEventHandler( context );
             Class<? extends WikiActionBean> beanClass = handler.getActionBeanClass();
-            UrlBinding mapping = UrlBindingFactory.getInstance().getBindingPrototype(beanClass);
+            UrlBinding mapping = m_urlBindingFactory.getBindingPrototype(beanClass);
             baseUrl = mapping == null ? null : mapping.getPath();
             urlBuilder = new UrlBuilder( null, baseUrl, false );
 
@@ -140,12 +142,6 @@ public class StripesURLConstructor extends DefaultURLConstructor
                     urlBuilder.addParameter( "group", name );
                 }
             }
-            
-//            // Set the event handler if not the default
-//            if ( !handler.equals( HandlerInfo.getDefaultHandlerInfo( beanClass ) ) )
-//            {
-//                urlBuilder.setEvent( handler.getEventName() );
-//            }
         }
 
         // Append the other parameters
@@ -176,6 +172,18 @@ public class StripesURLConstructor extends DefaultURLConstructor
     {
         super.initialize( engine, properties );
 
+        // Load the Stripes UrlBindingFactory
+        Configuration stripesConfig =(Configuration)engine.getServletContext().getAttribute( WikiRuntimeConfiguration.STRIPES_CONFIGURATION );
+        ActionResolver resolver = stripesConfig.getActionResolver();
+        if ( resolver instanceof AnnotatedClassActionResolver )
+        {
+            m_urlBindingFactory = UrlBindingFactory.getInstance();
+        }
+        else
+        {
+            throw new RuntimeException( "Stripes ActionResolver was not AnnotatedClassActionResolver! Fatal error." );
+        }
+
         // Load the URL patterns from the config file
         File file = new File( "WEB-INF/urlpattern.properties" );
         Properties props = new Properties();
@@ -187,7 +195,8 @@ public class StripesURLConstructor extends DefaultURLConstructor
         {
             // throw new WikiException( e.getMessage() );
         }
-
+        
+        // Add the additional bindings we find in the config files
         for( Map.Entry<Object, Object> entry : props.entrySet() )
         {
             String beanClassName = ((String) entry.getKey()).trim();
@@ -196,9 +205,8 @@ public class StripesURLConstructor extends DefaultURLConstructor
             try
             {
                 beanClass = (Class<? extends WikiActionBean>) Class.forName( beanClassName );
-                UrlBindingFactory urlFactory = UrlBindingFactory.getInstance();
                 UrlBinding bindingPrototype = parseUrlBinding( beanClass, urlPattern );
-                urlFactory.addBinding( beanClass, bindingPrototype );
+                m_urlBindingFactory.addBinding( beanClass, bindingPrototype );
             }
             catch( ClassNotFoundException e )
             {
