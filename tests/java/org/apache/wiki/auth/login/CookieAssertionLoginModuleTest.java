@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.auth.login;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             assertFalse( principals.contains( Role.ASSERTED ) );
@@ -105,7 +106,7 @@ public class CookieAssertionLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );

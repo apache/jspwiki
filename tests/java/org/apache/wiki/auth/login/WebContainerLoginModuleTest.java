@@ -75,7 +75,7 @@ public class WebContainerLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue(  principals.contains( principal ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -109,7 +109,7 @@ public class WebContainerLoginModuleTest extends TestCase
                           new HashMap<String, Object>());
         module.login();
         module.commit();
-        Set principals = subject.getPrincipals();
+        Set<Principal> principals = subject.getPrincipals();
         assertEquals( 3, principals.size() );
         assertTrue( principals.contains( principal ) );
         assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -134,7 +134,7 @@ public class WebContainerLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( principal ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );

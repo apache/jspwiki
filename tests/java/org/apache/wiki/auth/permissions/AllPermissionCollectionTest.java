@@ -262,7 +262,7 @@ public class AllPermissionCollectionTest extends TestCase
     private int count( AllPermissionCollection collection )
     {
         int i = 0;
-        Enumeration perms = collection.elements();
+        Enumeration<Permission> perms = collection.elements();
         while( perms.hasMoreElements() )
         {
             perms.nextElement();

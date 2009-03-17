@@ -319,7 +319,7 @@ public class GroupPermissionTest extends TestCase
     {
         try
         {
-            Boolean result = (Boolean)Subject.doAsPrivileged( subject, new PrivilegedAction()
+            Boolean result = (Boolean)Subject.doAsPrivileged( subject, new PrivilegedAction<Object>()
             {
                 public Object run()
                 {

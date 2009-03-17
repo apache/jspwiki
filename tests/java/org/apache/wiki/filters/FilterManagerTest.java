@@ -59,16 +59,16 @@ public class FilterManagerTest extends TestCase
     {
         FilterManager m = new FilterManager( m_engine, props );
 
-        List l = m.getFilterList();
+        List<PageFilter> l = m.getFilterList();
 
         assertEquals("Wrong number of filters", 2, l.size());
 
-        Iterator i = l.iterator();
-        PageFilter f1 = (PageFilter)i.next();
+        Iterator<PageFilter> i = l.iterator();
+        PageFilter f1 = i.next();
 
         assertTrue("Not a Profanityfilter", f1 instanceof ProfanityFilter);
 
-        PageFilter f2 = (PageFilter)i.next();
+        PageFilter f2 = i.next();
 
         assertTrue("Not a Testfilter", f2 instanceof TestFilter);
     }
@@ -78,9 +78,9 @@ public class FilterManagerTest extends TestCase
     {
         FilterManager m = new FilterManager( m_engine, props );
 
-        List l = m.getFilterList();
+        List<PageFilter> l = m.getFilterList();
 
-        Iterator i = l.iterator();
+        Iterator<PageFilter> i = l.iterator();
         i.next();
         TestFilter f2 = (TestFilter)i.next();
 

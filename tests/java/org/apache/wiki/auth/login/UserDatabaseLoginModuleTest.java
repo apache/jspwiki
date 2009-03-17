@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.auth.login;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
@@ -65,7 +66,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -104,7 +105,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );

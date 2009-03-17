@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.auth.login;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class AnonymousLoginModuleTest extends TestCase
             module.initialize(subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -93,7 +94,7 @@ public class AnonymousLoginModuleTest extends TestCase
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set principals = subject.getPrincipals();
+            Set<Principal> principals = subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
