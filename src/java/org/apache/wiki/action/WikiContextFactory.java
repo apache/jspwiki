@@ -33,17 +33,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.util.ResolverUtil;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.SessionMonitor;
-import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -53,7 +54,6 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.stripes.HandlerInfo;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
-import org.apache.wiki.ui.stripes.WikiInterceptor;
 import org.apache.wiki.url.StripesURLConstructor;
 import org.apache.wiki.util.TextUtil;
 
@@ -148,22 +148,11 @@ public final class WikiContextFactory
         // Stash the WikiSession as a request attribute
         WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
         request.setAttribute( ATTR_WIKISESSION, wikiSession );
-
-        WikiPage page = context.getPage();
-        if( page == null )
-        {
-            // If the page supplied was blank, default to the front page to
-            // avoid NPEs
-            // FIXME: I don't think this should ever happen
-            throw new InternalWikiException("saveContext with null wikipage");
-            //page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-            //context.setPage( page );
-        }
         request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
     }
 
-    /** Private map with JSPs as keys, Resolutions as values */
-    private final Map<String, RedirectResolution> m_specialRedirects;
+    /** Private map with JSPs as keys, URIs (for absolute or relative URLs)  as values */
+    private final Map<String, URI> m_specialRedirects;
 
     private final WikiEngine m_engine;
 
@@ -187,7 +176,7 @@ public final class WikiContextFactory
     {
         super();
         m_engine = engine;
-        m_specialRedirects = new HashMap<String, RedirectResolution>();
+        m_specialRedirects = new HashMap<String, URI>();
 
         initRequestContextMap( properties );
         initSpecialPageRedirects( properties );
@@ -242,10 +231,10 @@ public final class WikiContextFactory
      * 
      * @since 2.4.20
      * @param page the page name.
-     * @return The rewritten page name, or <code>null</code>, if the page
-     *         does not exist.
+     * @return The rewritten page name
+     * @throws PageNotFoundException if the page does not exist
      */
-    public final String getFinalPageName( String page ) throws ProviderException
+    public final String getFinalPageName( String page ) throws PageNotFoundException, ProviderException
     {
         boolean isThere = simplePageExists( page );
         String finalName = page;
@@ -289,8 +278,8 @@ public final class WikiContextFactory
 
     /**
      * <p>
-     * If the page is a special page, this method returns a
-     * {@link net.sourceforge.stripes.action.RedirectResolution} for that page;
+     * If the page is a special page, this method returns an
+     * a String representing the relative or absolute URL to that page;
      * otherwise, it returns <code>null</code>.
      * </p>
      * <p>
@@ -299,9 +288,8 @@ public final class WikiContextFactory
      * always be redirected to "RecentChanges.jsp" instead of trying to find a
      * Wiki page called "RecentChanges".
      * </p>
-     * TODO: fix this algorithm
      */
-    public final RedirectResolution getSpecialPageResolution( String page )
+    public final URI getSpecialPageURI( String page )
     {
         return m_specialRedirects.get( page );
     }
@@ -477,22 +465,17 @@ public final class WikiContextFactory
                             // No http:// ftp:// or other authority, so it must be relative to webapp /
                             if ( !redirectUrl.startsWith( "/" ) )
                             {
-                                redirectUrl = "/" + redirectUrl;
+                                uri = new URI( "/" + redirectUrl );
                             }
                         }
+                        
+                        // Add the URI for the special page
+                        m_specialRedirects.put( specialPage, uri );
                     }
                     catch( URISyntaxException e )
                     {
                         // The user supplied a STRANGE reference
                         log.error( "Strange special page reference: " + redirectUrl );
-                    }
-                    
-                    // Add a new RedirectResolution for the special page
-                    RedirectResolution resolution = m_specialRedirects.get( specialPage );
-                    if( resolution == null )
-                    {
-                        resolution = new RedirectResolution( redirectUrl );
-                        m_specialRedirects.put( specialPage, resolution );
                     }
                 }
             }
@@ -555,7 +538,14 @@ public final class WikiContextFactory
             // funny plurals)
             if( pageName != null )
             {
-                page = resolvePage( request, pageName );
+                try
+                {
+                    page = resolvePage( request, pageName );
+                }
+                catch( PageNotFoundException e )
+                {
+                    // If we can't find the page, it must not exist yet (which is ok)
+                }
             }
         }
 
@@ -601,13 +591,13 @@ public final class WikiContextFactory
             page = pages[0];
             try
             {
-                // Look for singular/plural variants; if one
-                // not found, take the one the user supplied
+                // Look for singular/plural variants
                 String finalPage = getFinalPageName( page );
-                if( finalPage != null )
-                {
-                    page = finalPage;
-                }
+                return finalPage;
+            }
+            catch( PageNotFoundException e )
+            {
+                // No worries; use the one the user supplied
             }
             catch( ProviderException e )
             {
@@ -667,6 +657,6 @@ public final class WikiContextFactory
         {
             return true;
         }
-        return m_engine.getPageManager().pageExists( page );
+        return m_engine.pageExists( page );
     }
 }
