@@ -409,9 +409,6 @@ public class JCRWikiPage
      *  
      *  {@inheritDoc}
      */
-    // TODO: I have a suspicion that defining this method causes some problems
-    //       with page attributes and caching.  So as of 2.7.32, it's disabled.
-    /*
     public boolean equals( Object o )
     {
         if( o != null && o instanceof WikiPage )
@@ -429,7 +426,7 @@ public class JCRWikiPage
         
         return false;
     }
-    */
+
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#hashCode()
      */
