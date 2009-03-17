@@ -36,6 +36,7 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.AbstractFileProvider;
@@ -88,7 +89,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
                                                    "TestBlog",
                                                    new Date(0),
                                                    new Date(Long.MAX_VALUE) );
@@ -118,7 +119,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
                                                    "TestBlog",
                                                    new Date(0),
                                                    new Date(Long.MAX_VALUE) );

@@ -20,7 +20,6 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
