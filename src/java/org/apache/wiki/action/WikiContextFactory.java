@@ -657,6 +657,6 @@ public final class WikiContextFactory
         {
             return true;
         }
-        return m_engine.pageExists( page );
+        return m_engine.getPageManager().pageExists( page );
     }
 }
