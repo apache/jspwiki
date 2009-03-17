@@ -231,7 +231,7 @@ public class RPCHandlerUTF8
         {
             return m_engine.getHTML( pagename );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage() );            
         }
@@ -246,7 +246,7 @@ public class RPCHandlerUTF8
         {
             return m_engine.getHTML( pagename, version );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage() );            
         }
@@ -337,7 +337,7 @@ public class RPCHandlerUTF8
 
             return result;
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( ERR_SERVER_ERROR, e.getMessage() );
         }

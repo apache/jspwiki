@@ -21,6 +21,8 @@
 
 package org.apache.wiki.action;
 
+import java.net.URI;
+
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.validation.Validate;
@@ -32,6 +34,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
@@ -132,11 +135,10 @@ public class ViewActionBean extends AbstractPageActionBean
                     String pageName = pageParamError.getFieldValue();
 
                     // Is it a special page?
-                    RedirectResolution resolution = getContext().getEngine().getWikiContextFactory()
-                        .getSpecialPageResolution( pageName );
-                    if( resolution != null )
+                    URI uri = getContext().getEngine().getWikiContextFactory().getSpecialPageURI( pageName );
+                    if( uri != null )
                     {
-                        return resolution;
+                        return new RedirectResolution( uri.toString() );
                     }
 
                     // Ok, it really doesn't exist. Send 'em to the "Create new
@@ -157,8 +159,11 @@ public class ViewActionBean extends AbstractPageActionBean
             if( engine != null )
             {
                 // Bind the front page to the action bean
-                page = engine.getPage( engine.getFrontPage() );
-                if( page == null )
+                try
+                {
+                    page = engine.getPage( engine.getFrontPage() );
+                }
+                catch( PageNotFoundException e )
                 {
                     page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
                 }

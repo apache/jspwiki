@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.util.FileUtil;

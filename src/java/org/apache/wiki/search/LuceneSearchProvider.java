@@ -49,6 +49,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -286,11 +287,11 @@ public class LuceneSearchProvider implements SearchProvider
         try
         {
             Attachment att = mgr.getAttachmentInfo( attachmentName, version );
-            //FIXME: Find out why sometimes att is null
-            if(att != null)
-            {
-                return getAttachmentContent( att );
-            }
+            return getAttachmentContent( att );
+        }
+        catch (PageNotFoundException e)
+        {
+            log.error("Attachment cannot be loaded", e);
         }
         catch (ProviderException e)
         {
@@ -592,10 +593,10 @@ public class LuceneSearchProvider implements SearchProvider
             {
                 Document doc = hits.doc(curr);
                 String pageName = doc.get(LUCENE_ID);
-                WikiPage page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
-
-                if(page != null)
+                WikiPage page;
+                try
                 {
+                    page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
                     if(page instanceof Attachment)
                     {
                         // Currently attachments don't look nice on the search-results page
@@ -621,8 +622,9 @@ public class LuceneSearchProvider implements SearchProvider
                     SearchResult result = new SearchResultImpl( page, score, fragments );     
                     list.add(result);
                 }
-                else
+                catch( PageNotFoundException e )
                 {
+                    // No worries!
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
                     pageRemoved(m_engine.createPage( WikiName.valueOf( pageName ) ));
                 }

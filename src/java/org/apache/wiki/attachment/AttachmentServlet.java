@@ -48,6 +48,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -245,87 +246,87 @@ public class AttachmentServlet extends HttpServlet
                 ver = Integer.parseInt( version );
             }
 
-            Attachment att = mgr.getAttachmentInfo( page, ver );
-
-            if( att != null )
+            Attachment att;
+            try
             {
-                //
-                //  Check if the user has permission for this attachment
-                //
-
-                Permission permission = PermissionFactory.getPagePermission( att, "view" );
-                if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
-                {
-                    log.debug("User does not have permission for this");
-                    res.sendError( HttpServletResponse.SC_FORBIDDEN );
-                    return;
-                }
-
-
-                //
-                //  Check if the client already has a version of this attachment.
-                //
-                if( HttpUtil.checkFor304( req, att ) )
-                {
-                    log.debug("Client has latest version already, sending 304...");
-                    res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
-                    return;
-                }
-
-                String mimetype = getMimeType( context, att.getFileName() );
-
-                res.setContentType( mimetype );
-
-                //
-                //  We use 'inline' instead of 'attachment' so that user agents
-                //  can try to automatically open the file.
-                //
-
-                res.addHeader( "Content-Disposition",
-                               "inline; filename=\"" + att.getFileName() + "\";" );
-
-                res.addDateHeader("Last-Modified",att.getLastModified().getTime());
-
-                if( !att.isCacheable() )
-                {
-                    res.addHeader( "Pragma", "no-cache" );
-                    res.addHeader( "Cache-control", "no-cache" );
-                }
-
-                // If a size is provided by the provider, report it.
-                if( att.getSize() >= 0 )
-                {
-                    // log.info("size:"+att.getSize());
-                    res.setContentLength( (int)att.getSize() );
-                }
-
-                out = res.getOutputStream();
-                in  = mgr.getAttachmentStream( context, att );
-
-                int read = 0;
-                byte[] buffer = new byte[BUFFER_SIZE];
-
-                while( (read = in.read( buffer )) > -1 )
-                {
-                    out.write( buffer, 0, read );
-                }
-
-                if(log.isDebugEnabled())
-                {
-                    msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
-                    log.debug( msg );
-                }
-                if( nextPage != null ) res.sendRedirect( nextPage );
-
+                att = mgr.getAttachmentInfo( page, ver );
+            }
+            catch( PageNotFoundException e )
+            {
+                msg = "Attachment '" + page + "', version " + ver + " does not exist.";
+                log.info( msg );
+                res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
                 return;
             }
 
-            msg = "Attachment '" + page + "', version " + ver +
-                  " does not exist.";
+            //
+            //  Check if the user has permission for this attachment
+            //
 
-            log.info( msg );
-            res.sendError( HttpServletResponse.SC_NOT_FOUND,
-                           msg );
+            Permission permission = PermissionFactory.getPagePermission( att, "view" );
+            if( !authmgr.checkPermission( context.getWikiSession(), permission ) )
+            {
+                log.debug("User does not have permission for this");
+                res.sendError( HttpServletResponse.SC_FORBIDDEN );
+                return;
+            }
+
+
+            //
+            //  Check if the client already has a version of this attachment.
+            //
+            if( HttpUtil.checkFor304( req, att ) )
+            {
+                log.debug("Client has latest version already, sending 304...");
+                res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
+                return;
+            }
+
+            String mimetype = getMimeType( context, att.getFileName() );
+
+            res.setContentType( mimetype );
+
+            //
+            //  We use 'inline' instead of 'attachment' so that user agents
+            //  can try to automatically open the file.
+            //
+
+            res.addHeader( "Content-Disposition",
+                           "inline; filename=\"" + att.getFileName() + "\";" );
+
+            res.addDateHeader("Last-Modified",att.getLastModified().getTime());
+
+            if( !att.isCacheable() )
+            {
+                res.addHeader( "Pragma", "no-cache" );
+                res.addHeader( "Cache-control", "no-cache" );
+            }
+
+            // If a size is provided by the provider, report it.
+            if( att.getSize() >= 0 )
+            {
+                // log.info("size:"+att.getSize());
+                res.setContentLength( (int)att.getSize() );
+            }
+
+            out = res.getOutputStream();
+            in  = mgr.getAttachmentStream( context, att );
+
+            int read = 0;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            while( (read = in.read( buffer )) > -1 )
+            {
+                out.write( buffer, 0, read );
+            }
+
+            if(log.isDebugEnabled())
+            {
+                msg = "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+req.getRemoteAddr();
+                log.debug( msg );
+            }
+            if( nextPage != null ) res.sendRedirect( nextPage );
+
             return;
         }
         catch( ProviderException pe )
@@ -722,9 +723,12 @@ public class AttachmentServlet extends HttpServlet
         //  then that attachment gains a new version.
         //
 
-        Attachment att = mgr.getAttachmentInfo( context.getPage().getName() );
-
-        if( att == null )
+        Attachment att;
+        try
+        {
+            att = mgr.getAttachmentInfo( context.getPage().getName() );
+        }
+        catch( PageNotFoundException e )
         {
             String contentType = "application/octet-stream"; // FIXME: This is not a good guess
             WikiName path = context.getPage().getQualifiedName().resolve(filename);

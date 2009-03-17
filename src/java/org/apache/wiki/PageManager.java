@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -139,10 +140,11 @@ public class PageManager extends ModuleManager
      *  @param pageName The name of the page to fetch.
      *  @param version The version to find
      *  @return The page content as a raw string
+     *  @throws PageNotFoundException if the wiki page cannot be found
      *  @throws ProviderException If the backend has issues.
      */
     public String getPageText( String pageName, int version )
-        throws ProviderException
+        throws PageNotFoundException, ProviderException
     {
         WikiPage p = m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version );
         
@@ -172,13 +174,16 @@ public class PageManager extends ModuleManager
     public void putPageText( WikiPage page, String content )
         throws ProviderException
     {
-        WikiPage p = m_engine.getContentManager().getPage( page.getQualifiedName() );
-        
-        if( p == null )
+        WikiPage p;
+        try
+        {
+            p = m_engine.getContentManager().getPage( page.getQualifiedName() );
+        }
+        catch( PageNotFoundException e )
+        {
             p = m_engine.getContentManager().addPage( page.getQualifiedName(), ContentManager.JSPWIKI_CONTENT_TYPE );
-            
+        }
         p.setContent(content);
-        
         p.save();
     }
 
@@ -238,11 +243,12 @@ public class PageManager extends ModuleManager
      *  @param pageName  The name of the page
      *  @param version   A version number
      *  @return          A WikiPage object, or null, if the page does not exist
+     *  @throws PageNotFoundException if the wiki page cannot be found
      *  @throws ProviderException If there is something wrong with the page 
      *                            name or the repository
      */
     public WikiPage getPageInfo( String pageName, int version )
-        throws ProviderException
+        throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version );        
     }
@@ -254,10 +260,11 @@ public class PageManager extends ModuleManager
      *  @param pageName The name of the page to fetch history for
      *  @return If the page does not exist, returns null, otherwise a List
      *          of WikiPages.
+     *  @throws PageNotFoundException if the wiki page cannot be found
      *  @throws ProviderException If the repository fails.
      */
     public List getVersionHistory( String pageName )
-        throws ProviderException
+        throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getVersionHistory( WikiName.valueOf( pageName ) );
     }
@@ -329,7 +336,15 @@ public class PageManager extends ModuleManager
     public void deleteVersion( WikiPage page )
         throws ProviderException
     {
-        m_engine.getContentManager().deleteVersion( page );
+        try
+        {
+            m_engine.getContentManager().deleteVersion( page );
+        }
+        catch( PageNotFoundException e )
+        {
+            // This should not happen. If it does, rethrow
+            throw new ProviderException( e.getMessage() );
+        }
     }
 
     /**
@@ -341,7 +356,15 @@ public class PageManager extends ModuleManager
     public void deletePage( WikiPage page )
         throws ProviderException
     {
-        m_engine.getContentManager().deletePage( page );
+        try
+        {
+            m_engine.getContentManager().deletePage( page );
+        }
+        catch( PageNotFoundException e )
+        {
+            // This should not happen. If it does, rethrow
+            throw new ProviderException( e.getMessage() );
+        }
     }
 
  

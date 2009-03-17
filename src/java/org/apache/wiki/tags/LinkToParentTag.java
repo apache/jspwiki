@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.content.PageNotFoundException;
 
 
 /**
@@ -48,7 +49,7 @@ public class LinkToParentTag
      */
     @Override
     public int doWikiStartTag()
-        throws IOException, WikiException
+        throws IOException, PageNotFoundException, WikiException
     {
         WikiPage p = m_wikiContext.getPage();
 

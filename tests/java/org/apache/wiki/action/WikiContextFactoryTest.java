@@ -24,13 +24,12 @@
  */
 
 package org.apache.wiki.action;
-import java.util.Locale;
+import java.net.URI;
 import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
@@ -39,8 +38,6 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.action.ViewActionBean;
-import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 
@@ -63,8 +60,10 @@ public class WikiContextFactoryTest extends TestCase
     
     protected void tearDown() throws Exception
     {
-        m_engine.deletePage( "TestPage" );
-        
+        if ( m_engine.pageExists( "TestPage" ) )
+        {
+            m_engine.deletePage( "TestPage" );
+        }
         m_engine.shutdown();
     }
     
@@ -145,7 +144,7 @@ public class WikiContextFactoryTest extends TestCase
         request.getParameterMap().put( "page", new String[]{"SinglePage"} );
         context = resolver.newContext( request, response, WikiContext.EDIT );
         assertEquals( WikiContext.EDIT, context.getRequestContext() );
-        assertEquals( page, context.getPage());
+        assertEquals( page, context.getPage() );
         
         // Passing a VIEW request with page=FindPage yields an ordinary page name, not a special page or JSP
         // FIXME: this won't work because WikiActionBeanResolver doesn't keep a cache of URLBindings 
@@ -182,16 +181,16 @@ public class WikiContextFactoryTest extends TestCase
     
     public void testSpecialPageReference()
     {
-        RedirectResolution r;
-        r = resolver.getSpecialPageResolution( "RecentChanges" );
-        assertEquals( "/RecentChanges.jsp", r.getUrl( Locale.getDefault() ) );
+        URI uri;
+        uri = resolver.getSpecialPageURI( "RecentChanges" );
+        assertEquals( "/RecentChanges.jsp", uri.toString() );
         
-        r = resolver.getSpecialPageResolution( "FindPage" );
-        assertEquals( "/Search.jsp", r.getUrl( Locale.getDefault() ) );
+        uri = resolver.getSpecialPageURI( "FindPage" );
+        assertEquals( "/Search.jsp", uri.toString() );
         
         // UserPrefs doesn't exist in our test properties
-        r = resolver.getSpecialPageResolution( "UserPrefs" );
-        assertNull( r );
+        uri = resolver.getSpecialPageURI( "UserPrefs" );
+        assertNull( uri );
     }
 
     public static Test suite()

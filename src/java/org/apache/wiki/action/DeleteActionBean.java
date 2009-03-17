@@ -34,6 +34,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -63,7 +64,7 @@ public class DeleteActionBean extends AbstractPageActionBean
     @HandlesEvent( "delete" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.DELETE_ACTION )
     @WikiRequestContext( "del" )
-    public Resolution delete() throws ProviderException
+    public Resolution delete() throws PageNotFoundException, ProviderException
     {
         // If all versions of a page or attachment should be deleted, redirect
         // to the main page (for page) or parent page (for attachment)
@@ -125,7 +126,7 @@ public class DeleteActionBean extends AbstractPageActionBean
      * exist, validation fails.
      */
     @ValidationMethod( when = ValidationState.ALWAYS )
-    public void validateBeforeDelete() throws ProviderException
+    public void validateBeforeDelete() throws PageNotFoundException, ProviderException
     {
         // If no version number supplied, always succeeds.
         if( m_version == Integer.MIN_VALUE )

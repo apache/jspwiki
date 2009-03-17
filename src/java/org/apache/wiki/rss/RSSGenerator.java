@@ -230,6 +230,10 @@ public class RSSGenerator
                        "\">"+att.getName()+"</a>" );
 
         }
+        catch( PageNotFoundException e )
+        {
+            log.debug( "Unable to load parent", e );
+        }
         catch( ProviderException e )
         {
             log.debug( "Unable to load parent", e );
@@ -276,6 +280,10 @@ public class RSSGenerator
             {
                 res = getPageDescription( page );
             }
+        }
+        catch( PageNotFoundException e )
+        {
+            log.error( "Unable to get description", e );
         }
         catch( ProviderException e )
         {

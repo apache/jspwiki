@@ -32,6 +32,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.PluginContent;
@@ -322,7 +323,15 @@ public class WeblogPlugin
         WikiContext entryCtx = (WikiContext) context.clone();
         entryCtx.setPage( entry );
 
-        String html = engine.getHTML( entryCtx, engine.getPage(entry.getName()) );
+        String html = "";
+        try
+        {
+            html = engine.getHTML( entryCtx, engine.getPage(entry.getName()) );
+        }
+        catch( PageNotFoundException e )
+        {
+            // No content for you, then!
+        }
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");
@@ -419,19 +428,19 @@ public class WeblogPlugin
      *  @return a list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
-    public List findBlogEntries( PageManager mgr,
+    public List<WikiPage> findBlogEntries( PageManager mgr,
                                  String baseName, Date start, Date end )
         throws ProviderException
     {
-        Collection everyone = mgr.getAllPages();
+        Collection<WikiPage> everyone = mgr.getAllPages();
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
 
-        for( Iterator i = everyone.iterator(); i.hasNext(); )
+        for( Iterator<WikiPage> i = everyone.iterator(); i.hasNext(); )
         {
-            WikiPage p = (WikiPage)i.next();
+            WikiPage p = i.next();
 
             String pageName = p.getName();
 

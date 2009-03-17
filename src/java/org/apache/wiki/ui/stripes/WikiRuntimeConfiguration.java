@@ -42,6 +42,8 @@ import net.sourceforge.stripes.config.RuntimeConfiguration;
  */
 public class WikiRuntimeConfiguration extends RuntimeConfiguration
 {
+    public static final String STRIPES_CONFIGURATION = "WikiRuntimeConfiguration";
+
     private Logger log = LoggerFactory.getLogger(WikiRuntimeConfiguration.class);
 
     private WikiEngine m_engine = null;
@@ -62,6 +64,9 @@ public class WikiRuntimeConfiguration extends RuntimeConfiguration
         ServletContext context = super.getServletContext();
         m_engine = WikiEngine.getInstance(context, null);
         log.info("WikiEngine is running.");
+        
+        // Stash the Configuration so JSPWiki (e.g., URLConstructors) can find it
+        context.setAttribute( STRIPES_CONFIGURATION, this );
     }
 
     /**

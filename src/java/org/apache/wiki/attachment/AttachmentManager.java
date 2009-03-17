@@ -36,6 +36,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -46,12 +47,11 @@ import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
- *  Provides facilities for handling attachments.  All attachment
- *  handling goes through this class.
- *  <p>
- *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider
+ *  <p>Provides facilities for handling attachments.  All attachment
+ *  handling goes through this class.</p>
+ *  <p>The AttachmentManager provides a facade towards the current WikiAttachmentProvider
  *  that is in use.  It is created by the WikiEngine as a singleton object, and
- *  can be requested through the WikiEngine.
+ *  can be requested through the WikiEngine.</p>
  *
  *  @since 1.9.28
  */
@@ -91,18 +91,17 @@ public class AttachmentManager
     private String[] m_forbiddenPatterns;
     
     /**
-     *  Creates a new AttachmentManager.  Note that creation will never fail,
+     *  <p>Creates a new AttachmentManager.  Note that creation will never fail,
      *  but it's quite likely that attachments do not function.
-     *  <p>
-     *  <b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really
+     *  </p>
+     *  <p><b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really
      *  know what you're doing.  Just use WikiEngine.getAttachmentManager() if
-     *  you're making a module for JSPWiki.
+     *  you're making a module for JSPWiki.</p>
      *
-     *  @param engine The wikiengine that owns this attachment manager.
+     *  @param engine The WikiEngine that owns this attachment manager
      *  @param props  A list of properties from which the AttachmentManager will seek
      *  its configuration.  Typically this is the "jspwiki.properties".
      */
-
     // FIXME: Perhaps this should fail somehow.
     public AttachmentManager( WikiEngine engine, Properties props )
     {
@@ -123,12 +122,13 @@ public class AttachmentManager
     /**
      *  Gets info on a particular attachment, latest version.
      *
-     *  @param name A full attachment name.
-     *  @return Attachment, or null, if no such attachment exists.
-     *  @throws ProviderException If something goes wrong.
+     *  @param name A full attachment name
+     *  @return the attachment
+     *  @throws ProviderException If something goes wrong
+     *  @throws PageNotFoundException if no such attachment or version exists
      */
     public Attachment getAttachmentInfo( String name )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         return m_engine.getContentManager().getPage( WikiName.valueOf( name ) );
     }
@@ -136,14 +136,15 @@ public class AttachmentManager
     /**
      *  Gets info on a particular attachment with the given version.
      *
-     *  @param name A full attachment name.
-     *  @param version A version number.
-     *  @return Attachment, or null, if no such attachment or version exists.
-     *  @throws ProviderException If something goes wrong.
+     *  @param name A full attachment name
+     *  @param version A version number
+     *  @return the attachment
+     *  @throws ProviderException If something goes wrong
+     *  @throws PageNotFoundException if no such attachment or version exists
      */
 
     public Attachment getAttachmentInfo( String name, int version )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         if( name == null )
         {
@@ -158,14 +159,15 @@ public class AttachmentManager
      *  attachment name.
      *
      *  @param context The current WikiContext
-     *  @param attachmentname The file name of the attachment.
-     *  @return Attachment, or null, if no such attachment exists.
-     *  @throws ProviderException If something goes wrong.
+     *  @param attachmentname The file name of the attachment
+     *  @return the attachment
+     *  @throws ProviderException If something goes wrong
+     *  @throws PageNotFoundException if no such attachment or version exists
      */
 
     public Attachment getAttachmentInfo( WikiContext context,
                                          String attachmentname )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         return getAttachmentInfo( context, attachmentname, WikiProvider.LATEST_VERSION );
     }
@@ -175,22 +177,28 @@ public class AttachmentManager
      *  attachment name.
      *
      *  @param context The current WikiContext
-     *  @param attachmentname The file name of the attachment.
-     *  @param version A particular version.
-     *  @return Attachment, or null, if no such attachment or version exists.
-     *  @throws ProviderException If something goes wrong.
+     *  @param attachmentname The file name of the attachment
+     *  @param version A particular version
+     *  @return the attachment
+     *  @throws ProviderException If something goes wrong
+     *  @throws PageNotFoundException if no such attachment or version exists
      */
 
     public Attachment getAttachmentInfo( WikiContext context,
                                          String attachmentname,
                                          int version )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         WikiPage currentPage = null;
 
         if( context != null )
         {
             currentPage = context.getPage();
+        }
+        
+        if ( currentPage == null )
+        {
+            return null;
         }
 
         WikiName name = currentPage.getQualifiedName().resolve( attachmentname );
@@ -211,11 +219,10 @@ public class AttachmentManager
      *  Returns the list of attachments associated with a given wiki page.
      *  If there are no attachments, returns an empty Collection.
      *
-     *  @param wikipage The wiki page from which you are seeking attachments for.
-     *  @return a valid collection of attachments.
-     *  @throws ProviderException If there was something wrong in the backend.
+     *  @param wikipage the wiki page from which you are seeking attachments for
+     *  @return a valid collection of attachments
+     *  @throws ProviderException if there was something wrong in the backend
      */
-
     // FIXME: This API should be changed to return a List.
     @SuppressWarnings("unchecked")
     public Collection listAttachments( WikiPage wikipage )
@@ -263,8 +270,7 @@ public class AttachmentManager
      *  @throws ProviderException If the backend fails due to some other reason.
      */
     public InputStream getAttachmentStream( Attachment att )
-        throws IOException,
-               ProviderException
+        throws IOException, ProviderException
     {
         return getAttachmentStream( null, att );
     }
@@ -387,9 +393,10 @@ public class AttachmentManager
      *  @return A list of Attachments.  May return null, if attachments are
      *          disabled.
      *  @throws ProviderException If the provider fails for some reason.
+     *  @throws PageNotFoundException if no such attachment or version exists
      */
     public List<WikiPage> getVersionHistory( String attachmentName )
-        throws ProviderException
+        throws ProviderException, PageNotFoundException
     {
         return m_engine.getContentManager().getVersionHistory( WikiName.valueOf(attachmentName) );
     }
@@ -399,23 +406,41 @@ public class AttachmentManager
      *
      *  @param att The attachment to delete
      *  @throws ProviderException If something goes wrong with the backend.
+     *  If a PageNotFoundException is generated by the ContentManager, it is
+     *  rethrown as a ProviderException
      */
     public void deleteVersion( WikiPage att )
         throws ProviderException
     {
-        m_engine.getContentManager().deleteVersion( att );
+        try
+        {
+            m_engine.getContentManager().deleteVersion( att );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new ProviderException( e.getMessage() );
+        }
     }
 
     /**
      *  Deletes all versions of the given attachment.
      *  @param att The Attachment to delete.
      *  @throws ProviderException if something goes wrong with the backend.
+     *  If a PageNotFoundException is generated by the ContentManager, it is
+     *  rethrown as a ProviderException
      */
     // FIXME: Should also use events!
     public void deleteAttachment( Attachment att )
         throws ProviderException
     {
-        m_engine.getContentManager().deletePage( att );
+        try
+        {
+            m_engine.getContentManager().deletePage( att );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new ProviderException( e.getMessage() );
+        }
     }
 
     /**

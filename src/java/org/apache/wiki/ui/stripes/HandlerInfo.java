@@ -395,7 +395,11 @@ public class HandlerInfo
         if( m_permissionTargetExpression != null )
         {
             PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionTargetExpression, object );
-            target = (String) evaluation.getValue();
+            Object value = evaluation.getValue();
+            if ( value != null )
+            {
+                target = value.toString();
+            }
             if( target == null )
             {
                 // If the target didn't evaluate, assume it's because some

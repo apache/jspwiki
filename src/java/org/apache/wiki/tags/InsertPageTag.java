@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspWriter;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -109,31 +110,33 @@ public class InsertPageTag
         }
         else
         {
-            insertedPage = engine.getPage( m_pageName );
-        }
-
-        if( insertedPage != null )
-        {
-            // FIXME: Do version setting later.
-            // page.setVersion( WikiProvider.LATEST_VERSION );
-
-            log.debug("Inserting page "+insertedPage);
-
-            JspWriter out = pageContext.getOut();
-
-            WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
-            
-            switch( m_mode )
+            try
             {
-              case HTML:
-                out.print( engine.getHTML( m_wikiContext, insertedPage ) );
-                break;
-              case PLAIN:
-                out.print( engine.getText( m_wikiContext, insertedPage ) );
-                break;
+                insertedPage = engine.getPage( m_pageName );
+                // FIXME: Do version setting later.
+                // page.setVersion( WikiProvider.LATEST_VERSION );
+
+                log.debug("Inserting page "+insertedPage);
+
+                JspWriter out = pageContext.getOut();
+
+                WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
+                
+                switch( m_mode )
+                {
+                  case HTML:
+                    out.print( engine.getHTML( m_wikiContext, insertedPage ) );
+                    break;
+                  case PLAIN:
+                    out.print( engine.getText( m_wikiContext, insertedPage ) );
+                    break;
+                }
+                m_wikiContext.setRealPage( oldPage );
             }
-            
-            m_wikiContext.setRealPage( oldPage );
+            catch( PageNotFoundException e )
+            {
+                // No worries. Nothing to include here...
+            }
         }
 
         return SKIP_BODY;

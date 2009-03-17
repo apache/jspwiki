@@ -28,6 +28,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -67,9 +68,12 @@ public class HistoryIteratorTag
         {
             if( page != null && engine.pageExists(page) )
             {
-                Collection versions = engine.getVersionHistory( page.getName() );
-
-                if( versions == null )
+                Collection<WikiPage> versions;
+                try
+                {
+                    versions = engine.getVersionHistory( page.getName() );
+                }
+                catch( PageNotFoundException e )
                 {
                     // There is no history
                     return SKIP_BODY;

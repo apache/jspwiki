@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -92,8 +93,7 @@ public class CheckVersionTag
      */
     @Override
     public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
+        throws IOException, PageNotFoundException, ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();

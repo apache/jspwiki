@@ -46,7 +46,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.plugin.WikiPlugin;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.RegExpUtil;
@@ -438,10 +437,9 @@ public class JSPWikiMarkupParser
 
             return m_engine.getFinalPageName( page );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             log.warn("TranslatorReader got a faulty page name!",e);
-
             return page;  // FIXME: What would be the correct way to go back?
         }
     }
@@ -1674,7 +1672,7 @@ public class JSPWikiMarkupParser
         {
             att = mgr.getAttachmentInfo( m_context, linktext );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             log.warn("Finding attachments failed: ",e);
             return null;

@@ -43,7 +43,6 @@ import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.controller.*;
 
-
 /**
  * <p>
  * Stripes {@link net.sourceforge.stripes.controller.Interceptor} that
@@ -53,9 +52,11 @@ import net.sourceforge.stripes.controller.*;
  * {@link  net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
  * but before the second stage.
  * {@link net.sourceforge.stripes.controller.LifecycleStage#HandlerResolution}.
- * The second time the interceptor executes is after the second lifecycle stage,
- * but before the third stage,
- * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}.
+ * The second time the interceptor executes is after the third lifecycle stage,
+ * aka
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation},
+ * but before the fourth stage
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#CustomValidation}.
  * See the
  * </p>
  * <p>
@@ -89,7 +90,7 @@ import net.sourceforge.stripes.controller.*;
  * 
  * @author Andrew Jaquith
  */
-@Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.BindingAndValidation } )
+@Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.CustomValidation } )
 public class WikiInterceptor implements Interceptor
 {
     private static final Logger log = LoggerFactory.getLogger( WikiInterceptor.class );
@@ -102,8 +103,9 @@ public class WikiInterceptor implements Interceptor
 
     /**
      * Intercepts the Stripes lifecycle stages and dispatches execution to
-     * delegate methods {@link #interceptActionBeanResolution(ExecutionContext)}
-     * and {@link #interceptBindingAndValidation(ExecutionContext)}, whichever
+     * delegate methods
+     * {@link #interceptAfterActionBeanResolution(ExecutionContext)} and
+     * {@link #interceptAfterBindingAndValidation(ExecutionContext)}, whichever
      * is appropriate.
      * 
      * @param context the current execution context
@@ -118,11 +120,11 @@ public class WikiInterceptor implements Interceptor
     {
         if( LifecycleStage.ActionBeanResolution.equals( context.getLifecycleStage() ) )
         {
-            return interceptActionBeanResolution( context );
+            return interceptAfterActionBeanResolution( context );
         }
-        else if( LifecycleStage.BindingAndValidation.equals( context.getLifecycleStage() ) )
+        else if( LifecycleStage.CustomValidation.equals( context.getLifecycleStage() ) )
         {
-            return interceptBindingAndValidation( context );
+            return interceptAfterBindingAndValidation( context );
         }
         return null;
     }
@@ -144,7 +146,7 @@ public class WikiInterceptor implements Interceptor
      * @throws Exception if the underlying lifcycle stage's execution throws an
      *             Exception
      */
-    protected Resolution interceptActionBeanResolution( ExecutionContext context ) throws Exception
+    protected Resolution interceptAfterActionBeanResolution( ExecutionContext context ) throws Exception
     {
         // Did the handler resolution stage return a Resolution? If so, bail.
         Resolution r = context.proceed();
@@ -186,12 +188,14 @@ public class WikiInterceptor implements Interceptor
     /**
      * <p>
      * Intercepts the
+     * {@link net.sourceforge.stripes.controller.LifecycleStage#CustomValidation}
+     * lifecycle stage, to ensure that it runs after all
      * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
-     * lifecycle stage and checks for proper access to the current ActionBean
-     * and target event. The access-checking logic runs after after the rest of
-     * the BindingAndValidation processing logic does, after which point Stripes
-     * has already discovered the correct ActionBean, and bound and validated
-     * its request parameters.
+     * interceptors, and checks for proper access to the current ActionBean and
+     * target event. The access-checking logic runs after after the rest of the
+     * BindingAndValidation processing logic does, after which point Stripes has
+     * already discovered the correct ActionBean, and bound and validated its
+     * request parameters.
      * </p>
      * <p>
      * To determine if the user is allowed to access the target event method,
@@ -212,7 +216,7 @@ public class WikiInterceptor implements Interceptor
      * @throws Exception if the underlying lifcycle stage's execution throws an
      *             Exception
      */
-    protected Resolution interceptBindingAndValidation( ExecutionContext context ) throws Exception
+    protected Resolution interceptAfterBindingAndValidation( ExecutionContext context ) throws Exception
     {
         // Stash the WikiActionBean as a PageContext attribute
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
@@ -274,17 +278,17 @@ public class WikiInterceptor implements Interceptor
 
     /**
      * Returns the WikiActionBean associated with the current
-     * {@link javax.servlet.jsp.PageContext}, which may have been previously stashed by
-     * {@link #interceptBindingAndValidation(ExecutionContext)}. Note that each
-     * PageContext can contain its own ActionBean. The ActionBean will be
-     * retrieved from page-scope attribute {@link WikiInterceptor#ATTR_ACTIONBEAN}.
-     * If the WikiActionBean cannot be obtained as a page-scope attribute, the
-     * request scope will be tried also.
+     * {@link javax.servlet.jsp.PageContext}, which may have been previously
+     * stashed by {@link #interceptAfterBindingAndValidation(ExecutionContext)}.
+     * Note that each PageContext can contain its own ActionBean. The ActionBean
+     * will be retrieved from page-scope attribute
+     * {@link WikiInterceptor#ATTR_ACTIONBEAN}. If the WikiActionBean cannot be
+     * obtained as a page-scope attribute, the request scope will be tried also.
      * 
      * @param pageContext the page context
      * @return the WikiActionBean
      * @throws IllegalStateException if the WikiActionBean was not found in the
-     *             page context or 
+     *             page context or
      */
     public static WikiActionBean findActionBean( PageContext pageContext )
     {
@@ -292,7 +296,7 @@ public class WikiInterceptor implements Interceptor
         if( bean == null )
         {
             bean = findActionBean( pageContext.getRequest() );
-            if ( bean == null )
+            if( bean == null )
             {
                 log.debug( "WikiActionBean not found under page context attribute '" + WikiInterceptor.ATTR_ACTIONBEAN
                            + "'! Something failed to stash it..." );
@@ -304,7 +308,7 @@ public class WikiInterceptor implements Interceptor
     /**
      * Returns the WikiActionBean associated with the current
      * {@link javax.servlet.http.HttpServletRequest}, which was previously
-     * stashed by {@link #interceptActionBeanResolution(ExecutionContext)}.
+     * stashed by {@link #interceptAfterActionBeanResolution(ExecutionContext)}.
      * Only the first ActionBean on a JSP will be stashed as a request-level
      * attribute. The ActionBean will be retrieved from attribute
      * {@link WikiInterceptor#ATTR_ACTIONBEAN}.

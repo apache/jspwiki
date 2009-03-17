@@ -34,7 +34,6 @@ import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
-import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -160,7 +159,7 @@ public class PermissionTag
                         return false;
                     }
                 }
-                catch( ProviderException e )
+                catch( Exception e )
                 {
                     // FIXME: What is the correct action here?
                     log.error( "Failed to find latest version", e );

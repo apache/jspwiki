@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -183,6 +184,10 @@ public class BasicSearchProvider implements SearchProvider
                         res.add( comparison );
                     }
                 }
+            }
+            catch( PageNotFoundException e )
+            {
+                log.error( "Unable to page content", e );
             }
             catch( ProviderException pe )
             {

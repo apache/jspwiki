@@ -912,10 +912,17 @@ public class ContentManager implements WikiEventListener
             page.save();
 
             // Refresh the context for post save filtering.
-            engine.getPage( page.getName() );
-            engine.textToHTML( context, proposedText );
-            engine.getFilterManager().doPostSaveFiltering( context, proposedText );
-
+            try
+            {
+                engine.getPage( page.getName() );
+                engine.textToHTML( context, proposedText );
+                engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+            }
+            catch( PageNotFoundException e )
+            {
+                e.printStackTrace();
+                throw new WikiException( e.getMessage() );
+            }
             return Outcome.STEP_COMPLETE;
         }
     }
@@ -1014,10 +1021,15 @@ public class ContentManager implements WikiEventListener
      *  @param path the path
      *  @return the {@link JCRWikiPage} 
      *  @throws ProviderException If the backend fails.
-     *  @throws PageNotFoundException If the page does not exist.
+     *  @throws PageNotFoundException If the page does not exist, or if <code>path</code>
+     *  is <code>null</code>
      */
     public JCRWikiPage getPage( WikiName path ) throws ProviderException, PageNotFoundException
     {
+        if ( path == null )
+        {
+            throw new PageNotFoundException( "(null)" );
+        }
         try
         {
             Session session = m_sessionManager.getSession();

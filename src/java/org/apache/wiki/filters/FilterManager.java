@@ -96,7 +96,7 @@ import org.jdom.xpath.XPath;
  */
 public final class FilterManager extends ModuleManager
 {
-    private PriorityList    m_pageFilters = new PriorityList();
+    private PriorityList<PageFilter>    m_pageFilters = new PriorityList<PageFilter>();
 
     private HashMap<String, PageFilterInfo>          m_filterClassMap = new HashMap<String,PageFilterInfo>();
 
@@ -417,7 +417,7 @@ public final class FilterManager extends ModuleManager
      *  
      *  @return A List of PageFilter objects
      */
-    public List getFilterList()
+    public List<PageFilter> getFilterList()
     {
         return m_pageFilters;
     }

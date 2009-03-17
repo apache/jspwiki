@@ -28,7 +28,7 @@ import org.apache.wiki.providers.ProviderException;
  *  
  *  @since 3.0
  */
-public class PageNotFoundException extends ProviderException
+public class PageNotFoundException extends Exception
 {
     private static final long serialVersionUID = 1L;
 

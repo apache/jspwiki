@@ -1,3 +1,24 @@
+2009-03-26  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-84
+
+        * PageNotFoundExceptions are now caught and thrown just
+        about everywhere they should be, plus or minus whatever
+        errors I made in the (very fast) process of refactoring.
+        Generally speaking: all method signatures that find and
+        return WikiPages *and* whose page/attachment parameters
+        are Strings now throw PageNotFoundExceptions.
+
+        * Stripes jar upgraded to r1.5.1.
+
+        * Many changes to EditActionBean and JSPs. Initial checkin
+        of SpamProtect annotation and matching JSP tag. This will
+        be refined in future checkins. NO unit tests yet.
+        
+        * JCRWikiPage.equals() is no longer commented out. The lack
+        of a functioning equals() method was hosing LOTS of unit
+        tests.
+
 2009-03-15  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-83

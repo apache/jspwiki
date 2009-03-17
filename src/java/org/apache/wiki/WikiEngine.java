@@ -23,6 +23,7 @@ package org.apache.wiki;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.Principal;
@@ -33,8 +34,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sourceforge.stripes.action.RedirectResolution;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.action.WikiActionBean;
@@ -906,9 +905,12 @@ public class WikiEngine
     // FIXME: Does not yet support spaces
     public WikiPage getFrontPage( String space ) throws ProviderException
     {
-        WikiPage p = getPage( m_frontPage );
-        
-        if( p == null )
+        WikiPage p;
+        try
+        {
+            p = getPage( m_frontPage );
+        }
+        catch( PageNotFoundException e )
         {
             p = createPage( new WikiName(space,m_frontPage) );
         }
@@ -1085,8 +1087,8 @@ public class WikiEngine
      */
     public String getSpecialPageReference( String original )
     {
-        RedirectResolution resolution = m_contextFactory.getSpecialPageResolution( original );
-        return resolution == null ? null : resolution.getUrl( Locale.getDefault() );
+        URI uri = m_contextFactory.getSpecialPageURI( original );
+        return uri == null ? null : uri.toString();
     }
 
     /**
@@ -1120,16 +1122,25 @@ public class WikiEngine
         {
             try
             {
-                Attachment att = m_attachmentManager.getAttachmentInfo(title);
-
-                if(att == null)
+                Attachment att;
+                try
+                {
+                    att = m_attachmentManager.getAttachmentInfo(title);
+                }
+                catch( PageNotFoundException e )
                 {
                     return TextUtil.beautifyString( title );
                 }
 
-                String parent = TextUtil.beautifyString( att.getParent().getName() );
-
-                return parent + "/" + att.getFileName();
+                try
+                {
+                    String parent = TextUtil.beautifyString( att.getParent().getName() );
+                    return parent + "/" + att.getFileName();
+                }
+                catch( PageNotFoundException e )
+                {
+                    return title;
+                }
             }
             catch( ProviderException e )
             {
@@ -1172,7 +1183,7 @@ public class WikiEngine
 
         try
         {
-            if( m_contextFactory.getSpecialPageResolution(page) != null ) return true;
+            if( m_contextFactory.getSpecialPageURI(page) != null ) return true;
 
             if( getFinalPageName( page ) != null )
             {
@@ -1181,7 +1192,7 @@ public class WikiEngine
 
             att = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             log.debug("pageExists() failed to find attachments",e);
         }
@@ -1201,19 +1212,19 @@ public class WikiEngine
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        if( m_contextFactory.getSpecialPageResolution(page) != null ) return true;
-
-        String finalName = getFinalPageName( page );
+        if( m_contextFactory.getSpecialPageURI(page) != null ) return true;
 
         boolean isThere = false;
-
-        if( finalName != null )
+        String finalName;
+        try
         {
-            //
-            //  Go and check if this particular version of this page
-            //  exists.
-            //
+            //  Go and check if this particular version of this page exists
+            finalName = getFinalPageName( page );
             isThere = m_contentManager.pageExists( WikiName.valueOf( finalName ), version );
+        }
+        catch( PageNotFoundException e )
+        {
+            // It's not there!
         }
 
         return isThere;
@@ -1239,17 +1250,17 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the correct page name, or null, if no such
-     *  page can be found.  Aliases are considered. This
+     *  Returns the correct page name This
      *  method simply delegates to
      *  {@link org.apache.wiki.action.WikiContextFactory#getFinalPageName(String)}.
      *  @since 2.0
      *  @param page Page name.
      *  @return The rewritten page name, or null, if the page does not exist.
      *  @throws ProviderException If something goes wrong in the backend.
+     *  @throws PageNotFoundException if the page cannot be found
      */
     public String getFinalPageName( String page )
-        throws ProviderException
+        throws PageNotFoundException, ProviderException
     {
         return m_contextFactory.getFinalPageName( page );
     }
@@ -1409,9 +1420,11 @@ public class WikiEngine
         {
             result = m_pageManager.getPageText( page, version );
         }
+        catch( PageNotFoundException e )
+        {
+        }
         catch( ProviderException e )
         {
-            // FIXME
         }
         finally
         {
@@ -2209,10 +2222,10 @@ public class WikiEngine
     public void deletePage( String pageName )
         throws ProviderException
     {
-        WikiPage p = getPage( pageName );
-
-        if( p != null )
+        WikiPage p;
+        try
         {
+            p = getPage( pageName );
             if( p instanceof Attachment )
             {
                 m_attachmentManager.deleteAttachment( (Attachment) p );
@@ -2229,6 +2242,10 @@ public class WikiEngine
                 }
                 m_pageManager.deletePage( p );
             }
+        }
+        catch( PageNotFoundException e )
+        {
+            // If page doesn't exist, do nothing
         }
     }
 

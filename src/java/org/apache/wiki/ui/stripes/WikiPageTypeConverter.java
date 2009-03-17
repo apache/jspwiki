@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 import net.sourceforge.stripes.controller.StripesFilter;
@@ -65,16 +66,29 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         try
         {
             page = engine.getPage( pageName );
-
-            String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
-            if( finalName == null || engine.getPage( finalName ) == null )
+        }
+        catch( PageNotFoundException e )
+        {
+            try
             {
-                errors.add( new LocalizableError( "common.nopage", pageName ) );
+                try
+                {
+                    String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
+                    return engine.getPage( finalName );
+                }
+                catch( PageNotFoundException e1 )
+                {
+                    errors.add( new LocalizableError( "common.nopage", pageName ) );
+                }
+            }
+            catch( ProviderException e2 )
+            {
+                errors.add( new SimpleError( e2.getMessage() ) );
             }
         }
         catch( ProviderException e )
         {
-            errors.add( new SimpleError( e.getMessage() ) );
+            errors.add( new SimpleError( "Provider exception: " + e.getMessage() ) );
         }
         return page;
     }

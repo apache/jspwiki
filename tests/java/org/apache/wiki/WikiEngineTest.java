@@ -133,11 +133,11 @@ public class WikiEngineTest extends TestCase
     public void testNonExistantPage()
         throws Exception
     {
-        String pagename = "Test1";
+        m_engine.deletePage( NAME1 );
 
         assertEquals( "Page already exists",
                       false,
-                      m_engine.pageExists( pagename ) );
+                      m_engine.pageExists( NAME1 ) );
     }
 
     /**
@@ -146,7 +146,8 @@ public class WikiEngineTest extends TestCase
     public void testNonExistantPage2()
         throws Exception
     {
-        WikiPage page = m_engine.createPage( WikiName.valueOf( "Test1" ) );
+        m_engine.deletePage( NAME1 );
+        WikiPage page = m_engine.createPage( WikiName.valueOf( NAME1 ) );
 
         assertEquals( "Page already exists",
                       false,

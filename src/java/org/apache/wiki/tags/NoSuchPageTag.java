@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -56,8 +57,7 @@ public class NoSuchPageTag
     }
 
     public int doWikiStartTag()
-        throws IOException,
-               ProviderException
+        throws IOException, PageNotFoundException, ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page;

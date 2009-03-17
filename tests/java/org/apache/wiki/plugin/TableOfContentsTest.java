@@ -27,8 +27,6 @@ package org.apache.wiki.plugin;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.api.WikiException;
-
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -240,7 +238,7 @@ public class TableOfContentsTest extends TestCase
         
     }
     
-    public void testSimilarNames() throws WikiException
+    public void testSimilarNames() throws Exception
     {
         String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
         

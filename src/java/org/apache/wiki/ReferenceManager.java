@@ -28,6 +28,7 @@ import java.util.*;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -177,8 +178,17 @@ public class ReferenceManager
     private void updatePageReferences( WikiPage page )
         throws ProviderException
     {
-        String content = m_engine.getPageManager().getPageText( page.getName(),
-                                                                WikiPageProvider.LATEST_VERSION );
+        String content;
+        try
+        {
+            content = m_engine.getPageManager().getPageText( page.getName(),
+                                                                    WikiPageProvider.LATEST_VERSION );
+        }
+        catch( PageNotFoundException e )
+        {
+            // This should not happen. If it does, rethrow
+            throw new ProviderException( e.getMessage() );
+        }
 
         TreeSet<String> res = new TreeSet<String>();
         Collection<String> links = m_engine.scanWikiLinks( page, content );
@@ -888,7 +898,7 @@ public class ReferenceManager
      *         does not exist, or if it has no references.
      */
     // FIXME: Return a Set instead of a Collection.
-    public synchronized Collection findReferrers( String pagename )
+    public synchronized Collection<String> findReferrers( String pagename )
     {
         Set<String> refs = getReferenceList( m_referredBy, pagename );
 
@@ -995,7 +1005,7 @@ public class ReferenceManager
      *  @return A Set of all defined page names that ReferenceManager knows about.
      *  @since 2.3.24
      */
-    public Set findCreated()
+    public Set<String> findCreated()
     {
         return new HashSet<String>( m_refersTo.keySet() );
     }
@@ -1004,18 +1014,13 @@ public class ReferenceManager
     {
         try
         {
-            String s = m_engine.getFinalPageName( orig );
-
-            if( s == null ) s = orig;
-
-            return s;
+            return m_engine.getFinalPageName( orig );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             log.error("Error while trying to fetch a page name; trying to cope with the situation.",e);
-
-            return orig;
         }
+        return orig;
     }
 
     /**

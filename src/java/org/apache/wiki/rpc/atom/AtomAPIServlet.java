@@ -35,6 +35,7 @@ import java.util.Iterator;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -117,9 +118,11 @@ public class AtomAPIServlet extends HttpServlet
         {
             String blogid = getPageName( request );
 
-            WikiPage page    = m_engine.getPage( blogid );
-
-            if( page == null )
+            try
+            {
+                m_engine.getPage( blogid );
+            }
+            catch( PageNotFoundException e )
             {
                 throw new ServletException("Page "+blogid+" does not exist, cannot add blog post.");
             }
@@ -222,7 +225,7 @@ public class AtomAPIServlet extends HttpServlet
     }
 
     private Entry getBlogEntry( String entryid )
-        throws ProviderException
+        throws Exception
     {
         WikiPage page = m_engine.getPage( entryid );
         WikiPage firstVersion = m_engine.getPage( entryid, 1 );

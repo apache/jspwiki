@@ -32,7 +32,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.providers.ProviderException;
 
@@ -75,7 +74,7 @@ public class DefaultAclManagerTest
         m_engine.shutdown();
     }
 
-    public void testGetPermissions() throws ProviderException, WikiSecurityException
+    public void testGetPermissions() throws Exception
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );

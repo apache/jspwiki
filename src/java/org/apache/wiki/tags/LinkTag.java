@@ -179,7 +179,7 @@ public class LinkTag
      * @throws ProviderException
      */
     private String figureOutURL()
-        throws ProviderException
+        throws PageNotFoundException, ProviderException
     {
         String url = null;
         WikiEngine engine = m_wikiContext.getEngine();

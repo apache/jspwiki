@@ -44,6 +44,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -343,7 +344,16 @@ public class TestEngine extends WikiEngine
         }
 
         // Create page and wiki context
-        WikiPage page = createPage( WikiName.valueOf( pageName ) );
+        WikiPage page = null;
+        
+        try
+        {
+            page = getPage( pageName );
+        }
+        catch ( PageNotFoundException e )
+        {
+            page = createPage( WikiName.valueOf( pageName ) );
+        }
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }

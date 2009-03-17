@@ -96,18 +96,28 @@ public class PageRenamer
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
         //
         WikiEngine engine = context.getEngine();
-        WikiPage fromPage = engine.getPage( renameFrom );
-        
-        if( fromPage == null )
+        WikiPage fromPage;
+        try
+        {
+            fromPage = engine.getPage( renameFrom );
+        }
+        catch( PageNotFoundException e )
         {
             throw new WikiException("No such page "+renameFrom);
         }
         
-        WikiPage toPage = engine.getPage( renameTo );
-        
-        if( toPage != null )
+        WikiPage toPage;
+        try
         {
-            throw new WikiException("Page already exists "+renameTo);
+            toPage = engine.getPage( renameTo );
+            if( toPage != null )
+            {
+                throw new WikiException("Page already exists "+renameTo);
+            }
+        }
+        catch( PageNotFoundException e )
+        {
+            // Good. The page should NOT exist already.
         }
         
         //
@@ -137,9 +147,14 @@ public class PageRenamer
         //  to the repo with no actual change.
         //
         
-        toPage = engine.getPage( renameTo );
-        
-        if( toPage == null ) throw new InternalWikiException("Rename seems to have failed for some strange reason - please check logs!");
+        try
+        {
+            toPage = engine.getPage( renameTo );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
+        }
 
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );

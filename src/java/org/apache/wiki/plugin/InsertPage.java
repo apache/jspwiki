@@ -31,7 +31,6 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -112,7 +111,7 @@ public class InsertPage
                     page = engine.getPage( includedPage );
                 }
             }
-            catch( ProviderException e )
+            catch( Exception e )
             {
                 res.append("<span class=\"error\">" + rb.getString( "plugin.insert.notfound" ) + "</span>");
                 return res.toString();

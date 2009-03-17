@@ -280,7 +280,7 @@ public class RPCHandler
         {
             return toRPCBase64( m_engine.getHTML( pagename ) );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( 1, pagename );
         }
@@ -295,7 +295,7 @@ public class RPCHandler
         {
             return toRPCBase64( m_engine.getHTML( pagename, version ) );
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( 1, e.getMessage() );
         }
@@ -395,7 +395,7 @@ public class RPCHandler
 
             return result;
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new XmlRpcException( 1, e.getMessage() );
         }

@@ -29,7 +29,6 @@ import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -133,14 +132,14 @@ public class Image
         try
         {
             AttachmentManager mgr = engine.getAttachmentManager();
-            WikiPage        att = mgr.getAttachmentInfo( context, src );
+            WikiPage att = mgr.getAttachmentInfo( context, src );
 
             if( att != null )
             {
                 src = context.getURL( WikiContext.ATTACH, att.getName() );
             }
         }
-        catch( ProviderException e )
+        catch( Exception e )
         {
             throw new PluginException( rb.getString( "plugin.image.attachinfo.failed" ) + e.getMessage() );
         }

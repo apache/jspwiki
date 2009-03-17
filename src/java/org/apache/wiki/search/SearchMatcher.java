@@ -27,6 +27,7 @@ import java.io.StringReader;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -137,6 +138,11 @@ public class SearchMatcher
             try
             {
                 return new SearchResultImpl( m_engine.getPage( wikiname ), totalscore );
+            }
+            catch( PageNotFoundException e )
+            {
+                // FIXME: Should really log this
+                return null;
             }
             catch( ProviderException e )
             {
