@@ -906,6 +906,9 @@ public class ContentManager implements WikiEventListener
             WikiEngine engine = context.getEngine();
             WikiPage page = context.getPage();
 
+            // Set the last-modified timestamp
+            page.setLastModified( new Date() );
+
             // Let the rest of the engine handle actual saving.
             page.setContent( proposedText );
             

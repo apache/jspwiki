@@ -53,16 +53,16 @@ public class RPCHandlerTest extends TestCase
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
+        m_engine.deletePage( "Dummy" );
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage("Dummy") );
         m_handler.initialize( ctx );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
         TestEngine.deleteTestPage( NAME1 );
         TestEngine.deleteAttachments( NAME1 );
         TestEngine.emptyWorkDir();
-        
         m_engine.shutdown();
     }
 
