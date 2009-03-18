@@ -83,7 +83,7 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPage() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "IPointToSomeoneElse" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToSomeoneElse" ) );
 
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin}" );
 
@@ -100,7 +100,7 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPageParmPage() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "IPointToSomeoneElse" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToSomeoneElse" ) );
 
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin page=IPointToSomeoneElseToo}" );
 
@@ -116,7 +116,7 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPageParmInClude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "IPointToTwoPages" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToTwoPages" ) );
 
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );

@@ -754,7 +754,7 @@ public class ContentManager implements WikiEventListener
         }
         catch( RepositoryException e )
         {
-            throw new ProviderException("Deletion of pages failed.",e);
+            throw new ProviderException( "Deletion of pages failed: " + e.getMessage(), e );
         }
     }
 
@@ -998,9 +998,10 @@ public class ContentManager implements WikiEventListener
      *  @param path the WikiName
      *  @param contentType the type of content
      *  @return the {@link JCRWikiPage} 
-     *  @throws ProviderException If the backend fails.
+     *  @throws PageAlreadyExistsException if the page already exists in the repository
+     *  @throws ProviderException if the backend fails
      */
-    public JCRWikiPage addPage( WikiName path, String contentType ) throws ProviderException
+    public JCRWikiPage addPage( WikiName path, String contentType ) throws PageAlreadyExistsException, ProviderException
     {
         try
         {

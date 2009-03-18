@@ -74,6 +74,7 @@ public class MailUtilTest extends TestCase
         
         m_engine = new TestEngine( m_props );
         
+        m_engine.deletePage( PAGE_NAME );
         m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( PAGE_NAME ) );
     }
 

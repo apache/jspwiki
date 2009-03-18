@@ -63,7 +63,7 @@ public class ReferringPagesPluginTest extends TestCase
         engine.saveText( "Foobar6", "Reference to [TestPage]." );
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = engine.getWikiContextFactory().newViewContext( engine.createPage( "TestPage" ) );
+        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage" ) );
         manager = new PluginManager( engine, props );
     }
 
@@ -94,7 +94,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testSingleReferral()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.createPage( "Foobar" ) );
+        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.getPage( "Foobar" ) );
 
         String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
@@ -135,7 +135,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testReferenceWidth()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.createPage( "Foobar" ) );
+        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.getPage( "Foobar" ) );
 
         String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");

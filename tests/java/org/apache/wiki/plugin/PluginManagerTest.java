@@ -59,14 +59,20 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
+        engine.deletePage( "Testpage" );
         context = engine.getWikiContextFactory().newViewContext( engine.createPage( "Testpage" ) );
         manager = new PluginManager( engine, props );
     }
 
-    public void tearDown() throws ProviderException
+    public void tearDown()
     {
-        engine.deletePage("Testpage");
-        
+        try
+        {
+            engine.deletePage("Testpage");
+        }
+        catch ( ProviderException e )
+        {
+        }
         engine.shutdown();
     }
 

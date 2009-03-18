@@ -45,6 +45,7 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.SessionMonitor;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -639,7 +640,15 @@ public final class WikiContextFactory
         catch( PageNotFoundException e )
         {
             page = MarkupParser.cleanLink( page );
-            return m_engine.createPage( WikiName.valueOf( page ) );
+            try
+            {
+                return m_engine.createPage( WikiName.valueOf( page ) );
+            }
+            catch( PageAlreadyExistsException e1 )
+            {
+                // This should not happen
+                throw new ProviderException( e1.getMessage() );
+            }
         }
     }
 

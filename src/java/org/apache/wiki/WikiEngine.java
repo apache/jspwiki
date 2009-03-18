@@ -49,10 +49,7 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.PageRenamer;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.*;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -409,7 +406,14 @@ public class WikiEngine
             //  Note: May be null, if JSPWiki has been deployed in a WAR file.
             //
             initialize( props );
-            log.info("Root path for this Wiki is: '"+m_rootPath+"'");
+            if ( m_rootPath == null )
+            {
+                log.warn("Root path for this Wiki is null. This is normal if deployed as a WAR or executed in mock context.");
+            }
+            else
+            {
+                log.info("Root path for this Wiki is: '"+m_rootPath+"'");
+            }
         }
         catch( Exception e )
         {
@@ -912,7 +916,15 @@ public class WikiEngine
         }
         catch( PageNotFoundException e )
         {
-            p = createPage( new WikiName(space,m_frontPage) );
+            try
+            {
+                p = createPage( new WikiName(space,m_frontPage) );
+            }
+            catch( PageAlreadyExistsException e1 )
+            {
+                // This should not happen
+                throw new ProviderException( e1.getMessage() );
+            }
         }
         
         return p;
@@ -1874,13 +1886,14 @@ public class WikiEngine
     /**
      *  Creates a new WikiPage object.
      *  
-     *  @param name The WikiName of the object to create
-     *  @return A new WikiPage object.
-     *  @throws ProviderException 
+     *  @param name the WikiName of the object to create
+     *  @return a new WikiPage object
+     *  @throws PageAlreadyExistsException if the page already exists in the repository.
+     *  @throws ProviderException if the backend fails
      *  @since 3.0
      */
     @SuppressWarnings("deprecation")
-    public WikiPage createPage( WikiName name ) throws ProviderException
+    public WikiPage createPage( WikiName name ) throws PageAlreadyExistsException, ProviderException
     {
         return m_contentManager.addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );
     }
@@ -1888,12 +1901,13 @@ public class WikiEngine
     /**
      *  A shortcut for createPage( WikiName.valueOf(fqn) );
      *  
-     *  @param fqn The fully qualified name of a wikipage.
-     *  @return A new page.
-     *  @throws ProviderException 
+     *  @param fqn the fully qualified name of a wikipage
+     *  @return a new page
+     *  @throws PageAlreadyExistsException if the page already exists in the repository
+     *  @throws ProviderException if the backend fails
      *  @since 3.0
      */
-    public WikiPage createPage( String fqn ) throws ProviderException
+    public WikiPage createPage( String fqn ) throws PageAlreadyExistsException, ProviderException
     {
         return createPage( WikiName.valueOf( fqn ) );
     }

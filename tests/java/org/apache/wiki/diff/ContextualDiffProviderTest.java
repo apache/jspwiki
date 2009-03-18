@@ -20,11 +20,9 @@
  */
 package org.apache.wiki.diff;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.wiki.*;
-import org.apache.wiki.api.WikiException;
 import org.apache.wiki.diff.ContextualDiffProvider;
 
 import junit.framework.Test;
@@ -83,7 +81,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testNoChanges() throws IOException, WikiException
+    public void testNoChanges() throws Exception
     {
         diffTest(null, "", "", "");
         diffTest(null, "A", "A", "A");
@@ -96,7 +94,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testSimpleInsertions() throws IOException, WikiException
+    public void testSimpleInsertions() throws Exception
     {
         // Ah, the white space trailing an insertion is tacked onto the insertion, this is fair, the
         // alternative would be to greedily take the leading whitespace before the insertion as part
@@ -121,7 +119,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testSimpleDeletions() throws IOException, WikiException
+    public void testSimpleDeletions() throws Exception
     {
         // Simple deletes...
         diffTest(null, "A B C", "A C", "A |-B -|C");
@@ -139,7 +137,7 @@ public class ContextualDiffProviderTest extends TestCase
 
 
 
-    public void testContextLimits() throws IOException, WikiException
+    public void testContextLimits() throws Exception
     {
         // No change
         diffTest("1", "A B C D E F G H I", "A B C D E F G H I", "A...");
@@ -163,14 +161,14 @@ public class ContextualDiffProviderTest extends TestCase
                 
     }
 
-    public void testMultiples() throws IOException, WikiException
+    public void testMultiples() throws Exception
     {
         diffTest(null, "A F", "A B C D E F", "A |^B C D E ^|F");
         diffTest(null, "A B C D E F", "A F", "A |-B C D E -|F");
         
     }
 
-    public void testSimpleChanges() throws IOException, WikiException
+    public void testSimpleChanges() throws Exception
     {
         // *changes* are actually an insert and a delete in the output...
 
@@ -204,7 +202,7 @@ public class ContextualDiffProviderTest extends TestCase
      */
     
     private void diffTest(String contextLimit, String oldText, String newText, String expectedDiff)
-        throws IOException, WikiException
+        throws Exception
     {
         ContextualDiffProvider diff = new ContextualDiffProvider();
 
@@ -220,6 +218,7 @@ public class ContextualDiffProviderTest extends TestCase
         m_engine.shutdown();
         m_engine = new TestEngine(props);
         
+        m_engine.deletePage( "Dummy" );
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( "Dummy" ) );
         String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 

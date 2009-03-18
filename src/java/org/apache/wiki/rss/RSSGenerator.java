@@ -27,6 +27,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -310,7 +311,23 @@ public class RSSGenerator
     public String generate() throws WikiException
     {
         WikiContext context = m_engine.getWikiContextFactory().newContext(null,null,WikiContext.RSS);
-        context.setPage( m_engine.createPage( WikiName.valueOf( "__DUMMY" ) ) );
+        // This is ugly
+        try
+        {
+            context.setPage( m_engine.createPage( WikiName.valueOf( "__DUMMY" ) ) );
+        }
+        catch( PageAlreadyExistsException e )
+        {
+            try
+            {
+                context.setPage( m_engine.getPage( "__DUMMY" ) );
+            }
+            catch( PageNotFoundException e1 )
+            {
+                // This should not happen
+                throw new WikiException( e1.getMessage() );
+            }
+        }
         Feed feed = new RSS10Feed( context );
 
         String result = generateFullWikiRSS( context, feed );

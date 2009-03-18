@@ -21,25 +21,20 @@
 
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.WikiRenderer;
 import org.apache.wiki.render.XHTMLRenderer;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 public class CounterPluginTest extends TestCase
@@ -65,11 +60,9 @@ public class CounterPluginTest extends TestCase
         testEngine.shutdown();
     }
 
-    private String translate( String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException, ProviderException
+    private String translate( String src ) throws Exception
     {
+        testEngine.deletePage( "TestPage" );
         WikiContext context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( "TestPage" ) );
         
         MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );

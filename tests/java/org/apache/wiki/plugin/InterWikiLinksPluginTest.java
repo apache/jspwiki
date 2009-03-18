@@ -52,6 +52,7 @@ public class InterWikiLinksPluginTest extends TestCase
 
         manager = new PluginManager( engine, props );
 
+        engine.deletePage( "TestPage" );
         context = engine.getWikiContextFactory().newViewContext( engine.createPage( "TestPage" ) );
 
         m_links = engine.getAllInterWikiLinks();

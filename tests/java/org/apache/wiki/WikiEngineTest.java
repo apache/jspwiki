@@ -25,10 +25,7 @@ import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.wiki.*;
-import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.*;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.*;
 import org.apache.wiki.util.FileUtil;
@@ -96,7 +93,7 @@ public class WikiEngineTest extends TestCase
 
         String newdir = tmpdir + File.separator + dirname;
 
-        props.setProperty( AbstractFileProvider.PROP_PAGEDIR, 
+        props.setProperty( WikiEngine.PROP_WORKDIR, 
                            newdir );
 
         m_engine.shutdown();
@@ -109,22 +106,6 @@ public class WikiEngineTest extends TestCase
 
         f.delete();
         
-    }
-
-    public void testNonExistantDirProperty() throws Exception
-    {
-        props.remove( AbstractFileProvider.PROP_PAGEDIR );
-        try
-        {
-            m_engine.shutdown();
-            m_engine = new TestEngine( props );
-
-            fail( "Wiki did not warn about missing property." );
-        }
-        catch( WikiException e )
-        {
-            // This is okay.
-        }
     }
 
     /**
@@ -282,6 +263,7 @@ public class WikiEngineTest extends TestCase
     {
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
+        m_engine.deletePage( "Test" );
         Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiName.valueOf( "Test" ) ), src ).toArray();
         
         assertEquals( "item 0", "Foobar", result[0] );
@@ -934,6 +916,7 @@ public class WikiEngineTest extends TestCase
     
     public void testChangeNoteOldVersion2() throws Exception
     {
+        m_engine.deletePage( NAME1 );
         WikiPage p = m_engine.createPage( WikiName.valueOf( NAME1 ) );
     
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );

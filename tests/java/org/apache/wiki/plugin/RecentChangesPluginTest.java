@@ -74,7 +74,7 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testSimple() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "TestPage01" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage01" ) );
 
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}" );
 
@@ -94,7 +94,7 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmInClude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "TestPage02" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage02" ) );
 
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
@@ -113,7 +113,7 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmExClude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage(  "TestPage03" ) );
+        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage03" ) );
 
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );

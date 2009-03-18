@@ -23,16 +23,16 @@ package org.apache.wiki.render;
 import java.io.StringReader;
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
-import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.render.WysiwygEditingRenderer;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.parser.WikiDocument;
 
 
 public class WysiwygEditingRendererTest extends TestCase
@@ -60,7 +60,15 @@ public class WysiwygEditingRendererTest extends TestCase
 
     private String render(String s) throws Exception
     {
-        WikiPage dummyPage = m_testEngine.createPage("TestPage");
+        WikiPage dummyPage;
+        try
+        {
+            dummyPage = m_testEngine.getPage("TestPage");
+        }
+        catch ( PageNotFoundException e )
+        {
+            dummyPage = m_testEngine.createPage("TestPage");
+        }
         WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( dummyPage );
 
         StringReader in = new StringReader(s);

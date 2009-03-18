@@ -62,6 +62,7 @@ public class VariableManagerTest extends TestCase
 
             m_variableManager = new VariableManager( props );
             testEngine = new TestEngine( props );
+            testEngine.deletePage( PAGE_NAME );
             m_context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage(WikiName.valueOf(PAGE_NAME)) );
 
         }

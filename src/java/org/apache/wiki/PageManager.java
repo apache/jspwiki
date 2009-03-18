@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -181,7 +182,15 @@ public class PageManager extends ModuleManager
         }
         catch( PageNotFoundException e )
         {
-            p = m_engine.getContentManager().addPage( page.getQualifiedName(), ContentManager.JSPWIKI_CONTENT_TYPE );
+            try
+            {
+                p = m_engine.getContentManager().addPage( page.getQualifiedName(), ContentManager.JSPWIKI_CONTENT_TYPE );
+            }
+            catch( PageAlreadyExistsException e1 )
+            {
+                // This should never happen
+                throw new ProviderException( e1.getMessage() );
+            }
         }
         p.setContent(content);
         p.save();

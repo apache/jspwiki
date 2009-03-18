@@ -44,6 +44,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -309,7 +310,7 @@ public class TestEngine extends WikiEngine
      * @param data
      */
     public void addAttachment( String pageName, String attachmentName, byte[] data )
-        throws ProviderException, IOException
+        throws PageAlreadyExistsException, ProviderException, IOException
     {
         Attachment att = getContentManager().addPage( WikiName.valueOf( pageName ).resolve( attachmentName ), "application/octet-stream" );
 
@@ -352,7 +353,15 @@ public class TestEngine extends WikiEngine
         }
         catch ( PageNotFoundException e )
         {
-            page = createPage( WikiName.valueOf( pageName ) );
+            try
+            {
+                page = createPage( WikiName.valueOf( pageName ) );
+            }
+            catch( PageAlreadyExistsException e1 )
+            {
+                // This should not happen
+                throw new WikiException( e1.getMessage() );
+            }
         }
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
@@ -376,7 +385,16 @@ public class TestEngine extends WikiEngine
         }
 
         // Create page and wiki context
-        WikiPage page = createPage( WikiName.valueOf( pageName ) );
+        WikiPage page;
+        try
+        {
+            page = createPage( WikiName.valueOf( pageName ) );
+        }
+        catch( PageAlreadyExistsException e1 )
+        {
+            // This should not happen
+            throw new WikiException( e1.getMessage() );
+        }
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }

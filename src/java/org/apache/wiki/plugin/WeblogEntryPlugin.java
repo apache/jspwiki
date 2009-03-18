@@ -26,6 +26,7 @@ import java.util.*;
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -159,7 +160,15 @@ public class WeblogEntryPlugin implements WikiPlugin
             String name = WeblogPlugin.makeEntryPage( baseName, 
                                                       date, 
                                                       Integer.toString(idx) );
-            WikiPage page = mgr.getEngine().createPage( WikiName.valueOf(name) );
+            WikiPage page;
+            try
+            {
+                page = mgr.getEngine().createPage( WikiName.valueOf(name) );
+            }
+            catch( PageAlreadyExistsException e )
+            {
+                throw new ProviderException( e.getMessage() );
+            }
                                           
             PageLock lock = mgr.getCurrentLock( page );
 

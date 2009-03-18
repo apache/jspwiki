@@ -342,7 +342,7 @@ public class BundleMigratorTest extends TestCase
         }
 
         // Try with one that does exist
-        m.setBundle( new Bundle( "etc/i18n/CoreResources" ) );
+        m.setBundle( new Bundle( "src/WebContent/WEB-INF/classes/CoreResources" ) );
     }
 
 }

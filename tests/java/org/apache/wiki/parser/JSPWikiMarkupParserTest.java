@@ -38,7 +38,6 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.WikiName;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.util.TextUtil;
 
@@ -60,13 +59,13 @@ public class JSPWikiMarkupParserTest extends TestCase
         super( s );
     }
 
-    public void setUp()
-    throws Exception
+    public void setUp() throws Exception
     {
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );
+        testEngine.deletePage( PAGE_NAME );
     }
 
     public void tearDown()
@@ -86,9 +85,9 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     private void deleteCreatedPages()
     {
-        for( Iterator i = created.iterator(); i.hasNext(); )
+        for( Iterator<String> i = created.iterator(); i.hasNext(); )
         {
-            String name = (String) i.next();
+            String name = i.next();
 
             TestEngine.deleteTestPage(name);
             TestEngine.deleteAttachments(name);
@@ -97,35 +96,22 @@ public class JSPWikiMarkupParserTest extends TestCase
         created.clear();
     }
 
-    private String translate( String src )
-    throws IOException,
-            NoRequiredPropertyException,
-            ServletException, ProviderException
+    private String translate( String src ) throws Exception
     {
         return translate( testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
 
-    private String translate( WikiEngine e, String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException, ProviderException
+    private String translate( WikiEngine e, String src ) throws Exception
     {
         return translate( e, e.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
     }
 
-
-    private String translate( WikiPage p, String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException
+    private String translate( WikiPage p, String src ) throws Exception
     {
         return translate( testEngine, p, src );
     }
 
-    private String translate( WikiEngine e, WikiPage p, String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException
+    private String translate( WikiEngine e, WikiPage p, String src ) throws Exception
     {
         WikiContext context = e.getWikiContextFactory().newViewContext( p );
         JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context,
@@ -136,11 +122,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         return conv.getString();
     }
 
-    private String translate_nofollow( String src )
-        throws IOException,
-               NoRequiredPropertyException,
-               ServletException,
-               WikiException
+    private String translate_nofollow( String src ) throws Exception
     {
         props.load( TestEngine.findTestProperties() );
 
@@ -157,8 +139,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         return conv.getString();
     }
 
-    public void testHyperlinks2()
-    throws Exception
+    public void testHyperlinks2() throws Exception
     {
         newPage("Hyperlink");
 
@@ -168,8 +149,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinks3()
-    throws Exception
+    public void testHyperlinks3() throws Exception
     {
         newPage("HyperlinkToo");
 
@@ -179,8 +159,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinks4()
-    throws Exception
+    public void testHyperlinks4() throws Exception
     {
         newPage("HyperLink");
 
@@ -190,8 +169,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinks5()
-    throws Exception
+    public void testHyperlinks5() throws Exception
     {
         newPage("HyperLink");
 
@@ -201,8 +179,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksNamed1()
-    throws Exception
+    public void testHyperlinksNamed1() throws Exception
     {
         newPage("HyperLink");
 
@@ -212,8 +189,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksNamed2()
-    throws Exception
+    public void testHyperlinksNamed2() throws Exception
     {
         newPage("HyperLink");
 
@@ -223,8 +199,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksNamed3()
-    throws Exception
+    public void testHyperlinksNamed3() throws Exception
     {
         newPage("HyperLink");
 
@@ -234,12 +209,10 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
     
-    //
-    //  Testing CamelCase hyperlinks
-    //
-
-    public void testHyperLinks6()
-    throws Exception
+    /**
+     * Testing CamelCase hyperlinks
+     */
+    public void testHyperLinks6() throws Exception
     {
         newPage("DiscussionAboutWiki");
         newPage("WikiMarkupDevelopment");
@@ -250,8 +223,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCC()
-    throws Exception
+    public void testHyperlinksCC() throws Exception
     {
         newPage("HyperLink");
 
@@ -261,8 +233,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCNonExistant()
-    throws Exception
+    public void testHyperlinksCCNonExistant() throws Exception
     {
         String src = "This should be a HyperLink.";
 
@@ -274,9 +245,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  Check if the CC hyperlink translator gets confused with
      *  unorthodox bracketed links.
      */
-
-    public void testHyperlinksCC2()
-    throws Exception
+    public void testHyperlinksCC2() throws Exception
     {
         newPage("HyperLink");
 
@@ -286,8 +255,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCC3()
-    throws Exception
+    public void testHyperlinksCC3() throws Exception
     {
         String src = "This should be a nonHyperLink.";
 
@@ -296,10 +264,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Two links on same line. */
-
-
-    public void testHyperlinksCC4()
-    throws Exception
+    public void testHyperlinksCC4() throws Exception
     {
         newPage("HyperLink");
         newPage("ThisToo");
@@ -312,9 +277,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
 
     /** Two mixed links on same line. */
-
-    public void testHyperlinksCC5()
-    throws Exception
+    public void testHyperlinksCC5() throws Exception
     {
         newPage("HyperLink");
         newPage("ThisToo");
@@ -326,9 +289,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Closing tags only. */
-
-    public void testHyperlinksCC6()
-    throws Exception
+    public void testHyperlinksCC6() throws Exception
     {
         newPage("HyperLink");
         newPage("ThisToo");
@@ -340,8 +301,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** First and last words on line. */
-    public void testHyperlinksCCFirstAndLast()
-    throws Exception
+    public void testHyperlinksCCFirstAndLast() throws Exception
     {
         newPage("HyperLink");
         newPage("ThisToo");
@@ -353,9 +313,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Hyperlinks inside URIs. */
-
-    public void testHyperlinksCCURLs()
-    throws Exception
+    public void testHyperlinksCCURLs() throws Exception
     {
         String src = "http://www.foo.bar/ANewHope/";
 
@@ -365,9 +323,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Hyperlinks inside URIs. */
-
-    public void testHyperlinksCCURLs2()
-    throws Exception
+    public void testHyperlinksCCURLs2() throws Exception
     {
         String src = "mailto:foo@bar.com";
 
@@ -377,9 +333,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Hyperlinks inside URIs. */
-
-    public void testHyperlinksCCURLs3()
-    throws Exception
+    public void testHyperlinksCCURLs3() throws Exception
     {
         String src = "This should be a link: http://www.foo.bar/ANewHope/.  Is it?";
 
@@ -389,9 +343,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     /** Hyperlinks in brackets. */
-
-    public void testHyperlinksCCURLs4()
-    throws Exception
+    public void testHyperlinksCCURLs4() throws Exception
     {
         String src = "This should be a link: (http://www.foo.bar/ANewHope/)  Is it?";
 
@@ -402,8 +354,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     /** Hyperlinks end line. */
 
-    public void testHyperlinksCCURLs5()
-    throws Exception
+    public void testHyperlinksCCURLs5() throws Exception
     {
         String src = "This should be a link: http://www.foo.bar/ANewHope/\nIs it?";
 
@@ -414,8 +365,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     /** Hyperlinks with odd chars. */
 
-    public void testHyperlinksCCURLs6()
-    throws Exception
+    public void testHyperlinksCCURLs6() throws Exception
     {
         String src = "This should not be a link: http://''some.server''/wiki//Wiki.jsp\nIs it?";
 
@@ -425,8 +375,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testHyperlinksCCURLs7()
-    throws Exception
+    public void testHyperlinksCCURLs7() throws Exception
     {
         String src = "http://www.foo.bar/ANewHope?q=foobar&gobble=bobble+gnoo";
 
@@ -435,8 +384,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCURLs8()
-    throws Exception
+    public void testHyperlinksCCURLs8() throws Exception
     {
         String src = "http://www.foo.bar/~ANewHope/";
 
@@ -445,8 +393,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
     
-    public void testHyperlinksCCURLs9()
-    throws Exception
+    public void testHyperlinksCCURLs9() throws Exception
     {
         String src = "http://www.foo.bar/%7EANewHope/";
 
@@ -455,8 +402,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCNegated()
-    throws Exception
+    public void testHyperlinksCCNegated() throws Exception
     {
         String src = "This should not be a ~HyperLink.";
 
@@ -464,8 +410,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCNegated2()
-    throws Exception
+    public void testHyperlinksCCNegated2() throws Exception
     {
         String src = "~HyperLinks should not be matched.";
 
@@ -473,8 +418,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCNegated3()
-    throws Exception
+    public void testHyperlinksCCNegated3() throws Exception
     {
         String src = "The page ~ASamplePage is not a hyperlink.";
 
@@ -482,8 +426,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksCCNegated4()
-    throws Exception
+    public void testHyperlinksCCNegated4() throws Exception
     {
         String src = "The page \"~ASamplePage\" is not a hyperlink.";
 
@@ -491,8 +434,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkInList()
-    throws Exception
+    public void testCCLinkInList() throws Exception
     {
         newPage("HyperLink");
 
@@ -502,8 +444,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkBold()
-    throws Exception
+    public void testCCLinkBold() throws Exception
     {
         newPage("BoldHyperLink");
 
@@ -513,8 +454,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkBold2()
-    throws Exception
+    public void testCCLinkBold2() throws Exception
     {
         newPage("HyperLink");
 
@@ -524,8 +464,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkItalic()
-    throws Exception
+    public void testCCLinkItalic() throws Exception
     {
         newPage("ItalicHyperLink");
 
@@ -535,8 +474,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkWithPunctuation()
-    throws Exception
+    public void testCCLinkWithPunctuation() throws Exception
     {
         newPage("HyperLink");
 
@@ -546,8 +484,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkWithPunctuation2()
-    throws Exception
+    public void testCCLinkWithPunctuation2() throws Exception
     {
         newPage("HyperLink");
         newPage("ThisToo");
@@ -558,8 +495,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testCCLinkWithScandics()
-    throws Exception
+    public void testCCLinkWithScandics() throws Exception
     {
         newPage("\u00c4itiSy\u00f6\u00d6ljy\u00e4");
 
@@ -570,8 +506,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testHyperlinksExt()
-    throws Exception
+    public void testHyperlinksExt() throws Exception
     {
         String src = "This should be a [http://www.regex.fi/]";
 
@@ -579,8 +514,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksExt2()
-    throws Exception
+    public void testHyperlinksExt2() throws Exception
     {
         String src = "This should be a [link|http://www.regex.fi/]";
 
@@ -588,8 +522,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksExtNofollow()
-    throws Exception
+    public void testHyperlinksExtNofollow() throws Exception
     {
         String src = "This should be a [link|http://www.regex.fi/]";
 
@@ -601,8 +534,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     //  Testing various odds and ends about hyperlink matching.
     //
 
-    public void testHyperlinksPluralMatch()
-    throws Exception
+    public void testHyperlinksPluralMatch() throws Exception
     {
         String src = "This should be a [HyperLinks]";
 
@@ -612,8 +544,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksPluralMatch2()
-    throws Exception
+    public void testHyperlinksPluralMatch2() throws Exception
     {
         String src = "This should be a [HyperLinks]";
 
@@ -621,8 +552,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksPluralMatch3()
-    throws Exception
+    public void testHyperlinksPluralMatch3() throws Exception
     {
         String src = "This should be a [HyperLink]";
 
@@ -632,8 +562,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksPluralMatch4()
-    throws Exception
+    public void testHyperlinksPluralMatch4() throws Exception
     {
         String src = "This should be a [Hyper links]";
 
@@ -644,8 +573,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testHyperlinkJS1()
-    throws Exception
+    public void testHyperlinkJS1() throws Exception
     {
         String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
 
@@ -653,8 +581,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksInterWiki1()
-    throws Exception
+    public void testHyperlinksInterWiki1() throws Exception
     {
         String src = "This should be a [link|JSPWiki:HyperLink]";
 
@@ -662,8 +589,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHyperlinksInterWiki2()
-    throws Exception
+    public void testHyperlinksInterWiki2() throws Exception
     {
         String src = "This should be a [JSPWiki:HyperLink]";
 
@@ -673,8 +599,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 /*
 // FIXME: These need to be fixed.
 
-    public void testAttachmentLink()
-    throws Exception
+    public void testAttachmentLink() throws Exception
     {
         newPage("Test");
 
@@ -689,8 +614,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src));
     }
 
-    public void testAttachmentLink2()
-    throws Exception
+    public void testAttachmentLink2() throws Exception
     {
         props.setProperty( "jspwiki.encoding", "ISO-8859-1" );
 
@@ -716,8 +640,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      * Are attachments parsed correctly also when using gappy text?
      */
     /*
-    public void testAttachmentLink3()
-    throws Exception
+    public void testAttachmentLink3() throws Exception
     {
         testEngine.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
@@ -735,8 +658,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 */
     /*
-    public void testAttachmentLink4()
-    throws Exception
+    public void testAttachmentLink4() throws Exception
     {
         testEngine.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
@@ -753,8 +675,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(testEngine,src));
     }
 */
-    public void testNoHyperlink()
-    throws Exception
+    public void testNoHyperlink() throws Exception
     {
         newPage("HyperLink");
 
@@ -764,8 +685,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testNoHyperlink2()
-    throws Exception
+    public void testNoHyperlink2() throws Exception
     {
         String src = "This should not be a [[[[HyperLink]";
 
@@ -773,8 +693,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testNoHyperlink3()
-    throws Exception
+    public void testNoHyperlink3() throws Exception
     {
         String src = "[[HyperLink], and this [[Neither].";
 
@@ -782,8 +701,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testNoPlugin()
-    throws Exception
+    public void testNoPlugin() throws Exception
     {
         String src = "There is [[{NoPlugin}] here.";
 
@@ -791,8 +709,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testErroneousHyperlink()
-    throws Exception
+    public void testErroneousHyperlink() throws Exception
     {
         String src = "What if this is the last char [";
 
@@ -800,8 +717,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testErroneousHyperlink2()
-    throws Exception
+    public void testErroneousHyperlink2() throws Exception
     {
         String src = "What if this is the last char [[";
 
@@ -809,8 +725,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testExtraPagename1()
-    throws Exception
+    public void testExtraPagename1() throws Exception
     {
         String src = "Link [test_page]";
 
@@ -820,8 +735,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testExtraPagename2()
-    throws Exception
+    public void testExtraPagename2() throws Exception
     {
         String src = "Link [test.page]";
 
@@ -831,8 +745,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testExtraPagename3()
-    throws Exception
+    public void testExtraPagename3() throws Exception
     {
         String src = "Link [.testpage_]";
 
@@ -842,8 +755,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImages()
-    throws Exception
+    public void testInlineImages() throws Exception
     {
         String src = "Link [test|http://www.ecyrd.com/test.png]";
 
@@ -851,8 +763,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImages2()
-    throws Exception
+    public void testInlineImages2() throws Exception
     {
         String src = "Link [test|http://www.ecyrd.com/test.ppm]";
 
@@ -860,8 +771,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImages3()
-    throws Exception
+    public void testInlineImages3() throws Exception
     {
         String src = "Link [test|http://images.com/testi]";
 
@@ -869,8 +779,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImages4()
-    throws Exception
+    public void testInlineImages4() throws Exception
     {
         String src = "Link [test|http://foobar.jpg]";
 
@@ -879,8 +788,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     // No link text should be just embedded link.
-    public void testInlineImagesLink2()
-    throws Exception
+    public void testInlineImagesLink2() throws Exception
     {
         String src = "Link [http://foobar.jpg]";
 
@@ -888,8 +796,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImagesLink()
-    throws Exception
+    public void testInlineImagesLink() throws Exception
     {
         String src = "Link [http://link.to/|http://foobar.jpg]";
 
@@ -897,8 +804,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testInlineImagesLink3()
-    throws Exception
+    public void testInlineImagesLink3() throws Exception
     {
         String src = "Link [SandBox|http://foobar.jpg]";
 
@@ -908,8 +814,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src) );
     }
 
-    public void testScandicPagename1()
-    throws Exception
+    public void testScandicPagename1() throws Exception
     {
         String src = "Link [\u00C5\u00E4Test]";
 
@@ -919,16 +824,14 @@ public class JSPWikiMarkupParserTest extends TestCase
                      translate(src));
     }
 
-    public void testParagraph()
-    throws Exception
+    public void testParagraph() throws Exception
     {
         String src = "1\n\n2\n\n3";
 
         assertEquals( "<p>1\n</p><p>2\n</p>\n<p>3</p>", translate(src) );
     }
 
-    public void testParagraph2()
-    throws Exception
+    public void testParagraph2() throws Exception
     {
         String src = "[WikiEtiquette]\r\n\r\n[Find page]";
 
@@ -938,8 +841,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       "<p><a class=\"wikipage\" href=\"/Wiki.jsp?page=FindPage\">Find page</a></p>", translate(src) );
     }
 
-    public void testParagraph3()
-    throws Exception
+    public void testParagraph3() throws Exception
     {
         String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
 
@@ -947,8 +849,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testParagraph4()
-    throws Exception
+    public void testParagraph4() throws Exception
     {
         String src = "\r\n[Recent Changes]\\\\\r\n[WikiEtiquette]\r\n\r\n[Find pages|FindPage]\\\\\r\n[Unused pages|UnusedPages]";
 
@@ -1004,48 +905,42 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testLinebreak()
-    throws Exception
+    public void testLinebreak() throws Exception
     {
         String src = "1\\\\2";
 
         assertEquals( "1<br />2", translate(src) );
     }
 
-    public void testLinebreakEscape()
-    throws Exception
+    public void testLinebreakEscape() throws Exception
     {
         String src = "1~\\\\2";
 
         assertEquals( "1\\\\2", translate(src) );
     }
 
-    public void testLinebreakClear()
-    throws Exception
+    public void testLinebreakClear() throws Exception
     {
         String src = "1\\\\\\2";
 
         assertEquals( "1<br clear=\"all\" />2", translate(src) );
     }
 
-    public void testTT()
-    throws Exception
+    public void testTT() throws Exception
     {
         String src = "1{{2345}}6";
 
         assertEquals( "1<tt>2345</tt>6", translate(src) );
     }
 
-    public void testTTAcrossLines()
-    throws Exception
+    public void testTTAcrossLines() throws Exception
     {
         String src = "1{{\n2345\n}}6";
 
         assertEquals( "1<tt>\n2345\n</tt>6", translate(src) );
     }
 
-    public void testTTLinks()
-    throws Exception
+    public void testTTLinks() throws Exception
     {
         String src = "1{{\n2345\n[a link]\n}}6";
 
@@ -1054,64 +949,56 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "1<tt>\n2345\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=ALink\">a link</a>\n</tt>6", translate(src) );
     }
 
-    public void testPre()
-    throws Exception
+    public void testPre() throws Exception
     {
         String src = "1{{{2345}}}6";
 
         assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">2345</span>6", translate(src) );
     }
 
-    public void testPre2()
-    throws Exception
+    public void testPre2() throws Exception
     {
         String src = "1 {{{ {{{ 2345 }}} }}} 6";
 
         assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 </span> }}} 6", translate(src) );
     }
 
-    public void testPre3()
-    throws Exception
+    public void testPre3() throws Exception
     {
         String src = "foo\n\nbar{{{2345}}}6";
 
         assertEquals( "<p>foo\n</p><p>bar<span style=\"font-family:monospace; white-space:pre;\">2345</span>6</p>", translate(src) );
     }
 
-    public void testPreEscape()
-    throws Exception
+    public void testPreEscape() throws Exception
     {
         String src = "1~{{{2345}}}6";
 
         assertEquals( "1{{{2345}}}6", translate(src) );
     }
 
-    public void testPreEscape2()
-    throws Exception
+    public void testPreEscape2() throws Exception
     {
         String src = "1{{{{{{2345~}}}}}}6";
 
         assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\">{{{2345}}}</span>6", translate(src) );
     }
 
-    public void testPreEscape3()
-    throws Exception
+    public void testPreEscape3() throws Exception
     {
         String src = "1 {{{ {{{ 2345 ~}}} }}} 6";
 
         assertEquals( "1 <span style=\"font-family:monospace; white-space:pre;\"> {{{ 2345 }}} </span> 6", translate(src) );
     }
 
-    public void testPreEscape4()
-    throws Exception
+    public void testPreEscape4() throws Exception
     {
         String src = "1{{{ {{{2345~}} }}}6";
 
         assertEquals( "1<span style=\"font-family:monospace; white-space:pre;\"> {{{2345~}} </span>6", translate(src) );
     }
 
-    public void testPreEscape5()
-    throws Exception
+    public void testPreEscape5() throws Exception
     {
         String src = "1{{{ ~ }}}6";
 
@@ -1119,32 +1006,28 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testHTMLInPre()
-    throws Exception
+    public void testHTMLInPre() throws Exception
     {
         String src = "1\n{{{ <b> }}}";
 
         assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate(src) );
     }
 
-    public void testCamelCaseInPre()
-    throws Exception
+    public void testCamelCaseInPre() throws Exception
     {
         String src = "1\n{{{ CamelCase }}}";
 
         assertEquals( "1\n<pre> CamelCase </pre>", translate(src) );
     }
 
-    public void testPreWithLines()
-    throws Exception
+    public void testPreWithLines() throws Exception
     {
         String src = "1\r\n{{{\r\nZippadii\r\n}}}";
 
         assertEquals( "1\n<pre>\nZippadii\n</pre>", translate(src) );
     }
 
-    public void testList1()
-    throws Exception
+    public void testList1() throws Exception
     {
         String src = "A list:\n* One\n* Two\n* Three\n";
 
@@ -1160,8 +1043,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      * Three
      </pre>
      */
-    public void testMultilineList1()
-    throws Exception
+    public void testMultilineList1() throws Exception
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
 
@@ -1169,8 +1051,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testMultilineList2()
-    throws Exception
+    public void testMultilineList2() throws Exception
     {
         String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
 
@@ -1178,24 +1059,21 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHTML()
-    throws Exception
+    public void testHTML() throws Exception
     {
         String src = "<b>Test</b>";
 
         assertEquals( "&lt;b&gt;Test&lt;/b&gt;", translate(src) );
     }
 
-    public void testHTML2()
-    throws Exception
+    public void testHTML2() throws Exception
     {
         String src = "<p>";
 
         assertEquals( "&lt;p&gt;", translate(src) );
     }
 
-    public void testHTMLWhenAllowed()
-    throws Exception
+    public void testHTMLWhenAllowed() throws Exception
     {
         String src = "<p>";
 
@@ -1210,8 +1088,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "<p>", out );
     }
 
-    public void testHTMLWhenAllowedPre()
-    throws Exception
+    public void testHTMLWhenAllowedPre() throws Exception
     {
         String src = "{{{ <br /> }}}";
 
@@ -1229,56 +1106,49 @@ public class JSPWikiMarkupParserTest extends TestCase
     /*
     // This test is not really needed anymore: the JDOM output mechanism
     // handles attribute and element content escaping properly.
-    public void testQuotes()
-    throws Exception
+    public void testQuotes() throws Exception
     {
         String src = "\"Test\"\"";
 
         assertEquals( "&quot;Test&quot;&quot;", translate(src) );
     }
     */
-    public void testHTMLEntities()
-    throws Exception
+    public void testHTMLEntities() throws Exception
     {
         String src = "& &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&";
 
         assertEquals( "&amp; &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&amp;", translate(src) );
     }
 
-    public void testItalicAcrossLinebreak()
-    throws Exception
+    public void testItalicAcrossLinebreak() throws Exception
     {
         String src="''This is a\ntest.''";
 
         assertEquals( "<i>This is a\ntest.</i>", translate(src) );
     }
 
-    public void testBoldAcrossLinebreak()
-    throws Exception
+    public void testBoldAcrossLinebreak() throws Exception
     {
         String src="__This is a\ntest.__";
 
         assertEquals( "<b>This is a\ntest.</b>", translate(src) );
     }
 
-    public void testBoldAcrossParagraph()
-    throws Exception
+    public void testBoldAcrossParagraph() throws Exception
     {
         String src="__This is a\n\ntest.__";
 
         assertEquals( "<p><b>This is a\n</b></p><p><b>test.</b></p>", translate(src) );
     }
 
-    public void testBoldItalic()
-    throws Exception
+    public void testBoldItalic() throws Exception
     {
         String src="__This ''is'' a test.__";
 
         assertEquals( "<b>This <i>is</i> a test.</b>", translate(src) );
     }
 
-    public void testFootnote1()
-    throws Exception
+    public void testFootnote1() throws Exception
     {
         String src="Footnote[1]";
 
@@ -1286,8 +1156,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testFootnote2()
-    throws Exception
+    public void testFootnote2() throws Exception
     {
         String src="[#2356] Footnote.";
 
@@ -1297,8 +1166,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     /** Check an reported error condition where empty list items could cause crashes */
 
-    public void testEmptySecondLevelList()
-    throws Exception
+    public void testEmptySecondLevelList() throws Exception
     {
         String src="A\n\n**\n\nB";
 
@@ -1307,8 +1175,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testEmptySecondLevelList2()
-    throws Exception
+    public void testEmptySecondLevelList2() throws Exception
     {
         String src="A\n\n##\n\nB";
 
@@ -1342,8 +1209,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  (by Mahlen Morris).
      */
 
-    public void testMixedList()
-    throws Exception
+    public void testMixedList() throws Exception
     {
         String src="*Item A\n##Numbered 1\n##Numbered 2\n*Item B\n";
 
@@ -1364,8 +1230,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  Like testMixedList() but the list types have been reversed.
      */
 
-    public void testMixedList2()
-    throws Exception
+    public void testMixedList2() throws Exception
     {
         String src="#Item A\n**Numbered 1\n**Numbered 2\n#Item B\n";
 
@@ -1407,8 +1272,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  
      */
 
-    public void testMixedListOnSameLevel()
-    throws Exception
+    public void testMixedListOnSameLevel() throws Exception
     {
         String src="* bullet A\n** bullet A_1\n*# number A_1\n* bullet B\n";
 
@@ -1455,8 +1319,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  
      */
 
-    public void testMixedListOnSameLevel2()
-    throws Exception
+    public void testMixedListOnSameLevel2() throws Exception
     {
         String src="* bullet A\n** bullet A_1\n## number A_1\n* bullet B\n";
 
@@ -1502,8 +1365,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  
      */
 
-    public void testMixedListOnSameLevel3()
-    throws Exception
+    public void testMixedListOnSameLevel3() throws Exception
     {
         String src="* bullet 1\n## number 2\n** bullet 3\n## number 4\n* bullet 5\n";
 
@@ -1545,8 +1407,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  
      */
 
-    public void testMixedListOnSameLevel4()
-    throws Exception
+    public void testMixedListOnSameLevel4() throws Exception
     {
         String src="# number 1\n** bullet 2\n## number 3\n** bullet 4\n# number 5\n";
 
@@ -1567,8 +1428,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       result );
     }
 
-    public void testNestedList()
-    throws Exception
+    public void testNestedList() throws Exception
     {
         String src="*Item A\n**Numbered 1\n**Numbered 2\n*Item B\n";
 
@@ -1586,8 +1446,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       result );
     }
 
-    public void testNestedList2()
-    throws Exception
+    public void testNestedList2() throws Exception
     {
         String src="*Item A\n**Numbered 1\n**Numbered 2\n***Numbered3\n*Item B\n";
 
@@ -1608,40 +1467,35 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testPluginInsert()
-    throws Exception
+    public void testPluginInsert() throws Exception
     {
         String src="[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=test}]";
 
         assertEquals( "test", translate(src) );
     }
 
-    public void testPluginHTMLInsert()
-    throws Exception
+    public void testPluginHTMLInsert() throws Exception
     {
         String src="[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text='<b>Foo</b>'}]";
 
         assertEquals( "<b>Foo</b>", translate(src) );
     }
 
-    public void testPluginNoInsert()
-    throws Exception
+    public void testPluginNoInsert() throws Exception
     {
         String src="[{SamplePlugin text=test}]";
 
         assertEquals( "test", translate(src) );
     }
 
-    public void testPluginInsertJS()
-    throws Exception
+    public void testPluginInsertJS() throws Exception
     {
         String src="Today: [{INSERT JavaScriptPlugin}] ''day''.";
 
         assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <i>day</i>.", translate(src) );
     }
 
-    public void testShortPluginInsert()
-    throws Exception
+    public void testShortPluginInsert() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text=test}]";
 
@@ -1651,32 +1505,28 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Test two plugins on same row.
      */
-    public void testShortPluginInsert2()
-    throws Exception
+    public void testShortPluginInsert2() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text=test}] [{INSERT SamplePlugin WHERE text=test2}]";
 
         assertEquals( "test test2", translate(src) );
     }
 
-    public void testPluginQuotedArgs()
-    throws Exception
+    public void testPluginQuotedArgs() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text='test me now'}]";
 
         assertEquals( "test me now", translate(src) );
     }
 
-    public void testPluginDoublyQuotedArgs()
-    throws Exception
+    public void testPluginDoublyQuotedArgs() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
         assertEquals( "test 'me too' now", translate(src) );
     }
 
-    public void testPluginQuotedArgs2()
-    throws Exception
+    public void testPluginQuotedArgs2() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text=foo}] [{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
 
@@ -1686,8 +1536,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Plugin output must not be parsed as Wiki text.
      */
-    public void testPluginWikiText()
-    throws Exception
+    public void testPluginWikiText() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text=PageContent}]";
 
@@ -1697,40 +1546,35 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Nor should plugin input be interpreted as wiki text.
      */
-    public void testPluginWikiText2()
-    throws Exception
+    public void testPluginWikiText2() throws Exception
     {
         String src="[{INSERT SamplePlugin WHERE text='----'}]";
 
         assertEquals( "----", translate(src) );
     }
 
-    public void testMultilinePlugin1()
-    throws Exception
+    public void testMultilinePlugin1() throws Exception
     {
         String src="Test [{INSERT SamplePlugin WHERE\n text=PageContent}]";
 
         assertEquals( "Test PageContent", translate(src) );
     }
 
-    public void testMultilinePluginBodyContent()
-    throws Exception
+    public void testMultilinePluginBodyContent() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n123\n456\n}]";
 
         assertEquals( "Test PageContent (123+456+)", translate(src) );
     }
 
-    public void testMultilinePluginBodyContent2()
-    throws Exception
+    public void testMultilinePluginBodyContent2() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\ntext=PageContent\n\n\n123\n456\n}]";
 
         assertEquals( "Test PageContent (+123+456+)", translate(src) );
     }
 
-    public void testMultilinePluginBodyContent3()
-    throws Exception
+    public void testMultilinePluginBodyContent3() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\n123\n456\n}]";
 
@@ -1740,8 +1584,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Has an extra space after plugin name.
      */
-    public void testMultilinePluginBodyContent4()
-    throws Exception
+    public void testMultilinePluginBodyContent4() throws Exception
     {
         String src="Test [{INSERT SamplePlugin \n\n123\n456\n}]";
 
@@ -1751,56 +1594,49 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Check that plugin end is correctly recognized.
      */
-    public void testPluginEnd()
-    throws Exception
+    public void testPluginEnd() throws Exception
     {
         String src="Test [{INSERT SamplePlugin text=']'}]";
 
         assertEquals( "Test ]", translate(src) );
     }
 
-    public void testPluginEnd2()
-    throws Exception
+    public void testPluginEnd2() throws Exception
     {
         String src="Test [{INSERT SamplePlugin text='a[]+b'}]";
 
         assertEquals( "Test a[]+b", translate(src) );
     }
 
-    public void testPluginEnd3()
-    throws Exception
+    public void testPluginEnd3() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b\n}]";
 
         assertEquals( "Test  (a[]+b+)", translate(src) );
     }
 
-    public void testPluginEnd4()
-    throws Exception
+    public void testPluginEnd4() throws Exception
     {
         String src="Test [{INSERT SamplePlugin text='}'}]";
 
         assertEquals( "Test }", translate(src) );
     }
 
-    public void testPluginEnd5()
-    throws Exception
+    public void testPluginEnd5() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}]";
 
         assertEquals( "Test  (a[]+b{}+Glob.+)", translate(src) );
     }
 
-    public void testPluginEnd6()
-    throws Exception
+    public void testPluginEnd6() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}}]";
 
         assertEquals( "Test  (a[]+b{}+Glob.+})", translate(src) );
     }
 
-    public void testNestedPlugin1()
-        throws Exception
+    public void testNestedPlugin1() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\n[{SamplePlugin}]\nGlob.\n}}]";
 
@@ -1808,8 +1644,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testNestedPlugin2()
-        throws Exception
+    public void testNestedPlugin2() throws Exception
     {
         String src="[{SET foo='bar'}]Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
 
@@ -1819,24 +1654,21 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     //  FIXME: I am not entirely certain if this is the right result
     //  Perhaps some sort of an error should be checked?
-    public void testPluginNoEnd()
-    throws Exception
+    public void testPluginNoEnd() throws Exception
     {
         String src="Test [{INSERT SamplePlugin\n\na+b{}\nGlob.\n}";
 
         assertEquals( "Test {INSERT SamplePlugin\n\na+b{}\nGlob.\n}", translate(src) );
     }
 
-    public void testVariableInsert()
-    throws Exception
+    public void testVariableInsert() throws Exception
     {
         String src="[{$pagename}]";
 
         assertEquals( PAGE_NAME+"", translate(src) );
     }
 
-    public void testTable1()
-    throws Exception
+    public void testTable1() throws Exception
     {
         String src="|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
 
@@ -1848,8 +1680,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testTable2()
-    throws Exception
+    public void testTable2() throws Exception
     {
         String src="||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
 
@@ -1861,8 +1692,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testTable3()
-    throws Exception
+    public void testTable3() throws Exception
     {
         String src="|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
 
@@ -1873,8 +1703,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testTable4()
-    throws Exception
+    public void testTable4() throws Exception
     {
         String src="|a\nbc";
 
@@ -1889,8 +1718,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      * Tests BugTableHeaderNotXHMTLCompliant
      * @throws Exception
      */
-    public void testTable5()
-    throws Exception
+    public void testTable5() throws Exception
     {
         String src="Testtable\n||header|cell\n\n|cell||header";
 
@@ -1903,8 +1731,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testTableLink()
-    throws Exception
+    public void testTableLink() throws Exception
     {
         String src="|Cell 1| Cell 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
 
@@ -1917,8 +1744,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testTableLinkEscapedBar()
-    throws Exception
+    public void testTableLinkEscapedBar() throws Exception
     {
         String src="|Cell 1| Cell~| 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
 
@@ -1931,8 +1757,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testDescription()
-    throws Exception
+    public void testDescription() throws Exception
     {
         String src=";:Foo";
 
@@ -1940,8 +1765,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testDescription2()
-    throws Exception
+    public void testDescription2() throws Exception
     {
         String src=";Bar:Foo";
 
@@ -1949,8 +1773,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testDescription3()
-    throws Exception
+    public void testDescription3() throws Exception
     {
         String src=";:";
 
@@ -1958,8 +1781,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testDescription4()
-    throws Exception
+    public void testDescription4() throws Exception
     {
         String src=";Bar:Foo :-)";
 
@@ -1967,8 +1789,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testDescription5()
-    throws Exception
+    public void testDescription5() throws Exception
     {
         String src=";Bar:Foo :-) ;-) :*]";
 
@@ -1977,8 +1798,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testRuler()
-    throws Exception
+    public void testRuler() throws Exception
     {
         String src="----";
 
@@ -1986,8 +1806,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testRulerCombo()
-    throws Exception
+    public void testRulerCombo() throws Exception
     {
         String src="----Foo";
 
@@ -1995,8 +1814,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testRulerCombo2()
-    throws Exception
+    public void testRulerCombo2() throws Exception
     {
         String src="Bar----Foo";
 
@@ -2004,8 +1822,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testShortRuler1()
-    throws Exception
+    public void testShortRuler1() throws Exception
     {
         String src="-";
 
@@ -2013,8 +1830,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testShortRuler2()
-    throws Exception
+    public void testShortRuler2() throws Exception
     {
         String src="--";
 
@@ -2022,8 +1838,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testShortRuler3()
-    throws Exception
+    public void testShortRuler3() throws Exception
     {
         String src="---";
 
@@ -2031,8 +1846,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testLongRuler()
-    throws Exception
+    public void testLongRuler() throws Exception
     {
         String src="------";
 
@@ -2040,8 +1854,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeading1()
-    throws Exception
+    public void testHeading1() throws Exception
     {
         String src="!Hello\nThis is a test";
 
@@ -2049,8 +1862,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeading2()
-    throws Exception
+    public void testHeading2() throws Exception
     {
         String src="!!Hello, testing 1, 2, 3";
 
@@ -2058,8 +1870,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeading3()
-    throws Exception
+    public void testHeading3() throws Exception
     {
         String src="!!!Hello there, how are you doing?";
 
@@ -2067,8 +1878,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeadingHyperlinks()
-    throws Exception
+    public void testHeadingHyperlinks() throws Exception
     {
         String src="!!![Hello]";
 
@@ -2076,8 +1886,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeadingHyperlinks2()
-    throws Exception
+    public void testHeadingHyperlinks2() throws Exception
     {
         String src="!!![Hello|http://www.google.com/]";
 
@@ -2085,8 +1894,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testHeadingHyperlinks3()
-    throws Exception
+    public void testHeadingHyperlinks3() throws Exception
     {
         String src="![Hello|http://www.google.com/?p=a&c=d]";
 
@@ -2097,8 +1905,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  in 2.0.0, this one throws OutofMemoryError.
      */
-    public void testBrokenPageText()
-    throws Exception
+    public void testBrokenPageText() throws Exception
     {
         String translation = translate( brokenPageText );
 
@@ -2108,8 +1915,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Shortened version of the previous one.
      */
-    public void testBrokenPageTextShort()
-    throws Exception
+    public void testBrokenPageTextShort() throws Exception
     {
         String src = "{{{\ncode.}}\n";
 
@@ -2119,16 +1925,14 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *  Shortened version of the previous one.
      */
-    public void testBrokenPageTextShort2()
-    throws Exception
+    public void testBrokenPageTextShort2() throws Exception
     {
         String src = "{{{\ncode.}\n";
 
         assertEquals( "<pre>\ncode.}\n</pre>", translate(src) );
     }
 
-    public void testExtraExclamation()
-        throws Exception
+    public void testExtraExclamation() throws Exception
     {
         String src = "Hello!";
 
@@ -2180,8 +1984,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  ACL tests.
      */
     /*
-     public void testSimpleACL1()
-     throws Exception
+     public void testSimpleACL1() throws Exception
      {
      String src = "Foobar.[{ALLOW view JanneJalkanen}]";
 
@@ -2199,8 +2002,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      assertFalse( "no edit", inArray( acl.findPrincipals( new PagePermission( PAGE_NAME, "edit") ), prof ) );
      }
 
-     public void testSimpleACL2()
-     throws Exception
+     public void testSimpleACL2() throws Exception
      {
      String src = "Foobar.[{ALLOW view JanneJalkanen}]\n"+
      "[{ALLOW edit JanneJalkanen, SuloVilen}]";
@@ -2246,8 +2048,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     /**
      *   Metadata tests
      */
-    public void testSet1()
-    throws Exception
+    public void testSet1() throws Exception
     {
         String src = "Foobar.[{SET name=foo}]";
 
@@ -2260,8 +2061,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "foo", p.getAttribute("name") );
     }
 
-    public void testSet2()
-    throws Exception
+    public void testSet2() throws Exception
     {
         String src = "Foobar.[{SET name = foo}]";
 
@@ -2274,8 +2074,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "foo", p.getAttribute("name") );
     }
 
-    public void testSet3()
-    throws Exception
+    public void testSet3() throws Exception
     {
         String src = "Foobar.[{SET name= Janne Jalkanen}]";
 
@@ -2288,8 +2087,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "Janne Jalkanen", p.getAttribute("name") );
     }
 
-    public void testSet4()
-    throws Exception
+    public void testSet4() throws Exception
     {
         String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
 
@@ -2303,8 +2101,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "Janne Jalkanen", p.getAttribute("too") );
     }
 
-    public void testSetHTML()
-    throws Exception
+    public void testSetHTML() throws Exception
     {
         String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
 
@@ -2322,8 +2119,7 @@ public class JSPWikiMarkupParserTest extends TestCase
      *  Test collection of links.
      */
 
-    public void testCollectingLinks()
-    throws Exception
+    public void testCollectingLinks() throws Exception
     {
         LinkCollector coll = new LinkCollector();
         String src = "[Test]";
@@ -2343,8 +2139,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         assertEquals( "wrong link", "Test", links.iterator().next() );
     }
 
-    public void testCollectingLinks2()
-    throws Exception
+    public void testCollectingLinks2() throws Exception
     {
         LinkCollector coll = new LinkCollector();
         String src = "["+PAGE_NAME+"/Test.txt]";
@@ -2366,8 +2161,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       links.iterator().next() );
     }
 /*
-    public void testCollectingLinksAttachment()
-    throws Exception
+    public void testCollectingLinksAttachment() throws Exception
     {
         // First, make an attachment.
 
@@ -2410,72 +2204,63 @@ public class JSPWikiMarkupParserTest extends TestCase
         }
     }
 */
-    public void testDivStyle1()
-    throws Exception
+    public void testDivStyle1() throws Exception
     {
         String src = "%%foo\ntest\n%%\n";
 
         assertEquals( "<div class=\"foo\">\ntest\n</div>\n", translate(src) );
     }
 
-    public void testDivStyle2()
-    throws Exception
+    public void testDivStyle2() throws Exception
     {
         String src = "%%(foo:bar;)\ntest\n%%\n";
 
         assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate(src) );
     }
 
-    public void testSpanStyle1()
-    throws Exception
+    public void testSpanStyle1() throws Exception
     {
         String src = "%%foo test%%\n";
 
         assertEquals( "<span class=\"foo\">test</span>\n", translate(src) );
     }
 
-    public void testSpanStyle2()
-    throws Exception
+    public void testSpanStyle2() throws Exception
     {
         String src = "%%(foo:bar;)test%%\n";
 
         assertEquals( "<span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
-    public void testSpanStyle3()
-    throws Exception
+    public void testSpanStyle3() throws Exception
     {
         String src = "Johan %%(foo:bar;)test%%\n";
 
         assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
-    public void testSpanStyle4()
-    throws Exception
+    public void testSpanStyle4() throws Exception
     {
         String src = "Johan %%(foo:bar;)test/%\n";
 
         assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate(src) );
     }
 
-    public void testSpanEscape()
-    throws Exception
+    public void testSpanEscape() throws Exception
     {
         String src = "~%%foo test~%%\n";
 
         assertEquals( "%%foo test%%\n", translate(src) );
     }
 
-    public void testSpanNested()
-    throws Exception
+    public void testSpanNested() throws Exception
     {
         String src = "Johan %%(color: rgb(1,2,3);)test%%\n";
 
         assertEquals( "Johan <span style=\"color: rgb(1,2,3);\">test</span>\n", translate(src) );
     }
 
-    public void testSpanStyleTable()
-    throws Exception
+    public void testSpanStyleTable() throws Exception
     {
         String src = "|%%(foo:bar;)test%%|no test\n";
 
@@ -2483,8 +2268,7 @@ public class JSPWikiMarkupParserTest extends TestCase
                       translate(src) );
     }
 
-    public void testSpanJavascript()
-    throws Exception
+    public void testSpanJavascript() throws Exception
     {
         String src = "%%(visibility: hidden; background-image:url(javascript:alert('X')))%%\nTEST";
 
@@ -2493,32 +2277,28 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     // FIXME: This test must be enabled later on!
     /*
-    public void testSpanJavascript2()
-    throws Exception
+    public void testSpanJavascript2() throws Exception
     {
         String src = "%%(visibility: hidden; background&#09;-image:url(j&#000013;avas&#99;ript:'url()';alert('X');)%%\nTEST";
 
         assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate(src) );
     }
     */
-    public void testHTMLEntities1()
-    throws Exception
+    public void testHTMLEntities1() throws Exception
     {
         String src = "Janne&apos;s test";
 
         assertEquals( "Janne&apos;s test", translate(src) );
     }
 
-    public void testHTMLEntities2()
-    throws Exception
+    public void testHTMLEntities2() throws Exception
     {
         String src = "&Auml;";
 
         assertEquals( "&Auml;", translate(src) );
     }
 
-    public void testBlankEscape()
-    throws Exception
+    public void testBlankEscape() throws Exception
     {
         String src = "H2%%sub 2%%~ O";
 
@@ -2526,24 +2306,21 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
 
-    public void testEmptyBold()
-    throws Exception
+    public void testEmptyBold() throws Exception
     {
         String src = "____";
 
         assertEquals( "<b></b>", translate(src) );
     }
 
-    public void testEmptyItalic()
-    throws Exception
+    public void testEmptyItalic() throws Exception
     {
         String src = "''''";
 
         assertEquals( "<i></i>", translate(src) );
     }
 
-    public void testRenderingSpeed1()
-       throws Exception
+    public void testRenderingSpeed1() throws Exception
     {
         Benchmark sw = new Benchmark();
         sw.start();
@@ -2557,32 +2334,28 @@ public class JSPWikiMarkupParserTest extends TestCase
         System.out.println("100 page renderings: "+sw+" ("+sw.toString(100)+" renderings/second)");
     }
 
-    public void testPunctuatedWikiNames()
-        throws Exception
+    public void testPunctuatedWikiNames() throws Exception
     {
         String src = "[-phobous]";
 
         assertEquals( "<a class=\"createpage\" href=\"/Edit.jsp?page=-phobous\" title=\"Create &quot;-phobous&quot;\">-phobous</a>", translate(src) );
     }
 
-    public void testPunctuatedWikiNames2()
-        throws Exception
+    public void testPunctuatedWikiNames2() throws Exception
     {
         String src = "[?phobous]";
 
         assertEquals( "<a class=\"createpage\" href=\"/Edit.jsp?page=Phobous\" title=\"Create &quot;Phobous&quot;\">?phobous</a>", translate(src) );
     }
 
-    public void testPunctuatedWikiNames3()
-        throws Exception
+    public void testPunctuatedWikiNames3() throws Exception
     {
         String src = "[Brightness (apical)]";
 
         assertEquals( "<a class=\"createpage\" href=\"/Edit.jsp?page=Brightness%20%28apical%29\" title=\"Create &quot;Brightness (apical)&quot;\">Brightness (apical)</a>", translate(src) );
     }
 
-    public void testDeadlySpammer()
-        throws Exception
+    public void testDeadlySpammer() throws Exception
     {
         String deadlySpammerText = "zzz <a href=\"http://ring1.gmum.net/frog-ringtone.html\">frogringtone</a> zzz http://ring1.gmum.net/frog-ringtone.html[URL=http://ring1.gmum.net/frog-ringtone.html]frog ringtone[/URL] frogringtone<br>";
 

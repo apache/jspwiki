@@ -35,6 +35,7 @@ import java.util.Iterator;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -148,7 +149,16 @@ public class AtomAPIServlet extends HttpServlet
             String pageName = plugin.getNewEntryPage( m_engine, blogid );
             String username = author.getName();
 
-            WikiPage entryPage = m_engine.createPage( WikiName.valueOf( pageName ) );
+            WikiPage entryPage;
+            try
+            {
+                entryPage = m_engine.createPage( WikiName.valueOf( pageName ) );
+            }
+            catch( PageAlreadyExistsException e )
+            {
+                // Should not happen
+                throw new ServletException( e.getMessage() );
+            }
             entryPage.setAuthor( username );
 
             WikiContext context = m_engine.getWikiContextFactory().newViewContext( request, response, entryPage );

@@ -1,4 +1,10 @@
-2009-03-26  Andrew Jaquith <ajaquith AT apache DOT org>
+2009-03-18  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-85
+        
+        * Lots of unit test and bug fixes.
+        
+2009-03-17  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-84
 

@@ -32,11 +32,13 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -168,7 +170,15 @@ public class BugReportHandler
             String pageName = findNextPage( context, title,
                                             (String)params.get( PARAM_PAGE ) );
 
-            WikiPage newPage = context.getEngine().createPage( WikiName.valueOf(pageName) );
+            WikiPage newPage;
+            try
+            {
+                newPage = context.getEngine().createPage( WikiName.valueOf(pageName) );
+            }
+            catch( PageAlreadyExistsException e )
+            {
+                throw new ProviderException( e.getMessage() );
+            }
             WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
 

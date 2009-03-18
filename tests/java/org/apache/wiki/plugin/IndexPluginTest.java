@@ -53,6 +53,7 @@ public class IndexPluginTest extends TestCase
         m_props.load( TestEngine.findTestProperties() );
         m_engine = new TestEngine( m_props );
         m_attManager = m_engine.getAttachmentManager();
+        m_engine.deletePage( "WhatEver" );
         m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.createPage( "WhatEver" ) );
         m_manager = new PluginManager( m_engine, m_props );
     }

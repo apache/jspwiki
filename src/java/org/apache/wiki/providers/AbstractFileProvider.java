@@ -25,6 +25,7 @@ import java.util.*;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -445,7 +446,15 @@ public abstract class AbstractFileProvider
             return null;
         }
 
-        WikiPage p = m_engine.createPage( WikiName.valueOf( page ) );
+        WikiPage p;
+        try
+        {
+            p = m_engine.createPage( WikiName.valueOf( page ) );
+        }
+        catch( PageAlreadyExistsException e )
+        {
+            throw new ProviderException( e.getMessage() );
+        }
         p.setLastModified( new Date(file.lastModified()) );
 
         return p;

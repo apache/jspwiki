@@ -20,21 +20,18 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.render.CreoleRenderer;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 public class CreoleRendererTest extends TestCase
@@ -55,8 +52,9 @@ public class CreoleRendererTest extends TestCase
         m_testEngine.shutdown();
     }
 
-    private String render(String s) throws IOException, ProviderException
+    private String render(String s) throws Exception
     {
+        m_testEngine.deletePage( "TestPage" );
         WikiPage dummyPage = m_testEngine.createPage("TestPage");
         WikiContext ctx = m_testEngine.getWikiContextFactory().newViewContext( dummyPage );
         
