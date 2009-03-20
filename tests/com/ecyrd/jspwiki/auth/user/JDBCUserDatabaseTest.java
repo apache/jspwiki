@@ -413,6 +413,11 @@ public class JDBCUserDatabaseTest extends TestCase
             assertNotNull( profile.getCreated() );
             assertNotNull( profile.getLastModified() );
             assertEquals( profile.getCreated(), profile.getLastModified() );
+            
+            // Make sure we can find it by uid
+            String uid = profile.getUid();
+            assertNotNull( m_db.findByUid( uid ) );
+
         }
         catch( NoSuchPrincipalException e )
         {

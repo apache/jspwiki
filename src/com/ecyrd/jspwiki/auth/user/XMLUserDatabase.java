@@ -546,6 +546,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
         }
         
+        setAttribute( user, UID, profile.getUid() );
         setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
@@ -623,7 +624,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
                 
                 // Parse basic attributes
                 profile.setUid( user.getAttribute( UID ) );
-                if ( profile.getUid() == null )
+                if ( profile.getUid() == null || profile.getUid().length() == 0 )
                 {
                     profile.setUid( generateUid( this ) );
                 }

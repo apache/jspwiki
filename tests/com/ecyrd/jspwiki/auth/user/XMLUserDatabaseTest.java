@@ -327,6 +327,10 @@ public class XMLUserDatabaseTest extends TestCase
           profile = m_db.findByEmail("user@example.com");
           assertEquals("user@example.com", profile.getEmail());
           assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
+          
+          // Make sure we can find it by uid
+          String uid = profile.getUid();
+          assertNotNull( m_db.findByUid( uid ) );
       }
       catch (NoSuchPrincipalException e)
       {
