@@ -66,7 +66,7 @@ public interface WikiPage
     public String getName();
     
     /**
-     * Returns the full, qualified, name of the WikiPage that includes the wiki name.
+     * Returns the full, qualified, name of the WikiPage that includes the wiki space.
      * Used by the {@link org.apache.wiki.ui.stripes.HandlerInfo} class and
      * {@link org.apache.wiki.ui.stripes.HandlerPermission} annotations.
      * @return the qualified page name, for example <code>mywiki:Main</code>

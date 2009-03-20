@@ -1,3 +1,13 @@
+2009-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-86
+
+        * Fixed bug in XMLUserDatabase that was preventing UIDs from being
+        saved, which generated tons of NPEs afterwards. Added unit tests
+        to check for correct saving of UIDs. Tightened input filtering on
+        user profile fields to prohibit more characters. [Forward-ported
+        from 2.8.2-svn-14].
+        
 2009-03-18  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-85
