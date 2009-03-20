@@ -1,5 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag" %>
+<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.ecyrd.jspwiki.attachment.Attachment" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -38,7 +40,15 @@
         log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
 
         wiki.deletePage( pagereq );
-        response.sendRedirect(wiki.getViewURL(redirTo));
+
+        FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
+        if( trail != null )
+        {
+            trail.removeItem( pagereq );
+            session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
+        }
+
+        response.sendRedirect(wikiContext.getURL( WikiContext.VIEW, pagereq ) );
         return;
     }
     else if( delete != null )

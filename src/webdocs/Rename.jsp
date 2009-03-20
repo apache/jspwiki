@@ -1,5 +1,7 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="com.ecyrd.jspwiki.*" %>
+<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag" %>
+<%@ page import="com.ecyrd.jspwiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="/WEB-INF/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -37,17 +39,21 @@
         {
             String renamedTo = wiki.renamePage(wikiContext, renameFrom, renameTo, changeReferences);
 
+            FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
+            if( trail != null )
+            {
+                trail.removeItem( renameFrom );
+                session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
+            }
+
             log.info("Page successfully renamed to '"+renamedTo+"'");
 
             response.sendRedirect( wikiContext.getURL( WikiContext.VIEW, renamedTo ) );
             return;
         }
-        else
-        {
-            wikiSession.addMessage("rename", rb.getString("rename.empty"));
+       wikiSession.addMessage("rename", rb.getString("rename.empty"));
 
-            log.info("Page rename request failed because new page name was left blank");
-        }
+      log.info("Page rename request failed because new page name was left blank");
     }
     catch (WikiException e)
     {
