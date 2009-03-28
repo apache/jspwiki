@@ -106,10 +106,6 @@
    </filter-mapping>
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/dav/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/RPCU/</url-pattern>
    </filter-mapping>
    <filter-mapping>
@@ -214,11 +210,6 @@
        -->
    </servlet>
 
-   <servlet>
-       <servlet-name>DAVServlet</servlet-name>
-       <servlet-class>org.apache.wiki.dav.WikiDavServlet</servlet-class>
-   </servlet>
-
    <!--
        Attachment exchange handler.
      -->
@@ -282,13 +273,6 @@
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
 
-   <!-- Remove to enable WebDav. EXPERIMENTAL FEATURE!
-   <servlet-mapping>
-       <servlet-name>DAVServlet</servlet-name>
-       <url-pattern>/dav/*</url-pattern>
-   </servlet-mapping>
-   -->
-   
    <servlet-mapping>
        <servlet-name>org.jabsorb.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>

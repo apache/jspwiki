@@ -120,7 +120,7 @@
   <property name="webtests.port"     value="10024" />
   <property name="webtests.shutdown" value="19041" />
   <property name="webtests.temp"     value="${java.io.tmpdir}/webtests" />
-  <property name="selenium-rc.jar"   value="${tests}/lib/selenium-server-1.0-beta1.jar" />
+  <property name="selenium-rc.jar"   value="${tests}/lib/selenium-server-1.0b2.jar" />
 
   <!-- The place where the javadocs are created -->
 
@@ -896,8 +896,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Copy the WEB-INF files -->
       <copy toDir="@{context.dir}/webapp/WEB-INF">
         <fileset dir="etc">
-          <include name="dtd/**" />
-          <include name="commons-logging.properties" />
           <include name="jspwiki.policy" />
         </fileset>
         <fileset dir="${tests}/etc" includes="userdatabase.xml groupdatabase.xml" />
@@ -974,6 +972,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         </classpath>
         <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
         <sysproperty key="log4j.configuration" value="log4j.properties" />
+        <sysproperty key="log4j.debug" value="yesplease" />
         <!--
         <jvmarg value="-Xdebug" />
         <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
@@ -993,7 +992,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <arg line="-htmlSuite" />
         <arg line='"${webtests.browser}"' />
         <arg line='"http://localhost:${webtests.port}"' />
-        <arg line="${basedir}/${webtests.build}/@{context}/selenium/TestSuite.html" />
+        <arg line="${webtests.build}/@{context}/selenium/TestSuite.html" />
         <arg line="${webtests.reports}/@{context}.html" />
       </java>
     </sequential>

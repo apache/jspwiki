@@ -44,7 +44,7 @@ public class WikiRuntimeConfiguration extends RuntimeConfiguration
 {
     public static final String STRIPES_CONFIGURATION = "WikiRuntimeConfiguration";
 
-    private Logger log = LoggerFactory.getLogger(WikiRuntimeConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(WikiRuntimeConfiguration.class);
 
     private WikiEngine m_engine = null;
 

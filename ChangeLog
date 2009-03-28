@@ -1,3 +1,18 @@
+2009-03-28  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-87
+        
+        * tried to make the webtests running again:
+           - removed some remaining DAV stuff from web.xml
+           - correct parameters to log statements in WikiEngine, ClassUtil
+           - build.xml: selenium-server-1.0-beta1.jar => selenium-server-1.0b2.jar
+             and some more cleanup
+           - AdminBeanManager got an extra try catch block for AccessControlException
+             for some reason this exception is thrown when running webtests in jetty
+           - provide a null check in StripesURLConstructor (it looks like initing the Servlet filters
+             in Jetty is different than in Tomcat for example, this is bit of kludge, we should not be
+             dependent on the order of filter initing)             
+        
 2009-03-19  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-86

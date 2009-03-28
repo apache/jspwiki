@@ -78,8 +78,10 @@ public class WikiServletFilter implements Filter
      */
     public void init( FilterConfig config ) throws ServletException
     {
+        log.info( "servlet filter " + this.getClass().getName() + " initializing" );
         ServletContext context = config.getServletContext();
         m_engine = WikiEngine.getInstance( context, null );
+        log.warn( "servlet filter " + this.getClass().getName() + " initialized" );
     }
 
     /**

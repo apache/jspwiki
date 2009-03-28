@@ -22,7 +22,7 @@ Start Tomcat and deploy the test-custom WAR.
 
 Start the Selenium server...
 
-java -jar tests/lib/selenium-server-1.0-beta1.jar -interactive
+java -jar tests/lib/selenium-server-1.0b2.jar -interactive
 
 Open Firefox.
 Set the browser proxy to localhost:4444

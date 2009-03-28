@@ -127,7 +127,7 @@ public class TestContainer
         container.server.addService( dss );
         dss.getDataSource( "jdbc/GroupDatabase" );
         
-        System.out.println( "Configured datasources." );
+        log.error( "Configured datasources." );
 
         // Start the server
         try
@@ -138,10 +138,10 @@ public class TestContainer
         catch( Throwable t )
         {
             t.printStackTrace();
-            System.err.println( t.getMessage() );
+            log.error( t.getMessage() );
             System.exit( 1 );
         }
-        System.out.println( "Started." );
+        log.error( "Started." );
 
     }
 

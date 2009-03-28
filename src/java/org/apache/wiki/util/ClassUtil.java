@@ -291,27 +291,26 @@ public final class ClassUtil
         }
         catch( InstantiationException e )
         {
-            log.info( "Cannot instantiate requested class "+requestedClass, e );
+            log.info( "%1$s %2$s", "Cannot instantiate requested class " + requestedClass, e );
             
             throw new WikiException("Failed to instantiate class "+requestedClass);
         }
         catch (IllegalAccessException e)
         {
-            log.info( "Cannot access requested class "+requestedClass, e );
+            log.info( "%1$s %2$s", "Cannot access requested class " + requestedClass, e );
             
             throw new WikiException("Failed to instantiate class "+requestedClass);
         }
         catch (IllegalArgumentException e)
         {
-            log.info( "Illegal arguments when constructing new object", e );
+            log.info( "%1$s %2$s", "Illegal arguments when constructing new object", e );
             
             throw new WikiException("Failed to instantiate class "+requestedClass);
         }
         catch (InvocationTargetException e)
         {
-            log.info( "You tried to instantiate an abstract class "+requestedClass, e );
-            
-            throw new WikiException("Failed to instantiate class "+requestedClass + ", reason: " + e.getCause());
+            log.info( "%1$s %2$s", "Failed to invoke class " + requestedClass, e.getCause() );
+            throw new WikiException("Failed to invoke class "+requestedClass + ", reason: " + e.getCause());
         }
     }
 

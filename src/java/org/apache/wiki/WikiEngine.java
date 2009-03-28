@@ -601,22 +601,22 @@ public class WikiEngine
         catch( RuntimeException e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.error( "Failed to start managers.", e );
+            log.error( "%1$s %2$s", "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage() );
         }
         catch (ClassNotFoundException e)
         {
-            log.error( "JSPWiki could not start, URLConstructor was not found: ",e );
+            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor was not found: ", e );
             throw new WikiException(e.getMessage());
         }
         catch (InstantiationException e)
         {
-            log.error( "JSPWiki could not start, URLConstructor could not be instantiated: ",e );
+            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor could not be instantiated: ", e );
             throw new WikiException(e.getMessage());
         }
         catch (IllegalAccessException e)
         {
-            log.error( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
+            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor cannot be accessed: ", e );
             throw new WikiException(e.getMessage());
         }
         catch( Exception e )

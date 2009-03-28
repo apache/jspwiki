@@ -21,6 +21,7 @@
 package org.apache.wiki.ui.admin;
 
 import java.lang.management.ManagementFactory;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public class AdminBeanManager implements WikiEventListener
 
     private MBeanServer m_mbeanServer = null;
 
-    private static Logger log = LoggerFactory.getLogger(AdminBeanManager.class);
+    private static final Logger log = LoggerFactory.getLogger(AdminBeanManager.class);
 
     public AdminBeanManager( WikiEngine engine )
     {
@@ -145,6 +146,11 @@ public class AdminBeanManager implements WikiEventListener
         catch( NullPointerException e )
         {
             log.error("Evil NPE occurred",e);
+        }
+        catch( AccessControlException e )
+        {
+            //FIXME catching this unchecked exception seems necessary when running webtests in Jetty 
+            log.error( "Evil AccessControlException occurred", e );
         }
     }
 

@@ -174,14 +174,17 @@ public class StripesURLConstructor extends DefaultURLConstructor
 
         // Load the Stripes UrlBindingFactory
         Configuration stripesConfig =(Configuration)engine.getServletContext().getAttribute( WikiRuntimeConfiguration.STRIPES_CONFIGURATION );
-        ActionResolver resolver = stripesConfig.getActionResolver();
-        if ( resolver instanceof AnnotatedClassActionResolver )
+        if( stripesConfig != null )
         {
-            m_urlBindingFactory = UrlBindingFactory.getInstance();
-        }
-        else
-        {
-            throw new RuntimeException( "Stripes ActionResolver was not AnnotatedClassActionResolver! Fatal error." );
+            ActionResolver resolver = stripesConfig.getActionResolver();
+            if( resolver instanceof AnnotatedClassActionResolver )
+            {
+                m_urlBindingFactory = UrlBindingFactory.getInstance();
+            }
+            else
+            {
+                throw new RuntimeException( "Stripes ActionResolver was not AnnotatedClassActionResolver! Fatal error." );
+            }
         }
 
         // Load the URL patterns from the config file
