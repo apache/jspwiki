@@ -197,7 +197,6 @@ public class UploadActionBean extends AbstractPageActionBean
             att = engine.getContentManager().addPage( path, contentType );
             created = true;
         }
-        att.setSize( contentLength );
 
         if( user != null )
         {

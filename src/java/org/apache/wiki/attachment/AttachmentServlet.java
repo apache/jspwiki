@@ -744,7 +744,6 @@ public class AttachmentServlet extends HttpServlet
             }
             created = true;
         }
-        att.setSize( contentLength );
 
         //
         //  Check if we're allowed to do this?

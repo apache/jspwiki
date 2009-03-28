@@ -290,13 +290,13 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Discards all unsaved modifications made to this repository.
-     *  
-     *  @throws RepositoryException 
+     *  Discards all unsaved modifications made to this repository and releases
+     *  the Session.  Any calls after this will allocate a new Session. But
+     *  that's okay, since an unreleased Session will keep accumulating memory.
      */
-    public void discardModifications() throws RepositoryException
+    public void release()
     {
-        m_sessionManager.getSession().refresh( false );
+        m_sessionManager.releaseSession();
     }
         
     /*
@@ -904,7 +904,7 @@ public class ContentManager implements WikiEventListener
             String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
 
             WikiEngine engine = context.getEngine();
-            WikiPage page = context.getPage();
+            JCRWikiPage page = (JCRWikiPage)context.getPage();
 
             // Set the last-modified timestamp
             page.setLastModified( new Date() );
@@ -1264,12 +1264,17 @@ public class ContentManager implements WikiEventListener
         {
             if( ownership != null && ((Owner)ownership).m_identity)
             {
-                Session session = m_currentSession.get();
-                session.logout();
-                m_currentSession.set(null);
+                releaseSession();
             }
         }
  
+        public void releaseSession()
+        {
+            Session session = m_currentSession.get();
+            session.logout();
+            m_currentSession.set(null);            
+        }
+        
         /**
          *  Between createSession() and destroySession() you may get the Session object
          *  with this call.

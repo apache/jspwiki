@@ -1,3 +1,15 @@
+2009-03-28  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-88
+        
+        * Added WikiEngine.release() to make sure that JCR Sessions can
+        be released properly at the end of requests to prevent them from
+        growing uncontrollably.
+        
+        * Removed some obsolete methods from WikiPage.
+        
+        * Cleaned up AbstractFileProvider
+        
 2009-03-28  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-87

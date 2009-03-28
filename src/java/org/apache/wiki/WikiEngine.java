@@ -1568,6 +1568,7 @@ public class WikiEngine
         fireEvent( WikiEngineEvent.SHUTDOWN );
         m_filterManager.destroy();
         LoggerFactory.unRegisterAllLoggerMBeans();
+        m_contentManager.release();
     }
 
     /**
@@ -2542,5 +2543,10 @@ public class WikiEngine
     public WatchDog getCurrentWatchDog()
     {
         return WatchDog.getCurrentWatchDog(this);
+    }
+    
+    public void release()
+    {
+        m_contentManager.release();
     }
 }

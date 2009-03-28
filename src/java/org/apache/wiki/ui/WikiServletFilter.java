@@ -186,6 +186,7 @@ public class WikiServletFilter implements Filter
         }
         finally
         {
+            m_engine.release(); // No longer used until next request.
             MDC.remove( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI() );
         }
 

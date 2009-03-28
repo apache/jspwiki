@@ -22,9 +22,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -37,31 +35,19 @@ public class PageSizeTag
 {
     private static final long serialVersionUID = 0L;
     
+    /**
+     *  {@inheritDoc}
+     */
     public final int doWikiStartTag()
         throws IOException
     {
-        WikiEngine engine = m_wikiContext.getEngine();
         WikiPage   page   = m_wikiContext.getPage();
 
-        try
+        if( page != null )
         {
-            if( page != null )
-            {
-                long size = page.getSize();
+            long size = page.getSize();
 
-                if( size == -1 && engine.pageExists(page) ) // should never happen with attachments
-                {
-                    size = engine.getPureText( page.getName(), page.getVersion() ).length();
-                    page.setSize( size );
-                }
-
-                pageContext.getOut().write( Long.toString(size) );
-            }
-        }
-        catch( ProviderException e )
-        {
-            log.warn("Providers did not work: ",e);
-            pageContext.getOut().write("Error determining page size: "+e.getMessage());
+            pageContext.getOut().write( Long.toString(size) );
         }
 
         return SKIP_BODY;
