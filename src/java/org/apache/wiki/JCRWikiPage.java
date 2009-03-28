@@ -527,18 +527,6 @@ public class JCRWikiPage
         
     }
 
-    public void setSize( long size )
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void setVersion( int version )
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
     public WikiPage getParent() throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getPage( m_name.getParent() );

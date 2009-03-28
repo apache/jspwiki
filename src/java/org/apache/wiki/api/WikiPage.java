@@ -120,22 +120,6 @@ public interface WikiPage
     public Date getLastModified();
 
     /**
-     *  Sets the last modification date.  In general, this is only
-     *  changed by the provider.
-     *  
-     *  @param date The date
-     */
-    public void setLastModified( Date date );
-
-    /**
-     *  Sets the page version.  In general, this is only changed
-     *  by the provider.
-     *  
-     *  @param version The version number
-     */
-    public void setVersion( int version );
-
-    /**
      *  Returns the version that this WikiPage instance represents.
      *  
      *  @return the version number of this page.
@@ -149,14 +133,6 @@ public interface WikiPage
      *  @since 2.1.109
      */
     public long getSize();
-
-    /**
-     *  Sets the size.  Typically called by the provider only.
-     *  
-     *  @param size The size of the page.
-     *  @since 2.1.109
-     */
-    public void setSize( long size );
 
     /**
      *  Returns the Acl for this page.  May return <code>null</code>, 
