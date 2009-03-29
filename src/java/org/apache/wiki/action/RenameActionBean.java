@@ -121,6 +121,8 @@ public class RenameActionBean extends AbstractPageActionBean
         log.info( "Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
                   + request.getRemoteAddr() + " by " + request.getRemoteUser() );
         String renamedTo = engine.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
+        
+        deleteFromBreadCrumb( renameFrom );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );
         
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", renamedTo );

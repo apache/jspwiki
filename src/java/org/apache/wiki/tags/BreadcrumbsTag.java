@@ -55,7 +55,9 @@ public class BreadcrumbsTag extends WikiTagBase
     private static final long serialVersionUID = 0L;
 
     private static final Logger log = LoggerFactory.getLogger(BreadcrumbsTag.class);
-    private static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
+    
+    /** The name of the session attribute representing the breadcrumbtrail */
+    public static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
     private String m_separator = ", ";
 
@@ -113,37 +115,44 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public int doWikiStartTag() throws IOException
     {
         HttpSession session = pageContext.getSession();
-        FixedQueue<String>  trail = (FixedQueue<String>) session.getAttribute(BREADCRUMBTRAIL_KEY);
+        FixedQueue  trail = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
 
         String page = m_wikiContext.getPage().getName();
 
         if( trail == null )
         {
-            trail = new FixedQueue<String>(m_maxQueueSize);
+            trail = new FixedQueue(m_maxQueueSize);
         }
 
         if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
         {
-            if( trail.isEmpty() )
+            if( m_wikiContext.getEngine().pageExists( page ) )
             {
-                trail.pushItem(page);
+                if( trail.isEmpty() )
+                {
+                    trail.pushItem( page );
+                }
+                else
+                {
+                    //
+                    // Don't add the page to the queue if the page was just
+                    // refreshed
+                    //
+                    if( !trail.getLast().equals( page ) )
+                    {
+                        trail.pushItem( page );
+                        log.debug( "added page: " + page );
+                    }
+                    log.debug( "didn't add page because of refresh" );
+                }
             }
             else
             {
-                //
-                // Don't add the page to the queue if the page was just refreshed
-                //
-                if( !trail.getLast().equals(page) )
-                {
-                    trail.pushItem(page);
-                    log.debug("added page: " + page);
-                }
-                log.debug("didn't add page because of refresh");
+                log.debug( "didn't add page because it doesn't exist: " + page );
             }
         }
 
@@ -182,8 +191,8 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    public static class FixedQueue<T>
-        extends LinkedList<T>
+    public static class FixedQueue
+        extends LinkedList<String>
         implements Serializable
     {
         private int m_size;
@@ -194,15 +203,29 @@ public class BreadcrumbsTag extends WikiTagBase
             m_size = size;
         }
 
-        T pushItem(T o)
+        String pushItem(String pageName)
         {
-            add(o);
+            add(pageName);
             if( size() > m_size )
             {
                 return removeFirst();
             }
-
             return null;
+        }
+        
+        /**
+         * @param pageName the page to be deleted from the breadcrumb
+         */
+        public void removeItem( String pageName )
+        {
+            for( int i = 0; i < size(); i++ )
+            {
+                String page = get( i );
+                if( page != null && page.equals( pageName ) )
+                {
+                    remove( page );
+                }
+            }
         }
     }
 

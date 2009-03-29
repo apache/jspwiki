@@ -21,9 +21,13 @@
 
 package org.apache.wiki.action;
 
+import javax.servlet.http.HttpSession;
+
 import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.tags.BreadcrumbsTag;
+import org.apache.wiki.tags.BreadcrumbsTag.FixedQueue;
 
 /**
  * Abstract {@link WikiActionBean} subclass used by all ActionBeans that use and
@@ -66,6 +70,25 @@ public class AbstractPageActionBean extends AbstractActionBean
     {
         m_page = page;
         getContext().setPage( page );
+    }
+
+    /**
+     * Removes the deleted page from the breadCrumb trail
+     * 
+     * @param pageName the pageName to be removed from the breadcrumb
+     */
+    void deleteFromBreadCrumb( String pageName )
+    {
+        HttpSession session = getContext().getRequest().getSession( false );
+        if( session != null )
+        {
+            FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
+            if( trail != null )
+            {
+                trail.removeItem( pageName );
+                session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
+            }
+        }
     }
 
 }

@@ -1,3 +1,10 @@
+2009-03-29  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-89
+        
+        * JSPWIKI-487 don't show deleted and renamed pages in the breadcrumbs
+           reported by Bruno Peeters
+           
 2009-03-28  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-88

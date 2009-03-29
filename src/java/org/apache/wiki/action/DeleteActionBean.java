@@ -48,7 +48,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
 @UrlBinding( "/Delete.jsp" )
 public class DeleteActionBean extends AbstractPageActionBean
 {
-    private Logger log = LoggerFactory.getLogger( DeleteActionBean.class );
+    private static final Logger log = LoggerFactory.getLogger( DeleteActionBean.class );
 
     private int m_version = Integer.MIN_VALUE;
 
@@ -76,8 +76,9 @@ public class DeleteActionBean extends AbstractPageActionBean
             log.info( "Deleting page " + pageName + ". User=" + request.getRemoteUser() + ", host="
                       + request.getRemoteAddr() );
             engine.deletePage( pageName );
+            
+            deleteFromBreadCrumb( pageName );
         }
-
         // Just delete a single version
         else
         {
