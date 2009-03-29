@@ -1,3 +1,12 @@
+2009-03-29  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-90
+
+        * Refactored ReferenceManager to use JCR repository.  It does
+        not quite work yet, but it's a start.
+        
+        * Minor refactorings to remove dependencies on PageManager. 
+
 2009-03-29  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-89

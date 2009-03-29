@@ -165,7 +165,14 @@ public class PageRenamer
         //  Update the references
         //
         
-        engine.getReferenceManager().pageRemoved( fromPage );
+        try
+        {
+            engine.getReferenceManager().pageRemoved( fromPage.getQualifiedName() );
+        }
+        catch( PageNotFoundException e )
+        {
+            // This is fine.
+        }
         engine.updateReferences( toPage );
 
         //
@@ -251,11 +258,11 @@ public class PageRenamer
     {
         Set<String> referrers = new TreeSet<String>();
         
-        Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
-        if( r != null ) referrers.addAll( r );
-        
         try
         {
+            Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+            if( r != null ) referrers.addAll( r );
+            
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
 
             for( WikiPage att : attachments  )

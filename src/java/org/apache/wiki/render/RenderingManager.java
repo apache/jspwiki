@@ -41,6 +41,7 @@ import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.CachingProvider;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -341,21 +342,29 @@ public class RenderingManager implements WikiEventListener, InternalModule
             {
                 String pageName = ((WikiPageEvent) event).getPageName();
                 m_documentCache.flushPattern( pageName );
-                Collection referringPages = m_engine.getReferenceManager().findReferrers( pageName );
-
-                //
-                //  Flush also those pages that refer to this page (if an nonexistant page
-                //  appears; we need to flush the HTML that refers to the now-existant page
-                //
-                if( referringPages != null )
+                try
                 {
-                    Iterator i = referringPages.iterator();
-                    while (i.hasNext())
+                    Collection referringPages = m_engine.getReferenceManager().findReferrers( pageName );
+
+                    //
+                    //  Flush also those pages that refer to this page (if an nonexistant page
+                    //  appears; we need to flush the HTML that refers to the now-existant page
+                    //
+                    if( referringPages != null )
                     {
-                        String page = (String) i.next();
-                        if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
-                        m_documentCache.flushPattern( page );
+                        Iterator i = referringPages.iterator();
+                        while (i.hasNext())
+                        {
+                            String page = (String) i.next();
+                            if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
+                            m_documentCache.flushPattern( page );
+                        }
                     }
+                }
+                catch( ProviderException e )
+                {
+                    // Just skip this
+                    // FIXME: Is this the right way to work?
                 }
             }
         }

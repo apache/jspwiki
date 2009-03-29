@@ -64,6 +64,9 @@ public class JCRWikiPage
 
     private static final String ACL = "wiki:acl";
 
+    public static final String REFERSTO = "wiki:refersTo";
+    
+
     private       WikiName   m_name;
     private       WikiEngine m_engine;
     private String           m_jcrPath = null;
@@ -134,6 +137,19 @@ public class JCRWikiPage
         return null;
     }
 
+    /**
+     *  Direct access to JCR Properties.
+     *  
+     *  @param key
+     *  @return
+     *  @throws PathNotFoundException
+     *  @throws RepositoryException
+     */
+    public Property getProperty( String key ) throws PathNotFoundException, RepositoryException
+    {
+        return getJCRNode().getProperty(key);
+    }
+    
     private Object getValue( Property property ) throws RepositoryException, ValueFormatException
     {
         switch( property.getType() )
@@ -453,6 +469,28 @@ public class JCRWikiPage
         return null;
     }
     
+    public Collection<WikiName> getRefersTo() throws ProviderException
+    {
+        Collection<WikiName> refs = new ArrayList<WikiName>();
+        
+        try
+        {
+            Property p = getProperty( REFERSTO );
+            
+            Value[] values = p.getValues();
+            
+            for( Value v : values )
+                refs.add( WikiName.valueOf( v.getString() ) );
+        }
+        catch( PathNotFoundException e ) {}
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to get the referrals",e);
+        }
+        return refs;
+    }
+    
+
     public void setContent( InputStream in ) throws ProviderException
     {
         try

@@ -20,15 +20,18 @@
  */
 package org.apache.wiki;
 
-import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.jcr.*;
 
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -38,103 +41,21 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.TextUtil;
 
 
-
-/*
-  BUGS
-
-  - if a wikilink is added to a page, then removed, RefMan still thinks that
-    the page refers to the wikilink page. Hm.
-
-  - if a page is deleted, gets very confused.
-
-  - Serialization causes page attributes to be missing, when InitializablePlugins
-    are not executed properly.  Thus, serialization should really also mark whether
-    a page is serializable or not...
- */
-
-
-/*
-   A word about synchronizing:
-
-   I expect this object to be accessed in three situations:
-   - when a WikiEngine is created and it scans its wikipages
-   - when the WE saves a page
-   - when a JSP page accesses one of the WE's ReferenceManagers
-     to display a list of (un)referenced pages.
-
-   So, access to this class is fairly rare, and usually triggered by
-   user interaction. OTOH, the methods in this class use their storage
-   objects intensively (and, sorry to say, in an unoptimized manner =).
-   My deduction: using unsynchronized HashMaps etc and syncing methods
-   or code blocks is preferrable to using slow, synced storage objects.
-   We don't have iterative code here, so I'm going to use synced methods
-   for now.
-
-   Please contact me if you notice problems with ReferenceManager, and
-   especially with synchronization, or if you have suggestions about
-   syncing.
-
-   ebu@memecry.net
-*/
-
 /**
- *  Keeps track of wikipage references:
+ *  Calculates wikipage references:
  *  <UL>
  *  <LI>What pages a given page refers to
  *  <LI>What pages refer to a given page
  *  </UL>
  *
- *  This is a quick'n'dirty approach without any finesse in storage and
- *  searching algorithms; we trust java.util.*.
- *  <P>
- *  This class contains two HashMaps, m_refersTo and m_referredBy. The
- *  first is indexed by WikiPage names and contains a Collection of all
- *  WikiPages the page refers to. (Multiple references are not counted,
- *  naturally.) The second is indexed by WikiPage names and contains
- *  a Set of all pages that refer to the indexing page. (Notice -
- *  the keys of both Maps should be kept in sync.)
- *  <P>
- *  When a page is added or edited, its references are parsed, a Collection
- *  is received, and we crudely replace anything previous with this new
- *  Collection. We then check each referenced page name and make sure they
- *  know they are referred to by the new page.
- *  <P>
- *  Based on this information, we can perform non-optimal searches for
- *  e.g. unreferenced pages, top ten lists, etc.
- *  <P>
- *  The owning class must take responsibility of filling in any pre-existing
- *  information, probably by loading each and every WikiPage and calling this
- *  class to update the references when created.
- *
- *  @author ebu@memecry.net
- *  @since 1.6.1
  */
-
-// FIXME: The way that we save attributes is now a major booboo, and must be
-//        replace forthwith.  However, this is a workaround for the great deal
-//        of problems that occur here...
-
 public class ReferenceManager
     extends BasicPageFilter
     implements InternalModule, WikiEventListener
 {
-    /** Maps page wikiname to a Collection of pages it refers to. The Collection
-     *  must contain Strings. The Collection may contain names of non-existing
-     *  pages.
-     */
-    private Map<String,Collection<String>> m_refersTo;
-    private Map<String,Collection<String>> m_unmutableRefersTo;
-
-    /** Maps page wikiname to a Set of referring pages. The Set must
-     *  contain Strings. Non-existing pages (a reference exists, but not a file
-     *  for the page contents) may have an empty Set in m_referredBy.
-     */
-    private Map<String,Set<String>> m_referredBy;
-    private Map<String,Set<String>> m_unmutableReferredBy;
 
     /** The WikiEngine that owns this object. */
     private WikiEngine     m_engine;
@@ -149,6 +70,8 @@ public class ReferenceManager
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
 
+    private static final String REFERENCES_ROOT = "/wiki:references";
+    
     /**
      *  Builds a new ReferenceManager.
      *
@@ -156,19 +79,12 @@ public class ReferenceManager
      */
     public ReferenceManager( WikiEngine engine )
     {
-        m_refersTo   = new HashMap<String,Collection<String>>();
-        m_referredBy = new HashMap<String,Set<String>>();
         m_engine = engine;
 
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(),
                                                              WikiEngine.PROP_MATCHPLURALS,
                                                              m_matchEnglishPlurals );
 
-        //
-        //  Create two maps that contain unmutable versions of the two basic maps.
-        //
-        m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
-        m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
     }
 
     /**
@@ -179,29 +95,33 @@ public class ReferenceManager
         throws ProviderException
     {
         String content;
-        try
-        {
-            content = m_engine.getPageManager().getPageText( page.getName(),
-                                                                    WikiPageProvider.LATEST_VERSION );
-        }
-        catch( PageNotFoundException e )
-        {
-            // This should not happen. If it does, rethrow
-            throw new ProviderException( e.getMessage() );
-        }
 
-        TreeSet<String> res = new TreeSet<String>();
-        Collection<String> links = m_engine.scanWikiLinks( page, content );
+        content = page.getContentAsString();
 
+        TreeSet<WikiName> res = new TreeSet<WikiName>();
+        Collection<WikiName> links = m_engine.scanWikiLinks( page, content );
+
+        // This makes sure all duplicates are removed.
+        
         res.addAll( links );
+        
+        // FIXME: I am not sure whether it makes sense to add all attachments here as well.
+        /*
         Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
 
         for( Iterator atti = attachments.iterator(); atti.hasNext(); )
         {
             res.add( ((WikiPage)(atti.next())).getName() );
         }
-
-        internalUpdateReferences( page.getName(), res );
+         */
+        try
+        {
+            internalUpdateReferences( (JCRWikiPage)page, res );
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to store internal references",e);
+        }
     }
 
     /**
@@ -216,11 +136,28 @@ public class ReferenceManager
     public void initialize( Collection pages )
         throws ProviderException
     {
+        try
+        {
+            Session session = m_engine.getContentManager().getCurrentSession();
+        
+            if( !session.getRootNode().hasNode( REFERENCES_ROOT ) )
+            {
+                session.getRootNode().addNode( REFERENCES_ROOT );
+        
+                session.save();
+            }
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Failed to initialize repository contents",e);
+        }
+        
         log.debug( "Initializing new ReferenceManager with "+pages.size()+" initial pages." );
         StopWatch sw = new StopWatch();
         sw.start();
         log.info( "Starting cross reference scan of WikiPages" );
 
+        /*
         //
         //  First, try to serialize old data from disk.  If that fails,
         //  we'll go and update the entire reference lists (which'll take
@@ -306,137 +243,12 @@ public class ReferenceManager
 
             serializeToDisk();
         }
-
+*/
         sw.stop();
         log.info( "Cross reference scan done in "+sw );
 
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
-                                            WikiPageEvent.PAGE_DELETED, this);
-    }
-
-    /**
-     *  Reads the serialized data from the disk back to memory.
-     *  Returns the date when the data was last written on disk
-     */
-    @SuppressWarnings("unchecked")
-    private synchronized long unserializeFromDisk()
-        throws IOException,
-               ClassNotFoundException
-    {
-        ObjectInputStream in = null;
-        long saved = 0L;
-
-        try
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-
-            in = new ObjectInputStream( new BufferedInputStream(new FileInputStream(f)) );
-
-            long ver     = in.readLong();
-
-            if( ver != serialVersionUID )
-            {
-                throw new IOException("File format has changed; I need to recalculate references.");
-            }
-
-            saved        = in.readLong();
-            m_refersTo   = (Map) in.readObject();
-            m_referredBy = (Map) in.readObject();
-
-            in.close();
-
-            m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
-            m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
-
-            sw.stop();
-            log.debug("Read serialized data successfully in "+sw);
-        }
-        finally
-        {
-            if( in != null ) in.close();
-        }
-
-        return saved;
-    }
-
-    /**
-     *  Serializes hashmaps to disk.  The format is private, don't touch it.
-     */
-    private synchronized void serializeToDisk()
-    {
-        ObjectOutputStream out = null;
-
-        try
-        {
-            StopWatch sw = new StopWatch();
-            sw.start();
-
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-
-            out = new ObjectOutputStream( new BufferedOutputStream(new FileOutputStream(f)) );
-
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-            out.writeObject( m_refersTo );
-            out.writeObject( m_referredBy );
-
-            out.close();
-
-            sw.stop();
-
-            log.debug("serialization done - took "+sw);
-        }
-        catch( IOException e )
-        {
-            log.error("Unable to serialize!");
-
-            try
-            {
-                if( out != null ) out.close();
-            }
-            catch( IOException ex ) {}
-        }
-    }
-
-    private String getHashFileName( String pageName )
-        throws NoSuchAlgorithmException
-    {
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-
-        byte[] dig;
-        try
-        {
-            dig = digest.digest( pageName.getBytes("UTF-8") );
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new InternalWikiException("AAAAGH!  UTF-8 is gone!  My eyes!  It burns...!");
-        }
-
-        return TextUtil.toHexString(dig)+".cache";
-    }
-
-    /**
-     *  Reads the serialized data from the disk back to memory.
-     *  Returns the date when the data was last written on disk
-     *  @deprecated to be removed
-     */
-    private synchronized long unserializeAttrsFromDisk(WikiPage p)
-        throws IOException,
-               ClassNotFoundException
-    {
-        return 0L;
-    }
-
-    /**
-     *  Serializes hashmaps to disk.  The format is private, don't touch it.
-     *  @deprecated To be removed
-     */
-    private synchronized void serializeAttrsToDisk( WikiPage p )
-    {
+        WikiEventUtils.addWikiEventListener(m_engine.getContentManager(),
+                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
     }
 
     /**
@@ -449,10 +261,15 @@ public class ReferenceManager
     {
         WikiPage page = context.getPage();
 
-        updateReferences( page.getName(),
-                          context.getEngine().scanWikiLinks( page, content ) );
-
-        serializeAttrsToDisk( page );
+        try
+        {
+            updateReferences( page,
+                              context.getEngine().scanWikiLinks( page, content ) );
+        }
+        catch( ProviderException e )
+        {
+            log.error("ReferenceManager updates failed, repo is now in inconsistent state!",e);
+        }
     }
 
     /**
@@ -466,70 +283,113 @@ public class ReferenceManager
      * referring page:deleted page.
      *
      *  @param page Name of the page to remove from the maps.
+     * @throws PageNotFoundException 
+     * @throws ProviderException 
      */
-    public synchronized void pageRemoved( WikiPage page )
+    public synchronized void pageRemoved( WikiName pageName ) throws ProviderException, PageNotFoundException
     {
-        String pageName = page.getName();
+        WikiPage page = m_engine.getContentManager().getPage( pageName );
+        
+        Collection<WikiName> refTo = page.getRefersTo();
 
-        pageRemoved(pageName);
+        for( WikiName referred : refTo )
+        {
+            log.debug( "Removing references to page %s from page %s", page.getQualifiedName(), referred );
+            Set<WikiName> referredBy = getReferredBy(referred);
+            
+            referredBy.remove( page.getQualifiedName() );
+            
+            try
+            {
+                setReferredBy( referred, referredBy );
+            }
+            catch( RepositoryException e )
+            {
+                throw new ProviderException("Failed to change the contents of pages",e);
+            }
+        }
+
     }
 
-    private void pageRemoved(String pageName)
+    private String getReferredByJCRPath(WikiName name)
     {
-        Collection<String> refTo = m_refersTo.get( pageName );
-
-        if( refTo != null )
-        {
-            Iterator itRefTo = refTo.iterator();
-            while( itRefTo.hasNext() )
-            {
-                String referredPageName = (String)itRefTo.next();
-                Set<String> refBy = m_referredBy.get( referredPageName );
-
-                if( refBy == null )
-                    throw new InternalWikiException("Refmgr out of sync: page "+pageName+" refers to "+referredPageName+", which has null referrers.");
-
-                refBy.remove(pageName);
-
-                m_referredBy.remove( referredPageName );
-
-                // We won't put it back again if it becomes empty and does not exist.  It will be added
-                // later on anyway, if it becomes referenced again.
-                if( !(refBy.isEmpty() && !m_engine.pageExists(referredPageName)) )
-                {
-                    m_referredBy.put( referredPageName, refBy );
-                }
-            }
-
-            log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
-            m_refersTo.remove( pageName );
-        }
-
-        Set<String> refBy = m_referredBy.get( pageName );
-        if( refBy == null || refBy.isEmpty() )
-        {
-            m_referredBy.remove( pageName );
-        }
-
-        //
-        //  Remove any traces from the disk, too
-        //
-        serializeToDisk();
-
+        return "/wiki:references/"+name.getSpace()+"/"+name.getPath();
+    }
+    
+    private Set<WikiName> getReferredBy(WikiName name) throws ProviderException
+    {
+        String jcrPath = getReferredByJCRPath( name );
+        
         try
         {
-            File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-
-            f = new File( f, getHashFileName(pageName) );
-
-            if( f.exists() ) f.delete();
+            jcrPath += "/wiki:referredBy";
+            
+            Property p = (Property)m_engine.getContentManager().getCurrentSession().getItem(jcrPath);
+            
+            TreeSet<WikiName> result = new TreeSet<WikiName>();
+            
+            for( Value v : p.getValues() )
+            {
+                result.add( WikiName.valueOf( v.getString() ) );
+            }
+            
+            return result;
         }
-        catch( NoSuchAlgorithmException e )
+        catch( PathNotFoundException e )
         {
-            log.error("What do you mean - no such algorithm?", e);
+            // Fine, we can return an empty set
+            return new TreeSet<WikiName>();
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to get the referred-by list",e);
         }
     }
+    
+    /**
+     *  Set the referredBy attribute set.
+     *  
+     *  @param name
+     *  @param references
+     *  @throws RepositoryException
+     */
+    private void setReferredBy(WikiName name,Set<WikiName> references) throws RepositoryException
+    {
+        String jcrPath = getReferredByJCRPath( name );
+        Property p = null;
 
+        String[] value = new String[references.size()];
+        WikiName[] refs = references.toArray(new WikiName[references.size()]);
+        
+        for( int i = 0; i < references.size(); i++ )
+        {
+            value[i] = refs[i].toString();
+        }
+        
+        ContentManager mgr = m_engine.getContentManager();
+        
+        try
+        {
+            p = (Property)mgr.getCurrentSession().getItem(jcrPath+"/wiki:referredBy");
+
+            p.setValue( value );
+        }
+        catch( PathNotFoundException e )
+        {
+            Session s = mgr.getCurrentSession();
+            if( !s.itemExists( jcrPath ) )
+            {
+                mgr.createJCRNode(jcrPath);
+            }
+            
+            Node nd = (Node) s.getItem(jcrPath);
+            
+            nd.setProperty( "wiki:referredBy", value );
+        }
+        
+        mgr.getCurrentSession().getItem( "/wiki:references" ).save();
+    }
+    
     /**
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo
      *  entry for this page already exists, it is removed and a new one is built
@@ -542,11 +402,17 @@ public class ReferenceManager
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    public synchronized void updateReferences( String page, Collection references )
+    public synchronized void updateReferences( WikiPage page, Collection<WikiName> references ) 
+        throws ProviderException
     {
-        internalUpdateReferences(page, references);
-
-        serializeToDisk();
+        try
+        {
+            internalUpdateReferences( (JCRWikiPage)page, references);
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Failed to update references",e);
+        }
     }
 
     /**
@@ -557,232 +423,65 @@ public class ReferenceManager
      *  This method does not synchronize the database to disk.
      *
      *  @param page Name of the page to update.
-     *  @param references A Collection of Strings, each one pointing to a page this page references.
+     *  @param newRefersTo A Collection of Strings, each one pointing to a page this page references.
+     * @throws ProviderException 
+     * @throws RepositoryException 
      */
 
-    private void internalUpdateReferences(String page, Collection references)
+    private void internalUpdateReferences(JCRWikiPage page, Collection<WikiName> newRefersTo) throws ProviderException, RepositoryException
     {
-        page = getFinalPageName( page );
+        //
+        //  Get the old refererences so that we can go and ping every page on that
+        //  list and make sure that their referredBy lists are fine.
+        //
+        Collection<WikiName> oldRefersTo = page.getRefersTo();
 
         //
-        // Create a new entry in m_refersTo.
+        //  Set up the new references list
         //
-        Collection oldRefTo = m_refersTo.get( page );
-        m_refersTo.remove( page );
 
-        TreeSet<String> cleanedRefs = new TreeSet<String>();
-        for( Iterator i = references.iterator(); i.hasNext(); )
+        WikiName[] wn = newRefersTo.toArray(new WikiName[newRefersTo.size()]);
+        String[] nr = new String[newRefersTo.size()];
+        
+        for( int i = 0; i < nr.length; i++ )
         {
-            String ref = (String)i.next();
-
-            ref = getFinalPageName( ref );
-
-            cleanedRefs.add( ref );
+            nr[i] = wn[i].toString();
         }
-
-        m_refersTo.put( page, cleanedRefs );
-
+        
+        Node nd = page.getJCRNode();
+      
+        nd.setProperty( JCRWikiPage.REFERSTO, nr );
+        
         //
-        //  We know the page exists, since it's making references somewhere.
-        //  If an entry for it didn't exist previously in m_referredBy, make
-        //  sure one is added now.
+        //  Go ping the old pages that the reference list has changed.
         //
-        if( !m_referredBy.containsKey( page ) )
+        
+        for( WikiName name : oldRefersTo )
         {
-            m_referredBy.put( page, new TreeSet<String>() );
-        }
-
-        //
-        //  Get all pages that used to be referred to by 'page' and
-        //  remove that reference. (We don't want to try to figure out
-        //  which particular references were removed...)
-        //
-        cleanReferredBy( page, oldRefTo, cleanedRefs );
-
-        //
-        //  Notify all referred pages of their referinesshoodicity.
-        //
-        Iterator<String> it = cleanedRefs.iterator();
-        while( it.hasNext() )
-        {
-            String referredPageName = it.next();
-            updateReferredBy( getFinalPageName(referredPageName), page );
-        }
-    }
-
-    /**
-     * Returns the refers-to list. For debugging.
-     * 
-     * @return The refers-to list.
-     */
-    protected Map getRefersTo()
-    {
-        return m_refersTo;
-    }
-
-    /**
-     * Returns the referred-by list. For debugging.
-     * 
-     * @return Referred-by lists.
-     */
-    protected Map getReferredBy()
-    {
-        return m_referredBy;
-    }
-
-    /**
-     * Cleans the 'referred by' list, removing references by 'referrer' to
-     * any other page. Called after 'referrer' is removed.
-     */
-    private void cleanReferredBy( String referrer,
-                                  Collection oldReferred,
-                                  Collection<String> newReferred )
-    {
-        // Two ways to go about this. One is to look up all pages previously
-        // referred by referrer and remove referrer from their lists, and let
-        // the update put them back in (except possibly removed ones).
-        // The other is to get the old referred to list, compare to the new,
-        // and tell the ones missing in the latter to remove referrer from
-        // their list. Hm. We'll just try the first for now. Need to come
-        // back and optimize this a bit.
-
-        if( oldReferred == null )
-            return;
-
-        Iterator it = oldReferred.iterator();
-        while( it.hasNext() )
-        {
-            String referredPage = (String)it.next();
-            Set oldRefBy = m_referredBy.get( referredPage );
-            if( oldRefBy != null )
+            if( !newRefersTo.contains( name ) )
             {
-                oldRefBy.remove( referrer );
-            }
-
-            // If the page is referred to by no one AND it doesn't even
-            // exist, we might just as well forget about this entry.
-            // It will be added again elsewhere if new references appear.
-            if( ( ( oldRefBy == null ) || ( oldRefBy.isEmpty() ) ) &&
-                ( m_engine.pageExists( referredPage ) == false ) )
-            {
-                m_referredBy.remove( referredPage );
+                // A page is no longer referenced, so this page is removed from its
+                // referencedBy list.
+                Set<WikiName> refs = getReferredBy( name );
+                refs.remove( page.getQualifiedName() );
+                setReferredBy( name, refs );
             }
         }
-
-    }
-
-
-    /**
-     *  When initially building a ReferenceManager from scratch, call this method
-     * BEFORE calling updateReferences() with a full list of existing page names.
-     * It builds the refersTo and referredBy key lists, thus enabling
-     * updateReferences() to function correctly.
-     * <P>
-     * This method should NEVER be called after initialization. It clears all mappings
-     * from the reference tables.
-     *
-     * @param pages   a Collection containing WikiPage objects.
-     */
-    private synchronized void buildKeyLists( Collection pages )
-    {
-        m_refersTo.clear();
-        m_referredBy.clear();
-
-        if( pages == null )
-            return;
-
-        Iterator it = pages.iterator();
-        try
+        
+        for( WikiName name : newRefersTo )
         {
-            while( it.hasNext() )
+            if( !oldRefersTo.contains(name) )
             {
-                WikiPage page = (WikiPage)it.next();
-                // We add a non-null entry to referredBy to indicate the referred page exists
-                m_referredBy.put( page.getName(), new TreeSet<String>() );
-                // Just add a key to refersTo; the keys need to be in sync with referredBy.
-                m_refersTo.put( page.getName(), null );
+                // There is a new reference which is not in the old references list,
+                // so we will need to add it to the new page's referencedBy list.
+                Set<WikiName> refs = getReferredBy( name );
+                refs.add( page.getQualifiedName() );
+                setReferredBy( name, refs );
             }
         }
-        catch( ClassCastException e )
-        {
-            log.error( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
-        }
+        
     }
 
-
-    /**
-     * Marks the page as referred to by the referrer. If the page does not
-     * exist previously, nothing is done. (This means that some page, somewhere,
-     * has a link to a page that does not exist.)
-     * <P>
-     * This method is NOT synchronized. It should only be referred to from
-     * within a synchronized method, or it should be made synced if necessary.
-     */
-    private void updateReferredBy( String page, String referrer )
-    {
-        // We're not really interested in first level self-references.
-        /*
-        if( page.equals( referrer ) )
-        {
-            return;
-        }
-        */
-        // Neither are we interested if plural forms refer to each other.
-        if( m_matchEnglishPlurals )
-        {
-            String p2 = page.endsWith("s") ? page.substring(0,page.length()-1) : page+"s";
-
-            if( referrer.equals(p2) )
-            {
-                return;
-            }
-        }
-
-        Set<String> referrers = m_referredBy.get( page );
-
-        // Even if 'page' has not been created yet, it can still be referenced.
-        // This requires we don't use m_referredBy keys when looking up missing
-        // pages, of course.
-        if(referrers == null)
-        {
-            referrers = new TreeSet<String>();
-            m_referredBy.put( page, referrers );
-        }
-        referrers.add( referrer );
-    }
-
-
-    /**
-     * Clears the references to a certain page so it's no longer in the map.
-     *
-     * @param pagename  Name of the page to clear references for.
-     */
-    public synchronized void clearPageEntries( String pagename )
-    {
-        pagename = getFinalPageName(pagename);
-
-        //
-        //  Remove this item from the referredBy list of any page
-        //  which this item refers to.
-        //
-        Collection<String> c = m_refersTo.get( pagename );
-
-        if( c != null )
-        {
-            for( String key : c )
-            {
-                Collection<?> dref = m_referredBy.get( key );
-
-                dref.remove( pagename );
-            }
-        }
-
-        //
-        //  Finally, remove direct references.
-        //
-        m_referredBy.remove( pagename );
-        m_refersTo.remove( pagename );
-    }
 
 
     /**
@@ -795,6 +494,8 @@ public class ReferenceManager
     {
         ArrayList<String> unref = new ArrayList<String>();
 
+        // FIXME: Not implemented yet
+        /*
         for( String key : m_referredBy.keySet() )
         {
             Set<?> refs = getReferenceList( m_referredBy, key );
@@ -804,7 +505,7 @@ public class ReferenceManager
                 unref.add( key );
             }
         }
-
+*/
         return unref;
     }
 
@@ -828,6 +529,8 @@ public class ReferenceManager
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
 
+        // FIXME: Not yet done
+        /*
         Collection<Collection<String>> allReferences = m_refersTo.values();
 
         for( Collection<String> refs : allReferences )
@@ -843,49 +546,10 @@ public class ReferenceManager
                 }
             }
         }
-
+         */
         return uncreated;
     }
 
-    /**
-     *  Searches for the given page in the given Map, and returns
-     *  the set of references.  This method also takes care of English plural
-     *  matching.
-     *  
-     *  @param coll The Map to search in
-     *  @param pagename The name to find.
-     *  @return The references list.
-     */
-    private <T> Set<T> getReferenceList( Map<String,Set<T>> coll, String pagename )
-    {
-        Set<T> refs = coll.get( pagename );
-
-        if( m_matchEnglishPlurals )
-        {
-            //
-            //  We'll add also matches from the "other" page.
-            //
-            Set<T> refs2;
-
-            if( pagename.endsWith("s") )
-            {
-                refs2 = coll.get( pagename.substring(0,pagename.length()-1) );
-            }
-            else
-            {
-                refs2 = coll.get( pagename+"s" );
-            }
-
-            if( refs2 != null )
-            {
-                if( refs != null )
-                    refs.addAll( refs2 );
-                else
-                    refs = refs2;
-            }
-        }
-        return refs;
-    }
 
     /**
      * Find all pages that refer to this page. Returns null if the page
@@ -896,40 +560,20 @@ public class ReferenceManager
      * @return A Collection of Strings.  (This is, in fact, a Set, and is likely
      *         to change at some point to a Set).  May return null, if the page
      *         does not exist, or if it has no references.
+     * @throws ProviderException 
+     * @deprecated
      */
     // FIXME: Return a Set instead of a Collection.
-    public synchronized Collection<String> findReferrers( String pagename )
+    public synchronized Collection<String> findReferrers( String pagename ) throws ProviderException
     {
-        Set<String> refs = getReferenceList( m_referredBy, pagename );
+        Set<String> refs = new TreeSet<String>();
 
-        if( refs == null || refs.isEmpty() )
-        {
-            return null;
-        }
+        Set<WikiName> r = getReferredBy( WikiName.valueOf( pagename ) );
 
+        for( WikiName wn : r )
+            refs.add( wn.toString() );
+        
         return refs;
-
-    }
-
-    /**
-     *  Returns all pages that refer to this page.  Note that this method
-     *  returns an unmodifiable Map, which may be abruptly changed.  So any
-     *  access to any iterator may result in a ConcurrentModificationException.
-     *  <p>
-     *  The advantages of using this method over findReferrers() is that
-     *  it is very fast, as it does not create a new object.  The disadvantages
-     *  are that it does not do any mapping between plural names, and you
-     *  may end up getting a ConcurrentModificationException.
-     *
-     * @param pageName Page name to query.
-     * @return A Set of Strings containing the names of all the pages that refer
-     *         to this page.  May return null, if the page does not exist or
-     *         has not been indexed yet.
-     * @since 2.2.33
-     */
-    public Set findReferredBy( String pageName )
-    {
-        return m_unmutableReferredBy.get( getFinalPageName(pageName) );
     }
 
     /**
@@ -948,52 +592,23 @@ public class ReferenceManager
      * @return A Collection of Strings containing the names of the pages that this page
      *         refers to. May return null, if the page does not exist or has not
      *         been indexed yet.
+     * @throws PageNotFoundException 
+     * @throws ProviderException 
      * @since 2.2.33
+     * @deprecated Use WikiPage.getRefersTo() instead
      */
-    public Collection findRefersTo( String pageName )
+    public Collection findRefersTo( String pageName ) throws ProviderException, PageNotFoundException
     {
-        return m_unmutableRefersTo.get( getFinalPageName(pageName) );
+        ArrayList<String> result = new ArrayList<String>();
+        
+        Collection<WikiName> refs = m_engine.getPage( pageName ).getRefersTo();
+        
+        for( WikiName wn : refs )
+            result.add( wn.toString() );
+        
+        return result;
     }
 
-    /**
-     * This 'deepHashCode' can be used to determine if there were any
-     * modifications made to the underlying to and by maps of the
-     * ReferenceManager. The maps of the ReferenceManager are not
-     * synchronized, so someone could add/remove entries in them while the
-     * hashCode is being computed.
-     *
-     * @return Sum of the hashCodes for the to and by maps of the
-     *         ReferenceManager
-     * @since 2.3.24
-     */
-    //
-    //   This method traps and retries if a concurrent
-    //   modifcaition occurs.
-    //   TODO: It is unnecessary to calculate the hashcode; it should be calculated only
-    //         when the hashmaps are changed.  This is slow.
-    //
-    public int deepHashCode()
-    {
-        boolean failed = true;
-        int signature = 0;
-
-        while (failed)
-        {
-            signature = 0;
-            try
-            {
-                signature ^= m_referredBy.hashCode();
-                signature ^= m_refersTo.hashCode();
-                failed = false;
-            }
-            catch (ConcurrentModificationException e)
-            {
-                Thread.yield();
-            }
-        }
-
-        return signature;
-    }
 
     /**
      *  Returns a list of all pages that the ReferenceManager knows about.
@@ -1003,11 +618,19 @@ public class ReferenceManager
      *  very fast.
      *
      *  @return A Set of all defined page names that ReferenceManager knows about.
+     *  @throws ProviderException 
      *  @since 2.3.24
+     *  @deprecated
      */
-    public Set<String> findCreated()
+    public Set<String> findCreated() throws ProviderException
     {
-        return new HashSet<String>( m_refersTo.keySet() );
+        Set<String> result = new TreeSet<String>();
+        Collection<WikiPage> c = m_engine.getContentManager().getAllPages( null );
+        
+        for( WikiPage p : c )
+            result.add( p.getQualifiedName().toString() );
+        
+        return result;
     }
 
     private String getFinalPageName( String orig )
@@ -1028,13 +651,26 @@ public class ReferenceManager
      */
     public void actionPerformed(WikiEvent event)
     {
-        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETED) )
+        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )
         {
             String pageName = ((WikiPageEvent) event).getPageName();
 
             if( pageName != null )
             {
-                pageRemoved( pageName );
+                try
+                {
+                    pageRemoved( WikiName.valueOf(pageName) );
+                }
+                catch( ProviderException e )
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                catch( PageNotFoundException e )
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }

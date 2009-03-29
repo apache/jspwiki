@@ -41,6 +41,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -1671,18 +1672,18 @@ public class JSPWikiMarkupParser
         try
         {
             att = mgr.getAttachmentInfo( m_context, linktext );
+            
+            return att.getName();
         }
+        catch( PageNotFoundException e )
+        {}
         catch( Exception e )
         {
             log.warn("Finding attachments failed: ",e);
             return null;
         }
-
-        if( att != null )
-        {
-            return att.getName();
-        }
-        else if( linktext.indexOf('/') != -1 )
+        
+        if( linktext.indexOf('/') != -1 )
         {
             return linktext;
         }

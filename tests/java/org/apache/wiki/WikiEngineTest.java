@@ -121,20 +121,6 @@ public class WikiEngineTest extends TestCase
                       m_engine.pageExists( NAME1 ) );
     }
 
-    /**
-     *  Check that calling pageExists( WikiPage ) works.
-     */
-    public void testNonExistantPage2()
-        throws Exception
-    {
-        m_engine.deletePage( NAME1 );
-        WikiPage page = m_engine.createPage( WikiName.valueOf( NAME1 ) );
-
-        assertEquals( "Page already exists",
-                      false,
-                      m_engine.pageExists( page ) );
-    }
-
     public void testFinalPageName()
         throws Exception
     {
@@ -602,16 +588,13 @@ public class WikiEngineTest extends TestCase
     {
         m_engine.saveText( NAME1, "Test" );
 
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-        File saved = new File( files, NAME1+".txt" );
-
-        assertTrue( "Didn't create it!", saved.exists() );
-
         WikiPage page = m_engine.getPage( NAME1, WikiProvider.LATEST_VERSION );
 
+        assertNotNull( "Page exists", page );
+        
         m_engine.deletePage( page.getName() );
 
-        assertFalse( "Page has not been removed!", saved.exists() );
+        assertFalse( "Page has not been removed!", m_engine.pageExists( NAME1 ) );
     }
 
 /*
@@ -956,6 +939,18 @@ public class WikiEngineTest extends TestCase
                       m_engine.pageExists( name ) );
     }
     
+    public void testCreatePage2()
+        throws Exception
+    {
+        m_engine.deletePage( NAME1 );
+        WikiPage page = m_engine.createPage( WikiName.valueOf( NAME1 ) );
+
+        assertEquals( "Page does not exist",
+                      true,
+                      m_engine.pageExists( page ) );
+    }
+
+
     public void testCreateEmptyPage() throws Exception 
     {
         String text = "";

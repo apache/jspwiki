@@ -345,15 +345,7 @@ public class PageManager extends ModuleManager
     public void deleteVersion( WikiPage page )
         throws ProviderException
     {
-        try
-        {
-            m_engine.getContentManager().deleteVersion( page );
-        }
-        catch( PageNotFoundException e )
-        {
-            // This should not happen. If it does, rethrow
-            throw new ProviderException( e.getMessage() );
-        }
+        m_engine.getContentManager().deleteVersion( page );
     }
 
     /**
@@ -365,15 +357,7 @@ public class PageManager extends ModuleManager
     public void deletePage( WikiPage page )
         throws ProviderException
     {
-        try
-        {
-            m_engine.getContentManager().deletePage( page );
-        }
-        catch( PageNotFoundException e )
-        {
-            // This should not happen. If it does, rethrow
-            throw new ProviderException( e.getMessage() );
-        }
+        m_engine.getContentManager().deletePage( page );
     }
 
  

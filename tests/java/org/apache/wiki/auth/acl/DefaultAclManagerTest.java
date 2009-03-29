@@ -60,16 +60,10 @@ public class DefaultAclManagerTest
         m_engine.saveText( "TestAclPage", text );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        try
-        {
-            m_engine.deletePage( "TestDefaultPage" );
-            m_engine.deletePage( "TestAclPage" );
-        }
-        catch ( ProviderException e )
-        {
-        }
+        m_engine.deletePage( "TestDefaultPage" );
+        m_engine.deletePage( "TestAclPage" );
         
         m_engine.shutdown();
     }

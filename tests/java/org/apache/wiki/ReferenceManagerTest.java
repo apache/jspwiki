@@ -33,6 +33,7 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.providers.AbstractFileProvider;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -110,7 +111,7 @@ public class ReferenceManagerTest extends TestCase
         assertTrue( c.size() == 1 && c.contains("Foobar") );
     }
     
-    public void testNonExistant2()
+    public void testNonExistant2() throws ProviderException
     {
         Collection c = mgr.findReferrers("TestBug");
         
@@ -382,6 +383,7 @@ public class ReferenceManagerTest extends TestCase
      * This method is NOT synchronized, and should be used in testing
      * with one user, one WikiEngine only.
      */
+    /*
     public static String dumpReferenceManager( ReferenceManager rm )
     {
         StringBuffer buf = new StringBuffer();
@@ -437,6 +439,7 @@ public class ReferenceManagerTest extends TestCase
         
         return( buf.toString() );
     }
+    */
 
 }
 

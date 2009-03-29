@@ -25,8 +25,10 @@ import java.util.*;
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -126,7 +128,14 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         //PatternCompiler g_compiler = new GlobCompiler();
 
         // go get all referred links
-        getReferredPages(context,rootname, 0);
+        try
+        {
+            getReferredPages(context,rootname, 0);
+        }
+        catch(Exception e)
+        {
+            throw new PluginException("Failed to get referred pages "+e.getMessage());
+        }
 
         // close and finish
         m_result.append ("</div>\n" ) ;
@@ -138,9 +147,11 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
     /**
      * Retrieves a list of all referred pages. Is called recursively
      * depending on the depth parameter
+     * @throws PageNotFoundException 
+     * @throws ProviderException 
      */
     @SuppressWarnings("unchecked")
-    private void getReferredPages( WikiContext context, String pagename, int depth )
+    private void getReferredPages( WikiContext context, String pagename, int depth ) throws ProviderException, PageNotFoundException
     {
         if( depth >= m_depth ) return;  // end of recursion
         if( pagename == null ) return;
@@ -157,7 +168,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         handleLinks( context, pages, ++depth, pagename );
     }
 
-    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename)
+    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename) throws ProviderException, PageNotFoundException
     {
         boolean isUL = false;
         HashSet<String> localLinkSet = new HashSet<String>();  // needed to skip multiple

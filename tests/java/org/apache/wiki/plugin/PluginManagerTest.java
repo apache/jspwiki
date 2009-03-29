@@ -24,16 +24,14 @@ package org.apache.wiki.plugin;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
-import org.apache.wiki.providers.ProviderException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
 
 
 public class PluginManagerTest extends TestCase
@@ -64,15 +62,9 @@ public class PluginManagerTest extends TestCase
         manager = new PluginManager( engine, props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        try
-        {
-            engine.deletePage("Testpage");
-        }
-        catch ( ProviderException e )
-        {
-        }
+        engine.deletePage("Testpage");
         engine.shutdown();
     }
 

@@ -129,7 +129,16 @@ public class SearchManager
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
 
-                Set allPages = m_engine.getReferenceManager().findCreated();
+                Set allPages;
+                try
+                {
+                    allPages = m_engine.getReferenceManager().findCreated();
+                }
+                catch( ProviderException e )
+                {
+                    // FIXME: THis is probably not very smart.
+                    allPages = new TreeSet();
+                }
 
                 int counter = 0;
                 for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )

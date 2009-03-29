@@ -55,6 +55,7 @@ import org.apache.wiki.util.WikiBackgroundThread;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.Workflow;
+import org.hsqldb.lib.StringUtil;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
@@ -84,6 +85,13 @@ import org.priha.util.ConfigurationException;
  *      it does not really take advantage of all of the JCR API.  Therefore, this
  *      class should be treated as extremely volatile.
  *  
+ *  Events which are fired by this Manager:
+ *  <ul>
+ *    <li>WikiPageEvent.PAGE_DELETE_REQUEST - Before deletion actually starts. Page still exists in
+ *        the repository.</li>
+ *    <li>WikiPageEvent.PAGE_DELETED - After deletion is complete, which means that the page no longer
+ *        exists in the repository.</li>
+ *  <ul>
  *  @since 3.0
  */
 
@@ -299,6 +307,19 @@ public class ContentManager implements WikiEventListener
         m_sessionManager.releaseSession();
     }
         
+    /**
+     *  Returns the current JCR Session.  If there is no Session, a new
+     *  one is created.
+     *  
+     *  @return A valid JCR Session
+     *  @throws LoginException If login credentials are wrong
+     *  @throws RepositoryException If something else fails with the repository
+     */
+    public Session getCurrentSession() throws LoginException, RepositoryException
+    {
+        return m_sessionManager.getSession();
+    }
+    
     /*
     public Object acquire() throws ProviderException
     {
@@ -684,9 +705,11 @@ public class ContentManager implements WikiEventListener
      *  @param page The page to delete.
      *  @throws ProviderException if the page fails
      *  @throws PageNotFoundException If the page in question does not exist.
+     *  @return True, if the page was actually deleted, and false otherwise.
      */
-    public void deleteVersion( WikiPage page )
-        throws ProviderException, PageNotFoundException
+    // TODO: The event which gets fired suggests that this actually a whole page delete event
+    public boolean deleteVersion( WikiPage page )
+        throws ProviderException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -697,10 +720,12 @@ public class ContentManager implements WikiEventListener
             jcrPage.save();
             
             fireEvent( WikiPageEvent.PAGE_DELETED, jcrPage.getName() );
+            
+            return true;
         }
         catch( PathNotFoundException e )
         {
-            throw new PageNotFoundException(page.getQualifiedName());
+            return false;
         }
         catch( RepositoryException e )
         {
@@ -709,15 +734,16 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Deletes an entire page, all versions, all traces.
+     *  Deletes an entire page, all versions, all traces.  If the page did not
+     *  exist, will just exit quietly and return false.
      *  
      *  @param page The WikiPage to delete
+     *  @return True, if the page was found and deleted; false, if the page did not exist in the first place
      *  @throws ProviderException If the backend fails or the page is illegal.
-     *  @throws PageNotFoundException If the page has already disappeared.
      */
     
-    public void deletePage( WikiPage page )
-        throws ProviderException, PageNotFoundException
+    public boolean deletePage( WikiPage page )
+        throws ProviderException
     {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
 
@@ -747,10 +773,12 @@ public class ContentManager implements WikiEventListener
             nd.getParent().save();
             
             fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
+            
+            return true;
         }
         catch( PathNotFoundException e )
         {
-            throw new PageNotFoundException(page.getQualifiedName());
+            return false;
         }
         catch( RepositoryException e )
         {
@@ -1009,6 +1037,9 @@ public class ContentManager implements WikiEventListener
         
             Node nd = session.getRootNode().addNode( getJCRPath(path) );
             
+            nd.addMixin( "mix:versionable" );
+            nd.addMixin( "mix:referenceable" );
+
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
             return page;
@@ -1080,6 +1111,8 @@ public class ContentManager implements WikiEventListener
                 
                 if( version == WikiProvider.LATEST_VERSION || version == 1)
                     page = new JCRWikiPage( m_engine, nd );
+                else
+                    throw new PageNotFoundException("Version "+version+" of page "+path+" does not exist!");
             }
             
             return page;
@@ -1312,8 +1345,35 @@ public class ContentManager implements WikiEventListener
         boolean m_identity = false;        
     }
 
-    public Node getJCRNode( String path ) throws RepositoryException
+    public Node getJCRNode( String jcrPath ) throws RepositoryException
     {
-        return (Node)m_sessionManager.getSession().getItem( path );
+        return (Node)m_sessionManager.getSession().getItem( jcrPath );
+    }
+
+    /**
+     *  Creates a JCR Node including all of its parents from a given JCR Path.
+     *  If the Node already exists, returns it.
+     *  
+     *  @param jcrPath An absolute or relative path. If relative, it's interpreted
+     *                 as relative to the workspace root node.
+     *  @return A valid JCR Node
+     *  @throws RepositoryException If the creation fails for some reason
+     */
+    public Node createJCRNode( String jcrPath ) throws RepositoryException
+    {
+        String[] components = StringUtil.split( jcrPath, "/" );
+        
+        Node current = getCurrentSession().getRootNode();
+
+        for( int i = 0; i < components.length; i++ )
+        {
+            if( !current.hasNode( components[i] ) )
+            {
+                current.addNode( components[i] );
+            }
+            current = current.getNode( components[i] );
+        }
+        
+        return current;
     }
 }

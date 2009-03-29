@@ -21,6 +21,7 @@
 package org.apache.wiki.api;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -206,6 +207,8 @@ public interface WikiPage
 
     public void setContent( InputStream in ) throws ProviderException;
 
+    public Collection<WikiName> getRefersTo() throws ProviderException;
+    
     /**
      *  Returns the parent of the page. 
      *  

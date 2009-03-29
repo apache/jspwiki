@@ -1579,7 +1579,7 @@ public class WikiEngine
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public Collection<String> scanWikiLinks( WikiPage page, String pagedata )
+    public List<WikiName> scanWikiLinks( WikiPage page, String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();
 
@@ -1591,7 +1591,14 @@ public class WikiEngine
                     false,
                     true );
 
-        return localCollector.getLinks();
+        ArrayList<WikiName> response = new ArrayList<WikiName>();
+        
+        for( String s : localCollector.getLinks() )
+        {
+            response.add( WikiName.valueOf( s ) );
+        }
+        
+        return response;
     }
 
     /**
@@ -1713,12 +1720,13 @@ public class WikiEngine
      *  Updates all references for the given page.
      *
      *  @param page wiki page for which references should be updated
+     * @throws ProviderException 
      */
-    public void updateReferences( WikiPage page )
+    public void updateReferences( WikiPage page ) throws ProviderException
     {
         String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
-        m_referenceManager.updateReferences( page.getName(),
+        m_referenceManager.updateReferences( page,
                                              scanWikiLinks( page, pageData ) );
     }
 
@@ -2238,30 +2246,14 @@ public class WikiEngine
         throws ProviderException
     {
         WikiPage p;
+
         try
         {
             p = getPage( pageName );
-            if( p instanceof Attachment )
-            {
-                m_attachmentManager.deleteAttachment( (Attachment) p );
-            }
-            else
-            {
-                if (m_attachmentManager.hasAttachments( p ))
-                {
-                    Collection attachments = m_attachmentManager.listAttachments( p );
-                    for( Iterator atti = attachments.iterator(); atti.hasNext(); )
-                    {
-                        m_attachmentManager.deleteAttachment( (Attachment)(atti.next()) );
-                    }
-                }
-                m_pageManager.deletePage( p );
-            }
+            
+            m_contentManager.deletePage( p );
         }
-        catch( PageNotFoundException e )
-        {
-            // If page doesn't exist, do nothing
-        }
+        catch(PageNotFoundException e) {}
     }
 
     /**
@@ -2273,14 +2265,7 @@ public class WikiEngine
     public void deleteVersion( WikiPage page )
         throws ProviderException
     {
-        if( page instanceof Attachment )
-        {
-            m_attachmentManager.deleteVersion( (WikiPage) page );
-        }
-        else
-        {
-            m_pageManager.deleteVersion( page );
-        }
+        m_contentManager.deleteVersion( page );
     }
 
     /**

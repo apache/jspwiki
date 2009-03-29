@@ -411,14 +411,7 @@ public class AttachmentManager
      */
     public void deleteVersion( WikiPage att ) throws ProviderException
     {
-        try
-        {
-            m_engine.getContentManager().deleteVersion( att );
-        }
-        catch( PageNotFoundException e )
-        {
-            // No worries
-        }
+        m_engine.getContentManager().deleteVersion( att );
     }
 
     /**
@@ -428,17 +421,9 @@ public class AttachmentManager
      *  @param att The Attachment to delete.
      *  @throws ProviderException if something goes wrong with the backend
      */
-    // FIXME: Should also use events!
     public void deleteAttachment( Attachment att ) throws ProviderException
     {
-        try
-        {
-            m_engine.getContentManager().deletePage( att );
-        }
-        catch( PageNotFoundException e )
-        {
-            // No worries
-        }
+        m_engine.getContentManager().deletePage( att );
     }
 
     /**
