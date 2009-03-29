@@ -21,6 +21,7 @@
 
 package org.apache.wiki;
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -187,7 +188,17 @@ public class TestEngine extends WikiEngine
         }
         catch( IOException e ) {} // Fine
     }
-
+    
+    public void emptyRepository() throws ProviderException
+    {
+        Collection<WikiPage> pages = getContentManager().getAllPages( null );
+        
+        for( WikiPage p : pages )
+        {
+            getContentManager().deletePage( p );
+        }
+    }
+    
     public static final InputStream findTestProperties()
     {
         return findTestProperties( "/jspwiki.properties" );

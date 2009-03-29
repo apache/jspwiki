@@ -66,13 +66,6 @@ public class ReferenceManagerTest extends TestCase
             File refmgrfile = new File( workDir, "refmgr.ser" );
             if( refmgrfile.exists() ) refmgrfile.delete();
         }
-
-        String fileDir = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-        
-        if( fileDir != null )
-        {
-            TestEngine.deleteAll( new File(fileDir) );
-        }
         
         engine = new TestEngine(props);
 

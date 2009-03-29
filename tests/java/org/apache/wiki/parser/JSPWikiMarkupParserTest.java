@@ -65,12 +65,12 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         testEngine = new TestEngine( props );
-        testEngine.deletePage( PAGE_NAME );
+        testEngine.emptyRepository();
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        deleteCreatedPages();
+        testEngine.emptyRepository();
         
         testEngine.shutdown();
     }

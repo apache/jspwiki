@@ -20,6 +20,8 @@
  */
 package org.apache.wiki.content;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.*;
@@ -224,7 +226,7 @@ public class ContentManager implements WikiEventListener
             {
                 try
                 {
-                    Class<Repository> jackrabbitRepo = (Class<Repository>) Class.forName( "org.apache.jackrabbit.TransientRepository" );
+                    Class<Repository> jackrabbitRepo = (Class<Repository>) Class.forName( "org.apache.jackrabbit.core.TransientRepository" );
                     m_repository = jackrabbitRepo.newInstance();
                 }
                 catch( ClassNotFoundException e1 )
@@ -306,7 +308,57 @@ public class ContentManager implements WikiEventListener
     {
         m_sessionManager.releaseSession();
     }
+    
+    public void shutdown()
+    {
+        release();
         
+        //
+        //  If this is a Jackrabbit Repository, we'll call it's shutdown() method
+        //  to make sure it's really shut down.
+        //
+        try
+        {
+            Class jcrRepoClass = Class.forName( "org.apache.jackrabbit.core.JackrabbitRepository" );
+            if( m_repository.getClass().isAssignableFrom(jcrRepoClass) )
+            {
+                log.info( "Shutting down Jackrabbit repository..." );
+                Method m = jcrRepoClass.getMethod( "shutdown" );
+                
+                m.invoke( m_repository );
+            }
+        }
+        catch( ClassNotFoundException e )
+        {
+            // Fine.
+        }
+        catch( SecurityException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( NoSuchMethodException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( IllegalArgumentException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( IllegalAccessException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch( InvocationTargetException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     /**
      *  Returns the current JCR Session.  If there is no Session, a new
      *  one is created.
@@ -359,7 +411,7 @@ public class ContentManager implements WikiEventListener
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
             
-            Query q = mgr.createQuery( "/jcr:root/"+JCR_PAGES_NODE+"/"+((space != null) ? space : "")+"/*", Query.XPATH );
+            Query q = mgr.createQuery( "/jcr:root/"+JCR_PAGES_NODE+((space != null) ? ("/"+space) : "")+"/*", Query.XPATH );
             
             QueryResult qr = q.execute();
             
@@ -1037,7 +1089,7 @@ public class ContentManager implements WikiEventListener
         
             Node nd = session.getRootNode().addNode( getJCRPath(path) );
             
-            nd.addMixin( "mix:versionable" );
+            //nd.addMixin( "mix:versionable" );
             nd.addMixin( "mix:referenceable" );
 
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
@@ -1304,8 +1356,11 @@ public class ContentManager implements WikiEventListener
         public void releaseSession()
         {
             Session session = m_currentSession.get();
-            session.logout();
-            m_currentSession.set(null);            
+            if( session != null )
+            {
+                session.logout();
+                m_currentSession.set(null);
+            }
         }
         
         /**

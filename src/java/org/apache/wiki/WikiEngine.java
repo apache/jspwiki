@@ -371,7 +371,15 @@ public class WikiEngine
     public WikiEngine( Properties properties )
         throws WikiException
     {
-        initialize( properties );
+        try
+        {
+            initialize( properties );
+        }
+        catch( WikiException e )
+        {
+            shutdown();
+            throw e;
+        }
     }
 
     /**
@@ -422,6 +430,7 @@ public class WikiEngine
             {
                 context.log( msg );
             }
+            shutdown();
             throw new WikiException( msg );
         }
     }
@@ -1566,9 +1575,9 @@ public class WikiEngine
     public void shutdown()
     {
         fireEvent( WikiEngineEvent.SHUTDOWN );
-        m_filterManager.destroy();
+        if( m_filterManager != null ) m_filterManager.destroy();
         LoggerFactory.unRegisterAllLoggerMBeans();
-        m_contentManager.release();
+        if( m_contentManager != null ) m_contentManager.shutdown();
     }
 
     /**

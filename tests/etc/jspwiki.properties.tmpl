@@ -9,14 +9,11 @@
 #
 jspwiki.pageProvider = org.apache.wiki.providers.FileSystemProvider
 
-jspwiki.usePageCache = true
-#
-#  Determines where wiki files are kept.
-#
-jspwiki.fileSystemProvider.pageDir = @tests.pagedir@
 jspwiki.workDir = @tests.workdir@
 
 jspwiki.translatorReader.camelCaseLinks = true
+
+jspwiki.repository = priha
 
 jspwiki.breakTitleWithSpaces = true
 
@@ -24,7 +21,6 @@ jspwiki.translatorReader.matchEnglishPlurals = true
 jspwiki.translatorReader.useOutlinkImage = false
 
 jspwiki.attachmentProvider = BasicAttachmentProvider
-jspwiki.basicAttachmentProvider.storageDir = @tests.pagedir@
 
 jspwiki.encoding = ISO-8859-1
 

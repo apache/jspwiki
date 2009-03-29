@@ -69,17 +69,10 @@ public class WikiEngineTest extends TestCase
         m_engine = new TestEngine(props);
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        if( files != null )
-        {
-            File f = new File( files );
-
-            TestEngine.deleteAll( f );
-        }
-
+        m_engine.emptyRepository();
+        
         TestEngine.emptyWorkDir();
         
         m_engine.shutdown();

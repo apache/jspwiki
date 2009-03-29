@@ -46,27 +46,13 @@ public class MassiveRepositoryTest extends TestCase
         props.load( TestEngine.findTestProperties("/jspwiki_vers.properties") );
         props.setProperty( CachingProvider.PROP_CACHECAPACITY, "1000" );
 
-        
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        // Remove file
-        File f = new File( files );
-
-        TestEngine.deleteAll(f);
-
         engine = new TestEngine(props);
     }
 
     protected void tearDown() throws Exception
     {
+        engine.emptyRepository();
         super.tearDown();
-        
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        // Remove file
-        File f = new File( files );
-
-        TestEngine.deleteAll(f);
     }
 
     private String getName( int i )
