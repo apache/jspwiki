@@ -6,6 +6,8 @@
         not quite work yet, but it's a start.
         
         * Minor refactorings to remove dependencies on PageManager. 
+        
+        * Minor fixes to unit tests to improve pass rate.
 
 2009-03-29  Harry Metske <metskem@apache.org>
 
