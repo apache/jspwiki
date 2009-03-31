@@ -38,6 +38,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.*;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
@@ -57,7 +58,6 @@ import org.apache.wiki.util.WikiBackgroundThread;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.Workflow;
-import org.hsqldb.lib.StringUtil;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
@@ -1440,7 +1440,7 @@ public class ContentManager implements WikiEventListener
      */
     public Node createJCRNode( String jcrPath ) throws RepositoryException
     {
-        String[] components = StringUtil.split( jcrPath, "/" );
+        String[] components = StringUtils.split( jcrPath, "/" );
         
         Node current = getCurrentSession().getRootNode();
 
