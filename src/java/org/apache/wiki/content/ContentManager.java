@@ -309,6 +309,9 @@ public class ContentManager implements WikiEventListener
         m_sessionManager.releaseSession();
     }
     
+    /**
+     *  Shuts down the ContentManager in a good fashion.
+     */
     public void shutdown()
     {
         release();
@@ -317,9 +320,10 @@ public class ContentManager implements WikiEventListener
         //  If this is a Jackrabbit Repository, we'll call it's shutdown() method
         //  to make sure it's really shut down.
         //
+        // FIXME: I am not too sure whether this really works.
         try
         {
-            Class jcrRepoClass = Class.forName( "org.apache.jackrabbit.core.JackrabbitRepository" );
+            Class<Repository> jcrRepoClass = (Class<Repository>)Class.forName( "org.apache.jackrabbit.core.JackrabbitRepository" );
             if( m_repository.getClass().isAssignableFrom(jcrRepoClass) )
             {
                 log.info( "Shutting down Jackrabbit repository..." );
@@ -357,6 +361,8 @@ public class ContentManager implements WikiEventListener
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        m_repository = null;
     }
     
     /**
@@ -626,9 +632,9 @@ public class ContentManager implements WikiEventListener
      *  List is a WikiPage.
      *  
      *  @param path The name of the page to fetch history for
-     *  @return If the page does not exist, returns null, otherwise a List
-     *          of WikiPages.
+     *  @return A List of WikiPages
      *  @throws ProviderException If the repository fails.
+     *  @throws PageNotFoundException If the page does not exist.
      */
 
     public List<WikiPage> getVersionHistory( WikiName path )
@@ -756,8 +762,8 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param page The page to delete.
      *  @throws ProviderException if the page fails
-     *  @throws PageNotFoundException If the page in question does not exist.
-     *  @return True, if the page was actually deleted, and false otherwise.
+     *  @return True, if the page existed and was actually deleted, and false if the page did
+     *          not exist.
      */
     // TODO: The event which gets fired suggests that this actually a whole page delete event
     public boolean deleteVersion( WikiPage page )
@@ -1140,6 +1146,15 @@ public class ContentManager implements WikiEventListener
         }
     }
 
+    /**
+     *  Finds a WikiPage with a particular version.
+     *  
+     *  @param path Path of the page to find.
+     *  @param version The version of the page to find
+     *  @return A valid WikiPage
+     *  @throws ProviderException If the backend fails.
+     *  @throws PageNotFoundException If the page version in question cannot be found.
+     */
     public JCRWikiPage getPage( WikiName path, int version ) throws ProviderException, PageNotFoundException
     {
         try
@@ -1292,6 +1307,7 @@ public class ContentManager implements WikiEventListener
         return pageChanged;
     }
 
+    /*
     public WikiPage getDummyPage() throws WikiException
     {
         try
@@ -1305,7 +1321,7 @@ public class ContentManager implements WikiEventListener
             throw new WikiException("Unable to get dummy page",e);
         }
     }
-
+*/
     /**
      *  Implements the ThreadLocal pattern for managing JCR Sessions.  It is the
      *  responsibility for every user to get a Session, then close it.
@@ -1400,6 +1416,14 @@ public class ContentManager implements WikiEventListener
         boolean m_identity = false;        
     }
 
+    /**
+     *  A shortcut to find a JCR Node from a given JCR Path.  This method should
+     *  NOT be called unless you really, really know what you are doing.
+     *  
+     *  @param jcrPath An absolute JCR path.
+     *  @return A JCR Node
+     *  @throws RepositoryException If the Node cannot be found or something else fails.
+     */
     public Node getJCRNode( String jcrPath ) throws RepositoryException
     {
         return (Node)m_sessionManager.getSession().getItem( jcrPath );
