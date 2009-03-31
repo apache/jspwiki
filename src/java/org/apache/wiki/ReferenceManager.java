@@ -64,9 +64,6 @@ public class ReferenceManager
 
     private static Logger log = LoggerFactory.getLogger(ReferenceManager.class);
 
-    private static final String SERIALIZATION_FILE = "refmgr.ser";
-    private static final String SERIALIZATION_DIR  = "refmgr-attr";
-
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
 
@@ -88,43 +85,6 @@ public class ReferenceManager
     }
 
     /**
-     *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
-     */
-    @SuppressWarnings("unchecked")
-    private void updatePageReferences( WikiPage page )
-        throws ProviderException
-    {
-        String content;
-
-        content = page.getContentAsString();
-
-        TreeSet<WikiName> res = new TreeSet<WikiName>();
-        Collection<WikiName> links = m_engine.scanWikiLinks( page, content );
-
-        // This makes sure all duplicates are removed.
-        
-        res.addAll( links );
-        
-        // FIXME: I am not sure whether it makes sense to add all attachments here as well.
-        /*
-        Collection attachments = m_engine.getAttachmentManager().listAttachments( page );
-
-        for( Iterator atti = attachments.iterator(); atti.hasNext(); )
-        {
-            res.add( ((WikiPage)(atti.next())).getName() );
-        }
-         */
-        try
-        {
-            internalUpdateReferences( (JCRWikiPage)page, res );
-        }
-        catch( RepositoryException e )
-        {
-            throw new ProviderException("Unable to store internal references",e);
-        }
-    }
-
-    /**
      *  Initializes the entire reference manager with the initial set of pages
      *  from the collection.
      *
@@ -133,7 +93,7 @@ public class ReferenceManager
      *  @since 2.2
      *  @throws ProviderException If reading of pages fail.
      */
-    public void initialize( Collection pages )
+    public void initialize( Collection<WikiPage> pages )
         throws ProviderException
     {
         try
@@ -282,7 +242,7 @@ public class ReferenceManager
      * can have more than one value we have to delete just the key-value-pair
      * referring page:deleted page.
      *
-     *  @param page Name of the page to remove from the maps.
+     *  @param pageName Name of the page to remove from the maps.
      * @throws PageNotFoundException 
      * @throws ProviderException 
      */
@@ -295,7 +255,7 @@ public class ReferenceManager
         for( WikiName referred : refTo )
         {
             log.debug( "Removing references to page %s from page %s", page.getQualifiedName(), referred );
-            Set<WikiName> referredBy = getReferredBy(referred);
+            Set<WikiName> referredBy = findReferrers(referred);
             
             referredBy.remove( page.getQualifiedName() );
             
@@ -311,12 +271,24 @@ public class ReferenceManager
 
     }
 
-    private String getReferredByJCRPath(WikiName name)
+    /**
+     *  Build the path which is used to store the ReferredBy data  
+     */
+    private final String getReferredByJCRPath(WikiName name)
     {
         return "/wiki:references/"+name.getSpace()+"/"+name.getPath();
     }
     
-    private Set<WikiName> getReferredBy(WikiName name) throws ProviderException
+    /**
+     *  Finds all the pages which are referenced by the given page.
+     *  
+     *  @param name The WikiName to find.
+     *  @return A set of WikiNames. If the page in question does not exist, returns
+     *          an empty set.
+     *  @throws ProviderException If something goes wrong.
+     *  @since 3.0
+     */
+    public Set<WikiName> findReferrers(WikiName name) throws ProviderException
     {
         String jcrPath = getReferredByJCRPath( name );
         
@@ -345,7 +317,7 @@ public class ReferenceManager
             throw new ProviderException("Unable to get the referred-by list",e);
         }
     }
-    
+        
     /**
      *  Set the referredBy attribute set.
      *  
@@ -462,7 +434,7 @@ public class ReferenceManager
             {
                 // A page is no longer referenced, so this page is removed from its
                 // referencedBy list.
-                Set<WikiName> refs = getReferredBy( name );
+                Set<WikiName> refs = findReferrers( name );
                 refs.remove( page.getQualifiedName() );
                 setReferredBy( name, refs );
             }
@@ -474,7 +446,7 @@ public class ReferenceManager
             {
                 // There is a new reference which is not in the old references list,
                 // so we will need to add it to the new page's referencedBy list.
-                Set<WikiName> refs = getReferredBy( name );
+                Set<WikiName> refs = findReferrers( name );
                 refs.add( page.getQualifiedName() );
                 setReferredBy( name, refs );
             }
@@ -548,32 +520,6 @@ public class ReferenceManager
         }
          */
         return uncreated;
-    }
-
-
-    /**
-     * Find all pages that refer to this page. Returns null if the page
-     * does not exist or is not referenced at all, otherwise returns a
-     * collection containing page names (String) that refer to this one.
-     * <p>
-     * @param pagename The page to find referrers for.
-     * @return A Collection of Strings.  (This is, in fact, a Set, and is likely
-     *         to change at some point to a Set).  May return null, if the page
-     *         does not exist, or if it has no references.
-     * @throws ProviderException 
-     * @deprecated
-     */
-    // FIXME: Return a Set instead of a Collection.
-    public synchronized Collection<String> findReferrers( String pagename ) throws ProviderException
-    {
-        Set<String> refs = new TreeSet<String>();
-
-        Set<WikiName> r = getReferredBy( WikiName.valueOf( pagename ) );
-
-        for( WikiName wn : r )
-            refs.add( wn.toString() );
-        
-        return refs;
     }
 
     /**

@@ -21,6 +21,7 @@
 package org.apache.wiki.plugin;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -30,6 +31,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -92,7 +94,7 @@ public class ReferringPagesPlugin
         {
             WikiPage page = context.getEngine().getPage( pageName );
         
-            Collection   links  = refmgr.findReferrers( page.getName() );
+            Collection<WikiName> links = refmgr.findReferrers( page.getQualifiedName() );
             String       wikitext = "";
 
             super.initialize( context, params );
@@ -110,14 +112,19 @@ public class ReferringPagesPlugin
         
             if( links != null && links.size() > 0 )
             {
-                links = filterCollection( links );
-                wikitext = wikitizeCollection( links, m_separator, items );
+                // FIXME: Having to copy all of these is kinda stupid.
+                ArrayList<String> tmpList = new ArrayList<String>();
+                
+                for( WikiName wn : links ) tmpList.add( wn.toString() );
+                
+                links = filterCollection( tmpList );
+                wikitext = wikitizeCollection( tmpList, m_separator, items );
 
                 result.append( makeHTML( context, wikitext ) );
                 
-                if( items < links.size() && items > 0 )
+                if( items < tmpList.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( links.size() - items) };
+                    Object[] args = { "" + ( tmpList.size() - items) };
                     extras = MessageFormat.format(extras, args);
                     
                     result.append( "<br />" );

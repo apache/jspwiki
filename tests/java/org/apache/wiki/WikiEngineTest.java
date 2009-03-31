@@ -873,7 +873,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
-        Collection pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        Collection pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
         assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
@@ -883,7 +883,7 @@ public class WikiEngineTest extends TestCase
         assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
         assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
         
-        pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
         
         assertEquals( "wrong # of referrers", 1, pages.size() );
         

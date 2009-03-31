@@ -128,7 +128,7 @@ public class PageRenamer
                                                    JSPWikiMarkupParser.PROP_CAMELCASELINKS, 
                                                    m_camelCase );
 
-        Set<String> referrers = getReferencesToChange( fromPage, engine );
+        Set<WikiName> referrers = getReferencesToChange( fromPage, engine );
 
         //
         //  Do the actual rename by changing from the frompage to the topage, including
@@ -203,24 +203,24 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<String>referrers )
+    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<WikiName>referrers )
     {
         WikiEngine engine = context.getEngine();
         
         if( referrers.isEmpty() ) return; // No referrers
         
-        for( String pageName : referrers )
+        for( WikiName pageName : referrers )
         {
             //  In case the page was just changed from under us, let's do this
             //  small kludge.
-            if( pageName.equals( fromPage.getName() ) )
+            if( pageName.equals( fromPage.getQualifiedName() ) )
             {
-                pageName = toPage.getName();
+                pageName = toPage.getQualifiedName();
             }
             
             try
             {
-                WikiPage p = engine.getPage( pageName );
+                WikiPage p = engine.getContentManager().getPage( pageName );
             
                 String sourceText = engine.getPureText( p );
             
@@ -254,15 +254,15 @@ public class PageRenamer
     }
 
     @SuppressWarnings("unchecked")
-    private Set<String> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
+    private Set<WikiName> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
     {
-        Set<String> referrers = new TreeSet<String>();
+        Set<WikiName> referrers = new TreeSet<WikiName>();
         
         try
         {
-            Collection<String> r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+            Collection<WikiName> r = engine.getReferenceManager().findReferrers( fromPage.getQualifiedName() );
             if( r != null ) referrers.addAll( r );
-            
+            /*
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );
 
             for( WikiPage att : attachments  )
@@ -271,6 +271,7 @@ public class PageRenamer
 
                 if( c != null ) referrers.addAll(c);
             }
+            */
         }
         catch( ProviderException e )
         {

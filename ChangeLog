@@ -1,3 +1,14 @@
+2009-03-31  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-91
+        
+        * Continued fixing ReferenceManager.  The API of ReferenceManager
+        is changing slightly to use WikiNames instead of Strings to reflect
+        the new multi-wiki capabilities.  This needs some fixes to tests as
+        well.
+        
+        * WikiName.equals() enhanced to manage also String comparisons.
+        
 2009-03-29  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-90

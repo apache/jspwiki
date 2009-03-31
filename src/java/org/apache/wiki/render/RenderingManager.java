@@ -30,6 +30,7 @@ import java.util.Properties;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -344,7 +345,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                 m_documentCache.flushPattern( pageName );
                 try
                 {
-                    Collection referringPages = m_engine.getReferenceManager().findReferrers( pageName );
+                    Collection<WikiName> referringPages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf(pageName) );
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistant page
@@ -355,9 +356,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
                         Iterator i = referringPages.iterator();
                         while (i.hasNext())
                         {
-                            String page = (String) i.next();
+                            WikiName page = (WikiName) i.next();
                             if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
-                            m_documentCache.flushPattern( page );
+                            m_documentCache.flushPattern( page.toString() );
                         }
                     }
                 }

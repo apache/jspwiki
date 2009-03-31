@@ -22,10 +22,12 @@ package org.apache.wiki.content;
 
 import java.util.Collection;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -76,6 +78,11 @@ public class PageRenamerTest extends TestCase
         m_engine.shutdown();
     }
 
+    private Set<WikiName> findReferrers(String path) throws ProviderException
+    {
+        return m_engine.getReferenceManager().findReferrers( WikiName.valueOf(path) );
+    }
+    
     public void testSimpleRename()
         throws Exception
     {
@@ -120,13 +127,13 @@ public class PageRenamerTest extends TestCase
         
         assertEquals( "no rename", "[FooTest]", data.trim() );
         
-        Collection<String> refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection<WikiName> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", (WikiName)refs.iterator().next() );
     }
 
     public void testReferrerChangeCC()
@@ -144,13 +151,13 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
      
         assertEquals( "no rename", "FooTest", data.trim() );
-        Collection<String> refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection<WikiName> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", (WikiName)refs.iterator().next() );
     }
     
     public void testReferrerChangeAnchor()
@@ -168,13 +175,13 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
      
         assertEquals( "no rename", "[FooTest#heading1]", data.trim() );
-        Collection<String> refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection<WikiName> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }
     
     public void testReferrerChangeMultilink()
@@ -195,13 +202,13 @@ public class PageRenamerTest extends TestCase
                       "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]", 
                       data.trim() );
 
-        Collection<String> refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection<WikiName> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }
     
     public void testReferrerNoWikiName()
@@ -253,13 +260,13 @@ public class PageRenamerTest extends TestCase
         att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
         assertNull("testpage/foo.txt exists",att);
         
-        Collection<String> refs = m_engine.getReferenceManager().findReferrers("TestPage/bar.jpg");
+        Collection<WikiName> refs = findReferrers("TestPage/bar.jpg");
     
         assertNull( "oldpage", refs );
     
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest/bar.jpg" );
+        refs = findReferrers( "FooTest/bar.jpg" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (String)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }
 
     public void testSamePage() throws Exception
@@ -477,12 +484,12 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
         assertEquals( "page not renamed", "[Test Page Referred|TestPageReferredNew]", data.trim() );
 
-        Collection refs = m_engine.getReferenceManager().findReferrers( "TestPageReferred" );
+        Collection refs = findReferrers( "TestPageReferred" );
         assertNull( "oldpage", refs );
 
-        refs = m_engine.getReferenceManager().findReferrers( "TestPageReferredNew" );
+        refs = findReferrers( "TestPageReferredNew" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPageReferring", (String) refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPageReferring", refs.iterator().next() );
     }
 
     /** https://issues.apache.org/jira/browse/JSPWIKI-398 */
@@ -497,12 +504,12 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
         assertEquals( "page not renamed", "[link one|Link uno] [link two]", data.trim() );
 
-        Collection refs = m_engine.getReferenceManager().findReferrers( "Link one" );
+        Collection refs = findReferrers( "Link one" );
         assertNull( "oldpage", refs );
 
-        refs = m_engine.getReferenceManager().findReferrers( "Link uno" );
+        refs = findReferrers( "Link uno" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "RenameTest", (String) refs.iterator().next() );
+        assertEquals( "wrong ref", "RenameTest", refs.iterator().next() );
     }
 
     public static Test suite()
