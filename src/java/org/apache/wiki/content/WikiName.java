@@ -26,6 +26,9 @@ import java.io.Serializable;
  *  A WikiName represents a combination of a WikiSpace as well as a
  *  path within that space.  For example, in "MyWiki:MainPage/foo.jpg",
  *  "MyWiki" is the space, and "MainPage/foo.jpg" is the path within that space.
+ *  <p>
+ *  A WikiName is a static object which cannot be changed after it has been
+ *  created.
  *  
  *  @since 3.0
  */
@@ -34,6 +37,7 @@ public class WikiName implements Serializable, Comparable<WikiName>
     private static final long serialVersionUID = 1L;
     private String m_space;
     private String m_path;
+    private String m_stringRepresentation = null;
     
     private WikiName()
     {}
@@ -143,17 +147,26 @@ public class WikiName implements Serializable, Comparable<WikiName>
      */
     public String toString()
     {
-        return m_space+":"+m_path;
+        //
+        //  The String representation is cached for maximum speed
+        //  and object creation overhead.
+        //
+        if( m_stringRepresentation == null )
+            m_stringRepresentation = m_space+":"+m_path;
+        
+        return m_stringRepresentation;
     }
 
     /**
-     *  {@inheritDoc}
+     *  The hashcode of the WikiName is exactly the same as the hashcode
+     *  of its String representation.  This is to fulfil the general
+     *  contract of equals().
      *  
      *  @return int 
      */
     public int hashCode()
     {
-        return m_space.hashCode() ^ m_path.hashCode();
+        return toString().hashCode();
     }
     
     /**
@@ -169,7 +182,9 @@ public class WikiName implements Serializable, Comparable<WikiName>
     
     /**
      *  A WikiName is equal to another WikiName if the space and the path
-     *  match.
+     *  match.  A WikiName can also be compared to a String, in which case
+     *  a WikiName is equal to the String if its String representation is
+     *  the same.  This is to make it easier to compare.
      *  
      *  @param o The Object to compare against.
      *  @return True, if this WikiName is equal to another WikiName.
@@ -181,6 +196,10 @@ public class WikiName implements Serializable, Comparable<WikiName>
             WikiName n = (WikiName) o;
             
             return m_space.equals( n.m_space ) && m_path.equals( n.m_path );
+        }
+        else if( o instanceof String )
+        {
+            return toString().equals( o );
         }
         return false;
     }
