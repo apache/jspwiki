@@ -45,7 +45,7 @@ public class AttachmentDavProviderTest extends TestCase
         DavItem di = m_provider.getItem( new DavPath("TestPage/deceit of the tribbles.txt") );
         
         assertNotNull( "No di", di );
-        assertEquals("URL", "http://localhost/attach/TestPage/deceit+of+the+tribbles.txt", 
+        assertEquals("URL", "http://localhost/attach/TestPage/deceit%20of%20the%20tribbles.txt", 
                      di.getHref() );
     }
 
