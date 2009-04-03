@@ -1,7 +1,7 @@
 
 Welcome to the stable version of JSPWiki 2.8!
 
-JSPWiki 2.8.1 is a security and stability update to 2.8.0.  All users
+JSPWiki 2.8.2 is a security and stability update to 2.8.0.  All users
 are encouraged to upgrade.
 
 This is the first major version of JSPWiki which is released completely under
@@ -18,9 +18,9 @@ UPDATES SINCE 2.8.0
 
 The full list is available in the ChangeLog file.  Highlights include
 
-* French translation and corepages
-* OC4J compatibility
-* Various fixes and updates
+* Russian translation thanks to Andrew Rikhlivsky
+
+* A number of stability and bug fixes.
 
 
 NEW FEATURES SINCE 2.6.x
