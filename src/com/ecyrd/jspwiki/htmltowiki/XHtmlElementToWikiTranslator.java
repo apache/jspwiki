@@ -518,14 +518,14 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "pre" ) )
                 {
-                    m_out.print( "\n{{{\n" ); // start JSPWiki "code blocks" on its own line
+                    m_out.print( "\n{{{" ); // start JSPWiki "code blocks" on its own line
                     m_preStack.push();
                     print( e );
                     m_preStack.pop();
 
-                    // print a newline before the closing braces for aesthetics and a newline after it
+                    // print a newline after the closing braces
                     // to avoid breaking any subsequent wiki markup that follows.
-                    m_out.print( "\n}}}\n" );
+                    m_out.print( "}}}\n" );
                 }
                 else if( n.equals( "code" ) || n.equals( "tt" ) )
                 {
