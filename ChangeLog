@@ -1,3 +1,11 @@
+2009-04-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-92
+        
+        * Fixed JCRWikiPage.getChildren(). Now you can kinda deploy
+        JSPWiki, but it's useless since if the main page is missing,
+        everything just breaks down.
+        
 2009-03-31  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-91

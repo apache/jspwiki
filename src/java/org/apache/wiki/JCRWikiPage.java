@@ -614,6 +614,10 @@ public class JCRWikiPage
                 pages.add( new JCRWikiPage( m_engine, iter.nextNode() ) );
             }
         }
+        catch( PathNotFoundException e )
+        {
+            return new ArrayList<WikiPage>();
+        }
         catch( RepositoryException e )
         {
             throw new ProviderException("Unable to list children",e);
