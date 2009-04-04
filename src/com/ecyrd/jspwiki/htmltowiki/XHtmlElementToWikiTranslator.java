@@ -390,9 +390,20 @@ public class XHtmlElementToWikiTranslator
                                 ref = trimLink( ref );
                                 if( ref != null )
                                 {
-                                    if( ref.startsWith( "#" ) )
+                                    if( ref.startsWith( "#" ) ) // This is a link to a footnote.
                                     {
-                                        print( e );
+                                        // convert "#ref-PageName-1" to just "1"
+                                        String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
+                                        
+                                        // remove the brackets around "[1]"
+                                        String textValue = e.getValue().substring( 1, (e.getValue().length() - 1) );
+                                        
+                                        if( href.equals( textValue ) ){ // handles the simplest case. Example: [1]
+                                            print( e );
+                                        }                                        
+                                        else{ // handles the case where the link text is different from the href. Example: [something|1]
+                                            m_out.print( "[" + textValue + "|" + href + "]" );
+                                        }
                                     }
                                     else
                                     {
