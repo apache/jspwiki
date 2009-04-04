@@ -37,11 +37,6 @@ import org.apache.wiki.providers.ProviderException;
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
  */
-
-// FIXME: We need to rethink how metadata is being used - probably the 
-//        author, date, etc. should also be part of the metadata.  We also
-//        need to figure out the metadata lifecycle.
-
 public interface WikiPage
 {
     /**
@@ -60,17 +55,17 @@ public interface WikiPage
     
 
     /**
-     *  Returns the name of the page.
+     *  Returns the name of the page without the space identifier.
      *  
      *  @return The page name.
      */
     public String getName();
     
     /**
-     * Returns the full, qualified, name of the WikiPage that includes the wiki space.
-     * Used by the {@link org.apache.wiki.ui.stripes.HandlerInfo} class and
-     * {@link org.apache.wiki.ui.stripes.HandlerPermission} annotations.
-     * @return the qualified page name, for example <code>mywiki:Main</code>
+     *  Returns the full, qualified, name of the WikiPage that includes the wiki space.
+     *  In most cases, you should use this method.
+     * 
+     *  @return the qualified page name, for example <code>mywiki:Main</code>
      */
     public WikiName getQualifiedName();
 
@@ -99,6 +94,7 @@ public interface WikiPage
      * Returns the full attributes Map, in case external code needs
      * to iterate through the attributes.
      * 
+     * @deprecated
      * @return The attribute Map.  Please note that this is a direct
      *         reference, not a copy.
      */
@@ -197,31 +193,72 @@ public interface WikiPage
      */
     public int compareTo( Object o );
  
+    /**
+     *  Returns the content of the WikiPage markup as a String.
+     *  
+     *  @return String depicting the contents.
+     *  @throws ProviderException If the page has no contents or fetching the content failed.
+     */
     public String getContentAsString() throws ProviderException;
 
+    /**
+     *  Returns the content of the WikiPage as an InputStream.
+     *  
+     *  @return The content of the page as an InputStream.
+     *  @throws ProviderException If the page contents cannot be retrieved.
+     */
     public InputStream getContentAsStream() throws ProviderException;
     
+    /**
+     *  Stores the state of the page, creating a new version in the
+     *  repository.
+     *  
+     *  @throws ProviderException If the save cannot be completed.
+     */
     public void save() throws ProviderException;
     
+    /**
+     *  Set the content of the page to a given String.  This directly writes
+     *  to the wiki:content attribute.
+     *  
+     *  @param content New content of the page.
+     *  @throws ProviderException If the page contents are illegal or cannot be stored.
+     */
     public void setContent(String content) throws ProviderException;
 
+    /**
+     *  Sets the contents of the page to the contents of the given InputStream.
+     * 
+     *  @param in InputStream to read from.
+     *  @throws ProviderException If the page cannot be stored.
+     */
     public void setContent( InputStream in ) throws ProviderException;
 
+    /**
+     *  Returns a collection of all the WikiNames that this page refers to.
+     *  
+     *  @return A collection of WikiNames. May be an empty collection if this
+     *          page refers to no other pages.
+     *  @throws ProviderException If the references cannot be fetched.
+     */
     public Collection<WikiName> getRefersTo() throws ProviderException;
     
     /**
      *  Returns the parent of the page. 
      *  
-     *  @throws ProviderException
+     *  @return The parent of the page.
+     *  @throws ProviderException If the parent page cannot be determined.
      *  @throws PageNotFoundException in case there is no parent page. 
      */
     public WikiPage getParent() throws PageNotFoundException, ProviderException;
 
     /**
      *  Returns a list of all subpages and attachments of this WikiPage.
+     *  In case there are no subpages or attachments, returns an empty
+     *  list.
      *  
-     *  @return
-     * @throws ProviderException
+     *  @return An ordered List of WikiPage objects.
+     *  @throws ProviderException If something goes wrong.
      */
     public List<WikiPage> getChildren() throws ProviderException;
 }
