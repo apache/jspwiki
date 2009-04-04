@@ -68,6 +68,7 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
 import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.admin.AdminBeanManager;
@@ -690,13 +691,12 @@ public class WikiEngine
      *
      *  @throws WikiException If the reference manager initialization fails.
      */
-    @SuppressWarnings("unchecked")
     public void initReferenceManager() throws WikiException
     {
         try
         {
             ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
-            pages.addAll( m_pageManager.getAllPages() );
+            pages.addAll( m_contentManager.getAllPages(null) );
 
             // Build a new manager with default key lists.
             if( m_referenceManager == null )
@@ -1063,6 +1063,7 @@ public class WikiEngine
      *
      *  @return A Collection of Strings.
      */
+    @SuppressWarnings("unchecked")
     public Collection<String> getAllInterWikiLinks()
     {
         Vector<String> v = new Vector<String>();
@@ -1439,7 +1440,8 @@ public class WikiEngine
 
         try
         {
-            result = m_pageManager.getPageText( page, version );
+            WikiPage p = m_contentManager.getPage( WikiName.valueOf( page ), version );
+            result = p.getContentAsString();
         }
         catch( PageNotFoundException e )
         {
@@ -1819,7 +1821,14 @@ public class WikiEngine
      */
     public int getPageCount()
     {
-        return m_pageManager.getTotalPageCount();
+        try
+        {
+            return m_contentManager.getTotalPageCount(null);
+        }
+        catch( ProviderException e )
+        {
+            return -1;
+        }
     }
 
     /**
@@ -1829,7 +1838,7 @@ public class WikiEngine
 
     public String getCurrentProvider()
     {
-        return m_pageManager.getProvider().getClass().getName();
+        return m_contentManager.getProvider();
     }
 
     /**
@@ -1842,7 +1851,7 @@ public class WikiEngine
      */
     public String getCurrentProviderInfo()
     {
-        return m_pageManager.getProviderDescription();
+        return m_contentManager.getProviderDescription();
     }
 
     /**
@@ -1850,6 +1859,8 @@ public class WikiEngine
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.
      *
+     *  @param space The WikiSpace for which you want to have the
+     *               Recent Changes for.
      *  @return Collection of WikiPage objects.  In reality, the returned
      *          collection is a Set, but due to API compatibility reasons,
      *          we're not changing the signature soon...
@@ -1857,7 +1868,6 @@ public class WikiEngine
 
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
-    @SuppressWarnings("unchecked")
     public Collection<WikiPage> getRecentChanges(String space)
     {
         try
@@ -1893,10 +1903,10 @@ public class WikiEngine
     //
     // FIXME: Should also have attributes attached.
     //
-    public Collection findPages( String query )
+    public Collection<SearchResult> findPages( String query )
         throws ProviderException, IOException
     {
-        Collection results = m_searchManager.findPages( query );
+        Collection<SearchResult> results = m_searchManager.findPages( query );
 
         return results;
     }
@@ -1910,7 +1920,6 @@ public class WikiEngine
      *  @throws ProviderException if the backend fails
      *  @since 3.0
      */
-    @SuppressWarnings("deprecation")
     public WikiPage createPage( WikiName name ) throws PageAlreadyExistsException, ProviderException
     {
         return m_contentManager.addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );

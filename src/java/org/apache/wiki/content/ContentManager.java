@@ -682,6 +682,11 @@ public class ContentManager implements WikiEventListener
         return m_repository.getDescriptor( Repository.REP_NAME_DESC );
     }
 
+    public String getProvider()
+    {
+        return m_repository.getDescriptor( Repository.SPEC_NAME_DESC );
+    }
+    
     /**
      *  Returns the total count of all pages in the repository. This
      *  method is equivalent of calling getAllPages().size(), but
