@@ -1,5 +1,12 @@
 2009-04-05  Janne Jalkanen <jalkanen@apache.org>
 
+        * 3.0.0-svn-95
+        
+        * Added the custom PreferencesLocalePicker to help Stripes pick
+        the right locale.
+
+2009-04-05  Janne Jalkanen <jalkanen@apache.org>
+
         * 3.0.0-svn-94
         
         * Got tired of the relative mess on page name resolving (as we were
