@@ -1,3 +1,11 @@
+2009-04-05 Harry Metske <metskem@apache.org>
+
+        * 2.8.3-svn-2
+
+        * added some code to Watchdog so that the stacktrace is dumped in case of 
+           a timeout, we dump stacktraces of all threads if the debuglevel is
+           INFO or higher
+        
 2008-04-04  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.3-svn-1
