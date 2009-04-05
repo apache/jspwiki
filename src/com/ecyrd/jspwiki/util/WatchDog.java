@@ -373,7 +373,7 @@ public final class WatchDog
     private static class WatchDogThread extends WikiBackgroundThread
     {
         /** How often the watchdog thread should wake up (in seconds) */
-        private static final int CHECK_INTERVAL = 5;
+        private static final int CHECK_INTERVAL = 30;
 
         public WatchDogThread( WikiEngine engine )
         {
