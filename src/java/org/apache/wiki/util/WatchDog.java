@@ -328,7 +328,14 @@ public final class WatchDog
             Thread t = (Thread) threadIterator.next();
             if( t.getName().equals( m_watchable.getName() ) || log.isInfoEnabled() )
             {
-                log.error( "dumping stacktrace for too long running thread : " + t );
+                if( t.getName().equals( m_watchable.getName() ) )
+                {
+                    log.error( "dumping stacktrace for too long running thread : " + t );
+                }
+                else
+                {
+                    log.error( "dumping stacktrace for other running thread : " + t );
+                }
                 StackTraceElement[] ste = stackTraces.get( t );
                 StringBuilder stacktrace = new StringBuilder( "stacktrace follows" );
                 for( int i = 0; i < ste.length; i++ )
