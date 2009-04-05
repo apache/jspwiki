@@ -45,25 +45,28 @@ public class WikiName implements Serializable, Comparable<WikiName>
     /**
      *  Create a WikiName from a space and a path.
      *  
-     *  @param space The space
+     *  @param space The space. If space == null, then uses {@link ContentManager#DEFAULT_SPACE}
      *  @param path The path
      */
     public WikiName(String space, String path)
     {
-        m_space = space;
+        m_space = (space != null) ? space : ContentManager.DEFAULT_SPACE;
         m_path  = path;
     }
     
     /**
      *  Parses a fully-qualified name (FQN) and turns it into a WikiName.
      *  If the space name is missing, uses {@link ContentManager#DEFAULT_SPACE}
-     *  for the space name.
+     *  for the space name. If the path is null, throws an IllegalArgumentException.
      *  
      *  @param path Path to parse
      *  @return A WikiName
+     *  @throws IllegalArgumentException If the path is null.
      */
-    public static WikiName valueOf(String path)
+    public static WikiName valueOf(String path) throws IllegalArgumentException
     {
+        if( path == null ) throw new IllegalArgumentException("null path given to WikiName.valueOf().");
+        
         WikiName name = new WikiName();
         int colon = path.indexOf(':');
         
@@ -80,9 +83,6 @@ public class WikiName implements Serializable, Comparable<WikiName>
         name.m_path = path;
         
         return name;
-        
-        // FIXME: Should probably use this
-        //throw new IllegalArgumentException("The path does not represent a fully qualified WikiName (space:path/path/path)");
     }
     
     /**

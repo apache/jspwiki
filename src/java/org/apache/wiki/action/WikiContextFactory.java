@@ -98,10 +98,7 @@ public final class WikiContextFactory
 
     private static final long serialVersionUID = 1L;
 
-    /** Prefix in jspwiki.properties signifying special page keys. */
-    private static final String PROP_SPECIALPAGE = "jspwiki.specialPage.";
-
-    /**
+   /**
      * This method can be used to find the WikiContext programmatically from a
      * JSP PageContext. We check the request context. The wiki context, if it
      * exists, is looked up using the key
@@ -152,17 +149,11 @@ public final class WikiContextFactory
         request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
     }
 
-    /** Private map with JSPs as keys, URIs (for absolute or relative URLs)  as values */
-    private final Map<String, URI> m_specialRedirects;
-
     private final WikiEngine m_engine;
 
     private String m_mockContextPath;
 
-    /** If true, we'll also consider english plurals (+s) a match. */
-    private boolean m_matchEnglishPlurals;
-
-    /** Maps (pre-3.0) request contexts map to WikiActionBeans. */
+   /** Maps (pre-3.0) request contexts map to WikiActionBeans. */
     private final Map<String, HandlerInfo> m_contextMap = new HashMap<String, HandlerInfo>();
 
     /**
@@ -177,13 +168,9 @@ public final class WikiContextFactory
     {
         super();
         m_engine = engine;
-        m_specialRedirects = new HashMap<String, URI>();
 
         initRequestContextMap( properties );
-        initSpecialPageRedirects( properties );
 
-        // Do we match plurals?
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( properties, WikiEngine.PROP_MATCHPLURALS, true );
 
         // Set the path prefix for constructing synthetic Stripes mock requests;
         // trailing slash is removed.
@@ -213,87 +200,6 @@ public final class WikiContextFactory
         return handler;
     }
 
-    /**
-     * <p>
-     * Returns the correct page name, or <code>null</code>, if no such page
-     * can be found. Aliases are considered.
-     * </p>
-     * <p>
-     * In some cases, page names can refer to other pages. For example, when you
-     * have matchEnglishPlurals set, then a page name "Foobars" will be
-     * transformed into "Foobar", should a page "Foobars" not exist, but the
-     * page "Foobar" would. This method gives you the correct page name to refer
-     * to.
-     * </p>
-     * <p>
-     * This facility can also be used to rewrite any page name, for example, by
-     * using aliases. It can also be used to check the existence of any page.
-     * </p>
-     * 
-     * @since 2.4.20
-     * @param page the page name.
-     * @return The rewritten page name
-     * @throws PageNotFoundException if the page does not exist
-     */
-    public final String getFinalPageName( String page ) throws PageNotFoundException, ProviderException
-    {
-        boolean isThere = simplePageExists( page );
-        String finalName = page;
-
-        if( !isThere && m_matchEnglishPlurals )
-        {
-            if( page.endsWith( "s" ) )
-            {
-                finalName = page.substring( 0, page.length() - 1 );
-            }
-            else
-            {
-                finalName += "s";
-            }
-
-            isThere = simplePageExists( finalName );
-        }
-
-        if( !isThere )
-        {
-            finalName = MarkupParser.wikifyLink( page );
-            isThere = simplePageExists( finalName );
-
-            if( !isThere && m_matchEnglishPlurals )
-            {
-                if( finalName.endsWith( "s" ) )
-                {
-                    finalName = finalName.substring( 0, finalName.length() - 1 );
-                }
-                else
-                {
-                    finalName += "s";
-                }
-
-                isThere = simplePageExists( finalName );
-            }
-        }
-
-        return isThere ? finalName : null;
-    }
-
-    /**
-     * <p>
-     * If the page is a special page, this method returns an
-     * a String representing the relative or absolute URL to that page;
-     * otherwise, it returns <code>null</code>.
-     * </p>
-     * <p>
-     * Special pages are non-existent references to other pages. For example,
-     * you could define a special page reference "RecentChanges" which would
-     * always be redirected to "RecentChanges.jsp" instead of trying to find a
-     * Wiki page called "RecentChanges".
-     * </p>
-     */
-    public final URI getSpecialPageURI( String page )
-    {
-        return m_specialRedirects.get( page );
-    }
 
     /**
      * <p>
@@ -437,51 +343,6 @@ public final class WikiContextFactory
         }
     }
 
-    /**
-     * Skims through a supplied set of Properties and looks for anything with
-     * the "special page" prefix, and creates Stripes
-     * {@link net.sourceforge.stripes.action.RedirectResolution} objects for any
-     * that are found.
-     */
-    private void initSpecialPageRedirects( Properties properties )
-    {
-        for( Map.Entry<Object,Object> entry : properties.entrySet() )
-        {
-            String key = (String) entry.getKey();
-            if( key.startsWith( PROP_SPECIALPAGE ) )
-            {
-                String specialPage = key.substring( PROP_SPECIALPAGE.length() );
-                String redirectUrl = (String) entry.getValue();
-                if( specialPage != null && redirectUrl != null )
-                {
-                    specialPage = specialPage.trim();
-                    
-                    // Parse the special page
-                    redirectUrl = redirectUrl.trim();
-                    try
-                    {
-                        URI uri = new URI( redirectUrl );
-                        if ( uri.getAuthority() == null )
-                        {
-                            // No http:// ftp:// or other authority, so it must be relative to webapp /
-                            if ( !redirectUrl.startsWith( "/" ) )
-                            {
-                                uri = new URI( "/" + redirectUrl );
-                            }
-                        }
-                        
-                        // Add the URI for the special page
-                        m_specialRedirects.put( specialPage, uri );
-                    }
-                    catch( URISyntaxException e )
-                    {
-                        // The user supplied a STRANGE reference
-                        log.error( "Strange special page reference: " + redirectUrl );
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Creates and returns a new WikiActionBean based on a supplied class, with
@@ -527,12 +388,12 @@ public final class WikiContextFactory
         // Extract and set the WikiPage
         if( page == null )
         {
-            String pageName = extractPageFromParameter( request );
+            WikiName pageName = extractPageFromParameter( request );
 
             // For view action, default to front page
             if( pageName == null && WikiContext.VIEW.equals( requestContext ) )
             {
-                pageName = m_engine.getFrontPage();
+                page = m_engine.getFrontPage(null);
             }
 
             // Make sure the page is resolved properly (taking into account
@@ -576,7 +437,7 @@ public final class WikiContextFactory
      * @param request the HTTP request
      * @return the resolved page name
      */
-    protected final String extractPageFromParameter( HttpServletRequest request )
+    protected final WikiName extractPageFromParameter( HttpServletRequest request )
     {
         // Corner case when request == null
         if( request == null )
@@ -586,29 +447,28 @@ public final class WikiContextFactory
 
         // Extract the page name from the URL directly
         String[] pages = request.getParameterValues( "page" );
-        String page = null;
+        WikiName page = null;
         if( pages != null && pages.length > 0 )
         {
-            page = pages[0];
+            page = WikiName.valueOf(pages[0]);
             try
             {
-                // Look for singular/plural variants
-                String finalPage = getFinalPageName( page );
+                // Look for variants
+                WikiName finalPage = m_engine.getFinalPageName( page );
+                
+                // If no variant, use whatever the user supplied.
+                if( finalPage == null ) return page;
+                
                 return finalPage;
-            }
-            catch( PageNotFoundException e )
-            {
-                // No worries; use the one the user supplied
             }
             catch( ProviderException e )
             {
                 // FIXME: Should not ignore!
             }
-            return page;
         }
 
         // Didn't resolve; return null
-        return page;
+        return null;
     }
 
     /**
@@ -622,7 +482,7 @@ public final class WikiContextFactory
      *            exist
      * @return the wiki page
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, String page ) throws PageNotFoundException, ProviderException
+    protected final WikiPage resolvePage( HttpServletRequest request, WikiName page ) throws PageNotFoundException, ProviderException
     {
         // See if the user included a version parameter
         int version = WikiProvider.LATEST_VERSION;
@@ -635,14 +495,14 @@ public final class WikiContextFactory
 
         try
         {
-            return m_engine.getPage( page, version );
+            return m_engine.getContentManager().getPage( page, version );
         }
         catch( PageNotFoundException e )
         {
-            page = MarkupParser.cleanLink( page );
+            String pageName = MarkupParser.cleanLink( page.getPath() );
             try
             {
-                return m_engine.createPage( WikiName.valueOf( page ) );
+                return m_engine.createPage( WikiName.valueOf( pageName ) );
             }
             catch( PageAlreadyExistsException e1 )
             {
@@ -652,20 +512,4 @@ public final class WikiContextFactory
         }
     }
 
-    /**
-     * Determines whether a "page" exists by examining the list of special pages
-     * and querying the page manager.
-     * 
-     * @param page the page to seek
-     * @return <code>true</code> if the page exists, <code>false</code>
-     *         otherwise
-     */
-    protected final boolean simplePageExists( String page ) throws ProviderException
-    {
-        if( m_specialRedirects.containsKey( page ) )
-        {
-            return true;
-        }
-        return m_engine.getPageManager().pageExists( page );
-    }
 }

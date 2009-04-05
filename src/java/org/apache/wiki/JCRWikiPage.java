@@ -57,7 +57,12 @@ public class JCRWikiPage
 
     private static final String AUTHOR       = "wiki:author";
 
-    private static final String ACL = "wiki:acl";
+    private static final String ACL          = "wiki:acl";
+
+    private static final String ATTR_CONTENT = "wiki:content";
+
+    private static final String CONTENTTYPE  = "wiki:contentType";
+    
 
     public static final String REFERSTO = "wiki:refersTo";
     
@@ -66,15 +71,6 @@ public class JCRWikiPage
     private       WikiEngine m_engine;
     private String           m_jcrPath = null;
     
-    /**
-     *  Use {@link WikiEngine#createPage(String)} instead.
-     *  @deprecated
-     */
-    public JCRWikiPage( WikiEngine engine, String path )
-    {
-        this( engine, WikiName.valueOf( path ) );
-    }
-
     /** 
      * Use {@link WikiEngine#createPage(WikiName)} instead. 
      * @deprecated 
@@ -452,10 +448,9 @@ public class JCRWikiPage
         return null;
     }
 
-    public String getContentType()
+    public String getContentType() throws ProviderException
     {
-        // TODO Auto-generated method stub
-        return null;
+        return (String)getAttribute( CONTENTTYPE );
     }
 
     public Set<String> getReferrers()
@@ -500,8 +495,7 @@ public class JCRWikiPage
 
     public void setContentType( String contentType )
     {
-        // TODO Auto-generated method stub
-        
+        setAttribute( CONTENTTYPE, contentType );
     }
     
     public void save() throws ProviderException
@@ -519,9 +513,7 @@ public class JCRWikiPage
             throw new ProviderException("Save failed",e);
         }
     }
-    
-    private static final String ATTR_CONTENT = "wiki:content";
-    
+
     public String getContentAsString() throws ProviderException
     {
         try
@@ -589,7 +581,7 @@ public class JCRWikiPage
         
     }
 
-    public boolean isAttachment()
+    public boolean isAttachment() throws ProviderException
     {
         if( getContentType().equals( ContentManager.JSPWIKI_CONTENT_TYPE ) ) return false;
         

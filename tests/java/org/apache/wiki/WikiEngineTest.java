@@ -121,10 +121,10 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobars", "2" );
 
         assertEquals( "plural mistake", "Foobars",
-                      m_engine.getFinalPageName( "Foobars" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
 
         assertEquals( "singular mistake", "Foobar",
-                      m_engine.getFinalPageName( "Foobar" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobar" )) );
     }
 
     public void testFinalPageNameSingular()
@@ -133,9 +133,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobar", "1" );
 
         assertEquals( "plural mistake", "Foobar",
-                      m_engine.getFinalPageName( "Foobars" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
         assertEquals( "singular mistake", "Foobar",
-                      m_engine.getFinalPageName( "Foobar" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobar") ) );
     }
 
     public void testFinalPageNamePlural()
@@ -144,9 +144,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobars", "1" );
 
         assertEquals( "plural mistake", "Foobars",
-                      m_engine.getFinalPageName( "Foobars" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
         assertEquals( "singular mistake", "Foobars",
-                      m_engine.getFinalPageName( "Foobar" ) );
+                      m_engine.getFinalPageName( WikiName.valueOf("Foobar") ) );
     }
     
     public void testPutPage()

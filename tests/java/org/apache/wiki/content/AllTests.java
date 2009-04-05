@@ -39,6 +39,8 @@ public class AllTests extends TestCase
         suite.addTest( PageRenamerTest.suite() );
         suite.addTest( WikiNameTest.suite() );
         suite.addTest( ContentManagerTest.suite() );
+        suite.addTest( SpecialPageNameResolverTest.suite() );
+        suite.addTest( EnglishPluralsPageNameResolverTest.suite() );
         
         return suite;
     }

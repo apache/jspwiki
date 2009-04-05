@@ -161,37 +161,6 @@ public class WikiContextFactoryTest extends TestCase
         context = resolver.newContext( request, response, WikiContext.VIEW_GROUP );
         assertEquals( WikiContext.VIEW_GROUP, context.getRequestContext() );
     }
-    
-    public void testFinalPageName() throws Exception
-    {
-        String page;
-        page = resolver.getFinalPageName( "SinglePage" );
-        assertEquals( "SinglePage", page );
-        page = resolver.getFinalPageName( "SinglePages" );
-        assertEquals( "SinglePage", page );
-        
-        page = resolver.getFinalPageName( "PluralPages" );
-        assertEquals( "PluralPages", page );
-        page = resolver.getFinalPageName( "PluralPage" );
-        assertEquals( "PluralPages", page );
-        
-        page = resolver.getFinalPageName( "NonExistentPage" );
-        assertNull( page );
-    }
-    
-    public void testSpecialPageReference()
-    {
-        URI uri;
-        uri = resolver.getSpecialPageURI( "RecentChanges" );
-        assertEquals( "/RecentChanges.jsp", uri.toString() );
-        
-        uri = resolver.getSpecialPageURI( "FindPage" );
-        assertEquals( "/Search.jsp", uri.toString() );
-        
-        // UserPrefs doesn't exist in our test properties
-        uri = resolver.getSpecialPageURI( "UserPrefs" );
-        assertNull( uri );
-    }
 
     public static Test suite()
     {

@@ -1,3 +1,17 @@
+2009-04-05  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-94
+        
+        * Got tired of the relative mess on page name resolving (as we were
+        doing this in quite a few places) and delegated the task to PageNameResolver class
+        (and its subclasses).  The name resolving is managed by the WikiEngine.
+        
+        * Moved a number of methods from WikiContextFactory to the respective
+        PageNameResolver classes.
+        
+        * Added SpecialPageNameResolver (with some special handling) and
+        EnglishPluralPageNameResolver.
+        
 2009-04-05  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-93

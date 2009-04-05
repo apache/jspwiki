@@ -18,44 +18,37 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.tags;
-
-import java.io.IOException;
+package org.apache.wiki.content;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
 
-
 /**
- *  Returns the currently requested page name.
- *
- *  @since 2.0
+ *  Resolves a given WikiName to a new WikiName.  For example,
+ *  a subclass could check for plural forms of the WikiName
+ *  and return the corresponding version.  It could also be
+ *  used to sanitize a WikiName or whatever you feel is useful.
  */
-public class PageNameTag
-    extends WikiTagBase
+public abstract class PageNameResolver
 {
-    private static final long serialVersionUID = 0L;
-    
-    public final int doWikiStartTag()
-        throws IOException, ProviderException
+    protected WikiEngine m_engine;
+
+    /**
+     *  Construct a PageNameResolver against a given WikiEngine.
+     *  
+     *  @param engine The Engine.
+     */
+    public PageNameResolver( WikiEngine engine )
     {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+        m_engine = engine;
+    }   
 
-        if( page != null )
-        {
-            if( page.isAttachment() )
-            {
-                pageContext.getOut().print( ((Attachment)page).getFileName() );
-            }
-            else
-            {
-                pageContext.getOut().print( engine.beautifyTitle( page.getName() ) );
-            }
-        }
-
-        return SKIP_BODY;
-    }
+    /**
+     *  Resolves the page name to another page.
+     *  
+     *  @param name The name to check for
+     *  @return A new name that you should getPage() on.
+     *  @throws ProviderException If the resolution fails in any way.
+     */
+    public abstract WikiName resolve( WikiName name ) throws ProviderException;
 }

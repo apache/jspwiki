@@ -33,6 +33,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
@@ -245,7 +246,7 @@ public class LinkTag
                 //
                 WikiPage p = engine.getPage( m_pageName );
 
-                if( p instanceof Attachment )
+                if( p.isAttachment() )
                 {
                     url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
                 }
@@ -258,19 +259,19 @@ public class LinkTag
 
                     reallink = MarkupParser.cleanLink( reallink );
 
-                    String matchedLink;
+                    WikiName matchedLink;
                     String sectref = "";
-                    if( (matchedLink = engine.getFinalPageName( reallink )) != null )
+                    if( (matchedLink = engine.getFinalPageName( WikiName.valueOf(reallink) )) != null )
                     {
-                        sectref = "section-"+engine.encodeName(matchedLink)+"-"+namedSection;
+                        sectref = "section-"+engine.encodeName(matchedLink.getPath())+"-"+namedSection;
                         sectref = "#"+sectref.replace('%', '_');
                     }
                     else
                     {
-                        matchedLink = reallink;
+                        matchedLink = WikiName.valueOf(reallink);
                     }
 
-                    url = makeBasicURL( m_context, matchedLink, parms, m_absolute ) + sectref;
+                    url = makeBasicURL( m_context, matchedLink.toString(), parms, m_absolute ) + sectref;
                 }
                 else
                 {

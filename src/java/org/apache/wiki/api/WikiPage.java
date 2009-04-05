@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
@@ -261,4 +260,17 @@ public interface WikiPage
      *  @throws ProviderException If something goes wrong.
      */
     public List<WikiPage> getChildren() throws ProviderException;
+    
+    /**
+     *  Returns true, if this page is an attachment (that is, does not
+     *  contain wikimarkup and has a parent page).
+     *  <p>
+     *  As of 3.0, you should not do an instanceof Attachment test to
+     *  test for attachmentness, since Attachment is now an interface.
+     *  Use this method instead.
+     *  
+     *  @return True, if this is an attachment. False otherwise.
+     *  @throws ProviderException If the attachmentness cannot be determined.
+     */
+    public boolean isAttachment() throws ProviderException;
 }

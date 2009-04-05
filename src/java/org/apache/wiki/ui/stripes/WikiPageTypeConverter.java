@@ -1,16 +1,22 @@
-/* Copyright 2005-2006 Tim Fennell
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package org.apache.wiki.ui.stripes;
 
@@ -44,8 +50,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
 {
     /**
      * Converts a named wiki page into a valid WikiPage object by retrieving the
-     * latest version via the WikiEngine. If the exact page is not found, plural
-     * variations will be tried. If the page cannot be found (perhaps because it
+     * latest version via the WikiEngine. If the page cannot be found (perhaps because it
      * does not exist), this method will add a validation error to the supplied
      * Collection of errors and return <code>null</code>. The error will be
      * of type {@link net.sourceforge.stripes.validation.LocalizableError} and
@@ -69,22 +74,7 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         }
         catch( PageNotFoundException e )
         {
-            try
-            {
-                try
-                {
-                    String finalName = engine.getWikiContextFactory().getFinalPageName( pageName );
-                    return engine.getPage( finalName );
-                }
-                catch( PageNotFoundException e1 )
-                {
-                    errors.add( new LocalizableError( "common.nopage", pageName ) );
-                }
-            }
-            catch( ProviderException e2 )
-            {
-                errors.add( new SimpleError( e2.getMessage() ) );
-            }
+            errors.add( new LocalizableError( "common.nopage", pageName ) );
         }
         catch( ProviderException e )
         {

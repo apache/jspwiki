@@ -266,7 +266,10 @@ public class WikiEngine
 
     private boolean          m_isConfigured = false; // Flag.
 
+    private List<PageNameResolver> m_nameResolvers = new ArrayList<PageNameResolver>();
 
+    private SpecialPageNameResolver m_specialPageResolver;
+    
     /** Each engine has its own workflow manager. */
     private WorkflowManager m_workflowMgr = null;
 
@@ -532,6 +535,14 @@ public class WikiEngine
         {
             //  Initialize the WikiContextFactory -- this MUST be done after setting the baseURL
             m_contextFactory  = new WikiContextFactory( this, props );
+            
+            /**
+             *  We treat the specialPageResolver in a slightly different way
+             *  than others.
+             */
+            m_specialPageResolver = new SpecialPageNameResolver(this); 
+            m_nameResolvers.add( m_specialPageResolver );
+            m_nameResolvers.add( new EnglishPluralsPageNameResolver( this ) );
             
             Class urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
@@ -903,7 +914,14 @@ public class WikiEngine
     // FIXME: This method should return the FQN of the defaultspace:frontpage page of the wiki.
     public String getFrontPage()
     {
-        return m_frontPage;
+        try
+        {
+            return getFrontPage(null).getQualifiedName().toString();
+        }
+        catch( ProviderException e )
+        {
+            return "ErrorFrontPageCannotBeDetermined";
+        }
     }
 
     /**
@@ -919,15 +937,17 @@ public class WikiEngine
     public WikiPage getFrontPage( String space ) throws ProviderException
     {
         WikiPage p;
+        WikiName name = new WikiName( space, m_frontPage );
+
         try
         {
-            p = getPage( m_frontPage );
+            p = m_contentManager.getPage( name );
         }
         catch( PageNotFoundException e )
         {
             try
             {
-                p = createPage( new WikiName(space,m_frontPage) );
+                p = createPage( name );
             }
             catch( PageAlreadyExistsException e1 )
             {
@@ -1107,10 +1127,10 @@ public class WikiEngine
      *  @param original The page to check
      *  @return A reference to the page, or null, if there's no special page.
      */
-    public String getSpecialPageReference( String original )
+    public URI getSpecialPageReference( String original )
     {
-        URI uri = m_contextFactory.getSpecialPageURI( original );
-        return uri == null ? null : uri.toString();
+        URI uri = m_specialPageResolver.getSpecialPageURI( original );
+        return uri;
     }
 
     /**
@@ -1203,23 +1223,20 @@ public class WikiEngine
     {
         WikiPage att = null;
 
+        WikiName name = WikiName.valueOf(page);
         try
         {
-            if( m_contextFactory.getSpecialPageURI(page) != null ) return true;
-
-            if( getFinalPageName( page ) != null )
+            if( getFinalPageName( name ) != null )
             {
                 return true;
             }
-
-            att = getAttachmentManager().getAttachmentInfo( (WikiContext)null, page );
         }
         catch( Exception e )
         {
             log.debug("pageExists() failed to find attachments",e);
         }
 
-        return att != null;
+        return false;
     }
 
     /**
@@ -1234,18 +1251,17 @@ public class WikiEngine
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        if( m_contextFactory.getSpecialPageURI(page) != null ) return true;
-
         boolean isThere = false;
-        String finalName;
+        WikiName finalName = WikiName.valueOf( page );
         try
         {
             //  Go and check if this particular version of this page exists
-            finalName = getFinalPageName( page );
-            isThere = m_contentManager.pageExists( WikiName.valueOf( finalName ), version );
+            finalName = getFinalPageName( finalName );
+            isThere = m_contentManager.pageExists( finalName, version );
         }
-        catch( PageNotFoundException e )
+        catch( Exception e )
         {
+            // FIXME: probably not a good idea to catch everything.
             // It's not there!
         }
 
@@ -1271,21 +1287,6 @@ public class WikiEngine
         return false;
     }
 
-    /**
-     *  Returns the correct page name This
-     *  method simply delegates to
-     *  {@link org.apache.wiki.action.WikiContextFactory#getFinalPageName(String)}.
-     *  @since 2.0
-     *  @param page Page name.
-     *  @return The rewritten page name, or null, if the page does not exist.
-     *  @throws ProviderException If something goes wrong in the backend.
-     *  @throws PageNotFoundException if the page cannot be found
-     */
-    public String getFinalPageName( String page )
-        throws PageNotFoundException, ProviderException
-    {
-        return m_contextFactory.getFinalPageName( page );
-    }
 
     /**
      *  Turns a WikiName into something that can be
@@ -1940,21 +1941,26 @@ public class WikiEngine
     }
     
     /**
-     *  Finds the corresponding WikiPage object based on the page name.  It always finds
-     *  the latest version of a page.
+     *  Finds the corresponding WikiPage object based on the page name. 
      *
      *  @param pagereq The name of the page to look for.
      *  @return A WikiPage object, or null, if the page by the name could not be found.
-     * @throws ProviderException 
-     * @throws PageNotFoundException 
+     *  @throws ProviderException 
+     *  @throws PageNotFoundException 
      */
 
     public WikiPage getPage( String pagereq ) 
         throws PageNotFoundException, ProviderException
     {
-        return getPage( pagereq, WikiProvider.LATEST_VERSION );
+        return getPage( WikiName.valueOf( pagereq ) );
     }
 
+    public WikiPage getPage( WikiName name )
+        throws PageNotFoundException, ProviderException
+    {            
+        return m_contentManager.getPage( name );
+    }
+    
     /**
      *  Finds the corresponding WikiPage object base on the page name and version.
      *
@@ -2552,4 +2558,22 @@ public class WikiEngine
     {
         m_contentManager.release();
     }
+    
+    /**
+     *  Resolves a page name as per the installed PageNameResolvers.
+     *  
+     *  @param page the page name.
+     *  @return The rewritten page name.  May also return null in case there
+     *          were problems.
+     */
+    public final WikiName getFinalPageName( WikiName page ) throws ProviderException
+    {
+        for( PageNameResolver resolver : m_nameResolvers )
+        {
+            page = resolver.resolve( page );
+        }
+        
+        return page;
+    }
+
 }

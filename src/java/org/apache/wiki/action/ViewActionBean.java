@@ -135,7 +135,7 @@ public class ViewActionBean extends AbstractPageActionBean
                     String pageName = pageParamError.getFieldValue();
 
                     // Is it a special page?
-                    URI uri = getContext().getEngine().getWikiContextFactory().getSpecialPageURI( pageName );
+                    URI uri = getContext().getEngine().getSpecialPageReference( pageName );
                     if( uri != null )
                     {
                         return new RedirectResolution( uri.toString() );
