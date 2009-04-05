@@ -51,7 +51,7 @@ import net.sourceforge.stripes.validation.Validate;
 @UrlBinding( "/UserPreferences.action" )
 public class UserPreferencesActionBean extends AbstractActionBean
 {
-    private Logger log = LoggerFactory.getLogger( "JSPWiki" );
+    private static final Logger log = LoggerFactory.getLogger( "JSPWiki" );
 
     private String m_assertedName = null;
 

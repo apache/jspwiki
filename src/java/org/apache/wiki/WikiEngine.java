@@ -1116,7 +1116,7 @@ public class WikiEngine
      *  <p>If the page is a special page, then returns a direct URL
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
-     *  {@link org.apache.wiki.action.WikiContextFactory#getSpecialPageURI}.
+     *  {@link org.apache.wiki.content.SpecialPageNameResolver#getSpecialPageURI}.
      *  </p>
      *  <p>
      *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
