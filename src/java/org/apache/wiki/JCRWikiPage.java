@@ -26,20 +26,15 @@ import java.util.*;
 import javax.jcr.*;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.Acl;
-import org.apache.wiki.auth.acl.AclEntry;
-import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.providers.WikiPageProvider;
 
 
 /**
@@ -140,8 +135,8 @@ public class JCRWikiPage
     /**
      *  Direct access to JCR Properties.
      *  
-     *  @param key
-     *  @return
+     *  @param key the key for which we want the property
+     *  @return Property
      *  @throws PathNotFoundException
      *  @throws RepositoryException
      */

@@ -304,18 +304,38 @@ public final class WatchDog
 
                 if( now > st.getExpiryTime() )
                 {
-                    log.info("Watchable '"+m_watchable.getName()+
-                             "' exceeded timeout in state '"+
-                             st.getState()+
-                             "' by "+
-                             (now-st.getExpiryTime())/1000+" seconds");
+                    log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() + "' by "
+                              + (now - st.getExpiryTime()) / 1000 + " seconds" );
 
+                    dumpStackTraceForWatchable();
                     m_watchable.timeoutExceeded( st.getState() );
                 }
             }
             catch( EmptyStackException e )
             {
                 // FIXME: Do something?
+            }
+        }
+    }
+
+    private void dumpStackTraceForWatchable()
+    {
+        Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
+        Set<Thread> threads = stackTraces.keySet();
+        Iterator<Thread> threadIterator = threads.iterator();
+        while ( threadIterator.hasNext() )
+        {
+            Thread t = (Thread) threadIterator.next();
+            if( t.getName().equals( m_watchable.getName() ) || log.isInfoEnabled() )
+            {
+                log.error( "dumping stacktrace for too long running thread : " + t );
+                StackTraceElement[] ste = stackTraces.get( t );
+                StringBuilder stacktrace = new StringBuilder( "stacktrace follows" );
+                for( int i = 0; i < ste.length; i++ )
+                {
+                    stacktrace.append( "\n" + ste[i] );
+                }
+                log.error( stacktrace.toString() );
             }
         }
     }

@@ -100,7 +100,7 @@ public class UploadActionBean extends AbstractPageActionBean
     /**
      * Handler method that uploads a new attachment to the ViewActionBean.
      * 
-     * @return
+     * @return Resolution
      */
     @HandlesEvent( "upload" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.UPLOAD_ACTION )

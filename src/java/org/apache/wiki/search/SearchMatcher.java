@@ -167,7 +167,7 @@ public class SearchMatcher
         /**
          *  Create a new SearchResult with a given name and a score.
          *  
-         *  @param name Page Name
+         *  @param page Page Name
          *  @param score A score from 0+
          */
         public SearchResultImpl( WikiPage page, int score )

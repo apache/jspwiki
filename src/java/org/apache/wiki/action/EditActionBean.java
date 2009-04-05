@@ -431,7 +431,7 @@ public class EditActionBean extends AbstractPageActionBean
      * Sets a flag indicating that new page text should be appended to the old
      * text.
      * 
-     * @param <code>true</code> if text should be appended; <code>false</code>
+     * @param append <code>true</code> if text should be appended; <code>false</code>
      *            otherwise (the default).
      */
     @Validate( required = false )
@@ -492,7 +492,7 @@ public class EditActionBean extends AbstractPageActionBean
      * {@link HtmlStringToWikiTranslator}. Calling this method causes
      * {@link #setText(String)} to be called, with the translated text supplied.
      * 
-     * @param the HTML to translate
+     * @param html the HTML to translate
      * @throws JDOMException if the HTML cannot be translated
      * @throws IOException if the HtmlStringToWikiTranslator cannot translated
      *             the text
