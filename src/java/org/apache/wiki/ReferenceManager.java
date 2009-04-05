@@ -579,19 +579,6 @@ public class ReferenceManager
         return result;
     }
 
-    private String getFinalPageName( String orig )
-    {
-        try
-        {
-            return m_engine.getFinalPageName( orig );
-        }
-        catch( Exception e )
-        {
-            log.error("Error while trying to fetch a page name; trying to cope with the situation.",e);
-        }
-        return orig;
-    }
-
     /**
      *  {@inheritDoc}
      */
