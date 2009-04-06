@@ -26,6 +26,7 @@ import java.util.Locale;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.providers.ProviderException;
 
 import net.sourceforge.stripes.controller.StripesFilter;
@@ -74,7 +75,30 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         }
         catch( PageNotFoundException e )
         {
-            errors.add( new LocalizableError( "common.nopage", pageName ) );
+            try
+            {
+                WikiName finalName = engine.getFinalPageName( WikiName.valueOf( pageName ) );
+                if ( finalName == null )
+                {
+                    errors.add( new LocalizableError( "common.nopage", pageName ) );
+                }
+                else
+                {
+                    try
+                    {
+                        return engine.getPage( finalName );
+                    }
+                    catch( PageNotFoundException pnf )
+                    {
+                        // This should never happen, because getFinalPageName always verifies the page exists!
+                        pnf.printStackTrace();
+                    }
+                }
+            }
+            catch( ProviderException e2 )
+            {
+                errors.add( new SimpleError( e2.getMessage() ) );
+            }
         }
         catch( ProviderException e )
         {

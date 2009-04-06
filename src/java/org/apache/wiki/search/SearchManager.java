@@ -87,7 +87,7 @@ public class SearchManager
     {
         initialize( engine, properties );
 
-        WikiEventUtils.addWikiEventListener(m_engine.getPageManager(),
+        WikiEventUtils.addWikiEventListener(m_engine.getContentManager(),
                                             WikiPageEvent.PAGE_DELETE_REQUEST, this);
 
         JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
@@ -129,7 +129,7 @@ public class SearchManager
 
                 String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
 
-                Set allPages;
+                Set<String> allPages;
                 try
                 {
                     allPages = m_engine.getReferenceManager().findCreated();
@@ -137,13 +137,13 @@ public class SearchManager
                 catch( ProviderException e )
                 {
                     // FIXME: THis is probably not very smart.
-                    allPages = new TreeSet();
+                    allPages = new TreeSet<String>();
                 }
 
                 int counter = 0;
-                for( Iterator i = allPages.iterator(); i.hasNext() && counter < maxLength; )
+                for( Iterator<String> i = allPages.iterator(); i.hasNext() && counter < maxLength; )
                 {
-                    String p = (String) i.next();
+                    String p = i.next();
                     String pp = p.toLowerCase();
                     if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) )
                     {

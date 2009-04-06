@@ -150,15 +150,15 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection findPages( QueryItem[] query )
+    private Collection<SearchResult> findPages( QueryItem[] query )
     {
         TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
 
-        Collection allPages = null;
+        Collection<WikiPage> allPages = null;
         try
         {
-            allPages = m_engine.getPageManager().getAllPages();
+            allPages = m_engine.getContentManager().getAllPages( null );
         }
         catch( ProviderException pe )
         {
@@ -166,17 +166,14 @@ public class BasicSearchProvider implements SearchProvider
             return null;
         }
 
-        Iterator it = allPages.iterator();
-        while( it.hasNext() )
+        for ( WikiPage page : allPages )
         {
             try
             {
-                WikiPage page = (WikiPage) it.next();
                 if (page != null)
                 {
                     String pageName = page.getName();
-                    String pageContent = m_engine.getPageManager().getPageText(pageName, WikiPageProvider.LATEST_VERSION) +
-                                         attachmentNames(page, " ");
+                    String pageContent = page.getContentAsString() + attachmentNames(page, " ");
                     SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
 
                     if( comparison != null )
@@ -184,10 +181,6 @@ public class BasicSearchProvider implements SearchProvider
                         res.add( comparison );
                     }
                 }
-            }
-            catch( PageNotFoundException e )
-            {
-                log.error( "Unable to page content", e );
             }
             catch( ProviderException pe )
             {
@@ -205,7 +198,7 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages(String query)
+    public Collection<SearchResult> findPages(String query)
     {
         return findPages(parseQuery(query));
     }

@@ -186,6 +186,11 @@ public class StripesURLConstructor extends DefaultURLConstructor
                 throw new RuntimeException( "Stripes ActionResolver was not AnnotatedClassActionResolver! Fatal error." );
             }
         }
+        else
+        {
+            Thread.dumpStack();
+            throw new RuntimeException( "Could not retrieve the Stripes configuration. Something is wrong..." );
+        }
 
         // Load the URL patterns from the config file
         File file = new File( "WEB-INF/urlpattern.properties" );

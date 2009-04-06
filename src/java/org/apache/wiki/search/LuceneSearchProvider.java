@@ -306,7 +306,7 @@ public class LuceneSearchProvider implements SearchProvider
      * @param att Attachment to get content for. Filename extension is used to determine the type of the attachment.
      * @return String representing the content of the file.
      * FIXME This is a very simple implementation of some text-based attachment, mainly used for testing.
-     * This should be replaced /moved to Attachment search providers or some other 'plugable' wat to search attachments
+     * This should be replaced /moved to Attachment search providers or some other 'pluggable' way to search attachments
      */
     protected String getAttachmentContent( Attachment att )
     {
