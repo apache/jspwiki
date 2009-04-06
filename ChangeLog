@@ -1,6 +1,14 @@
+2009-04-05  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-97
+        
+        * added the tests.stress.disabled property to build.properties, and minor tweak
+           to build.xml. You now have the option to skip the stress tests while running
+           the JUnit tests. 
+
 2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
-        * 3.0.0-svn-86
+        * 3.0.0-svn-96
 
         * [JSPWIKI-304] Changed all Workflow signatures so that all attribute
         values are now Serializable. This has required some minor changes

@@ -160,7 +160,7 @@
   <path id="path.tests">
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
-	   <pathelement location="${java.home}/../lib/tools.jar" />
+	 <pathelement location="${java.home}/../lib/tools.jar" />
      <fileset dir="${code.web}/WEB-INF/lib">
         <include name="*.jar" />
      </fileset>
@@ -722,7 +722,7 @@
            <fileset dir="${tests.src}">
                 <include name="**/*Test.java" />
                 <exclude name="**/AllTest*java" />
-                <include name="**/StressTestSpeed.java" if="tests.stress.enabled"/>
+                <exclude name="stress/**" if="tests.stress.disabled"/>
                 <exclude name="org/apache/wiki/web/*.*" />
                 <exclude name="org/apache/wiki/TranslatorReaderTest*" />
            </fileset>
@@ -732,6 +732,7 @@
   	 <junitreport todir="${tests}">
   	    <fileset dir="${tests.reports}">
   	       <include name="**/TEST-*.xml" />
+           <exclude name="**/TEST-stress.*.xml" if="tests.stress.disabled"/>
   	    </fileset>
   	    <report format="noframes" todir="${tests}" />
   	 </junitreport>
@@ -971,7 +972,6 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
            <path refid="path.tests" />
         </classpath>
         <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
-        <sysproperty key="log4j.configuration" value="log4j.properties" />
         <sysproperty key="log4j.debug" value="yesplease" />
         <!--
         <jvmarg value="-Xdebug" />
