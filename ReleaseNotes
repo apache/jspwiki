@@ -51,7 +51,17 @@ Please see the UPGRADING document in this same directory.
 EXPERIMENTAL FEATURES
 =====================
 
-
 KNOWN PROBLEMS
 ==============
 
+* URLs for Stripes actions currently use the default .action URLs, rather than URLs
+that conform to ShortURL/ShortView/JSP formats. This will be fixed later in the 3.0
+development cycle, when we create our own ActionResolver implementation. This will
+read URL patterns from a configuration file, instead of being hard-coded.
+
+* When WikiPages are parsed, ACL entries are extracted and removed from the page markup,
+and persisted as JCR attributes. This occurs when the page is loaded and parsed by
+JSPWikiMarkupParser, and when the page is saved. The intent is to begin moving ACL
+information out of the page entirely, and into separate storage. However, we do not
+yet have a GUI for manipulating the ACL once it has been extracted. This will come
+later in the 3.0 development cycle. 

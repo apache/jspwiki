@@ -1,3 +1,26 @@
+2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-86
+
+        * [JSPWIKI-304] Changed all Workflow signatures so that all attribute
+        values are now Serializable. This has required some minor changes
+        to WikiPage get/setAttribute, such that these must also be
+        Serializable too. In practice this is not a problem, because all
+        attributes passed to WikiContext were always Strings anyway. The
+        net effect of this change is that we can now make workflows
+        persistent across engine restarts! (Coming later...)
+        
+        * Eliminated nearly every reference to PageManager with
+        ContentManager in the code, plus or minus about two references.
+        JSPs not checked yet.
+        
+        * Changed DefaultAclManager to extract and store ACLs parsed
+        from markup, as it should be. We will need a JSP-tier GUI
+        for manipulating the ACL separately. (Coming later...)
+        
+        * Fixed bug in HandlerInfo that was preventing evaluation
+        of permissions when <null> pages were set. 
+
 2009-04-05  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-95
