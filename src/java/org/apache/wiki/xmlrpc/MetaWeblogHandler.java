@@ -246,7 +246,7 @@ public class MetaWeblogHandler
 
             WeblogPlugin plugin = new WeblogPlugin();
 
-            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine().getPageManager(), 
+            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine().getContentManager(), 
                                                             blogid,
                                                             new Date(0L),
                                                             new Date());

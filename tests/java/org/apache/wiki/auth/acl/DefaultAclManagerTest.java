@@ -33,7 +33,6 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.providers.ProviderException;
 
 
 public class DefaultAclManagerTest
@@ -72,13 +71,13 @@ public class DefaultAclManagerTest
     {
         WikiPage page = m_engine.getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
-        assertNotNull( page.getAcl() );
-        assertTrue(page.getAcl().isEmpty());
+        assertNotNull( acl );
+        assertTrue( acl.isEmpty());
 
         page = m_engine.getPage( "TestAclPage" );
         acl = m_engine.getAclManager().getPermissions( page );
-        assertNotNull( page.getAcl() );
-        assertFalse(page.getAcl().isEmpty());
+        assertNotNull( acl );
+        assertFalse( acl.isEmpty() );
 
         Principal[] p;
 

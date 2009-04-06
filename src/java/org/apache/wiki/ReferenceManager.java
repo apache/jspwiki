@@ -462,7 +462,7 @@ public class ReferenceManager
      *  
      *  @return The Collection of Strings
      */
-    public synchronized Collection findUnreferenced()
+    public synchronized Collection<String> findUnreferenced()
     {
         ArrayList<String> unref = new ArrayList<String>();
 
@@ -494,7 +494,7 @@ public class ReferenceManager
      * 
      * @return A Collection of Strings
      */
-    public synchronized Collection findUncreated()
+    public synchronized Collection<String> findUncreated()
     {
         TreeSet<String> uncreated = new TreeSet<String>();
 
@@ -543,7 +543,7 @@ public class ReferenceManager
      * @since 2.2.33
      * @deprecated Use WikiPage.getRefersTo() instead
      */
-    public Collection findRefersTo( String pageName ) throws ProviderException, PageNotFoundException
+    public Collection<String> findRefersTo( String pageName ) throws ProviderException, PageNotFoundException
     {
         ArrayList<String> result = new ArrayList<String>();
         

@@ -95,7 +95,7 @@ public class SearchManagerBean extends SimpleAdminBean
                 @SuppressWarnings("unchecked")
                 public void backgroundTask() throws Exception
                 {
-                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
+                    Collection<WikiPage> allPages = m_engine.getContentManager().getAllPages( null );
 
                     SearchManager mgr = m_engine.getSearchManager();
                     m_max = allPages.size();

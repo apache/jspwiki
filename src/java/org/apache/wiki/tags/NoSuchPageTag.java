@@ -57,10 +57,10 @@ public class NoSuchPageTag
     }
 
     public int doWikiStartTag()
-        throws IOException, PageNotFoundException, ProviderException
+        throws IOException, ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
+        WikiPage   page = null;
 
         if( m_pageName == null )
         {
@@ -68,10 +68,15 @@ public class NoSuchPageTag
         }
         else
         {
-            page = engine.getPage( m_pageName );
+            try
+            {
+                page = engine.getPage( m_pageName );
+            }
+            catch( PageNotFoundException e )
+            {
+                // Page is null
+            }
         }
-
-        // System.out.println("Checking "+page);
 
         if( page != null && engine.pageExists( page.getName(), page.getVersion() ) )
         {

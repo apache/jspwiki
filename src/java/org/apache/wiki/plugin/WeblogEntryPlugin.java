@@ -23,9 +23,12 @@ package org.apache.wiki.plugin;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.wiki.*;
+import org.apache.wiki.PageLock;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
@@ -76,7 +79,7 @@ public class WeblogEntryPlugin implements WikiPlugin
         SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
         String today = fmt.format( new Date() );
             
-        int entryNum = findFreeEntry( engine.getPageManager(),
+        int entryNum = findFreeEntry( engine.getContentManager(),
                                       blogName,
                                       today );
 
@@ -116,20 +119,18 @@ public class WeblogEntryPlugin implements WikiPlugin
         return sb.toString();
     }
 
-    private int findFreeEntry( PageManager mgr,
+    private int findFreeEntry( ContentManager mgr,
                                String baseName,
                                String date )
         throws ProviderException
     {
-        Collection everyone = mgr.getAllPages();
+        Collection<WikiPage> everyone = mgr.getAllPages( null );
         int max = 0;
 
         String startString = WeblogPlugin.makeEntryPage( baseName, date, "" );
         
-        for( Iterator i = everyone.iterator(); i.hasNext(); )
+        for( WikiPage p : everyone )
         {
-            WikiPage p = (WikiPage)i.next();
-
             if( p.getName().startsWith(startString) )
             {
                 try

@@ -57,14 +57,16 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
-        engine.deletePage( "Testpage" );
         context = engine.getWikiContextFactory().newViewContext( engine.createPage( "Testpage" ) );
         manager = new PluginManager( engine, props );
     }
 
     public void tearDown() throws Exception
     {
-        engine.deletePage("Testpage");
+        if ( engine.pageExists( "Testpage" ) )
+        {
+            engine.deletePage("Testpage");
+        }
         engine.shutdown();
     }
 

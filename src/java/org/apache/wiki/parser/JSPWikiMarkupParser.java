@@ -48,6 +48,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.plugin.WikiPlugin;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.RegExpUtil;
@@ -1378,14 +1379,16 @@ public class JSPWikiMarkupParser
         try
         {
             acl = m_engine.getAclManager().parseAcl( page, ruleLine );
-
-            page.setAcl( acl );
-
+            page.save();
             if( log.isDebugEnabled() ) log.debug( acl.toString() );
         }
         catch( WikiSecurityException wse )
         {
             return makeError( wse.getMessage() );
+        }
+        catch( ProviderException pe )
+        {
+            return makeError( "Could not save WikiPage after extracting ACL: " + pe.getMessage() );
         }
 
         return m_currentElement;

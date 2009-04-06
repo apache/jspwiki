@@ -113,7 +113,7 @@ public class WikiEventUtils
             {
                 if( client instanceof WikiEngine )
                 {
-                    WikiEventManager.addWikiEventListener( ((WikiEngine)client).getPageManager(), listener );
+                    WikiEventManager.addWikiEventListener( ((WikiEngine)client).getContentManager(), listener );
                 }
                 else // if ( client instanceof PageManager ) // no filter?
                 {

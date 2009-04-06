@@ -38,6 +38,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.filters.SpamProtect;
@@ -106,7 +107,7 @@ public class EditActionBean extends AbstractPageActionBean
         PageLock lock = (PageLock) session.getAttribute( LOCK_PREFIX + pagereq );
         if( lock != null )
         {
-            engine.getPageManager().unlockPage( lock );
+            engine.getContentManager().unlockPage( lock );
             session.removeAttribute( LOCK_PREFIX + pagereq );
         }
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", pagereq );
@@ -155,7 +156,7 @@ public class EditActionBean extends AbstractPageActionBean
         // If page is locked, make sure we tell the user
         List<Message> messages = wikiContext.getMessages();
         WikiEngine engine = wikiContext.getEngine();
-        PageManager mgr = engine.getPageManager();
+        ContentManager mgr = engine.getContentManager();
         PageLock lock = mgr.getCurrentLock( m_page );
         if( lock != null )
         {

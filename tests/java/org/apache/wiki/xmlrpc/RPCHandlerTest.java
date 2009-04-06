@@ -26,9 +26,7 @@ import junit.framework.*;
 import java.util.*;
 
 import org.apache.wiki.*;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.xmlrpc.RPCHandler;
+import org.apache.wiki.api.WikiPage;import org.apache.wiki.xmlrpc.RPCHandler;
 import org.apache.xmlrpc.*;
 
 public class RPCHandlerTest extends TestCase
@@ -66,7 +64,7 @@ public class RPCHandlerTest extends TestCase
         m_engine.shutdown();
     }
 
-    public void testNonexistantPage()
+    public void testNonexistentPage()
     {
         try
         {
@@ -83,12 +81,12 @@ public class RPCHandlerTest extends TestCase
         throws Exception
     {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        Vector previousChanges = m_handler.getRecentChanges( time );
+        Vector<Hashtable<String,Object>> previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
         WikiPage directInfo = m_engine.getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        Vector recentChanges = m_handler.getRecentChanges( time );
+        Vector<Hashtable<String,Object>> recentChanges = m_handler.getRecentChanges( time );
 
         assertEquals( "wrong number of changes", 1, recentChanges.size() - previousChanges.size() );
     }
@@ -116,7 +114,7 @@ public class RPCHandlerTest extends TestCase
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
         WikiPage directInfo = m_engine.getPage( NAME1 );
 
-        Hashtable ht = m_handler.getPageInfo( NAME1 );
+        Hashtable<String,Object> ht = m_handler.getPageInfo( NAME1 );
         assertEquals( "name", (String)ht.get( "name" ), NAME1 );
 
         Date d = (Date) ht.get( "lastModified" );
@@ -149,11 +147,11 @@ public class RPCHandlerTest extends TestCase
 
         m_engine.saveText( pageName, text );
 
-        Vector links = m_handler.listLinks( pageName );
+        Vector<Hashtable<String,String>> links = m_handler.listLinks( pageName );
 
         assertEquals( "link count", 1, links.size() );
 
-        Hashtable linkinfo = (Hashtable) links.elementAt(0);
+        Hashtable<String,String> linkinfo = links.elementAt(0);
 
         assertEquals( "name", "Foobar", linkinfo.get("page") );
         assertEquals( "type", "local",  linkinfo.get("type") );

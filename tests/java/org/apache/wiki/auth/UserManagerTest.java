@@ -24,19 +24,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.wiki.*;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.UserManager;
-import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.auth.user.*;
+import org.apache.wiki.auth.user.DuplicateUserException;
+import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.workflow.*;
-
-import junit.framework.TestCase;
 
 
 /**
@@ -103,10 +106,10 @@ public class UserManagerTest extends TestCase
       // First, count the number of users, groups, and pages
       int oldUserCount = m_db.getWikiNames().length;
       GroupManager groupManager = m_engine.getGroupManager();
-      PageManager pageManager = m_engine.getPageManager();
+      ContentManager contentManager = m_engine.getContentManager();
       AuthorizationManager authManager = m_engine.getAuthorizationManager();
       int oldGroupCount = groupManager.getRoles().length;
-      int oldPageCount = pageManager.getTotalPageCount();
+      int oldPageCount = contentManager.getTotalPageCount( null );
       
       // Setup Step 1: create a new user with random name
       WikiSession session = m_engine.guestSession();
@@ -147,7 +150,7 @@ public class UserManagerTest extends TestCase
       
       // 3a. Make sure the page got saved, and that ONLY our test user has permission to read it.
       WikiPage p = m_engine.getPage( pageName );
-      assertEquals ( oldPageCount+1, pageManager.getTotalPageCount() );
+      assertEquals ( oldPageCount+1, contentManager.getTotalPageCount( null ) );
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
@@ -207,7 +210,7 @@ public class UserManagerTest extends TestCase
       pageName = "TestPage2" + now;
       m_engine.saveText( pageName, "More test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
       p = m_engine.getPage( pageName );
-      assertEquals ( oldPageCount+1, pageManager.getTotalPageCount() );
+      assertEquals ( oldPageCount+1, contentManager.getTotalPageCount( null ) );
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
       assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
       assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
@@ -262,7 +265,7 @@ public class UserManagerTest extends TestCase
       assertEquals( oldGroupCount, groupManager.getRoles().length );
       
       m_engine.deletePage( pageName );
-      assertEquals( oldPageCount, pageManager.getTotalPageCount() );
+      assertEquals( oldPageCount, contentManager.getTotalPageCount( null ) );
   }
 
   public void testSetUserProfile() throws Exception
@@ -321,12 +324,12 @@ public class UserManagerTest extends TestCase
       
       // Now, look in Admin's queue, and verify there's a pending Decision there
       DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-      Collection decisions = dq.getActorDecisions( m_engine.adminSession() );
+      Collection<Decision> decisions = dq.getActorDecisions( m_engine.adminSession() );
       assertEquals( 1, decisions.size() );
 
       // Verify that the Decision has all the facts and attributes we need
-      Decision d = (Decision)decisions.iterator().next();
-      List facts = d.getFacts();
+      Decision d = decisions.iterator().next();
+      List<Fact> facts = d.getFacts();
       assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get(0) );
       assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(1) );
       assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(2) );
@@ -375,12 +378,12 @@ public class UserManagerTest extends TestCase
       
       // Now, look in Admin's queue, and verify there's a pending Decision there
       DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-      Collection decisions = dq.getActorDecisions( m_engine.adminSession() );
+      Collection<Decision> decisions = dq.getActorDecisions( m_engine.adminSession() );
       assertEquals( 1, decisions.size() );
 
       // Verify that the Decision has all the facts and attributes we need
-      Decision d = (Decision)decisions.iterator().next();
-      List facts = d.getFacts();
+      Decision d = decisions.iterator().next();
+      List<Fact> facts = d.getFacts();
       assertEquals( new Fact( UserManager.PREFS_FULL_NAME, profile.getFullname() ), facts.get(0) );
       assertEquals( new Fact( UserManager.PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get(1) );
       assertEquals( new Fact( UserManager.FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get(2) );

@@ -26,10 +26,11 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
@@ -233,8 +234,8 @@ public class PageRenamer
                 {
                     p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
                     p.setAuthor( context.getCurrentUser().getName() );
-         
-                    engine.getPageManager().putPageText( p, newText );
+                    p.setContent( newText );
+                    p.save();
                     engine.updateReferences( p );
                 }
             }

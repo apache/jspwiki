@@ -29,7 +29,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.PageManager;
 import org.apache.wiki.PropertyReader;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -249,7 +248,6 @@ public class Installer
         parseProperty( AuthenticationManager.PROP_SECURITY, nullValue );
         
         // Set a few more default properties, for easy setup
-        m_props.setProperty( PageManager.PROP_PAGEPROVIDER, "VersioningFileProvider" );
         m_props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
     }
     

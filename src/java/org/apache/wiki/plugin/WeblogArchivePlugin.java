@@ -138,7 +138,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         WeblogPlugin pl = new WeblogPlugin();
 
-        List blogEntries = pl.findBlogEntries( engine.getPageManager(),
+        List blogEntries = pl.findBlogEntries( engine.getContentManager(),
                                                page, new Date(0L), new Date() );
         
         for( Iterator i = blogEntries.iterator(); i.hasNext(); )

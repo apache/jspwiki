@@ -34,9 +34,16 @@ public class ContentManagerTest extends TestCase
     @Override
     protected void tearDown() throws Exception
     {
-        WikiPage p = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
-        
-        if( p != null ) m_mgr.deletePage( p );
+        try
+        {
+            WikiPage p = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
+            
+            if( p != null ) m_mgr.deletePage( p );
+        }
+        catch ( PageNotFoundException e )
+        {
+            // No worries; it just means one of our unit tests never created TestPage...
+        }
         
         super.tearDown();
     }

@@ -711,7 +711,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        Collection c = refMgr.findUncreated();
+        Collection<String> c = refMgr.findUncreated();
         assertTrue( "Non-existent reference not detected by ReferenceManager",
             Util.collectionContains( c, "Foobar" ));
 
@@ -752,7 +752,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        Collection c = refMgr.findUncreated();
+        Collection<String> c = refMgr.findUncreated();
         assertEquals( "uncreated count", 1, c.size() );
         assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
 
@@ -822,8 +822,6 @@ public class WikiEngineTest extends TestCase
             Properties pr = new Properties();
             pr.load( TestEngine.findTestProperties( "/jspwiki_vers.properties" ) );
 
-            pr.setProperty( PageManager.PROP_USECACHE, "true" );
-
             m_engine.shutdown();
             m_engine = new TestEngine( pr );
 
@@ -873,7 +871,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
-        Collection pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
+        Collection<WikiName> pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
         assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );

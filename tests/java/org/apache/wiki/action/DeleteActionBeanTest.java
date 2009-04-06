@@ -20,8 +20,6 @@
  */
 package org.apache.wiki.action;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -30,11 +28,8 @@ import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
-import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.Users;
 
 public class DeleteActionBeanTest extends TestCase
@@ -48,8 +43,6 @@ public class DeleteActionBeanTest extends TestCase
         try
         {
             TestEngine.emptyWorkDir();
-            props.load( TestEngine.findTestProperties( "/jspwiki_vers.properties" ) );
-            props.setProperty( PageManager.PROP_USECACHE, "false" );
             m_engine = new TestEngine( props );
         }
         catch( Exception e )

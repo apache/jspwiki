@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Date;
 import java.util.Collection;
-import java.util.Iterator;
 
 
 import org.apache.wiki.*;
@@ -275,16 +274,14 @@ public class AtomAPIServlet extends HttpServlet
         throws ProviderException,
                IOException
     {
-        Collection pages = m_engine.getPageManager().getAllPages();
+        Collection<WikiPage> pages = m_engine.getContentManager().getAllPages( null );
 
         Feed feed = SyndicationFactory.newSyndicationFeed();
         feed.setTitle("List of blogs at this site");
         feed.setModified( new Date() );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage p : pages )
         {
-            WikiPage p = (WikiPage) i.next();
-
             //
             //  List only weblogs
             //  FIXME: Unfortunately, a weblog is not known until it has

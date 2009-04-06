@@ -27,12 +27,16 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.PluginContent;
@@ -258,7 +262,7 @@ public class WeblogPlugin
 
         try
         {
-            List<WikiPage> blogEntries = findBlogEntries( engine.getPageManager(),
+            List<WikiPage> blogEntries = findBlogEntries( engine.getContentManager(),
                                                           weblogName,
                                                           startTime.getTime(),
                                                           stopTime.getTime() );
@@ -421,27 +425,25 @@ public class WeblogPlugin
      *  Attempts to locate all pages that correspond to the
      *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
-     *  @param mgr A PageManager which is used to get the pages
+     *  @param mgr A ContentManager which is used to get the pages
      *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
      *  @param start The date which is the first to be considered
      *  @param end   The end date which is the last to be considered
      *  @return a list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
-    public List<WikiPage> findBlogEntries( PageManager mgr,
+    public List<WikiPage> findBlogEntries( ContentManager mgr,
                                  String baseName, Date start, Date end )
         throws ProviderException
     {
-        Collection<WikiPage> everyone = mgr.getAllPages();
+        Collection<WikiPage> everyone = mgr.getAllPages( null );
         ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
 
-        for( Iterator<WikiPage> i = everyone.iterator(); i.hasNext(); )
+        for( WikiPage p : everyone )
         {
-            WikiPage p = i.next();
-
             String pageName = p.getName();
 
             if( pageName.startsWith( baseName ) )
@@ -473,7 +475,7 @@ public class WeblogPlugin
                             //
                             if( pageDay != null && pageDay.after(start) && pageDay.before(end) )
                             {
-                                WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
+                                WikiPage firstVersion = mgr.getPage( p.getQualifiedName(), 1 );
                                 result.add( firstVersion );
                             }
                         }

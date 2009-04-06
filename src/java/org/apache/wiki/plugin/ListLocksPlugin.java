@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.wiki.PageLock;
-import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.content.ContentManager;
 
 
 /**
@@ -50,8 +50,8 @@ public class ListLocksPlugin
     {
         StringBuilder result = new StringBuilder();
 
-        PageManager mgr = context.getEngine().getPageManager();
-        List locks = mgr.getActiveLocks();
+        ContentManager mgr = context.getEngine().getContentManager();
+        List<PageLock> locks = mgr.getActiveLocks();
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         result.append("<table class=\"wikitable\">\n");
@@ -69,9 +69,9 @@ public class ListLocksPlugin
         else
         {
             int rowNum = 1;
-            for( Iterator i = locks.iterator(); i.hasNext(); )
+            for( Iterator<PageLock> i = locks.iterator(); i.hasNext(); )
             {
-                PageLock lock = (PageLock) i.next();
+                PageLock lock = i.next();
 
                 result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
                 result.append("<td>"+lock.getPage()+"</td>");

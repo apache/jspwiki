@@ -29,7 +29,6 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
 import net.sourceforge.stripes.validation.*;
 
-import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
@@ -137,8 +136,7 @@ public class DeleteActionBean extends AbstractPageActionBean
 
         // If version supplied exists, validation succeeds also.
         WikiEngine engine = getContext().getEngine();
-        PageManager pm = engine.getPageManager();
-        if( pm.pageExists( getPage().getName(), m_version ) )
+        if( engine.pageExists( getPage().getName(), m_version ) )
         {
             // While we're at it, set the correct version for the bean
             m_page = engine.getPage( getPage().getName(), m_version );

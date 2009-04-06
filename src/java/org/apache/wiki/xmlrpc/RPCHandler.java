@@ -101,15 +101,14 @@ public class RPCHandler
         return toRPCString(m_engine.getApplicationName());
     }
 
-    public Vector getAllPages()
+    public Vector<String> getAllPages()
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
+        Collection<WikiPage> pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
         Vector<String> result = new Vector<String>();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage p : pages )
         {
-            WikiPage p = (WikiPage) i.next();
             if( !(p instanceof Attachment) )
             {
                 result.add( toRPCString(p.getName()) );
@@ -154,10 +153,10 @@ public class RPCHandler
         return ht;
     }
 
-    public Vector getRecentChanges( Date since )
+    public Vector<Hashtable<String, Object>> getRecentChanges( Date since )
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
+        Collection<WikiPage> pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
         Vector<Hashtable<String, Object>> result = new Vector<Hashtable<String, Object>>();
 
         Calendar cal = Calendar.getInstance();
@@ -171,10 +170,8 @@ public class RPCHandler
                   (cal.getTimeZone().inDaylightTime(since) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         since = cal.getTime();
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
-
             if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
             {
                 result.add( encodeWikiPage( page ) );
@@ -238,14 +235,14 @@ public class RPCHandler
         }
     }
     
-    public Hashtable getPageInfo( String pagename )
+    public Hashtable<String,Object> getPageInfo( String pagename )
         throws XmlRpcException
     {
         pagename = parsePageCheckCondition( pagename );
         return encodeWikiPage( getWikiPage(pagename,-1) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, int version )
+    public Hashtable<String,Object> getPageInfoVersion( String pagename, int version )
         throws XmlRpcException
     {
         pagename = parsePageCheckCondition( pagename );
@@ -301,7 +298,7 @@ public class RPCHandler
         }
     }
 
-    public Vector listLinks( String pagename )
+    public Vector<Hashtable<String, String>> listLinks( String pagename )
         throws XmlRpcException
     {
         pagename = parsePageCheckCondition( pagename );
@@ -329,9 +326,8 @@ public class RPCHandler
             //
             //  Add local links.
             //
-            for( Iterator i = localCollector.getLinks().iterator(); i.hasNext(); )
+            for( String link : localCollector.getLinks() )
             {
-                String link = (String) i.next();
                 Hashtable<String, String> ht = new Hashtable<String, String>();
                 ht.put( "page", toRPCString( link ) );
                 ht.put( "type", LINK_LOCAL );
@@ -362,16 +358,12 @@ public class RPCHandler
             //
             // Add links to inline attachments
             //
-            for( Iterator i = attCollector.getLinks().iterator(); i.hasNext(); )
+            for( String link : attCollector.getLinks() )
             {
-                String link = (String) i.next();
-
                 Hashtable<String, String> ht = new Hashtable<String, String>();
-
                 ht.put( "page", toRPCString( link ) );
                 ht.put( "type", LINK_LOCAL );
                 ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
-
                 result.add( ht );
             }
 
@@ -380,16 +372,12 @@ public class RPCHandler
             // simply because URLs are by definition ASCII.
             //
 
-            for( Iterator i = extCollector.getLinks().iterator(); i.hasNext(); )
+            for( String link : extCollector.getLinks() )
             {
-                String link = (String) i.next();
-                
                 Hashtable<String, String> ht = new Hashtable<String, String>();
-
                 ht.put( "page", link );
                 ht.put( "type", LINK_EXTERNAL );
                 ht.put( "href", link );
-
                 result.add( ht );
             }
 

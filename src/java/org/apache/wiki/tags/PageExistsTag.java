@@ -22,7 +22,6 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -40,7 +39,7 @@ public class PageExistsTag
     private static final long serialVersionUID = 0L;
     
     public final int doWikiStartTag()
-        throws IOException, PageNotFoundException, ProviderException
+        throws IOException, ProviderException
     {
         return (super.doWikiStartTag() == SKIP_BODY) ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }

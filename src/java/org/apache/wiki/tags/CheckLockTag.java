@@ -22,13 +22,12 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.wiki.PageLock;
-import org.apache.wiki.PageManager;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.providers.ProviderException;
 
 /**
@@ -99,7 +98,7 @@ public class CheckLockTag
 
         if( page != null )
         {
-            PageManager mgr = engine.getPageManager();
+            ContentManager mgr = engine.getContentManager();
 
             PageLock lock = mgr.getCurrentLock( page );
 

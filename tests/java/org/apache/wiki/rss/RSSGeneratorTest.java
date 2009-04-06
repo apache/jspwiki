@@ -24,7 +24,6 @@
  */
 package org.apache.wiki.rss;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -39,7 +38,6 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
-import org.apache.wiki.providers.AbstractFileProvider;
 
 /**
  *
@@ -89,7 +87,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getContentManager(),
                                                    "TestBlog",
                                                    new Date(0),
                                                    new Date(Long.MAX_VALUE) );
@@ -119,7 +117,7 @@ public class RSSGeneratorTest extends TestCase
 
         WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getPageManager(),
+        List<WikiPage> entries = blogplugin.findBlogEntries( m_testEngine.getContentManager(),
                                                    "TestBlog",
                                                    new Date(0),
                                                    new Date(Long.MAX_VALUE) );
