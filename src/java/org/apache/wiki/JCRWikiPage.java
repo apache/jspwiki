@@ -114,13 +114,20 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getAttribute(java.lang.String)
      */
-    public Object getAttribute( String key )
+    public Serializable getAttribute( String key )
     {
         try
         {
             Property property = getJCRNode().getProperty( key );
-            
-            return getValue( property );
+            Object value = getValue( property );
+            if ( value instanceof Serializable )
+            {
+                return (Serializable)value;
+            }
+            else
+            {
+                throw new IllegalStateException( "The value returned by " + key + " was not a Serializalble, as expected.");
+            }
         }
         catch( ItemNotFoundException e ) {}
         catch( RepositoryException e ) {} // FIXME: Should log this at least.
@@ -178,7 +185,7 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getAttributes()
      */
-    public Map getAttributes() 
+    public Map<String,Serializable> getAttributes() 
     {
         return null; // FIXME: m_attributes;
     }
@@ -186,16 +193,22 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#removeAttribute(java.lang.String)
      */
-    public Object removeAttribute( String key )
+    public Serializable removeAttribute( String key )
     {
         try
         {
             Property p = getJCRNode().getProperty( key );
             
             Object value = getValue(p);
-            p.remove();
-        
-            return value;
+            if ( value instanceof Serializable )
+            {
+                p.remove();
+                return (Serializable)value;
+            }
+            else
+            {
+                throw new IllegalStateException( "The value returned by " + key + " was not a Serializalble, as expected.");
+            }
         }
         catch(RepositoryException e) {}
         
@@ -546,7 +559,7 @@ public class JCRWikiPage
     }
 
  
-    public void setAttribute( String key, Object attribute )
+    public void setAttribute( String key, Serializable attribute )
     {
         // TODO Auto-generated method stub
         
