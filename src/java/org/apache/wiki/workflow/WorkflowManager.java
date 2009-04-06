@@ -88,7 +88,7 @@ public class WorkflowManager implements WikiEventListener
      *
      * @return the current workflows
      */
-    public Collection getWorkflows()
+    public Collection<Workflow> getWorkflows()
     {
         return new HashSet<Workflow>( m_workflows );
     }
@@ -97,7 +97,7 @@ public class WorkflowManager implements WikiEventListener
      * Returns a collection of finished workflows; that is, those that have aborted or completed.
      * @return the finished workflows
      */
-    public List getCompletedWorkflows()
+    public List<Workflow> getCompletedWorkflows()
     {
         return new ArrayList<Workflow>( m_completed );
     }
@@ -198,11 +198,11 @@ public class WorkflowManager implements WikiEventListener
     }
 
     /**
-     * Protected helper method that returns the associated WikiEngine
+     * Returns the associated WikiEngine
      *
      * @return the wiki engine
      */
-    protected WikiEngine getEngine()
+    public WikiEngine getEngine()
     {
         if ( m_engine == null )
         {
@@ -244,7 +244,7 @@ public class WorkflowManager implements WikiEventListener
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection getOwnerWorkflows( WikiSession session )
+    public Collection<Workflow> getOwnerWorkflows( WikiSession session )
     {
         List<Workflow> workflows = new ArrayList<Workflow>();
         if ( session.isAuthenticated() )

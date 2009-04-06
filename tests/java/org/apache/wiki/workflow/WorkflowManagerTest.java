@@ -27,7 +27,6 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.workflow.*;
 
 import junit.framework.TestCase;
 
@@ -86,7 +85,7 @@ public class WorkflowManagerTest extends TestCase
         wm.start(w);
         assertEquals(1, wm.getWorkflows().size());
         assertEquals(0, wm.getCompletedWorkflows().size());
-        Workflow workflow = (Workflow)wm.getWorkflows().iterator().next();
+        Workflow workflow = wm.getWorkflows().iterator().next();
         assertEquals(w, workflow);
         assertEquals(1, workflow.getId());
         

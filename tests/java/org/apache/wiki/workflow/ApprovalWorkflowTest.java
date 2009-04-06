@@ -27,15 +27,14 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.apache.wiki.PageManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.filters.BasicPageFilter;
-import org.apache.wiki.workflow.*;
 
 
 public class ApprovalWorkflowTest extends TestCase
@@ -113,7 +112,7 @@ public class ApprovalWorkflowTest extends TestCase
         assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
         assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
         assertEquals( decisionKey, decision.getMessageKey() );
-        List decisionFacts = ((Decision)decision).getFacts();
+        List<Fact> decisionFacts = ((Decision)decision).getFacts();
         assertEquals( 3, decisionFacts.size() );
         assertEquals( facts[0], decisionFacts.get(0) );
         assertEquals( facts[1], decisionFacts.get(1) );
@@ -204,11 +203,11 @@ public class ApprovalWorkflowTest extends TestCase
         assertFalse( m_engine.pageExists(pageName));
 
         // Second, GroupPrincipal Admin should see a Decision in its queue
-        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
+        Collection<Decision> decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         assertEquals(1, decisions.size());
 
         // Now, approve the decision and it should go away, and page should appear.
-        Decision decision = (Decision)decisions.iterator().next();
+        Decision decision = decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
         assertTrue( m_engine.pageExists(pageName));
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
@@ -236,19 +235,19 @@ public class ApprovalWorkflowTest extends TestCase
         assertFalse( m_engine.pageExists(pageName));
 
         // ...and there should be a Decision in GroupPrincipal Admin's queue
-        Collection decisions = m_dq.getActorDecisions( m_engine.adminSession() );
+        Collection<Decision> decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...
-        Decision decision = (Decision)decisions.iterator().next();
+        Decision decision = decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
         assertFalse( m_engine.pageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         assertEquals(1, decisions.size());
-        decision = (Decision)decisions.iterator().next();
-        assertEquals(PageManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
+        decision = decisions.iterator().next();
+        assertEquals(ContentManager.SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
         decision.decide(Outcome.DECISION_ACKNOWLEDGE);

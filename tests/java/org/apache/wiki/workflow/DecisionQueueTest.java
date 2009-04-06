@@ -29,7 +29,6 @@ import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.workflow.*;
 
 import junit.framework.TestCase;
 
@@ -152,7 +151,7 @@ public class DecisionQueueTest extends TestCase
 
     public void testActorDecisions()
     {
-        Collection decisions = m_queue.getActorDecisions(adminSession);
+        Collection<Decision> decisions = m_queue.getActorDecisions(adminSession);
         assertEquals(1, decisions.size());
 
         decisions = m_queue.getActorDecisions(janneSession);
@@ -183,9 +182,9 @@ public class DecisionQueueTest extends TestCase
         assertEquals(decision, w.getCurrentStep());
 
         // Verify that it's also in Janne's DecisionQueue
-        Collection decisions = m_queue.getActorDecisions(janneSession);
+        Collection<Decision> decisions = m_queue.getActorDecisions(janneSession);
         assertEquals(1, decisions.size());
-        Decision d = (Decision)decisions.iterator().next();
+        Decision d = decisions.iterator().next();
         assertEquals(decision, d);
 
         // Make Decision, and verify that it's gone from the queue

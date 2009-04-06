@@ -229,7 +229,7 @@ public class Workflow implements Serializable
     public static final int CREATED = -2;
 
     /** Lazily-initialized attribute map. */
-    private Map<String, Object> m_attributes;
+    private Map<String, Serializable> m_attributes;
 
     /** The initial Step for this Workflow. */
     private Step m_firstStep;
@@ -377,14 +377,14 @@ public class Workflow implements Serializable
     }
 
     /**
-     * Retrieves a named Object associated with this Workflow. If the Workflow
+     * Retrieves a named object associated with this Workflow. If the Workflow
      * has completed or aborted, this method always returns <code>null</code>.
      *
      * @param attr
      *            the name of the attribute
      * @return the value
      */
-    public final synchronized Object getAttribute( String attr )
+    public final synchronized Serializable getAttribute( String attr )
     {
         if ( m_attributes == null )
         {
@@ -508,7 +508,7 @@ public class Workflow implements Serializable
      * @return an array of Steps representing those that have executed, or are
      *         currently executing
      */
-    public final List getHistory()
+    public final List<Step> getHistory()
     {
         return Collections.unmodifiableList( m_history );
     }
@@ -603,11 +603,11 @@ public class Workflow implements Serializable
      * @param obj
      *            the value
      */
-    public final synchronized void setAttribute(String attr, Object obj )
+    public final synchronized void setAttribute(String attr, Serializable obj )
     {
         if ( m_attributes == null )
         {
-            m_attributes = new HashMap<String, Object>();
+            m_attributes = new HashMap<String, Serializable>();
         }
         m_attributes.put( attr, obj );
     }

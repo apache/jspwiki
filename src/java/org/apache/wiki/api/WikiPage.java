@@ -21,6 +21,7 @@
 package org.apache.wiki.api;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public interface WikiPage
      *  @param key The key to use for fetching the attribute
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
-    public Object getAttribute( String key );
+    public Serializable getAttribute( String key );
 
     /**
      *  Sets an metadata attribute.
@@ -87,7 +88,7 @@ public interface WikiPage
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */
-    public void setAttribute( String key, Object attribute );
+    public void setAttribute( String key, Serializable attribute );
 
     /**
      * Returns the full attributes Map, in case external code needs
@@ -97,7 +98,7 @@ public interface WikiPage
      * @return The attribute Map.  Please note that this is a direct
      *         reference, not a copy.
      */
-    public Map getAttributes();
+    public Map<String,Serializable> getAttributes();
 
     /**
      *  Removes an attribute from the page, if it exists.
@@ -106,7 +107,7 @@ public interface WikiPage
      *  @return If the attribute existed, returns the object.
      *  @since 2.1.111
      */
-    public Object removeAttribute( String key );
+    public Serializable removeAttribute( String key );
 
     /**
      *  Returns the date when this page was last modified.

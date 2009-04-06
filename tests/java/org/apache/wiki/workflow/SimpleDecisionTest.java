@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.workflow.*;
 
 import junit.framework.TestCase;
 
@@ -53,7 +52,7 @@ public class SimpleDecisionTest extends TestCase
         m_decision.addFact(f3);
 
         // The facts should be available, and returned in order
-        List facts = m_decision.getFacts();
+        List<Fact> facts = m_decision.getFacts();
         assertEquals(f1, facts.get(0));
         assertEquals(f2, facts.get(1));
         assertEquals(f3, facts.get(2));
@@ -104,7 +103,7 @@ public class SimpleDecisionTest extends TestCase
         m_decision.addError("Error deciding something.");
         m_decision.addError("Error deciding something else.");
 
-        List errors = m_decision.getErrors();
+        List<String> errors = m_decision.getErrors();
         assertEquals(2, errors.size());
         assertEquals("Error deciding something.", errors.get(0));
         assertEquals("Error deciding something else.", errors.get(1));
@@ -112,7 +111,7 @@ public class SimpleDecisionTest extends TestCase
 
     public void testAvailableOutcomes()
     {
-        Collection outcomes = m_decision.getAvailableOutcomes();
+        Collection<Outcome> outcomes = m_decision.getAvailableOutcomes();
         assertTrue(outcomes.contains(Outcome.DECISION_APPROVE));
         assertTrue(outcomes.contains(Outcome.DECISION_DENY));
         assertFalse(outcomes.contains(Outcome.DECISION_HOLD));

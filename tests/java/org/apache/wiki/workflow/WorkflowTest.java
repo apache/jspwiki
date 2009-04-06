@@ -27,7 +27,6 @@ import java.util.Date;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.workflow.*;
 
 import junit.framework.TestCase;
 

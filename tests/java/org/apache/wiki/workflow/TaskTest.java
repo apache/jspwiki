@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.workflow.*;
 
 import junit.framework.TestCase;
 
@@ -109,7 +108,7 @@ public class TaskTest extends TestCase
         m_task.addError("Error deciding something.");
         m_task.addError("Error deciding something else.");
 
-        List errors = m_task.getErrors();
+        List<String> errors = m_task.getErrors();
         assertEquals(2, errors.size());
         assertEquals("Error deciding something.", errors.get(0));
         assertEquals("Error deciding something else.", errors.get(1));
@@ -117,7 +116,7 @@ public class TaskTest extends TestCase
 
     public void testAvailableOutcomes()
     {
-        Collection outcomes = m_task.getAvailableOutcomes();
+        Collection<Outcome> outcomes = m_task.getAvailableOutcomes();
         assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
         assertFalse(outcomes.contains(Outcome.DECISION_DENY));
         assertFalse(outcomes.contains(Outcome.DECISION_HOLD));

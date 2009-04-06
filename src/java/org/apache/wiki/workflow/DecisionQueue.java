@@ -99,7 +99,7 @@ public class DecisionQueue implements Serializable
      *            the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection getActorDecisions(WikiSession session)
+    public Collection<Decision> getActorDecisions(WikiSession session)
     {
         ArrayList<Decision> decisions = new ArrayList<Decision>();
         if ( session.isAuthenticated() )
