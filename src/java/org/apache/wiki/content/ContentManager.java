@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.content;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Permission;
@@ -110,6 +111,24 @@ public class ContentManager implements WikiEventListener
 
     private static final long serialVersionUID = 2L;
     
+    /** Workflow attribute for storing the ACL. */
+    private static final String PRESAVE_PAGE_ACL = "page.acl";
+    
+    /** Workflow attribute for storing the page author. */
+    private static final String PRESAVE_PAGE_AUTHOR = "page.author";
+    
+    /** Workflow attribute for storing the page attributes. */
+    private static final String PRESAVE_PAGE_ATTRIBUTES = "page.attributes";
+    
+    /** Workflow attribute for storing the page last-modified date. */
+    private static final String PRESAVE_PAGE_LASTMODIFIED = "page.lastmodified";
+    
+    /** Workflow attribute for storing the qualfiied page name. */
+    private static final String PRESAVE_PAGE_NAME = "page.name";
+    
+    /** Workflow attribute for storing the proposed page text. */
+    private static final String PRESAVE_PAGE_TEXT = "page.text";
+    
     /** The property value for setting the amount of time before the page locks expire. 
      *  Value is {@value}.
      */
@@ -117,9 +136,6 @@ public class ContentManager implements WikiEventListener
     
     /** The message key for storing the text for the presave task.  Value is <tt>{@value}</tt>*/
     public static final String PRESAVE_TASK_MESSAGE_KEY = "task.preSaveWikiPage";
-    
-    /** The workflow attribute which stores the wikiContext. */
-    public static final String PRESAVE_WIKI_CONTEXT = "wikiContext";
     
     /** The name of the key from jspwiki.properties which defines who shall approve
      *  the workflow of storing a wikipage.  Value is <tt>{@value}</tt>*/
@@ -934,18 +950,17 @@ public class ContentManager implements WikiEventListener
             WikiEngine engine = m_context.getEngine();
             Workflow workflow = getWorkflow();
 
-            // Get the wiki page
+            // Stash the page author. Prefer the one set for the page
+            // already; otherwise use the current author
             WikiPage page = m_context.getPage();
-
-            // Figure out who the author was. Prefer the author
-            // set programmatically; otherwise get from the
-            // current logged in user
-            if ( page.getAuthor() == null )
+            String author = null;
+            if ( page.getAuthor() != null )
             {
-                Principal wup = m_context.getCurrentUser();
-
-                if ( wup != null )
-                    page.setAuthor( wup.getName() );
+                author = page.getAuthor();
+            }
+            if ( author == null )
+            {
+                author = m_context.getCurrentUser().getName();
             }
 
             // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
@@ -959,9 +974,14 @@ public class ContentManager implements WikiEventListener
                 throw e;
             }
 
-            // Stash the wiki context, old and new text as workflow attributes
-            workflow.setAttribute( PRESAVE_WIKI_CONTEXT, m_context );
-            workflow.setAttribute( FACT_PROPOSED_TEXT, saveText );
+            // Stash the page ACL, author, attributes, modified-date, name and new text as workflow attributes
+            workflow.setAttribute( PRESAVE_PAGE_ACL, page.getAcl() );
+            workflow.setAttribute( PRESAVE_PAGE_AUTHOR, author );
+            workflow.setAttribute( PRESAVE_PAGE_ATTRIBUTES, (Serializable)page.getAttributes() );
+            workflow.setAttribute( PRESAVE_PAGE_LASTMODIFIED, new Date() );
+            workflow.setAttribute( PRESAVE_PAGE_NAME, page.getQualifiedName() );
+            workflow.setAttribute( PRESAVE_PAGE_TEXT, saveText );
+            
             return Outcome.STEP_COMPLETE;
         }
     }
@@ -990,27 +1010,48 @@ public class ContentManager implements WikiEventListener
         @Override
         public Outcome execute() throws WikiException
         {
-            // Retrieve attributes
-            WikiContext context = (WikiContext) getWorkflow().getAttribute( PRESAVE_WIKI_CONTEXT );
-            String proposedText = (String) getWorkflow().getAttribute( FACT_PROPOSED_TEXT );
-
-            WikiEngine engine = context.getEngine();
-            JCRWikiPage page = (JCRWikiPage)context.getPage();
-
-            // Set the last-modified timestamp
-            page.setLastModified( new Date() );
-
-            // Let the rest of the engine handle actual saving.
-            page.setContent( proposedText );
+            // Fetch the page that was being saved
+            Workflow workflow = getWorkflow();
+            WikiEngine engine = workflow.getWorkflowManager().getEngine();
+            WikiName name = (WikiName)workflow.getAttribute( PRESAVE_PAGE_NAME );
+            JCRWikiPage page;
+            try
+            {
+                page = (JCRWikiPage)engine.getContentManager().getPage( name );
+            }
+            catch( PageNotFoundException e )
+            {
+                throw new WikiException( e.getMessage() );
+            }
             
+            // Retrieve the page ACL, author, attributes, modified-date, name and new text from the workflow
+            Acl acl = (Acl)workflow.getAttribute( PRESAVE_PAGE_ACL );
+            String author = (String)workflow.getAttribute( PRESAVE_PAGE_AUTHOR );
+            Map<String,Serializable> attributes = (Map<String,Serializable>)workflow.getAttribute( PRESAVE_PAGE_ATTRIBUTES );
+            Date date = (Date)workflow.getAttribute( PRESAVE_PAGE_LASTMODIFIED );
+            String text = (String)workflow.getAttribute( PRESAVE_PAGE_TEXT );
+
+            // Set the page properties and save it!
+            page.setAcl( acl );
+            page.setAuthor( author );
+            if ( attributes != null )
+            {
+                for ( Map.Entry<String, Serializable> attribute: attributes.entrySet() )
+                {
+                    page.setAttribute( attribute.getKey(), attribute.getValue() );
+                }
+            }
+            page.setLastModified( date );
+            page.setContent( text );
             page.save();
 
             // Refresh the context for post save filtering.
             try
             {
+                WikiContext context = engine.getWikiContextFactory().newViewContext( page );
                 engine.getPage( page.getName() );
-                engine.textToHTML( context, proposedText );
-                engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+                engine.textToHTML( context, text );
+                engine.getFilterManager().doPostSaveFiltering( context, text );
             }
             catch( PageNotFoundException e )
             {

@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.auth.acl;
 
+import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
@@ -55,7 +56,7 @@ import java.util.Enumeration;
  * @author Andrew Jaquith
  * @since 2.3
  */
-public interface Acl
+public interface Acl extends Serializable
 {
     /**
      * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an
