@@ -400,7 +400,7 @@ public class HandlerInfo
             {
                 target = value.toString();
             }
-            if( target == null )
+            if( value == null || target == null )
             {
                 // If the target didn't evaluate, assume it's because some
                 // property wasn't set (probably normal)
