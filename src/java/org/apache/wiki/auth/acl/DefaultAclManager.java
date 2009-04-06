@@ -26,9 +26,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wiki.*;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -38,7 +37,6 @@ import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.render.RenderingManager;
 
 
 
@@ -173,7 +171,8 @@ public class DefaultAclManager implements AclManager
         {
             try
             {
-                acl = getPermissions(page.getParent());
+                WikiPage parent = page.getParent();
+                acl = getPermissions( parent );
             }
             catch( PageNotFoundException e )
             {
@@ -185,56 +184,17 @@ public class DefaultAclManager implements AclManager
                 throw new WikiSecurityException("Unable to get parent page to check for permissions.");
             }
         }
-        // FIXME: Check if the above is sufficient; may be that parsing still needs to be done here
-/*
-            //
-            //  If null, try the parent.
-            //
-            if( page instanceof Attachment )
-            {
-                WikiPage parent;
-                try
-                {
-                    parent = page.getParent();
-                }
-                catch( ProviderException e )
-                {
-                    throw new WikiSecurityException("Unable to get parent page to check for permissions");
-                }
-
-                acl = getPermissions( parent );
-            }
-            else
-            {
-                //
-                //  Or, try parsing the page
-                //
-                WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( page );
-
-                ctx.setVariable( RenderingManager.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
-
-                m_engine.getHTML( ctx, page );
-
-                page = m_engine.getPage( page.getName(), page.getVersion() );
-                acl = page.getAcl();
-
-                if( acl == null )
-                {
-                    acl = new AclImpl();
-                    page.setAcl( acl );
-                }
-            }
-        }
-*/
         return acl;
     }
 
     /**
-     * Sets the access control list for the page and persists it by prepending
-     * it to the wiki page markup and saving the page. When this method is
-     * called, all other ACL markup in the page is removed. This method will forcibly
-     * expire locks on the wiki page if they exist. Any ProviderExceptions will be
-     * re-thrown as WikiSecurityExceptions.
+     * Sets the access control list for the page. The Acl is stored by calling
+     * {@link WikiPage#setAcl(Acl)}. When this method is called, all pre-3.0
+     * ACL markup in the page is removed. Note that the ACL is not actually
+     * persisted to the back-end repository until {@link WikiPage#save()} is
+     * called. Any ProviderExceptions will be re-thrown as
+     * WikiSecurityExceptions.
+     * 
      * @param page the wiki page
      * @param acl the access control list
      * @since 2.5
@@ -242,27 +202,21 @@ public class DefaultAclManager implements AclManager
      */
     public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException
     {
-        PageManager pageManager = m_engine.getPageManager();
-
-        // Forcibly expire any page locks
-        PageLock lock = pageManager.getCurrentLock( page );
-        if ( lock != null )
-        {
-            pageManager.unlockPage( lock );
-        }
-
         // Remove all of the existing ACLs.
         String pageText = m_engine.getPureText( page );
         Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
         String cleansedText = matcher.replaceAll( "" );
-        String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
-        try
+        page.setAcl( acl );
+        if ( pageText != null && !pageText.equals( cleansedText ) )
         {
-            pageManager.putPageText( page, newText );
-        }
-        catch ( ProviderException e )
-        {
-            throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage() );
+            try
+            {
+                page.setContent( cleansedText );
+            }
+            catch ( ProviderException e )
+            {
+                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage() );
+            }
         }
     }
 
