@@ -99,7 +99,7 @@
             log.debug( "Attempting to authenticate user " + uid );
 
             // Log the user in!
-            if ( mgr.login( wikiSession, uid, passwd ) )
+            if ( mgr.login( wikiSession, request, uid, passwd ) )
             {
                 log.info( "Successfully authenticated user " + uid + " (custom auth)" );
             }
@@ -138,7 +138,7 @@
     // If user logged in, set the user cookie with the wiki principal's name.
     // redirect to wherever we're supposed to go. If login.jsp
     // was called without parameters, this will be the front page. Otherwise,
-    // there's probably a 'page' parameter telling us where to go.
+    // there's probably a 'redirect' parameter telling us where to go.
 
     if( wikiSession.isAuthenticated() )
     {

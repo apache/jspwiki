@@ -43,7 +43,7 @@ public class TestEngine extends WikiEngine
             // Set up long-running admin session
             HttpServletRequest request = newHttpRequest();
             m_adminWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_adminWikiSession,
+            this.getAuthenticationManager().login( m_adminWikiSession, request,
                                                    Users.ADMIN,
                                                    Users.ADMIN_PASS );
         }
@@ -79,7 +79,7 @@ public class TestEngine extends WikiEngine
             // Set up a test Janne session
             HttpServletRequest request = newHttpRequest();
             m_janneWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_janneWikiSession,
+            this.getAuthenticationManager().login( m_janneWikiSession, request,
                     Users.JANNE,
                     Users.JANNE_PASS );
         }
@@ -298,7 +298,7 @@ public class TestEngine extends WikiEngine
         // Build new request and associate our admin session
         MockHttpServletRequest request = newHttpRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession,
+        this.getAuthenticationManager().login( wikiSession, request,
                 Users.ADMIN,
                 Users.ADMIN_PASS );
 
@@ -314,7 +314,7 @@ public class TestEngine extends WikiEngine
         // Build new request and associate our Janne session
         MockHttpServletRequest request = newHttpRequest();
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession,
+        this.getAuthenticationManager().login( wikiSession, request,
                 Users.JANNE,
                 Users.JANNE_PASS );
 

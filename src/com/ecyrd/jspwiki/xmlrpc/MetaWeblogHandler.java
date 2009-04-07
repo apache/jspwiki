@@ -87,7 +87,7 @@ public class MetaWeblogHandler
             AuthenticationManager amm = m_context.getEngine().getAuthenticationManager();
             AuthorizationManager mgr = m_context.getEngine().getAuthorizationManager();
         
-            if( amm.login( m_context.getWikiSession(), username, password ) )
+            if( amm.login( m_context.getWikiSession(), m_context.getHttpRequest(), username, password ) )
             {
                 if( !mgr.checkPermission( m_context.getWikiSession(), PermissionFactory.getPagePermission( page, permission ) ))
                 {

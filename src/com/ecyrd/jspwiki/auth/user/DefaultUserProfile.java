@@ -232,7 +232,7 @@ public final class DefaultUserProfile implements UserProfile
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
-     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)}).
+     * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession,HttpServletRequest, String, String)}).
      * The login name is typically a short name ("jannej"). In contrast, the
      * wiki name is typically of type FirstnameLastName ("JanneJalkanen").
      * @param name the login name

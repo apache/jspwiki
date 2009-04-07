@@ -195,7 +195,7 @@ public final class AuthenticationManager
         catch (ClassNotFoundException e)
         {
             e.printStackTrace();
-            throw new WikiException(e.getMessage());
+            throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
         
         // Initialize the LoginModule options
@@ -330,6 +330,25 @@ public final class AuthenticationManager
     
     /**
      * Attempts to perform a WikiSession login for the given username/password
+     * combination using JSPWiki's custom authentication mode. This method is identical to
+     * {@link #login(WikiSession, String, String)}, except that user's HTTP request is not made available
+     * to LoginModules via the {@link com.ecyrd.jspwiki.auth.login.HttpRequestCallback}.
+     * @param session the current wiki session; may not be <code>null</code>.
+     * @param username The user name. This is a login name, not a WikiName. In
+     *            most cases they are the same, but in some cases, they might
+     *            not be.
+     * @param password the password
+     * @return true, if the username/password is valid
+     * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
+     * @deprecated use {@link #login(WikiSession, HttpServletRequest, String, String)} instead
+     */
+    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
+    {
+        return login( session, null, username, password );
+    }
+    
+    /**
+     * Attempts to perform a WikiSession login for the given username/password
      * combination using JSPWiki's custom authentication mode. In order to log in,
      * the JAAS LoginModule supplied by the WikiEngine property {@link #PROP_LOGIN_MODULE}
      * will be instantiated, and its
@@ -338,7 +357,9 @@ public final class AuthenticationManager
      * class will be used. When the LoginModule's <code>initialize</code> method is invoked,
      * an options Map populated by properties keys prefixed by {@link #PREFIX_LOGIN_MODULE_OPTIONS}
      * will be passed as a parameter.
-     * @param session the current wiki session; may not be null.
+     * @param session the current wiki session; may not be <code>null</code>.
+     * @param request the user's HTTP request. This parameter may be <code>null</code>, but the configured
+     * LoginModule will not have access to the HTTP request in this case.
      * @param username The user name. This is a login name, not a WikiName. In
      *            most cases they are the same, but in some cases, they might
      *            not be.
@@ -346,7 +367,7 @@ public final class AuthenticationManager
      * @return true, if the username/password is valid
      * @throws com.ecyrd.jspwiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      */
-    public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException
+    public final boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException
     {
         if ( session == null )
         {
@@ -360,9 +381,9 @@ public final class AuthenticationManager
             delayLogin(username);
         }
         
-        UserManager userMgr = m_engine.getUserManager();
         CallbackHandler handler = new WikiCallbackHandler(
-                userMgr.getUserDatabase(),
+                m_engine,
+                null,
                 username,
                 password );
         
@@ -530,11 +551,11 @@ public final class AuthenticationManager
         }
         catch (InstantiationException e)
         {
-            throw new WikiSecurityException(e.getMessage());
+            throw new WikiSecurityException(e.getMessage(), e );
         }
         catch (IllegalAccessException e)
         {
-            throw new WikiSecurityException(e.getMessage());
+            throw new WikiSecurityException(e.getMessage(), e );
         }
 
         // Initialize the LoginModule
