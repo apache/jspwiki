@@ -303,9 +303,10 @@ public final class WatchDog
                 if( now > st.getExpiryTime() )
                 {
                     log.info("Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() + "' by "
-                             + (now - st.getExpiryTime()) / 1000 + " seconds");
+                             + (now - st.getExpiryTime()) / 1000 + " seconds"+(log.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces."));
 
                     dumpStackTraceForWatchable();
+                    
                     m_watchable.timeoutExceeded(st.getState());
                 }
             }
@@ -316,11 +317,18 @@ public final class WatchDog
         }
     }
 
+    /**
+     *  Dumps the stack traces as DEBUG level events.
+     */
     private void dumpStackTraceForWatchable()
     {
+        if( !log.isDebugEnabled() ) return;
+        
         Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
         Set<Thread> threads = stackTraces.keySet();
         Iterator<Thread> threadIterator = threads.iterator();
+        StringBuilder stacktrace = new StringBuilder();
+
         while ( threadIterator.hasNext() )
         {
             Thread t = threadIterator.next();
@@ -328,21 +336,21 @@ public final class WatchDog
             {
                 if( t.getName().equals( m_watchable.getName() ) )
                 {
-                    log.error( "dumping stacktrace for too long running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for too long running thread : " + t );
                 }
                 else
                 {
-                    log.error( "dumping stacktrace for other running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for other running thread : " + t );
                 }
                 StackTraceElement[] ste = stackTraces.get( t );
-                StringBuilder stacktrace = new StringBuilder( "stacktrace follows" );
                 for( int i = 0; i < ste.length; i++ )
                 {
                     stacktrace.append( "\n" + ste[i] );
                 }
-                log.error( stacktrace.toString() );
             }
         }
+        
+        log.debug( stacktrace.toString() );
     }
 
     /**
