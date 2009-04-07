@@ -325,7 +325,7 @@ public class RSSGenerator
             catch( PageNotFoundException e1 )
             {
                 // This should not happen
-                throw new WikiException( e1.getMessage() );
+                throw new WikiException( e1.getMessage(), e1 );
             }
         }
         Feed feed = new RSS10Feed( context );

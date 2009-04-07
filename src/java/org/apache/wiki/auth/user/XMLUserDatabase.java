@@ -398,7 +398,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
         }
         catch ( IOException e )
         {
-            throw new WikiSecurityException( e.getLocalizedMessage() );
+            throw new WikiSecurityException( e.getLocalizedMessage(), e );
         }
 
         // Copy new file over old version
@@ -579,7 +579,7 @@ public class XMLUserDatabase extends AbstractUserDatabase
             }
             catch ( IOException e )
             {
-                throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
+                throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
             }
         }
 

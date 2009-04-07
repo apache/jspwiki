@@ -168,7 +168,7 @@ public class WeblogEntryPlugin implements WikiPlugin
             }
             catch( PageAlreadyExistsException e )
             {
-                throw new ProviderException( e.getMessage() );
+                throw new ProviderException( e.getMessage(), e );
             }
                                           
             PageLock lock = mgr.getCurrentLock( page );

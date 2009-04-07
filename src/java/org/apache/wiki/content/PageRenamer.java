@@ -104,7 +104,7 @@ public class PageRenamer
         }
         catch( PageNotFoundException e )
         {
-            throw new WikiException("No such page "+renameFrom);
+            throw new WikiException("No such page "+renameFrom, e );
         }
         
         WikiPage toPage;

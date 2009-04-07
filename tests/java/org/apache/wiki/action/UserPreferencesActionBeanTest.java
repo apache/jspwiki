@@ -93,7 +93,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         trip = m_engine.guestTrip( "/UserPreferences.action" );
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
-        boolean login = m_engine.getAuthenticationManager().login( wikiSession, Users.JANNE, Users.JANNE_PASS );
+        boolean login = m_engine.getAuthenticationManager().login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
         assertTrue( "Could not log in.", login );
 
         // Set 'assertion' param; verify redirect to front page

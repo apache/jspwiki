@@ -235,7 +235,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
 
         if( dbInstantiationError != null )
         {
-            throw new WikiSecurityException( dbInstantiationError + " Cause: " + (cause != null ? cause.getMessage() : "") );
+            throw new WikiSecurityException( dbInstantiationError + " Cause: " + (cause != null ? cause.getMessage() : ""), cause );
         }
 
         return m_groupDatabase;
@@ -273,7 +273,7 @@ public final class GroupManager implements Authorizer, WikiEventListener
         }
         catch ( WikiException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
 
         // Load all groups from the database into the cache
@@ -616,10 +616,10 @@ public final class GroupManager implements Authorizer, WikiEventListener
                 {
                     m_groups.put( oldGroup.getPrincipal(), oldGroup );
                 }
-                throw new WikiSecurityException( e.getMessage() + " (rolled back to previous version)." );
+                throw new WikiSecurityException( e.getMessage() + " (rolled back to previous version).", e );
             }
             // Re-throw security exception
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
     }
 

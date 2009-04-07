@@ -740,7 +740,7 @@ public class AttachmentServlet extends HttpServlet
             catch( PageAlreadyExistsException e1 )
             {
                 // This should not happen
-                throw new ProviderException( e1.getMessage() );
+                throw new ProviderException( e1.getMessage(), e1 );
             }
             created = true;
         }

@@ -1,3 +1,24 @@
+2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-98
+
+        * Refactored various exception-throwing code bits to use the extended
+        constructors for WikiException/WikiSecurityException/ProviderException
+        to provide for better logging and debugging.
+
+        * Added support in WikiCallbackHandler for HttpRequestCallback and
+        WikiEngineCallback. This means LoginModules used for JSPWiki integrated
+        (custom) authentication can now access the WikiEngine and the HTTP request.
+        Thanks to Lou Peters and many, many others for bringing this issue to my
+        attention. Please test this function! This change has been forward-ported from
+        2.8.3. 
+        
+        * As a result of the additional callback support for LoginModules used with
+        integrated authentication, AuthenticationManager gains a new method,
+        login(WikiSession,HttpServletRequest,String,String). Please use this instead
+        of login(WikiSession,String,String), which is now deprecated. This change
+        has been forward-ported from 2.8.3.
+
 2009-04-05  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-97

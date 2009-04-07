@@ -164,7 +164,7 @@ public interface UserProfile extends Serializable
     /**
      * Sets the name by which the user logs in. The login name is used as the
      * username for custom authentication (see
-     * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession, String, String)},
+     * {@link org.apache.wiki.auth.AuthenticationManager#login(org.apache.wiki.WikiSession, javax.servlet.http.HttpServletRequest, String, String)},
      * {@link org.apache.wiki.auth.login.UserDatabaseLoginModule}). The login
      * name is typically a short name ("jannej"). In contrast, the wiki name is
      * typically of type FirstnameLastName ("JanneJalkanen").

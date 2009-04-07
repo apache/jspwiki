@@ -450,7 +450,7 @@ public class XMLGroupDatabase implements GroupDatabase
         }
         catch( IOException e )
         {
-            throw new WikiSecurityException( e.getLocalizedMessage() );
+            throw new WikiSecurityException( e.getLocalizedMessage(), e );
         }
 
         // Copy new file over old version

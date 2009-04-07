@@ -189,7 +189,7 @@ public class PageManager extends ModuleManager
             catch( PageAlreadyExistsException e1 )
             {
                 // This should never happen
-                throw new ProviderException( e1.getMessage() );
+                throw new ProviderException( e1.getMessage(), e1 );
             }
         }
         p.setContent(content);

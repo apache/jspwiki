@@ -296,7 +296,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( "Could not delete group " + groupName + ": " + e.getMessage() );
+            throw new WikiSecurityException( "Could not delete group " + groupName + ": " + e.getMessage(), e );
         }
         finally
         {
@@ -354,7 +354,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {
@@ -463,7 +463,7 @@ public class JDBCGroupDatabase implements GroupDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {

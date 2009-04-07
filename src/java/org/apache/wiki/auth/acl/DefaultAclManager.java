@@ -136,11 +136,11 @@ public class DefaultAclManager implements AclManager
         catch( NoSuchElementException nsee )
         {
             log.warn( "Invalid access rule: " + ruleLine + " - defaults will be used." );
-            throw new WikiSecurityException( "Invalid access rule: " + ruleLine );
+            throw new WikiSecurityException( "Invalid access rule: " + ruleLine, nsee );
         }
         catch( IllegalArgumentException iae )
         {
-            throw new WikiSecurityException( "Invalid permission type: " + ruleLine );
+            throw new WikiSecurityException( "Invalid permission type: " + ruleLine, iae );
         }
 
         return acl;
@@ -181,7 +181,7 @@ public class DefaultAclManager implements AclManager
             }
             catch( ProviderException e )
             {
-                throw new WikiSecurityException("Unable to get parent page to check for permissions.");
+                throw new WikiSecurityException( "Unable to get parent page to check for permissions.", e );
             }
         }
         return acl;
@@ -215,7 +215,7 @@ public class DefaultAclManager implements AclManager
             }
             catch ( ProviderException e )
             {
-                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage() );
+                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage(), e );
             }
         }
     }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import javax.security.auth.callback.*;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -34,7 +35,7 @@ import org.apache.wiki.log.LoggerFactory;
 /**
  * Handles logins made from inside the wiki application, rather than via the web
  * container. This handler is instantiated in
- * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession, String, String)}.
+ * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession, javax.servlet.http.HttpServletRequest, String, String)}.
  * If container-managed authentication is used, the
  * {@link WebContainerCallbackHandler} is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
@@ -45,26 +46,27 @@ public class WikiCallbackHandler implements CallbackHandler
 {
     private static final Logger log = LoggerFactory.getLogger(WikiCallbackHandler.class);
 
+    private final HttpServletRequest m_request;
+    
     private final WikiEngine m_engine;
 
     private final String       m_password;
 
     private final String       m_username;
-    
-    private final Locale      m_locale;
 
     /**
      *  Create a new callback handler.
      *  
      *  @param engine the WikiEngine for this wiki
-     *  @param locale the Locale to use, for localizing messages
+     *  @param request the user's HTTP request. If passed as <code>null</code>,
+     *  later requests for {@link HttpRequestCallback} will return an UnsupportedCallbackException
      *  @param username the username
      *  @param password the password
      */
-    public WikiCallbackHandler( WikiEngine engine, Locale locale, String username, String password )
+    public WikiCallbackHandler( WikiEngine engine, HttpServletRequest request, String username, String password )
     {
         m_engine = engine;
-        m_locale = locale;
+        m_request = request;
         m_username = username;
         m_password = password;
     }
@@ -79,9 +81,17 @@ public class WikiCallbackHandler implements CallbackHandler
         for( int i = 0; i < callbacks.length; i++ )
         {
             Callback callback = callbacks[i];
-            if ( callback instanceof WikiEngineCallback )
+            if ( callback instanceof HttpRequestCallback )
+            {
+                ( (HttpRequestCallback) callback ).setRequest( m_request );
+            }
+            else if( callback instanceof WikiEngineCallback )
             {
                 ( (WikiEngineCallback) callback ).setEngine( m_engine );
+            }
+            else if ( callback instanceof UserDatabaseCallback )
+            {
+                ( (UserDatabaseCallback) callback ).setUserDatabase( m_engine.getUserManager().getUserDatabase() );
             }
             else if ( callback instanceof NameCallback )
             {
@@ -93,7 +103,7 @@ public class WikiCallbackHandler implements CallbackHandler
             }
             else if ( callback instanceof LocaleCallback )
             {
-                ( (LocaleCallback) callback ).setLocale( m_locale );
+                ( (LocaleCallback) callback ).setLocale( m_request != null ? m_request.getLocale() : Locale.getDefault() );
             }
             else if( callbacks[i] instanceof TextOutputCallback )
             {

@@ -306,7 +306,7 @@ public class WikiSessionTest extends TestCase
         
         // Log in the user with credentials
         WikiSession session = WikiSession.getWikiSession( engine, request );
-        engine.getAuthenticationManager().login( session, id, password );
+        engine.getAuthenticationManager().login( session, request, id, password );
         
         // Make sure the user is actually authenticated
         if ( !session.isAuthenticated() )

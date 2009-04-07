@@ -636,7 +636,7 @@ public class LuceneSearchProvider implements SearchProvider
                     catch( PageAlreadyExistsException e1 )
                     {
                         // This should not happen
-                        throw new ProviderException( e1.getMessage() );
+                        throw new ProviderException( e1.getMessage(), e1 );
                     }
                 }
             }

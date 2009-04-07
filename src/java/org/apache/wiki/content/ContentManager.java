@@ -1021,7 +1021,7 @@ public class ContentManager implements WikiEventListener
             }
             catch( PageNotFoundException e )
             {
-                throw new WikiException( e.getMessage() );
+                throw new WikiException( e.getMessage(), e );
             }
             
             // Retrieve the page ACL, author, attributes, modified-date, name and new text from the workflow
@@ -1056,7 +1056,7 @@ public class ContentManager implements WikiEventListener
             catch( PageNotFoundException e )
             {
                 e.printStackTrace();
-                throw new WikiException( e.getMessage() );
+                throw new WikiException( e.getMessage(), e );
             }
             return Outcome.STEP_COMPLETE;
         }

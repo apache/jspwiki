@@ -354,7 +354,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip = m_engine.guestTrip( "/UserProfile.action" );
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
-        boolean login = m_engine.getAuthenticationManager().login( wikiSession, "user" + suffix, "mypassword" );
+        boolean login = m_engine.getAuthenticationManager().login( wikiSession, request, "user" + suffix, "mypassword" );
         assertTrue( "Could not log in.", login );
 
         // Make sure the saved profile is loaded when we access prefs page
@@ -368,7 +368,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip = m_engine.guestTrip( "/UserProfile.action" );
         request = trip.getRequest();
         wikiSession = WikiSession.getWikiSession( m_engine, request );
-        login = m_engine.getAuthenticationManager().login( wikiSession, "user" + suffix, "mypassword" );
+        login = m_engine.getAuthenticationManager().login( wikiSession, request, "user" + suffix, "mypassword" );
         assertTrue( "Could not lot in.", login );
 
         // Pass new values for the mutable fields (except the password).

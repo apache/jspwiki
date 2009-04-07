@@ -293,24 +293,24 @@ public final class ClassUtil
         {
             log.info( "%1$s %2$s", "Cannot instantiate requested class " + requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException( "Failed to instantiate class "+requestedClass, e );
         }
         catch (IllegalAccessException e)
         {
             log.info( "%1$s %2$s", "Cannot access requested class " + requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException( "Failed to instantiate class "+requestedClass, e );
         }
         catch (IllegalArgumentException e)
         {
             log.info( "%1$s %2$s", "Illegal arguments when constructing new object", e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException( "Failed to instantiate class "+requestedClass, e );
         }
         catch (InvocationTargetException e)
         {
             log.info( "%1$s %2$s", "Failed to invoke class " + requestedClass, e.getCause() );
-            throw new WikiException("Failed to invoke class "+requestedClass + ", reason: " + e.getCause());
+            throw new WikiException( "Failed to invoke class "+requestedClass + ", reason: " + e.getCause(), e );
         }
     }
 
@@ -342,7 +342,7 @@ public final class ClassUtil
         {
             log.info( "Cannot find requested class", e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException( "Failed to instantiate class "+requestedClass, e );
         }
     }
 }

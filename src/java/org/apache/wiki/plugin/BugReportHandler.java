@@ -177,7 +177,7 @@ public class BugReportHandler
             }
             catch( PageAlreadyExistsException e )
             {
-                throw new ProviderException( e.getMessage() );
+                throw new ProviderException( e.getMessage(), e );
             }
             WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );

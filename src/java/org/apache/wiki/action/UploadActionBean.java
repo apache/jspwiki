@@ -219,7 +219,7 @@ public class UploadActionBean extends AbstractPageActionBean
             // here we have the context available, so we can
             // internationalize it properly :
             throw new ProviderException( context.getBundle( InternationalizationManager.CORE_BUNDLE )
-                .getString( pe.getMessage() ) );
+                .getString( pe.getMessage() ), pe );
         }
         
         // Close the stream and delete the filebean, since we're done with it

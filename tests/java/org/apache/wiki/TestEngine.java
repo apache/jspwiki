@@ -91,7 +91,7 @@ public class TestEngine extends WikiEngine
             // Set up long-running admin session
             HttpServletRequest request = newHttpRequest();
             m_adminWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_adminWikiSession,
+            this.getAuthenticationManager().login( m_adminWikiSession, request,
                                                    Users.ADMIN,
                                                    Users.ADMIN_PASS );
         }
@@ -127,7 +127,7 @@ public class TestEngine extends WikiEngine
             // Set up a test Janne session
             HttpServletRequest request = newHttpRequest();
             m_janneWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_janneWikiSession,
+            this.getAuthenticationManager().login( m_janneWikiSession, request,
                     Users.JANNE,
                     Users.JANNE_PASS );
         }
@@ -346,7 +346,7 @@ public class TestEngine extends WikiEngine
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
         try
         {
-            this.getAuthenticationManager().login( wikiSession,
+            this.getAuthenticationManager().login( wikiSession, request,
                     Users.ADMIN,
                     Users.ADMIN_PASS );
         }
@@ -371,7 +371,7 @@ public class TestEngine extends WikiEngine
             catch( PageAlreadyExistsException e1 )
             {
                 // This should not happen
-                throw new WikiException( e1.getMessage() );
+                throw new WikiException( e1.getMessage(), e1 );
             }
         }
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
@@ -386,7 +386,7 @@ public class TestEngine extends WikiEngine
         WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
         try
         {
-            this.getAuthenticationManager().login( wikiSession,
+            this.getAuthenticationManager().login( wikiSession, request,
                     Users.JANNE,
                     Users.JANNE_PASS );
         }
@@ -404,7 +404,7 @@ public class TestEngine extends WikiEngine
         catch( PageAlreadyExistsException e1 )
         {
             // This should not happen
-            throw new WikiException( e1.getMessage() );
+            throw new WikiException( e1.getMessage(), e1 );
         }
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
@@ -492,7 +492,7 @@ public class TestEngine extends WikiEngine
         }
         MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
         WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
-        this.getAuthenticationManager().login( session, user, password );
+        this.getAuthenticationManager().login( session, trip.getRequest(), user, password );
         return trip;
     }
     

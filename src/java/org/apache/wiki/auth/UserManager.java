@@ -374,7 +374,7 @@ public final class UserManager
             }
             catch ( LoginException e )
             {
-                throw new WikiSecurityException( e.getMessage() );
+                throw new WikiSecurityException( e.getMessage(), e );
             }
 
             // Alert all listeners that the profile changed...

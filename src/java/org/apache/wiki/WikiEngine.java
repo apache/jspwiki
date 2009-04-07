@@ -435,7 +435,7 @@ public class WikiEngine
                 context.log( msg );
             }
             shutdown();
-            throw new WikiException( msg );
+            throw new WikiException( msg, e );
         }
     }
 
@@ -623,29 +623,29 @@ public class WikiEngine
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.error( "%1$s %2$s", "Failed to start managers.", e );
-            throw new WikiException( "Failed to start managers: "+e.getMessage() );
+            throw new WikiException( "Failed to start managers: "+e.getMessage(), e );
         }
         catch (ClassNotFoundException e)
         {
             log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor was not found: ", e );
-            throw new WikiException(e.getMessage());
+            throw new WikiException( e.getMessage(), e );
         }
         catch (InstantiationException e)
         {
             log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor could not be instantiated: ", e );
-            throw new WikiException(e.getMessage());
+            throw new WikiException( e.getMessage(), e );
         }
         catch (IllegalAccessException e)
         {
             log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor cannot be accessed: ", e );
-            throw new WikiException(e.getMessage());
+            throw new WikiException( e.getMessage(), e );
         }
         catch( Exception e )
         {
             // Final catch-all for everything
             
             log.error( "%1$s %2$s", "JSPWiki could not start, due to an unknown exception when starting.", e );
-            throw new WikiException("Failed to start; please check log files for better information.");
+            throw new WikiException( "Failed to start; please check log files for better information.", e );
         }
         
         //
@@ -952,7 +952,7 @@ public class WikiEngine
             catch( PageAlreadyExistsException e1 )
             {
                 // This should not happen
-                throw new ProviderException( e1.getMessage() );
+                throw new ProviderException( e1.getMessage(), e1 );
             }
         }
         
@@ -1113,7 +1113,7 @@ public class WikiEngine
     }
 
     /**
-     *  <p>If the page is a special page, then returns a direct URL
+     *  <p>If the page is a special page, then returns a direct URI
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
      *  {@link org.apache.wiki.content.SpecialPageNameResolver#getSpecialPageURI}.

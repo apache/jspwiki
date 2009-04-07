@@ -1,3 +1,4 @@
+<%@ page import="java.net.URI" %>
 <%@ page import="org.apache.wiki.log.Logger" %>
 <%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="org.apache.wiki.*" %>
@@ -18,11 +19,11 @@
     String pagereq = wikiContext.getPage().getName();
     
     // Redirect if the request was for a 'special page'
-    String specialpage = wiki.getSpecialPageReference( pagereq );
+    URI specialpage = wiki.getSpecialPageReference( pagereq );
     if( specialpage != null )
     {
         // FIXME: Do Something Else
-        response.sendRedirect( specialpage );
+        response.sendRedirect( specialpage.toString() );
         return;
     }
 

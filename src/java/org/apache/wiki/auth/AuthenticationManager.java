@@ -196,7 +196,7 @@ public final class AuthenticationManager
         catch (ClassNotFoundException e)
         {
             e.printStackTrace();
-            throw new WikiException(e.getMessage());
+            throw new WikiException( e.getMessage(), e );
         }
         
         // Initialize the LoginModule options
@@ -288,7 +288,7 @@ public final class AuthenticationManager
             catch ( WikiSecurityException e )
             {
                 e.printStackTrace();
-                throw new WikiSecurityException( e.getMessage() );
+                throw new WikiSecurityException( e.getMessage(), e );
             }
             
             // Execute the container login module
@@ -370,7 +370,9 @@ public final class AuthenticationManager
     /**
      * Attempts to perform a WikiSession login for the given username/password
      * combination using JSPWiki's custom authentication mode, using the system default Locale.
-     * The operation is otherwise identical to {@link #login(WikiSession, Locale, String, String)}.
+     * The operation is otherwise identical to {@link #login(WikiSession, HttpServletRequest, String, String)}.
+     * Also, the user's HTTP request is not made available to LoginModules via the
+     * {@link com.ecyrd.jspwiki.auth.login.HttpRequestCallback}.
      * @param session the current wiki session; may not be <code>null</code>.
      * @param username The user name
      * @param password the password
@@ -382,10 +384,11 @@ public final class AuthenticationManager
      * @throws WikiSecurityException
      *             if the login failed for any other reason. The root-cause exception can
      *             be retrieved via {@link java.lang.Throwable#getCause()}
+     * @deprecated use {@link #login(WikiSession, HttpServletRequest, String, String)} instead
      */
     public final boolean login( WikiSession session, String username, String password ) throws WikiSecurityException, LoginException
     {
-        return login( session, Locale.getDefault(), username, password );
+        return login( session, null, username, password );
     }
 
     /**
@@ -399,6 +402,8 @@ public final class AuthenticationManager
      * an options Map populated by properties keys prefixed by {@link #PREFIX_LOGIN_MODULE_OPTIONS}
      * will be passed as a parameter.
      * @param session the current wiki session; may not be <code>null</code>.
+     * @param request the user's HTTP request. This parameter may be <code>null</code>, but the configured
+     * LoginModule will not have access to the HTTP request in this case.
      * @param username The user name. This is a login name, not a WikiName. In
      *            most cases they are the same, but in some cases, they might
      *            not be.
@@ -412,7 +417,7 @@ public final class AuthenticationManager
      *             if the login failed for any other reason. The root-cause exception can
      *             be retrieved via {@link java.lang.Throwable#getCause()}
      */
-    public final boolean login( WikiSession session, Locale locale, String username, String password ) throws WikiSecurityException, LoginException
+    public final boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException, LoginException
     {
         if ( session == null )
         {
@@ -428,7 +433,7 @@ public final class AuthenticationManager
         
         CallbackHandler handler = new WikiCallbackHandler(
                 m_engine,
-                locale,
+                request,
                 username,
                 password );
         
