@@ -22,18 +22,16 @@ package com.ecyrd.jspwiki.auth.login;
 
 import java.io.IOException;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.callback.*;
+import javax.servlet.http.HttpServletRequest;
 
-import com.ecyrd.jspwiki.auth.user.UserDatabase;
+import com.ecyrd.jspwiki.WikiEngine;
+import com.ecyrd.jspwiki.WikiSession;
 
 /**
  * Handles logins made from inside the wiki application, rather than via the web
  * container. This handler is instantiated in
- * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession, String, String)}.
+ * {@link com.ecyrd.jspwiki.auth.AuthenticationManager#login(WikiSession,HttpServletRequest, String, String)}.
  * If container-managed authentication is used, the
  * {@link WebContainerCallbackHandler}is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
@@ -42,22 +40,26 @@ import com.ecyrd.jspwiki.auth.user.UserDatabase;
  */
 public class WikiCallbackHandler implements CallbackHandler
 {
-    private final UserDatabase m_database;
+    private final HttpServletRequest m_request;
 
+    private final WikiEngine m_engine;
+    
     private final String       m_password;
 
     private final String       m_username;
 
     /**
      *  Create a new callback handler.
-     *  
-     *  @param database The Userdatabase to use
-     *  @param username The username
-     *  @param password The password
+     * @param engine the WikiEngine
+     * @param request the user's HTTP request. If passed as <code>null</code>,
+     *  later requests for {@link HttpRequestCallback} will return an UnsupportedCallbackException
+     * @param username the username
+     * @param password the password
      */
-    public WikiCallbackHandler( UserDatabase database, String username, String password )
+    public WikiCallbackHandler( WikiEngine engine, HttpServletRequest request, String username, String password )
     {
-        m_database = database;
+        m_request = request;
+        m_engine = engine;
         m_username = username;
         m_password = password;
     }
@@ -72,9 +74,17 @@ public class WikiCallbackHandler implements CallbackHandler
         for( int i = 0; i < callbacks.length; i++ )
         {
             Callback callback = callbacks[i];
-            if ( callback instanceof UserDatabaseCallback )
+            if ( callback instanceof HttpRequestCallback )
             {
-                ( (UserDatabaseCallback) callback ).setUserDatabase( m_database );
+                ( (HttpRequestCallback) callback ).setRequest( m_request );
+            }
+            else if( callback instanceof WikiEngineCallback )
+            {
+                ( (WikiEngineCallback) callback ).setEngine( m_engine );
+            }
+            else if ( callback instanceof UserDatabaseCallback )
+            {
+                ( (UserDatabaseCallback) callback ).setUserDatabase( m_engine.getUserManager().getUserDatabase() );
             }
             else if ( callback instanceof NameCallback )
             {

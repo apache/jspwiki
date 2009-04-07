@@ -44,6 +44,8 @@ import com.ecyrd.jspwiki.auth.user.XMLUserDatabase;
  */
 public class UserDatabaseLoginModuleTest extends TestCase
 {
+    WikiEngine m_engine;
+
     UserDatabase m_db;
 
     Subject      m_subject;
@@ -53,7 +55,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
         try
         {
             // Log in with a user that isn't in the database
-            CallbackHandler handler = new WikiCallbackHandler( m_db, "user", "password" );
+            CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
             module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
@@ -68,7 +70,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
             
             // Login with a user that IS in the database
             m_subject = new Subject();
-            handler = new WikiCallbackHandler( m_db, "janne", "myP@5sw0rd" );
+            handler = new WikiCallbackHandler( m_engine, null, "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
             module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
@@ -92,7 +94,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
     {
         try
         {
-            CallbackHandler handler = new WikiCallbackHandler( m_db, "user", "password" );
+            CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
             module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
@@ -122,7 +124,7 @@ public class UserDatabaseLoginModuleTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-        WikiEngine m_engine  = new TestEngine(props);
+        m_engine  = new TestEngine(props);
         m_db = new XMLUserDatabase();
         m_subject = new Subject();
         try
