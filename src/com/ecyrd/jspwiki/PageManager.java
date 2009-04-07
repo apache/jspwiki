@@ -168,17 +168,17 @@ public class PageManager extends ModuleManager implements WikiEventListener
         catch( ClassNotFoundException e )
         {
             log.error("Unable to locate provider class '"+classname+"'",e);
-            throw new WikiException("no provider class");
+            throw new WikiException( "No provider class.", e );
         }
         catch( InstantiationException e )
         {
             log.error("Unable to create provider class '"+classname+"'",e);
-            throw new WikiException("faulty provider class");
+            throw new WikiException( "Faulty provider class.", e );
         }
         catch( IllegalAccessException e )
         {
             log.error("Illegal access to provider class '"+classname+"'",e);
-            throw new WikiException("illegal provider class");
+            throw new WikiException( "Illegal provider class.", e );
         }
         catch( NoRequiredPropertyException e )
         {
@@ -189,7 +189,7 @@ public class PageManager extends ModuleManager implements WikiEventListener
         catch( IOException e )
         {
             log.error("An I/O exception occurred while trying to create a new page provider: "+classname, e );
-            throw new WikiException("Unable to start page provider: "+e.getMessage());
+            throw new WikiException( "Unable to start page provider: "+e.getMessage(), e );
         }
 
     }

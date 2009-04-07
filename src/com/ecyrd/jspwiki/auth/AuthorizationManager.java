@@ -431,7 +431,7 @@ public final class AuthorizationManager
         catch ( PolicyException e )
         {
             log.error("Could not initialize local security policy: " + e.getMessage() );
-            throw new WikiException( e.getMessage() );
+            throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
         }
     }
 
@@ -473,17 +473,17 @@ public final class AuthorizationManager
             catch( ClassNotFoundException e )
             {
                 log.fatal( "Authorizer " + clazz + " cannot be found", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be found" );
+                throw new WikiException( "Authorizer " + clazz + " cannot be found", e );
             }
             catch( InstantiationException e )
             {
                 log.fatal( "Authorizer " + clazz + " cannot be created", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be created" );
+                throw new WikiException( "Authorizer " + clazz + " cannot be created", e );
             }
             catch( IllegalAccessException e )
             {
                 log.fatal( "You are not allowed to access this authorizer class", e );
-                throw new WikiException( "You are not allowed to access this authorizer class" );
+                throw new WikiException( "You are not allowed to access this authorizer class", e );
             }
         }
 

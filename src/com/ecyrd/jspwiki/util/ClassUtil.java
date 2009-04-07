@@ -291,25 +291,25 @@ public final class ClassUtil
         {
             log.info( "Cannot instantiate requested class "+requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
         catch (IllegalAccessException e)
         {
             log.info( "Cannot access requested class "+requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
         catch (IllegalArgumentException e)
         {
             log.info( "Illegal arguments when constructing new object", e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
         catch (InvocationTargetException e)
         {
             log.info( "You tried to instantiate an abstract class "+requestedClass, e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
     }
 
@@ -341,7 +341,7 @@ public final class ClassUtil
         {
             log.info( "Cannot find requested class", e );
             
-            throw new WikiException("Failed to instantiate class "+requestedClass);
+            throw new WikiException("Failed to instantiate class "+requestedClass, e );
         }
     }
 }

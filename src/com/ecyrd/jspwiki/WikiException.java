@@ -33,10 +33,21 @@ public class WikiException
     /**
      *  Constructs an exception.
      *  
-     *  @param msg The message in the exception.
+     *  @param msg the message in the exception.
      */
     public WikiException( String msg )
     {
-        super(msg);
+        super( msg );
+    }
+    
+    /**
+     *  Constructs an exception with a supplied cause.
+     *  
+     *  @param msg the message in the exception.
+     *  @param cause the cause of the exception
+     */
+    public WikiException( String msg, Throwable cause )
+    {
+        super( msg, cause );
     }
 }

@@ -370,7 +370,7 @@ public final class UserManager
             }
             catch ( WikiException e )
             {
-                throw new WikiSecurityException( e.getMessage() );
+                throw new WikiSecurityException( e.getMessage(), e );
             }
 
             // Alert all listeners that the profile changed...

@@ -52,7 +52,7 @@ public class PluginException
      */
     public PluginException( String message, Throwable original )
     {
-        super( message );
+        super( message, original );
         m_throwable = original;
     }
 

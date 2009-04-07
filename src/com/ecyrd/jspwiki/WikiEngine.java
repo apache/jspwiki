@@ -406,7 +406,7 @@ public class WikiEngine
             {
                 context.log( msg );
             }
-            throw new WikiException( msg );
+            throw new WikiException( msg, e );
         }
     }
 
@@ -595,29 +595,33 @@ public class WikiEngine
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
-            throw new WikiException( "Failed to start managers: "+e.getMessage() );
+            e.printStackTrace();
+            throw new WikiException( "Failed to start managers: "+e.getMessage(), e );
         }
         catch (ClassNotFoundException e)
         {
             log.fatal( "JSPWiki could not start, URLConstructor was not found: ",e );
-            throw new WikiException(e.getMessage());
+            e.printStackTrace();
+            throw new WikiException(e.getMessage(), e );
         }
         catch (InstantiationException e)
         {
             log.fatal( "JSPWiki could not start, URLConstructor could not be instantiated: ",e );
-            throw new WikiException(e.getMessage());
+            e.printStackTrace();
+            throw new WikiException(e.getMessage(), e );
         }
         catch (IllegalAccessException e)
         {
             log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: ",e );
-            throw new WikiException(e.getMessage());
+            e.printStackTrace();
+            throw new WikiException(e.getMessage(), e );
         }
         catch( Exception e )
         {
             // Final catch-all for everything
-            
             log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
-            throw new WikiException("Failed to start; please check log files for better information.");
+            e.printStackTrace();
+            throw new WikiException("Failed to start; please check log files for better information.", e );
         }
         
         //

@@ -341,7 +341,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {
@@ -428,7 +428,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {
@@ -646,7 +646,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {
@@ -728,7 +728,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 }
                 catch ( IOException e )
                 {
-                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
+                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
                 ps.setTimestamp( 9, ts );
                 ps.execute();
@@ -773,7 +773,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
                 }
                 catch ( IOException e )
                 {
-                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage() );
+                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
                 ps.setDate( 9, lockExpiry );
                 ps.setString( 10, profile.getLoginName() );
@@ -791,7 +791,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase
         }
         catch( SQLException e )
         {
-            throw new WikiSecurityException( e.getMessage() );
+            throw new WikiSecurityException( e.getMessage(), e );
         }
         finally
         {
