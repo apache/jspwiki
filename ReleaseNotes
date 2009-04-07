@@ -4,6 +4,9 @@ Welcome to the stable version of JSPWiki 2.8!
 JSPWiki 2.8.2 is a security and stability update to 2.8.0.  All users
 are encouraged to upgrade.
 
+The full log of any issues fixed can be found at:
+https://issues.apache.org/jira/sr/jira.issueviews:searchrequest-printable/temp/SearchRequest.html?pid=12310732&status=5&status=6&fixfor=12313496&sorter/field=priority&sorter/order=DESC
+
 This is the first major version of JSPWiki which is released completely under
 the Apache License.  This is done as a part of the transition to the
 Apache Incubation.
