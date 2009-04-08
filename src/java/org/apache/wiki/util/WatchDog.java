@@ -318,33 +318,41 @@ public final class WatchDog
         }
     }
 
+
+    /**
+     *  Dumps the stack traces as DEBUG level events.
+     */
     private void dumpStackTraceForWatchable()
     {
+        if( !log.isDebugEnabled() ) return;
+        
         Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
         Set<Thread> threads = stackTraces.keySet();
         Iterator<Thread> threadIterator = threads.iterator();
+        StringBuilder stacktrace = new StringBuilder();
+
         while ( threadIterator.hasNext() )
         {
-            Thread t = (Thread) threadIterator.next();
-            if( t.getName().equals( m_watchable.getName() ) || log.isInfoEnabled() )
+            Thread t = threadIterator.next();
+            if( t.getName().equals( m_watchable.getName() ) )
             {
                 if( t.getName().equals( m_watchable.getName() ) )
                 {
-                    log.error( "dumping stacktrace for too long running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for too long running thread : " + t );
                 }
                 else
                 {
-                    log.error( "dumping stacktrace for other running thread : " + t );
+                    stacktrace.append( "dumping stacktrace for other running thread : " + t );
                 }
                 StackTraceElement[] ste = stackTraces.get( t );
-                StringBuilder stacktrace = new StringBuilder( "stacktrace follows" );
                 for( int i = 0; i < ste.length; i++ )
                 {
                     stacktrace.append( "\n" + ste[i] );
                 }
-                log.error( stacktrace.toString() );
             }
         }
+        
+        log.debug( stacktrace.toString() );
     }
 
     /**
