@@ -332,7 +332,7 @@ public final class WatchDog
         while ( threadIterator.hasNext() )
         {
             Thread t = threadIterator.next();
-            if( t.getName().equals( m_watchable.getName() ) || log.isInfoEnabled() )
+            if( t.getName().equals( m_watchable.getName() ) )
             {
                 if( t.getName().equals( m_watchable.getName() ) )
                 {
