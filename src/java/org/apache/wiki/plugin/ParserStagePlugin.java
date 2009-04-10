@@ -41,5 +41,5 @@ public interface ParserStagePlugin
      *  @param context WikiContext, as usual.
      *  @param params  Parsed parameters for the plugin.
      */
-    public void executeParser( PluginContent element, WikiContext context, Map params );
+    public void executeParser( PluginContent element, WikiContext context, Map<String,Object> params );
 }

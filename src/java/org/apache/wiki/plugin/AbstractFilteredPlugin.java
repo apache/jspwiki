@@ -34,6 +34,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
@@ -127,7 +128,7 @@ public abstract class AbstractFilteredPlugin
      * @throws PluginException if any of the plugin parameters are malformed
      */
     // FIXME: The compiled pattern strings should really be cached somehow.
-    public void initialize( WikiContext context, Map<String,String> params )
+    public void initialize( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
@@ -253,19 +254,22 @@ public abstract class AbstractFilteredPlugin
      *  @param c The collection to filter.
      *  @return A filtered collection.
      */
-    protected Collection filterCollection( Collection c )
+    protected <T extends Object>Collection<T> filterCollection( Collection<T> c )
     {
-        ArrayList<Object> result = new ArrayList<Object>();
+        ArrayList<T> result = new ArrayList<T>();
 
-        for( Iterator i = c.iterator(); i.hasNext(); )
+        for( T objectje : c )
         {
             String pageName = null;
-            Object objectje = i.next();
             if( objectje instanceof WikiPage )
             {
                 pageName = ((WikiPage) objectje).getName();
             }
-            else
+            else if ( objectje instanceof WikiName )
+            {
+                pageName = ((WikiName) objectje).toString();
+            }
+            else if ( objectje instanceof String )
             {
                 pageName = (String) objectje;
             }
@@ -278,7 +282,7 @@ public abstract class AbstractFilteredPlugin
             //
             boolean includeThis = m_include == null;
 
-            if( m_include != null )
+            if( m_include != null && pageName != null )
             {
                 for( int j = 0; j < m_include.length; j++ )
                 {
@@ -291,7 +295,7 @@ public abstract class AbstractFilteredPlugin
                 }
             }
 
-            if( m_exclude != null )
+            if( m_exclude != null && pageName != null )
             {
                 for( int j = 0; j < m_exclude.length; j++ )
                 {
@@ -311,13 +315,9 @@ public abstract class AbstractFilteredPlugin
                 boolean isAttachment = pageName.contains( "/" );
                 if( !isAttachment || (isAttachment && m_showAttachments) )
                 {
-                    if( objectje instanceof WikiPage )
+                    if( objectje instanceof WikiPage || objectje instanceof WikiName || objectje instanceof String )
                     {
                         result.add( objectje );
-                    }
-                    else
-                    {
-                        result.add( pageName );
                     }
                 }
                 

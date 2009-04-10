@@ -22,7 +22,6 @@ package org.apache.wiki.auth.login;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -31,20 +30,16 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.TestAuthorizer;
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.auth.Authorizer;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.login.WebContainerCallbackHandler;
-import org.apache.wiki.auth.login.WebContainerLoginModule;
-import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.auth.user.XMLUserDatabase;
-
+import junit.framework.TestCase;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
-import junit.framework.TestCase;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 /**
@@ -52,15 +47,13 @@ import junit.framework.TestCase;
  */
 public class WebContainerLoginModuleTest extends TestCase
 {
-    Authorizer authorizer;
+    UserDatabase m_db;
 
-    UserDatabase db;
-
-    Subject      subject;
+    Subject      m_subject;
 
     private TestEngine m_engine;
 
-    public final void testLogin()
+    public final void testLogin() throws WikiSecurityException
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
         MockHttpServletRequest request = m_engine.newHttpRequest();
@@ -68,14 +61,14 @@ public class WebContainerLoginModuleTest extends TestCase
         try
         {
             // Test using Principal (WebContainerLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue(  principals.contains( principal ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -90,51 +83,21 @@ public class WebContainerLoginModuleTest extends TestCase
         }
     }
 
-    public final void testLoginWithRoles() throws Exception
-    {
-        // Create user with 2 container roles; TestAuthorizer knows about these
-        Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        MockHttpServletRequest request = m_engine.newHttpRequest();
-        request.setUserPrincipal( principal );
-        Set<String> roles = new HashSet<String>();
-        roles.add( "IT" );
-        roles.add( "Engineering" );
-        request.setRoles( roles );
-
-        // Test using Principal (WebContainerLoginModule succeeds)
-        CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
-        LoginModule module = new WebContainerLoginModule();
-        module.initialize(subject, handler, 
-                          new HashMap<String, Object>(), 
-                          new HashMap<String, Object>());
-        module.login();
-        module.commit();
-        Set<Principal> principals = subject.getPrincipals();
-        assertEquals( 3, principals.size() );
-        assertTrue( principals.contains( principal ) );
-        assertFalse( principals.contains( Role.ANONYMOUS ) );
-        assertFalse( principals.contains( Role.ASSERTED ) );
-        assertFalse( principals.contains( Role.AUTHENTICATED ) );
-        assertFalse( principals.contains( Role.ALL ) );
-        assertTrue(  principals.contains( new Role( "IT" ) ) );
-        assertTrue(  principals.contains( new Role( "Engineering" ) ) );
-    }
-
-    public final void testLogout()
+    public final void testLogout() throws WikiSecurityException
     {
         Principal principal = new WikiPrincipal( "Andrew Jaquith" );
         MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new WebContainerLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( principal ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -158,25 +121,17 @@ public class WebContainerLoginModuleTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
         m_engine = new TestEngine(props);
-        authorizer = new TestAuthorizer();
-        authorizer.initialize( m_engine, props );
-        db = new XMLUserDatabase();
-        subject = new Subject();
+        m_db = new XMLUserDatabase();
+        m_subject = new Subject();
         try
         {
-            db.initialize( m_engine, props );
+            m_db.initialize( m_engine, props );
         }
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             assertTrue( false );
         }
-    }
-    
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-        m_engine.shutdown();
     }
 
 }

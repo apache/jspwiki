@@ -76,7 +76,7 @@ public class ReferringPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
@@ -95,7 +95,7 @@ public class ReferringPagesPlugin
             WikiPage page = context.getEngine().getPage( pageName );
         
             Collection<WikiName> links = refmgr.findReferrers( page.getQualifiedName() );
-            String       wikitext = "";
+            String wikitext = "";
 
             super.initialize( context, params );
 
@@ -113,11 +113,11 @@ public class ReferringPagesPlugin
             if( links != null && links.size() > 0 )
             {
                 // FIXME: Having to copy all of these is kinda stupid.
-                ArrayList<String> tmpList = new ArrayList<String>();
+                Collection<String> tmpList = new ArrayList<String>();
                 
                 for( WikiName wn : links ) tmpList.add( wn.toString() );
                 
-                links = filterCollection( tmpList );
+                tmpList= filterCollection( tmpList );
                 wikitext = wikitizeCollection( tmpList, m_separator, items );
 
                 result.append( makeHTML( context, wikitext ) );

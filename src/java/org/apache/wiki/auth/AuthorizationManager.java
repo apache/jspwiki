@@ -461,7 +461,7 @@ public final class AuthorizationManager
         catch ( PolicyException e )
         {
             log.error("Could not initialize local security policy: " + e.getMessage() );
-            throw new WikiException( e.getMessage(), e );
+            throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
         }
     }
 

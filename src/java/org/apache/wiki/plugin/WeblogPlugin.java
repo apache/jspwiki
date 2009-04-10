@@ -36,7 +36,6 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.PluginContent;
@@ -511,7 +510,7 @@ public class WeblogPlugin
      *  Mark us as being a real weblog. 
      *  {@inheritDoc}
      */
-    public void executeParser(PluginContent element, WikiContext context, Map params)
+    public void executeParser(PluginContent element, WikiContext context, Map<String,Object> params)
     {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }

@@ -42,7 +42,7 @@ public class FormClose
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map<String,Object> params )
         throws PluginException
     {
         StringBuilder tags = new StringBuilder();

@@ -40,7 +40,7 @@ public abstract class WikiFormAdminBean
 {
     public abstract String getForm( WikiContext context );
     
-    public abstract void handleResponse( WikiContext context, Map params );
+    public abstract void handleResponse( WikiContext context, Map<?,?> params );
 
     public String doGet(WikiContext context)
     {
@@ -58,7 +58,6 @@ public abstract class WikiFormAdminBean
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         

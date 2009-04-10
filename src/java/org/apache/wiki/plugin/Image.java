@@ -90,7 +90,7 @@ public class Image
      *  This method is used to clean away things like quotation marks which
      *  a malicious user could use to stop processing and insert javascript.
      */
-    private static final String getCleanParameter( Map params, String paramId )
+    private static final String getCleanParameter( Map<String,Object> params, String paramId )
     {
         return TextUtil.replaceEntities( (String) params.get( paramId ) );
     }
@@ -98,7 +98,7 @@ public class Image
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         ResourceBundle rb =  context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );

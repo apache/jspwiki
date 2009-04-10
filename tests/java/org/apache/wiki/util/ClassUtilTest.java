@@ -38,7 +38,7 @@ public class ClassUtilTest extends TestCase
     public void testFindClass()
         throws Exception
     {
-        Class foo = ClassUtil.findClass( "org.apache.wiki.api", "WikiPage" );
+        Class<?> foo = ClassUtil.findClass( "org.apache.wiki.api", "WikiPage" );
 
         assertEquals( foo.getName(), "org.apache.wiki.api.WikiPage" );
     }
@@ -51,7 +51,7 @@ public class ClassUtilTest extends TestCase
     {
         try
         {
-            Class foo = ClassUtil.findClass( "org.apache.jspwiki", "MubbleBubble" );
+            Class<?> foo = ClassUtil.findClass( "org.apache.jspwiki", "MubbleBubble" );
             fail("Found class:"+foo);
         }
         catch( ClassNotFoundException e )

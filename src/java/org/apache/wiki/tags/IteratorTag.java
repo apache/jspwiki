@@ -53,7 +53,7 @@ public abstract class IteratorTag
 {
 
     protected String      m_pageName;
-    protected Iterator    m_iterator;
+    protected Iterator<?>    m_iterator;
     protected WikiContext m_wikiContext;
 
     private static Logger log = LoggerFactory.getLogger( IteratorTag.class );
@@ -63,7 +63,7 @@ public abstract class IteratorTag
      *  
      *  @param arg A Collection which will be iterated.
      */
-    public void setList( Collection arg )
+    public void setList( Collection<?> arg )
     {
         if( arg != null )
             m_iterator = arg.iterator();

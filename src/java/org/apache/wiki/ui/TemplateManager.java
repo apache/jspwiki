@@ -38,6 +38,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 
@@ -151,6 +152,8 @@ public class TemplateManager extends ModuleManager
      * List of time zones, used by {@link #listTimeZones(HttpServletRequest)}.
      */
     private static final List<TimeZone> TIME_ZONES;
+    
+    private static final List<WikiModuleInfo> EMPTY_MODULE_LIST = new ArrayList<WikiModuleInfo>();
 
     static
     {
@@ -474,14 +477,14 @@ public class TemplateManager extends ModuleManager
      * @return map of TimeFormats
      * @since 2.7.x
      */
-    public Map listTimeFormats( WikiContext context )
+    public Map<String,String> listTimeFormats( WikiContext context )
     {
         Properties props = m_engine.getWikiProperties();
         ArrayList<String> tfArr = new ArrayList<String>( 40 );
         LinkedHashMap<String, String> resultMap = new LinkedHashMap<String, String>();
 
         /* filter timeformat properties */
-        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+        for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
         {
             String name = (String) e.nextElement();
 
@@ -633,9 +636,9 @@ public class TemplateManager extends ModuleManager
 
         boolean first = true;
 
-        for( Enumeration en = rb.getKeys(); en.hasMoreElements(); )
+        for( Enumeration<String> en = rb.getKeys(); en.hasMoreElements(); )
         {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
 
             if( key.startsWith( "javascript" ) )
             {
@@ -794,8 +797,8 @@ public class TemplateManager extends ModuleManager
      * 
      * @return {@inheritDoc}
      */
-    public Collection modules()
+    public Collection<WikiModuleInfo> modules()
     {
-        return new ArrayList();
+        return EMPTY_MODULE_LIST;
     }
 }

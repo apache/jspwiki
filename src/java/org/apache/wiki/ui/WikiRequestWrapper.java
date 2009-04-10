@@ -87,9 +87,10 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
      * value {@link org.apache.wiki.preferences.Preferences#PREFS_LOCALE},
      * that value is returned as the first item in the array.
      */
-    public Enumeration getLocales()
+    @SuppressWarnings("unchecked")
+    public Enumeration<Locale> getLocales()
     {
-        Enumeration requestLocales = super.getLocales();
+        Enumeration<Locale> requestLocales = (Enumeration<Locale>)super.getLocales();
         if( m_locale == null )
         {
             return requestLocales;

@@ -24,7 +24,6 @@ import java.lang.management.ManagementFactory;
 import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.management.*;
@@ -167,19 +166,19 @@ public class AdminBeanManager implements WikiEventListener
      *  Registers all the beans from a collection of WikiModuleInfos.  If some of the beans
      *  fail, logs the message and keeps going to the next bean.
      *
-     *  @param c Collection of WikiModuleInfo instances
+     *  @param modules Collection of WikiModuleInfo instances
      */
-    private void registerBeans( Collection c )
+    private void registerBeans( Collection<? extends WikiModuleInfo> modules )
     {
-        for( Iterator i = c.iterator(); i.hasNext(); )
+        for( WikiModuleInfo module : modules )
         {
-            String abname = ((WikiModuleInfo)i.next()).getAdminBeanClass();
+            String abname = module.getAdminBeanClass();
 
             try
             {
                 if( abname != null && abname.length() > 0 )
                 {
-                    Class abclass = Class.forName(abname);
+                    Class<?> abclass = Class.forName(abname);
 
                     AdminBean ab = (AdminBean) abclass.newInstance();
 
@@ -232,7 +231,7 @@ public class AdminBeanManager implements WikiEventListener
      *
      *  @return all AdminBeans known to the manager
      */
-    public List getAllBeans()
+    public List<AdminBean> getAllBeans()
     {
         if( m_allBeans == null ) reload();
 
@@ -248,14 +247,11 @@ public class AdminBeanManager implements WikiEventListener
      */
     public AdminBean findBean( String id )
     {
-        for( Iterator i = m_allBeans.iterator(); i.hasNext(); )
+        for( AdminBean ab : m_allBeans )
         {
-            AdminBean ab = (AdminBean) i.next();
-
             if( ab.getId().equals(id) )
                 return ab;
         }
-
         return null;
     }
 
@@ -287,11 +283,10 @@ public class AdminBeanManager implements WikiEventListener
         {
             if( ((WikiEngineEvent)event).getType() == WikiEngineEvent.SHUTDOWN )
             {
-                for( Iterator i = m_allBeans.iterator(); i.hasNext(); )
+                for( AdminBean ab : m_allBeans )
                 {
                     try
                     {
-                        AdminBean ab = (AdminBean) i.next();
                         ObjectName on = getObjectName( ab );
                         if( m_mbeanServer.isRegistered( on ) )
                         {

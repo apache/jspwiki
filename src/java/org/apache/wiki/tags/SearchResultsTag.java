@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.jsp.PageContext;
 
+import org.apache.wiki.search.SearchResult;
+
 /**
  *  Includes the body content, if there are any search results.
  *
@@ -34,10 +36,11 @@ public class SearchResultsTag
 {
     private static final long serialVersionUID = 0L;
     
+    @SuppressWarnings("unchecked")
     public final int doWikiStartTag()
         throws IOException
     {
-        Collection list = (Collection)pageContext.getAttribute( "searchresults",
+        Collection<SearchResult> list = (Collection<SearchResult>)pageContext.getAttribute( "searchresults",
                                                                 PageContext.REQUEST_SCOPE );
         
         if( list != null )

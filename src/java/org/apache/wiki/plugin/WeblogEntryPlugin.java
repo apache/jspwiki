@@ -94,7 +94,7 @@ public class WeblogEntryPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);

@@ -55,7 +55,7 @@ public class WeblogArchivePlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
@@ -83,7 +83,7 @@ public class WeblogArchivePlugin implements WikiPlugin
 
         try
         {
-            Collection months = collectMonths( engine, weblogName );
+            Collection<Calendar> months = collectMonths( engine, weblogName );
             int year = 0;
 
             //
@@ -94,15 +94,13 @@ public class WeblogArchivePlugin implements WikiPlugin
 
             if( months.size() > 0 )
             {
-                year = ((Calendar)months.iterator().next()).get( Calendar.YEAR );
+                year = months.iterator().next().get( Calendar.YEAR );
 
                 sb.append( "<li class=\"archiveyear\">"+year+"</li>\n" );
             }
 
-            for( Iterator i = months.iterator(); i.hasNext(); )
+            for( Calendar cal : months )
             {
-                Calendar cal = (Calendar) i.next();
-
                 if( cal.get( Calendar.YEAR ) != year )
                 {
                     year = cal.get( Calendar.YEAR );
@@ -129,22 +127,19 @@ public class WeblogArchivePlugin implements WikiPlugin
         return sb.toString();
     }
 
-    @SuppressWarnings("unchecked")
-    private SortedSet collectMonths( WikiEngine engine, String page )
+    private SortedSet<Calendar> collectMonths( WikiEngine engine, String page )
         throws ProviderException
     {
-        Comparator comp = new ArchiveComparator();
+        Comparator<Calendar> comp = new ArchiveComparator();
         TreeSet<Calendar> res = new TreeSet<Calendar>( comp );
 
         WeblogPlugin pl = new WeblogPlugin();
 
-        List blogEntries = pl.findBlogEntries( engine.getContentManager(),
+        List<WikiPage> blogEntries = pl.findBlogEntries( engine.getContentManager(),
                                                page, new Date(0L), new Date() );
         
-        for( Iterator i = blogEntries.iterator(); i.hasNext(); )
+        for( WikiPage p : blogEntries )
         {
-            WikiPage p = (WikiPage) i.next();
-
             // FIXME: Not correct, should parse page creation time.
 
             Date d = p.getLastModified();
@@ -189,26 +184,23 @@ public class WeblogArchivePlugin implements WikiPlugin
      * Two dates in the same month are considered equal.
      */
     private static class ArchiveComparator
-        implements Comparator
+        implements Comparator<Calendar>
     {
 
-        public int compare( Object a, Object b ) 
+        public int compare( Calendar a, Calendar b ) 
         {
-            if( a == null || b == null || 
-                !(a instanceof Calendar) || !(b instanceof Calendar) )
+            if( a == null || b == null )
             {
                 throw new ClassCastException( "Invalid calendar supplied for comparison." );
             }
                     
-            Calendar ca = (Calendar) a;
-            Calendar cb = (Calendar) b;
-            if( ca.get( Calendar.YEAR ) == cb.get( Calendar.YEAR ) &&
-                ca.get( Calendar.MONTH ) == cb.get( Calendar.MONTH ) )
+            if( a.get( Calendar.YEAR ) == b.get( Calendar.YEAR ) &&
+                a.get( Calendar.MONTH ) == b.get( Calendar.MONTH ) )
             {
                 return 0;
             }
 
-            return cb.getTime().before( ca.getTime() ) ? 1 : -1;
+            return b.getTime().before( a.getTime() ) ? 1 : -1;
         }
     }
 }

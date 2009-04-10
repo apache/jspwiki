@@ -23,8 +23,6 @@ package org.apache.wiki.ui.migrator;
 import java.io.File;
 import java.util.List;
 
-import org.apache.wiki.ui.migrator.*;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

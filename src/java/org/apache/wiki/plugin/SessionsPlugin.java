@@ -22,7 +22,6 @@ package org.apache.wiki.plugin;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.wiki.WikiContext;
@@ -58,7 +57,7 @@ public class SessionsPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();
@@ -106,11 +105,9 @@ public class SessionsPlugin
             //
             //
             StringBuilder s = new StringBuilder();
-            Iterator entries = distinctPrincipals.entrySet().iterator();
-            while (entries.hasNext())
+            for (Map.Entry<String,Integer> entry : distinctPrincipals.entrySet() )
             {
-                Map.Entry entry = (Map.Entry)entries.next();
-                s.append( entry.getKey().toString() + "(" + entry.getValue().toString() + "), " );
+                s.append( entry.getKey() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :
             return s.substring(0, s.length() - 2);

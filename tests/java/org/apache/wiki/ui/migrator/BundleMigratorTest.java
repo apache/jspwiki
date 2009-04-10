@@ -80,10 +80,10 @@ public class BundleMigratorTest extends TestCase
         {
             // Delete sample "to" and "from" property files
             File sourcePropfile = new File( tmp, ( locale.length() == 0 ? "source" : "source_" + locale ) + ".properties" );
-            //sourcePropfile.delete();
+            sourcePropfile.delete();
             
             File destPropfile = new File( tmp, ( locale.length() == 0 ? "dest" : "dest_" + locale ) + ".properties" );
-            //destPropfile.delete();
+            destPropfile.delete();
         }
     }
     

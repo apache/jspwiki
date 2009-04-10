@@ -22,7 +22,6 @@ package org.apache.wiki.auth.login;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -31,16 +30,15 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import junit.framework.TestCase;
+
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.login.UserDatabaseLoginModule;
-import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
-
-import junit.framework.TestCase;
 
 
 /**
@@ -48,11 +46,11 @@ import junit.framework.TestCase;
  */
 public class UserDatabaseLoginModuleTest extends TestCase
 {
-    UserDatabase db;
+    WikiEngine m_engine;
 
-    Subject      subject;
-    
-    private TestEngine m_engine = null;
+    UserDatabase m_db;
+
+    Subject      m_subject;
 
     public final void testLogin()
     {
@@ -61,27 +59,27 @@ public class UserDatabaseLoginModuleTest extends TestCase
             // Log in with a user that isn't in the database
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
             assertFalse( principals.contains( Role.ALL ) );
             
             // Login with a user that IS in the database
-            subject = new Subject();
+            m_subject = new Subject();
             handler = new WikiCallbackHandler( m_engine, null, "janne", "myP@5sw0rd" );
             module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            principals = subject.getPrincipals();
+            principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -100,12 +98,12 @@ public class UserDatabaseLoginModuleTest extends TestCase
         {
             CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
             LoginModule module = new UserDatabaseLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
             assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -128,12 +126,12 @@ public class UserDatabaseLoginModuleTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
-       m_engine  = new TestEngine(props);
-        db = new XMLUserDatabase();
-        subject = new Subject();
+        m_engine  = new TestEngine(props);
+        m_db = new XMLUserDatabase();
+        m_subject = new Subject();
         try
         {
-            db.initialize( m_engine, props );
+            m_db.initialize( m_engine, props );
         }
         catch( NoRequiredPropertyException e )
         {
@@ -142,9 +140,4 @@ public class UserDatabaseLoginModuleTest extends TestCase
         }
     }
 
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-        m_engine.shutdown();
-    }
 }

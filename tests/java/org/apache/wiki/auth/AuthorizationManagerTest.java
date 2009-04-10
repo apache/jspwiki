@@ -20,7 +20,6 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.File;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Properties;
@@ -33,7 +32,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;

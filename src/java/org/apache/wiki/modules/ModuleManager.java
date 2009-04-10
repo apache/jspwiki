@@ -93,7 +93,7 @@ public abstract class ModuleManager
      * 
      * @return A Collection of WikiModuleInfo instances.
      */
-    public abstract Collection modules();
+    public abstract Collection<? extends WikiModuleInfo> modules();
 
     /**
      *  Builds a search path from three components:
@@ -128,19 +128,19 @@ public abstract class ModuleManager
     
         try
         {
-            Enumeration resources = getClass().getClassLoader().getResources( MODULE_RESOURCE_LOCATION );
+            Enumeration<URL> resources = getClass().getClassLoader().getResources( MODULE_RESOURCE_LOCATION );
     
             while( resources.hasMoreElements() )
             {
-                URL resource = (URL) resources.nextElement();
+                URL resource = resources.nextElement();
     
                 try
                 {
                     Document doc = builder.build( resource );
     
-                    List packages = XPath.selectNodes( doc, "/modules/@package");
+                    List<?> packages = XPath.selectNodes( doc, "/modules/@package");
     
-                    for( Iterator i = packages.iterator(); i.hasNext(); )
+                    for( Iterator<?> i = packages.iterator(); i.hasNext(); )
                     {
                         Attribute a = (Attribute) i.next();
     

@@ -1,3 +1,16 @@
+2009-04-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-99
+        
+        * Lots of generics improvements.
+        
+        * [JSPWIKI-473] Fixed bug that was causing role checks using custom
+        Authorizers to fail. AuthenticationManager was not calling
+        Authorizer.isInRole(WikiSession, Principal), as it should have.
+        In addition to fixing the bug, we also now include a special test case
+        to verify that custom Authorizers work properly. Thanks to Steve
+        Dahl for reporting this issue. (This was forward-ported from 2.8.)
+
 2009-04-06  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-98

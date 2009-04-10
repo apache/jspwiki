@@ -73,6 +73,7 @@ public class SearchResultIteratorTag
         m_start = arg;
     }
     
+    @SuppressWarnings("unchecked")
     public final int doStartTag()
     {
         //
@@ -80,7 +81,7 @@ public class SearchResultIteratorTag
         //
         if( m_iterator == null )
         {
-            Collection searchresults = (Collection) pageContext.getAttribute( "searchresults",
+            Collection<SearchResult> searchresults = (Collection<SearchResult>) pageContext.getAttribute( "searchresults",
                                                                               PageContext.REQUEST_SCOPE );
             setList( searchresults );
             

@@ -78,7 +78,7 @@ public class AttachmentsIteratorTag
         {
             if( page != null && engine.pageExists(page) )
             {
-                Collection atts = mgr.listAttachments( page );
+                Collection<WikiPage> atts = mgr.listAttachments( page );
 
                 if( atts == null )
                 {
@@ -91,7 +91,7 @@ public class AttachmentsIteratorTag
 
                 if( m_iterator.hasNext() )
                 {
-                    WikiPage  att = (WikiPage) m_iterator.next();
+                    WikiPage  att = (WikiPage)m_iterator.next();
 
                     WikiContext context = (WikiContext)m_wikiContext.clone();
                     context.setPage( att );

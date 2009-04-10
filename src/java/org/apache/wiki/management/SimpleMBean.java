@@ -350,7 +350,7 @@ public abstract class SimpleMBean
     public AttributeList setAttributes(AttributeList arg0)
     {
         AttributeList result = new AttributeList();
-        for( Iterator i = arg0.iterator(); i.hasNext(); )
+        for( Iterator<?> i = arg0.iterator(); i.hasNext(); )
         {
             Attribute attr = (Attribute)i.next();
 

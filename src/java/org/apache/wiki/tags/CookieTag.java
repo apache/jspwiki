@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -319,8 +318,8 @@ public class CookieTag
             return null;
         }
         String in = c.getValue();
-        Map values = parseCookieValues( in );
-        return (String)values.get( item );
+        Map<String,String> values = parseCookieValues( in );
+        return values.get( item );
     }
 
 
@@ -357,7 +356,7 @@ public class CookieTag
      * Encodes name-value pairs in the map into a single string, in a format
      * understood by this class and JavaScript decodeURIComponent().
      */
-    private String encodeValues( Map values )
+    private String encodeValues( Map<String,String> values )
     {
         StringBuilder rval = new StringBuilder();
         if( values == null || values.size() == 0 )
@@ -365,12 +364,10 @@ public class CookieTag
             return rval.toString();
         }
 
-        Iterator it = values.entrySet().iterator();
-        while( it.hasNext() )
+        for( Map.Entry<String,String> e : values.entrySet() )
         {
-            Map.Entry e = (Map.Entry) it.next();
-            String n = (String)e.getKey();
-            String v = (String)e.getValue();
+            String n = e.getKey();
+            String v = e.getValue();
             if( v != null )
             {
                 String nv = n + "=" + v;

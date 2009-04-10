@@ -78,7 +78,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         int since = TextUtil.parseIntParameter( (String) params.get( "since" ), DEFAULT_DAYS );
@@ -107,7 +107,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
 
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
-        Collection   changes = engine.getRecentChanges(context.getPage().getWiki());
+        Collection<WikiPage>   changes = engine.getRecentChanges(context.getPage().getWiki());
         super.initialize( context, params );
         changes = super.filterCollection( changes );
 
@@ -121,10 +121,8 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
             table rt = new table();
             rt.setCellPadding(spacing).setClass("recentchanges");
 
-            for( Iterator i = changes.iterator(); i.hasNext(); )
+            for( WikiPage pageref : changes )
             {
-                WikiPage pageref = (WikiPage) i.next();
-
                 Date lastmod = pageref.getLastModified();
 
                 if( lastmod.before( sincedate.getTime() ) )
@@ -241,7 +239,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat( WikiContext context, Map params )
+    private DateFormat getTimeFormat( WikiContext context, Map<String,Object> params )
     {
         String formatString = get(params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT);
 
@@ -253,7 +251,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
 
 
 
-    private DateFormat getDateFormat( WikiContext context, Map params )
+    private DateFormat getDateFormat( WikiContext context, Map<String,Object> params )
     {
         String formatString = get(params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT);
 
@@ -266,7 +264,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
 
 
 
-    private String get(Map params, String defaultValue, String paramName)
+    private String get(Map<String,Object> params, String defaultValue, String paramName)
     {
         String value = (String) params.get(paramName);
         return null == value ? defaultValue : value;

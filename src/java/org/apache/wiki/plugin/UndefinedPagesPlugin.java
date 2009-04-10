@@ -44,11 +44,11 @@ public class UndefinedPagesPlugin extends AbstractFilteredPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String,String> params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection links = refmgr.findUncreated();
+        Collection<String> links = refmgr.findUncreated();
 
         super.initialize( context, params );
 

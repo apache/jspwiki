@@ -21,20 +21,14 @@
 package org.apache.wiki.search;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.providers.WikiPageProvider;
 
 
 
@@ -125,7 +119,7 @@ public class BasicSearchProvider implements SearchProvider
     {
         if(m_engine.getAttachmentManager().hasAttachments(page))
         {
-            Collection attachments;
+            Collection<WikiPage> attachments;
             try
             {
                 attachments = m_engine.getAttachmentManager().listAttachments(page);
@@ -137,9 +131,9 @@ public class BasicSearchProvider implements SearchProvider
             }
 
             StringBuilder attachmentNames = new StringBuilder();
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( Iterator<WikiPage> it = attachments.iterator(); it.hasNext(); )
             {
-                WikiPage att = (WikiPage) it.next();
+                WikiPage att = it.next();
                 attachmentNames.append(att.getName());
                 if(it.hasNext())
                     attachmentNames.append(separator);

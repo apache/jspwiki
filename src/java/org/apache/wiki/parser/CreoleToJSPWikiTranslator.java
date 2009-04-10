@@ -398,9 +398,9 @@ public class CreoleToJSPWikiTranslator
         return content;
     }
 
-    private ArrayList readPlaceholderProperties(Properties wikiProps)
+    private ArrayList<String[]> readPlaceholderProperties(Properties wikiProps)
     {
-        Set keySet = wikiProps.keySet();
+        Set<Object> keySet = wikiProps.keySet();
         Object[] keys = keySet.toArray();
         ArrayList<String[]> result = new ArrayList<String[]>();
 
@@ -425,7 +425,7 @@ public class CreoleToJSPWikiTranslator
         Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
 
-        ArrayList plProperties = readPlaceholderProperties(wikiProps);
+        ArrayList<String[]> plProperties = readPlaceholderProperties(wikiProps);
 
         while (matcher.find())
         {
@@ -444,7 +444,7 @@ public class CreoleToJSPWikiTranslator
                     // Replace placeholder params
                     for (int j = 0; j < plProperties.size(); j++)
                     {
-                        String[] pair = (String[]) plProperties.get(j);
+                        String[] pair = plProperties.get(j);
                         String key = pair[0];
                         String value = pair[1];
                         String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");

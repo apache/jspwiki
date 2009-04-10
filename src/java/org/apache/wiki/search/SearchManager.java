@@ -107,7 +107,7 @@ public class SearchManager
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List getSuggestions( String wikiName, int maxLength )
+        public List<String> getSuggestions( String wikiName, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
@@ -165,18 +165,18 @@ public class SearchManager
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List findPages( String searchString, int maxLength )
+        public List<HashMap<String,Object>> findPages( String searchString, int maxLength )
         {
             StopWatch sw = new StopWatch();
             sw.start();
 
-            List<HashMap> list = new ArrayList<HashMap>(maxLength);
+            List<HashMap<String,Object>> list = new ArrayList<HashMap<String,Object>>(maxLength);
 
             if( searchString.length() > 0 )
             {
                 try
                 {
-                    Collection c;
+                    Collection<SearchResult> c;
 
                     if( m_searchProvider instanceof LuceneSearchProvider )
                         c = ((LuceneSearchProvider)m_searchProvider).findPages( searchString, 0 );
@@ -184,9 +184,9 @@ public class SearchManager
                         c = m_searchProvider.findPages( searchString );
 
                     int count = 0;
-                    for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
+                    for( Iterator<SearchResult> i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
-                        SearchResult sr = (SearchResult)i.next();
+                        SearchResult sr = i.next();
                         HashMap<String,Object> hm = new HashMap<String,Object>();
                         hm.put( "page", sr.getPage().getName() );
                         hm.put( "score", sr.getScore() );
@@ -266,7 +266,7 @@ public class SearchManager
 
         try
         {
-            Class providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
+            Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
             m_searchProvider = (SearchProvider)providerClass.newInstance();
         }
         catch( ClassNotFoundException e )
@@ -309,11 +309,11 @@ public class SearchManager
      * @throws ProviderException If the provider fails and a search cannot be completed.
      * @throws IOException If something else goes wrong.
      */
-    public Collection findPages( String query )
+    public Collection<SearchResult> findPages( String query )
         throws ProviderException, IOException
     {
         if( query == null ) query = "";
-        Collection c = m_searchProvider.findPages( query );
+        Collection<SearchResult> c = m_searchProvider.findPages( query );
 
         return c;
     }

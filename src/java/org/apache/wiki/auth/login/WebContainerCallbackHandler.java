@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.Authorizer;
-
+import org.apache.wiki.auth.WikiSecurityException;
 
 /**
  * Handles logins made from within JSPWiki.
@@ -41,22 +41,22 @@ public final class WebContainerCallbackHandler implements CallbackHandler
 {
     private final HttpServletRequest m_request;
 
-    private final Authorizer         m_authorizer;
-
     private final WikiEngine         m_engine;
 
+    private final Authorizer m_authorizer;
+    
     /**
      *  Create a new handler.
      *  
      *  @param engine The WikiEngine
      *  @param request The request to look into
-     *  @param authorizer The authorizer which does all these things.
+     * @throws WikiSecurityException 
      */
-    public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request, Authorizer authorizer )
+    public WebContainerCallbackHandler( WikiEngine engine, HttpServletRequest request ) throws WikiSecurityException
     {
         m_engine  = engine;
         m_request = request;
-        m_authorizer = authorizer;
+        m_authorizer = m_engine.getAuthorizationManager().getAuthorizer();
     }
 
     /**

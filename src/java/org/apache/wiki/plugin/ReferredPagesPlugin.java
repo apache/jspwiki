@@ -75,7 +75,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         m_engine = context.getEngine();
@@ -182,10 +182,8 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
 
         if( m_formatSort ) Collections.sort(allLinks);
 
-        for( Iterator i = allLinks.iterator(); i.hasNext(); )
+        for( String link : allLinks )
         {
-            String link = (String) i.next() ;
-
             if( localLinkSet.contains( link ) ) continue; // skip multiple
                                                           // links to the same
                                                           // page

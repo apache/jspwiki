@@ -88,7 +88,7 @@ public class Denounce implements WikiPlugin
             Properties props = new Properties();
             props.load( in );
 
-            for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+            for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
             {
                 String name = (String) e.nextElement();
 
@@ -128,7 +128,7 @@ public class Denounce implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String,String> params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         c_denounceText = context.getBundle( WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE ).getString( "plugin.denounce.denouncetext" );

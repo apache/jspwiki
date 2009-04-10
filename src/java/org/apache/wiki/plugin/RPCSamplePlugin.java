@@ -57,7 +57,7 @@ public class RPCSamplePlugin implements WikiPlugin, RPCCallable
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map params) throws PluginException
+    public String execute(WikiContext context, Map<String,Object> params) throws PluginException
     {
         JSONRPCManager.registerJSONObject( context, this );
         

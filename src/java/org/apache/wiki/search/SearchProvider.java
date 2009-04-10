@@ -58,5 +58,5 @@ public interface SearchProvider extends WikiProvider
      * @throws ProviderException if the search provider failed.
      * @throws IOException if for some reason the query could not be executed.
      */
-    public Collection findPages(String query) throws ProviderException, IOException;
+    public Collection<SearchResult> findPages(String query) throws ProviderException, IOException;
 }

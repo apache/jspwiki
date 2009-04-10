@@ -165,7 +165,7 @@ public class IfPlugin implements WikiPlugin
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params ) throws PluginException
+    public String execute( WikiContext context, Map<String, Object> params ) throws PluginException
     {
         return ifInclude( context, params ) ? context.getEngine().textToHTML( context,
                                                                               (String) params.get( PluginManager.PARAM_BODY ) )
@@ -182,7 +182,7 @@ public class IfPlugin implements WikiPlugin
      * @throws PluginException If something goes wrong
      * @return True, if the condition holds.
      */
-    public static boolean ifInclude( WikiContext context, Map<String, String> params ) throws PluginException
+    public static boolean ifInclude( WikiContext context, Map<String, Object> params ) throws PluginException
     {
         boolean include = false;
 

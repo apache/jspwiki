@@ -149,7 +149,7 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         WikiEngine engine = context.getEngine();

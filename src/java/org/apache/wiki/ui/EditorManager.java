@@ -124,11 +124,11 @@ public class EditorManager extends ModuleManager
             // Get all resources of all modules
             //
 
-            Enumeration resources = getClass().getClassLoader().getResources( MODULE_RESOURCE_LOCATION );
+            Enumeration<URL> resources = getClass().getClassLoader().getResources( MODULE_RESOURCE_LOCATION );
 
             while( resources.hasMoreElements() )
             {
-                URL resource = (URL) resources.nextElement();
+                URL resource = resources.nextElement();
 
                 try
                 {
@@ -136,9 +136,9 @@ public class EditorManager extends ModuleManager
 
                     Document doc = builder.build( resource );
 
-                    List plugins = XPath.selectNodes( doc, "/modules/editor");
+                    List<?> plugins = XPath.selectNodes( doc, "/modules/editor");
 
-                    for( Iterator i = plugins.iterator(); i.hasNext(); )
+                    for( Iterator<?> i = plugins.iterator(); i.hasNext(); )
                     {
                         Element pluginEl = (Element) i.next();
 
@@ -349,7 +349,7 @@ public class EditorManager extends ModuleManager
         }
     }
 
-    public Collection modules()
+    public Collection<WikiModuleInfo> modules()
     {
         ArrayList<WikiModuleInfo> ls = new ArrayList<WikiModuleInfo>();
 

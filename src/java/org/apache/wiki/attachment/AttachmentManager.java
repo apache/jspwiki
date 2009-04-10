@@ -224,12 +224,11 @@ public class AttachmentManager
      *  @throws ProviderException if there was something wrong in the backend
      */
     // FIXME: This API should be changed to return a List.
-    @SuppressWarnings("unchecked")
-    public Collection listAttachments( WikiPage wikipage )
+    public Collection<WikiPage> listAttachments( WikiPage wikipage )
         throws ProviderException
     {
         List<WikiPage> children = wikipage.getChildren();
-        ArrayList<Attachment> atts = new ArrayList<Attachment>(); 
+        ArrayList<WikiPage> atts = new ArrayList<WikiPage>(); 
         
         for( WikiPage p : children )
         {

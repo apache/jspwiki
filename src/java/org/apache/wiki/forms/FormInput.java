@@ -48,7 +48,7 @@ public class FormInput
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map<String,Object> params )
         throws PluginException
     {
         String inputName  = (String)params.get( PARAM_INPUTNAME );
@@ -64,7 +64,7 @@ public class FormInput
 
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
-        Map previousValues = null;
+        Map<String,Object> previousValues = null;
         if( info != null )
         {
             if( info.hide() )
@@ -76,7 +76,7 @@ public class FormInput
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap<String,Object>();
         }
 
         // In order to isolate posted form elements into their own

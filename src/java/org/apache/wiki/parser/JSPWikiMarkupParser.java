@@ -409,7 +409,7 @@ public class JSPWikiMarkupParser
         Properties props    = engine.getWikiProperties();
         ArrayList<String>  ptrnlist = new ArrayList<String>();
 
-        for( Enumeration e = props.propertyNames(); e.hasMoreElements(); )
+        for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
         {
             String name = (String) e.nextElement();
 
@@ -457,17 +457,15 @@ public class JSPWikiMarkupParser
      *  @return The result of the mutation.
      */
 
-    protected String callMutatorChain( Collection list, String text )
+    protected String callMutatorChain( Collection<StringTransmutator> list, String text )
     {
         if( list == null || list.size() == 0 )
         {
             return text;
         }
 
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        for( StringTransmutator m : list )
         {
-            StringTransmutator m = (StringTransmutator) i.next();
-
             text = m.mutate( m_context, text );
         }
 
@@ -481,12 +479,9 @@ public class JSPWikiMarkupParser
      */
     protected void callHeadingListenerChain( Heading param )
     {
-        List list = m_headingListenerChain;
-
-        for( Iterator i = list.iterator(); i.hasNext(); )
+        List<HeadingListener> list = m_headingListenerChain;
+        for( HeadingListener h : list )
         {
-            HeadingListener h = (HeadingListener) i.next();
-
             h.headingAdded( m_context, param );
         }
     }
@@ -513,7 +508,7 @@ public class JSPWikiMarkupParser
         return el;
     }
 
-    private Element makeLink( int type, String link, String text, String section, Iterator attributes )
+    private Element makeLink( int type, String link, String text, String section, Iterator<Attribute> attributes )
     {
         Element el = null;
 
@@ -639,7 +634,7 @@ public class JSPWikiMarkupParser
         {
             while( attributes.hasNext() )
             {
-                Attribute attr = (Attribute)attributes.next();
+                Attribute attr = attributes.next();
                 if( attr != null )
                 {
                     el.setAttribute(attr);
@@ -699,9 +694,9 @@ public class JSPWikiMarkupParser
         {
             link = link.toLowerCase();
 
-            for( Iterator i = m_inlineImagePatterns.iterator(); i.hasNext(); )
+            for( Pattern pattern : m_inlineImagePatterns )
             {
-                Matcher matcher = ((Pattern) i.next()).matcher( link );
+                Matcher matcher = pattern.matcher( link );
                 if( matcher.matches() )
                     return true;
             }
@@ -2945,7 +2940,7 @@ public class JSPWikiMarkupParser
         //
         //  Add the paragraph tag to the first paragraph
         //
-        List kids = rootElement.getContent();
+        List<?> kids = rootElement.getContent();
 
         if( rootElement.getChild("p") != null )
         {
@@ -2953,7 +2948,7 @@ public class JSPWikiMarkupParser
             int idxOfFirstContent = 0;
             int count = 0;
 
-            for( Iterator i = kids.iterator(); i.hasNext(); count++ )
+            for( Iterator<?> i = kids.iterator(); i.hasNext(); count++ )
             {
                 Content c = (Content) i.next();
                 if( c instanceof Element )
@@ -2977,10 +2972,8 @@ public class JSPWikiMarkupParser
             {
                 Element newel = new Element("p");
 
-                for( Iterator i = ls.iterator(); i.hasNext(); )
+                for( Content c : ls )
                 {
-                    Content c = (Content) i.next();
-
                     c.detach();
                     newel.addContent(c);
                 }

@@ -53,8 +53,7 @@ public class UnusedPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
@@ -67,10 +66,10 @@ public class UnusedPagesPlugin
         {
             //  remove links to attachments (recognizable by a slash in it)
             //  FIXME: In 3.0, this assumption is going to fail. FIXME3.0
-            Iterator iterator = links.iterator();
+            Iterator<String> iterator = links.iterator();
             while( iterator.hasNext() ) 
             {
-                String link = (String) iterator.next();
+                String link = iterator.next();
                 if (link.indexOf("/")!=-1) 
                 {
                     iterator.remove();

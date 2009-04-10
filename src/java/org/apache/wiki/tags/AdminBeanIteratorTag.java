@@ -22,7 +22,6 @@ package org.apache.wiki.tags;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.AdminBeanManager;
@@ -56,14 +55,12 @@ public class AdminBeanIteratorTag extends IteratorTag
     {
         AdminBeanManager mgr = m_wikiContext.getEngine().getAdminBeanManager();
 
-        Collection beans = mgr.getAllBeans();
+        Collection<AdminBean> beans = mgr.getAllBeans();
 
         ArrayList<AdminBean> typedBeans = new ArrayList<AdminBean>();
 
-        for( Iterator i = beans.iterator(); i.hasNext(); )
+        for( AdminBean ab : beans )
         {
-            AdminBean ab = (AdminBean)i.next();
-
             if( ab.getType() == m_type )
             {
                 typedBeans.add( ab );

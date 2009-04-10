@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
 
 
@@ -56,11 +57,11 @@ public class PluginIndexPlugin extends AbstractFilteredPlugin implements WikiPlu
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    public String execute( WikiContext context, Map<String,Object> params ) throws PluginException
     {
         super.initialize( context, params );
 
-        String details = (String) params.get( PARAM_DETAILS );
+        String details = (String)params.get( PARAM_DETAILS );
 
         String summaryHeader = "\n||name";
         String detailHeader = "\n||Name||Class Name||alias's||author||minVersion||maxVersion||adminBean Class";
@@ -106,9 +107,9 @@ public class PluginIndexPlugin extends AbstractFilteredPlugin implements WikiPlu
         else
         {
             wikitext.append( summaryHeader );
-            for( WikiPluginInfo pluginInfo : plugins )
+            for( WikiModuleInfo module : plugins )
             {
-                String name = pluginInfo.getName();
+                String name = module.getName();
                 wikitext.append( "\n|" + name );
             }
         }

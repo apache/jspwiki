@@ -70,10 +70,11 @@ public class Search implements WikiPlugin
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    @SuppressWarnings("unchecked")
+    public String execute( WikiContext context, Map<String,Object> params ) throws PluginException
     {
         int maxItems = Integer.MAX_VALUE;
-        Collection results = null;
+        Collection<SearchResult> results = null;
         
         String queryString = (String)params.get( PARAM_QUERY );
         String set         = (String)params.get( PARAM_SET );
@@ -84,7 +85,7 @@ public class Search implements WikiPlugin
         
         if( queryString == null )
         {
-            results = (Collection)context.getVariable( set );
+            results = (Collection<SearchResult>)context.getVariable( set );
         }
         else
         {
@@ -109,17 +110,17 @@ public class Search implements WikiPlugin
         return res;
     }
     
-    private Collection doBasicQuery( WikiContext context, String query )
+    private Collection<SearchResult> doBasicQuery( WikiContext context, String query )
         throws ProviderException, IOException
     {
         log.debug("Searching for string "+query);
 
-        Collection list = context.getEngine().findPages( query );
+        Collection<SearchResult> list = context.getEngine().findPages( query );
 
         return list;
     }
     
-    private String renderResults( Collection results, WikiContext context, int maxItems )
+    private String renderResults( Collection<SearchResult> results, WikiContext context, int maxItems )
     {
         WikiEngine engine = context.getEngine();
         table t = new table();
@@ -133,9 +134,9 @@ public class Search implements WikiPlugin
         row.addElement( new th().setAlign("left").addElement("Score"));
 
         int idx = 0;
-        for( Iterator i = results.iterator(); i.hasNext() && idx++ <= maxItems; )
+        for( Iterator<SearchResult> i = results.iterator(); i.hasNext() && idx++ <= maxItems; )
         {
-            SearchResult sr = (SearchResult) i.next();
+            SearchResult sr = i.next();
             row = new tr();
             
             td name = new td().setWidth("30%");

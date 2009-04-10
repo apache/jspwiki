@@ -64,7 +64,7 @@ public class Note implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map params) throws PluginException
+    public String execute(WikiContext context, Map<String,Object> params) throws PluginException
     {
         String commandline = (String) params.get(PluginManager.PARAM_CMDLINE);
         if (commandline == null || commandline.length() == 0)

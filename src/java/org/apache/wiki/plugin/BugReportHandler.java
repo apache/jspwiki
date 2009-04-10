@@ -75,7 +75,7 @@ public class BugReportHandler
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         String    title;
@@ -85,9 +85,9 @@ public class BugReportHandler
         SimpleDateFormat format = new SimpleDateFormat( DEFAULT_DATEFORMAT );
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
-        title       = (String) params.get( PARAM_TITLE );
-        description = (String) params.get( PARAM_DESCRIPTION );
-        version     = (String) params.get( PARAM_VERSION );
+        title       = (String)params.get( PARAM_TITLE );
+        description = (String)params.get( PARAM_DESCRIPTION );
+        version     = (String)params.get( PARAM_VERSION );
 
         Principal wup = context.getCurrentUser();
 
@@ -102,7 +102,7 @@ public class BugReportHandler
         if( description == null ) description = "";
         if( version == null ) version = "unknown";
 
-        Properties mappings = parseMappings( (String) params.get( PARAM_MAPPINGS ) );
+        Properties mappings = parseMappings( (String)params.get( PARAM_MAPPINGS ) );
 
         //
         //  Start things
@@ -130,10 +130,8 @@ public class BugReportHandler
             //
             //  Outputting the other parameters added to this.
             //
-            for( Iterator i = params.entrySet().iterator(); i.hasNext(); )
+            for( Map.Entry<String,Object>entry : params.entrySet() )
             {
-                Map.Entry entry = (Map.Entry) i.next();
-
                 if( entry.getKey().equals( PARAM_TITLE ) ||
                     entry.getKey().equals( PARAM_DESCRIPTION ) ||
                     entry.getKey().equals( PARAM_VERSION ) ||
@@ -149,12 +147,10 @@ public class BugReportHandler
                     //  If no mapping has been defined, just ignore
                     //  it.
                     //
-                    String head = mappings.getProperty( (String)entry.getKey(),
-                                                        (String)entry.getKey() );
+                    String head = mappings.getProperty( entry.getKey(), entry.getKey() );
                     if( head.length() > 0 )
                     {
-                        out.println("|"+head+
-                                    "|"+entry.getValue());
+                        out.println("|"+head+"|"+entry.getValue());
                     }
                 }
             }
@@ -167,8 +163,7 @@ public class BugReportHandler
             //
             //  Now create a new page for this bug report
             //
-            String pageName = findNextPage( context, title,
-                                            (String)params.get( PARAM_PAGE ) );
+            String pageName = findNextPage( context, title, (String)params.get( PARAM_PAGE ) );
 
             WikiPage newPage;
             try

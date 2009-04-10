@@ -50,12 +50,12 @@ public class FormTextarea
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map<String,Object> params )
         throws PluginException
     {
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
-        Map previousValues = null;
+        Map<String,Object> previousValues = null;
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         if( info != null )
@@ -69,7 +69,7 @@ public class FormTextarea
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap<String,Object>();
         }
 
         ConcreteElement field = null;
@@ -83,7 +83,7 @@ public class FormTextarea
         return "";
     }
 
-    private textarea buildTextArea( Map params, Map previousValues, ResourceBundle rb )
+    private textarea buildTextArea( Map<String,Object> params, Map<String,Object> previousValues, ResourceBundle rb )
         throws PluginException
     {
         String inputName = (String)params.get( PARAM_INPUTNAME );

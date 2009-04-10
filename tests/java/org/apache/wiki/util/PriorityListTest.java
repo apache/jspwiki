@@ -34,7 +34,7 @@ public class PriorityListTest extends TestCase
     
     public void testInsert()
     {
-        PriorityList p = new PriorityList();
+        PriorityList<String> p = new PriorityList<String>();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
@@ -51,7 +51,7 @@ public class PriorityListTest extends TestCase
      */
     public void testInsertSame()
     {
-        PriorityList p = new PriorityList();
+        PriorityList<String> p = new PriorityList<String>();
 
         p.add( "One", 1 );
         p.add( "Two", 1 );
@@ -64,7 +64,7 @@ public class PriorityListTest extends TestCase
 
     public void testInsertSame2()
     {
-        PriorityList p = new PriorityList();
+        PriorityList<String> p = new PriorityList<String>();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
@@ -88,7 +88,7 @@ public class PriorityListTest extends TestCase
 
     public void testInsertSame3()
     {
-        PriorityList p = new PriorityList();
+        PriorityList<String> p = new PriorityList<String>();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );

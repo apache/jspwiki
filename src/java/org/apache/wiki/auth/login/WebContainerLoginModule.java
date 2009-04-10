@@ -40,7 +40,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 
 
-
 /**
  * <p>
  * Logs in a user by extracting authentication data from an Http servlet
@@ -84,9 +83,7 @@ public class WebContainerLoginModule extends AbstractLoginModule
     public boolean login() throws LoginException
     {
         HttpRequestCallback rcb = new HttpRequestCallback();
-        AuthorizerCallback acb = new AuthorizerCallback();
-        Callback[] callbacks = new Callback[]
-        { rcb, acb };
+        Callback[] callbacks = new Callback[] { rcb };
         String userId = null;
 
         try
@@ -126,9 +123,6 @@ public class WebContainerLoginModule extends AbstractLoginModule
             }
             m_principals.add( principal );
 
-            // Add any container roles
-            injectWebAuthorizerRoles( acb.getAuthorizer(), request );
-
             return true;
         }
         catch( IOException e )
@@ -142,39 +136,4 @@ public class WebContainerLoginModule extends AbstractLoginModule
             return false;
         }
     }
-
-    /**
-     * If the current Authorizer is a
-     * {@link org.apache.wiki.auth.authorize.WebAuthorizer},
-     * this method iterates through each role returned by the
-     * authorizer (via
-     * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole( HttpServletRequest, Role)})
-     * and injects the appropriate ones into the Subject.
-     * @param acb the authorizer callback
-     * @param rcb the HTTP request
-     */
-    private final void injectWebAuthorizerRoles( Authorizer authorizer, HttpServletRequest request )
-    {
-        Principal[] roles = authorizer.getRoles();
-        Set<Principal> foundRoles = new HashSet<Principal>();
-        if ( authorizer instanceof WebAuthorizer )
-        {
-            WebAuthorizer wa = (WebAuthorizer)authorizer;
-            for ( int i = 0; i < roles.length; i++ )
-            {
-                if ( wa.isUserInRole( request, roles[i] ) )
-                {
-                    foundRoles.add( roles[i] );
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug("Added container role " + roles[i].getName() + "." );
-                    }
-                }
-            }
-        }
-
-        // Add these container roles if login succeeds
-        m_principals.addAll( foundRoles );
-    }
-
 }

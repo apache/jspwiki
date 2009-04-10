@@ -283,7 +283,7 @@ public class PluginManager extends ModuleManager
     /**
      *  Outputs a HTML-formatted version of a stack trace.
      */
-    private String stackTrace( Map params, Throwable t )
+    private String stackTrace( Map<String,Object> params, Throwable t )
     {
         div d = new div();
         d.setClass("debug");
@@ -294,11 +294,9 @@ public class PluginManager extends ModuleManager
         d.addElement( new b( "Parameters to the plugin" ) );
 
         ul list = new ul();
-        for( Iterator i = params.entrySet().iterator(); i.hasNext(); )
+        for( Map.Entry<String, Object>e : params.entrySet() )
         {
-            Map.Entry e = (Map.Entry) i.next();
-            String key = (String)e.getKey();
-
+            String key = e.getKey();
             list.addElement(new li( key+"'='"+e.getValue() ) );
         }
 
@@ -327,7 +325,7 @@ public class PluginManager extends ModuleManager
      */
     public String execute( WikiContext context,
                            String classname,
-                           Map params )
+                           Map<String,Object> params )
         throws PluginException
     {
         if( !m_pluginsEnabled )
@@ -436,7 +434,7 @@ public class PluginManager extends ModuleManager
      *
      * @throws IOException If the parsing fails.
      */
-    public Map parseArgs( String argstring )
+    public Map<String, Object> parseArgs( String argstring )
         throws IOException
     {
         HashMap<String, Object> arglist = new HashMap<String, Object>();
@@ -573,7 +571,7 @@ public class PluginManager extends ModuleManager
                 String plugin = res.group( 2 );
                 String args = commandline.substring( res.end(), commandline.length()
                                                                 - (commandline.charAt( commandline.length() - 1 ) == '}' ? 1 : 0) );
-                Map arglist = parseArgs( args );
+                Map<String,Object> arglist = parseArgs( args );
 
                 return execute( context, plugin, arglist );
             }
@@ -940,13 +938,10 @@ public class PluginManager extends ModuleManager
     {
         TreeSet<WikiPluginInfo> ls = new TreeSet<WikiPluginInfo>();
         
-        for( Iterator i = m_pluginClassMap.values().iterator(); i.hasNext(); )
+        for( WikiPluginInfo wmi : m_pluginClassMap.values() )
         {
-            WikiPluginInfo wmi = (WikiPluginInfo) i.next();
-            
             if( !ls.contains(wmi) ) ls.add(wmi);
         }
-        
         return ls;
     }
 
@@ -967,7 +962,7 @@ public class PluginManager extends ModuleManager
 
         ResourceBundle rb = context.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         Object[] args = { content.getPluginName() };
-        Map params = content.getParameters();
+        Map<String,Object> params = content.getParameters();
         try
         {
             WikiPlugin plugin;

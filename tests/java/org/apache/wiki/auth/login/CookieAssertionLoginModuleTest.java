@@ -31,20 +31,16 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.Cookie;
 
-import org.apache.wiki.NoRequiredPropertyException;
-import org.apache.wiki.TestAuthorizer;
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.auth.Authorizer;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.login.CookieAssertionLoginModule;
-import org.apache.wiki.auth.login.WebContainerCallbackHandler;
-import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.auth.user.XMLUserDatabase;
-
+import junit.framework.TestCase;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
-import junit.framework.TestCase;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 /**
@@ -52,15 +48,13 @@ import junit.framework.TestCase;
  */
 public class CookieAssertionLoginModuleTest extends TestCase
 {
-    Authorizer authorizer;
+    UserDatabase m_db;
 
-    UserDatabase db;
-
-    Subject      subject;
+    Subject      m_subject;
 
     private TestEngine m_engine;
 
-    public final void testLogin()
+    public final void testLogin() throws WikiSecurityException
     {
         MockHttpServletRequest request = m_engine.newHttpRequest();
         try
@@ -71,15 +65,15 @@ public class CookieAssertionLoginModuleTest extends TestCase
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
             request.setCookies( new Cookie[] { cookie } );
-            subject = new Subject();
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            m_subject = new Subject();
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new CookieAssertionLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             assertFalse( principals.contains( Role.ASSERTED ) );
@@ -92,21 +86,21 @@ public class CookieAssertionLoginModuleTest extends TestCase
         }
     }
 
-    public final void testLogout()
+    public final void testLogout() throws WikiSecurityException
     {
         MockHttpServletRequest request = m_engine.newHttpRequest();
         Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
         request.setCookies( new Cookie[] { cookie } );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request, authorizer );
+            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             LoginModule module = new CookieAssertionLoginModule();
-            module.initialize(subject, handler, 
+            module.initialize( m_subject, handler, 
                               new HashMap<String, Object>(), 
-                              new HashMap<String, Object>());
+                              new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set<Principal> principals = subject.getPrincipals();
+            Set<Principal> principals = m_subject.getPrincipals();
             assertEquals( 1, principals.size() );
             assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -130,25 +124,17 @@ public class CookieAssertionLoginModuleTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
         m_engine = new TestEngine(props);
-        authorizer = new TestAuthorizer();
-        authorizer.initialize( m_engine, props );
-        db = new XMLUserDatabase();
-        subject = new Subject();
+        m_db = new XMLUserDatabase();
+        m_subject = new Subject();
         try
         {
-            db.initialize( m_engine, props );
+            m_db.initialize( m_engine, props );
         }
         catch( NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             assertTrue( false );
         }
-    }
-
-    protected void tearDown() throws Exception
-    {
-        super.tearDown();
-        m_engine.shutdown();
     }
 
 }

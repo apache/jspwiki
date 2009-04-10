@@ -213,10 +213,8 @@ public class LuceneSearchProvider implements SearchProvider
                                               true );
                     Collection<WikiPage> allPages = m_engine.getContentManager().getAllPages(null);
 
-                    for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
+                    for( WikiPage page : allPages )
                     {
-                        WikiPage page = (WikiPage) iterator.next();
-                        
                         try
                         {
                             String text = page.getContentAsString();
@@ -401,7 +399,7 @@ public class LuceneSearchProvider implements SearchProvider
                InstantiationException,
                IllegalAccessException
     {
-        Class clazz = ClassUtil.findClass( "", m_analyzerClass );
+        Class<?> clazz = ClassUtil.findClass( "", m_analyzerClass );
         Analyzer analyzer = (Analyzer)clazz.newInstance();
         return analyzer;
     }
@@ -456,12 +454,11 @@ public class LuceneSearchProvider implements SearchProvider
         // Now add the names of the attachments of this page
         try
         {
-            Collection attachments = m_engine.getAttachmentManager().listAttachments(page);
+            Collection<WikiPage> attachments = m_engine.getAttachmentManager().listAttachments(page);
             String attachmentNames = "";
 
-            for( Iterator it = attachments.iterator(); it.hasNext(); )
+            for( WikiPage att : attachments )
             {
-                WikiPage att = (WikiPage) it.next();
                 attachmentNames += att.getName() + ";";
             }
             field = new Field(LUCENE_ATTACHMENTS, attachmentNames,
@@ -535,7 +532,7 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection findPages( String query )
+    public Collection<SearchResult> findPages( String query )
         throws ProviderException
     {
         return findPages( query, FLAG_CONTEXTS );
@@ -555,7 +552,7 @@ public class LuceneSearchProvider implements SearchProvider
      *  @return A Collection of SearchResult instances
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection findPages( String query, int flags )
+    public Collection<SearchResult> findPages( String query, int flags )
         throws ProviderException
     {
         Searcher  searcher = null;

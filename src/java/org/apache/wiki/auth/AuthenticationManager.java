@@ -37,6 +37,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.login.*;
 import org.apache.wiki.event.WikiEventListener;
@@ -46,7 +47,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
-
 
 
 /**
@@ -196,7 +196,7 @@ public final class AuthenticationManager
         catch (ClassNotFoundException e)
         {
             e.printStackTrace();
-            throw new WikiException( e.getMessage(), e );
+            throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
         
         // Initialize the LoginModule options
@@ -277,41 +277,24 @@ public final class AuthenticationManager
 
         // If user not authenticated, check if container logged them in, or if
         // there's an authentication cookie
-        Set<Principal> principals = null;
         if ( !session.isAuthenticated() )
         {
             // Create a callback handler
-            try
-            {
-                handler = new WebContainerCallbackHandler( m_engine, request, authorizationMgr.getAuthorizer() );
-            }
-            catch ( WikiSecurityException e )
-            {
-                e.printStackTrace();
-                throw new WikiSecurityException( e.getMessage(), e );
-            }
+            handler = new WebContainerCallbackHandler( m_engine, request );
             
-            // Execute the container login module
+            // Execute the container login module, then (if that fails) the cookie auth module
+            Set<Principal> principals = null;
             try
             {
                 principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
-            }
-            catch ( LoginException e )
-            {
-                // Container credentials not supplied in request. Ok, try the auth cookie!
-            }
-            
-            // Execute the cookie authentication module (if allowed)
-            if ( ( principals == null || principals.size() == 0 ) && authenticationMgr.allowsCookieAuthentication() )
-            {
-                try
+                if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
                 {
                     principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
                 }
-                catch( LoginException e )
-                {
-                    // Authentication cookie not supplied in request. Ok, try the assertion cookie!
-                }
+            }
+            catch( LoginException e )
+            {
+                // Failed to log in with container credentials
             }
             
             // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
@@ -322,6 +305,9 @@ public final class AuthenticationManager
                 {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
                 }
+                
+                // Add all appropriate Authorizer roles
+                injectAuthorizerRoles( session, authorizationMgr.getAuthorizer(), request );
             }
         }
 
@@ -329,6 +315,7 @@ public final class AuthenticationManager
         if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() )
         {
             // Execute the cookie assertion login module
+            Set<Principal> principals = null;
             try
             {
                 principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
@@ -339,27 +326,27 @@ public final class AuthenticationManager
             }
             catch( LoginException e )
             {
-                // Assertion cookie not supplied in request. Ok, use the IP address!
+                // User failed to log in with the assertion cookie
             }
         }
 
         // If user still anonymous, use the remote address
-        if ( session.isAnonymous() )
+        if (session.isAnonymous() )
         {
+            Set<Principal> principals = null;
             try
             {
                 principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
+                if ( principals != null && principals.size() > 0 )
+                {
+                    fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
+                    return true;
+                }
             }
             catch( LoginException e )
             {
-                // If the anonymous login didn't succeed, we have a genuine configuration problem!
-                e.printStackTrace();
-                throw new WikiSecurityException( e.getMessage() );
-            }
-            if ( principals != null && principals.size() > 0 )
-            {
-                fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
-                return true;
+                // Anonymous login failed... this just should not happen
+                log.error( "Anonymous login failed! Something must be wrong with the configuration..." );
             }
         }
         
@@ -446,6 +433,10 @@ public final class AuthenticationManager
             {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
             }
+            
+            // Add all appropriate Authorizer roles
+            injectAuthorizerRoles( session, m_engine.getAuthorizationManager().getAuthorizer(), null );
+            
             return true;
         }
         return false;
@@ -615,9 +606,10 @@ public final class AuthenticationManager
         loginModule.initialize( subject, handler, EMPTY_MAP, options );
 
         // Try to log in:
+        boolean loginSucceeded = false;
         boolean commitSucceeded = false;
-        boolean loginSucceeded = loginModule.login();
-        if ( loginSucceeded )
+        loginSucceeded = loginModule.login();
+        if (loginSucceeded)
         {
             commitSucceeded = loginModule.commit();
         }
@@ -771,6 +763,49 @@ public final class AuthenticationManager
                         throw new IllegalArgumentException( "JAAS LoginModule key " + propName + " cannot be specified twice!" );
                     }
                     m_loginModuleOptions.put( optionKey, optionValue );
+                }
+            }
+        }
+    }
+    
+    /**
+     * After successful login, this method is called to inject authorized role Principals into the WikiSession.
+     * To determine which roles should be injected, the configured Authorizer
+     * is queried for the roles it knows about by calling  {@link com.ecyrd.jspwiki.auth.Authorizer#getRoles()}.
+     * Then, each role returned by the authorizer is tested by calling {@link com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+     * If this check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
+     * {@link com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+     * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
+     * @param session the user's current WikiSession
+     * @param authorizer the WikiEngine's configured Authorizer
+     * @param request the user's HTTP session, which may be <code>null</code>
+     */
+    private final void injectAuthorizerRoles( WikiSession session, Authorizer authorizer, HttpServletRequest request )
+    {
+        // Test each role the authorizer knows about
+        for ( Principal role : authorizer.getRoles() )
+        {
+            // Test the Authorizer
+            if ( authorizer.isUserInRole( session, role ) )
+            {
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                if ( log.isDebugEnabled() )
+                {
+                    log.debug("Added authorizer role " + role.getName() + "." );
+                }
+            }
+            
+            // If web authorizer, test the request.isInRole() method also
+            else if ( request != null && authorizer instanceof WebAuthorizer )
+            {
+                WebAuthorizer wa = (WebAuthorizer)authorizer;
+                if ( wa.isUserInRole( request, role ) )
+                {
+                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                    if ( log.isDebugEnabled() )
+                    {
+                        log.debug("Added container role " + role.getName() + "." );
+                    }
                 }
             }
         }

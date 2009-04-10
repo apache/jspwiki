@@ -87,12 +87,12 @@ public class SearchManagerTest extends TestCase
 
         Thread.sleep( 10000L ); // Should cover for both index and initial delay
         
-        Collection res = m_mgr.findPages( "mankind" );
+        Collection<SearchResult> res = m_mgr.findPages( "mankind" );
      
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
         
-        assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        assertEquals( "page","TestPage", res.iterator().next().getPage().getName() );
     }
 
     public void testSimpleSearch2()
@@ -108,12 +108,12 @@ public class SearchManagerTest extends TestCase
 
         Thread.sleep( 10000L ); // Should cover for both index and initial delay
     
-        Collection res = m_mgr.findPages( "mankind" );
+        Collection<SearchResult> res = m_mgr.findPages( "mankind" );
  
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
     
-        assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        assertEquals( "page","TestPage", res.iterator().next().getPage().getName() );
     }
 
     public void testSimpleSearch3()
@@ -134,7 +134,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.sleep( 10000L ); // Should cover for both index and initial delay
  
-        Collection res = m_mgr.findPages( "mankind" );
+        Collection<SearchResult> res = m_mgr.findPages( "mankind" );
 
         assertNotNull( "found results", res );
         assertEquals( "empty results", 0, res.size() );
@@ -143,7 +143,7 @@ public class SearchManagerTest extends TestCase
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
      
-        assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        assertEquals( "page","TestPage", res.iterator().next().getPage().getName() );
     }
 
     public void testTitleSearch()

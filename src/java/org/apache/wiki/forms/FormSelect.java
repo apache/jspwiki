@@ -43,14 +43,14 @@ public class FormSelect
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map params )
+    public String execute( WikiContext ctx, Map<String,Object> params )
         throws PluginException
     {
         // Don't render if no error and error-only-rendering is on.
         FormInfo info = getFormInfo( ctx );
 
         ResourceBundle rb = ctx.getBundle(WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-        Map previousValues = null;
+        Map<String,Object> previousValues = null;
         
         if( info != null )
         {
@@ -63,7 +63,7 @@ public class FormSelect
 
         if( previousValues == null )
         {
-            previousValues = new HashMap();
+            previousValues = new HashMap<String,Object>();
         }
 
         ConcreteElement field = null;
@@ -81,7 +81,7 @@ public class FormSelect
     /**
      * Builds a Select element.
      */
-    private select buildSelect( Map pluginParams, Map ctxValues, ResourceBundle rb )
+    private select buildSelect( Map<String,Object> pluginParams, Map<String,Object> ctxValues, ResourceBundle rb )
         throws PluginException
     {
         String inputName = (String)pluginParams.get( PARAM_INPUTNAME );

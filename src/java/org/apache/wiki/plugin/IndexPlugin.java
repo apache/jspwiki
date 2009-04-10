@@ -45,7 +45,7 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map params ) throws PluginException
+    public String execute( WikiContext context, Map<String,Object> params ) throws PluginException
     {
         super.initialize( context, params );
         
@@ -126,16 +126,14 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
      */
     private List<String> listPages( WikiContext context ) throws ProviderException
     {
-
         ArrayList<String> result = new ArrayList<String>();
-
-        Collection pages = context.getEngine().getReferenceManager().findCreated();
+        Collection<String> pages = context.getEngine().getReferenceManager().findCreated();
 
         pages = super.filterCollection( pages );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( String page : pages )
         {
-            result.add( (String) i.next() );
+            result.add( page );
         }
         return result;
     }
