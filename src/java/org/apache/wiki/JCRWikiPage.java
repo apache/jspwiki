@@ -185,9 +185,13 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getAttributes()
      */
+    //
+    // This method will be removed, since it makes no sense to get
+    // all of the attributes, as the end result may be very, very large.
+    //
     public Map<String,Serializable> getAttributes() 
     {
-        return null; // FIXME: m_attributes;
+        return null;
     }
 
     /* (non-Javadoc)

@@ -426,7 +426,7 @@ public class ContentManager implements WikiEventListener
     public Collection<WikiPage> getAllPages( String space )
         throws ProviderException
     {
-        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
+        Set<WikiPage> result = new TreeSet<WikiPage>();
         try
         {
             Session session = m_sessionManager.getSession();
@@ -442,8 +442,10 @@ public class ContentManager implements WikiEventListener
                 Node n = ni.nextNode();
                 
                 // Hack to make sure we don't add the space root node. 
-                if( n.getDepth() != 2 )
+                if( !isSpaceRoot(n) )
+                {
                     result.add( new JCRWikiPage( getEngine(), n ) );
+                }
             }
         }
         catch( RepositoryException e )
@@ -458,6 +460,16 @@ public class ContentManager implements WikiEventListener
         return result;
     }
 
+    /**
+     *  Returns true, if this Node is the root node of a space.
+     *  
+     *  @param nd Node to check
+     *  @return true, if this is a root node of a space.
+     */
+    private boolean isSpaceRoot(Node nd) throws RepositoryException
+    {
+        return nd.getPath().startsWith( "/"+JCR_PAGES_NODE ) && nd.getDepth() == 2;
+    }
     
     /**
      *  Returns the WikiEngine to which this PageManager belongs to.
@@ -698,9 +710,14 @@ public class ContentManager implements WikiEventListener
         return m_repository.getDescriptor( Repository.REP_NAME_DESC );
     }
 
+    /**
+     *  Return the FQN of the class implementing Repository.
+     * 
+     *  @return A class name.
+     */
     public String getProvider()
     {
-        return m_repository.getDescriptor( Repository.SPEC_NAME_DESC );
+        return m_repository.getClass().getName();
     }
     
     /**
@@ -720,6 +737,7 @@ public class ContentManager implements WikiEventListener
     {
         return getAllPages(space).size();
     }
+    
     /**
      *  Returns true, if the page exists (any version).
      *  
@@ -975,6 +993,10 @@ public class ContentManager implements WikiEventListener
             }
 
             // Stash the page ACL, author, attributes, modified-date, name and new text as workflow attributes
+
+            // FIXME: This does not work, since the attribute list can be exceedingly big (in the order of gigabytes).
+            //        Alternate method required.
+            
             workflow.setAttribute( PRESAVE_PAGE_ACL, page.getAcl() );
             workflow.setAttribute( PRESAVE_PAGE_AUTHOR, author );
             workflow.setAttribute( PRESAVE_PAGE_ATTRIBUTES, (Serializable)page.getAttributes() );
