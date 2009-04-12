@@ -23,7 +23,6 @@ package org.apache.wiki.plugin;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.wiki.PageLock;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
@@ -31,6 +30,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;

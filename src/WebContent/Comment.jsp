@@ -1,6 +1,7 @@
 <%@ page import="org.apache.wiki.log.Logger" %>
 <%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.content.lock.PageLock" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>

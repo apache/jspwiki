@@ -33,6 +33,7 @@ import org.apache.wiki.content.WikiName;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
 
 

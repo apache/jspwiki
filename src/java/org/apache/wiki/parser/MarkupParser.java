@@ -26,9 +26,9 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
 
-import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.util.StringTransmutator;
 
 
 

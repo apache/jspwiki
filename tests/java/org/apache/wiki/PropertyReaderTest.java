@@ -22,7 +22,7 @@ package org.apache.wiki;
 
 import java.util.Properties;
 
-import org.apache.wiki.PropertyReader;
+import org.apache.wiki.util.PropertyReader;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

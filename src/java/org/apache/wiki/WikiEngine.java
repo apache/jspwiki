@@ -76,9 +76,7 @@ import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiInterceptor;
 import org.apache.wiki.url.URLConstructor;
-import org.apache.wiki.util.ClassUtil;
-import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.WatchDog;
+import org.apache.wiki.util.*;
 import org.apache.wiki.workflow.*;
 
 

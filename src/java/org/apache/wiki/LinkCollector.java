@@ -23,6 +23,8 @@ package org.apache.wiki;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.wiki.util.StringTransmutator;
+
 /**
  *  Just a simple class collecting all of the links
  *  that come in.

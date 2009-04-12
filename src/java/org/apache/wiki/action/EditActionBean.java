@@ -40,6 +40,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.filters.SpamProtect;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;

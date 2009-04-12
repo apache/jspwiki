@@ -24,10 +24,10 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.wiki.PageLock;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.providers.ProviderException;
 
 /**

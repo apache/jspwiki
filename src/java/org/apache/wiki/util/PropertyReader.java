@@ -18,7 +18,7 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,8 +28,8 @@ import java.util.*;
 
 import javax.servlet.ServletContext;
 
+import org.apache.wiki.Release;
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.util.TextUtil;
 
 
 /**

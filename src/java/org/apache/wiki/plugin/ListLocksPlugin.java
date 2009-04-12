@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.wiki.PageLock;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.lock.PageLock;
 
 
 /**

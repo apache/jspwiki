@@ -52,6 +52,7 @@ import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.RegExpUtil;
+import org.apache.wiki.util.StringTransmutator;
 import org.apache.wiki.util.TextUtil;
 import org.jdom.*;
 

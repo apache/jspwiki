@@ -1,3 +1,12 @@
+2009-04-12  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-100
+        
+        * Moved PageTimeComparator, PropertyReader and StringTransmutator
+        to the util package.
+        
+        * Moved PageLock to org.apache.wiki.content.lock package.
+        
 2009-04-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-99

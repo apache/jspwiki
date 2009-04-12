@@ -30,6 +30,7 @@ import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.ModuleManager;

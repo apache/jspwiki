@@ -31,13 +31,13 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.PropertyReader;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.LocaleConverter;
+import org.apache.wiki.util.PropertyReader;
 
 
 /**

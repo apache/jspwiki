@@ -18,7 +18,9 @@
     specific language governing permissions and limitations
     under the License.     
  */
-package org.apache.wiki;
+package org.apache.wiki.util;
+
+import org.apache.wiki.WikiContext;
 
 /**
  *  Defines an interface for transforming strings within a Wiki context.

@@ -26,7 +26,6 @@ import java.util.*;
 import javax.security.auth.login.LoginException;
 
 
-import org.apache.wiki.PageTimeComparator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
@@ -43,6 +42,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.PageTimeComparator;
 import org.apache.xmlrpc.XmlRpcException;
 
 
