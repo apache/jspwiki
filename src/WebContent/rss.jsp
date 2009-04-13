@@ -74,7 +74,7 @@
     if( mode.equals("blog") )
     {
         org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
-        changed = plug.findBlogEntries(wiki.getPageManager(), 
+        changed = plug.findBlogEntries(wiki.getContentManager(), 
                                        wikipage.getName(),
                                        new Date(0L),
                                        new Date());
