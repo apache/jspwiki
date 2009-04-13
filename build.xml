@@ -435,7 +435,7 @@
       outputDir="${war.build}/java"
       poolingEnabled="false"
       package="org.apache.wiki.jsp"
-      webXmlFragment="${war.build}/web-fragment.xml" />
+      webXmlFragment="${war.build}/web-fragment.xmlf" />
     <!-- Compile the generated Java sources -->
     <mkdir dir="${war.build}/classes"/>
     <javac srcdir="${war.build}/java" destdir="${war.build}/classes">
@@ -446,7 +446,7 @@
     </javac>
     <!-- Inject JSP mappings into web.xml -->
     <echo message="Adding JSP servlet mappings to web.xml" />
-    <loadfile property="generated-web.xml" srcFile="${war.build}/web-fragment.xml"/>
+    <loadfile property="generated-web.xml" srcFile="${war.build}/web-fragment.xmlf"/>
     <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="true">
       <filterset begintoken="&lt;!--" endtoken="--&gt;">
         <filter token=" PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS " value="${generated-web.xml}" />
