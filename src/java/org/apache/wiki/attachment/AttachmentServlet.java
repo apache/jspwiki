@@ -50,7 +50,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
@@ -731,7 +731,7 @@ public class AttachmentServlet extends HttpServlet
         catch( PageNotFoundException e )
         {
             String contentType = "application/octet-stream"; // FIXME: This is not a good guess
-            WikiName path = context.getPage().getQualifiedName().resolve(filename);
+            WikiPath path = context.getPage().getWikiPath().resolve(filename);
             
             try
             {

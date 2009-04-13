@@ -29,7 +29,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -148,7 +148,7 @@ public class PageManager extends ModuleManager
     public String getPageText( String pageName, int version )
         throws PageNotFoundException, ProviderException
     {
-        WikiPage p = m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version );
+        WikiPage p = m_engine.getContentManager().getPage( WikiPath.valueOf( pageName ), version );
         
         if( p != null ) return p.getContentAsString();
         
@@ -179,13 +179,13 @@ public class PageManager extends ModuleManager
         WikiPage p;
         try
         {
-            p = m_engine.getContentManager().getPage( page.getQualifiedName() );
+            p = m_engine.getContentManager().getPage( page.getWikiPath() );
         }
         catch( PageNotFoundException e )
         {
             try
             {
-                p = m_engine.getContentManager().addPage( page.getQualifiedName(), ContentManager.JSPWIKI_CONTENT_TYPE );
+                p = m_engine.getContentManager().addPage( page.getWikiPath(), ContentManager.JSPWIKI_CONTENT_TYPE );
             }
             catch( PageAlreadyExistsException e1 )
             {
@@ -260,7 +260,7 @@ public class PageManager extends ModuleManager
     public WikiPage getPageInfo( String pageName, int version )
         throws PageNotFoundException, ProviderException
     {
-        return m_engine.getContentManager().getPage( WikiName.valueOf( pageName ), version );        
+        return m_engine.getContentManager().getPage( WikiPath.valueOf( pageName ), version );        
     }
 
     /**
@@ -276,7 +276,7 @@ public class PageManager extends ModuleManager
     public List getVersionHistory( String pageName )
         throws PageNotFoundException, ProviderException
     {
-        return m_engine.getContentManager().getVersionHistory( WikiName.valueOf( pageName ) );
+        return m_engine.getContentManager().getVersionHistory( WikiPath.valueOf( pageName ) );
     }
 
     /**
@@ -319,7 +319,7 @@ public class PageManager extends ModuleManager
     public boolean pageExists( String pageName )
         throws ProviderException
     {
-        return m_engine.getContentManager().pageExists( WikiName.valueOf( pageName ) );
+        return m_engine.getContentManager().pageExists( WikiPath.valueOf( pageName ) );
     }
 
     /**
@@ -334,7 +334,7 @@ public class PageManager extends ModuleManager
     public boolean pageExists( String pageName, int version )
         throws ProviderException
     {
-        return m_engine.getContentManager().pageExists( WikiName.valueOf( pageName ), version );
+        return m_engine.getContentManager().pageExists( WikiPath.valueOf( pageName ), version );
     }
 
     /**

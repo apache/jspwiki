@@ -50,5 +50,5 @@ public abstract class PageNameResolver
      *  @return A new name that you should getPage() on.
      *  @throws ProviderException If the resolution fails in any way.
      */
-    public abstract WikiName resolve( WikiName name ) throws ProviderException;
+    public abstract WikiPath resolve( WikiPath name ) throws ProviderException;
 }

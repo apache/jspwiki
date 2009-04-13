@@ -42,7 +42,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -193,7 +193,7 @@ public class UploadActionBean extends AbstractPageActionBean
         if( att == null )
         {
             String contentType = "application/octet-stream"; // FIXME: This is not a good guess
-            WikiName path = context.getPage().getQualifiedName().resolve(filename);
+            WikiPath path = context.getPage().getWikiPath().resolve(filename);
             att = engine.getContentManager().addPage( path, contentType );
             created = true;
         }

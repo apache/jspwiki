@@ -33,7 +33,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
@@ -265,9 +265,9 @@ public abstract class AbstractFilteredPlugin
             {
                 pageName = ((WikiPage) objectje).getName();
             }
-            else if ( objectje instanceof WikiName )
+            else if ( objectje instanceof WikiPath )
             {
-                pageName = ((WikiName) objectje).toString();
+                pageName = ((WikiPath) objectje).toString();
             }
             else if ( objectje instanceof String )
             {
@@ -315,7 +315,7 @@ public abstract class AbstractFilteredPlugin
                 boolean isAttachment = pageName.contains( "/" );
                 if( !isAttachment || (isAttachment && m_showAttachments) )
                 {
-                    if( objectje instanceof WikiPage || objectje instanceof WikiName || objectje instanceof String )
+                    if( objectje instanceof WikiPage || objectje instanceof WikiPath || objectje instanceof String )
                     {
                         result.add( objectje );
                     }

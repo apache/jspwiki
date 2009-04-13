@@ -22,7 +22,7 @@ package org.apache.wiki.attachment;
 
 import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 
 /**
  *  A DynamicAttachment is an attachment which does not really exist, but is
@@ -90,7 +90,7 @@ public class DynamicAttachment extends JCRWikiPage implements Attachment
                              String fileName,
                              DynamicAttachmentProvider provider)
     {
-        super(engine, WikiName.valueOf( parentPage ).resolve( fileName ) );
+        super(engine, WikiPath.valueOf( parentPage ).resolve( fileName ) );
         m_provider = provider;
     }
 

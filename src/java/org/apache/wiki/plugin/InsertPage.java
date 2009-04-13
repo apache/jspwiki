@@ -31,7 +31,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -102,7 +102,7 @@ public class InsertPage
             WikiPage page = null;
             try
             {
-                WikiName pageName = engine.getFinalPageName( context.getPage().getQualifiedName().resolve( includedPage ) );
+                WikiPath pageName = engine.getFinalPageName( context.getPage().getWikiPath().resolve( includedPage ) );
                 if( pageName != null )
                 {
                     page = engine.getPage( pageName );

@@ -666,7 +666,7 @@ public class ContentManager implements WikiEventListener
      *  @throws PageNotFoundException If the page does not exist.
      */
 
-    public List<WikiPage> getVersionHistory( WikiName path )
+    public List<WikiPage> getVersionHistory( WikiPath path )
         throws ProviderException, PageNotFoundException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
@@ -742,11 +742,11 @@ public class ContentManager implements WikiEventListener
     /**
      *  Returns true, if the page exists (any version).
      *  
-     *  @param wikiPath  the {@link WikiName} to check for
+     *  @param wikiPath  the {@link WikiPath} to check for
      *  @return A boolean value describing the existence of a page
      *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
-    public boolean pageExists( WikiName wikiPath )
+    public boolean pageExists( WikiPath wikiPath )
         throws ProviderException
     {
         if( wikiPath == null )
@@ -772,12 +772,12 @@ public class ContentManager implements WikiEventListener
      *  Checks for existence of a specific page and version.
      *  
      *  @since 2.3.29
-     *  @param wikiPath  the {@link WikiName} to check for
+     *  @param wikiPath  the {@link WikiPath} to check for
      *  @param version The version to check
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
      *  @throws ProviderException If the backend fails or the wikiPath is illegal.
      */
-    public boolean pageExists( WikiName wikiPath, int version )
+    public boolean pageExists( WikiPath wikiPath, int version )
         throws ProviderException
     {
         if( wikiPath == null )
@@ -1002,7 +1002,7 @@ public class ContentManager implements WikiEventListener
             workflow.setAttribute( PRESAVE_PAGE_AUTHOR, author );
             workflow.setAttribute( PRESAVE_PAGE_ATTRIBUTES, (Serializable)page.getAttributes() );
             workflow.setAttribute( PRESAVE_PAGE_LASTMODIFIED, new Date() );
-            workflow.setAttribute( PRESAVE_PAGE_NAME, page.getQualifiedName() );
+            workflow.setAttribute( PRESAVE_PAGE_NAME, page.getWikiPath() );
             workflow.setAttribute( PRESAVE_PAGE_TEXT, saveText );
             
             return Outcome.STEP_COMPLETE;
@@ -1036,7 +1036,7 @@ public class ContentManager implements WikiEventListener
             // Fetch the page that was being saved
             Workflow workflow = getWorkflow();
             WikiEngine engine = workflow.getWorkflowManager().getEngine();
-            WikiName name = (WikiName)workflow.getAttribute( PRESAVE_PAGE_NAME );
+            WikiPath name = (WikiPath)workflow.getAttribute( PRESAVE_PAGE_NAME );
             JCRWikiPage page;
             try
             {
@@ -1109,7 +1109,7 @@ public class ContentManager implements WikiEventListener
      *  @param wikiName The WikiName.
      *  @return A full JCR path
      */
-    public static String getJCRPath( WikiName wikiName )
+    public static String getJCRPath( WikiPath wikiName )
     {
         String spaceName;
         String spacePath;
@@ -1123,12 +1123,12 @@ public class ContentManager implements WikiEventListener
     /**
      *  Evaluates a WikiName in the context of the current page request.
      *  
-     *  @param jcrpath The JCR Path used to get the {@link WikiName}
-     *  @return The {@link WikiName} for the requested jcr path
+     *  @param jcrpath The JCR Path used to get the {@link WikiPath}
+     *  @return The {@link WikiPath} for the requested jcr path
      *  @throws ProviderException If the backend fails.
      */
     // FIXME: Should be protected - fix once WikiPage moves to content-package
-    public static WikiName getWikiPath( String jcrpath ) throws ProviderException
+    public static WikiPath getWikiPath( String jcrpath ) throws ProviderException
     {
         if( jcrpath.startsWith("/"+JCR_PAGES_NODE+"/") )
         {
@@ -1138,7 +1138,7 @@ public class ContentManager implements WikiEventListener
             
             if( firstSlash != -1 )
             {
-                return new WikiName(wikiPath.substring( 0, firstSlash ), 
+                return new WikiPath(wikiPath.substring( 0, firstSlash ), 
                                     wikiPath.substring( firstSlash+1 ) );
             }
         }
@@ -1156,7 +1156,7 @@ public class ContentManager implements WikiEventListener
      *  @throws PageAlreadyExistsException if the page already exists in the repository
      *  @throws ProviderException if the backend fails
      */
-    public JCRWikiPage addPage( WikiName path, String contentType ) throws PageAlreadyExistsException, ProviderException
+    public JCRWikiPage addPage( WikiPath path, String contentType ) throws PageAlreadyExistsException, ProviderException
     {
         try
         {
@@ -1186,7 +1186,7 @@ public class ContentManager implements WikiEventListener
      *  @throws PageNotFoundException If the page does not exist, or if <code>path</code>
      *  is <code>null</code>
      */
-    public JCRWikiPage getPage( WikiName path ) throws ProviderException, PageNotFoundException
+    public JCRWikiPage getPage( WikiPath path ) throws ProviderException, PageNotFoundException
     {
         if ( path == null )
         {
@@ -1224,7 +1224,7 @@ public class ContentManager implements WikiEventListener
      *  @throws ProviderException If the backend fails.
      *  @throws PageNotFoundException If the page version in question cannot be found.
      */
-    public JCRWikiPage getPage( WikiName path, int version ) throws ProviderException, PageNotFoundException
+    public JCRWikiPage getPage( WikiPath path, int version ) throws ProviderException, PageNotFoundException
     {
         try
         {

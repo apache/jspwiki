@@ -42,7 +42,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -439,7 +439,7 @@ public class JSPWikiMarkupParser
         {
             if( page == null || page.length() == 0 ) return null;
 
-            return m_engine.getFinalPageName( WikiName.valueOf( page ) ).toString();
+            return m_engine.getFinalPageName( WikiPath.valueOf( page ) ).toString();
         }
         catch( Exception e )
         {

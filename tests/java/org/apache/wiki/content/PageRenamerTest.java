@@ -78,9 +78,9 @@ public class PageRenamerTest extends TestCase
         m_engine.shutdown();
     }
 
-    private Set<WikiName> findReferrers(String path) throws ProviderException
+    private Set<WikiPath> findReferrers(String path) throws ProviderException
     {
-        return m_engine.getReferenceManager().findReferrers( WikiName.valueOf(path) );
+        return m_engine.getReferenceManager().findReferrers( WikiPath.valueOf(path) );
     }
     
     public void testSimpleRename()
@@ -127,13 +127,13 @@ public class PageRenamerTest extends TestCase
         
         assertEquals( "no rename", "[FooTest]", data.trim() );
         
-        Collection<WikiName> refs = findReferrers("TestPage");
+        Collection<WikiPath> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (WikiName)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", (WikiPath)refs.iterator().next() );
     }
 
     public void testReferrerChangeCC()
@@ -151,13 +151,13 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
      
         assertEquals( "no rename", "FooTest", data.trim() );
-        Collection<WikiName> refs = findReferrers("TestPage");
+        Collection<WikiPath> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (WikiName)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", (WikiPath)refs.iterator().next() );
     }
     
     public void testReferrerChangeAnchor()
@@ -175,7 +175,7 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
      
         assertEquals( "no rename", "[FooTest#heading1]", data.trim() );
-        Collection<WikiName> refs = findReferrers("TestPage");
+        Collection<WikiPath> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
@@ -202,7 +202,7 @@ public class PageRenamerTest extends TestCase
                       "[FooTest] [FooTest] [linktext|FooTest] FooTest [linktext|FooTest] [FooTest#Anchor] [FooTest] FooTest [FooTest]", 
                       data.trim() );
 
-        Collection<WikiName> refs = findReferrers("TestPage");
+        Collection<WikiPath> refs = findReferrers("TestPage");
         
         assertNull( "oldpage", refs );
         
@@ -260,7 +260,7 @@ public class PageRenamerTest extends TestCase
         att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
         assertNull("testpage/foo.txt exists",att);
         
-        Collection<WikiName> refs = findReferrers("TestPage/bar.jpg");
+        Collection<WikiPath> refs = findReferrers("TestPage/bar.jpg");
     
         assertNull( "oldpage", refs );
     

@@ -47,7 +47,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
@@ -388,7 +388,7 @@ public final class WikiContextFactory
         // Extract and set the WikiPage
         if( page == null )
         {
-            WikiName pageName = extractPageFromParameter( request );
+            WikiPath pageName = extractPageFromParameter( request );
 
             // For view action, default to front page
             if( pageName == null && WikiContext.VIEW.equals( requestContext ) )
@@ -437,7 +437,7 @@ public final class WikiContextFactory
      * @param request the HTTP request
      * @return the resolved page name
      */
-    protected final WikiName extractPageFromParameter( HttpServletRequest request )
+    protected final WikiPath extractPageFromParameter( HttpServletRequest request )
     {
         // Corner case when request == null
         if( request == null )
@@ -447,14 +447,14 @@ public final class WikiContextFactory
 
         // Extract the page name from the URL directly
         String[] pages = request.getParameterValues( "page" );
-        WikiName page = null;
+        WikiPath page = null;
         if( pages != null && pages.length > 0 )
         {
-            page = WikiName.valueOf(pages[0]);
+            page = WikiPath.valueOf(pages[0]);
             try
             {
                 // Look for variants
-                WikiName finalPage = m_engine.getFinalPageName( page );
+                WikiPath finalPage = m_engine.getFinalPageName( page );
                 
                 // If no variant, use whatever the user supplied.
                 if( finalPage == null ) return page;
@@ -482,7 +482,7 @@ public final class WikiContextFactory
      *            exist
      * @return the wiki page
      */
-    protected final WikiPage resolvePage( HttpServletRequest request, WikiName page ) throws PageNotFoundException, ProviderException
+    protected final WikiPage resolvePage( HttpServletRequest request, WikiPath page ) throws PageNotFoundException, ProviderException
     {
         // See if the user included a version parameter
         int version = WikiProvider.LATEST_VERSION;
@@ -502,7 +502,7 @@ public final class WikiContextFactory
             String pageName = MarkupParser.cleanLink( page.getPath() );
             try
             {
-                return m_engine.createPage( WikiName.valueOf( pageName ) );
+                return m_engine.createPage( WikiPath.valueOf( pageName ) );
             }
             catch( PageAlreadyExistsException e1 )
             {

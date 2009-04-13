@@ -37,7 +37,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -130,7 +130,7 @@ public class AttachmentManager
     public Attachment getAttachmentInfo( String name )
         throws ProviderException, PageNotFoundException
     {
-        return m_engine.getContentManager().getPage( WikiName.valueOf( name ) );
+        return m_engine.getContentManager().getPage( WikiPath.valueOf( name ) );
     }
 
     /**
@@ -201,7 +201,7 @@ public class AttachmentManager
             return null;
         }
 
-        WikiName name = currentPage.getQualifiedName().resolve( attachmentname );
+        WikiPath name = currentPage.getWikiPath().resolve( attachmentname );
         
         Attachment att;
 
@@ -320,7 +320,7 @@ public class AttachmentManager
      *  @see #getAttachmentInfo(String)
      */
 
-    public DynamicAttachment getDynamicAttachment( WikiName name )
+    public DynamicAttachment getDynamicAttachment( WikiPath name )
     {
         try
         {
@@ -397,7 +397,7 @@ public class AttachmentManager
     public List<WikiPage> getVersionHistory( String attachmentName )
         throws ProviderException, PageNotFoundException
     {
-        return m_engine.getContentManager().getVersionHistory( WikiName.valueOf(attachmentName) );
+        return m_engine.getContentManager().getVersionHistory( WikiPath.valueOf(attachmentName) );
     }
 
     /**

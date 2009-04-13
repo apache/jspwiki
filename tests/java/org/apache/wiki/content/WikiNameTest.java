@@ -21,7 +21,7 @@
 package org.apache.wiki.content;
 
 import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -31,7 +31,7 @@ public class WikiNameTest extends TestCase
 {
     public void testParse1()
     {
-        WikiName wn = WikiName.valueOf( "Foo:Bar/Blob 2" );
+        WikiPath wn = WikiPath.valueOf( "Foo:Bar/Blob 2" );
         
         assertEquals("space", "Foo", wn.getSpace() );
         assertEquals("path", "Bar/Blob 2", wn.getPath() );
@@ -39,7 +39,7 @@ public class WikiNameTest extends TestCase
 
     public void testParse2()
     {
-        WikiName wn = WikiName.valueOf( "BarBrian" );
+        WikiPath wn = WikiPath.valueOf( "BarBrian" );
         
         assertEquals("space", ContentManager.DEFAULT_SPACE, wn.getSpace() );
         assertEquals("path", "BarBrian", wn.getPath() );
@@ -47,18 +47,18 @@ public class WikiNameTest extends TestCase
 
     public void testResolve1()
     {
-        WikiName wn = new WikiName("Test","TestPage");
+        WikiPath wn = new WikiPath("Test","TestPage");
         
-        WikiName newname = wn.resolve("Barbapapa");
+        WikiPath newname = wn.resolve("Barbapapa");
         
         assertEquals( "Test:Barbapapa", newname.toString() );
     }
 
     public void testResolveAbsolute()
     {
-        WikiName wn = new WikiName("Test","TestPage");
+        WikiPath wn = new WikiPath("Test","TestPage");
         
-        WikiName newname = wn.resolve("Foo:Barbapapa");
+        WikiPath newname = wn.resolve("Foo:Barbapapa");
         
         assertEquals( "Foo:Barbapapa", newname.toString() );
     }

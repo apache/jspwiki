@@ -45,7 +45,7 @@ public class PageNotFoundException extends Exception
      *  Construct an exception from a WikiName path. 
      *  @param path The path to the nonexistant WikiPage.
      */
-    public PageNotFoundException( WikiName path )
+    public PageNotFoundException( WikiPath path )
     {
         super( path.toString() );
     }

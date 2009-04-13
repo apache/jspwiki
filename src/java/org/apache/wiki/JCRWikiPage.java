@@ -33,7 +33,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -67,15 +67,15 @@ public class JCRWikiPage
     public static final String REFERSTO = "wiki:refersTo";
     
 
-    private       WikiName   m_name;
+    private       WikiPath   m_name;
     private       WikiEngine m_engine;
     private String           m_jcrPath = null;
     
     /** 
-     * Use {@link WikiEngine#createPage(WikiName)} instead. 
+     * Use {@link WikiEngine#createPage(WikiPath)} instead. 
      * @deprecated 
      */
-    public JCRWikiPage( WikiEngine engine, WikiName name )
+    public JCRWikiPage( WikiEngine engine, WikiPath name )
     {
         m_engine  = engine;
         m_name    = name;
@@ -106,7 +106,7 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getQualifiedName()
      */
-    public WikiName getQualifiedName()
+    public WikiPath getWikiPath()
     {
         return m_name;
     }
@@ -476,9 +476,9 @@ public class JCRWikiPage
         return null;
     }
     
-    public Collection<WikiName> getRefersTo() throws ProviderException
+    public Collection<WikiPath> getRefersTo() throws ProviderException
     {
-        Collection<WikiName> refs = new ArrayList<WikiName>();
+        Collection<WikiPath> refs = new ArrayList<WikiPath>();
         
         try
         {
@@ -487,7 +487,7 @@ public class JCRWikiPage
             Value[] values = p.getValues();
             
             for( Value v : values )
-                refs.add( WikiName.valueOf( v.getString() ) );
+                refs.add( WikiPath.valueOf( v.getString() ) );
         }
         catch( PathNotFoundException e ) {}
         catch( RepositoryException e )

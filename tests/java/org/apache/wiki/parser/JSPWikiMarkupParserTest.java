@@ -37,7 +37,7 @@ import junit.framework.TestSuite;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.util.TextUtil;
 
@@ -98,12 +98,12 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     private String translate( String src ) throws Exception
     {
-        return translate( testEngine.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
+        return translate( testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) ), src );
     }
 
     private String translate( WikiEngine e, String src ) throws Exception
     {
-        return translate( e, e.createPage( WikiName.valueOf( PAGE_NAME ) ), src );
+        return translate( e, e.createPage( WikiPath.valueOf( PAGE_NAME ) ), src );
     }
 
     private String translate( WikiPage p, String src ) throws Exception
@@ -1081,7 +1081,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         testEngine.shutdown();
         testEngine = new TestEngine( props );
 
-        WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage page = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String out = translate( testEngine, page, src );
 
@@ -1096,7 +1096,7 @@ public class JSPWikiMarkupParserTest extends TestCase
         testEngine.shutdown();
         testEngine = new TestEngine( props );
 
-        WikiPage page = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage page = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String out = translate( testEngine, page, src );
 
@@ -2052,7 +2052,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name=foo}]";
 
-        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage p = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2065,7 +2065,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name = foo}]";
 
-        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage p = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2078,7 +2078,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name= Janne Jalkanen}]";
 
-        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage p = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2091,7 +2091,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
 
-        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage p = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 
@@ -2105,7 +2105,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
 
-        WikiPage p = testEngine.createPage( WikiName.valueOf( PAGE_NAME ) );
+        WikiPage p = testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) );
 
         String res = translate( p, src );
 

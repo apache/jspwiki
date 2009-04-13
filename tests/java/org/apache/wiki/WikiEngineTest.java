@@ -26,7 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.*;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -121,10 +121,10 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobars", "2" );
 
         assertEquals( "plural mistake", "Foobars",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
 
         assertEquals( "singular mistake", "Foobar",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobar" )) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobar" )) );
     }
 
     public void testFinalPageNameSingular()
@@ -133,9 +133,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobar", "1" );
 
         assertEquals( "plural mistake", "Foobar",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
         assertEquals( "singular mistake", "Foobar",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobar") ) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobar") ) );
     }
 
     public void testFinalPageNamePlural()
@@ -144,9 +144,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobars", "1" );
 
         assertEquals( "plural mistake", "Foobars",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobars") ) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
         assertEquals( "singular mistake", "Foobars",
-                      m_engine.getFinalPageName( WikiName.valueOf("Foobar") ) );
+                      m_engine.getFinalPageName( WikiPath.valueOf("Foobar") ) );
     }
     
     public void testPutPage()
@@ -243,7 +243,7 @@ public class WikiEngineTest extends TestCase
         String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
 
         m_engine.deletePage( "Test" );
-        Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiName.valueOf( "Test" ) ), src ).toArray();
+        Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiPath.valueOf( "Test" ) ), src ).toArray();
         
         assertEquals( "item 0", "Foobar", result[0] );
         assertEquals( "item 1", "This is a link", result[1] );
@@ -871,7 +871,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
-        Collection<WikiName> pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
+        Collection<WikiPath> pages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf("RenameBugTestPage") );
         assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
@@ -881,7 +881,7 @@ public class WikiEngineTest extends TestCase
         assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
         assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
         
-        pages = m_engine.getReferenceManager().findReferrers( WikiName.valueOf("RenameBugTestPage") );
+        pages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf("RenameBugTestPage") );
         
         assertEquals( "wrong # of referrers", 1, pages.size() );
         
@@ -891,7 +891,7 @@ public class WikiEngineTest extends TestCase
     public void testChangeNoteOldVersion2() throws Exception
     {
         m_engine.deletePage( NAME1 );
-        WikiPage p = m_engine.createPage( WikiName.valueOf( NAME1 ) );
+        WikiPage p = m_engine.createPage( WikiPath.valueOf( NAME1 ) );
     
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
 
@@ -934,7 +934,7 @@ public class WikiEngineTest extends TestCase
         throws Exception
     {
         m_engine.deletePage( NAME1 );
-        WikiPage page = m_engine.createPage( WikiName.valueOf( NAME1 ) );
+        WikiPage page = m_engine.createPage( WikiPath.valueOf( NAME1 ) );
 
         assertEquals( "Page does not exist",
                       true,

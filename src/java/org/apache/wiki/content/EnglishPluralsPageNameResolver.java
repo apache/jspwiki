@@ -46,7 +46,7 @@ public class EnglishPluralsPageNameResolver extends PageNameResolver
     }
 
     @Override
-    public WikiName resolve( WikiName name ) throws ProviderException
+    public WikiPath resolve( WikiPath name ) throws ProviderException
     {
         ContentManager mgr = m_engine.getContentManager();
         
@@ -54,16 +54,16 @@ public class EnglishPluralsPageNameResolver extends PageNameResolver
         
         if( m_matchEnglishPlurals )
         {
-            WikiName alternativeName;
+            WikiPath alternativeName;
             
             if( name.getPath().endsWith( "s" ) )
             {
-                alternativeName = new WikiName( name.getSpace(), 
+                alternativeName = new WikiPath( name.getSpace(), 
                                                 name.getPath().substring( 0, name.getPath().length()-1) );
             }
             else
             {
-                alternativeName = new WikiName( name.getSpace(),
+                alternativeName = new WikiPath( name.getSpace(),
                                                 name.getPath()+"s" );
             }
             

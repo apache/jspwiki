@@ -29,7 +29,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -164,7 +164,7 @@ public class WeblogEntryPlugin implements WikiPlugin
             WikiPage page;
             try
             {
-                page = mgr.getEngine().createPage( WikiName.valueOf(name) );
+                page = mgr.getEngine().createPage( WikiPath.valueOf(name) );
             }
             catch( PageAlreadyExistsException e )
             {

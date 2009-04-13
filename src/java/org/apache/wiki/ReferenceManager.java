@@ -31,7 +31,7 @@ import org.apache.commons.lang.time.StopWatch;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventUtils;
@@ -246,18 +246,18 @@ public class ReferenceManager
      * @throws PageNotFoundException 
      * @throws ProviderException 
      */
-    public synchronized void pageRemoved( WikiName pageName ) throws ProviderException, PageNotFoundException
+    public synchronized void pageRemoved( WikiPath pageName ) throws ProviderException, PageNotFoundException
     {
         WikiPage page = m_engine.getContentManager().getPage( pageName );
         
-        Collection<WikiName> refTo = page.getRefersTo();
+        Collection<WikiPath> refTo = page.getRefersTo();
 
-        for( WikiName referred : refTo )
+        for( WikiPath referred : refTo )
         {
-            log.debug( "Removing references to page %s from page %s", page.getQualifiedName(), referred );
-            Set<WikiName> referredBy = findReferrers(referred);
+            log.debug( "Removing references to page %s from page %s", page.getWikiPath(), referred );
+            Set<WikiPath> referredBy = findReferrers(referred);
             
-            referredBy.remove( page.getQualifiedName() );
+            referredBy.remove( page.getWikiPath() );
             
             try
             {
@@ -274,7 +274,7 @@ public class ReferenceManager
     /**
      *  Build the path which is used to store the ReferredBy data  
      */
-    private final String getReferredByJCRPath(WikiName name)
+    private final String getReferredByJCRPath(WikiPath name)
     {
         return "/wiki:references/"+name.getSpace()+"/"+name.getPath();
     }
@@ -288,7 +288,7 @@ public class ReferenceManager
      *  @throws ProviderException If something goes wrong.
      *  @since 3.0
      */
-    public Set<WikiName> findReferrers(WikiName name) throws ProviderException
+    public Set<WikiPath> findReferrers(WikiPath name) throws ProviderException
     {
         String jcrPath = getReferredByJCRPath( name );
         
@@ -298,11 +298,11 @@ public class ReferenceManager
             
             Property p = (Property)m_engine.getContentManager().getCurrentSession().getItem(jcrPath);
             
-            TreeSet<WikiName> result = new TreeSet<WikiName>();
+            TreeSet<WikiPath> result = new TreeSet<WikiPath>();
             
             for( Value v : p.getValues() )
             {
-                result.add( WikiName.valueOf( v.getString() ) );
+                result.add( WikiPath.valueOf( v.getString() ) );
             }
             
             return result;
@@ -310,7 +310,7 @@ public class ReferenceManager
         catch( PathNotFoundException e )
         {
             // Fine, we can return an empty set
-            return new TreeSet<WikiName>();
+            return new TreeSet<WikiPath>();
         }
         catch( RepositoryException e )
         {
@@ -325,13 +325,13 @@ public class ReferenceManager
      *  @param references
      *  @throws RepositoryException
      */
-    private void setReferredBy(WikiName name,Set<WikiName> references) throws RepositoryException
+    private void setReferredBy(WikiPath name,Set<WikiPath> references) throws RepositoryException
     {
         String jcrPath = getReferredByJCRPath( name );
         Property p = null;
 
         String[] value = new String[references.size()];
-        WikiName[] refs = references.toArray(new WikiName[references.size()]);
+        WikiPath[] refs = references.toArray(new WikiPath[references.size()]);
         
         for( int i = 0; i < references.size(); i++ )
         {
@@ -374,7 +374,7 @@ public class ReferenceManager
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    public synchronized void updateReferences( WikiPage page, Collection<WikiName> references ) 
+    public synchronized void updateReferences( WikiPage page, Collection<WikiPath> references ) 
         throws ProviderException
     {
         try
@@ -400,19 +400,19 @@ public class ReferenceManager
      * @throws RepositoryException 
      */
 
-    private void internalUpdateReferences(JCRWikiPage page, Collection<WikiName> newRefersTo) throws ProviderException, RepositoryException
+    private void internalUpdateReferences(JCRWikiPage page, Collection<WikiPath> newRefersTo) throws ProviderException, RepositoryException
     {
         //
         //  Get the old refererences so that we can go and ping every page on that
         //  list and make sure that their referredBy lists are fine.
         //
-        Collection<WikiName> oldRefersTo = page.getRefersTo();
+        Collection<WikiPath> oldRefersTo = page.getRefersTo();
 
         //
         //  Set up the new references list
         //
 
-        WikiName[] wn = newRefersTo.toArray(new WikiName[newRefersTo.size()]);
+        WikiPath[] wn = newRefersTo.toArray(new WikiPath[newRefersTo.size()]);
         String[] nr = new String[newRefersTo.size()];
         
         for( int i = 0; i < nr.length; i++ )
@@ -428,26 +428,26 @@ public class ReferenceManager
         //  Go ping the old pages that the reference list has changed.
         //
         
-        for( WikiName name : oldRefersTo )
+        for( WikiPath name : oldRefersTo )
         {
             if( !newRefersTo.contains( name ) )
             {
                 // A page is no longer referenced, so this page is removed from its
                 // referencedBy list.
-                Set<WikiName> refs = findReferrers( name );
-                refs.remove( page.getQualifiedName() );
+                Set<WikiPath> refs = findReferrers( name );
+                refs.remove( page.getWikiPath() );
                 setReferredBy( name, refs );
             }
         }
         
-        for( WikiName name : newRefersTo )
+        for( WikiPath name : newRefersTo )
         {
             if( !oldRefersTo.contains(name) )
             {
                 // There is a new reference which is not in the old references list,
                 // so we will need to add it to the new page's referencedBy list.
-                Set<WikiName> refs = findReferrers( name );
-                refs.add( page.getQualifiedName() );
+                Set<WikiPath> refs = findReferrers( name );
+                refs.add( page.getWikiPath() );
                 setReferredBy( name, refs );
             }
         }
@@ -547,9 +547,9 @@ public class ReferenceManager
     {
         ArrayList<String> result = new ArrayList<String>();
         
-        Collection<WikiName> refs = m_engine.getPage( pageName ).getRefersTo();
+        Collection<WikiPath> refs = m_engine.getPage( pageName ).getRefersTo();
         
-        for( WikiName wn : refs )
+        for( WikiPath wn : refs )
             result.add( wn.toString() );
         
         return result;
@@ -574,7 +574,7 @@ public class ReferenceManager
         Collection<WikiPage> c = m_engine.getContentManager().getAllPages( null );
         
         for( WikiPage p : c )
-            result.add( p.getQualifiedName().toString() );
+            result.add( p.getWikiPath().toString() );
         
         return result;
     }
@@ -592,7 +592,7 @@ public class ReferenceManager
             {
                 try
                 {
-                    pageRemoved( WikiName.valueOf(pageName) );
+                    pageRemoved( WikiPath.valueOf(pageName) );
                 }
                 catch( ProviderException e )
                 {

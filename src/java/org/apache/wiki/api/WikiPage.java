@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -67,7 +67,7 @@ public interface WikiPage
      * 
      *  @return the qualified page name, for example <code>mywiki:Main</code>
      */
-    public WikiName getQualifiedName();
+    public WikiPath getWikiPath();
 
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 
@@ -241,7 +241,7 @@ public interface WikiPage
      *          page refers to no other pages.
      *  @throws ProviderException If the references cannot be fetched.
      */
-    public Collection<WikiName> getRefersTo() throws ProviderException;
+    public Collection<WikiPath> getRefersTo() throws ProviderException;
     
     /**
      *  Returns the parent of the page. 

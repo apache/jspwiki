@@ -60,7 +60,7 @@ public class SpecialPageNameResolver extends PageNameResolver
     }
 
     @Override
-    public WikiName resolve( WikiName name ) throws ProviderException
+    public WikiPath resolve( WikiPath name ) throws ProviderException
     {
         if( simplePageExists(name) ) return name;
         
@@ -76,7 +76,7 @@ public class SpecialPageNameResolver extends PageNameResolver
      * @return <code>true</code> if the page exists, <code>false</code>
      *         otherwise
      */
-    protected final boolean simplePageExists( WikiName page ) throws ProviderException
+    protected final boolean simplePageExists( WikiPath page ) throws ProviderException
     {
         if( m_specialRedirects.containsKey( page ) )
         {

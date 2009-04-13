@@ -36,7 +36,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
@@ -306,7 +306,7 @@ public class MetaWeblogHandler
 
             String pageName = plugin.getNewEntryPage( engine, blogid );
 
-            WikiPage entryPage = engine.createPage( WikiName.valueOf( pageName ) );
+            WikiPage entryPage = engine.createPage( WikiPath.valueOf( pageName ) );
             entryPage.setAuthor( username );
 
             WikiContext context = engine.getWikiContextFactory().newViewContext( entryPage );
@@ -366,7 +366,7 @@ public class MetaWeblogHandler
             byte[] data = (byte[]) content.get( "bits" );
 
             AttachmentManager attmgr = engine.getAttachmentManager();
-            Attachment att = engine.getContentManager().addPage( WikiName.valueOf( blogid ).resolve( name ),
+            Attachment att = engine.getContentManager().addPage( WikiPath.valueOf( blogid ).resolve( name ),
                                                                  "application/octet-stream"); //FIXME! Needs a better guess
             att.setAuthor( username );
 

@@ -129,7 +129,7 @@ public class PageRenamer
                                                    JSPWikiMarkupParser.PROP_CAMELCASELINKS, 
                                                    m_camelCase );
 
-        Set<WikiName> referrers = getReferencesToChange( fromPage, engine );
+        Set<WikiPath> referrers = getReferencesToChange( fromPage, engine );
 
         //
         //  Do the actual rename by changing from the frompage to the topage, including
@@ -168,7 +168,7 @@ public class PageRenamer
         
         try
         {
-            engine.getReferenceManager().pageRemoved( fromPage.getQualifiedName() );
+            engine.getReferenceManager().pageRemoved( fromPage.getWikiPath() );
         }
         catch( PageNotFoundException e )
         {
@@ -204,19 +204,19 @@ public class PageRenamer
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<WikiName>referrers )
+    private void updateReferrers( WikiContext context, WikiPage fromPage, WikiPage toPage, Set<WikiPath>referrers )
     {
         WikiEngine engine = context.getEngine();
         
         if( referrers.isEmpty() ) return; // No referrers
         
-        for( WikiName pageName : referrers )
+        for( WikiPath pageName : referrers )
         {
             //  In case the page was just changed from under us, let's do this
             //  small kludge.
-            if( pageName.equals( fromPage.getQualifiedName() ) )
+            if( pageName.equals( fromPage.getWikiPath() ) )
             {
-                pageName = toPage.getQualifiedName();
+                pageName = toPage.getWikiPath();
             }
             
             try
@@ -255,13 +255,13 @@ public class PageRenamer
     }
 
     @SuppressWarnings("unchecked")
-    private Set<WikiName> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
+    private Set<WikiPath> getReferencesToChange( WikiPage fromPage, WikiEngine engine )
     {
-        Set<WikiName> referrers = new TreeSet<WikiName>();
+        Set<WikiPath> referrers = new TreeSet<WikiPath>();
         
         try
         {
-            Collection<WikiName> r = engine.getReferenceManager().findReferrers( fromPage.getQualifiedName() );
+            Collection<WikiPath> r = engine.getReferenceManager().findReferrers( fromPage.getWikiPath() );
             if( r != null ) referrers.addAll( r );
             /*
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );

@@ -33,7 +33,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageAlreadyExistsException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -168,7 +168,7 @@ public class BugReportHandler
             WikiPage newPage;
             try
             {
-                newPage = context.getEngine().createPage( WikiName.valueOf(pageName) );
+                newPage = context.getEngine().createPage( WikiPath.valueOf(pageName) );
             }
             catch( PageAlreadyExistsException e )
             {

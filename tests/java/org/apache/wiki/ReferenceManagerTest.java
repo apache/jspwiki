@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
 
@@ -98,22 +98,22 @@ public class ReferenceManagerTest extends TestCase
     }
 
     /** Shortcut to help testing. */
-    private Set<WikiName> findReferrers( String path ) throws ProviderException
+    private Set<WikiPath> findReferrers( String path ) throws ProviderException
     {
-        return mgr.findReferrers(  WikiName.valueOf(path) );
+        return mgr.findReferrers(  WikiPath.valueOf(path) );
     }
     
     public void testNonExistant1()
         throws Exception
     {
-        Collection<WikiName> c = mgr.findReferrers( WikiName.valueOf("Foobar2") );
+        Collection<WikiPath> c = mgr.findReferrers( WikiPath.valueOf("Foobar2") );
         
-        assertTrue( c.size() == 1 && c.contains( WikiName.valueOf("Foobar") ) );
+        assertTrue( c.size() == 1 && c.contains( WikiPath.valueOf("Foobar") ) );
     }
     
     public void testNonExistant2() throws ProviderException
     {
-        Collection<WikiName> c = findReferrers("TestBug");
+        Collection<WikiPath> c = findReferrers("TestBug");
         
         assertTrue( c.size() == 0 );
     }
@@ -121,7 +121,7 @@ public class ReferenceManagerTest extends TestCase
     public void testRemove()
         throws Exception
     {
-        Collection<WikiName> c = findReferrers("Foobar2");
+        Collection<WikiPath> c = findReferrers("Foobar2");
         
         assertTrue( c.size() == 1 && c.contains("Foobar") );
 
@@ -175,14 +175,14 @@ public class ReferenceManagerTest extends TestCase
     public void testReferrers()
         throws Exception
     {
-        Collection<WikiName> c = findReferrers( "TestPage" );
+        Collection<WikiPath> c = findReferrers( "TestPage" );
         assertNull( "TestPage referrers", c );
 
         c = findReferrers( "Foobar" );
         assertTrue( "Foobar referrers", c.size()==2  );
 
         c = findReferrers( "Foobar2" );
-        assertTrue( "Foobar2 referrers", c.size()==1 && ((WikiName) c.iterator().next()).equals("Foobar") );
+        assertTrue( "Foobar2 referrers", c.size()==1 && ((WikiPath) c.iterator().next()).equals("Foobar") );
 
         c = findReferrers( "Foobars" );
         assertEquals( "Foobars referrers", 2, c.size() );
@@ -210,7 +210,7 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "FatalBugs", "<foo>" );
         engine.saveText( "BugCommentPreviewDeletesAllComments", "FatalBug" );
         
-        Collection<WikiName> c = findReferrers( "FatalBugs" );
+        Collection<WikiPath> c = findReferrers( "FatalBugs" );
         
         assertEquals( "FatalBugs referrers number", 2, c.size()  );
     }

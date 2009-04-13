@@ -33,7 +33,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
@@ -259,16 +259,16 @@ public class LinkTag
 
                     reallink = MarkupParser.cleanLink( reallink );
 
-                    WikiName matchedLink;
+                    WikiPath matchedLink;
                     String sectref = "";
-                    if( (matchedLink = engine.getFinalPageName( WikiName.valueOf(reallink) )) != null )
+                    if( (matchedLink = engine.getFinalPageName( WikiPath.valueOf(reallink) )) != null )
                     {
                         sectref = "section-"+engine.encodeName(matchedLink.getPath())+"-"+namedSection;
                         sectref = "#"+sectref.replace('%', '_');
                     }
                     else
                     {
-                        matchedLink = WikiName.valueOf(reallink);
+                        matchedLink = WikiPath.valueOf(reallink);
                     }
 
                     url = makeBasicURL( m_context, matchedLink.toString(), parms, m_absolute ) + sectref;

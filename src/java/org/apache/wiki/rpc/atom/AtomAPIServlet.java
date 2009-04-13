@@ -36,7 +36,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
@@ -151,7 +151,7 @@ public class AtomAPIServlet extends HttpServlet
             WikiPage entryPage;
             try
             {
-                entryPage = m_engine.createPage( WikiName.valueOf( pageName ) );
+                entryPage = m_engine.createPage( WikiPath.valueOf( pageName ) );
             }
             catch( PageAlreadyExistsException e )
             {

@@ -29,7 +29,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -315,7 +315,7 @@ public class RSSGenerator
         // This is ugly
         try
         {
-            context.setPage( m_engine.createPage( WikiName.valueOf( "__DUMMY" ) ) );
+            context.setPage( m_engine.createPage( WikiPath.valueOf( "__DUMMY" ) ) );
         }
         catch( PageAlreadyExistsException e )
         {

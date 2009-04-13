@@ -31,7 +31,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -94,7 +94,7 @@ public class ReferringPagesPlugin
         {
             WikiPage page = context.getEngine().getPage( pageName );
         
-            Collection<WikiName> links = refmgr.findReferrers( page.getQualifiedName() );
+            Collection<WikiPath> links = refmgr.findReferrers( page.getWikiPath() );
             String wikitext = "";
 
             super.initialize( context, params );
@@ -115,7 +115,7 @@ public class ReferringPagesPlugin
                 // FIXME: Having to copy all of these is kinda stupid.
                 Collection<String> tmpList = new ArrayList<String>();
                 
-                for( WikiName wn : links ) tmpList.add( wn.toString() );
+                for( WikiPath wn : links ) tmpList.add( wn.toString() );
                 
                 tmpList= filterCollection( tmpList );
                 wikitext = wikitizeCollection( tmpList, m_separator, items );

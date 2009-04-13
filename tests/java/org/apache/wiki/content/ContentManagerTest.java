@@ -10,7 +10,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 
 
 public class ContentManagerTest extends TestCase
@@ -36,7 +36,7 @@ public class ContentManagerTest extends TestCase
     {
         try
         {
-            WikiPage p = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
+            WikiPage p = m_mgr.getPage( WikiPath.valueOf("Main:TestPage") );
             
             if( p != null ) m_mgr.deletePage( p );
         }
@@ -56,7 +56,7 @@ public class ContentManagerTest extends TestCase
     public void testBasicGet() throws Exception
     {
         String content = "Test Content";
-        WikiPage page = m_mgr.addPage( WikiName.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_mgr.addPage( WikiPath.valueOf("Main:TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
@@ -64,7 +64,7 @@ public class ContentManagerTest extends TestCase
         
         page.save();
         
-        WikiPage page2 = m_mgr.getPage( WikiName.valueOf("Main:TestPage") );
+        WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("Main:TestPage") );
         
         assertNotNull( "page2", page2 );
         
@@ -75,7 +75,7 @@ public class ContentManagerTest extends TestCase
     public void testBasicGetDefaultSpace() throws Exception
     {
         String content = "Test Content";
-        WikiPage page = m_mgr.addPage( WikiName.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+        WikiPage page = m_mgr.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
         
         assertNotNull("WikiPage create", page);
         
@@ -83,7 +83,7 @@ public class ContentManagerTest extends TestCase
         
         page.save();
         
-        WikiPage page2 = m_mgr.getPage( WikiName.valueOf("TestPage") );
+        WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("TestPage") );
         
         assertNotNull( "page2", page2 );
         
@@ -93,9 +93,9 @@ public class ContentManagerTest extends TestCase
     
     public void testPaths() throws Exception
     {
-        assertEquals( "One", "/pages/Main/MainPage", ContentManager.getJCRPath( WikiName.valueOf("Main:MainPage") ) );
+        assertEquals( "One", "/pages/Main/MainPage", ContentManager.getJCRPath( WikiPath.valueOf("Main:MainPage") ) );
         
-        assertEquals( "Back", WikiName.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/Main/MainPage" ) );
+        assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/Main/MainPage" ) );
     }
     
     public static Test suite()

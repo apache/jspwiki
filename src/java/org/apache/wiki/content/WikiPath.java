@@ -23,23 +23,23 @@ package org.apache.wiki.content;
 import java.io.Serializable;
 
 /**
- *  A WikiName represents a combination of a WikiSpace as well as a
+ *  A WikiPath represents a combination of a WikiSpace as well as a
  *  path within that space.  For example, in "MyWiki:MainPage/foo.jpg",
  *  "MyWiki" is the space, and "MainPage/foo.jpg" is the path within that space.
  *  <p>
- *  A WikiName is a static object which cannot be changed after it has been
+ *  A WikiPath is an immutable object which cannot be changed after it has been
  *  created.
  *  
  *  @since 3.0
  */
-public class WikiName implements Serializable, Comparable<WikiName>
+public class WikiPath implements Serializable, Comparable<WikiPath>
 {
     private static final long serialVersionUID = 1L;
     private String m_space;
     private String m_path;
     private String m_stringRepresentation = null;
     
-    private WikiName()
+    private WikiPath()
     {}
     
     /**
@@ -48,7 +48,7 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  @param space The space. If space == null, then uses {@link ContentManager#DEFAULT_SPACE}
      *  @param path The path
      */
-    public WikiName(String space, String path)
+    public WikiPath(String space, String path)
     {
         m_space = (space != null) ? space : ContentManager.DEFAULT_SPACE;
         m_path  = path;
@@ -63,11 +63,13 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  @return A WikiName
      *  @throws IllegalArgumentException If the path is null.
      */
-    public static WikiName valueOf(String path) throws IllegalArgumentException
+    // TODO: Measure performance in realtime situations, then figure out whether
+    //       we should have an internal HashMap for path objects.
+    public static WikiPath valueOf(String path) throws IllegalArgumentException
     {
         if( path == null ) throw new IllegalArgumentException("null path given to WikiName.valueOf().");
         
-        WikiName name = new WikiName();
+        WikiPath name = new WikiPath();
         int colon = path.indexOf(':');
         
         if( colon != -1 )
@@ -111,13 +113,13 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  @return A Valid WikiName or null, if there is no parent.
      */
     // FIXME: Would it make more sense to throw an exception?
-    public WikiName getParent()
+    public WikiPath getParent()
     {
         int slash = m_path.lastIndexOf( '/' );
         
         if( slash == -1 ) return null;
         
-        return new WikiName( m_space, m_path.substring( 0, slash ) );
+        return new WikiPath( m_space, m_path.substring( 0, slash ) );
     }
     
     /**
@@ -127,17 +129,17 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  @param path Path to resolve
      *  @return A new WikiName
      */
-    public WikiName resolve( String path )
+    public WikiPath resolve( String path )
     {
         int colon = path.indexOf( ':' );
         
         if( colon != -1 )
         {
             // It is a FQN, essentially an absolute path, so no resolution necessary
-            return WikiName.valueOf( path );
+            return WikiPath.valueOf( path );
         }
         
-        return new WikiName( getSpace(), path );
+        return new WikiPath( getSpace(), path );
     }
     
     /**
@@ -175,7 +177,7 @@ public class WikiName implements Serializable, Comparable<WikiName>
      *  @param o The Object to compare against.
      *  @return int
      */
-    public int compareTo( WikiName o )
+    public int compareTo( WikiPath o )
     {
         return toString().compareTo( o.toString() );
     }
@@ -191,9 +193,9 @@ public class WikiName implements Serializable, Comparable<WikiName>
      */
     public boolean equals( Object o )
     {
-        if( o instanceof WikiName )
+        if( o instanceof WikiPath )
         {
-            WikiName n = (WikiName) o;
+            WikiPath n = (WikiPath) o;
             
             return m_space.equals( n.m_space ) && m_path.equals( n.m_path );
         }

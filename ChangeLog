@@ -1,3 +1,10 @@
+2009-04-13  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-101
+        
+        * At Andrew's suggestion, WikiName is now called WikiPath. Also changed
+        relevant methods in WikiPage.
+        
 2009-04-12  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-100

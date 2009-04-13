@@ -914,7 +914,7 @@ public class WikiEngine
     {
         try
         {
-            return getFrontPage(null).getQualifiedName().toString();
+            return getFrontPage(null).getWikiPath().toString();
         }
         catch( ProviderException e )
         {
@@ -935,7 +935,7 @@ public class WikiEngine
     public WikiPage getFrontPage( String space ) throws ProviderException
     {
         WikiPage p;
-        WikiName name = new WikiName( space, m_frontPage );
+        WikiPath name = new WikiPath( space, m_frontPage );
 
         try
         {
@@ -1221,7 +1221,7 @@ public class WikiEngine
     {
         WikiPage att = null;
 
-        WikiName name = WikiName.valueOf(page);
+        WikiPath name = WikiPath.valueOf(page);
         try
         {
             if( getFinalPageName( name ) != null )
@@ -1250,7 +1250,7 @@ public class WikiEngine
         throws ProviderException
     {
         boolean isThere = false;
-        WikiName finalName = WikiName.valueOf( page );
+        WikiPath finalName = WikiPath.valueOf( page );
         try
         {
             //  Go and check if this particular version of this page exists
@@ -1439,7 +1439,7 @@ public class WikiEngine
 
         try
         {
-            WikiPage p = m_contentManager.getPage( WikiName.valueOf( page ), version );
+            WikiPage p = m_contentManager.getPage( WikiPath.valueOf( page ), version );
             result = p.getContentAsString();
         }
         catch( PageNotFoundException e )
@@ -1589,7 +1589,7 @@ public class WikiEngine
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public List<WikiName> scanWikiLinks( WikiPage page, String pagedata )
+    public List<WikiPath> scanWikiLinks( WikiPage page, String pagedata )
     {
         LinkCollector localCollector = new LinkCollector();
 
@@ -1601,11 +1601,11 @@ public class WikiEngine
                     false,
                     true );
 
-        ArrayList<WikiName> response = new ArrayList<WikiName>();
+        ArrayList<WikiPath> response = new ArrayList<WikiPath>();
         
         for( String s : localCollector.getLinks() )
         {
-            response.add( WikiName.valueOf( s ) );
+            response.add( WikiPath.valueOf( s ) );
         }
         
         return response;
@@ -1919,7 +1919,7 @@ public class WikiEngine
      *  @throws ProviderException if the backend fails
      *  @since 3.0
      */
-    public WikiPage createPage( WikiName name ) throws PageAlreadyExistsException, ProviderException
+    public WikiPage createPage( WikiPath name ) throws PageAlreadyExistsException, ProviderException
     {
         return m_contentManager.addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );
     }
@@ -1935,7 +1935,7 @@ public class WikiEngine
      */
     public WikiPage createPage( String fqn ) throws PageAlreadyExistsException, ProviderException
     {
-        return createPage( WikiName.valueOf( fqn ) );
+        return createPage( WikiPath.valueOf( fqn ) );
     }
     
     /**
@@ -1950,10 +1950,10 @@ public class WikiEngine
     public WikiPage getPage( String pagereq ) 
         throws PageNotFoundException, ProviderException
     {
-        return getPage( WikiName.valueOf( pagereq ) );
+        return getPage( WikiPath.valueOf( pagereq ) );
     }
 
-    public WikiPage getPage( WikiName name )
+    public WikiPage getPage( WikiPath name )
         throws PageNotFoundException, ProviderException
     {            
         return m_contentManager.getPage( name );
@@ -1976,7 +1976,7 @@ public class WikiEngine
     public WikiPage getPage( String pagereq, int version ) 
         throws PageNotFoundException, ProviderException
     {
-        WikiPage p = m_contentManager.getPage( WikiName.valueOf( pagereq ), version );
+        WikiPage p = m_contentManager.getPage( WikiPath.valueOf( pagereq ), version );
         
         return p;
     }
@@ -1996,7 +1996,7 @@ public class WikiEngine
     public List<WikiPage> getVersionHistory( String page ) 
         throws PageNotFoundException, ProviderException
     {
-        return m_contentManager.getVersionHistory( WikiName.valueOf( page ) );
+        return m_contentManager.getVersionHistory( WikiPath.valueOf( page ) );
     }
 
     /**
@@ -2564,7 +2564,7 @@ public class WikiEngine
      *  @return The rewritten page name.  May also return null in case there
      *          were problems.
      */
-    public final WikiName getFinalPageName( WikiName page ) throws ProviderException
+    public final WikiPath getFinalPageName( WikiPath page ) throws ProviderException
     {
         for( PageNameResolver resolver : m_nameResolvers )
         {

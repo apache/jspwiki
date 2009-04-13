@@ -55,20 +55,20 @@ public class EnglishPluralsPageNameResolverTest extends TestCase
     
     public void testFinalPageName() throws Exception
     {
-        WikiName page;
-        page = resolver.resolve( WikiName.valueOf("SinglePage") );
+        WikiPath page;
+        page = resolver.resolve( WikiPath.valueOf("SinglePage") );
         assertEquals( "SinglePage", page );
         
-        page = resolver.resolve( WikiName.valueOf("SinglePages") );
+        page = resolver.resolve( WikiPath.valueOf("SinglePages") );
         assertEquals( "SinglePage", page );
         
-        page = resolver.resolve( WikiName.valueOf("PluralPages") );
+        page = resolver.resolve( WikiPath.valueOf("PluralPages") );
         assertEquals( "PluralPages", page );
         
-        page = resolver.resolve( WikiName.valueOf( "PluralPage" ) );
+        page = resolver.resolve( WikiPath.valueOf( "PluralPage" ) );
         assertEquals( "PluralPages", page );
         
-        page = resolver.resolve( WikiName.valueOf("NonExistentPage") );
+        page = resolver.resolve( WikiPath.valueOf("NonExistentPage") );
         assertNull( page );
     }
 

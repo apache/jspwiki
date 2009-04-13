@@ -474,7 +474,7 @@ public class WeblogPlugin
                             //
                             if( pageDay != null && pageDay.after(start) && pageDay.before(end) )
                             {
-                                WikiPage firstVersion = mgr.getPage( p.getQualifiedName(), 1 );
+                                WikiPage firstVersion = mgr.getPage( p.getWikiPath(), 1 );
                                 result.add( firstVersion );
                             }
                         }

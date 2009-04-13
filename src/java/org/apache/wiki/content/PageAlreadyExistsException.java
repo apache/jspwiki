@@ -43,7 +43,7 @@ public class PageAlreadyExistsException extends Exception
      *  Construct an exception from a WikiName path. 
      *  @param path the path to the WikiPage, which already exists.
      */
-    public PageAlreadyExistsException( WikiName path )
+    public PageAlreadyExistsException( WikiPath path )
     {
         super( path.toString() );
     }

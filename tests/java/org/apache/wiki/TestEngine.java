@@ -47,7 +47,7 @@ import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
@@ -323,7 +323,7 @@ public class TestEngine extends WikiEngine
     public void addAttachment( String pageName, String attachmentName, byte[] data )
         throws PageAlreadyExistsException, ProviderException, IOException
     {
-        Attachment att = getContentManager().addPage( WikiName.valueOf( pageName ).resolve( attachmentName ), "application/octet-stream" );
+        Attachment att = getContentManager().addPage( WikiPath.valueOf( pageName ).resolve( attachmentName ), "application/octet-stream" );
 
         att.setContent( new ByteArrayInputStream(data) );
 
@@ -366,7 +366,7 @@ public class TestEngine extends WikiEngine
         {
             try
             {
-                page = createPage( WikiName.valueOf( pageName ) );
+                page = createPage( WikiPath.valueOf( pageName ) );
             }
             catch( PageAlreadyExistsException e1 )
             {
@@ -399,7 +399,7 @@ public class TestEngine extends WikiEngine
         WikiPage page;
         try
         {
-            page = createPage( WikiName.valueOf( pageName ) );
+            page = createPage( WikiPath.valueOf( pageName ) );
         }
         catch( PageAlreadyExistsException e1 )
         {

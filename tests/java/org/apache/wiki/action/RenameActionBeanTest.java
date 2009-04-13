@@ -26,7 +26,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.action.RenameActionBean;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.Users;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -151,8 +151,8 @@ public class RenameActionBeanTest extends TestCase
         m_engine.saveText("ReferstoTest", "This page refers to [Test].\n");
         WikiPage referringPage = m_engine.getPage("ReferstoTest");
         assertNotNull("Did not save page ReferstoTest!", referringPage );
-        assertNotNull( m_engine.getReferenceManager().findReferrers(WikiName.valueOf("Test")) );
-        assertEquals( 1, m_engine.getReferenceManager().findReferrers(WikiName.valueOf("Test")).size() );
+        assertNotNull( m_engine.getReferenceManager().findReferrers(WikiPath.valueOf("Test")) );
+        assertEquals( 1, m_engine.getReferenceManager().findReferrers(WikiPath.valueOf("Test")).size() );
         
         MockRoundtrip trip;
         ValidationErrors errors;

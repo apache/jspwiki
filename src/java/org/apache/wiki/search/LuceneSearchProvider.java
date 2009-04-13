@@ -51,7 +51,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiName;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
@@ -626,7 +626,7 @@ public class LuceneSearchProvider implements SearchProvider
                     log.error("Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache");
                     try
                     {
-                        page = m_engine.createPage( WikiName.valueOf( pageName ) );
+                        page = m_engine.createPage( WikiPath.valueOf( pageName ) );
                         pageRemoved( page );
                         m_engine.deletePage( pageName );
                     }
