@@ -129,7 +129,7 @@ import org.apache.wiki.event.WorkflowEvent;
  * <ul>
  * <li><strong>Named attributes</strong> are simple key-value pairs that
  * Workflow participants can get or set. Keys are Strings; values can be any
- * Object. Named attributes are set with {@link #setAttribute(String, Object)}
+ * Object. Named attributes are set with {@link #setAttribute(String, Serializable)}
  * and retrieved with {@link #getAttribute(String)}.</li>
  * <li><strong>Message arguments</strong> are used in combination with
  * JSPWiki's {@link org.apache.wiki.i18n.InternationalizationManager} to

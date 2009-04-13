@@ -30,17 +30,17 @@ import org.apache.wiki.WikiSession;
 /**
  * Interface for service providers of authorization information. After a user
  * successfully logs in, the
- * {@link com.ecyrd.jspwiki.auth.AuthenticationManager} consults the configured
+ * {@link org.apache.wiki.auth.AuthenticationManager} consults the configured
  * Authorizer to determine which additional
- * {@link com.ecyrd.jspwiki.auth.authorize.Role} principals should be added to
+ * {@link org.apache.wiki.auth.authorize.Role} principals should be added to
  * the user's WikiSession. To determine which roles should be injected, the
  * Authorizer is queried for the roles it knows about by calling
- * {@link com.ecyrd.jspwiki.auth.Authorizer#getRoles()}. Then, each role
+ * {@link org.apache.wiki.auth.Authorizer#getRoles()}. Then, each role
  * returned by the Authorizer is tested by calling
- * {@link com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+ * {@link org.apache.wiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
  * If this check fails, and the Authorizer is of type WebAuthorizer,
  * AuthenticationManager checks the role again by calling
- * {@link com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+ * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
  * Any roles that pass the test are injected into the Subject by firing
  * appropriate authentication events.
  * 

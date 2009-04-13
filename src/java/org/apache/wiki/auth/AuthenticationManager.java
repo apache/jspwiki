@@ -359,7 +359,7 @@ public final class AuthenticationManager
      * combination using JSPWiki's custom authentication mode, using the system default Locale.
      * The operation is otherwise identical to {@link #login(WikiSession, HttpServletRequest, String, String)}.
      * Also, the user's HTTP request is not made available to LoginModules via the
-     * {@link com.ecyrd.jspwiki.auth.login.HttpRequestCallback}.
+     * {@link org.apache.wiki.auth.login.HttpRequestCallback}.
      * @param session the current wiki session; may not be <code>null</code>.
      * @param username The user name
      * @param password the password
@@ -771,10 +771,10 @@ public final class AuthenticationManager
     /**
      * After successful login, this method is called to inject authorized role Principals into the WikiSession.
      * To determine which roles should be injected, the configured Authorizer
-     * is queried for the roles it knows about by calling  {@link com.ecyrd.jspwiki.auth.Authorizer#getRoles()}.
-     * Then, each role returned by the authorizer is tested by calling {@link com.ecyrd.jspwiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+     * is queried for the roles it knows about by calling  {@link org.apache.wiki.auth.Authorizer#getRoles()}.
+     * Then, each role returned by the authorizer is tested by calling {@link org.apache.wiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
      * If this check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
-     * {@link com.ecyrd.jspwiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+     * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
      * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
      * @param session the user's current WikiSession
      * @param authorizer the WikiEngine's configured Authorizer
