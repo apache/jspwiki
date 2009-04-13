@@ -94,7 +94,7 @@ public class ReferringPagesPlugin
         {
             WikiPage page = context.getEngine().getPage( pageName );
         
-            Collection<WikiPath> links = refmgr.findReferrers( page.getWikiPath() );
+            Collection<WikiPath> links = refmgr.findReferrers( page.getPath() );
             String wikitext = "";
 
             super.initialize( context, params );

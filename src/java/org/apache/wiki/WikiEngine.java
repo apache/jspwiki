@@ -914,7 +914,7 @@ public class WikiEngine
     {
         try
         {
-            return getFrontPage(null).getWikiPath().toString();
+            return getFrontPage(null).getPath().toString();
         }
         catch( ProviderException e )
         {

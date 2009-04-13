@@ -731,7 +731,7 @@ public class AttachmentServlet extends HttpServlet
         catch( PageNotFoundException e )
         {
             String contentType = "application/octet-stream"; // FIXME: This is not a good guess
-            WikiPath path = context.getPage().getWikiPath().resolve(filename);
+            WikiPath path = context.getPage().getPath().resolve(filename);
             
             try
             {

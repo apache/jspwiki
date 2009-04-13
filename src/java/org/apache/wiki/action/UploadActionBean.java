@@ -193,7 +193,7 @@ public class UploadActionBean extends AbstractPageActionBean
         if( att == null )
         {
             String contentType = "application/octet-stream"; // FIXME: This is not a good guess
-            WikiPath path = context.getPage().getWikiPath().resolve(filename);
+            WikiPath path = context.getPage().getPath().resolve(filename);
             att = engine.getContentManager().addPage( path, contentType );
             created = true;
         }

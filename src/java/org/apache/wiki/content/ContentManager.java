@@ -1002,7 +1002,7 @@ public class ContentManager implements WikiEventListener
             workflow.setAttribute( PRESAVE_PAGE_AUTHOR, author );
             workflow.setAttribute( PRESAVE_PAGE_ATTRIBUTES, (Serializable)page.getAttributes() );
             workflow.setAttribute( PRESAVE_PAGE_LASTMODIFIED, new Date() );
-            workflow.setAttribute( PRESAVE_PAGE_NAME, page.getWikiPath() );
+            workflow.setAttribute( PRESAVE_PAGE_NAME, page.getPath() );
             workflow.setAttribute( PRESAVE_PAGE_TEXT, saveText );
             
             return Outcome.STEP_COMPLETE;

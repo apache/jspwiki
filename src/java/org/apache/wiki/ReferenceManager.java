@@ -254,10 +254,10 @@ public class ReferenceManager
 
         for( WikiPath referred : refTo )
         {
-            log.debug( "Removing references to page %s from page %s", page.getWikiPath(), referred );
+            log.debug( "Removing references to page %s from page %s", page.getPath(), referred );
             Set<WikiPath> referredBy = findReferrers(referred);
             
-            referredBy.remove( page.getWikiPath() );
+            referredBy.remove( page.getPath() );
             
             try
             {
@@ -435,7 +435,7 @@ public class ReferenceManager
                 // A page is no longer referenced, so this page is removed from its
                 // referencedBy list.
                 Set<WikiPath> refs = findReferrers( name );
-                refs.remove( page.getWikiPath() );
+                refs.remove( page.getPath() );
                 setReferredBy( name, refs );
             }
         }
@@ -447,7 +447,7 @@ public class ReferenceManager
                 // There is a new reference which is not in the old references list,
                 // so we will need to add it to the new page's referencedBy list.
                 Set<WikiPath> refs = findReferrers( name );
-                refs.add( page.getWikiPath() );
+                refs.add( page.getPath() );
                 setReferredBy( name, refs );
             }
         }
@@ -574,7 +574,7 @@ public class ReferenceManager
         Collection<WikiPage> c = m_engine.getContentManager().getAllPages( null );
         
         for( WikiPage p : c )
-            result.add( p.getWikiPath().toString() );
+            result.add( p.getPath().toString() );
         
         return result;
     }

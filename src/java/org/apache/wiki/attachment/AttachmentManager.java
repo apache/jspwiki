@@ -201,7 +201,7 @@ public class AttachmentManager
             return null;
         }
 
-        WikiPath name = currentPage.getWikiPath().resolve( attachmentname );
+        WikiPath name = currentPage.getPath().resolve( attachmentname );
         
         Attachment att;
 

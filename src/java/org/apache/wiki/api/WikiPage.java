@@ -67,7 +67,7 @@ public interface WikiPage
      * 
      *  @return the qualified page name, for example <code>mywiki:Main</code>
      */
-    public WikiPath getWikiPath();
+    public WikiPath getPath();
 
     /**
      *  A WikiPage may have a number of attributes, which might or might not be 

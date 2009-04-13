@@ -168,7 +168,7 @@ public class PageRenamer
         
         try
         {
-            engine.getReferenceManager().pageRemoved( fromPage.getWikiPath() );
+            engine.getReferenceManager().pageRemoved( fromPage.getPath() );
         }
         catch( PageNotFoundException e )
         {
@@ -214,9 +214,9 @@ public class PageRenamer
         {
             //  In case the page was just changed from under us, let's do this
             //  small kludge.
-            if( pageName.equals( fromPage.getWikiPath() ) )
+            if( pageName.equals( fromPage.getPath() ) )
             {
-                pageName = toPage.getWikiPath();
+                pageName = toPage.getPath();
             }
             
             try
@@ -261,7 +261,7 @@ public class PageRenamer
         
         try
         {
-            Collection<WikiPath> r = engine.getReferenceManager().findReferrers( fromPage.getWikiPath() );
+            Collection<WikiPath> r = engine.getReferenceManager().findReferrers( fromPage.getPath() );
             if( r != null ) referrers.addAll( r );
             /*
             Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( fromPage );

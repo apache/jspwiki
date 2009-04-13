@@ -179,13 +179,13 @@ public class PageManager extends ModuleManager
         WikiPage p;
         try
         {
-            p = m_engine.getContentManager().getPage( page.getWikiPath() );
+            p = m_engine.getContentManager().getPage( page.getPath() );
         }
         catch( PageNotFoundException e )
         {
             try
             {
-                p = m_engine.getContentManager().addPage( page.getWikiPath(), ContentManager.JSPWIKI_CONTENT_TYPE );
+                p = m_engine.getContentManager().addPage( page.getPath(), ContentManager.JSPWIKI_CONTENT_TYPE );
             }
             catch( PageAlreadyExistsException e1 )
             {

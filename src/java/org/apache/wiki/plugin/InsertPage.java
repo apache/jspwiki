@@ -102,7 +102,7 @@ public class InsertPage
             WikiPage page = null;
             try
             {
-                WikiPath pageName = engine.getFinalPageName( context.getPage().getWikiPath().resolve( includedPage ) );
+                WikiPath pageName = engine.getFinalPageName( context.getPage().getPath().resolve( includedPage ) );
                 if( pageName != null )
                 {
                     page = engine.getPage( pageName );

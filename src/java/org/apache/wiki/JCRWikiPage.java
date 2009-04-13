@@ -106,7 +106,7 @@ public class JCRWikiPage
     /* (non-Javadoc)
      * @see org.apache.wiki.WikiPage#getQualifiedName()
      */
-    public WikiPath getWikiPath()
+    public WikiPath getPath()
     {
         return m_name;
     }
