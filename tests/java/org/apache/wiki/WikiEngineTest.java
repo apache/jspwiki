@@ -41,6 +41,8 @@ public class WikiEngineTest extends TestCase
 
     TestEngine m_engine;
 
+    private static final WikiPath PATH_FOOBAR  = WikiPath.valueOf( "Foobar" );
+    private static final WikiPath PATH_FOOBARS = WikiPath.valueOf( "Foobars" );
 
     public WikiEngineTest( String s )
     {
@@ -120,10 +122,10 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "Foobar", "1" );
         m_engine.saveText( "Foobars", "2" );
 
-        assertEquals( "plural mistake", "Foobars",
+        assertEquals( "plural mistake", PATH_FOOBARS,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
 
-        assertEquals( "singular mistake", "Foobar",
+        assertEquals( "singular mistake", PATH_FOOBAR,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobar" )) );
     }
 
@@ -132,9 +134,9 @@ public class WikiEngineTest extends TestCase
     {
         m_engine.saveText( "Foobar", "1" );
 
-        assertEquals( "plural mistake", "Foobar",
+        assertEquals( "plural mistake", PATH_FOOBAR,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
-        assertEquals( "singular mistake", "Foobar",
+        assertEquals( "singular mistake", PATH_FOOBAR,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobar") ) );
     }
 
@@ -143,9 +145,9 @@ public class WikiEngineTest extends TestCase
     {
         m_engine.saveText( "Foobars", "1" );
 
-        assertEquals( "plural mistake", "Foobars",
+        assertEquals( "plural mistake", PATH_FOOBARS,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobars") ) );
-        assertEquals( "singular mistake", "Foobars",
+        assertEquals( "singular mistake", PATH_FOOBARS,
                       m_engine.getFinalPageName( WikiPath.valueOf("Foobar") ) );
     }
     
@@ -245,7 +247,7 @@ public class WikiEngineTest extends TestCase
         m_engine.deletePage( "Test" );
         Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiPath.valueOf( "Test" ) ), src ).toArray();
         
-        assertEquals( "item 0", "Foobar", result[0] );
+        assertEquals( "item 0", PATH_FOOBAR, result[0] );
         assertEquals( "item 1", "This is a link", result[1] );
     }
 

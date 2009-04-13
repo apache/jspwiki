@@ -61,7 +61,7 @@ public class JCRWikiPage
 
     private static final String ATTR_CONTENT = "wiki:content";
 
-    private static final String CONTENTTYPE  = "wiki:contentType";
+    public  static final String CONTENTTYPE  = "wiki:contentType";
     
 
     public static final String REFERSTO = "wiki:refersTo";
@@ -600,7 +600,9 @@ public class JCRWikiPage
 
     public boolean isAttachment() throws ProviderException
     {
-        if( getContentType().equals( ContentManager.JSPWIKI_CONTENT_TYPE ) ) return false;
+        String contentType = getContentType();
+        
+        if( ContentManager.JSPWIKI_CONTENT_TYPE.equals( contentType ) ) return false;
         
         return true;
     }

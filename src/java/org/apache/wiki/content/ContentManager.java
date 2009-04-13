@@ -1158,6 +1158,8 @@ public class ContentManager implements WikiEventListener
      */
     public JCRWikiPage addPage( WikiPath path, String contentType ) throws PageAlreadyExistsException, ProviderException
     {
+        checkValidContentType( contentType );
+        
         try
         {
             Session session = m_sessionManager.getSession();
@@ -1166,7 +1168,8 @@ public class ContentManager implements WikiEventListener
             
             //nd.addMixin( "mix:versionable" );
             nd.addMixin( "mix:referenceable" );
-
+            nd.setProperty( JCRWikiPage.CONTENTTYPE, contentType );
+            
             JCRWikiPage page = new JCRWikiPage(m_engine, nd);
             
             return page;
@@ -1177,6 +1180,14 @@ public class ContentManager implements WikiEventListener
         }
     }
 
+    /** Throws an exception if the content type is not a fully valid content type. */
+    private void checkValidContentType( String type ) throws ProviderException
+    {
+        if( type == null ) throw new ProviderException("null content type");
+        
+        if( type.indexOf('/') == -1 ) throw new ProviderException("Not RFC compliant type");
+    }
+    
     /**
      *  Get content from the repository.
      *  
