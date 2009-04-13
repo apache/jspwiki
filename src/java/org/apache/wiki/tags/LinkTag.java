@@ -289,7 +289,7 @@ public class LinkTag
 
             parms = addParamsForRecipient( parms, m_containedParams );
 
-            if( p instanceof Attachment )
+            if( p.isAttachment() )
             {
                 String ctx = m_context;
                 // Switch context appropriately when attempting to view an

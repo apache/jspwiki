@@ -57,7 +57,7 @@ public class LinkToParentTag
         //  We just simply set the page to be our parent page
         //  and call the superclass.
         //
-        if( p instanceof Attachment )
+        if( p.isAttachment() )
         {
             setPage( p.getParent().getName() );
         }

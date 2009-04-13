@@ -62,10 +62,14 @@ public class RPCHandlerUTF8
         {
             WikiPage p = (WikiPage) i.next();
 
-            if( !(p instanceof Attachment) )
+            try
             {
-                result.add( p.getName() );
+                if( !(p.isAttachment()) )
+                {
+                    result.add( p.getName() );
+                }
             }
+            catch( ProviderException e ) {}
         }
 
         return result;
@@ -128,10 +132,14 @@ public class RPCHandlerUTF8
         {
             WikiPage page = (WikiPage)i.next();
 
-            if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
+            try
             {
-                result.add( encodeWikiPage( page ) );
+                if( page.getLastModified().after( since ) && !(page.isAttachment()) )
+                {
+                    result.add( encodeWikiPage( page ) );
+                }
             }
+            catch( ProviderException e ) {}
         }
 
         return result;

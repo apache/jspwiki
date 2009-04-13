@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.providers.ProviderException;
 
 
 /**
@@ -55,23 +56,23 @@ public class PageTypeTag
     }
 
     public final int doWikiStartTag()
-        throws IOException
+        throws IOException,ProviderException
     {
         WikiPage   page   = m_wikiContext.getPage();
 
         if( page != null )
         {
-            if( m_type.equals("attachment") && page instanceof Attachment )
+            if( m_type.equals("attachment") && page.isAttachment() )
             {
                 return EVAL_BODY_INCLUDE;
             }
             
-            if( m_type.equals("page") && !(page instanceof Attachment) )
+            if( m_type.equals("page") && !(page.isAttachment()) )
             {
                 return EVAL_BODY_INCLUDE;
             }
 
-            if( m_type.equals("weblogentry") && !(page instanceof Attachment) && page.getName().indexOf("_blogentry_") != -1 )
+            if( m_type.equals("weblogentry") && !(page.isAttachment()) && page.getName().indexOf("_blogentry_") != -1 )
             {
                 return EVAL_BODY_INCLUDE;
             }

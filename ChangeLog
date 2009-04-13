@@ -5,6 +5,11 @@
         * At Andrew's suggestion, WikiName is now called WikiPath. Also changed
         relevant methods in WikiPage.
         
+        * Small build configuration changes since not all XML was validating.
+        
+        * Replaced all "instanceof Attachment" calls with WikiPage.isAttachment()
+        calls.
+        
 2009-04-12  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-100

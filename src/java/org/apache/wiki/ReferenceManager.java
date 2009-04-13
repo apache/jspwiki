@@ -154,7 +154,7 @@ public class ReferenceManager
             {
                 WikiPage page = (WikiPage) it.next();
 
-                if( page instanceof Attachment )
+                if( page.isAttachment() )
                 {
                     // Skip attachments
                 }
@@ -187,7 +187,7 @@ public class ReferenceManager
             {
                 WikiPage page  = (WikiPage)it.next();
 
-                if( page instanceof Attachment )
+                if( page.isAttachment() )
                 {
                     // We cannot build a reference list from the contents
                     // of attachments, so we skip them.

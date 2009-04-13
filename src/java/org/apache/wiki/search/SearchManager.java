@@ -324,7 +324,14 @@ public class SearchManager
      */
     public void pageRemoved(WikiPage page)
     {
-        m_searchProvider.pageRemoved(page);
+        try
+        {
+            m_searchProvider.pageRemoved(page);
+        }
+        catch( ProviderException e )
+        {
+            log.error("Unable to remove page from Search index",e);
+        }
     }
 
     /**
@@ -363,7 +370,14 @@ public class SearchManager
      */
     public void reindexPage(WikiPage page)
     {
-        m_searchProvider.reindexPage(page);
+        try
+        {
+            m_searchProvider.reindexPage(page);
+        }
+        catch( ProviderException e )
+        {
+            log.error( "Unable to index page", e );
+        }
     }
 
     /**

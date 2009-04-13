@@ -40,7 +40,7 @@ public interface SearchProvider extends WikiProvider
      * Delete a page from the search index
      * @param page Page to remove from search index
      */
-    public void pageRemoved(WikiPage page);
+    public void pageRemoved(WikiPage page) throws ProviderException;
 
     /**
      *  Adds a WikiPage for indexing queue.  This is called a queue, since
@@ -48,8 +48,9 @@ public interface SearchProvider extends WikiProvider
      *  be done in a separate thread.
      *
      *  @param page The WikiPage to be indexed.
+     *  @throws ProviderException If the page could not be indexed for some reason. 
      */
-    public void reindexPage(WikiPage page);
+    public void reindexPage(WikiPage page) throws ProviderException;
 
     /**
      * Search for pages matching a search query

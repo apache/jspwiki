@@ -274,7 +274,7 @@ public class RSSGenerator
 
         try
         {
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 res = getAttachmentDescription( (WikiPage)page );
             }
@@ -439,7 +439,7 @@ public class RSSGenerator
      *  @param feed A Feed to generate the feed to.
      *  @return feed.getString().
      */
-    protected String generateFullWikiRSS( WikiContext wikiContext, Feed feed )
+    protected String generateFullWikiRSS( WikiContext wikiContext, Feed feed ) throws ProviderException
     {
         feed.setChannelTitle( m_engine.getApplicationName() );
         feed.setFeedURL( m_engine.getBaseURL() );
@@ -471,7 +471,7 @@ public class RSSGenerator
 
             String url;
 
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),
@@ -506,7 +506,8 @@ public class RSSGenerator
      * @return the RSS representation of the wiki context
      */
     @SuppressWarnings("unchecked")
-    protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed )
+    protected String generateWikiPageRSS( WikiContext wikiContext, List changed, Feed feed ) 
+        throws ProviderException
     {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
@@ -537,7 +538,7 @@ public class RSSGenerator
 
             String url;
 
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),
@@ -621,7 +622,7 @@ public class RSSGenerator
 
             String url;
 
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 url = m_engine.getURL( WikiContext.ATTACH,
                                        page.getName(),

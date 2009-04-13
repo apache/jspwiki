@@ -52,7 +52,7 @@ public class ParentPageNameTag
 
         if( page != null )
         {
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 pageContext.getOut().print( engine.beautifyTitle( page.getParent().getName()) );
             }

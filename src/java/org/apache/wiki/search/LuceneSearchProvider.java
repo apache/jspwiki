@@ -500,7 +500,7 @@ public class LuceneSearchProvider implements SearchProvider
      *
      *  @param page WikiPage to add to the update queue.
      */
-    public void reindexPage( WikiPage page )
+    public void reindexPage( WikiPage page ) throws ProviderException
     {
         if( page != null )
         {
@@ -508,24 +508,20 @@ public class LuceneSearchProvider implements SearchProvider
 
             // TODO: Think if this was better done in the thread itself?
 
-            if( page instanceof Attachment )
+            if( page.isAttachment() )
             {
                 text = getAttachmentContent( (Attachment) page );
             }
             else
             {
-                text = m_engine.getPureText( page );
+                text = page.getContentAsString();
             }
 
-            if( text != null )
-            {
-                // Add work item to m_updates queue.
-                Object[] pair = new Object[2];
-                pair[0] = page;
-                pair[1] = text;
-                m_updates.add(pair);
-                log.debug("Scheduling page " + page.getName() + " for index update");
-            }
+            Object[] pair = new Object[2];
+            pair[0] = page;
+            pair[1] = text;
+            m_updates.add(pair);
+            log.debug("Scheduling page " + page.getName() + " for index update");
         }
     }
 
@@ -595,7 +591,7 @@ public class LuceneSearchProvider implements SearchProvider
                 try
                 {
                     page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
-                    if(page instanceof Attachment)
+                    if(page.isAttachment())
                     {
                         // Currently attachments don't look nice on the search-results page
                         // When the search-results are cleaned up this can be enabled again.

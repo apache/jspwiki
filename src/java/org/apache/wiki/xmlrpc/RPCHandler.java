@@ -109,9 +109,16 @@ public class RPCHandler
 
         for( WikiPage p : pages )
         {
-            if( !(p instanceof Attachment) )
+            try
             {
-                result.add( toRPCString(p.getName()) );
+                if( !(p.isAttachment()) )
+                {
+                    result.add( toRPCString(p.getName()) );
+                }
+            }
+            catch( ProviderException e )
+            {
+                // We ignore these exceptions. Don't know whether we really should.
             }
         }
 
@@ -172,9 +179,16 @@ public class RPCHandler
 
         for( WikiPage page : pages )
         {
-            if( page.getLastModified().after( since ) && !(page instanceof Attachment) )
+            try
             {
-                result.add( encodeWikiPage( page ) );
+                if( page.getLastModified().after( since ) && !(page.isAttachment()) )
+                {
+                    result.add( encodeWikiPage( page ) );
+                }
+            }
+            catch( ProviderException e )
+            {
+                // We ignore these.
             }
         }
 

@@ -57,19 +57,19 @@ public class EnglishPluralsPageNameResolverTest extends TestCase
     {
         WikiPath page;
         page = resolver.resolve( WikiPath.valueOf("SinglePage") );
-        assertEquals( "SinglePage", page );
+        assertEquals( "Main:SinglePage", page.toString() );
         
         page = resolver.resolve( WikiPath.valueOf("SinglePages") );
-        assertEquals( "SinglePage", page );
+        assertEquals( "Main:SinglePage", page.toString() );
         
         page = resolver.resolve( WikiPath.valueOf("PluralPages") );
-        assertEquals( "PluralPages", page );
+        assertEquals( "Main:PluralPages", page.toString() );
         
         page = resolver.resolve( WikiPath.valueOf( "PluralPage" ) );
-        assertEquals( "PluralPages", page );
+        assertEquals( "Main:PluralPages", page.toString() );
         
         page = resolver.resolve( WikiPath.valueOf("NonExistentPage") );
-        assertNull( page );
+        assertEquals( "Main:NonExistentPage", page.toString() );
     }
 
     public static Test suite()
