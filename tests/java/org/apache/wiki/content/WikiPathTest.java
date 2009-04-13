@@ -27,7 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class WikiNameTest extends TestCase
+public class WikiPathTest extends TestCase
 {
     public void testParse1()
     {
@@ -65,7 +65,7 @@ public class WikiNameTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite(WikiNameTest.class);
+        return new TestSuite(WikiPathTest.class);
     }
 
 }
