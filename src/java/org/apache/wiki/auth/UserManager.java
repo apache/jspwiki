@@ -369,7 +369,7 @@ public final class UserManager
                 AuthenticationManager mgr = m_engine.getAuthenticationManager();
                 if ( newProfile && !mgr.isContainerAuthenticated() )
                 {
-                    mgr.login( session, profile.getLoginName(), profile.getPassword() );
+                    mgr.login( session, null, profile.getLoginName(), profile.getPassword() );
                 }
             }
             catch ( LoginException e )

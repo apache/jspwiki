@@ -314,7 +314,7 @@ public final class PropertyReader
     {
         //get variable name/values from properties...
         Map<String,String> vars = new HashMap<String,String>();
-        Enumeration propertyList = properties.propertyNames();
+        Enumeration<?> propertyList = properties.propertyNames();
         while( propertyList.hasMoreElements() )
         {
             String propertyName = (String)propertyList.nextElement();
@@ -341,12 +341,10 @@ public final class PropertyReader
                 continue;
             }
 
-            Iterator iter = vars.entrySet().iterator();
-            while ( iter.hasNext() )
+            for ( Map.Entry<String, String>entry : vars.entrySet() )
             {
-                Map.Entry entry = (Map.Entry)iter.next();
-                String varName = (String)entry.getKey();
-                String varValue = (String)entry.getValue();
+                String varName = entry.getKey();
+                String varValue = entry.getValue();
 
                 //replace old property value, using the same variabe. If we don't overwrite
                 //the same one the next loop works with the original one again and

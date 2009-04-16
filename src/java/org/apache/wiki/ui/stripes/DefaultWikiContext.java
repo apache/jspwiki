@@ -59,6 +59,14 @@ public class DefaultWikiContext implements WikiContext
     private String m_requestContext = null;
 
     private WikiSession m_session = null;
+    
+    /**
+     * No-argument constructor for the DefaultWikiContext class.
+     */
+    public DefaultWikiContext()
+    {
+        super();
+    }
 
     /**
      * Stores the HttpServletRequest. May be null, if the request did not come

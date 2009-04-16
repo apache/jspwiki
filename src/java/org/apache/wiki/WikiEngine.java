@@ -542,7 +542,7 @@ public class WikiEngine
             m_nameResolvers.add( m_specialPageResolver );
             m_nameResolvers.add( new EnglishPluralsPageNameResolver( this ) );
             
-            Class urlclass = ClassUtil.findClass( "org.apache.wiki.url",
+            Class<?> urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
             m_urlConstructor = (URLConstructor) urlclass.newInstance();
             m_urlConstructor.initialize( this, props );
@@ -1219,8 +1219,6 @@ public class WikiEngine
      */
     public boolean pageExists( String page )
     {
-        WikiPage att = null;
-
         WikiPath name = WikiPath.valueOf(page);
         try
         {

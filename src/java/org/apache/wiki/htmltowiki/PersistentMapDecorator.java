@@ -31,18 +31,18 @@ import java.util.Set;
  * 
  * @author Sebastian Baltes (sbaltes@gmx.com)
  */
-public class PersistentMapDecorator extends Properties
+public class PersistentMapDecorator<K,V> extends Properties
 {
     private static final long serialVersionUID = 0L;
     
-    private Map m_delegate;
+    private Map<K,V> m_delegate;
 
     /**
      *  Creates a new decorator for a given map.
      *  
      *  @param delegate The map to create a decorator for.
      */
-    public PersistentMapDecorator( Map delegate )
+    public PersistentMapDecorator( Map<K,V> delegate )
     {
         m_delegate = delegate;
     }
@@ -137,7 +137,7 @@ public class PersistentMapDecorator extends Properties
     @Override
     public Object put( Object arg0, Object arg1 )
     {
-        return m_delegate.put( arg0, arg1 );
+        return m_delegate.put( (K)arg0, (V)arg1 );
     }
 
     /**

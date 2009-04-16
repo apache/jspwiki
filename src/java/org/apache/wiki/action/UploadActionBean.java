@@ -168,7 +168,6 @@ public class UploadActionBean extends AbstractPageActionBean
         // Get the file name, size etc from the FileBean
         InputStream data = filebean.getInputStream();
         String filename = filebean.getFileName();
-        int contentLength = (int)filebean.getSize();
         
         // Cleanse the file name
         filename = AttachmentManager.cleanFileName( filename );

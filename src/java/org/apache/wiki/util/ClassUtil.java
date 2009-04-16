@@ -67,9 +67,9 @@ public final class ClassUtil
         
                 XPath xpath = XPath.newInstance("/classmappings/mapping");
     
-                List nodes = xpath.selectNodes( doc );
+                List<?> nodes = xpath.selectNodes( doc );
             
-                for( Iterator i = nodes.iterator(); i.hasNext(); )
+                for( Iterator<?> i = nodes.iterator(); i.hasNext(); )
                 {
                     Element f = (Element) i.next();
                 
@@ -112,7 +112,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found
      *          from the list.
      */
-    public static Class findClass( List packages, String className )
+    public static Class<?> findClass( List<String> packages, String className )
         throws ClassNotFoundException
     {
         ClassLoader loader = ClassUtil.class.getClassLoader();
@@ -123,10 +123,8 @@ public final class ClassUtil
         }
         catch( ClassNotFoundException e )
         {
-            for( Iterator i = packages.iterator(); i.hasNext(); )
+            for( String packageName : packages )
             {
-                String packageName = (String)i.next();
-
                 try
                 {
                     return loader.loadClass( packageName + "." + className );
@@ -152,7 +150,7 @@ public final class ClassUtil
      *  @throws ClassNotFoundException if this particular class cannot be found.
      */
 
-    public static Class findClass( String packageName, String className )
+    public static Class<?> findClass( String packageName, String className )
         throws ClassNotFoundException
     {
         ArrayList<String> list = new ArrayList<String>();
@@ -256,7 +254,7 @@ public final class ClassUtil
         {
             Class<?> cl = getMappedClass( requestedClass );
          
-            Constructor[] ctors = cl.getConstructors();
+            Constructor<?>[] ctors = cl.getConstructors();
             
             //
             //  Try to find the proper constructor by comparing the
@@ -322,7 +320,7 @@ public final class ClassUtil
      *  @return A Class object which you can then instantiate.
      *  @throws WikiException
      */
-    private static Class getMappedClass( String requestedClass )
+    private static Class<?> getMappedClass( String requestedClass )
         throws WikiException
     {
         String mappedClass = c_classMappings.get( requestedClass );
@@ -334,7 +332,7 @@ public final class ClassUtil
         
         try
         {
-            Class cl = Class.forName(mappedClass);
+            Class<?> cl = Class.forName(mappedClass);
             
             return cl;
         }

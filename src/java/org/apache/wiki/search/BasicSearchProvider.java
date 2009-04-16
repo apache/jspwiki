@@ -61,7 +61,7 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public void reindexPage(WikiPage page) {}
+    public void reindexPage(WikiPage page) throws ProviderException {}
 
     /**
      *  Parses a query into something that we can use.

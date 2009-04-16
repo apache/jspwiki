@@ -21,14 +21,11 @@
 package org.apache.wiki.parser;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-
-import javax.servlet.ServletException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

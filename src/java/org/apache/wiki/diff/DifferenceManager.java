@@ -72,7 +72,7 @@ public class DifferenceManager
 
         try
         {
-            Class providerClass = ClassUtil.findClass( "org.apache.wiki.diff", providerClassName );
+            Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.diff", providerClassName );
             m_provider = (DiffProvider)providerClass.newInstance();
         }
         catch( ClassNotFoundException e )

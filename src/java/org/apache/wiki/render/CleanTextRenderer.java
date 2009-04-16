@@ -21,7 +21,6 @@
 package org.apache.wiki.render;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wiki.WikiContext;
@@ -70,12 +69,10 @@ public class CleanTextRenderer
         {
             XPath xp = XPath.newInstance( ALL_TEXT_NODES );
         
-            List nodes = xp.selectNodes(m_document.getDocument());
+            List<?> nodes = xp.selectNodes(m_document.getDocument());
             
-            for( Iterator i = nodes.iterator(); i.hasNext(); )
+            for( Object el : nodes )
             {
-                Object el = i.next();
-                
                 if( el instanceof Text )
                 {
                     sb.append( ((Text)el).getValue() );

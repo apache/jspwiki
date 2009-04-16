@@ -65,7 +65,6 @@ public interface WikiPageProvider
      *  @param page The page name.
      *  @return true, if the page exists; false otherwise.
      */
-
     public boolean pageExists( String page );
 
     /**
@@ -78,7 +77,7 @@ public interface WikiPageProvider
      *  @param query An array of QueryItems to match
      *  @return A Collection of WikiPages.
      */
-    public Collection findPages( QueryItem[] query );
+    public Collection<WikiPage> findPages( QueryItem[] query );
 
     /**
      *  Returns info about the page.
@@ -98,8 +97,7 @@ public interface WikiPageProvider
      *  @return A collection of WikiPages
      *  @throws ProviderException If something goes wrong.
      */
-
-    public Collection getAllPages()
+    public Collection<WikiPage> getAllPages()
         throws ProviderException;
 
     /**
@@ -109,8 +107,7 @@ public interface WikiPageProvider
      *  @return A Collection of WikiPages
      *  @since 1.6.4
      */
-
-    public Collection getAllChangedSince( Date date );
+    public Collection<WikiPage> getAllChangedSince( Date date );
 
     /**
      *  Gets the number of pages.
@@ -119,7 +116,6 @@ public interface WikiPageProvider
      *  @throws ProviderException If something goes wrong
      *  @since 1.6.4
      */
-
     public int getPageCount()
         throws ProviderException;
 
@@ -131,8 +127,7 @@ public interface WikiPageProvider
      *  @return A collection of WikiPages.
      *  @throws ProviderException If something goes wrong.
      */
-
-    public List getVersionHistory( String page )
+    public List<WikiPage> getVersionHistory( String page )
         throws ProviderException;
 
     /**
@@ -144,7 +139,6 @@ public interface WikiPageProvider
      *  @return The content of the page, or null, if the page does not exist.
      *  @throws ProviderException If something goes wrong.
      */
-
     public String getPageText( String page, int version )
         throws ProviderException;
 
@@ -160,7 +154,6 @@ public interface WikiPageProvider
      *
      *  @throws ProviderException If the page cannot be removed for some reason.
      */
-
     public void deleteVersion( String pageName, int version )
         throws ProviderException;
 
@@ -185,7 +178,6 @@ public interface WikiPageProvider
      */
     public void deletePage( String pageName )
         throws ProviderException;
-
      
      /**
       * Move a page

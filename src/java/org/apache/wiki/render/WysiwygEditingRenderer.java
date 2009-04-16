@@ -22,7 +22,6 @@ package org.apache.wiki.render;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Iterator;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
@@ -72,9 +71,8 @@ public class WysiwygEditingRenderer
      */
     private void processChildren(Element baseElement)
     {
-        for( Iterator itr = baseElement.getChildren().iterator(); itr.hasNext(); )
+        for( Object childElement : baseElement.getChildren() )
         {
-            Object childElement = itr.next();
             if( childElement instanceof Element )
             {
                 Element element = (Element)childElement;

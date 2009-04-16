@@ -1,3 +1,12 @@
+2009-04-16  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-102
+        
+        * Improved enhanced-for loops and generics throughout.
+        Fixed some tag and Stripes errors that were preventing the WAR
+        from running. RPC classes and search providers now propagate
+        exceptions for page fetching and reindexing.
+
 2009-04-13  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-101

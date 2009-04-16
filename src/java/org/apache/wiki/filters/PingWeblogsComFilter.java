@@ -98,11 +98,12 @@ public class PingWeblogsComFilter
                                         log.error("Unable to execute weblogs.com ping to URL: "+url.toString(),ex);
                                     }
 
+                                    @SuppressWarnings("unchecked")
                                     public void handleResult( Object result,
                                                               URL url,
                                                               String method )
                                     {
-                                        Hashtable res = (Hashtable) result;
+                                        Hashtable<String,Object> res = (Hashtable<String,Object>) result;
 
                                         Boolean flerror = (Boolean)res.get("flerror");
                                         String  msg     = (String)res.get("message");

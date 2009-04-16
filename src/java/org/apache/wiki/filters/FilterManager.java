@@ -166,7 +166,7 @@ public final class FilterManager extends ModuleManager
             
             int priority = 0; // FIXME: Currently fixed.
 
-            Class cl = ClassUtil.findClass( "org.apache.wiki.filters",
+            Class<?> cl = ClassUtil.findClass( "org.apache.wiki.filters",
                                             className );
 
             PageFilter filter = (PageFilter)cl.newInstance();
@@ -282,9 +282,9 @@ public final class FilterManager extends ModuleManager
         
         XPath xpath = XPath.newInstance("/pagefilters/filter");
     
-        List nodes = xpath.selectNodes( doc );
+        List<?> nodes = xpath.selectNodes( doc );
         
-        for( Iterator i = nodes.iterator(); i.hasNext(); )
+        for( Iterator<?> i = nodes.iterator(); i.hasNext(); )
         {
             Element f = (Element) i.next();
             
@@ -292,9 +292,9 @@ public final class FilterManager extends ModuleManager
 
             Properties props = new Properties();
             
-            List params = f.getChildren("param");
+            List<?> params = f.getChildren("param");
             
-            for( Iterator par = params.iterator(); par.hasNext(); )
+            for( Iterator<?> par = params.iterator(); par.hasNext(); )
             {
                 Element p = (Element) par.next();
                 
@@ -322,10 +322,8 @@ public final class FilterManager extends ModuleManager
     {
         fireEvent( WikiPageEvent.PRE_TRANSLATE_BEGIN, context );
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        for( PageFilter f : m_pageFilters )
         {
-            PageFilter f = (PageFilter) i.next();
-
             pageData = f.preTranslate( context, pageData );
         }
 
@@ -348,10 +346,8 @@ public final class FilterManager extends ModuleManager
     {
         fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        for( PageFilter f : m_pageFilters )
         {
-            PageFilter f = (PageFilter) i.next();
-
             htmlData = f.postTranslate( context, htmlData );
         }
 
@@ -374,10 +370,8 @@ public final class FilterManager extends ModuleManager
     {
         fireEvent( WikiPageEvent.PRE_SAVE_BEGIN, context );
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        for( PageFilter f : m_pageFilters )
         {
-            PageFilter f = (PageFilter) i.next();
-
             pageData = f.preSave( context, pageData );
         }
 
@@ -400,10 +394,8 @@ public final class FilterManager extends ModuleManager
     {
         fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
 
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        for( PageFilter f : m_pageFilters )
         {
-            PageFilter f = (PageFilter) i.next();
-
             // log.info("POSTSAVE: "+f.toString() );
             f.postSave( context, pageData );
         }
@@ -429,10 +421,8 @@ public final class FilterManager extends ModuleManager
      */
     public void destroy()
     {
-        for( Iterator i = m_pageFilters.iterator(); i.hasNext(); )
+        for( PageFilter f : m_pageFilters )
         {
-            PageFilter f = (PageFilter) i.next();
-
             f.destroy( m_engine );
         }        
     }

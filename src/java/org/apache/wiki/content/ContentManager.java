@@ -329,6 +329,7 @@ public class ContentManager implements WikiEventListener
     /**
      *  Shuts down the ContentManager in a good fashion.
      */
+    @SuppressWarnings("unchecked")
     public void shutdown()
     {
         release();

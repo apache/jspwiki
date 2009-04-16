@@ -368,16 +368,9 @@ public class SearchManager
      *
      *   @param page The page.
      */
-    public void reindexPage(WikiPage page)
+    public void reindexPage(WikiPage page) throws ProviderException
     {
-        try
-        {
-            m_searchProvider.reindexPage(page);
-        }
-        catch( ProviderException e )
-        {
-            log.error( "Unable to index page", e );
-        }
+        m_searchProvider.reindexPage(page);
     }
 
     /**

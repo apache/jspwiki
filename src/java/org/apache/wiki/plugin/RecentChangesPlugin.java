@@ -29,7 +29,6 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -222,7 +221,8 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                 }
                 catch( ProviderException e )
                 {
-                    // FIXME: Not sure what should go here.
+                	// Rethrow any exceptions if isAttachment() fails.
+                    throw new PluginException( "Could not determine whether WikiPage " + pageref.getName() + " is an attachment.", e );
                 }
                 
                 

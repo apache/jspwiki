@@ -26,7 +26,6 @@ import javax.servlet.jsp.JspWriter;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.content.PageNotFoundException;
 
 

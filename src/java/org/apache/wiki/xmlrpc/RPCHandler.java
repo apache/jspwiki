@@ -101,7 +101,7 @@ public class RPCHandler
         return toRPCString(m_engine.getApplicationName());
     }
 
-    public Vector<String> getAllPages()
+    public Vector<String> getAllPages() throws ProviderException
     {
         checkPermission( PagePermission.VIEW );
         Collection<WikiPage> pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
@@ -109,16 +109,9 @@ public class RPCHandler
 
         for( WikiPage p : pages )
         {
-            try
+            if( !(p.isAttachment() ) )
             {
-                if( !(p.isAttachment()) )
-                {
-                    result.add( toRPCString(p.getName()) );
-                }
-            }
-            catch( ProviderException e )
-            {
-                // We ignore these exceptions. Don't know whether we really should.
+                result.add( toRPCString(p.getName()) );
             }
         }
 
@@ -160,7 +153,7 @@ public class RPCHandler
         return ht;
     }
 
-    public Vector<Hashtable<String, Object>> getRecentChanges( Date since )
+    public Vector<Hashtable<String, Object>> getRecentChanges( Date since ) throws ProviderException
     {
         checkPermission( PagePermission.VIEW );
         Collection<WikiPage> pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
@@ -179,16 +172,9 @@ public class RPCHandler
 
         for( WikiPage page : pages )
         {
-            try
+            if( page.getLastModified().after( since ) && !( page.isAttachment() ) )
             {
-                if( page.getLastModified().after( since ) && !(page.isAttachment()) )
-                {
-                    result.add( encodeWikiPage( page ) );
-                }
-            }
-            catch( ProviderException e )
-            {
-                // We ignore these.
+                result.add( encodeWikiPage( page ) );
             }
         }
 

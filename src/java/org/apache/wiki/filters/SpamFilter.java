@@ -463,9 +463,9 @@ public class SpamFilter
 
             long time = System.currentTimeMillis()-60*1000L; // 1 minute
 
-            for( Iterator i = m_lastModifications.iterator(); i.hasNext(); )
+            for( Iterator<Host> i = m_lastModifications.iterator(); i.hasNext(); )
             {
-                Host host = (Host)i.next();
+                Host host = i.next();
 
                 //
                 //  Check if this item is invalid
@@ -723,9 +723,9 @@ public class SpamFilter
     {
         long now = System.currentTimeMillis();
 
-        for( Iterator i = m_temporaryBanList.iterator(); i.hasNext(); )
+        for( Iterator<Host> i = m_temporaryBanList.iterator(); i.hasNext(); )
         {
-            Host host = (Host)i.next();
+            Host host = i.next();
 
             if( host.getReleaseTime() < now )
             {
@@ -753,10 +753,8 @@ public class SpamFilter
 
             long now = System.currentTimeMillis();
 
-            for( Iterator i = m_temporaryBanList.iterator(); i.hasNext(); )
+            for( Host host : m_temporaryBanList )
             {
-                Host host = (Host)i.next();
-
                 if( host.getAddress().equals(remote) )
                 {
                     long timeleft = (host.getReleaseTime() - now) / 1000L;

@@ -32,7 +32,7 @@
 <wiki:IncludeResources type="script" />
 <meta name="wikiContext" content='${wikiContext.requestContext}' />
 <meta name="wikiBaseUrl" content='<wiki:BaseURL/>' />
-<meta name="wikiPageUrl" content='<wiki:Link format="url" page="#$%" />' />
+<meta name="wikiPageUrl" content='<wiki:Link format="url" page="${wikiContext.page.name}" />' />
 <meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
 <meta name="wikiJsonUrl" content='<%=  WikiContextFactory.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>

@@ -29,29 +29,48 @@ import org.apache.wiki.log.LoggerFactory;
 
 import net.sourceforge.stripes.config.RuntimeConfiguration;
 
-
 /**
  * Subclass of Stripes
- * {@link net.sourceforge.stripes.config.RuntimeConfiguration} that keeps a
- * reference to the running WikiEngine. This Configuration is loaded at startup
+ * {@link net.sourceforge.stripes.config.RuntimeConfiguration} that initializes
+ * Stripes and starts up the WikiEngine. This Configuration is loaded at startup
  * by the {@link net.sourceforge.stripes.controller.StripesFilter}, so it is
- * one of the very first things that happens. Because it loads first, it creates
- * the WikiEngine.
+ * one of the very first things that happens. The {@link #init()} method
+ * performs all of the initialization tasks. After initialization, the current
+ * StripesConfiguration can be retrieved at any time by calling {@link }.
  * 
  * @author Andrew Jaquith
  */
 public class WikiRuntimeConfiguration extends RuntimeConfiguration
 {
-    public static final String STRIPES_CONFIGURATION = "WikiRuntimeConfiguration";
+    private static final String STRIPES_CONFIGURATION = "WikiRuntimeConfiguration";
 
-    private static final Logger log = LoggerFactory.getLogger(WikiRuntimeConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger( WikiRuntimeConfiguration.class );
 
     private WikiEngine m_engine = null;
 
     /**
+     * Returns the Stripes WikiRuntimeConfiguration for a supplied
+     * ServletContext. Only one Stripes Configuration will be stored per
+     * ServletContext (and by implication, per WikiEngine).
+     * 
+     * @param context the servlet context
+     * @return the configuration
+     */
+    public static WikiRuntimeConfiguration getConfiguration( ServletContext context )
+    {
+        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) context.getAttribute( STRIPES_CONFIGURATION );
+        if( config != null )
+        {
+            return config;
+        }
+        throw new IllegalStateException( "WikiRuntimeConfiguration not found!" );
+    }
+
+    /**
      * Initializes the WikiRuntimeConfiguration by calling the superclass
      * {@link net.sourceforge.stripes.config.Configuration#init()} method, then
-     * setting the internally cached WikiEngine reference.
+     * starting the WikiEngine. This method also stashes the
+     * WikiRuntimeConfiguration in the ServletContext as an attribute.
      */
     @Override
     public void init()
@@ -59,14 +78,14 @@ public class WikiRuntimeConfiguration extends RuntimeConfiguration
         // Initialize the Stripes configuration
         super.init();
 
-        // Retrieve the WikiEngine
-        log.info("Attempting to retrieve WikiEngine.");
+        // Stash the Configuration so we can find it later
         ServletContext context = super.getServletContext();
-        m_engine = WikiEngine.getInstance(context, null);
-        log.info("WikiEngine is running.");
-        
-        // Stash the Configuration so JSPWiki (e.g., URLConstructors) can find it
         context.setAttribute( STRIPES_CONFIGURATION, this );
+
+        // Start the JSPWiki WikiEngine
+        log.info( "Attempting to start WikiEngine." );
+        m_engine = WikiEngine.getInstance( context, null );
+        log.info( "WikiEngine is running." );
     }
 
     /**

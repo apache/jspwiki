@@ -24,7 +24,6 @@
  */
 
 package org.apache.wiki.action;
-import java.net.URI;
 import java.util.Properties;
 
 import junit.framework.Test;

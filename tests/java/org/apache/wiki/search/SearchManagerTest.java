@@ -157,7 +157,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.sleep( 5000L ); // Should cover for both index and initial delay
  
-        Collection res = m_mgr.findPages( "Test" );
+        Collection<SearchResult> res = m_mgr.findPages( "Test" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
@@ -176,7 +176,7 @@ public class SearchManagerTest extends TestCase
 
         Thread.sleep( 5000L ); // Should cover for both index and initial delay
 
-        Collection res = m_mgr.findPages( "TestPage" );
+        Collection<SearchResult> res = m_mgr.findPages( "TestPage" );
 
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );

@@ -24,7 +24,6 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -201,10 +200,8 @@ public final class JSONRPCManager extends RPCManager
                 
                 WikiEngine e = WikiEngine.getInstance( req.getSession().getServletContext(), null );
                
-                for( Iterator i = c_globalObjects.values().iterator(); i.hasNext(); )
+                for( CallbackContainer cc : c_globalObjects.values() )
                 {
-                    CallbackContainer cc = (CallbackContainer) i.next();
-                    
                     if( cc.m_object == instance )
                     {
                         canDo = e.getAuthorizationManager().checkPermission( WikiSession.getWikiSession(e, req), 
@@ -290,10 +287,8 @@ public final class JSONRPCManager extends RPCManager
         
         bridge.registerCallback( acc, HttpServletRequest.class );
         
-        for( Iterator i = c_globalObjects.values().iterator(); i.hasNext(); )
+        for( CallbackContainer cc : c_globalObjects.values() )
         {
-            CallbackContainer cc = (CallbackContainer) i.next();
-       
             bridge.registerObject( cc.m_id, cc.m_object );
         }
 

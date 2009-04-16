@@ -93,7 +93,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     /**
      *
      */
-    private         Constructor m_rendererConstructor;
+    private         Constructor<?> m_rendererConstructor;
 
     /**
      *  Name of the WikiContext variable which is set to Boolean.TRUE or Boolean.FALSE
@@ -146,10 +146,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
         {
             renderImplName = DEFAULT_RENDERER;
         }
-        Class[] rendererParams = { WikiContext.class, WikiDocument.class };
+        Class<?>[] rendererParams = { WikiContext.class, WikiDocument.class };
         try
         {
-            Class c = Class.forName( renderImplName );
+            Class<?> c = Class.forName( renderImplName );
             m_rendererConstructor = c.getConstructor( rendererParams );
         }
         catch( ClassNotFoundException e )
@@ -353,12 +353,10 @@ public class RenderingManager implements WikiEventListener, InternalModule
                     //
                     if( referringPages != null )
                     {
-                        Iterator i = referringPages.iterator();
-                        while (i.hasNext())
+                        for ( WikiPath path : referringPages )
                         {
-                            WikiPath page = (WikiPath) i.next();
-                            if( log.isDebugEnabled() ) log.debug( "Flushing " + page );
-                            m_documentCache.flushPattern( page.toString() );
+                            if( log.isDebugEnabled() ) log.debug( "Flushing " + path );
+                            m_documentCache.flushPattern( path.toString() );
                         }
                     }
                 }

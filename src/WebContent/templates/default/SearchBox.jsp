@@ -23,16 +23,16 @@
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
       <a href="#" id='quickView' class='action'
-      onclick="SearchBox.navigate( '<wiki:Link format="url" page="__PAGEHERE__"/>','<fmt:message key="sbox.view.title"/>' );"
+      onclick="SearchBox.navigate( '<wiki:Link format="url" page="Main"/>','<fmt:message key="sbox.view.title"/>' );"
         title="<fmt:message key="sbox.view.title"/>"><fmt:message key="sbox.view"/></a>
       <a href="#" id='quickEdit' class='action'
-      onclick="SearchBox.navigate( '<wiki:Link format="url" context="edit" page="__PAGEHERE__"/>','<fmt:message key="sbox.edit.title"/>' );"
+      onclick="SearchBox.navigate( '<wiki:Link format="url" context="edit" page="Main"/>','<fmt:message key="sbox.edit.title"/>' );"
         title="<fmt:message key="sbox.edit.title"/>"><fmt:message key="sbox.edit"/></a>
       <a href="#" id='quickClone' class='action'	
-      onclick="return SearchBox.navigate( '<wiki:Link format="url" page="__PAGEHERE__" context="edit" />', '<fmt:message key="sbox.clone.title"/>', true );"
+      onclick="return SearchBox.navigate( '<wiki:Link format="url" page="Main" context="edit" />', '<fmt:message key="sbox.clone.title"/>', true );"
         title="<fmt:message key="sbox.clone.title"/>"><fmt:message key="sbox.clone"/></a>
       <a href="#" id="advancedSearch" class='action'
-      onclick="SearchBox.navigate( '<wiki:BaseURL />Search.jsp?query=__PAGEHERE__','<wiki:Variable var="pagename"/>' )"
+      onclick="SearchBox.navigate( '<wiki:BaseURL />Search.jsp?query=Main','<wiki:Variable var="pagename"/>' )"
         title="<fmt:message key="sbox.find.title"/> [ f ]"><fmt:message key="sbox.find"/></a>
     </div>
     <div id="searchResult">

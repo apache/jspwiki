@@ -49,7 +49,7 @@ import org.apache.wiki.providers.ProviderException;
 
 public class JCRWikiPage
     implements Cloneable,
-               Comparable, WikiPage, Attachment
+               Comparable<Object>, WikiPage, Attachment
 {
     private static final long serialVersionUID = 1L;
 

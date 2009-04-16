@@ -47,12 +47,14 @@ import net.sourceforge.stripes.controller.*;
  * <p>
  * Stripes {@link net.sourceforge.stripes.controller.Interceptor} that
  * instantiates the correct WikiContext associated with JSPs, checks for access,
- * and redirects users if necessary. The interceptor executes twice: the first
+ * and redirects users if necessary. The interceptor executes three times: the first
  * time is after the first lifecycle state, <em>aka</em>
  * {@link  net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
  * but before the second stage.
  * {@link net.sourceforge.stripes.controller.LifecycleStage#HandlerResolution}.
- * The second time the interceptor executes is after the third lifecycle stage,
+ * The second time the interceptor executes is after the second lifecycle stage,
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#HandlerResolution}.
+ * The third time the interceptor executes is after the third lifecycle stage,
  * aka
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation},
  * but before the fourth stage
@@ -90,7 +92,7 @@ import net.sourceforge.stripes.controller.*;
  * 
  * @author Andrew Jaquith
  */
-@Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.CustomValidation } )
+@Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation } )
 public class WikiInterceptor implements Interceptor
 {
     private static final Logger log = LoggerFactory.getLogger( WikiInterceptor.class );
@@ -122,9 +124,46 @@ public class WikiInterceptor implements Interceptor
         {
             return interceptAfterActionBeanResolution( context );
         }
+        else if( LifecycleStage.HandlerResolution.equals( context.getLifecycleStage() ) )
+        {
+            return interceptAfterHandlerResolution( context );
+        }
         else if( LifecycleStage.CustomValidation.equals( context.getLifecycleStage() ) )
         {
             return interceptAfterBindingAndValidation( context );
+        }
+        return null;
+    }
+
+    /**
+     * After the Stripes event handler method has been identified, this method
+     * sets the corresponding JSPWiki request context for the WikiContext.
+     * Because Stripes event handler methods correspond exactly one-to-one
+     * with pre-3.0 JSPWiki requests contexts, we allows Stripes to identify the
+     * handler method first, then make sure the WikiContext's context is synchronized.
+     * @param context the execution context
+     * @return always returns <code>null</code>
+     */
+    protected Resolution interceptAfterHandlerResolution( ExecutionContext context ) throws Exception
+    {
+        // Did the handler resolution stage return a Resolution? If so, bail.
+        Resolution r = context.proceed();
+        if( r != null )
+        {
+            return r;
+        }
+
+        // Get the event handler method
+        Method handler = context.getHandler();
+
+        // Make sure we set the WikiContext request context, while we're at it
+        WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
+        Map<Method, HandlerInfo> eventinfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
+        HandlerInfo eventInfo = eventinfos.get( handler );
+        if( eventInfo != null )
+        {
+            String requestContext = eventInfo.getRequestContext();
+            actionBean.getContext().setRequestContext( requestContext );
         }
         return null;
     }
@@ -235,15 +274,8 @@ public class WikiInterceptor implements Interceptor
 
         // Get the event handler method
         Method handler = context.getHandler();
-
-        // Make sure we set the WikiContext request context, while we're at it
         Map<Method, HandlerInfo> eventinfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
         HandlerInfo eventInfo = eventinfos.get( handler );
-        if( eventInfo != null )
-        {
-            String requestContext = eventInfo.getRequestContext();
-            actionBean.getContext().setRequestContext( requestContext );
-        }
 
         // Does the event handler have a required permission?
         boolean allowed = true;

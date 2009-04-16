@@ -23,7 +23,6 @@ package org.apache.wiki.action;
 
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.mail.AuthenticationFailedException;

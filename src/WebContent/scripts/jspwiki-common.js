@@ -1002,7 +1002,7 @@ var SearchBox = {
 			s=encodeURIComponent(s);
 			if(clone && (s != p)) s += '&clone=' + p;
 
-			location.href = url.replace('__PAGEHERE__', s );
+			location.href = url.replace('Main', s );
 		};
 		
 		if(s!='') {

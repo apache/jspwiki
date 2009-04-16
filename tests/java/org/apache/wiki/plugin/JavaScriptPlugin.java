@@ -41,7 +41,7 @@ public class JavaScriptPlugin
 {
     protected static boolean c_inited = false;
     
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         return "<script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n";

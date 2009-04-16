@@ -152,7 +152,7 @@ public class CreoleRenderer extends WikiRenderer
         //
         //  Go through the children
         //
-        for( Iterator i = ce.getContent().iterator(); i.hasNext(); )
+        for( Iterator<?> i = ce.getContent().iterator(); i.hasNext(); )
         {
             Content c = (Content)i.next();
             

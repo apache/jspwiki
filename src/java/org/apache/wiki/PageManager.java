@@ -34,6 +34,7 @@ import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.providers.WikiPageProvider;
 
@@ -128,7 +129,7 @@ public class PageManager extends ModuleManager
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    public Collection getAllPages()
+    public Collection<WikiPage> getAllPages()
         throws ProviderException
     {
         return m_engine.getContentManager().getAllPages(null);
@@ -242,7 +243,7 @@ public class PageManager extends ModuleManager
      *          an empty list.
      *  @since 2.0.22.
      */
-    public List getActiveLocks()
+    public List<PageLock> getActiveLocks()
     {
         return m_engine.getContentManager().getActiveLocks();
     }
@@ -273,7 +274,7 @@ public class PageManager extends ModuleManager
      *  @throws PageNotFoundException if the wiki page cannot be found
      *  @throws ProviderException If the repository fails.
      */
-    public List getVersionHistory( String pageName )
+    public List<WikiPage> getVersionHistory( String pageName )
         throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getVersionHistory( WikiPath.valueOf( pageName ) );
@@ -366,7 +367,7 @@ public class PageManager extends ModuleManager
      *  {@inheritDoc}
      */
     @Override
-    public Collection modules()
+    public Collection<WikiModuleInfo> modules()
     {
         // TODO Auto-generated method stub
         return null;

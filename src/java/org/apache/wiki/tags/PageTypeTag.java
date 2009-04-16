@@ -23,7 +23,6 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.ProviderException;
 
 

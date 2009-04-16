@@ -31,7 +31,6 @@ import net.sourceforge.stripes.validation.*;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;

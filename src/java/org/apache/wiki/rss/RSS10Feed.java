@@ -22,7 +22,6 @@ package org.apache.wiki.rss;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Iterator;
 
 import org.apache.ecs.xml.XML;
 import org.apache.wiki.WikiContext;
@@ -53,12 +52,9 @@ public class RSS10Feed extends Feed
         
         XML rdfseq = new XML( "rdf:Seq" );
         
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Entry e : m_entries )
         {
-            Entry e = (Entry)i.next();
-
             String url = e.getURL();
-
             rdfseq.addElement( new XML("rdf:li").addAttribute( "rdf:resource", url ) );
         }
         
@@ -73,10 +69,8 @@ public class RSS10Feed extends Feed
         
         WikiEngine engine = m_wikiContext.getEngine();
         
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Entry e : m_entries )
         {
-            Entry e = (Entry)i.next();
-            
             String url = e.getURL();
             
             XML item = new XML( "item" );

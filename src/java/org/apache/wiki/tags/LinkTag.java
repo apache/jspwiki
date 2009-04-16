@@ -31,7 +31,6 @@ import javax.servlet.jsp.tagext.BodyTag;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
@@ -315,19 +314,19 @@ public class LinkTag
         return url;
     }
 
-    private String addParamsForRecipient( String addTo, Map params )
+    private String addParamsForRecipient( String addTo, Map<String,String> params )
     {
         if( params == null || params.size() == 0 )
         {
             return addTo;
         }
         StringBuilder buf = new StringBuilder();
-        Iterator it = params.entrySet().iterator();
+        Iterator<Map.Entry<String,String>> it = params.entrySet().iterator();
         while( it.hasNext() )
         {
-            Map.Entry e = (Map.Entry) it.next();
-            String n = (String)e.getKey();
-            String v = (String)e.getValue();
+            Map.Entry<String,String> e = it.next();
+            String n = e.getKey();
+            String v = e.getValue();
             buf.append( n );
             buf.append( "=" );
             buf.append( v );

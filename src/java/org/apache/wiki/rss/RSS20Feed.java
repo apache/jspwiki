@@ -56,7 +56,7 @@ public class RSS20Feed extends Feed
         super( context );
     }
 
-    private List getItems()
+    private List<Element> getItems()
     {
         ArrayList<Element> list = new ArrayList<Element>();
         SimpleDateFormat fmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
@@ -67,9 +67,8 @@ public class RSS20Feed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Entry e : m_entries )
         {
-            Entry e = (Entry)i.next();
             WikiPage p = e.getPage();
 
             String url = e.getURL();
@@ -90,11 +89,11 @@ public class RSS20Feed extends Feed
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    Collection<WikiPage> c = engine.getAttachmentManager().listAttachments(p);
 
-                    for( Iterator a = c.iterator(); a.hasNext(); )
+                    for( WikiPage page : c )
                     {
-                        Attachment att = (Attachment) a.next();
+                        Attachment att = (Attachment)page;
 
                         Element attEl = new Element("enclosure");
                         attEl.setAttribute( "url", engine.getURL(WikiContext.ATTACH, att.getName(), null, true ) );

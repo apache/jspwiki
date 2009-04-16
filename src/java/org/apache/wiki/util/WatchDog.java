@@ -146,18 +146,18 @@ public final class WatchDog
 
         synchronized( c_kennel )
         {
-            for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
+            for( Iterator<Map.Entry<Integer, WeakReference<WatchDog>>> i = c_kennel.entrySet().iterator(); i.hasNext(); )
             {
-                Map.Entry e = (Map.Entry) i.next();
+                Map.Entry<Integer, WeakReference<WatchDog>> e = i.next();
 
-                WeakReference w = (WeakReference) e.getValue();
+                WeakReference<WatchDog> w = e.getValue();
 
                 //
                 //  Remove expired as well
                 //
                 if( w.get() == null )
                 {
-                    c_kennel.remove( e.getKey() );
+                    i.remove();
                     scrub();
                     break;
                 }
@@ -413,11 +413,11 @@ public final class WatchDog
             
             synchronized( c_kennel )
             {
-                for( Iterator i = c_kennel.entrySet().iterator(); i.hasNext(); )
+                for( Iterator<Map.Entry<Integer, WeakReference<WatchDog>>> i = c_kennel.entrySet().iterator(); i.hasNext();  )
                 {
-                    Map.Entry entry = (Map.Entry) i.next();
+                    Map.Entry<Integer, WeakReference<WatchDog>> entry = i.next();
 
-                    WeakReference wr = (WeakReference) entry.getValue();
+                    WeakReference<WatchDog> wr = entry.getValue();
 
                     WatchDog w = (WatchDog) wr.get();
 

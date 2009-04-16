@@ -30,13 +30,11 @@ public class Util
     /**
      * Check that a collection contains the required string.
      */
-    public static boolean collectionContains( Collection container,
+    public static boolean collectionContains( Collection<String> container,
                                               String captive )
     {
-        Iterator i = container.iterator();
-        while( i.hasNext() )
+        for ( String cap : container )
         {
-            Object cap = i.next();
             if( cap instanceof String && captive.equals( cap ) )
                 return true;
         }

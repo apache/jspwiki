@@ -33,7 +33,6 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.WikiPath;
-import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -141,7 +140,7 @@ public class ReferenceManagerTest extends TestCase
     public void testUnreferenced()
         throws Exception
     {
-        Collection c = mgr.findUnreferenced();
+        Collection<String> c = mgr.findUnreferenced();
         assertTrue( "Unreferenced page not found by ReferenceManager",
                     Util.collectionContains( c, "TestPage" ));
     }
@@ -152,24 +151,24 @@ public class ReferenceManagerTest extends TestCase
     {
         engine.saveText( "Foobar2", "[TestPage]" );
 
-        Collection c = mgr.findUnreferenced();
+        Collection<String> c = mgr.findUnreferenced();
         assertEquals( "Wrong # of orphan pages, stage 1", 0, c.size() );
 
         engine.saveText( "Foobar2", "norefs" );
         c = mgr.findUnreferenced();
         assertEquals( "Wrong # of orphan pages", 1, c.size() );
 
-        Iterator i = c.iterator();
-        String first = (String) i.next();
+        Iterator<String> i = c.iterator();
+        String first = i.next();
         assertEquals( "Not correct referrers", "TestPage", first );
     }
 
     public void testUncreated()
         throws Exception
     {
-        Collection c = mgr.findUncreated();
+        Collection<String> c = mgr.findUncreated();
         
-        assertTrue( c.size()==1 && ((String) c.iterator().next()).equals("Foobar2") );
+        assertTrue( c.size()==1 && c.iterator().next().equals("Foobar2") );
     }
 
     public void testReferrers()
@@ -192,7 +191,7 @@ public class ReferenceManagerTest extends TestCase
     public void testRefersTo()
         throws Exception
     {
-        Collection s = mgr.findRefersTo( "Foobar" );
+        Collection<String> s = mgr.findRefersTo( "Foobar" );
         
         assertTrue( "does not have Foobar", s.contains("Foobar") );
         // assertTrue( "does not have Foobars", s.contains("Foobars") );
@@ -226,12 +225,12 @@ public class ReferenceManagerTest extends TestCase
         throws Exception
     {
         engine.saveText( "TestPage", "Reference to [Foobars]." );
-        Collection c = mgr.findUnreferenced();
-        assertTrue( "Foobar unreferenced", c.size()==1 && ((String) c.iterator().next()).equals("TestPage") );
+        Collection<String> c = mgr.findUnreferenced();
+        assertTrue( "Foobar unreferenced", c.size()==1 && c.iterator().next().equals("TestPage") );
 
-        c = findReferrers( "Foobar" );
+        Collection<WikiPath>p = findReferrers( "Foobar" );
         assertTrue( "Foobar referrers", 
-                    c.size()==2 );
+                    p.size()==2 );
     }
 
 
@@ -246,17 +245,18 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "Foobar2s", "qwertz" );
         assertTrue( "no uncreated", mgr.findUncreated().size()==0 );
 
-        Collection c = findReferrers( "Foobar2s" );
-        assertTrue( "referrers", c!=null && c.size()==1 && ((String) c.iterator().next()).equals("Foobar") );
+        Collection<WikiPath> c = findReferrers( "Foobar2s" );
+        assertTrue( "referrers", c!=null && c.size()==1 && c.iterator().next().toString().equals("Foobar") );
     }
 
     public void testUpdateBothExist()
         throws Exception
     {
         engine.saveText( "Foobars", "qwertz" );
-        Collection c = findReferrers( "Foobars" );
+        Collection<WikiPath> c = findReferrers( "Foobars" );
         assertEquals( "Foobars referrers", 2, c.size() );
-        assertTrue( "Foobars referrer is not TestPage", c.contains( "TestPage" ) && c.contains("Foobar"));
+        assertTrue( "Foobars referrer is not TestPage", c.contains( WikiPath.valueOf( "TestPage" ) ) 
+                    && c.contains( WikiPath.valueOf( "Foobar") ) );
     }
 
     public void testUpdateBothExist2()
@@ -265,7 +265,7 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "Foobars", "qwertz" );
         engine.saveText( "TestPage", "Reference to [Foobar], [Foobars]." );
         
-        Collection c = findReferrers( "Foobars" );
+        Collection<WikiPath> c = findReferrers( "Foobars" );
         assertEquals( "Foobars referrers count", 2, c.size() );
 
         assertTrue( "Foobars referrers", 
@@ -290,7 +290,7 @@ public class ReferenceManagerTest extends TestCase
         
         engine.saveText( "BugOne", "OpenBug" );
         
-        Collection ref = findReferrers( "NewBugs" );
+        Collection<WikiPath> ref = findReferrers( "NewBugs" );
         assertNull("newbugs",ref); // No referrers must be found
 
         ref = findReferrers( "NewBug" );
@@ -298,11 +298,11 @@ public class ReferenceManagerTest extends TestCase
 
         ref = findReferrers( "OpenBugs" );
         assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        assertEquals("openbugs2","BugOne",ref.iterator().next().toString());
 
         ref = findReferrers( "OpenBug" );
         assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        assertEquals("openbug2","BugOne",ref.iterator().next().toString());
 
     }
 
@@ -315,7 +315,7 @@ public class ReferenceManagerTest extends TestCase
     
         engine.saveText( "BugOne", "OpenBug" );
     
-        Collection ref = findReferrers( "NewBugs" );
+        Collection<WikiPath> ref = findReferrers( "NewBugs" );
         assertNull("newbugs",ref); // No referrers must be found
 
         ref = findReferrers( "NewBug" );
@@ -323,11 +323,11 @@ public class ReferenceManagerTest extends TestCase
 
         ref = findReferrers( "OpenBugs" );
         assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        assertEquals("openbugs2","BugOne",ref.iterator().next().toString());
 
         ref = findReferrers( "OpenBug" );
         assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        assertEquals("openbug2","BugOne",ref.iterator().next().toString());
 
     }
 
@@ -341,30 +341,30 @@ public class ReferenceManagerTest extends TestCase
     
         engine.saveText( "BugOne", "OpenBug" );
     
-        Collection ref = findReferrers( "NewBugs" );
+        Collection<WikiPath> ref = findReferrers( "NewBugs" );
         assertEquals("newbugs",1,ref.size()); 
-        assertEquals("newbugs2","BugTwo",ref.iterator().next()); 
+        assertEquals("newbugs2","BugTwo",ref.iterator().next().toString()); 
 
         ref = findReferrers( "NewBug" );
         assertEquals("newbugs",1,ref.size()); 
-        assertEquals("newbugs2","BugTwo",ref.iterator().next()); 
+        assertEquals("newbugs2","BugTwo",ref.iterator().next().toString()); 
 
         ref = findReferrers( "OpenBugs" );
         assertEquals("openbugs",1,ref.size());
-        assertEquals("openbugs2","BugOne",ref.iterator().next());
+        assertEquals("openbugs2","BugOne",ref.iterator().next().toString());
 
         ref = findReferrers( "OpenBug" );
         assertEquals("openbug",1,ref.size());
-        assertEquals("openbug2","BugOne",ref.iterator().next());
+        assertEquals("openbug2","BugOne",ref.iterator().next().toString());
 
     }
 
     public void testSelf() throws WikiException
     {
         engine.saveText( "BugOne", "BugOne" );
-        Collection ref = findReferrers( "BugOne" );
+        Collection<WikiPath> ref = findReferrers( "BugOne" );
         assertEquals("wrong size",1,ref.size());
-        assertEquals("ref", "Main:BugOne", ref.iterator().next());
+        assertEquals("ref", "Main:BugOne", ref.iterator().next().toString());
     }
     
     public static Test suite()

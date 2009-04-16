@@ -20,8 +20,6 @@
  */
 package org.apache.wiki.content;
 
-import org.apache.wiki.providers.ProviderException;
-
 /**
  *  A particular kind of exception noting that the WikiPage or attachment 
  *  in question was not found.

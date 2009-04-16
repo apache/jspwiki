@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 
@@ -81,7 +80,7 @@ public class AtomFeed extends Feed
         return e.getURL(); // FIXME: Not really a feed id!
     }
 
-    private Collection getItems()
+    private Collection<Element> getItems()
     {
         ArrayList<Element> list = new ArrayList<Element>();
 
@@ -91,18 +90,14 @@ public class AtomFeed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Entry e : m_entries )
         {
-            Entry e = (Entry)i.next();
-
             WikiPage p = e.getPage();
-
             Element entryEl = getElement("entry");
 
             //
             //  Mandatory elements
             //
-
             entryEl.addContent( getElement("id").setText( getEntryID(e)) );
             entryEl.addContent( getElement("title").setAttribute("type","html").setText( e.getTitle() ));
             entryEl.addContent( getElement("updated").setText( DateFormatUtils.formatUTC(p.getLastModified(),
@@ -110,7 +105,6 @@ public class AtomFeed extends Feed
             //
             //  Optional elements
             //
-
             entryEl.addContent( getElement("author").addContent( getElement("name").setText( e.getAuthor() )));
             entryEl.addContent( getElement("link").setAttribute("rel","alternate").setAttribute("href",e.getURL()));
             entryEl.addContent( getElement("content").setAttribute("type","html").setText( e.getContent() ));
@@ -118,16 +112,15 @@ public class AtomFeed extends Feed
             //
             //  Check for enclosures
             //
-
             if( engine.getAttachmentManager().hasAttachments(p) && servletContext != null )
             {
                 try
                 {
-                    Collection c = engine.getAttachmentManager().listAttachments(p);
+                    Collection<WikiPage> c = engine.getAttachmentManager().listAttachments(p);
 
-                    for( Iterator a = c.iterator(); a.hasNext(); )
+                    for( WikiPage page : c )
                     {
-                        Attachment att = (Attachment) a.next();
+                        Attachment att = (Attachment) page;
 
                         Element attEl = getElement("link");
                         attEl.setAttribute( "rel","enclosure" );
@@ -162,10 +155,8 @@ public class AtomFeed extends Feed
 
         Date lastModified = new Date(0L);
 
-        for( Iterator i = m_entries.iterator(); i.hasNext(); )
+        for( Entry e : m_entries )
         {
-            Entry e = (Entry)i.next();
-
             if( e.getPage().getLastModified().after(lastModified) )
                 lastModified = e.getPage().getLastModified();
         }

@@ -175,7 +175,7 @@ public class TestJDBCDataSource implements DataSource
                 return new URLClassLoader( new URL[] { driverURL }, parent );
             }
         });
-        Class driverClass = loader.loadClass( clazz );
+        Class<?> driverClass = loader.loadClass( clazz );
 
         // Cache the driver
         m_driver = (Driver) driverClass.newInstance();

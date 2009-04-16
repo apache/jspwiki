@@ -29,6 +29,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.xmlrpc.AuthenticationFailed;
 
 
@@ -76,13 +77,13 @@ public abstract class AbstractRPCHandler
         m_engine  = context.getEngine();
     }
 
-    protected abstract Hashtable encodeWikiPage( WikiPage p );
+    protected abstract Hashtable<String,Object> encodeWikiPage( WikiPage p );
 
-    public Vector getRecentChanges( Date since )
+    public Vector<Hashtable<String,Object>> getRecentChanges( Date since ) throws ProviderException
     {
         checkPermission( PagePermission.VIEW );
-        Collection pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
-        Vector<Hashtable<?, ?>> result    = new Vector<Hashtable<?, ?>>();
+        Collection<WikiPage> pages = m_engine.getRecentChanges(m_context.getPage().getWiki());
+        Vector<Hashtable<String,Object>> result    = new Vector<Hashtable<String,Object>>();
 
         // Transform UTC into local time.
         Calendar cal = Calendar.getInstance();
@@ -91,10 +92,8 @@ public abstract class AbstractRPCHandler
                  (cal.get( Calendar.ZONE_OFFSET ) + 
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
 
-        for( Iterator i = pages.iterator(); i.hasNext(); )
+        for( WikiPage page : pages )
         {
-            WikiPage page = (WikiPage)i.next();
-
             if( page.getLastModified().after( cal.getTime() ) )
             {
                 result.add( encodeWikiPage( page ) );

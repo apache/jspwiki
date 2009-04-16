@@ -5,7 +5,7 @@
 
   <%-- If wiki page is current, allow search engines to spider it --%>
   <wiki:CheckVersion mode="latest">
-    <s:layout-component name="head.meta.robots">
+    <s:layout-component name="headMetaRobots">
       <meta name="robots" content="index,follow" />
     </s:layout-component>
   </wiki:CheckVersion>

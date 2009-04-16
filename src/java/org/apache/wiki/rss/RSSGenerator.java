@@ -25,7 +25,6 @@ import java.util.*;
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
@@ -369,7 +368,7 @@ public class RSSGenerator
      * @throws ProviderException If the underlying provider failed.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
-    public String generateFeed( WikiContext wikiContext, List changed, String mode, String type )
+    public String generateFeed( WikiContext wikiContext, List<WikiPage> changed, String mode, String type )
         throws ProviderException, IllegalArgumentException
     {
         Feed feed = null;
@@ -446,13 +445,13 @@ public class RSSGenerator
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        Collection changed = m_engine.getRecentChanges(wikiContext.getPage().getWiki());
+        Collection<WikiPage> changed = m_engine.getRecentChanges(wikiContext.getPage().getWiki());
 
         WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
-        for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
+        for( Iterator<WikiPage> i = changed.iterator(); i.hasNext() && items < 15; items++ )
         {
-            WikiPage page = (WikiPage) i.next();
+            WikiPage page = i.next();
 
             //
             //  Check if the anonymous user has view access to this page.

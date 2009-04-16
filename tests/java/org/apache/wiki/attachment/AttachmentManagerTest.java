@@ -22,14 +22,10 @@
 package org.apache.wiki.attachment;
 
 import java.io.*;
-import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.FileUtil;
 
 import junit.framework.Test;

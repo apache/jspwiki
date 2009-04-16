@@ -21,7 +21,7 @@
           jslocalizedstrings  : Localized scripts for JavaScript
                                 functions. Default=blank
           jsfunction          : JavaScript functions. Default=blank
-          head.meta.robots    : Search engine options. Default=noindex,nofollow
+          headMetaRobots      : Search engine options. Default=noindex,nofollow
           content             : The page contents. Default=blank
           
      2) DefaultLayout injects additional JSPs that are meant to be
@@ -113,7 +113,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="wikiContext" content='${wikiContext.requestContext}' />
     <meta name="wikiBaseUrl" content='<wiki:BaseURL/>' />
-    <meta name="wikiPageUrl" content='<wiki:Link format="url" page="#$%" />' />
+    <meta name="wikiPageUrl" content='<wiki:Link format="url" page="${wikiContext.page.name}" />' />
     <meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
     <meta name="wikiJsonUrl" content='<%=  WikiContextFactory.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>' /><%--unusual pagename--%>
     <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
@@ -124,7 +124,7 @@
 
          Search engines: by default, page is not indexed or followed
     --%>
-    <s:layout-component name="head.meta.robots">
+    <s:layout-component name="headMetaRobots">
     <meta name="robots" content="noindex,nofollow" />
     </s:layout-component>
     <%--

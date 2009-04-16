@@ -43,7 +43,7 @@ public class SamplePlugin
 {
     protected static boolean c_rendered = false;
     
-    public String execute( WikiContext context, Map params )
+    public String execute( WikiContext context, Map<String,Object> params )
         throws PluginException
     {
         StringBuffer sb = new StringBuffer();
@@ -64,7 +64,7 @@ public class SamplePlugin
         return sb.toString();
     }
 
-    public void executeParser(PluginContent element, WikiContext context, Map params)
+    public void executeParser(PluginContent element, WikiContext context, Map<String,Object> params)
     {
         if( element.getParameter("render") != null ) c_rendered = true;
     }

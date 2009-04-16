@@ -67,7 +67,7 @@ public class TestJNDIContext implements Context
 
         private static Context ctx = null;
 
-        public Context getInitialContext( Hashtable environment ) throws NamingException
+        public Context getInitialContext( Hashtable<?,?> environment ) throws NamingException
         {
             return ctx;
         }

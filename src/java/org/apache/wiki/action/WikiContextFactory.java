@@ -22,8 +22,6 @@
 package org.apache.wiki.action;
 
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -56,7 +54,6 @@ import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.stripes.HandlerInfo;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.url.StripesURLConstructor;
-import org.apache.wiki.util.TextUtil;
 
 
 /**

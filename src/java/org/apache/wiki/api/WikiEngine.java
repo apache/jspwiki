@@ -57,5 +57,5 @@ public interface WikiEngine
      * 
      *  @return An immutable iterator instance.
      */
-    public Iterator getAllConfigParameters();
+    public Iterator<String> getAllConfigParameters();
 }

@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -141,7 +140,7 @@ public class XHtmlElementToWikiTranslator
                 // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
                 boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment" );
 
-                Map styleProps = null;
+                Map<String,String> styleProps = null;
 
                 // Only get the styles if it's not a link element. Styles for link elements are
                 // handled as an AugmentedWikiLink instead.
@@ -152,8 +151,8 @@ public class XHtmlElementToWikiTranslator
 
                 if( styleProps != null )
                 {
-                    String fontFamily = (String)styleProps.get( "font-family" );
-                    String whiteSpace = (String)styleProps.get( "white-space" );
+                    String fontFamily = styleProps.get( "font-family" );
+                    String whiteSpace = styleProps.get( "white-space" );
                     if( fontFamily != null && ( fontFamily.indexOf( "monospace" ) >= 0
                             && whiteSpace != null && whiteSpace.indexOf( "pre" ) >= 0  ) )
                     {
@@ -162,8 +161,8 @@ public class XHtmlElementToWikiTranslator
                         monospace = true;
                     }
 
-                    String weight = (String)styleProps.remove( "font-weight" );
-                    String style = (String)styleProps.remove( "font-style" );
+                    String weight = styleProps.remove( "font-weight" );
+                    String style = styleProps.remove( "font-style" );
 
                     if( n.equals( "p" ) )
                     {
@@ -255,9 +254,8 @@ public class XHtmlElementToWikiTranslator
 
     private void printChildren( Element base ) throws IOException, JDOMException
     {
-        for( Iterator i = base.getContent().iterator(); i.hasNext(); )
+        for( Object c : base.getContent() )
         {
-            Object c = i.next();
             if( c instanceof Element )
             {
                 Element e = (Element)c;
@@ -396,7 +394,7 @@ public class XHtmlElementToWikiTranslator
                                     }
                                     else
                                     {
-                                        Map augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
+                                        Map<String,String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
 
                                         m_out.print( "[" );
                                         print( e );
@@ -730,9 +728,8 @@ public class XHtmlElementToWikiTranslator
         if( map.size() > 0 )
         {
             m_out.print( "[{Image src='" + src + "'" );
-            for( Iterator i = map.entrySet().iterator(); i.hasNext(); )
+            for( Map.Entry<Object,Object> entry : map.entrySet() )
             {
-                Map.Entry entry = (Map.Entry)i.next();
                 if( !entry.getValue().equals( "" ) )
                 {
                     m_out.print( " " + entry.getKey() + "='" + entry.getValue() + "'" );
@@ -751,12 +748,11 @@ public class XHtmlElementToWikiTranslator
         return s == null ? null : (s.replaceAll( "\\s", "" ).length() == 0 ? null : s);
     }
 
-    private String propsToStyleString( Map styleProps )
+    private String propsToStyleString( Map<String,String> styleProps )
     {
         StringBuilder style = new StringBuilder();
-        for( Iterator i = styleProps.entrySet().iterator(); i.hasNext(); )
+        for( Map.Entry<String, String>entry : styleProps.entrySet() )
         {
-            Map.Entry entry = (Map.Entry)i.next();
             style.append( " " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
         }
         return style.toString();
@@ -783,7 +779,7 @@ public class XHtmlElementToWikiTranslator
     /**
      *  Returns a Map containing the valid augmented wiki link attributes.
      */
-    private Map getAugmentedWikiLinkAttributes( Element a )
+    private Map<String,String> getAugmentedWikiLinkAttributes( Element a )
     {
         Map<String,String> attributesMap = new HashMap<String,String>();
 
@@ -878,15 +874,14 @@ public class XHtmlElementToWikiTranslator
     /**
      * Converts the entries in the map to a string for use in a wiki link.
      */
-    private String augmentedWikiLinkMapToString( Map attributesMap )
+    private String augmentedWikiLinkMapToString( Map<String,String> attributesMap )
     {
         StringBuilder sb = new StringBuilder();
 
-        for ( Iterator itr = attributesMap.entrySet().iterator(); itr.hasNext(); )
+        for ( Map.Entry<String, String> entry : attributesMap.entrySet() )
         {
-            Map.Entry entry = (Map.Entry)itr.next();
-            String attributeName = (String)entry.getKey();
-            String attributeValue = (String)entry.getValue();
+            String attributeName = entry.getKey();
+            String attributeValue = entry.getValue();
 
             sb.append( " " + attributeName + "='" + attributeValue + "'" );
         }
@@ -894,7 +889,7 @@ public class XHtmlElementToWikiTranslator
         return sb.toString().trim();
     }
 
-    private Map getStylePropertiesLowerCase( Element base ) throws IOException
+    private Map<String,String> getStylePropertiesLowerCase( Element base ) throws IOException
     {
         String n = base.getName().toLowerCase();
 
@@ -917,8 +912,6 @@ public class XHtmlElementToWikiTranslator
                 }
             }
         }
-
-
 
         if( n.equals( "font" ) )
         {
@@ -972,8 +965,8 @@ public class XHtmlElementToWikiTranslator
         }
 
         style = style.replace( ';', '\n' ).toLowerCase();
-        LinkedHashMap m = new LinkedHashMap();
-        new PersistentMapDecorator( m ).load( new ByteArrayInputStream( style.getBytes() ) );
+        LinkedHashMap<String,String> m = new LinkedHashMap<String,String>();
+        new PersistentMapDecorator<String,String>( m ).load( new ByteArrayInputStream( style.getBytes() ) );
         return m;
     }
 

@@ -22,8 +22,6 @@ package org.apache.wiki.auth.login;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -32,10 +30,7 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 

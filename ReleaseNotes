@@ -65,3 +65,11 @@ JSPWikiMarkupParser, and when the page is saved. The intent is to begin moving A
 information out of the page entirely, and into separate storage. However, we do not
 yet have a GUI for manipulating the ACL once it has been extracted. This will come
 later in the 3.0 development cycle. 
+
+* JCRPage implements the Attachment interface, in addition to WikiPage. This means that
+code snippets like "p instanceof Attachment" will NOT work reliably. You should instead
+use the WikiPage.isAttachment() method to test for this condition instead.
+
+* Dummy page names like "__PAGEHERE__" and "#$%" in JavaScript and JSPs have
+been replaced with "Main". They were throwing PageNotFoundExceptions. It's
+probable that Stripes will eliminate the need to do this, anyway.

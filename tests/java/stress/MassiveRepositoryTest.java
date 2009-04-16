@@ -20,7 +20,6 @@
  */
 package stress;
 
-import java.io.File;
 import java.util.Properties;
 import java.util.Random;
 
@@ -28,7 +27,6 @@ import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.util.TextUtil;
 

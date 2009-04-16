@@ -467,10 +467,9 @@ public class VariableManager
         {
             StringBuilder res = new StringBuilder();
 
-            for( Iterator i = m_context.getEngine().getAllInterWikiLinks().iterator(); i.hasNext(); )
+            for( String link : m_context.getEngine().getAllInterWikiLinks() )
             {
                 if( res.length() > 0 ) res.append(", ");
-                String link = (String) i.next();
                 res.append( link );
                 res.append( " --> " );
                 res.append( m_context.getEngine().getInterWikiURL(link) );    
@@ -482,11 +481,9 @@ public class VariableManager
         {
             StringBuilder res = new StringBuilder();
 
-            for( Iterator i = m_context.getEngine().getAllInlinedImagePatterns().iterator(); i.hasNext(); )
+            for( String ptrn : m_context.getEngine().getAllInlinedImagePatterns() )
             {
                 if( res.length() > 0 ) res.append(", ");
-
-                String ptrn = (String) i.next();
                 res.append(ptrn);
             }
 
@@ -540,15 +537,14 @@ public class VariableManager
 
         public String getPagefilters()
         {
-            List filters = m_context.getEngine().getFilterManager().getFilterList();
+            List<PageFilter> filters = m_context.getEngine().getFilterManager().getFilterList();
             StringBuilder sb = new StringBuilder();
 
-            for (Iterator i = filters.iterator(); i.hasNext();)
+            for (PageFilter filter : filters )
             {
-                PageFilter pf = (PageFilter) i.next();
-                String f = pf.getClass().getName();
+                String f = filter.getClass().getName();
 
-                if( pf instanceof InternalModule )
+                if( filter instanceof InternalModule )
                     continue;
 
                 if( sb.length() > 0 )

@@ -277,7 +277,7 @@ public class PluginManager extends ModuleManager
     private Class<? extends WikiPlugin> findPluginClass( String classname )
         throws ClassNotFoundException
     {
-        return ClassUtil.findClass( m_searchPath, classname );
+        return (Class<WikiPlugin>)ClassUtil.findClass( m_searchPath, classname );
     }
 
     /**
