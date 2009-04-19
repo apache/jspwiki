@@ -26,7 +26,7 @@ import org.apache.wiki.util.TextUtil;
 
 /**
  *  A resolver for English language plurals (matches "PageName" to "PageNames" and
- *  vice versa).  If the page does not exist, returns the requested name.
+ *  vice versa).  If the page does not exist, returns <code>null</code>.
  */
 public class EnglishPluralsPageNameResolver extends PageNameResolver
 {
@@ -71,7 +71,7 @@ public class EnglishPluralsPageNameResolver extends PageNameResolver
                 return alternativeName;
         }
         
-        return name;
+        return null;
     }
 
 }

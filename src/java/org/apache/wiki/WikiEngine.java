@@ -2556,7 +2556,9 @@ public class WikiEngine
     }
     
     /**
-     *  Resolves a page name as per the installed PageNameResolvers.
+     *  Resolves a wiki path, trying all resolution algorithms as specified by the
+     *  {@link PageNameResolver} classes. If the path resolves to a different
+     *  path, that path is returned. Otherwise, <code>null</code> is returned.
      *  
      *  @param page the page name.
      *  @return The rewritten page name.  May also return null in case there
@@ -2564,12 +2566,23 @@ public class WikiEngine
      */
     public final WikiPath getFinalPageName( WikiPath page ) throws ProviderException
     {
+        // If the original name resolves, return it
+        if ( getContentManager().pageExists( page  ) )
+        {
+            return page;
+        }
+
+        // Otherwise try resolving it
         for( PageNameResolver resolver : m_nameResolvers )
         {
-            page = resolver.resolve( page );
+            WikiPath resolvedPath = resolver.resolve( page );
+            if ( resolvedPath != null )
+            {
+                return resolvedPath;
+            }
         }
         
-        return page;
+        return null;
     }
 
 }

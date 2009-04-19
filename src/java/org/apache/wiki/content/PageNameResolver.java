@@ -44,7 +44,9 @@ public abstract class PageNameResolver
     }   
 
     /**
-     *  Resolves the page name to another page.
+     *  Resolves the page name to another page. If the page can be resolved to another
+     *  page name, this method returns that name. If it cannot be resolved, this
+     *  method returns <code>null</code>.
      *  
      *  @param name The name to check for
      *  @return A new name that you should getPage() on.
