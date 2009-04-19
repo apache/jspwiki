@@ -22,9 +22,10 @@
       </p>
     </c:if>
   
-    <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
+    <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
     <p id="submitbuttons">
       <s:hidden name="page"><wiki:Variable var='pagename' /></s:hidden>
+      <s:hidden name="startTime" />
       <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
       <wiki:CheckRequestContext context='edit'>
         <s:submit name="save" accesskey="s" title="${saveTitle}" />

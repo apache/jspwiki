@@ -15,8 +15,6 @@
 <wiki:TabbedSection defaultTab="editcontent">
 
   <wiki:Tab id="editcontent" titleKey="edit.tab.edit" accesskey="e">
-    <s:errors />
-    <s:messages />
     <wiki:Editor/>
   </wiki:Tab>
   

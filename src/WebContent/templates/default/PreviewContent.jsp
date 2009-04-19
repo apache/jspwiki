@@ -25,8 +25,10 @@
         <s:hidden name="link" />
         <s:hidden name="page" value="${wikiActionBean.page.name}" />
         <s:hidden name="remember" />
+        <s:hidden name="startTime" />
         <s:hidden name="text" />
-        <s:hidden name="<%=SpamFilter.getHashFieldName(request)%>"><c:out value="${lastchange}" /></s:hidden>
+        <%-- Spam detection fields --%>
+        <wiki:SpamProtect />
       </p>
       <div id="submitbuttons">
         <c:set var="editTitle"><fmt:message key="editor.preview.edit.title"/></c:set>

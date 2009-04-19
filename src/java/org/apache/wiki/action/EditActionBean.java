@@ -22,8 +22,8 @@
 package org.apache.wiki.action;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.Principal;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,9 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.validation.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.wiki.*;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -42,12 +44,12 @@ import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.filters.RedirectException;
-import org.apache.wiki.filters.SpamProtect;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.SpamProtect;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.util.TextUtil;
@@ -84,7 +86,7 @@ public class EditActionBean extends AbstractPageActionBean
 
     private String m_link = null;
 
-    private Date m_startTime = null;
+    private long m_startTime = -1;
 
     /**
      * Event handler method that cancels any locks the user possesses for the
@@ -95,11 +97,12 @@ public class EditActionBean extends AbstractPageActionBean
      */
     @DontValidate
     @HandlesEvent( "cancel" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.EDIT_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.EDIT_ACTION )
     @WikiRequestContext( "cancel" )
     public Resolution cancel()
     {
-        String pagereq = m_page.getName();
+        WikiPage page = getPage();
+        String pagereq = page.getName();
         log.debug( "Cancelled editing " + pagereq );
 
         // Cancel page lock
@@ -115,12 +118,12 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     @HandlesEvent( "comment" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.COMMENT_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.COMMENT_ACTION )
     @WikiRequestContext( "comment" )
     public Resolution comment()
     {
-        // Set the editing start time
-        m_startTime = new Date();
+        // Set the editing start time (will be written to the JSPs as encrypted parameter)
+        setStartTime( System.currentTimeMillis() );
 
         return null;
     }
@@ -132,7 +135,7 @@ public class EditActionBean extends AbstractPageActionBean
      * @return a forward resolution back to the preview page.
      */
     @HandlesEvent( "diff" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "diff" )
     public Resolution diff()
     {
@@ -142,7 +145,7 @@ public class EditActionBean extends AbstractPageActionBean
     @DefaultHandler
     @DontValidate
     @HandlesEvent( "edit" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.EDIT_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.EDIT_ACTION )
     @WikiRequestContext( "edit" )
     public Resolution edit() throws ProviderException
     {
@@ -150,15 +153,19 @@ public class EditActionBean extends AbstractPageActionBean
         HttpServletRequest request = wikiContext.getRequest();
         HttpSession session = request.getSession();
         Principal user = wikiContext.getCurrentUser();
-        String pageName = m_page.getName();
+        WikiPage page = getPage();
+        String pageName = page.getName();
 
         log.info( "Editing page " + pageName + ". User=" + user.getName() + ", host=" + request.getRemoteAddr() );
 
+        // Set the editing start time (will be written to the JSPs as encrypted parameter)
+        setStartTime( System.currentTimeMillis() );
+        
         // If page is locked, make sure we tell the user
         List<Message> messages = wikiContext.getMessages();
         WikiEngine engine = wikiContext.getEngine();
         ContentManager mgr = engine.getContentManager();
-        PageLock lock = mgr.getCurrentLock( m_page );
+        PageLock lock = mgr.getCurrentLock( page );
         if( lock != null )
         {
             messages.add( new LocalizableMessage( "edit.locked", lock.getLocker(), lock.getTimeLeft() ) );
@@ -169,29 +176,26 @@ public class EditActionBean extends AbstractPageActionBean
         WikiPage latest;
         try
         {
-            latest = engine.getPage( m_page.getName() );
+            latest = engine.getPage( page.getName() );
         }
         catch( PageNotFoundException e )
         {
-            latest = m_page;
+            latest = page;
         }
-        if( latest.getVersion() != m_page.getVersion() )
+        if( latest.getVersion() != page.getVersion() )
         {
-            errors.addGlobalError( new LocalizableError( "edit.restoring", m_page.getVersion() ) );
+            errors.addGlobalError( new LocalizableError( "edit.restoring", page.getVersion() ) );
         }
 
         // Attempt to lock the page.
-        lock = mgr.lockPage( m_page, user.getName() );
+        lock = mgr.lockPage( page, user.getName() );
         if( lock != null )
         {
             session.setAttribute( LOCK_PREFIX + pageName, lock );
         }
 
         // Load the page text
-        m_text = engine.getPureText( m_page );
-
-        // Set the editing start time
-        m_startTime = new Date();
+        m_text = engine.getPureText( page );
 
         return new ForwardResolution( "/Edit.jsp" );
     }
@@ -292,7 +296,7 @@ public class EditActionBean extends AbstractPageActionBean
      * 
      * @return the start time
      */
-    public Date getStartTime()
+    public long getStartTime()
     {
         return m_startTime;
     }
@@ -322,9 +326,9 @@ public class EditActionBean extends AbstractPageActionBean
     {
         // Set author: prefer authenticated/asserted principals first
         WikiSession wikiSession = getContext().getWikiSession();
-        if( m_author == null || !wikiSession.isAnonymous() )
+        if( getAuthor() == null || !wikiSession.isAnonymous() )
         {
-            m_author = wikiSession.getUserPrincipal().getName();
+            setAuthor( wikiSession.getUserPrincipal().getName() );
         }
     }
 
@@ -334,11 +338,11 @@ public class EditActionBean extends AbstractPageActionBean
      * @return a forward resolution back to the preview page.
      */
     @HandlesEvent( "preview" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "preview" )
     public Resolution preview()
     {
-        log.debug( "Previewing " + m_page.getName() );
+        log.debug( "Previewing " + getPage().getName() );
         return new ForwardResolution( "/Preview.jsp" );
     }
 
@@ -355,34 +359,45 @@ public class EditActionBean extends AbstractPageActionBean
     @ValidationMethod( on = "save", when = ValidationState.NO_ERRORS )
     public void validateNoConflicts() throws ProviderException
     {
-        if( m_startTime.before( m_page.getLastModified() ) )
+        ValidationErrors errors = getContext().getValidationErrors();
+        WikiPage page = getPage();
+        boolean exists = getContext().getEngine().pageExists( page );
+        long lastModified = exists ? page.getLastModified().getTime() : -1;
+        if( exists && m_startTime < lastModified )
         {
             // Retrieve and escape the conflicting text
-            String conflictText = m_page.getContentAsString();
+            String conflictText = page.getContentAsString();
             conflictText = StringEscapeUtils.escapeXml( conflictText );
             conflictText = TextUtil.replaceString( conflictText, "\n", "<br />" );
             m_conflictText = conflictText;
 
             // Create a validation error
-            ValidationErrors errors = getContext().getValidationErrors();
             errors.add( "text", new LocalizableError( "edit.conflict" ) );
+        }
+        
+        // Is the user trying to edit a special page? Tsk, tsk.
+        URI uri = getContext().getEngine().getSpecialPageReference( page.getName() );
+        if( uri != null )
+        {
+            errors.add( "page", new LocalizableError( "edit.specialpage" ) );
         }
     }
 
     @HandlesEvent( "save" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.EDIT_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.EDIT_ACTION )
     @WikiRequestContext( "save" )
-    @SpamProtect
+    @SpamProtect( content = "text" )
     public Resolution save() throws WikiException
     {
         WikiSession wikiSession = getContext().getWikiSession();
         HttpServletRequest request = getContext().getHttpRequest();
         HttpSession session = request.getSession();
         WikiContext wikiContext = getContext();
+        WikiPage page = getPage();
         WikiEngine engine = getContext().getEngine();
-        String pagereq = m_page.getName();
+        String pagereq = page.getName();
 
-        log.info( "Saving page " + m_page.getName() + ". UserPrincipal=" + wikiSession.getUserPrincipal().getName() + ", Author="
+        log.info( "Saving page " + page.getName() + ". UserPrincipal=" + wikiSession.getUserPrincipal().getName() + ", Author="
                   + m_author + ", Host=" + getContext().getRequest().getRemoteAddr() );
 
         // Set author information and other metadata
@@ -411,11 +426,11 @@ public class EditActionBean extends AbstractPageActionBean
             {
                 engine.saveText( wikiContext, m_text );
             }
-            session.removeAttribute( LOCK_PREFIX +m_page.getName() );
+            session.removeAttribute( LOCK_PREFIX +page.getName() );
         }
         catch( DecisionRequiredException ex )
         {
-            session.removeAttribute( LOCK_PREFIX +m_page.getName() );
+            session.removeAttribute( LOCK_PREFIX +page.getName() );
             return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", "ApprovalRequiredForPageChanges" );
         }
         catch( RedirectException ex )
@@ -546,14 +561,14 @@ public class EditActionBean extends AbstractPageActionBean
      * tampered with by the user. When the <code>save</code> event is
      * executed, it will be decrypted and used to detect edit conflicts. This
      * value is initialized to the current time when the
-     * {@link #initDefaultValues()} method fires.
+     * {@link #edit()} or {@link #comment()} methods fire.
      * 
      * @param date the start time
      */
     @Validate( required = true, encrypted = true )
-    public void setStartTime( Date date )
+    public void setStartTime( long time )
     {
-        m_startTime = date;
+        m_startTime = time;
     }
 
     /**
