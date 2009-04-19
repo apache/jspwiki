@@ -598,11 +598,15 @@ public class JCRWikiPage
         
     }
 
+    /**
+     * Returns <code>true</code> if this WikiPage exists in the repository and is of any content
+     * type other than {@link ContentManager.JSPWIKI_CONTENT_TYPE}; <code>false</code> otherwise.
+     */
     public boolean isAttachment() throws ProviderException
     {
         String contentType = getContentType();
-        
-        if( ContentManager.JSPWIKI_CONTENT_TYPE.equals( contentType ) ) return false;
+        boolean exists = m_engine.getContentManager().pageExists( getPath() );
+        if( !exists || ContentManager.JSPWIKI_CONTENT_TYPE.equals( contentType ) ) return false;
         
         return true;
     }
