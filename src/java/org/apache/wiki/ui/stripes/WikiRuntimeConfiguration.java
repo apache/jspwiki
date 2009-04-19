@@ -36,9 +36,11 @@ import net.sourceforge.stripes.config.RuntimeConfiguration;
  * by the {@link net.sourceforge.stripes.controller.StripesFilter}, so it is
  * one of the very first things that happens. The {@link #init()} method
  * performs all of the initialization tasks. After initialization, the current
- * StripesConfiguration can be retrieved at any time by calling {@link }.
+ * StripesConfiguration can be retrieved at any time by calling
+ * {@link #getConfiguration(ServletContext)}.
  * 
  * @author Andrew Jaquith
+ * @since 3.0
  */
 public class WikiRuntimeConfiguration extends RuntimeConfiguration
 {

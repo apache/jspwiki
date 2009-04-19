@@ -365,7 +365,7 @@ public class HandlerInfo
      * For example, suppose the HandlerPermission annotation for the
      * <code>view()</code> handler method is
      * </p>
-     * <blockquote><code>&#064;HandlerPermission(permissionClass=PagePermission.class, target="${page.qualifiedName}", actions=PagePermission.VIEW_ACTION)</code></blockquote>
+     * <blockquote><code>&#064;HandlerPermission(permissionClass=PagePermission.class, target="${page.path}", actions=PagePermission.VIEW_ACTION)</code></blockquote>
      * <p>
      * If <code>object</code> is a ViewActionBean whose <code>getPage()</code>
      * property returns page "Main" in the wiki named "Default", the returned

@@ -1,3 +1,51 @@
+2009-04-19  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-103
+        
+        * Fixed bug in JCRWikiPage.isAttachment() that caused non-existent pages
+        to be erroneously treated as attachments.
+        
+        * Fixed NPE in VariableManager.
+        
+        * Fixed bug in WikiEngine.getFinalPageName() that was causing
+        page lookups to fail horribly. Made PageNameResolver implementations
+        consistent in terms of how they treat page variants that are not found.
+        
+        * Fixed bug where the WikiPage references stored by WikiActionBeanContext
+        and the underlying WikiContext were not synchronized. As a result,
+        AbstractPageActionBean's m_page field is now private.
+        
+        * Massive refactoring to EditActionBean, and related spam-protection
+        classes. Bug-fix to ContentManager's page-save task.
+        Editing actually works again! More fixes coming later.
+        
+        * WikiPageTypeConverter's behavior changed. Unless the string
+        passed to convert() is a special page, WikiPageTypeConverter is
+        now guaranteed to return a WikiPage (which may or may not be
+        persisted in the repository). SpecialPage names still cause
+        the converter to return null, by design. The result of this
+        change is that editing/viewing functions don't "break" if
+        the page doesn't exist.
+        
+        * Fixed bug in InsertPageTag caused by recent introduction of
+        PageNotFoundException, that was causing content not to be properly
+        inserted. Fixed bugs with similar cause in LinkTag.
+        
+        * Fixed NPE in PermissionTag.
+        
+        * The @SpamProtect annotation and SpamProtect tag are now fully
+        functional. Any JSP that submits to a WikiActionBean whose handler
+        method is annotated with @SpamProtect receives the protection
+        automatically, thanks to SpamInterceptor and collaborating
+        SpamFilter. All that is needed is to add the tag
+        <wiki:SpamProtect /> as a child element to the <form>
+        or <s:form> elements. The same three-way check used in the
+        old Edit.jsp is still done: random "trap" parameter; random
+        "token" parameter; UTF-8 check parameter. To help ActionBean
+        unit test classes run with protected handler events, the
+        static method TestEngine.addSpamProtectParams(MockRoundtrip)
+        was created.
+
 2009-04-16  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-102
