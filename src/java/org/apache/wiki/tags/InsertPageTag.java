@@ -95,49 +95,41 @@ public class InsertPageTag
                ProviderException
     {
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   insertedPage;
+        WikiPage   insertedPage = null;
 
-        //
-        //  NB: The page might not really exist if the user is currently
-        //      creating it (i.e. it is not yet in the cache or providers), 
-        //      AND we got the page from the wikiContext.
-        //
-
-        if( m_pageName == null )
+        try
         {
-            insertedPage = m_wikiContext.getPage();
-            if( !engine.pageExists(insertedPage) ) return SKIP_BODY;
+            insertedPage = m_pageName == null ? m_wikiContext.getPage() : engine.getPage( m_pageName );
         }
-        else
+        catch ( PageNotFoundException e )
         {
-            try
-            {
-                insertedPage = engine.getPage( m_pageName );
-                // FIXME: Do version setting later.
-                // page.setVersion( WikiProvider.LATEST_VERSION );
-
-                log.debug("Inserting page "+insertedPage);
-
-                JspWriter out = pageContext.getOut();
-
-                WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
-                
-                switch( m_mode )
-                {
-                  case HTML:
-                    out.print( engine.getHTML( m_wikiContext, insertedPage ) );
-                    break;
-                  case PLAIN:
-                    out.print( engine.getText( m_wikiContext, insertedPage ) );
-                    break;
-                }
-                m_wikiContext.setRealPage( oldPage );
-            }
-            catch( PageNotFoundException e )
-            {
-                // No worries. Nothing to include here...
-            }
+            // Couldn't find either the context page, or the one supplied to the tag. Oops!
         }
+        
+        if( insertedPage == null )
+        {
+            return SKIP_BODY;
+        }
+        
+        // FIXME: Do version setting later.
+        // page.setVersion( WikiProvider.LATEST_VERSION );
+
+        log.debug("Inserting page "+insertedPage);
+
+        JspWriter out = pageContext.getOut();
+
+        WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
+        
+        switch( m_mode )
+        {
+          case HTML:
+            out.print( engine.getHTML( m_wikiContext, insertedPage ) );
+            break;
+          case PLAIN:
+            out.print( engine.getText( m_wikiContext, insertedPage ) );
+            break;
+        }
+        m_wikiContext.setRealPage( oldPage );
 
         return SKIP_BODY;
     }

@@ -282,13 +282,22 @@ public class LinkTag
         }
         else if( m_pageName != null && m_pageName.length() > 0 )
         {
-            WikiPage p = engine.getPage( m_pageName );
+            WikiPage p = null;
+            try
+            {
+                p = engine.getPage( m_pageName );
+            }
+            catch ( PageNotFoundException e )
+            {
+                // Page doesn't exist yet, but that's ok; make sure version is null
+                m_version = null;
+            }
 
             String parms = (m_version != null) ? "version="+getVersion() : null;
 
             parms = addParamsForRecipient( parms, m_containedParams );
 
-            if( p.isAttachment() )
+            if( p != null && p.isAttachment() )
             {
                 String ctx = m_context;
                 // Switch context appropriately when attempting to view an
