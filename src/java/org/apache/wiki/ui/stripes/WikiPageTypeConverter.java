@@ -20,20 +20,23 @@
  */
 package org.apache.wiki.ui.stripes;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Locale;
-
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiPath;
-import org.apache.wiki.providers.ProviderException;
 
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.TypeConverter;
 import net.sourceforge.stripes.validation.ValidationError;
+
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.PageAlreadyExistsException;
+import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.providers.ProviderException;
 
 /**
  * Stripes type converter that converts a WikiPage name, expressed as a String,
@@ -52,23 +55,35 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
     /**
      * Converts a named wiki page into a valid WikiPage object by retrieving the
      * latest version via the WikiEngine. If the page cannot be found (perhaps because it
-     * does not exist), this method will add a validation error to the supplied
-     * Collection of errors and return <code>null</code>. The error will be
-     * of type {@link net.sourceforge.stripes.validation.LocalizableError} and
-     * will have a message key of <code>common.nopage</code> and a single
-     * parameter (equal to the value passed for <code>pageName</code>).
+     * does not exist) and it is not a special page, this method return a newly 
+     * instantiated WikiPage that has not yet been saved to the repository.
+     * In other words: for non-<code>null</code> values of
+     * <code>pageName</code> where the page does not correspond to a
+     * special page, this method is guaranteed to return a WikiPage. The only
+     * time this method will return <code>null</code> is if the string
+     * corresponds to a special page.
      * 
      * @param pageName the name of the WikiPage to retrieve
      * @param targetType the type to return, which will always be of type
      *            {@link org.apache.wiki.api.WikiPage}
      * @param errors the current Collection of validation errors for this field
-     * @return the
+     * @return the WikiPage
      */
     public WikiPage convert( String pageName, Class<? extends WikiPage> targetType, Collection<ValidationError> errors )
     {
         WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
         WikiEngine engine = config.getEngine();
         WikiPage page = null;
+        
+        // Is this a special page?
+        URI uri = engine.getSpecialPageReference( pageName );
+        if( uri != null )
+        {
+            errors.add( new LocalizableError( "edit.specialPage" ) );
+            return null;
+        }
+        
+        // Not a special page. Let's go get (or create) the page...
         try
         {
             page = engine.getPage( pageName );
@@ -77,23 +92,18 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         {
             try
             {
-                WikiPath finalName = engine.getFinalPageName( WikiPath.valueOf( pageName ) );
-                if ( finalName == null )
+                page = getFinalPage( engine, pageName );
+                if ( page == null )
                 {
-                    errors.add( new LocalizableError( "common.nopage", pageName ) );
+                    ContentManager cm = engine.getContentManager();
+                    page = cm.addPage( WikiPath.valueOf( pageName ), ContentManager.JSPWIKI_CONTENT_TYPE );
+                    cm.release();
                 }
-                else
-                {
-                    try
-                    {
-                        return engine.getPage( finalName );
-                    }
-                    catch( PageNotFoundException pnf )
-                    {
-                        // This should never happen, because getFinalPageName always verifies the page exists!
-                        pnf.printStackTrace();
-                    }
-                }
+            }
+            catch( PageAlreadyExistsException e2 )
+            {
+                // If content manager can't add a new page (should not happen!)
+                errors.add( new SimpleError( e2.getMessage() ) );
             }
             catch( ProviderException e2 )
             {
@@ -107,6 +117,33 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         return page;
     }
 
+    /**
+     * Looks up and returns the WikiPage matching the supplied page name, trying all possible
+     * variations as defined by {@link WikiEngine#getFinalPageName(WikiPath)}.
+     * @param engine the wiki engine
+     * @param pageName the page name to find
+     * @return the WikiPage, if contained in the repository
+     * @throws ProviderException in unusual cases; this should never happen
+     */
+    private WikiPage getFinalPage( WikiEngine engine, String pageName ) throws ProviderException
+    {
+        WikiPath finalName = engine.getFinalPageName( WikiPath.valueOf( pageName ) );
+        if ( finalName != null )
+        {
+            try
+            {
+                return engine.getPage( finalName );
+            }
+            catch( PageNotFoundException pnf )
+            {
+                // This should never happen, because getFinalPageName always verifies the page exists!
+                pnf.printStackTrace();
+                throw new ProviderException( "Could not find WikiPage " + finalName + " even though we just found it. Odd!" );
+            }
+        }
+        return null;
+    }
+    
     public void setLocale( Locale locale )
     {
     }

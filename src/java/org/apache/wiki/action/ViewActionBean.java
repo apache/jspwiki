@@ -26,15 +26,11 @@ import java.net.URI;
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.validation.Validate;
-import net.sourceforge.stripes.validation.ValidationError;
-import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
@@ -65,7 +61,7 @@ public class ViewActionBean extends AbstractPageActionBean
      * @return a forward to the content template
      */
     @HandlesEvent( "attachments" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     public Resolution attachments()
     {
         return new ForwardResolution( "/Attachments.jsp" );
@@ -89,7 +85,7 @@ public class ViewActionBean extends AbstractPageActionBean
      * @return a forward to the content template
      */
     @HandlesEvent( "info" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "info" )
     public Resolution info()
     {
@@ -121,72 +117,49 @@ public class ViewActionBean extends AbstractPageActionBean
     @After( stages = LifecycleStage.BindingAndValidation )
     public Resolution resolvePage() throws WikiException
     {
-        WikiPage page = getPage();
-        ValidationErrors errors = this.getContext().getValidationErrors();
         WikiEngine engine = getContext().getEngine();
 
-        // The user supplied a page that doesn't exist
-        if( errors.get( "page" ) != null )
+        if ( getPage() == null )
         {
-            for( ValidationError pageParamError : errors.get( "page" ) )
+            // The page might be null because it's a special page WikiPageTypeConverter
+            // refused to convert. If so, redirect.
+            String pageName = getContext().getRequest().getParameter( "page" );
+            if ( pageName != null )
             {
-                if( "page".equals( pageParamError.getFieldName() ) )
+                URI uri = getContext().getEngine().getSpecialPageReference( pageName );
+                if( uri != null )
                 {
-                    String pageName = pageParamError.getFieldValue();
-
-                    // Is it a special page?
-                    URI uri = getContext().getEngine().getSpecialPageReference( pageName );
-                    if( uri != null )
-                    {
-                        return new RedirectResolution( uri.toString() );
-                    }
-
-                    // Ok, it really doesn't exist. Send 'em to the "Create new
-                    // page?" JSP
-                    log.info( "User supplied page name '" + pageName + "' that doesn't exist; redirecting to create pages JSP." );
-                    return new RedirectResolution( NewPageActionBean.class ).addParameter( "page", pageName );
+                    return new RedirectResolution( uri.toString() );
+                }
+                else
+                {
+                    throw new WikiException( "Wiki page name " + pageName + " didn't parse. This is highly unusual." );
                 }
             }
-        }
 
-        // If page not supplied, try retrieving the front page to avoid NPEs
-        if( page == null )
-        {
+            // The user forget to supply a page name. Go to front page.
             if( log.isDebugEnabled() )
             {
                 log.debug( "User did not supply a page name: defaulting to front page." );
             }
-            if( engine != null )
-            {
-                // Bind the front page to the action bean
-                try
-                {
-                    page = engine.getPage( engine.getFrontPage() );
-                }
-                catch( PageNotFoundException e )
-                {
-                    page = engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-                }
-                setPage( page );
-                return null;
-            }
+            setPage( engine.getFrontPage( null ) );
         }
 
         // If page still missing, it's an error condition
-        if( page == null )
+        if( getPage() == null )
         {
             throw new WikiException( "Page not supplied, and WikiEngine does not define a front page! This is highly unusual." );
         }
 
         // Is there an ALIAS attribute in the wiki pge?
-        String specialUrl = (String) page.getAttribute( WikiPage.ALIAS );
+        String specialUrl = (String) getPage().getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
 
         // Is there a REDIRECT attribute in the wiki page?
-        specialUrl = (String) page.getAttribute( WikiPage.REDIRECT );
+        specialUrl = (String) getPage().getAttribute( WikiPage.REDIRECT );
         if( specialUrl != null )
         {
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
@@ -228,7 +201,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @DefaultHandler
     @DontValidate
     @HandlesEvent( "view" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.VIEW_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "view" )
     public Resolution view()
     {
