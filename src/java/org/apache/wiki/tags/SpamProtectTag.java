@@ -1,6 +1,7 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,14 +12,14 @@ import javax.servlet.jsp.tagext.TagSupport;
 import net.sourceforge.stripes.util.CryptoUtil;
 
 import org.apache.wiki.filters.SpamFilter;
-import org.apache.wiki.filters.SpamInterceptor;
+import org.apache.wiki.ui.stripes.SpamInterceptor;
 
 /**
  * <p>
  * Tag that injects hidden {@link SpamFilter}-related parameters into the
  * current form, which will be parsed and verified by {@link SpamInterceptor}
  * whenever the input is processed by an ActionBean event handler method
- * annotated with the {@link org.apache.wiki.filters.SpamProtect} annotation.
+ * annotated with the {@link org.apache.wiki.ui.stripes.SpamProtect} annotation.
  * </p>
  * <p>
  * This tag will inject the following parameters:
@@ -43,7 +44,7 @@ import org.apache.wiki.filters.SpamInterceptor;
  * to be empty.</li>
  * </li>
  * <li><b>An an encrypted parameter</b> called
- * {@link SpamInterceptor#REQ_SPAM_PARAM}, whose contents are the names of
+ * {@link SpamFilter#REQ_SPAM_PARAM}, whose contents are the names of
  * parameters 2 and 3, separated by a carriage return character. These contents
  * are then encrypted.</li>
  * </ol>
@@ -82,17 +83,17 @@ public class SpamProtectTag extends WikiTagBase
         out.write( "<input name=\"" + tokenParam + "\" type=\"hidden\" value=\"" + tokenValue + "\" />\n" );
 
         // Inject UTF-8 detector
-        out.write( "<input name=\""+ SpamInterceptor.REQ_ENCODING_CHECK + "\" type=\"hidden\" value=\"\u3041\" />\n" );
+        out.write( "<input name=\""+ SpamFilter.REQ_ENCODING_CHECK + "\" type=\"hidden\" value=\"\u3041\" />\n" );
 
         // Add encrypted parameter indicating the names of the trap and token fields
         String encryptedParam = CryptoUtil.encrypt( trapParam + "\n" + tokenParam );
-        out.write( "<input name=\""+ SpamInterceptor.REQ_SPAM_PARAM+"\" type=\"hidden\" value=\""+encryptedParam+"\" />\n" );
+        out.write( "<input name=\""+ SpamFilter.REQ_SPAM_PARAM+"\" type=\"hidden\" value=\""+encryptedParam+"\" />\n" );
     }
 
     private static String getUniqueID()
     {
         StringBuilder sb = new StringBuilder();
-        Random rand = new Random();
+        Random rand = new SecureRandom();
 
         for( int i = 0; i < 6; i++ )
         {

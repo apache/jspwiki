@@ -36,6 +36,7 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
+import net.sourceforge.stripes.util.CryptoUtil;
 
 import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.api.WikiException;
@@ -48,6 +49,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
@@ -165,6 +167,22 @@ public class TestEngine extends WikiEngine
         MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path );
         request.setSession( new MockHttpSession( this.getServletContext() ) );
         return request;
+    }
+    
+    /**
+     * For testing purposes: generates and adds sample spam-protect form parameters to a MockRountrip object.
+     * This is done in the same way that {@link SpamProtectTag} does it.
+     */
+    public static void addSpamProtectParams( MockRoundtrip trip )
+    {
+        // Add the trap + token params
+        String paramValue = CryptoUtil.encrypt( "TRAPAA\nTOKENA" );
+        trip.addParameter( "TRAPAA", new String[0] );
+        trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
+        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+
+        // Add the UTF-8 token
+        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
     }
     
     public static void emptyWorkDir()

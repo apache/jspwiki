@@ -1031,6 +1031,7 @@ public class ContentManager implements WikiEventListener
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
         @Override
         public Outcome execute() throws WikiException
         {
@@ -1045,7 +1046,16 @@ public class ContentManager implements WikiEventListener
             }
             catch( PageNotFoundException e )
             {
-                throw new WikiException( e.getMessage(), e );
+                // Doesn't exist? No problem. Time to make one.
+                try
+                {
+                    page = engine.getContentManager().addPage( name, ContentManager.JSPWIKI_CONTENT_TYPE );
+                }
+                catch( PageAlreadyExistsException pae )
+                {
+                    // This should never happen, but it if does, throw a big honking exception
+                    throw new WikiException( "We were just told the page didn't exist. Now it does? Explain that please...", pae );
+                }
             }
             
             // Retrieve the page ACL, author, attributes, modified-date, name and new text from the workflow

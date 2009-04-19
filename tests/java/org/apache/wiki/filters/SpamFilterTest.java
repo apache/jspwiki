@@ -21,22 +21,37 @@
 
 package org.apache.wiki.filters;
 
-import junit.framework.*;
+import java.util.Map;
 
-public class AllTests extends TestCase
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.wiki.action.TestActionBean;
+
+public class SpamFilterTest extends TestCase
 {
-    public AllTests( String s )
+    public SpamFilterTest( String s )
     {
         super( s );
     }
 
+    public void testGetBeanProperties() throws Exception
+    {
+        TestActionBean bean = new TestActionBean();
+        bean.setAcl( "ACL" );
+        bean.setText( "Sample text" );
+        Map<String, Object> map = SpamFilter.getBeanProperties( bean, new String[] { "text", "acl", "nonExistentProperty" } );
+        assertEquals( 2, map.size() );
+        Object value = map.get( "text" );
+        assertEquals( "Sample text", value );
+        value = map.get( "acl" );
+        assertEquals( "ACL", value );
+    }
+
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("PageFilter tests");
-
-        suite.addTest( FilterManagerTest.suite() );
-        suite.addTest( SpamFilterTest.suite() );
-
-        return suite;
+        return new TestSuite( SpamFilterTest.class );
     }
+
 }
