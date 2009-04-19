@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.security.Permission;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.action.GroupActionBean;
@@ -152,11 +153,15 @@ public class PermissionTag
             {
                 try
                 {
-                    WikiPage latest = m_wikiContext.getEngine().getPage( page.getName() );
-                    if( page.getVersion() != WikiProvider.LATEST_VERSION &&
-                        latest.getVersion() != page.getVersion() )
+                    WikiEngine engine = m_wikiContext.getEngine();
+                    if ( engine.pageExists( page ) )
                     {
-                        return false;
+                        WikiPage latest = engine.getPage( page.getName() );
+                        if( page.getVersion() != WikiProvider.LATEST_VERSION &&
+                            latest.getVersion() != page.getVersion() )
+                        {
+                            return false;
+                        }
                     }
                 }
                 catch( Exception e )
