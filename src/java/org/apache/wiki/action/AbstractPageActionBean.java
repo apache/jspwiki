@@ -42,8 +42,6 @@ import org.apache.wiki.tags.BreadcrumbsTag.FixedQueue;
  */
 public class AbstractPageActionBean extends AbstractActionBean
 {
-    protected WikiPage m_page = null;
-
     /**
      * Returns the WikiPage; defaults to <code>null</code>.
      * 
@@ -51,7 +49,7 @@ public class AbstractPageActionBean extends AbstractActionBean
      */
     public WikiPage getPage()
     {
-        return m_page;
+        return getContext().getPage();
     }
 
     /**
@@ -68,7 +66,6 @@ public class AbstractPageActionBean extends AbstractActionBean
     @Validate( required = true )
     public void setPage( WikiPage page )
     {
-        m_page = page;
         getContext().setPage( page );
     }
 

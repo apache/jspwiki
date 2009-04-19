@@ -67,7 +67,8 @@ public class DeleteActionBean extends AbstractPageActionBean
         // If all versions of a page or attachment should be deleted, redirect
         // to the main page (for page) or parent page (for attachment)
         WikiEngine engine = getContext().getEngine();
-        String pageName = m_page.getName();
+        WikiPage page = getPage();
+        String pageName = page.getName();
         if( m_version == Integer.MIN_VALUE )
         {
             HttpServletRequest request = getContext().getRequest();
@@ -86,9 +87,9 @@ public class DeleteActionBean extends AbstractPageActionBean
         }
 
         // If attachment deleted; always redirect to parent page
-        if( m_page.isAttachment() )
+        if( page.isAttachment() )
         {
-            String redirPage = m_page.getParent().getName();
+            String redirPage = page.getParent().getName();
             return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", redirPage );
         }
 
@@ -138,7 +139,7 @@ public class DeleteActionBean extends AbstractPageActionBean
         if( engine.pageExists( getPage().getName(), m_version ) )
         {
             // While we're at it, set the correct version for the bean
-            m_page = engine.getPage( getPage().getName(), m_version );
+            setPage( engine.getPage( getPage().getName(), m_version ) );
             return;
         }
 

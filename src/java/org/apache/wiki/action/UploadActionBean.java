@@ -116,7 +116,7 @@ public class UploadActionBean extends AbstractPageActionBean
             }
         }
 
-        return new RedirectResolution( ViewActionBean.class, "attachments" ).addParameter( "page", m_page.getName() );
+        return new RedirectResolution( ViewActionBean.class, "attachments" ).addParameter( "page", getPage().getName() );
     }
     
     @ValidationMethod
@@ -225,7 +225,7 @@ public class UploadActionBean extends AbstractPageActionBean
         data.close();
         filebean.delete();
 
-        log.info( "User " + user + " uploaded attachment to " + m_page.getName() + " called " + filename + ", size " + att.getSize() );
+        log.info( "User " + user + " uploaded attachment to " + getPage().getName() + " called " + filename + ", size " + att.getSize() );
 
         return created;
     }
