@@ -23,20 +23,30 @@ package org.apache.wiki;
 import org.apache.wiki.api.WikiException;
 
 /**
- *  Marks that no such variable was located.
+ * Marks that no such variable was located.
  */
-public class NoSuchVariableException
-    extends WikiException
+public class NoSuchVariableException extends WikiException
 {
-    private static final long          serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     *  Constructs an exception.
-     *
-     *  @param msg Message to show
+     * Constructs an exception.
+     * 
+     * @param msg Message to show
      */
     public NoSuchVariableException( String msg )
     {
-        super(msg);
+        super( msg );
+    }
+
+    /**
+     * Constructs an exception.
+     * 
+     * @param msg Message to show
+     * @param cause the cause of the exception
+     */
+    public NoSuchVariableException( String msg, Throwable cause )
+    {
+        super( msg, cause );
     }
 }

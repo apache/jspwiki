@@ -388,7 +388,7 @@ public class VariableManager
         }
         catch( Exception e )
         {
-            log.info("Interesting exception: cannot fetch variable value",e);
+            log.info( "Interesting exception: cannot fetch variable value '" + varName + "'.", e );
         }
         return "";
     }
@@ -420,7 +420,8 @@ public class VariableManager
 
         public String getPagename()
         {
-            return m_context.getPage().getName();
+            WikiPage page = m_context.getPage();
+            return page == null ? null : page.getName();
         }
 
         public String getApplicationname()
