@@ -1,3 +1,12 @@
+2009-04-23 Harry Metske <metskem@apache.org>
+
+        * 2.8.3-svn-5
+
+        * JSPWIKI-523 Change TableOfContentsPlugin so it generates (more) relative links
+        so it properly displays when used in EditHelpPage (reported by Stefan Bohn.
+        
+        * Added two (dummy) methods to TestJDBCDataSource so it also compiles with JDK 6
+
 2008-04-04  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.3-svn-4

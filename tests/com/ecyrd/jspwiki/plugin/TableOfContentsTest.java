@@ -58,7 +58,7 @@ public class TableOfContentsTest extends TestCase
         assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                       "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                       "<ul>\n"+
-                      "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">Heading bar</a></li>\n"+
+                      "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">Heading bar</a></li>\n"+
                       "</ul>\n</div>\n</div>\n\n</p>"+
                       "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>\n",
                       res );
@@ -77,9 +77,9 @@ public class TableOfContentsTest extends TestCase
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                 "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                 "<ul>\n"+
-                "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
-                "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
-                "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">3.1.1 Subsubheading</a></li>\n"+
+                "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
+                "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
+                "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading\">3.1.1 Subsubheading</a></li>\n"+
                 "</ul>\n</div>\n</div>\n\n</p>"+
                 "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
                 "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
@@ -102,14 +102,14 @@ public class TableOfContentsTest extends TestCase
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
-        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">3.1.1 Subsubheading</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading2\">3.1.2 Subsubheading2</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading2\">3.2 Subheading2</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading3\">3.2.1 Subsubheading3</a></li>\n"+
-        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">4 Heading</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">4.1 Subheading3</a></li>\n"+
+        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading\">3.1 Subheading</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading\">3.1.1 Subsubheading</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading2\">3.1.2 Subsubheading2</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading2\">3.2 Subheading2</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading3\">3.2.1 Subsubheading3</a></li>\n"+
+        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-Heading\">4 Heading</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading3\">4.1 Subheading3</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
@@ -137,15 +137,15 @@ public class TableOfContentsTest extends TestCase
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading0\">3.1 Subheading0</a></li>\n"+
-        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">4 Heading bar</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">4.1 Subheading</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">4.1.1 Subsubheading</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading2\">4.1.2 Subsubheading2</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading2\">4.2 Subheading2</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading3\">4.2.1 Subsubheading3</a></li>\n"+
-        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Heading\">5 Heading</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading3\">5.1 Subheading3</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading0\">3.1 Subheading0</a></li>\n"+
+        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">4 Heading bar</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading\">4.1 Subheading</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading\">4.1.1 Subsubheading</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading2\">4.1.2 Subsubheading2</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading2\">4.2 Subheading2</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading3\">4.2.1 Subsubheading3</a></li>\n"+
+        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-Heading\">5 Heading</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading3\">5.1 Subheading3</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h3 id=\"section-Test-Subheading0\">Subheading0<a class=\"hashlink\" href=\"#section-Test-Subheading0\">#</a></h3>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
@@ -174,9 +174,9 @@ public class TableOfContentsTest extends TestCase
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
-        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-HeadingBar\">FooBar-3 Heading bar</a></li>\n"+
-        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subheading\">FooBar-3.1 Subheading</a></li>\n"+
-        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"/Wiki.jsp?page=Test#section-Test-Subsubheading\">FooBar-3.1.1 Subsubheading</a></li>\n"+
+        "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">FooBar-3 Heading bar</a></li>\n"+
+        "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading\">FooBar-3.1 Subheading</a></li>\n"+
+        "<li class=\"toclevel-3\"><a class=\"wikipage\" href=\"#section-Test-Subsubheading\">FooBar-3.1.1 Subsubheading</a></li>\n"+
         "</ul>\n</div>\n</div>\n\n</p>"+
         "\n<h2 id=\"section-Test-HeadingBar\">Heading bar<a class=\"hashlink\" href=\"#section-Test-HeadingBar\">#</a></h2>"+
         "\n<h3 id=\"section-Test-Subheading\">Subheading<a class=\"hashlink\" href=\"#section-Test-Subheading\">#</a></h3>"+
@@ -228,8 +228,8 @@ public class TableOfContentsTest extends TestCase
         assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
         assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );
 
-        assertTrue( "First test", res.indexOf( "Wiki.jsp?page=Test#section-Test-Test" ) != -1 );
-        assertTrue( "2nd test",   res.indexOf( "Wiki.jsp?page=Test#section-Test-Test-2" ) != -1 );
+        assertTrue( "First test", res.indexOf( "#section-Test-Test" ) != -1 );
+        assertTrue( "2nd test",   res.indexOf( "#section-Test-Test-2" ) != -1 );
         
     }
     public static Test suite()

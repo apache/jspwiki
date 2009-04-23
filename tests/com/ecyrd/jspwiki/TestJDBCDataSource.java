@@ -161,4 +161,16 @@ public class TestJDBCDataSource implements DataSource
         m_driver = (Driver) driverClass.newInstance();
     }
 
+    public boolean isWrapperFor( Class<?> arg0 ) throws SQLException
+    {
+        // unused interface methods required for JDK 6
+        return false;
+    }
+
+    public <T> T unwrap( Class<T> arg0 ) throws SQLException
+    {
+        // unused interface methods required for JDK 6
+        return null;
+    }
+
 }
