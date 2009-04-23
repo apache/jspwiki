@@ -1,3 +1,12 @@
+2009-04-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-104
+
+        * JSPWIKI-523 Change TableOfContentsPlugin so it generates (more) relative links
+        so it properly displays when used in EditHelpPage (reported by Stefan Bohn.
+        
+        * Added two (dummy) methods to TestJDBCDataSource so it also compiles with JDK 6
+        
 2009-04-19  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-103
@@ -659,7 +668,7 @@
 
         * 3.0.0-svn-45
         
-        * JSPWIKI-466 - FileSystemProviderTest rücksichtslos empties java.io.tmpdir
+        * JSPWIKI-466 - FileSystemProviderTest rï¿½cksichtslos empties java.io.tmpdir
         
 2009-01-03  Harry Metske <metskem@apache.org>
 
