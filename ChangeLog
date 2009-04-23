@@ -668,7 +668,7 @@
 
         * 3.0.0-svn-45
         
-        * JSPWIKI-466 - FileSystemProviderTest rï¿½cksichtslos empties java.io.tmpdir
+        * JSPWIKI-466 - FileSystemProviderTest rücksichtslos empties java.io.tmpdir
         
 2009-01-03  Harry Metske <metskem@apache.org>
 
