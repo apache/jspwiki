@@ -363,7 +363,7 @@ public class ReferenceManager
     }
     
     /**
-     *  Updates the referred pages of a new or edited WikiPage. If a refersTo
+     *  Updates list of pages a new or edited WikiPage refers to. If a refersTo
      *  entry for this page already exists, it is removed and a new one is built
      *  from scratch. Also calls updateReferredBy() for each referenced page.
      *  <P>

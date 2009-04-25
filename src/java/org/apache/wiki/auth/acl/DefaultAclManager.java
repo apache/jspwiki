@@ -215,7 +215,7 @@ public class DefaultAclManager implements AclManager
             }
             catch ( ProviderException e )
             {
-                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderExcpetion " + e.getMessage(), e );
+                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderException " + e.getMessage(), e );
             }
         }
     }

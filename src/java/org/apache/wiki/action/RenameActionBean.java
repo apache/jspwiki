@@ -111,7 +111,7 @@ public class RenameActionBean extends AbstractPageActionBean
      * @throws WikiException if the page cannot be renamed
      */
     @HandlesEvent( "rename" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.RENAME_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.RENAME_ACTION )
     @WikiRequestContext( "rename" )
     public Resolution rename() throws WikiException
     {

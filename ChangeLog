@@ -1,3 +1,12 @@
+2009-04-25  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-105
+        
+        * Many unit test fixes, including many to JSPWikiMarkupParser. About 90% of tests pass now.
+        WikiPath is now truly immutable. DefaultURLConstructor omits the space name from pages if
+        in the main space, and colons are no longer URLencoded. Fixed bug in ContentManager that
+        was preventing page ACLs from being changed correctly if a user's name changed.
+        
 2009-04-23  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-104

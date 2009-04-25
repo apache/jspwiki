@@ -103,7 +103,7 @@ public class UploadActionBean extends AbstractPageActionBean
      * @return Resolution
      */
     @HandlesEvent( "upload" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.UPLOAD_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.UPLOAD_ACTION )
     @WikiRequestContext( "upload" )
     public Resolution upload() throws Exception
     {

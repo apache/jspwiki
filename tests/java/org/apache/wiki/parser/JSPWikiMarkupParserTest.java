@@ -95,7 +95,10 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     private String translate( String src ) throws Exception
     {
-        return translate( testEngine.createPage( WikiPath.valueOf( PAGE_NAME ) ), src );
+        WikiPath path = WikiPath.valueOf( PAGE_NAME );
+        boolean exists = testEngine.pageExists( path.toString() );
+        WikiPage page = exists ? testEngine.getPage( path.toString() ) : testEngine.createPage( path );
+        return translate( page, src );
     }
 
     private String translate( WikiEngine e, String src ) throws Exception
@@ -232,6 +235,7 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     public void testHyperlinksCCNonExistant() throws Exception
     {
+        testEngine.deletePage( "HyperLink" );
         String src = "This should be a HyperLink.";
 
         assertEquals( "This should be a <a class=\"createpage\" href=\"/Edit.jsp?page=HyperLink\" title=\"Create &quot;HyperLink&quot;\">HyperLink</a>.",

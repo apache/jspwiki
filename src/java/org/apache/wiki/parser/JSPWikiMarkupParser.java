@@ -35,12 +35,16 @@ import javax.xml.transform.Result;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.VariableManager;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -439,7 +443,15 @@ public class JSPWikiMarkupParser
         {
             if( page == null || page.length() == 0 ) return null;
 
-            return m_engine.getFinalPageName( WikiPath.valueOf( page ) ).toString();
+            WikiPath path = WikiPath.valueOf( page );
+            WikiPath finalPath = m_engine.getFinalPageName( path );
+            path = finalPath != null ? finalPath : path;
+            if ( m_engine.pageExists( path.toString() ) )
+            {
+                String pageLink = ContentManager.DEFAULT_SPACE.equals( path.getSpace() ) ? path.getPath() : path.toString();
+                return pageLink;
+            }
+            return null;
         }
         catch( Exception e )
         {
@@ -1673,8 +1685,7 @@ public class JSPWikiMarkupParser
         try
         {
             att = mgr.getAttachmentInfo( m_context, linktext );
-            
-            return att.getName();
+            return att == null ? null : att.getName();
         }
         catch( PageNotFoundException e )
         {}

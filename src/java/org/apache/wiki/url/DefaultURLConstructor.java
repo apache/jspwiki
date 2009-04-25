@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -156,11 +157,28 @@ public class DefaultURLConstructor
      *  encoding.  See http://issues.apache.org/bugzilla/show_bug.cgi?id=39278
      *  for more info.
      *  
-     *  We also convert any %2F's back to slashes to make nicer-looking URLs.
+     *  We also convert any %2F's back to slashes to make nicer-looking URLs,
+     *  and the first %3A into a colon (:) because it denotes the space.
      */
     private final String encodeURI( String uri )
     {
+        int colon = uri.indexOf( ':' );
+        
         uri = m_engine.encodeName(uri);
+        
+        // Add back the colon for the space name if not the default space
+        if ( colon != -1 )
+        {
+            String space = uri.substring( 0, colon );
+            if ( ContentManager.DEFAULT_SPACE.equals( space ) )
+            {
+                uri = uri.substring( colon + 3, uri.length() );
+            }
+            else
+            {
+                uri = space + ":" + uri.substring( colon + 3, uri.length() );
+            }
+        }
         
         uri = StringUtils.replace( uri, "+", "%20" );
         uri = StringUtils.replace( uri, "%2F", "/" );

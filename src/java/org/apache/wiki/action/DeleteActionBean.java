@@ -60,7 +60,7 @@ public class DeleteActionBean extends AbstractPageActionBean
      * @throws ProviderException if the delete failed for any reason
      */
     @HandlesEvent( "delete" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.qualifiedName}", actions = PagePermission.DELETE_ACTION )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.DELETE_ACTION )
     @WikiRequestContext( "del" )
     public Resolution delete() throws PageNotFoundException, ProviderException
     {

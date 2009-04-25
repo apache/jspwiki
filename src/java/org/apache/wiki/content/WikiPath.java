@@ -32,15 +32,12 @@ import java.io.Serializable;
  *  
  *  @since 3.0
  */
-public class WikiPath implements Serializable, Comparable<WikiPath>
+public final class WikiPath implements Serializable, Comparable<WikiPath>
 {
     private static final long serialVersionUID = 1L;
-    private String m_space;
-    private String m_path;
-    private String m_stringRepresentation = null;
-    
-    private WikiPath()
-    {}
+    private final String m_space;
+    private final String m_path;
+    private final String m_stringRepresentation;
     
     /**
      *  Create a WikiName from a space and a path.
@@ -52,6 +49,7 @@ public class WikiPath implements Serializable, Comparable<WikiPath>
     {
         m_space = (space != null) ? space : ContentManager.DEFAULT_SPACE;
         m_path  = path;
+        m_stringRepresentation = m_space+":"+m_path;
     }
     
     /**
@@ -69,22 +67,15 @@ public class WikiPath implements Serializable, Comparable<WikiPath>
     {
         if( path == null ) throw new IllegalArgumentException("null path given to WikiName.valueOf().");
         
-        WikiPath name = new WikiPath();
         int colon = path.indexOf(':');
         
         if( colon != -1 )
         {
             // This is a FQN
-            name.m_space = path.substring( 0, colon );
-            name.m_path  = path.substring( colon+1 );
-            
-            return name;
+            return new WikiPath( path.substring( 0, colon ), path.substring( colon+1 ) );
         }
 
-        name.m_space = ContentManager.DEFAULT_SPACE;
-        name.m_path = path;
-        
-        return name;
+        return new WikiPath ( ContentManager.DEFAULT_SPACE, path );
     }
     
     /**
@@ -149,13 +140,6 @@ public class WikiPath implements Serializable, Comparable<WikiPath>
      */
     public String toString()
     {
-        //
-        //  The String representation is cached for maximum speed
-        //  and object creation overhead.
-        //
-        if( m_stringRepresentation == null )
-            m_stringRepresentation = m_space+":"+m_path;
-        
         return m_stringRepresentation;
     }
 
@@ -168,7 +152,7 @@ public class WikiPath implements Serializable, Comparable<WikiPath>
      */
     public int hashCode()
     {
-        return toString().hashCode();
+        return m_stringRepresentation.hashCode();
     }
     
     /**

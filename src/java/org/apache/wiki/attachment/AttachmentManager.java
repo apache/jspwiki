@@ -210,9 +210,13 @@ public class AttachmentManager
         if( att == null )
         {
             att = m_engine.getContentManager().getPage( name, version );
+            if ( att != null && att.isAttachment() )
+            {
+                return att;
+            }
         }
 
-        return att;
+        return null;
     }
 
     /**

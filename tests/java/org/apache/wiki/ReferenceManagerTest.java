@@ -122,7 +122,7 @@ public class ReferenceManagerTest extends TestCase
     {
         Collection<WikiPath> c = findReferrers("Foobar2");
         
-        assertTrue( c.size() == 1 && c.contains("Foobar") );
+        assertTrue( c.size() == 1 && c.contains( WikiPath.valueOf( "Foobar") ) );
 
         engine.deletePage( "Foobar" );
         
@@ -269,7 +269,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "Foobars referrers count", 2, c.size() );
 
         assertTrue( "Foobars referrers", 
-                    c.contains("TestPage") && c.contains("Foobar"));
+                    c.contains( WikiPath.valueOf( "TestPage" ) ) && c.contains( WikiPath.valueOf( "Foobar" ) ) );
     }
 
     public void testCircularRefs()

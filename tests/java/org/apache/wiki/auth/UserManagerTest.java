@@ -31,6 +31,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -109,7 +110,6 @@ public class UserManagerTest extends TestCase
       ContentManager contentManager = m_engine.getContentManager();
       AuthorizationManager authManager = m_engine.getAuthorizationManager();
       int oldGroupCount = groupManager.getRoles().length;
-      int oldPageCount = contentManager.getTotalPageCount( null );
       
       // Setup Step 1: create a new user with random name
       WikiSession session = m_engine.guestSession();
@@ -145,6 +145,7 @@ public class UserManagerTest extends TestCase
       assertTrue  ( groupManager.isUserInRole( session, group.getPrincipal() ) );
       
       // Setup Step 3: create a new page with our test user in the ACL
+      int oldPageCount = contentManager.getTotalPageCount( null );
       String pageName = "TestPage" + now;
       m_engine.saveText( pageName, "Test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
       
@@ -185,16 +186,18 @@ public class UserManagerTest extends TestCase
       // Test 3: our page should not contain the old wiki name OR login name
       // in the ACL any more (the full name is always used)
       p = m_engine.getPage( pageName );
-      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
-      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( oldName  ) ) );
-      assertNull   ( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
-      assertNotNull( p.getAcl().getEntry( new WikiPrincipal( newName  ) ) );
+      Acl acl = p.getAcl();
+      assertNotNull ( acl );
+      assertNull   ( acl.getEntry( new WikiPrincipal( oldLogin ) ) );
+      assertNull   ( acl.getEntry( new WikiPrincipal( oldName  ) ) );
+      assertNull   ( acl.getEntry( new WikiPrincipal( newLogin ) ) );
+      assertNotNull( acl.getEntry( new WikiPrincipal( newName  ) ) );
       assertTrue( "Test User view page", authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ) );
       assertFalse( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Test 4: our page text should have been re-written
-      // (The new full name should be in the ACL, but the login name should have been removed)
-      String expectedText = "[{ALLOW view Alice," + newName + "}]\nTest text.  More text.\r\n";
+      // (with the ACL text surgically removed)
+      String expectedText = "Test text.  More text.\r\n";
       String actualText = m_engine.getText( pageName );
       assertEquals( expectedText, actualText );
       
@@ -252,8 +255,8 @@ public class UserManagerTest extends TestCase
       assertFalse( "Bob !view page", authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ) );
       
       // Test 8: our page text should have been re-written
-      // (The new full name should be in the ACL, but the login name should have been removed)
-      expectedText = "[{ALLOW view Alice," + oldName + "}]\nMore test text.  More text.\r\n";
+      // (with the ACL text surgically removed)
+      expectedText = "More test text.  More text.\r\n";
       actualText = m_engine.getText( pageName );
       assertEquals( expectedText, actualText );
       

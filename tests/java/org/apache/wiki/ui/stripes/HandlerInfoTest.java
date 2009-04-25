@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.action.EditActionBean;
 import org.apache.wiki.action.GroupActionBean;
 import org.apache.wiki.action.ViewActionBean;
 import org.apache.wiki.auth.permissions.GroupPermission;
@@ -190,25 +191,20 @@ public class HandlerInfoTest extends TestCase
     public void testNotEvaluatedPermissionAnnotation() throws Exception
     {
         MockRoundtrip trip;
-        ViewActionBean bean;
+        EditActionBean bean;
         Method method;
         HandlerInfo handlerInfo;
         Permission perm;
 
-        // Set up a new ViewActionBean with the non-existent page Foobar
-        trip = m_engine.guestTrip( "/Wiki.action" );
-        trip.addParameter( "page", "Foobar" );
-        trip.execute( "view" );
-        bean = trip.getActionBean( ViewActionBean.class );
-        assertNotNull( bean );
+        // Set up a new EditActionBean without a page parameter
+        trip = m_engine.guestTrip( "/Edit.action" );
+        trip.execute( "edit" );
+        bean = trip.getActionBean( EditActionBean.class );
         
-        // The Page should not exist
-        assertNull( bean.getPage() );
-
-        // The view handler should NOT return a "view" PagePermission (because
+        // The view handler should NOT return an "edit" PagePermission (because
         // EL can't evaluate)
-        method = ViewActionBean.class.getMethod( "view", new Class[0] );
-        Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( ViewActionBean.class );
+        method = EditActionBean.class.getMethod( "edit", new Class[0] );
+        Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( EditActionBean.class );
         handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
         perm = handlerInfo.getPermission( bean );

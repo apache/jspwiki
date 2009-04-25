@@ -126,7 +126,7 @@ public class JCRWikiPage
             }
             else
             {
-                throw new IllegalStateException( "The value returned by " + key + " was not a Serializalble, as expected.");
+                throw new IllegalStateException( "The value returned by " + key + " was not a Serializable, as expected.");
             }
         }
         catch( ItemNotFoundException e ) {}
@@ -159,14 +159,16 @@ public class JCRWikiPage
         return property.getString();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setAttribute(java.lang.String, java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
-    public void setAttribute( String key, String attribute )
+    public void setAttribute( String key, Serializable attribute )
     {
         try
         {
-            getJCRNode().setProperty( key, attribute );
+            // FIXME: Using the string value can't possibly be
+            // the right thing to do here.
+            getJCRNode().setProperty( key, attribute.toString() );
         }
         catch(RepositoryException e) {} // FIXME: Should log
     }
@@ -560,13 +562,6 @@ public class JCRWikiPage
         {
             throw new ProviderException("Unable to set content",e);
         }
-    }
-
- 
-    public void setAttribute( String key, Serializable attribute )
-    {
-        // TODO Auto-generated method stub
-        
     }
 
     public WikiPage getParent() throws PageNotFoundException, ProviderException

@@ -1320,13 +1320,13 @@ public class ContentManager implements WikiEventListener
                 for ( Iterator<WikiPage> it = pages.iterator(); it.hasNext(); )
                 {
                     WikiPage page = (WikiPage)it.next();
-                    boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
-                    if ( aclChanged )
+                    Acl acl = changeAcl( page, oldPrincipals, newPrincipal );
+                    if ( acl != null )
                     {
                         // If the Acl needed changing, change it now
                         try
                         {
-                            m_engine.getAclManager().setPermissions( page, page.getAcl() );
+                            m_engine.getAclManager().setPermissions( page, acl );
                         }
                         catch ( WikiSecurityException e )
                         {
@@ -1348,18 +1348,19 @@ public class ContentManager implements WikiEventListener
 
     /**
      *  For a single wiki page, replaces all Acl entries matching a supplied array of Principals 
-     *  with a new Principal.
+     *  with a new Principal. If the Acl is changed, the changed Acl is returned. Otherwise,
+     *  (the Acl did not change), null is returned.
      * 
      *  @param page the wiki page whose Acl is to be modified
      *  @param oldPrincipals an array of Principals to replace; all AclEntry objects whose
      *   {@link AclEntry#getPrincipal()} method returns one of these Principals will be replaced
      *  @param newPrincipal the Principal that should receive the old Principals' permissions
-     *  @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
+     *  @return a non-<code>null</code> Acl if the Acl was actually changed; <code>null</code> otherwise
      */
-    protected boolean changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
+    protected Acl changeAcl( WikiPage page, Principal[] oldPrincipals, Principal newPrincipal )
     {
         Acl acl = page.getAcl();
-        boolean pageChanged = false;
+        boolean aclChanged = false;
         if ( acl != null )
         {
             Enumeration<AclEntry> entries = acl.entries();
@@ -1379,7 +1380,7 @@ public class ContentManager implements WikiEventListener
                         Permission permission = (Permission)permissions.nextElement();
                         newEntry.addPermission(permission);
                     }
-                    pageChanged = true;
+                    aclChanged = true;
                     entriesToRemove.add( entry );
                     entriesToAdd.add( newEntry );
                 }
@@ -1395,7 +1396,7 @@ public class ContentManager implements WikiEventListener
                 acl.addEntry( entry );
             }
         }
-        return pageChanged;
+        return aclChanged ? acl : null;
     }
 
     /*
