@@ -541,7 +541,7 @@ public class ReferenceManager
      * @throws PageNotFoundException 
      * @throws ProviderException 
      * @since 2.2.33
-     * @deprecated Use WikiPage.getRefersTo() instead
+     * @deprecated Use {@link org.apache.wiki.api.WikiPage.getRefersTo()} instead
      */
     public Collection<String> findRefersTo( String pageName ) throws ProviderException, PageNotFoundException
     {

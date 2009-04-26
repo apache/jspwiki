@@ -25,6 +25,8 @@ import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.log.Logger;
+import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
 
 import junit.framework.Test;
@@ -81,9 +83,9 @@ public class RecentChangesPluginTest extends TestCase
         // we don't want to compare the complete html returned, but check if certain Strings are present and other 
         // Strings are not present
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
 
     }
 
@@ -100,9 +102,9 @@ public class RecentChangesPluginTest extends TestCase
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>" ));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
 
     }
 
@@ -115,13 +117,12 @@ public class RecentChangesPluginTest extends TestCase
     {
         context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage03" ) );
 
-        String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
+        String res = manager.execute( context, "{INSERT RecentChangesPlugin exclude='TestPage03*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>Test Page 01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>Test Page 02</a>" ));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>Test Page 03</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
 
     }
 

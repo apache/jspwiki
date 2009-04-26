@@ -248,7 +248,7 @@ public class WikiEngineTest extends TestCase
         Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiPath.valueOf( "Test" ) ), src ).toArray();
         
         assertEquals( "item 0", PATH_FOOBAR, result[0] );
-        assertEquals( "item 1", "This is a link", result[1] );
+        assertEquals( "item 1", "Main:This is a link", result[1] );
     }
 
     public void testBeautifyTitle()
@@ -874,7 +874,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
         Collection<WikiPath> pages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf("RenameBugTestPage") );
-        assertEquals( "has one", "OldNameTestPage", pages.iterator().next() );
+        assertEquals( "has one", "Main:OldNameTestPage", pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
         

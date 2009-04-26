@@ -26,6 +26,8 @@ import org.apache.ecs.xhtml.div;
 import org.apache.ecs.xhtml.span;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -121,19 +123,18 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
      * include/exclude patterns and showAttachments parameter.
      * 
      * @param context
-     * @return A list containing page names
+     * @return A list containing {@link org.apache.wiki.api.WikiPage} Objects
      * @throws ProviderException
      */
     private List<String> listPages( WikiContext context ) throws ProviderException
     {
         ArrayList<String> result = new ArrayList<String>();
-        Collection<String> pages = context.getEngine().getReferenceManager().findCreated();
-
+        Collection<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE );
         pages = super.filterCollection( pages );
 
-        for( String page : pages )
+        for( WikiPage page : pages )
         {
-            result.add( page );
+            result.add( page.getName() );
         }
         return result;
     }
