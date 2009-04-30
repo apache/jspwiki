@@ -144,7 +144,7 @@ public class BasicSearchProvider implements SearchProvider
         return "";
     }
 
-    private Collection<SearchResult> findPages( QueryItem[] query )
+    private SortedSet<SearchResult> findPages( QueryItem[] query )
     {
         TreeSet<SearchResult> res = new TreeSet<SearchResult>( new SearchResultComparator() );
         SearchMatcher matcher = new SearchMatcher( m_engine, query );
@@ -192,9 +192,9 @@ public class BasicSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection<SearchResult> findPages(String query)
+    public List<SearchResult> findPages(String query)
     {
-        return findPages(parseQuery(query));
+        return new ArrayList<SearchResult>( findPages( parseQuery( query ) ) );
     }
 
     /**

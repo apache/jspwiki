@@ -21,7 +21,7 @@
 package org.apache.wiki;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.wiki.util.StringTransmutator;
 
@@ -38,7 +38,7 @@ public class LinkCollector
      * Returns a List of Strings representing links.
      * @return the link collection
      */
-    public Collection<String> getLinks()
+    public List<String> getLinks()
     {
         return m_items;
     }

@@ -21,7 +21,7 @@
 package org.apache.wiki.search;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
@@ -53,11 +53,12 @@ public interface SearchProvider extends WikiProvider
     public void reindexPage(WikiPage page) throws ProviderException;
 
     /**
-     * Search for pages matching a search query
+     * Search for pages matching a search query returning an ordered list of results.
+     * 
      * @param query query to search for
-     * @return collection of pages that match query
+     * @return the ordered list of SearchResults that match query, in descending quality order (i.e. best match first)
      * @throws ProviderException if the search provider failed.
      * @throws IOException if for some reason the query could not be executed.
      */
-    public Collection<SearchResult> findPages(String query) throws ProviderException, IOException;
+    public List<SearchResult> findPages(String query) throws ProviderException, IOException;
 }

@@ -1,3 +1,10 @@
+2009-04-30  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-107
+        
+        * JSPWIKI-528: Three patches from Greg Kable to rationalize the use
+        of Collections in the APIs.
+        
 2009-04-26  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-106

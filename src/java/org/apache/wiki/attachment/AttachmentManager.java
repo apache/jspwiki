@@ -24,10 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.JCRWikiPage;
@@ -220,33 +217,66 @@ public class AttachmentManager
     }
 
     /**
-     *  Returns the list of attachments associated with a given wiki page.
-     *  If there are no attachments, returns an empty Collection.
+     * Returns the list of attachments associated with a given wiki page.
+     * If there are no attachments, returns an empty List. The order of
+     * the list is not defined.
+     * 
+     * @param wikipage
+     *            the wiki page from which you are seeking attachments for
+     * @return an unordered List of attachments
+     * @throws ProviderException
+     *             if there was something wrong in the backend
+     */
+    public List<WikiPage> listAttachments( WikiPage wikipage )
+        throws ProviderException
+    {
+        return (List<WikiPage>) listAttachmentsImpl( new ArrayList<WikiPage>(), wikipage );
+    }
+
+    /**
+     * Returns the sorted set of attachments associated with a given wiki page.
+     * If there are no attachments, returns an empty Set. The set is in page
+     * name order.
+     * 
+     * @param wikipage
+     *            the wiki page from which you are seeking attachments for
+     * @return a SortedSet of attachments
+     * @throws ProviderException
+     *             if there was something wrong in the backend
+     */
+    public SortedSet<WikiPage> listAttachmentsSorted( WikiPage wikipage )
+        throws ProviderException
+    {
+        return (SortedSet<WikiPage>) listAttachmentsImpl( new TreeSet<WikiPage>(), wikipage );
+    }
+
+    /**
+     *  Internal routine to find the attachments associated with a given wiki page.
+     *  Depends on the passed Collection for ordering and such.
      *
+     *  @param result Collection used to hold the resulting attachments
      *  @param wikipage the wiki page from which you are seeking attachments for
-     *  @return a valid collection of attachments
+     *  @return the passed in Collection, filled with the attachments
      *  @throws ProviderException if there was something wrong in the backend
      */
-    // FIXME: This API should be changed to return a List.
-    public Collection<WikiPage> listAttachments( WikiPage wikipage )
+    private Collection<WikiPage> listAttachmentsImpl( Collection<WikiPage> result, WikiPage wikipage )
         throws ProviderException
     {
         List<WikiPage> children = wikipage.getChildren();
-        ArrayList<WikiPage> atts = new ArrayList<WikiPage>(); 
         
         for( WikiPage p : children )
         {
             JCRWikiPage jwp = (JCRWikiPage)p;
             if( jwp.isAttachment() )
-                atts.add( jwp );
+                result.add( jwp );
         }
         
-        return atts;
+        return result;
     }
 
     /**
      *  Returns true, if the page has any attachments at all.  This is
-     *  a convinience method.
+     *  a convenience method.
      *
      *
      *  @param wikipage The wiki page from which you are seeking attachments for.
@@ -256,9 +286,18 @@ public class AttachmentManager
     {
         try
         {
-            return listAttachments( wikipage ).size() > 0;
+            List<WikiPage> children = wikipage.getChildren();
+            for( WikiPage p : children )
+            {
+                JCRWikiPage jwp = (JCRWikiPage)p;
+                if( jwp.isAttachment() )
+                    return true;
+            }
         }
-        catch( Exception e ) {}
+        catch( ProviderException e )
+        {
+            // Do nothing because there's nothing we can do
+        }
 
         return false;
     }

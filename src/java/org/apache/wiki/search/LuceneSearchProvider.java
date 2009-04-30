@@ -528,7 +528,7 @@ public class LuceneSearchProvider implements SearchProvider
     /**
      *  {@inheritDoc}
      */
-    public Collection<SearchResult> findPages( String query )
+    public List<SearchResult> findPages( String query )
         throws ProviderException
     {
         return findPages( query, FLAG_CONTEXTS );
@@ -545,10 +545,10 @@ public class LuceneSearchProvider implements SearchProvider
      *
      *  @param query The query to perform in Lucene query language
      *  @param flags A set of flags
-     *  @return A Collection of SearchResult instances
+     *  @return the ordered list of SearchResult instances in descending quality order (i.e. best match first)
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection<SearchResult> findPages( String query, int flags )
+    public List<SearchResult> findPages( String query, int flags )
         throws ProviderException
     {
         Searcher  searcher = null;
