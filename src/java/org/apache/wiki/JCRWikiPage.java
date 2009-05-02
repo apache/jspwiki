@@ -64,9 +64,6 @@ public class JCRWikiPage
     public  static final String CONTENTTYPE  = "wiki:contentType";
     
 
-    public static final String REFERSTO = "wiki:refersTo";
-    
-
     private       WikiPath   m_name;
     private       WikiEngine m_engine;
     private String           m_jcrPath = null;
@@ -472,31 +469,14 @@ public class JCRWikiPage
         return (String)getAttribute( CONTENTTYPE );
     }
 
-    public Set<String> getReferrers()
+    public List<WikiPath> getReferrers() throws ProviderException
     {
-        // TODO Auto-generated method stub
-        return null;
+        return m_engine.getReferenceManager().getReferredBy( m_name );
     }
     
-    public Collection<WikiPath> getRefersTo() throws ProviderException
+    public List<WikiPath> getRefersTo() throws ProviderException
     {
-        Collection<WikiPath> refs = new ArrayList<WikiPath>();
-        
-        try
-        {
-            Property p = getProperty( REFERSTO );
-            
-            Value[] values = p.getValues();
-            
-            for( Value v : values )
-                refs.add( WikiPath.valueOf( v.getString() ) );
-        }
-        catch( PathNotFoundException e ) {}
-        catch( RepositoryException e )
-        {
-            throw new ProviderException("Unable to get the referrals",e);
-        }
-        return refs;
+        return m_engine.getReferenceManager().getRefersTo( m_name );
     }
     
 
@@ -517,15 +497,14 @@ public class JCRWikiPage
         setAttribute( CONTENTTYPE, contentType );
     }
     
+    /**
+     * {@inheritDoc}. This implementation delegates to {@link ContentManager#save(WikiPage)}.
+     */
     public void save() throws ProviderException
     {
         try
         {
-            Node nd = getJCRNode();
-            if( nd.isNew() )
-                nd.getParent().save();
-            else
-                nd.save();
+            m_engine.getContentManager().save( this );
         }
         catch( RepositoryException e )
         {
@@ -601,7 +580,7 @@ public class JCRWikiPage
     {
         String contentType = getContentType();
         boolean exists = m_engine.getContentManager().pageExists( getPath() );
-        if( !exists || ContentManager.JSPWIKI_CONTENT_TYPE.equals( contentType ) ) return false;
+        if( !exists || contentType == null || ContentManager.JSPWIKI_CONTENT_TYPE.equals( contentType ) ) return false;
         
         return true;
     }
