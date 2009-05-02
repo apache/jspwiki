@@ -98,6 +98,10 @@ public class WikiEventUtils
         // Make sure WikiEventManager exists
         WikiEventManager.getInstance();
         
+        // FIXME: Seriously, what is all this crap code below? We've made it impossible to use the
+        // same event type with more than one source. Isn't the listener pattern supposed to
+        // stop stuff like this? Bueller?
+        
         // first, figure out what kind of event is expected to be generated this does
         // tie us into known types, but WikiEvent.isValidType() will return true so
         // long as the type was set to any non-ERROR or non-UNKNOWN value

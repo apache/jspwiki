@@ -21,6 +21,7 @@
 
 package org.apache.wiki.event;
 
+import java.io.Serializable;
 import java.util.EventObject;
 
 /**
@@ -42,7 +43,11 @@ public abstract class WikiEvent extends EventObject
 
     private int m_type = UNDEFINED;
 
+    private final Serializable[] m_args;
+    
     private final long m_when;
+
+    private static final Serializable[] NO_ARGS = new Serializable[0];
 
     // ............
 
@@ -51,14 +56,39 @@ public abstract class WikiEvent extends EventObject
      * Constructs an instance of this event.
      * @param src the Object that is the source of the event.
      * @param type   the event type.
+      * @param args additional arguments passed to the event.
      */
-    public WikiEvent( Object src, int type )
+    public WikiEvent( Object src, int type, Serializable... args )
     {
+        // FIXME: not sure Serializable are the best thing to use here...
         super( src );
         m_when = System.currentTimeMillis();
         setType( type );
+        
+        // Set arguments
+        if ( args == null )
+        {
+            m_args = NO_ARGS;
+        }
+        else
+        {
+            m_args = new Serializable[args.length];
+            for ( int i = 0; i < args.length; i++ )
+            {
+                m_args[i] = args[i];
+            }
+        }
     }
 
+    /**
+     * Returns the additional arguments passed to this event at construction,
+     * or a zero-length array if not supplied.
+     * @return the arguments
+     */
+    public Serializable[] getArgs()
+    {
+        return m_args;
+    }
 
     /**
      *  Returns the timestamp of when this WikiEvent occurred.

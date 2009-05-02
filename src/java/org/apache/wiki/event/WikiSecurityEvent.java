@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.event;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -143,10 +144,11 @@ public final class WikiSecurityEvent extends WikiEvent
      * @param type the type of event
      * @param principal the subject of the event, which may be <code>null</code>
      * @param target the changed Object, which may be <code>null</code>
+      * @param args additional arguments passed to the event.
      */
-    public WikiSecurityEvent( Object src, int type, Principal principal, Object target )
+    public WikiSecurityEvent( Object src, int type, Principal principal, Object target, Serializable...args )
     {
-        super( src, type );
+        super( src, type, args );
         if ( src == null )
         {
             throw new IllegalArgumentException( "Argument(s) cannot be null." );
@@ -177,8 +179,9 @@ public final class WikiSecurityEvent extends WikiEvent
      *            page, group or authentication/authentication/group manager.
      * @param type the type of event
      * @param target the changed Object, which may be <code>null</code>.
+      * @param args additional arguments passed to the event.
      */
-    public WikiSecurityEvent( Object src, int type, Object target )
+    public WikiSecurityEvent( Object src, int type, Object target, Serializable... args )
     {
         this( src, type, null, target );
     }
