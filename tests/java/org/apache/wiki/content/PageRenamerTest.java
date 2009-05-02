@@ -21,17 +21,20 @@
 package org.apache.wiki.content;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-
-import org.apache.wiki.*;
-import org.apache.wiki.api.WikiException;
-import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.providers.ProviderException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.WikiException;
+import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 
 public class PageRenamerTest extends TestCase
@@ -78,9 +81,9 @@ public class PageRenamerTest extends TestCase
         m_engine.shutdown();
     }
 
-    private Set<WikiPath> findReferrers(String path) throws ProviderException
+    private List<WikiPath> findReferrers(String path) throws ProviderException
     {
-        return m_engine.getReferenceManager().findReferrers( WikiPath.valueOf(path) );
+        return m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf(path) );
     }
     
     public void testSimpleRename()

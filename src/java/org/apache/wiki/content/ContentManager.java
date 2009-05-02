@@ -54,6 +54,7 @@ import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.WikiBackgroundThread;
@@ -173,6 +174,8 @@ public class ContentManager implements WikiEventListener
     
     private static final String DEFAULT_WORKSPACE = "jspwiki";
     
+    private static final Serializable[] NO_ARGS = new Serializable[0];
+
     static Logger log = LoggerFactory.getLogger( ContentManager.class );
 
     protected HashMap<String,PageLock> m_pageLocks = new HashMap<String,PageLock>();
@@ -324,6 +327,22 @@ public class ContentManager implements WikiEventListener
     public void release()
     {
         m_sessionManager.releaseSession();
+    }
+    
+    /**
+     * Saves a WikiPage to the repositiry.
+     * @param page
+     */
+    public void save( WikiPage page ) throws RepositoryException
+    {
+        WikiPath path = page.getPath();
+        Node nd = getJCRNode( getJCRPath( path ) );
+        if( nd.isNew() )
+            nd.getParent().save();
+        else
+            nd.save();
+        
+        fireEvent( ContentEvent.NODE_SAVED, page.getName(), NO_ARGS );
     }
     
     /**
@@ -511,7 +530,7 @@ public class ContentManager implements WikiEventListener
 
         synchronized( m_pageLocks )
         {
-            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
+            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName(), NO_ARGS ); // prior to or after actual lock?
 
             lock = m_pageLocks.get( page.getName() );
 
@@ -554,7 +573,7 @@ public class ContentManager implements WikiEventListener
             log.debug( "Unlocked page "+lock.getPage() );
         }
 
-        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage() );
+        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage(), NO_ARGS );
     }
 
     /**
@@ -810,7 +829,7 @@ public class ContentManager implements WikiEventListener
     public boolean deleteVersion( WikiPage page )
         throws ProviderException
     {
-        fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
+        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
 
         JCRWikiPage jcrPage = (JCRWikiPage)page;
         try
@@ -818,7 +837,7 @@ public class ContentManager implements WikiEventListener
             jcrPage.getJCRNode().remove();
             jcrPage.save();
             
-            fireEvent( WikiPageEvent.PAGE_DELETED, jcrPage.getName() );
+            fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
             
             return true;
         }
@@ -844,7 +863,7 @@ public class ContentManager implements WikiEventListener
     public boolean deletePage( WikiPage page )
         throws ProviderException
     {
-        fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
+        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
 
         VersionHistory vh;
         try
@@ -871,7 +890,7 @@ public class ContentManager implements WikiEventListener
             
             nd.getParent().save();
             
-            fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
+            fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
             
             return true;
         }
@@ -996,8 +1015,8 @@ public class ContentManager implements WikiEventListener
 
             // Stash the page ACL, author, attributes, modified-date, name and new text as workflow attributes
 
-            // FIXME: This does not work, since the attribute list can be exceedingly big (in the order of gigabytes).
-            //        Alternate method required.
+            // FIXME: This works now,  but will not scale, because the attribute list can be exceedingly
+            // big (in the order of gigabytes). Alternate method required.
             
             workflow.setAttribute( PRESAVE_PAGE_ACL, page.getAcl() );
             workflow.setAttribute( PRESAVE_PAGE_AUTHOR, author );
@@ -1096,6 +1115,121 @@ public class ContentManager implements WikiEventListener
         }
     }
 
+    // page renaming code....................................................
+    
+    /**
+     *  Renames a page.
+     *  
+     *  @param context The current context.
+     *  @param renameFrom The name from which to rename.
+     *  @param renameTo The new name.
+     *  @param changeReferrers If true, also changes all the referrers.
+     *  @return The final new name (in case it had to be modified)
+     *  @throws WikiException If the page cannot be renamed.
+     */
+    public String renamePage( WikiContext context, 
+                              String renameFrom, 
+                              String renameTo, 
+                              boolean changeReferrers )
+        throws WikiException
+    {
+        //
+        //  Sanity checks first
+        //
+        if( renameFrom == null || renameFrom.length() == 0 )
+        {
+            throw new WikiException( "From name may not be null or empty" );
+        }
+        if( renameTo == null || renameTo.length() == 0 )
+        {
+            throw new WikiException( "To name may not be null or empty" );
+        }
+       
+        //
+        //  Clean up the "to" -name so that it does not contain anything illegal
+        //
+        
+        renameTo = MarkupParser.cleanLink( renameTo.trim() );
+        
+        if( renameTo.equals(renameFrom) )
+        {
+            throw new WikiException( "You cannot rename the page to itself" );
+        }
+        
+        //
+        //  Preconditions: "from" page must exist, and "to" page must not yet exist.
+        //
+        WikiEngine engine = context.getEngine();
+        WikiPage fromPage;
+        try
+        {
+            fromPage = engine.getPage( renameFrom );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new WikiException("No such page "+renameFrom, e );
+        }
+        
+        WikiPage toPage;
+        try
+        {
+            toPage = engine.getPage( renameTo );
+            if( toPage != null )
+            {
+                throw new WikiException("Page already exists "+renameTo);
+            }
+        }
+        catch( PageNotFoundException e )
+        {
+            // Good. The page should NOT exist already.
+        }
+        
+        //
+        //  Do the actual rename by changing from the frompage to the topage, including
+        //  all of the attachments
+        //
+        
+        engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
+        /*
+        if( engine.getAttachmentManager().attachmentsEnabled() )
+        {
+            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
+        }
+*/
+        //
+        //  Add a comment to the page notifying what changed.  This adds a new revision
+        //  to the repo with no actual change.
+        //
+        
+        try
+        {
+            toPage = engine.getPage( renameTo );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
+        }
+
+        toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
+        toPage.setAuthor( context.getCurrentUser().getName() );
+        
+        engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
+
+        // Tell everyone we moved the page
+        fireEvent( ContentEvent.NODE_RENAMED, toPage.getName(), fromPage.getName(), Boolean.valueOf( changeReferrers ) );
+        
+        //
+        //  re-index the page 
+        //
+        engine.getSearchManager().reindexPage(toPage);
+
+        
+        //
+        //  Done, return the new name.
+        //
+        return renameTo;
+    }
+
     // events processing .......................................................
 
     /**
@@ -1103,14 +1237,15 @@ public class ContentManager implements WikiEventListener
      *  to all registered listeners.
      *
      * @see org.apache.wiki.event.WikiPageEvent
-     * @param type       the event type to be fired
-     * @param pagename   the wiki page name as a String
+     * @param type the event type to be fired
+     * @param pagename the wiki page name as a String
+     * @param args additional arguments to pass to the event
      */
-    protected final void fireEvent( int type, String pagename )
+    protected final void fireEvent( int type, String pagename, Serializable... args )
     {
         if ( WikiEventManager.isListening(this) )
         {
-            WikiEventManager.fireEvent(this,new WikiPageEvent(m_engine,type,pagename));
+            WikiEventManager.fireEvent(this,new WikiPageEvent(m_engine,type,pagename,args));
         }
     }
     

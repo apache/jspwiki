@@ -76,8 +76,8 @@ public final class UserManager
     private static Logger log = LoggerFactory.getLogger(UserManager.class);
 
     /** Message key for the "save profile" message. */
-    public  static final String SAVE_APPROVER               = "workflow.createUserProfile";
-    private static final String PROP_DATABASE               = "jspwiki.userdatabase";
+    public static final String SAVE_APPROVER               = "workflow.createUserProfile";
+    public static final String PROP_DATABASE               = "jspwiki.userdatabase";
     protected static final String SAVE_TASK_MESSAGE_KEY     = "task.createUserProfile";
     protected static final String SAVED_PROFILE             = "userProfile";
     protected static final String SAVE_DECISION_MESSAGE_KEY = "decision.createUserProfile";

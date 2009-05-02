@@ -345,7 +345,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                 m_documentCache.flushPattern( pageName );
                 try
                 {
-                    Collection<WikiPath> referringPages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf(pageName) );
+                    Collection<WikiPath> referringPages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf(pageName) );
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistant page

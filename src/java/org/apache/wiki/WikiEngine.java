@@ -556,8 +556,6 @@ public class WikiEngine
             // m_filterManager     = (FilterManager)ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
             m_renderingManager  = (RenderingManager) ClassUtil.getMappedObject(RenderingManager.class.getName());
 
-            m_searchManager     = (SearchManager)ClassUtil.getMappedObject(SearchManager.class.getName(), this, props );
-
             m_authenticationManager = (AuthenticationManager) ClassUtil.getMappedObject(AuthenticationManager.class.getName());
             m_authorizationManager  = (AuthorizationManager) ClassUtil.getMappedObject( AuthorizationManager.class.getName());
             m_userManager           = (UserManager) ClassUtil.getMappedObject(UserManager.class.getName());
@@ -601,20 +599,15 @@ public class WikiEngine
             m_renderingManager.initialize( this, props );
 
             //
-            //  ReferenceManager has the side effect of loading all
-            //  pages.  Therefore after this point, all page attributes
-            //  are available.
+            //  ReferenceManager and SearchManager  must start after ContentManager does.
             //
-            //  initReferenceManager is indirectly using m_filterManager, therefore
-            //  it has to be called after it was initialized.
-            //
-            initReferenceManager();
-
-            //
-            //  Hook the different manager routines into the system.
-            //
-            getFilterManager().addPageFilter(m_referenceManager, -1001 );
-            getFilterManager().addPageFilter(m_searchManager, -1002 );
+            m_referenceManager = (ReferenceManager)
+                ClassUtil.getMappedObject(ReferenceManager.class.getName() );
+            m_referenceManager.initialize( this, props );
+            
+            m_searchManager     = (SearchManager)
+                ClassUtil.getMappedObject(SearchManager.class.getName() );
+            m_searchManager.initialize( this, props );
         }
 
         catch( RuntimeException e )
@@ -693,35 +686,6 @@ public class WikiEngine
         log.info("WikiEngine configured.");
         m_isConfigured = true;
     }
-
-    /**
-     *  Initializes the reference manager. Scans all existing WikiPages for
-     *  internal links and adds them to the ReferenceManager object.
-     *
-     *  @throws WikiException If the reference manager initialization fails.
-     */
-    public void initReferenceManager() throws WikiException
-    {
-        try
-        {
-            ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
-            pages.addAll( m_contentManager.getAllPages(null) );
-
-            // Build a new manager with default key lists.
-            if( m_referenceManager == null )
-            {
-                m_referenceManager =
-                    (ReferenceManager) ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
-                m_referenceManager.initialize( pages );
-            }
-
-        }
-        catch( ProviderException e )
-        {
-            log.error("PageProvider is unable to list pages: ", e);
-        }
-    }
-
 
     /**
      *  Throws an exception if a property is not found.
@@ -1580,36 +1544,6 @@ public class WikiEngine
     }
 
     /**
-     *  Reads a WikiPage full of data from a String and returns all links
-     *  internal to this Wiki in a Collection.
-     *
-     *  @param page The WikiPage to scan
-     *  @param pagedata The page contents
-     *  @return a Collection of Strings
-     */
-    public List<WikiPath> scanWikiLinks( WikiPage page, String pagedata )
-    {
-        LinkCollector localCollector = new LinkCollector();
-
-        textToHTML( m_contextFactory.newViewContext( page ),
-                    pagedata,
-                    localCollector,
-                    null,
-                    localCollector,
-                    false,
-                    true );
-
-        ArrayList<WikiPath> response = new ArrayList<WikiPath>();
-        
-        for( String s : localCollector.getLinks() )
-        {
-            response.add( WikiPath.valueOf( s ) );
-        }
-        
-        return response;
-    }
-
-    /**
      *  Just convert WikiText to HTML.
      *
      *  @param context The WikiContext in which to do the conversion
@@ -1723,21 +1657,6 @@ public class WikiEngine
 
         return result;
     }
-
-    /**
-     *  Updates all references for the given page.
-     *
-     *  @param page wiki page for which references should be updated
-     * @throws ProviderException 
-     */
-    public void updateReferences( WikiPage page ) throws ProviderException
-    {
-        String pageData = getPureText( page.getName(), WikiProvider.LATEST_VERSION );
-
-        m_referenceManager.updateReferences( page,
-                                             scanWikiLinks( page, pageData ) );
-    }
-
 
     /**
      *  Writes the WikiText of a page into the
@@ -2359,7 +2278,7 @@ public class WikiEngine
                               boolean changeReferrers)
         throws WikiException
     {
-        return m_pageRenamer.renamePage(context, renameFrom, renameTo, changeReferrers);
+        return m_contentManager.renamePage(context, renameFrom, renameTo, changeReferrers);
     }
 
     /**

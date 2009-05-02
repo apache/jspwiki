@@ -239,18 +239,6 @@ public class WikiEngineTest extends TestCase
         assertEquals( "A%E2%89%A2%CE%91.", m_engine.encodeName( name ) );
     }
 
-    public void testReadLinks()
-        throws Exception
-    {
-        String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
-
-        m_engine.deletePage( "Test" );
-        Object[] result = m_engine.scanWikiLinks( m_engine.createPage( WikiPath.valueOf( "Test" ) ), src ).toArray();
-        
-        assertEquals( "item 0", PATH_FOOBAR, result[0] );
-        assertEquals( "item 1", "Main:This is a link", result[1] );
-    }
-
     public void testBeautifyTitle()
     {
         String src = "WikiNameThingy";
@@ -713,7 +701,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        Collection<String> c = refMgr.findUncreated();
+        List<String> c = refMgr.findUncreated();
         assertTrue( "Non-existent reference not detected by ReferenceManager",
             Util.collectionContains( c, "Foobar" ));
 
@@ -754,7 +742,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        Collection<String> c = refMgr.findUncreated();
+        List<String> c = refMgr.findUncreated();
         assertEquals( "uncreated count", 1, c.size() );
         assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
 
@@ -873,7 +861,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
-        Collection<WikiPath> pages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf("RenameBugTestPage") );
+        Collection<WikiPath> pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
         assertEquals( "has one", "Main:OldNameTestPage", pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
@@ -883,7 +871,7 @@ public class WikiEngineTest extends TestCase
         assertFalse( "did not vanish", m_engine.pageExists( "OldNameTestPage") );
         assertTrue( "did not appear", m_engine.pageExists( "NewNameTestPage") );
         
-        pages = m_engine.getReferenceManager().findReferrers( WikiPath.valueOf("RenameBugTestPage") );
+        pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
         
         assertEquals( "wrong # of referrers", 1, pages.size() );
         

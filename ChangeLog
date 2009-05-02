@@ -1,3 +1,27 @@
+2009-05-02  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-108
+
+        * Major re-write of ReferenceManager. The refactoring included moving little-used
+        WikiEngine.scanWikiLinks() to ReferenceManager.extractLinks(). This method should
+        never have been in WikiEngine to begin with. ReferenceManager is also completely
+        "unhooked" from FilterManager/PageEvent events, and instead listens to (new)
+        ContentEvents that are emitted when JCR events happen. This is much, much cleaner
+        and will allow PageRenamer to be eliminated Real Soon Now (and moved to
+        ContentManager, where it belongs). SearchManager is similarly unhooked from
+        FilterManager and listens for ContentEvents. Among other things, this also means that
+        saved pages won't be indexed twice. 10 failing unit tests remain in ReferenceManager,
+        and a few bugs still need to be pounded out. I will make one more major checkin of
+        ReferenceManager, soon, to fix remaining tests. Overall passrate is now nearly 93%.
+        
+        * Fixed subtle bug in JCRWikiPage that was causing isAttachment() to incorrectly
+        report its status. Also, JCRWikiPage no longer manages its own references (now
+        handled by ReferenceManager) or saves itself to the JCR (it delegates to
+        ContentManager, so that ContentEvent creation can be guaranteed).
+        
+        * Added varargs to WikiEvent and subclasses, so that arbitrary numbers of
+        arguments can be supplied with events.
+
 2009-04-30  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-107

@@ -24,16 +24,14 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventUtils;
-import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.filters.BasicPageFilter;
+import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.InternalModule;
@@ -53,7 +51,6 @@ import org.apache.wiki.util.TextUtil;
  */
 
 public class SearchManager
-    extends BasicPageFilter
     implements InternalModule, WikiEventListener
 {
     private static final Logger log = LoggerFactory.getLogger(SearchManager.class);
@@ -70,6 +67,8 @@ public class SearchManager
 
     private SearchProvider    m_searchProvider = null;
 
+    private WikiEngine m_engine = null;
+
     /**
      *  The name of the JSON object that manages search.
      */
@@ -82,15 +81,11 @@ public class SearchManager
      *  @param properties The list of Properties.
      *  @throws WikiException If it cannot be instantiated.
      */
-    public SearchManager( WikiEngine engine, Properties properties )
+    public SearchManager()
         throws WikiException
     {
-        initialize( engine, properties );
-
-        WikiEventUtils.addWikiEventListener(m_engine.getContentManager(),
-                                            WikiPageEvent.PAGE_DELETE_REQUEST, this);
-
-        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
+        // Do nothing, really
+        super();
     }
 
     /**
@@ -220,6 +215,11 @@ public class SearchManager
 
         loadSearchProvider(properties);
 
+        // Make sure we catch any page add/save/rename events
+        WikiEventManager.addWikiEventListener( engine.getContentManager(), this );
+
+        JSONRPCManager.registerGlobalObject( JSON_SEARCH, new JSONSearch() );
+        
         try
         {
             m_searchProvider.initialize(engine, properties);
@@ -295,7 +295,7 @@ public class SearchManager
      *  
      *  @return The current SearchProvider.
      */
-    public SearchProvider getSearchEngine()
+    protected SearchProvider getSearchProvider()
     {
         return m_searchProvider;
     }
@@ -322,7 +322,7 @@ public class SearchManager
      *  Removes the page from the search cache (if any).
      *  @param page  The page to remove
      */
-    public void pageRemoved(WikiPage page)
+    private void removePage(WikiPage page)
     {
         try
         {
@@ -331,35 +331,6 @@ public class SearchManager
         catch( ProviderException e )
         {
             log.error("Unable to remove page from Search index",e);
-        }
-    }
-
-    /**
-     *  Reindexes the page.
-     *  
-     *  @param wikiContext {@inheritDoc}
-     *  @param content {@inheritDoc}
-     */
-    @Override
-    public void postSave( WikiContext wikiContext, String content )
-    {
-        //
-        //  Makes sure that we're indexing the latest version of this
-        //  page.
-        //
-        WikiPage p;
-        try
-        {
-            p = m_engine.getPage( wikiContext.getPage().getName() );
-            reindexPage( p );
-        }
-        catch( PageNotFoundException e )
-        {
-            // Swallow quietly; something went wrong but no point making fuss about it.
-        }
-        catch( ProviderException e )
-        {
-            log.info("Could not reindex a page",e);
         }
     }
 
@@ -380,22 +351,55 @@ public class SearchManager
      */
     public void actionPerformed(WikiEvent event)
     {
-        if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST) )
+        if ( !(event instanceof WikiPageEvent ) )
         {
-            String pageName = ((WikiPageEvent) event).getPageName();
-
-            try
+           return; 
+        }
+        
+        String pageName = ((WikiPageEvent) event).getPageName();
+        switch ( event.getType() )
+        {
+            // If page was deleted, remove it from the index
+            case ( ContentEvent.NODE_DELETE_REQUEST ):
             {
-                WikiPage p = m_engine.getPage( pageName );
-                pageRemoved( p );
+                try
+                {
+                    WikiPage p = m_engine.getPage( pageName );
+                    removePage( p );
+                }
+                catch( PageNotFoundException e )
+                {
+                    throw new InternalWikiException("Page removed already!?!");
+                }
+                catch( ProviderException e ) 
+                {
+                    log.info( "Could not reindex page " + pageName, e );
+                    e.printStackTrace();
+                }
             }
-            catch( PageNotFoundException e )
+            
+            // If page was saved, reindex it
+            case ( ContentEvent.NODE_SAVED ):
             {
-                throw new InternalWikiException("Page removed already!?!");
-            }
-            catch( ProviderException e ) 
-            {
-                // FIXME: How should it deal with this?
+                //
+                //  Makes sure that we're indexing the latest version of this
+                //  page.
+                //
+                WikiPage p;
+                try
+                {
+                    p = m_engine.getPage( pageName );
+                    reindexPage( p );
+                }
+                catch( PageNotFoundException e )
+                {
+                    // Swallow quietly; something went wrong but no point making fuss about it.
+                }
+                catch( ProviderException e )
+                {
+                    log.info( "Could not reindex page " + pageName, e );
+                    e.printStackTrace();
+                }
             }
         }
     }

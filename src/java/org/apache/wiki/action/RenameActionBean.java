@@ -35,6 +35,7 @@ import net.sourceforge.stripes.validation.ValidationMethod;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
@@ -120,7 +121,8 @@ public class RenameActionBean extends AbstractPageActionBean
         HttpServletRequest request = getContext().getRequest();
         log.info( "Page rename request for page '" + renameFrom + "' to new name '" + m_renameTo + "' from "
                   + request.getRemoteAddr() + " by " + request.getRemoteUser() );
-        String renamedTo = engine.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
+        PageRenamer renamer = engine.getPageRenamer();
+        String renamedTo = renamer.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
         
         deleteFromBreadCrumb( renameFrom );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );

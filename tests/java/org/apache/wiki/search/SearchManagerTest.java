@@ -73,7 +73,7 @@ public class SearchManagerTest extends TestCase
     public void testDefaultProvider()
     {
         assertEquals( "org.apache.wiki.search.LuceneSearchProvider", 
-                      m_mgr.getSearchEngine().getClass().getName() );    
+                      m_mgr.getSearchProvider().getClass().getName() );    
     }
     
     public void testSimpleSearch()

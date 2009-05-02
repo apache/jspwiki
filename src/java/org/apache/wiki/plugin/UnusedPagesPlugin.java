@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
@@ -57,7 +59,16 @@ public class UnusedPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<String> links = refmgr.findUnreferenced();
+        Collection<String> links;
+        try
+        {
+            links = refmgr.findUnreferenced();
+        }
+        catch( RepositoryException e )
+        {
+            e.printStackTrace();
+            throw new PluginException( "Could not find unreferenced pages.", e );
+        }
         //
         // filter out attachments if "excludeattachments" was requested:
         //

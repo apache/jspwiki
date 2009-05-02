@@ -151,8 +151,8 @@ public class RenameActionBeanTest extends TestCase
         m_engine.saveText("ReferstoTest", "This page refers to [Test].\n");
         WikiPage referringPage = m_engine.getPage("ReferstoTest");
         assertNotNull("Did not save page ReferstoTest!", referringPage );
-        assertNotNull( m_engine.getReferenceManager().findReferrers(WikiPath.valueOf("Test")) );
-        assertEquals( 1, m_engine.getReferenceManager().findReferrers(WikiPath.valueOf("Test")).size() );
+        assertNotNull( m_engine.getReferenceManager().getReferredBy(WikiPath.valueOf("Test")) );
+        assertEquals( 1, m_engine.getReferenceManager().getReferredBy(WikiPath.valueOf("Test")).size() );
         
         MockRoundtrip trip;
         ValidationErrors errors;

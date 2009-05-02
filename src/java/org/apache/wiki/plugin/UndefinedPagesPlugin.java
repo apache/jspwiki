@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
@@ -48,7 +50,16 @@ public class UndefinedPagesPlugin extends AbstractFilteredPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<String> links = refmgr.findUncreated();
+        Collection<String> links;
+        try
+        {
+            links = refmgr.findUncreated();
+        }
+        catch( RepositoryException e )
+        {
+            e.printStackTrace();
+            throw new PluginException( "Could not find uncreated pages.", e );
+        }
 
         super.initialize( context, params );
 

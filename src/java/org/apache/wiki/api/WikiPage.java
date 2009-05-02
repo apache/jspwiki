@@ -22,7 +22,6 @@ package org.apache.wiki.api;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +213,7 @@ public interface WikiPage
      *  repository.
      *  
      *  @throws ProviderException If the save cannot be completed.
+     *  @deprecated use {@link org.apache.wiki.content.ContentManager#save(WikiPage)} instead
      */
     public void save() throws ProviderException;
     
@@ -241,7 +241,7 @@ public interface WikiPage
      *          page refers to no other pages.
      *  @throws ProviderException If the references cannot be fetched.
      */
-    public Collection<WikiPath> getRefersTo() throws ProviderException;
+    public List<WikiPath> getRefersTo() throws ProviderException;
     
     /**
      *  Returns the parent of the page. 
