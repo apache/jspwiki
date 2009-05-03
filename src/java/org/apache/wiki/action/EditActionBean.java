@@ -563,7 +563,7 @@ public class EditActionBean extends AbstractPageActionBean
      * value is initialized to the current time when the
      * {@link #edit()} or {@link #comment()} methods fire.
      * 
-     * @param date the start time
+     * @param time the start time
      */
     @Validate( required = true, encrypted = true )
     public void setStartTime( long time )

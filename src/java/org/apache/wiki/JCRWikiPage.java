@@ -574,7 +574,7 @@ public class JCRWikiPage
 
     /**
      * Returns <code>true</code> if this WikiPage exists in the repository and is of any content
-     * type other than {@link ContentManager.JSPWIKI_CONTENT_TYPE}; <code>false</code> otherwise.
+     * type other than {@link ContentManager#JSPWIKI_CONTENT_TYPE}; <code>false</code> otherwise.
      */
     public boolean isAttachment() throws ProviderException
     {
