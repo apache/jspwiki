@@ -1,3 +1,18 @@
+2009-05-03  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-108
+
+        * Second commit of ReferenceManager. All unit tests now pass, although certain
+        behaviors are slightly different than in the past. In particular, the WikiPaths
+        passed to getReferredBy() and getRefersTo() are NOT resolved; they are assumed
+        to be correct. This was an unnecessary optimization that, in practice, was not
+        needed. Overall pass rate over 93%.
+        
+        * Relocated unit test results from to build/tests. This keeps the tests dir
+        nice and clean.
+        
+        * Minor Javadoc tweaks.
+
 2009-05-02  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-108
