@@ -729,12 +729,12 @@
         </batchtest>
      </junit>
 
-  	 <junitreport todir="${tests}">
+  	 <junitreport todir="${build}/tests">
   	    <fileset dir="${tests.reports}">
   	       <include name="**/TEST-*.xml" />
            <exclude name="**/TEST-stress.*.xml" if="tests.stress.disabled"/>
   	    </fileset>
-  	    <report format="noframes" todir="${tests}" />
+  	    <report format="noframes" todir="${build}/tests" />
   	 </junitreport>
 
   </target>
@@ -758,11 +758,11 @@
         </batchtest>
      </junit>
 
-     <junitreport todir="${tests}">
+     <junitreport todir="${build}/tests">
         <fileset dir="${tests.reports}">
            <include name="**/TEST-*.xml" />
         </fileset>
-        <report format="noframes" todir="${tests}" />
+        <report format="noframes" todir="${build}/tests" />
      </junitreport>
 
   </target>
