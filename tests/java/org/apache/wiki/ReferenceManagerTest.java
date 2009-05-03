@@ -94,6 +94,19 @@ public class ReferenceManagerTest extends TestCase
         engine.deletePage( "NewBug" );
         engine.deletePage( "BugOne" );
         engine.deletePage( "BugTwo" );
+        Session s = engine.getContentManager().getCurrentSession();
+        try
+        {
+            s.getRootNode().getNode( "/TestAddToProperty" ).remove();
+            s.save();
+        }
+        catch ( PathNotFoundException e ) {}
+        try
+        {
+            s.getRootNode().getNode( "/TestRemoveFromProperty" ).remove();
+            s.save();
+        }
+        catch ( PathNotFoundException e ) {}
 
         engine.shutdown();
     }
@@ -116,10 +129,12 @@ public class ReferenceManagerTest extends TestCase
         destinations.add( WikiPath.valueOf( "PageOne" ) );
         destinations.add( WikiPath.valueOf( "PageTwo" ) );
         destinations.add( WikiPath.valueOf( "PageThree" ) );
+        Session s = engine.getContentManager().getCurrentSession();
         for ( WikiPath destination : destinations )
         {
             mgr.addReferredBy( destination, source );
         }
+        s.save();
 
         List<WikiPath> links = mgr.getReferredBy( source );
         assertEquals( 0, links.size() );
@@ -141,15 +156,15 @@ public class ReferenceManagerTest extends TestCase
      * Tests low-level method for adding to a multi-valued JCR Node property.
      * @throws Exception
      */
-    public void testAddToValues() throws Exception
+    public void testAddToProperty() throws Exception
     {
         ContentManager cm = engine.getContentManager();
-        String jcrPath = ReferenceManager.REFERENCES_ROOT + "/" + "TestAddToValues";
+        String jcrPath = "/TestAddToProperty";
         Node node;
         Property prop;
         Session s = cm.getCurrentSession();
         
-        mgr.addToValues( jcrPath, "foo","Value1" );
+        mgr.addToProperty( jcrPath, "foo","Value1", true );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -157,7 +172,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 1, prop.getValues().length );
         assertEquals( "Value1", prop.getValues()[0].getString() );
         
-        mgr.addToValues( jcrPath, "foo","Value2" );
+        mgr.addToProperty( jcrPath, "foo","Value2", true );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -166,13 +181,27 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "Value2", prop.getValues()[1].getString() );
         
         // Add the same Value1 again!
-        mgr.addToValues( jcrPath, "foo","Value1" );
+        mgr.addToProperty( jcrPath, "foo","Value1", true );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
         assertNotNull( prop.getValues() );
         assertEquals( 3, prop.getValues().length );
         assertEquals( "Value1", prop.getValues()[2].getString() );
+        
+        // Add the same Value1 again, without 'addAgain' flag
+        mgr.addToProperty( jcrPath, "foo","Value1", false );
+        s.save();
+        node = cm.getJCRNode( jcrPath );
+        prop = node.getProperty( "foo" );
+        assertNotNull( prop.getValues() );
+        assertEquals( 3, prop.getValues().length );
+        assertEquals( "Value1", prop.getValues()[2].getString() );
+        
+        // Clean up
+        node = s.getRootNode().getNode( jcrPath );
+        node.remove();
+        s.save();
     }
 
     public void testBecomesUnreferenced() throws Exception
@@ -185,7 +214,7 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "Foobar2", "norefs" );
         c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "TestPage", c.get( 0 ) );
+        assertEquals( "Main:TestPage", c.get( 0 ) );
     }
 
     public void testCircularRefs() throws Exception
@@ -196,6 +225,22 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 0, mgr.findUnreferenced().size() );
     }
 
+    public void testDeletePage() throws Exception
+    {
+        Collection<WikiPath> c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2" ));
+        assertEquals( 1, c.size() );
+        assertTrue( c.contains( WikiPath.valueOf( "Foobar" ) ) );
+
+        engine.deletePage( "Foobar" );
+        c = mgr.getReferredBy( WikiPath.valueOf("Foobar2" ));
+        assertEquals( 0, c.size() );
+
+        engine.saveText( "Foobar", "[Foobar2]" );
+        c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2" ));
+        assertEquals( 1, c.size() );
+        assertTrue( c.contains( WikiPath.valueOf( "Foobar" ) ) );
+    }
+    
     public void testExtractLinks() throws Exception
     {
         String src = "Foobar. [Foobar].  Frobozz.  [This is a link].";
@@ -207,7 +252,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "item 0", PATH_FOOBAR, results.get( 0 ) );
         assertEquals( "item 1", WikiPath.valueOf( "Main:This is a link" ), results.get( 1 ) );
     }
-    
+
     public void testGetReferredBy() throws Exception
     {
         //engine.saveText( "TestPage", "Reference to [Foobar]." );
@@ -217,7 +262,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 0, c.size() );
 
         c = mgr.getReferredBy( WikiPath.valueOf( "Foobar" ));
-        assertEquals( 3, c.size() );
+        assertEquals( 2, c.size() );
 
         c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2" ));
         assertEquals( 1, c.size() );
@@ -237,11 +282,9 @@ public class ReferenceManagerTest extends TestCase
         assertTrue( "Does not have Foobar, but it should have", links.contains( WikiPath.valueOf( "Foobar" ) ) );
 
         links = mgr.getRefersTo( WikiPath.valueOf( "Foobar" ) );
-        assertEquals( 3, links.size() );
-        assertTrue( "Does not have Foobar, but it should have", links.contains( WikiPath.valueOf( "Foobar" ) ) ); // 2 of
-        // these
-        assertTrue( "Does not have Foobar2, but it should have", links.contains( WikiPath.valueOf( "Foobar2" ) ) ); // 1 of
-        // these
+        assertEquals( 2, links.size() );
+        assertTrue( "Does not have Foobar, but it should have", links.contains( WikiPath.valueOf( "Foobar" ) ) );
+        assertTrue( "Does not have Foobar2, but it should have", links.contains( WikiPath.valueOf( "Foobar2" ) ) );
 
         links = mgr.getRefersTo( WikiPath.valueOf( "Foobar2" ) );
         assertEquals( 0, links.size() );
@@ -261,7 +304,7 @@ public class ReferenceManagerTest extends TestCase
         assertTrue( c.size() == 0 );
     }
 
-    public void testPluralSingularUpdate1() throws Exception
+    public void testPluralSingularUpdate() throws Exception
     {
         engine.saveText( "BugOne", "NewBug" );
         engine.saveText( "NewBugs", "foo" );
@@ -269,71 +312,15 @@ public class ReferenceManagerTest extends TestCase
 
         engine.saveText( "BugOne", "OpenBug" );
 
-        Collection<WikiPath> links = mgr.getReferredBy( WikiPath.valueOf( "NewBugs" ));
-        assertEquals( "newbugs", links.size() ); // No referrers must be found
+        Collection<WikiPath> links = mgr.getReferredBy( WikiPath.valueOf( "NewBug" ));
+        assertEquals( "newbugs", 0, links.size() ); // No referrers must be found
 
         links = mgr.getReferredBy( WikiPath.valueOf( "NewBug" ));
-        assertEquals( "newbug", links.size() ); // No referrers must be found
+        assertEquals( "newbug", 0, links.size() ); // No referrers must be found
 
         links = mgr.getReferredBy( WikiPath.valueOf( "OpenBugs" ));
         assertEquals( "openbugs", 1, links.size() );
-        assertEquals( "openbugs2", "BugOne", links.iterator().next().toString() );
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "OpenBug" ));
-        assertEquals( "openbug", 1, links.size() );
-        assertEquals( "openbug2", "BugOne", links.iterator().next().toString() );
-
-    }
-
-    public void testPluralSingularUpdate2() throws Exception
-    {
-        engine.saveText( "BugOne", "NewBug" );
-        engine.saveText( "NewBug", "foo" );
-        engine.saveText( "OpenBug", "bar" );
-
-        engine.saveText( "BugOne", "OpenBug" );
-
-        Collection<WikiPath> links = mgr.getReferredBy( WikiPath.valueOf( "NewBugs" ));
-        assertEquals( 0, links.size() ); // No referrers must be found
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "NewBug" ));
-        assertEquals( 0, links.size() ); // No referrers must be found
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "OpenBugs" ));
-        assertEquals( "openbugs", 1, links.size() );
-        assertEquals( "openbugs2", "BugOne", links.iterator().next().toString() );
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "OpenBug" ));
-        assertEquals( "openbug", 1, links.size() );
-        assertEquals( "openbug2", "BugOne", links.iterator().next().toString() );
-
-    }
-
-    public void testPluralSingularUpdate3() throws Exception
-    {
-        engine.saveText( "BugOne", "NewBug" );
-        engine.saveText( "BugTwo", "NewBug" );
-        engine.saveText( "NewBugs", "foo" );
-        engine.saveText( "OpenBugs", "bar" );
-
-        engine.saveText( "BugOne", "OpenBug" );
-
-        Collection<WikiPath> links = mgr.getReferredBy( WikiPath.valueOf( "NewBugs" ));
-        assertEquals( "newbugs", 1, links.size() );
-        assertEquals( "newbugs2", "BugTwo", links.iterator().next().toString() );
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "NewBug" ));
-        assertEquals( "newbugs", 1, links.size() );
-        assertEquals( "newbugs2", "BugTwo", links.iterator().next().toString() );
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "OpenBugs" ));
-        assertEquals( "openbugs", 1, links.size() );
-        assertEquals( "openbugs2", "BugOne", links.iterator().next().toString() );
-
-        links = mgr.getReferredBy( WikiPath.valueOf( "OpenBug" ));
-        assertEquals( "openbug", 1, links.size() );
-        assertEquals( "openbug2", "BugOne", links.iterator().next().toString() );
-
+        assertEquals( "openbugs2", "Main:BugOne", links.iterator().next().toString() );
     }
 
     public void testRebuild() throws Exception
@@ -344,60 +331,41 @@ public class ReferenceManagerTest extends TestCase
         assertNotSame( 0, node.getNodes().getSize() );
         mgr.rebuild();
         
-        // Make sure all of the inbound references got deleted
+        // Should see just 3 children of REFERENCES_ROOT
         node = (Node)cm.getJCRNode( ReferenceManager.REFERENCES_ROOT );
+        assertNotNull( node );
+        assertEquals( 3, node.getNodes().getSize() );
+        
+        // Make sure all of the inbound references got deleted
+        node = (Node)cm.getJCRNode( ReferenceManager.REFERRED_BY );
         assertNotNull( node );
         assertEquals( 0, node.getNodes().getSize() );
         
-        // Make sure the not-created/not-referenced properties got created
-        try
-        {
-            node.getProperty( ReferenceManager.NOT_CREATED );
-        }
-        catch ( PathNotFoundException e )
-        {
-            // Excellent!
-        }
-        try
-        {
-            node.getProperty( ReferenceManager.NOT_REFERENCED );
-        }
-        catch ( PathNotFoundException e )
-        {
-            // Excellent!
-        }
-    }
-
-    public void testRemove() throws Exception
-    {
-        Collection<WikiPath> c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2" ));
-        assertEquals( 1, c.size() );
-        assertTrue( c.contains( WikiPath.valueOf( "Foobar" ) ) );
-
-        engine.deletePage( "Foobar" );
-        c = mgr.getReferredBy( WikiPath.valueOf("Foobar2" ));
-        assertEquals( 0, c.size() );
-
-        engine.saveText( "Foobar", "[Foobar2]" );
-        c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2" ));
-        assertEquals( 1, c.size() );
-        assertTrue( c.contains( WikiPath.valueOf( "Foobar" ) ) );
+        // Make sure all of the uncreated references got deleted
+        node = (Node)cm.getJCRNode( ReferenceManager.NOT_CREATED );
+        assertNotNull( node );
+        assertEquals( 0, node.getNodes().getSize() );
+        
+        // Make sure all of the unreferenced references got deleted
+        node = (Node)cm.getJCRNode( ReferenceManager.NOT_REFERENCED );
+        assertNotNull( node );
+        assertEquals( 0, node.getNodes().getSize() );
     }
 
     /**
      * Tests low-level method for removing items from a multi-valued JCR Node property.
      * @throws Exception
      */
-    public void testRemoveAllFromValues() throws Exception
+    public void testRemoveFromProperty() throws Exception
     {
         ContentManager cm = engine.getContentManager();
-        String jcrPath = ReferenceManager.REFERENCES_ROOT + "/" + "TestRemoveFromValues";
+        String jcrPath = "/TestRemoveFromProperty";
         Node node;
         Property prop;
         Session s = cm.getCurrentSession();
         
-        mgr.addToValues( jcrPath, "foo","Value1" );
-        mgr.addToValues( jcrPath, "foo","Value2" );
+        mgr.addToProperty( jcrPath, "foo","Value1", true );
+        mgr.addToProperty( jcrPath, "foo","Value2", true );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -405,7 +373,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 2, prop.getValues().length );
 
         // Remove the first value
-        mgr.removeAllFromValues( jcrPath, "foo", "Value1" );
+        mgr.removeFromProperty( jcrPath, "foo", "Value1" );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -414,7 +382,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "Value2", prop.getValues()[0].getString() );
         
         // Try removing a value that does not exist in the property
-        mgr.removeAllFromValues( jcrPath, "foo", "NonExistentValue" );
+        mgr.removeFromProperty( jcrPath, "foo", "NonExistentValue" );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -423,7 +391,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( "Value2", prop.getValues()[0].getString() );
         
         // Remove the last value
-        mgr.removeAllFromValues( jcrPath, "foo", "Value2" );
+        mgr.removeFromProperty( jcrPath, "foo", "Value2" );
         s.save();
         node = cm.getJCRNode( jcrPath );
         try
@@ -436,8 +404,8 @@ public class ReferenceManagerTest extends TestCase
         }
         
         // Add back in the first value, twice
-        mgr.addToValues( jcrPath, "foo","Value1" );
-        mgr.addToValues( jcrPath, "foo","Value1" );
+        mgr.addToProperty( jcrPath, "foo","Value1", true );
+        mgr.addToProperty( jcrPath, "foo","Value1", true );
         s.save();
         node = cm.getJCRNode( jcrPath );
         prop = node.getProperty( "foo" );
@@ -445,7 +413,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 2, prop.getValues().length );
         
         // Remove the first value -- ALL should be gone now
-        mgr.removeAllFromValues( jcrPath, "foo", "Value1" );
+        mgr.removeFromProperty( jcrPath, "foo", "Value1" );
         s.save();
         node = cm.getJCRNode( jcrPath );
         try
@@ -456,6 +424,11 @@ public class ReferenceManagerTest extends TestCase
         {
             // Good! This is what we expect.
         }
+        
+        // Clean up
+        node = s.getRootNode().getNode( jcrPath );
+        node.remove();
+        s.save();
     }
 
     /**
@@ -486,6 +459,7 @@ public class ReferenceManagerTest extends TestCase
         destinations.add( destination3 );
         destinations.add( destination4 );
         mgr.setLinks( source, destinations );
+        engine.getContentManager().getCurrentSession().save();
         
         // We should see four outbound links from source-->dest1,2,3,4
         assertEquals( 4, mgr.getRefersTo( source ).size() );
@@ -503,6 +477,7 @@ public class ReferenceManagerTest extends TestCase
         
         // Now, remove all links from the source to dest1,2,3, and all inbound links too
         mgr.removeLinks( source );
+        engine.getContentManager().getCurrentSession().save();
         assertEquals( 0, mgr.getRefersTo( source ).size() );
         assertEquals( 0, mgr.getReferredBy( source ).size() );
         assertEquals( 0, mgr.getReferredBy( destination1 ).size() );
@@ -548,6 +523,7 @@ public class ReferenceManagerTest extends TestCase
         destinations.add( destination2 );
         destinations.add( destination3 );
         mgr.setLinks( source, destinations );
+        engine.getContentManager().getCurrentSession().save();
 
         // We should see three outbound links from source-->dest1,2,3
         List<WikiPath> links;
@@ -590,6 +566,7 @@ public class ReferenceManagerTest extends TestCase
         destinations.add( WikiPath.valueOf( "PageTwo" ) );
         destinations.add( WikiPath.valueOf( "PageThree" ) );
         mgr.setRefersTo( source, destinations );
+        engine.getContentManager().getCurrentSession().save();
 
         List<WikiPath> links = mgr.getRefersTo( source );
         assertEquals( 3, links.size() );
@@ -626,27 +603,24 @@ public class ReferenceManagerTest extends TestCase
     {
         List<String> c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "TestPage", c.get( 0 ) );
+        assertEquals( "Main:TestPage", c.get( 0 ) );
     }
 
-    public void testUpdateBothExist() throws Exception
+    public void testPluralExists() throws Exception
     {
         engine.saveText( "Foobars", "qwertz" );
         Collection<WikiPath> c = mgr.getReferredBy( WikiPath.valueOf( "Foobars" ));
-        assertEquals( "Foobars referrers", 2, c.size() );
-        assertTrue( "Foobars referrer is not TestPage", c.contains( WikiPath.valueOf( "TestPage" ) )
-                                                        && c.contains( WikiPath.valueOf( "Foobar" ) ) );
+        assertEquals( 0, c.size() );
     }
 
-    public void testUpdateBothExist2() throws Exception
+    public void testPluralExists2() throws Exception
     {
         engine.saveText( "Foobars", "qwertz" );
         engine.saveText( "TestPage", "Reference to [Foobar], [Foobars]." );
 
         Collection<WikiPath> c = mgr.getReferredBy( WikiPath.valueOf( "Foobars" ));
-        assertEquals( "Foobars referrers count", 2, c.size() );
-
-        assertTrue( "Foobars referrers", c.contains( WikiPath.valueOf( "TestPage" ) ) && c.contains( WikiPath.valueOf( "Foobar" ) ) );
+        assertEquals( 1, c.size() );
+        assertTrue( c.contains( WikiPath.valueOf( "TestPage" ) ) );
     }
 
     /**
@@ -657,10 +631,12 @@ public class ReferenceManagerTest extends TestCase
     public void testUpdateFoobar2s() throws Exception
     {
         engine.saveText( "Foobar2s", "qwertz" );
-        assertEquals( 0, mgr.findUncreated().size() );
+        List<String> c = mgr.findUncreated();
+        assertEquals( 1, c.size() );
+        assertTrue( c.contains( "Main:Foobar2" ) );
 
-        Collection<WikiPath> c = mgr.getReferredBy( WikiPath.valueOf( "Foobar2s" ));
-        assertTrue( "referrers", c != null && c.size() == 1 && c.iterator().next().toString().equals( "Foobar" ) );
+        Collection<WikiPath> w = mgr.getReferredBy( WikiPath.valueOf( "Foobar2s" ));
+        assertEquals( 0, w.size() );
     }
 
     /**
@@ -675,39 +651,11 @@ public class ReferenceManagerTest extends TestCase
         engine.saveText( "TestPage", "Reference to [Foobars]." );
         List<String> c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "TestPage", c.get( 0 ) );
+        assertEquals( "Main:TestPage", c.get( 0 ) );
 
         Collection<WikiPath> p = mgr.getReferredBy( WikiPath.valueOf( "Foobar" ));
-        assertTrue( "Foobar referrers", p.size() == 2 );
+        assertEquals( 2, p.size() );
     }
 
-    /**
-     * Test method: dumps the contents of ReferenceManager link lists to stdout.
-     * This method is NOT synchronized, and should be used in testing with one
-     * user, one WikiEngine only.
-     */
-    /*
-     * public static String dumpReferenceManager( ReferenceManager rm ) {
-     * StringBuffer buf = new StringBuffer(); try { buf.append(
-     * "================================================================\n" );
-     * buf.append( "Referred By list:\n" ); Set keys =
-     * rm.getReferredBy().keySet(); Iterator it = keys.iterator(); while(
-     * it.hasNext() ) { String key = (String) it.next(); buf.append( key + "
-     * referred by: " ); Set refs = (Set)rm.getReferredBy().get( key ); Iterator
-     * rit = refs.iterator(); while( rit.hasNext() ) { String aRef =
-     * (String)rit.next(); buf.append( aRef + " " ); } buf.append( "\n" ); }
-     * buf.append(
-     * "----------------------------------------------------------------\n" );
-     * buf.append( "Refers To list:\n" ); keys = rm.getRefersTo().keySet(); it =
-     * keys.iterator(); while( it.hasNext() ) { String key = (String) it.next();
-     * buf.append( key + " refers to: " ); Collection refs =
-     * (Collection)rm.getRefersTo().get( key ); if(refs != null) { Iterator rit =
-     * refs.iterator(); while( rit.hasNext() ) { String aRef =
-     * (String)rit.next(); buf.append( aRef + " " ); } buf.append( "\n" ); }
-     * else buf.append("(no references)\n"); } buf.append(
-     * "================================================================\n" ); }
-     * catch(Exception e) { buf.append("Problem in dump(): " + e + "\n" ); }
-     * return( buf.toString() ); }
-     */
-
+    
 }

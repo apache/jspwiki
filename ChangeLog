@@ -1,6 +1,6 @@
 2009-05-03  Andrew Jaquith <ajaquith AT apache DOT org>
 
-        * 3.0.0-svn-108
+        * 3.0.0-svn-109
 
         * Second commit of ReferenceManager. All unit tests now pass, although certain
         behaviors are slightly different than in the past. In particular, the WikiPaths
