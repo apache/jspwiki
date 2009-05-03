@@ -809,6 +809,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             // There seems to be a bug in Priha that causes property files to bloat,
             // so we remove the property first, then re-add it
             p.remove();
+            s.save();
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
         catch( PathNotFoundException e )
