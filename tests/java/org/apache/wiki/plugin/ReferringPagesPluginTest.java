@@ -67,7 +67,7 @@ public class ReferringPagesPluginTest extends TestCase
         manager = new PluginManager( engine, props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
         TestEngine.deleteTestPage( "TestPage" );
         TestEngine.deleteTestPage( "Foobar" );
@@ -77,7 +77,7 @@ public class ReferringPagesPluginTest extends TestCase
         TestEngine.deleteTestPage( "Foobar5" );
         TestEngine.deleteTestPage( "Foobar6" );
         TestEngine.deleteTestPage( "Foobar7" );
-        
+        engine.emptyRepository();
         engine.shutdown();
     }
 

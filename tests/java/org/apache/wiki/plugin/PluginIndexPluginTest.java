@@ -63,7 +63,9 @@ public class PluginIndexPluginTest extends TestCase
 
         manager = new PluginManager( engine, props );
 
-        context = engine.getWikiContextFactory().newViewContext( engine.createPage( "TestPage" ) );
+        engine.saveText( "TestPage", "This is a test." );
+        
+        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage" ) );
 
         m_requiredPlugins = context.getEngine().getPluginManager().modules();
     }

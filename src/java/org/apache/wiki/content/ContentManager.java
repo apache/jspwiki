@@ -330,8 +330,8 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     * Saves a WikiPage to the repositiry.
-     * @param page
+     * Saves a WikiPage to the repository.
+     * @param page the page to save
      */
     public void save( WikiPage page ) throws RepositoryException
     {

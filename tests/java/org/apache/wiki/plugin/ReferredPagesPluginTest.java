@@ -88,7 +88,7 @@ public class ReferredPagesPluginTest extends TestCase
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin}" );
 
         assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElse\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElse</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
+                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElse\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElse</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">Main:SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
                       res );
     }
 
@@ -105,7 +105,7 @@ public class ReferredPagesPluginTest extends TestCase
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin page=IPointToSomeoneElseToo}" );
 
         assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElseToo\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElseToo</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
+                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElseToo\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElseToo</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">Main:SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
                       res );
     }
 

@@ -28,7 +28,11 @@ import java.util.*;
 public class Util
 {
     /**
-     * Check that a collection contains the required string.
+     * Check that a collection contains the required object.
+     * @param items the collection to check
+     * @param item the item to look for
+     * @return <code>true</code> if the collection contains an item equal
+     * to the supplied item; <code>false</code> otherwise
      */
     public static boolean collectionContains( Collection<String> container,
                                               String captive )

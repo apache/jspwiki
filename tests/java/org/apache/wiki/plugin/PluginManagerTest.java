@@ -30,7 +30,6 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
 
 
@@ -40,7 +39,7 @@ public class PluginManagerTest extends TestCase
 
     Properties props = new Properties();
 
-    WikiEngine engine;
+    TestEngine engine;
 
     WikiContext context;
 
@@ -57,7 +56,8 @@ public class PluginManagerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         engine = new TestEngine(props);
-        context = engine.getWikiContextFactory().newViewContext( engine.createPage( "Testpage" ) );
+        engine.saveText( "TestPage", "This is a test." );
+        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage" ) );
         manager = new PluginManager( engine, props );
     }
 

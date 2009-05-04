@@ -1,3 +1,26 @@
+2009-05-04  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-110
+        
+        * Encountered problem with new ReferenceManager (probably related to Priha)
+        that causes heap exhaustion. ReferenceManager includes a few (temporary)
+        diagnostics for this. It also changes the method signatures for getRefersTo
+        and getReferredBy to return lists of WikiPath. Several plugins were changed
+        to accommodate this.
+        
+        * Added method WikiEngine.beautify(WikiPath), which works identically to
+        the String version, except that those paths who are prefixed with the default
+        space name (plus a colon) are rendered without the space name. WikiEngine
+        also gains a method getSpaces(), which today only returns the default space.
+        In the future this will be configurable.
+        
+        * To prevent wiki paths that have space prefixes from being interpreted as
+        inter-wiki links,  JSPWikiMarkupParser prioritizes these first. This means that
+        wiki space names can't be the same as those for an interwiki prefixes.
+        (Which is ok: when you think about it, an outside wiki is really just a space
+        managed by someone else.) This fix was needed prevent various unit tests
+        from bombing.
+        
 2009-05-03  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-109
