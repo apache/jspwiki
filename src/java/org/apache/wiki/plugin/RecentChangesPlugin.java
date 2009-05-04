@@ -148,7 +148,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                     String link = context.getURL( pageref.isAttachment() ? WikiContext.ATTACH : WikiContext.VIEW, 
                                                   pageref.getName() ) ;
                 
-                    a linkel = new a(link,engine.beautifyTitle(pageref.getName()));
+                    a linkel = new a(link,engine.beautifyTitle(pageref.getPath()));
                 
                     tr row = new tr();
                 

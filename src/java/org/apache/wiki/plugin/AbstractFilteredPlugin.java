@@ -251,27 +251,27 @@ public abstract class AbstractFilteredPlugin
     /**
      *  Filters a collection according to the include and exclude -parameters.
      *  
-     *  @param c The collection to filter.
+     *  @param items The collection to filter.
      *  @return A filtered collection.
      */
-    protected <T extends Object>Collection<T> filterCollection( Collection<T> c )
+    protected <T extends Object>Collection<T> filterCollection( Collection<T> items )
     {
-        ArrayList<T> result = new ArrayList<T>();
+        ArrayList<T> filteredItems = new ArrayList<T>();
 
-        for( T objectje : c )
+        for( T item : items )
         {
             String pageName = null;
-            if( objectje instanceof WikiPage )
+            if( item instanceof WikiPage )
             {
-                pageName = ((WikiPage) objectje).getName();
+                pageName = ((WikiPage) item).getName();
             }
-            else if ( objectje instanceof WikiPath )
+            else if ( item instanceof WikiPath )
             {
-                pageName = ((WikiPath) objectje).toString();
+                pageName = ((WikiPath) item).toString();
             }
-            else if ( objectje instanceof String )
+            else if ( item instanceof String )
             {
-                pageName = (String) objectje;
+                pageName = (String) item;
             }
 
             //
@@ -315,9 +315,9 @@ public abstract class AbstractFilteredPlugin
                 boolean isAttachment = pageName.contains( "/" );
                 if( !isAttachment || (isAttachment && m_showAttachments) )
                 {
-                    if( objectje instanceof WikiPage || objectje instanceof WikiPath || objectje instanceof String )
+                    if( item instanceof WikiPage || item instanceof WikiPath || item instanceof String )
                     {
-                        result.add( objectje );
+                        filteredItems.add( item );
                     }
                 }
                 
@@ -349,7 +349,7 @@ public abstract class AbstractFilteredPlugin
             }
         }
 
-        return result;
+        return filteredItems;
     }
 
     /**
@@ -360,14 +360,14 @@ public abstract class AbstractFilteredPlugin
      *  @param numItems How many items to show.
      *  @return The WikiText
      */
-    protected String wikitizeCollection( Collection<String> links, String separator, int numItems )
+    protected String wikitizeCollection( Collection<WikiPath> links, String separator, int numItems )
     {
         if( links == null || links.isEmpty() )
             return "";
 
         StringBuilder output = new StringBuilder();
 
-        Iterator<String> it     = links.iterator();
+        Iterator<WikiPath> it     = links.iterator();
         int      count  = 0;
 
         //
@@ -375,7 +375,7 @@ public abstract class AbstractFilteredPlugin
         //
         while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) )
         {
-            String value = (String)it.next();
+            WikiPath value = it.next();
 
             if( count > 0 )
             {

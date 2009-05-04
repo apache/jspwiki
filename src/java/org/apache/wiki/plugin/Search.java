@@ -142,7 +142,7 @@ public class Search implements WikiPlugin
             td name = new td().setWidth("30%");
             name.addElement( "<a href=\""+
                              context.getURL( WikiContext.VIEW, sr.getPage().getName() )+
-                             "\">"+engine.beautifyTitle(sr.getPage().getName())+"</a>");
+                             "\">"+engine.beautifyTitle(sr.getPage().getPath())+"</a>");
             row.addElement( name );
             
             row.addElement( new td().addElement(""+sr.getScore()));

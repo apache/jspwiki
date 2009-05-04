@@ -53,7 +53,7 @@ public class ParentPageNameTag
         {
             if( page.isAttachment() )
             {
-                pageContext.getOut().print( engine.beautifyTitle( page.getParent().getName()) );
+                pageContext.getOut().print( engine.beautifyTitle( page.getParent().getPath() ) );
             }
             else
             {

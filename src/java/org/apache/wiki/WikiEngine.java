@@ -262,6 +262,9 @@ public class WikiEngine
     /** Each engine has their own application id. */
     private String           m_appid = "";
 
+    /** The spaces defined for this WikiEngine. */
+    private String[] m_spaces;
+
     private boolean          m_isConfigured = false; // Flag.
 
     private List<PageNameResolver> m_nameResolvers = new ArrayList<PageNameResolver>();
@@ -522,6 +525,10 @@ public class WikiEngine
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
+        // Initialize the spaces for this wiki
+        // TODO: make this configurable
+        m_spaces = new String[] { ContentManager.DEFAULT_SPACE };
+
         //
         //  Initialize the important modules.  Any exception thrown by the
         //  managers means that we will not start up.
@@ -781,6 +788,15 @@ public class WikiEngine
     public String getBaseURL()
     {
         return m_baseURL;
+    }
+
+    /**
+     * Returns the spaces this wiki knows about.
+     * @return an array of Strings representing the spaces defined for this wiki.
+     */
+    public String[] getSpaces()
+    {
+        return m_spaces;
     }
 
     /**
@@ -1107,6 +1123,22 @@ public class WikiEngine
         String appName = TextUtil.getStringProperty(m_properties,PROP_APPNAME,Release.APPNAME);
 
         return MarkupParser.cleanLink( appName );
+    }
+
+    /**
+     * Beautifies the wiki path. Delegates to {@link #beautifyTitle(String)}, except that
+     * any paths that denote the default space ({@link ContentManager#DEFAULT_SPACE}
+     * have their space prefixes omitted.
+     * @param path the path to beautify
+     * @return the result
+     */
+    public String beautifyTitle( WikiPath path )
+    {
+        if ( ContentManager.DEFAULT_SPACE.equals( path.getSpace() ) )
+        {
+            return beautifyTitle( path.getPath() );
+        }
+        return beautifyTitle( path.toString() );
     }
 
     /**
