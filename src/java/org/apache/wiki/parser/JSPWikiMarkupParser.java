@@ -697,6 +697,31 @@ public class JSPWikiMarkupParser
     }
 
     /**
+     * Returns <code>true</code> if the link passed contains
+     * a colon, and the contents to the left of the colon matches
+     * one of the configured wiki spaces as returned by
+     * {@link WikiEngine#getSpaces()}.
+     * @param link the link to examine
+     * @return the result
+     */
+    private boolean isSpaceLink( String link )
+    {
+        int colonPos = link.indexOf( ':' );
+        if ( colonPos != -1 )
+        {
+            String possibleSpace = link.substring( 0, colonPos );
+            for ( String space : m_engine.getSpaces() )
+            {
+                if ( space.equals( possibleSpace ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      *  Matches the given link to the list of image name patterns
      *  to determine whether it should be treated as an inline image
      *  or not.
@@ -1542,7 +1567,7 @@ public class JSPWikiMarkupParser
                     addElement( outlinkImage() );
                 }
             }
-            else if( link.isInterwikiLink() )
+            else if( link.isInterwikiLink() && !isSpaceLink( linktext ) )
             {
                 // It's an interwiki link
                 // InterWiki links also get added to external link chain
