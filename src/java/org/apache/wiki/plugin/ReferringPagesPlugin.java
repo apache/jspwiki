@@ -21,7 +21,6 @@
 package org.apache.wiki.plugin;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -112,19 +111,14 @@ public class ReferringPagesPlugin
         
             if( links != null && links.size() > 0 )
             {
-                // FIXME: Having to copy all of these is kinda stupid.
-                Collection<String> tmpList = new ArrayList<String>();
-                
-                for( WikiPath wn : links ) tmpList.add( wn.toString() );
-                
-                tmpList= filterCollection( tmpList );
-                wikitext = wikitizeCollection( tmpList, m_separator, items );
+                links = filterCollection( links );
+                wikitext = wikitizeCollection( links , m_separator, items );
 
                 result.append( makeHTML( context, wikitext ) );
                 
-                if( items < tmpList.size() && items > 0 )
+                if( items < links.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( tmpList.size() - items) };
+                    Object[] args = { "" + ( links.size() - items) };
                     extras = MessageFormat.format(extras, args);
                     
                     result.append( "<br />" );

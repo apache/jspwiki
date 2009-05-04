@@ -208,13 +208,13 @@ public class ReferenceManagerTest extends TestCase
     {
         engine.saveText( "Foobar2", "[TestPage]" );
 
-        List<String> c = mgr.findUnreferenced();
+        List<WikiPath> c = mgr.findUnreferenced();
         assertEquals( 0, c.size() );
 
         engine.saveText( "Foobar2", "norefs" );
         c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "Main:TestPage", c.get( 0 ) );
+        assertEquals( WikiPath.valueOf( "Main:TestPage" ), c.get( 0 ) );
     }
 
     public void testCircularRefs() throws Exception
@@ -594,16 +594,16 @@ public class ReferenceManagerTest extends TestCase
 
     public void testUncreated() throws Exception
     {
-        List<String> c = mgr.findUncreated();
+        List<WikiPath> c = mgr.findUncreated();
         assertEquals( 1, c.size());
-        assertEquals( "Main:Foobar2", c.get( 0 ) );
+        assertEquals( WikiPath.valueOf( "Main:Foobar2" ), c.get( 0 ) );
     }
 
     public void testUnreferenced() throws Exception
     {
-        List<String> c = mgr.findUnreferenced();
+        List<WikiPath> c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "Main:TestPage", c.get( 0 ) );
+        assertEquals( WikiPath.valueOf( "Main:TestPage" ), c.get( 0 ) );
     }
 
     public void testPluralExists() throws Exception
@@ -631,9 +631,9 @@ public class ReferenceManagerTest extends TestCase
     public void testUpdateFoobar2s() throws Exception
     {
         engine.saveText( "Foobar2s", "qwertz" );
-        List<String> c = mgr.findUncreated();
+        List<WikiPath> c = mgr.findUncreated();
         assertEquals( 1, c.size() );
-        assertTrue( c.contains( "Main:Foobar2" ) );
+        assertTrue( c.contains( WikiPath.valueOf( "Main:Foobar2" ) ) );
 
         Collection<WikiPath> w = mgr.getReferredBy( WikiPath.valueOf( "Foobar2s" ));
         assertEquals( 0, w.size() );
@@ -649,12 +649,30 @@ public class ReferenceManagerTest extends TestCase
     public void testUpdatePluralOnlyRef() throws Exception
     {
         engine.saveText( "TestPage", "Reference to [Foobars]." );
-        List<String> c = mgr.findUnreferenced();
+        List<WikiPath> c = mgr.findUnreferenced();
         assertEquals( 1, c.size() );
-        assertEquals( "Main:TestPage", c.get( 0 ) );
+        assertEquals( WikiPath.valueOf( "Main:TestPage" ), c.get( 0 ) );
 
         Collection<WikiPath> p = mgr.getReferredBy( WikiPath.valueOf( "Foobar" ));
         assertEquals( 2, p.size() );
+    }
+
+    /**
+     * A placeholder for methods that try to reproduce the Unicode issues plaguing the
+     * current build. So far, this does not produce the desired side-effects.
+     * @throws Exception
+     */
+    public void testPropertyStress() throws Exception
+    {
+        String jcrPath = "/PropertyStress";
+        
+        String scandic = "ÄitiSyöÖljyä";        
+        mgr.addToProperty( jcrPath, "foo",scandic, false );
+        
+        for ( int i = 0; i < 10; i++ )
+        {
+            mgr.addToProperty( jcrPath, "foo",scandic, false );
+        }
     }
 
     

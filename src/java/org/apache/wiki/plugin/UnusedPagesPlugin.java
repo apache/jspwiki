@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -59,7 +60,7 @@ public class UnusedPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<String> links;
+        Collection<WikiPath> links;
         try
         {
             links = refmgr.findUnreferenced();
@@ -77,11 +78,11 @@ public class UnusedPagesPlugin
         {
             //  remove links to attachments (recognizable by a slash in it)
             //  FIXME: In 3.0, this assumption is going to fail. FIXME3.0
-            Iterator<String> iterator = links.iterator();
+            Iterator<WikiPath> iterator = links.iterator();
             while( iterator.hasNext() ) 
             {
-                String link = iterator.next();
-                if (link.indexOf("/")!=-1) 
+                WikiPath link = iterator.next();
+                if ( link.getPath().indexOf("/")!=-1 ) 
                 {
                     iterator.remove();
                 }
@@ -90,7 +91,7 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet<String> sortedSet = new TreeSet<String>();
+        TreeSet<WikiPath> sortedSet = new TreeSet<WikiPath>();
         
         links = filterCollection( links );
         

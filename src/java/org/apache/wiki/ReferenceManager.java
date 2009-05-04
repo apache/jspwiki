@@ -463,13 +463,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * @return A list of Strings, where each names a page that hasn't been
      *         created
      */
-    public List<String> findUncreated() throws RepositoryException
+    public List<WikiPath> findUncreated() throws RepositoryException
     {
         String[] linkStrings = getFromProperty( NOT_CREATED, PROPERTY_NOT_CREATED );
-        List<String> links = new ArrayList<String>();
+        List<WikiPath> links = new ArrayList<WikiPath>();
         for( String link : linkStrings )
         {
-            links.add( link );
+            links.add( WikiPath.valueOf( link  ) );
         }
         return links;
     }
@@ -484,13 +484,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      * @return A list of Strings, where each names a page that hasn't been
      *         created
      */
-    public List<String> findUnreferenced() throws RepositoryException
+    public List<WikiPath> findUnreferenced() throws RepositoryException
     {
         String[] linkStrings = getFromProperty( NOT_REFERENCED, PROPERTY_NOT_REFERENCED );
-        List<String> links = new ArrayList<String>();
+        List<WikiPath> links = new ArrayList<WikiPath>();
         for( String link : linkStrings )
         {
-            links.add( link );
+            links.add( WikiPath.valueOf( link ) );
         }
         return links;
     }
@@ -511,6 +511,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     public List<WikiPath> getReferredBy( WikiPath destination ) throws ProviderException
     {
+        if ( destination == null )
+        {
+            throw new IllegalArgumentException( "Destination cannot be null!" );
+        }
+        
         try
         {
             String jcrPath = getReferencedByJCRNode( destination );
@@ -547,6 +552,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     public List<WikiPath> getRefersTo( WikiPath source ) throws ProviderException
     {
+        if ( source == null )
+        {
+            throw new IllegalArgumentException( "Source cannot be null!" );
+        }
+
         try
         {
             String jcrPath = ContentManager.getJCRPath( source );
@@ -631,9 +641,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     /**
      * Builds and returns the path used to store the ReferredBy data
      */
-    private String getReferencedByJCRNode( WikiPath name )
+    private String getReferencedByJCRNode( WikiPath path )
     {
-        return REFERRED_BY + "/" + name.getSpace() + "/" + name.getPath();
+        if ( path == null )
+        {
+            throw new IllegalArgumentException( "Path cannot be null!" );
+        }
+        return REFERRED_BY + "/" + path.getSpace() + "/" + path.getPath();
     }
 
     /**
@@ -668,6 +682,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     private void renameLinksTo( WikiPath oldPath, WikiPath newPath ) throws ProviderException, RepositoryException
     {
+        if ( oldPath == null || newPath == null )
+        {
+            throw new IllegalArgumentException( "oldPath and newPath cannot be null!" );
+        }
+        
         List<WikiPath> referrers = getReferredBy( oldPath );
         if( referrers.isEmpty() )
             return; // No referrers
@@ -728,6 +747,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     private WikiPath resolvePage( WikiPath path ) throws ProviderException
     {
+        if ( path == null )
+        {
+            throw new IllegalArgumentException( "Path cannot be null!" );
+        }
+        
         WikiPath finalPath = m_engine.getFinalPageName( path );
         return finalPath == null ? path : finalPath;
     }
@@ -746,6 +770,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void addReferredBy( WikiPath page, WikiPath from ) throws RepositoryException
     {
+        if ( page == null || from == null )
+        {
+            throw new IllegalArgumentException( "Page and from cannot be null!" );
+        }
+        
         // Make sure the 'referredBy' root exists
         initReferenceMetadata();
 
@@ -770,6 +799,12 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void addToProperty( String jcrNode, String property, String newValue, boolean addAgain ) throws RepositoryException
     {
+        if ( jcrNode == null || property == null || newValue == null )
+        {
+            throw new IllegalArgumentException( "jcrNode, property and newValue cannot be null!" );
+        }
+        checkValueString( newValue );
+        
         // Retrieve (or create) the destination node for the page
         ContentManager cm = m_engine.getContentManager();
         Session s = cm.getCurrentSession();
@@ -795,10 +830,15 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             Value[] values = p.getValues();
             for( int i = 0; i < values.length; i++ )
             {
-                newValues.add( values[i].getString() );
-                if( values[i].getString().equals( newValue ) )
+                String valueString = values[i].getString();
+                checkValueString( valueString );
+                if( valueString != null && valueString.length() > 0 )
                 {
-                    notFound = false;
+                    newValues.add( valueString );
+                    if( newValue.equals( valueString ) )
+                    {
+                        notFound = false;
+                    }
                 }
             }
             if( notFound || addAgain )
@@ -834,6 +874,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected List<WikiPath> extractLinks( WikiPath path ) throws PageNotFoundException, ProviderException
     {
+        if ( path == null )
+        {
+            throw new IllegalArgumentException( "Path cannot be null!" );
+        }
+        
         // Set up a streamlined parser to collect links
         WikiPage page = m_engine.getPage( path );
         LinkCollector localCollector = new LinkCollector();
@@ -880,6 +925,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected String[] getFromProperty( String jcrNode, String property ) throws RepositoryException
     {
+        if ( jcrNode == null || property == null )
+        {
+            throw new IllegalArgumentException( "jcrNode and property cannot be null!" );
+        }
+        
         // Retrieve the destination node for the page
         ContentManager cm = m_engine.getContentManager();
         Node node = null;
@@ -901,6 +951,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             stringValues = new String[values.length];
             for( int i = 0; i < values.length; i++ )
             {
+                checkValueString( values[i].getString() );
                 stringValues[i] = values[i].getString();
             }
         }
@@ -926,6 +977,12 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void removeFromProperty( String jcrNode, String property, String value ) throws RepositoryException
     {
+        if ( jcrNode == null || property == null || value == null )
+        {
+            throw new IllegalArgumentException( "jcrNode, property and value cannot be null!" );
+        }
+        checkValueString( value );
+        
         // Retrieve (or create) the destination node for the page
         ContentManager cm = m_engine.getContentManager();
         Session s = cm.getCurrentSession();
@@ -950,17 +1007,19 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             Value[] values = p.getValues();
             for( int i = 0; i < values.length; i++ )
             {
-                if( !values[i].getString().equals( value ) )
+                String valueString = values[i].getString();
+                checkValueString( valueString );
+                if( valueString != null && valueString.length() > 0 && !value.equals( valueString ) )
                 {
-                    newValues.add( values[i].getString() );
+                    newValues.add( valueString );
                 }
             }
             if( newValues.size() == 0 )
             {
-                // This seems like a hack, but zero-length arrays don't seem to
-                // work
-                // unless we remove the property entirely first.
+                // There seems to be a bug in Priha that causes property files to bloat,
+                // so we remove the property first, then re-add it
                 p.remove();
+                s.save();
             }
         }
         catch( PathNotFoundException e )
@@ -974,6 +1033,29 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
         s.save();
+    }
+    
+    /**
+     * Strictly for troubleshooting: we look for a non-Roman value in the string and throw an exception.
+     * @param v
+     */
+    private void checkValueString( String v )
+    {
+        boolean highChar = false;
+        for ( int i = 0; i < v.length(); i++ )
+        {
+            int ch = v.charAt( i );
+            if ( ch < 32 || ch > 127 )
+            {
+                highChar = true;
+                break;
+//                throw new IllegalStateException( "Bad character in string " + v +", char='" + (char)ch + "' int=" + ch );
+            }
+        }
+        if ( highChar )
+        {
+            Thread.currentThread().dumpStack();
+        }
     }
 
     /**
@@ -995,6 +1077,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void removeLinks( WikiPath page ) throws ProviderException, RepositoryException
     {
+        if ( page == null )
+        {
+            throw new IllegalArgumentException( "Page cannot be null!" );
+        }
+        
         // Get old linked pages; add to 'unreferenced list' if needed
         List<WikiPath> referenced = getRefersTo( page );
         for( WikiPath ref : referenced )
@@ -1076,6 +1163,10 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void setLinks( WikiPath source, List<WikiPath> destinations ) throws ProviderException, RepositoryException
     {
+        if ( source == null || destinations == null )
+        {
+            throw new IllegalArgumentException( "Source and destinations cannot be null!" );
+        }
 
         Session s = m_cm.getCurrentSession();
 
@@ -1156,6 +1247,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     protected void setRefersTo( WikiPath source, List<WikiPath> destinations ) throws ProviderException, RepositoryException
     {
+        if ( source == null || destinations == null )
+        {
+            throw new IllegalArgumentException( "Source and destinations cannot be null!" );
+        }
+        
         if( !m_cm.pageExists( source ) )
         {
             return;

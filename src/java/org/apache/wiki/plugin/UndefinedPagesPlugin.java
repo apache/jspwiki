@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.content.WikiPath;
 
 
 /**
@@ -50,7 +51,7 @@ public class UndefinedPagesPlugin extends AbstractFilteredPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<String> links;
+        Collection<WikiPath> links;
         try
         {
             links = refmgr.findUncreated();
@@ -63,7 +64,7 @@ public class UndefinedPagesPlugin extends AbstractFilteredPlugin
 
         super.initialize( context, params );
 
-        TreeSet<String> sortedSet = new TreeSet<String>();
+        TreeSet<WikiPath> sortedSet = new TreeSet<WikiPath>();
 
         links = filterCollection( links );
 

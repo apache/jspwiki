@@ -701,9 +701,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        List<String> c = refMgr.findUncreated();
+        List<WikiPath> c = refMgr.findUncreated();
         assertTrue( "Non-existent reference not detected by ReferenceManager",
-            Util.collectionContains( c, "Foobar" ));
+            c.contains( WikiPath.valueOf( "Foobar" ) ) );
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
@@ -727,7 +727,7 @@ public class WikiEngineTest extends TestCase
 
         assertTrue( "Non-existent reference after external page change " +
                     "not detected by ReferenceManager",
-                    Util.collectionContains( c, "Puppaa" ));
+                    c.contains( WikiPath.valueOf( "Puppaa" ) ) );
     }
 
 
@@ -742,9 +742,9 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( NAME1, "[Foobar]" );
         m_engine.getText( NAME1 ); // Ensure that page is cached.
 
-        List<String> c = refMgr.findUncreated();
+        List<WikiPath> c = refMgr.findUncreated();
         assertEquals( "uncreated count", 1, c.size() );
-        assertEquals( "wrong referenced page", "Foobar", (String)c.iterator().next() );
+        assertEquals( "wrong referenced page", WikiPath.valueOf( "Foobar" ), c.iterator().next() );
 
         Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
 
