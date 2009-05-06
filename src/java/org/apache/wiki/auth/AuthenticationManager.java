@@ -287,14 +287,22 @@ public final class AuthenticationManager
             try
             {
                 principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
-                if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() )
+            }
+            catch( LoginException e )
+            {
+                // Failed to log in with container credentials
+            }
+
+            try
+            {
+                if ( ( principals == null || principals.size() == 0 ) && authenticationMgr.allowsCookieAuthentication() )
                 {
                     principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
                 }
             }
             catch( LoginException e )
             {
-                // Failed to log in with container credentials
+                // Failed to log in with cookie authentication credentials
             }
             
             // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
