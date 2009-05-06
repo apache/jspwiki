@@ -51,9 +51,9 @@ public class RPCHandlerTest extends TestCase
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
-        m_engine.deletePage( "Dummy" );
-        WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage("Dummy") );
-        m_handler.initialize( ctx );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( "Dummy" ) );
+        m_handler.initialize( context );
+        m_engine.getContentManager().release();
     }
 
     public void tearDown() throws Exception
@@ -80,8 +80,10 @@ public class RPCHandlerTest extends TestCase
     public void testRecentChanges()
         throws Exception
     {
+        m_engine.emptyRepository();
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
         Vector<Hashtable<String,Object>> previousChanges = m_handler.getRecentChanges( time );
+        assertEquals( 0, previousChanges.size() );
 
         m_engine.saveText( NAME1, "Foo" );
         WikiPage directInfo = m_engine.getPage( NAME1 );

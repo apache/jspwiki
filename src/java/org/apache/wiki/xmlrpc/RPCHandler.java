@@ -172,7 +172,7 @@ public class RPCHandler
 
         for( WikiPage page : pages )
         {
-            if( !( page.isAttachment() ) && page.getLastModified().after( since ) )
+            if( !( page.isAttachment() ) && page.getLastModified() != null && page.getLastModified().after( since ) )
             {
                 result.add( encodeWikiPage( page ) );
             }
