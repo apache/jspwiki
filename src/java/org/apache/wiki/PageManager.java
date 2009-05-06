@@ -320,7 +320,7 @@ public class PageManager extends ModuleManager
     public boolean pageExists( String pageName )
         throws ProviderException
     {
-        return m_engine.getContentManager().pageExists( WikiPath.valueOf( pageName ) );
+        return m_engine.pageExists( pageName );
     }
 
     /**
@@ -335,7 +335,7 @@ public class PageManager extends ModuleManager
     public boolean pageExists( String pageName, int version )
         throws ProviderException
     {
-        return m_engine.getContentManager().pageExists( WikiPath.valueOf( pageName ), version );
+        return m_engine.pageExists( pageName, version );
     }
 
     /**

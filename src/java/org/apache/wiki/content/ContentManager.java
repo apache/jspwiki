@@ -760,7 +760,14 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Returns true, if the page exists (any version).
+     *  Returns <code>true</code> if a given page exists (any version). 
+     *  In order for
+     *  this method to return <code>true</code>, the JCR node
+     *  representing the page must exist, and it must also have been
+     *  previously saved (that is, not "new").
+     *  
+     *  Unlike {@link WikiEngine#pageExists(String}, this method does not
+     *  resolve the supplied path by calling {@link WikiEngine#getFinalPageName(WikiPath)}. 
      *  
      *  @param wikiPath  the {@link WikiPath} to check for
      *  @return A boolean value describing the existence of a page
@@ -773,25 +780,36 @@ public class ContentManager implements WikiEventListener
         {
             throw new ProviderException("Illegal page name");
         }
-
+        
+        // Find the JCR node
+        String jcrPath = getJCRPath( wikiPath ); 
+        Node node = null;
         try
         {
-            Session session = m_sessionManager.getSession();
-            
-            String jcrPath = getJCRPath( wikiPath ); 
-            
-            return session.getRootNode().hasNode( jcrPath );
+            node = getJCRNode( jcrPath );
+        }
+        catch ( PathNotFoundException e )
+        {
+            // Node wasn't in JCR; thus, page doesn't exist.
+            return false;
         }
         catch( RepositoryException e )
         {
             throw new ProviderException( "Unable to check for page existence", e );
         }
+        
+        // Node "exists" only if it's been saved already.
+        return  !node.isNew();
     }
     
     /**
-     *  Checks for existence of a specific page and version.
+     *  Returns <code>true</code> if a given page exists for a specific version.
+     *  For the page to "exist" the page must have been previously added
+     *  (for example, by {@link #addPage(WikiPath, String)}), although it need not
+     *  have been saved. This is unlike the {@link WikiEngine} version of
+     *  <code>pageExists</code>, which requires the page to be saved before it
+     *  is considered to exist.
      *  
-     *  @since 2.3.29
      *  @param wikiPath  the {@link WikiPath} to check for
      *  @param version The version to check
      *  @return <code>true</code> if the page exists, <code>false</code> otherwise
@@ -805,16 +823,25 @@ public class ContentManager implements WikiEventListener
             throw new ProviderException("Illegal page name");
         }
 
+        // Find the JCR node
+        String jcrPath = getJCRPath( wikiPath ); 
+        Node node = null;
         try
         {
-            Session session = m_sessionManager.getSession();
-            
-            return session.itemExists( getJCRPath( wikiPath ) );
+            node = getJCRNode( jcrPath );
+        }
+        catch ( PathNotFoundException e )
+        {
+            // Node wasn't in JCR; thus, page doesn't exist.
+            return false;
         }
         catch( RepositoryException e )
         {
-            throw new ProviderException("Unable to check for page existence",e);
+            throw new ProviderException( "Unable to check for page existence", e );
         }
+        
+        // Node "exists" only if it's been saved already.
+        return  !node.isNew();
     }
 
     /**
@@ -1148,81 +1175,59 @@ public class ContentManager implements WikiEventListener
         //
         //  Clean up the "to" -name so that it does not contain anything illegal
         //
-        
         renameTo = MarkupParser.cleanLink( renameTo.trim() );
-        
         if( renameTo.equals(renameFrom) )
         {
             throw new WikiException( "You cannot rename the page to itself" );
         }
         
         //
-        //  Preconditions: "from" page must exist, and "to" page must not yet exist.
+        //  Preconditions: "from" page must exist, and "to" page must NOT exist.
         //
         WikiEngine engine = context.getEngine();
-        WikiPage fromPage;
-        try
+        WikiPath fromPage = WikiPath.valueOf( renameFrom );
+        WikiPath toPage = WikiPath.valueOf( renameTo );
+        if ( !engine.pageExists( fromPage.toString() ) )
         {
-            fromPage = engine.getPage( renameFrom );
+            // TODO: Should localize this
+            throw new WikiException("Cannot rename: source page '"+fromPage.toString() + "' does not exist." );
         }
-        catch( PageNotFoundException e )
+        if ( engine.pageExists( toPage.toString() ) )
         {
-            throw new WikiException("No such page "+renameFrom, e );
-        }
-        
-        WikiPage toPage;
-        try
-        {
-            toPage = engine.getPage( renameTo );
-            if( toPage != null )
-            {
-                throw new WikiException("Page already exists "+renameTo);
-            }
-        }
-        catch( PageNotFoundException e )
-        {
-            // Good. The page should NOT exist already.
+            // TODO: Should localize this
+            throw new WikiException("Cannot rename: destination page '"+toPage.toString() + "' already exists." );
         }
         
         //
         //  Do the actual rename by changing from the frompage to the topage, including
         //  all of the attachments
         //
-        
-        engine.getPageManager().getProvider().movePage( renameFrom, renameTo );
-        /*
-        if( engine.getAttachmentManager().attachmentsEnabled() )
-        {
-            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameTo );
-        }
-*/
-        //
-        //  Add a comment to the page notifying what changed.  This adds a new revision
-        //  to the repo with no actual change.
-        //
-        
+        Workspace w;
         try
         {
-            toPage = engine.getPage( renameTo );
+            w = getCurrentSession().getWorkspace();
+            w.move( getJCRPath( fromPage ), getJCRPath( toPage ) );
         }
-        catch( PageNotFoundException e )
+        catch( RepositoryException e )
+        {
+            throw new WikiException( "Could not rename page. Reason: " + e.getMessage(), e );
+        }
+
+        // Make sure the move succeeded...
+        WikiPage page;
+        try
+        {
+            page = engine.getPage( toPage );
+        }
+        catch ( PageNotFoundException e )
         {
             throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
-
-        toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
-        toPage.setAuthor( context.getCurrentUser().getName() );
-        
-        engine.getPageManager().putPageText( toPage, engine.getPureText( toPage ) );
+        page.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
+        page.setAuthor( context.getCurrentUser().getName() );
 
         // Tell everyone we moved the page
-        fireEvent( ContentEvent.NODE_RENAMED, toPage.getName(), fromPage.getName(), Boolean.valueOf( changeReferrers ) );
-        
-        //
-        //  re-index the page 
-        //
-        engine.getSearchManager().reindexPage(toPage);
-
+        fireEvent( ContentEvent.NODE_RENAMED, toPage.toString(), fromPage.toString(), Boolean.valueOf( changeReferrers ) );
         
         //
         //  Done, return the new name.

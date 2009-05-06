@@ -1211,24 +1211,19 @@ public class WikiEngine
      *  any version as existing.  Will also consider attachments.
      *
      *  @param page WikiName of the page.
-     *  @return true, if page (or attachment) exists.
+     *  @return true, if page (or attachment) exists
+     *  @see #pageExists(String, int)
      */
     public boolean pageExists( String page )
     {
-        WikiPath name = WikiPath.valueOf(page);
         try
         {
-            if( getFinalPageName( name ) != null )
-            {
-                return true;
-            }
+            return pageExists( page, WikiProvider.LATEST_VERSION ); 
         }
-        catch( Exception e )
+        catch ( ProviderException e )
         {
-            log.debug("pageExists() failed to find attachments",e);
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -1237,27 +1232,19 @@ public class WikiEngine
      *
      *  @param page Page name
      *  @param version Page version
-     *  @return True, if page (or alias, or attachment) exists
-     *  @throws ProviderException If the provider fails.
+     *  @return True, if page (or alias, or attachment) exists.
+     *  @throws ProviderException If the provider fails
      */
     public boolean pageExists( String page, int version )
         throws ProviderException
     {
-        boolean isThere = false;
-        WikiPath finalName = WikiPath.valueOf( page );
-        try
-        {
-            //  Go and check if this particular version of this page exists
-            finalName = getFinalPageName( finalName );
-            isThere = m_contentManager.pageExists( finalName, version );
-        }
-        catch( Exception e )
-        {
-            // FIXME: probably not a good idea to catch everything.
-            // It's not there!
-        }
+        // Resolve the page path
+        WikiPath path = WikiPath.valueOf( page );
+        WikiPath finalPath = getFinalPageName( path );
+        finalPath = finalPath == null ? path : finalPath;
 
-        return isThere;
+        // Delegate to ContentManager
+        return m_contentManager.pageExists( finalPath, version );
     }
 
     /**
@@ -1268,15 +1255,12 @@ public class WikiEngine
      *  @return true, if the page (or alias, or attachment) exists.
      *  @throws ProviderException If something goes badly wrong.
      *  @since 2.0
+     *  @see #pageExists(String, int)
      */
     public boolean pageExists( WikiPage page )
         throws ProviderException
     {
-        if( page != null )
-        {
-            return pageExists( page.getName(), page.getVersion() );
-        }
-        return false;
+        return pageExists( page.getPath().toString(), WikiProvider.LATEST_VERSION );
     }
 
 

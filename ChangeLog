@@ -1,3 +1,37 @@
+2009-05-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-112
+        
+        * Minor refactoring of pageExists() in WikiEngine, PageManager (legacy)
+        and ContentManager to clarify that a page "exists" if it is present
+        in the JCR and it has also been previously saved. Previously, we did not
+        consider persistence, only if the page existed in memory in the JCR.
+        Page-renaming code in ContentManager is now JCR-optimized (even
+        though the renaming tests still all fail).
+        
+        * Fixed NPE in JCRWikiPage.getLastModified().
+        
+        * Fixed bug in AuthenticationManager that was causing cookie authentication
+        to fail.
+        
+        * Fixed bug in RPCHandler and test code that was causing a test to fail.
+        
+2009-05-05  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-111
+
+        * Fixed AuthenticationManager bug that prevented cookie authentication from
+        working.
+        
+        * Fixed bug in WikiEngine.pageExists that caused pages to be reported as
+        "existing" when they had been added to the JCR repository but not yet saved.
+        WikiEngine.pageExists now checks to see if has actually been saved,
+        whereas ContentManager does not.
+        
+        * Re-wrrote ContentManager.renamePage to use JCR. Sadly, Priha does
+        not support Workspace.move(). If it did, maybe the renaming tests would
+        all work?
+        
 2009-05-04  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-110

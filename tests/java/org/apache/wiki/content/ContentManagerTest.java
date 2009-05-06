@@ -1,5 +1,6 @@
 package org.apache.wiki.content;
 
+import java.util.Collection;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -9,8 +10,6 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.WikiPath;
 
 
 public class ContentManagerTest extends TestCase
@@ -62,7 +61,7 @@ public class ContentManagerTest extends TestCase
         
         page.setContent( content );
         
-        page.save();
+        m_mgr.save( page );
         
         WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("Main:TestPage") );
         
@@ -81,7 +80,7 @@ public class ContentManagerTest extends TestCase
         
         page.setContent( content );
         
-        page.save();
+        m_mgr.save( page );
         
         WikiPage page2 = m_mgr.getPage( WikiPath.valueOf("TestPage") );
         
@@ -98,6 +97,20 @@ public class ContentManagerTest extends TestCase
         assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/Main/MainPage" ) );
     }
     
+    public void getAllPages() throws Exception
+    {
+        m_engine.emptyRepository();
+        Collection<WikiPage> allPages = m_mgr.getAllPages( ContentManager.DEFAULT_SPACE );
+        assertEquals( 0, allPages.size() );
+
+        // Add 2 pages to space Main
+        m_engine.saveText( "Test1", "This is a test." );
+        m_engine.saveText( "Test2", "This is a test." );
+
+        allPages = m_mgr.getAllPages( null );
+        assertEquals( 2, allPages.size() );
+    }
+
     public static Test suite()
     {
         return new TestSuite( ContentManagerTest.class );
