@@ -225,7 +225,10 @@ public class JCRWikiPage
     {
         try
         {
-            return getJCRNode().getProperty( LASTMODIFIED ).getDate().getTime();
+            if ( getJCRNode().hasProperty( LASTMODIFIED ) )
+            {
+                return getJCRNode().getProperty( LASTMODIFIED ).getDate().getTime();
+            }
         }
         catch( RepositoryException e )
         {
@@ -609,4 +612,5 @@ public class JCRWikiPage
         
         return pages;
     }
+    
 }
