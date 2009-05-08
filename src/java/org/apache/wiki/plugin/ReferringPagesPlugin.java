@@ -21,7 +21,7 @@
 package org.apache.wiki.plugin;
 
 import java.text.MessageFormat;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -93,7 +93,7 @@ public class ReferringPagesPlugin
         {
             WikiPage page = context.getEngine().getPage( pageName );
         
-            Collection<WikiPath> links = refmgr.getReferredBy( page.getPath() );
+            List<WikiPath> links = refmgr.getReferredBy( page.getPath() );
             String wikitext = "";
 
             super.initialize( context, params );

@@ -444,10 +444,10 @@ public class ContentManager implements WikiEventListener
      *  @throws ProviderException If the backend has problems.
      */
    
-    public Collection<WikiPage> getAllPages( String space )
+    public List<WikiPage> getAllPages( String space )
         throws ProviderException
     {
-        Set<WikiPage> result = new TreeSet<WikiPage>();
+        List<WikiPage> results = new ArrayList<WikiPage>();
         try
         {
             Session session = m_sessionManager.getSession();
@@ -465,7 +465,11 @@ public class ContentManager implements WikiEventListener
                 // Hack to make sure we don't add the space root node. 
                 if( !isSpaceRoot(n) )
                 {
-                    result.add( new JCRWikiPage( getEngine(), n ) );
+                    WikiPage page = new JCRWikiPage( getEngine(), n );
+                    if ( !results.contains( page ) )
+                    {
+                        results.add( page );
+                    }
                 }
             }
         }
@@ -478,7 +482,7 @@ public class ContentManager implements WikiEventListener
             throw new ProviderException("getAllPages()",e);
         }
         
-        return result;
+        return results;
     }
 
     /**

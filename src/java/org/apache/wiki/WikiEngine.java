@@ -164,6 +164,8 @@ public class WikiEngine
     /** If this property is set to false, we don't allow the creation of empty pages */
     public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
+    private static final Comparator<WikiPage> PAGE_TIME_COMPARATOR = new PageTimeComparator();
+
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
 
@@ -1787,30 +1789,23 @@ public class WikiEngine
     }
 
     /**
-     *  Returns a Collection of WikiPages, sorted in time
+     *  Returns a List of WikiPages, sorted in time
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.
      *
      *  @param space The WikiSpace for which you want to have the
      *               Recent Changes for.
-     *  @return Collection of WikiPage objects.  In reality, the returned
-     *          collection is a Set, but due to API compatibility reasons,
-     *          we're not changing the signature soon...
+     *  @return List of WikiPage objects
      */
-
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
-    public Collection<WikiPage> getRecentChanges(String space)
+    public List<WikiPage> getRecentChanges(String space)
     {
         try
         {
-            Collection<WikiPage>   pages = m_contentManager.getAllPages(space);
-
-            TreeSet<WikiPage> sortedPages = new TreeSet<WikiPage>( new PageTimeComparator() );
-
-            sortedPages.addAll( pages );
-
-            return sortedPages;
+            List<WikiPage>   pages = m_contentManager.getAllPages(space);
+            Collections.sort( pages, PAGE_TIME_COMPARATOR );
+            return pages;
         }
         catch( ProviderException e )
         {

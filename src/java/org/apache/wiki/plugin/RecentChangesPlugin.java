@@ -107,7 +107,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
 
         // FIXME: Should really have a since date on the getRecentChanges
         // method.
-        Collection<WikiPage>   changes = engine.getRecentChanges(context.getPage().getWiki());
+        List<WikiPage>   changes = engine.getRecentChanges(context.getPage().getWiki());
         super.initialize( context, params );
         changes = super.filterCollection( changes );
 
@@ -127,7 +127,7 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                 {
                     Date lastmod = pageref.getLastModified();
 
-                    if( lastmod.before( sincedate.getTime() ) )
+                    if( lastmod == null || lastmod.before( sincedate.getTime() ) )
                     {
                         break;
                     }

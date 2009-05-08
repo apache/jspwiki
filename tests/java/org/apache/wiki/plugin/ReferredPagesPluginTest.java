@@ -88,7 +88,7 @@ public class ReferredPagesPluginTest extends TestCase
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin}" );
 
         assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElse\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElse</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">Main:SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
+                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElse\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElse</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
                       res );
     }
 
@@ -105,26 +105,35 @@ public class ReferredPagesPluginTest extends TestCase
         String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin page=IPointToSomeoneElseToo}" );
 
         assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElseToo\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElseToo</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">Main:SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
+                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElseToo\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElseToo</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
                       res );
     }
 
     /**
-     * Test with the include parameter
+     * Test with the include parameter (with and without the space name)
      * 
      * @throws Exception
      */
-    public void testReferredPageParmInClude() throws Exception
+    public void testReferredPageParmInclude() throws Exception
     {
         context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToTwoPages" ) );
+        String expected = "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[Main:SomeBodyPointsToMe.*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n";
 
         String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );
-
-        assertEquals(
-                      "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[SomeBodyPointsToMe*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n",
-                      res );
-
+        assertEquals( expected, res );
+        
+        res = manager.execute( context,
+                                      "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='Main:SomeBodyPointsToMe*'}" );
+        assertEquals( expected, res );
+    }
+    
+    public void testSanitizePattern()
+    {
+        assertEquals( "Main:Foo", AbstractFilteredPlugin.sanitizePattern( "Foo" ) );
+        assertEquals( "Main:Foo*", AbstractFilteredPlugin.sanitizePattern( "Foo*" ) );
+        assertEquals( "Test:Foo", AbstractFilteredPlugin.sanitizePattern( "Test:Foo" ) );
+        assertEquals( ".*?Foo", AbstractFilteredPlugin.sanitizePattern( ".*?Foo" ) );
     }
 
     public static Test suite()

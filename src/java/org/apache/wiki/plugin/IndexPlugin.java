@@ -129,7 +129,7 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
     private List<String> listPages( WikiContext context ) throws ProviderException
     {
         ArrayList<String> result = new ArrayList<String>();
-        Collection<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE );
+        List<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE );
         pages = super.filterCollection( pages );
 
         for( WikiPage page : pages )

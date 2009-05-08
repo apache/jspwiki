@@ -32,6 +32,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
@@ -110,8 +111,8 @@ public abstract class AbstractFilteredPlugin
     protected           String   m_separator = ""; // null not blank
     protected           String   m_after = "\\\\";
 
-    protected           Pattern[] m_exclude;
-    protected           Pattern[]  m_include;
+    protected           Pattern[] m_exclude = new Pattern[]{ Pattern.compile( "^$" )};
+    protected           Pattern[]  m_include = new Pattern[]{ Pattern.compile( ".*" )};
     protected           boolean m_showAttachments = true;
     
     protected           String m_show = "pages";
@@ -179,8 +180,9 @@ public abstract class AbstractFilteredPlugin
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
+                    String pattern = sanitizePattern( ptrns[i] );
                     m_exclude[i] = Pattern
-                        .compile( RegExpUtil.globToPerl5( ptrns[i].toCharArray(),
+                        .compile( RegExpUtil.globToPerl5( pattern.toCharArray(),
                                                                         RegExpUtil.DEFAULT_MASK ) );
                 }
             }
@@ -205,8 +207,9 @@ public abstract class AbstractFilteredPlugin
 
                 for( int i = 0; i < ptrns.length; i++ )
                 {
+                    String pattern = sanitizePattern( ptrns[i] );
                     m_include[i] = Pattern
-                        .compile( RegExpUtil.globToPerl5( ptrns[i].toCharArray(),
+                        .compile( RegExpUtil.globToPerl5( pattern.toCharArray(),
                                                                         RegExpUtil.DEFAULT_MASK ) );
                 }
             }
@@ -254,7 +257,7 @@ public abstract class AbstractFilteredPlugin
      *  @param items The collection to filter.
      *  @return A filtered collection.
      */
-    protected <T extends Object>Collection<T> filterCollection( Collection<T> items )
+    protected <T extends Object> List<T> filterCollection( List<T> items )
     {
         ArrayList<T> filteredItems = new ArrayList<T>();
 
@@ -263,7 +266,7 @@ public abstract class AbstractFilteredPlugin
             String pageName = null;
             if( item instanceof WikiPage )
             {
-                pageName = ((WikiPage) item).getName();
+                pageName = ((WikiPage) item).getPath().toString();
             }
             else if ( item instanceof WikiPath )
             {
@@ -353,6 +356,57 @@ public abstract class AbstractFilteredPlugin
     }
 
     /**
+     * Sanitizes a user-supplied include/exclude pattern.
+     * If all characters before the first colon are letters,
+     * numbers or spaces, we need to prepend the
+     * default wiki space for backwards compatibility.
+     * @param pattern the pattern
+     * @return the sanitized pattern
+     */
+    protected static String sanitizePattern( String pattern )
+    {
+        boolean hasSpace = false;
+        boolean nameIsPrefix = false;
+        for ( int i = 0; i < pattern.length(); i++ )
+        {
+            char ch = pattern.charAt( i );
+            if ( ch ==32 ||
+                  ( ch >=48 && ch <= 57 ) ||
+                  ( ch >=65 && ch <= 90 ) ||
+                  ( ch >=97 && ch <= 122 ) )
+            {
+                nameIsPrefix = true;
+            }
+            else if ( i > 0 && nameIsPrefix && ch == ':' )
+            {
+                // Make sure we add in an escape char (\) in front of the colon
+                if ( pattern.charAt( i - 1 ) == '\\' )
+                {
+                    hasSpace = true;
+                    break;
+                }
+                else
+                {
+                    pattern = pattern.substring( 0, i ) + pattern.substring( i, pattern.length() );
+                    hasSpace = true;
+                    break;
+                }
+            }
+            else if ( nameIsPrefix )
+            {
+                hasSpace = false;
+                break;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        return ( nameIsPrefix && !hasSpace ) ? ContentManager.DEFAULT_SPACE + ":" + pattern : pattern;
+    }
+    
+    /**
      *  Makes WikiText from a Collection.
      *
      *  @param links Collection to make into WikiText.
@@ -386,7 +440,8 @@ public abstract class AbstractFilteredPlugin
             output.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + m_engine.beautifyTitle(value) + "|" + value + "]" );
+            String page = ContentManager.DEFAULT_SPACE.equals( value.getSpace() ) ? value.getPath() : value.toString();
+            output.append( "[" + m_engine.beautifyTitle(value) + "|" + page + "]" );
             count++;
         }
 

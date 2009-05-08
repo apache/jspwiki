@@ -20,10 +20,7 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.jcr.RepositoryException;
 
@@ -60,7 +57,7 @@ public class UnusedPagesPlugin
         throws PluginException
     {
         ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<WikiPath> links;
+        List<WikiPath> links;
         try
         {
             links = refmgr.findUnreferenced();
@@ -91,11 +88,8 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet<WikiPath> sortedSet = new TreeSet<WikiPath>();
-        
         links = filterCollection( links );
-        
-        sortedSet.addAll( links );
+        Collections.sort( links );
 
         String wikitext = null;
         
@@ -109,7 +103,7 @@ public class UnusedPagesPlugin
         }
         else
         {
-            wikitext = wikitizeCollection(sortedSet, m_separator, ALL_ITEMS);
+            wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
         }        
         return makeHTML( context, wikitext );
     }

@@ -1,3 +1,13 @@
+2009-05-07  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-113
+
+        * Fixed various plugins that were broken, particularly AbstractFilteredPlugin
+        which did not know now to handle page names without spaces. We treat
+        this as meaning the default space. Minor method signature changes from
+        Collection to List in WikiEngine and ContentManager. Pass rate is now
+        95.5%, not counting the JCR Property-related file issue noted in build 110.
+
 2009-05-05  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-112

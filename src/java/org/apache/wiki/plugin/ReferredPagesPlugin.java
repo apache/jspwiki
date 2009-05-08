@@ -21,11 +21,14 @@
 package org.apache.wiki.plugin;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
@@ -52,7 +55,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
     private static Logger log = LoggerFactory.getLogger( ReferredPagesPlugin.class );
     private WikiEngine     m_engine;
     private int            m_depth;
-    private HashSet<String> m_exists  = new HashSet<String>();
+    private HashSet<WikiPath> m_exists  = new HashSet<WikiPath>();
     private StringBuilder   m_result  = new StringBuilder(1024);
     private boolean m_formatCompact  = true;
     private boolean m_formatSort     = false;
@@ -96,11 +99,8 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         m_depth = TextUtil.parseIntParameter( (String)params.get( PARAM_DEPTH ), MIN_DEPTH );
         if( m_depth > MAX_DEPTH )  m_depth = MAX_DEPTH;
 
-        String includePattern = (String) params.get(PARAM_INCLUDE);
-        if( includePattern == null ) includePattern = ".*";
-
-        String excludePattern = (String) params.get(PARAM_EXCLUDE);
-        if( excludePattern == null ) excludePattern = "^$";
+        String includePattern = filterString( m_include );
+        String excludePattern = filterString( m_exclude );
 
         log.debug( "Fetching referred pages for "+ rootname +
                    " with a depth of "+ m_depth +
@@ -116,11 +116,13 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
                        "] format["+(m_formatCompact ? "compact" : "full") +
                        (m_formatSort ? " sort" : "") + "]";
 
+        WikiPath root = WikiPath.valueOf( rootname );
+        String rootString = ContentManager.DEFAULT_SPACE.equals( root.getSpace() ) ? root.getPath() : root.toString();
         m_result.append("<div class=\"ReferredPagesPlugin\">\n");
         m_result.append("<a class=\"wikipage\" href=\""+ href +
                         "\" title=\"" + title +
-                        "\">" + rootname + "</a>\n");
-        m_exists.add(rootname);
+                        "\">" + rootString + "</a>\n");
+        m_exists.add(WikiPath.valueOf( rootname ) );
 
         // pre compile all needed patterns
         // glob compiler :  * is 0..n instance of any char  -- more convenient as input
@@ -130,7 +132,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         // go get all referred links
         try
         {
-            getReferredPages(context,rootname, 0);
+            getReferredPages( context, WikiPath.valueOf( rootname ), 0);
         }
         catch(Exception e)
         {
@@ -143,6 +145,19 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         return m_result.toString() ;
     }
 
+    private String filterString( Pattern[] patterns )
+    {
+        StringBuilder s = new StringBuilder();
+        for ( int i = 0; i < patterns.length; i++ )
+        {
+            s.append( patterns[i].pattern() );
+            if ( i < patterns.length - 1 )
+            {
+                s.append( ',' );
+            }
+        }
+        return s.toString();
+    }
 
     /**
      * Retrieves a list of all referred pages. Is called recursively
@@ -151,46 +166,39 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
      * @throws ProviderException 
      */
     @SuppressWarnings("unchecked")
-    private void getReferredPages( WikiContext context, String pagename, int depth ) throws ProviderException, PageNotFoundException
+    private void getReferredPages( WikiContext context, WikiPath path, int depth ) throws ProviderException, PageNotFoundException
     {
         if( depth >= m_depth ) return;  // end of recursion
-        if( pagename == null ) return;
-        if( !m_engine.pageExists(pagename) ) return;
+        if( path == null ) return;
+        
+        if( !m_engine.pageExists( path.toString() ) ) return;
 
         ReferenceManager mgr = m_engine.getReferenceManager();
 
-        Collection<String> pages = mgr.findRefersTo( pagename );
-        if( pages != null )
+        List<WikiPath> pages = mgr.getRefersTo( path );
+        if( pages != null && pages.size() > 0 )
         {
             pages = super.filterCollection( pages );
         }
 
-        handleLinks( context, pages, ++depth, pagename );
+        handleLinks( context, pages, ++depth, path );
     }
 
-    private void handleLinks(WikiContext context,Collection<String> links, int depth, String pagename) throws ProviderException, PageNotFoundException
+    private void handleLinks(WikiContext context,List<WikiPath> links, int depth, WikiPath path ) throws ProviderException, PageNotFoundException
     {
         boolean isUL = false;
-        HashSet<String> localLinkSet = new HashSet<String>();  // needed to skip multiple
-        // links to the same page
-        localLinkSet.add(pagename);
+        HashSet<WikiPath> uniqueLinks = new HashSet<WikiPath>();  // skip multiple links to same page
+        uniqueLinks.add( path );
 
-        ArrayList<String> allLinks = new ArrayList<String>();
+        if( m_formatSort ) Collections.sort(links);
 
-        if( links != null )
-            allLinks.addAll( links );
-
-        if( m_formatSort ) Collections.sort(allLinks);
-
-        for( String link : allLinks )
+        for( WikiPath link : links )
         {
-            if( localLinkSet.contains( link ) ) continue; // skip multiple
-                                                          // links to the same
-                                                          // page
-            localLinkSet.add( link );
+            if( uniqueLinks.contains( link ) ) continue; // skip multiple links to same page
+            
+            uniqueLinks.add( link );
 
-            if( !m_engine.pageExists( link ) ) continue; // hide links to non
-                                                         // existing pages
+            if( !m_engine.pageExists( link.toString() ) ) continue; // hide links to non existing pages
 
             if( m_exists.contains( link ) )
             {
@@ -203,9 +211,7 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
 
                     m_result.append("<li> " + link + " </li>\n");
 
-                    getReferredPages( context, link, depth );  // added recursive
-                                                      // call - on general
-                                                      // request
+                    getReferredPages( context, link, depth );  // recursive
                 }
             }
             else
@@ -215,9 +221,9 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
                     isUL = true; m_result.append("<ul>\n");
                 }
 
-                String href = context.getURL(WikiContext.VIEW,link);
-                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+link+"</a></li>\n" );
-
+                String href = context.getURL(WikiContext.VIEW,link.toString());
+                String linkString = ContentManager.DEFAULT_SPACE.equals( link.getSpace() ) ? link.getPath() : link.toString();
+                m_result.append("<li><a class=\"wikipage\" href=\""+ href +"\">"+linkString+"</a></li>\n" );
                 m_exists.add( link );
 
                 getReferredPages( context, link, depth );

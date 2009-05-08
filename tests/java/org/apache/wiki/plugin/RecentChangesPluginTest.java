@@ -94,7 +94,7 @@ public class RecentChangesPluginTest extends TestCase
      * 
      * @throws Exception
      */
-    public void testParmInClude() throws Exception
+    public void testParmInclude() throws Exception
     {
         context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage02" ) );
 
@@ -113,7 +113,7 @@ public class RecentChangesPluginTest extends TestCase
      * 
      * @throws Exception
      */
-    public void testParmExClude() throws Exception
+    public void testParmExclude() throws Exception
     {
         context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage03" ) );
 
