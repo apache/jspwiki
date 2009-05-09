@@ -218,7 +218,7 @@ public class PluginManagerTest extends TestCase
     {
         engine.saveText(context, "[{SamplePlugin render=true}]");
 
-        engine.getHTML( "Testpage" );
+        engine.getHTML( "TestPage" );
 
         assertTrue( SamplePlugin.c_rendered );
     }

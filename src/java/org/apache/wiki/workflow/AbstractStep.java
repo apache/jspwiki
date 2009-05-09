@@ -112,10 +112,10 @@ public abstract class AbstractStep implements Step
     /**
      * {@inheritDoc}
      */
-    public final Collection<Outcome> getAvailableOutcomes()
+    public final Set<Outcome> getAvailableOutcomes()
     {
         Set<Outcome> outcomes = m_successors.keySet();
-        return Collections.unmodifiableCollection( outcomes );
+        return Collections.unmodifiableSet( outcomes );
     }
 
     /**

@@ -246,12 +246,10 @@ public class MetaWeblogHandler
 
             WeblogPlugin plugin = new WeblogPlugin();
 
-            List<WikiPage> changed = plugin.findBlogEntries(m_context.getEngine().getContentManager(), 
+            SortedSet<WikiPage> changed = plugin.findBlogEntriesSorted(m_context.getEngine().getContentManager(), 
                                                             blogid,
                                                             new Date(0L),
                                                             new Date());
-
-            Collections.sort( changed, new PageTimeComparator() );
 
             int items = 0;
             for( Iterator i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ )

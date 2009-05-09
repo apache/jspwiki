@@ -1,3 +1,14 @@
+2009-05-09  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-114
+
+        * JSPWIKI-528, applied Greg's patches jspwiki-528-Weblog.patch and 
+           jspwiki-528-workflow.Step.patch.
+           
+        * minor javadoc in ContentManager
+        
+        * fixed PluginManagerTest
+
 2009-05-07  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-113
@@ -798,7 +809,7 @@
 
         * 3.0.0-svn-45
         
-        * JSPWIKI-466 - FileSystemProviderTest rücksichtslos empties java.io.tmpdir
+        * JSPWIKI-466 - FileSystemProviderTest rï¿½cksichtslos empties java.io.tmpdir
         
 2009-01-03  Harry Metske <metskem@apache.org>
 

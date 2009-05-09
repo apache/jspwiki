@@ -770,7 +770,7 @@ public class ContentManager implements WikiEventListener
      *  representing the page must exist, and it must also have been
      *  previously saved (that is, not "new").
      *  
-     *  Unlike {@link WikiEngine#pageExists(String}, this method does not
+     *  Unlike {@link WikiEngine#pageExists(String)}, this method does not
      *  resolve the supplied path by calling {@link WikiEngine#getFinalPageName(WikiPath)}. 
      *  
      *  @param wikiPath  the {@link WikiPath} to check for

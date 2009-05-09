@@ -42,6 +42,7 @@ import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -261,12 +262,10 @@ public class WeblogPlugin
 
         try
         {
-            List<WikiPage> blogEntries = findBlogEntries( engine.getContentManager(),
+            SortedSet<WikiPage> blogEntries = findBlogEntriesSorted( engine.getContentManager(),
                                                           weblogName,
                                                           startTime.getTime(),
                                                           stopTime.getTime() );
-
-            Collections.sort( blogEntries, new PageDateComparator() );
 
             sb.append("<div class=\"weblog\">\n");
             
@@ -428,15 +427,54 @@ public class WeblogPlugin
      *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
      *  @param start The date which is the first to be considered
      *  @param end   The end date which is the last to be considered
-     *  @return a list of pages with their FIRST revisions.
+     *  @return an unordered list of pages with their FIRST revisions.
      *  @throws ProviderException If something goes wrong
      */
     public List<WikiPage> findBlogEntries( ContentManager mgr,
                                  String baseName, Date start, Date end )
         throws ProviderException
     {
+        return (List<WikiPage>)findBlogEntries( new ArrayList<WikiPage>(), mgr, baseName, start, end );
+    }
+
+    /**
+     *  Attempts to locate all pages that correspond to the
+     *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
+     *
+     *  @param mgr A ContentManager which is used to get the pages
+     *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
+     *  @param start The date which is the first to be considered
+     *  @param end   The end date which is the last to be considered
+     *  @return a SortedSet of pages with their FIRST revisions in reverse date order (i.e. newest first).
+     *  @throws ProviderException If something goes wrong
+     */
+    public SortedSet<WikiPage> findBlogEntriesSorted( ContentManager mgr,
+                                 String baseName, Date start, Date end )
+        throws ProviderException
+    {
+        return (SortedSet<WikiPage>)findBlogEntries( new TreeSet<WikiPage>(PageTimeComparator.DEFAULT_PAGETIME_COMPARATOR), mgr, baseName, start, end );
+    }
+
+    /**
+     *  Attempts to locate all pages that correspond to the
+     *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
+     *  
+     *  Ordering of the resulting pages is determined by the passed in result collection.
+     *
+     *  @param result the Collection to be filled with the resulting WikiPages
+     *  @param mgr A ContentManager which is used to get the pages
+     *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
+     *  @param start The date which is the first to be considered
+     *  @param end   The end date which is the last to be considered
+     *  @return the passed Collection now filled with pages with their FIRST revisions.
+     *  @throws ProviderException If something goes wrong
+     */
+    public Collection<WikiPage> findBlogEntries( Collection<WikiPage> result, ContentManager mgr,
+                                 String baseName, Date start, Date end )
+        throws ProviderException
+    {
+        result.clear();
         Collection<WikiPage> everyone = mgr.getAllPages( null );
-        ArrayList<WikiPage> result = new ArrayList<WikiPage>();
 
         baseName = makeEntryPage( baseName );
         SimpleDateFormat fmt = new SimpleDateFormat(DEFAULT_DATEFORMAT);
@@ -488,22 +526,6 @@ public class WeblogPlugin
         }
 
         return result;
-    }
-
-    /**
-     *  Reverse comparison.
-     */
-    private static class PageDateComparator implements Comparator<WikiPage>
-    {
-        public int compare( WikiPage page1, WikiPage page2 )
-        {
-            if( page1 == null || page2 == null )
-            {
-                return 0;
-            }
-
-            return page2.getLastModified().compareTo( page1.getLastModified() );
-        }
     }
 
     /** 

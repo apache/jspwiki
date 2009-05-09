@@ -27,23 +27,21 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 
-
 /**
- *  Compares the lastModified date of its arguments.  Both o1 and o2 MUST
- *  be WikiPage objects, or else you will receive a ClassCastException.
+ *  Compares the lastModified date of two WikiPages.
  *  <p>
  *  If the lastModified date is the same, then the next key is the page name.
  *  If the page name is also equal, then returns 0 for equality.
  */
-// FIXME: Does not implement equals().
-// FIXME3.0: move to util package
-
 public class PageTimeComparator
     implements Comparator<WikiPage>, Serializable
 {
     private static final long serialVersionUID = 0L;
 
     static Logger log = LoggerFactory.getLogger( PageTimeComparator.class ); 
+
+    // A special singleton instance for quick access
+    public static final Comparator<WikiPage> DEFAULT_PAGETIME_COMPARATOR = new PageTimeComparator();
 
     /**
      *  {@inheritDoc}
@@ -79,5 +77,22 @@ public class PageTimeComparator
         }
 
         return timecomparison;
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    public boolean equals(Object o)
+    {
+        // Nothing to compare.  All PageTimeComparators are equal.
+        return (o instanceof PageTimeComparator);
+    }
+    
+    /**
+     *  {@inheritDoc}
+     */
+    public int hashcode()
+    {
+        return 864420504;
     }
 }

@@ -20,8 +20,8 @@
  */
 package org.apache.wiki.workflow;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -116,7 +116,7 @@ public class TaskTest extends TestCase
 
     public void testAvailableOutcomes()
     {
-        Collection<Outcome> outcomes = m_task.getAvailableOutcomes();
+        Set<Outcome> outcomes = m_task.getAvailableOutcomes();
         assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
         assertFalse(outcomes.contains(Outcome.DECISION_DENY));
         assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
