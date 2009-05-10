@@ -1313,19 +1313,34 @@ public class ContentManager implements WikiEventListener
      */
     public JCRWikiPage addPage( WikiPath path, String contentType ) throws PageAlreadyExistsException, ProviderException
     {
+        return addPage( path, getJCRPath(path), contentType );
+    }
+
+    /**
+     *  Add new content to the repository to a particular JCR path.
+     *  
+     *  @param path
+     *  @param jcrPath
+     *  @param contentType
+     *  @return
+     *  @throws ProviderException
+     */
+    private JCRWikiPage addPage( WikiPath path, String jcrPath, String contentType ) 
+        throws ProviderException
+    {
         checkValidContentType( contentType );
         
         try
         {
             Session session = m_sessionManager.getSession();
         
-            Node nd = session.getRootNode().addNode( getJCRPath(path) );
+            Node nd = session.getRootNode().addNode( jcrPath );
             
             //nd.addMixin( "mix:versionable" );
             nd.addMixin( "mix:referenceable" );
             nd.setProperty( JCRWikiPage.CONTENTTYPE, contentType );
             
-            JCRWikiPage page = new JCRWikiPage(m_engine, nd);
+            JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
             
             return page;
         }
@@ -1333,8 +1348,9 @@ public class ContentManager implements WikiEventListener
         {
             throw new ProviderException( "Unable to add a page", e );
         }
+    
     }
-
+    
     /** Throws an exception if the content type is not a fully valid content type. */
     private void checkValidContentType( String type ) throws ProviderException
     {
@@ -1356,7 +1372,7 @@ public class ContentManager implements WikiEventListener
     {
         if ( path == null )
         {
-            throw new PageNotFoundException( "(null)" );
+            throw new PageNotFoundException( "null WikiPath given to getPage()" );
         }
         try
         {
