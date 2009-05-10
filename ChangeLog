@@ -1,3 +1,8 @@
+2009-05-10  Janne Jalkanen <jalkanen@apache.org>
+
+        * Priha 0.1.16 to address some encoding issues with our unit
+        tests (no version bump).
+
 2009-05-09  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-114
