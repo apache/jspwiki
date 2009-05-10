@@ -74,6 +74,7 @@ public class AbstractPageActionBean extends AbstractActionBean
      * 
      * @param pageName the pageName to be removed from the breadcrumb
      */
+    // FIXME: Is this in the right place? Shouldn't this be a static method in BreadcrumbsTag?
     void deleteFromBreadCrumb( String pageName )
     {
         HttpSession session = getContext().getRequest().getSession( false );
