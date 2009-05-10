@@ -79,14 +79,39 @@ public class JCRWikiPage
         m_jcrPath = ContentManager.getJCRPath( name );
     }
 
+    /**
+     *  Creates a JCRWikiPage using the default path.
+     *  
+     *  @param engine
+     *  @param node
+     *  @throws RepositoryException
+     *  @throws ProviderException
+     */
     public JCRWikiPage(WikiEngine engine, Node node)
         throws RepositoryException, ProviderException
     {
-        m_engine  = engine;
-        m_jcrPath = node.getPath();
-        m_name    = ContentManager.getWikiPath( node.getPath() );
+        this( engine, ContentManager.getWikiPath( node.getPath() ), node );
     }
         
+    /**
+     *  Creates a WikiPage with a given Node.  This constructor
+     *  can be used when you wish to put create a WikiPage outside the
+     *  default page hierarchy, for example when you need to create
+     *  a temporary storage for workflows.
+     *  
+     *  @param engine
+     *  @param name
+     *  @param node
+     *  @throws RepositoryException
+     */
+    public JCRWikiPage(WikiEngine engine, WikiPath name, Node node) 
+        throws RepositoryException
+    {
+        m_engine  = engine;
+        m_jcrPath = node.getPath();
+        m_name    = name;
+    }
+    
     public Node getJCRNode() throws RepositoryException
     {
         return m_engine.getContentManager().getJCRNode(m_jcrPath);
