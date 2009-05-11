@@ -252,107 +252,156 @@ public abstract class AbstractFilteredPlugin
     }
     
     /**
-     *  Filters a collection according to the include and exclude -parameters.
+     *  Filters a list of same-type objects according to the include and exclude parameters
+     *  supplied to the plugin. The list supplied to this method is filtered
+     *  in-place. That is, it is <em>not</em> defensively copied; items filtered
+     *  are removed from the list.
      *  
-     *  @param items The collection to filter.
-     *  @return A filtered collection.
+     *  @param items the collection to filter
+     *  @return the same collection, with items removed as needed
+     * @throws IllegalArgumentException if the list is composed of objects that
+     * are not WikiPages, WikiPaths, or Strings
      */
     protected <T extends Object> List<T> filterCollection( List<T> items )
     {
-        ArrayList<T> filteredItems = new ArrayList<T>();
-
-        for( T item : items )
+        Iterator<T> iterator = items.listIterator();
+        while( iterator.hasNext() )
         {
-            String pageName = null;
-            if( item instanceof WikiPage )
-            {
-                pageName = ((WikiPage) item).getPath().toString();
-            }
-            else if ( item instanceof WikiPath )
-            {
-                pageName = ((WikiPath) item).toString();
-            }
-            else if ( item instanceof String )
-            {
-                pageName = (String) item;
-            }
+            T item = iterator.next();
+            String pageName = getPageName( item );
 
-            //
-            //  If include parameter exists, then by default we include only those
-            //  pages in it (excluding the ones in the exclude pattern list).
-            //
-            //  include='*' means the same as no include.
-            //
-            boolean includeThis = m_include == null;
+            // Include it?
+            boolean include = filterItem( pageName );
 
-            if( m_include != null && pageName != null )
+            if( include )
             {
-                for( int j = 0; j < m_include.length; j++ )
-                {
-                    Matcher matcher = m_include[j].matcher( pageName );
-                    if( matcher.matches() )
-                    {
-                        includeThis = true;
-                        break;
-                    }
-                }
-            }
-
-            if( m_exclude != null && pageName != null )
-            {
-                for( int j = 0; j < m_exclude.length; j++ )
-                {
-                    Matcher matcher = m_exclude[j].matcher( pageName );
-                    if( matcher.matches() )
-                    {
-                        includeThis = false;
-                        break; // The inner loop, continue on the next item
-                    }
-                }
-            }
-
-            if( includeThis )
-            {
-                // show the page if it's not an attachment, or it's and
+                // show the page if it's not an attachment, or it's an
                 // attachment and show_attachment=true
                 boolean isAttachment = pageName.contains( "/" );
-                if( !isAttachment || (isAttachment && m_showAttachments) )
+                if( isAttachment && !m_showAttachments )
                 {
-                    if( item instanceof WikiPage || item instanceof WikiPath || item instanceof String )
-                    {
-                        filteredItems.add( item );
-                    }
+                    include = false;
                 }
                 
-                //
-                //  if we want to show the last modified date of the most recently changed page, we keep a "high watermark" here:
-                WikiPage page = null;
-                if( m_lastModified )
-                {
-                    try
-                    {
-                        page = m_engine.getPage( pageName );
+                // Update the "high watermark"
+                updateHighWaterMark( pageName );
+            }
+            
+            // Remove the item from the list if not included
+            if ( !include )
+            {
+                iterator.remove();
+            }
+        }
 
-                        Date lastModPage = page.getLastModified();
-                        if( log.isDebugEnabled() )
-                        {
-                            log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
-                        }
-                        if( lastModPage.after( m_dateLastModified ) )
-                        {
-                            m_dateLastModified = lastModPage;
-                        }
-                    }
-                    catch( PageNotFoundException e ) {}
-                    catch( ProviderException e )
-                    {
-                        log.debug( "Error while getting page data", e );
-                    }
+        return items;
+    }
+    
+    /**
+     * Returns the name of a wiki page, wiki path, or String page name.
+     * @param item
+     * @return the page name
+     * @throws IllegalArgumentException if <code>item</code> is
+     * not a WikiPage, WikiPath, or String
+     */
+    private String getPageName( Object item )
+    {
+        if( item instanceof WikiPage )
+        {
+            return ((WikiPage) item).getPath().toString();
+        }
+        else if ( item instanceof WikiPath )
+        {
+            return ((WikiPath) item).toString();
+        }
+        else if ( item instanceof String )
+        {
+            return (String) item;
+        }
+        throw new IllegalArgumentException( "Item must be WikiPage, WikiPath or String." );
+    }
+   
+    
+    /**
+     * Returns <code>true</code> if an item should be included based on the
+     * settings of the include/exclude filters. If the include parameter exists,
+     * then by default the page is included if it is matches the pattern.
+     * The item will always be included if the include parameter is "*".
+     * After checking the include list, the exclude list is examined. The item is
+     * excluded if it matches the exclude pattern. If the exclude pattern was not
+     * supplied, it is not excluded.
+     * @param pageName the page to filter
+     * @return the result
+     */
+    private boolean filterItem( String pageName )
+    {
+        //
+        //  If include parameter exists, then by default we include only those
+        //  pages in it (excluding the ones in the exclude pattern list).
+        //
+        //  include='*' means the same as no include.
+        //
+        boolean include = m_include == null;
+
+        if( m_include != null && pageName != null )
+        {
+            for( int j = 0; j < m_include.length; j++ )
+            {
+                Matcher matcher = m_include[j].matcher( pageName );
+                if( matcher.matches() )
+                {
+                    include = true;
+                    break;
                 }
             }
         }
 
-        return filteredItems;
+        if( m_exclude != null && pageName != null )
+        {
+            for( int j = 0; j < m_exclude.length; j++ )
+            {
+                Matcher matcher = m_exclude[j].matcher( pageName );
+                if( matcher.matches() )
+                {
+                    include = false;
+                    break; // The inner loop, continue on the next item
+                }
+            }
+        }
+        
+        return include;
+    }
+    
+    /**
+     * Updates the internal field that stores the last-modified date of the most recently
+     * changed page.
+     * @param pageName the name of the page to check
+     */
+    private void updateHighWaterMark( String pageName )
+    {
+        WikiPage page = null;
+        if( m_lastModified )
+        {
+            try
+            {
+                page = m_engine.getPage( pageName );
+
+                Date lastModPage = page.getLastModified();
+                if( log.isDebugEnabled() )
+                {
+                    log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
+                }
+                if( lastModPage.after( m_dateLastModified ) )
+                {
+                    m_dateLastModified = lastModPage;
+                }
+            }
+            catch( PageNotFoundException e ) {}
+            catch( ProviderException e )
+            {
+                log.debug( "Error while getting page data", e );
+            }
+        }
     }
 
     /**
@@ -407,50 +456,50 @@ public abstract class AbstractFilteredPlugin
     }
     
     /**
-     *  Makes WikiText from a Collection.
+     *  Makes WikiText markup from a collection of links.
      *
-     *  @param links Collection to make into WikiText.
-     *  @param separator Separator string to use.
-     *  @param numItems How many items to show.
+     *  @param links the collection to make into WikiText.
+     *  @param separator the separator string to use.
+     *  @param maxItems the maximum number of items to show.
      *  @return The WikiText
      */
-    protected String wikitizeCollection( Collection<WikiPath> links, String separator, int numItems )
+    protected String wikitizeCollection( Collection<WikiPath> links, String separator, int maxItems )
     {
         if( links == null || links.isEmpty() )
             return "";
 
-        StringBuilder output = new StringBuilder();
+        StringBuilder markup = new StringBuilder();
 
-        Iterator<WikiPath> it     = links.iterator();
+        Iterator<WikiPath> it = links.iterator();
         int      count  = 0;
 
         //
         //  The output will be B Item[1] A S B Item[2] A S B Item[3] A
         //
-        while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) )
+        while( it.hasNext() && ( (count < maxItems) || ( maxItems == ALL_ITEMS ) ) )
         {
-            WikiPath value = it.next();
+            WikiPath link = it.next();
 
             if( count > 0 )
             {
-                output.append( m_after );
-                output.append( m_separator );
+                markup.append( m_after );
+                markup.append( m_separator );
             }
 
-            output.append( m_before );
+            markup.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            String page = ContentManager.DEFAULT_SPACE.equals( value.getSpace() ) ? value.getPath() : value.toString();
-            output.append( "[" + m_engine.beautifyTitle(value) + "|" + page + "]" );
+            String page = ContentManager.DEFAULT_SPACE.equals( link.getSpace() ) ? link.getPath() : link.toString();
+            markup.append( "[" + m_engine.beautifyTitle( link ) + "|" + page + "]" );
             count++;
         }
 
         //
         //  Output final item - if there have been none, no "after" is printed
         //
-        if( count > 0 ) output.append( m_after );
+        if( count > 0 ) markup.append( m_after );
 
-        return output.toString();
+        return markup.toString();
     }
 
     /**

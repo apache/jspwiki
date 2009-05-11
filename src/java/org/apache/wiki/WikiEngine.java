@@ -1059,35 +1059,35 @@ public class WikiEngine
     }
 
     /**
-     *  Returns a collection of all supported InterWiki links.
+     *  Returns an unordered list of all supported InterWiki links.
      *
-     *  @return A Collection of Strings.
+     *  @return An unordered list of Strings.
      */
     @SuppressWarnings("unchecked")
-    public Collection<String> getAllInterWikiLinks()
+    public List<String> getAllInterWikiLinks()
     {
-        Vector<String> v = new Vector<String>();
+        List<String> links = new ArrayList<String>();
 
-        for( Enumeration i = m_properties.propertyNames(); i.hasMoreElements(); )
+        for( Enumeration e = m_properties.propertyNames(); e.hasMoreElements(); )
         {
-            String prop = (String) i.nextElement();
+            String prop = (String) e.nextElement();
 
             if( prop.startsWith( PROP_INTERWIKIREF ) )
             {
-                v.add( prop.substring( prop.lastIndexOf(".")+1 ) );
+                links.add( prop.substring( prop.lastIndexOf(".")+1 ) );
             }
         }
 
-        return v;
+        return links;
     }
 
     /**
-     *  Returns a collection of all image types that get inlined.
+     *  Returns an unordered  list of all image types that get inlined.
      *
-     *  @return A Collection of Strings with a regexp pattern.
+     *  @return An unordered list of Strings with a regexp pattern.
      */
 
-    public Collection<String> getAllInlinedImagePatterns()
+    public List<String> getAllInlinedImagePatterns()
     {
         return JSPWikiMarkupParser.getImagePatterns( this );
     }
@@ -1789,13 +1789,13 @@ public class WikiEngine
     }
 
     /**
-     *  Returns a List of WikiPages, sorted in time
+     *  Returns a list of WikiPages, sorted in time
      *  order of last change (i.e. first object is the most
      *  recently changed).  This method also includes attachments.
      *
-     *  @param space The WikiSpace for which you want to have the
-     *               Recent Changes for.
-     *  @return List of WikiPage objects
+     *  @param space The wiki space for which you want to get
+     *  recent changes
+     *  @return a list of wiki pages, sorted
      */
     // FIXME: Should really get a Date object and do proper comparisons.
     //        This is terribly wasteful.
@@ -1815,26 +1815,24 @@ public class WikiEngine
     }
 
     /**
-     *  Parses an incoming search request, then
-     *  does a search.
-     *  <P>
-     *  The query is dependent on the actual chosen search provider - each one of them has
-     *  a language of its own.
+     *  <p>Searches for objects using the WikiEngine's configured
+     *  search provider. How the query is processed depends on the
+     *  on the search provider; each has its own search syntax .
+     *  The returned list is sorted in order of relevance (i.e., highest
+     *  quality hits first).</p>
      *
-     *  @param query The query string
-     *  @return A Collection of SearchResult objects.
+     *  @param query the query string
+     *  @return A list of SearchResult objects
      *  @throws ProviderException If the searching failed
-     *  @throws IOException       If the searching failed
+     *  @throws IOException If the searching failed
      */
-
     //
     // FIXME: Should also have attributes attached.
     //
-    public Collection<SearchResult> findPages( String query )
+    public List<SearchResult> findPages( String query )
         throws ProviderException, IOException
     {
-        Collection<SearchResult> results = m_searchManager.findPages( query );
-
+        List<SearchResult> results = m_searchManager.findPages( query );
         return results;
     }
 
@@ -1911,16 +1909,15 @@ public class WikiEngine
 
 
     /**
-     *  Returns a Collection of WikiPages containing the
+     *  Returns a list of WikiPages containing the
      *  version history of a page.
      *
      *  @param page Name of the page to look for
-     *  @return an ordered List of WikiPages, each corresponding to a different
+     *  @return an ordered list of WikiPages, each corresponding to a different
      *          revision of the page.
      * @throws ProviderException 
      * @throws PageNotFoundException 
      */
-
     public List<WikiPage> getVersionHistory( String page ) 
         throws PageNotFoundException, ProviderException
     {

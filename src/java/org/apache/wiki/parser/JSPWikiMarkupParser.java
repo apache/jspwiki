@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
 
@@ -52,7 +53,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.plugin.WikiPlugin;
-import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.CleanTextRenderer;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.RegExpUtil;
@@ -403,35 +403,34 @@ public class JSPWikiMarkupParser
 
     /**
      *  Figure out which image suffixes should be inlined.
-     *  @return Collection of Strings with patterns.
+     *  @return a list of Strings with patterns.
      *  
      *  @param engine The WikiEngine from which the patterns are read.
      */
-
     // FIXME: Does not belong here; should be elsewhere
-    public static Collection<String> getImagePatterns( WikiEngine engine )
+    public static List<String> getImagePatterns( WikiEngine engine )
     {
         Properties props    = engine.getWikiProperties();
-        ArrayList<String>  ptrnlist = new ArrayList<String>();
+        ArrayList<String>  patterns = new ArrayList<String>();
 
         for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
         {
-            String name = (String) e.nextElement();
+            String prop = (String) e.nextElement();
 
-            if( name.startsWith( PROP_INLINEIMAGEPTRN ) )
+            if( prop.startsWith( PROP_INLINEIMAGEPTRN ) )
             {
-                String ptrn = TextUtil.getStringProperty( props, name, null );
+                String pattern = TextUtil.getStringProperty( props, prop, null );
 
-                ptrnlist.add( ptrn );
+                patterns.add( pattern );
             }
         }
 
-        if( ptrnlist.size() == 0 )
+        if( patterns.size() == 0 )
         {
-            ptrnlist.add( DEFAULT_INLINEPATTERN );
+            patterns.add( DEFAULT_INLINEPATTERN );
         }
 
-        return ptrnlist;
+        return patterns;
     }
 
     /**
@@ -1412,14 +1411,14 @@ public class JSPWikiMarkupParser
         try
         {
             acl = m_engine.getAclManager().parseAcl( page, ruleLine );
-            page.save();
+            m_engine.getContentManager().save( page );
             if( log.isDebugEnabled() ) log.debug( acl.toString() );
         }
         catch( WikiSecurityException wse )
         {
             return makeError( wse.getMessage() );
         }
-        catch( ProviderException pe )
+        catch( RepositoryException pe )
         {
             return makeError( "Could not save WikiPage after extracting ACL: " + pe.getMessage() );
         }

@@ -439,11 +439,10 @@ public class ContentManager implements WikiEventListener
      *  please see {@link ReferenceManager#findCreated()}, which is probably a lot
      *  faster.  This method may cause repository access.
      *  
-     *  @param space Name of the Wiki space.  May be null, in which case gets all spaces
-     *  @return A Collection of WikiPage objects.
-     *  @throws ProviderException If the backend has problems.
+     *  @param space the name of the wiki space containing the pages to get.  May be
+     *  <code>null</code>, in which case gets all spaces
+     *  @throws ProviderException if the backend has problems.
      */
-   
     public List<WikiPage> getAllPages( String space )
         throws ProviderException
     {
@@ -483,6 +482,30 @@ public class ContentManager implements WikiEventListener
         }
         
         return results;
+    }
+    
+    /**
+     *  Returns all pages in a specified order.  If you need just the page names, 
+     *  please see {@link ReferenceManager#findCreated()}, which is probably a lot
+     *  faster.  This method may cause repository access.
+     *  
+     *  @param space the name of the wiki space containing the pages to get.  May be
+     *  <code>null</code>, in which case gets all spaces
+     *  @param comparator the comparator used for sorting the page collection;
+     *  for example, {@link org.apache.wiki.util.PageTimeComparator}.
+     *  @return a list of WikiPage objects.
+     *  @throws ProviderException if the back-end has problems.
+     */
+    public List<WikiPage> getAllPages( String space, Comparator<WikiPage> comparator )
+        throws ProviderException
+    {
+        if ( comparator == null )
+        {
+            throw new IllegalArgumentException ( "Comparator cannot be null." );
+        }
+        List<WikiPage> pages = getAllPages( space );
+        Collections.sort( pages, comparator );
+        return pages;
     }
 
     /**
@@ -1476,7 +1499,7 @@ public class ContentManager implements WikiEventListener
             {
                 int pagesChanged = 0;
                 // FIXME: This is a hack to make this thing compile, not work.
-                Collection<WikiPage> pages = getAllPages( null );
+                List<WikiPage> pages = getAllPages( null );
                 for ( Iterator<WikiPage> it = pages.iterator(); it.hasNext(); )
                 {
                     WikiPage page = (WikiPage)it.next();

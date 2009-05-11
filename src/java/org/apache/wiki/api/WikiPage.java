@@ -36,7 +36,7 @@ import org.apache.wiki.providers.ProviderException;
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page
  *  content is moved around in Strings, though.
  */
-public interface WikiPage
+public interface WikiPage extends Comparable<WikiPage>
 {
     /**
      *  "Summary" is a short summary of the page.  It is a String.
@@ -190,7 +190,7 @@ public interface WikiPage
      *  @param o The object to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( Object o );
+    public int compareTo( WikiPage o );
  
     /**
      *  Returns the content of the WikiPage markup as a String.

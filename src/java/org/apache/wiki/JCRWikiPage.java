@@ -48,8 +48,7 @@ import org.apache.wiki.providers.ProviderException;
 //        need to figure out the metadata lifecycle.
 
 public class JCRWikiPage
-    implements Cloneable,
-               Comparable<Object>, WikiPage, Attachment
+    implements Cloneable, WikiPage, Attachment, Comparable<WikiPage>
 {
     private static final long serialVersionUID = 1L;
 
@@ -437,20 +436,17 @@ public class JCRWikiPage
         return p;
     }
     
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.WikiPage#compareTo(java.lang.Object)
      */
-    public int compareTo( Object o )
+    public int compareTo( WikiPage o )
     {
-        int res = 0;
-        if( o instanceof WikiPage )
-        {
-            WikiPage c = (WikiPage)o;
+        WikiPage c = (WikiPage)o;
         
-            res = this.getName().compareTo(c.getName());
-            
-            if( res == 0 ) res = this.getVersion()-c.getVersion();
-        }
+        int res = this.getName().compareTo(c.getName());
+        
+        if( res == 0 ) res = this.getVersion()-c.getVersion();
             
         return res;
     }

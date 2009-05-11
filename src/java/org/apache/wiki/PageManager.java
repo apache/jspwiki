@@ -129,7 +129,7 @@ public class PageManager extends ModuleManager
      *  @return A Collection of WikiPage objects.
      *  @throws ProviderException If the backend has problems.
      */
-    public Collection<WikiPage> getAllPages()
+    public List<WikiPage> getAllPages()
         throws ProviderException
     {
         return m_engine.getContentManager().getAllPages(null);

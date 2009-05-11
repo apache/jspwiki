@@ -21,6 +21,7 @@
 package org.apache.wiki.plugin;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -112,6 +113,7 @@ public class ReferringPagesPlugin
             if( links != null && links.size() > 0 )
             {
                 links = filterCollection( links );
+                Collections.sort( links );
                 wikitext = wikitizeCollection( links , m_separator, items );
 
                 result.append( makeHTML( context, wikitext ) );

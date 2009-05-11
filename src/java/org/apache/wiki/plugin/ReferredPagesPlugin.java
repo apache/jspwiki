@@ -184,20 +184,15 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
         handleLinks( context, pages, ++depth, path );
     }
 
-    private void handleLinks(WikiContext context,List<WikiPath> links, int depth, WikiPath path ) throws ProviderException, PageNotFoundException
+    private void handleLinks(WikiContext context, List<WikiPath> links, int depth, WikiPath path ) throws ProviderException, PageNotFoundException
     {
         boolean isUL = false;
-        HashSet<WikiPath> uniqueLinks = new HashSet<WikiPath>();  // skip multiple links to same page
-        uniqueLinks.add( path );
+        links.add( path );
 
         if( m_formatSort ) Collections.sort(links);
 
         for( WikiPath link : links )
         {
-            if( uniqueLinks.contains( link ) ) continue; // skip multiple links to same page
-            
-            uniqueLinks.add( link );
-
             if( !m_engine.pageExists( link.toString() ) ) continue; // hide links to non existing pages
 
             if( m_exists.contains( link ) )

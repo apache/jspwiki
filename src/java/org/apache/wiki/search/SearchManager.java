@@ -302,17 +302,17 @@ public class SearchManager
      *  Sends a search to the current search provider. The query is is whatever native format
      *  the query engine wants to use.
      *
-     * @param query The query.  Null is safe, and is interpreted as an empty query.
+     * @param query the query string. A value of <code>null</code> is treated
+     * as an zero-length query string.
      * @return A collection of WikiPages that matched.
      * @throws ProviderException If the provider fails and a search cannot be completed.
      * @throws IOException If something else goes wrong.
      */
-    public Collection<SearchResult> findPages( String query )
+    public List<SearchResult> findPages( String query )
         throws ProviderException, IOException
     {
         if( query == null ) query = "";
-        Collection<SearchResult> c = m_searchProvider.findPages( query );
-
+        List<SearchResult> c = m_searchProvider.findPages( query );
         return c;
     }
 

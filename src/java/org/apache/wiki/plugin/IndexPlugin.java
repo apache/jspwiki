@@ -51,7 +51,6 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
     {
         super.initialize( context, params );
         
-        List<String> pages;
         div masterDiv = new div();
         masterDiv.setClass( "index" );
         
@@ -61,15 +60,17 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
         indexDiv.setClass( "header" );
         try
         {
-            pages = listPages( context );
+            List<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE  );
+            pages = super.filterCollection( pages );
             Collections.sort( pages );
             
             char initialChar = ' ';
             
             div currentDiv = new div();
             
-            for( String name : pages )
+            for( WikiPage page : pages )
             {
+                String name = page.getName();
                 if( name.charAt( 0 ) != initialChar )
                 {
                     if( initialChar != ' ' ) indexDiv.addElement( " - " );
@@ -116,27 +117,6 @@ public class IndexPlugin  extends AbstractFilteredPlugin implements WikiPlugin
         s.addElement( "<a name='"+initialChar+"'>"+initialChar+"</a>" );
 
         return s;
-    }
-
-    /**
-     * Grabs a list of all pages and filters them according to the
-     * include/exclude patterns and showAttachments parameter.
-     * 
-     * @param context
-     * @return A list containing {@link org.apache.wiki.api.WikiPage} Objects
-     * @throws ProviderException
-     */
-    private List<String> listPages( WikiContext context ) throws ProviderException
-    {
-        ArrayList<String> result = new ArrayList<String>();
-        List<WikiPage> pages = context.getEngine().getContentManager().getAllPages( ContentManager.DEFAULT_SPACE );
-        pages = super.filterCollection( pages );
-
-        for( WikiPage page : pages )
-        {
-            result.add( page.getName() );
-        }
-        return result;
     }
 
 }

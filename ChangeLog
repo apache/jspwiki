@@ -1,3 +1,17 @@
+2009-05-10  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-115
+
+        * Reviewed and partially applied the remainder of Greg Kable's patches
+        [JSPWIKI-528]. The changes to ComtentManager, WikiEngine and several
+        plugins go further than those specified in the patch, and eliminate the
+        wrapping/unwrapping in AbstractFilteredPlugin.filterCollection. Notable
+        changes include use of Lists in preference to SortedSets, plus the use
+        of Collections.sort(). To do this, WikiPage now extends
+        Comparable<WikiPage>, as does JCRWikiPage. To allow pages to be
+        returned efficiently in a specified order, ContentManager now has a
+        method getAllPages(String,Comparator<WikiPage>).
+
 2009-05-10  Janne Jalkanen <jalkanen@apache.org>
 
         * Priha 0.1.16 to address some encoding issues with our unit

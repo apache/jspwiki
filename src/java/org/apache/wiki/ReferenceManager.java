@@ -1054,7 +1054,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
         if ( highChar )
         {
-            Thread.currentThread().dumpStack();
+            Thread.dumpStack();
         }
     }
 

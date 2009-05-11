@@ -42,7 +42,6 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.util.PageTimeComparator;
 import org.apache.xmlrpc.XmlRpcException;
 
 
@@ -370,7 +369,7 @@ public class MetaWeblogHandler
 
             att.setContent( new ByteArrayInputStream( data ) );
             
-            att.save();
+            engine.getContentManager().save( att );
 
             url = engine.getURL( WikiContext.ATTACH, att.getName(), null, true );
         }
