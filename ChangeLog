@@ -1,3 +1,11 @@
+2009-05-11 Dirk Frederickx <dirk.frederickx@apache.org>
+
+        * 2.8.3-svn-6
+
+        * JSPWIKI-532 %%columns didn't work properly when the first child element was
+        a DOM text element.
+        
+
 2009-04-23 Harry Metske <metskem@apache.org>
 
         * 2.8.3-svn-5

@@ -436,7 +436,7 @@ var WikiColumns =
 		width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
 
 		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
-			col = colDef.clone().injectBefore(el.getFirst()),
+			col = colDef.clone().injectTop(el),
 			n;
 		while(n = col.nextSibling){
 			if(n.tagName && n.tagName.toLowerCase() == 'hr'){
