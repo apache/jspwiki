@@ -348,26 +348,14 @@ public class WikiPage
     }
     
     /**
-     *  Compares a page with another.  The primary sorting order
-     *  is according to page name, and if they have the same name,
-     *  then according to the page version.
+     *  Compares a page with another using the defined PageNameComparator.  See com.ecyrd.jspwiki.util.PageSorter.
      *  
-     *  @param o The object to compare against
+     *  @param page The object to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( Object o )
+    public int compareTo( Object page )
     {
-        int res = 0;
-        if( o instanceof WikiPage )
-        {
-            WikiPage c = (WikiPage)o;
-        
-            res = this.getName().compareTo(c.getName());
-            
-            if( res == 0 ) res = this.getVersion()-c.getVersion();
-        }
-            
-        return res;
+        return m_engine.getPageSorter().compare( this, (WikiPage) page );
     }
     
     /**

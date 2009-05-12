@@ -71,6 +71,7 @@ import com.ecyrd.jspwiki.ui.admin.AdminBeanManager;
 import com.ecyrd.jspwiki.ui.progress.ProgressManager;
 import com.ecyrd.jspwiki.url.URLConstructor;
 import com.ecyrd.jspwiki.util.ClassUtil;
+import com.ecyrd.jspwiki.util.PageSorter;
 import com.ecyrd.jspwiki.util.WatchDog;
 import com.ecyrd.jspwiki.workflow.*;
 
@@ -148,6 +149,9 @@ public class WikiEngine
     /** If this property is set to false, all filters are disabled when translating. */
     public static final String PROP_RUNFILTERS   = "jspwiki.runFilters";
 
+    /** Compares pages by name */
+    private PageSorter     m_pageSorter = null;
+    
     /** Does the work in renaming pages. */
     private PageRenamer    m_pageRenamer = null;
 
@@ -507,6 +511,10 @@ public class WikiEngine
 
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
+        
+        // Initialize the page name comparator now as it may be used while
+        // initializing other modules
+        initPageSorter( props );
 
         //
         //  Initialize the important modules.  Any exception thrown by the
@@ -2444,5 +2452,24 @@ public class WikiEngine
     public WatchDog getCurrentWatchDog()
     {
         return WatchDog.getCurrentWatchDog(this);
+    }
+    
+    /**
+     * Initialize the page name comparator.
+     */
+    private void initPageSorter( Properties props )
+    {
+        m_pageSorter = new PageSorter();
+        m_pageSorter.initialize( props );
+    }
+    
+    /**
+     * Get this engine's page name comparator.
+     * 
+     * @return the PageSorter used to sort pages by name in this engine
+     */
+    public PageSorter getPageSorter()
+    {
+        return m_pageSorter;
     }
 }

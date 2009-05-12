@@ -21,6 +21,9 @@
 package com.ecyrd.jspwiki.plugin;
 
 import java.io.IOException;
+import java.text.Collator;
+import java.text.ParseException;
+import java.text.RuleBasedCollator;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -34,6 +37,11 @@ import com.ecyrd.jspwiki.parser.WikiDocument;
 import com.ecyrd.jspwiki.preferences.Preferences;
 import com.ecyrd.jspwiki.preferences.Preferences.TimeFormat;
 import com.ecyrd.jspwiki.render.RenderingManager;
+import com.ecyrd.jspwiki.util.PageSorter;
+import com.ecyrd.jspwiki.util.comparators.CollatorComparator;
+import com.ecyrd.jspwiki.util.comparators.HumanComparator;
+import com.ecyrd.jspwiki.util.comparators.JavaNaturalComparator;
+import com.ecyrd.jspwiki.util.comparators.LocaleComparator;
 
 /**
  *  This is a base class for all plugins using referral things.
@@ -49,6 +57,8 @@ import com.ecyrd.jspwiki.render.RenderingManager;
  *  <li><b>show</b> - value is either "pages" (default) or "count".  When "count" is specified, shows only the count
  *      of pages which match. (since 2.8)</li>
  *  <li><b>showLastModified</b> - When show=count, shows also the last modified date. (since 2.8)</li>
+ *  <li><b>sortOrder</b> - specifies the sort order for the resulting list.  Options are
+ *  'human', 'java', 'locale' or a <code>RuleBasedCollator</code> rule string. (since 2.8.3)</li>
  *  </ul>
  *  
  */
@@ -89,6 +99,12 @@ public abstract class AbstractReferralPlugin
     
     /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LASTMODIFIED     = "showLastModified";
+    
+    /** Parameter name for specifying the sort order.  Value is <tt>{@value}</tt>. */
+    protected static final String PARAM_SORTORDER        = "sortOrder";
+    protected static final String PARAM_SORTORDER_HUMAN  = "human";
+    protected static final String PARAM_SORTORDER_JAVA   = "java";
+    protected static final String PARAM_SORTORDER_LOCALE = "locale";
 
     protected           int      m_maxwidth = Integer.MAX_VALUE;
     protected           String   m_before = ""; // null not blank
@@ -97,6 +113,7 @@ public abstract class AbstractReferralPlugin
 
     protected           Pattern[]  m_exclude;
     protected           Pattern[]  m_include;
+    protected           PageSorter m_sorter;
     
     protected           String m_show = "pages";
     protected           boolean m_lastModified=false;
@@ -219,10 +236,12 @@ public abstract class AbstractReferralPlugin
                 }
             }
         }
+        
+        initSorter( context, params );
     }
     
     /**
-     *  Filters a collection according to the include and exclude -parameters.
+     *  Filters a collection according to the include and exclude parameters.
      *  
      *  @param c The collection to filter.
      *  @return A filtered collection.
@@ -311,6 +330,20 @@ public abstract class AbstractReferralPlugin
             }
         }
 
+        return result;
+    }
+
+    /**
+     *  Filters and sorts a collection according to the include and exclude parameters.
+     *  
+     *  @param c The collection to filter.
+     *  @return A filtered and sorted collection.
+     */
+    @SuppressWarnings( "unchecked" )
+    protected Collection filterAndSortCollection( Collection c )
+    {
+        ArrayList<Object> result = (ArrayList<Object>)filterCollection( c );
+        m_sorter.sortPages( result );
         return result;
     }
 
@@ -415,5 +448,45 @@ public abstract class AbstractReferralPlugin
 
             return text;
         }
+    }
+    
+    /**
+     * Helper method to initialize the comparator for this page.
+     */
+    private void initSorter( WikiContext context, Map params )
+    {
+        String order = (String) params.get( PARAM_SORTORDER );
+        if( order == null || order.length() == 0 )
+        {
+            // Use the configured comparator
+            m_sorter = context.getEngine().getPageSorter();
+        }
+        else if( order.equalsIgnoreCase( PARAM_SORTORDER_JAVA ) )
+        {
+            // use Java "natural" ordering
+            m_sorter = new PageSorter( JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR );
+        }
+        else if( order.equalsIgnoreCase( PARAM_SORTORDER_LOCALE ) )
+        {
+            // use this locale's ordering
+            m_sorter = new PageSorter( LocaleComparator.DEFAULT_LOCALE_COMPARATOR );
+        }
+        else if( order.equalsIgnoreCase( PARAM_SORTORDER_HUMAN ) )
+        {
+            // use human ordering
+            m_sorter = new PageSorter( HumanComparator.DEFAULT_HUMAN_COMPARATOR );
+        }
+        else
+            try
+            {
+                Collator collator = new RuleBasedCollator( order );
+                collator.setStrength( Collator.PRIMARY );
+                m_sorter = new PageSorter( new CollatorComparator( collator ) );
+            }
+            catch( ParseException pe )
+            {
+                log.info( "Failed to parse requested collator - using default ordering", pe );
+                m_sorter = context.getEngine().getPageSorter();
+            }
     }
 }

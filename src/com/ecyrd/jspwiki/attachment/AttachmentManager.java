@@ -324,7 +324,7 @@ public class AttachmentManager
         //
         if( atts instanceof List )
         {
-            Collections.sort( (List) atts );
+            m_engine.getPageSorter().sortPages( (List) atts );
         }
 
         return atts;

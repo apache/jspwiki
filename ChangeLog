@@ -1,3 +1,10 @@
+2009-05-12 Harry Metske <metskem@apache.org>
+
+        * 2.8.3-svn-7
+
+        * JSPWIKI-526 Allow administrators to select the Comparator 
+           used for sorting page lists by name, thanks to Greg Kable
+        
 2009-05-11 Dirk Frederickx <dirk.frederickx@apache.org>
 
         * 2.8.3-svn-6

@@ -72,11 +72,7 @@ public class UnusedPagesPlugin
 
         super.initialize( context, params );
 
-        TreeSet<String> sortedSet = new TreeSet<String>();
-        
-        links = filterCollection( links );
-        
-        sortedSet.addAll( links );
+        links = filterAndSortCollection( links );
 
         String wikitext = null;
         
@@ -90,7 +86,7 @@ public class UnusedPagesPlugin
         }
         else
         {
-            wikitext = wikitizeCollection(sortedSet, m_separator, ALL_ITEMS);
+            wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
         }        
         return makeHTML( context, wikitext );
     }

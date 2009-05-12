@@ -71,7 +71,7 @@ public class PageTimeComparator
 
         if( timecomparison == 0 )
         {
-            return w1.getName().compareTo( w2.getName() );
+            return w1.compareTo( w2 );
         }
 
         return timecomparison;

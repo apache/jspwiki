@@ -79,7 +79,7 @@ public class AttachmentDavProvider implements DavProvider
             log.error("Unable to get all attachments",e);
         }
 
-        Collections.sort( pageNames );
+        m_engine.getPageSorter().sort( pageNames );
 
         ArrayList<DirectoryItem> result = new ArrayList<DirectoryItem>();
 

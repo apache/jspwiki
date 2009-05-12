@@ -100,7 +100,7 @@ public class ReferringPagesPlugin
         
             if( links != null && links.size() > 0 )
             {
-                links = filterCollection( links );
+                links = filterAndSortCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
                 result.append( makeHTML( context, wikitext ) );

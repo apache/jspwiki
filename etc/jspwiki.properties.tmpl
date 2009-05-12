@@ -40,6 +40,33 @@ jspwiki.baseURL=
 jspwiki.pageProvider = FileSystemProvider
 
 #
+# How to order pages in various lists and plugins.  By default, they are
+# ordered using Java's "natural" String order (purely character by character
+# comparison). This means that the pages named "Page1", "Page2" and "Page10"
+# appear in the order "Page1", "Page10", "Page2".
+#
+# To specify a different ordering, give the fully qualified name of a String
+# Comparator. If the class can't be found, an error will be logged and page
+# sorting will fall back to the default "natural" ordering. You can specify
+# any String Comparator class here BUT be careful of using case insensitive
+# comparators as JSPWiki page names may be case sensitive.
+# Example: jspwiki.pageNameComparator.class = my.fully.qualified.comparator
+#
+# For convenience, we have provided a few possibly useful comparators:
+#
+# HumanComparator understands numbers and sorts in a more human friendly
+# order (English only).  Using HumanComparator, the pages "Page1", "Page2",
+# "Page10" will sort in that order.
+# Example: jspwiki.pageNameComparator.class = HumanComparator
+#
+# LocaleComparator uses the server's Locale for ordering.  Useful if your
+# content is always in a language other than English.  Does not do human
+# friendly numeric ordering.
+# Example: jspwiki.pageNameComparator.class = LocaleComparator
+#
+#jspwiki.pageNameComparator.class =
+
+#
 #  Set to true, if you want to cache page data into memory.  This is
 #  in general a good idea.
 #

@@ -65,7 +65,7 @@ public class IndexPlugin  extends AbstractReferralPlugin implements WikiPlugin
         try
         {
             pages = listPages( context, include, exclude );
-            Collections.sort( pages );
+            context.getEngine().getPageSorter().sort( pages );
             
             char initialChar = ' ';
             

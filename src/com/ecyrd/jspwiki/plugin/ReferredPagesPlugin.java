@@ -197,7 +197,7 @@ public class ReferredPagesPlugin implements WikiPlugin
         if( links != null )
             allLinks.addAll( links );
 
-        if( m_formatSort ) Collections.sort(allLinks);
+        if( m_formatSort ) context.getEngine().getPageSorter().sort( allLinks );
 
         for( Iterator i = allLinks.iterator(); i.hasNext(); )
         {
