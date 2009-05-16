@@ -1233,7 +1233,8 @@ public class ContentManager implements WikiEventListener
         try
         {
             w = getCurrentSession().getWorkspace();
-            w.move( getJCRPath( fromPage ), getJCRPath( toPage ) );
+            getCurrentSession().move( getJCRPath( fromPage ), getJCRPath( toPage ) );
+            getCurrentSession().save();
         }
         catch( RepositoryException e )
         {

@@ -103,14 +103,20 @@ public class PageRenamerTest extends TestCase
         WikiPage newpage = m_engine.getPage("FooTest");
         
         assertNotNull( "no new page", newpage );
-        assertNull( "old page not gone", m_engine.getPage("TestPage") );
+        try
+        {
+            m_engine.getPage("TestPage");
+        
+            fail( "old page not gone" );
+        }
+        catch( PageNotFoundException e ) {} // Expected 
         
         // Refmgr
         
         Collection<String> refs = m_engine.getReferenceManager().findCreated();
         
-        assertTrue( "FooTest does not exist", refs.contains("FooTest") );
-        assertFalse( "TestPage exists", refs.contains("TestPage") );
+        assertTrue( "FooTest does not exist", refs.contains("Main:FooTest") );
+        assertFalse( "TestPage exists", refs.contains("Main:TestPage") );
         assertEquals( "wrong list size", refCount+1, refs.size() );
     }
     

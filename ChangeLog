@@ -1,9 +1,18 @@
+2009-05-15  Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-116
+        
+        * Fixed the first PageRenamerTest, which was both expecting page
+        names in old format, as well as checking assertNull() on getPage()
+        instead of catching PageNotFoundException.  Page renaming
+        now actually works, though the tests still need to be fixed.
+
 2009-05-10  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-115
 
         * Reviewed and partially applied the remainder of Greg Kable's patches
-        [JSPWIKI-528]. The changes to ComtentManager, WikiEngine and several
+        [JSPWIKI-528]. The changes to ContentManager, WikiEngine and several
         plugins go further than those specified in the patch, and eliminate the
         wrapping/unwrapping in AbstractFilteredPlugin.filterCollection. Notable
         changes include use of Lists in preference to SortedSets, plus the use
