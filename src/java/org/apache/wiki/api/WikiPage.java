@@ -210,10 +210,11 @@ public interface WikiPage extends Comparable<WikiPage>
     
     /**
      *  Stores the state of the page, creating a new version in the
-     *  repository.
+     *  repository. Implementations must, at least, call
+     *  {@link org.apache.wiki.content.ContentManager#save(WikiPage)}
+     *  to ensure that internal events related page-saving fire properly.
      *  
      *  @throws ProviderException If the save cannot be completed.
-     *  @deprecated use {@link org.apache.wiki.content.ContentManager#save(WikiPage)} instead
      */
     public void save() throws ProviderException;
     
