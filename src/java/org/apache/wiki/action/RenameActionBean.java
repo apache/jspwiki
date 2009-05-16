@@ -38,6 +38,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.tags.BreadcrumbsTag;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
@@ -124,7 +125,7 @@ public class RenameActionBean extends AbstractPageActionBean
         PageRenamer renamer = engine.getPageRenamer();
         String renamedTo = renamer.renamePage( getContext(), renameFrom, m_renameTo, m_changeReferences );
         
-        deleteFromBreadCrumb( renameFrom );
+        BreadcrumbsTag.deleteFromBreadCrumb( request, renameFrom );
         log.info( "Page successfully renamed to '" + renamedTo + "'" );
         
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", renamedTo );

@@ -68,25 +68,4 @@ public class AbstractPageActionBean extends AbstractActionBean
     {
         getContext().setPage( page );
     }
-
-    /**
-     * Removes the deleted page from the breadCrumb trail
-     * 
-     * @param pageName the pageName to be removed from the breadcrumb
-     */
-    // FIXME: Is this in the right place? Shouldn't this be a static method in BreadcrumbsTag?
-    void deleteFromBreadCrumb( String pageName )
-    {
-        HttpSession session = getContext().getRequest().getSession( false );
-        if( session != null )
-        {
-            FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
-            if( trail != null )
-            {
-                trail.removeItem( pageName );
-                session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
-            }
-        }
-    }
-
 }

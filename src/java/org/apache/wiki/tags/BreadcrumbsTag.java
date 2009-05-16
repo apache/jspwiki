@@ -21,6 +21,7 @@
 package org.apache.wiki.tags;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 
@@ -229,5 +230,23 @@ public class BreadcrumbsTag extends WikiTagBase
         }
     }
 
+    /**
+     * Removes the deleted page from the breadCrumb trail
+     * 
+     * @param pageName the pageName to be removed from the breadcrumb
+     */
+    public static void deleteFromBreadCrumb( HttpServletRequest request, String pageName )
+    {
+        HttpSession session = request.getSession( false );
+        if( session != null )
+        {
+            FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
+            if( trail != null )
+            {
+                trail.removeItem( pageName );
+                session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
+            }
+        }
+    }
 }
 

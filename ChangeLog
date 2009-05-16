@@ -1,3 +1,11 @@
+2009-05-15  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-117
+        
+        * moved BreadcrumbsTrail code from AbstractPageActionBean 
+           to BreadcrumbsTag. This is an intermediate improvement, 
+           the definite solution is described in JSPWIKI-533 
+
 2009-05-15  Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-116

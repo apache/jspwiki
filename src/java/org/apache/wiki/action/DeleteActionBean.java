@@ -36,6 +36,7 @@ import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.tags.BreadcrumbsTag;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
@@ -76,7 +77,7 @@ public class DeleteActionBean extends AbstractPageActionBean
                       + request.getRemoteAddr() );
             engine.deletePage( pageName );
             
-            deleteFromBreadCrumb( pageName );
+            BreadcrumbsTag.deleteFromBreadCrumb( request, pageName );
         }
         // Just delete a single version
         else

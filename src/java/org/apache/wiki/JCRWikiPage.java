@@ -438,7 +438,7 @@ public class JCRWikiPage
     
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiPage#compareTo(java.lang.Object)
+     * @see org.apache.wiki.api.WikiPage#compareTo(java.lang.Object)
      */
     public int compareTo( WikiPage o )
     {
