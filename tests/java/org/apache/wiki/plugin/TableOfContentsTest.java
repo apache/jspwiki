@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
  */
 public class TableOfContentsTest extends TestCase
 {
-    TestEngine testEngine;
+    TestEngine m_testEngine;
     
     /*
      * @see TestCase#setUp()
@@ -51,7 +51,7 @@ public class TableOfContentsTest extends TestCase
         
         props.load(TestEngine.findTestProperties());
         
-        testEngine = new TestEngine( props );
+        m_testEngine = new TestEngine( props );
     }
 
     /*
@@ -61,9 +61,9 @@ public class TableOfContentsTest extends TestCase
     {
         super.tearDown();
         
-        testEngine.deletePage( "Test" );
+        m_testEngine.deletePage( "Test" );
         
-        testEngine.shutdown();
+        m_testEngine.shutdown();
     }
 
     public void testHeadingVariables()
@@ -71,9 +71,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src="[{SET foo=bar}]\n\n[{TableOfContents}]\n\n!!!Heading [{$foo}]";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -90,9 +90,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -115,9 +115,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -150,9 +150,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!Subheading0\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -187,9 +187,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3,prefix=FooBar-}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         // FIXME: The <p> should not be here.
         String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -217,9 +217,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src = "!!![{TableOfContents}]";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         assertTrue( res.indexOf("Table of Contents") != -1 );
     }
@@ -229,9 +229,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src = "[{TableOfContents}]\n\n!<i>test</i>";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         assertTrue( "<i>", res.indexOf("<i>") == -1 ); // Check that there is no HTML left
         assertTrue( "</i>", res.indexOf("</i>") == -1 ); // Check that there is no HTML left
@@ -242,9 +242,9 @@ public class TableOfContentsTest extends TestCase
     {
         String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
 
         assertTrue( "Final HTML 1", res.indexOf(  "id=\"section-Test-Test\"" ) != -1 );
         assertTrue( "Final HTML 2", res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1 );

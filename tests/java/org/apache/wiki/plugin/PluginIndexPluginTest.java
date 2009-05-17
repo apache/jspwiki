@@ -37,13 +37,13 @@ import junit.framework.TestSuite;
 
 public class PluginIndexPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties m_props = new Properties();
 
-    TestEngine engine;
+    TestEngine m_engine;
 
-    WikiContext context;
+    WikiContext m_context;
 
-    PluginManager manager;
+    PluginManager m_manager;
 
     Collection<WikiPluginInfo> m_requiredPlugins;
 
@@ -57,24 +57,24 @@ public class PluginIndexPluginTest extends TestCase
 
     public void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine( props );
+        m_engine = new TestEngine( m_props );
 
-        manager = new PluginManager( engine, props );
+        m_manager = new PluginManager( m_engine, m_props );
 
-        engine.saveText( "TestPage", "This is a test." );
+        m_engine.saveText( "TestPage", "This is a test." );
         
-        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "TestPage" ) );
 
-        m_requiredPlugins = context.getEngine().getPluginManager().modules();
+        m_requiredPlugins = m_context.getEngine().getPluginManager().modules();
     }
 
     public void tearDown()
     {
         TestEngine.emptyWorkDir();
         
-        engine.shutdown();
+        m_engine.shutdown();
     }
 
     public static Test suite()
@@ -89,7 +89,7 @@ public class PluginIndexPluginTest extends TestCase
      */
     public void testCorePluginsPresent() throws PluginException
     {
-        String result = manager.execute( context, "{PluginIndexPlugin details=false}" );
+        String result = m_manager.execute( m_context, "{PluginIndexPlugin details=false}" );
 
         // test for the presence of each core plugin (this list can be expanded
         // as new plugins are added)
@@ -108,7 +108,7 @@ public class PluginIndexPluginTest extends TestCase
      */
     public void testDetails() throws PluginException
     {
-        String result = manager.execute( context, "{PluginIndexPlugin details=true}" );
+        String result = m_manager.execute( m_context, "{PluginIndexPlugin details=true}" );
 
         // check for the presence of all required columns:
         for( int i = 0; i < REQUIRED_COLUMNS.length; i++ )
@@ -125,7 +125,7 @@ public class PluginIndexPluginTest extends TestCase
      */
     public void testNumberOfRows() throws PluginException
     {
-        String result = manager.execute( context, "{PluginIndexPlugin details=true}" );
+        String result = m_manager.execute( m_context, "{PluginIndexPlugin details=true}" );
 
         String row = "<tr";
         String[] pieces = result.split( row );

@@ -65,7 +65,7 @@ public class SearchManagerTest extends TestCase
     {
         super.tearDown();
         
-        TestEngine.deleteTestPage("TestPage");
+        m_engine.emptyRepository();
         
         m_engine.shutdown();
     }

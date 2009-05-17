@@ -39,8 +39,8 @@ import org.apache.wiki.render.XHTMLRenderer;
 
 public class CounterPluginTest extends TestCase
 {
-    Properties props = new Properties();
-    TestEngine testEngine;
+    Properties m_props = new Properties();
+    TestEngine m_testEngine;
     
     public CounterPluginTest( String s )
     {
@@ -50,20 +50,20 @@ public class CounterPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        testEngine = new TestEngine(props);
+        m_testEngine = new TestEngine(m_props);
     }
 
     public void tearDown()
     {
-        testEngine.shutdown();
+        m_testEngine.shutdown();
     }
 
     private String translate( String src ) throws Exception
     {
-        testEngine.deletePage( "TestPage" );
-        WikiContext context = testEngine.getWikiContextFactory().newViewContext( testEngine.createPage( "TestPage" ) );
+        m_testEngine.deletePage( "TestPage" );
+        WikiContext context = m_testEngine.getWikiContextFactory().newViewContext( m_testEngine.createPage( "TestPage" ) );
         
         MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );
         

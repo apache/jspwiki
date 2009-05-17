@@ -36,10 +36,10 @@ import org.apache.wiki.plugin.PluginManager;
 
 public class ReferringPagesPluginTest extends TestCase
 {
-    Properties props = new Properties();
-    TestEngine engine;
-    WikiContext context;
-    PluginManager manager;
+    Properties m_props = new Properties();
+    TestEngine m_engine;
+    WikiContext m_context;
+    PluginManager m_manager;
 
     public ReferringPagesPluginTest( String s )
     {
@@ -49,36 +49,28 @@ public class ReferringPagesPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        props.setProperty( "jspwiki.breakTitleWithSpaces", "false" );
-        engine = new TestEngine(props);
+        m_props.setProperty( "jspwiki.breakTitleWithSpaces", "false" );
+        m_engine = new TestEngine(m_props);
 
-        engine.saveText( "TestPage", "Reference to [Foobar]." );
-        engine.saveText( "Foobar", "Reference to [TestPage]." );
-        engine.saveText( "Foobar2", "Reference to [TestPage]." );
-        engine.saveText( "Foobar3", "Reference to [TestPage]." );
-        engine.saveText( "Foobar4", "Reference to [TestPage]." );
-        engine.saveText( "Foobar5", "Reference to [TestPage]." );
-        engine.saveText( "Foobar6", "Reference to [TestPage]." );
-        engine.saveText( "Foobar7", "Reference to [TestPage]." );
+        m_engine.saveText( "TestPage", "Reference to [Foobar]." );
+        m_engine.saveText( "Foobar", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar2", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar3", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar4", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar5", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar6", "Reference to [TestPage]." );
+        m_engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage" ) );
-        manager = new PluginManager( engine, props );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "TestPage" ) );
+        m_manager = new PluginManager( m_engine, m_props );
     }
 
     public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "TestPage" );
-        TestEngine.deleteTestPage( "Foobar" );
-        TestEngine.deleteTestPage( "Foobar2" );
-        TestEngine.deleteTestPage( "Foobar3" );
-        TestEngine.deleteTestPage( "Foobar4" );
-        TestEngine.deleteTestPage( "Foobar5" );
-        TestEngine.deleteTestPage( "Foobar6" );
-        TestEngine.deleteTestPage( "Foobar7" );
-        engine.emptyRepository();
-        engine.shutdown();
+        m_engine.emptyRepository();
+        m_engine.shutdown();
     }
 
     private String mkLink( String page )
@@ -94,9 +86,9 @@ public class ReferringPagesPluginTest extends TestCase
     public void testSingleReferral()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.getPage( "Foobar" ) );
+        WikiContext context2 = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "Foobar" ) );
 
-        String res = manager.execute( context2,
+        String res = m_manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
         assertEquals( mkLink( "TestPage" )+"<br />",
@@ -106,7 +98,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testMaxReferences()
         throws Exception
     {
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
     
         int count = 0;
@@ -135,9 +127,9 @@ public class ReferringPagesPluginTest extends TestCase
     public void testReferenceWidth()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.getPage( "Foobar" ) );
+        WikiContext context2 = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "Foobar" ) );
 
-        String res = manager.execute( context2,
+        String res = m_manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
         assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
@@ -147,7 +139,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testInclude()
         throws Exception
     {
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{ReferringPagesPlugin include='*7'}" );
 
         assertTrue( "7", res.indexOf("Foobar7") != -1 );
@@ -161,7 +153,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testExclude()
         throws Exception
     {
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{ReferringPagesPlugin exclude='*'}");
 
         assertEquals( "...nobody",
@@ -171,7 +163,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testExclude2()
         throws Exception
     {
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{ReferringPagesPlugin exclude='*7'}");
 
         assertTrue( res.indexOf("Foobar7") == -1 );
@@ -180,7 +172,7 @@ public class ReferringPagesPluginTest extends TestCase
     public void testExclude3()
        throws Exception
     {
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{ReferringPagesPlugin exclude='*7,*5,*4'}");
 
         assertTrue( "7", res.indexOf("Foobar7") == -1 );
@@ -194,13 +186,13 @@ public class ReferringPagesPluginTest extends TestCase
     public void testCount() throws Exception
     {
         String result = null;
-        result = manager.execute(context, "{ReferringPagesPlugin show=count}");
+        result = m_manager.execute(m_context, "{ReferringPagesPlugin show=count}");
         assertEquals("7",result);
         
-        result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count}");
+        result = m_manager.execute(m_context, "{ReferringPagesPlugin,exclude='*7',show=count}");
         assertEquals("6",result);
         
-        result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
+        result = m_manager.execute(m_context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
         String numberResult=result.substring(0,result.indexOf(" "));
         assertEquals("6",numberResult);
         
@@ -214,7 +206,7 @@ public class ReferringPagesPluginTest extends TestCase
         String exceptionString = null;
         try
         {
-            result = manager.execute(context, "{ReferringPagesPlugin,showLastModified=true}");
+            result = m_manager.execute(m_context, "{ReferringPagesPlugin,showLastModified=true}");
         }
         catch (PluginException pe)
         {

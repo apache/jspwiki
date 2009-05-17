@@ -34,28 +34,28 @@ import org.apache.wiki.api.PluginException;
 
 public class InterWikiLinksPluginTest extends TestCase
 {
-    private Properties props = new Properties();
+    private Properties m_props = new Properties();
 
-    private TestEngine engine;
+    private TestEngine m_engine;
 
-    private WikiContext context;
+    private WikiContext m_context;
 
-    private PluginManager manager;
+    private PluginManager m_manager;
 
     private Collection<String> m_links = null;
 
     public void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine( props );
+        m_engine = new TestEngine( m_props );
 
-        manager = new PluginManager( engine, props );
+        m_manager = new PluginManager( m_engine, m_props );
 
-        engine.deletePage( "TestPage" );
-        context = engine.getWikiContextFactory().newViewContext( engine.createPage( "TestPage" ) );
+        m_engine.deletePage( "TestPage" );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.createPage( "TestPage" ) );
 
-        m_links = engine.getAllInterWikiLinks();
+        m_links = m_engine.getAllInterWikiLinks();
 
     }
 
@@ -63,7 +63,7 @@ public class InterWikiLinksPluginTest extends TestCase
     {
         TestEngine.emptyWorkDir();
 
-        engine.shutdown();
+        m_engine.shutdown();
     }
 
     public static Test suite()
@@ -78,7 +78,7 @@ public class InterWikiLinksPluginTest extends TestCase
      */
     public void testLinkCollection() throws PluginException
     {
-        String result = manager.execute( context, "{InterWikiLinksPlugin}" );
+        String result = m_manager.execute( m_context, "{InterWikiLinksPlugin}" );
 
         boolean allLinksFound = true;
         for( String link : m_links )
@@ -100,7 +100,7 @@ public class InterWikiLinksPluginTest extends TestCase
     public void testTableFormat() throws PluginException
     {
         String title = "DirtyHarryWikiLinks";
-        String result = manager.execute( context, "{InterWikiLinksPlugin type=TABLE,tabletitle=" + title + "}" );
+        String result = m_manager.execute( m_context, "{InterWikiLinksPlugin type=TABLE,tabletitle=" + title + "}" );
 
         assertTrue( "no table found", result.contains( "<table>" ) );
 

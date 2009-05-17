@@ -35,10 +35,10 @@ import org.apache.wiki.plugin.PluginManager;
 
 public class UndefinedPagesPluginTest extends TestCase
 {
-    Properties props = new Properties();
-    TestEngine engine;
-    WikiContext context;
-    PluginManager manager;
+    Properties m_props = new Properties();
+    TestEngine m_engine;
+    WikiContext m_context;
+    PluginManager m_manager;
 
     public UndefinedPagesPluginTest( String s )
     {
@@ -48,28 +48,27 @@ public class UndefinedPagesPluginTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine(props);
+        m_engine = new TestEngine(m_props);
 
-        engine.saveText( "TestPage", "Reference to [Foobar]." );
-        engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
+        m_engine.saveText( "TestPage", "Reference to [Foobar]." );
+        m_engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
-        context = engine.getWikiContextFactory().newViewContext( engine.getPage( "TestPage") );
-        manager = new PluginManager( engine, props );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "TestPage") );
+        m_manager = new PluginManager( m_engine, m_props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "TestPage" );
-        TestEngine.deleteTestPage( "Foobar" );
+        m_engine.emptyRepository();
         TestEngine.emptyWorkDir();
-        engine.shutdown();
+        m_engine.shutdown();
     }
 
     private String wikitize( String s )
     {
-        return engine.textToHTML( context, s );
+        return m_engine.textToHTML( m_context, s );
     }
 
     /**
@@ -80,9 +79,9 @@ public class UndefinedPagesPluginTest extends TestCase
     public void testSimpleUndefined()
         throws Exception
     {
-        WikiContext context2 = engine.getWikiContextFactory().newViewContext( engine.getPage( "Foobar") );
+        WikiContext context2 = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "Foobar") );
 
-        String res = manager.execute( context2,
+        String res = m_manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin");
 
         String exp = "[Foobar 2]\\\\";
@@ -93,7 +92,7 @@ public class UndefinedPagesPluginTest extends TestCase
     public void testCount() throws Exception
     {
         String result = null;
-        result = manager.execute(context, "{UndefinedPagesPlugin show=count}");
+        result = m_manager.execute(m_context, "{UndefinedPagesPlugin show=count}");
         assertEquals("1", result);
 
         // test if the proper exception is thrown:
@@ -101,7 +100,7 @@ public class UndefinedPagesPluginTest extends TestCase
         String exceptionString = null;
         try
         {
-            result = manager.execute(context, "{UndefinedPagesPlugin,show=count,showLastModified=true}");
+            result = m_manager.execute(m_context, "{UndefinedPagesPlugin,show=count,showLastModified=true}");
         }
         catch (PluginException pe)
         {

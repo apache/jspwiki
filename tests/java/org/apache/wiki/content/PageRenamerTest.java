@@ -52,32 +52,15 @@ public class PageRenamerTest extends TestCase
         props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
         
         TestEngine.emptyWorkDir();
-        m_engine = new TestEngine(props);  
+        m_engine = new TestEngine(props);
+
+        m_engine.emptyRepository();
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        
-        TestEngine.deleteTestPage("TestPage");
-        TestEngine.deleteTestPage("TestPage2");
-        TestEngine.deleteTestPage("FooTest");
-        TestEngine.deleteTestPage("Test");
-        TestEngine.deleteTestPage("CdauthNew");
-        TestEngine.deleteTestPage("Cdauth");
-        TestEngine.deleteTestPage("TestPageReferring");
-        TestEngine.deleteTestPage("TestPageReferredNew");
-        TestEngine.deleteTestPage("Main");
-        TestEngine.deleteTestPage("Main8887");
-        TestEngine.deleteTestPage("TestPage1234");
-        TestEngine.deleteTestPage("TestPageReferred");
-        TestEngine.deleteTestPage("RenameTest");
-        TestEngine.deleteTestPage("Link one");
-        TestEngine.deleteTestPage("Link uno");
-        TestEngine.deleteTestPage("Link two");
-
-        TestEngine.emptyWorkDir();
-        
+               
         m_engine.shutdown();
     }
 

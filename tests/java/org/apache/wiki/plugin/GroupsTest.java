@@ -32,8 +32,8 @@ import junit.framework.TestSuite;
 
 public class GroupsTest extends TestCase
 {
-    Properties props = new Properties();
-    TestEngine testEngine;
+    Properties m_props = new Properties();
+    TestEngine m_testEngine;
     
     public GroupsTest( String s )
     {
@@ -43,25 +43,25 @@ public class GroupsTest extends TestCase
     public void setUp()
         throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        testEngine = new TestEngine(props);
+        m_testEngine = new TestEngine(m_props);
     }
 
     public void tearDown() throws Exception
     {
         super.tearDown();
         
-        testEngine.deletePage( "Test" );
+        m_testEngine.deletePage( "Test" );
     }
     
     public void testTag() throws Exception
     {
         String src="[{Groups}]";
         
-        testEngine.saveText( "Test", src );
+        m_testEngine.saveText( "Test", src );
         
-        String res = testEngine.getHTML( "Test" );
+        String res = m_testEngine.getHTML( "Test" );
         
         assertEquals( "<a href=\"/Group.jsp?group=Admin\">Admin</a>, " 
                 + "<a href=\"/Group.jsp?group=Art\">Art</a>, "

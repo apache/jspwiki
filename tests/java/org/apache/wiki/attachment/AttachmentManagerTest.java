@@ -77,16 +77,10 @@ public class AttachmentManagerTest extends TestCase
         return tmpFile;
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( NAME1 );
-        TestEngine.deleteTestPage( NAMEU );
-
-        TestEngine.deleteAttachments(NAME1);
-        TestEngine.deleteAttachments(NAMEU);
-
         TestEngine.emptyWorkDir();
-        
+        m_engine.emptyRepository();
         m_engine.shutdown();
     }
 /*

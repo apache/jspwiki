@@ -34,13 +34,13 @@ import junit.framework.TestSuite;
 
 public class ReferredPagesPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties m_props = new Properties();
 
-    TestEngine engine;
+    TestEngine m_engine;
 
-    WikiContext context;
+    WikiContext m_context;
 
-    PluginManager manager;
+    PluginManager m_manager;
 
     public ReferredPagesPluginTest( String s )
     {
@@ -49,31 +49,27 @@ public class ReferredPagesPluginTest extends TestCase
 
     public void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine( props );
+        m_engine = new TestEngine( m_props );
 
-        engine.saveText( "SomeBodyPointsToMe", "Somebody points to this page" );
-        engine.saveText( "IPointToSomeoneElse", "Reference to [SomeBodyPointsToMe]." );
-        engine.saveText( "IPointToSomeoneElseToo", "Reference to [SomeBodyPointsToMe]." );
-        engine.saveText( "SomeBodyPointsToMeToo", "Somebody points to this page too" );
-        engine.saveText( "IPointToTwoPages", "Reference to [SomeBodyPointsToMe]  and   [SomeBodyPointsToMeToo]." );
+        m_engine.saveText( "SomeBodyPointsToMe", "Somebody points to this page" );
+        m_engine.saveText( "IPointToSomeoneElse", "Reference to [SomeBodyPointsToMe]." );
+        m_engine.saveText( "IPointToSomeoneElseToo", "Reference to [SomeBodyPointsToMe]." );
+        m_engine.saveText( "SomeBodyPointsToMeToo", "Somebody points to this page too" );
+        m_engine.saveText( "IPointToTwoPages", "Reference to [SomeBodyPointsToMe]  and   [SomeBodyPointsToMeToo]." );
 
 //        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "IPointToSomeoneElse" ) );
-        manager = new PluginManager( engine, props );
+        m_manager = new PluginManager( m_engine, m_props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "SomeBodyPointsToMe" );
-        TestEngine.deleteTestPage( "IPointToSomeoneElse" );
-        TestEngine.deleteTestPage( "IPointToSomeoneElseToo" );
-        TestEngine.deleteTestPage( "SomeBodyPointsToMeToo");
-        TestEngine.deleteTestPage( "IPointToTwoPages" );
+        m_engine.emptyRepository();
         
         TestEngine.emptyWorkDir();
         
-        engine.shutdown();
+        m_engine.shutdown();
     }
 
     /**
@@ -83,9 +79,9 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPage() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToSomeoneElse" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "IPointToSomeoneElse" ) );
 
-        String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin}" );
+        String res = m_manager.execute( m_context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin}" );
 
         assertEquals(
                       "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElse\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElse</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
@@ -100,9 +96,9 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPageParmPage() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToSomeoneElse" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "IPointToSomeoneElse" ) );
 
-        String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin page=IPointToSomeoneElseToo}" );
+        String res = m_manager.execute( m_context, "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin page=IPointToSomeoneElseToo}" );
 
         assertEquals(
                       "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToSomeoneElseToo\" title=\"ReferredPagesPlugin: depth[1] include[.*] exclude[^$] format[compact]\">IPointToSomeoneElseToo</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n</ul>\n</div>\n",
@@ -116,14 +112,14 @@ public class ReferredPagesPluginTest extends TestCase
      */
     public void testReferredPageParmInclude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "IPointToTwoPages" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "IPointToTwoPages" ) );
         String expected = "<div class=\"ReferredPagesPlugin\">\n<a class=\"wikipage\" href=\"/Wiki.jsp?page=IPointToTwoPages\" title=\"ReferredPagesPlugin: depth[1] include[Main:SomeBodyPointsToMe.*] exclude[^$] format[compact]\">IPointToTwoPages</a>\n<ul>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMe\">SomeBodyPointsToMe</a></li>\n<li><a class=\"wikipage\" href=\"/Wiki.jsp?page=SomeBodyPointsToMeToo\">SomeBodyPointsToMeToo</a></li>\n</ul>\n</div>\n";
 
-        String res = manager.execute( context,
+        String res = m_manager.execute( m_context,
                                       "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='SomeBodyPointsToMe*'}" );
         assertEquals( expected, res );
         
-        res = manager.execute( context,
+        res = m_manager.execute( m_context,
                                       "{INSERT org.apache.wiki.plugin.ReferredPagesPlugin include='Main:SomeBodyPointsToMe*'}" );
         assertEquals( expected, res );
     }

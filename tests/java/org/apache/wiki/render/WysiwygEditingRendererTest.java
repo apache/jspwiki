@@ -50,10 +50,9 @@ public class WysiwygEditingRendererTest extends TestCase
         m_testEngine.saveText( "This Pagename Has Spaces", "This Pagename Has Spaces" );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "WysiwygEditingRendererTest" );
-        TestEngine.deleteTestPage( "This Pagename Has Spaces" );
+        m_testEngine.emptyRepository();
         
         m_testEngine.shutdown();
     }

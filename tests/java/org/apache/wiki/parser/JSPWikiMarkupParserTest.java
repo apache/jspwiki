@@ -35,6 +35,7 @@ import org.apache.wiki.*;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.util.TextUtil;
 
@@ -80,14 +81,13 @@ public class JSPWikiMarkupParserTest extends TestCase
         created.addElement( name );
     }
 
-    private void deleteCreatedPages()
+    private void deleteCreatedPages() throws ProviderException
     {
         for( Iterator<String> i = created.iterator(); i.hasNext(); )
         {
             String name = i.next();
 
-            TestEngine.deleteTestPage(name);
-            TestEngine.deleteAttachments(name);
+            testEngine.deletePage(name);
         }
 
         created.clear();

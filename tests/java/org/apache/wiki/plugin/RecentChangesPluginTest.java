@@ -23,50 +23,44 @@ package org.apache.wiki.plugin;
 
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.log.Logger;
-import org.apache.wiki.log.LoggerFactory;
-import org.apache.wiki.plugin.PluginManager;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiContext;
+
 
 public class RecentChangesPluginTest extends TestCase
 {
-    Properties props = new Properties();
+    Properties m_props = new Properties();
 
-    TestEngine engine;
+    TestEngine m_engine;
 
-    WikiContext context;
+    WikiContext m_context;
 
-    PluginManager manager;
+    PluginManager m_pluginmanager;
 
     public void setUp() throws Exception
     {
-        props.load( TestEngine.findTestProperties() );
+        m_props.load( TestEngine.findTestProperties() );
 
-        engine = new TestEngine( props );
+        m_engine = new TestEngine( m_props );
 
-        engine.saveText( "TestPage01", "Some Text for testing 01" );
-        engine.saveText( "TestPage02", "Some Text for testing 02" );
-        engine.saveText( "TestPage03", "Some Text for testing 03" );
+        m_engine.saveText( "TestPage01", "Some Text for testing 01" );
+        m_engine.saveText( "TestPage02", "Some Text for testing 02" );
+        m_engine.saveText( "TestPage03", "Some Text for testing 03" );
 
 //        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "TestPage01" ) );
-        manager = new PluginManager( engine, props );
+        m_pluginmanager = new PluginManager( m_engine, m_props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "TestPage01" );
-        TestEngine.deleteTestPage( "TestPage02" );
-        TestEngine.deleteTestPage( "TestPage03" );
-        
+        m_engine.emptyRepository();
         TestEngine.emptyWorkDir();
         
-        engine.shutdown();
+        m_engine.shutdown();
     }
 
     /**
@@ -76,9 +70,9 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testSimple() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage01" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage01" ) );
 
-        String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}" );
+        String res = m_pluginmanager.execute( m_context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}" );
 
         // we don't want to compare the complete html returned, but check if certain Strings are present and other 
         // Strings are not present
@@ -96,9 +90,9 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmInclude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage02" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage02" ) );
 
-        String res = manager.execute( context,
+        String res = m_pluginmanager.execute( m_context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
@@ -115,9 +109,9 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmExclude() throws Exception
     {
-        context = engine.getWikiContextFactory().newViewContext( null, null, engine.getPage(  "TestPage03" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage03" ) );
 
-        String res = manager.execute( context, "{INSERT RecentChangesPlugin exclude='TestPage03*'}" );
+        String res = m_pluginmanager.execute( m_context, "{INSERT RecentChangesPlugin exclude='TestPage03*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
         assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));

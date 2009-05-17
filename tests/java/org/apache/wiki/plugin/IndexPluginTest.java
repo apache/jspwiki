@@ -58,9 +58,9 @@ public class IndexPluginTest extends TestCase
         m_manager = new PluginManager( m_engine, m_props );
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
-        TestEngine.deleteTestPage( "TestPage" );
+        m_engine.emptyRepository();
         TestEngine.emptyWorkDir();
         m_engine.shutdown();
     }

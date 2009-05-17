@@ -274,37 +274,6 @@ public class TestEngine extends WikiEngine
     }
 
     /**
-     *  Removes a page, but not any auxiliary information.  Works only
-     *  with FileSystemProvider.
-     */
-    public static void deleteTestPage( String name )
-    {
-        Properties properties = new Properties();
-
-        try
-        {
-            properties.load( findTestProperties() );
-            String files = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-            File f = new File( files, mangleName(name)+".txt" );
-
-            f.delete();
-
-            // Remove the property file, too
-            f = new File( files, mangleName(name)+".properties" );
-
-            if( f.exists() )
-                f.delete();
-            
-            deleteAttachments( name );
-        }
-        catch( Exception e )
-        {
-            log.error("Couldn't delete "+name, e );
-        }
-    }
-
-    /**
      *  Deletes all attachments related to the given page.
      */
     public static void deleteAttachments( String page )
