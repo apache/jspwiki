@@ -20,8 +20,6 @@
  */
 package org.apache.wiki.url;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -65,7 +63,12 @@ public class StripesURLConstructor extends DefaultURLConstructor
      */
     private String m_pathPrefix;
 
-    private UrlBindingFactory m_urlBindingFactory;
+    /**
+     * Keeps references to Stripes UrlBindingFactory; lazily initialized.
+     */
+    private UrlBindingFactory m_urlBindingFactory = null;
+    
+    private WikiEngine m_engine;
 
     /**
      * Contains the base URL of the JSPWiki Web application before the
@@ -92,6 +95,17 @@ public class StripesURLConstructor extends DefaultURLConstructor
     @Override
     public String makeURL( String context, String name, boolean absolute, String parameters )
     {
+        // Lazily initialize the binding factory
+        if ( m_urlBindingFactory == null )
+        {
+            m_urlBindingFactory = getUrlBindingFactory();
+            if ( m_urlBindingFactory == null )
+            {
+                // If no UrlBindingFactory, bail
+                throw new RuntimeException( "Could not retrieve the Stripes UrlBindingFactory!" );
+            }
+        }
+        
         // Get the path prefix
         String pathPrefix;
         UrlBuilder urlBuilder;
@@ -172,62 +186,14 @@ public class StripesURLConstructor extends DefaultURLConstructor
     {
         super.initialize( engine, properties );
 
-        // Load the Stripes UrlBindingFactory
-        Configuration stripesConfig =WikiRuntimeConfiguration.getConfiguration( engine.getServletContext() );
-        if( stripesConfig != null )
-        {
-            ActionResolver resolver = stripesConfig.getActionResolver();
-            if( resolver instanceof AnnotatedClassActionResolver )
-            {
-                m_urlBindingFactory = UrlBindingFactory.getInstance();
-            }
-            else
-            {
-                throw new RuntimeException( "Stripes ActionResolver was not AnnotatedClassActionResolver! Fatal error." );
-            }
-        }
-        else
-        {
-            Thread.dumpStack();
-            throw new RuntimeException( "Could not retrieve the Stripes configuration. Something is wrong..." );
-        }
-
-        // Load the URL patterns from the config file
-        File file = new File( "WEB-INF/urlpattern.properties" );
-        Properties props = new Properties();
-        try
-        {
-            props.load( new FileInputStream( file ) );
-        }
-        catch( Exception e )
-        {
-            // throw new WikiException( e.getMessage() );
-        }
-        
-        // Add the additional bindings we find in the config files
-        for( Map.Entry<Object, Object> entry : props.entrySet() )
-        {
-            String beanClassName = ((String) entry.getKey()).trim();
-            String urlPattern = ((String) entry.getKey()).trim();
-            Class<? extends WikiActionBean> beanClass;
-            try
-            {
-                beanClass = (Class<? extends WikiActionBean>) Class.forName( beanClassName );
-                UrlBinding bindingPrototype = parseUrlBinding( beanClass, urlPattern );
-                m_urlBindingFactory.addBinding( beanClass, bindingPrototype );
-            }
-            catch( ClassNotFoundException e )
-            {
-                log.error( "Could not instantiate class " + beanClassName );
-            }
-        }
-
+        m_engine = engine;
         m_pathPrefix = getContextPath( engine );
         m_baseUrl = engine.getBaseURL();
         if ( m_baseUrl.endsWith( "/" ) )
         {
             m_baseUrl = m_baseUrl.substring( 0, m_baseUrl.length() - 1 );
         }
+        log.info( "StripesURLConstructor initialized." );
     }
 
     public static String getContextPath( WikiEngine engine )
@@ -252,6 +218,21 @@ public class StripesURLConstructor extends DefaultURLConstructor
             }
         }
         return contextPath;
+    }
+    
+    private UrlBindingFactory getUrlBindingFactory()
+    {
+        // Load the Stripes UrlBindingFactory
+        Configuration stripesConfig =WikiRuntimeConfiguration.getConfiguration( m_engine.getServletContext() );
+        if( stripesConfig != null )
+        {
+            ActionResolver resolver = stripesConfig.getActionResolver();
+            if( resolver instanceof AnnotatedClassActionResolver )
+            {
+                return UrlBindingFactory.getInstance();
+            }
+        }
+        return null;
     }
 
     /**
@@ -286,95 +267,6 @@ public class StripesURLConstructor extends DefaultURLConstructor
             }
         }
         return params;
-    }
-    
-    private UrlBinding parseUrlBinding( Class<? extends ActionBean> beanType, String pattern )
-    {
-        // This is copied line-for-line from Stripes 1.5
-        
-        // parse the pattern
-        String path = null;
-        List<Object> components = new ArrayList<Object>();
-        int braceLevel = 0;
-        boolean escape = false;
-        char[] chars = pattern.toCharArray();
-        StringBuilder buf = new StringBuilder(pattern.length());
-        char c = 0;
-        for (int i = 0; i < chars.length; i++) 
-        {
-            c = chars[i];
-            if (!escape) 
-            {
-                switch (c) 
-                {
-                case '{':
-                    ++braceLevel;
-                    if (braceLevel == 1) 
-                    {
-                        if (path == null) 
-                        {
-                            // extract trailing non-alphanum chars as a literal to trim the path
-                            int end = buf.length() - 1;
-                            while (end >= 0 && !Character.isJavaIdentifierPart(buf.charAt(end)))
-                                --end;
-                            if (end < 0) 
-                            {
-                                path = buf.toString();
-                            }
-                            else 
-                            {
-                                ++end;
-                                path = buf.substring(0, end);
-                                components.add(buf.substring(end));
-                            }
-                        }
-                        else 
-                        {
-                            components.add(buf.toString());
-                        }
-                        buf.setLength(0);
-                        continue;
-                    }
-                    break;
-                case '}':
-                    if (braceLevel > 0) 
-                    {
-                        --braceLevel;
-                    }
-                    if (braceLevel == 0) 
-                    {
-                        components.add(parseUrlBindingParameter(beanType, buf.toString()));
-                        buf.setLength(0);
-                        continue;
-                    }
-                    break;
-                case '\\':
-                    escape = true;
-                    continue;
-                }
-            }
-
-            // append the char
-            buf.append(c);
-            escape = false;
-        }
-
-        // handle whatever is left
-        if (buf.length() > 0) 
-        {
-            if (escape)
-                throw new ParseException(pattern, "Expression must not end with escape character");
-            else if (braceLevel > 0)
-                throw new ParseException(pattern, "Unterminated left brace ('{') in expression");
-            else if (path == null)
-                path = buf.toString();
-            else if (c == '}')
-                components.add(parseUrlBindingParameter(beanType, buf.toString()));
-            else
-                components.add(buf.toString());
-        }
-
-        return new UrlBinding(beanType, path, components);
     }
     
     /**
