@@ -934,6 +934,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml" />
         <fileset file="${jarfile}"/>
         <fileset file="${jdbc.driver.jar}"/>
+      	<fileset file="${tests}/lib/jasper-runtime-*.jar"/>
       </copy>
 
       <!-- Copy the JSPs -->

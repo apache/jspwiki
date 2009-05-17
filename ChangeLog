@@ -1,3 +1,16 @@
+2009-05-17  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-118
+        
+        * JSPWIKI-534 WikiServletFilter now lazily initializes, so that the
+           StripesFilter always init's first. 
+           This was necessary for running in Jetty.
+           
+        * included jasper-runtime-*.jar in the copy-step for preparation in
+           running the webtests.
+           The webtests still don't work, something selenium-specific that I
+           could not find yet. 
+
 2009-05-15  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-117

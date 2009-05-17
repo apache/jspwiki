@@ -61,6 +61,8 @@ public class WikiServletFilter implements Filter
 {
     protected static final Logger log = LoggerFactory.getLogger( WikiServletFilter.class );
     protected WikiEngine m_engine = null;
+    private boolean m_wikiInitialized = false;
+    private FilterConfig m_config =null;
 
     /**
      *  Creates a Wiki Servlet Filter.
@@ -78,12 +80,23 @@ public class WikiServletFilter implements Filter
      */
     public void init( FilterConfig config ) throws ServletException
     {
-        log.info( "servlet filter " + this.getClass().getName() + " initializing" );
-        ServletContext context = config.getServletContext();
-        m_engine = WikiEngine.getInstance( context, null );
-        log.warn( "servlet filter " + this.getClass().getName() + " initialized" );
+        // save the reference to config, we need it when we lazy init the wiki in initWiki()
+        m_config = config;
     }
 
+    /**
+     *  This filter should initialize after the StripesFilter has set up the WikiRuntimeConfiguration. 
+     *  To make sure this happens, we do lazy initialization here.
+     */
+    private void initWiki()
+    {
+        log.info( "servlet filter " + this.getClass().getName() + " initializing" );
+        ServletContext context = m_config.getServletContext();
+        m_engine = WikiEngine.getInstance( context, null );
+        m_wikiInitialized = true;
+        log.warn( "servlet filter " + this.getClass().getName() + " initialized" );
+    }
+    
     /**
      * Destroys the WikiServletFilter.
      */
@@ -105,6 +118,10 @@ public class WikiServletFilter implements Filter
     */
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException
     {
+        // one time init first
+        if( !m_wikiInitialized )
+            initWiki();
+        
         //
         //  Sanity check; it might be true in some conditions, but we need to know where.
         //
