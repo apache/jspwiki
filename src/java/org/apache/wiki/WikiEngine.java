@@ -781,7 +781,8 @@ public class WikiEngine
     }
 
     /**
-     *  Returns the base URL, telling where this Wiki actually lives.
+     *  Returns the base URL, telling where this Wiki actually lives. The baseURL
+     *  is guaranteed to be returned with a trailing slash (/).
      *
      *  @since 1.6.1
      *  @return The Base URL.

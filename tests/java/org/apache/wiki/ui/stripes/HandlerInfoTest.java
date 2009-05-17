@@ -28,7 +28,6 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.action.EditActionBean;
 import org.apache.wiki.action.GroupActionBean;
-import org.apache.wiki.action.ViewActionBean;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.ui.stripes.HandlerInfo;

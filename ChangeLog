@@ -1,3 +1,34 @@
+2009-05-18  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-119
+
+        * Reverted WikiPage.save() so that this method is no longer
+        deprecated. Added documentation requiring implementations
+        to delegate to ContentManager.save() so that events are
+        fired correctly.
+
+        * Added experimental FileBasedActionResolver, which allows
+        arbitrary ActionBean URL bindings to be specified in an
+        external file. This will allow fully customized URL binding schemes
+        to be defined without hard-coding them in the ActionBean
+        classes themselves. Currently the configuration file is
+        hard-coded as WEB-INF/urlpattern.properties. This restriction
+        will be loosened later. FileBasedActionResolver is turned
+        off by default.
+
+        * Added experimental ShortUrlRedirectFilter, which intercepts
+        URLs written in the "short URL" scheme and redirects them
+        to the correct ActionBean URLs. When used in conjunction with
+        FileBasedActionResolver, it allows backwards compatibility to
+        be preserved with "permalink" short URLs for viewing, while
+        freeing up implementors to specify their own completely
+        customized URL schemes. This filter is turned off by default.
+        So that it can be more easily turned on and off, this may be
+        refactored into a Stripes Interceptor later. But for now, it's a
+        filter. Murray, this one's for you.
+        
+        * Supplemental tweaks for JSPWIKI-534.
+
 2009-05-17  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-118
