@@ -29,7 +29,10 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite("Stripes UI tests");
+        suite.addTest( FileBasedActionResolverTest.suite() );
         suite.addTest( HandlerInfoTest.suite() );
+        suite.addTest( ShortUrlRedirectFilterTest.suite() );
+        suite.addTest( SpamInterceptorTest.suite() );
         return suite;
     }
 
