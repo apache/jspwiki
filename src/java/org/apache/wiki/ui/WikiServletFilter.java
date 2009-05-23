@@ -209,22 +209,6 @@ public class WikiServletFilter implements Filter
 
     }
 
-    /**
-     *  Figures out the wiki context from the request.  This method does not create the
-     *  context if it does not exist.
-     *  
-     *  @param request The request to examine
-     *  @return A valid WikiContext value (or null, if the context could not be located).
-     */
-    protected WikiContext getWikiContext( ServletRequest  request )
-    {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-    
-        WikiContext ctx = (WikiContext) httpRequest.getAttribute( WikiTagBase.ATTR_CONTEXT );
-        
-        return ctx;
-    }
-
     /** 
      * Determines whether the request has been previously wrapped with a WikiRequestWrapper. 
      * We find the wrapper by recursively unwrapping successive request wrappers, if they have been supplied.
