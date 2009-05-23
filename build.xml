@@ -386,7 +386,7 @@
     </schemavalidate>
     <!-- Clean up stuff from last time -->
     <delete quiet="true">
-      <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar"/>
+      <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar,web-fragment.xmlf,web.xml"/>
     </delete>
     <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="false" />
   </target>
