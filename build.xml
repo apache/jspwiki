@@ -574,9 +574,29 @@
        <arg line="export ${svn.repository}/${svn.tag} &quot;${install.src}&quot;"/>
   	</exec>
   	
-    <zip zipfile="${release.dir}/${ant.project.name}-src.zip">
-        <zipfileset dir="${install.src}" />
-    </zip>
+  	<!-- Figure out JSPWiki version -->
+  		
+  	<javac srcdir="${install.src}" destdir="${code.build}" includes="org/apache/wiki/Release"/>
+  	
+  	<java classpath="${code.build}" 
+  	      classname="org.apache.wiki.Release" 
+  		  outputproperty="jspwiki.version"/>
+  	  	
+  	<property name="tmpzipdir" value="${tmpdir}/${ant.project.name}-${jspwiki.version}" />
+  	
+  	<delete dir="${tmpzipdir}"/>
+  	<mkdir dir="${tmpzipdir}"/>
+  	
+	<move todir="${tmpzipdir}">
+		<fileset dir="${install.src}">
+			<include name="**"/>
+			<!-- Any excluded files should go here -->
+		</fileset>
+  	</move>
+  	
+    <zip zipfile="${release.dir}/${ant.project.name}-src.zip" 
+    	 basedir="${tmpdir}" 
+    	 includes="${ant.project.name}-${jspwiki.version}/**"/>
 
   </target>
 
