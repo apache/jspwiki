@@ -1,3 +1,44 @@
+2009-05-23  Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-120
+
+        * Minor enhancement to JCRWikiPage: now implements
+        getContentAsStream(). Also, Javadocs and field m_name
+        tweaked to reflect WikiName-->WikiPath renaming.
+        The method getContentType() was pulled up from Attachment
+        into the WikiPage interface to prevent need to special-case.
+
+        * Major refactoring of attachment handling. AttachmentServlet
+        has been removed in favor of AttachmentActionBean. The Stripes
+        DynamicMappingFilter was added to ensure that /attach URLs are
+        mapped correctly. Upload URLs are slightly different, but
+        download URLs remain the same (and in fact are now path-aware, so
+        they support spaces and subpages). AttachmentServlet will be
+        removed from the code entirely once AttachmentActionBean is
+        better road-tested.
+
+        * Major refactoring of the IteratorTag and its subclasses.
+        The new versions are much, much simpler, have zero redundant
+        code and are easily extensible. As part of this refactoring,
+        direct manipulation of WikiContext state via request attribute
+        WikiTagBase.ATTR_CONTEXT is now officially discouraged; use
+        WikiContextFactory.saveContext() and
+        WikiContextFactory.findContext() instead. Added Javadocs.
+
+        * ReferenceManager: fixed bug where attachments were being
+        scanned for wiki links.
+
+        * Fixed bug in WikiActionBeanContext that prevented the correct
+        WikiContext from being restored during iteration.
+
+        * WikiPath gains a helpful method, getName(), which returns just
+        the portion of the path after the last slash. It works just
+        like File.getName(). Reformatted the class also, with JavaDocs
+        now fully reflecting rename of WikiName-->WikiPath.
+
+        * Fixed bug in build.xml where JSP-precompiled WARs were not
+        being built correctly.
+
 2009-05-18  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-119
