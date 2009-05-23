@@ -26,39 +26,40 @@ import java.util.Collection;
 import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.AdminBeanManager;
 
-
 /**
- *  Provides an iterator for all AdminBeans of a given type.
- *
+ * Iterator tag for all AdminBeans of a given type.
  */
-public class AdminBeanIteratorTag extends IteratorTag
+public class AdminBeanIteratorTag extends IteratorTag<AdminBean>
 {
     private static final long serialVersionUID = 1L;
 
     private int m_type;
 
     /**
-     *  Set the type of the bean.
-     *  
-     *  @param type Type to set
+     * Set the type of the bean to iterate over.
+     * 
+     * @param type type of AdminBean to seek
      */
-    public void setType(String type)
+    public void setType( String type )
     {
         m_type = AdminBeanManager.getTypeFromString( type );
     }
 
     /**
-     *  {@inheritDoc}
+     * Returns the default list of AdminBeans returned by
+     * {@link AdminBeanManager#getAllBeans()}. Only AdminBeans that match the
+     * type set by {@link #setType(String)} will be returned.
+     * 
+     * @return the admin beans
      */
     @Override
-    public void resetIterator()
+    protected Collection<AdminBean> initItems()
     {
         AdminBeanManager mgr = m_wikiContext.getEngine().getAdminBeanManager();
 
+        // Retrieve the list of beans for the specified type
         Collection<AdminBean> beans = mgr.getAllBeans();
-
         ArrayList<AdminBean> typedBeans = new ArrayList<AdminBean>();
-
         for( AdminBean ab : beans )
         {
             if( ab.getType() == m_type )
@@ -67,6 +68,6 @@ public class AdminBeanIteratorTag extends IteratorTag
             }
         }
 
-        setList( typedBeans );
+        return typedBeans;
     }
 }

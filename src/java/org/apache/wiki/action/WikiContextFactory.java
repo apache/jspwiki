@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -50,7 +51,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.tags.WikiTagBase;
 import org.apache.wiki.ui.stripes.HandlerInfo;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.url.StripesURLConstructor;
@@ -70,6 +70,9 @@ import org.apache.wiki.url.StripesURLConstructor;
  */
 public final class WikiContextFactory
 {
+    @SuppressWarnings("unused")
+    private static final String ATTR_CONTEXT = "wikiContext";
+
     /**
      * The PageContext attribute name of the WikiEngine stored by
      * WikiInterceptor.
@@ -99,7 +102,7 @@ public final class WikiContextFactory
      * This method can be used to find the WikiContext programmatically from a
      * JSP PageContext. We check the request context. The wiki context, if it
      * exists, is looked up using the key
-     * {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}.
+     * {@link #ATTR_CONTEXT}.
      * 
      * @since 2.4
      * @param pageContext the JSP page context
@@ -108,7 +111,7 @@ public final class WikiContextFactory
     public static WikiContext findContext( PageContext pageContext )
     {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        WikiContext context = (WikiContext) request.getAttribute( WikiTagBase.ATTR_CONTEXT );
+        WikiContext context = (WikiContext) request.getAttribute( ATTR_CONTEXT );
         return context;
     }
 
@@ -116,11 +119,7 @@ public final class WikiContextFactory
      * <p>
      * Saves the supplied WikiContext, and the related WikiEngine and
      * WikiSession, in request scope. The WikiContext is saved as an attribute
-     * named {@link org.apache.wiki.tags.WikiTagBase#ATTR_CONTEXT}. The
-     * WikiEngine is also saved as {@link #ATTR_WIKIENGINE}, and the
-     * WikiSession as {@link #ATTR_WIKISESSION}. Among other things, by saving
-     * these items as attributes, they can be accessed via JSP Expression
-     * Language variables, for example <code>${wikiContext}</code>.
+     * named {@link #ATTR_CONTEXT}.
      * </p>
      * <p>
      * Note: when the WikiContext is saved, it will be guaranteed to have a
@@ -133,17 +132,9 @@ public final class WikiContextFactory
      * @param request the HTTP request
      * @param context the WikiContext to save
      */
-    public static void saveContext( HttpServletRequest request, WikiContext context )
+    public static void saveContext( ServletRequest request, WikiContext context )
     {
-        // Stash WikiEngine as a request attribute (can be
-        // used later as ${wikiEngine} in EL markup)
-        WikiEngine engine = context.getEngine();
-        request.setAttribute( ATTR_WIKIENGINE, engine );
-
-        // Stash the WikiSession as a request attribute
-        WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
-        request.setAttribute( ATTR_WIKISESSION, wikiSession );
-        request.setAttribute( WikiTagBase.ATTR_CONTEXT, context );
+        request.setAttribute( ATTR_CONTEXT, context );
     }
 
     private final WikiEngine m_engine;

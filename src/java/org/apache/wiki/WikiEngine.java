@@ -45,6 +45,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
@@ -2171,6 +2172,14 @@ public class WikiEngine
         try
         {
             context = m_contextFactory.newContext( request, (HttpServletResponse)null, requestContext );
+            
+            // Stash WikiEngine as a request attribute (can be
+            // used later as ${wikiEngine} in EL markup)
+            request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, this );
+
+            // Stash the WikiSession as a request attribute
+            WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+            request.setAttribute( WikiContextFactory.ATTR_WIKISESSION, wikiSession );
             
             // Stash the action bean/wiki context, and return it!
             WikiContextFactory.saveContext( request, context );

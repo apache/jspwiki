@@ -20,144 +20,87 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+import java.util.Collections;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 
-
-
 /**
- *  Iterates through the list of attachments one has.
- *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>page - Page name to refer to.  Default is the current page.
- *  </UL>
- *
- *  @since 2.0
+ * <p>
+ * Iterator tag for the looping through the attachments of a WikiPage. In
+ * addition to the <code>start</code> and <code>maxItems</code> attributes,
+ * other attributes that can be set are:
+ * </p>
+ * <ul>
+ * <li><code>page</code> - the page name to use. The default is the one
+ * associated with the current WikiContext.</li>
+ * </ul>
+ * 
+ * @see IteratorTag
+ * @since 2.0
  */
-
-// FIXME: Too much in common with IteratorTag - REFACTOR
-public class AttachmentsIteratorTag
-    extends IteratorTag
+public class AttachmentsIteratorTag extends IteratorTag<WikiPage>
 {
-    private static final long serialVersionUID = 0L;
-    
-    static    Logger    log = LoggerFactory.getLogger( AttachmentsIteratorTag.class );
+    private static final long serialVersionUID = 1L;
+
+    private static final Collection<WikiPage> EMPTY_COLLECTION = Collections.unmodifiableCollection( new ArrayList<WikiPage>() );
+
+    static Logger log = LoggerFactory.getLogger( AttachmentsIteratorTag.class );
 
     /**
-     *  {@inheritDoc}
+     * <p>
+     * Returns the attachments for the current WikiContext, or an empty
+     * collection. This method will return an empty collection if:
+     * </p>
+     * <ul>
+     * <li>the attachment manager does not allow attachments</li>
+     * <li>the underlying provider throws an exception</li>
+     * <li>the WikiPage the current WikiContext refers to does not exist
+     * <li>
+     * <li>the WikiPage the current WikiContext has no attachments</li>
+     * </ul>
+     * 
+     * @return the collection attachments
      */
-    @Override
-    public final int doStartTag()
+    private Collection<WikiPage> getAttachments()
     {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
-
-        WikiEngine        engine = m_wikiContext.getEngine();
-        AttachmentManager mgr    = engine.getAttachmentManager();
-        WikiPage          page;
-
-        page = m_wikiContext.getPage();
-
+        // Return empty collection if attachments are not enabled
+        WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
+        WikiEngine engine = wikiContext.getEngine();
+        AttachmentManager mgr = engine.getAttachmentManager();
         if( !mgr.attachmentsEnabled() )
         {
-            return SKIP_BODY;
+            return EMPTY_COLLECTION;
         }
 
+        WikiPage page = wikiContext.getPage();
         try
         {
-            if( page != null && engine.pageExists(page) )
+            if( page != null && engine.pageExists( page ) )
             {
-                Collection<WikiPage> atts = mgr.listAttachments( page );
-
-                if( atts == null )
-                {
-                    log.debug("No attachments to display.");
-                    // There are no attachments included
-                    return SKIP_BODY;
-                }
-
-                m_iterator = atts.iterator();
-
-                if( m_iterator.hasNext() )
-                {
-                    WikiPage  att = (WikiPage)m_iterator.next();
-
-                    WikiContext context = (WikiContext)m_wikiContext.clone();
-                    context.setPage( att );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
-
-                    pageContext.setAttribute( getId(), att );
-                }
-                else
-                {
-                    return SKIP_BODY;
-                }
+                return mgr.listAttachments( page );
             }
-            else
-            {
-                return SKIP_BODY;
-            }
-
-            return EVAL_BODY_BUFFERED;
         }
         catch( ProviderException e )
         {
-            log.error("Provider failed while trying to iterator through history",e);
-            // FIXME: THrow something.
+            log.error( "Provider failed while trying to fetch attachments for page " + page.getName(), e );
         }
-
-        return SKIP_BODY;
+        return EMPTY_COLLECTION;
     }
 
     /**
-     *  {@inheritDoc}
+     * Returns the list of attachments that will be iterated over.
      */
-    @Override
-    public final int doAfterBody()
+    protected Collection<WikiPage> initItems()
     {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
-                bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
-                // FIXME: throw something?
-            }
-        }
-
-        if( m_iterator != null && m_iterator.hasNext() )
-        {
-            WikiPage att = (WikiPage) m_iterator.next();
-
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setPage( att );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-
-            pageContext.setAttribute( getId(), att );
-
-            return EVAL_BODY_BUFFERED;
-        }
-
-        return SKIP_BODY;
+        return getAttachments();
     }
 }

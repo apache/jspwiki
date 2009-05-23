@@ -20,131 +20,45 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.log.Logger;
-import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.search.SearchResult;
 
-
-
 /**
- *  Iterates through Search result results.
- *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>max = how many search results should be shown.
- *  </UL>
- *
- *  @since 2.0
+ * Iterator tag for the current search results, as identified by a
+ * request-scoped attribute set elsewhere; for example, by an ActionBean.
  */
-
-// FIXME: Shares MUCH too much in common with IteratorTag.  Must refactor.
-public class SearchResultIteratorTag
-    extends IteratorTag
+public class SearchResultIteratorTag extends IteratorTag<SearchResult>
 {
-    private static final long serialVersionUID = 0L;
-    
-    private   int         m_maxItems;
-    private   int         m_count = 0;
-    private   int         m_start = 0;
-    
-    static Logger log = LoggerFactory.getLogger(SearchResultIteratorTag.class);
-    
-    public void release()
-    {
-        super.release();
-        m_maxItems = m_count = 0;
-    }
+    private static final long serialVersionUID = 1L;
 
-    public void setMaxItems( int arg )
+    /**
+     * \ Returns the list of SearchResults to iterate over.
+     */
+    @Override
+    @SuppressWarnings( "unchecked" )
+    protected Collection<SearchResult> initItems()
     {
-        m_maxItems = arg;
-    }
-
-    public void setStart( int arg )
-    {
-        m_start = arg;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public final int doStartTag()
-    {
-        //
-        //  Do lazy eval if the search results have not been set.
-        //
-        if( m_iterator == null )
+        Collection<SearchResult> results = (Collection<SearchResult>) pageContext.getAttribute( "searchresults",
+                                                                                                PageContext.REQUEST_SCOPE );
+        if( results == null )
         {
-            Collection<SearchResult> searchresults = (Collection<SearchResult>) pageContext.getAttribute( "searchresults",
-                                                                              PageContext.REQUEST_SCOPE );
-            setList( searchresults );
-            
-            int skip = 0;
-            
-            //  Skip the first few ones...
-            m_iterator = searchresults.iterator();
-            while( m_iterator.hasNext() && (skip++ < m_start) ) m_iterator.next();
+            return new ArrayList<SearchResult>();
         }
-
-        m_count       = 0;
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
-
-        return nextResult();
+        return results;
     }
 
-    private int nextResult()
+    /**
+     * When the next iterated item is encountered, this method sets the current
+     * WikiContext's page property to the value of
+     * {@link SearchResult#getPage()}.
+     */
+    @Override
+    protected void nextItem( SearchResult item )
     {
-        if( m_iterator != null && m_iterator.hasNext() && m_count++ < m_maxItems )
-        {
-            SearchResult r = (SearchResult) m_iterator.next();
-            
-            // Create a wiki context for the result
-            WikiEngine engine = m_wikiContext.getEngine();
-            WikiContext context = engine.getWikiContextFactory().newViewContext( r.getPage() );
-            
-            // Stash it in the page context
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(), r );
-
-            return EVAL_BODY_BUFFERED;
-        }
-
-        return SKIP_BODY;
-    }
-
-    public int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
-                bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
-                // FIXME: throw something?
-            }
-        }
-
-        return nextResult();
-    }
-
-    public int doEndTag()
-    {
-        m_iterator = null;
-
-        return super.doEndTag();
+        m_wikiContext.setPage( item.getPage() );
     }
 }

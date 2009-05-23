@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.wiki.*;
 import org.apache.wiki.action.WikiActionBean;
+import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.WikiInterceptor;
@@ -36,11 +37,12 @@ import net.sourceforge.stripes.tag.StripesTagSupport;
 
 
 /**
- *  Base class for JSPWiki tags.  You do not necessarily have
- *  to derive from this class, since this does some initialization.
- *  <P>
- *  This tag is only useful if you're having an "empty" tag, with
- *  no body content.
+ *  <p>Base class for JSPWiki tags.  Tags need not necessarily
+ *  derive from this class, since this base class initializes certain
+ *  state properties that not all tag classes need.</p>
+ *  <p>The default method stubs defined in this class are only useful for
+ *  empty element tags, with no body content. Subclasses can override
+ *  any of these methods to provide customized functionality.</p>
  *
  *  @since 2.0
  */
@@ -48,6 +50,10 @@ public abstract class WikiTagBase
     extends StripesTagSupport
     implements TryCatchFinally
 {
+    /**
+     * @deprecated use {@link org.apache.wiki.action.WikiContextFactory#saveContext(javax.servlet.ServletRequest, WikiContext)}
+     * and {@link org.apache.wiki.action.WikiContextFactory#findContext(PageContext)} to set the WikiContext instead
+     */
     public static final String ATTR_CONTEXT = "wikiContext";
 
     static    Logger    log = LoggerFactory.getLogger( WikiTagBase.class );
@@ -59,41 +65,52 @@ public abstract class WikiTagBase
     private String m_id;
 
     /**
-     *   This method calls the parent setPageContext() but it also
-     *   provides a way for a tag to initialize itself before
-     *   any of the setXXX() methods are called.
+     * {@inheritDoc}
+     * <p>This implementation calls the superclass method setPageContext(),
+     * and also calls {{@link #initTag()} so that the tags (or subclasses) can
+     * initialize <code>set<var>XXX</var>()</code> property methods are
+     * called.</p>
      */
     public void setPageContext(PageContext arg0)
     {
         super.setPageContext(arg0);
-        
         initTag();
     }
 
     /**
-     *  This method is called when the tag is encountered within a new request,
-     *  but before the setXXX() methods are called. 
-     *  The default implementation does nothing.
+     *  Initialization method that resets the tag to a known state.
+     *  This method is called after the tag is encountered within a new request,
+     *  but before the <code>set<var>XXX</var>()</code> methods are called. 
+     *  The default implementation nulls out the internal
+     * references to the WikiActionBean, WikiContext, and tag ID.
      *  @since 2.3.92
      */
     public void initTag()
     {
+        m_wikiActionBean = null;
         m_wikiContext = null;
         m_id = null;
         return;
     }
     
     /**
-     * Initializes the tag, and sets an internal reference to the current WikiActionBean
-     * by delegating to
-     * {@link org.apache.wiki.ui.stripes.WikiInterceptor#findActionBean(PageContext)}.
-     * (That method retrieves the WikiActionBean from page scope.).
-     * If the WikiActionBean is a WikiContext, a specific reference to the WikiContext
-     * will be set also. Both of these available as protected fields {@link #m_wikiActionBean} and
-     * {@link #m_wikiContext}, respectively. It is considered an error condition if the 
-     * WikiActionBean cannot be retrieved from the PageContext.
-     * It's also an error condition if the WikiActionBean is actually a WikiContext, and it
-     * returns a <code>null</code> WikiPage.
+     * <p>Superclass initializer that sets common state attributes for WikiTagBase
+     * subclasses. Subclasses should generally override {@link #doWikiStartTag()}, rather
+     * than this method, to initialize themselves.</p>
+     * <p>This method performs the following initialization steps. First, it sets an
+     * internal reference to the current WikiActionBean obtained by calling
+     * {@link org.apache.wiki.ui.stripes.WikiInterceptor#findActionBean(PageContext)},
+     * which retrieves the WikiActionBean from page scope.
+     * Then, the object returned by {@link WikiActionBean#getContext()} will be 
+     * set as the page's WikiContext. Both of these objects are made available to
+     * subclasses as protected fields {@link #m_wikiActionBean} and
+     * {@link #m_wikiContext}, respectively.</p>
+     * <p> It is considered an error condition if the 
+     * WikiActionBean cannot be retrieved from the PageContext. This can happen if
+     * WikiTagBase (or a subclass tag) is used in a JSP that doesn't set or use an
+     * ActionBean. For this reason, JSPs that use WikiTagBase-subclassed tags should
+     * always contain a &lt;stripes:useActionBean&gt; tag at the top of the page to ensure
+     * that the correct ActionBean is set.</p>
      */
     public int doStartTag()
         throws JspException
@@ -102,16 +119,13 @@ public abstract class WikiTagBase
         {
             // Retrieve the ActionBean injected by WikiInterceptor
             m_wikiActionBean = WikiInterceptor.findActionBean( this.getPageContext() );
-            
-            // It's really bad news if the WikiActionBean wasn't injected (or saved as a variable!)
             if ( m_wikiActionBean == null )
             {
                 throw new JspException( "Can't find WikiActionBean in page context! (tag=" + this.getClass() + ")" );
             }
 
-            // The WikiContext is the ActionBean's ActionBeanContext
-            m_wikiContext = m_wikiActionBean.getContext();
-
+            // Retrieve the WikiContext -- always WikiActionBean.getContext() unless IteratorTag changed it
+            m_wikiContext = WikiContextFactory.findContext( pageContext );
             if( m_wikiContext == null )
             {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
@@ -127,8 +141,15 @@ public abstract class WikiTagBase
     }
 
     /**
-     *  This method is allowed to do pretty much whatever he wants.
-     *  We then catch all mistakes.
+     *  Initialization method used by WikiTagBase subclasses to initialize themselves.
+     *  Subclasses can override this method to do just about anything. Implementations
+     *  should return {@link javax.servlet.jsp.tagext.Tag#EVAL_BODY_INCLUDE},
+     *  or {@link javax.servlet.jsp.tagext.Tag#SKIP_BODY}. If the subclass implements
+     *  {@link javax.servlet.jsp.tagext.BodyTag}, it may also return
+     *  {@link javax.servlet.jsp.tagext.BodyTag#EVAL_BODY_BUFFERED}.
+     *  Any exceptions that are thrown can then be dealt with by
+     *  {@link #doCatch(Throwable)} or {@link #doFinally()}.
+     *  @see javax.servlet.jsp.tagext.Tag#doStartTag()}
      */
     public abstract int doWikiStartTag() throws Exception;
 
@@ -138,26 +159,46 @@ public abstract class WikiTagBase
         return EVAL_PAGE;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public int doAfterBody() throws JspException 
     {
         return SKIP_BODY;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public String getId()
     {
         return m_id;
     }
 
+    /**
+     * {@inheritDoc}. The default implementation does nothing.
+     */
     public void doCatch(Throwable arg0) throws Throwable
     {
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The default implementation nulls out the internal
+     * references to the WikiActionBean, WikiContext, and tag ID.</p>
+     */
     public void doFinally()
     {
+        m_wikiActionBean = null;
         m_wikiContext = null;
         m_id = null;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The default implementation sanitizes the tag ID before setting
+     * it by escaping potentially dangerous characters.</p>
+     */
     public void setId(String id)
     {
 		m_id = ( TextUtil.replaceEntities( id ) );

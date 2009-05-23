@@ -23,11 +23,11 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 
@@ -49,14 +49,11 @@ public abstract class WikiBodyTag extends BodyTagSupport
     {
         try
         {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                    PageContext.REQUEST_SCOPE );
-
+            m_wikiContext = WikiContextFactory.findContext( pageContext );
             if( m_wikiContext == null )
             {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }
-
             return doWikiStartTag();
         }
         catch( Exception e )

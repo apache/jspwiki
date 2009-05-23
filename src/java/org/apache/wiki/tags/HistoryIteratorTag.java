@@ -20,12 +20,10 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+import java.util.Collections;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
@@ -33,110 +31,50 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 
-
-
 /**
- *  Iterates through tags.
- *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>page - Page name to refer to.  Default is the current page.
- *  </UL>
- *
- *  @since 2.0
+ * <p>
+ * Iterator tag that loops through the historical versions of a WikiPage. In
+ * addition to the <code>start</code> and <code>maxItems</code> attributes,
+ * other attributes that can be set are:
+ * </p>
+ * <ul>
+ * <li><code>page</code> - the page name to use. The default is the one
+ * associated with the current WikiContext.</li>
+ * </ul>
+ * 
+ * @since 2.0
  */
-
-// FIXME: Too much in common with IteratorTag - REFACTOR
-public class HistoryIteratorTag
-    extends IteratorTag
+public class HistoryIteratorTag extends IteratorTag<WikiPage>
 {
-    private static final long serialVersionUID = 0L;
-    
-    static    Logger    log = LoggerFactory.getLogger( HistoryIteratorTag.class );
+    private static final long serialVersionUID = 1L;
 
-    public final int doStartTag()
+    private static final Collection<WikiPage> EMPTY_COLLECTION = Collections.unmodifiableCollection( new ArrayList<WikiPage>() );
+
+    static Logger log = LoggerFactory.getLogger( HistoryIteratorTag.class );
+
+    /**
+     * Returns the historical versions of the current WikiPage.
+     */
+    @Override
+    protected Collection<WikiPage> initItems()
     {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT,
-                                                                PageContext.REQUEST_SCOPE );
-
+        WikiPage page = m_wikiContext.getPage();
         WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page;
-
-        page = m_wikiContext.getPage();
-
         try
         {
-            if( page != null && engine.pageExists(page) )
+            if( page != null && engine.pageExists( page ) )
             {
-                Collection<WikiPage> versions;
-                try
-                {
-                    versions = engine.getVersionHistory( page.getName() );
-                }
-                catch( PageNotFoundException e )
-                {
-                    // There is no history
-                    return SKIP_BODY;
-                }
-
-                m_iterator = versions.iterator();
-
-                if( m_iterator.hasNext() )
-                {
-                    WikiContext context = (WikiContext)m_wikiContext.clone();
-                    context.setPage( (WikiPage)m_iterator.next() );
-                    pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                              context,
-                                              PageContext.REQUEST_SCOPE );
-                    pageContext.setAttribute( getId(),
-                                              context.getPage() );
-                }
-                else
-                {
-                    return SKIP_BODY;
-                }
+                return engine.getVersionHistory( page.getName() );
             }
-
-            return EVAL_BODY_BUFFERED;
+        }
+        catch( PageNotFoundException e )
+        {
+            log.error( "Provider claims page " + page.getName() + " doesn't exists, right after it said it did. This is odd!", e );
         }
         catch( ProviderException e )
         {
-            log.error("Provider failed while trying to iterator through history",e);
-            // FIXME: THrow something.
+            log.error( "Provider failed while trying to fetch history for page " + page.getName(), e );
         }
-
-        return SKIP_BODY;
-    }
-
-    public final int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
-                JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
-                bodyContent.clearBody();
-            }
-            catch( IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
-                // FIXME: throw something?
-            }
-        }
-
-        if( m_iterator != null && m_iterator.hasNext() )
-        {
-            WikiContext context = (WikiContext)m_wikiContext.clone();
-            context.setPage( (WikiPage)m_iterator.next() );
-            pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                      context,
-                                      PageContext.REQUEST_SCOPE );
-            pageContext.setAttribute( getId(),
-                                      context.getPage() );
-            return EVAL_BODY_BUFFERED;
-        }
-
-        return SKIP_BODY;
+        return EMPTY_COLLECTION;
     }
 }

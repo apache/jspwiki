@@ -205,6 +205,13 @@ public class WikiInterceptor implements Interceptor
             WikiEngine engine = actionBeanContext.getEngine();
             WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
             actionBeanContext.setWikiSession( wikiSession );
+            
+            // Stash WikiEngine as a request attribute (can be
+            // used later as ${wikiEngine} in EL markup)
+            request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, engine );
+
+            // Stash the WikiSession as a request attribute
+            request.setAttribute( WikiContextFactory.ATTR_WIKISESSION, wikiSession );
         }
 
         // Stash the ActionBean as request attribute, if not saved yet
@@ -213,7 +220,7 @@ public class WikiInterceptor implements Interceptor
             request.setAttribute( ATTR_ACTIONBEAN, actionBean );
         }
 
-        // Stash the WikiContext, WikiEngine
+        // Stash the WikiContext
         WikiContextFactory.saveContext( request, actionBean.getContext() );
 
         if( log.isDebugEnabled() )

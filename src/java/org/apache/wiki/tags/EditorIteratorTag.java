@@ -23,45 +23,40 @@ package org.apache.wiki.tags;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.WikiContextFactory;
-import org.apache.wiki.log.Logger;
-import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
 
-
 /**
- *  Iterates through editors.
- *
- *  @author Chuck Smith
- *  @since 2.4.12
+ * Iterator tag for editors.
+ * 
+ * @author Chuck Smith
+ * @since 2.4.12
  */
-
-public class EditorIteratorTag
-    extends IteratorTag
+public class EditorIteratorTag extends IteratorTag<Editor>
 {
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
-    static    Logger    log = LoggerFactory.getLogger( EditorIteratorTag.class );
-
-    public final int doStartTag()
+    /**
+     * Returns the default list of editors into the collection that will be iterated
+     * over, as returned by {@link EditorManager#getEditorList()}.
+     */
+    protected Collection<Editor> initItems()
     {
-        m_wikiContext = WikiContextFactory.findContext(pageContext);
-
-        WikiEngine engine = m_wikiContext.getEngine();
-        EditorManager mgr    = engine.getEditorManager();
-
+        // Retrieve the list of editors
+        WikiContext wikiContext = WikiContextFactory.findContext( pageContext );
+        WikiEngine engine = wikiContext.getEngine();
+        EditorManager mgr = engine.getEditorManager();
         String[] editorList = mgr.getEditorList();
 
+        // Create a new collection of Editors
         Collection<Editor> editors = new ArrayList<Editor>();
-
-        for ( int i = 0; i < editorList.length; i++ )
+        for( int i = 0; i < editorList.length; i++ )
         {
-            editors.add(new Editor(m_wikiContext, editorList[i]));
+            editors.add( new Editor( m_wikiContext, editorList[i] ) );
         }
-        setList( editors );
-
-        return super.doStartTag();
+        return editors;
     }
 }
