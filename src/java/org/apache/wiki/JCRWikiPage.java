@@ -63,7 +63,7 @@ public class JCRWikiPage
     public  static final String CONTENTTYPE  = "wiki:contentType";
     
 
-    private       WikiPath   m_name;
+    private       WikiPath   m_path;
     private       WikiEngine m_engine;
     private String           m_jcrPath = null;
     
@@ -71,11 +71,11 @@ public class JCRWikiPage
      * Use {@link WikiEngine#createPage(WikiPath)} instead. 
      * @deprecated 
      */
-    public JCRWikiPage( WikiEngine engine, WikiPath name )
+    public JCRWikiPage( WikiEngine engine, WikiPath path )
     {
         m_engine  = engine;
-        m_name    = name;
-        m_jcrPath = ContentManager.getJCRPath( name );
+        m_path    = path;
+        m_jcrPath = ContentManager.getJCRPath( path );
     }
 
     /**
@@ -108,7 +108,7 @@ public class JCRWikiPage
     {
         m_engine  = engine;
         m_jcrPath = node.getPath();
-        m_name    = name;
+        m_path    = name;
     }
     
     public Node getJCRNode() throws RepositoryException
@@ -121,7 +121,7 @@ public class JCRWikiPage
      */
     public String getName()
     {
-        return m_name.getPath();
+        return m_path.getPath();
     }
     
     /* (non-Javadoc)
@@ -129,7 +129,7 @@ public class JCRWikiPage
      */
     public WikiPath getPath()
     {
-        return m_name;
+        return m_path;
     }
 
     /* (non-Javadoc)
@@ -242,7 +242,8 @@ public class JCRWikiPage
         return null;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.WikiPage#getLastModified()
      */
     public Date getLastModified()
@@ -415,7 +416,7 @@ public class JCRWikiPage
     // FIXME: Should we rename this method?
     public String getWiki()
     {
-        return m_name.getSpace();
+        return m_path.getSpace();
     }
 
     /* (non-Javadoc)
@@ -423,7 +424,7 @@ public class JCRWikiPage
      */
     public String toString()
     {
-        return "WikiPage ["+m_name+",ver="+getVersion()+",mod="+getLastModified()+"]";
+        return "WikiPage ["+m_path+",ver="+getVersion()+",mod="+getLastModified()+"]";
     }
 
     /* (non-Javadoc)
@@ -431,7 +432,7 @@ public class JCRWikiPage
      */
     public Object clone()
     {
-        JCRWikiPage p = new JCRWikiPage( m_engine, m_name );
+        JCRWikiPage p = new JCRWikiPage( m_engine, m_path );
             
         return p;
     }
@@ -479,28 +480,40 @@ public class JCRWikiPage
      */
     public int hashCode()
     {
-        return m_name.hashCode() * getVersion();
+        return m_path.hashCode() * getVersion();
     }
 
-    public InputStream getContentAsStream()
+    public InputStream getContentAsStream() throws ProviderException
     {
-        // TODO Auto-generated method stub
+        try
+        {
+            Property p = getJCRNode().getProperty( ATTR_CONTENT );
+
+            return p.getStream();
+        }
+        catch( PathNotFoundException e )
+        {
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException("Unable to get property",e);
+        }
         return null;
     }
 
-    public String getContentType() throws ProviderException
+    public String getContentType()
     {
         return (String)getAttribute( CONTENTTYPE );
     }
 
     public List<WikiPath> getReferrers() throws ProviderException
     {
-        return m_engine.getReferenceManager().getReferredBy( m_name );
+        return m_engine.getReferenceManager().getReferredBy( m_path );
     }
     
     public List<WikiPath> getRefersTo() throws ProviderException
     {
-        return m_engine.getReferenceManager().getRefersTo( m_name );
+        return m_engine.getReferenceManager().getRefersTo( m_path );
     }
     
 
@@ -569,13 +582,17 @@ public class JCRWikiPage
 
     public WikiPage getParent() throws PageNotFoundException, ProviderException
     {
-        return m_engine.getContentManager().getPage( m_name.getParent() );
+        return m_engine.getContentManager().getPage( m_path.getParent() );
     }
 
+    /**
+     * Returns the file name of the WikiPage. For both attachments and wiki pages,
+     * this is the name portion of the WikiPath that comes after the last trailing slash.
+     * It is equal to the value of {@link WikiPath#getName()}.
+     */
     public String getFileName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return m_path.getName();
     }
 
     public boolean isCacheable()

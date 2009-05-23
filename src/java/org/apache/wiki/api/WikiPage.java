@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
@@ -208,6 +209,16 @@ public interface WikiPage extends Comparable<WikiPage>
      */
     public InputStream getContentAsStream() throws ProviderException;
     
+    /**
+     * Returns the MIME type of the attachment. Wiki markup will always return
+     * content type <code>{@link ContentManager#JSPWIKI_CONTENT_TYPE}</code>.
+     * Other WikiPage sub-interfaces, for example
+     * {@link org.apache.wiki.attachment.Attachment} may elect to return different
+     * content types.
+     * @return the attachment type
+     */
+    public String getContentType();
+
     /**
      *  Stores the state of the page, creating a new version in the
      *  repository. Implementations must, at least, call
