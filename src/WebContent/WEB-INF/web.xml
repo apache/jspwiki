@@ -91,6 +91,13 @@
       </init-param>
    </filter>
 
+   <filter>
+      <description>Dynamically maps URLs to ActionBeans.</description>
+      <display-name>Stripes Dynamic Mapping Filter</display-name>
+      <filter-name>DynamicMappingFilter</filter-name>
+      <filter-class>net.sourceforge.stripes.controller.DynamicMappingFilter</filter-class>
+   </filter>
+
    <!--
       This is new in 2.4.  This defines a servlet filter which filters all requests. 
    -->
@@ -133,10 +140,17 @@
        <servlet-name>StripesDispatcher</servlet-name>
        <dispatcher>REQUEST</dispatcher>
    </filter-mapping>
+   <filter-mapping>
+      <filter-name>DynamicMappingFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+      <dispatcher>REQUEST</dispatcher>
+      <dispatcher>FORWARD</dispatcher>
+      <dispatcher>INCLUDE</dispatcher>
+   </filter-mapping>
 
    <!--
        HttpSessionListener used for managing WikiSessions.
-     -->
+   -->
    <listener>
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
@@ -209,15 +223,6 @@
        -->
    </servlet>
 
-   <!--
-       Attachment exchange handler.
-     -->
-
-   <servlet>
-       <servlet-name>AttachmentServlet</servlet-name>
-       <servlet-class>org.apache.wiki.attachment.AttachmentServlet</servlet-class>
-   </servlet>
-
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>/dispatcher</url-pattern>
@@ -261,11 +266,6 @@
    </servlet-mapping>
 
    AND REMOVE ME TOO -->
-
-   <servlet-mapping>
-       <servlet-name>AttachmentServlet</servlet-name>
-       <url-pattern>/attach/*</url-pattern>
-   </servlet-mapping>
 
    <servlet-mapping>
        <servlet-name>WikiServlet</servlet-name>

@@ -22,7 +22,9 @@ package org.apache.wiki.url;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import net.sourceforge.stripes.action.ActionBean;
@@ -34,8 +36,8 @@ import net.sourceforge.stripes.util.bean.ParseException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.action.AttachActionBean;
 import org.apache.wiki.action.GroupActionBean;
+import org.apache.wiki.action.AttachmentActionBean;
 import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -134,7 +136,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
             // Append the "name" parameter for page/group action beans (argh; we have to do stupid if/else tricks)
             if ( name != null )
             {
-                if( AttachActionBean.class.isAssignableFrom( beanClass ) )
+                if( AttachmentActionBean.class.isAssignableFrom( beanClass ) )
                 {
                     int slashAt = name.indexOf( '/' );
                     if ( slashAt == -1 )

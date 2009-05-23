@@ -151,7 +151,7 @@ public class ViewActionBean extends AbstractPageActionBean
             throw new WikiException( "Page not supplied, and WikiEngine does not define a front page! This is highly unusual." );
         }
 
-        // Is there an ALIAS attribute in the wiki pge?
+        // Is there an ALIAS attribute in the wiki page?
         String specialUrl = (String) getPage().getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
@@ -165,8 +165,14 @@ public class ViewActionBean extends AbstractPageActionBean
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
 
-        // If we got this far, it means the user supplied a page parameter, AND
-        // it exists
+        // Ok, the page exists. If attachment, make sure it's directed to the "info" handler
+        WikiPage page = getPage();
+        String handler = getContext().getEventName();
+        if ( getPage().isAttachment() && !"info".equals( handler ) )
+        {
+            return new RedirectResolution( ViewActionBean.class, "info" ).addParameter( "page", page.getPath().toString() );
+        }
+        
         return null;
     }
 

@@ -97,7 +97,7 @@ public interface WikiContext
     public static final String    ERROR    = HandlerInfo.getHandlerInfo( ErrorActionBean.class, "error" ).getRequestContext();
 
     /** User is uploading something. */
-    public static final String    UPLOAD   = HandlerInfo.getHandlerInfo( UploadActionBean.class, "upload" ).getRequestContext();
+    public static final String    UPLOAD   = HandlerInfo.getHandlerInfo( AttachmentActionBean.class, "upload" ).getRequestContext();
 
     /** User is commenting something. */
     public static final String    COMMENT  = HandlerInfo.getHandlerInfo( EditActionBean.class, "comment" ).getRequestContext();
@@ -127,7 +127,7 @@ public interface WikiContext
     public static final String    DELETE   = HandlerInfo.getHandlerInfo( DeleteActionBean.class, "delete" ).getRequestContext();
 
     /** User is downloading an attachment. */
-    public static final String    ATTACH   = HandlerInfo.getHandlerInfo( AttachActionBean.class, "upload" ).getRequestContext();
+    public static final String    ATTACH   = HandlerInfo.getHandlerInfo( AttachmentActionBean.class, "download" ).getRequestContext();
 
     /** RSS feed is being generated. */
     public static final String    RSS      = HandlerInfo.getHandlerInfo( RSSActionBean.class, "rss" ).getRequestContext();

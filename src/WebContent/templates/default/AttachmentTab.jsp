@@ -2,10 +2,6 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.auth.*" %>
-<%@ page import="org.apache.wiki.ui.progress.*" %>
-<%@ page import="org.apache.wiki.auth.permissions.*" %>
-<%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -27,7 +23,7 @@
     <div id="addattachment">
       <h3><fmt:message key="attach.add" /></h3>
       <wiki:Permission permission="upload">
-        <s:form beanclass="org.apache.wiki.action.UploadActionBean" class="wikiform" id="uploadform" acceptcharset="UTF-8">
+        <s:form beanclass="org.apache.wiki.action.AttachmentActionBean" class="wikiform" id="uploadform" acceptcharset="UTF-8">
           <s:param name="progressid" value="<%=progressId%>" />
           <s:param name="page" value="${wikiActionBean.page.name}" />
           <table>
@@ -35,7 +31,7 @@
             <td colspan="2"><div class="formhelp"><fmt:message key="attach.add.info" /></div></td>
           </tr>
           <tr>
-            <td span="2"><s:errors field="newAttachments" /></td>
+            <td colspan="2"><s:errors field="newAttachments" /></td>
           </tr>
           <tr>
             <td><s:label for="attachfile0" name="attach.add.selectfile" /></td>
@@ -78,8 +74,8 @@
         <div class="slimbox-img sortable">
           <table class="wikitable">
             <tr>
-              <th><fmt:message key="info.attachment.type" /></th>
               <th><fmt:message key="info.attachment.name" /></th>
+              <th><fmt:message key="info.attachment.type" /></th>
               <th><fmt:message key="info.size" /></th>
               <th><fmt:message key="info.version" /></th>
               <th><fmt:message key="info.date" /></th>
@@ -91,15 +87,12 @@
             <wiki:AttachmentsIterator id="att">
     <%
       String name = att.getFileName();
-      int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
-    
       String sname = name;
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
     %>
               <tr>
-                <td><div class="attachtype"><%= attachtype %></div></td>
                 <td><wiki:LinkTo title="<%= name %>"><%= sname %></wiki:LinkTo></td>
+                <td><div class="attachtype"><%= att.getContentType() %></div></td>
                 <td style="white-space:nowrap;text-align:right;">
                   <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
                 </td>
