@@ -324,7 +324,8 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
 
         String pageName = ((WikiPageEvent) event).getPageName();
-        if( pageName == null )
+        WikiPath path = pageName == null ? null : WikiPath.valueOf( pageName );
+        if( !isWikiPage( path ) )
         {
             return;
         }
@@ -337,7 +338,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
                 // If page was saved, update all references
                 case (ContentEvent.NODE_SAVED ): {
-                    WikiPath path = resolvePage( WikiPath.valueOf( pageName ) );
+                    path = resolvePage( path );
 
                     // Get new linked pages, and set refersTo/referencedBy links
                     List<WikiPath> referenced = extractLinks( path );
@@ -351,7 +352,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
                     // If page was deleted, remove all references to it/from it
                 case (ContentEvent.NODE_DELETE_REQUEST ): {
-                    WikiPath path = resolvePage( WikiPath.valueOf( pageName ) );
+                    path = resolvePage( path );
 
                     // Remove the links from deleted page to its referenced
                     // pages
@@ -365,7 +366,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
                 case (ContentEvent.NODE_RENAMED ): {
                     // Update references from this page
-                    WikiPath toPage = WikiPath.valueOf( pageName );
+                    WikiPath toPage = path;
                     WikiPath fromPage = WikiPath.valueOf( (String) ((WikiPageEvent) event).getArgs()[0] );
                     Boolean changeReferrers = (Boolean) ((WikiPageEvent) event).getArgs()[1];
                     removeLinks( fromPage );
@@ -1033,6 +1034,26 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
         s.save();
+    }
+    
+    /**
+     * Determines whether the WIkiPage at a specified path is in fact a page. If the WikiPage
+     * at the specified path does not exist, it is not a page. If the WikiPage is an attachment,
+     * it is not a page. The WikiPage at a the specified path is only a page if it exists, and
+     * is not an attachment.
+     */
+    private boolean isWikiPage( WikiPath path )
+    {
+        if ( path == null ) return false;
+        try
+        {
+            WikiPage page = m_cm.getPage( path );
+            return !page.isAttachment();
+        }
+        catch ( Exception e )
+        {
+            return false;
+        }
     }
     
     /**
