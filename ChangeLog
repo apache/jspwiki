@@ -1,3 +1,8 @@
+2009-05-23  Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-121
+        Minor javadoc corrections and one JUnit test fix
+        
 2009-05-23  Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-120

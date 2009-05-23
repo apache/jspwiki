@@ -89,7 +89,7 @@ public class PageTimeComparator
     }
     
     /**
-     *  {@inheritDoc}
+     *
      */
     public int hashcode()
     {

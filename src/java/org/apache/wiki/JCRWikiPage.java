@@ -244,7 +244,7 @@ public class JCRWikiPage
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiPage#getLastModified()
+     * @see org.apache.wiki.api.WikiPage#getLastModified()
      */
     public Date getLastModified()
     {

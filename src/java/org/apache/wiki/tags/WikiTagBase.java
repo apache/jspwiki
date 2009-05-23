@@ -149,7 +149,7 @@ public abstract class WikiTagBase
      *  {@link javax.servlet.jsp.tagext.BodyTag#EVAL_BODY_BUFFERED}.
      *  Any exceptions that are thrown can then be dealt with by
      *  {@link #doCatch(Throwable)} or {@link #doFinally()}.
-     *  @see javax.servlet.jsp.tagext.Tag#doStartTag()}
+     *  @see javax.servlet.jsp.tagext.Tag#doStartTag()
      */
     public abstract int doWikiStartTag() throws Exception;
 
@@ -160,7 +160,7 @@ public abstract class WikiTagBase
     }
     
     /**
-     * {@inheritDoc}
+     * 
      */
     public int doAfterBody() throws JspException 
     {
@@ -168,7 +168,7 @@ public abstract class WikiTagBase
     }
     
     /**
-     * {@inheritDoc}
+     * 
      */
     public String getId()
     {
@@ -195,7 +195,6 @@ public abstract class WikiTagBase
     }
 
     /**
-     * {@inheritDoc}
      * <p>The default implementation sanitizes the tag ID before setting
      * it by escaping potentially dangerous characters.</p>
      */

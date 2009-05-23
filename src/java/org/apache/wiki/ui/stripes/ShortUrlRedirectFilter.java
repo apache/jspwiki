@@ -40,7 +40,7 @@ import org.apache.wiki.util.TextUtil;
  * Intercepts HTTP requests intended for a "short URL" addresses and redirects
  * them to ActionBean URLs. Because this filter needs access to Stripes methods
  * to do its work, the <code>web.xml</code> file must configure the filter
- * order so that {@link StripesFilter} executes before this one.
+ * order so that {@link net.sourceforge.stripes.controller.StripesFilter} executes before this one.
  * </p>
  * <p>
  * This filter exists purely to provide backwards-compatibility with URLs

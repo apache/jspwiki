@@ -179,7 +179,7 @@ public abstract class IteratorTag<T> extends BodyTagSupport implements TryCatchF
      * initialization code, to ensure that the iterator tag's internal state
      * initializes correctly. For subclasses that need to "pre-load" a default
      * collection of items, all that is needed is to have the overridden method
-     * call {@link #setList(Collection) or {@link #setList(Object[])}, then
+     * call {@link #setList(Collection)} or {@link #setList(Object[])}, then
      * call <code>super.doInitBody()</code>.
      * </p>
      * <p>
@@ -195,7 +195,7 @@ public abstract class IteratorTag<T> extends BodyTagSupport implements TryCatchF
      * <code>m_items</code> contains one or more values, or
      * {@link javax.servlet.jsp.tagext.Tag#SKIP_BODY} if not.
      * 
-     * @see javax.servlet.jsp.tagext.Tag#doStartTag()}
+     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
      *      </p>
      */
     public final int doStartTag()
@@ -239,7 +239,7 @@ public abstract class IteratorTag<T> extends BodyTagSupport implements TryCatchF
     /**
      * {@inheritDoc}
      * calls
-     * {@link #resetIterator(), nulls out the internal iterator and wiki context
+     * {@link #resetIterator()}, nulls out the internal iterator and wiki context
      * references, and restores the WikiContext to its original state.     
      */
     public void release()
@@ -250,7 +250,7 @@ public abstract class IteratorTag<T> extends BodyTagSupport implements TryCatchF
     /**
      * Resets the iterator to the first item in the list set by
      * {@link #setList(Collection)} or
-     * {@link #setList(Object[]). The default implementation sets the current record
+     * {@link #setList(Object[])}. The default implementation sets the current record
      * to the first one. Override this method to reset your own iterator.
      */
     public final void resetIterator()
