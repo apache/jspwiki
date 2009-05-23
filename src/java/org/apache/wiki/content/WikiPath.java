@@ -23,120 +23,165 @@ package org.apache.wiki.content;
 import java.io.Serializable;
 
 /**
- *  A WikiPath represents a combination of a WikiSpace as well as a
- *  path within that space.  For example, in "MyWiki:MainPage/foo.jpg",
- *  "MyWiki" is the space, and "MainPage/foo.jpg" is the path within that space.
- *  <p>
- *  A WikiPath is an immutable object which cannot be changed after it has been
- *  created.
- *  
- *  @since 3.0
+ * <p>
+ * A WikiPath represents a combination of a WikiSpace as well as a path within
+ * that space. For example, in "MyWiki:MainPage/foo.jpg", "MyWiki" is the space,
+ * and "MainPage/foo.jpg" is the path within that space.
+ * </p>
+ * <p>
+ * The path itself is a sequence of names indicating a directory-like hierarchy,
+ * with each name separated by slashes (/). The WikiPath's <em>name</em> is
+ * the last name in the WikiPath's name sequence.
+ * <p>
+ * A WikiPath is an immutable object which cannot be changed after it has been
+ * created.
+ * </p>
+ * 
+ * @since 3.0
  */
 public final class WikiPath implements Serializable, Comparable<WikiPath>
 {
     private static final long serialVersionUID = 1L;
+
     private final String m_space;
+
     private final String m_path;
+    
+    private final String m_name;
+
     private final String m_stringRepresentation;
-    
+
     /**
-     *  Create a WikiName from a space and a path.
-     *  
-     *  @param space The space. If space == null, then uses {@link ContentManager#DEFAULT_SPACE}
-     *  @param path The path
+     * Create a WikiPath from a space and a path.
+     * 
+     * @param space the space. If space == null, then uses
+     *            {@link ContentManager#DEFAULT_SPACE}
+     * @param path the path
+     * @throws IllegalArgumentException if <code>path</code> is null
      */
-    public WikiPath(String space, String path)
+    public WikiPath( String space, String path )
     {
-        m_space = (space != null) ? space : ContentManager.DEFAULT_SPACE;
-        m_path  = path;
-        m_stringRepresentation = m_space+":"+m_path;
+        if ( path == null )
+        {
+            throw new IllegalArgumentException( "Path must not be null!" );
+        }
+        m_path = path;
+        int lastSlash = path.lastIndexOf( "/" );
+        if ( lastSlash == -1 )
+        {
+            m_name = path;
+        }
+        else if ( lastSlash == path.length() -  1 )
+        {
+            m_name = "";
+        }
+        else
+        {
+            m_name = path.substring( lastSlash + 1, path.length() );
+        }
+        m_space = space == null ? ContentManager.DEFAULT_SPACE : space;
+        m_stringRepresentation = m_space + ":" + m_path;
     }
-    
+
     /**
-     *  Parses a fully-qualified name (FQN) and turns it into a WikiName.
-     *  If the space name is missing, uses {@link ContentManager#DEFAULT_SPACE}
-     *  for the space name. If the path is null, throws an IllegalArgumentException.
-     *  
-     *  @param path Path to parse
-     *  @return A WikiName
-     *  @throws IllegalArgumentException If the path is null.
+     * Parses a fully-qualified name (FQN) and turns it into a WikiPath. If the
+     * space name is missing, uses {@link ContentManager#DEFAULT_SPACE} for the
+     * space name. If the path is null, throws an IllegalArgumentException.
+     * 
+     * @param path Path to parse
+     * @return A WikiPath
+     * @throws IllegalArgumentException If the path is null.
      */
     // TODO: Measure performance in realtime situations, then figure out whether
-    //       we should have an internal HashMap for path objects.
-    public static WikiPath valueOf(String path) throws IllegalArgumentException
+    // we should have an internal HashMap for path objects.
+    public static WikiPath valueOf( String path ) throws IllegalArgumentException
     {
-        if( path == null ) throw new IllegalArgumentException("null path given to WikiName.valueOf().");
-        
-        int colon = path.indexOf(':');
-        
+        if( path == null )
+            throw new IllegalArgumentException( "null path given to WikiPath.valueOf()." );
+
+        int colon = path.indexOf( ':' );
+
         if( colon != -1 )
         {
             // This is a FQN
-            return new WikiPath( path.substring( 0, colon ), path.substring( colon+1 ) );
+            return new WikiPath( path.substring( 0, colon ), path.substring( colon + 1 ) );
         }
 
-        return new WikiPath ( ContentManager.DEFAULT_SPACE, path );
+        return new WikiPath( ContentManager.DEFAULT_SPACE, path );
     }
-    
+
     /**
-     *  Return the space part of the WikiName
-     *  
-     *  @return Just the space name.
+     * Returns the name portion of the WikiPath; that is, the portion
+     * of the name after the last slash.
+     * 
+     * @return the name
+     */
+    public String getName()
+    {
+        return m_name;
+    }
+
+    /**
+     * Return the space part of the WikiPath
+     * 
+     * @return Just the space name.
      */
     public String getSpace()
     {
         return m_space;
     }
-    
+
     /**
-     *  Return the path part of the WikiName.
-     *  
-     *  @return Just the path.
+     * Return the path part of the WikiPath.
+     * 
+     * @return Just the path.
      */
     public String getPath()
     {
         return m_path;
     }
-    
+
     /**
-     *  Returns the WikiName of the parent.
-     *  
-     *  @return A Valid WikiName or null, if there is no parent.
+     * Returns the WikiPath of the parent.
+     * 
+     * @return A Valid WikiPath or null, if there is no parent.
      */
     // FIXME: Would it make more sense to throw an exception?
     public WikiPath getParent()
     {
         int slash = m_path.lastIndexOf( '/' );
-        
-        if( slash == -1 ) return null;
-        
+
+        if( slash == -1 )
+            return null;
+
         return new WikiPath( m_space, m_path.substring( 0, slash ) );
     }
-    
+
     /**
-     *  Resolves a path with respect to this WikiName.  This is typically used
-     *  when figuring out where a subpage should be pointing at.
-     *  
-     *  @param path Path to resolve
-     *  @return A new WikiName
+     * Resolves a path with respect to this WikiPath. This is typically used
+     * when figuring out where a subpage should be pointing at.
+     * 
+     * @param path Path to resolve
+     * @return A new WikiPath
      */
     public WikiPath resolve( String path )
     {
         int colon = path.indexOf( ':' );
-        
+
         if( colon != -1 )
         {
-            // It is a FQN, essentially an absolute path, so no resolution necessary
+            // It is a FQN, essentially an absolute path, so no resolution
+            // necessary
             return WikiPath.valueOf( path );
         }
-        
+
         return new WikiPath( getSpace(), path );
     }
-    
+
     /**
-     *  Returns the FQN format (space:path) of the name.
-     *  
-     *  @return The name in FQN format.
+     * Returns the FQN format (space:path) of the name.
+     * 
+     * @return The name in FQN format.
      */
     public String toString()
     {
@@ -144,43 +189,43 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
     }
 
     /**
-     *  The hashcode of the WikiName is exactly the same as the hashcode
-     *  of its String representation.  This is to fulfil the general
-     *  contract of equals().
-     *  
-     *  @return int 
+     * The hashcode of the WikiPath is exactly the same as the hashcode of its
+     * String representation. This is to fulfil the general contract of
+     * equals().
+     * 
+     * @return int
      */
     public int hashCode()
     {
         return m_stringRepresentation.hashCode();
     }
-    
+
     /**
-     *  A WikiName is compared using it's toString() method.
-     *  
-     *  @param o The Object to compare against.
-     *  @return int
+     * A WikiPath is compared using it's toString() method.
+     * 
+     * @param o The Object to compare against.
+     * @return int
      */
     public int compareTo( WikiPath o )
     {
         return toString().compareTo( o.toString() );
     }
-    
+
     /**
-     *  A WikiName is equal to another WikiName if the space and the path
-     *  match.  A WikiName can also be compared to a String, in which case
-     *  a WikiName is equal to the String if its String representation is
-     *  the same.  This is to make it easier to compare.
-     *  
-     *  @param o The Object to compare against.
-     *  @return True, if this WikiName is equal to another WikiName.
+     * A WikiPath is equal to another WikiPath if the space and the path match.
+     * A WikiPath can also be compared to a String, in which case a WikiPath is
+     * equal to the String if its String representation is the same. This is to
+     * make it easier to compare.
+     * 
+     * @param o The Object to compare against.
+     * @return True, if this WikiPath is equal to another WikiPath.
      */
     public boolean equals( Object o )
     {
         if( o instanceof WikiPath )
         {
             WikiPath n = (WikiPath) o;
-            
+
             return m_space.equals( n.m_space ) && m_path.equals( n.m_path );
         }
         else if( o instanceof String )

@@ -31,18 +31,38 @@ public class WikiPathTest extends TestCase
 {
     public void testParse1()
     {
-        WikiPath wn = WikiPath.valueOf( "Foo:Bar/Blob 2" );
+        WikiPath path = WikiPath.valueOf( "Foo:Bar/Blob 2" );
         
-        assertEquals("space", "Foo", wn.getSpace() );
-        assertEquals("path", "Bar/Blob 2", wn.getPath() );
+        assertEquals("space", "Foo", path.getSpace() );
+        assertEquals("path", "Bar/Blob 2", path.getPath() );
+        assertEquals( "name", "Blob 2", path.getName() );
     }
 
     public void testParse2()
     {
-        WikiPath wn = WikiPath.valueOf( "BarBrian" );
+        WikiPath path = WikiPath.valueOf( "BarBrian" );
         
-        assertEquals("space", ContentManager.DEFAULT_SPACE, wn.getSpace() );
-        assertEquals("path", "BarBrian", wn.getPath() );
+        assertEquals("space", ContentManager.DEFAULT_SPACE, path.getSpace() );
+        assertEquals("path", "BarBrian", path.getPath() );
+        assertEquals( "name", "BarBrian", path.getName() );
+    }
+    
+    public void testParseHierarchicalPath()
+    {
+        WikiPath path = WikiPath.valueOf( "Test/Foo/Bar" );
+        
+        assertEquals("space", ContentManager.DEFAULT_SPACE, path.getSpace() );
+        assertEquals("path", "Test/Foo/Bar", path.getPath() );
+        assertEquals( "name", "Bar", path.getName() );
+    }
+    
+    public void testParseNoName()
+    {
+        WikiPath path = WikiPath.valueOf( "BarBrian/" );
+        
+        assertEquals("space", ContentManager.DEFAULT_SPACE, path.getSpace() );
+        assertEquals("path", "BarBrian/", path.getPath() );
+        assertEquals( "name", "", path.getName() );
     }
 
     public void testResolve1()
