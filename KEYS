@@ -1,3 +1,14 @@
+This file contains the PGP keys of various developers.
+
+Users: pgp < KEYS
+       gpg --import KEYS
+Developers: 
+        pgp -kxa <your name> and append it to this file.
+        (pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+        (gpg --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+
+
 pub   1024D/13BE2497 2007-12-11
 uid                  Janne Jalkanen <Janne.Jalkanen@iki.fi>
 sig 3        13BE2497 2007-12-11  Janne Jalkanen <Janne.Jalkanen@iki.fi>
