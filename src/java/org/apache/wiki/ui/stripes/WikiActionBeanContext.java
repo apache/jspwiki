@@ -169,7 +169,7 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     public Object clone()
     {
         WikiActionBeanContext copy = new WikiActionBeanContext();
-        copy.m_delegate = m_delegate;
+        copy.m_delegate = (DefaultWikiContext)m_delegate.clone();
         copy.setEngine( getEngine() );
         copy.setEventName( getEventName() );
         copy.setRequest( getRequest() );
