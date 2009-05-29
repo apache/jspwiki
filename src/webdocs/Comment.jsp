@@ -59,6 +59,9 @@
 
     WikiPage wikipage = wikiContext.getPage();
     WikiPage latestversion = wiki.getPage( pagereq );
+
+    session.removeAttribute( EditorManager.REQ_EDITEDTEXT );
+
     if( latestversion == null )
     {
         latestversion = wikiContext.getPage();
