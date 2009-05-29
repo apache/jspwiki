@@ -1,3 +1,11 @@
+2009-05-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-122
+
+        * JSPWIKI-564  Comment Editor populated by Preview from another wikipage,
+        reported by Jeff Allen.
+        The Comment.jsp now always clears the EDITED_TEXT from the session.
+
 2009-05-23  Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-121
