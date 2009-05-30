@@ -26,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.*;
 
-import org.apache.catalina.util.HexUtils;
 import org.apache.wiki.NoRequiredPropertyException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -35,6 +34,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.util.CryptoUtil;
+import org.apache.wiki.util.HexUtils;
 
 
 /**

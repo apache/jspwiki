@@ -1,8 +1,4 @@
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>JSPWiki Java API Documentation</title>
-<!--
+/* 
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,21 +16,19 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.   
--->
-</head>
+    under the License.  
+ */
+package org.apache.wiki.rpc;
 
-<body>
+import org.apache.wiki.WikiContext;
 
-Provides the different login modules that JSPWiki uses.
-
-<h3>Package Specification</h3>
-
-TBD
-
-<h3>Related Documentation</h3>
-
-TBD
-
-</body>
-</html>
+/**
+ *  Any wiki RPC handler should implement this so that they can be properly
+ *  initialized and recognized by JSPWiki.
+ *
+ *  @since 2.1.7
+ */
+public interface WikiRPCHandler
+{
+    public void initialize( WikiContext context );
+}

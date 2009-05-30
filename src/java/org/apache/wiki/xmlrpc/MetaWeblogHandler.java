@@ -42,6 +42,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.rpc.WikiRPCHandler;
 import org.apache.xmlrpc.XmlRpcException;
 
 

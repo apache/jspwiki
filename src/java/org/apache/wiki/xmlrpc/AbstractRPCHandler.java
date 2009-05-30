@@ -30,6 +30,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.rpc.WikiRPCHandler;
 import org.apache.xmlrpc.AuthenticationFailed;
 
 

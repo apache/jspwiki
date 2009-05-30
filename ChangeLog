@@ -1,3 +1,17 @@
+2009-05-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-123
+
+        * JSPWIKI-565  add missing package.html files
+        
+        * moved WikiRPCHandler from org.apache.wiki.xmlrpc to
+        org.apache.wiki.rpc (as indicated by the FIXME)
+        
+        * moved/reorged HexUtils from org.apache.catalina.util to
+        org.apache.wiki.util. (org.apache.catalina.util removed)
+        
+        * fixed a few errors in the NL translation
+        
 2009-05-29 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-122

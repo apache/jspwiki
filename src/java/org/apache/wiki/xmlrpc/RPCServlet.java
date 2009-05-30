@@ -38,6 +38,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.rpc.WikiRPCHandler;
 import org.apache.xmlrpc.*;
 
 
