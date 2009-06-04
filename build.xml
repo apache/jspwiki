@@ -631,6 +631,10 @@
     <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_fr.zip"
          basedir="src/wikipages/fr">
     </zip>
+
+    <zip zipfile="${install.fulldir}/${ant.project.name}-corepages_pt_BR.zip"
+         basedir="src/wikipages/pt_BR">
+    </zip>
  
     <!-- Add other languages here -->
     
