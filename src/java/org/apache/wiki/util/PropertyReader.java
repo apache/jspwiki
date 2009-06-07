@@ -47,8 +47,10 @@ public final class PropertyReader
 
     private static final String DEFAULT_JSPWIKI_PROPERTIES = "/ini/default_jspwiki.properties";
 
-    /** The web.xml parameter that defines where the config file is to be found.
-     *  If it is not defined, uses the default as defined by DEFAULT_PROPERTYFILE.
+    /** The servlet context parameter (from web.xml)  that defines where the 
+     *  config file is to be found.
+     *  If it is not defined, checks the Java System Property, if that is not defined either, 
+     *  uses the default as defined by DEFAULT_PROPERTYFILE.
      *  {@value #DEFAULT_PROPERTYFILE}
      */
     public static final String PARAM_PROPERTYFILE = "jspwiki.propertyfile";
@@ -93,7 +95,8 @@ public final class PropertyReader
     {}
 
     /**
-     *  Loads the webapp properties based on servlet context information.
+     *  Loads the webapp properties based on servlet context information, 
+     *  or (if absent) based on teh Java System Property PARAM_PROPERTYFILE .
      *  Returns a Properties object containing the settings, or null if unable
      *  to load it. (The default file is WEB-INF/jspwiki.properties, and can
      *  be overridden by setting PARAM_PROPERTYFILE in the server or webapp
@@ -122,7 +125,7 @@ public final class PropertyReader
      */
     public static Properties loadWebAppProps( ServletContext context )
     {
-        String      propertyFile   = context.getInitParameter(PARAM_PROPERTYFILE);
+        String propertyFile = getInitParameter( context, PARAM_PROPERTYFILE );
         InputStream propertyStream = null;
 
         try

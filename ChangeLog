@@ -1,3 +1,11 @@
+2009-06-07 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-125
+
+        * JSPWIKI-568  jspwiki.propertyfile cannot be defined as system property
+        You can now specify a Java System Property jspwiki.propertyfile to specify
+        the location of jspwiki.properties (thanks to Piotr Tarnowski) 
+
 2009-06-03 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-124
