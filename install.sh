@@ -1,3 +1,4 @@
+#!/bin/sh
 # 
 #    JSPWiki - a JSP-based WikiWiki clone.
 #
@@ -19,8 +20,6 @@
 #    under the License.  
 #
 ############################################################################
-
-#!/bin/sh
 #
 #  A very simple installer script which restarts tomcat as well.
 #

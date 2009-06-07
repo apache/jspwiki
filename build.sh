@@ -1,3 +1,4 @@
+#!/bin/sh
 # 
 #    JSPWiki - a JSP-based WikiWiki clone.
 #
@@ -19,7 +20,5 @@
 #    under the License.  
 #
 ############################################################################
-
-#!/bin/sh
 
 ant -Dbuild.properties=build.properties -find
