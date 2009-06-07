@@ -1,3 +1,9 @@
+2009-06-07 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-127
+        
+        * JSPWIKI-545: Fixed a number of RAT issues (2), more needed still.
+        
 2009-06-07 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-126
