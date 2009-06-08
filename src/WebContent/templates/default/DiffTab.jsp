@@ -20,17 +20,18 @@
 --%>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.WikiPage" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 
 <% 
   WikiContext c = WikiContextFactory.findContext( pageContext );  
-  List history = c.getEngine().getVersionHistory(c.getPage().getName());
+  List<WikiPage> history = c.getEngine().getVersionHistory(c.getPage().getName());
   pageContext.setAttribute( "history", history );
   pageContext.setAttribute( "diffprovider", c.getEngine().getVariable(c,"jspwiki.diffProvider"));
  %>
