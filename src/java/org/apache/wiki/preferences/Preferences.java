@@ -20,6 +20,7 @@
  */
 package org.apache.wiki.preferences;
 
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,6 +37,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.stripes.LocaleConverter;
 import org.apache.wiki.util.PropertyReader;
 
@@ -59,6 +61,47 @@ import org.apache.wiki.util.PropertyReader;
  */
 public class Preferences extends HashMap<String, String>
 {
+    private static final Map<Locale,String> LOCALES;
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     */
+    private Preferences() {}
+
+    /**
+     * List of time zones, used by {@link #listTimeZones(HttpServletRequest)}.
+     */
+    private static final List<TimeZone> TIME_ZONES;
+
+    static
+    {
+        // Init time zones
+        List<TimeZone> zones = new ArrayList<TimeZone>();
+        String[] ids = { "Pacific/Midway", "Pacific/Honolulu", "America/Anchorage", "PST", "MST", "CST", "EST", "America/Caracas",
+                        "Brazil/East", "Atlantic/South_Georgia", "Atlantic/Cape_Verde", "Etc/Greenwich", "CET", "ART", "EAT",
+                        "Asia/Dubai", "IST", "BST", "VST", "CTT", "JST", "Australia/Sydney", "SST", "NZ", "Pacific/Tongatapu",
+                        "Pacific/Kiritimati" };
+        for( String id : ids )
+        {
+            java.util.TimeZone zone = java.util.TimeZone.getTimeZone( id );
+            zones.add( zone );
+        }
+        TIME_ZONES = Collections.unmodifiableList( zones );
+        
+        // Init locales
+        Locale[] locales = Locale.getAvailableLocales();
+        Map<Locale,String> foundLocales = new HashMap<Locale,String>();
+        for ( Locale locale : locales )
+        {
+            URL url = TemplateManager.class.getClassLoader().getResource( "CoreResources_" + locale.toString() + ".properties" );
+            if ( url != null )
+            {
+                foundLocales.put( locale, locale.getDisplayName( locale ) );
+            }
+        }
+        LOCALES = Collections.unmodifiableMap( foundLocales );
+    }
+
     /**
      * <p>
      * Enumeration of three different date formats that JSPWiki supports.
@@ -130,6 +173,9 @@ public class Preferences extends HashMap<String, String>
      */
     public static final String PREFS_LOCALE = "Locale";
 
+    /** I18N string to mark the server timezone */
+    public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
+
     /**
      * Cookie name for the user's preferred template skin.
      */
@@ -140,6 +186,9 @@ public class Preferences extends HashMap<String, String>
     private static Logger log = LoggerFactory.getLogger( Preferences.class );
 
     private static final LocaleConverter LOCALE_CONVERTER = new LocaleConverter();
+
+    /** Prefix of the default timeformat properties. */
+    public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
 
     /**
      * Get SimpleTimeFormat according to user browser locale and preferred time
@@ -408,4 +457,126 @@ public class Preferences extends HashMap<String, String>
         }
         return cookieValue == null ? defaultValue : cookieValue;
     }
+
+    /**
+     * Returns a Map of localized time zones, with the TimeZone IDs as keys and
+     * localized formatted names as the values.
+     * 
+     * @param request the HTTP request
+     * @return map of TimeZones
+     * @since 2.7.x
+     */
+    public static Map<String, String> listTimeZones( HttpServletRequest request )
+    {
+        WikiEngine engine = WikiEngine.getInstance( request.getSession().getServletContext(), null );
+        LinkedHashMap<String, String> resultMap = new LinkedHashMap<String, String>();
+        java.util.TimeZone serverZone = java.util.TimeZone.getDefault();
+        Date now = new Date();
+
+        // Build a map of TimeZones and their localized display names
+        for( TimeZone zone : TIME_ZONES )
+        {
+            int offset = zone.getRawOffset() / 3600000;
+            String zoneLabel = "[GMT" + (offset > 0 ? "+" : "") + offset + "] "
+                               + zone.getDisplayName( zone.inDaylightTime( now ), TimeZone.LONG, request.getLocale() );
+            if( serverZone.getRawOffset() == zone.getRawOffset() )
+            {
+                InternationalizationManager i18n = engine.getInternationalizationManager();
+                String serverLabel = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, request.getLocale(),
+                                               I18NSERVER_TIMEZONE );
+                zoneLabel = zoneLabel + " " + serverLabel;
+            }
+            resultMap.put( zone.getID(), zoneLabel );
+        }
+        return resultMap;
+    }
+
+    /**
+     * List all installed i18n language properties
+     * 
+     * @param request the HTTP request
+     * @return map of installed Languages (with help of Juan Pablo Santos
+     *         Rodriguez)
+     * @since 2.7.x
+     */
+    public static Map<Locale, String> listLocales( HttpServletRequest request )
+    {
+        return LOCALES;
+    }
+
+    /**
+     * List all available timeformats, read from the jspwiki.properties
+     * 
+     * @param context the wiki context
+     * @return map of TimeFormats
+     * @since 2.7.x
+     */
+    public static Map<String,String> listTimeFormats( WikiContext context )
+    {
+        Properties props = context.getEngine().getWikiProperties();
+        ArrayList<String> timeFormats = new ArrayList<String>( 40 );
+        LinkedHashMap<String, String> resultMap = new LinkedHashMap<String, String>();
+
+        /* filter timeformat properties */
+        for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
+        {
+            String name = (String) e.nextElement();
+
+            if( name.startsWith( TIMEFORMATPROPERTIES ) )
+            {
+                timeFormats.add( name );
+            }
+        }
+
+        /* fetch actual formats */
+        if( timeFormats.size() == 0 ) /*
+                                 * no props found - make sure some default
+                                 * formats are avail
+                                 */
+        {
+            timeFormats.add( "dd-MMM-yy" );
+            timeFormats.add( "d-MMM-yyyy" );
+            timeFormats.add( "EEE, dd-MMM-yyyy, zzzz" );
+        }
+        else
+        {
+            Collections.sort( timeFormats );
+
+            for( int i = 0; i < timeFormats.size(); i++ )
+            {
+                timeFormats.set( i, props.getProperty( timeFormats.get( i ) ) );
+            }
+        }
+
+        String prefTimeZone = Preferences.getPreference( context.getHttpRequest().getSession(), "TimeZone" );
+        TimeZone timeZone = TimeZone.getTimeZone( prefTimeZone );
+
+        Date d = new Date(); // current date
+        try
+        {
+            // dummy format pattern
+            SimpleDateFormat format = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+            format.setTimeZone( timeZone );
+
+            for( int i = 0; i < timeFormats.size(); i++ )
+            {
+                try
+                {
+                    String f = timeFormats.get( i );
+                    format.applyPattern( f );
+
+                    resultMap.put( f, format.format( d ) );
+                }
+                catch( IllegalArgumentException e )
+                {
+                } // skip parameter
+            }
+        }
+        catch( IllegalArgumentException e )
+        {
+        } // skip parameter
+
+        return resultMap;
+    }
+
 }

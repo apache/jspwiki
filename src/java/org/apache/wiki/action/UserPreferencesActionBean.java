@@ -37,7 +37,6 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.stripes.HandlerPermission;
-import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 import net.sourceforge.stripes.action.*;
@@ -202,9 +201,9 @@ public class UserPreferencesActionBean extends AbstractActionBean
         
         // Set request attributes
         request.setAttribute( "skins", t.listSkins( request, c.getTemplate() ) );
-        request.setAttribute( "locales", t.listLocales( request ) );
-        request.setAttribute( "timeformats", t.listTimeFormats( getContext() ) );
-        request.setAttribute( "timezones", t.listTimeZones( request ) );
+        request.setAttribute( "locales", Preferences.listLocales( request ) );
+        request.setAttribute( "timeformats", Preferences.listTimeFormats( getContext() ) );
+        request.setAttribute( "timezones", Preferences.listTimeZones( request ) );
         
         // Pre-populate values
         m_editor = Preferences.getPreference( session, Preferences.PREFS_EDITOR );
@@ -352,8 +351,6 @@ public class UserPreferencesActionBean extends AbstractActionBean
     @WikiRequestContext( "prefs" )
     public Resolution view()
     {
-        WikiActionBeanContext context = getContext();
-        TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
         return new ForwardResolution( "/UserPreferences.jsp" );
     }
 }
