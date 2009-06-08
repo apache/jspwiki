@@ -21,7 +21,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <wiki:TabbedSection defaultTab="lostpassword">
 
@@ -33,8 +33,8 @@
 <wiki:Tab id="lostpassword" titleKey="login.lostpw.tab">
 
 <div class="center">
-<stripes:form beanclass="org.apache.wiki.action.LoginActionBean" id="lostpw" class="wikiform" method="post" acceptcharset="UTF-8">
-  <stripes:param name="tab" value="lostpassword" />
+<s:form beanclass="org.apache.wiki.action.LoginActionBean" id="lostpw" class="wikiform" acceptcharset="UTF-8">
+  <s:param name="tab" value="lostpassword" />
   <h3><fmt:message key="login.lostpw.heading" /></h3>
 
   <c:choose>
@@ -60,13 +60,13 @@
     </tr>
     </c:if>
     <tr>
-      <td><stripes:label for="email" /></td>
-      <td><stripes:text size="24" name="email" id="email" /></td>
+      <td><s:label for="email" /></td>
+      <td><s:text size="24" name="email" id="email" /></td>
     </tr>
     <tr>
       <td>&nbsp;</td>
       <td>
-        <stripes:submit name="resetPassword" />
+        <s:submit name="resetPassword" />
       </td>
     </tr>
   </table>
@@ -90,7 +90,7 @@
   </c:otherwise>
   </c:choose>
 
-</stripes:form>
+</s:form>
 </div>
 
 </wiki:Tab>

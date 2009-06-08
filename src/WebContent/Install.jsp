@@ -18,7 +18,6 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
@@ -28,8 +27,8 @@
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.InstallActionBean" event="install" id="wikiActionBean" />
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.InstallActionBean" event="install" id="wikiActionBean" />
 
 
 <%!

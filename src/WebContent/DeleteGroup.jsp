@@ -18,5 +18,5 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.GroupActionBean" event="delete" id="wikiActionBean" executeResolution="true" />
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.GroupActionBean" event="delete" id="wikiActionBean" executeResolution="true" />

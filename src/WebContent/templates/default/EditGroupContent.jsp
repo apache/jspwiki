@@ -29,7 +29,7 @@
 <%@ page import="org.apache.wiki.log.LoggerFactory" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%!

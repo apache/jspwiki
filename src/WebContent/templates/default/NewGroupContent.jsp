@@ -29,7 +29,7 @@
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%
   // Extract the group name and members
@@ -70,7 +70,7 @@
   <table class="wikitable">
     <!-- Name -->
     <tr>
-      <th><stripes:label name="newgroup.name" /></th>
+      <th><s:label name="newgroup.name" /></th>
       <td><input type="text" name="group" size="30" value="<%=name%>" />
       <div class="formhelp">
         <fmt:message key="newgroup.name.description" />

@@ -24,7 +24,7 @@
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%
     String postURL = "";
@@ -49,8 +49,8 @@
 <wiki:Tab id="logincontent" titleKey="login.tab">
 <%--<wiki:Include page='LoginTab.jsp'/>--%>
 
-<stripes:form action="<%=postURL%>" id="login" class="wikiform" method="post" acceptcharset="UTF-8">
-  <stripes:param name="tab" value="logincontent" />
+<s:form action="<%=postURL%>" id="login" class="wikiform" acceptcharset="UTF-8">
+  <s:param name="tab" value="logincontent" />
 
   <div class="center">
 
@@ -65,25 +65,25 @@
       </td>
     </tr>
     <tr>
-      <td><stripes:label for="j_username" name="loginName" /></td>
+      <td><s:label for="j_username" name="loginName" /></td>
       <td>
-        <stripes:text size="24" name="j_username" id="j_username"><wiki:Variable var="uid" default="" /></stripes:text>
+        <s:text size="24" name="j_username" id="j_username"><wiki:Variable var="uid" default="" /></s:text>
       </td>
     </tr>
     <tr>
-      <td><stripes:label for="j_password" name="password" /></td>
-      <td><stripes:password size="24" name="j_password" id="j_password" /></td>
+      <td><s:label for="j_password" name="password" /></td>
+      <td><s:password size="24" name="j_password" id="j_password" /></td>
     </tr>
     <% if( supportsCookieAuthentication ) { %>
     <tr>
-      <td><stripes:label for="remember" /></td>
-      <td><stripes:checkbox name="remember" id="j_remember" /></td>
+      <td><s:label for="remember" /></td>
+      <td><s:checkbox name="remember" id="j_remember" /></td>
     </tr>
     <% } %>
     <tr>
       <td>&nbsp;</td>
       <td>
-        <stripes:submit name="login" />
+        <s:submit name="login" />
       </td>
     </tr>
     </table>
@@ -104,7 +104,7 @@
     </div>
 
   </div>
-</stripes:form>
+</s:form>
 
 </wiki:Tab>
 

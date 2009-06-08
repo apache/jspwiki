@@ -18,4 +18,5 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<stripes:useActionBean beanclass="org.apache.wiki.action.LoginActionBean" event="logout" executeResolution="true" id="wikiActionBean" />
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.LoginActionBean" event="logout" executeResolution="true" id="wikiActionBean" />

@@ -25,8 +25,8 @@
 <%@ page import="org.apache.wiki.plugin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="edit" id="wikiActionBean" />
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="edit" id="wikiActionBean" />
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>

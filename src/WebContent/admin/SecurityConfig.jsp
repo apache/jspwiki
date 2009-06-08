@@ -25,9 +25,9 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.NoneActionBean" event="none" id="wikiActionBean" />
+<s:useActionBean beanclass="org.apache.wiki.action.NoneActionBean" event="none" id="wikiActionBean" />
 <%! 
   public void jspInit()
   {

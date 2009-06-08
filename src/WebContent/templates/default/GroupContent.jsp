@@ -21,19 +21,19 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <wiki:TabbedSection defaultTab="${param.tab}">
   <wiki:Tab id="viewgroup" titleKey="group.tab">
   <h3><c:out value="${wikiActionBean.name}" /></h3>
-  <strips:messages />
+  <s:messages />
   <wiki:Permission permission="createGroups">
     <fmt:message key="group.createsuggestion">
       <fmt:param>
-        <stripes:link beanclass="org.apache.wiki.action.GroupActionBean" event="create">
-          <stripes:param name="group" value="${wikiActionBean.name}" />
-          <stripes:param name="group" value="${wikiActionBean.name}" />
+        <s:link beanclass="org.apache.wiki.action.GroupActionBean" event="create">
+          <s:param name="group" value="${wikiActionBean.name}" />
+          <s:param name="group" value="${wikiActionBean.name}" />
           <fmt:message key="group.createit" />
-        </stripes:link>
+        </s:link>
       </fmt:param>
     </fmt:message>
   </wiki:Permission>
@@ -78,19 +78,19 @@
 
   <wiki:Permission permission="deleteGroup">
     <c:set var="confirm" value="<fmt:message key='grp.deletegroup.confirm'/>" scope="page"/>
-    <stripes:form beanclass="org.apache.wiki.action.GroupActionBean" class="wikiform"
+    <s:form beanclass="org.apache.wiki.action.GroupActionBean" class="wikiform"
       id="deleteGroup"
       onsubmit="return( confirm('${confirm}') && Wiki.submitOnce(this) );"
       method="POST" acceptcharset="UTF-8">
-      <stripes:submit name="delete"><fmt:message key="actions.deletegroup" /></stripes:submit>
-    </stripes:form>
+      <s:submit name="delete"><fmt:message key="actions.deletegroup" /></s:submit>
+    </s:form>
   </wiki:Permission>
 
 </wiki:Tab>
 
 <wiki:Permission permission="editGroup">
   <wiki:Tab id="editgroup" titleKey="actions.editgroup"
-           url="<stripes:link beanclass='org.apache.wiki.action.GroupActionBean' event='edit'><stripes:param name='group' value='${wikiActionBean.name}' /></stripes:link>"
+           url="<s:link beanclass='org.apache.wiki.action.GroupActionBean' event='edit'><s:param name='group' value='${wikiActionBean.name}' /></s:link>"
            accesskey="e" >
   </wiki:Tab>
 </wiki:Permission>

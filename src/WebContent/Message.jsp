@@ -26,11 +26,11 @@
 <%@ page import="org.apache.wiki.ui.stripes.*" %>
 <%@ page import="org.apache.wiki.tags.WikiTagBase" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
 %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.MessageActionBean" id="wikiActionBean" />
+<s:useActionBean beanclass="org.apache.wiki.action.MessageActionBean" id="wikiActionBean" />
 <%
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiContext wikiContext = WikiContextFactory.findContext( pageContext );

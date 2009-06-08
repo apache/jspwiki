@@ -24,7 +24,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <script language="JavaScript">
   function SubmitOutcomeIfSelected(selectId) 
   {
@@ -61,11 +61,13 @@
   </div>
   <table class="wikitable">
     <thead>
-      <th width="5%" align="center"><fmt:message key="workflow.id" /></th>
-      <th width="45%" align="left"><fmt:message key="workflow.item" /></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actions" /></th>
-      <th width="15%" align="left"><fmt:message key="workflow.requester" /></th>
-      <th width="20%" align="left"><fmt:message key="workflow.startTime" /></th>
+      <tr>
+        <th width="5%" align="center"><fmt:message key="workflow.id" /></th>
+        <th width="45%" align="left"><fmt:message key="workflow.item" /></th>
+        <th width="15%" align="left"><fmt:message key="workflow.actions" /></th>
+        <th width="15%" align="left"><fmt:message key="workflow.requester" /></th>
+        <th width="20%" align="left"><fmt:message key="workflow.startTime" /></th>
+      </tr>
     </thead>
     <tbody>
       <% i = 1; %>
@@ -142,11 +144,13 @@
   </div>
   <table class="wikitable">
     <thead>
-      <th width="5%" align="center"><fmt:message key="workflow.id" /></th>
-      <th width="45%" align="left"><fmt:message key="workflow.item" /></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actions" /></th>
-      <th width="15%" align="left"><fmt:message key="workflow.actor" /></th>
-      <th width="20%" align="left"><fmt:message key="workflow.startTime" /></th>
+      <tr>
+        <th width="5%" align="center"><fmt:message key="workflow.id" /></th>
+        <th width="45%" align="left"><fmt:message key="workflow.item" /></th>
+        <th width="15%" align="left"><fmt:message key="workflow.actions" /></th>
+        <th width="15%" align="left"><fmt:message key="workflow.actor" /></th>
+        <th width="20%" align="left"><fmt:message key="workflow.startTime" /></th>
+      </tr>
     </thead>
     <% i = 1; %>
     <tbody>
