@@ -77,8 +77,8 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "127";
-    
+    public static final String     BUILD         = "128";
+
     /**
      *  This is the generic version string you should use
      *  when printing out the version.  It is of the form "VERSION.REVISION.MINORREVISION[-POSTFIX][-BUILD]".

@@ -1,3 +1,38 @@
+2009-06-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * Search.jsp migrated to Stripes. SearchActionBean now provides
+        searching logic, including an ajaxSearch() method that filters
+        results correctly (this is not hooked up to the client JavaScript
+        yet, but it should be straightforward to do). Still some i18n
+        cleanup to do.
+
+        * Cleanup of a few stray unneeded annotations and imports, and
+        Java-fived a few other classes and JSPs.
+
+        * listTimezones/TimeFormats/Locales code moved to Preferences,
+        where it belongs. All of these were only called by one method
+        anyway, so this was a safe thing to do.
+
+        * Added method TemplateManager.getTemplateResources() that returns
+        a Map that resolves requests for -- wait for it -- template
+        resources. This Map is injected into the HttpSession as the
+        attribute 'templates'. That means that JSPs can now use EL
+        expressions like this: ${templates['FindContent.jsp']}, which returns
+        the relative path to the correct content JSP. The current template
+        takes precedence, followed by the default template. The Map is
+        initialized at wiki startup, so it is very efficient.
+        In the future, wiki:IncludeTag will be refactored to use this Map.
+
+        * Changed all instances of the stripes: prefix in the JSPs to s:.
+
+        * Fixed bug in BreadCrumbs tag that was causing non-WikiPage contexts
+        to appear as page "Main". These contexts are now omitted. Fixed
+        related bug where non-WikiPage contexts were causing NPEs in certain
+        tags, like FeedDiscovery and PermissionTag.
+
+        * Added doc/JSON Changes.txt that documents important information
+        about how AJAX calls will change in 3.0.
+
 2009-06-07 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-127

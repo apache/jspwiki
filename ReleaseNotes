@@ -72,6 +72,13 @@ Please see the UPGRADING document in this same directory.
 EXPERIMENTAL FEATURES
 =====================
 
+* Session attribute 'templates' (a map) can now be used with any JSP markup
+for lookup of template-specific resources. For example, the EL
+expression ${templates['FindContent.jsp']} returns 
+/templates/*/FindContent.jsp, where * is the current configured template
+or the default template, depending on which one actually returns
+the resource.
+
 KNOWN PROBLEMS
 ==============
 
