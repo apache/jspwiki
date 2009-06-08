@@ -103,7 +103,7 @@ public interface WikiContext
     public static final String    COMMENT  = HandlerInfo.getHandlerInfo( EditActionBean.class, "comment" ).getRequestContext();
 
     /** User is searching for content. */
-    public static final String    FIND     = HandlerInfo.getHandlerInfo( SearchActionBean.class, "find" ).getRequestContext();
+    public static final String    FIND     = HandlerInfo.getHandlerInfo( SearchActionBean.class, "search" ).getRequestContext();
 
     /** User wishes to create a new group */
     public static final String    CREATE_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "create" ).getRequestContext();

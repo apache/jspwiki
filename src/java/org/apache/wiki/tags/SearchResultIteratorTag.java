@@ -20,12 +20,12 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.servlet.jsp.PageContext;
-
+import org.apache.wiki.action.SearchActionBean;
+import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.ui.stripes.WikiInterceptor;
 
 /**
  * Iterator tag for the current search results, as identified by a
@@ -36,19 +36,17 @@ public class SearchResultIteratorTag extends IteratorTag<SearchResult>
     private static final long serialVersionUID = 1L;
 
     /**
-     * \ Returns the list of SearchResults to iterate over.
+     * Returns the list of SearchResults to iterate over.
      */
     @Override
-    @SuppressWarnings( "unchecked" )
     protected Collection<SearchResult> initItems()
     {
-        Collection<SearchResult> results = (Collection<SearchResult>) pageContext.getAttribute( "searchresults",
-                                                                                                PageContext.REQUEST_SCOPE );
-        if( results == null )
+        WikiActionBean actionBean = WikiInterceptor.findActionBean( pageContext );
+        if ( actionBean != null && actionBean instanceof SearchActionBean )
         {
-            return new ArrayList<SearchResult>();
+            return ((SearchActionBean)actionBean).getResults();
         }
-        return results;
+        return SearchActionBean.NO_RESULTS;
     }
 
     /**

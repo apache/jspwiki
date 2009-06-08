@@ -22,8 +22,8 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 import java.util.Collection;
-import javax.servlet.jsp.PageContext;
 
+import org.apache.wiki.action.SearchActionBean;
 import org.apache.wiki.search.SearchResult;
 
 /**
@@ -37,17 +37,14 @@ public class SearchResultsSizeTag
 {
     private static final long serialVersionUID = 0L;
     
-    @SuppressWarnings("unchecked")
     public final int doWikiStartTag()
         throws IOException
     {
-        Collection<SearchResult> list = (Collection<SearchResult>)pageContext.getAttribute( "searchresults",
-                                                                PageContext.REQUEST_SCOPE );
-        if( list != null )
+        if ( m_wikiActionBean != null && m_wikiActionBean instanceof SearchActionBean )
         {
-            pageContext.getOut().print( list.size() );
+            Collection<SearchResult> results = ((SearchActionBean)m_wikiActionBean).getResults();
+            pageContext.getOut().print( results.size() );
         }
-
         return SKIP_BODY;
     }
 }

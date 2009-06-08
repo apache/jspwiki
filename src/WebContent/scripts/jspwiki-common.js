@@ -931,9 +931,9 @@ var SearchBox = {
 			if (option.value == match) option.selected = true;
 		});
 
-		new Ajax(Wiki.TemplateUrl+'AJAXSearch.jsp', {
-			postBody: $('searchform2').toQueryString(),
-			update: 'searchResult2', 
+		new Ajax(Wiki.BasePath+'Search.action', {
+			postBody: "ajaxSearch=&"+$('searchform2').toQueryString(),
+			update: 'searchResult2',
 			method: 'post',
 			onComplete: function() { 
 				$('spin').hide(); 

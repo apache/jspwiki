@@ -27,24 +27,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 
 <wiki:TabbedSection>
 <wiki:Tab id="findcontent" titleKey="find.tab" accesskey="s">
 
-<form action="<wiki:Link format='url' jsp='Search.jsp'/>"
-       class="wikiform"
-          id="searchform2"
-         accept-charset="<wiki:ContentEncoding/>">
-
+<s:form beanclass="org.apache.wiki.action.SearchActionBean" class="wikiform"
+    id="searchform2" acceptcharset="UTF-8">
+    
   <h4><fmt:message key="find.input" /></h4>
   <p>
-    <input type="text"
-           name="query" id="query2" 
-          value="<c:out value='${query}'/>" 
-           size="32" />
-
-    <input type="checkbox" name="details" id="details" <c:if test='${param.details == "on"}'>checked='checked'</c:if> />
+    <s:text name="query" id="query2" size="32" />
+    <s:checkbox name="details" id="details" />
     <fmt:message key="find.details" />
 
     <select name="scope" id="scope"> 
@@ -55,16 +49,83 @@
       <option value="attachment:" <c:if test='${param.scope eq "attachment:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.attach' /></option>       
     </select>
 
-	<input type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find" />" />
-	<input type="submit" name="go" id="go" value="<fmt:message key="find.submit.go" />" />
-    <input type="hidden" name="start" id="start" value="0" />
-    <input type="hidden" name="maxitems" id="maxitems" value="20" />
+    <s:submit name="search" id="ok" value="<fmt:message key='find.submit.find' />" />
+    <s:submit name="go" id="go" value="<fmt:message key='find.submit.go' />" />
+    <s:hidden name="start" id="start" value="0" />
+    <s:hidden name="maxItems" id="maxitems" value="20" />
 
     <span id="spin" class="spin" style="position:absolute;display:none;"></span>
   </p>
-</form>
+</s:form>
 
-<div id="searchResult2"><wiki:Include page="AJAXSearch.jsp" /></div>
+<div id="searchResult2">
+  <wiki:SearchResults>
+
+    <h4><fmt:message key="find.heading.results"><fmt:param><c:out value="${wikiActionBean.query}" /></fmt:param></fmt:message></h4>
+    <p>
+      <fmt:message key="find.externalsearch" />
+      <a class="external" href="http://www.google.com/search?q=<c:out value='${wikiActionBean.query}' />" title="Google Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
+      |     
+      <a class="external" href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${wikiActionBean.query}' />" title="Wikipedia Search '<c:out value='${wikiActionBean.query}' />'" target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
+    </p>
+
+    <wiki:SetPagination start="${wikiActionBean.start}" total="${wikiActionBean.resultsCount}" pagesize="20" maxlinks="9" fmtkey="info.pagination" onclick="$('start').value=%s; SearchBox.runfullsearch();" />
+
+    <div class="graphBars">
+      <div class="zebra-table">
+        <table class="wikitable">
+    
+          <tr>
+             <th align="left"><fmt:message key="find.results.page" /></th>
+             <th align="left"><fmt:message key="find.results.score" /></th>
+          </tr>
+    
+          <wiki:SearchResultIterator id="searchref" start="${wikiActionBean.start}" maxItems="${wikiActionBean.maxItems}">
+          <tr>
+            <td><wiki:LinkTo><wiki:PageName/></wiki:LinkTo></td>
+            <td><span class="gBar"><%= searchref.getScore() %></span></td>
+          </tr>
+    
+          <c:if test="${wikiActionBean.details == 'true'}">
+  <%
+            String[] contexts = searchref.getContexts();
+            if( (contexts != null) && (contexts.length > 0) ) 
+            {
+  %>  
+          <tr class="odd">
+            <td colspan="2">
+              <div class="fragment">
+  <%
+              for (int i = 0; i < contexts.length; i++) 
+              {
+  %>
+                <%= (i > 0 ) ? "<span class='fragment_ellipsis'> ... </span>" : ""  %>
+                <%= contexts[i]  %>
+  <%
+              }
+  %>
+               </div>
+             </td>
+           </tr>
+  <% 
+            }
+  %>
+          </c:if><%-- details --%>
+        </wiki:SearchResultIterator>
+    
+        <wiki:IfNoSearchResults>
+          <tr>
+            <td class="nosearchresult" colspan="2"><fmt:message key="find.noresults" /></td>
+          </tr>
+        </wiki:IfNoSearchResults>
+    
+        </table>
+      </div>
+    </div>
+    ${pagination}
+
+  </wiki:SearchResults>
+</div>
 
 </wiki:Tab>
 
