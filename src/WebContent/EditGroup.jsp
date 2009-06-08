@@ -18,10 +18,10 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.GroupActionBean" event="save" id="wikiActionBean" />
-<stripes:layout-render name="/templates/default/DefaultLayout.jsp">
-  <stripes:layout-component name="content">
-    <jsp:include page="/templates/default/EditGroupContent.jsp" />
-  </stripes:layout-component>
-</stripes:layout-render>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.GroupActionBean" event="save" id="wikiActionBean" />
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
+  <s:layout-component name="content">
+    <jsp:include page="${templates['EditGroupContent.jsp']}" />
+  </s:layout-component>
+</s:layout-render>

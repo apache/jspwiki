@@ -23,6 +23,7 @@ package org.apache.wiki.auth;
 import java.security.Principal;
 import java.util.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
@@ -248,15 +249,26 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
     }
 
     /**
-     * Fires when the web container creates a new HTTP session.
+     * Fires when the web container creates a new HTTP session;
+     * it also injects scripting session attribute <code>templates</code>
+     * into the session.
      * 
-     * @param se the HTTP session event
+     * @param event the HTTP session event
      */
-    public void sessionCreated( HttpSessionEvent se )
+    public void sessionCreated( HttpSessionEvent event )
     {
-        HttpSession session = se.getSession();
+        HttpSession session = event.getSession();
         
         JSONRPCManager.sessionCreated(session);
+        
+        // Go get the WikiEngine; note that m_engine is NOT set
+        // yet because this method is called by the container,
+        // and it has no knowledge of getInstance(WikiEngine).
+        ServletContext servletContext = session.getServletContext();
+        WikiEngine engine = WikiEngine.getInstance( servletContext, null );
+        
+        // Stash 'templates' attribute for scripting
+        session.setAttribute( "templates", engine.getTemplateManager().getTemplateResources() );
     }
 
     /**

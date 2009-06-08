@@ -22,7 +22,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="attachments" executeResolution="true" id="wikiActionBean" />
-<s:layout-render name="/templates/default/DefaultLayout.jsp">
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
 
   <s:layout-component name="content">
     <wiki:NoSuchPage>
@@ -31,7 +31,7 @@
       </fmt:message>
     </wiki:NoSuchPage>
     <wiki:PageExists>
-      <jsp:include page="/templates/default/AttachmentTab.jsp" />
+      <jsp:include page="${templates['AttachmentTab.jsp']}" />
     </wiki:PageExists>
   </s:layout-component>
   

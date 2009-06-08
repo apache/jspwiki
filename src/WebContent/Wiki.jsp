@@ -18,10 +18,11 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.ViewActionBean" event="view" executeResolution="true" id="wikiActionBean" />
-<s:layout-render name="/templates/default/DefaultLayout.jsp">
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
 
   <%-- If wiki page is current, allow search engines to spider it --%>
   <wiki:CheckVersion mode="latest">
@@ -37,7 +38,7 @@
       </fmt:message>
     </wiki:NoSuchPage>
     <wiki:PageExists>
-      <jsp:include page="/templates/default/PageContent.jsp" />
+      <jsp:include page="${templates['PageContent.jsp']}" />
     </wiki:PageExists>
   </s:layout-component>
   

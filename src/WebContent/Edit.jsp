@@ -22,7 +22,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="edit" executeResolution="true" id="wikiActionBean" />
-<s:layout-render name="/templates/default/DefaultLayout.jsp">
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
 
   <%-- Page title should say Edit: + pagename --%>
   <s:layout-component name="headTitle">
@@ -39,7 +39,7 @@
   </s:layout-component>
 
   <s:layout-component name="content">
-    <jsp:include page="/templates/default/EditContent.jsp" />
+    <jsp:include page="${templates['EditContent.jsp']}" />
   </s:layout-component>
   
 </s:layout-render>

@@ -22,8 +22,6 @@ package org.apache.wiki.ui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.servlet.ServletContext;
@@ -34,13 +32,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.preferences.Preferences.TimeFormat;
 
 
 /**
@@ -113,7 +108,7 @@ public class TemplateManager extends ModuleManager
      */
     public static final String RESOURCE_INLINECSS = "inlinecss";
 
-    /** The default directory for the properties. Value is {@value}. */
+    /** The default directory for template resources. Value is {@value}. */
     public static final String DIRECTORY = "templates";
 
     /** The name of the default template. Value is {@value}. */
@@ -124,12 +119,6 @@ public class TemplateManager extends ModuleManager
 
     /** I18N string to mark the default locale */
     public static final String I18NDEFAULT_LOCALE = "prefs.user.language.default";
-
-    /** I18N string to mark the server timezone */
-    public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
-
-    /** Prefix of the default timeformat properties. */
-    public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
 
     /**
      * The name under which the resource includes map is stored in the
@@ -144,46 +133,38 @@ public class TemplateManager extends ModuleManager
     /** Requests a HTTP header. Value is {@value}. */
     public static final String RESOURCE_HTTPHEADER = "httpheader";
 
-    private static final Map<Locale,String> LOCALES;
-
     private WikiEngine m_engine;
     
+    private static final List<WikiModuleInfo> EMPTY_MODULE_LIST = Collections.emptyList();
+
     /**
-     * List of time zones, used by {@link #listTimeZones(HttpServletRequest)}.
+     * Map that resolves resource requests relative to the templates directory
+     * with the actual resources.
+     * @see #getTemplateResources()
      */
-    private static final List<TimeZone> TIME_ZONES;
+    private Map<String,String> m_resources = Collections.emptyMap();
     
-    private static final List<WikiModuleInfo> EMPTY_MODULE_LIST = new ArrayList<WikiModuleInfo>();
-
-    static
+    /**
+     * Resolves requests for resources relative to the
+     * <code>templates/<var>template</var></code> path to the actual resources,
+     * where <var>template</var> is the configured template returned by
+     * {@link WikiEngine#getTemplateDir()}, for example <code>default</code>.
+     * Each key refers to a resource path that a JSP might request; each value
+     * is the actual path to the resolved resource, relative to the webapp
+     * context. For example, if the current template is <code>modern</code>,
+     * the key <code>FindContent.jsp</code> might return the value
+     * <code>/templates/modern/FindContent.jsp</code> if the resource exists
+     * in the template. If not, the value will be
+     * <code>/templates/default/FindContent.jsp</code>. It is also possible
+     * for certain keys to return <code>null</code>. The map itself is
+     * immutable.
+     * @return the unmodifiable map
+     */
+    public Map<String,String> getTemplateResources()
     {
-        // Init time zones
-        List<TimeZone> zones = new ArrayList<TimeZone>();
-        String[] ids = { "Pacific/Midway", "Pacific/Honolulu", "America/Anchorage", "PST", "MST", "CST", "EST", "America/Caracas",
-                        "Brazil/East", "Atlantic/South_Georgia", "Atlantic/Cape_Verde", "Etc/Greenwich", "CET", "ART", "EAT",
-                        "Asia/Dubai", "IST", "BST", "VST", "CTT", "JST", "Australia/Sydney", "SST", "NZ", "Pacific/Tongatapu",
-                        "Pacific/Kiritimati" };
-        for( String id : ids )
-        {
-            java.util.TimeZone zone = java.util.TimeZone.getTimeZone( id );
-            zones.add( zone );
-        }
-        TIME_ZONES = Collections.unmodifiableList( zones );
-        
-        // Init locales
-        Locale[] locales = Locale.getAvailableLocales();
-        Map<Locale,String> foundLocales = new HashMap<Locale,String>();
-        for ( Locale locale : locales )
-        {
-            URL url = TemplateManager.class.getClassLoader().getResource( "CoreResources_" + locale.toString() + ".properties" );
-            if ( url != null )
-            {
-                foundLocales.put( locale, locale.getDisplayName( locale ) );
-            }
-        }
-        LOCALES = Collections.unmodifiableMap( foundLocales );
+        return m_resources;
     }
-
+    
     /**
      * Creates a new TemplateManager. There is typically one manager per engine.
      * 
@@ -194,10 +175,7 @@ public class TemplateManager extends ModuleManager
     {
         super( engine );
         m_engine = engine;
-        //
-        // Uses the unlimited cache.
-        //
-        // m_propertyCache = new Cache( true, false );
+        initTemplateResources( engine.getTemplateDir() );
     }
 
     /**
@@ -227,27 +205,35 @@ public class TemplateManager extends ModuleManager
     }
 
     /**
-     * Tries to locate a given resource from the template directory. If the
-     * given resource is not found under the current name, returns the path to
-     * the corresponding one in the default template.
+     * Tries to locate a given resource from the template directory, relative to
+     * the root of the JSPWiki webapp context (for example, relative to
+     * <code>/JSPWiki/</code>). If the given resource is not found at the 
+     * supplied path, returns the path to the corresponding resource in the
+     * default template path. If the resource does not exist in the
+     * default template path either, <code>null</code> is returned.
      * 
-     * @param sContext The servlet context
-     * @param name The name of the resource
-     * @return The name of the resource which was found.
+     * 
+     * @param sContext the servlet context
+     * @param path the path to the resource; for example,
+     * <code>/templates/custom/FindContent.jsp</code>
+     * @return The name of the resource which was found; for example,
+     * <code>/templates/custom/FindContent.jsp</code> (if it exists in the
+     * <code>custom</code> template directory), or 
+     * <code>/templates/default/FindContent.jsp</code> (if not)
      */
-    private static String findResource( ServletContext sContext, String name )
+    private static String findResource( ServletContext sContext, String path )
     {
-        InputStream is = sContext.getResourceAsStream( name );
+        InputStream is = sContext.getResourceAsStream( path );
 
         if( is == null )
         {
-            String defname = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart( name ) );
-            is = sContext.getResourceAsStream( defname );
+            String defaultPath = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart( path ) );
+            is = sContext.getResourceAsStream( defaultPath );
 
             if( is != null )
-                name = defname;
+                path = defaultPath;
             else
-                name = null;
+                path = null;
         }
 
         if( is != null )
@@ -261,7 +247,7 @@ public class TemplateManager extends ModuleManager
             }
         }
 
-        return name;
+        return path;
     }
 
     /**
@@ -455,131 +441,6 @@ public class TemplateManager extends ModuleManager
         }
 
         return resultSet;
-    }
-
-    /**
-     * List all installed i18n language properties
-     * 
-     * @param request the HTTP request
-     * @return map of installed Languages (with help of Juan Pablo Santos
-     *         Rodriguez)
-     * @since 2.7.x
-     */
-    public Map<Locale, String> listLocales( HttpServletRequest request )
-    {
-        return LOCALES;
-    }
-
-    /**
-     * List all available timeformats, read from the jspwiki.properties
-     * 
-     * @param context the wiki context
-     * @return map of TimeFormats
-     * @since 2.7.x
-     */
-    public Map<String,String> listTimeFormats( WikiContext context )
-    {
-        Properties props = m_engine.getWikiProperties();
-        ArrayList<String> tfArr = new ArrayList<String>( 40 );
-        LinkedHashMap<String, String> resultMap = new LinkedHashMap<String, String>();
-
-        /* filter timeformat properties */
-        for( Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); )
-        {
-            String name = (String) e.nextElement();
-
-            if( name.startsWith( TIMEFORMATPROPERTIES ) )
-            {
-                tfArr.add( name );
-            }
-        }
-
-        /* fetch actual formats */
-        if( tfArr.size() == 0 ) /*
-                                 * no props found - make sure some default
-                                 * formats are avail
-                                 */
-        {
-            tfArr.add( "dd-MMM-yy" );
-            tfArr.add( "d-MMM-yyyy" );
-            tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
-        }
-        else
-        {
-            Collections.sort( tfArr );
-
-            for( int i = 0; i < tfArr.size(); i++ )
-            {
-                tfArr.set( i, props.getProperty( tfArr.get( i ) ) );
-            }
-        }
-
-        String prefTimeZone = Preferences.getPreference( context.getHttpRequest().getSession(), "TimeZone" );
-        // TimeZone tz = TimeZone.getDefault();
-        TimeZone tz = TimeZone.getTimeZone( prefTimeZone );
-        /*
-         * try { tz.setRawOffset(Integer.parseInt(prefTimeZone)); } catch
-         * (Exception e) { }
-         */
-
-        Date d = new Date(); // current date
-        try
-        {
-            // dummy format pattern
-            SimpleDateFormat fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
-            fmt.setTimeZone( tz );
-
-            for( int i = 0; i < tfArr.size(); i++ )
-            {
-                try
-                {
-                    String f = tfArr.get( i );
-                    fmt.applyPattern( f );
-
-                    resultMap.put( f, fmt.format( d ) );
-                }
-                catch( IllegalArgumentException e )
-                {
-                } // skip parameter
-            }
-        }
-        catch( IllegalArgumentException e )
-        {
-        } // skip parameter
-
-        return resultMap;
-    }
-
-    /**
-     * Returns a Map of locallized time zones, with the TimeZone IDs as keys and
-     * localized formatted names as the values.
-     * 
-     * @param request the HTTP request
-     * @return map of TimeZones
-     * @since 2.7.x
-     */
-    public Map<String, String> listTimeZones( HttpServletRequest request )
-    {
-        LinkedHashMap<String, String> resultMap = new LinkedHashMap<String, String>();
-        java.util.TimeZone serverZone = java.util.TimeZone.getDefault();
-        Date now = new Date();
-
-        // Build a map of TimeZones and their localized display names
-        for( TimeZone zone : TIME_ZONES )
-        {
-            int offset = zone.getRawOffset() / 3600000;
-            String zoneLabel = "[GMT" + (offset > 0 ? "+" : "") + offset + "] "
-                               + zone.getDisplayName( zone.inDaylightTime( now ), TimeZone.LONG, request.getLocale() );
-            if( serverZone.getRawOffset() == zone.getRawOffset() )
-            {
-                InternationalizationManager i18n = m_engine.getInternationalizationManager();
-                String serverLabel = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, request.getLocale(),
-                                               I18NSERVER_TIMEZONE );
-                zoneLabel = zoneLabel + " " + serverLabel;
-            }
-            resultMap.put( zone.getID(), zoneLabel );
-        }
-        return resultMap;
     }
 
     /**
@@ -800,5 +661,46 @@ public class TemplateManager extends ModuleManager
     public Collection<WikiModuleInfo> modules()
     {
         return EMPTY_MODULE_LIST;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void initTemplateResources( String template )
+    {
+        Map<String,String> resources = new HashMap<String,String>();
+        ServletContext servletContext = m_engine.getServletContext();
+        
+        // Iterate through all of the resources in the default map
+        String templatePrefix = "/" + DIRECTORY + "/" + template + "/";
+        Set<String> templateResources = (Set<String>)servletContext.getResourcePaths( templatePrefix );
+        Set<String> alreadyProcessed = new HashSet<String>();
+        
+        // Add all of the resources the template contains
+        if ( templateResources != null )
+        {
+            for ( String resource : templateResources )
+            {
+                String shortResource = resource.substring( templatePrefix.length() ); 
+                resources.put( shortResource, resource );
+                alreadyProcessed.add( shortResource );
+            }
+        }
+        
+        // Add resources the template does not contain, but default does
+        templatePrefix = "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/";
+        Set<String> defaultResources = (Set<String>)servletContext.getResourcePaths( templatePrefix );
+        if ( defaultResources != null )
+        {
+            for ( String resource : defaultResources )
+            {
+                String shortResource = resource.substring( templatePrefix.length() ); 
+                if ( !alreadyProcessed.contains( shortResource ) )
+                {
+                    resources.put( shortResource, resource );
+                }
+            }
+        }
+        
+        // We're done! Make the map immutable
+        m_resources = Collections.unmodifiableMap( resources );
     }
 }
