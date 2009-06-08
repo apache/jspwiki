@@ -119,7 +119,7 @@ public class PermissionTag
             || EDIT_PREFERENCES.equals( permission ) || EDIT_PROFILE.equals( permission )
             || LOGIN.equals( permission ) )
         {
-            gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
+            gotPermission = mgr.checkPermission( session, new WikiPermission( "*", permission ) );
         }
         else if ( VIEW_GROUP.equals( permission ) )
         {

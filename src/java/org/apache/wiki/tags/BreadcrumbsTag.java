@@ -122,8 +122,6 @@ public class BreadcrumbsTag extends WikiTagBase
         HttpSession session = pageContext.getSession();
         FixedQueue  trail = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
 
-        String page = m_wikiContext.getPage().getName();
-
         if( trail == null )
         {
             trail = new FixedQueue(m_maxQueueSize);
@@ -131,6 +129,7 @@ public class BreadcrumbsTag extends WikiTagBase
 
         if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) )
         {
+            String page = m_wikiContext.getPage().getName();
             if( m_wikiContext.getEngine().pageExists( page ) )
             {
                 if( trail.isEmpty() )
