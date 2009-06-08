@@ -32,8 +32,8 @@
 <%@ page import="org.apache.wiki.workflow.Workflow" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
-<stripes:useActionBean beanclass="org.apache.wiki.action.WorkflowActionBean" event="view" id="wikiActionBean"/>
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.WorkflowActionBean" event="view" id="wikiActionBean"/>
 
 <%! 
     Logger log = LoggerFactory.getLogger("JSPWiki"); 
@@ -59,10 +59,10 @@
           String outcomeKey = request.getParameter("outcome");
           Outcome outcome = Outcome.forName( outcomeKey );
           // Iterate through our actor decisions and see if we can find an ID match
-          Collection decisions = dq.getActorDecisions(wikiSession);
-          for (Iterator it = decisions.iterator(); it.hasNext();)
+          Collection<Decision> decisions = dq.getActorDecisions(wikiSession);
+          for (Iterator<Decision> it = decisions.iterator(); it.hasNext();)
           {
-            Decision d = (Decision)it.next();
+            Decision d = it.next();
             if (d.getId() == id)
             {
               // Cool, we found it. Now make the decision.
@@ -86,10 +86,10 @@
           // Extract parameters for decision ID & decision outcome
           int id = Integer.parseInt( request.getParameter( "id" ) );
           // Iterate through our owner decisions and see if we can find an ID match
-          Collection workflows = wiki.getWorkflowManager().getOwnerWorkflows(wikiSession);
-          for (Iterator it = workflows.iterator(); it.hasNext();)
+          Collection<Workflow> workflows = wiki.getWorkflowManager().getOwnerWorkflows(wikiSession);
+          for (Iterator<Workflow> it = workflows.iterator(); it.hasNext();)
           {
-            Workflow w = (Workflow)it.next();
+            Workflow w = it.next();
             if (w.getId() == id)
             {
               // Cool, we found it. Now kill the workflow.
