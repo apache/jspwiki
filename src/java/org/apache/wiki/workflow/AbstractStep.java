@@ -37,6 +37,7 @@ import org.apache.wiki.api.WikiException;
  */
 public abstract class AbstractStep implements Step
 {
+    private static final long serialVersionUID = 6095697006504453318L;
 
     /** Timestamp of when the step started. */
     private Date m_start;

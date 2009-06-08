@@ -70,7 +70,6 @@ import org.apache.wiki.url.StripesURLConstructor;
  */
 public final class WikiContextFactory
 {
-    @SuppressWarnings("unused")
     private static final String ATTR_CONTEXT = "wikiContext";
 
     /**

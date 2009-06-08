@@ -183,7 +183,6 @@ public class StripesURLConstructor extends DefaultURLConstructor
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public void initialize( WikiEngine engine, Properties properties )
     {
         super.initialize( engine, properties );

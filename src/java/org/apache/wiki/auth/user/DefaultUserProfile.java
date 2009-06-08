@@ -264,7 +264,6 @@ public final class DefaultUserProfile implements UserProfile
      * @param name the wiki name
      * @deprecated This method will be removed in a future release.
      */
-    @SuppressWarnings("deprecation")
     public void setWikiName( String name )
     {
     }

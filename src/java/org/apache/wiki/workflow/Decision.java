@@ -58,6 +58,8 @@ import org.apache.wiki.api.WikiException;
  */
 public abstract class Decision extends AbstractStep
 {
+    private static final long serialVersionUID = -6835601038263238062L;
+
     private Principal m_actor;
 
     private int m_id;

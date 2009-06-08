@@ -26,7 +26,6 @@ import java.util.*;
 
 import org.apache.wiki.*;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.content.PageNotFoundException;

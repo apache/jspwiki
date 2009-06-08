@@ -476,7 +476,6 @@ public final class UserManager
      * @param context the current wiki context
      * @param profile the supplied UserProfile
      */
-    @SuppressWarnings("unchecked")
     public final void validateProfile( WikiContext context, UserProfile profile )
     {
         boolean isNew = profile.isNew();
@@ -592,7 +591,6 @@ public final class UserManager
          * No-op.
          * @throws WikiSecurityException never...
          */
-        @SuppressWarnings("deprecation")
         public void commit() throws WikiSecurityException
         {
             // No operation

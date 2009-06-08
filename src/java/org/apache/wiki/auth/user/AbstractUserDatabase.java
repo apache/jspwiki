@@ -59,7 +59,6 @@ public abstract class AbstractUserDatabase implements UserDatabase
      * @deprecated there is no need to call this method because the save, rename and
      * delete methods contain their own commit logic
      */
-    @SuppressWarnings("deprecation")
     public synchronized void commit() throws WikiSecurityException
     { }
 

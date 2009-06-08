@@ -78,7 +78,7 @@ public class RPCServlet extends HttpServlet
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        Class handlerClass = Class.forName( handlerName );
+        Class<? extends WikiRPCHandler> handlerClass = Class.forName( handlerName ).asSubclass( WikiRPCHandler.class );
         m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
     }
 
@@ -190,16 +190,17 @@ public class RPCServlet extends HttpServlet
     private static class LocalHandler
         implements ContextXmlRpcHandler
     {
-        private Class m_clazz;
+        private Class<? extends WikiRPCHandler> m_clazz;
 
-        public LocalHandler( Class clazz )
+        public LocalHandler( Class<? extends WikiRPCHandler> clazz )
         {
             m_clazz = clazz;
         }
 
+        @SuppressWarnings("unchecked")
         public Object execute(String method, Vector params, XmlRpcContext context) throws Exception
         {
-            WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
+            WikiRPCHandler rpchandler = m_clazz.newInstance();
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
 
             Invoker invoker = new Invoker( rpchandler );

@@ -130,7 +130,7 @@ public class MetaWeblogHandler
      *  @throws XmlRpcException If something goes wrong
      *  @return An empty hashtable.
      */
-    public Hashtable getCategories( String blogid,
+    public Hashtable<String,? extends Object> getCategories( String blogid,
                                     String username,
                                     String password )
         throws XmlRpcException
@@ -142,7 +142,7 @@ public class MetaWeblogHandler
 
             checkPermissions( page, username, password, "view" );
 
-            Hashtable ht = new Hashtable();
+            Hashtable<String,Object> ht = new Hashtable<String,Object>();
 
             return ht;
         }
@@ -170,7 +170,7 @@ public class MetaWeblogHandler
      *  @param page The actual entry page
      *  @return A metaWeblog entry struct.
      */
-    private Hashtable<String,Object> makeEntry( WikiPage page ) throws XmlRpcException
+    private Hashtable<String,? extends Object> makeEntry( WikiPage page ) throws XmlRpcException
     {
         Hashtable<String, Object> ht = new Hashtable<String, Object>();
 
@@ -228,13 +228,13 @@ public class MetaWeblogHandler
     //        goes through all of the blog entries.
 
     @SuppressWarnings("unchecked")
-    public Hashtable getRecentPosts( String blogid,
+    public Hashtable<String, ? extends Object> getRecentPosts( String blogid,
                                      String username,
                                      String password,
                                      int numberOfPosts)
         throws XmlRpcException
     {
-        Hashtable<String, Hashtable<String, Object>> result = new Hashtable<String, Hashtable<String, Object>>();
+        Hashtable<String, Hashtable<String,? extends Object>> result = new Hashtable<String, Hashtable<String,? extends Object>>();
 
         log.info( "metaWeblog.getRecentPosts() called");
 
@@ -288,7 +288,7 @@ public class MetaWeblogHandler
     public String newPost( String blogid,
                            String username,
                            String password,
-                           Hashtable content,
+                           Hashtable<String,? extends Object> content,
                            boolean publish )
         throws XmlRpcException
     {
@@ -344,10 +344,10 @@ public class MetaWeblogHandler
      *  @throws XmlRpcException If something goes wrong
      *  
      */
-    public Hashtable newMediaObject( String blogid, 
+    public Hashtable<String,? extends Object> newMediaObject( String blogid, 
                                      String username,
                                      String password,
-                                     Hashtable content )
+                                     Hashtable<String,? extends Object> content )
         throws XmlRpcException
     {
         WikiEngine engine = m_context.getEngine();
@@ -399,7 +399,7 @@ public class MetaWeblogHandler
     boolean editPost( String postid,
                       String username,
                       String password,
-                      Hashtable content,
+                      Hashtable<String,? extends Object> content,
                       boolean publish )
         throws XmlRpcException
     {
@@ -443,7 +443,7 @@ public class MetaWeblogHandler
      *  Gets the text of any page.  The title of the page is parsed
      *  (if any is provided).
      */
-    Hashtable getPost( String postid,
+    Hashtable<String,? extends Object> getPost( String postid,
                        String username,
                        String password )
         throws XmlRpcException

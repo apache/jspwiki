@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -37,7 +36,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.tags.WikiTagBase;
 import org.slf4j.MDC;
 
 

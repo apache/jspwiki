@@ -51,6 +51,8 @@ import org.apache.wiki.log.LoggerFactory;
  */
 public abstract class IteratorTag<T> extends BodyTagSupport implements TryCatchFinally
 {
+    private static final long serialVersionUID = 7401852034172736286L;
+
     private static Logger log = LoggerFactory.getLogger( IteratorTag.class );
 
     private Collection<T> m_items = null;

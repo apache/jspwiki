@@ -21,13 +21,9 @@
 
 package org.apache.wiki.action;
 
-import javax.servlet.http.HttpSession;
-
 import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.tags.BreadcrumbsTag;
-import org.apache.wiki.tags.BreadcrumbsTag.FixedQueue;
 
 /**
  * Abstract {@link WikiActionBean} subclass used by all ActionBeans that use and

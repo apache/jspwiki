@@ -42,6 +42,8 @@ import org.apache.wiki.log.LoggerFactory;
 public abstract class WikiBodyTag extends BodyTagSupport
     implements TryCatchFinally
 {
+    private static final long serialVersionUID = 8229258658211707992L;
+
     protected WikiContext m_wikiContext;
     static    Logger    log = LoggerFactory.getLogger( WikiBodyTag.class );
 
