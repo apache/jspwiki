@@ -1,3 +1,10 @@
+2009-06-11 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-129
+        
+        * JSPWIKI-545: Fixed a number of RAT issues again. I guess we
+        are done now, please check.
+        
 2009-06-07 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * Search.jsp migrated to Stripes. SearchActionBean now provides
