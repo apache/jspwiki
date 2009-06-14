@@ -27,6 +27,11 @@
 
 var WikiPreferences =
 {
+	/*
+	Function: onPageLoad()
+		Register a onbeforeunload handler to show a popup when the user leaves
+		the Preferences page without saving.
+	*/
 	onPageLoad: function(){
 
 		window.onbeforeunload = (function(){
@@ -36,8 +41,28 @@ var WikiPreferences =
 			}) ) return "prefs.areyousure".localize();
 
 		}).bind(this);
+
+		/*
+		Make an immedieate change to the position of the Favorites block 
+		(aka left-menu) according to the setting prefOrientation dropdown.
+		The setting is persisted only when submitting the form. (savePrefs)
+		*/
+		$('prefOrientation').addEvent('click',function(){
+			$('wikibody')
+				.removeClass('fav-left|fav-right')
+				.addClass(this.getValue());
+		});
+
  	},
- 	
+
+	/*
+	Function: savePrefs()
+		Save all user preferences to the Wiki UserPrefs cookie.
+		This function is called as form onsubmit handler of the UserPref page.
+
+		FIXME: could this be done server side -- no since some prefs are only 
+		known client-side, only persisted through cookies.
+	*/
 	savePrefs: function(){
 		var prefs = {
 			'prefSkin':'SkinName',
@@ -60,7 +85,6 @@ window.addEvent('load', WikiPreferences.onPageLoad.bind(WikiPreferences) );
 var WikiGroup =
 {
 	MembersID   : "membersfield",
-	//GroupTltID  : "grouptemplate",
 	GroupID     : "groupfield",
 	NewGroupID  : "newgroup",
 	GroupInfoID : "groupinfo",

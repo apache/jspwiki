@@ -1,3 +1,20 @@
+2009-06-14 Dirk Frederickx <brushed AT apache DOT org>
+
+        * 3.0.0-svn-130
+        
+        * Checked in new versions of jspwiki-common.js, jpswiki-edit.js 
+        and jspwiki.css. 
+        Extensive documentation has been added to the javascript and css
+        files, although not complete yet.
+        The jspwiki-edit.js has been updated to replace posteditor.js. Expect
+        still some loose ends though.  The plain editor has a new simplified
+        toolbar, but this is still work in progress.
+        
+        * Updated the js ajax routines to better fit with new the stripes approach.
+        FindContents.jsp is now dynamically updating search results.
+        The jsonrpc javascript is still unchanged.
+
+
 2009-06-11 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-129

@@ -23,9 +23,8 @@
 <wiki:CheckRequestContext context='view|diff|edit|upload|info'>
   <div id='actionsBottom' class="pageactions"> 
     <wiki:PageExists>  
-  
-      <a href="#top" class="action quick2top" title="<fmt:message key='actions.gototop' />">&laquo;</a>
-  
+    <ul>
+      <li>  
       <wiki:CheckVersion mode="latest">
          <fmt:message key="info.lastmodified">
             <fmt:param><wiki:PageVersion/></fmt:param>
@@ -40,9 +39,12 @@
            <fmt:param><wiki:Author/></fmt:param>
         </fmt:message>
       </wiki:CheckVersion>
-  
-     <wiki:RSSImageLink mode="wiki" />
-  
+      </li>
+      <li><wiki:RSSImageLink mode="wiki" /></li>
+      <li><a href="#top" 
+            class="action quick2top" 
+            title="<fmt:message key='actions.gototop' />">&laquo;</a></li>
+    </ul> 
     </wiki:PageExists>
   
     <wiki:NoSuchPage><fmt:message key="actions.notcreated" /></wiki:NoSuchPage> 

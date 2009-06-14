@@ -41,16 +41,18 @@
     <s:checkbox name="details" id="details" />
     <fmt:message key="find.details" />
 
-    <select name="scope" id="scope"> 
-      <option value="" <c:if test="${empty param.scope}">selected="selected"</c:if> ><fmt:message key='find.scope.all' /></option>
-      <option value="author:" <c:if test='${param.scope eq "author:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.authors' /></option>
-      <option value="name:" <c:if test='${param.scope eq "name:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.pagename' /></option>
-      <option value="contents:" <c:if test='${param.scope eq "contents:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.content' /></option>
-      <option value="attachment:" <c:if test='${param.scope eq "attachment:"}'>selected="selected"</c:if> ><fmt:message key='find.scope.attach' /></option>       
-    </select>
+    <s:select name="${param.scope}" id="scope"> 
+      <s:option value="" ><fmt:message key='find.scope.all' /></s:option>
+      <s:option value="author:" ><fmt:message key='find.scope.authors' /></s:option>
+      <s:option value="name:" ><fmt:message key='find.scope.pagename' /></s:option>
+      <s:option value="contents:" ><fmt:message key='find.scope.content' /></s:option>
+      <s:option value="attachment:" ><fmt:message key='find.scope.attach' /></s:option>       
+    </s:select>
 
-    <s:submit name="search" id="ok" value="<fmt:message key='find.submit.find' />" />
-    <s:submit name="go" id="go" value="<fmt:message key='find.submit.go' />" />
+    <c:set var="submitfind" scope="page"><fmt:message key="find.submit.find"/></c:set>
+    <s:submit name="search" id="ok" value="${submitfind}" />    
+    <c:set var="submitgo" scope="page"><fmt:message key="find.submit.go"/></c:set>
+    <s:submit name="go" id="go" value="${submitgo}" />
     <s:hidden name="start" id="start" value="0" />
     <s:hidden name="maxItems" id="maxitems" value="20" />
 
@@ -86,27 +88,27 @@
             <td><span class="gBar"><%= searchref.getScore() %></span></td>
           </tr>
     
-          <c:if test="${wikiActionBean.details == 'true'}">
-  <%
+          <c:if test="${wikiActionBean.details == 'true'}"><%
+
             String[] contexts = searchref.getContexts();
             if( (contexts != null) && (contexts.length > 0) ) 
             {
-  %>  
-          <tr class="odd">
+
+        %><tr class="odd">
             <td colspan="2">
-              <div class="fragment">
-  <%
+              <div class="fragment"><%
+              
               for (int i = 0; i < contexts.length; i++) 
               {
-  %>
-                <%= (i > 0 ) ? "<span class='fragment_ellipsis'> ... </span>" : ""  %>
-                <%= contexts[i]  %>
-  <%
+              
+              %><%= (i > 0 ) ? "<span class='fragment_ellipsis'> ... </span>" : ""  
+              %><%= contexts[i]  %><%
+              
               }
-  %>
-               </div>
-             </td>
-           </tr>
+
+           %></div>
+           </td>
+         </tr>
   <% 
             }
   %>

@@ -25,8 +25,6 @@
 
 <div id="favorites">
 
-  <wiki:Include page="UserBox.jsp" />
-  
   <div id="hiddenmorepopup">
   <ul id="morepopup">
      <wiki:CheckRequestContext context='view|info|diff|upload'>

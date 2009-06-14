@@ -42,18 +42,18 @@
   </div>
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
-      <a href="#" id='quickView' class='action'
+      <a href="#" id='quickView' class='btn'
       onclick="SearchBox.navigate( '<wiki:Link format="url" page="Main"/>','<fmt:message key="sbox.view.title"/>' );"
-        title="<fmt:message key="sbox.view.title"/>"><fmt:message key="sbox.view"/></a>
-      <a href="#" id='quickEdit' class='action'
+        title="<fmt:message key="sbox.view.title"/>"><span><span><fmt:message key="sbox.view"/></span></span></a>
+      <a href="#" id='quickEdit' class='btn'
       onclick="SearchBox.navigate( '<wiki:Link format="url" context="edit" page="Main"/>','<fmt:message key="sbox.edit.title"/>' );"
-        title="<fmt:message key="sbox.edit.title"/>"><fmt:message key="sbox.edit"/></a>
-      <a href="#" id='quickClone' class='action'	
+        title="<fmt:message key="sbox.edit.title"/>"><span><span><fmt:message key="sbox.edit"/></span></span></a>
+      <a href="#" id='quickClone' class='btn'	
       onclick="return SearchBox.navigate( '<wiki:Link format="url" page="Main" context="edit" />', '<fmt:message key="sbox.clone.title"/>', true );"
-        title="<fmt:message key="sbox.clone.title"/>"><fmt:message key="sbox.clone"/></a>
-      <a href="#" id="advancedSearch" class='action'
+        title="<fmt:message key="sbox.clone.title"/>"><span><span><fmt:message key="sbox.clone"/></span></span></a>
+      <a href="#" id="advancedSearch" class='btn'
       onclick="SearchBox.navigate( '<wiki:BaseURL />Search.jsp?query=Main','<wiki:Variable var="pagename"/>' )"
-        title="<fmt:message key="sbox.find.title"/> [ f ]"><fmt:message key="sbox.find"/></a>
+        title="<fmt:message key="sbox.find.title"/> [ f ]"><span><span><fmt:message key="sbox.find"/></span></span></a>
     </div>
     <div id="searchResult">
 	  <fmt:message key='sbox.search.result' />

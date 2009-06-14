@@ -35,7 +35,10 @@
   <!-- Add Javascript for editors -->
   <s:layout-component name="script">
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js' />"></script>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/dialog.js' />"></script>
+    <%--
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/posteditor.js' />"></script>
+    --%>
   </s:layout-component>
 
   <s:layout-component name="content">

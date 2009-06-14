@@ -1,4 +1,4 @@
-/* 
+/*! 
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -18,128 +18,186 @@
     specific language governing permissions and limitations
     under the License.  
 */
-/* JSPWiki stylesheet jspwiki.css
- * April 07, based on BrushedTemplate
- * Styles can be overwritten by print and skin stylesheets
- * /
+/* 
+Stylesheet: JSPWiki
+	This is the default JSPWiki stylesheet.
+	It provides the default plain look-n-feel for JSPWiki.
 
-/* COLOR scheme   
-	normal font color
-	#f9f9f9 code, comment, weblogentries, (light grey)
-	#d7d7d7 table header(darker grey)
-	#ddd table borders,
-	#d9e8ff edit background
-	#eee hover color
-	#f93 highlight color, searchbars, ...  (amber)
-	#e0e0ff information (light blue)
-	#ffff80 warning (light yellow)
-	#ffe0e0 error (light pink)
- */
+	Skin stylesheets can add or override skin specific styles.
 
-/* +++ 010 LAYOUT of main ID blocks +++ */
+	Checkout jspwiki-print.css for print specific styles.
+
+License:
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Browser Support:
+	A-grade browsers are supported: FF2+, FF3+, Safari3.2+, IE7, IE8
+	(ref. http://developer.yahoo.com/yui/articles/gbs/)
+	
+	Browser specific hacks are avoided as much as possible.
+	However, specific treatment for IEx browsers is sometimes needed.
+	In order to work-around some of the browser limitations, 
+	the JSPWiki stylesheets use following inline css-hacks.
+
+	> /. IE6 and below ./
+	> * html <css-selector> { <css-attribute>:<css-value> }
+	> <css-selector> { _<css-attribute>:<css-value> }
+	>
+	> /. IE7 and below: ./
+	> *:first-child+html <css-selector> { <css-attribute>:<css-value> }
+	> <css-selector> { *<css-attribute>:<css-value> }
+
+Color scheme:
+	All color-references in this stylesheet have #COLOR-MARKERS# 
+	to make it more easy for a global lookup or replacement.  
+	From css3 on, variables could be used instead.		
+
+	- code, comment, weblogentries, (light grey) : #f9f9f9/.#COMMENT#./ 
+	- font color for input, textarea form element : #007/.#INPUT#./ 
+	- table header(darker grey) : #d7d7d7/.#TH#./
+	- borders, for tables, tabs, ... : #ddd/.#BORDER#./
+	- hover color :  #eee/.#HOVER#./
+	- cursor (higlight in item lists) :  #eee/.#CURSOR#./
+	- resize bar :  #f9f9f9/.#RIBBON#./
+	- soft fonts (toolbar): #999/.#SOFTFONT#./;
+	- mark search results, searchbars (amber) : #f93/.#MARK#./ 
+	- information (light blue) : #e0e0ff/.#INFO#./
+	- warning (light yellow) : #ffff80/.#WARNING#./
+	- error (light pink) : #ffe0e0/.#ERROR#./
+	- diff inserted lines: #9f9/.#DIFFADD#./ 
+	- diff deleted lines: #f93/.#DIFFDEL#./ 
+
+History:
+	* April 07, based on BrushedTemplate, v2.6/v2.8	
+	* Q1 2009, refactoring for v3.x, 
+	  including documentation (Natural Docs),
+	  simplified css by enhancing modularity and reuse.
+	  (inspired on the work of Object Oriented CSS, by Nicole Sullivan
+	  http://wiki.github.com/stubbornella/oocss)
+
+*/
+
+
+/*
+Section: Grid
+	"Grids are used to break any space into fractions, they can be nested and stacked. 
+	A unit can contain another line or it can contain other objects directly. 
+	The sum of the fractional sizes of all children of one line should be equal to one. 
+	Grids control width, content controls height." 
+
+Credit:
+	http://wiki.github.com/stubbornella/oocss.
+*/
+/* **************** GRIDS ***************** */
+.line, .lastUnit {overflow: hidden;_overflow:visible;_zoom:1; }
+.unit{float:left;_zoom:1;}
+.unitExt{float:right;}
+.size1of1{float:none;}
+.size1of2{width:50%;}
+.size1of3{width:33.33333%;}
+.size2of3{width:66.66666%;}
+.size1of4{width:25%;}
+.size3of4{width:75%;}
+.size1of5{width:20%;}
+.size2of5{width:40%;}
+.size3of5{width:60%;}
+.size4of5{width:80%;}
+.lastUnit{float:none;_position:relative; _left:-3px; _margin-right: -3px;width:auto;}
+
+/* extending grids to allow a unit that takes the width of its content */
+.media{width:auto;}
+
+
+/*
+Section: Main 
+	This section determines the main page layout of the JSPWiki design.
+	
+	Using these blocks, you can build pages which have a header, footer, 
+	main page content and left or right positioned favorites columns.
+	The default PlainVanilla layout is fully liquid, taking up all the screen space.
+	Alternative PlanVanilla skins are available with fixed width.
+	
+Note:
+	Fluid layouts (default) keep the width of the #wikibody set on auto.
+	Set the width of the #wikibody to a fixed value for fixed layouts.
+	
+	You can change the amount of space given to the main page by changing the
+	width of the #main. The size of the #sidebar will adjust automatically
+	to fill the size of the #content block.
+	
+	The #main block appears first in the flow of the document, to make sure
+	this info is rendered first.
+	
+	The orientation of the layout is changed by toggling the ''.fav-right'' 
+	class on the #wikibody element.
+	
+DOM structure:
+(start code)
+<body class="view|edit|comment hidefav">
+<div id="wikibody" class="<empty>|fav-right">
+  <div id="header"> ................ </div>
+  <div id="content">
+    <div id="main">
+      <div id="actionsTop"> ........ </div>
+      ... page content goes here ...  
+      <div id="actionsBottom"> ..... </div>
+    </div>
+    <div id="favorites"> ........... </div>
+  </div>
+  <div id="footer"> ................ </div>
+</div>
+(end)
+
+*/
+
+/*DEBUG./
+#header,#content,#footer { border:1px solid red; }
+#page,#favorites, .applicationlogo, .breadcrumbs, .userbox, .searchbox, .titlebox { border:1px solid lime; }
+#previewcontent, #info, #pagecontent, #attach, #findcontent { border:1px solid pink; }
+/*DEBUG*/
+
 #wikibody {
-	margin:1em 2em; 
-	padding:0.25em;
+	margin:1em 2em; /* fluid width - fit to the size of the window */
+/*	margin:0 auto; width:950px; _text-align:left;  /.fixed width./ */
 }
-#header, #footer {
-	padding:0 0 0 20%;
-}
-#header .applicationlogo {
-	position:absolute;
-	left:2em; 
-	right:auto;
-	width:18%;
-}
-#footer .applicationlogo,
-#footer .companylogo,
-#footer .wikiversion,
-#footer .rssfeed,
-#header .companylogo { 
-	display:none; 
-}
-#header .userbox {
-	float:right;
-}
-#header .pagename {
-	float:left;
-}
-#header .searchbox {
-	clear:right;
-	float:right;
-}
-#header .breadcrumbs {
-	clear:both;
-}
-#favorites {
-	float:left;
-	overflow:hidden; /*avoid overflow for wide content of leftmenu or leftmenufooter */
-	margin-top:1.75em;
-	width:18%;
-	padding:0.5em;
-}
-#favorites .userbox {
-	border:1px solid #ddd;
-	margin-bottom:0.5em;
-	padding:0.25em 0.5em;
-	display:none; 
-}
-#favorites .login, #favorites .logoff {
-	clear:left;
-}
-#footer .copyright { 
+#header, .header, #content, #page, #footer, .footer {
+	overflow:hidden;
+	_overflow:visible; 
+	_zoom:1;
 }
 #content { 
 	margin:1em 0;
 }
-/*#wikibody.fav-left*/ #page, #wikibody.fav-right #favorites {
+#page {
+	width:80%;
 	float:right;
+	_margin-left:-3px;/* ie hack - three pixel text jog */
 }
-#wikibody.fav-right #page, /*#wikibody.fav-left*/ #favorites {
+.fav-right #page {
 	float:left;
+	xxmargin:0 10px 0 0; /*replace by split-handle ? */
+	_margin-right:-3px;/* ie hack - three pixel text jog */
 }
-/*ie6 hack*/
-* html /*#wikibody.fav-left*/ #page, * html #wikibody.fav-right #favorites {
-	margin-left:-3px; /*Three Pixel Text Jog*/
+.hidefav #page, .hidefav .fav-right #page {
+	width:auto;
+	float:none;
 }
-* html #wikibody.fav-right #page, * html /*#wikibody.fav-left*/ #favorites {
-	margin-right:-3px;/*Three Pixel Text Jog*/
+.hidefav #favorites {
+	width:20%;
 }
-#wikibody.fav-right #header, #wikibody.fav-right #footer {
-	padding:0 20% 0 0;
-}
-#wikibody.fav-right #header .applicationlogo {
-	left:auto;
+.fav-right #header .applicationlogo {
 	right:2em; 
 }
-#page { 
-	width:80%;
-}
-#wikibody.fav-slide #page {
-	width:100%;
-}
 
-#actionsTop	{ 
-	float:right;
-	z-index:10;
-}
-/* ie hack */
-* html #actionsTop	{ 
-	margin-top:1px;
-}
-#actionsBottom {
-	text-align:right;
-	margin-bottom:0.5em;
-}
-* html #header, * html .userbox {
-	height:1% /*hasLayout:true; --ie peekaboo/layout hack */
-}
 
-b.roundedCorners {
-}
-
-/* +++ 200 Generic stuff here +++ */
-/* refined global reset */
-/* inspired by http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ and yui reset */
+/*
+Global: Reset
+	Contains the global css reset,
+	inspired by http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ 
+	and yui reset.
+	
+	Also contains the global setting of the font/size. (typography of the site)
+*/
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
@@ -155,45 +213,69 @@ fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
 	outline:0;
 }
 body { 
-	color:black; 
-	background:white; 
-	margin: 0;
+	color:#000; 
+	background:#fff; 
+	margin:0;
 	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
+	/*font:13px/1.231 arial,helvetica,clean,sans-serif;*/
 	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
+	*font-size:small;
+	*font:x-small;
 }
 table {	
 	border-collapse:collapse; 
 	border-spacing:0;
 	empty-cells:show; 
 }
-
 h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr, .quote {
 	margin:0.5em 0; 
+	page-break-after:avoid;
 }
+tr, ul, ol, dl {
+	page-break-inside:avoid;
+}
+
 th, td { 
 	padding:0.25em 0.5em; 
 }
-.hr { 
-	display:block;
-	border-bottom:1px solid #ddd; 
+b, i {
+	color:inherit;
 }
-hr, .hr, .clearbox {
+/*
+Horizontal rulers:
+	Consistent styling of horizontal rulers.
+	More info at http://www.sovavsiti.cz/css/hr.html.
+	
+	The {{.hr}} class can be used to insert HRs in context were
+	the standard HR tag (---- jspwiki markup) has semantic meaning.
+	EG: in the %%columns dynamic style, the ---- ruler is used to
+	separate differnt columns. You can still show horizontal rules
+	by using the {{.hr}} class.
+*/
+hr, .hr { 
+	display:block;
+	border:0;
+	background-color:#ddd/*#BORDER#*/;
+	color:#ddd/*#BORDER#*/; /*needed for ie*/
+	height:2px;
+}
+.hr hr {
+	display:none;
+}
+br, hr, .hr, .clearbox {
 	clear:both;
 }
 
-/* +++ 210 Page titles, headings, and paragraphs +++ */
-.titlebox {
-	color:#555;
-	padding:0.25em 1em;
-}
-.pagename {
-	font-size:175%;
-	line-height:1.4;
-	font-weight:bold;
-	margin-bottom:0.5em;
-}
+/*
+Headings:
+	The headings h2, h3 and h4 get a {{clear:left}} so they can appear 
+	side by side with .commentbox-es.
+	
+	The {{.editsection}} and {{hashlink}} define the styling of the
+	[[Edit] and # hash-hover link on each heading.	
+*/
 h2, h3, h4 {
-	clear:left;
+	clear:left; 
 	margin:1em 0 0.5em 0;
 	padding:0.25em 0;
 	line-height:1.2;
@@ -209,26 +291,24 @@ a.editsection, a.hashlink {
 	line-height:1.2;
 	padding:0.25em;
 	text-decoration:none;
-	color:grey; 
+	color:#ccc; 
 }
 a.editsection:hover, a.hashlink:hover {
-	background-color:#eee;
+	background-color:#ddd/*#HOVER#*/;
 	color:blue !important;
 }
-h2:hover a.hashlink, h3:hover a.hashlink, h4:hover a.hashlink {
-	color: #ccc;
+h2:hover a, h3:hover a, h4:hover a {
+	color:grey;
 }
-a.hashlink {
-	color:white; /* tranparent nok in ie -- use background color */
+a.editsection, a.hashlink {
+	*color:white; /* tranparent nok in ie -- use background color */
 }
 
-b, i {
-	color:inherit;
-}
-br {
-	clear:both;
-}
-/* +++ 220 Lists and bullets +++ */
+
+/* 
+Lists and bullets:
+
+*/
 ul ul, ol ol {
 	margin:0;
 }
@@ -242,11 +322,17 @@ dl dd {
 	margin-left:2em;
 }
 
-/* +++ 225 Forms, Labels, form-values and form-help +++ */
+
+/*
+Forms:
+	Including Labels, form-values and form-help.
+	
+	Also the general formatting of fieldset, legends is defined here.
+*/
 .wikiform {
 }
 .wikiform tr {
-	vertical-align:top;
+	vertical-align:middle;
 }
 .wikiform td {
 }
@@ -260,9 +346,24 @@ dl dd {
 /*
 textarea, input[type=text] {
 	padding: 1px 0 1px 3px;
-	border: 1px solid #ddd;
+	border: 1px solid #ddd/.#BORDER#//;
 }
 */
+textarea, input[type=text] {
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	padding:1px 3px;
+	border:1px inset #ddd/*#BORDER#*/;
+	/*color:#007/.#INPUT#./;*/
+}
+
+input, textarea, select {
+	font-family:inherit;
+	font-size:inherit;
+	*font-size:100%;
+	font-weight:inherit;
+}
+
 legend, label {
 	font-weight:bold;
 	white-space:nowrap;
@@ -271,80 +372,95 @@ legend, label {
 fieldset {
 	margin:0.5em 0;
 	padding:0.5em;
-	border:1px solid #ddd;
+	border:1px solid #ddd/*#BORDER#*/;
 }
-.wikiform input[type='submit'], .wikiform input[type='button'],.wikiform input[type='file'], .wikiform button {
+.wikiform input[type='submit'],
+.wikiform input[type='button'],
+.wikiform input[type='file'],
+.wikiform button {
 	cursor:pointer;
 }
-.wikiform input, .wikiform option {
+.wikiform option {
 	padding:0 0.25em;
 }
 
-/* +++ 240 Pre-formatted text blocks and code +++ */
-code, tt, pre {
+/*
+PRE and xflow: 
+	Pre-formatted text and code blocks.
+
+	pre - preformatted block
+	.pre - preformatted inline block
+	tt - teletype, monospace inline block
+
+	The ''.xflow'' class ensures a browser compatible overflow of wide content.
+	By default the page height depends on the content, the width should not
+	go beyond the width of the display. So, if needed, add a horizontal scroll bar.
+	Does have some IE specific hacks.
+
+	Applicable to preformatted blocks (pre, tt, code), and the main page content
+	elements such as #pagecontent, #findcontent, #info, #attach, ... 
+	
+*/
+code, tt, .pre, pre {
 	font:110% Monaco, "Courier New", Courier, monospace;
-	overflow:auto;
+	line-height:1.1;
+	border:1px solid #ddd/*#BORDER#*/;
 }
 pre {
 	clear:both;
-	white-space:pre;
-	margin:1em 2.5%;
+	margin:1em 1.5em;
 	padding:0.5em;
-	background:#f9f9f9;
-	border:1px solid #ddd;
+	background:#f9f9f9/*#COMMENT#*/;
+	/*
+	border:1px dashed #0000aa; 
+	color:#000077; 
+	background:#ffffee;
+	margin:1em 0;
+	*/
 }
-/*ie6 hack*/
-* html pre {
-	overflow:visible; 
-	overflow-x:auto; /*proprieatary ie*/
-	width:95%;  /* hasLayout=true */
-	margin:1em auto;  /* otherwise funny effect on more menu ugh */
-	padding-bottom:1.5em; /*take scrollbar into account on ie*/
+.pre, pre {
+	white-space:pre;
+	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
 }
-/*ie7 hack */
-*:first-child+html pre {
-	overflow:visible; 
-	overflow-x:auto; /*proprieatary ie*/
-	margin:1em auto;  /* otherwise funny effect on more menu ugh */
-	padding-bottom:1.5em; /*take scrollbar into account on ie*/
+
+#previewcontent, #info, #pagecontent, #attach, #findcontent,.fragment,
+.pre, pre, 
+.xflow {
+	overflow:auto;
+	_width:100%;
+    /*ie hacks CHECKME*/
+	_xxoverflow:visible; 
+	_overflow-x:auto;
+	_xxzoom:1; /*width:95%;  hasLayout=true */
+	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
 }
+
                            
-/* +++ 250 Hyperlinks +++ */
+/*
+Links:
+	The reusable {{.hover}} class provides generic support for 
+	mouse-hover styling on any DOM element. (IE only supports :hover on <a>)
+	
+>	a:link { ... }
+>	a:hover { ... }
+>	a:focus { ... }
+>	a:visited { ... }
+>	a:active { ... }
+
+>	a.wikipage
+>	a.external
+>	a.interwiki
+*/
 a {
 	color:blue;
 }
-a:link {
-}
-a:visited {
-}
-a:active {
-}
 .hover {
-	background-color:#eee;
-}
-/* ie6 hack */
-* html .hover { 
-	background-color:#eee;
-}
-/* ie7 hack */
-*:first-child+html .hover { 
-	background-color:#eee;
-}
-
-a:hover {
-}
-a:focus {
-}
-a.wikipage {
+	background-color:#ddd/*#HOVER#*/;
 }
 a.createpage {
 	color:red;
-	text-decoration:none;
-	border-bottom:1px dashed red;
-}
-a.external {
-}
-a.interwiki {
+	xtext-decoration:none;
+	xborder-bottom:1px dashed red;
 }
 a.feed {
 	background-image:url(../../images/jspwiki-strip.gif);
@@ -359,7 +475,7 @@ a.feed {
 	display:block;
 	float:right;
 }
-/* switch to gif for better ie rendering, but selectors nok in ie6 (fine in ie7) */
+/* switch to gif for better ie rendering, but selectors nok in ie6 (fine in ie7?) */
 /*a.infolink {
 	background-image:url("../../images/jspwiki-strip.gif");
 	background-repeat:no-repeat;
@@ -373,41 +489,38 @@ a.infolink img {
 	display:none;
 }*/
 
-/* +++ 260 Image styles +++ */
-img {
-	border:none;
-	/* max-width:99%; FIXME ff ok to fit in parent */
-}
-img.inline {
-}
-img.outlink {
-} 
-img.attlink {
-} 
-.applicationlogo a {
-	display:block;
-	height:64px;
-	width:64px;
-	overflow:hidden;
-	margin-left:auto;
-	margin-right:auto;
-	text-indent:-1000px;
-	background:url(../../images/jspwiki_logo.png) -64px 0 no-repeat;
-}
-.applicationlogo a:hover {
-	background-position:0 0;
-}
+/* 
+Footnotes:
 
-
-/* +++ 270 Footnotes and small text +++ */
-a.footnoteref {
+*/
+.footnoteref {
 	vertical-align:super;
 	font-size:85%;
 }
-a.footnote {
+.footnote {
 	vertical-align:super;
 	color:#04A;
 }
+
+/*
+Style: Images
+
+>	img.inline
+>	img.outlink
+>	img.attlink
+*/
+img {
+	border:0;
+	/* max-width:99%; FIXME ff ok to fit in parent */
+}
+
+/*
+Section: ReusableStyles
+	Various reusable css classes for small text, sub- and super-text, 
+	strike-through formatting, centered text, quotes, ....
+	
+	The standard error, warning and information boxes are defined here as well.
+*/
 .small {
 	font-size:85%;
 }
@@ -426,14 +539,14 @@ a.footnote {
 	text-align:center;
 }
 .center table {
-	margin-left:auto;
-	margin-right:auto;
+	margin:0.5em auto;
 	text-align:left;
 }
 .quote {
-	border-left:4px solid #bbb;
-	padding-left:3em;
-	margin:0 0.5em;
+	font:12px/1.5 Georgia, 'Times New Roman', serif;
+	border-left:0.5em solid #bbb/*#BORDER#*/;
+	padding-left:1em;
+	display:block;
 }
 .ltr {
 	direction:ltr;
@@ -441,96 +554,65 @@ a.footnote {
 .rtl {
 	direction:rtl;
 }
-.invisible {
+.hide, .invisible/* used by the TASKS plugin */ {
 	display:none;
-}  /* also used by the TASKS plugin */
+}
 
-
-/* +++ 280 Convenience styles and info/warning/error dialogs +++ */
 .additinfo {
-	background-color:#e0e0ff;
+	background-color:#e0e0ff/*#INFO#*/;
 }
 .diffnote, .information, .warning, .error {
 	display:block;
 	clear:both;
-	margin:1em .5em;
-	padding:1em 1em 1em 3em;
-	background-position:.8em .9em;
-	background-repeat:no-repeat;
+	margin:1em 0;
+	padding:1em 32px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
 }
 td .information, td .warning, td .error {
-	margin:0;
+	margin:0; /* make sure to fill the table cell with the background color*/
 }
 .diffnote, .information {
-	background-image:url(images/information.gif);
-	background-color:#e0e0ff;
+	background:#e0e0ff/*#INFO#*/ url(images/information.gif) 8px 1em no-repeat;
 }
 .warning {
-	background-image:url(images/exclamation.gif);
-	background-color:#ffff80;
+	background:#ffff80/*#WARNING*/ url(images/exclamation.gif) 8px 1em no-repeat;
 }
 .error {
-	background-image:url(images/error.gif);
-	background-color:#ffe0e0;
-	color:#c00000;
-}
-.error * li {
-	margin-left:0;
-	padding-left:0;
+	background:#ffe0e0/*#ERROR#*/ url(images/error.gif) 8px 1em no-repeat;
+	color:#c00;
 }
 
-input.error, label.error {
-	background-image:none;
-	background-color:white;
-    color:black;
-    margin:0;
-    padding:0;
-}
-
-/* +++ 290 Comment boxes (used on some pages) +++ */
-.commentbox {
-	display:block;
-	float:right;
-	clear:right;
-	width:35%;
-	overflow:hidden;
-	border:1px solid #ddd;
-	background:#f9f9f9;
-	padding:0 0.5em;
-	margin:0 0 1em 0.5em;
-	font-size:90%;
-}
-.commentbox li {
-	margin-left:0;
-	padding-left:0;
-}
-
-/* +++ 300 Wiki tables and zebra tables +++ */
-.wikitable {
-	margin:0.5em 0.25em;
+/* 
+Style: Tables
+*/
+table {
+	margin:0.5em 0;
 }
 .wikitable tr {
 	vertical-align:top;
 }
-.wikitable * th {
-	border:1px solid #ddd;
-	background-color:#eee;
+.wikitable th {
+	border:1px solid #ddd/*#BORDER#*/;
+	background:#eee/*#TH#*/;
 	vertical-align:top;
 }
-.wikitable * td {
-	border:1px solid #ddd;
+.wikitable td {
+	border:1px solid #ddd/*#BORDER#*/;
 	vertical-align:top;
 	text-align:left;
 	/*word-wrap:break-word;*/
 }
 .zebra-table tr.odd td {
-	background-color:#eee;
+	background:#eee/*#ODDROW#*/;
 }
 .wikitable * td.split {
 	border-top:1px solid #d9d9d9;
 } /* CHECK */
 
-/* +++ 350 Attachments +++ */
+/*
+Style: Attachments
+*/
 #attach {
 }
 /* upload submit button */
@@ -541,7 +623,7 @@ input.error, label.error {
 	float:left;
 	margin-left:1em;
 	width:30em;
-	border:2px solid #ddd;
+	border:2px solid #ddd/*#BORDER#*/;
 	visibility:hidden;
 }
 #progressbar .ajaxprogress {
@@ -550,83 +632,151 @@ input.error, label.error {
 	text-align:center;
 	width:0;
 }
-.attachtype {
-	line-height:1.6;
-	font-size:11px;
+/*
+Section: JSPs
+	This section contains the styles related to specific JSPs 
+	See: [AttachmentTab], [CommentContent], [ConflictContent],
+	[DiffContent], [Favorites], [FindContent]
+	
+	See also: [EditContent], [Header], [Footer]
+
+*/
+
+/*
+Style: AttachmentTab
+	Add attachment icons per type of attachement.
+	
+DOM structure
+>	<div class="att-img gif> ... </div>
+
+*/
+.att-img {
+	height:16px;
 	padding-left:20px;
-	background-repeat:no-repeat;
-	background-position:0 0;
-	background-image:url(images/attach-strip.png);
+	background:url(images/attach-strip.png) no-repeat;
 }
-#attach-gif { background-position:0 -112px; }
-#attach-png { background-position:0 -112px; }
-#attach-bmp { background-position:0 -112px; }
-#attach-jpg { background-position:0 -112px; }
-#attach-jpeg { background-position:0 -112px; }
-#attach-text { background-position:0 -16px; }
-#attach-txt { background-position:0 -16px; }
-#attach-zip { background-position:0 -128px; }
-#attach-jar { background-position:0 -128px; }
-#attach-tar { background-position:0 -128px; }
-#attach-pdf { background-position:0 -80px; }
-#attach-doc { background-position:0 -32px; }
-#attach-xls { background-position:0 -48px; }
-#attach-ppt { background-position:0 -64px; }
-#attach-swf { background-position:0 -96px; }
-#attach-mov { background-position:0 -160px; }
-#attach-mp3 { background-position:0 -144px; }
-#attach-wav { background-position:0 -144px; }
+.att-img.gif	{ background-position:0 -112px;	}
+.att-img.png	{ background-position:0 -112px;	}
+.att-img.bmp	{ background-position:0 -112px;	}
+.att-img.jpg	{ background-position:0 -112px;	}
+.att-img.jpeg	{ background-position:0 -112px;	}
+.att-img.text	{ background-position:0 -16px;	}
+.att-img.txt	{ background-position:0 -16px;	}
+.att-img.zip	{ background-position:0 -128px;	}
+.att-img.jar	{ background-position:0 -128px;	}
+.att-img.tar	{ background-position:0 -128px;	}
+.att-img.pdf	{ background-position:0 -80px;	}
+.att-img.doc	{ background-position:0 -32px;	}
+.att-img.xls	{ background-position:0 -48px;	}
+.att-img.ppt	{ background-position:0 -64px;	}
+.att-img.swf	{ background-position:0 -96px;	}
+.att-img.mov	{ background-position:0 -160px;	}
+.att-img.mp3	{ background-position:0 -144px;	}
+.att-img.wav	{ background-position:0 -144px;	}
 
-/* +++ 400 Styles for specific JSPs +++ */
 
-/* +++ 405 AttachmentTab +++ */
-
-/* +++ 410 CommentContent +++ */
-#commentcontent {
+/*
+Experimental:
+	Add icons to attachment and external links.
+	Overwrite the hard-code image links of the wiki-engine and add 
+	''skinnable'' icons through css.
+*/
+img.outlink {
+	display:none;
+}
+a.external {
+	padding-right:6px;
+	background:transparent url(../../images/out.png) no-repeat center right;
+}
+/* FIXME
+a.external {
+	padding-right:18px;
+	background:transparent url(images/extern.gif) no-repeat center right;
+}
+a.external[href^='mailto:'] {
+	padding-right:20px;
+	background:transparent url(images/email.png) no-repeat center right;
+}
+a.createpage{
+	padding-right:20px;
+	background:transparent url(images/pencil.png) no-repeat center right;
+}
+*/
+/* fixme
+    add the attachment_small.png to the attachment strip
+*/
+a.infolink {
+	margin-left:3px;
+	padding-right:16px;
+	background:transparent url(../../images/attachment_small.png) no-repeat center right;	
+}
+a.infolink img {
+	display:none;
+}
+a.infolink[href$='.doc'] {
+	background:transparent url(images/attach-strip.png) no-repeat center right;
+	background-position:0 -32px;
+}
+a.infolink[href$='.pdf'] {
+	background:transparent url(images/attach-strip.png) no-repeat center right;
+	background-position:0 -80px;
 }
 
-/* +++ 415 ConflictContent +++ */
-#conflict,
-#conflictother,
-#conflictown {
-}
 
-/* +++ 420 DiffContent and Diff Providers:Traditional and External +++ */
-#diffcontent {
-	clear:both;
-}
+
+/*
+Style: CommentContent
+
+>#commentcontent
+*/
+
+/*
+Style: ConflictContent
+
+>#conflict
+>#conflictother
+>#conflictown 
+*/
+
+/*
+Style: DiffContent
+	Covers the css classes for the DIFF Providers:Traditional and External 
+
+>	#diffcontent
+*/
 .diffbody {
-	padding:0.5em;
-}
-/* .diffnote equals .information */
-td.diffadd, td.diffrem, td.diff {
+	padding:1em;
 	font:110% Monaco, "Courier New", Courier, monospace;
 	overflow:auto;
 	line-height:1;
 }
-td.diffadd {
-	background:#9f9;
+/* .diffnote equals .information */
+.diffadd {
+	background:#9f9;/*#DIFFADD#*/
 }
-td.diffrem {
-	background:#f93;
+.diffrem {
+	background:#f93/*#DIFFDEL#*/;
 }
-td.diff {
+.diff {
 	background:#fff;
 }
 
-/* +++ 421 Contextual diff provider +++ */
+/*
+Style: Contextual diff provider 
+
+*/
 .diff-wikitext {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	line-height:1;
 	overflow:auto;
 }
 .diff-insertion {
-	background:#9f9;
+	background:#9f9;/*#DIFFADD#*/
 	text-decoration:none;
 	color:black;
 } 
 .diff-deletion {
-	background:#f93;
+	background:#f93/*#DIFFDEL#*/;
 	text-decoration:line-through;
 	color:black;
 } 
@@ -636,24 +786,39 @@ td.diff {
 }
 
 
-/* +++ 425 Edit/EditContent and CommentContent +++ */
-body.edit {
-} 
-body.comment {
-} 
-#edithelp {	 
-}
+/*
+Section: Editors
+	Covers the Edit.jsp, EditContent.jsp and CommentContent.jsp.
 
-/* +++ 430 Edit/EditContent +++ */
-.textarea-resizer {
-    background:#eee url(images/resize-horizontal.gif) top center;
-	cursor:s-resize; /* css3 row-resize */ 
-    font-size:1px;
-	height:6px; 
-    line-height:6px;
-    overflow:hidden;
-}
+>	body.edit 
+>	body.comment 
+>	#edithelp
+*/
 
+/*
+Style: Plain Editor
+	See plain.jsp
+*/
+#toolbar {
+	color:#555/*#SOFTFONT#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin:0.5em 0;
+	background:#f9f9f9/*#RIBBON#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+}
+#toolbar fieldset {
+	border-color:#ddd/*#BORDER#*/;
+	padding:0.25em; 
+	margin-left:0.5em;
+	float:left;
+}
+#toolbar legend {
+	line-height:0.9;
+	padding:0 0.25em;
+	font-weight:normal;
+}
+/*
 #toolbuttons, #toolextra, #searchbar {
 	margin-left:1em;
 	clear:both;
@@ -665,113 +830,117 @@ body.comment {
 	margin-right:1em;
 }
 #toolbuttons span {
-	border:1px solid #ddd;
+	border:1px solid #ddd/.#BORDER#./;
 }
-a.tool {
+*/
+.tool {
 	float:left;
-	display:block;
-	background:transparent;
 	margin:2px;
-	text-decoration: none;
-}
-a.tool:hover, .btn:hover {
-	background-color:#ddd !important;
-}
-#tools a.tool { 
-	border:none; 
-	background-repeat:no-repeat;
-	background-image:url("images/editor-strip.gif");
-	background-color:transparent;
+	display:block;
+	background:url("images/editor-strip.gif") no-repeat;
 	height:16px; 
 	width:16px;
 	text-indent:20px; 
 	overflow:hidden;
 }
-
-#tbREDO		{ background-position:0 0; width:auto !important;}
-#tbUNDO		{ background-position:0 -16px; width:auto !important;}
-
-/*#tbOUTLINE	{ background-position:0 0; width:auto !important;}
-#tbOUTLINE	{ 
-	width:auto !important;
-	background-image:url("images/book_open.png") !important; 
+.tool:hover {
+	background-color:#ddd/*#HOVER#*/;
+	xxborder-color:#ddd/*#HOVER#*/;
 }
-*/
-/*
-label[for="edittoc"] {
-	background-repeat:no-repeat;
-	background-position:center left;
-	xxbackground-image:url("images/editor-strip.gif");
-	background-image:url("images/book_open.png") !important; 
-	background-color:transparent;
-	padding:2px 0 2px 20px; 
+.tool.disabled:hover {
+	background-color:transparent !important;
+	border-color:transparent !important;
+	cursor:default !important;
 }
-*/
-#tbH1 		{ background-position:0 -192px; }
-#tbH2 		{ background-position:0 -208px; }
-#tbH3 		{ background-position:0 -224px; }
-#tbB  		{ background-position:0 -176px; }
-#tbI  		{ background-position:0 -256px; }
-#tbLink   	{ background-position:0 -48px; }
-#tbMONO   	{ background-position:0 -160px; }
-/*
-#tbColor  	{ background-image:url("images/paintbrush.png");  }
-#tbBackground { background-image:url("images/paintcan.png");  }
-*/
-#tbPRE   	{ background-position:0 -64px; }
-#tbCODE   	{ background-position:0 -80px; }
-#tbHR 		{ background-position:0 -240px; }
-#tbBR 		{ background-position:0 -112px; }
-#tbDL 		{ background-position:0 -272px; }
-#tbSUP		{ background-position:0 -336px; }
-#tbSUB		{ background-position:0 -320px; }
-#tbSTRIKE 	{ background-position:0 -304px; }
-#tbUL 		{ background-position:0 -256px; }
-#tbOL 		{ background-position:0 -272px; }
-#tbLEFT   	{ background-position:0 -288px; }
-#tbCENTER 	{ background-position:0 -304px; }
-#tbRIGHT  	{ background-position:0 -320px; }
-#tbJUST   	{ background-position:0 -336px; }
-#tbQUOTE  	{ background-position:0 -272px; }
-#tbIMG		{ background-position:0 -96px; }
-#tbTABLE  	{ background-position:0 -144px; }
-#tbTOC		{ background-position:0 -32px; }
-#tbTAB		{ background-position:0 -128px; }
-#tbSIGN		{ background-position:0 -288px; }
+/* FIXME */
+.tool .dropmenu {
+	background:transparent url("images/dropmenu.gif") no-repeat 115% 50%;
+	margin-right:5px;
+}
 
+.tool.tH1 		{ background-position:0 -192px; }
+.tool.tH2 		{ background-position:0 -208px; }
+.tool.tH3 		{ background-position:0 -224px; }
+.tool.tB  		{ background-position:0 -176px; }
+.tool.tI  		{ background-position:0 -256px; }
+.tool.tLink   	{ background-position:0 -48px; }
+.tool.tMONO   	{ background-position:0 -160px; }
+.tool.tPRE   	{ background-position:0 -64px; }
+.tool.tCODE   	{ background-position:0 -80px; }
+.tool.tHR 		{ background-position:0 -240px; }
+.tool.tBR 		{ background-position:0 -112px; }
+.tool.tDL 		{ background-position:0 -272px; }
+/*.tool.tSUP		{ background-position:0 -336px; }*/
+/*.tool.tSUB		{ background-position:0 -320px; }*/
+/*.tool.tSTRIKE 	{ background-position:0 -304px; }*/
+/*
+.tool.tUL 		{ background-position:0 -256px; }
+.tool.tOL 		{ background-position:0 -272px; }
+.tool.tLEFT   	{ background-position:0 -288px; }
+.tool.tCENTER 	{ background-position:0 -304px; }
+.tool.tRIGHT  	{ background-position:0 -320px; }
+.tool.tJUST   	{ background-position:0 -336px; }
+*/
+/*.tool.tQUOTE  	{ background-position:0 -272px; }*/
+.tool.tIMG		{ background-position:0 -96px; }
+.tool.tTABLE  	{ background-position:0 -144px; }
+.tool.tTOC		{ background-position:0 -32px; }
+.tool.tTAB		{ background-position:0 -128px; }
+
+.tool.tUNDO		{ background-image:url("images/undo.gif"); width:16px !important; }
+.tool.tREDO		{ background-image:url("images/redo.gif"); width:16px !important; }
+.tool.tUNDO.disabled { background-image:url("undo-disabled.gif"); }
+.tool.tREDO.disabled { background-image:url("/images/redo-disabled.gif"); }
+.tool.tSEARCH	{ background-image:url("images/find.png"); width:16px !important; }
+.tool.tCONFIG	{ background-image:url("images/cog.png"); }
+/*.tool.tSIGN		{ background-position:0 -288px; }*/
+.tool.tSIGN		{ background-image:url("images/vcard.png"); }
+.tool.tCHAR		{ background-image:url("images/text_letter_omega.png"); background-position:0 0;}
+.tool.tACL		{ background-image:url("images/key.png"); }
+.tool.tCSS		{ background-image:url("images/paintbrush.png"); }
+.tool.tFONT		{ background-image:url("images/font.png");  }
+.tool.tCOLOR	{ background-image:url("images/color_wheel.png");  }
+
+.tool.tPLUGIN	{ background-image:url("images/plugin.png");  }
+
+.tool.tHORZ	{ background-image:url("images/application_tile_horizontal.png"); }
+.tool.tVERT { background-image:url("images/application_tile_vertical.png");  }
+
+/*
 #tbDOREPLACE { background-image:url("images/doreplace.png") !important;  }
+*/
+#findDialog {
+	padding:0 0.5em;
+}
+.size1of1 .editor-container {
+	width:99%; /* save some space for the scroll bar of the textarea */	
+}  
+.size1of2 .editor-container {
+	width:96%; /* save some space for the scroll bar of the textarea */	
+}
 
 .editor {
 	font:110% Monaco, "Courier New", Courier, monospace;
-	padding:4px;
-	width:99%;
+	padding:4px 4px 4px 8px;
+	width:100%;	
 }
-#toctoc {
-	position:relative;
-	margin:0.5em 0;
+.resize-bar {
+    background:#ddd/*#BORDER#*/ url(images/resize-horizontal.gif) top center;
+	cursor:s-resize; /* css3 row-resize */ 
+    font-size:1px;
+	height:6px; 
+    line-height:6px;
+    overflow:hidden;
 }
-#toctoc label {
-	display:block;
-	margin:0;
+#previewspin {
+	position:absolute;
+	z-index:10;
+	right:20%;
+}
+/* #livepreview */
+#livepreview {
 	padding:0.5em;
 }
-#toctoc ul {
-	border:3px solid #eee;
-	width:auto;
-	overflow:auto;
-	height:150px;
-	list-style:none;
-	margin:0;
-	padding:0;	
-}
-#toctoc a {
-	display:block;
-	padding:0 0.5em;
-	cursor:pointer;
-	overflow:hidden;
-	white-space:nowrap;	
-}
-
 /* ie6 hack ensure moremenu remains properly aligned */
 * html #editorarea {
 	padding:4px 0;
@@ -780,185 +949,110 @@ label[for="edittoc"] {
 *:first-child+html #editorarea {
 	padding:4px 0;
 }
-#submitbuttons input {
-	margin-right:2em;
-}
 #commentcontent, #editcontent {
 	width:100%;
 }
 
-#searchbar {
-	display:block !important;
+/*
+Style: SnipEditor
+	activeSnip - background on the textarea to indicate active TAB handling
+	snieptoc - dynamic table of contents
+*/
+.activeSnip {
+	background:#eee url(images/universal-diag.png);
 }
-#searchbar span {
+#snipetoc {
+	position:absolute;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	overflow:auto;
+	color:#fff;
+	background-color:rgba(0,0,0,0.7)/*##*/;
+	*background:url(images/tip.png) top left; /*ie6,ie7*/
+}
+#snipetoc.hidden {
+	width:6px;
+	overflow:hidden;
+	background-color:#ddd/*#BORDER#*/;
+}
+#snipetoc ul {
+	list-style:none;
+	margin-left:6px;
+	padding:0.25em;
+}
+#snipetoc a {
+	color:white;
+	font-weight:normal;
+	display:block;
+	padding:0 0.5em;
+	cursor:pointer;
+	overflow:hidden;
 	white-space:nowrap;
 }
-#searchbarhelp {
-}
-#findSuggestionMenu {
-	position:absolute;
-	color:white;
-	background-color:rgba(0,0,0,0.7);
-	-moz-border-radius:10px;
+#snipetoc a:hover, #snipetoc .cursor { 
+	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
-	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
-	z-index:10;
-	font-size:85%;
-	overflow:hidden;
-}
-/* ie6 hack */
-* html #findSuggestionMenu {
-	background:url(images/tip.png) top left;
-}
-/* ie7 hack */
-*:first-child+html #findSuggestionMenu {
-	background:url(images/tip.png) top left;
+	background-color:rgba(0,0,0,0.5) !important;
+	*background-color:black !important;	 /* ie hack */
 }
 
-#findSuggestionMenu ul {
-	list-style:none;
-	margin:0;
-	padding:0;
-}
-#findSuggestionMenu li { 
-	padding:0.25em 0.5em;
-	cursor:pointer;
-}
-#findSuggestionMenu .hover { 
-	background-color:rgba(0,0,0,0.5);
-	-moz-border-radius:10px;
-	-webkit-border-radius:5px;
-}
-/* ie6 hack */
-* html #findSuggestionMenu .hover { 
-	background-color:black;
-}
-/* ie7 hack */
-*:first-child+html #findSuggestionMenu .hover { 
-	background-color:black;
-}
-
-
-/* +++ 440 Favorites +++ */
-#favoriteToggle {
-	float:left;
-	margin-bottom:-1px;
-	padding:0.25em 0.5em;
-	font:inherit;
-	font-weight:bold;
-	height:auto; /* undo collapseOpen font settings */
-	overflow:hidden;
-	width:16px;
-	text-indent:2em;
-}
-#favoriteToggle.collapseOpen {
-	background:url(images/favopen.gif) no-repeat center;
-}
-#favoriteToggle.collapseClose {
-	background:url(images/favclose.gif) no-repeat center;
-}
 /*
-#favoriteToggle.collapseOpen {
-	background:url(images/layout_none.gif) no-repeat center;
-}
-#wikibody.fav-right #favoriteToggle.collapseClose {
-	background:url(images/layout_right.gif) no-repeat center;
-}
-#wikibody.fav-left #favoriteToggle.collapseClose {
-	background:url(images/layout_left.gif) no-repeat center;
-}
-#wikibody.fav-left #favoriteToggle.collapseOpen:hover {
-	background:#eee url(images/layout_left.gif) no-repeat center;
-}
-#wikibody.fav-right #favoriteToggle.collapseOpen:hover {
-	background:#eee url(images/layout_right.gif) no-repeat center;
-}
-#favoriteToggle.collapseClose:hover {
-	background:#eee url(images/layout_none.gif) no-repeat center !important;
-}
-*/
+Style: Favorites
 
-/* fixme
-#collapseFavs {
-	position:absolute; 
-	margin-left:-1px; 
-	left:-0.5em; 
-	top:-1px;
-	width:0.5em;
-	height:100%;
-	background:#f9f9f9;
-	border-top:1px solid #f9f9f9;
-	border-bottom:1px solid #f9f9f9;
+Note:
+	FIXME
+	Use faux columns to create equal size floated elements.
+	Implies a background image on the container element ??? 
+	
+	Use border to obtain same height of tab-contents. CHECK/FIXME
+
+DOM Structure:
+(start code)
+	todo
+
+(end)
+*/
+#favorites {
+	overflow:hidden; /*avoid overflow for wide content of leftmenu or leftmenufooter */
+	padding-top:1.75em;
+}
+
+#page {
+	position:relative;
+	padding:0 0 0 10px;
+}
+.fav-right #page {
+	padding:0 10px 0 0;
+}
+#page .splitbar {
+	position:absolute;
+	width:4px;
+	top:1.75em; /* 1.5line-height + ?0.25 */
+	left:6px;
+	bottom:2em; /* 1.5line-height + 0.5margin-bottom */
+	background:#f9f9f9/*#COMMENT#*/;
+	xxborder-top:1px solid #f9f9f9/*#COMMENT#*/;
 	cursor:pointer;
 }
-#wikibody.fav-right #collapseFavs {
+.fav-right #page .splitbar {
 	left:auto;
-	right:-0.5em;
-	margin-left:0;
-	margin-right:-1px;
+	right:6px;
 }
-#collapseFavs.hover {
-	background-color:#eee;
-	border-color:#eee;
+#page .splitbar.hover {
+	background:#eee;
 }
-#collapseFavsWrapper {
-	position:absolute;
-	padding-right:1em;
-	left:0.5em;
-	top:-2em;
-	cursor:auto;
-	overflow:hidden;
-}
-#wikibody.fav-right #collapseFavsWrapper {
-	left:auto;
-	right:0.5em;
-	padding-right:0;
-	padding-left:1em;
-}
-#collapseFavsWrapper #favorites {
-	background:white;
-	border:0.5em solid #eee;
-	border-left:none;
-}
-#wikibody.fav-right #collapseFavsWrapper #favorites {
-	border-right:none;
-	border-left:0.5em solid #eee;
-}
-#collapseFavsPointer {
+#splitPointer, .hidefav .fav-right #splitPointer {
 	position:absolute;
 	width:4px;
 	height:12px;
 	background:url(images/arrleft.gif) top left no-repeat;
-	margin-left:-15px;
+	margin-top:-16px;
 	z-index:5;
 }
-#wikibody.fav-right #collapseFavsPointer{
-	margin-left:15px;
-}
-.fav-slide #collapseFavsPointer {
+.hidefav #splitPointer, .fav-right #splitPointer {
 	background-image:url(images/arrright.gif);
 }
-*/
 
-.userbox {
-	overflow:hidden;
-	padding:0.5em 0;
-}
-#favorites .userbox a.action, #favorites .userbox .username {
-	float:left;
-	display:block;
-	margin-right:4px; /*spacing between buttons */
-}
-.username {
-	font-style:italic;
-	padding:0.25em 0.5em;
-}
-.username.anonymous {
-}
-.username.asserted {
-}
-.username.authenticated {
-}
 
 .wikiversion, .rssfeed {
 	font-size:90%;
@@ -966,7 +1060,9 @@ label[for="edittoc"] {
 	text-align:center;
 }
 
-/* +++ 450 FindContent +++ */
+/*
+Style: FindContent
+*/
 #details, #scope {
 	margin-left:2em; 
 }
@@ -975,17 +1071,21 @@ label[for="edittoc"] {
 .graphBar {
 	padding:0;
 	color:white;
-	border-color:#f93;
+	border-color:#f93/*#MARK#*/;
 	border-left-style:solid;
 	border-bottom-style:solid;
 }
 .fragment {
-	margin:0.25em;
+	padding:0.25em;
 	font:90% Monaco, "Courier New", Courier, monospace;
+	width:800px;
+	white-space:pre;/* check */
 }
+/* search detail fragment pieces are concatenated by an ... ellips char. */
 .fragment_ellipsis {
 	font-weight:bold;
 }
+*/
 .nosearchresult {
 	font-style:italic;
 }
@@ -994,55 +1094,172 @@ label[for="edittoc"] {
    in the results.
    <span class="searchword">thingy</span>
  */
-.cursor {
-	background-color:#eee;
-}
 .searchword, .searchmatch {
-	background-color:#f93;
+	background-color:#f93/*#MARK#*/;
 	color:black;
 	text-decoration:inherit;
 } 
+.cursor {
+	background-color:#ddd/*#CURSOR#*/;
+}
 
-/* +++ 455 Footer +++ */
+/*
+Style: Footer
+	See Footer.jsp, [Header]
+
+	opplicationlogo - JSPWiki-logo, styling 100% through css, 
+		with a background image and link to the FrontPage. By default hidden.
+	companylogo - Secondary logo. By default hidden.
+	copyright - (optional), contains the [[CopyrightNotice] when present.
+	wikiversion - Wiki Version 'JSPWiki v2.8.x-svn-xx. By default hidden
+	rssfeed - link to the JSPWiki RSS-feed link when rssfeeds are activated.
+	
+	See also [Header]
+
+DOM Structure:
+(start code)
+<div id="footer" >
+  <div class="applicationlogo"> ... </div>
+  <div class="companylogo"> ....... </div>
+  <div id="copyright"> ............ </div>
+  <div class="wikiversion"> ....... </div>
+  <div class="rssfeed"> ........... </div>
+</div>
+(end)
+*/
+#footer .applicationlogo,
+#footer .companylogo,
+#footer .wikiversion,
+#footer .rssfeed {
+	display:none; 
+}
 .copyright {
 	padding:1em 0.25em;
 	font-size:90%;
 	text-align:center;
-	color:#555;
+	color:#555;/*#COPYRIGHT#*/
 }
 
-/* +++ 460 Header +++ */
-.breadcrumbs {
-	font-size:90%;
-	padding:0 1.5em 1em 0;	 
-}
 
-/* +++ 465 InfoContent +++ */
-#infocontent {
-}
-#incomingLinks, #outgoingLinks, #externalLinks, #attachmentLinks, #versionhistory {
-	width:30%;
-	overflow:hidden;	
-	margin-right:0.5em;
+/*
+Section: Header
+	See Header.jsp, [SearchBox], UserBox.jsp, [Footer]
+	
+	titlebox - Horizontal block at the top of the header, which you can use
+		to put web-site messages, alerts, new-flashes etc. It contains the
+		content of thee [TitleBox] page.
+	opplicationlogo - (float:left) JSPWiki-logo, styling 100% through css, 
+		with a background image. It also includes a hover effect to swap the image.
+	companylogo - Secondary logo. By default hidden.
+	userbox - (float:right) User information box. See [Userbox]
+	pagename - Name of the wiki page
+	searchbox - (float:right) Quick Navigation box
+	breadcrumbs - Horizontal block showing links to previously visited pages.
+
+DOM structure:
+(start code)
+<div id="header" >
+  <div class="titlebox"> .......... </div>
+  <div class="applicationlogo"> ... </div>
+  <div class="companylogo"> ....... </div>
+
+  <div class="userbox"> ........... 
+    <span class="username anonymous|asserted|authenticated"> .. </span>
+    <a class="btn login|logout"> .. </a>
+    <a class="btn prefs"> .. </a>
+  </div>
+  <div class="pagename"> .......... </div>
+  <div class="search-box"> ........ </div>
+  <div class="breadcrumbs"> ....... </div>
+</div>
+
+(end)
+*/
+#header .applicationlogo {
 	float:left;
-}  
-#versionhistory td {
-	white-space:nowrap;
-}  
-.pagination {
-	margin:0.25em;
-	padding:0.5em;
-	background:#eee;
-	/*line-height:1;*/
 }
-.pagination a {
-	cursor:pointer;
+.applicationlogo a {
+	display:block;
+	height:64px;
+	width:64px;
+	margin:0 auto;/* center logo, in case the width of the parent block is larger */
+	text-indent:-1000px;/* hide link text*/
+	background:url(../../images/jspwiki_logo.png) -64px 0 no-repeat;
+}
+.applicationlogo a:hover {
+	background-position:0 0;
+}
+.companylogo { 
+	display:none; /* not used */
+}
+.pagename {
+	float:left;
+	font-size:175%;
+	line-height:64px; /* same height as the application-logo */
+	font-weight:bold;
+}
+.userbox {
+	float:right;
+	padding:0.5em 0;
+}
+.username {
+	margin:0.5em;
+	font-style:italic;
+}
+/*
+.username.anonymous { .. }
+.username.asserted { .. }
+.username.authenticated { ..}
+*/
+.searchbox {
+	float:right;
+	clear:right; /* put under the .userbox */
+}
+.breadcrumbs {
+	clear:both;
+	font-size:90%;
+	padding:0.5em;
+}
+
+
+/*
+Style: Content Blocks 
+	See PageContent.jsp, InfoContent.jsp, ...
+
+DOM Structure:
+(start code)
+<div class="tabmenu"> ...... </div>
+<div class="tabs">
+  <div id="pagecontent"> ... </div>
+  <div id="attach"> ........ </div>
+  <div id="info"> .......... </div>
+</div>
+(end)
+
+>	#infocontent
+>	#incomingLinks
+>	#outgoingLinks
+*/
+
+
+/*
+Style: Pagination.
+	Reusable pagination ribbon for search results and version history tables.
+*/
+.pagination {
+	padding:0.5em;
+	background:#f9f9f9/*#RIBBON#*/;
+	border:1px solid #ddd/*#BORDER#*/;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	line-height:1.2;
 }
 .pagination a, .pagination .cursor {
 	padding:0.5em;
 }
-.pagination .cursor, .pagination a:hover {
-	background-color:#d7d7d7;
+/* FIXME fall back to cursor and hover standards */
+.pagination a:hover {
+	background-color:#ddd/*#HOVER#*/;
 }
 td.changenote {
 	font-style:italic;
@@ -1055,9 +1272,38 @@ th.changenote, td.changenote {
 	display:block;
 }
 
-/* +++ 470 PageActions +++ */
+/*
+Style: PageActions 
+	See PageActionsTop.jsp, PageActionsBottom.jsp, [Content]
+	
+DOM Structure:
+(start code)
+<div id="actionsTop" class="pageactions">
+  <ul>
+    <li><a class="action edit" href="..."> ... </a></li>
+    <li id="morebutton"><a class="action more" href=".."> ... </a></li>
+  </ul>
+</div>
+
+<div id="pagebody"> ... </div>
+
+<div id="actionsBottom" class="pageactions">
+  <ul>
+    <li> ... page-information links ... </li>
+    <li><a class="feed"> ... </a></li>
+    <li><a class="action quick2top" href="#top"> ...</a></li>
+  </ul>
+</div>
+(end)
+*/
+#actionsTop	{ 
+	z-index:10;
+	_margin-top:1px; /*CHECKME IE*/
+}
+/*#actionsBottom { ... } */
 .pageactions {
 	line-height:1.5;
+	float:right;
 }
 .pageactions ul {
 	list-style:none;
@@ -1066,39 +1312,36 @@ th.changenote, td.changenote {
 }
 .pageactions li {
 	display:block;
+	white-space:nowrap;
 	float:left;
 }
+/* drop down more--menu */
 .pageactions li ul {
 	position:absolute;
 	background:white;
-	border:2px solid #ddd;
-	left:0; /*right:2.5em; */
-	z-index:10;
-}
-.pageactions li ul li ul {
-	position:static;
-	left:auto;
+	border:2px solid #ddd/*#BORDER#*/;
+	left:0; /* right:2.5em; */
+	xz-index:10;
 }
 .pageactions li ul li {
 	display:block;
-	white-space:nowrap;
 	float:none;
 }
 .pageactions li ul li.separator { 
-	border-top:2px solid #ddd;
+	border-top:2px solid #ddd/*#BORDER#*/;
 }
-/* undo settings for nested information! */
-.pageactions li ul li ul {
+/* nested UL */
+.pageactions li ul ul {
 	position:static;
 	left:auto;
 	border:none;
 }
-.pageactions li ul li ul li {
-/* nothing to undo ?? */
-}
+
+
+
 #hiddenmorepopup {
 	display:none;
-	border:1px solid #ddd;
+	border:1px solid #ddd/*#BORDER#*/;
 }
 #hiddenmorepopup ul {
 	list-style:none;
@@ -1106,36 +1349,27 @@ th.changenote, td.changenote {
 	padding:0;
 
 }
-#morebutton ul a {
+
+#morebutton ul a,
+.xxpageactions li a {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	cursor:pointer;
 }
-.pageactions a.action {
+a.action {
 	display:block;
 }
-#morebutton a:hover, a.action:hover, #sectiontoc a:hover
-.userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
-	background-color:#eee !important;
+a.action:hover, .pageactions li ul ul li:hover {
+	background-color:#ddd/*#HOVER#*/ !important;
 }
-
-a.action.view,
-a.action.comment,
-a.action.prefs,
-a.action.attach,
-a.action.info,
-a.action.viewgroup,
-a.action.creategroup,
-a.action.workflow,
-a.action.login,
-a.action.logout {
-}
-#searchTools a.action, .userbox a.action, a.action.edit, a.action.more {
+/*#xxsearchTools a.action, .xxuserbox a.action, */
+/* edit and more button should fit with Tabbed section */
+a.action.edit, a.action.more {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	line-height:normal;
-	border:1px solid #ddd;		
-	background:#f9f9f9;
+	border:1px solid #ddd/*#BORDER#*/;		
+	background:#f9f9f9/*#COMMENT#*/;
 	white-space:nowrap;
 }
 a.action.edit, a.action.more {
@@ -1144,25 +1378,146 @@ a.action.edit, a.action.more {
 }
 a.action.more {
 	padding-right:1.5em;
-	background: #f9f9f9 url(images/arrdownsmall.gif) 95% center no-repeat;
+	background: #f9f9f9/*#COMMENT#*/ url(images/arrdownsmall.gif) 95% center no-repeat;
 }
-a.action.quick2top, a.action.quick2bottom {
+.quick2top {
  	overflow:hidden;
+ 	margin:0 0 0 2px;
 	padding:0; 
 	text-indent:20px;
  	width:20px; 
- 	margin:0 0 0 2px;
-}
-a.action.quick2top {
-	float:right;
  	background:url(images/arrup.gif) no-repeat 3px 3px;
 }
 
-/*********/
+/* 
+Styles: Buttons
+	Pretty styling of buttons, with a 1px radius without corner images. 
+	The gradient requires an image. Ideally, the <button> element should be used
+	(instead of <a>) for semantic and accessibility reasons. Note that the hover 
+	state will not work on button elements for IE6 and lower without using 
+	JavaScript to detect a mouseOver event.
+	
+
+	Reasons for 2 nested spans:
+	* The inner {{span}} creates the top and bottom borders. 
+	  Because {{button}} and {{a}} are inline elements, 
+	  top/bottom borders and padding do not affect the height of parent elements 
+	  (such as the outer {{span}}). So with the same top/bottom padding 
+	  of both {{span}} elements, the left/right borders of the outer 
+	  {{span}} stop short of the top/bottom borders of the inner 
+	  {{span}}.
+	* The outer {{span}} is necessary to fix bugs in Gecko-based browsers 
+	  and in IE (separate issues for both). Gecko browsers add an extra 3px of 
+	  padding inside {{button}} elements which can't be eliminated. 
+	  Without the outer span, top/bottom and left/right borders wouldn't connect. 
+	  IE just has trouble styling {{button}}s and nested elements inside them, 
+	  so the majority of visible styles are applied to two inner {{span}}.
+
+DOM structure
+>	<a class=".btn"><span><span>...</span></span></a>
+>	<button class=".btn"><span><span>...</span></span></button>
+
+Credit: 
+	http://stopdesign.com/eg/buttons/3.0/code.html
+*/
+.btn {
+	display:inline-block;
+	background:none;
+	margin:0;
+	padding:3px 0;
+	border-width:0;
+	overflow:visible;
+	/*font:100%/1.2 Arial,Sans-serif;*/
+	text-decoration:none;
+	color:#333;
+}
+* html button.btn {
+	padding-bottom:1px;
+}
+/* Immediately below is a temporary hack to serve the 
+	following margin values only to Gecko browsers
+	Gecko browsers add an extra 3px of left/right 
+	padding to button elements which can't be overriden.
+	Thus, we use -3px of left/right margin to overcome this. 
+*/
+html:not([lang*=""]) button.btn {
+	margin:0 -3px; /* -3px ? needs -5px when buttons have whitespace inbetween */
+}
+.btn span {
+	background:#ddd/*#BORDER#*/ url(images/bg-button.gif) repeat-x 0 0;
+	margin:0;
+	padding:3px 0;
+	border-left:1px solid #bbb;
+	border-right:1px solid #aaa;
+	_padding-top:0; /*ie6 hack */
+}
+/*
+* html .btn span {
+	padding-top:0;
+}
+*/
+.btn span span {
+	position:relative;
+	padding:3px .4em;
+	border-width:0;
+	border-top:1px solid #bbb;
+	border-bottom:1px solid #aaa;
+	white-space:nowrap;
+}
+.btn span span span {
+	border:none;
+	margin:0;
+	padding:0;
+}
+
+/* pill classes only needed if using pill style buttons ( LEFT | CENTER | RIGHT ) */
+button.pill-l span {
+	border-right-width:0;
+}
+button.pill-l span span {
+	border-right:1px solid #bbb;
+}
+button.pill-c span {
+	border-right-style:none;
+	border-left-color:#fff;
+}
+button.pill-c span span {
+	border-right:1px solid #bbb;
+}
+button.pill-r span {
+	border-left-color:#fff;
+}
+
+/* only needed if implementing separate hover/focus/active state for buttons */
+.btn:hover span, .btn:hover span span, .btn:focus span, .btn:focus span span {
+	cursor:pointer; /* important for any clickable/pressable element */
+	border-color:#9cf !important;
+	color:#000;
+}
+.btn:active span {
+	background-position:0 -400px;
+	outline:none;
+}
+.btn:focus, .btn:active {
+	outline:none; /* doesn't seem to be respected for <button>, only <a> */
+}
+
+/* use if one button should be the 'primary' button */
+.primary {
+	font-weight:bold;
+	color:#000;
+}
+
+
+/*
+Style: Popup
+	Popup dialog box 
+	FIXME
+*/
 .popup ul {
 	position:absolute; 
 	background:white;
-	border:2px solid #ddd;
+	border:2px solid #ddd/*#BORDER#*/;
 	padding:0.25em;
 	margin:0;
 	left:0;
@@ -1176,51 +1531,46 @@ a.action.quick2top {
 	cursor:pointer;
 }
 .popup a:hover {
-	background-color:#eee !important;
+	background-color:#ddd/*#HOVER#*/ !important;
 } 
 
-/* +++ 472 PageContent.jsp +++ */
-#pagecontent {
-	padding:0.5em 0;
-}
-html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
-	overflow:auto;
-}
-* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
-	width:100%;
-	overflow-x:auto;
-}
-/*ie7 hack */
-*:first-child+html #previewcontent, *:first-child+html #info, *:first-child+html #pagecontent, *:first-child+html #attach, *:first-child+html #findcontent {
-	overflow-x:auto;
-}
+/*
+Style: PreviewContent
 
-
-/* +++ 475 PreviewContent - "This is a preview" comment +++ */
-#livepreviewheader {
-	clear:both;
-	font-size:110%;
-	background-color:#ddd;
-	padding:0.5em;
-	margin:0.5em 0;
-}  
-#livepreview {
-}  
-#previewcontent {
-}  
+>	#previewcontent
+*/
 .previewcontent {
 	background-image:url(images/preview.gif);
 }  
 
-/* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
+/*
+Style: PreferencesContent, LoginContent, GroupContent 
 
-/* +++ 485 SearchBox +++ */
+*/
+
+/*
+Style: spin
+	Reusable spin class to show rotating icon to indicate background processing,
+	or loading of ajax content.
+
+*/
 .spin { 
 	background:url(images/spin.gif) no-repeat;
-	width:16px;
 	height:16px;
-	margin:0 0.5em;
+	text-indent:20px;
+	xmargin:0 0.5em;
 }
+
+/*
+Style: SearchBox
+	See SearchBox.jsp.
+
+
+DOM structure:
+(start code)
+
+(end)
+*/
 .searchbox {
 }
 #searchForm #query {
@@ -1246,14 +1596,11 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 #searchboxMenu {
 	position:absolute;
 	background:white;
-	border:2px solid #ddd;
+	border:2px solid #ddd/*#BORDER#*/;
 	padding:0.25em;
 	left:0;
 	z-index:15;
-}
-/*ie6 hack*/
-* html #searchboxMenu {
-	white-space:nowrap;  /*ensure box has proper width ugh! */
+	_white-space:nowrap;  /*ie6: ensure box has proper width ugh! */
 }
 #searchboxMenu ul {
 	list-style:none;
@@ -1265,7 +1612,7 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 }
 
 #searchTools a:hover, #searchboxMenu li:hover { 
-	background:#eee;
+	background:#ddd/*#HOVER#*/;
 }
 #searchboxMenu div {
 	margin:0.5em 0;
@@ -1274,17 +1621,40 @@ html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #a
 	text-align:left;
 }
 
-/* +++ 490 ViewTemplate +++ */
-body.view {
-	/*background-image:white;*/ 
-}
+
+/*
+Style: ViewTemplate.jsp 
+
+>	body.view 
+*/
 
 
-/* +++ 600 JSPWiki plugins +++ */
+/*
+Section: Plugins 
+	Stylesheet definitions for plain vanilla JSPWiki Plugins, including:
+	[ImagePlugin], [IndexPlugin], [TableOfContentsPlugin], [WeblogPlugins],
+	[RecentChangesPlugin]
+*/
 
-/* +++ 610 Image plugin +++ */
+
+/*
+Style: ImagePlugin 
+
+DOM Structure:
+	(start code)
+	<table border="0" class="imageplugin" align="left|right|center">
+		<tr><td><img src="img.jpg" height="200px" width="200px" /></td></tr>
+	</table>
+	(end)
+*/
 .imageplugin {
 	margin:.5em 0;
+}
+.imageplugin[align="left"]{
+	margin-right:0.5em;
+}
+.imageplugin[align="right"]{
+	margin-left:0.5em;
 }
 .imageplugin img {
 	border:0;
@@ -1297,13 +1667,16 @@ body.view {
 	margin:0;
 }
 
-/* +++ 620 Index plugin +++ */
-.index {
-}
+/*
+Style: IndexPlugin 
+
+DOM structure:
+
+*/
 .index .header {
 	padding:4px;
-	background:#f9f9f9;
-	border:1px solid #ddd;
+	background:#f9f9f9/*#COMMENT#*/;
+	border:1px solid #ddd/*#BORDER#*/;
 	text-align:center;
 	font-size:1.4em;
 }
@@ -1318,24 +1691,30 @@ body.view {
 	margin-top:1.5ex;
 }
 
-/* +++ 625 Table of contents plugin +++ */
-div.toc {
+/*
+Style: TableOfContentsPlugin
+
+Note:
+	When a TOC plugin is invoked multiple times, only the first one renders the TOC.
+	All subsequent invocations just render a link to the toc.
+	This link (a.toc) has little use; so we just want to hide it :-)
+	
+	Typical use-case: have a LeftMenu with a call of the TOC plugin. 
+	The table-of-contents of the wiki-page will be inserted in the leftmenu
+	unless the TOC is already present in the rendered wiki-page.
+	
+DOM structure:
+
+*/
+.toc {
 	width:60%; 
 	float:left;
 	clear:left;
 }
-/* duplicate toc items links back to the first rendered table of contents */
-a.toc {
-	color:grey;	
-	padding:0.25em;
-}
-a.toc:hover {
-	background:#eee;
-}
 #favorites .toc {
 	width:100%;
 }
-#pagecontent .toc h4 {
+.toc h4 {
 	font-size:1.4em;
 }
 .toc ul {
@@ -1355,11 +1734,18 @@ a.toc:hover {
 .toc li.toclevel-3 {
 	margin-left:2.5em;
 }
+a.toc {
+	display:none;
+}
 
 
-/*continue here ...*/
+/*
+Style: WeblogPlugins
+	Styling of weblogs and weblogarchive plugins 
+	
+DOM structure:
 
-/* +++ 630 Weblog and weblogarchive plugins +++ */
+*/
 .weblog {
 	margin:0 2em;
 	clear:both;
@@ -1417,27 +1803,31 @@ a.toc:hover {
 	line-height:1.1;
 }
 .weblogcomments {
-	background:#f9f9f9;
+	background:#f9f9f9/*#COMMENT#*/;
 	margin:0 0.5em 1em 0.5em;
 	padding:1em;
 }
 
 
-/* +++ 640 RecentChangesPlugin +++ */
+/*
+Style: RecentChangesPlugin 
+
+DOM structure:
+*/
 .recentchanges {
-	table-layout:fixed;
-} /*faster renderer */
+	table-layout:fixed;  /* render faster */
+}
 .recentchanges .changenote { 
 	font-style:italic;
 }
 .recentchanges td {
 	vertical-align:top;
-	border-bottom:1px solid #f9f9f9;
+	border-bottom:1px solid #f9f9f9/*#COMMENT#*/;
 }
 .recentchanges .date {
 	vertical-align:bottom;
 	border-top:1.5em solid white;
-	background-color:#f9f9f9 !important;
+	background-color:#f9f9f9/*#COMMENT#*/ !important;
 	border-bottom:none;
 }
 .recentchanges tr.odd td {
@@ -1445,9 +1835,17 @@ a.toc:hover {
 } 
 
 
-/* +++ 800 JSPWiki JSP Taglibs +++ */
+/*
+Section: Taglibs
+	Stylesheet definitions for some of the JSP-tags shipped with JSPWiki.
+*/
    
-/* +++ 805 CalendarTag +++ */
+/*
+Style: CalendarTag 
+
+DOM structure:
+
+*/
 div.calendar {
 	border:1px solid black;
 }
@@ -1460,7 +1858,7 @@ table.calendar td.othermonth {
 	color:#707070;
 }
 table.calendar td.link {
-	background:#f9f9f9;
+	background:#f9f9f9/*#COMMENT#*/;
 }
 table.calendar tr.month {
 }
@@ -1468,33 +1866,88 @@ table.calendar tr.weekdays {
 	color:red;
 }
 
-/* +++ 900 "Special-effects" JavaScript styles +++ */
+/*
+Section: DynamicStyles
+	Dynamic styles are more powerful styles, powered by some JavaScript and 
+	advanced css. They can add substantial visual experience to your wikipages, 
+	though the structure of your pages and wiki markup remain unchanged. 
+	Actually, the pages are still fully accessbile on browsers with javascript 
+	turned off.	
+	
+	[TabbedSection], [Accordion], [Columns], [Tips], [CollapsibleLists],
+	[CollapsibleBox], [SortableTables], [SLIMBOX], [Category], [Prettify],
+	[CommentBox]
+	
+	More dynamic styles
+	[Coverflow], 
+*/
    
-/* +++ 910 Tabbed Pages +++ */
-/* use absolute position trick to avoid page bump when inserting tabmenu 
- * "tabs" surrounds the actual tab-content :only border right-bottom-left
- * "tabmenu" visualises the actuals tabs :border-bottom to close the tabs box
- * "tabmenu a" for the actual tabs :border left-top-right to draw the tab
- *    Note:margin-left -2px to compensate border-width ico you want adjacent tabs
- *          increase/decrease margin-left to create space between the tabs
- *   "active" is the active tab  :border-bottom --white-- to 'reopen' the tabmenu border
- *   "alerttab" is a --red-- tab used in edit mode for msg like lock etc.
- */
+
+/*
+Style: Commentbox
+	Left floating comment box, with or without caption.
+	
+WIKI Markup:
+> %%commentbox ... /%
+> %%ocmmentbox-CaptionText ... /%
+
+DOM structure:
+>	<div class="commentbox"> ... </div>
+>	<fieldset class="commentbox">
+>		<legend>CaptionText</legend>
+>		....
+>	</fieldset>
+
+*/
+.commentbox {
+	display:block;
+	float:right;
+	clear:right;
+	width:35%;
+	overflow:hidden;
+	border:1px solid #ddd/*#BORDER#*/;
+	background:#f9f9f9/*#COMMENT#*/;
+	padding:0.5em;
+	margin-left:0.5em;
+	font-size:95%;
+}
+
+
+/*
+Style: TabbedSections
+
+	FIXME: check jquery tabs-css for simplification
+
+Note:
+ Use absolute position trick to avoid page bump when inserting tabmenu 
+ - "tabs" surrounds the actual tab-content :only border right-bottom-left
+ - "tabmenu" visualises the actuals tabs :border-bottom to close the tabs box
+ - "tabmenu a" for the actual tabs :border left-top-right to draw the tab
+Note:
+	margin-left -2px to compensate border-width ico you want adjacent tabs
+          increase/decrease margin-left to create space between the tabs
+   "active" is the active tab  :border-bottom --white-- to 'reopen' the tabmenu border
+   "alerttab" is a --red-- tab used in edit mode for msg like lock etc.
+
+DOM structure:
+
+*/
 .accesskey {
 	text-decoration:underline;
 }
 .hidetab {
 	display:none;
 }
-.tabs {
+.tabs { 
 	clear:both;
 	padding:0.5em;
-	border:1px solid #ddd;
+	border:1px solid #ddd/*#BORDER#*/;
 	margin-bottom:0.5em;
 }
 .tabmenu {
 	padding:0 1em;
 	font-weight:bold;
+	xoverflow:hidden; /* ensure floats are enclosed */
 } 
 /* nested tabs should not allow floated stuff to appear next to the tabmenu - ugh */
 .tabs .tabmenu {
@@ -1514,17 +1967,17 @@ table.calendar tr.weekdays {
 	float:left;
 	margin:0 0 -1px -1px;
 	padding:0.25em 0.5em;
-	border:1px solid #ddd;
+	border:1px solid #ddd/*#BORDER#*/;
 	border-bottom:none;
 	color:gray;
-	background:#f9f9f9;
+	background:#f9f9f9/*#COMMENT#*/;
 	text-decoration:none;
 	cursor:pointer;
 	white-space:nowrap;
 	line-height:normal;
 }
 .tabmenu a:hover {
-	background:#eee;
+	background:#ddd/*#HOVER#*/;
 }
 .tabmenu a.activetab {
 	color:black;
@@ -1534,22 +1987,26 @@ table.calendar tr.weekdays {
 }
 
 
-/* +++ 910 Accordion +++ */
+/*
+Style: Accordion 
+
+DOM structure:
+*/
 .accordion, .tabbedAccordion {
 	clear:both;
-	border:1px solid #ddd;
-	margin-bottom:0.5em;
+	border:1px solid #ddd/*#BORDER#*/;
+	margin-bottom:0.5em;	
 }
 .accordion .toggle {
-	border: 2px solid #f9f9f9;
-	background:#f9f9f9;
+	border: 2px solid #f9f9f9/*#COMMENT#*/;
+	background:#f9f9f9/*#COMMENT#*/;
 	cursor:pointer;
 	font-weight:bold;
 	line-height:1.4;
 	padding:0.25em 1em 0.25em 0;
 }
 .accordion .toggle:hover, .menu .toggle:hover {
-	background:#eee;
+	background:#ddd/*#HOVER#*/;
 }
 .accordion .tab {
 	padding:0 1em;
@@ -1557,7 +2014,7 @@ table.calendar tr.weekdays {
 .menu {
     clear:both; /* check out */
 	color:gray;
-	font-weight:bold; 
+	font-weight:bold;
 }
 .menu.top {
 	margin-left:0.5em; /* small left indent of first toggle */
@@ -1571,8 +2028,8 @@ table.calendar tr.weekdays {
 	margin-top:0.5em; /* small top indent of first toggle */
 }
 .menu .toggle {
-	background:#f9f9f9;
-	border:1px solid #ddd;
+	background:#f9f9f9/*#COMMENT#*/;
+	border:1px solid #ddd/*#BORDER#*/;
 	cursor:pointer;
 	padding:0.25em 0.5em;
 }
@@ -1600,7 +2057,7 @@ table.calendar tr.weekdays {
 }
 .menu.right .toggle.active {
 	border-left:1px solid white;
-} 
+}
 .tabbedAccordion {
 	padding:0.5em;
 }
@@ -1608,16 +2065,16 @@ table.calendar tr.weekdays {
 	margin-bottom:0.5em;	
 }
 .leftAccordion .tab, .rightAccordion .tab {
-	border:1px solid #ddd !important;
+	border:1px solid #ddd/*#BORDER#*/ !important;
 	margin:0 0 -2px 0; /* trick :: -2px to reveal top and bottom borders the tabs */
 	padding:0.25em 0.5em;
-} 
+}
 
-/* ie only hack no needed ?
-* html .togglemenu {
+/* ie only hack no needed ? */
+* html .menu {
 	margin-top:1px;
 }  
-*/
+
 
 /* margin is not compatible with scrollHeigth used by accordion - replace it by padding */
 /*
@@ -1630,21 +2087,42 @@ table.calendar tr.weekdays {
 }
 */
 
-/* +++ 912 wiki columns +++ */
-/*ie6 and lower hack */
-* html .columns {
-	width:100%;
-}
-/*ie7 hack */
-*:first-child+html .columns {
-	width:100%;
+/*
+Style: Columns 
+
+Wiki-markup:
+>	%%columns ... /%
+
+DOM structure:
+
+*/
+.columns {
+	*width:100%; /*ie6,ie7 hack*/
 }
 .columns .col {
 	float:left;
-	padding:0 0.25em;
+	padding:0 0.5em 0.5em 0;
 }
+/*ie6 and lower hack ./
+* html .columns {
+	width:100%;
+}
+/*ie7 hack ./
+*:first-child+html .columns {
+	width:100%;
+}
+*/
 
-/* +++ 915 Tips +++ */
+/*
+Style: Tips 
+
+Wiki-markup:
+> %%tip ... /%
+> %%tip-TipCaption ... /%
+
+DOM structure:
+
+*/
 .tip-anchor {
 	border-bottom:2px solid #545454;
 	cursor:pointer;
@@ -1688,33 +2166,35 @@ table.calendar tr.weekdays {
 }
 
 
-/* +++ 920 Collapsible lists +++ */
+/*
+Style: CollapsibleLists
+
+DOM structure:
+*/
 div.collapse ul, div.collapse ol {
 	margin:0;
 	padding:0;
-}
-/* ie6 hack : avoid strange side-effect on borders */
-* html div.collapse ul, * html div.collapse ol {
-	width:100%;
 }
 div.collapse li {
 	list-style-type:none;
 }
 .collapse .collapsebody, .collapsebox .collapse .collapsebody {
 	padding-left:1.5em;
+	*float:left; /* ie6, ie7 hack */
+	*padding-left:0.5em; /* ie6, ie7 hack */
 }
-/* ie7 hack */
+/* ie7 hack ./
 *:first-child+html .collapse .collapsebody, 
 *:first-child+html .collapsebox .collapse .collapsebody {
 	float:left;
 	padding-left:0.5em;
 }
-/* ie6 hack */
+/* ie6 hack ./
 * html .collapse .collapsebody, * html .collapsebox .collapse .collapsebody {
 	float:left;
 	padding-left:0.5em;
 }
-
+*/
 
 /* collapse icons */   
 .collapseBullet, .collapseOpen, .collapseClose {
@@ -1731,10 +2211,14 @@ div.collapse li {
 	cursor:pointer;
 }
 
-/* +++ collapsebox +++ */
+/*
+Style: CollapsibleBox 
+
+DOM structure:
+*/
 .collapsebox {
     clear:right; /* avoid clash with intern floated bullet */
-	border:1px solid #ddd;
+	border:1px solid #ddd/*#BORDER#*/;
 	margin:0 0 0.5em 0;
 }  
 .collapsetitle {
@@ -1746,7 +2230,13 @@ div.collapse li {
 	padding:0 0.5em;
 }
 
-/* +++ 930 Sortable tables +++ */
+/*
+Style: SortableTables
+
+Wiki markup:
+
+DOM structure:
+*/
 .sortable .sortAscending, .sortable .sortDescending, .sortable .sort {
 	background-repeat:no-repeat;
 	background-position:2px 4px;
@@ -1764,9 +2254,19 @@ div.collapse li {
 	background-image:url(images/sorted_up.gif);
 	background-position:2px 0px;
 }
+select.filter {
+	display:block;
+}
 
 
-/* +++ 940 SLIMBOX Attachment viewer etc. +++ */
+/*
+Style: SLIMBOX 
+	SLIMBOX is the attachment viewer etc.
+	
+Credit:
+	Todo
+	
+*/
 a.slimbox {
 	font-weight:bold;
 	font-size:1.3em;
@@ -1779,7 +2279,7 @@ a.slimbox:visited, a.slimbox:active, a.slimbox:link {
 	border:none;
 }
 a.slimbox:hover {
-	background-color:#eee;
+	background-color:#ddd/*#HOVER#*/;
 }
 
 #lbOverlay {
@@ -1789,6 +2289,7 @@ a.slimbox:hover {
 	width:100%;
 	background-color:#000;
 	cursor:pointer;
+	
 }
 #lbCenter, #lbBottomContainer {
 	position:absolute;
@@ -1862,7 +2363,9 @@ a.slimbox:hover {
 }
 
 
-/* +++ 950 Categorised +++ */
+/*
+Style: Category
+*/
 .categoryLink {
 	border-bottom:2px solid #545454;
 	text-decoration:none;
@@ -1921,7 +2424,7 @@ a.slimbox:hover {
 }
 .categoryText li {
 	display:block;
-	padding:0 8px;
+	padding:0 8px; 
 }
 .categoryPopup .hover { 
 	background-color:rgba(0,0,0,0.5);
@@ -1938,21 +2441,42 @@ a.slimbox:hover {
 }
 
 
-/* Pretty printing styles. Used with prettify.js. */
-pre.prettyprint {   
-}
+/*
+Style: Prettify
+	Pretty printing styles for the code-coloring PRE blocks. 
+	Used with prettify.js.
+	
+	CSS classes used to style specific elements:
+	.str - string literal
+	.kwd - keyword
+	.com - comment              
+	.typ - type
+	.lit - literal value
+	.pun - punctuation string
+	.pln - plain
+	.tag - sgml tag
+	.atn - sgml attribute name
+	.atv - sgml attribute value	
+	.dec - markup declaration such as a DOCTYPE
+	
+Credit:
+	http://code.google.com/p/google-code-prettify/
 
-.str {color: #489a1b; } /* string 080*/
-.kwd {color: #1b609a; } /*keyword 008*/
-.com {color: #888; } /*800*/
-.typ {color: #666; }
-.lit {color: #066; }
-.pun {color: #660; }
-.pln {color: #000; }
-.tag {color: #008; }
-.atn {color: #606; }
-.atv {color: #080; }
-.dec {color: #606; }
+DOM structure:
+>	<pre class="prettyprint"> ... </pre>
+
+*/
+.str { color: #489a1b; /*080*/ }
+.kwd { color: #1b609a; /*008*/ } 
+.com { color: #888; /*800*/ } 
+.typ { color: #666; }
+.lit { color: #066; }
+.pun { color: #660; }
+.pln { color: #000; }
+.tag { color: #008; }
+.atn { color: #606; }
+.atv { color: #080; }
+.dec { color: #606; }
 
 @media print {
   .str {color: #060; }
@@ -1968,32 +2492,173 @@ pre.prettyprint {
 }
 
 
+/*
+Section: dialog 
+	CSSdefs for the Mootools dialog plugin
 
-div.coverflow {
-	background-color:#000;
-	color:#fff;
-	visibility:hidden;
-	position:relative;
-	overflow:hidden;
+DOM structure:
+*/
+.dialog { 
+	position:absolute; 
+	font:11px/1.5 Lucida Grande, Arial, Helvetica, Sans-Serif;
+	color:white; 
+	background-color:rgba(0,0,0,0.7);
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
+	z-index:100; 
 }
-div.coverflow * {
+/* CHECK IExxx
+/* ie6 hack ./ * html .newlogo {
+	background:url(../../templates/default/images/tip.png) top left;
+}
+/* ie7 hack ./ *:first-child+html #snipetoc .newlogo { 
+	background:url(../../templates/default/images/tip.png) top left;
+}
+*/
+.dialog .caption {
+	text-align:center;
+	padding:5px; 
+	font-size:110%;
+	white-space:nowrap;
+	background-color:rgba(255,255,255,0.1);
+}
+.dialog .caption a.closer { 
+	color:inherit !important;
+	float:right; 
+	margin-left:1em;
+	cursor:pointer; 
+	-moz-user-select:none; 
+	-khtml-user-select:none; 
+	user-select:none; 
+}
+
+.dialog .body { 
+	-moz-user-select:none; 
+	-khtml-user-select:none; 
+	user-select:none; 
+	padding:5px;
+}
+.dialog .resize { 
+	float: right; 
+	background:url('images/resize.gif') no-repeat;
+	top: -13px; 
+	right: 3px; 
+	position: relative; 
+	height: 14px; 
+	width: 14px; 
+	cursor: se-resize 
+}
+.dialog .buttons {
+	text-align:center;
+	padding: 0 0 5px 0;
+	xxbackground-color:rgba(255,255,255,0.1);
+}
+
+
+/* 
+Style: SelectionDialog 
+
+*/
+.selectionDialog .body ul {
+	list-style:none;
 	margin:0;
 	padding:0;
 }
-div.coverflow .imgcontainer {
-	position:relative;
+.selectionDialog .body li { 
+	padding:0.25em 0.5em;
+	cursor:pointer;
+	white-space:nowrap;
 }
-div.coverflow img {
-	position:absolute;
-	border:none;
+.selectionDialog .hover { 
+	background-color:rgba(0,0,0,0.5);
+	-moz-border-radius:10px;
+	-webkit-border-radius:5px;
 }
-div.coverflow .slider {
-	position:relative;
-	border:1px solid #bbb;
-	z-index:10001;
+/* ie6 hack */ * html .selectionDialog .hover {
+	background-color:black;
 }
-div.coverflow .knob {
-	background:#fff;
-	width:100px;
-	height:15px;
+/* ie7 hack */ *:first-child+html .selectionDialog .hover {
+	background-color:black;
+}
+
+/*
+Style: fontDialog 
+*/
+.fontDialog li {
+	font-size:110%;
+}
+
+/*
+Style: charsDialog 
+*/
+.charsDialog td {
+	font-size:110%;
+	font-weight:bold;
+	text-align:center;
+	cursor:pointer;
+	padding:0.25em 0.5em; 
+}
+.charsDialog table {	
+	border-collapse:collapse; 
+	border-spacing:0;
+	empty-cells:show; 
+}
+.charsDialog td:hover {
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	background:rgba(255,255,255,0.7);
+	color:rgba(0,0,0,0.7);
+}
+.charsDialog {
+	*background:url(images/tip.png) top left;/*IE hack*/
+}
+/*
+/* ie6 hack ./ * html .charsDialog,
+/* ie7 hack ./ *:first-child+html .charsDialog {
+}
+*/
+
+/*
+Style: ColorDialog 
+*/
+.colorDialog { 
+	padding-bottom:8px; 
+	/*border:1px solid #111; */
+	width:148px; 
+	height:155px; 
+}
+.colorDialog .caption { 
+	background-color:transparent;
+}
+.colorDialog .caption span { 
+	padding:0 40px 0 5px; 
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	color:black;
+	background-color:white;
+	cursor:text;
+	float:left; 
+	font:110% Monaco, "Courier New", Courier, monospace;
+}
+.colorDialog .body { 
+	margin:22px 10px 0 10px; /*32-10(padding caption)=22*/
+	padding:0;
+	width:128px; 
+	height:128px; 
+	cursor:crosshair; 
+}
+.colorDialog .cursor { 
+	background:url('./cursor.gif') no-repeat; 
+	position:absolute; 
+	height:9px; 
+	width:9px; 
+	z-index:101; 
+}
+.colorDialog .body img { 
+	height:100%; 
+	width:100%; 
+	position:relative; 
+	top:-8px;
+	left:-1px; 
 }

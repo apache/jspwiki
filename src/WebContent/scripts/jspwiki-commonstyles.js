@@ -1,4 +1,4 @@
-/* 
+/*! 
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,108 +20,175 @@
  */
 
 /*
- * jspwiki-commonstyles.js
- * Contains additional Dynmic Styles 
- *
- *	114 Reflection (adds reflection to images): dynamic style 
- *	132 Accordion object: dynamic style
- *	220 RoundedCorners: dynamic style
- *	260 WikiTips: dynamic style 
- *	270 WikiColumns: dynamic style
- *	300 Prettify: dynamic style
- */
- 
- 
+Script: jspwiki-commonstyles.js
+	Contains additional Dynmic Styles 
+
+	* [Reflection]: add reflection to images
+	* [Accordion]: horizontal and vertical accordions
+	* [RoundedCorners]: ==> move to jspwiki-extra.js
+	* [Tips]: mouse-hover Tips
+	* [Columns]: side-by-side columns
+	* [Prettify]: syntax highlighting
+
+License:
+	http://www.apache.org/licenses/LICENSE-2.0
+*/
+  
 /*
-Dynamic Style: Reflection  (114)
+Script: Reflection
+	Add reflection effect to images.
+	Uses the ''reflection.js'' by Christophe Bleys
 
-Inspired by Reflection.js at http://cow.neondragon.net/stuff/reflection/
-Freely distributable under MIT-style license.
-Adapted for JSPWiki/BrushedTemplate, D.Frederickx, Sep 06
+Arguments:
 
-Use:
- 	%%reflection-height-opacity  [some-image.jpg] %%
- */
-var WikiReflection = {
+Options:
+	height - (optional) 1..100. Height value of the reflection image, 
+	  in percent of the height of the reflected image (default = 30%)
+	opacity - (optional) 1..100. Opacity or transparency value of the 
+	  reflection image (default = 50%, 100 means not transparent)
 
-	render: function(page,name){
-		$ES('*[class^=reflection]',page).each( function(w){
-			var parms = w.className.split('-');
-			$ES('img',w).each(function(img){
-				Reflection.add(img, parms[1], parms[2]);
-			}); 
+Example:
+> 	%%reflection  [some-image.jpg] /%
+> 	%%reflection-30-50  [some-image.jpg] /%
+
+*/
+Wiki.registerPlugin( function(page, name){
+
+	$ES('*[class^=reflection]',page).each( function(r){
+		var parms = r.className.split('-');
+		$ES('img', r).reflect({ height:parms[1]/100, width:parms[2]/100 });
+	});
+
+});
+
+/*
+Element: reflect
+	Extend the base Element class with a reflect and unreflect methods.
+	
+Credits:
+>	reflection.js for mootools v1.32
+>	(c) 2006-2008 Christophe Beyls, http://www.digitalia.be
+>	MIT-style license.
+*/
+Element.extend({
+	reflect: function(options) {
+		var img = this,
+			oHeight = options.height || 0.33,
+			oOpacity = options.opacity || 0.5;
+			
+		if (img.getTag() == "img") {
+
+			img.unreflect();
+
+			function doReflect() {
+				var reflection, 
+					imgW = img.width,
+					imgH = img.height,
+					reflectionHeight = Math.floor(imgH * oHeight), 
+					wrapper, 
+					context, 
+					gradient;
+
+				if (window.ie) {
+					reflection = new Element("img", {src: img.src, styles: {
+						width: imgW,
+						height: imgH,
+						marginBottom: -imgH + reflectionHeight,
+						filter: "flipv progid:DXImageTransform.Microsoft.Alpha(opacity=" + (oOpacity * 100) + 
+								", style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy=" + (oHeight * 100) + ")"
+					}});
+				} else {
+					reflection = new Element("canvas",{width: imgW, height: reflectionHeight});
+					if (!reflection.getContext) return;
+					try {
+						context = reflection.getContext("2d");
+						context.save();
+						context.translate(0, imgH-1);
+						context.scale(1, -1);
+						context.drawImage(img, 0, 0, imgW, imgH);
+						context.restore();
+						context.globalCompositeOperation = "destination-out";
+
+						gradient = context.createLinearGradient(0, 0, 0, reflectionHeight);
+						gradient.addColorStop(0, "rgba(255, 255, 255, " + (1 - oOpacity) + ")");
+						gradient.addColorStop(1, "rgba(255, 255, 255, 1.0)");
+						context.fillStyle = gradient;
+						context.rect(0, 0, imgW, reflectionHeight);
+						context.fill();
+					} catch(e) {
+						return;
+					}
+				}
+				reflection.setStyles({display: "block", border: 0});
+
+				wrapper = new Element(($(img.parentNode).getTag() == "a") ? "span" : "div").injectAfter(img).adopt(img, reflection);
+				wrapper.className = img.className;
+				wrapper.style.cssText = img._reflected = img.style.cssText;
+				wrapper.setStyles({width: imgW, height: imgH + reflectionHeight, overflow: "hidden"});
+				img.style.cssText = "display: block; border: 0px";
+				img.className = "reflected";
+			}
+
+			if (img.complete) doReflect();
+			else img.onload = doReflect;
+		}
+
+		return img;
+	},
+
+	unreflect: function() {
+		var img = this, wrapper;
+		img.onload = Class.empty;
+
+		if (img._reflected !== undefined) {
+			wrapper = img.parentNode;
+			img.className = wrapper.className;
+			img.style.cssText = img._reflected;
+			img._reflected = undefined;
+			wrapper.parentNode.replaceChild(img, wrapper);
+		}
+
+		return img;
+	}
+});
+
+Elements.extend({
+	reflect: function(options) {
+		return this.forEach(function(el) {
+			el.reflect(options);
+		});
+	},
+
+	unreflect: function() {
+		return this.forEach(function(el) {
+			el.unreflect();
 		});
 	}
-}
-Wiki.addPageRender(WikiReflection);
-
-/* FIXME : add delayed loading of reflection library */
-var Reflection = {
-
-	options: { height: 0.33, opacity: 0.5 },
-
-	add: function(img, height, opacity) {
-		//TODO Reflection.remove(image); --is this still needed?
-		height  = (height ) ? height/100 : this.options.height;
-		opacity = (opacity) ? opacity/100: this.options.opacity;
-
-		var div = new Element('div').injectAfter(img).adopt(img),
-			imgW = img.width,
-			imgH = img.height,
-			rH   = Math.floor(imgH * height); //reflection height
-
-		div.className = img.className.replace(/\breflection\b/, "");
-		div.style.cssText = img.backupStyle = img.style.cssText;
-		//div.setStyles({'width':img.width, 'height':imgH +rH, "maxWidth": imgW });
-		div.setStyles({'width':img.width, 'height':imgH +rH });
-		img.style.cssText = 'vertical-align: bottom';
-		//img.className = 'inline reflected';  //FIXME: is this still needed ??
-
-		if( window.ie ){ 
-			new Element('img', {'src': img.src, 'styles': {
-				'width': imgW,
-				'marginBottom': "-" + (imgH - rH) + 'px',
-				'filter': 'flipv progid:DXImageTransform.Microsoft.Alpha(opacity='+(opacity*100)+', style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy='+(height*100)+')'
-			}}).inject(div);
-		} else {
-			var r = new Element('canvas', {'width':imgW, 'height':rH, 'styles': {'width':imgW, 'height': rH}}).inject(div);
-			if( !r.getContext ) return;
-
-			var ctx = r.getContext("2d");
-			ctx.save();
-			ctx.translate(0, imgH-1);
-			ctx.scale(1, -1);
-			ctx.drawImage(img, 0, 0, imgW, imgH);
-			ctx.restore();
-			ctx.globalCompositeOperation = "destination-out";
-
-			var g = ctx.createLinearGradient(0, 0, 0, rH);
-			g.addColorStop( 0, "rgba(255, 255, 255, " + (1 - opacity) + ")" );
-			g.addColorStop( 1, "rgba(255, 255, 255, 1.0)" );
-			ctx.fillStyle = g;
-			ctx.rect( 0, 0, imgW, rH );
-			ctx.fill(); 
-		}
-	}
-}
+});
 
 
-/** 132 Accordion for Tabs, Accordeons, CollapseBoxes
- **
- ** Following markup:
- ** <div class="accordion">
- **		<div class="tab-FirstTab">...<div>
- **		<div class="tab-SecondTab">...<div>
- ** </div>
- **
- **	is changed into
- **	<div class="accordion">
- **		<div class="toggle active">First Tab</div>
- **		<div class="tab-FirstTab tab active">...</div>
- **		<div class="toggle">Second Tab</div>
- **		<div class="tab-SecondTab">...</div>
- **	</div>
- **/
+/*
+Class: Accordion
+	Add accordion effect for Tabs, Accordeons, CollapseBoxes
+
+
+Following markup
+{{{
+	<div class="accordion">
+		<div class="tab-FirstTab">...<div>
+		<div class="tab-SecondTab">...<div>
+	</div>
+}}}
+is changed into
+{{{
+	<div class="accordion">
+		<div class="toggle active">First Tab</div>
+		<div class="tab-FirstTab tab active">...</div>
+		<div class="toggle">Second Tab</div>
+		<div class="tab-SecondTab">...</div>
+	</div>
+}}}
+*/
 var WikiAccordion = {
 
 	render: function(page,name){
@@ -131,7 +198,7 @@ var WikiAccordion = {
 
 		$ES('.accordion, .tabbedAccordion, .leftAccordion, .rightAccordion',page).each( function(tt){
 			
-			var toggles=[], contents=[], menu=false;
+			var toggles=[], contents=[], accordion=null, menu=false;
 			if(tt.hasClass('tabbedAccordion')){
 				menu = new Element('div',{'class':'menu top'}).injectBefore(tt);
 			}
@@ -153,10 +220,14 @@ var WikiAccordion = {
 				menu ? t.inject(menu) : bullet.clone().injectTop(t.injectBefore(tab));
 
 				toggles.push(t);
-				contents.push(tab.addClass('tab'));
+				var i = toggles.length-1;
+				contents.push(tab
+					.addClass('tab')
+					.addEvent('onShow', function(){	accordion.display(i); }) 
+				);
 			});
 			
-			new Accordion(toggles, contents, {     
+			accordion = new Accordion(toggles, contents, { 
 				height: true,
 				alwaysHide: !menu,
 				onComplete: function(){
@@ -181,10 +252,13 @@ var WikiAccordion = {
 		bullet=toggle=null; //avoid memory leaks
 	}
 }
-Wiki.addPageRender(WikiAccordion);
+Wiki.registerPlugin( WikiAccordion );
 
 
-/** 220 RoundedCorners --experimental
+/*
+Class: RoundedCorners
+
+--experimental
  ** based on Nifty corners by Allesandro Fulciniti
  ** www.pro.html.it
  ** Refactored for JSPWiki
@@ -202,7 +276,8 @@ Wiki.addPageRender(WikiAccordion);
  **                    "s": Small rounded corner (lowercase s)
  **                    "n": Normal square corner
  **
- **/
+
+*/
 var RoundedCorners =
 {
 	/** Definition of CORNER dimensions
@@ -373,7 +448,7 @@ var RoundedCorners =
 			'padding-left':(padl==0) ? 4 : padl,
 			'padding-right':(padr==0) ? 4 : padr,
 			'background-color':color.hex
-		} }).wrapChildren(n);
+		} }).wraps(n);
 
 		if(border.hex){
 			//n.setStyles('border','');
@@ -382,88 +457,130 @@ var RoundedCorners =
 		}
 	}
 }
-Wiki.addPageRender(RoundedCorners);
+Wiki.registerPlugin( RoundedCorners );
 
 
-/**
- ** 260 Wiki Tips: 
- **/
-var WikiTips =
-{
-	render: function(page,name) {    
-		var tips = [];
-		$ES('*[class^=tip]',page).each( function(t){
-			var parms = t.className.split('-');
-			if( parms.length<=0 || parms[0] != 'tip' ) return;
+/*
+Script: Tips
+	Add mouse-hover Tips to your pages.
+	Depends on Mootools Tips plugin.
+
+Argument:
+	caption - (optional) 
+	
+Example:
+>  %%tip-ClickHere some tip text /%
+
+*/
+Wiki.registerPlugin( function(page, name){
+
+	var tips = [];
+
+	$ES('*[class^=tip]',page).each( function(t){
+
+		var parms = t.className.split('-');
+		if( parms.length>1 || parms[0] == 'tip' ){
+
 			t.className = "tip";
 
-			var body = new Element('span').wrapChildren(t).hide(),
+			var body = new Element('span').wraps(t).hide(),
 				caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
 
 			tips.push( 
 				new Element('span',{
 					'class': 'tip-anchor',
-					'title': caption + '::' + body.innerHTML
+					title: caption + '::' + body.innerHTML
 				}).setHTML(caption).inject(t)
 			);
-		});
-		if( tips.length>0 ) new Tips( tips , {'className':'tip', 'Xfixed':true} );
-	}
-}
-Wiki.addPageRender(WikiTips);
-
-
-/**
- ** 270 Wiki Columns
- ** Dirk Frederickx, Mar 07
- **/
-var WikiColumns =
-{
-	render: function(page,name) {    
-		var tips = [];
-		$ES('*[class^=columns]',page).each( function(t){
-			var parms = t.className.split('-');
-			t.className='columns';
-			WikiColumns.buildColumns(t, parms[1] || 'auto');
-		});
-	},
-
-	buildColumns: function( el, width){
-		var breaks = $ES('hr',el);
-		if(!breaks || breaks.length==0) return;
-
-		var colCount = breaks.length+1;
-		width = (width=='auto') ? 98/colCount+'%' : width/colCount+'px';
-
-		var colDef = new Element('div',{'class':'col','styles':{'width':width}}),
-			col = colDef.clone().injectBefore(el.getFirst()),
-			n;
-		while(n = col.nextSibling){
-			if(n.tagName && n.tagName.toLowerCase() == 'hr'){
-				col = colDef.clone();
-				$(n).replaceWith(col);
-				continue;
-			}
-			col.appendChild(n);
 		}
-		new Element('div',{'styles':{'clear':'both'}}).inject(el);
-	}
-}
-Wiki.addPageRender(WikiColumns);
+	});
+
+	if( tips.length>0 ) new Tips( tips , {className:'tip', 'Xfixed':true} );
+
+});
 
 
-/* 300 Javascript Code Prettifier
- * based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
- */
-var WikiPrettify = {
-	render: function(page,name){
-		var els = $ES('.prettify pre, .prettify code',page); 
-		if(!els || els.length==0) return;
+/*
+Script: Columns
+	Format the page content side by side, in columns, like in a newspaper.
+	HR elements (in wiki {{----}} markup) are used to separate the columns.
+	Column widths are equal and automatically calculated. 
+	Optionally, you can specify the width in pixel(px) for the columns.
+
+Arguments:
+	width - (optional) column width in pixel(px)
+
+Example:
+>	%%columms-300
+>		column-text1 ...
+>		----
+>		column-text1 ...
+>	/%
+*/
+Wiki.registerPlugin( function(page, name){
+
+	$ES('*[class^=columns]',page).each( function(block){
+
+		var parms = block.className.split('-'),
+			columnBreaks = $ES('hr', block);
+
+		if( columnBreaks && columnBreaks.length>0 ){
+
+			var columnCount = columnBreaks.length + 1,
+				width = ( parms[1] ) ? parms[1]/columnCount+'px' : 95/columnCount+'%',
+				wrapper = new Element('div', { 'class':'col', 'styles':{ 'width':width } }),
+				col = wrapper.clone().injectTop(block),
+				n;
+				
+			block.className='columns';
+			
+			while( n = col.nextSibling ){
+
+				if( n.tagName && n.tagName.toLowerCase() == 'hr' ){
+					$(n).replaceWith( col = wrapper.clone() );
+				} else {
+					col.appendChild( n );
+				}
+
+			}
+
+			new Element('div',{styles:{clear:'both'}}).inject( block );
+			//wrapper.empty(); //memory leak
+		}
+	});
+	
+});
+
+/*
+Script: Code-Prettifier
+
+Credits:
+	Based on http://google-code-prettify.googlecode.com/svn/trunk/README.html
+
+	Prettify has been modified slightly to avoid processing of the same element.
+	See http://code.google.com/p/google-code-prettify/issues/detail?id=40
+
+Future extension:
+	Add option to overrule the choice of language:
+>	"bsh", "c", "cc", "cpp", "cs", "csh", "cyc", "cv", "htm", "html",
+>Ê Ê "java", "js", "m", "mxml", "perl", "pl", "pm", "py", "rb", "sh",
+>Ê Ê "xhtml", "xml", "xsl"
+
+Example:
+>	%%prettify {{{
+>		some code snippet here ...
+>	}}} /%
+
+*/
+Wiki.registerPlugin( function(page, name){
+
+	var els = $ES('.prettify pre, .prettify code', page); 
+
+	if( els && els.length>0 ){
+
 		els.addClass('prettyprint');		
-
-		//TODO: load assets .css and .js 
-		//PRETTIFY: patch added to avoid processing of the same element
 		prettyPrint(page);
+
 	}
-}
-Wiki.addPageRender(WikiPrettify);
+
+});

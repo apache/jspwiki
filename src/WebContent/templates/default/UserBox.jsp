@@ -51,10 +51,10 @@
         <c:set var="loginTitle"><fmt:message key='actions.login.title' /></c:set>
         <s:link
           beanclass="org.apache.wiki.action.LoginActionBean"
-          class="action login"
+          class="btn login"
           title="${loginTitle}">
           <s:param name="redirect" value="${wikiContext.page.name}" />
-          <fmt:message key="actions.login"/>
+          <span><span><fmt:message key="actions.login"/></span></span>
         </s:link>
       </wiki:Permission>
     </wiki:CheckRequestContext>
@@ -64,9 +64,9 @@
     <c:set var="logoutTitle"><fmt:message key='actions.logout.title' /></c:set>
     <s:link
       beanclass="org.apache.wiki.action.LoginActionBean" event="logout"
-      class="action logout"
+      class="btn logout"
       title="${logoutTitle}">
-      <fmt:message key="actions.logout"/>
+      <span><span><fmt:message key="actions.logout"/></span></span>
     </s:link>
   </wiki:UserCheck>
 
@@ -75,10 +75,10 @@
       <c:set var="prefsTitle"><fmt:message key='actions.prefs.title' /></c:set>
       <s:link
         beanclass="org.apache.wiki.action.UserPreferencesActionBean"
-        class="action prefs" accesskey="p"
+        class="btn prefs" accesskey="p"
         title="${prefsTitle}">
         <s:param name="redirect" value="${wikiContext.page.name}" />
-        <fmt:message key="actions.prefs"/>
+        <span><span><fmt:message key="actions.prefs"/></span></span>
       </s:link>
     </wiki:CheckRequestContext>
   </wiki:CheckRequestContext>
