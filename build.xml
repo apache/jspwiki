@@ -192,15 +192,9 @@
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="${code.web}/WEB-INF/jspwiki.properties" />
      <copy file="${tests}/etc/jspwiki.properties.tmpl" tofile="${tests}/etc/jspwiki.properties" />
-     <copy file="${tests}/etc/jspwiki_rcs.properties.tmpl" tofile="${tests}/etc/jspwiki_rcs.properties" />
-     <copy file="${tests}/etc/jspwiki_vers.properties.tmpl" tofile="${tests}/etc/jspwiki_vers.properties" />
      <replace file="${code.web}/WEB-INF/jspwiki.properties"
               replacefilterfile="${build.properties}" />
      <replace file="${tests}/etc/jspwiki.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="${tests}/etc/jspwiki_rcs.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="${tests}/etc/jspwiki_vers.properties"
               replacefilterfile="${build.properties}" />
   </target>
 
@@ -211,8 +205,6 @@
     <delete dir="${tests.build}" />
     <delete file="${code.web}/WEB-INF/jspwiki.properties" />
     <delete file="${tests}/etc/jspwiki.properties" />
-    <delete file="${tests}/etc/jspwiki_rcs.properties" />
-    <delete file="${tests}/etc/jspwiki_vers.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>

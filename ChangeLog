@@ -1,3 +1,12 @@
+2009-06-07 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-132
+        
+        * JSPWIKI-545: Fixed hopefully the last of the RAT issues.
+        
+        * Removed generation of jspwiki_rcs and jspwiki_vers.properties
+        from unit tests, since they are no longer used.
+        
 2009-06-21 Dirk Frederickx <brushed AT apache DOT org>
 
         * 3.0.0-svn-131
