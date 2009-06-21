@@ -87,7 +87,7 @@
     <link rel="start" href="<wiki:LinkTo format='url' page='${wikiEngine.frontPage}' />" title="Front page" />
     <link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico' />" />
     <%-- ie6 needs next line --%>
-    <link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico' />" />
+    <link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='favicon.ico' />" />
     <%--
 
          Support for the universal edit button
@@ -123,8 +123,12 @@
     --%>
     <script type="text/javascript">//<![CDATA[
     /* Localized javascript strings: LocalizedStrings[] */
+    <%-- DELETEME
     <s:layout-component name="jslocalizedstrings" />
     <s:layout-component name="jsfunction" />
+    --%>
+    <wiki:IncludeResources type="jslocalizedstrings"/>
+    <wiki:IncludeResources type="jsfunction"/>
     //]]></script>
     <%--
 

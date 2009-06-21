@@ -404,13 +404,17 @@ PRE and xflow:
 code, tt, .pre, pre {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	line-height:1.1;
-	border:1px solid #ddd/*#BORDER#*/;
+}
+.pre, pre {
+	white-space:pre;
+	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
 }
 pre {
 	clear:both;
 	margin:1em 1.5em;
 	padding:0.5em;
 	background:#f9f9f9/*#COMMENT#*/;
+	border:1px solid #ddd/*#BORDER#*/;
 	/*
 	border:1px dashed #0000aa; 
 	color:#000077; 
@@ -418,15 +422,10 @@ pre {
 	margin:1em 0;
 	*/
 }
-.pre, pre {
-	white-space:pre;
-	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
-}
-
-#previewcontent, #info, #pagecontent, #attach, #findcontent,.fragment,
+#previewcontent, #info, #pagecontent, #attach, #findcontent,
 .pre, pre, 
 .xflow {
-	overflow:auto;
+	overflow-y:hidden; /*safari only ??*/
 	_width:100%;
     /*ie hacks CHECKME*/
 	_xxoverflow:visible; 
@@ -434,7 +433,6 @@ pre {
 	_xxzoom:1; /*width:95%;  hasLayout=true */
 	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
 }
-
                            
 /*
 Links:
@@ -713,6 +711,7 @@ a.infolink {
 a.infolink img {
 	display:none;
 }
+/*
 a.infolink[href$='.doc'] {
 	background:transparent url(images/attach-strip.png) no-repeat center right;
 	background-position:0 -32px;
@@ -721,6 +720,7 @@ a.infolink[href$='.pdf'] {
 	background:transparent url(images/attach-strip.png) no-repeat center right;
 	background-position:0 -80px;
 }
+*/
 
 
 
@@ -1019,16 +1019,16 @@ DOM Structure:
 
 #page {
 	position:relative;
-	padding:0 0 0 10px;
+	padding:0 0 0 16px;
 }
 .fav-right #page {
-	padding:0 10px 0 0;
+	padding:0 16px 0 0;
 }
 #page .splitbar {
 	position:absolute;
 	width:4px;
 	top:1.75em; /* 1.5line-height + ?0.25 */
-	left:6px;
+	left:12px;
 	bottom:2em; /* 1.5line-height + 0.5margin-bottom */
 	background:#f9f9f9/*#COMMENT#*/;
 	xxborder-top:1px solid #f9f9f9/*#COMMENT#*/;
@@ -1036,7 +1036,7 @@ DOM Structure:
 }
 .fav-right #page .splitbar {
 	left:auto;
-	right:6px;
+	right:12px;
 }
 #page .splitbar.hover {
 	background:#eee;
@@ -1075,17 +1075,14 @@ Style: FindContent
 	border-left-style:solid;
 	border-bottom-style:solid;
 }
-.fragment {
-	padding:0.25em;
-	font:90% Monaco, "Courier New", Courier, monospace;
-	width:800px;
-	white-space:pre;/* check */
+/* search detail fragment */
+#searchResult2 .pre {
+	padding:0.5em;
 }
 /* search detail fragment pieces are concatenated by an ... ellips char. */
-.fragment_ellipsis {
+.ellipsis {
 	font-weight:bold;
 }
-*/
 .nosearchresult {
 	font-style:italic;
 }

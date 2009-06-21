@@ -1,3 +1,19 @@
+2009-06-21 Dirk Frederickx <brushed AT apache DOT org>
+
+        * 3.0.0-svn-131
+        
+        * Fixed Quick Navigation drop down menu position.
+        
+        * Fixed the overflow handling of wide pages. (eg pages with wide
+        preformatted content or wide images)
+
+        * Fixed the location of the favicon.ico.
+        
+        * Fixed the insertion of 'jslocalizationstring' and 'jsfunction',
+        which were missing from the DefaultLayout.jsp.
+        
+        * Fixed the formatting of the search detail fragments in FindContent.jsp.
+
 2009-06-14 Dirk Frederickx <brushed AT apache DOT org>
 
         * 3.0.0-svn-130

@@ -96,12 +96,12 @@
 
         %><tr class="odd">
             <td colspan="2">
-              <div class="fragment"><%
+              <div class="pre"><%
               
               for (int i = 0; i < contexts.length; i++) 
               {
               
-              %><%= (i > 0 ) ? "<span class='fragment_ellipsis'> ... </span>" : ""  
+              %><%= (i > 0 ) ? "<span class='ellipsis'> ... </span>" : ""  
               %><%= contexts[i]  %><%
               
               }

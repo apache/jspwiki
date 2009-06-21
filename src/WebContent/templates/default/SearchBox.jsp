@@ -28,7 +28,6 @@
         class="wikiform"
            id="searchForm" accept-charset="<wiki:ContentEncoding />">
 
-  <div style="position:relative">
   <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
         onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
            type="text" value="<fmt:message key='sbox.search.submit'/>"
@@ -39,7 +38,7 @@
   		 name="searchSubmit" id="searchSubmit"
   		value="<fmt:message key='find.submit.go'/>"
   		title="<fmt:message key='find.submit.go'/>"></button>
-  </div>
+
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
       <a href="#" id='quickView' class='btn'
