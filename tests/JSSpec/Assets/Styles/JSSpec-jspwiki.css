@@ -1,0 +1,235 @@
+@CHARSET "UTF-8";
+/* 
+File:JSSpec-jspwiki.css
+	Stylesheet for javascript spec.
+	Adjusted for JSPWiki by Dirk Frederickx, Dec 2008
+
+License:
+	todo
+ */
+
+/* refined global reset */
+/* inspired by http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ and yui reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin:0;
+	padding:0;
+	border:0;
+	outline:none;
+	/* vertical-align:baseline; seems to give printing errors in FF */
+}
+pre {
+	font:120% Monaco, Courier New, monospace;
+	overflow:auto;
+	clear:both;
+	white-space:pre;
+	padding:0.5em;
+	background:#f9f9f9;
+	border:1px solid #ddd;
+}
+ul {
+	list-style:none;
+}
+a {
+	text-decoration:none;
+}
+a:link, a:visited {
+	color:#666;
+}
+a:hover, a:active {
+	cursor:pointer !important;
+}
+
+html {
+	overflow:hidden;
+}
+
+body, #jsspec_container {
+	color:black; 
+	background:white; 
+	xxfont:11px/1.5 Lucida Grande, Arial, Helvetica, Sans-Serif;
+	font:11px/1.5 Verdana,Arial,Helvetica,sans-serif;
+
+	overflow:hidden;
+	width:100%;
+	height:100%;
+}
+
+
+#title {
+	position:absolute;	
+	top:0;    	
+	left:0;	
+	width:100%;	
+	height:30px;	
+	overflow:hidden;
+	background:grey;
+	padding:0.5em;
+	color:white;
+}
+
+#list {	
+	position:absolute;    	
+	top:40px;	
+	left:0;	
+	bottom:0;	
+	overflow:auto;    	
+	width:20%;
+	_height:expression(document.body.clientHeight-40);
+}
+
+#log {	
+	position:absolute;    	
+	top:40px;	
+	width:80%;
+	right:0;	
+	bottom:0;	
+	overflow:auto;	
+	_height:expression(document.body.clientHeight-40);
+	_width:expression(document.body.clientWidth-250);
+}
+
+
+/* hiding subtitles */
+h2 {
+	background:white;
+	margin-bottom:0.25em;
+	padding:0.25em 0.5em;
+}
+
+/* title section */
+
+div#title h1 {
+	font-size:2em;
+	float:left;
+}
+#title ul {
+	margin-right:1em;
+}
+div#title ul li {
+	font-weight:bold;
+	font-size:1.25em;
+	float:right;
+	padding:0.25em;
+}
+
+div#title p {
+	padding:1.5em;
+	float:left;
+}
+
+/* spec container */
+ul.specs {
+	margin:0.5em;
+}
+
+ul.specs li {
+	margin-bottom:0.1em;
+}
+
+/* spec title */
+ul.specs li h3 {
+	font-weight:bold;
+	padding:0.25em 1em;
+	cursor:pointer !important;
+}
+
+/* example container */
+ul.examples li {
+	border-style:solid;
+	margin:0.5em 0em 0.5em 2em;
+}
+
+/* example title */
+ul.examples li h4 {
+	padding:0.25em 0.5em;
+	margin-bottom:0.25em;
+}
+
+/* example explanation */
+ul.examples li div {
+	overflow:hidden;
+	padding:0.5em;
+}
+
+/* highlight clickable title blocks to collopse/hide spec examples */
+#log ul.specs li h3:hover {
+	padding-left:0.5em;
+	border-left:0.5em solid gray;
+	padding-right:0.5em;
+	border-right:0.5em solid gray;
+}
+
+/* styles for ongoing, success, failure, error */
+div.success, div.success a {
+	color:#9f9;
+}
+
+ul.specs li.success h3, ul.specs li.success h3 a {
+	background-color:#9f9;
+}
+
+ul.examples li.success, ul.examples li.success a {
+	background-color:#9f9;
+}
+
+div.exception, div.exception a {
+	color:#f93;
+}
+
+ul.specs li.exception h3, ul.specs li.exception h3 a {
+	background-color:#f93;
+}
+
+ul.examples li.exception, ul.examples li.exception a {
+	background-color:#f93;
+}
+
+div.ongoing, div.ongoing a {
+	color:#ffff80;
+}
+
+ul.specs li.ongoing h3, ul.specs li.ongoing h3 a {
+	background-color:#ffff80;
+} 
+
+ul.examples li.ongoing, ul.examples li.ongoing a {
+	background-color:#ffff80;
+}
+
+/* --------------------
+ * values
+ */
+
+.number_value, .string_value, .regexp_value, .boolean_value, .dom_value {
+	font-family: monospace;
+	color: blue;
+	white-space: pre;
+}
+
+.object_value, .array_value {
+}
+
+.date_value {
+	color:olive;
+}
+
+.undefined_value, .null_value {
+	color:blue;
+}
+
+.dom_attr_name {
+}
+
+.dom_attr_value {
+	color:red;
+}
+
+.dom_path {
+	color:gray;
+}
+
+strong {
+}
