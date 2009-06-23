@@ -1,12 +1,3 @@
-2009-06-22 Dirk Frederickx <brushed AT apache DOT org>
-
-        * 3.0.0-svn-133
-        
-        * Added javascript unit-tests based on JSSpec. Not all tests are running
-        yet and the test-suite definitely needs further expansions.
-        Just open tests/JSSpec/JSSpec-index.html in your browser to run the test-suite.
-        
-
 2009-06-07 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-132
