@@ -286,4 +286,5 @@ public interface WikiPage extends Comparable<WikiPage>
      *  @throws ProviderException If the attachmentness cannot be determined.
      */
     public boolean isAttachment() throws ProviderException;
+    
 }

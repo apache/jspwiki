@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.*;
 import org.apache.wiki.util.FileUtil;
@@ -647,8 +648,6 @@ public class WikiEngineTest extends TestCase
    */ 
     public void testDeleteVersion() throws Exception
     {
-        props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
-
         m_engine.shutdown();
         m_engine = new TestEngine( props );
         m_engine.saveText( NAME1, "Test1" );
@@ -659,7 +658,12 @@ public class WikiEngineTest extends TestCase
 
         m_engine.deleteVersion( page );
 
-        assertNull( "got page", m_engine.getPage( NAME1, 3 ) );
+        try
+        {
+            WikiPage p = m_engine.getPage( NAME1, 3 );
+            fail("got page");
+        }
+        catch(PageNotFoundException e) {} // Expected
 
         String content = m_engine.getText( NAME1, WikiProvider.LATEST_VERSION );
 
@@ -668,139 +672,30 @@ public class WikiEngineTest extends TestCase
 
     public void testDeleteVersion2() throws Exception
     {
-            props.setProperty( "jspwiki.pageProvider", "VersioningFileProvider" );
+        m_engine.shutdown();
+        m_engine = new TestEngine( props );
+        m_engine.saveText( NAME1, "Test1" );
+        m_engine.saveText( NAME1, "Test2" );
+        m_engine.saveText( NAME1, "Test3" );
 
-            m_engine.shutdown();
-            m_engine = new TestEngine( props );
-            m_engine.saveText( NAME1, "Test1" );
-            m_engine.saveText( NAME1, "Test2" );
-            m_engine.saveText( NAME1, "Test3" );
+        WikiPage page = m_engine.getPage( NAME1, 1 );
 
-            WikiPage page = m_engine.getPage( NAME1, 1 );
+        m_engine.deleteVersion( page );
 
-            m_engine.deleteVersion( page );
-
-            assertNull( "got page", m_engine.getPage( NAME1, 1 ) );
-
-            String content = m_engine.getText( NAME1, WikiProvider.LATEST_VERSION );
-
-            assertEquals( "content", "Test3", content.trim() );
-
-            assertEquals( "content1", "", m_engine.getText( NAME1, 1 ).trim() );
+        try
+        {
+            m_engine.getPage( NAME1, 1 );
+            fail("Got page!");
         }
+        catch( PageNotFoundException e ) {} // Expected
+
+        String content = m_engine.getText( NAME1, WikiProvider.LATEST_VERSION );
+
+        assertEquals( "content", "Test3", content.trim() );
+
+        assertEquals( "content1", "", m_engine.getText( NAME1, 1 ).trim() );
+    }
     
-    
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModificationRefs()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-
-        m_engine.saveText( NAME1, "[Foobar]" );
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        List<WikiPath> c = refMgr.findUncreated();
-        assertTrue( "Non-existent reference not detected by ReferenceManager",
-            c.contains( WikiPath.valueOf( "Foobar" ) ) );
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+".txt" );
-
-        assertTrue( "No file!", saved.exists() );
-
-        FileWriter out = new FileWriter( saved );
-        FileUtil.copyContents( new StringReader("[Puppaa]"), out );
-        out.close();
-
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to wake up.
-
-        String text = m_engine.getText( NAME1 );
-
-        assertEquals( "wrong contents", "[Puppaa]", text );
-
-        c = refMgr.findUncreated();
-
-        assertTrue( "Non-existent reference after external page change " +
-                    "not detected by ReferenceManager",
-                    c.contains( WikiPath.valueOf( "Puppaa" ) ) );
-    }
-
-
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModificationRefsDeleted()
-        throws Exception
-    {
-        ReferenceManager refMgr = m_engine.getReferenceManager();
-
-        m_engine.saveText( NAME1, "[Foobar]" );
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        List<WikiPath> c = refMgr.findUncreated();
-        assertEquals( "uncreated count", 1, c.size() );
-        assertEquals( "wrong referenced page", WikiPath.valueOf( "Foobar" ), c.iterator().next() );
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+".txt" );
-
-        assertTrue( "No file!", saved.exists() );
-
-        saved.delete();
-
-        assertFalse( "File not deleted!", saved.exists() );
-
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD ); // Wait five seconds for CachingProvider to catch up.
-
-        WikiPage p = m_engine.getPage( NAME1 );
-
-        assertNull( "Got page!", p );
-
-        String text = m_engine.getText( NAME1 );
-
-        assertEquals( "wrong contents", "", text );
-
-        c = refMgr.findUncreated();
-        assertEquals( "NEW: uncreated count", 0, c.size() );
-    }
-
-    /**
-     *  Assumes that CachingProvider is in use.
-     */
-    public void testExternalModification()
-        throws Exception
-    {
-        m_engine.saveText( NAME1, "Foobar" );
-
-        m_engine.getText( NAME1 ); // Ensure that page is cached.
-
-        Thread.sleep( 2000L ); // Wait two seconds for filesystem granularity
-
-        String files = props.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-
-        File saved = new File( files, NAME1+".txt" );
-
-        assertTrue( "No file!", saved.exists() );
-
-        FileWriter out = new FileWriter( saved );
-        FileUtil.copyContents( new StringReader("Puppaa"), out );
-        out.close();
-
-        // Wait for the caching provider to notice a refresh.
-        Thread.sleep( 2000L*PAGEPROVIDER_RESCAN_PERIOD );
-
-        // Trim - engine.saveText() may append a newline.
-        String text = m_engine.getText( NAME1 ).trim();
-        assertEquals( "wrong contents", "Puppaa", text );
-    }
 
     /**
      * Tests BugReadingOfVariableNotWorkingForOlderVersions

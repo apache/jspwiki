@@ -367,7 +367,7 @@ public class SearchManager
                 }
                 catch( PageNotFoundException e )
                 {
-                    throw new InternalWikiException("Page removed already!?!");
+                    throw new InternalWikiException("Page removed already!?! Page="+pageName);
                 }
                 catch( ProviderException e ) 
                 {

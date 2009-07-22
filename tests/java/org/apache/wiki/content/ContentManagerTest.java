@@ -132,6 +132,60 @@ public class ContentManagerTest extends TestCase
         assertEquals( 2, allPages.size() );
     }
 
+    public void testVersions() throws Exception
+    {
+        String content = "Test Content";
+
+        WikiPage page = m_mgr.addPage( WikiPath.valueOf("TestPage"), ContentManager.JSPWIKI_CONTENT_TYPE );
+
+        page.setContent( content );
+        
+        page.save();
+        
+        page.setContent( "New Test Content" );
+        
+        page.save();
+        
+        page.setContent( "Even newer Test Content" );
+        
+        page.save();
+        
+        assertEquals( "origpage version", 3, page.getVersion() );
+        
+        WikiPage p2 = m_mgr.getPage( WikiPath.valueOf("TestPage") );
+        
+        assertEquals( "fetched page version", 3, p2.getVersion() );
+        
+        assertEquals( "content", "Even newer Test Content", p2.getContentAsString() );
+        
+        assertEquals( "content type", ContentManager.JSPWIKI_CONTENT_TYPE, p2.getContentType() );
+        
+        // Test get version
+
+        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 1 );
+        
+        assertEquals( "v1 content", "Test Content", p2.getContentAsString() );
+        assertEquals( "v1 version", 1, p2.getVersion() );
+
+        assertFalse( "content", page.getContentAsString().equals(p2.getContentAsString()));
+        assertFalse( "uuid", page.getAttribute( "jcr:uuid" ).equals( p2.getAttribute( "jcr:uuid" )));
+        
+        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 2 );
+        
+        assertEquals( "v2 content", "New Test Content", p2.getContentAsString() );
+        assertEquals( "v2 version", 2, p2.getVersion() );
+
+        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), 3 );
+        
+        assertEquals( "v3 content", "Even newer Test Content", p2.getContentAsString() );
+        assertEquals( "v3 version", 3, p2.getVersion() );
+
+        p2 = m_mgr.getPage( WikiPath.valueOf("TestPage"), -1 );
+        
+        assertEquals( "v3 content", "Even newer Test Content", p2.getContentAsString() );
+        assertEquals( "v3 version", 3, p2.getVersion() );
+}
+    
     public static Test suite()
     {
         return new TestSuite( ContentManagerTest.class );

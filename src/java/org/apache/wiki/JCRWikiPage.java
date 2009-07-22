@@ -60,6 +60,8 @@ public class JCRWikiPage
 
     private static final String ATTR_CONTENT = "wiki:content";
 
+    public static final String ATTR_VERSION  = "wiki:version";
+    
     public  static final String CONTENTTYPE  = "wiki:contentType";
     
 
@@ -111,6 +113,12 @@ public class JCRWikiPage
         m_path    = name;
     }
     
+    /**
+     *  Returns the JCR Node which backs this WikiPage implementation.
+     *  
+     *  @return The JCR Node
+     *  @throws RepositoryException If the page cannot be located.
+     */
     public Node getJCRNode() throws RepositoryException
     {
         return m_engine.getContentManager().getJCRNode(m_jcrPath);
@@ -275,8 +283,17 @@ public class JCRWikiPage
      */
     public int getVersion()
     {
-        return -1;
-        //return getJCRNode().getBaseVersion().
+        try
+        {
+            return (int) getJCRNode().getProperty( ATTR_VERSION ).getLong();
+        }
+        catch( PathNotFoundException e )
+        {}
+        catch( RepositoryException e )
+        {
+            // FIXME: SHould really throw something else.
+        }
+        return 0;
     }
 
     /* (non-Javadoc)
@@ -580,6 +597,10 @@ public class JCRWikiPage
         }
     }
 
+    /**
+     *  Returns the parent page of this subpage. If this is not a subpage,
+     *  it will simply throw a PageNotFoundException.
+     */
     public WikiPage getParent() throws PageNotFoundException, ProviderException
     {
         return m_engine.getContentManager().getPage( m_path.getParent() );
@@ -595,12 +616,20 @@ public class JCRWikiPage
         return m_path.getName();
     }
 
+    public boolean isLatest() throws RepositoryException
+    {
+        // TODO: This is a bit kludgish, but works.
+        return getJCRNode().getPath().indexOf( "/wiki:versions/" ) == -1;
+    }
+    
+    /** @deprecated */
     public boolean isCacheable()
     {
         // TODO Auto-generated method stub
         return false;
     }
 
+    /** @deprecated */
     public void setCacheable( boolean value )
     {
         // TODO Auto-generated method stub
@@ -626,6 +655,9 @@ public class JCRWikiPage
         return true;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public List<WikiPage> getChildren() throws ProviderException
     {
         ArrayList<WikiPage> pages = new ArrayList<WikiPage>();
@@ -636,7 +668,16 @@ public class JCRWikiPage
         
             while( iter.hasNext() )
             {
-                pages.add( new JCRWikiPage( m_engine, iter.nextNode() ) );
+                Node n = iter.nextNode();
+                
+                //
+                //  We will not count any page which has a namespace as
+                //  a child of this WikiPage.
+                //
+                if( n.getName().indexOf( ':' ) == -1 )
+                {                
+                    pages.add( new JCRWikiPage( m_engine, iter.nextNode() ) );
+                }
             }
         }
         catch( PathNotFoundException e )
@@ -650,5 +691,43 @@ public class JCRWikiPage
         
         return pages;
     }
+
+    // FIXME: This is really slow.  I mean, really, really slow, especially
+    //        if you call it repeatedly.
+    public JCRWikiPage getPredecessor() throws ProviderException, PageNotFoundException
+    {
+        List<WikiPage> versions = m_engine.getVersionHistory( getName() );
+
+        int thisVersion = getVersion();
+
+        WikiPage p = null;
+
+        for( int i = 0; i < versions.size(); i++ )
+        {
+            if( versions.get( i ).getVersion() == thisVersion )
+            {
+                break;
+            }
+            p = versions.get( i );
+        }
+        
+        if( p == null )
+            throw new PageNotFoundException("No predecessor");
+        
+        return (JCRWikiPage)p;
+    }
+
+    public JCRWikiPage getCurrentVersion() throws ProviderException
+    {
+        try
+        {
+            return (JCRWikiPage) m_engine.getPage( getPath() );
+        }
+        catch( PageNotFoundException e )
+        {
+            throw new ProviderException("version cannot access current page - this can be serious",e);
+        }
+    }
     
+
 }

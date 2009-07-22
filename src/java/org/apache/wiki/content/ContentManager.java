@@ -28,12 +28,12 @@ import java.security.Principal;
 import java.util.*;
 
 import javax.jcr.*;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
+import javax.jcr.version.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -102,6 +102,8 @@ import org.priha.util.ConfigurationException;
 
 public class ContentManager implements WikiEventListener
 {
+    private static final String WIKI_VERSIONS = "wiki:versions";
+
     /**
      *  The name of the default WikiSpace.
      */
@@ -330,17 +332,114 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     * Saves a WikiPage to the repository.
-     * @param page the page to save
+     *  Creates a new version of the given page.
+     *  
+     *  @param page
+     *  @throws RepositoryException 
+     */
+    private void checkin( String path, int currentVersion ) throws RepositoryException
+    {
+        Session copierSession = null;
+        
+        try
+        {
+            copierSession = m_sessionManager.newSession();
+            
+            // If the item does not exist yet, there is nothing to copy.
+            if( !copierSession.itemExists( path ) ) return;
+            
+            Node nd = (Node)copierSession.getItem( path );
+            Node versions;
+            
+            if( !nd.hasNode( WIKI_VERSIONS ) )
+            {
+                versions = nd.addNode( WIKI_VERSIONS );
+            }
+            else
+            {
+                versions = nd.getNode( WIKI_VERSIONS );
+            }
+            
+            Node newVersion = versions.addNode( Integer.toString( currentVersion ) );
+            
+            newVersion.addMixin( "mix:referenceable" );
+            
+            copyProperties( nd, newVersion );
+            
+            copierSession.save();
+        }
+        finally
+        {
+            if( copierSession != null ) copierSession.logout();
+        }
+        
+    }
+
+    private void copyProperties( Node source, Node dest )
+                                                         throws RepositoryException,
+                                                             ValueFormatException,
+                                                             VersionException,
+                                                             LockException,
+                                                             ConstraintViolationException
+    {
+        for( PropertyIterator pi = source.getProperties(); pi.hasNext(); )
+        {
+            Property p = pi.nextProperty();
+            
+            int opp = p.getDefinition().getOnParentVersion();
+            
+            //
+            //  This should prevent us from copying stuff which is set by
+            //  the repository.
+            //
+            // FIXME: The jcr:uuid check is a Priha 0.1.21-specific hack - I have
+            //        no idea why it's giving the wrong OnParentVersionAction.
+            if( opp == OnParentVersionAction.COPY && !p.getName().equals( "jcr:uuid" ))
+            {
+//                System.out.println("  Copying "+p.getName());
+                if( p.getDefinition().isMultiple() )
+                    dest.setProperty( p.getName(), p.getValues() );
+                else
+                    dest.setProperty( p.getName(), p.getValue() );
+            }
+//            else System.out.println("  Skipping "+p.getName());
+        }
+    }
+    
+    /**
+     *  Saves a WikiPage to the repository and creates a new version.
+     *  Sets the following attributes:
+     *  <ul>
+     *  <li>wiki:created
+     *  <li>wiki:version
+     *  </ul>
+     * 
+     *  @param page the page to save
      */
     public void save( WikiPage page ) throws RepositoryException
     {
         WikiPath path = page.getPath();
         Node nd = getJCRNode( getJCRPath( path ) );
+
+        int version = page.getVersion();
+        
+        nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
+        
+        if( !nd.hasProperty( "wiki:created" ) )
+        {
+            nd.setProperty( "wiki:created", Calendar.getInstance() );
+        }
+        
         if( nd.isNew() )
+        {
+            // New node, so nothing to check in
             nd.getParent().save();
+        }
         else
+        {
+            checkin( getJCRPath( path ), version );
             nd.save();
+        }
         
         fireEvent( ContentEvent.NODE_SAVED, page.getName(), NO_ARGS );
     }
@@ -462,7 +561,8 @@ public class ContentManager implements WikiEventListener
                 Node n = ni.nextNode();
                 
                 // Hack to make sure we don't add the space root node. 
-                if( !isSpaceRoot(n) )
+                // or any of the special child nodes that have a namespace
+                if( !isSpaceRoot(n) && n.getPath().indexOf( ':' ) == -1 )
                 {
                     WikiPage page = new JCRWikiPage( getEngine(), n );
                     if ( !results.contains( page ) )
@@ -717,32 +817,28 @@ public class ContentManager implements WikiEventListener
         throws ProviderException, PageNotFoundException
     {
         List<WikiPage> result = new ArrayList<WikiPage>();
-        JCRWikiPage base = getPage(path);
 
         try
         {
-            Node baseNode = base.getJCRNode();
+            Node base = getJCRNode( getJCRPath(path) );
             
-            VersionHistory vh = baseNode.getVersionHistory();
-            
-            for( VersionIterator vi = vh.getAllVersions(); vi.hasNext(); )
+            if( base.hasNode( WIKI_VERSIONS ) )
             {
-                Version v = vi.nextVersion();
-                
-                result.add( new JCRWikiPage(m_engine,v) );
+                Node versionHistory = base.getNode( WIKI_VERSIONS );
+            
+                for( NodeIterator ni = versionHistory.getNodes(); ni.hasNext(); )
+                {
+                    Node v = ni.nextNode();
+
+                    result.add( new JCRWikiPage(m_engine,path,v) );
+                }
             }
-        }
-        catch( PathNotFoundException e )
-        {
-            throw new PageNotFoundException(path);
+            
+            result.add( new JCRWikiPage(m_engine,base) );
         }
         catch( RepositoryException e )
         {
-            throw new ProviderException("Unable to get version history",e);
-        }
-        catch( WikiException e )
-        {
-            throw new ProviderException("Unable to get version history",e);
+            throw new ProviderException("Failure in trying to get version history",e);
         }
         
         return result;
@@ -872,26 +968,56 @@ public class ContentManager implements WikiEventListener
     }
 
     /**
-     *  Deletes only a specific version of a WikiPage.
+     *  Deletes only a specific version of a WikiPage.  No need to call page.save()
+     *  after this.
+     *  <p>
+     *  If this is the only version of the page, then the entire page will be
+     *  deleted.
      *  
      *  @param page The page to delete.
      *  @throws ProviderException if the page fails
      *  @return True, if the page existed and was actually deleted, and false if the page did
      *          not exist.
      */
-    // TODO: The event which gets fired suggests that this actually a whole page delete event
+    // TODO: Should fire proper events
     public boolean deleteVersion( WikiPage page )
         throws ProviderException
     {
-        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
+        //fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
 
         JCRWikiPage jcrPage = (JCRWikiPage)page;
+        
         try
         {
-            jcrPage.getJCRNode().remove();
-            jcrPage.save();
+            if( jcrPage.isLatest() )
+            {
+                // ..--p8mmmfpppppppppcccc0i9u8ioakkkcnnnnr njv,vv,vb
+
+                try
+                {
+                    JCRWikiPage pred = jcrPage.getPredecessor();
+                
+                    restore( pred );
+                }
+                catch( PageNotFoundException e )
+                {
+                    deletePage( page );
+                }
+                catch( PageAlreadyExistsException e )
+                {
+                    // SHould never happen, so this is quite problematic
+                    throw new ProviderException( "Page which was already removed still exists?", e );
+                }
+                
+            }
+            else
+            {
+                jcrPage.getJCRNode().remove();
+                
+                jcrPage.getJCRNode().getParent().save();
+            }
             
-            fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
+            //fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
             
             return true;
         }
@@ -903,6 +1029,30 @@ public class ContentManager implements WikiEventListener
         {
             throw new ProviderException("Unable to delete a page",e);
         }
+    }
+    
+    private void restore( JCRWikiPage page ) throws ProviderException, RepositoryException, PageAlreadyExistsException
+    {
+        JCRWikiPage original = page.getCurrentVersion();
+        WikiPath path = original.getPath();
+        String contentType = page.getContentType();
+        
+        Node origNode = original.getJCRNode();
+
+        for( PropertyIterator pi = origNode.getProperties(); pi.hasNext(); )
+        {
+            Property p = pi.nextProperty();
+
+            // TODO: Again, strange Priha-specific hack for 0.1.21
+            if( !p.getDefinition().isProtected() && !p.getName().equals("jcr:uuid") )
+                p.remove();
+        }
+        
+        origNode.save();
+        
+        copyProperties( page.getJCRNode(), origNode );
+        
+        origNode.save();
     }
     
     /**
@@ -919,25 +1069,9 @@ public class ContentManager implements WikiEventListener
     {
         fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
 
-        VersionHistory vh;
         try
         {
             Node nd = ((JCRWikiPage)page).getJCRNode();
-            
-            // Remove version history
-            if( nd.isNodeType( "mix:versionable" ) )
-            {
-                vh = nd.getVersionHistory();
-            
-                for( VersionIterator iter = vh.getAllVersions(); iter.hasNext(); )
-                {
-                    Version v = iter.nextVersion();
-                
-                    v.remove();
-                    v.save();
-                }
-                vh.save();
-            }
             
             // Remove the node itself.
             nd.remove();
@@ -1434,38 +1568,28 @@ public class ContentManager implements WikiEventListener
     {
         try
         {
-            JCRWikiPage page = null;
             Session session = m_sessionManager.getSession();
         
-            Node nd = session.getRootNode().getNode( getJCRPath(path) );
-
-            try
-            {
-                VersionHistory vh = nd.getVersionHistory();
+            Node original = session.getRootNode().getNode( getJCRPath(path) );
             
-                Version v = vh.getVersion( Integer.toString( version ) );
+            Property p = original.getProperty( "wiki:version" );
             
-                page = new JCRWikiPage(m_engine, v);
-            }
-            catch( UnsupportedRepositoryOperationException e )
-            {
-                // No version history yet
-                
-                if( version == WikiProvider.LATEST_VERSION || version == 1)
-                    page = new JCRWikiPage( m_engine, nd );
-                else
-                    throw new PageNotFoundException("Version "+version+" of page "+path+" does not exist!");
-            }
+            if( p.getLong() == version || version == WikiProvider.LATEST_VERSION )
+                return new JCRWikiPage( m_engine, original );
             
-            return page;
+            Node versionHistory = original.getNode( WIKI_VERSIONS );
+            
+            Node v = versionHistory.getNode( Integer.toString( version ) );
+            
+            return new JCRWikiPage( m_engine, path, v );
         }
         catch( PathNotFoundException e )
         {
-            throw new PageNotFoundException( path );
+            throw new PageNotFoundException("No such version "+version+" exists for path "+path);
         }
         catch( RepositoryException e )
         {
-            throw new ProviderException( "Unable to get a page", e );
+            throw new ProviderException( "Repository failed", e );
         }
     }
     
@@ -1624,13 +1748,27 @@ public class ContentManager implements WikiEventListener
             Session session = m_currentSession.get();  
             if(session == null)
             {
-                session = m_repository.login(m_workspaceName); 
+                session = newSession(); 
                 m_currentSession.set(session);
                 return m_trueOwner;
             }
             return m_fakeOwner;
         }
 
+        /**
+         *  Creates a new Session object always which you will need to manually logout().
+         *  
+         *  @return A new Session object.
+         *  @throws LoginException
+         *  @throws RepositoryException
+         */
+        public Session newSession() throws LoginException, RepositoryException
+        {
+            Session session = m_repository.login(m_workspaceName);
+            
+            return session;
+        }
+        
         /**
          *  Closes the current session, if this caller is the owner.  Must be called
          *  in your finally- block.
