@@ -98,7 +98,7 @@ public class TranslationsCheck
         
             System.out.println("Duplicates overall (two or more occurences):");
             System.out.println("--------------------------------------------");
-            Iterator iter = duplProps.iterator();
+            Iterator<String> iter = duplProps.iterator();
             if (duplProps.size() == 0)
                 System.out.println("(none)");
             else
@@ -134,10 +134,10 @@ public class TranslationsCheck
 
         System.out.println("Missing:");
         System.out.println("--------");
-        Iterator iter = sortedNames(p1).iterator();
+        Iterator<String> iter = sortedNames(p1).iterator();
         while (iter.hasNext())
         {
-            String name = (String) iter.next();
+            String name = iter.next();
             String value = p1.getProperty(name);
 
             if (p2.get(name) == null)
@@ -152,7 +152,7 @@ public class TranslationsCheck
         iter = sortedNames(p2).iterator();
         while (iter.hasNext())
         {
-            String name = (String) iter.next();
+            String name = iter.next();
             String value = p2.getProperty(name);
 
             if (p1.get(name) == null)
@@ -163,29 +163,31 @@ public class TranslationsCheck
         System.out.println();
     }
 
-    private static List sortedNames(Properties p)
+    @SuppressWarnings("unchecked")
+    private static List<String> sortedNames(Properties p)
     {
         List<String> list = new ArrayList<String>();
-        Enumeration iter = p.propertyNames();
+        Enumeration<String> iter = (Enumeration<String>) p.propertyNames();
         while (iter.hasMoreElements())
         {
-            list.add( (String)iter.nextElement() );
+            list.add( iter.nextElement() );
         }
 
         Collections.sort(list);
         return list;
     }
     
+    @SuppressWarnings("unchecked")
     private static void detectDuplicates(String source) throws IOException
     {
         Properties p = new Properties();
         p.load(new FileInputStream(new File(base + source)));
         
-        Enumeration iter = p.propertyNames();
+        Enumeration<String> iter = (Enumeration<String>) p.propertyNames();
         String currentStr;
         while (iter.hasMoreElements())
         {
-            currentStr = (String) iter.nextElement();
+            currentStr = iter.nextElement();
             if (!allProps.add(currentStr))
                 duplProps.add(currentStr);
         }
