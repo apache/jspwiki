@@ -230,8 +230,8 @@ public abstract class AbstractLoginModule implements LoginModule
             callbackHandler.handle( callbacks );
             m_locale = ((LanguageCallback)callbacks[0]).getLocale();
         }
-        catch( IOException e ) { }
-        catch( UnsupportedCallbackException e ) { }
+        catch( IOException e ) {}
+        catch( UnsupportedCallbackException e ) {}
         
         // If still not set, use the JRE default
         if ( m_locale == null )
