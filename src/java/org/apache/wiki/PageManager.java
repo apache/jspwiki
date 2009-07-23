@@ -26,10 +26,7 @@ import java.util.Properties;
 
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.PageAlreadyExistsException;
-import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.content.*;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;

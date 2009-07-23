@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.ReferenceManager;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;

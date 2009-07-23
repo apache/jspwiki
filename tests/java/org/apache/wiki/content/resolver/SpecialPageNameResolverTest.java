@@ -19,13 +19,14 @@
     under the License.      
  */
 
-package org.apache.wiki.content;
+package org.apache.wiki.content.resolver;
 
 import java.net.URI;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.content.resolver.SpecialPageNameResolver;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

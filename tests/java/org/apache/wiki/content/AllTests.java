@@ -21,6 +21,9 @@
 
 package org.apache.wiki.content;
 
+import org.apache.wiki.content.resolver.EnglishPluralsPageNameResolverTest;
+import org.apache.wiki.content.resolver.SpecialPageNameResolverTest;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -39,9 +42,9 @@ public class AllTests extends TestCase
         suite.addTest( PageRenamerTest.suite() );
         suite.addTest( WikiPathTest.suite() );
         suite.addTest( ContentManagerTest.suite() );
-        suite.addTest( SpecialPageNameResolverTest.suite() );
-        suite.addTest( EnglishPluralsPageNameResolverTest.suite() );
-        
+        suite.addTest( ReferenceManagerTest.suite() );
+        suite.addTest( org.apache.wiki.content.resolver.AllTests.suite() );
+
         return suite;
     }
 }

@@ -1,3 +1,15 @@
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-135
+        
+        * Moved some classes from the top-level package to better places.
+        For example, JCRWikiPage => org.apache.wiki.content.jcr; 
+        ReferenceManager => org.apache.wiki.content.
+        
+        * PageNameResolvers now have their own package under .content.
+        
+        * Also moved around some test classes to their proper packages.
+        
 2009-07-23 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-134

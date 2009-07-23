@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
@@ -35,6 +34,7 @@ import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.content.jcr.JCRWikiPage;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;

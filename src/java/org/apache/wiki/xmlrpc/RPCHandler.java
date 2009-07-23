@@ -32,6 +32,7 @@ import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.TextUtil;
 import org.apache.xmlrpc.XmlRpcException;
 

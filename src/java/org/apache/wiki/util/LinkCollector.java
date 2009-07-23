@@ -18,12 +18,12 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wiki.util.StringTransmutator;
+import org.apache.wiki.WikiContext;
 
 /**
  *  Just a simple class collecting all of the links

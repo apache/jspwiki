@@ -37,11 +37,7 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("JSPWiki Unit Tests");
 
-        suite.addTest( FileUtilTest.suite() );
-        suite.addTest( PropertyReaderTest.suite() );
-        suite.addTest( ReferenceManagerTest.suite() );
         suite.addTest( ReleaseTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
         // This is obsolete and not maintained anymore
         // suite.addTest( TranslatorReaderTest.suite() );

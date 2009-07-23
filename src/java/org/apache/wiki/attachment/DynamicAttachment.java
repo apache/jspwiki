@@ -20,9 +20,9 @@
  */
 package org.apache.wiki.attachment;
 
-import org.apache.wiki.JCRWikiPage;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.content.jcr.JCRWikiPage;
 
 /**
  *  A DynamicAttachment is an attachment which does not really exist, but is

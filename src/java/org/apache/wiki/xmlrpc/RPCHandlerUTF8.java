@@ -22,7 +22,6 @@ package org.apache.wiki.xmlrpc;
 
 import java.util.*;
 
-import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
@@ -30,6 +29,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.LinkCollector;
 import org.apache.xmlrpc.XmlRpcException;
 
 

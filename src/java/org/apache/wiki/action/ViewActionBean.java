@@ -108,7 +108,7 @@ public class ViewActionBean extends AbstractPageActionBean
      * special page names from <code>jspwiki.properties</code>, and possible
      * aliases. To determine whether the page is a special page, this method
      * calls
-     * {@link org.apache.wiki.content.SpecialPageNameResolver#getSpecialPageURI(String)}.
+     * {@link org.apache.wiki.content.resolver.SpecialPageNameResolver#getSpecialPageURI(String)}.
      * 
      * @return a {@link net.sourceforge.stripes.action.RedirectResolution} to
      *         the special page's real URL, if a special page was specified, or

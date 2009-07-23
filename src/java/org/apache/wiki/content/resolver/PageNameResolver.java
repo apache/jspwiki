@@ -18,9 +18,10 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.content;
+package org.apache.wiki.content.resolver;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
 /**

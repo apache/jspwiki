@@ -19,8 +19,7 @@
     under the License.    
  */
 
-package org.apache.wiki.util;
-
+package org.apache.wiki.content.resolver;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -35,22 +34,11 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("Utility suite tests");
+        TestSuite suite = new TestSuite("JSPWiki Content Resolver Unit Tests");
 
-        suite.addTest( FileUtilTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
-        suite.addTest( PropertyReaderTest.suite() );
+        suite.addTest( SpecialPageNameResolverTest.suite() );
+        suite.addTest( EnglishPluralsPageNameResolverTest.suite() );
 
-        suite.addTest( ClassUtilTest.suite() );
-        suite.addTest( CommentedPropertiesTest.suite() );
-        suite.addTest( CryptoUtilTest.suite() );
-        suite.addTest( MailUtilTest.suite() );
-        suite.addTest( PriorityListTest.suite() );
-        suite.addTest( SerializerTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
-        suite.addTest( TimedCounterListTest.suite() );
-        suite.addTest( UtilJ2eeCompatTest.suite() );
-        
         return suite;
     }
 }

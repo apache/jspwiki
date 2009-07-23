@@ -19,7 +19,7 @@
     under the License.    
  */
 
-package org.apache.wiki;
+package org.apache.wiki.util;
 
 import junit.framework.*;
 import java.io.*;

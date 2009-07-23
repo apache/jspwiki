@@ -24,9 +24,9 @@ import java.util.*;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wiki.ReferenceManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.PluginException;
+import org.apache.wiki.content.ReferenceManager;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.util.TextUtil;
 

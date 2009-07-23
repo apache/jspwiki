@@ -51,6 +51,9 @@ import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.DefaultAclManager;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.content.*;
+import org.apache.wiki.content.resolver.EnglishPluralsPageNameResolver;
+import org.apache.wiki.content.resolver.PageNameResolver;
+import org.apache.wiki.content.resolver.SpecialPageNameResolver;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -1098,7 +1101,7 @@ public class WikiEngine
      *  <p>If the page is a special page, then returns a direct URI
      *  to that page.  Otherwise returns <code>null</code>.
      *  This method delegates requests to
-     *  {@link org.apache.wiki.content.SpecialPageNameResolver#getSpecialPageURI}.
+     *  {@link org.apache.wiki.content.resolver.SpecialPageNameResolver#getSpecialPageURI}.
      *  </p>
      *  <p>
      *  Special pages are defined in jspwiki.properties using the jspwiki.specialPage
@@ -1347,7 +1350,7 @@ public class WikiEngine
      */
     public String getText( String page )
     {
-        return getText( page, WikiPageProvider.LATEST_VERSION );
+        return getText( page, WikiProvider.LATEST_VERSION );
     }
 
     /**
@@ -1486,7 +1489,7 @@ public class WikiEngine
     public String getHTML( String page ) 
         throws PageNotFoundException, ProviderException
     {
-        return getHTML( page, WikiPageProvider.LATEST_VERSION );
+        return getHTML( page, WikiProvider.LATEST_VERSION );
     }
 
     /**
@@ -1948,7 +1951,7 @@ public class WikiEngine
 
         // Kludge to make diffs for new pages to work this way.
 
-        if( version1 == WikiPageProvider.LATEST_VERSION )
+        if( version1 == WikiProvider.LATEST_VERSION )
         {
             page1 = "";
         }

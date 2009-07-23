@@ -28,6 +28,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.ReferenceManager;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;

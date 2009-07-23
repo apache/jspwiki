@@ -24,7 +24,6 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -45,7 +44,10 @@ import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -56,7 +58,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.*;
 
 
@@ -590,7 +591,7 @@ public class LuceneSearchProvider implements SearchProvider
                 WikiPage page;
                 try
                 {
-                    page = m_engine.getPage(pageName, WikiPageProvider.LATEST_VERSION);
+                    page = m_engine.getPage(pageName, WikiProvider.LATEST_VERSION);
                     if(page.isAttachment())
                     {
                         // Currently attachments don't look nice on the search-results page

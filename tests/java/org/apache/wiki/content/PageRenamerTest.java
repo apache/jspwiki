@@ -125,7 +125,7 @@ public class PageRenamerTest extends TestCase
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (WikiPath)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }
 
     public void testReferrerChangeCC()
@@ -149,7 +149,7 @@ public class PageRenamerTest extends TestCase
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", (WikiPath)refs.iterator().next() );
+        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }
     
     public void testReferrerChangeAnchor()

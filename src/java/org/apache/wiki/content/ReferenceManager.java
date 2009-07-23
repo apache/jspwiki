@@ -18,7 +18,7 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.content;
 
 import java.io.IOException;
 import java.util.*;
@@ -27,16 +27,16 @@ import java.util.regex.Pattern;
 
 import javax.jcr.*;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.PageNotFoundException;
-import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.event.*;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.TextUtil;
 
 /**

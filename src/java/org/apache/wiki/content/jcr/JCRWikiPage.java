@@ -18,7 +18,7 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki;
+package org.apache.wiki.content.jcr;
 
 import java.io.*;
 import java.util.*;
@@ -28,6 +28,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.acl.Acl;

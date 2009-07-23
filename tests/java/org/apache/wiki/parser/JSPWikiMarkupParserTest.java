@@ -37,6 +37,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.XHTMLRenderer;
+import org.apache.wiki.util.LinkCollector;
 import org.apache.wiki.util.TextUtil;
 
 import stress.Benchmark;

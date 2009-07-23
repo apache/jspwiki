@@ -50,6 +50,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.content.jcr.JCRWikiPage;
 import org.apache.wiki.content.lock.PageLock;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
@@ -745,64 +746,7 @@ public class ContentManager implements WikiEventListener
         return result;
     }
 
-    /**
-     *  Finds a WikiPage object describing a particular page and version.
-     *  
-     *  @param pageName  The name of the page
-     *  @param version   A version number
-     *  @return          A WikiPage object, or null, if the page does not exist
-     *  @throws ProviderException If there is something wrong with the page 
-     *                            name or the repository
-     */
-    /*
-    // FIXME: Remove.  Just exists to make sure that all the things that need
-    //        to be called are called.
-    public WikiPage getPage( String pageName, int version )
-        throws ProviderException
-    {
-        if( pageName == null || pageName.length() == 0 )
-        {
-            throw new ProviderException("Illegal page name '"+pageName+"'");
-        }
 
-        WikiPage page = null;
-
-        try
-        {
-            page = m_provider.getPageInfo( pageName, version );
-        }
-        catch( RepositoryModifiedException e )
-        {
-            //
-            //  This only occurs with the latest version.
-            //
-            log.info("Repository has been modified externally while fetching info for "+pageName );
-
-            page = m_provider.getPageInfo( pageName, version );
-
-            if( page != null )
-            {
-                m_engine.updateReferences( page );
-            }
-            else
-            {
-                m_engine.getReferenceManager().pageRemoved( new WikiPage(m_engine,pageName) );
-            }
-        }
-
-        //
-        //  Should update the metadata.
-        //
-        
-        if( page != null && !page.hasMetadata() )
-        {
-            WikiContext context = new WikiContext(m_engine,page);
-            m_engine.textToHTML( context, getPageText(pageName,version) );
-        }
-        
-        return page;
-    }
-*/
     /**
      *  Gets a version history of page.  Each element in the returned
      *  List is a WikiPage.
@@ -1034,8 +978,6 @@ public class ContentManager implements WikiEventListener
     private void restore( JCRWikiPage page ) throws ProviderException, RepositoryException, PageAlreadyExistsException
     {
         JCRWikiPage original = page.getCurrentVersion();
-        WikiPath path = original.getPath();
-        String contentType = page.getContentType();
         
         Node origNode = original.getJCRNode();
 
@@ -1121,7 +1063,7 @@ public class ContentManager implements WikiEventListener
 
                 for( Iterator<PageLock> i = entries.iterator(); i.hasNext(); )
                 {
-                    PageLock p = (PageLock) i.next();
+                    PageLock p = i.next();
 
                     if( now.after( p.getExpiryTime() ) )
                     {
@@ -1249,7 +1191,7 @@ public class ContentManager implements WikiEventListener
             JCRWikiPage page;
             try
             {
-                page = (JCRWikiPage)engine.getContentManager().getPage( name );
+                page = engine.getContentManager().getPage( name );
             }
             catch( PageNotFoundException e )
             {
@@ -1363,10 +1305,8 @@ public class ContentManager implements WikiEventListener
         //  Do the actual rename by changing from the frompage to the topage, including
         //  all of the attachments
         //
-        Workspace w;
         try
         {
-            w = getCurrentSession().getWorkspace();
             getCurrentSession().move( getJCRPath( fromPage ), getJCRPath( toPage ) );
             getCurrentSession().save();
         }
@@ -1494,7 +1434,6 @@ public class ContentManager implements WikiEventListener
         
             Node nd = session.getRootNode().addNode( jcrPath );
             
-            //nd.addMixin( "mix:versionable" );
             nd.addMixin( "mix:referenceable" );
             nd.setProperty( JCRWikiPage.CONTENTTYPE, contentType );
             

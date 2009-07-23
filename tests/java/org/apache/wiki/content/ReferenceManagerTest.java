@@ -19,7 +19,7 @@
     under the License.    
  */
 
-package org.apache.wiki;
+package org.apache.wiki.content;
 
 import java.util.*;
 
@@ -32,8 +32,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.ContentManager;
+import org.apache.wiki.content.ReferenceManager;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
