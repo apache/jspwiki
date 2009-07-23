@@ -85,11 +85,11 @@ public class WikiCallbackHandler implements CallbackHandler
             {
                 ( (HttpRequestCallback) callback ).setRequest( m_request );
             }
-            else if( callback instanceof WikiEngineCallback )
+            else if( callback instanceof WikiEngineCallback && m_engine != null )
             {
                 ( (WikiEngineCallback) callback ).setEngine( m_engine );
             }
-            else if ( callback instanceof UserDatabaseCallback )
+            else if ( callback instanceof UserDatabaseCallback && m_engine != null )
             {
                 ( (UserDatabaseCallback) callback ).setUserDatabase( m_engine.getUserManager().getUserDatabase() );
             }
@@ -101,9 +101,9 @@ public class WikiCallbackHandler implements CallbackHandler
             {
                 ( (PasswordCallback) callback ).setPassword( m_password.toCharArray() );
             }
-            else if ( callback instanceof LocaleCallback )
+            else if ( callback instanceof LanguageCallback )
             {
-                ( (LocaleCallback) callback ).setLocale( m_request != null ? m_request.getLocale() : Locale.getDefault() );
+                ( (LanguageCallback) callback ).setLocale( m_request != null ? m_request.getLocale() : Locale.getDefault() );
             }
             else if( callbacks[i] instanceof TextOutputCallback )
             {

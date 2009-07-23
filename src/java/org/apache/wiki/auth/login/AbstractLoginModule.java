@@ -20,13 +20,18 @@
  */
 package org.apache.wiki.auth.login;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.LanguageCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
@@ -38,7 +43,7 @@ import org.apache.wiki.log.LoggerFactory;
 
 /**
  * Abstract JAAS {@link javax.security.auth.spi.LoginModule}that implements
- * base functionality. The methods {@link #login()} and {@link #commit()} must
+ * base functionality. The method {@link #login()} must
  * be implemented by subclasses. The default implementations of
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
@@ -51,6 +56,12 @@ public abstract class AbstractLoginModule implements LoginModule
     private static final Logger   log = LoggerFactory.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
+    
+    /**
+     * Stores the Locale, as determined by {@link #initialize(Subject, CallbackHandler, Map, Map)}.
+     * If not set, defaults to {@link Locale#getDefault()}.
+     */
+    protected Locale m_locale = null;
 
     protected Map<String,?>             m_options;
 
@@ -174,8 +185,14 @@ public abstract class AbstractLoginModule implements LoginModule
 
     /**
      * Initializes the LoginModule with a given <code>Subject</code>,
-     * callback handler, options and shared state. In particular, the member
-     * variable <code>m_principals</code> is initialized as a blank Set.
+     * callback handler, options and shared state. The member
+     * variable <code>m_principals</code> is initialized as an empty Set.
+     * In addition, if the CallbackHander supports the
+     * {@link javax.security.auth.callback.LanguageCallback} callback, the Locale
+     * that callback returns will be assigned to protected variable <code>m_locale</code>.
+     * The value of <code>m_locale</code> can then be used by subclasses to provide
+     * localized error messages if needed. If the CallbackHandler does not support
+     * LanguageCallback, the JRE's default Locale will be used.
      * @see javax.security.auth.spi.LoginModule#initialize(javax.security.auth.Subject,
      *      javax.security.auth.callback.CallbackHandler, java.util.Map,
      *      java.util.Map)
@@ -205,6 +222,22 @@ public abstract class AbstractLoginModule implements LoginModule
         }
         // Stash the previous WikiPrincipals; we will flush these if login succeeds
         m_previousWikiPrincipals.addAll( subject.getPrincipals( WikiPrincipal.class ) );
+        
+        // Try to figure out the user's Locale, using the JDK LanguageCallback first
+        Callback[] callbacks = new Callback[] { new LanguageCallback() };
+        try
+        {
+            callbackHandler.handle( callbacks );
+            m_locale = ((LanguageCallback)callbacks[0]).getLocale();
+        }
+        catch( IOException e ) { }
+        catch( UnsupportedCallbackException e ) { }
+        
+        // If still not set, use the JRE default
+        if ( m_locale == null )
+        {
+            m_locale = Locale.getDefault();
+        }
     }
 
     /**

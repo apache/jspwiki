@@ -21,7 +21,6 @@
 package org.apache.wiki.auth.login;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -30,7 +29,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -51,13 +49,8 @@ import org.apache.wiki.log.LoggerFactory;
  * username</li>
  * <li>{@link javax.security.auth.callback.PasswordCallback}- supplies the
  * password</li>
- * <li>{@link org.apache.wiki.auth.login.LocaleCallback}- supplies the
- * HTTP request, from which the user's {@link java.util.Locale} is obtained
- * (used for constructing localized error messages)</li>
- * <li>{@link org.apache.wiki.auth.login.WikiEngineCallback}- supplies the
- * {@link org.apache.wiki.WikiEngine}, from which the
- * {@link org.apache.wiki.i18n.InternationalizationManager} is obtained
- * (used for constructing localized error messages)</li>
+ * <li>{@link org.apache.wiki.auth.login.UserDatabaseCallback}- supplies the
+ * {@link org.apache.wiki.auth.user.UserDatabase}, which authenticates the user</li>
  * </ol>
  * <p>
  * After authentication, a Principals based on the login name will be created
@@ -69,6 +62,8 @@ import org.apache.wiki.log.LoggerFactory;
 public class UserDatabaseLoginModule extends AbstractLoginModule
 {
 
+    private static final InternationalizationManager I18N = new InternationalizationManager( null );
+    
     private static final Logger log = LoggerFactory.getLogger( UserDatabaseLoginModule.class );
 
     /**
@@ -87,18 +82,14 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
     {
         NameCallback ncb = new NameCallback( "User name" );
         PasswordCallback pcb = new PasswordCallback( "Password", false );
-        LocaleCallback lcb = new LocaleCallback();
-        WikiEngineCallback wcb = new WikiEngineCallback();
-        Callback[] callbacks = new Callback[] { ncb, pcb, lcb, wcb };
+        UserDatabaseCallback ucb = new UserDatabaseCallback();
+        Callback[] callbacks = new Callback[] { ncb, pcb, ucb };
         try
         {
             m_handler.handle( callbacks );
             String username = ncb.getName();
             String password = new String( pcb.getPassword() );
-            Locale locale = lcb.getLocale();
-            WikiEngine engine = wcb.getEngine();
-            UserDatabase db = engine.getUserManager().getUserDatabase();
-            InternationalizationManager i18n = engine.getInternationalizationManager();
+            UserDatabase db = ucb.getUserDatabase();
 
             // Look up the user and compare the password hash
             if ( db == null )
@@ -112,7 +103,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             }
             catch( NoSuchPrincipalException e )
             {
-                throw new FailedLoginException( i18n.get( InternationalizationManager.CORE_BUNDLE, locale, "login.error.password" ) );
+                throw new FailedLoginException( I18N.get( InternationalizationManager.CORE_BUNDLE, m_locale, "login.error.password" ) );
             }
             String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) )
@@ -127,7 +118,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 
                 return true;
             }
-            throw new FailedLoginException( i18n.get( InternationalizationManager.CORE_BUNDLE, locale, "login.error.password" ) );
+            throw new FailedLoginException( I18N.get( InternationalizationManager.CORE_BUNDLE, m_locale, "login.error.password" ) );
         }
         catch( IOException e )
         {

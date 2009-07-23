@@ -1,3 +1,14 @@
+2009-07-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-134
+        
+        * First LDAP support classes checked in. We support an LdapLoginModule
+        and LdapAuthorizer. Both are configured via jspwiki.properties
+        and should be considered experimental. Significant limitations at the
+        moment include the assumption that role searches are done ONLY via
+        anonymous bind. We support OpenLDAP, but not Active Directory (yet).
+        The LdapUserDatabase implementation won't come for a while, either.
+
 2009-07-22 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-133

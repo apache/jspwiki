@@ -460,6 +460,7 @@ jspwiki.plugin.searchPath =
 #  Supply the JAAS LoginModule class used for custom authentication here.
 #  The implementation MUST have a zero-argument constructor (as noted in the
 #  javax.security.auth.spi.LoginModule Javadocs).
+#jspwiki.loginModule.class = org.apache.wiki.auth.login.LdapLoginModule
 jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 
 #
@@ -467,9 +468,10 @@ jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 #  etc. should be replaced with the actual parameter names. The parameter names and
 # values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
 # when its initialize() method is called. The default UserDatabaseLoginModule class does
-# not need any options.
-#jspwiki.loginModule.options.param1 = value1
-#jspwiki.loginModule.options.param2 = value2
+# not need any options. The example below is for LdapLoginModule.
+#jspwiki.loginModule.options.ldap.connectionURL = ldap://127.0.0.1:4890/
+#jspwiki.loginModule.options.ldap.userPattern = uid={0},ou=people,dc=jspwiki,dc=org
+#jspwiki.loginModule.options.ldap.ssl = false
 
 # 
 #  Cookie authentication & assertion

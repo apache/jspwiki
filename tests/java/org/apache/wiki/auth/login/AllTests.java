@@ -39,6 +39,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite( "Login module tests" );
         suite.addTestSuite( AnonymousLoginModuleTest.class );
         suite.addTestSuite( CookieAssertionLoginModuleTest.class );
+        suite.addTestSuite( LdapLoginModuleTest.class );
         suite.addTestSuite( UserDatabaseLoginModuleTest.class );
         suite.addTestSuite( WebContainerLoginModuleTest.class );
         return suite;
