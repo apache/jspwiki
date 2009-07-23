@@ -31,6 +31,7 @@ import junit.framework.TestSuite;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 
 public class ContentManagerTest extends TestCase
@@ -184,7 +185,58 @@ public class ContentManagerTest extends TestCase
         
         assertEquals( "v3 content", "Even newer Test Content", p2.getContentAsString() );
         assertEquals( "v3 version", 3, p2.getVersion() );
-}
+    }
+    
+    private void storeVersions( WikiPage p, int howMany ) throws ProviderException
+    {
+        for( int i = 1; i <= howMany; i++ )
+        {
+            p.setContent( "Test "+i );
+            p.save();
+        }        
+    }
+    
+    public void testZillionVersions() throws Exception
+    {
+        WikiPage p = m_mgr.addPage( WikiPath.valueOf( "TestPage" ), ContentManager.JSPWIKI_CONTENT_TYPE );
+        
+        storeVersions( p, 100 );
+        
+        p = m_engine.getPage( "TestPage", 100 );
+        assertEquals( "content 100","Test 100", p.getContentAsString() );
+        assertEquals( "version 100", 100, p.getVersion() );
+        
+        p = m_engine.getPage( "TestPage", 1 );
+        assertEquals( "content 1","Test 1", p.getContentAsString() );
+        assertEquals( "version 1", 1, p.getVersion() );
+        
+        p = m_engine.getPage( "TestPage", 51 );
+        assertEquals( "content 51","Test 51", p.getContentAsString() );
+        assertEquals( "version 51", 51, p.getVersion() );
+    }
+    
+    public void testDeleteAllVersions() throws Exception
+    {
+        WikiPage p = m_engine.createPage( "TestPage" );
+        
+        storeVersions( p, 3 );
+        
+        for( int i = 1; i <= 3; i++ )
+        {
+            p = m_engine.getPage( "TestPage", i );
+            
+            m_engine.deleteVersion( p );
+        }
+    
+        assertFalse( m_engine.pageExists( "TestPage" ) );
+        
+        try
+        {
+            m_engine.getPage( "TestPage" );
+            fail("Didn't get exception!");
+        }
+        catch( PageNotFoundException e ) {} // Expected
+    }
     
     public static Test suite()
     {
