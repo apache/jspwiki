@@ -1,5 +1,14 @@
 2009-07-23 Janne Jalkanen <jalkanen@apache.org>
 
+        * 3.0.0-svn-136
+        
+        * Improved LoggerFactory not to fail horribly when the SLF4J
+        bridge classes were missing.
+        
+        * Installed default priha and log4j config files to WEB-INF/classes
+        
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
         * 3.0.0-svn-135
         
         * Moved some classes from the top-level package to better places.
