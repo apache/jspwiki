@@ -44,7 +44,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
 @UrlBinding( "/Search.jsp" )
 public class SearchActionBean extends AbstractActionBean
 {
-    private Logger log = LoggerFactory.getLogger("JSPWikiSearch");
+    private static Logger log = LoggerFactory.getLogger("JSPWikiSearch");
 
     public static final Collection<SearchResult> NO_RESULTS = Collections.emptyList();
     
@@ -153,7 +153,10 @@ public class SearchActionBean extends AbstractActionBean
                         filteredResults.add( result );
                     }
                 }
-                catch( Exception e ) { log.error( "Searching for page " + page, e ); }
+                catch( Exception e ) 
+                { 
+                    log.error( "Searching for page " + page, e ); 
+                }
             }
         }
         catch( Exception e )
