@@ -32,7 +32,9 @@ import org.apache.wiki.util.CommentedProperties;
  */
 public class BundleMigrator
 {
-
+    /**
+     *  Describes a message bundle.
+     */
     public static class Bundle
     {
         private final Map<Locale, File> m_bundleFiles = new HashMap<Locale, File>();
@@ -102,7 +104,8 @@ public class BundleMigrator
         }
 
         /**
-         * Loads the set of bundle files from disk.
+         *  Loads the set of bundle files from disk.
+         *  @throws IOException If the loading fails.
          */
         public void load() throws IOException
         {
@@ -119,9 +122,9 @@ public class BundleMigrator
         }
 
         /**
-         * Saves the set of bundle files to disk.
+         *  Saves the set of bundle files to disk.
          * 
-         * @throws IOException
+         *  @throws IOException If saving fails.
          */
         public void save() throws IOException
         {
@@ -142,6 +145,7 @@ public class BundleMigrator
          * 
          * @param baseFile the path to the base bundle file, minus the trailing
          *            locale and <code>.properties</code>
+         * @throws FileNotFoundException If the Bundle file cannot be located. 
          */
         protected void findBundleFiles( String baseFile ) throws FileNotFoundException
         {
@@ -180,6 +184,7 @@ public class BundleMigrator
      * 
      * @param key the name of the key to copy
      * @param target the target Bundle
+     * @throws IOException If the copying fails.
      */
     public void copy( String key, Bundle target ) throws IOException
     {
@@ -238,6 +243,7 @@ public class BundleMigrator
      * 
      * @param key the name of the key to move
      * @param target the target Bundle
+     * @throws IOException If the moving fails.
      */
     public void move( String key, Bundle target ) throws IOException
     {
@@ -249,6 +255,7 @@ public class BundleMigrator
      * Deletes a message key from the source Bundle.
      * 
      * @param key the name of the key to remove
+     * @throws IOException If removal fails.
      */
     public void remove( String key ) throws IOException
     {
@@ -287,6 +294,7 @@ public class BundleMigrator
      * 
      * @param key the name of the key to change
      * @param newKey the new name for the key
+     * @throws IOException If the renaming fails for some reason.
      */
     public void rename( String key, String newKey ) throws IOException
     {
@@ -337,8 +345,9 @@ public class BundleMigrator
      * 
      * @param source the Bundle to operate on
      * @throws FileNotFoundException if the base bundle file does not exist
+     * @throws IOException If something else fails.
      */
-    public void setBundle( Bundle source ) throws IOException
+    public void setBundle( Bundle source ) throws FileNotFoundException, IOException
     {
         m_source = source;
         source.load();
@@ -401,24 +410,32 @@ public class BundleMigrator
             // Execute the action
             if( "delete".equals( action ) )
             {
-                if  ( wrongNumberArgs( 3, args, "BundleMigrator delete source keyname" ) ) { return; }
+                if  ( wrongNumberArgs( 3, args, "BundleMigrator delete source keyname" ) ) 
+                    return;
+                
                 migrator.remove( key );
             }
             else if( "rename".equals( action ) )
             {
-                if ( wrongNumberArgs( 4, args, "BundleMigrator rename source keyname newkeyname" ) ) { return; }
+                if ( wrongNumberArgs( 4, args, "BundleMigrator rename source keyname newkeyname" ) )
+                    return;
+                
                 String newKey = args[3].trim();
                 migrator.rename( key, newKey );
             }
             else if( "copy".equals( action ) )
             {
-                if ( wrongNumberArgs( 4, args, "BundleMigrator copy source keyname destination" ) ) { return; }
+                if ( wrongNumberArgs( 4, args, "BundleMigrator copy source keyname destination" ) ) 
+                    return;
+                
                 Bundle destination = new Bundle( args[3].trim() );
                 migrator.copy( key, destination );
             }
             else if( "move".equals( action ) )
             {
-                if ( wrongNumberArgs( 4, args, "BundleMigrator move source keyname destination" ) ) { return; }
+                if ( wrongNumberArgs( 4, args, "BundleMigrator move source keyname destination" ) ) 
+                    return;
+                
                 Bundle destination = new Bundle( args[3].trim() );
                 migrator.move( key, destination );
             }
