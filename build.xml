@@ -557,7 +557,7 @@
        NB: You must have the svn command line client available in
        your path before you attempt to run this task.
    -->
-  <target name="srczip" depends="installinit"
+  <target name="srczip" depends="init,installinit"
           description="Builds source zip.">
 
   	<delete dir="${install.src}" />
