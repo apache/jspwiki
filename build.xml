@@ -567,10 +567,18 @@
   	</exec>
   	
   	<!-- Figure out JSPWiki version -->
-  		
-  	<javac srcdir="${install.src}" destdir="${code.build}" includes="org/apache/wiki/Release"/>
   	
-  	<java classpath="${code.build}" 
+  	<mkdir dir="${install.src}/build"/>
+  	<javac srcdir="${install.src}/src/java" destdir="${install.src}/build" 
+  		   includes="org/apache/wiki/Release.java">
+  		<classpath>
+	        <fileset dir="${install.src}/src/WebContent">
+    	      <include name="**/*.jar"/>
+        	</fileset>
+  		</classpath>
+  	</javac>
+  	
+  	<java classpath="${install.src}/build" 
   	      classname="org.apache.wiki.Release" 
   		  outputproperty="jspwiki.version"/>
   	  	
@@ -582,6 +590,7 @@
 	<move todir="${tmpzipdir}">
 		<fileset dir="${install.src}">
 			<include name="**"/>
+			<exclude name="build"/>
 			<!-- Any excluded files should go here -->
 		</fileset>
   	</move>
