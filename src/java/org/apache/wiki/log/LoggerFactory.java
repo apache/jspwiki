@@ -32,7 +32,6 @@ import javax.management.ObjectName;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.parser.MarkupParser;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 
 /**
@@ -67,9 +66,30 @@ public final class LoggerFactory
     
     private static String c_wikiName = null;
 
+    /**
+     *  Attempt to install the SLF4J bridge handlers.  However, since those
+     *  classes might not be available for some reason or the other, we call
+     *  the initialization through Reflection to avoid really hard-to-debug
+     *  problems during servlet container startup.
+     */
     static
     {
-        SLF4JBridgeHandler.install();
+        try
+        {
+            Class<?> bridge = Class.forName( "org.slf4j.bridge.SLF4JBridgeHandler" );
+            
+            Method m = bridge.getMethod("install");
+            
+            m.invoke(null);
+        }
+        catch( Exception e ) 
+        {
+            System.out.println("No SLF4J bridge handler classes located; continuing anyway. " +
+                               "In practice this means that only JSPWiki logs entries will be available " +
+                               "in the JSPWiki log files. If you want to have the logs also from " +
+                               "any of the additional libraries, you should install the java.util.logging " +
+                               "and commons logging bridge files.");
+        }
     }
 
     /**
