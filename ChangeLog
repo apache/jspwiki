@@ -1,5 +1,13 @@
 2009-07-23 Janne Jalkanen <jalkanen@apache.org>
 
+        * 3.0.0-svn-137
+        
+        * Switched from OSCache to EhCache to provide better performance
+        (and remove one extra JAR from the distro).  RenderingManagerTest
+        performance goes up 50%...
+
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
         * 3.0.0-svn-136
         
         * Improved LoggerFactory not to fail horribly when the SLF4J

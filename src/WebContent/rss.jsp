@@ -25,17 +25,22 @@
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
-<%@ page import="com.opensymphony.oscache.base.*" %>
+<%@ page import="net.sf.ehcache.*" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="oscache" %>
 
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
-    Cache m_cache = new Cache( true, false, false, true, 
-                               "com.opensymphony.oscache.base.algorithm.LRUCache", 256 );
+    CacheManager m_cacheManager = CacheManager.getInstance();
 %>
 
 <%
+    Cache cache = m_cacheManager.getCache("jspwiki.rssCache");
+    if( cache == null )
+    {
+        cache = new Cache( "jspwiki.rssCache", 500, false, false, 24*3600, 24*3600 );
+        m_cacheManager.addCache(cache);
+    }
+
     WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
@@ -140,20 +145,21 @@
     
     String rss = "";
     
-    try
+    Element e = cache.get(hashKey);
+    
+    if( e != null )
     {
-        rss = (String)m_cache.getFromCache(hashKey);
+        rss = (String)e.getValue();
     }
-    catch( NeedsRefreshException e )
+    else
     { 
         try
         {
             rss = wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type );
-            m_cache.putInCache(hashKey,rss);
+            cache.put( new Element(hashKey,rss) );
         }
         catch( Exception e1 )
         {
-            m_cache.cancelUpdate(hashKey);            
         }
     }
     

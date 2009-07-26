@@ -26,6 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -39,9 +43,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
-
-import com.opensymphony.oscache.base.Cache;
-import com.opensymphony.oscache.base.NeedsRefreshException;
 
 /**
  *  <p>Provides facilities for handling attachments.  All attachment
@@ -77,6 +78,10 @@ public class AttachmentManager
     static Logger log = LoggerFactory.getLogger( AttachmentManager.class );
     private WikiEngine             m_engine;
 
+    private CacheManager           m_cachingManager = CacheManager.getInstance();
+    private Cache                  m_dynamicAttachments;
+    private static final String    CACHE_NAME = "jspwiki.dynamicAttachmentCache";
+    
     /**
      *  List of attachment types which are allowed.
      */
@@ -103,6 +108,14 @@ public class AttachmentManager
     public AttachmentManager( WikiEngine engine, Properties props )
     {
         m_engine = engine;
+        
+        m_dynamicAttachments = m_cachingManager.getCache( CACHE_NAME );
+        if( m_dynamicAttachments == null )
+        {
+            m_dynamicAttachments = new Cache( CACHE_NAME, Integer.MAX_VALUE, false, true, 3600, 3600 );
+            m_cachingManager.addCache( m_dynamicAttachments );
+        }
+        
         initFileRestrictions();
     }
 
@@ -340,8 +353,6 @@ public class AttachmentManager
         return att.getContentAsStream();
     }
 
-    private Cache m_dynamicAttachments = new Cache( true, false, false );
-
     /**
      *  Stores a dynamic attachment.  Unlike storeAttachment(), this just stores
      *  the attachment in the memory.
@@ -351,7 +362,7 @@ public class AttachmentManager
      */
     public void storeDynamicAttachment( WikiContext ctx, DynamicAttachment att )
     {
-        m_dynamicAttachments.putInCache( att.getName(),  att );
+        m_dynamicAttachments.put( new Element( att.getName(), att) );
     }
 
     /**
@@ -365,19 +376,14 @@ public class AttachmentManager
 
     public DynamicAttachment getDynamicAttachment( WikiPath name )
     {
-        try
+        Element att = m_dynamicAttachments.get( name.toString() );
+        
+        if( att != null )
         {
-            return (DynamicAttachment) m_dynamicAttachments.getFromCache( name.toString() );
+            return (DynamicAttachment) att.getObjectValue();
         }
-        catch( NeedsRefreshException e )
-        {
-            //
-            //  Remove from cache, it has expired.
-            //
-            m_dynamicAttachments.putInCache( name.toString(), null );
 
-            return null;
-        }
+        return null;
     }
 
     /**

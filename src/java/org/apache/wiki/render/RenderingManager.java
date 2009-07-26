@@ -24,8 +24,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -45,10 +49,6 @@ import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
-
-import com.opensymphony.oscache.base.Cache;
-import com.opensymphony.oscache.base.NeedsRefreshException;
-
 /**
  *  This class provides a facade towards the differing rendering routines.  You should
  *  use the routines in this manager instead of the ones in WikiEngine, if you don't
@@ -62,7 +62,13 @@ import com.opensymphony.oscache.base.NeedsRefreshException;
  *  the same size as the page cache), but you may control them separately.
  *  <p>
  *  You can turn caching completely off by stating a cacheSize of zero.
- *
+ *  <p>
+ *  Since 3.0, the underlying cache implementation is based on EhCache, with the cache
+ *  name set to {@link RenderingManager#CACHE_NAME} (Currently set to {@value RenderingManager#CACHE_NAME}.)
+ *  If a cache by that name exists already (e.g. configured in ehcache.xml), then that
+ *  cache is used.  If the cache does not exist, then we'll just simply use the settings
+ *  from jspwiki.properties.
+ *  
  *  @since  2.4
  */
 public class RenderingManager implements WikiEventListener, InternalModule
@@ -79,12 +85,18 @@ public class RenderingManager implements WikiEventListener, InternalModule
     public  static final String PROP_CACHESIZE    = "jspwiki.renderingManager.capacity";
     private static final int    DEFAULT_CACHESIZE = 1000;
     private static final String VERSION_DELIMITER = "::";
-    private static final String OSCACHE_ALGORITHM = "com.opensymphony.oscache.base.algorithm.LRUCache";
     private static final String PROP_RENDERER     = "jspwiki.renderingManager.renderer";
     
     /** The name of the default renderer. */
     public  static final String DEFAULT_RENDERER  = XHTMLRenderer.class.getName();
 
+    /** Name of the EhCache cache. */
+    public  static final String CACHE_NAME        = "jspwiki.renderingCache";
+    
+    /**
+     *  Create a private caching manager.
+     */
+    private CacheManager m_cacheManager = CacheManager.getInstance();
     /**
      *  Stores the WikiDocuments that have been cached.
      */
@@ -121,25 +133,25 @@ public class RenderingManager implements WikiEventListener, InternalModule
         throws WikiException
     {
         m_engine = engine;
-        int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, -1 );
+        int cacheSize = TextUtil.getIntegerProperty( properties, PROP_CACHESIZE, DEFAULT_CACHESIZE );
 
-        if( cacheSize == -1 )
+        //
+        //  First check, if there's already a cache configured in ehcache.xml
+        //  If not, create our own.
+        //
+        Cache c = m_cacheManager.getCache( CACHE_NAME );
+        
+        if( c == null && cacheSize > 0 )
         {
-            cacheSize = TextUtil.getIntegerProperty( properties,
-                                                     CachingProvider.PROP_CACHECAPACITY,
-                                                     DEFAULT_CACHESIZE );
-        }
-
-        if( cacheSize > 0 )
-        {
-            m_documentCache = new Cache(true,false,false,false,
-                                        OSCACHE_ALGORITHM,
-                                        cacheSize);
+            c = new Cache(CACHE_NAME,cacheSize,false,false,m_cacheExpiryPeriod,m_cacheExpiryPeriod);
+            m_cacheManager.addCache( c );
         }
         else
         {
             log.info( "RenderingManager caching is disabled." );
         }
+        
+        m_documentCache = m_cacheManager.getCache( CACHE_NAME );
 
         String renderImplName = properties.getProperty( PROP_RENDERER );
         if( renderImplName == null )
@@ -149,8 +161,8 @@ public class RenderingManager implements WikiEventListener, InternalModule
         Class<?>[] rendererParams = { WikiContext.class, WikiDocument.class };
         try
         {
-            Class<?> c = Class.forName( renderImplName );
-            m_rendererConstructor = c.getConstructor( rendererParams );
+            Class<?> cc = Class.forName( renderImplName );
+            m_rendererConstructor = cc.getConstructor( rendererParams );
         }
         catch( ClassNotFoundException e )
         {
@@ -202,28 +214,26 @@ public class RenderingManager implements WikiEventListener, InternalModule
     {
         String pageid = context.getRealPage().getName()+VERSION_DELIMITER+context.getRealPage().getVersion();
 
-        boolean wasUpdated = false;
-
         if( m_documentCache != null )
         {
-            try
+            Element e = m_documentCache.get( pageid );
+            
+            if( e != null )
             {
-                WikiDocument doc = (WikiDocument) m_documentCache.getFromCache( pageid,
-                                                                                m_cacheExpiryPeriod );
-
-                wasUpdated = true;
+                WikiDocument doc = (WikiDocument) e.getObjectValue();
 
                 //
                 //  This check is needed in case the different filters have actually
                 //  changed the page data.
                 //  FIXME: Figure out a faster method
+                
                 if( pagedata.equals(doc.getPageData()) )
                 {
                     if( log.isDebugEnabled() ) log.debug("Using cached HTML for page "+pageid );
                     return doc;
                 }
             }
-            catch( NeedsRefreshException e )
+            else
             {
                 if( log.isDebugEnabled() ) log.debug("Re-rendering and storing "+pageid );
             }
@@ -239,18 +249,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
             doc.setPageData( pagedata );
             if( m_documentCache != null )
             {
-                m_documentCache.putInCache( pageid, doc );
-                wasUpdated = true;
+                m_documentCache.put( new Element( pageid, doc ) );
             }
             return doc;
         }
         catch( IOException ex )
         {
             log.error("Unable to parse",ex);
-        }
-        finally
-        {
-            if( m_documentCache != null && !wasUpdated ) m_documentCache.cancelUpdate( pageid );
         }
 
         return null;
@@ -328,6 +333,19 @@ public class RenderingManager implements WikiEventListener, InternalModule
         return null;
     }
 
+    private void flushCache( String key )
+    {
+        // We use Strings always
+        List<String> keys = (List<String>)m_documentCache.getKeys();
+        
+        for( String k : keys )
+        {
+            if( k.startsWith( key ) )
+                m_documentCache.remove( k );
+        }
+        
+    }
+    
     /**
      * Flushes the document cache in response to a POST_SAVE_BEGIN event.
      *
@@ -342,7 +360,9 @@ public class RenderingManager implements WikiEventListener, InternalModule
             if( m_documentCache != null )
             {
                 String pageName = ((WikiPageEvent) event).getPageName();
-                m_documentCache.flushPattern( pageName );
+
+                flushCache( pageName );
+
                 try
                 {
                     Collection<WikiPath> referringPages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf(pageName) );
@@ -356,7 +376,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
                         for ( WikiPath path : referringPages )
                         {
                             if( log.isDebugEnabled() ) log.debug( "Flushing " + path );
-                            m_documentCache.flushPattern( path.toString() );
+                            flushCache( path.toString() );
                         }
                     }
                 }
