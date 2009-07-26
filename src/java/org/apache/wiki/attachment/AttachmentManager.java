@@ -112,7 +112,7 @@ public class AttachmentManager
         m_dynamicAttachments = m_cachingManager.getCache( CACHE_NAME );
         if( m_dynamicAttachments == null )
         {
-            m_dynamicAttachments = new Cache( CACHE_NAME, Integer.MAX_VALUE, false, true, 3600, 3600 );
+            m_dynamicAttachments = new Cache( CACHE_NAME, 256, false, true, 3600, 3600 );
             m_cachingManager.addCache( m_dynamicAttachments );
         }
         

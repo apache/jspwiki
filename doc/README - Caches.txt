@@ -49,7 +49,7 @@ over jspwiki.properties.
 -------------------------------------------------------------------------------
 
 Name:					jspwiki.dynamicAttachmentCache
-Default configuration:	No maximum size
+Default configuration:	256 entries
 						memory only caching;
 						No expiry time.
 						
