@@ -1,3 +1,12 @@
+2009-07-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-138
+        
+        * fixed two minor JUnit tests (DenouncePlugin and CommentedProperties)
+          the last one by removing the license from test.properties (should be OK)
+          
+        * removed OSCache reference from SisterSites.jsp
+
 2009-07-23 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-137

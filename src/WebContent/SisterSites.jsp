@@ -24,7 +24,6 @@
 <%@ page import="java.text.*" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
-<%@ taglib uri="http://www.opensymphony.com/oscache" prefix="oscache" %>
 <%!
     Logger log = LoggerFactory.getLogger("JSPWiki");
 %>

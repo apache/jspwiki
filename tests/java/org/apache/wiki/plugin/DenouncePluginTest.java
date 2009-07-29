@@ -77,7 +77,6 @@ public class DenouncePluginTest extends TestCase
         MockHttpServletRequest request = m_engine.newHttpRequest();
         if (header != null)
             request.addHeader("User-Agent", header);
-        //if(host != null)
 
         request.getParameterMap().put("page", new String[]{"TestPage"});
         m_context = m_engine.getWikiContextFactory().newViewContext( request, null, null );
@@ -91,20 +90,25 @@ public class DenouncePluginTest extends TestCase
         m_engine.shutdown();
     }
 
-    public void testSLURPBot() throws Exception 
+    public void testSLURPBot1() throws Exception
     {
-        setupHTTPRequest("Slurp/2.1");
-        String res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertEquals(getDenounceText(), res);
-        //
-        setupHTTPRequest("ETSlurp/");
-        res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertEquals(getDenounceText(), res);
+        setupHTTPRequest( "Slurp/2.1" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertEquals( getDenounceText(), res );
+    }
 
-        setupHTTPRequest("Slurp");
-        res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertFalse(getDenounceText().equalsIgnoreCase(res));
+    public void testSLURPBot2() throws Exception
+    {
+        setupHTTPRequest( "ETSlurp/" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertEquals( getDenounceText(), res );
+    }
 
+    public void testSLURPBot3() throws Exception
+    {
+        setupHTTPRequest( "Slurp" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertFalse( getDenounceText().equalsIgnoreCase( res ) );
     }
     
     public void testGoogleBotWithWrongCase() throws Exception 
@@ -114,20 +118,26 @@ public class DenouncePluginTest extends TestCase
         assertFalse(getDenounceText().equalsIgnoreCase(res));
     }
     
-    public void testGoogleBot() throws Exception 
+    public void testGoogleBot1() throws Exception
     {
-        setupHTTPRequest("Googlebot/2.1");
-        String res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertEquals(getDenounceText(), res);
+        setupHTTPRequest( "Googlebot/2.1" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertEquals( getDenounceText(), res );
         //
-        setupHTTPRequest("ETSGooglebot/2.1");
-        res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertEquals(getDenounceText(), res);
+    }
 
-        setupHTTPRequest("ETSGooglebot");
-        res = m_pluginmanager.execute(m_context, PLUGINCMDLINE);
-        assertEquals(getDenounceText(), res);
+    public void testGoogleBot2() throws Exception
+    {
+        setupHTTPRequest( "ETSGooglebot/2.1" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertEquals( getDenounceText(), res );
+    }
 
+    public void testGoogleBot3() throws Exception
+    {
+        setupHTTPRequest( "ETSGooglebot" );
+        String res = m_pluginmanager.execute( m_context, PLUGINCMDLINE );
+        assertEquals( getDenounceText(), res );
     }
 
     public void testPlugin() throws Exception 
