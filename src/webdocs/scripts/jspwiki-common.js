@@ -1437,7 +1437,7 @@ var Sortable =
 				val1 = Sortable.convert( v1.getAttribute('sortvalue') || $getText(v1), datatype ),
 				val2 = Sortable.convert( v2.getAttribute('sortvalue') || $getText(v2), datatype );
 
-			return val1 - val2;
+			return (val1<val2) ? -1 : (val1>val2) ? 1 : 0; 
 			
 		}
 	}

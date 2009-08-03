@@ -1,3 +1,11 @@
+2009-08-03 Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.3-svn-11
+
+        * JSPWIKI-581   Fixing %%sortable, with strange side-effects when sorting table columns
+        with strings. (detected by Stefan Bohn)
+        
+
 2009-06-07 Harry Metske <metskem@apache.org>
 
         * 2.8.3-svn-10
