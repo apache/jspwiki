@@ -20,6 +20,9 @@
  */
 package org.apache.wiki.auth.authorize;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +32,10 @@ import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.Authorizer;
+import org.freshcookies.security.Keychain;
 
 /**
  * @author Andrew Jaquith
@@ -39,9 +44,25 @@ public class LdapAuthorizerTest extends TestCase
 {
     private Map<String, String> m_options;
 
-    protected void setUp()
+    protected void setUp() throws Exception
     {
         m_options = new HashMap<String, String>();
+        m_options.put( LdapAuthorizer.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
+        m_options.put( LdapAuthorizer.PROPERTY_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
+        m_options.put( LdapAuthorizer.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
+        m_options.put( LdapAuthorizer.PROPERTY_ROLE_PATTERN, "(&(objectClass=groupOfUniqueNames)(cn={0})(uniqueMember={1}))" );
+        m_options.put( LdapAuthorizer.PROPERTY_SSL, "false" );
+        m_options.put( LdapAuthorizer.PROPERTY_AUTHENTICATION, "simple" );
+        m_options.put( LdapAuthorizer.PROPERTY_BIND_DN, "uid=Fred,ou=people,dc=jspwiki,dc=org" );
+        
+        // Create the Keychain
+        Keychain keychain = new Keychain();
+        keychain.load( null, "keychain-password".toCharArray() );
+        Keychain.Password password = new Keychain.Password( "password" );
+        keychain.setEntry( LdapAuthorizer.KEYCHAIN_BIND_DN_ENTRY, password );
+        File file = new File("tests/etc/WEB-INF/test-keychain" );
+        OutputStream stream = new FileOutputStream( file );
+        keychain.store( stream, "keychain-password".toCharArray() );
     }
 
     /**
@@ -53,15 +74,14 @@ public class LdapAuthorizerTest extends TestCase
         props.load( TestEngine.findTestProperties() );
         props.putAll( config );
         props.put( AuthorizationManager.PROP_AUTHORIZER, LdapAuthorizer.class.getCanonicalName() );
+        props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "test-keychain" );
+        props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
         TestEngine engine = new TestEngine( props );
         return engine;
     }
 
     public void testGetRoles() throws Exception
     {
-        m_options.put( LdapAuthorizer.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
-        m_options.put( LdapAuthorizer.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
-        m_options.put( LdapAuthorizer.PROPERTY_USER_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
         Authorizer authorizer = createEngine( m_options ).getAuthorizationManager().getAuthorizer();
 
         // LDAP should return just 2 roles, Admin and Role1
@@ -75,9 +95,6 @@ public class LdapAuthorizerTest extends TestCase
 
     public void testFindRole() throws Exception
     {
-        m_options.put( LdapAuthorizer.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
-        m_options.put( LdapAuthorizer.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
-        m_options.put( LdapAuthorizer.PROPERTY_USER_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
         Authorizer authorizer = createEngine( m_options ).getAuthorizationManager().getAuthorizer();
         
         // We should be able to find roles Admin and Role1
@@ -90,9 +107,6 @@ public class LdapAuthorizerTest extends TestCase
 
     public void testIsUserInRole() throws Exception
     {
-        m_options.put( LdapAuthorizer.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
-        m_options.put( LdapAuthorizer.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
-        m_options.put( LdapAuthorizer.PROPERTY_USER_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
         TestEngine engine = createEngine( m_options );
         Authorizer authorizer = engine.getAuthorizationManager().getAuthorizer();
         Role admin = new Role( "Admin" );

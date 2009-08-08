@@ -1,7 +1,12 @@
 package org.apache.wiki.auth.authorize;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -18,17 +23,35 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.util.TextUtil;
+import org.freshcookies.security.Keychain;
 
 /**
  * Authorizer whose Roles are supplied by LDAP groups.
  */
 public class LdapAuthorizer implements Authorizer
 {
-    private Hashtable<String, String> m_env;
+    private Hashtable<String, String> m_jndiEnv;
 
     private String m_roleBase = null;
 
-    private String m_userPattern = null;
+    /**
+     * Finds all roles; based on m_rolePattern
+     */
+    private String m_roleFinder = null;
+
+    private String m_authentication = null;
+
+    private Keychain m_keychain = null;
+
+    private String m_connectionUrl = null;
+
+    private String m_ssl = null;
+
+    private String m_rolePattern = null;
+
+    private String m_userLoginIdPattern = null;
+
+    private String m_bindDN = null;
 
     /**
      * {@inheritDoc}
@@ -37,7 +60,7 @@ public class LdapAuthorizer implements Authorizer
     {
         try
         {
-            DirContext ctx = new InitialLdapContext( m_env, null );
+            DirContext ctx = new InitialLdapContext( m_jndiEnv, null );
             SearchControls searchControls = new SearchControls();
             searchControls.setReturningAttributes( new String[0] );
             NamingEnumeration<SearchResult> roles = ctx.search( m_roleBase, "(cn=" + role + ")", searchControls );
@@ -61,10 +84,10 @@ public class LdapAuthorizer implements Authorizer
         Set<Role> foundRoles = new HashSet<Role>();
         try
         {
-            DirContext ctx = new InitialLdapContext( m_env, null );
+            DirContext ctx = new InitialLdapContext( m_jndiEnv, null );
             SearchControls searchControls = new SearchControls();
             searchControls.setReturningAttributes( new String[] { "cn" } );
-            NamingEnumeration<SearchResult> roles = ctx.search( m_roleBase, "(objectClass=groupOfUniqueNames)", searchControls );
+            NamingEnumeration<SearchResult> roles = ctx.search( m_roleBase, m_roleFinder, searchControls );
             while ( roles.hasMore() )
             {
                 SearchResult foundRole = roles.next();
@@ -82,11 +105,41 @@ public class LdapAuthorizer implements Authorizer
     private static final Logger log = LoggerFactory.getLogger( LdapAuthorizer.class );
 
     /**
+     * Property that specifies the JNDI authentication type. Valid values are
+     * the same as those for {@link Context#SECURITY_AUTHENTICATION}:
+     * <code>none</code>, <code>simple</code>, <code>strong</code> or
+     * <code>DIGEST-MD5</code>. The default is <code>simple</code> if SSL is
+     * specified, and <code>DIGEST-MD5</code> otherwise. This property is also
+     * used by {@link org.apache.wiki.auth.login.LdapLoginModule}.
+     */
+    protected static final String PROPERTY_AUTHENTICATION = "jspwiki.loginModule.options.ldap.authentication";
+
+    /**
      * Property that supplies the connection URL for the LDAP server, e.g.
      * <code>ldap://127.0.0.1:4890/</code>. This property is also used by
      * {@link org.apache.wiki.auth.login.LdapLoginModule}.
      */
     protected static final String PROPERTY_CONNECTION_URL = "jspwiki.loginModule.options.ldap.connectionURL";
+
+    /**
+     * Property that supplies the DN used to bind to the directory when looking
+     * up users and roles.
+     */
+    protected static final String PROPERTY_BIND_DN = "jspwiki.ldap.bindDN";
+
+    /**
+     * Property that supplies the base DN where roles are contained, e.g.
+     * <code>ou=roles,dc=jspwiki,dc=org</code>.
+     */
+    protected static final String PROPERTY_ROLE_BASE = "jspwiki.ldap.roleBase";
+
+    /**
+     * Property that supplies the pattern for finding users within the role
+     * base, e.g.
+     * <code>(&(objectClass=groupOfUniqueNames)(cn={0})(uniqueMember={1}))</code>
+     * .
+     */
+    protected static final String PROPERTY_ROLE_PATTERN = "jspwiki.ldap.rolePattern";
 
     /**
      * Property that indicates whether to use SSL for connecting to the LDAP
@@ -96,76 +149,107 @@ public class LdapAuthorizer implements Authorizer
     protected static final String PROPERTY_SSL = "jspwiki.loginModule.options.ldap.ssl";
 
     /**
-     * Property that supplies the DN pattern for finding users, e.g.
-     * <code>uid={0},ou=people,dc=jspwiki,dc=org</code> This property is also
+     * Property that specifies the pattern for the username used to log in to
+     * the LDAP server. Usually this is a full DN, for example
+     * <code>uid={0},ou=people,dc=jspwiki,dc=org</code>. However, sometimes (as
+     * with Active Directory 2003 and later) only the userid is used, in which
+     * case the principal will simply be <code>{0}</code>. This property is also
      * used by {@link org.apache.wiki.auth.login.LdapLoginModule}.
      */
-    protected static final String PROPERTY_USER_PATTERN = "jspwiki.loginModule.options.ldap.userPattern";
+    protected static final String PROPERTY_LOGIN_ID_PATTERN = "jspwiki.loginModule.options.ldap.userPattern";
 
-    /**
-     * Property that supplies the DN pattern for finding roles, e.g.
-     * <code>ou=roles,dc=jspwiki,dc=org</code>
-     */
-    protected static final String PROPERTY_ROLE_BASE = "jspwiki.ldap.roleBase";
+    private static final String[] REQUIRED_PROPERTIES = new String[] { PROPERTY_CONNECTION_URL, PROPERTY_LOGIN_ID_PATTERN,
+                                                                      PROPERTY_ROLE_BASE, PROPERTY_ROLE_PATTERN };
+
+    protected static final String KEYCHAIN_BIND_DN_ENTRY = "LdapAuthorizer.BindDN.Password";
 
     /**
      * {@inheritDoc}
      */
     public void initialize( WikiEngine engine, Properties props ) throws WikiSecurityException
     {
-        Hashtable<String, String> env = new Hashtable<String, String>();
-        env.put( Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory" );
-        env.put( Context.SECURITY_AUTHENTICATION, "none" );
-
-        // LDAP server to search
-        String option = (String) props.get( PROPERTY_CONNECTION_URL );
-        if( option != null && option.trim().length() > 0 )
+        // Make sure all required properties are here
+        for( String prop : REQUIRED_PROPERTIES )
         {
-            env.put( Context.PROVIDER_URL, option.trim() );
+            if( !props.containsKey( prop ) )
+            {
+                throw new WikiSecurityException( "Property " + prop + " is required!" );
+            }
         }
 
-        // Use SSL?
-        option = (String) props.get( PROPERTY_SSL );
-        boolean ssl = TextUtil.isPositive( option );
-        env.put( Context.SECURITY_PROTOCOL, ssl ? "ssl" : "none" );
-        m_env = env;
+        // Figure out LDAP environment settings
+        m_connectionUrl = props.getProperty( PROPERTY_CONNECTION_URL ).trim();
+        m_userLoginIdPattern = props.getProperty( PROPERTY_LOGIN_ID_PATTERN ).trim();
+        m_roleBase = props.getProperty( PROPERTY_ROLE_BASE ).trim();
+        m_rolePattern = props.getProperty( PROPERTY_ROLE_PATTERN ).trim();
+        m_roleFinder = m_rolePattern.replaceAll( "\\{[0-1]\\}", "\\*" );
+        m_keychain = engine.getAuthenticationManager().getKeychain();
 
-        if( log.isDebugEnabled() )
+        // Figure out optional properties
+        String ssl = (String) props.get( PROPERTY_SSL );
+        m_ssl = (ssl != null && TextUtil.isPositive( ssl )) ? "ssl" : "none";
+        String authentication = (String) props.get( PROPERTY_AUTHENTICATION );
+        if( authentication == null || authentication.length() == 0 )
         {
-            log.debug( "Built JNDI environment for LDAP search.", m_env );
-        }
-
-        // DN pattern for finding users
-        option = (String) props.get( PROPERTY_USER_PATTERN );
-        if( option != null && option.trim().length() > 0 )
-        {
-            m_userPattern = option.trim();
+            m_authentication = "ssl".equals( m_ssl ) ? "simple" : "DIGEST-MD5";
         }
         else
         {
-            throw new WikiSecurityException( PROPERTY_USER_PATTERN + " not supplied." );
+            m_authentication = authentication;
+        }
+        String bindDN = props.getProperty( PROPERTY_BIND_DN );
+        if( bindDN != null && bindDN.length() > 0 )
+        {
+            m_bindDN = bindDN.trim();
         }
 
-        // DN pattern for finding roles
-        option = (String) props.get( PROPERTY_ROLE_BASE );
-        if( option != null && option.trim().length() > 0 )
-        {
-            m_roleBase = option.trim();
-        }
-        else
-        {
-            throw new WikiSecurityException( PROPERTY_ROLE_BASE + " not supplied." );
-        }
-        
         // Do a quick connection test, and fail-fast if needed
+        buildJndiEnvironment();
         try
         {
-            new InitialLdapContext( m_env, null );
+            new InitialLdapContext( m_jndiEnv, null );
         }
         catch( NamingException e )
         {
             throw new WikiSecurityException( "Could not start LdapAuthorizer! Cause: " + e.getMessage(), e );
         }
+    }
+
+    private void buildJndiEnvironment() throws WikiSecurityException
+    {
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put( Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory" );
+        env.put( Context.PROVIDER_URL, m_connectionUrl );
+        env.put( Context.SECURITY_PROTOCOL, m_ssl );
+        env.put( Context.SECURITY_AUTHENTICATION, m_authentication );
+
+        // If we need and Bind DN and Keychain is loaded, get the bind DN and
+        // password
+        if( m_bindDN != null && m_keychain.isLoaded() )
+        {
+            try
+            {
+                KeyStore.Entry password = m_keychain.getEntry( KEYCHAIN_BIND_DN_ENTRY );
+                if( password instanceof Keychain.Password )
+                {
+                    env.put( Context.SECURITY_PRINCIPAL, m_bindDN );
+                    env.put( Context.SECURITY_CREDENTIALS, ((Keychain.Password) password).getPassword() );
+                }
+            }
+            catch( KeyStoreException e )
+            {
+                e.printStackTrace();
+                throw new WikiSecurityException( "Could not build JNDI environment. ", e );
+            }
+        }
+
+        // Spill all the information if debugging
+        if( log.isDebugEnabled() )
+        {
+            log.debug( "Built JNDI environment for LDAP login.", env );
+        }
+
+        m_jndiEnv = env;
     }
 
     /**
@@ -176,7 +260,7 @@ public class LdapAuthorizer implements Authorizer
      * an LDAP group contained in the role-base DN. The user DN is constructed
      * from the user Principal, where the <code>uid</code> of the user's DN is
      * the Principal name, and the rest of the DN is determined by
-     * {@link #PROPERTY_USER_PATTERN}.
+     * {@link #PROPERTY_LOGIN_ID_PATTERN}.
      * </p>
      * <p>
      * To make an accurate search, Principals that are of type {@link Role},
@@ -211,15 +295,17 @@ public class LdapAuthorizer implements Authorizer
     {
         // Build DN
         String uid = session.getLoginPrincipal().getName();
-        String dn = m_userPattern.replace( "{0}", uid ).trim();
+        String dn = m_userLoginIdPattern.replace( "{0}", uid ).trim();
         dn = dn.replace( "=", "\\3D" );
 
         try
         {
-            DirContext ctx = new InitialLdapContext( m_env, null );
+            DirContext ctx = new InitialLdapContext( m_jndiEnv, null );
             SearchControls searchControls = new SearchControls();
+            searchControls.setSearchScope( SearchControls.SUBTREE_SCOPE );
             searchControls.setReturningAttributes( new String[0] );
-            String filter = "(&(objectClass=groupOfUniqueNames)(cn=" + role.getName() + ")(uniqueMember=" + dn + "))";
+            String filter = m_rolePattern.replace( "{0}", role.getName() );
+            filter = filter.replace( "{1}", dn );
             NamingEnumeration<SearchResult> roles = ctx.search( m_roleBase, filter, searchControls );
             return roles.hasMore();
         }

@@ -21,8 +21,11 @@
 package org.apache.wiki.auth;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.*;
 
@@ -47,6 +50,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
+import org.freshcookies.security.Keychain;
 
 
 /**
@@ -120,7 +124,8 @@ public final class AuthenticationManager
     protected Class<? extends LoginModule> m_loginModuleClass = UserDatabaseLoginModule.class;
     
     /** Options passed to {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)}; 
-     * initialized by {@link #initialize(WikiEngine, Properties)}. */
+     * initialized by {@link #initialize(WikiEngine, Properties)}. It is initialized once when
+     * {@link #initialize(WikiEngine, Properties)} executes, and is unmodifiable. */
     protected Map<String,String> m_loginModuleOptions = new HashMap<String,String>();
 
     /** Just to provide compatibility with the old versions.  The same
@@ -154,6 +159,45 @@ public final class AuthenticationManager
     /** Keeps a list of the usernames who have attempted a login recently. */
     
     private TimedCounterList<String> m_lastLoginAttempts = new TimedCounterList<String>();
+    
+    /**
+     * The default path to the keychain.
+     */
+    protected static final String DEFAULT_KEYCHAIN_PATH = "keychain";
+    
+    /**
+     * The password for the keychain. If no password is specified, the default
+     * keychain password is used.
+     */
+    public static final String PROP_KEYCHAIN_PASSWORD = "jspwiki.keychainPassword";
+
+    /**
+     * The path to the keychain, if needed for loading. If a fully-qualified
+     * path is not specified, keychain will be assumed to be relative to
+     * WEB-INF/. If the path is not set at all, it will default to
+     * {@link #DEFAULT_KEYSTORE_PATH}.
+     */
+    public static final String PROP_KEYCHAIN_PATH = "jspwiki.keychainPath";
+    
+    /**
+     * Keeps a reference to the keychain.
+     */
+    private Keychain m_keychain = null;
+
+    /**
+     * Keeps a reference to the keychain path.
+     */
+    private String m_keychainPath = null;
+
+    /**
+     * Returns the Keychain object used to store passwords and keying materials.
+     * @return the keychain
+     * @since 3.0
+     */
+    public Keychain getKeychain()
+    {
+        return m_keychain;
+    }
     
     /**
      * Creates an AuthenticationManager instance for the given WikiEngine and
@@ -201,6 +245,31 @@ public final class AuthenticationManager
         
         // Initialize the LoginModule options
         initLoginModuleOptions( props );
+        
+        // Initialize the keychain
+        m_keychain = new Keychain();
+        String path = props.getProperty( PROP_KEYCHAIN_PATH );
+        path = (path == null || path.trim().length() == 0) ? null : path.trim();
+        if( path == null )
+        {
+            path = "WEB-INF/" + DEFAULT_KEYCHAIN_PATH;
+        }
+        else
+        {
+            File filePath = new File( path );
+            if ( filePath.getParent() == null )
+            {
+                path = "WEB-INF/" + path;
+            }
+        }
+        m_keychainPath = path;
+
+        // Unlock the keychain if password was supplied.
+        String password = props.getProperty( PROP_KEYCHAIN_PASSWORD );
+        if( password != null )
+        {
+            initKeychain( password );
+        }
     }
 
     /**
@@ -569,6 +638,26 @@ public final class AuthenticationManager
     }
 
     /**
+     * Attempts to unlock the keychain using the supplied password. This method
+     * is generally called after JSPWiki starts up by a user-triggered event,
+     * for example an administration page. If the keychain has already been
+     * unlocked, this method does nothing and returns immediately.
+     * 
+     * @param password the password or PIN that protects the underlying keychain
+     */
+    public void unlockKeychain( String password ) throws WikiSecurityException
+    {
+        if( !m_keychain.isLoaded() )
+        {
+            initKeychain( password );
+        }
+        if( !m_keychain.isLoaded() )
+        {
+            throw new WikiSecurityException( "Wrong password." );
+        }
+    }
+    
+    /**
      * Instantiates and executes a single JAAS
      * {@link javax.security.auth.spi.LoginModule}, and returns a Set of
      * Principals that results from a successful login. The LoginModule is instantiated,
@@ -754,6 +843,7 @@ public final class AuthenticationManager
      */
     private void initLoginModuleOptions(Properties props)
     {
+        Map<String,String> options = new HashMap<String,String>();
         for ( Object key : props.keySet() )
         {
             String propName = key.toString();
@@ -770,10 +860,11 @@ public final class AuthenticationManager
                     {
                         throw new IllegalArgumentException( "JAAS LoginModule key " + propName + " cannot be specified twice!" );
                     }
-                    m_loginModuleOptions.put( optionKey, optionValue );
+                    options.put( optionKey, optionValue );
                 }
             }
         }
+        m_loginModuleOptions = Collections.unmodifiableMap( options );
     }
     
     /**
@@ -818,5 +909,48 @@ public final class AuthenticationManager
             }
         }
     }
+    
+    /**
+     * Loads the keychain, using a supplied password to unlock it.
+     * 
+     * @param password the password to unlock the keychain. If <code>null</code>
+     *            the keychain will be loaded without a password.
+     * @throws WikiSecurityException if the keychain could not be located, or if
+     *             the password is incorrect
+     */
+    private void initKeychain( String password ) throws WikiSecurityException
+    {
+        // If the path was supplied, verify that it exists
+        InputStream stream = null;
+        log.debug( "Loading keychain from path " + m_keychainPath );
+        if( m_engine.getServletContext() == null )
+        {
+            ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
+            stream = cl.getResourceAsStream( m_keychainPath );
+        }
+        else
+        {
+            stream = m_engine.getServletContext().getResourceAsStream( "/" + m_keychainPath );
+        }
+        if( stream == null )
+        {
+            throw new WikiSecurityException( "Unable to find keychain " + m_keychainPath + "." );
+        }
 
+        // Load the keychain
+        char[] passwordChars = password == null ? null : password.toCharArray();
+        try
+        {
+            m_keychain.load( stream, passwordChars );
+        }
+        catch( NoSuchAlgorithmException e )
+        {
+            e.printStackTrace();
+        }
+        catch( IOException e )
+        {
+            // Wrong password! That is ok for now.
+            log.info( "Keychain could not be unlocked; wrong password or PIN." );
+        }
+    }
 }

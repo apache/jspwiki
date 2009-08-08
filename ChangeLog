@@ -1,3 +1,19 @@
+2009-08-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-139
+
+        * Checked in revised LdapLoginModule and LdapAuthorizer. Notable new
+        features include provisional support for Active Directory, which
+        "mostly" works. I also added the ability to bind to LDAP with a
+        specified identity. To to this, we use a new feature of
+        freshcookies-security called a "keychain" that stores the binding
+        DN in an password-locked, triple-DES encrypted file. The keychain
+        is available via AuthenticationManager.getKeychain() and can be
+        used for storage of anything sensitive. The keychain is NOT required
+        to be unlocked at startup time (although obviously LDAP binds will
+        fail). We will provide the ability for the admin to unlock the
+        keychain via the web UI in a future build.  
+
 2009-07-29 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-138

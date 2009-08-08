@@ -40,12 +40,15 @@ import org.apache.wiki.auth.authorize.Role;
  */
 public class LdapLoginModuleTest extends TestCase
 {
-    static final Map<String,String> m_options;
+    private Map<String,String> m_options = null;
     
-    static {
+    public void setUp() {
         m_options = new HashMap<String, String>();
-        m_options.put( LdapLoginModule.OPTIONS_CONNECTION_URL, "ldap://127.0.0.1:4890" );
-        m_options.put( LdapLoginModule.OPTIONS_USER_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
+        m_options.put( LdapLoginModule.OPTION_CONNECTION_URL, "ldap://127.0.0.1:4890" );
+        m_options.put( LdapLoginModule.OPTION_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
+        m_options.put( LdapLoginModule.OPTION_USER_BASE, "ou=people,dc=jspwiki,dc=org" );
+        m_options.put( LdapLoginModule.OPTION_USER_PATTERN, "(&(objectClass=inetOrgPerson)(uid={0}))" );
+        m_options.put( LdapLoginModule.OPTION_AUTHENTICATION, "simple" );
     }
 
     public final void testLoginNonExistentUser() throws Exception
@@ -93,6 +96,61 @@ public class LdapLoginModuleTest extends TestCase
         assertFalse( principals.contains( Role.ALL ) );
     }
 
+    public final void testLoginFullname() throws Exception
+    {
+        // Login with a user that has both a surname and given name
+        Subject subject = new Subject();
+        CallbackHandler handler = new WikiCallbackHandler( null, null, "Fred", "password" );
+        LoginModule module = new LdapLoginModule();
+        module.initialize( subject, handler, new HashMap<String, Object>(), m_options );
+        module.login();
+        module.commit();
+        
+        // Successful login will inject the usual LoginPrincipal
+        Set<Principal> principals = subject.getPrincipals();
+        assertEquals( 3, principals.size() );
+        assertTrue( principals.contains( new WikiPrincipal( "Fred", WikiPrincipal.LOGIN_NAME ) ) );
+        
+        // PLUS, in this case only, principals for Wiki Name and Full Name
+        // NOTE that because Fred has a first name + last name, this is preferred
+        // to the common name of "Flintstone, Fred"
+        assertTrue( principals.contains( new WikiPrincipal( "Fred Flintstone", WikiPrincipal.FULL_NAME ) ) );
+        assertTrue( principals.contains( new WikiPrincipal( "FredFlintstone", WikiPrincipal.WIKI_NAME ) ) );
+    }
+    
+    public static final void main( String... args ) throws Exception
+    {
+        LdapLoginModuleTest t = new LdapLoginModuleTest();
+
+        t.m_options.clear();
+        t.m_options.put( LdapLoginModule.OPTION_AUTHENTICATION, "DIGEST-MD5" );
+        t.m_options.put( LdapLoginModule.OPTION_CONNECTION_URL, "ldap://camb-dc01.forrester.loc:389" );
+        t.m_options.put( LdapLoginModule.OPTION_LOGIN_ID_PATTERN, "(uid={0})" );
+        t.m_options.put( LdapLoginModule.OPTION_USER_BASE, "OU=users,OU=Cambridge,OU=Office Locations,OU=forrester,DC=forrester,DC=loc" );
+        t.m_options.put( LdapLoginModule.OPTION_USER_PATTERN, "(&(objectClass=person)(mailNickname={0}))" );
+        
+        // Login with a user that IS in the database
+        Subject subject = new Subject();
+        CallbackHandler handler = new WikiCallbackHandler( null, null, "ajaquith", "****" );
+        LoginModule module = new LdapLoginModule();
+        module.initialize( subject, handler, new HashMap<String, Object>(), t.m_options );
+        module.login();
+        module.commit();
+        
+        // Successful login will inject the usual LoginPrincipal
+        Set<Principal> principals = subject.getPrincipals();
+        assertEquals( 3, principals.size() );
+        assertTrue( principals.contains( new WikiPrincipal( "ajaquith", WikiPrincipal.LOGIN_NAME ) ) );
+        
+        // PLUS, in this case only, principals for Wiki Name and Full Name
+        assertTrue( principals.contains( new WikiPrincipal( "Andrew Jaquith", WikiPrincipal.FULL_NAME ) ) );
+        assertTrue( principals.contains( new WikiPrincipal( "AndrewJaquith", WikiPrincipal.WIKI_NAME ) ) );
+        
+        // AuthenticationManager, NOT the LoginModule, adds the Role principals
+        assertFalse( principals.contains( Role.AUTHENTICATED ) );
+        assertFalse( principals.contains( Role.ALL ) );
+    }
+    
     public final void testLogout() throws Exception
     {
         Subject subject = new Subject();

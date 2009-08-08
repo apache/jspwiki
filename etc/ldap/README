@@ -2,8 +2,8 @@ This document describes how to set up OpenLDAP with a sample dataset to support
 the LdapAuthorizerTest and LdapLoginModuleTest unit tests. It assumes that OpenLDAP
 is installed on your system and that config files are stored in /etc/openldap.
 OpenLDAP runs on most Unix-like systems. Mac OS X 10.5 Leopard has OpenLDAP installed
-out of the box, and this is the setup this document was written to work with.
-Your mileage may vary.
+out of the box. The out-of-the-box OS X setup was what this document was written
+to work with. Your mileage may vary.
 
 First-time setup
 1) copy ldap.conf to /etc/openldap

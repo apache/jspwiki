@@ -468,9 +468,13 @@ jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 #  etc. should be replaced with the actual parameter names. The parameter names and
 # values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
 # when its initialize() method is called. The default UserDatabaseLoginModule class does
-# not need any options. The example below is for LdapLoginModule.
+# not need any options. The example below is for LdapLoginModule, configured for OpenLDAP.
+#
+#jspwiki.loginModule.options.ldap.authentication = DIGEST-MD5
 #jspwiki.loginModule.options.ldap.connectionURL = ldap://127.0.0.1:4890/
-#jspwiki.loginModule.options.ldap.userPattern = uid={0},ou=people,dc=jspwiki,dc=org
+#jspwiki.loginModule.options.ldap.loginIdPattern = uid\={0},ou\=people,dc\=jspwiki,dc\=org
+#jspwiki.loginModule.options.ldap.userBase = ou\=people,dc\=jspwiki,dc\=org
+#jspwiki.loginModule.options.ldap.userPattern = (&(objectClass\=inetOrgPerson)(uid\={0}))
 #jspwiki.loginModule.options.ldap.ssl = false
 
 # 
@@ -527,6 +531,19 @@ jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 #  Authorizer if you wish; specify that class here.
 
 jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
+
+# In addition to the built-in web container authorizer, JSPWiki also supplies
+# an Authorizer that works with LDAP. If the LdapAuthorizer is specified,
+# these settings used to describe how roles are looked up. The connection URL is
+# the same specified above in Custom Authentication. The 'role base' supplies
+# the DN containing role entries.
+#
+#jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
+#jspwiki.ldap.roleBase = ou\=roles,dc\=jspwiki,dc\=org
+#jspwiki.ldap.rolePattern = (&(objectClass\=groupOfUniqueNames)(cn\={0})(uniqueMember\={1}))
+#jspwiki.ldap.bindDN = cn\=Manager,dc\=jspwiki,dc\=org
+#jspwiki.ldap.bindPasswordAlias = ldap.ManagerDN
+
 
 #  B) GROUPS
 #  As an additional source of authorization, users can belong to discretionary

@@ -44,7 +44,7 @@ public class AllTests extends TestCase
         suite.addTest( org.apache.wiki.auth.login.AllTests.suite() );
         suite.addTest( org.apache.wiki.auth.permissions.AllTests.suite() );
         suite.addTest( org.apache.wiki.auth.user.AllTests.suite() );
-        suite.addTestSuite( org.apache.wiki.auth.UserManagerTest.class );
+        suite.addTestSuite( UserManagerTest.class );
         
         return suite;
     }
