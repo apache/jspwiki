@@ -4,7 +4,7 @@
 
         * Checked in LdapUserDatabase, and refactorings to other LDAP
         classes. The LdapUserDatabase is read-only. ProfileTab will
-        respect this will print, rather than allow edits to, user
+        respect this and will print, rather than allow edits to, user
         profile information as a result. Any UserDatabase can now be
         flagged as "read-only" (via jspwiki.properties) to achieve
         the same effect. 
