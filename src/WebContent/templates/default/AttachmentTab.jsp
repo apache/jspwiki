@@ -26,6 +26,7 @@
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
+<%@ page errorPage="/Error.jsp" %>
 <%
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContextFactory.findContext( pageContext );

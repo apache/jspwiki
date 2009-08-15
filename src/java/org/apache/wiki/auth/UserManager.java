@@ -52,6 +52,7 @@ import org.apache.wiki.rpc.json.JSONRPCManager;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.MailUtil;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.*;
 
 
@@ -63,6 +64,8 @@ import org.apache.wiki.workflow.*;
  */
 public final class UserManager
 {
+    public static final String PROP_READ_ONLY_PROFILES = "jspwiki.userdatabase.readOnlyProfiles";
+
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
     private static final String SESSION_MESSAGES = "profile";
     private static final String PARAM_EMAIL = "email";
@@ -72,6 +75,8 @@ public final class UserManager
     private static final String UNKNOWN_CLASS = "<unknown>";
 
     private WikiEngine m_engine;
+
+    private boolean m_readOnlyProfiles = false;
 
     private static Logger log = LoggerFactory.getLogger(UserManager.class);
 
@@ -85,8 +90,6 @@ public final class UserManager
     protected static final String PREFS_LOGIN_NAME          = "prefs.loginname";
     protected static final String PREFS_FULL_NAME           = "prefs.fullname";
     protected static final String PREFS_EMAIL               = "prefs.email";
-
-    // private static final String  PROP_ACLMANAGER     = "jspwiki.aclManager";
 
     /** Associates wiki sessions with profiles */
     private final Map<WikiSession,UserProfile> m_profiles = new WeakHashMap<WikiSession,UserProfile>();
@@ -115,8 +118,9 @@ public final class UserManager
 
         m_useJAAS = AuthenticationManager.SECURITY_JAAS.equals( props.getProperty(AuthenticationManager.PROP_SECURITY, AuthenticationManager.SECURITY_JAAS ) );
 
-        // Attach the PageManager as a listener
-        // TODO: it would be better if we did this in PageManager directly
+        m_readOnlyProfiles = TextUtil.isPositive( props.getProperty( PROP_READ_ONLY_PROFILES ) );
+
+        // Attach the ContentManager as a listener
         addWikiEventListener( engine.getContentManager() );
 
         JSONRPCManager.registerGlobalObject( "users", new JSONUserModule(this), new AllPermission(null) );
@@ -246,6 +250,17 @@ public final class UserManager
         // Stash the profile for next time
         m_profiles.put( session, profile );
         return profile;
+    }
+
+    /**
+     * Returns <code>true</code> if all user profiles returned by the back-end database are
+     * read-only. Read-only behavior can be forced by setting the <code>jspwiki.properties</code>
+     * property {@link #PROP_READ_ONLY_PROFILES}.
+     * @return the result
+     */
+    public boolean isReadOnly()
+    {
+        return m_readOnlyProfiles;
     }
 
     /**

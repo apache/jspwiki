@@ -24,17 +24,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.auth.AuthenticationManager;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.Authorizer;
+import org.apache.wiki.auth.*;
+import org.apache.wiki.auth.login.LdapLoginModule;
 import org.freshcookies.security.Keychain;
 
 /**
@@ -42,47 +39,57 @@ import org.freshcookies.security.Keychain;
  */
 public class LdapAuthorizerTest extends TestCase
 {
-    private Map<String, String> m_options;
+    private TestEngine m_engine;
 
     protected void setUp() throws Exception
     {
-        m_options = new HashMap<String, String>();
-        m_options.put( LdapAuthorizer.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
-        m_options.put( LdapAuthorizer.PROPERTY_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
-        m_options.put( LdapAuthorizer.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
-        m_options.put( LdapAuthorizer.PROPERTY_ROLE_PATTERN, "(&(objectClass=groupOfUniqueNames)(cn={0})(uniqueMember={1}))" );
-        m_options.put( LdapAuthorizer.PROPERTY_SSL, "false" );
-        m_options.put( LdapAuthorizer.PROPERTY_AUTHENTICATION, "simple" );
-        m_options.put( LdapAuthorizer.PROPERTY_BIND_DN, "uid=Fred,ou=people,dc=jspwiki,dc=org" );
-        
         // Create the Keychain
         Keychain keychain = new Keychain();
         keychain.load( null, "keychain-password".toCharArray() );
         Keychain.Password password = new Keychain.Password( "password" );
-        keychain.setEntry( LdapAuthorizer.KEYCHAIN_BIND_DN_ENTRY, password );
+        keychain.setEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY, password );
         File file = new File("tests/etc/WEB-INF/test-keychain" );
         OutputStream stream = new FileOutputStream( file );
         keychain.store( stream, "keychain-password".toCharArray() );
-    }
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected TestEngine createEngine( Map<String, String> config ) throws Exception
-    {
+        // Create the TestEngine properties
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        props.putAll( config );
+
+        // Set the LoginModule options
+        props.put( UserManager.PROP_READ_ONLY_PROFILES, "true" );
+        props.put( AuthenticationManager.PROP_LOGIN_MODULE, LdapLoginModule.class.getName() );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapLoginModule.OPTION_CONNECTION_URL, "ldap://127.0.0.1:4890" );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapLoginModule.OPTION_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapLoginModule.OPTION_USER_BASE, "dc=jspwiki,dc=org" );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapLoginModule.OPTION_USER_PATTERN, "(&(objectClass=inetOrgPerson)(uid={0}))" );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapLoginModule.OPTION_AUTHENTICATION, "simple" );
+        props.put( AuthenticationManager.PREFIX_LOGIN_MODULE_OPTIONS + LdapConfig.PROPERTY_SSL, "false" );
+
+        // Set the Authorizer properties
         props.put( AuthorizationManager.PROP_AUTHORIZER, LdapAuthorizer.class.getCanonicalName() );
+        props.put( LdapConfig.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
+        props.put( LdapConfig.PROPERTY_ROLE_PATTERN, "(&(objectClass=groupOfUniqueNames)(cn={0}))" );
+        props.put( LdapConfig.PROPERTY_IS_IN_ROLE_PATTERN, "(&(&(objectClass=groupOfUniqueNames)(cn={0}))(uniqueMember={1}))" );
+        props.put( LdapConfig.PROPERTY_BIND_DN, "uid=Fred,ou=people,dc=jspwiki,dc=org" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "test-keychain" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
-        TestEngine engine = new TestEngine( props );
-        return engine;
+
+        m_engine = new TestEngine( props );
+    }
+
+    protected void tearDown() throws Exception
+    {
+        File file = new File("tests/etc/WEB-INF/test-keychain" );
+        if ( file.exists() )
+        {
+            file.delete();
+        }
     }
 
     public void testGetRoles() throws Exception
     {
-        Authorizer authorizer = createEngine( m_options ).getAuthorizationManager().getAuthorizer();
+        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
 
         // LDAP should return just 2 roles, Admin and Role1
         Principal[] roles = authorizer.getRoles();
@@ -95,7 +102,7 @@ public class LdapAuthorizerTest extends TestCase
 
     public void testFindRole() throws Exception
     {
-        Authorizer authorizer = createEngine( m_options ).getAuthorizationManager().getAuthorizer();
+        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         
         // We should be able to find roles Admin and Role1
         assertEquals( new Role("Admin"), authorizer.findRole( "Admin" ) );
@@ -107,18 +114,18 @@ public class LdapAuthorizerTest extends TestCase
 
     public void testIsUserInRole() throws Exception
     {
-        TestEngine engine = createEngine( m_options );
-        Authorizer authorizer = engine.getAuthorizationManager().getAuthorizer();
+        assertTrue( m_engine.getUserManager().isReadOnly() );
+        Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         Role admin = new Role( "Admin" );
         Role role1 = new Role( "Role1" );
         
         // Janne does not belong to any roles
-        WikiSession session = engine.janneSession();
+        WikiSession session = m_engine.janneSession();
         assertFalse( authorizer.isUserInRole( session, admin ) );
         assertFalse( authorizer.isUserInRole( session, role1 ) );
         
         // The Admin belongs to just the Admin role
-        session = engine.adminSession();
+        session = m_engine.adminSession();
         assertTrue( authorizer.isUserInRole( session, admin ) );
         assertFalse( authorizer.isUserInRole( session, role1 ) );
     }

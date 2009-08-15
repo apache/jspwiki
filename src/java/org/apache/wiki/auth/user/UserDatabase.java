@@ -75,7 +75,7 @@ public interface UserDatabase
      * this Principal using
      * {@link org.apache.wiki.auth.WikiPrincipal#WikiPrincipal(String, String)}
      * with the <code>type</code> parameter set to
-     * {@link org.apache.wiki.auth.WikiPrincipal#WIKI_NAME}. The method
+     * {@link org.apache.wiki.auth.WikiPrincipal#FULL_NAME}. The method
      * {@link org.apache.wiki.WikiSession#getUserPrincipal()} will return this
      * principal as the "primary" principal. Note that this method can also be
      * used to mark a WikiPrincipal as a login name or a wiki name.

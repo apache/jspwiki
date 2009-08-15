@@ -434,6 +434,17 @@ jspwiki.plugin.searchPath =
 #  want to modify the security policy file WEB-INF/jspwiki.policy. See
 #  the policy file for more details.
 #
+#  KEYCHAIN
+#
+#  Where secrets are kept. The default location is WEB-INF/keychain
+#jspwiki.keychainPath = keychain
+
+#
+#  The keychain password, in plain text. If omitted, the keychain will
+#  remain locked after startup. It is safer to omit the password.
+#jspwiki.keychainPassword = myPlaintextPassword
+
+#
 #  AUTHENTICATION
 #
 #  For authentication, JSPWiki uses JAAS (Java Authentication and Authorization
@@ -539,11 +550,9 @@ jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
 # the DN containing role entries.
 #
 #jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
-#jspwiki.ldap.roleBase = ou\=roles,dc\=jspwiki,dc\=org
-#jspwiki.ldap.rolePattern = (&(objectClass\=groupOfUniqueNames)(cn\={0})(uniqueMember\={1}))
-#jspwiki.ldap.bindDN = cn\=Manager,dc\=jspwiki,dc\=org
-#jspwiki.ldap.bindPasswordAlias = ldap.ManagerDN
-
+#ldap.roleBase = ou\=roles,dc\=jspwiki,dc\=org
+#ldap.isInRolePattern = (&(objectClass\=groupOfUniqueNames)(cn\={0})(uniqueMember\={1}))
+#ldap.bindDN = cn\=Manager,dc\=jspwiki,dc\=org
 
 #  B) GROUPS
 #  As an additional source of authorization, users can belong to discretionary
@@ -593,14 +602,10 @@ jspwiki.userdatabase = org.apache.wiki.auth.user.XMLUserDatabase
 
 #jspwiki.userdatabase = org.apache.wiki.auth.user.JDBCUserDatabase
 
-#  If your JSPWiki user database shares login information with your
-#  web container's authentication realm, you can configure JSPWiki to
-#  add container users. At present, this only works with JDBCUserDatabase,
-#  and only if you've configured your web container to use a database
-#  with compatible columns and tables. If you don't know what this means,
-#  then leave this property set to FALSE (the default).
+#  If your user database is read-only, set this property to true.
+#  LdapUserDatabase, for example, should almost always be read-only.
 
-#jspwiki.userdatabase.isSharedWithContainer = false
+jspwiki.userdatabase.readOnlyProfiles = false
 
 #  ACCESS CONTROL LISTS
 #  Last but not least, JSPWiki needs a way of reading and persisting page

@@ -82,8 +82,13 @@
      <tr>
        <td><s:label for="profile.fullname" /></td>
        <td>
-         <s:text name="profile.fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></s:text>
-          <s:errors field="profile.fullname" />
+         <wiki:UserProfile property="canChangeFullname">
+           <s:text name="profile.fullname" id="fullname" size="20"><wiki:UserProfile property="fullname" /></s:text>
+           <s:errors field="profile.fullname" />
+         </wiki:UserProfile>
+         <wiki:UserProfile property="!canChangeFullname">
+           <wiki:UserProfile property="fullname" />
+         </wiki:UserProfile>
          <div class="formhelp"><fmt:message key="prefs.fullname.description" /></div>
        </td>
      </tr>
@@ -92,8 +97,13 @@
      <tr>
        <td><s:label for="profile.email" name="email" /></td>
        <td>
-         <s:text name="profile.email" id="email" size="20"><wiki:UserProfile property="email" /></s:text>
-         <s:errors field="profile.email" />
+         <wiki:UserProfile property="canChangeEmail">
+           <s:text name="profile.email" id="email" size="20"><wiki:UserProfile property="email" /></s:text>
+           <s:errors field="profile.email" />
+         </wiki:UserProfile>
+         <wiki:UserProfile property="!canChangeEmail">
+           <wiki:UserProfile property="email" />
+         </wiki:UserProfile>
          <div class="formhelp"><fmt:message key="prefs.email.description" /></div>
        </td>
      </tr>

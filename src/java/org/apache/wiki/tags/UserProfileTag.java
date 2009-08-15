@@ -64,10 +64,17 @@ import org.apache.wiki.util.TextUtil;
  * in the user database
  * <li><code>new</code> - evaluates the body of the tag if user's profile does not
  * exist in the user database
- * <li><code>canChangeLoginName</code> - always true if custom auth used; also true for container auth
- * and current UserDatabase.isSharedWithContainer() is true.</li>
- * <li><code>canChangePassword</code> - always true if custom auth used; also true for container auth
- * and current UserDatabase.isSharedWithContainer() is true.</li>
+ * <li><code>canChangeLoginName</code> - true if custom auth used and
+ * {@link UserManager#PROP_READ_ONLY_PROFILES} is not set; always
+ * false for container auth
+ * is set to <code>true</code></li>
+ * <li><code>canChangePassword</code> - true if custom auth used and
+ * {@link UserManager#PROP_READ_ONLY_PROFILES} is not set; always
+ * false for container auth</li>
+ * <li><code>canChangeEmail</code> - always true unless {@link UserManager#PROP_READ_ONLY_PROFILES}
+ * is set</li>
+ * <li><code>canChangeFullname</code> - always true unless {@link UserManager#PROP_READ_ONLY_PROFILES}
+ * is set</li>
  * </ul>
  * <p>In addition, the values <code>exists</code>, <code>new</code>, <code>canChangeLoginName</code>
  * and <code>canChangeLoginName</code> can also be prefixed with <code>!</code> to indicate the
@@ -112,6 +119,14 @@ public class UserProfileTag extends WikiTagBase
     private static final String CHANGE_PASSWORD       = "canchangepassword";
 
     private static final String NOT_CHANGE_PASSWORD   = "!canchangepassword";
+
+    private static final String CHANGE_FULL_NAME      = "canchangefullname";
+    
+    private static final String NOT_CHANGE_FULL_NAME  = "!canchangefullname";
+    
+    private static final String CHANGE_EMAIL          = "canchangeemail";
+
+    private static final String NOT_CHANGE_EMAIL      = "!canchangeemail";
 
     private String             m_prop;
 
@@ -195,6 +210,20 @@ public class UserProfileTag extends WikiTagBase
         {
             AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
             if ( authMgr.isContainerAuthenticated() )
+            {
+                return EVAL_BODY_INCLUDE;
+            }
+        }
+        else if ( CHANGE_EMAIL.equals( m_prop ) || CHANGE_FULL_NAME.equals( m_prop ) )
+        {
+            if ( !m_wikiContext.getEngine().getUserManager().isReadOnly() )
+            {
+                return EVAL_BODY_INCLUDE;
+            }
+        }
+        else if ( NOT_CHANGE_EMAIL.equals( m_prop ) || NOT_CHANGE_FULL_NAME.equals( m_prop ) );
+        {
+            if ( m_wikiContext.getEngine().getUserManager().isReadOnly() )
             {
                 return EVAL_BODY_INCLUDE;
             }

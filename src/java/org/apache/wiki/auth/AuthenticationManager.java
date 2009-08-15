@@ -21,6 +21,7 @@
 package org.apache.wiki.auth;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -109,13 +110,13 @@ public final class AuthenticationManager
     protected static final Logger              log                 = LoggerFactory.getLogger( AuthenticationManager.class );
 
     /** Prefix for LoginModule options key/value pairs. */
-    protected static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
+    public static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
 
     /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used to assert identities. */
     protected static final String                 PROP_ALLOW_COOKIE_ASSERTIONS = "jspwiki.cookieAssertions";
 
     /** The {@link javax.security.auth.spi.LoginModule} to use for custom authentication. */
-    protected static final String                 PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
+    public static final String                 PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
     
     /** Empty Map passed to JAAS {@link #doJAASLogin(Class, CallbackHandler, Map)} method. */
     protected static final Map<String,String> EMPTY_MAP = Collections.unmodifiableMap( new HashMap<String,String>() );
@@ -211,6 +212,32 @@ public final class AuthenticationManager
     public final void initialize( WikiEngine engine, Properties props ) throws WikiException
     {
         m_engine = engine;
+
+        // Initialize the keychain
+        m_keychain = new Keychain();
+        String path = props.getProperty( PROP_KEYCHAIN_PATH );
+        path = (path == null || path.trim().length() == 0) ? null : path.trim();
+        if( path == null )
+        {
+            path = "WEB-INF/" + DEFAULT_KEYCHAIN_PATH;
+        }
+        else
+        {
+            File filePath = new File( path );
+            if ( filePath.getParent() == null )
+            {
+                path = "WEB-INF/" + path;
+            }
+        }
+        m_keychainPath = path;
+
+        // Unlock the keychain if password was supplied.
+        String password = props.getProperty( PROP_KEYCHAIN_PASSWORD );
+        if( password != null )
+        {
+            initKeychain( password );
+        }
+
         m_storeIPAddress = TextUtil.getBooleanProperty( props, PROP_STOREIPADDRESS, m_storeIPAddress );
 
         // Should J2SE policies be used for authorization?
@@ -245,31 +272,6 @@ public final class AuthenticationManager
         
         // Initialize the LoginModule options
         initLoginModuleOptions( props );
-        
-        // Initialize the keychain
-        m_keychain = new Keychain();
-        String path = props.getProperty( PROP_KEYCHAIN_PATH );
-        path = (path == null || path.trim().length() == 0) ? null : path.trim();
-        if( path == null )
-        {
-            path = "WEB-INF/" + DEFAULT_KEYCHAIN_PATH;
-        }
-        else
-        {
-            File filePath = new File( path );
-            if ( filePath.getParent() == null )
-            {
-                path = "WEB-INF/" + path;
-            }
-        }
-        m_keychainPath = path;
-
-        // Unlock the keychain if password was supplied.
-        String password = props.getProperty( PROP_KEYCHAIN_PASSWORD );
-        if( password != null )
-        {
-            initKeychain( password );
-        }
     }
 
     /**
@@ -776,13 +778,24 @@ public final class AuthenticationManager
     }
 
     /**
-     * Returns the first Principal in a set that isn't a {@link org.apache.wiki.auth.authorize.Role} or
+     * Returns the first Principal in a set of type
+     * {@link WikiPrincipal#LOGIN_NAME}, or failing that, the first one that
+     * isn't a {@link org.apache.wiki.auth.authorize.Role} or
      * {@link org.apache.wiki.auth.GroupPrincipal}.
+     * 
      * @param principals the principal set
      * @return the login principal
      */
     protected Principal getLoginPrincipal(Set<Principal> principals)
     {
+        for ( Principal principal : principals )
+        {
+            if ( principal instanceof WikiPrincipal
+                &&((WikiPrincipal)principal).getType() == WikiPrincipal.LOGIN_NAME )
+            {
+                return principal;
+            }
+        }
         for (Principal principal: principals )
         {
             if ( isUserPrincipal( principal ) )
@@ -932,6 +945,21 @@ public final class AuthenticationManager
         {
             stream = m_engine.getServletContext().getResourceAsStream( "/" + m_keychainPath );
         }
+
+        // If we can't get it from classloader, see if it's an absolute path
+        if ( stream == null )
+        {
+            File file = new File( m_keychainPath);
+            try
+            {
+                if ( file.isAbsolute() && file.exists() )
+                {
+                    stream = new FileInputStream( file );
+                }
+            }
+            catch ( Exception e ) { }
+        }
+
         if( stream == null )
         {
             throw new WikiSecurityException( "Unable to find keychain " + m_keychainPath + "." );

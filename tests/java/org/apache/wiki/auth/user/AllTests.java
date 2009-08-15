@@ -39,6 +39,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite( "User profile and database tests" );
         suite.addTestSuite( UserProfileTest.class );
         suite.addTestSuite( JDBCUserDatabaseTest.class );
+        suite.addTestSuite( LdapUserDatabaseTest.class );
         suite.addTestSuite( XMLUserDatabaseTest.class );
         return suite;
     }
