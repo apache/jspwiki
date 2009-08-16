@@ -125,3 +125,54 @@ KBzciR0AoIBnTYzCbqv2x17gFExsYoTPRY8iAJ4rdu/lVVtNiGM3TMThzy3/EOUt
 Rw==
 =dBz2
 -----END PGP PUBLIC KEY BLOCK-----
+
+pub   1024D/21A3459A 2009-08-11
+uid                  Florian Holeczek <florian@holeczek.de>
+sig 3        21A3459A 2009-08-16  Florian Holeczek <florian@holeczek.de>
+sig 3        19F92918 2009-08-11  Stefan Seelmann <mail@stefan-seelmann.de>
+uid                  Florian Holeczek <florian@bnv-gz.de>
+sig 3        21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+uid                  Florian Holeczek <florianh@apache.org>
+sig 3        21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+sig 3        19F92918 2009-08-11  Stefan Seelmann <mail@stefan-seelmann.de>
+sub   4096R/376BFC33 2009-08-11
+sig          21A3459A 2009-08-11  Florian Holeczek <florian@holeczek.de>
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.9 (MingW32)
+
+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
+=wxBK
+-----END PGP PUBLIC KEY BLOCK-----
