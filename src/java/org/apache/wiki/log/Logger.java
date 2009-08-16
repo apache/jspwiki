@@ -52,6 +52,14 @@ public interface Logger
     void error( String string, Object... params );
 
     /**
+     *  Log an error.
+     *  
+     *  @param string The string to log.  
+     *  @param t , the Throwable to log, including the stacktrace
+     */
+    void error( String string, Throwable t);
+
+    /**
      *  Log a warning.
      *  
      *  @param string The string to log.  May contain {@link Formatter} -specific

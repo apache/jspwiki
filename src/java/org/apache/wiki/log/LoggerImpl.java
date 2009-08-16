@@ -57,6 +57,16 @@ public class LoggerImpl implements org.apache.wiki.log.Logger, Serializable
     }
 
     /** {@inheritDoc} */
+
+    public void error( String string, Throwable t )
+    {
+        if( isErrorEnabled() )
+        {
+            m_slf4jLogger.error( string, t );
+        }
+    }
+
+    /** {@inheritDoc} */
     public void warn( String string, Object... params )
     {
         if( isWarnEnabled() )

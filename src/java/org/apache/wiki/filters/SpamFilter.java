@@ -1210,7 +1210,7 @@ public class SpamFilter extends BasicPageFilter
                                                                                                      throws MissingParameterException
     {
         WikiActionBeanContext context = actionBean.getContext();
-        HttpServletRequest request = (HttpServletRequest) context.getRequest();
+        HttpServletRequest request = context.getRequest();
 
         // Recover the encrypted parameter and then validate the trap and token
         // fields

@@ -671,7 +671,7 @@ public class TemplateManager extends ModuleManager
         
         // Iterate through all of the resources in the default map
         String templatePrefix = "/" + DIRECTORY + "/" + template + "/";
-        Set<String> templateResources = (Set<String>)servletContext.getResourcePaths( templatePrefix );
+        Set<String> templateResources = servletContext.getResourcePaths( templatePrefix );
         Set<String> alreadyProcessed = new HashSet<String>();
         
         // Add all of the resources the template contains
@@ -687,7 +687,7 @@ public class TemplateManager extends ModuleManager
         
         // Add resources the template does not contain, but default does
         templatePrefix = "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/";
-        Set<String> defaultResources = (Set<String>)servletContext.getResourcePaths( templatePrefix );
+        Set<String> defaultResources = servletContext.getResourcePaths( templatePrefix );
         if ( defaultResources != null )
         {
             for ( String resource : defaultResources )

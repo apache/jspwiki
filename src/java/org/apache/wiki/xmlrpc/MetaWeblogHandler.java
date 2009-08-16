@@ -30,7 +30,6 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -363,7 +362,6 @@ public class MetaWeblogHandler
             String name = (String) content.get( "name" );
             byte[] data = (byte[]) content.get( "bits" );
 
-            AttachmentManager attmgr = engine.getAttachmentManager();
             Attachment att = engine.getContentManager().addPage( WikiPath.valueOf( blogid ).resolve( name ),
                                                                  "application/octet-stream"); //FIXME! Needs a better guess
             att.setAuthor( username );

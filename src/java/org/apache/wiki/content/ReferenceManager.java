@@ -827,7 +827,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         try
         {
             boolean notFound = true;
-            Property p = (Property) node.getProperty( property );
+            Property p = node.getProperty( property );
             Value[] values = p.getValues();
             for( int i = 0; i < values.length; i++ )
             {
@@ -947,7 +947,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         String[] stringValues = NO_VALUES;
         try
         {
-            Property p = (Property) node.getProperty( property );
+            Property p = node.getProperty( property );
             Value[] values = p.getValues();
             stringValues = new String[values.length];
             for( int i = 0; i < values.length; i++ )
@@ -1004,7 +1004,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         List<String> newValues = new ArrayList<String>();
         try
         {
-            Property p = (Property) node.getProperty( property );
+            Property p = node.getProperty( property );
             Value[] values = p.getValues();
             for( int i = 0; i < values.length; i++ )
             {

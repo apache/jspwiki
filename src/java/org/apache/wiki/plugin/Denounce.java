@@ -60,8 +60,6 @@ public class Denounce implements WikiPlugin
     private static final String PROP_HOSTPATTERN    = "denounce.hostpattern.";
     private static final String PROP_REFERERPATTERN = "denounce.refererpattern.";
 
-    private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
-
     private static ArrayList<Pattern> c_refererPatterns = new ArrayList<Pattern>();
     private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<Pattern>();
     private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<Pattern>();
@@ -169,7 +167,7 @@ public class Denounce implements WikiPlugin
     {
         for( Iterator<Pattern> i = list.iterator(); i.hasNext(); )
         {
-            Pattern pattern = (Pattern)i.next();
+            Pattern pattern = i.next();
             if (pattern.matcher(path).find())
             {
                 return true;

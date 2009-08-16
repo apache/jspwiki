@@ -328,28 +328,28 @@ public class ReferenceManagerTest extends TestCase
     public void testRebuild() throws Exception
     {
         ContentManager cm = engine.getContentManager();
-        Node node = (Node)cm.getJCRNode( ReferenceManager.REFERENCES_ROOT );
+        Node node = cm.getJCRNode( ReferenceManager.REFERENCES_ROOT );
         assertNotNull( node );
         assertNotSame( 0, node.getNodes().getSize() );
         mgr.rebuild();
         
         // Should see just 3 children of REFERENCES_ROOT
-        node = (Node)cm.getJCRNode( ReferenceManager.REFERENCES_ROOT );
+        node = cm.getJCRNode( ReferenceManager.REFERENCES_ROOT );
         assertNotNull( node );
         assertEquals( 3, node.getNodes().getSize() );
         
         // Make sure all of the inbound references got deleted
-        node = (Node)cm.getJCRNode( ReferenceManager.REFERRED_BY );
+        node = cm.getJCRNode( ReferenceManager.REFERRED_BY );
         assertNotNull( node );
         assertEquals( 0, node.getNodes().getSize() );
         
         // Make sure all of the uncreated references got deleted
-        node = (Node)cm.getJCRNode( ReferenceManager.NOT_CREATED );
+        node = cm.getJCRNode( ReferenceManager.NOT_CREATED );
         assertNotNull( node );
         assertEquals( 0, node.getNodes().getSize() );
         
         // Make sure all of the unreferenced references got deleted
-        node = (Node)cm.getJCRNode( ReferenceManager.NOT_REFERENCED );
+        node = cm.getJCRNode( ReferenceManager.NOT_REFERENCED );
         assertNotNull( node );
         assertEquals( 0, node.getNodes().getSize() );
     }

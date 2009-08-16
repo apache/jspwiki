@@ -461,7 +461,7 @@ public class JCRWikiPage
      */
     public int compareTo( WikiPage o )
     {
-        WikiPage c = (WikiPage)o;
+        WikiPage c = o;
         
         int res = this.getName().compareTo(c.getName());
         

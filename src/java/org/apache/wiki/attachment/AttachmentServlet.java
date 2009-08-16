@@ -800,7 +800,6 @@ public class AttachmentServlet extends HttpServlet
     {
         public long m_currentBytes;
         public long m_totalBytes;
-        public String m_uid;
 
         public void update(long recvdBytes, long totalBytes, int item)
         {

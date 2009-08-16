@@ -419,7 +419,7 @@ public final class WatchDog
 
                     WeakReference<WatchDog> wr = entry.getValue();
 
-                    WatchDog w = (WatchDog) wr.get();
+                    WatchDog w = wr.get();
 
                     if( w != null )
                     {

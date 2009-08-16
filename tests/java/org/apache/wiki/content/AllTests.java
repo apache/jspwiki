@@ -21,9 +21,6 @@
 
 package org.apache.wiki.content;
 
-import org.apache.wiki.content.resolver.EnglishPluralsPageNameResolverTest;
-import org.apache.wiki.content.resolver.SpecialPageNameResolverTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

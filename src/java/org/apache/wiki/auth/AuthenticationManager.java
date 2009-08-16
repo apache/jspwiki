@@ -176,7 +176,7 @@ public final class AuthenticationManager
      * The path to the keychain, if needed for loading. If a fully-qualified
      * path is not specified, keychain will be assumed to be relative to
      * WEB-INF/. If the path is not set at all, it will default to
-     * {@link #DEFAULT_KEYSTORE_PATH}.
+     * {@link #DEFAULT_KEYCHAIN_PATH}.
      */
     public static final String PROP_KEYCHAIN_PATH = "jspwiki.keychainPath";
     

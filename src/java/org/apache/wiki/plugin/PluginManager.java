@@ -606,7 +606,6 @@ public class PluginManager extends ModuleManager
      *  @return A DOM element
      *  @throws PluginException If plugin invocation is faulty
      */
-   @SuppressWarnings("unchecked")
    public PluginContent parsePluginLine( WikiContext context, String commandline, int pos )
         throws PluginException
     {

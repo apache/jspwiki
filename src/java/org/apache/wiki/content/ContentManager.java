@@ -1566,7 +1566,7 @@ public class ContentManager implements WikiEventListener
                 List<WikiPage> pages = getAllPages( null );
                 for ( Iterator<WikiPage> it = pages.iterator(); it.hasNext(); )
                 {
-                    WikiPage page = (WikiPage)it.next();
+                    WikiPage page = it.next();
                     Acl acl = changeAcl( page, oldPrincipals, newPrincipal );
                     if ( acl != null )
                     {
@@ -1615,7 +1615,7 @@ public class ContentManager implements WikiEventListener
             Collection<AclEntry> entriesToRemove = new ArrayList<AclEntry>();
             while ( entries.hasMoreElements() )
             {
-                AclEntry entry = (AclEntry)entries.nextElement();
+                AclEntry entry = entries.nextElement();
                 if ( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) )
                 {
                     // Create new entry
@@ -1624,7 +1624,7 @@ public class ContentManager implements WikiEventListener
                     Enumeration<Permission> permissions = entry.permissions();
                     while ( permissions.hasMoreElements() )
                     {
-                        Permission permission = (Permission)permissions.nextElement();
+                        Permission permission = permissions.nextElement();
                         newEntry.addPermission(permission);
                     }
                     aclChanged = true;
@@ -1634,12 +1634,12 @@ public class ContentManager implements WikiEventListener
             }
             for ( Iterator<AclEntry> ix = entriesToRemove.iterator(); ix.hasNext(); )
             {
-                AclEntry entry = (AclEntry)ix.next();
+                AclEntry entry = ix.next();
                 acl.removeEntry( entry );
             }
             for ( Iterator<AclEntry> ix = entriesToAdd.iterator(); ix.hasNext(); )
             {
-                AclEntry entry = (AclEntry)ix.next();
+                AclEntry entry = ix.next();
                 acl.addEntry( entry );
             }
         }

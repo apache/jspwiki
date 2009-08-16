@@ -45,7 +45,6 @@ import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
@@ -64,7 +63,7 @@ import org.apache.wiki.util.TextUtil;
  *  You can turn caching completely off by stating a cacheSize of zero.
  *  <p>
  *  Since 3.0, the underlying cache implementation is based on EhCache, with the cache
- *  name set to {@link RenderingManager#CACHE_NAME} (Currently set to {@value RenderingManager#CACHE_NAME}.)
+ *  name set to {@link RenderingManager#CACHE_NAME} (Currently set to {@value CACHE_NAME}.)
  *  If a cache by that name exists already (e.g. configured in ehcache.xml), then that
  *  cache is used.  If the cache does not exist, then we'll just simply use the settings
  *  from jspwiki.properties.
@@ -352,7 +351,6 @@ public class RenderingManager implements WikiEventListener, InternalModule
      * @see org.apache.wiki.event.WikiEventListener#actionPerformed(org.apache.wiki.event.WikiEvent)
      * @param event {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
     public void actionPerformed(WikiEvent event)
     {
         if( (event instanceof WikiPageEvent) && (event.getType() == WikiPageEvent.POST_SAVE_BEGIN) )

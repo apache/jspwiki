@@ -1,3 +1,16 @@
+2009-08-16 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-141
+        
+        * got rid of a bunch of Javadoc and compile warnings
+        
+        * added an extra error(String, Throwable) method to the Logger interface.
+          When we switched to the varargs interfaces we lost the (log4j) 
+          option to automagically dump the stacktrace with the exception.
+          WikiEngine's initialize method now uses this new method, so we 
+          can better diagnose problems with new features and things like
+          JackRabbit.
+
 2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-140

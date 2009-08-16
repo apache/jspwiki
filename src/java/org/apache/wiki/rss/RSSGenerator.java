@@ -275,7 +275,7 @@ public class RSSGenerator
         {
             if( page.isAttachment() )
             {
-                res = getAttachmentDescription( (WikiPage)page );
+                res = getAttachmentDescription( page );
             }
             else
             {

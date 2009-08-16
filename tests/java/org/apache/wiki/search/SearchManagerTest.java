@@ -162,7 +162,7 @@ public class SearchManagerTest extends TestCase
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
  
-        assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        assertEquals( "page","TestPage", res.iterator().next().getPage().getName() );
     }
 
     public void testTitleSearch2()
@@ -181,7 +181,7 @@ public class SearchManagerTest extends TestCase
         assertNotNull( "null result", res );
         assertEquals( "no pages", 1, res.size() );
 
-        assertEquals( "page","TestPage", ((SearchResult)res.iterator().next()).getPage().getName() );
+        assertEquals( "page","TestPage", res.iterator().next().getPage().getName() );
     }
 
     public static Test suite()

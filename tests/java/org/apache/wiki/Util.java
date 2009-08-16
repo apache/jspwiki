@@ -39,7 +39,7 @@ public class Util
     {
         for ( String cap : container )
         {
-            if( cap instanceof String && captive.equals( cap ) )
+            if( cap != null && captive.equals( cap ) )
                 return true;
         }
 

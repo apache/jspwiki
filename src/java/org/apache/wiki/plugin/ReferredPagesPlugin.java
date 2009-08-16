@@ -166,7 +166,6 @@ public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiP
      * @throws PageNotFoundException 
      * @throws ProviderException 
      */
-    @SuppressWarnings("unchecked")
     private void getReferredPages( WikiContext context, WikiPath path, int depth ) throws ProviderException, PageNotFoundException
     {
         if( depth >= m_depth ) return;  // end of recursion

@@ -67,7 +67,6 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.ProviderException;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.rss.RSSThread;
@@ -621,34 +620,35 @@ public class WikiEngine
             m_searchManager     = (SearchManager)
                 ClassUtil.getMappedObject(SearchManager.class.getName() );
             m_searchManager.initialize( this, props );
+            
         }
 
         catch( RuntimeException e )
         {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.error( "%1$s %2$s", "Failed to start managers.", e );
+            log.error( "Failed to start managers, stacktrace follows: ", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage(), e );
         }
         catch (ClassNotFoundException e)
         {
-            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor was not found: ", e );
+            log.error( "JSPWiki could not start, URLConstructor was not found, stacktrace follows: ", e );
             throw new WikiException( e.getMessage(), e );
         }
         catch (InstantiationException e)
         {
-            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor could not be instantiated: ", e );
+            log.error( "JSPWiki could not start, URLConstructor could not be instantiated, stacktrace follows: ", e );
             throw new WikiException( e.getMessage(), e );
         }
         catch (IllegalAccessException e)
         {
-            log.error( "%1$s %2$s", "JSPWiki could not start, URLConstructor cannot be accessed: ", e );
+            log.error( "JSPWiki could not start, URLConstructor cannot be accessed, stacktrace follows: ", e );
             throw new WikiException( e.getMessage(), e );
         }
         catch( Exception e )
         {
             // Final catch-all for everything
             
-            log.error( "%1$s %2$s", "JSPWiki could not start, due to an unknown exception when starting.", e );
+            log.error( "JSPWiki could not start, due to an unknown exception while starting, stacktrace follows: ", e );
             throw new WikiException( "Failed to start; please check log files for better information.", e );
         }
         

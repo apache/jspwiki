@@ -189,7 +189,7 @@ public class PluginContent extends Text
                         val = engine.getVariableManager().expandVariables( context, (String)val );
                     }
                 
-                    parsedParams.put( (String)e.getKey(), val );
+                    parsedParams.put( e.getKey(), val );
                 }
             
                 result = engine.getPluginManager().execute( context,

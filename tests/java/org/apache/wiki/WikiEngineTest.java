@@ -28,8 +28,6 @@ import java.util.*;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
-import org.apache.wiki.providers.*;
-import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -660,6 +658,7 @@ public class WikiEngineTest extends TestCase
 
         try
         {
+            @SuppressWarnings( "unused" )
             WikiPage p = m_engine.getPage( NAME1, 3 );
             fail("got page");
         }
