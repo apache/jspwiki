@@ -13,6 +13,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 
+import org.apache.wiki.auth.login.AbstractLoginModule;
 import org.apache.wiki.util.TextUtil;
 import org.freshcookies.security.Keychain;
 
@@ -278,7 +279,7 @@ public class LdapConfig
      * Builds a JNDI environment hashtable for authenticating to the LDAP
      * server. The hashtable is built using information extracted from the
      * options map supplied to the LoginModule via
-     * {@link #initialize(javax.security.auth.Subject, javax.security.auth.callback.CallbackHandler, Map, Map)}
+     * {@link AbstractLoginModule#initialize(javax.security.auth.Subject, javax.security.auth.callback.CallbackHandler, Map, Map)}
      * . The username and password parameters supply the LDAP credentials.
      * 
      * @param username the user's distinguished name (DN), used for
