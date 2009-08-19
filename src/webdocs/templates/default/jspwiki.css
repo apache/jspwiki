@@ -172,10 +172,25 @@ hr, .hr, .clearbox {
 	font-weight:bold;
 	margin-bottom:0.5em;
 }
+/*
+Headings:
+	The headings h2, h3 and h4 get a {{clear:left}} so they can appear 
+	side by side with .commentbox-es.
+	
+	The {{.editsection}} and {{hashlink}} define the styling of the
+	[[Edit] and # hash-hover link on each heading.
+	
+DOM structure:
+>	<h2 id="section-...">Header-Title
+>	<a class="hashlink" href="...">#</a>
+>	<a class="editsection href="...&section=0">[Edit]</a>
+>	</h2>
+
+*/
 h2, h3, h4 {
 	clear:left;
 	margin:1em 0 0.5em 0;
-	padding:0.25em 0;
+	padding:0.25em;
 	line-height:1.2;
 }
 h2 { font-size: 150%; }
@@ -184,23 +199,23 @@ h3 { font-size: 132%; }
 h3 .editsection, h3 .hashlink { font-size: 76%; }
 h4 { font-size: 116%; }
 h4 .editsection, h4 .hashlink { font-size: 86%; }
+
 a.editsection, a.hashlink {	
 	font-weight:normal;
 	line-height:1.2;
 	padding:0.25em;
 	text-decoration:none;
-	color:grey; 
+	color:#ccc; 
 }
 a.editsection:hover, a.hashlink:hover {
-	background-color:#eee;
+	background-color:#ddd;
 	color:blue !important;
 }
-h2:hover a.hashlink, h3:hover a.hashlink, h4:hover a.hashlink {
-	color: #ccc;
+h2:hover .editsection, h3:hover .editsection, h4:hover .editsection,
+h2:hover .hashlink, h3:hover .hashlink, h4:hover .hashlink {
+	color:#999;
 }
-a.hashlink {
-	color:white; /* tranparent nok in ie -- use background color */
-}
+
 
 b, i {
 	color:inherit;
@@ -272,23 +287,18 @@ pre {
 	padding:0.5em;
 	background:#f9f9f9;
 	border:1px solid #ddd;
+	_width:100%;
+	_overflow-x:auto;
+	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
 }
-/*ie6 hack*/
-* html pre {
-	overflow:visible; 
-	overflow-x:auto; /*proprieatary ie*/
-	width:95%;  /* hasLayout=true */
-	margin:1em auto;  /* otherwise funny effect on more menu ugh */
-	padding-bottom:1.5em; /*take scrollbar into account on ie*/
+
+#previewcontent, #info, #pagecontent, #attach, #findcontent {
+	overflow-y:hidden; /*safari only -- ?? */
+	_width:100%;
+	_overflow-x:auto;
+	_padding-bottom:1.5em !important; /*take scrollbar into account on ie ugh*/
 }
-/*ie7 hack */
-*:first-child+html pre {
-	overflow:visible; 
-	overflow-x:auto; /*proprieatary ie*/
-	margin:1em auto;  /* otherwise funny effect on more menu ugh */
-	padding-bottom:1.5em; /*take scrollbar into account on ie*/
-}
-                           
+
 /* +++ 250 Hyperlinks +++ */
 a {
 	color:blue;
@@ -1117,18 +1127,6 @@ a.action.quick2top {
 #pagecontent {
 	padding:0.5em 0;
 }
-html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
-	overflow:auto;
-}
-* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
-	width:100%;
-	overflow-x:auto;
-}
-/*ie7 hack */
-*:first-child+html #previewcontent, *:first-child+html #info, *:first-child+html #pagecontent, *:first-child+html #attach, *:first-child+html #findcontent {
-	overflow-x:auto;
-}
-
 
 /* +++ 475 PreviewContent - "This is a preview" comment +++ */
 #sneakpreviewheader {

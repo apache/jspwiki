@@ -1,3 +1,15 @@
+2009-08-19 Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.3-svn-12
+
+        * JSPWIKI-576. Styles of section [Edit] links fixed for IE.
+
+        * JSPWIKI-585: Scrollbars on wide-pages fixed for FF and Safari (overflow-y:hidden) and IE.
+        
+        * JSPWIKI-383, JSPWIKI-481: Support redirecting back to special pages suchs as 
+        the Search page, Workflow page.
+                
+        
 2009-08-03 Dirk Frederickx <brushed@apache.org>
 
         * 2.8.3-svn-11

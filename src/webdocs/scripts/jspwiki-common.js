@@ -392,18 +392,26 @@ var Wiki = {
 	addEditLinks: function(){
 		if( $("previewcontent") || !this.PermissionEdit || this.prefs.get('SectionEditing') != 'on') return;
 
-		var url = this.EditUrl;
+		var aa = new Element('a',{'class':'editsection'}).setHTML('quick.edit'.localize()), 
+			i = 0,
+			url = this.EditUrl;
+
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
-		var aa = new Element('a').setHTML('quick.edit'.localize()), 
-			ee = new Element('span',{'class':'editsection'}).adopt(aa),
-			i = 0;
-
-		$$('#pagecontent *[id^=section]').each(function(el){
-			if(el.id=='section-TOC') return;
-			aa.set({'href':url + i++ });
-			el.adopt(ee.clone());
+		this.getSections().each( function(el){
+			el.adopt(aa.set({'href':url + i++ }).clone());
 		});
+
+	},
+	/*
+	Function: getSections
+		Returns the list of all section headers, excluding the header of the 
+		Table Of Contents.
+	*/
+	getSections: function(){
+		return $$('#pagecontent *[id^=section]').filter( 
+			function(item){ return(item.id != 'section-TOC') }
+		);
 	},
 
 	$jsonid : 10000,
