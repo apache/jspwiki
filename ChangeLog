@@ -1,6 +1,14 @@
+2009-08-19 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-143
+        
+        * upgrade priha : 0.1.22 => 0.1.30
+        
+        * recovered ChangeLog
+
 2009-08-19 Dirk Frederickx <brushed@apache.org>
 
-        * 3.0.0-svn-133
+        * 3.0.0-svn-142
 
         * JSPWIKI-576. Styles of section [Edit] links fixed for IE.
 
@@ -8,7 +16,105 @@
         
         * JSPWIKI-383, JSPWIKI-481: Support redirecting back to special pages suchs as 
         the Search page, Workflow page.
-                
+        
+2009-08-16 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-141
+        
+        * got rid of a bunch of Javadoc and compile warnings
+        
+        * added an extra error(String, Throwable) method to the Logger interface.
+          When we switched to the varargs interfaces we lost the (log4j) 
+          option to automagically dump the stacktrace with the exception.
+          WikiEngine's initialize method now uses this new method, so we 
+          can better diagnose problems with new features and things like
+          JackRabbit.
+
+2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-140
+
+        * Checked in LdapUserDatabase, and refactorings to other LDAP
+        classes. The LdapUserDatabase is read-only. ProfileTab will
+        respect this and will print, rather than allow edits to, user
+        profile information as a result. Any UserDatabase can now be
+        flagged as "read-only" (via jspwiki.properties) to achieve
+        the same effect. 
+
+2009-08-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-139
+
+        * Checked in revised LdapLoginModule and LdapAuthorizer. Notable new
+        features include provisional support for Active Directory, which
+        "mostly" works. I also added the ability to bind to LDAP with a
+        specified identity. To to this, we use a new feature of
+        freshcookies-security called a "keychain" that stores the binding
+        DN in an password-locked, triple-DES encrypted file. The keychain
+        is available via AuthenticationManager.getKeychain() and can be
+        used for storage of anything sensitive. The keychain is NOT required
+        to be unlocked at startup time (although obviously LDAP binds will
+        fail). We will provide the ability for the admin to unlock the
+        keychain via the web UI in a future build.  
+
+2009-07-29 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-138
+        
+        * fixed two minor JUnit tests (DenouncePlugin and CommentedProperties)
+          the last one by removing the license from test.properties (should be OK)
+          
+        * removed OSCache reference from SisterSites.jsp
+
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-137
+        
+        * Switched from OSCache to EhCache to provide better performance
+        (and remove one extra JAR from the distro).  RenderingManagerTest
+        performance goes up 50%...
+
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-136
+        
+        * Improved LoggerFactory not to fail horribly when the SLF4J
+        bridge classes were missing.
+        
+        * Installed default priha and log4j config files to WEB-INF/classes
+        
+2009-07-23 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-135
+        
+        * Moved some classes from the top-level package to better places.
+        For example, JCRWikiPage => org.apache.wiki.content.jcr; 
+        ReferenceManager => org.apache.wiki.content.
+        
+        * PageNameResolvers now have their own package under .content.
+        
+        * Also moved around some test classes to their proper packages.
+        
+2009-07-23 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-134
+        
+        * First LDAP support classes checked in. We support an LdapLoginModule
+        and LdapAuthorizer. Both are configured via jspwiki.properties
+        and should be considered experimental. Significant limitations at the
+        moment include the assumption that role searches are done ONLY via
+        anonymous bind. We support OpenLDAP, but not Active Directory (yet).
+        The LdapUserDatabase implementation won't come for a while, either.
+
+2009-07-22 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-133
+        
+        * First implementation of versioning implemented.  Almost all
+        of the WikiEngine unit tests now run, though some of the old ones
+        were removed.  Please see doc/README - JCR Changes.txt for details
+        about the versioning implementation.
+                 
 
 2009-06-07 Janne Jalkanen <jalkanen@apache.org>
 
