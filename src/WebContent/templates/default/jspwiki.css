@@ -273,11 +273,18 @@ Headings:
 	
 	The {{.editsection}} and {{hashlink}} define the styling of the
 	[[Edit] and # hash-hover link on each heading.	
+	
+DOM structure:
+>	<h2 id="section-...">Header-Title
+>	<a class="hashlink" href="...">#</a>
+>	<a class="editsection href="...&section=0">[Edit]</a>
+>	</h2>
+
 */
 h2, h3, h4 {
 	clear:left; 
 	margin:1em 0 0.5em 0;
-	padding:0.25em 0;
+	padding:0.25em;
 	line-height:1.2;
 }
 h2 { font-size: 150%; }
@@ -286,6 +293,7 @@ h3 { font-size: 132%; }
 h3 .editsection, h3 .hashlink { font-size: 76%; }
 h4 { font-size: 116%; }
 h4 .editsection, h4 .hashlink { font-size: 86%; }
+
 a.editsection, a.hashlink {	
 	font-weight:normal;
 	line-height:1.2;
@@ -297,11 +305,9 @@ a.editsection:hover, a.hashlink:hover {
 	background-color:#ddd/*#HOVER#*/;
 	color:blue !important;
 }
-h2:hover a, h3:hover a, h4:hover a {
-	color:grey;
-}
-a.editsection, a.hashlink {
-	*color:white; /* tranparent nok in ie -- use background color */
+h2:hover .editsection, h3:hover .editsection, h4:hover .editsection,
+h2:hover .hashlink, h3:hover .hashlink, h4:hover .hashlink {
+	color:#999;/*#SOFTFONT#*/
 }
 
 
@@ -343,13 +349,7 @@ Forms:
 	font-style:italic;
 	margin:0.5em 0;
 }
-/*
-textarea, input[type=text] {
-	padding: 1px 0 1px 3px;
-	border: 1px solid #ddd/.#BORDER#//;
-}
-*/
-textarea, input[type=text] {
+textarea, input[type=text], input[type=password] {
 	-moz-border-radius:3px;
 	-webkit-border-radius:3px;
 	padding:1px 3px;
@@ -404,17 +404,13 @@ PRE and xflow:
 code, tt, .pre, pre {
 	font:110% Monaco, "Courier New", Courier, monospace;
 	line-height:1.1;
-}
-.pre, pre {
-	white-space:pre;
-	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
+	border:1px solid #ddd/*#BORDER#*/;
 }
 pre {
 	clear:both;
 	margin:1em 1.5em;
 	padding:0.5em;
 	background:#f9f9f9/*#COMMENT#*/;
-	border:1px solid #ddd/*#BORDER#*/;
 	/*
 	border:1px dashed #0000aa; 
 	color:#000077; 
@@ -422,15 +418,16 @@ pre {
 	margin:1em 0;
 	*/
 }
-#previewcontent, #info, #pagecontent, #attach, #findcontent,
+.pre, pre {
+	white-space:pre;
+	_margin:1em auto;  /*FIXME: otherwise funny effect on more menu ugh */
+}
+
+#previewcontent, #info, #pagecontent, #attach, #findcontent,.fragment,
 .pre, pre, 
 .xflow {
 	overflow-y:hidden; /*safari only ??*/
 	_width:100%;
-    /*ie hacks CHECKME*/
-	_xxoverflow:visible; 
-	_overflow-x:auto;
-	_xxzoom:1; /*width:95%;  hasLayout=true */
 	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
 }
                            
@@ -923,6 +920,7 @@ Style: Plain Editor
 	font:110% Monaco, "Courier New", Courier, monospace;
 	padding:4px 4px 4px 8px;
 	width:100%;	
+	resize:none; /*resizing done through js*/
 }
 .resize-bar {
     background:#ddd/*#BORDER#*/ url(images/resize-horizontal.gif) top center;
@@ -1565,16 +1563,39 @@ Style: SearchBox
 
 DOM structure:
 (start code)
+<form id="searchForm">
 
+  <input id="query" />
+  <button type="submit" id="searchSubmit" value=".."></button>
+  		
+  <div id="searchboxMenu" style='visibility:hidden;'>
+    <div id="searchTools">
+      <a id='quickView' class='btn'><span><span>...</span></span></a>
+      <a id='quickEdit' class='btn'><span><span>...</span></span></a>
+      <a id='quickClone' class='btn'><span><span>...</span></span></a>
+      <a id="advancedSearch" class='btn'><span><span>...</span></span></a>
+    </div>
+    <div id="searchResult">
+	  <fmt:message key='sbox.search.result' />
+      <span id="searchTarget">...</span>
+      <span id="searchSpin" class="spin" style="position:absolute;display:none;"></span>
+	  <div id="searchOutput"></div>
+    </div>
+    <div id="recentSearches" style="display:none;">
+      <fmt:message key="sbox.recentsearches" />
+      <span><a id="recentClear">...</a></span>
+    </div>
+  </div>
+
+</form>
 (end)
 */
-.searchbox {
-}
-#searchForm #query {
+#query {
 	width:164px;
 	padding:2px 22px 2px 2px;	
 	vertical-align: middle;
 	color:#555;
+	float:left;/* ensure the searchSubmit button appear on the same horizontal line */
 }
 #searchSubmit {
 	position:absolute;
@@ -1587,8 +1608,7 @@ DOM structure:
 	height:16px;
 	border:none; 
 	background: url(images/search.gif) no-repeat center;
-	overflow:hidden;	
-    cursor:pointer;
+	/*overflow:hidden;*/
 }
 #searchboxMenu {
 	position:absolute;

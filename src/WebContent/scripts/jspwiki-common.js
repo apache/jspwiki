@@ -284,7 +284,7 @@ Element.extend({
 			top += el.offsetTop || 0;
 			//if( el.getStyle('position')=='relative') alert( 'found relative\n'+el.innerHTML.slice(0,40) );
 			el = el.offsetParent;
-		} while( el && (el.getStyle('position')=='static') );
+		} while( el && ($(el).getStyle('position')=='static') );
 
 		overflown.each(function(element){
 			left -= element.scrollLeft || 0;
@@ -2802,7 +2802,7 @@ var Dialog = new Class({
 		//modal: false,
 		//resize: false, //true or {x:[min,max],y:[min,max]}
 		showNow: true,
-		draggable: true,
+		draggable: true
 		//buttons: { 'button-label': callbackfn-when-clicked }
 		//onShow: Class.empty,
 		//onHide: Class.empty,
