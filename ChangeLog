@@ -1,3 +1,9 @@
+2009-08-19 Harry Metske <metskem@apache.org>
+
+        * 2.8.3-svn-13
+
+        * Changed Exporter's dateformat to JSR-170's required ISO 8601 format 
+
 2009-08-19 Dirk Frederickx <brushed@apache.org>
 
         * 2.8.3-svn-12

@@ -62,7 +62,7 @@ public class Exporter
     private static final String BINARY = "Binary";
     private static final String DATE   = "Date";
     
-    private SimpleDateFormat m_isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private SimpleDateFormat m_isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     /**
      *  Create a new wiki exporter.
