@@ -29,14 +29,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
-import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-
 
 /**
  * <p>
@@ -45,8 +42,7 @@ import org.apache.wiki.log.LoggerFactory;
  * {@link WikiCallbackHandler}) that supports the following Callback types:
  * </p>
  * <ol>
- * <li>{@link javax.security.auth.callback.NameCallback}- supplies the
- * username</li>
+ * <li>{@link javax.security.auth.callback.NameCallback}- supplies the username</li>
  * <li>{@link javax.security.auth.callback.PasswordCallback}- supplies the
  * password</li>
  * <li>{@link org.apache.wiki.auth.login.UserDatabaseCallback}- supplies the
@@ -56,6 +52,7 @@ import org.apache.wiki.log.LoggerFactory;
  * After authentication, a Principals based on the login name will be created
  * and associated with the Subject.
  * </p>
+ * 
  * @author Andrew Jaquith
  * @since 2.3
  */
@@ -63,20 +60,22 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
 {
 
     private static final InternationalizationManager I18N = new InternationalizationManager( null );
-    
+
     private static final Logger log = LoggerFactory.getLogger( UserDatabaseLoginModule.class );
 
     /**
-     *      {@inheritDoc}
-     *      <p>Note: this method will throw a
-     *      {@link javax.security.auth.login.FailedLoginException} if the
-     *      username or password does not match what is contained in the
-     *      database. The text of this message will be looked up in the
-     *      {@link org.apache.wiki.i18n.InternationalizationManager#CORE_BUNDLE}
-     *      using the key <code>login.error.password</code>. Any other
-     *      Exceptions thrown by this method will <em>not</em> be localized,
-     *      because they represent exceptional error conditions that should not
-     *      occur unless the wiki is configured incorrectly.</p>
+     * {@inheritDoc}
+     * <p>
+     * Note: this method will throw a
+     * {@link javax.security.auth.login.FailedLoginException} if the username or
+     * password does not match what is contained in the database. The text of
+     * this message will be looked up in the
+     * {@link org.apache.wiki.i18n.InternationalizationManager#CORE_BUNDLE}
+     * using the key <code>login.error.password</code>. Any other Exceptions
+     * thrown by this method will <em>not</em> be localized, because they
+     * represent exceptional error conditions that should not occur unless the
+     * wiki is configured incorrectly.
+     * </p>
      */
     public boolean login() throws LoginException
     {
@@ -91,30 +90,20 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             String password = new String( pcb.getPassword() );
             UserDatabase db = ucb.getUserDatabase();
 
-            // Look up the user and compare the password hash
-            if ( db == null )
+            // Look up the user and check the password
+            if( db == null )
             {
                 throw new LoginException( "No user database: check the callback handler code!" );
             }
-            UserProfile profile;
-            try
+            if( db.validatePassword( username, password ) )
             {
-                profile = db.findByLoginName( username );
-            }
-            catch( NoSuchPrincipalException e )
-            {
-                throw new FailedLoginException( I18N.get( InternationalizationManager.CORE_BUNDLE, m_locale, "login.error.password" ) );
-            }
-            String storedPassword = profile.getPassword();
-            if ( storedPassword != null && db.validatePassword( username, password ) )
-            {
-                if ( log.isDebugEnabled() )
+                if( log.isDebugEnabled() )
                 {
                     log.debug( "Logged in user database user " + username );
                 }
 
                 // If login succeeds, commit these principals/roles
-                m_principals.add( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) );
+                m_principals.add( new WikiPrincipal( username, WikiPrincipal.LOGIN_NAME ) );
 
                 return true;
             }

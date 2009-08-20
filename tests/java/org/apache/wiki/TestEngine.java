@@ -42,8 +42,10 @@ import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.Attachment;
-import org.apache.wiki.auth.*;
-import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.SessionMonitor;
+import org.apache.wiki.auth.Users;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
@@ -52,6 +54,7 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.tags.SpamProtectTag;
 import org.apache.wiki.ui.WikiServletFilter;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -416,8 +419,6 @@ public class TestEngine extends WikiEngine
     {
         props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
         props.put( WikiEngine.PROP_URLCONSTRUCTOR, "org.apache.wiki.url.DefaultURLConstructor" );
-        props.put( UserManager.PROP_DATABASE, "org.apache.wiki.auth.user.XMLUserDatabase" );
-        props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
         return props;
     }
 

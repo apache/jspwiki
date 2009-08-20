@@ -23,23 +23,20 @@ package org.apache.wiki.auth.authorize;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 import org.xml.sax.EntityResolver;
@@ -210,6 +207,15 @@ public class WebContainerAuthorizer implements WebAuthorizer
             }
         }
         return null;
+    }
+
+    /**
+     * Always throws a WikiSecurityException
+     */
+    public Role[] findRoles( WikiSession session ) throws WikiSecurityException
+    {
+        // FIXME: at some point this should actually work.
+        throw new WikiSecurityException( "Not supported by this Authorizer." );
     }
 
     /**

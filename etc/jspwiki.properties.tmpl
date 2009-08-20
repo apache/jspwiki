@@ -473,22 +473,17 @@ jspwiki.plugin.searchPath =
 #  Supply the JAAS LoginModule class used for custom authentication here.
 #  The implementation MUST have a zero-argument constructor (as noted in the
 #  javax.security.auth.spi.LoginModule Javadocs).
-#jspwiki.loginModule.class = org.apache.wiki.auth.login.LdapLoginModule
 jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 
 #
-# JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
+#  JAAS LoginContext parameters used to initialize the LoginModule. Note that 'param1'
 #  etc. should be replaced with the actual parameter names. The parameter names and
-# values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
-# when its initialize() method is called. The default UserDatabaseLoginModule class does
-# not need any options. The example below is for LdapLoginModule, configured for OpenLDAP.
+#  values will be loaded to a Map and passed to the LoginModule as the 'options' parameter
+#  when its initialize() method is called. The default UserDatabaseLoginModule class does
+#  not need any options. The example below is for a fictitious LoginModule.
 #
-#jspwiki.loginModule.options.ldap.authentication = DIGEST-MD5
-#jspwiki.loginModule.options.ldap.connectionURL = ldap://127.0.0.1:4890/
-#jspwiki.loginModule.options.ldap.loginIdPattern = uid\={0},ou\=people,dc\=jspwiki,dc\=org
-#jspwiki.loginModule.options.ldap.userBase = ou\=people,dc\=jspwiki,dc\=org
-#jspwiki.loginModule.options.ldap.userPattern = (&(objectClass\=inetOrgPerson)(uid\={0}))
-#jspwiki.loginModule.options.ldap.ssl = false
+#jspwiki.loginModule.options.foo = foosetting
+#jspwiki.loginModule.options.bar = barsetting
 
 # 
 #  Cookie authentication & assertion
@@ -542,19 +537,14 @@ jspwiki.loginModule.class = org.apache.wiki.auth.login.UserDatabaseLoginModule
 #  belongs to the roles listed in web.xml using <security-role>/<role-name> or
 #  <auth-constraint>/<role-name> elements. However, you can use another
 #  Authorizer if you wish; specify that class here.
-
+#
 jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
 
 # In addition to the built-in web container authorizer, JSPWiki also supplies
-# an Authorizer that works with LDAP. If the LdapAuthorizer is specified,
-# these settings used to describe how roles are looked up. The connection URL is
-# the same specified above in Custom Authentication. The 'role base' supplies
-# the DN containing role entries.
-#
-#jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
-#ldap.roleBase = ou\=roles,dc\=jspwiki,dc\=org
-#ldap.isInRolePattern = (&(objectClass\=groupOfUniqueNames)(cn\={0})(uniqueMember\={1}))
-#ldap.bindDN = cn\=Manager,dc\=jspwiki,dc\=org
+# an Authorizer that works with LDAP. See the "LDAP" section below for
+# configuration options.
+#jspwiki.authorizer = org.apache.wiki.auth.authorize.LdapAuthorizer
+
 
 #  B) GROUPS
 #  As an additional source of authorization, users can belong to discretionary
@@ -563,6 +553,10 @@ jspwiki.authorizer = org.apache.wiki.auth.authorize.WebContainerAuthorizer
 #  storage. Override with your own GroupDatabase implementation with this property:
 
 jspwiki.groupdatabase = org.apache.wiki.auth.authorize.XMLGroupDatabase
+
+#  JSPWiki provides an alternative UserDatabase implementation that looks up
+#  user profiles from an LDAP directory. It is read-only. See the "LDAP"
+#  section below for configuration options.
 
 #  The default group database implementation stores member lists
 #  in an XML file. The location of this file should be in a secure directory
@@ -578,10 +572,11 @@ jspwiki.groupdatabase = org.apache.wiki.auth.authorize.XMLGroupDatabase
 #jspwiki.xmlGroupDatabaseFile = /etc/tomcat/groupdatabase.xml
 
 #  USER DATABASE
+#
 #  User's wiki profiles are stored in a UserDatabase. The default user database
 #  uses an XML file for persistent storage.
 #  Override with your own UserDatabase implementation with this property:
-
+#
 jspwiki.userdatabase = org.apache.wiki.auth.user.XMLUserDatabase
 
 #  The default user database implementation stores usernames and passwords
@@ -595,14 +590,19 @@ jspwiki.userdatabase = org.apache.wiki.auth.user.XMLUserDatabase
 #  something useful as soon as you can. But for test wikis, it's probably
 #  ok to leave this un-set, as long as users know that their profiles could
 #  "disappear" if the wiki app is ever redeployed.
-
+#
 #jspwiki.xmlUserDatabaseFile = /etc/tomcat/userdatabase.xml
 
-# You can also use a JDBC database for storing user profiles.
-# See the online AuthenticationAndAuthorization2.3 docs for details on
-# how to configure it.
-
+#  You can also use a JDBC database for storing user profiles.
+#  See the online AuthenticationAndAuthorization2.3 docs for details on
+#  how to configure it.
+#
 #jspwiki.userdatabase = org.apache.wiki.auth.user.JDBCUserDatabase
+
+#  You can also use a read-only LDAP database for obtaining user
+#  profiles. See the "LDAP" section below for configuration details.
+#
+#jspwiki.userdatabase = org.apache.wiki.auth.user.LdapUserDatabase
 
 #  If your user database is read-only, set this property to true.
 #  LdapUserDatabase, for example, should almost always be read-only.
@@ -610,12 +610,45 @@ jspwiki.userdatabase = org.apache.wiki.auth.user.XMLUserDatabase
 jspwiki.userdatabase.readOnlyProfiles = false
 
 #  ACCESS CONTROL LISTS
+#
 #  Last but not least, JSPWiki needs a way of reading and persisting page
 #  access control lists. The default implementation reads these from the page
 #  markup. For example: "[{ALLOW edit Charlie}]". If using a custom
 #  ACL manager, specify the AclManager implementation class here:
 
 jspwiki.aclManager = org.apache.wiki.auth.acl.DefaultAclManager
+
+# LDAP CONFIGURATION
+#
+#  JSPWiki can use LDAP for authentication, role lookups and user lookups.
+#  You must set these first three properties. The 'ldap.config' property sets
+#  sensible defaults for OpenLDAP and Active Directory. Valid values
+#  (unsurprisingly) are OPEN_LDAP and ACTIVE_DIRECTORY.
+#
+#ldap.config = ACTIVE_DIRECTORY
+#ldap.connectionURL = ldap://127.0.0.1:4890/
+#ldap.userBase = ou\=people,dc\=jspwiki,dc\=org
+
+#  If the LdapAuthorizer is specified for role lookups, these settings 
+#  describe how roles are looked up. The connection URL, SSL and authentication
+#  properties are the same specified above. The role base specifies where roles
+#  (LDAP group objects) reside. The 'ldap.bindDN' specifies the user identity used
+#  to bind to LDAP to perform searches. The password for this identity is stored
+#  in the keychain (see KEYCHAIN above) under the entry name 'ldap.bindDNPassword'.
+#
+#ldap.roleBase = ou\=roles,dc\=jspwiki,dc\=org
+#ldap.bindDN = cn\=Manager,dc\=jspwiki,dc\=org
+
+#  For fine-tuning LDAP connection and search properties, you can modify the settings
+#  below. See the Javadoc for the org.apache.wiki.auth.LdapConfig class for more details.
+#
+#ldap.authentication = DIGEST-MD5
+#ldap.ssl = false
+#ldap.loginIdPattern = {0}
+#ldap.isInRoleFilter = (&(&(objectClass\=group)(cn\={0}))(member\={1}))
+#ldap.userFilter = (&(objectClass\=person)(sAMAccountName\={0}))
+#ldap.user.loginName = sAMAccountName
+#ldap.user.objectClass = person
 
 #############################################################################
 #

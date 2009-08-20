@@ -25,8 +25,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 
@@ -56,6 +55,11 @@ public class TestAuthorizer implements WebAuthorizer
     public Principal findRole( String role )
     {
         return null;
+    }
+
+    public Role[] findRoles( WikiSession session ) throws WikiSecurityException
+    {
+        throw new WikiSecurityException( "Not supported by this Authorizer." );
     }
 
     public void initialize( WikiEngine engine, Properties props )

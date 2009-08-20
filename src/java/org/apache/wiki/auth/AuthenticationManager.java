@@ -110,7 +110,7 @@ public final class AuthenticationManager
     protected static final Logger              log                 = LoggerFactory.getLogger( AuthenticationManager.class );
 
     /** Prefix for LoginModule options key/value pairs. */
-    public static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
+    protected static final String                 PREFIX_LOGIN_MODULE_OPTIONS = "jspwiki.loginModule.options.";
 
     /** If this jspwiki.properties property is <code>true</code>, allow cookies to be used to assert identities. */
     protected static final String                 PROP_ALLOW_COOKIE_ASSERTIONS = "jspwiki.cookieAssertions";
@@ -881,42 +881,76 @@ public final class AuthenticationManager
     }
     
     /**
-     * After successful login, this method is called to inject authorized role Principals into the WikiSession.
-     * To determine which roles should be injected, the configured Authorizer
-     * is queried for the roles it knows about by calling  {@link org.apache.wiki.auth.Authorizer#getRoles()}.
-     * Then, each role returned by the authorizer is tested by calling {@link org.apache.wiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
-     * If this check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
-     * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
-     * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
+     * <p>
+     * After successful login, this method is called to inject authorized role
+     * Principals into the WikiSession. To determine which roles should be
+     * injected, the configured Authorizer is queried for the roles the user
+     * posssesses by calling
+     * {@link org.apache.wiki.auth.Authorizer#findRoles(WikiSession)}. If this
+     * method does not throw a {@link WikiSecurityException}, any roles that are
+     * found are injected into the Subject.
+     * </p>
+     * <p>
+     * However, not all Authorizers know how to return roles for a given
+     * WikiSession. In this case, we must resort to a more brute-force approach
+     * to identify which roles the user posssesses. First, we ask the Authorizer
+     * to return the roles it knows about by calling
+     * {@link org.apache.wiki.auth.Authorizer#getRoles()}. Then, each role
+     * returned by the authorizer is tested by calling
+     * {@link org.apache.wiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}
+     * . If this check fails, and the Authorizer is of type WebAuthorizer, the
+     * role is checked again by calling
+     * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}
+     * ). Any roles that pass the test are injected into the Subject by firing
+     * appropriate authentication events.
+     * 
      * @param session the user's current WikiSession
      * @param authorizer the WikiEngine's configured Authorizer
      * @param request the user's HTTP session, which may be <code>null</code>
      */
     private final void injectAuthorizerRoles( WikiSession session, Authorizer authorizer, HttpServletRequest request )
     {
-        // Test each role the authorizer knows about
-        for ( Principal role : authorizer.getRoles() )
+        // See if the Authorizer allows us to ask directly what roles the user has
+        try
         {
-            // Test the Authorizer
-            if ( authorizer.isUserInRole( session, role ) )
+            Role[] roles = authorizer.findRoles( session );
+            for ( Role role : roles )
             {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                if ( log.isDebugEnabled() )
+                if( log.isDebugEnabled() )
                 {
-                    log.debug("Added authorizer role " + role.getName() + "." );
+                    log.debug( "Added authorizer role " + role.getName() + "." );
                 }
             }
-            
-            // If web authorizer, test the request.isInRole() method also
-            else if ( request != null && authorizer instanceof WebAuthorizer )
+            return;
+        }
+        catch( WikiSecurityException e )
+        {
+            // No worries; the authorizer doesn't support it
+        }
+        
+        // Test each role the authorizer knows about
+        for( Principal role : authorizer.getRoles() )
+        {
+            if( authorizer.isUserInRole( session, role ) )
             {
-                WebAuthorizer wa = (WebAuthorizer)authorizer;
-                if ( wa.isUserInRole( request, role ) )
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                if( log.isDebugEnabled() )
+                {
+                    log.debug( "Added authorizer role " + role.getName() + "." );
+                }
+            }
+
+            // If web authorizer, test the request.isInRole() method also
+            else if( request != null && authorizer instanceof WebAuthorizer )
+            {
+                WebAuthorizer wa = (WebAuthorizer) authorizer;
+                if( wa.isUserInRole( request, role ) )
                 {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                    if ( log.isDebugEnabled() )
+                    if( log.isDebugEnabled() )
                     {
-                        log.debug("Added container role " + role.getName() + "." );
+                        log.debug( "Added container role " + role.getName() + "." );
                     }
                 }
             }

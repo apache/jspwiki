@@ -1,3 +1,16 @@
+2009-08-19 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-144
+
+        * LDAP support for user databases, authentication and authorization
+        has landed in the trunk. It has been tested with Active Directory
+        and OpenLDAP, and is customizable for other LDAP servers. See
+        jspwiki.properties for more details. Note that a user-accessible
+        way of configuring the "Keychain" for storing bind DN passwords
+        is still not available, but will be coming soon in a revamped
+        installer screen. LdapLoginModule was removed, because it's actually
+        much cleaner to use the UserDatabaseLoginModule instead.
+
 2009-08-19 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-143
@@ -114,8 +127,7 @@
         of the WikiEngine unit tests now run, though some of the old ones
         were removed.  Please see doc/README - JCR Changes.txt for details
         about the versioning implementation.
-                 
-
+        
 2009-06-07 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-132

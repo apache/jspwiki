@@ -105,6 +105,15 @@ public final class GroupManager implements Authorizer, WikiEventListener
     }
 
     /**
+     * Always throws a WikiSecurityException.
+     */
+    public Role[] findRoles( WikiSession session ) throws WikiSecurityException
+    {
+        // FIXME: at some point this should actually work.
+        throw new WikiSecurityException( "Not supported by this Authorizer." );
+    }
+
+    /**
      * <p>
      * Finds or creates a Group in the GroupDatabase. The Group will either be a
      * copy of an existing Group (if one can be found), or a new, unregistered

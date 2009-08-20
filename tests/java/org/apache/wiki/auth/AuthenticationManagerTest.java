@@ -69,6 +69,11 @@ public class AuthenticationManagerTest extends TestCase
             return null;
         }
 
+        public Role[] findRoles( WikiSession session ) throws WikiSecurityException
+        {
+            throw new WikiSecurityException( "Not supported by this Authorizer." );
+        }
+        
         public Principal[] getRoles()
         {
             return m_roles;
