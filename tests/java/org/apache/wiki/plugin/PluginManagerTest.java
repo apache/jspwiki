@@ -231,7 +231,6 @@ public class PluginManagerTest extends TestCase
         {
             if( wpi.getName().equals( "SamplePlugin" ) )
             {
-                assertEquals("author", "Urgle Burgle", wpi.getAuthor());
                 String[] aliases = wpi.getAliases();
                 
                 assertNotNull("aliases",aliases);

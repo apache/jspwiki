@@ -667,7 +667,7 @@ public class ReferenceManagerTest extends TestCase
     {
         String jcrPath = "/PropertyStress";
         
-        String scandic = "ÄitiSyöÖljyä";        
+        String scandic = "\ufffditiSy\ufffd\ufffdljy\ufffd";        
         mgr.addToProperty( jcrPath, "foo",scandic, false );
         
         for ( int i = 0; i < 10; i++ )

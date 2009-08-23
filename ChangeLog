@@ -1,5 +1,16 @@
 2009-08-23 Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-147
+        
+        * removed author check from PluginManagerTest (as a result
+          of removing author field from ModuleDate)
+          
+        * get rid of annoying compile warnings about "unmappable character
+          for encoding UTF8" in ReferenceManagerTest, now using 
+          Unicode escape sequences 
+
+2009-08-23 Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-146
         
         * JSPWIKI-589 Removed all @author tags from source files
