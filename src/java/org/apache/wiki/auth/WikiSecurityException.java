@@ -25,7 +25,6 @@ import org.apache.wiki.api.WikiException;
 /**
  * Indicates an authentication or authorization error or exception.
  * 
- * @author Erik Bunn
  * @since 2.0
  */
 public class WikiSecurityException extends WikiException

@@ -43,7 +43,6 @@ import org.apache.wiki.auth.authorize.Role;
  * ). Any roles that pass the test are injected into the Subject by firing
  * appropriate authentication events.
  * 
- * @author Andrew Jaquith
  * @since 2.3
  */
 public interface Authorizer

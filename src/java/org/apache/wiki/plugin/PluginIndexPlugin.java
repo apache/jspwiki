@@ -44,9 +44,8 @@ import org.apache.wiki.plugin.PluginManager.WikiPluginInfo;
  * </ul>
  * 
  * @since 3.0
- * @author Harry Metske
  */
-@ModuleData( author = "Harry Metske", minVersion = "3.0", maxVersion = "1000000", minAPIVersion = "2.8" )
+@ModuleData( minVersion = "3.0", maxVersion = "1000000", minAPIVersion = "2.8" )
 public class PluginIndexPlugin extends AbstractFilteredPlugin implements WikiPlugin
 {
     /** Parameter name for the details parameter. Value is <tt>{@value}</tt>. */

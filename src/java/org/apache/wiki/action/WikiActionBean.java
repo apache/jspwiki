@@ -28,7 +28,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
 
 /**
  * ActionBean sub-interface.
- * @author Andrew Jaquith
  *
  */
 public interface WikiActionBean extends ActionBean

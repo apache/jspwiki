@@ -29,7 +29,6 @@ import java.util.Set;
  * Adds the load / save - functionality known from the Properties - class to any
  * Map implementation.
  * 
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class PersistentMapDecorator<K,V> extends Properties
 {

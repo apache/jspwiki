@@ -36,7 +36,6 @@ import org.apache.wiki.plugin.WikiPlugin;
  *  by using the {@link #PARAM_COLS} and {@link #PARAM_ROWS} to signify the width
  *  and height of the area.
  *  
- *  @author ebu
  */
 public class FormTextarea
     extends FormElement

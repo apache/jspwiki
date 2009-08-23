@@ -26,7 +26,6 @@ import org.apache.wiki.api.WikiPage;
  *  Describes an attachment.  Attachments are actually derivatives of
  *  a WikiPage, since they do actually have a WikiName as well.
  *
- *  @author Erik Bunn
  */
 public interface Attachment
     extends WikiPage

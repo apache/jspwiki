@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
  * preservation. When the properties are written to disk, previous comments
  * present in the file are preserved.
  * 
- * @author Andrew Jaquith
  * @since 2.4.22
  */
 public class CommentedProperties extends Properties

@@ -32,7 +32,6 @@ import org.apache.wiki.api.WikiException;
  * Step methods; subclasses need only implement {@link #execute()} and
  * {@link #getActor()}.
  *
- * @author Andrew Jaquith
  * @since 2.5
  */
 public abstract class AbstractStep implements Step

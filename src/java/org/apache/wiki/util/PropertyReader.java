@@ -39,7 +39,6 @@ import org.apache.wiki.api.WikiException;
  * need for (shell) scripting in order to generate different jspwiki.properties
  * to a minimum.
  *
- * @author Christoph Sauer
  * @since 2.5.x
  */
 public final class PropertyReader
@@ -236,7 +235,6 @@ public final class PropertyReader
      *
      * @param context             where to read the cascade from
      * @param defaultProperties   properties to merge the cascading properties to
-     * @author Christoph Sauer
      * @since 2.5.x
      */
     private static void loadWebAppPropsCascade(ServletContext context, Properties defaultProperties)

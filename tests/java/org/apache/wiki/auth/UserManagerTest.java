@@ -44,7 +44,6 @@ import org.apache.wiki.workflow.*;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class UserManagerTest extends TestCase
 {

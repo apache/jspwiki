@@ -52,7 +52,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * {@link #setRequest(HttpServletRequest)}.
  * </p>
  * 
- * @author Andrew Jaquith
  */
 public class WikiActionBeanContext extends ActionBeanContext implements WikiContext
 {

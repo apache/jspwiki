@@ -31,8 +31,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 
 /**
  * Defines an interface for loading, persisting and storing users.
- * @author Janne Jalkanen
- * @author Andrew Jaquith
  * @since 2.3
  */
 public interface UserDatabase

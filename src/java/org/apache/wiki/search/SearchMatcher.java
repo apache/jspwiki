@@ -38,7 +38,6 @@ import org.apache.wiki.providers.ProviderException;
  * TranslatorReader rewrite will presumably invalidate this, among other things.
  *
  * @since 2.1.5
- * @author ebu at ecyrd dot com
  */
 public class SearchMatcher
 {

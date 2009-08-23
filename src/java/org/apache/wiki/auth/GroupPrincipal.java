@@ -32,7 +32,6 @@ import java.security.Principal;
  * privileges to specific wiki groups via the security policy file should always specify
  * principals of type GroupPrincipal.
  * @see org.apache.wiki.auth.authorize.Group
- * @author Andrew Jaquith
  * @since 2.3.79
  */
 public final class GroupPrincipal implements Principal

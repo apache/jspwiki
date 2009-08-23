@@ -49,7 +49,6 @@ import org.apache.wiki.util.TextUtil;
  *    <li><b>format</b> -  full|compact, FULL now expands all levels correctly
  *  </ul>
  *
- *  @author Dirk Frederickx
  */
 public class ReferredPagesPlugin extends AbstractFilteredPlugin implements WikiPlugin
 {

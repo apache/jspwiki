@@ -84,7 +84,6 @@ import java.io.Serializable;
   * be fired after its <tt>*_END</tt> event has been fired.
   * </p>
   *
-  * @author  Murray Altheim
   * @see     org.apache.wiki.event.WikiEvent
   * @since   2.4.20
   */

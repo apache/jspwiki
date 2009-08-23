@@ -84,7 +84,6 @@ import org.apache.wiki.log.LoggerFactory;
  * to obtain a list of the current wiki session users.</p>
  * <p>WikiSession encloses a protected static class, {@link SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
- * @author Andrew R. Jaquith
  */
 public final class WikiSession implements WikiEventListener
 {

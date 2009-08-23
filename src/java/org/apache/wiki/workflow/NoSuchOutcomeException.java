@@ -24,7 +24,6 @@ package org.apache.wiki.workflow;
  * Exception thrown when an attempt is made to find an Outcome that does not
  * exist.
  *
- * @author Andrew Jaquith
  */
 public class NoSuchOutcomeException extends Exception
 {

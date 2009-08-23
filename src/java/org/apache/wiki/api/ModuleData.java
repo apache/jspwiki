@@ -40,10 +40,7 @@ import java.lang.annotation.RetentionPolicy;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ModuleData
-{
-    /** The author of this module. */
-    String author()         default "AnonymousCoward";
-    
+{    
     /** The minimum version of JSPWiki that this module will work with.  This will be
      *  checked when the module is loaded.
      */

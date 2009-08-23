@@ -63,9 +63,6 @@ import org.apache.wiki.auth.AuthenticationManager;
  *
  *  It is NOT a good idea to use BOTH of the arguments.
  *
- *  @author Janne Jalkanen
- *  @author Erik Bunn
- *  @author Andrew Jaquith
  *  @since 2.0
  */
 public class UserCheckTag

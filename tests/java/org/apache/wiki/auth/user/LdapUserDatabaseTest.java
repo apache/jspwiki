@@ -30,7 +30,6 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.*;
 
 /**
- * @author Andrew Jaquith
  */
 public class LdapUserDatabaseTest extends TestCase
 {

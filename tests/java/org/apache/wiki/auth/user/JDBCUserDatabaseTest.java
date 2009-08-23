@@ -47,7 +47,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class JDBCUserDatabaseTest extends TestCase
 {

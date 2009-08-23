@@ -100,7 +100,6 @@ import org.apache.wiki.util.TextUtil;
  * 
  * @since 2.1.112
  */
-@ModuleData( author = "JSPWiki development group" )
 public class SpamFilter extends BasicPageFilter
 {
     private static final String ATTR_SPAMFILTER_SCORE = "spamfilter.score";

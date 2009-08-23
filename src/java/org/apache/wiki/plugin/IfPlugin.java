@@ -108,7 +108,6 @@ import org.apache.wiki.util.TextUtil;
  * references to other plugins.
  * </p>
  * 
- * @author Murray Altheim
  * @since 2.6
  */
 @ModuleData( aliases = { "If" } )

@@ -65,8 +65,6 @@ import org.freshcookies.security.Keychain;
  * of 2^login attempts milliseconds - that is, 10 login attempts incur a login penalty of 1.024 seconds.
  * The delay is currently capped to 20 seconds.
  * 
- * @author Andrew Jaquith
- * @author Erik Bunn
  * @since 2.3
  */
 public final class AuthenticationManager

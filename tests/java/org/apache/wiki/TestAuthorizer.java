@@ -34,8 +34,6 @@ import org.apache.wiki.auth.authorize.WebAuthorizer;
  * A very fast authorizer that does almost nothing. The WebContainerAuthorizer module
  * is very slow, as it parses the web.xml each time, so we use this for most of
  * the different tests.
- * @author Janne Jalkanen
- * @author Andrew R. Jaquith
  * @since 2.3
  */
 public class TestAuthorizer implements WebAuthorizer

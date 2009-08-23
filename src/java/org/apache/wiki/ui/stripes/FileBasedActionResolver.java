@@ -49,7 +49,6 @@ import org.apache.wiki.api.WikiException;
  * <code>ActionResolver.Class</code> init parameter to this class name (e.g.,
  * <code>org.apache.wiki.ui.stripes.FileBasedActionResolver</code>).
  * 
- * @author Andrew Jaquith
  * @since 3.0
  */
 @DontAutoLoad

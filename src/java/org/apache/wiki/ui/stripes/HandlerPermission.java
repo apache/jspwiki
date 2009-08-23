@@ -66,7 +66,6 @@ import java.security.Permission;
  * <p>This Annotation class does not parse, process or instantiate Permissions; it merely specifies
  * the syntax for annotating event handler methods. The collaborating class {@link HandlerInfo}
  * actually does the heavy lifting.</p>
- * @author Andrew Jaquith
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { ElementType.METHOD })

@@ -49,7 +49,6 @@ import java.util.LinkedList;
  * This queue is displayed as a series of links separated by a separator
  * character.
  * </p>
- * @author Ken Liu ken@kenliu.net
  */
 public class BreadcrumbsTag extends WikiTagBase
 {

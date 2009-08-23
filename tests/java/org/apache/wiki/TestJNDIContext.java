@@ -47,7 +47,6 @@ import javax.naming.spi.InitialContextFactory;
  * ctx.bind( "jdbc/UserDatabase", ds);<br/>
  * </code></blockquote>
  * 
- * @author Andrew R. Jaquith
  * @since 2.3
  */
 public class TestJNDIContext implements Context
@@ -60,7 +59,6 @@ public class TestJNDIContext implements Context
     /**
      * InitialContextFactory class that configures the JVM to
      * always return a particular TestJNDIContext.
-     * @author Andrew R. Jaquith
      */
     public static class Factory implements InitialContextFactory
     {

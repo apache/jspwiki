@@ -58,7 +58,6 @@ import org.apache.wiki.util.TextUtil;
  * </p>
  * @see javax.security.auth.spi.LoginModule#commit()
  * @see CookieAuthenticationLoginModule
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class CookieAssertionLoginModule extends AbstractLoginModule

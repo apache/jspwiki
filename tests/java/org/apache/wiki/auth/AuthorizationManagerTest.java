@@ -50,7 +50,6 @@ import org.apache.wiki.providers.ProviderException;
 
 /**
  * Tests the AuthorizationManager class.
- * @author Janne Jalkanen
  */
 public class AuthorizationManagerTest extends TestCase
 {

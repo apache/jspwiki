@@ -22,7 +22,6 @@ package org.apache.wiki.auth;
 
 /**
  *  Thrown in some error situations where a WikiPrincipal object does not exist.
- *  @author Andrew Jaquith
  *  @since 2.3
  */
 public final class NoSuchPrincipalException

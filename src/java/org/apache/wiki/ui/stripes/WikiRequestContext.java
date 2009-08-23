@@ -35,7 +35,6 @@ import net.sourceforge.stripes.action.HandlesEvent;
  * annotation. The values returned by both annotations do not need to match.
  * 
  * @see HandlerInfo#getRequestContext()
- * @author Andrew Jaquith
  */
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.METHOD } )

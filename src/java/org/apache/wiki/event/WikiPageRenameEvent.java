@@ -28,7 +28,6 @@ package org.apache.wiki.event;
  *  This reuses {@link #getPageName()} to return the new name of the
  *  page, with {@link #getOldPageName()} returning the old name.
  *
- * @author  Murray Altheim
  * @see     org.apache.wiki.event.WikiPageEvent
  * @since   2.5.108
  */

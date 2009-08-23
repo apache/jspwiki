@@ -1,3 +1,4 @@
+
 /* 
     JSPWiki - a JSP-based WikiWiki clone.
 
@@ -59,7 +60,6 @@ import org.apache.wiki.workflow.*;
 
 /**
  * Provides a facade for obtaining user information.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class UserManager
@@ -726,7 +726,6 @@ public final class UserManager
      * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, org.apache.wiki.workflow.Fact[], Task, String)};
      * they will not function correctly otherwise.
      *
-     * @author Andrew Jaquith
      */
     public static class SaveUserProfileTask extends Task
     {

@@ -38,7 +38,6 @@ import org.apache.wiki.util.ClassUtil;
 /**
  * Load, initialize and delegate to the DiffProvider that will actually do the work.
  *
- * @author John Volkar
  */
 public class DifferenceManager
 {

@@ -32,7 +32,6 @@ import org.apache.wiki.auth.permissions.PagePermission;
 /**
  * Implementation of a JSPWiki AclEntry.
  *
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class AclEntryImpl implements AclEntry, Serializable

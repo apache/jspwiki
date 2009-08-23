@@ -59,9 +59,6 @@ import org.jdom.xpath.XPath;
  *  </modules>
  *  </pre>
  *
- *  @author Christoph Sauer
- *  @author Chuck Smith
- *  @author Dirk Frederickx
  *  @since 2.4
  */
 public class EditorManager extends ModuleManager

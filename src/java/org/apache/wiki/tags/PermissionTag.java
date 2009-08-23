@@ -61,7 +61,6 @@ import org.apache.wiki.auth.permissions.WikiPermission;
  *     &lt;/wiki:Permission&gt;
  *  </pre>
  *  
- *  @author Andrew Jaquith
  *  @since 2.0
  */
 public class PermissionTag

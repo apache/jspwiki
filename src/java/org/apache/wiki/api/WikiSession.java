@@ -64,7 +64,6 @@ import java.util.Locale;
  * to obtain a list of the current wiki session users.</p>
  * <p>WikiSession encloses a protected static class, {@link org.apache.wiki.auth.SessionMonitor},
  * to keep track of WikiSessions registered with each wiki.</p>
- * @author Andrew R. Jaquith
  */
 public interface WikiSession
 {

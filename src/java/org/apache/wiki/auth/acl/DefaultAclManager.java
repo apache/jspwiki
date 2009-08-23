@@ -42,7 +42,6 @@ import org.apache.wiki.providers.ProviderException;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class DefaultAclManager implements AclManager

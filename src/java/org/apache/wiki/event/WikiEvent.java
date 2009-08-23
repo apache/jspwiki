@@ -27,8 +27,6 @@ import java.util.EventObject;
 /**
  * Abstract parent class for wiki events.
  *
- * @author  Murray Altheim
- * @author  Andrew Jaquith
  * @since 2.3.79
  */
 public abstract class WikiEvent extends EventObject

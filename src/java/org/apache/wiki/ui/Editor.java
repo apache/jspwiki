@@ -25,7 +25,6 @@ import org.apache.wiki.WikiContext;
 /**
  *  Describes an editor.
  *
- *  @author Chuck Smith
  *  @since 2.4.12
  */
 public class Editor

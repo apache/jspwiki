@@ -39,7 +39,6 @@ import org.apache.wiki.event.WorkflowEvent;
  * Workflows.
  * </p>
  *
- * @author Andrew Jaquith
  */
 public class WorkflowManager implements WikiEventListener
 {

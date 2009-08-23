@@ -41,7 +41,6 @@ import java.util.Enumeration;
  * interface, minus negative permissions.
  * </p>
  * @see Acl
- * @author Andrew Jaquith
  * @since 2.3
  */
 public interface AclEntry extends Serializable

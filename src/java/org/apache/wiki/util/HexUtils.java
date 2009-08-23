@@ -22,7 +22,6 @@ package org.apache.wiki.util;
  * to lessen library dependencies and increase portability.
  * - ARJ, 4/04
  *
- * @author Craig R. McClanahan
  * @since 2.3
  */
 

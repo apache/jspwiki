@@ -52,7 +52,6 @@ import org.slf4j.MDC;
  * this method contains all of the logic needed to grab any user login credentials set 
  * by the container or by cookies.
  *  
- *  @author Andrew Jaquith
  *
  */
 public class WikiServletFilter implements Filter

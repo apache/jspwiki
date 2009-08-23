@@ -53,7 +53,6 @@ import org.apache.wiki.log.LoggerFactory;
  * created and associated with the Subject.
  * @see javax.security.auth.spi.LoginModule#commit()
  *      </p>
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class AnonymousLoginModule extends AbstractLoginModule

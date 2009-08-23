@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
  * servlet request.
  * @see javax.servlet.http.HttpServletRequest#getUserPrincipal() or
  * @see javax.servlet.http.HttpServletRequest#getRemoteUser() methods.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class HttpRequestCallback implements Callback

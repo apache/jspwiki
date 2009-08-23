@@ -171,7 +171,6 @@ import org.apache.wiki.util.Serializer;
  * that changes are applied.
  * </p>
  * 
- * @author Andrew R. Jaquith
  * @since 2.3
  */
 public class JDBCUserDatabase extends AbstractUserDatabase

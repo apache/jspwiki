@@ -36,7 +36,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class XMLGroupDatabaseTest extends TestCase
 {

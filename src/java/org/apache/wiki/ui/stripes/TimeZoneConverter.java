@@ -31,7 +31,6 @@ import net.sourceforge.stripes.validation.ValidationError;
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
  * stage of request processing.
  * 
- * @author Andrew Jaquith
  */
 public class TimeZoneConverter implements TypeConverter<TimeZone>
 {

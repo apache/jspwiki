@@ -58,7 +58,6 @@ import org.apache.wiki.plugin.WikiPlugin;
  * follow it; any further Forms need new FormSet calls.
  *
  * @see FormInfo
- * @author ebu
  */
 public class FormSet
     implements WikiPlugin

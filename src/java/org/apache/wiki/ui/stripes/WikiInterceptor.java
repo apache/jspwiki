@@ -90,7 +90,6 @@ import net.sourceforge.stripes.controller.*;
  * <code>${wikiPage}</code>.
  * </p>
  * 
- * @author Andrew Jaquith
  */
 @Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation } )
 public class WikiInterceptor implements Interceptor

@@ -30,7 +30,6 @@ import org.apache.wiki.event.WikiSecurityEvent;
 
 /**
  * Traps the most recent WikiEvent so that it can be used in assertions.
- * @author Andrew Jaquith
  * @since 2.3.79
  */
 public class SecurityEventTrap implements WikiEventListener

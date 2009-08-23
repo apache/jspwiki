@@ -35,7 +35,6 @@ import org.apache.wiki.plugin.WikiPlugin;
 /**
  *  Creates a Form select field.
  *  
- *  @author ebu
  */
 public class FormSelect
     extends FormElement

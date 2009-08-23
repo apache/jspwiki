@@ -43,7 +43,6 @@ import net.sourceforge.stripes.validation.ValidationErrors;
  * form. If not suppled, defaults to a generic (non-specific) collection</li>
  * <li><code>div</code> - the <code>div</code> class to wrap the
  * messages in; if not supplied, <code>information</code> is assumed</li></ul>
- * @author Andrew Jaquith
  * @since 2.3.54
  */
 public class MessagesTag extends WikiTagBase

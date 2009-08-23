@@ -34,7 +34,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 /**
  * Handles logins made from within JSPWiki.
  * @see org.apache.wiki.WikiSession#getWikiSession(WikiEngine,HttpServletRequest)
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class WebContainerCallbackHandler implements CallbackHandler

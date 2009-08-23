@@ -28,7 +28,6 @@ import java.util.LinkedHashMap;
  * @param <K> {@inheritDoc}
  * @param <V> {@inheritDoc}
  * 
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class ForgetNullValuesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
 {

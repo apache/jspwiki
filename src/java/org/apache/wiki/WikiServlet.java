@@ -36,7 +36,6 @@ import java.io.*;
  *  redirects to the proper JSP pages. It also intercepts the servlet
  *  shutdown events and uses it to signal wiki shutdown.
  *  
- *  @author Andrew Jaquith
  *  @since 2.2
  */
 public class WikiServlet

@@ -29,7 +29,6 @@ import java.io.Serializable;
  * {@link #toString()} method should return a human-readable String. Facts are
  * immutable objects.
  * 
- * @author Andrew Jaquith
  * @since 2.5
  */
 public final class Fact implements Serializable

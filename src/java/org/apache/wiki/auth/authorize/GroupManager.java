@@ -62,7 +62,6 @@ import org.apache.wiki.util.ClassUtil;
  * extracted group information from storage (e.g., wiki pages) have been
  * refactored into the GroupDatabase interface.</em>
  * </p>
- * @author Andrew Jaquith
  * @since 2.4.19
  */
 public final class GroupManager implements Authorizer, WikiEventListener

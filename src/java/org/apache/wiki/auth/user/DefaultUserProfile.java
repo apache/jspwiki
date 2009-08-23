@@ -28,7 +28,6 @@ import java.util.Map;
 /**
  * Default implementation for representing wiki user information, such as the
  * login name, full name, wiki name, and e-mail address.
- * @author Andrew Jaquith
  * @since 2.3
  */
 

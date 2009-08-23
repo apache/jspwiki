@@ -30,7 +30,6 @@ import org.apache.wiki.api.WikiException;
 
 /**
  * Factory class that creates common Workflow instances such as a standard approval workflow.
- * @author Andrew Jaquith
  */
 public final class WorkflowBuilder
 {

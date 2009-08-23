@@ -34,7 +34,6 @@ import org.apache.wiki.plugin.WikiPlugin;
  *  <P>
  *  Parameters: text - text to return.
  *
- *  @author Janne Jalkanen
  */
 public class JavaScriptPlugin
     implements WikiPlugin, InitializablePlugin

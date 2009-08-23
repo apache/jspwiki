@@ -28,7 +28,6 @@ import java.security.Principal;
  * The Decision is reassignable, and the default Outcome is 
  * {@link Outcome#DECISION_APPROVE}.
  * 
- * @author Andrew Jaquith
  */
 public class SimpleDecision extends Decision
 {

@@ -26,7 +26,6 @@ import java.io.Serializable;
  * Resolution of a workflow Step, such as "approve," "deny," "hold," "task
  * error," or other potential resolutions.
  *
- * @author Andrew Jaquith
  * @since 2.5
  */
 public final class Outcome implements Serializable

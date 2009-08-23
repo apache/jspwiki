@@ -64,7 +64,6 @@ import org.apache.wiki.plugin.WikiPlugin;
  * context to reset, and the form would be shown again. This may
  * be a useless option.)
  *
- *  @author ebu
  */
 public class FormOpen
     extends FormElement

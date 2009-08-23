@@ -34,7 +34,6 @@ import java.util.Comparator;
  *  or hash code; two WikiPrincipals with the same name but different types are still
  *  considered equal.
  *
- *  @author Andrew Jaquith
  *  @since  2.2
  */
 public final class WikiPrincipal implements Principal, Comparable<Principal>, Serializable

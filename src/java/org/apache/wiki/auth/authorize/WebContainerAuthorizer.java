@@ -50,7 +50,6 @@ import org.xml.sax.SAXException;
  * <code>Authorizer</code> interface, this class also provides a convenience
  * method {@link #isContainerAuthorized()} that queries the web application
  * descriptor to determine if the container manages authorization.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class WebContainerAuthorizer implements WebAuthorizer
@@ -412,7 +411,6 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * <p>For example, Sun Microsystem's DTD for the webapp 2.3 specification is normally
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
-     * @author Andrew Jaquith
      */
     public class LocalEntityResolver implements EntityResolver
     {

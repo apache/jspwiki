@@ -188,9 +188,6 @@ import org.apache.wiki.log.LoggerFactory;
  * and the bug report (#40668) is
  * <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=40668">here</a>.
  *
- * @author Christoph Sauer
- * @author Dan Frankowski
- * @author Andrew Jaquith
  */
 public final class MailUtil
 {
@@ -467,7 +464,6 @@ public final class MailUtil
     /**
      * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
      * an SMTP server.
-     * @author Christoph Sauer
      */
     protected static class SmtpAuthenticator extends Authenticator
     {

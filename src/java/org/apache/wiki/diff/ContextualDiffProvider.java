@@ -41,10 +41,6 @@ import org.apache.wiki.util.TextUtil;
  * A seriously better diff provider, which highlights changes word-by-word using
  * CSS.
  *
- * Suggested by John Volkar.
- *
- * @author John Volkar
- * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
  */
 
 public class ContextualDiffProvider implements DiffProvider

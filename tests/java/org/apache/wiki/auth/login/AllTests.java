@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * @author Andrew R. Jaquith
  */
 public class AllTests extends TestCase
 {

@@ -48,7 +48,6 @@ import org.apache.wiki.parser.MarkupParser;
  * jul records to the slf4j API.
  * </p>
  * 
- * @author Harry Metske
  * @since 3.0
  */
 public final class LoggerFactory

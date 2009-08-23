@@ -47,7 +47,6 @@ import org.apache.wiki.log.LoggerFactory;
  * be implemented by subclasses. The default implementations of
  * {@link #initialize(Subject, CallbackHandler, Map, Map)}, {@link #abort()} and
  * {@link #logout()} should be sufficient for most purposes.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public abstract class AbstractLoginModule implements LoginModule

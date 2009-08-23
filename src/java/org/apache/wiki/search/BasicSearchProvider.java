@@ -35,7 +35,6 @@ import org.apache.wiki.providers.ProviderException;
 /**
  *  Interface for the search providers that handle searching the Wiki
  *
- *  @author Arent-Jan Banck
  *  @since 2.2.21.
  */
 public class BasicSearchProvider implements SearchProvider

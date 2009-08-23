@@ -55,7 +55,6 @@ import org.apache.wiki.util.TextUtil;
  * of the page content every time. <em>Optional.</em></li>
  * </ul>
  * 
- * @author Dirk Frederickx
  * @since v2.3.63
  */
 public class TabTag extends WikiTagBase

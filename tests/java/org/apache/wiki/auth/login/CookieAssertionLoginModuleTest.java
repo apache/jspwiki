@@ -44,7 +44,6 @@ import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 /**
- * @author Andrew R. Jaquith
  */
 public class CookieAssertionLoginModuleTest extends TestCase
 {

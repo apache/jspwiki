@@ -42,7 +42,6 @@ import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 /**
- * @author Andrew R. Jaquith
  */
 public class UserDatabaseLoginModuleTest extends TestCase
 {

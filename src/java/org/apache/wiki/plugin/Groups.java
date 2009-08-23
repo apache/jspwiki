@@ -41,7 +41,6 @@ import org.apache.wiki.auth.authorize.GroupManager;
  *  
  *  
  *  @since 2.4.19
- *  @author Andrew Jaquith
  */
 public class Groups
     implements WikiPlugin

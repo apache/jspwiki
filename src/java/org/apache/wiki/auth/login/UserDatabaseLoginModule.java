@@ -53,7 +53,6 @@ import org.apache.wiki.log.LoggerFactory;
  * and associated with the Subject.
  * </p>
  * 
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule

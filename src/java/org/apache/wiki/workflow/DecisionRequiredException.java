@@ -29,7 +29,6 @@ import org.apache.wiki.api.WikiException;
  * the activity could not complete, or that the activity has been queued for 
  * review.
  *
- * @author Andrew Jaquith
  */
 public class DecisionRequiredException extends WikiException
 {

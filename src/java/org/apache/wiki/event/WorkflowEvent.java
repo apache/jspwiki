@@ -31,7 +31,6 @@ import org.apache.wiki.workflow.Workflow;
  * with priority INFO.
  * </p>
  * 
- * @author Andrew Jaquith
  * @since 2.3.79
  */
 public final class WorkflowEvent extends WikiEvent

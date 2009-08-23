@@ -39,7 +39,6 @@ import net.sourceforge.stripes.validation.ValidationError;
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
  * stage of request processing.
  * 
- * @author Andrew Jaquith
  */
 public class GroupTypeConverter implements TypeConverter<Group>
 {

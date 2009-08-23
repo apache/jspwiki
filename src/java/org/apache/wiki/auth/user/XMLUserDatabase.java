@@ -53,7 +53,6 @@ import org.xml.sax.SAXException;
  * &lt;/users&gt;
  * </code></blockquote> 
  * <p>In this example, the un-hashed password is <code>myP@5sw0rd</code>. Passwords are hashed without salt.</p>
- * @author Andrew Jaquith
  * @since 2.3
  */
 

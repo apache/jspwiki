@@ -71,7 +71,6 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * used by an existing wiki page.
  * </p>
  * 
- * @author Andrew Jaquith
  */
 @UrlBinding( "/Rename.action" )
 public class RenameActionBean extends AbstractPageActionBean

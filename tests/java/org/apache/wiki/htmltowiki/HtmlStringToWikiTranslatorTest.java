@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
 /**
  * JUnit test cases for Converting Html to Wiki Markup.
  * 
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class HtmlStringToWikiTranslatorTest extends TestCase
 {

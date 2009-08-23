@@ -40,7 +40,6 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * Displays the wiki page a users requested, resolving special page names and
  * redirecting if needed.
  * 
- * @author Andrew Jaquith
  */
 @UrlBinding( "/Wiki.action" )
 public class ViewActionBean extends AbstractPageActionBean

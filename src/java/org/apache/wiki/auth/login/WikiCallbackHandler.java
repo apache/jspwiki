@@ -39,7 +39,6 @@ import org.apache.wiki.log.LoggerFactory;
  * If container-managed authentication is used, the
  * {@link WebContainerCallbackHandler} is used instead. This callback handler is
  * designed to be used with {@link UserDatabaseLoginModule}.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class WikiCallbackHandler implements CallbackHandler

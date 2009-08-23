@@ -30,7 +30,6 @@ import org.apache.wiki.api.WikiException;
  * {@link Outcome#DECISION_ACKNOWLEDGE}. The Decision is not reassignable, and
  * the default Outcome is {@link Outcome#DECISION_ACKNOWLEDGE}.
  * 
- * @author Andrew Jaquith
  * @since 2.5
  */
 public final class SimpleNotification extends Decision

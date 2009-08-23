@@ -25,7 +25,6 @@ import java.security.Principal;
 /**
  * Wrapper class for container-managed or externally-provided principals.
  * Instances of PrincipalWrapper are immutable.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class PrincipalWrapper implements Principal

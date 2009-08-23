@@ -44,8 +44,6 @@ import org.apache.wiki.util.TextUtil;
 /**
  * This is the JSPWiki 'traditional' diff.  It uses an internal diff engine.
  * 
- * @author Erik Bunn
- * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
  */
 
 public class TraditionalDiffProvider implements DiffProvider

@@ -28,7 +28,6 @@ import java.security.PermissionCollection;
  * <p>
  * Permission to perform all operations on a given wiki.
  * </p>
- * @author Andrew Jaquith
  * @since 2.3.80
  */
 public final class AllPermission extends Permission implements Serializable

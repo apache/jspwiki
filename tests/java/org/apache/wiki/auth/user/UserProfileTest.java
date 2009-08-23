@@ -34,7 +34,6 @@ import junit.framework.TestSuite;
 
 /**
  *  Tests the DefaultUserProfile class.
- *  @author Janne Jalkanen
  */
 public class UserProfileTest extends TestCase
 {

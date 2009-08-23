@@ -27,7 +27,6 @@ import javax.servlet.jsp.tagext.VariableInfo;
 /**
  *  Just provides the TEI data for EditorIteratorTag.
  *
- *  @author Chuck Smith
  *  @since 2.4.12
  */
 public class EditorIteratorInfo extends TagExtraInfo

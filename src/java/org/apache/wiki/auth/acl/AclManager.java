@@ -29,7 +29,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 
 /**
  *  Specifies how to parse and return ACLs from wiki pages.
- *  @author Andrew Jaquith
  *  @since 2.3
  */
 public interface AclManager

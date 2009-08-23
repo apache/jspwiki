@@ -63,7 +63,6 @@ import org.apache.wiki.api.WikiPage;
  * <li><code>comment</code>&nbsp;and&nbsp;<code>upload</code>&nbsp;imply&nbsp;<code>view</code></li>
  * Targets that do not include a wiki prefix <i>never </i> imply others.
  * </ul>
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class PagePermission extends Permission implements Serializable

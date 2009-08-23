@@ -32,7 +32,6 @@ import org.apache.wiki.ui.EditorManager;
 /**
  * Iterator tag for editors.
  * 
- * @author Chuck Smith
  * @since 2.4.12
  */
 public class EditorIteratorTag extends IteratorTag<Editor>

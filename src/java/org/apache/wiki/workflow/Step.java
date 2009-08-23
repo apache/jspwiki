@@ -60,7 +60,6 @@ import org.apache.wiki.api.WikiException;
  * method that returns message arguments.
  * </p>
  * 
- * @author Andrew Jaquith
  * @since 2.5
  */
 public interface Step extends Serializable

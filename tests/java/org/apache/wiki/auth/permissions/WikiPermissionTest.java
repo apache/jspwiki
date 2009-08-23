@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class WikiPermissionTest extends TestCase
 {

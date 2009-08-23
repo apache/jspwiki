@@ -79,7 +79,6 @@ import org.apache.wiki.auth.GroupPrincipal;
  * means, &#8220;allow Authenticated users to edit any groups they are members of.&#8221;
  * The wildcard target (*) does <em>not</em> imply <code>&lt;groupmember&gt;</code>; it
  * must be granted explicitly.
- * @author Andrew Jaquith
  * @since 2.4.17
  */
 public final class GroupPermission extends Permission implements Serializable

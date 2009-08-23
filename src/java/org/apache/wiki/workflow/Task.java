@@ -33,7 +33,6 @@ import java.security.Principal;
  * throwing a WikiException.
  * <p>
  *
- * @author Andrew Jaquith
  * @since 2.5
  */
 public abstract class Task extends AbstractStep

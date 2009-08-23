@@ -483,7 +483,6 @@ public class TemplateManager extends ModuleManager
      * 
      * @param wiki context
      * @return Javascript snippet which defines the LocaliedStrings array
-     * @author Dirk Frederickx
      * @since 2.5.108
      * @deprecated use the Stripes <code>layout-component</code> tags instead
      */

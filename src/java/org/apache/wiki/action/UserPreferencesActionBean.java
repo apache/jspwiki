@@ -45,7 +45,6 @@ import net.sourceforge.stripes.validation.Validate;
 
 
 /**
- * @author Andrew Jaquith
  */
 @UrlBinding( "/UserPreferences.action" )
 public class UserPreferencesActionBean extends AbstractActionBean

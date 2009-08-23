@@ -29,7 +29,6 @@ import org.apache.wiki.auth.Authorizer;
  * Callback for requesting and supplying an Authorizer required by a
  * LoginModule. This Callback is used by LoginModules needing access to the
  * external authorizer or group manager.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class AuthorizerCallback implements Callback

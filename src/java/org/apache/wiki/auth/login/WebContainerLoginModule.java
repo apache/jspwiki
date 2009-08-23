@@ -60,7 +60,6 @@ import org.apache.wiki.log.LoggerFactory;
  * After authentication, the Subject will contain the Principal that
  * represents the logged-in user.</p>
  *
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class WebContainerLoginModule extends AbstractLoginModule

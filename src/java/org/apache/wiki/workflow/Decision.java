@@ -53,7 +53,6 @@ import org.apache.wiki.api.WikiException;
  * {@link #getFacts()}.
  * </p>
  *
- * @author Andrew Jaquith
  * @since 2.5
  */
 public abstract class Decision extends AbstractStep

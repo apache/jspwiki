@@ -28,7 +28,6 @@ import java.util.Map;
  * Container for carrying HTTP FORM information between
  * WikiPlugin invocations in the Session.
  *
- *  @author ebu
  */
 public class FormInfo
     implements Serializable

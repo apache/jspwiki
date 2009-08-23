@@ -29,7 +29,6 @@ import org.apache.wiki.auth.user.UserDatabase;
  * Callback for requesting and supplying a wiki UserDatabase. This callback is
  * used by LoginModules that need access to a user database for looking up users
  * by id.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class UserDatabaseCallback implements Callback

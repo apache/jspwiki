@@ -33,7 +33,6 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * actions (e.g., {@link UserPreferencesActionBean}) and others.
  * </p>
  * 
- * @author Andrew Jaquith
  */
 abstract class AbstractActionBean implements WikiActionBean
 {

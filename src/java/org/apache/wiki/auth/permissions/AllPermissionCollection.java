@@ -27,7 +27,6 @@ import java.util.Hashtable;
 
 /**
  * A collection of AllPermission objects.
- * @author Andrew R. Jaquith
  */
 public class AllPermissionCollection extends PermissionCollection
 {

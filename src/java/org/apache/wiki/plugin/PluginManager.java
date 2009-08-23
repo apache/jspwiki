@@ -734,7 +734,6 @@ public class PluginManager extends ModuleManager
     /**
      *  Contains information about a bunch of plugins.
      *
-     *  @author Kees Kuip
      */
     public static final class WikiPluginInfo
         extends WikiModuleInfo

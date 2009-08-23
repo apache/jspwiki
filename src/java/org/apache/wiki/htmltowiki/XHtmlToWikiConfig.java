@@ -26,7 +26,6 @@ import org.apache.wiki.WikiContext;
  *  Defines a Wiki configuration to XHtmlToWikiTranslator, including things like
  *  URLs.
  *
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class XHtmlToWikiConfig
 {

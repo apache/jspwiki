@@ -1088,7 +1088,6 @@ public class ContentManager implements WikiEventListener
      * WikiExceptions thrown by page filters will be re-thrown, and the workflow
      * will abort.
      *
-     * @author Andrew Jaquith
      */
     public static class PreSaveWikiPageTask extends Task
     {
@@ -1165,7 +1164,6 @@ public class ContentManager implements WikiEventListener
      * {@link org.apache.wiki.workflow.WorkflowBuilder#buildApprovalWorkflow(Principal, String, Task, String, org.apache.wiki.workflow.Fact[], Task, String)};
      * they will not function correctly otherwise.
      *
-     * @author Andrew Jaquith
      */
     public static class SaveWikiPageTask extends Task
     {

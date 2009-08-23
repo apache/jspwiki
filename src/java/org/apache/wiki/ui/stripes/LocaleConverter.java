@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
  * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
  * stage of request processing.
  * 
- * @author Andrew Jaquith
  */
 public class LocaleConverter implements TypeConverter<Locale>
 {

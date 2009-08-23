@@ -46,7 +46,6 @@ import org.apache.wiki.api.PluginException;
  *  </ul>
  *  </ul>
  *  @since 2.3.84
- *  @author Andrew Jaquith
  */
 public class SessionsPlugin
     implements WikiPlugin

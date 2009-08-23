@@ -54,7 +54,6 @@ import org.jdom.JDOMException;
 /**
  * Helper class for verifying JSPWiki's security configuration. Invoked by
  * <code>admin/SecurityConfig.jsp</code>.
- * @author Andrew Jaquith
  * @since 2.4
  */
 public final class SecurityVerifier

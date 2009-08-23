@@ -58,7 +58,6 @@ import org.apache.wiki.auth.GroupPrincipal;
  * Groups themselves.
  * </p>
  *
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class Group

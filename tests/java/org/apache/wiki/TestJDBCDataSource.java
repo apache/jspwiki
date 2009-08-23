@@ -40,7 +40,6 @@ import javax.sql.DataSource;
  * arbitrary propreties file. Gemerally, we pass on any exceptions encountered
  * as unchecked, since it means that the test case that references this class is
  * failing somehow.
- * @author Andrew R. Jaquith
  */
 public class TestJDBCDataSource implements DataSource
 {

@@ -36,8 +36,7 @@ import org.apache.wiki.plugin.WikiPlugin;
  *  Parameters: text - text to return.
  *  Any _body content gets appended between brackets.
  */
-@ModuleData( author = "Urgle Burgle", 
-             aliases = { "samplealias2", "samplealias" } )
+@ModuleData( aliases = { "samplealias2", "samplealias" } )
 public class SamplePlugin
     implements WikiPlugin, ParserStagePlugin
 {

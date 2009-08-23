@@ -35,7 +35,6 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import junit.framework.TestCase;
 
 /**
- * @author Andrew R. Jaquith
  */
 public class GroupPermissionTest extends TestCase
 {

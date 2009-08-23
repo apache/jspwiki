@@ -49,7 +49,6 @@ import org.apache.wiki.util.TextUtil;
  *  </ul>
  *  
  *  @since 2.1.37
- *  @author Scott Hurlbert
  */
 public class InsertPage
     implements WikiPlugin

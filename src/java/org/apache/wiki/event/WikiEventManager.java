@@ -142,7 +142,6 @@ import org.apache.wiki.log.LoggerFactory;
  *  your object might still be getting events, so if you wish to avoid that,
  *  please remove it explicitly as described above.
  *  </p>
- * @author Murray Altheim
  * @since 2.4.20
  */
 public final class WikiEventManager
@@ -427,7 +426,6 @@ public final class WikiEventManager
      *  to it. Interaction with this delegating class is done via the
      *  methods of the {@link WikiEventDelegate} API.
      *
-     * @author Murray Altheim
      * @since 2.4.20
      */
     private static final class WikiEventDelegate

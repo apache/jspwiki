@@ -41,7 +41,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class XMLUserDatabaseTest extends TestCase
 {

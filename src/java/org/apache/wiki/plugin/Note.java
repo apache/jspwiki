@@ -46,8 +46,6 @@ import org.apache.wiki.util.TextUtil;
  *  <li><b>_cmdline</b> - the commentText</li>
  *  </ul>
  *  
- * @author John Volkar
- * @author Scott Hulbert
  */
 public class Note implements WikiPlugin
 {

@@ -49,7 +49,6 @@ import org.apache.wiki.filters.BasicPageFilter;
   * </p>
   *
   * @see org.apache.wiki.event.WikiEventManager
-  * @author Murray Altheim
   * @deprecated this  class was always a dopey idea because there appears to be no limit on how many
   * page events we might fire, if we stack up multiple PageEventFilters. Attach listeners to ContentManager,
   * for example, instead.

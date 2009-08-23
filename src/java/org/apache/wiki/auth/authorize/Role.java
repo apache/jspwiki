@@ -28,7 +28,6 @@ import java.security.Principal;
  * as Anonymous, Asserted and Authenticated. It can also represent dynamic roles
  * used by an external {@link org.apache.wiki.auth.Authorizer}, such as a web
  * container.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class Role implements Principal, Serializable

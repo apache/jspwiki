@@ -31,7 +31,6 @@ import org.apache.wiki.plugin.WikiPlugin;
 /**
  *  Closes a WikiForm.
  *
- *  @author ebu
  */
 public class FormClose
     extends FormElement

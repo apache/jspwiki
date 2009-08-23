@@ -27,7 +27,6 @@ import org.apache.wiki.auth.permissions.WikiPermission;
 import junit.framework.TestCase;
 
 /**
- * @author Andrew Jaquith
  */
 public class AllPermissionTest extends TestCase
 {

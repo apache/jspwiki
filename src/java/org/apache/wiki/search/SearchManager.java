@@ -46,7 +46,6 @@ import org.apache.wiki.util.TextUtil;
 /**
  *  Manages searching the Wiki.
  *
- *  @author Arent-Jan Banck
  *  @since 2.2.21.
  */
 

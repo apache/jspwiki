@@ -40,7 +40,6 @@ import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
 /**
- * @author Torsten Hildebrandt.
  */
 public class ReferenceManagerTest extends TestCase
 {

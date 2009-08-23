@@ -31,7 +31,6 @@ import org.apache.wiki.plugin.WikiPlugin;
  *  <P>
  *  Parameters: text - text to return.
  *
- *  @author Janne Jalkanen
  */
 public class SamplePlugin2
     implements WikiPlugin

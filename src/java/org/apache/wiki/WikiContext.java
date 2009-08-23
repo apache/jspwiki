@@ -53,7 +53,6 @@ import org.apache.wiki.ui.stripes.HandlerInfo;
  *
  *  @see org.apache.wiki.plugin.Counter
  *
- *  @author Andrew R. Jaquith
  */
 public interface WikiContext
     extends Cloneable

@@ -45,7 +45,6 @@ import org.apache.wiki.preferences.Preferences;
  * Locale will also be returned at the top of the enumeration returned by
  * {@link #getLocales()}.
  * 
- * @author Andrew Jaquith
  * @since 2.8
  */
 public class WikiRequestWrapper extends HttpServletRequestWrapper

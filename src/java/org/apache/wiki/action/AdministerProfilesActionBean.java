@@ -41,7 +41,6 @@ import net.sourceforge.stripes.validation.ValidateNestedProperties;
  * persists the changes. Also receives an Array of Strings (login names) for
  * UserProfiles that are to be deleted, and deletes them.
  * 
- * @author Andrew Jaquith
  */
 @UrlBinding( "/AdministerProfiles.jsp" )
 public class AdministerProfilesActionBean extends AbstractActionBean

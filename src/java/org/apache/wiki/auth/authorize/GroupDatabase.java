@@ -31,7 +31,6 @@ import org.apache.wiki.auth.WikiSecurityException;
 
 /**
  * Defines an interface for loading, persisting and storing wiki groups.
- * @author Andrew Jaquith
  * @since 2.4.22
  */
 public interface GroupDatabase

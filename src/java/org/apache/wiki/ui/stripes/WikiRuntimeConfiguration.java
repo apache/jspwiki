@@ -39,7 +39,6 @@ import net.sourceforge.stripes.config.RuntimeConfiguration;
  * StripesConfiguration can be retrieved at any time by calling
  * {@link #getConfiguration(ServletContext)}.
  * 
- * @author Andrew Jaquith
  * @since 3.0
  */
 public class WikiRuntimeConfiguration extends RuntimeConfiguration

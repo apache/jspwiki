@@ -65,7 +65,6 @@ import org.apache.wiki.url.StripesURLConstructor;
  * due to the JSP being accessed.
  * </p>
  * 
- * @author Andrew Jaquith
  * @since 2.4.22
  */
 public final class WikiContextFactory

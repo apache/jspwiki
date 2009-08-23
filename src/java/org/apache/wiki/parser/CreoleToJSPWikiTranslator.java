@@ -44,9 +44,6 @@ import java.util.regex.Pattern;
  * <p><b>WARNING</b>: This is an experimental feature, and known to be
  * broken.  Use at your own risk.</o>
  *
- * @author Steffen Schramm
- * @author Hanno Eichelberger
- * @author Christoph Sauer
  *
  * @see <a href="http://www.wikicreole.org/">Wiki Creole Spec</a>
  */

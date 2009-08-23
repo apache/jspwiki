@@ -46,7 +46,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew R. Jaquith
  */
 public class AnonymousLoginModuleTest extends TestCase
 {

@@ -56,9 +56,6 @@ import org.apache.wiki.util.TextUtil;
 // FIXME: It is not yet possible to do wiki internal links.  In order to
 //        do this cleanly, a TranslatorReader revamp is needed.
 
-@ModuleData(
-    author = "JSPWiki development group"
-)
 public class Image
     implements WikiPlugin
 {

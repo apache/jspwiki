@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
  * FormUtil is mainly concerned with mapping HTTP parameters to
  * WikiPlugin parameters.
  *
- * @author ebu
  */
 public final class FormUtil
 {

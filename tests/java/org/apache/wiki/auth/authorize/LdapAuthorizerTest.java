@@ -38,7 +38,6 @@ import org.apache.wiki.auth.user.LdapUserDatabase;
 import org.freshcookies.security.Keychain;
 
 /**
- * @author Andrew Jaquith
  */
 public class LdapAuthorizerTest extends TestCase
 {

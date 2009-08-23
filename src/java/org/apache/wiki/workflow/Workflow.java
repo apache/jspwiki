@@ -198,7 +198,6 @@ import org.apache.wiki.event.WorkflowEvent;
  * together) to the workflow</li>
  * </ul>
  *
- * @author Andrew Jaquith
  */
 public class Workflow implements Serializable
 {

@@ -36,7 +36,6 @@ import java.util.Formatter;
  *     log.debug("Found %d elements of type '%s'", list.size, elementType );
  *  </pre>
  * 
- *  @author Harry Metske
  *  @since 3.0
  *  @see java.util.Formatter
  */

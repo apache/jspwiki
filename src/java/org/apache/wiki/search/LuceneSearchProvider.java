@@ -64,7 +64,6 @@ import org.apache.wiki.util.*;
 /**
  *  Interface for the search providers that handle searching the Wiki
  *
- *  @author Arent-Jan Banck
  *  @since 2.2.21.
  */
 public class LuceneSearchProvider implements SearchProvider

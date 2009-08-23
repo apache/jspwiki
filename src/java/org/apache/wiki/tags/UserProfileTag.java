@@ -79,7 +79,6 @@ import org.apache.wiki.util.TextUtil;
  * <p>In addition, the values <code>exists</code>, <code>new</code>, <code>canChangeLoginName</code>
  * and <code>canChangeLoginName</code> can also be prefixed with <code>!</code> to indicate the
  * negative condition (for example, <code>!exists</code>).</p>
- * @author Andrew Jaquith
  * @since 2.3
  */
 public class UserProfileTag extends WikiTagBase

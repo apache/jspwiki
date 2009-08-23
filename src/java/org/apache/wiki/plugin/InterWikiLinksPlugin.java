@@ -46,7 +46,6 @@ import org.apache.wiki.api.PluginException;
  * look.
  * </p>
  * 
- * @author Wouter van daele (devjunkie at nukleos dot com)
  */
 public class InterWikiLinksPlugin implements WikiPlugin
 {

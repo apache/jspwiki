@@ -28,7 +28,6 @@ import java.util.TreeMap;
 /**
  * some usefull methods for properties
  *
- * @author Sebastian Baltes (sbaltes@gmx.com)
  * @version 1.0
  */
 // FIXME3.0 move to utils package

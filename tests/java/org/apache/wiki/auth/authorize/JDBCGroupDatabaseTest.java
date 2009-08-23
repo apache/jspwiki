@@ -42,7 +42,6 @@ import junit.framework.TestCase;
 
 
 /**
- * @author Andrew Jaquith
  */
 public class JDBCGroupDatabaseTest extends TestCase
 {

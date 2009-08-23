@@ -39,7 +39,6 @@ import org.jdom.xpath.XPath;
 /**
  * Converting XHtml to Wiki Markup.  This is the class which does all of the heavy loading.
  *
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class XHtmlElementToWikiTranslator
 {

@@ -33,7 +33,6 @@ import net.sourceforge.stripes.action.Resolution;
  * parameter to a method that produces an URL, the resulting URL does not
  * prepend anything before the page.
  * 
- * @author Andrew Jaquith
  */
 public class NoneActionBean extends AbstractPageActionBean
 {

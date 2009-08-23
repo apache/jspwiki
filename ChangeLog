@@ -1,4 +1,11 @@
-2009-08-22 Harry Metske <metskem@apache.org>
+2009-08-23 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-146
+        
+        * JSPWIKI-589 Removed all @author tags from source files
+          and added contributor names to README
+          
+2009-08-23 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-145
           

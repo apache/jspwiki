@@ -25,7 +25,6 @@ import java.security.Principal;
 /**
  * System users asociated with workflow Task steps.
  * 
- * @author Andrew Jaquith
  */
 public final class SystemPrincipal implements Principal
 {

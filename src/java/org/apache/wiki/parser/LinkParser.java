@@ -146,7 +146,6 @@ import org.jdom.Attribute;
  *      JDOM Attribute:  rel="Next" </pre>
  *
  *
- *  @author Murray Altheim
  *  @since  2.5.10
  */
 public class LinkParser

@@ -34,7 +34,6 @@ import org.apache.wiki.api.WikiException;
  * Keeps a queue of pending Decisions that need to be acted on by named
  * Principals.
  *
- * @author Andrew Jaquith
  * @since 2.5
  */
 public class DecisionQueue implements Serializable

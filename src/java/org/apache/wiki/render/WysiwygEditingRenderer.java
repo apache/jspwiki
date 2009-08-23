@@ -36,7 +36,6 @@ import org.jdom.output.XMLOutputter;
  *  Implements a WikiRendered that outputs XHTML in a format that is suitable
  *  for use by a WYSIWYG XHTML editor.
  *
- *  @author David Au
  *  @since  2.5
  */
 public class WysiwygEditingRenderer

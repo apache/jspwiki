@@ -279,7 +279,6 @@ public class ApprovalWorkflowTest extends TestCase
     /**
      * Sample "prep task" that sets an attribute in the workflow indicating
      * that it ran successfully,
-     * @author Andrew Jaquith
      */
     public static class TestPrepTask extends Task
     {
@@ -301,7 +300,6 @@ public class ApprovalWorkflowTest extends TestCase
 
     /**
      * Dummy PageFilter that always throws a FilterException during preSave operations.
-     * @author Andrew Jaquith
      */
     public static class AbortFilter extends BasicPageFilter
     {

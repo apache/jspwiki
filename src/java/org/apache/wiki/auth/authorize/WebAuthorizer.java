@@ -31,7 +31,6 @@ import org.apache.wiki.auth.Authorizer;
  * Extends the {@link org.apache.wiki.auth.Authorizer} interface by
  * including a delgate method for 
  * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
- * @author Andrew Jaquith
  */
 public interface WebAuthorizer extends Authorizer
 {

@@ -84,7 +84,6 @@ import org.freshcookies.security.policy.PolicyException;
  * <p>See the {@link #checkPermission(WikiSession, Permission)} and
  * {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more information
  * on the authorization logic.</p>
- * @author Andrew Jaquith
  * @since 2.3
  * @see AuthenticationManager
  */

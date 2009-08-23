@@ -33,7 +33,6 @@ import java.security.Principal;
  * UnresolvedPrincipal performs a function similar to
  * {@link java.security.UnresolvedPermission}.
  * 
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class UnresolvedPrincipal implements Principal, Serializable

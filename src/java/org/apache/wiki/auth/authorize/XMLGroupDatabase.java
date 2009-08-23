@@ -73,7 +73,6 @@ import org.xml.sax.SAXException;
  * &nbsp;&nbsp;&lt;/group&gt;<br/>
  * &lt;/groups&gt;
  * </code></blockquote>
- * @author Andrew Jaquith
  * @since 2.4.17
  */
 public class XMLGroupDatabase implements GroupDatabase

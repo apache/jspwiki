@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 /**
  * An adapter class for slf4j Logging.
  * 
- * @author Harry Metske
  * @since 3.0
  */
 public class LoggerImpl implements org.apache.wiki.log.Logger, Serializable

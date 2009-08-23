@@ -40,7 +40,6 @@ import org.apache.wiki.util.HexUtils;
 /**
  * Abstract UserDatabase class that provides convenience methods for finding
  * profiles, building Principal collections and hashing passwords.
- * @author Andrew R. Jaquith
  * @since 2.3
  */
 public abstract class AbstractUserDatabase implements UserDatabase

@@ -23,7 +23,6 @@ package org.apache.wiki.auth.user;
 /**
  * Exception indicating that an identical user already exists in the user
  * database.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class DuplicateUserException extends Exception

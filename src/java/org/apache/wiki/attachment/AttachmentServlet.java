@@ -75,7 +75,6 @@ import org.apache.wiki.util.TextUtil;
  *  <p>
  *  This servlet is also capable of managing dynamically created attachments.
  *
- *  @author Erik Bunn
  *
  *  @since 1.9.45.
  */
@@ -792,7 +791,6 @@ public class AttachmentServlet extends HttpServlet
     /**
      *  Provides tracking for upload progress.
      *  
-     *  @author Janne Jalkanen
      */
     private static class UploadListener
        extends    ProgressItem

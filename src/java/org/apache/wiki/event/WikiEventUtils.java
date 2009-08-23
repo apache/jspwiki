@@ -27,7 +27,6 @@ import org.apache.wiki.WikiEngine;
  *  A utility class that adds some JSPWiki-specific functionality to the
  *  WikiEventManager (which is really a general-purpose event manager).
  *
- * @author Murray Altheim
  * @since 2.4.20
  */
 public class WikiEventUtils

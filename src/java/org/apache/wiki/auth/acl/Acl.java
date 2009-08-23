@@ -53,7 +53,6 @@ import java.util.Enumeration;
  * the getPermissions() and checkPermission() methods have been eliminated due
  * to the complexities associated with resolving Role principal membership.
  * </p>
- * @author Andrew Jaquith
  * @since 2.3
  */
 public interface Acl extends Serializable

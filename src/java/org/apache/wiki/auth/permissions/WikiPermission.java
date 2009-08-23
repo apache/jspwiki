@@ -35,7 +35,6 @@ import java.util.Arrays;
  * a wildcard. For pages, the wildcard may be a prefix, suffix, or all by
  * itself. <p> Certain permissions imply others. Currently,
  * <code>createGroups</code> implies <code>createPages</code>. </p>
- * @author Andrew Jaquith
  * @since 2.3
  */
 public final class WikiPermission extends Permission implements Serializable

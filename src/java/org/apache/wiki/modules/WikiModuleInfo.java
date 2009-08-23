@@ -109,7 +109,6 @@ public class WikiModuleInfo
         
         if( data != null )
         {
-            m_author = data.author();
             m_minVersion = data.minVersion();
             m_maxVersion = data.maxVersion();
             m_scriptLocation = data.scripts();

@@ -47,7 +47,6 @@ import net.sourceforge.stripes.util.bean.PropertyExpressionEvaluation;
  * Permissions. This class caches HandlerInfo objects for each ActionBean class,
  * so introspection operations only happen once per class.
  * 
- * @author Andrew Jaquith
  */
 public class HandlerInfo
 {

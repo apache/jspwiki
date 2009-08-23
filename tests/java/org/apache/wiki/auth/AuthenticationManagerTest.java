@@ -48,7 +48,6 @@ import junit.framework.TestSuite;
 /**
  * Tests the AuthorizationManager class.
  * 
- * @author Janne Jalkanen
  */
 public class AuthenticationManagerTest extends TestCase
 {

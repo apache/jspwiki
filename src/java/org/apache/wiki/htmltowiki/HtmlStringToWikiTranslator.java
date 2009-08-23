@@ -35,7 +35,6 @@ import org.jdom.output.XMLOutputter;
  * Converting Html to Wiki Markup with NekoHtml for converting html to xhtml and
  * Xhtml2WikiTranslator for converting xhtml to Wiki Markup.
  * 
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 public class HtmlStringToWikiTranslator
 {

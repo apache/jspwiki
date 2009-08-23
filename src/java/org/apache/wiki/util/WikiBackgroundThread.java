@@ -34,7 +34,6 @@ import org.apache.wiki.event.WikiEventListener;
  * the normal {@link Thread#run()}, and provide a constructor that
  * passes the WikiEngine and sleep interval. This class is
  * thread-safe.
- * @author Andrew Jaquith
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener
 {

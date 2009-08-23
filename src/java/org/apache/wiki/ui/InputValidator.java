@@ -34,7 +34,6 @@ import org.apache.wiki.i18n.InternationalizationManager;
  * validators are provided: email address, identifier and standard input. Standard input
  * validator will reject any HTML-like input, and any of a number of special
  * characters.  ID validator rejects HTML and quoted strings, and a couple of special characters.
- * @author Andrew Jaquith
  * @since 2.3.54
  */
 public final class InputValidator

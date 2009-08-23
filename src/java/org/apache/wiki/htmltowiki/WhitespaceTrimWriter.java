@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 /**
  * Part of the XHtmlToWikiTranslator.
  * 
- * @author Sebastian Baltes (sbaltes@gmx.com)
  */
 // FIXME: Needs a better description as to how it works.
 public class WhitespaceTrimWriter extends Writer

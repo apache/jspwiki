@@ -43,7 +43,6 @@ import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 /**
- * @author Andrew R. Jaquith
  */
 public class WebContainerLoginModuleTest extends TestCase
 {

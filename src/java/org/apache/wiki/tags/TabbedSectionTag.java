@@ -82,8 +82,6 @@ import org.apache.wiki.tags.TabTag.TabInfo;
  * <li>defaultTab - Page name to refer to. Default is the first tab.</li>
  * </ul>
  * 
- * @author Dirk Frederickx
- * @author Andrew Jaquith
  * @since v2.3.63
  */
 public class TabbedSectionTag extends BodyTagSupport

@@ -26,8 +26,6 @@ import org.apache.wiki.WikiEngine;
 /**
   * WikiEngineEvent indicates a change in the state of the WikiEngine.
   * 
-  * @author  Murray Altheim
-  * @author  Andrew Jaquith
   * @see     org.apache.wiki.event.WikiEvent
   * @since   2.4.20
   */

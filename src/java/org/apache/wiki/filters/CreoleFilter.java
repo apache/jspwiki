@@ -45,9 +45,6 @@ import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
  * to implement a non-mixed mode Creole at some point, since turning on
  * Creole will make new pages obsolete.
  * 
- * @author Steffen Schramm
- * @author Hanno Eichelberger
- * @author Christoph Sauer
  * 
  * @see <a href="http://www.wikicreole.org/wiki/MixedMode">[[WikiCreole:MixedMode]]</a> 
  */

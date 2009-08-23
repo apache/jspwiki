@@ -41,7 +41,6 @@ import org.apache.wiki.auth.permissions.AllPermission;
  * Default implementation of {@link org.apache.wiki.WikiContext}.
  * </p>
  * 
- * @author Andrew R. Jaquith
  * @since 3.0
  */
 public class DefaultWikiContext implements WikiContext

@@ -31,7 +31,6 @@ import java.util.Map;
  * As of 2.8, user profiles can store custom key/value String/Serializable attributes, and store
  * a unique ID. Locks are checked by {@link org.apache.wiki.auth.AuthenticationManager};
  * if a profile is locked, the user cannot log with that profile.
- * @author Andrew Jaquith
  * @since 2.3
  */
 public interface UserProfile extends Serializable

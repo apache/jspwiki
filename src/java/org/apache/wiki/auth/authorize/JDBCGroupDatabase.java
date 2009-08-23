@@ -135,7 +135,6 @@ import org.apache.wiki.log.LoggerFactory;
  * changes are applied.
  * </p>
  * 
- * @author Andrew R. Jaquith
  * @since 2.3
  */
 public class JDBCGroupDatabase implements GroupDatabase

@@ -1,3 +1,4 @@
+
 /*
     JSPWiki - a JSP-based WikiWiki clone.
 
@@ -36,8 +37,6 @@ import org.apache.wiki.Release;
  * java -cp classes TranslationsCheck fi
  * </code>
  * 
- * @author Christoph Sauer
- * @author Florian Holeczek
  */
 public class TranslationsCheck
 {

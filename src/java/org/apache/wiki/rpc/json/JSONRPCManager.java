@@ -168,7 +168,6 @@ public final class JSONRPCManager extends RPCManager
      *  Note that this is an obvious optimization piece if this becomes
      *  a bottleneck.
      *  
-     *  @author Janne Jalkanen
      */
     static class WikiJSONAccessor implements InvocationCallback
     {
@@ -297,7 +296,6 @@ public final class JSONRPCManager extends RPCManager
     /**
      *  Just stores the registered global method.
      *  
-     *  @author Janne Jalkanen
      *
      */
     private static class CallbackContainer

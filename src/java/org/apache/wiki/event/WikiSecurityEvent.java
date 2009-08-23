@@ -60,7 +60,6 @@ import org.apache.wiki.log.LoggerFactory;
  *   <li>remove group member</li>
  *   <li>clear all members from group</li>
  * </ul>
- * @author Andrew Jaquith
  * @since 2.3.79
  */
 public final class WikiSecurityEvent extends WikiEvent
