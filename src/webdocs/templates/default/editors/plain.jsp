@@ -19,10 +19,9 @@
    WikiContext context = WikiContext.findContext( pageContext ); 
    WikiEngine engine = context.getEngine();
    
-   String contextPath = request.getContextPath();
+   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/jspwiki-edit.js" );
+   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/posteditor.js" );
 
-   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/jspwiki-edit.js" );
-   TemplateManager.addResourceRequest( context, "script",  contextPath + "/scripts/posteditor.js" );
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:CheckRequestContext context="edit">

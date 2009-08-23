@@ -1389,7 +1389,8 @@ var Sortable =
 		rows.each(function(r,i){
 
 			var v = r.cells[colidx];
-			v = v.getAttribute('sortvalue') || $getText(v);
+			
+			v = v.getAttribute('jspwiki:sortvalue') || $getText(v);
 			v = v.clean().toLowerCase();
 
 			if(num)  num  = !isNaN(parseFloat(v));
@@ -1442,8 +1443,8 @@ var Sortable =
 			//fixme: should cache the converted sortable values
 			var v1 = row1.cells[i],
 				v2 = row2.cells[i],
-				val1 = Sortable.convert( v1.getAttribute('sortvalue') || $getText(v1), datatype ),
-				val2 = Sortable.convert( v2.getAttribute('sortvalue') || $getText(v2), datatype );
+				val1 = Sortable.convert( v1.getAttribute('jspwiki:sortvalue') || $getText(v1), datatype ),
+				val2 = Sortable.convert( v2.getAttribute('jspwiki:sortvalue') || $getText(v2), datatype );
 
 			return (val1<val2) ? -1 : (val1>val2) ? 1 : 0; 
 			

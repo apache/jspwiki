@@ -7,7 +7,7 @@
 <fmt:setBundle basename="templates.default"/>
 <% 
   WikiContext context = WikiContext.findContext( pageContext ); 
-  TemplateManager.addResourceRequest( context, "script", "scripts/jspwiki-prefs.js" );
+  TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/jspwiki-prefs.js" );
 %>
 
 <wiki:TabbedSection defaultTab="${param.tab}">

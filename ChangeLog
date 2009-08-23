@@ -1,3 +1,20 @@
+2009-08-23 Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.3-svn-14
+
+        * JSPWIKI-480. Small improvement on Attachment sorting.
+        Not using the attribute 'jspwiki:sortvalue' to allow sorting of 
+        date values, both in attachment and info tabs.
+
+        * JSPWIKI-574. Redirect from UserPreferences.jsp hangs when null.
+        (which is the case eg after subsequent log in) 
+
+        * JSPWIKI-590. Use relative paths to link the javascript routines.
+        Avoid the use of getContextPath(), as the URL may have been rewritten
+        external to jspwiki. (reported by Florian) 
+        This fix only resolves the references to javascript routines.
+        
+
 2009-08-19 Harry Metske <metskem@apache.org>
 
         * 2.8.3-svn-13
@@ -12,7 +29,7 @@
 
         * JSPWIKI-585: Scrollbars on wide-pages fixed for FF and Safari (overflow-y:hidden) and IE.
         
-        * JSPWIKI-383, JSPWIKI-481: Support redirecting back to special pages suchs as 
+        * JSPWIKI-383, JSPWIKI-481: Support redirecting back to special pages such as 
         the Search page, Workflow page.
                 
         

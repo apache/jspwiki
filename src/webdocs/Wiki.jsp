@@ -16,7 +16,7 @@
     String pagereq = wikiContext.getName();
 
     // Redirect if request was for a special page
-    String redirect = wiki.getRedirectURL( wikiContext );
+    String redirect = wikiContext.getRedirectURL( );
     if( redirect != null )
     {
         response.sendRedirect( redirect );

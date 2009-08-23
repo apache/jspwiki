@@ -199,7 +199,7 @@
           </wiki:LinkTo>
         </td>
 
-	    <td style="white-space:nowrap;" sortvalue="<fmt:formatDate value='<%= currentPage.getLastModified() %>' pattern='EEE, d MMM yyyy hh:mm:ss' />">
+	    <td style="white-space:nowrap;" jspwiki:sortvalue="<%= currentPage.getLastModified().getTime() %>">
         <fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </td>
         <td style="white-space:nowrap;text-align:right;">
@@ -360,7 +360,7 @@
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>
-	  <td style="white-space:nowrap;" sortvalue="<fmt:formatDate value='<%= att.getLastModified() %>' pattern='EEE, d MMM yyyy hh:mm:ss' />">
+	  <td style="white-space:nowrap;" jspwiki:sortvalue="<%= att.getLastModified().getTime() %>">
 	  <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 	  </td>
       <td><wiki:Author /></td>

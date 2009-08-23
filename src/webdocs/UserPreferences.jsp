@@ -73,7 +73,15 @@
         if ( wikiSession.getMessages( "profile" ).length == 0 )
         {
             String redirectPage = request.getParameter( "redirect" );
-            response.sendRedirect( wiki.getViewURL(redirectPage) );
+
+            if( !wiki.pageExists( redirectPage ) )
+            {
+               redirectPage = wiki.getFrontPage();
+            }
+            
+            String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
+            log.info( "Redirecting user to " + viewUrl );
+            response.sendRedirect( viewUrl );
             return;
         }
     }
@@ -85,6 +93,10 @@
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
+        if( !wiki.pageExists( redirectPage ) )
+        {
+          redirectPage = wiki.getFrontPage();
+        }
         String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wiki.getViewURL( redirectPage );
 
         log.info( "Redirecting user to " + viewUrl );
