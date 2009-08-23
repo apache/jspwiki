@@ -1,3 +1,17 @@
+2009-08-22 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-145
+          
+        * corrected propname in build.properties : 
+           war.compile.jsps => compile.jsps
+           
+        * added dummy SimpleCredentials login to ContentManager.newSession()
+          this is required since priha 0.1.25 (not sure if this is the 
+          right place/approach but at least we can run our JUnit tests again,
+          although still many tests fail (92.15%))
+          
+        * upgrade priha : 0.1.30 => 0.1.32
+
 2009-08-19 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-144

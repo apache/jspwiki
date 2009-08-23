@@ -1703,8 +1703,8 @@ public class ContentManager implements WikiEventListener
          */
         public Session newSession() throws LoginException, RepositoryException
         {
-            Session session = m_repository.login(m_workspaceName);
-            
+            Session session = m_repository.login( new SimpleCredentials( "jspwikiUser", "passwordDoesNotMatter".toCharArray() ),
+                                                  m_workspaceName );
             return session;
         }
         
