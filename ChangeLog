@@ -1,3 +1,10 @@
+2009-08-25 Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.3-svn-15
+        
+        * JSPWIKI-580: Fixing the quirky handling of the textarea selection range
+        in IEx browsers.
+
 2009-08-23 Dirk Frederickx <brushed@apache.org>
 
         * 2.8.3-svn-14

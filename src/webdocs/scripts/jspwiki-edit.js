@@ -689,18 +689,44 @@ var TextArea =
 		return f.getValue().substring(cur.start, cur.end);		
 	},
 
+	/*
+	Function: setSelectionRange 
+		Selects the selection range of the textarea from start to end
+
+	Arguments:
+		start - start position of the selection
+		end - (optional) end position of the seletion (default == start)
+
+	Returns:
+		Textarea object
+	*/
 	setSelection: function(start, end){
-		var ta = this.textarea;
-		if(window.ie){
-			var r1 = ta.createTextRange();
-			r1.collapse(true);
-			r1.moveStart('character',start);
-			r1.moveEnd('character',end-start);
-			r1.select();
+
+		var txta = this.textarea;
+		if(!end) end = start;
+
+		if($defined(txta.setSelectionRange)){
+
+			txta.setSelectionRange(start, end);
+
 		} else {
-			ta.selectionStart = start;
-			ta.selectionEnd = end;
+
+            var value = txta.value,
+            	diff = value.substr(start, end - start).replace(/\r/g, '').length;
+
+            start = value.substr(0, start).replace(/\r/g, '').length;
+           
+			var range = txta.createTextRange();
+			range.collapse(true);
+			range.moveEnd('character', start + diff);
+			range.moveStart('character', start);
+			range.select();
+			//textarea.scrollTop = scrollPosition;
+			//textarea.focus();
+
 		}
+		return this;
+
 	},
 
 	// getCursor(id) : returns start offset of cursor (integer)
@@ -708,53 +734,76 @@ var TextArea =
 		return this.getSelectionCoordinates(id).start;
 	},
 	
-	// getSelectionCoordinates : returns {'start':x, 'end':y } coordinates of the selection
+	/*
+	Function: getSelectionCoordinates
+		Returns the selected textarea range. 
+
+	Returns:
+		{{ { 'start':number, 'end':number, 'thin':boolean } }}
+		start - coordinate of the selection
+		end - coordinate of the selection
+		thin - boolean indicates whether selection is empty (start==end)
+	*/
 	getSelectionCoordinates: function(id) {
-		var f = $(id); if(!f) return ''; 
+		var txta = $(id),
+			pos = {start: 0, end: 0, thin: true};
 
-		if(window.ie){
-			var r1 = document.selection.createRange(),
-				r2 = r1.duplicate(); // use as a 'dummy' 
-				
-			r2.moveToElementText( f ); // select all text 
-			r2.setEndPoint( 'EndToEnd', r1 );  // move 'dummy' end point to end point of original range 
+		if( $defined(txta.selectionStart) ){
 
-			return { 
-				'start': r2.text.length - r1.text.length, 
-				'end': r2.text.length
-			};
-			
-		}
-		else if( f.selectionStart || f.selectionStart == '0') {
-			return {'start':f.selectionStart,'end':f.selectionEnd };
+			pos = { start: txta.selectionStart, end: txta.selectionEnd };
+
 		} else {
-			return {'start':f.value.length,'end':f.value.length };
+
+	  		var range = document.selection.createRange();
+			if (!range || range.parentElement() != txta) return pos;
+	 		var dup = range.duplicate(),
+				value = txta.value,
+				offset = value.length - value.match(/[\n\r]*$/)[0].length;
+
+			dup.moveToElementText(txta);
+			dup.setEndPoint('StartToEnd', range);
+			pos.end = offset - dup.text.length;
+	  		dup.setEndPoint('StartToStart', range);
+			pos.start = offset - dup.text.length;
+
 		}
+
+		pos.thin = (pos.start==pos.end);
+		return pos;
+			
 	},
 
 	// replaceSelection(id,newtext) replaces the selection with a newtext, an selects the replaced newtext
 	replaceSelection: function(id, newText){
-		var f = $(id); if(!f) return;
-		var scrollTop = f.scrollTop; //cache top
+
+		var value = newText.replace(/\r/g, ''), //$A(arguments).join(''),
+			txta = $(id),
+			scrollTop = txta.scrollTop; //cache top
 		 
-		if(window.ie){
-			f.focus();
-			var range = document.selection.createRange();
-			range.text = newText;			
-			range.collapse(true);
-			range.moveStart("character", -newText.length);
-			range.select();
+		if( $defined(txta.selectionStart) ){
+
+			var start = txta.selectionStart, 
+				end = txta.selectionEnd,
+				v = txta.value;
+			txta.value = v.substr(0, start) + value + v.substr(end);
+			txta.selectionStart = start;
+			txta.selectionEnd = start + value.length;
+
 		} else { 
-			var start = f.selectionStart, 
-				end = f.selectionEnd;
-			f.value = f.value.substring(0, start) + newText + f.value.substring(end);
-			f.selectionStart = start;
-			f.selectionEnd = start + newText.length;
+
+			txta.focus();
+			var range = document.selection.createRange();
+			range.text = value;			
+			range.collapse(true);
+			range.moveStart("character", -value.length);
+			range.select();
+
 		}
-		f.focus();
-		f.scrollTop = scrollTop;
-		
-		f.fireEvent('change');
+		txta.focus();
+		txta.scrollTop = scrollTop;		
+		txta.fireEvent('change');
+		return;
+
 	},
 	
 	// isSelectionAtStartOfLine(id): returns boolean indicating whether cursor is at the start of newline
