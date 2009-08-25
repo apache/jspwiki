@@ -2299,23 +2299,25 @@ var Textarea = new Class({
 		var txta = this.ta;
 		if(!end) end = start;
 
-		if(window.ie){
-			/**/
+		if($defined(txta.setSelectionRange)){
+
+			txta.setSelectionRange(start, end);
+
+		} else {
+
             var value = txta.value,
             	diff = value.substr(start, end - start).replace(/\r/g, '').length;
 
             start = value.substr(0, start).replace(/\r/g, '').length;
-            /**/
+           
 			var range = txta.createTextRange();
 			range.collapse(true);
-			//range.moveEnd('character',end-start);
 			range.moveEnd('character', start + diff);
 			range.moveStart('character', start);
 			range.select();
 			//textarea.scrollTop = scrollPosition;
 			//textarea.focus();
-		} else {
-			txta.setSelectionRange(start, end);
+
 		}
 		return this;
 	},
@@ -2331,6 +2333,7 @@ var Textarea = new Class({
 		thin - boolean indicates whether selection is empty (start==end)
 	*/
 
+/* ffs
 	getIERanges: function(){
 		this.ta.focus();
 		var txta = this.ta,
@@ -2341,29 +2344,29 @@ var Textarea = new Class({
 		dupe.setEndPoint('EndToStart', re);
 		return { start: dupe.text.length, end: dupe.text.length + range.text.length, length: range.text.length, text: range.text };
 	},
-
+*/
 	getSelectionRange: function(){
 
 		var txta = this.ta,
 			pos = {start: 0, end: 0, thin: true};
 
-			if( window.ie ){
+		if( $defined(txta.selectionStart) ){
 
-		  		var range = document.selection.createRange();
-				if (!range || range.parentElement() != txta) return pos;
-		 		var dup = range.duplicate(),
-					value = txta.value,
-					offset = value.length - value.match(/[\n\r]*$/)[0].length;
-
-				dup.moveToElementText(txta);
-				dup.setEndPoint('StartToEnd', range);
-				pos.end = offset - dup.text.length;
-		  		dup.setEndPoint('StartToStart', range);
-				pos.start = offset - dup.text.length;
+			pos = { start: txta.selectionStart, end: txta.selectionEnd };
 
 		} else {
 		
-			pos = { start: txta.selectionStart, end: txta.selectionEnd };
+	  		var range = document.selection.createRange();
+			if (!range || range.parentElement() != txta) return pos;
+	 		var dup = range.duplicate(),
+				value = txta.value,
+				offset = value.length - value.match(/[\n\r]*$/)[0].length;
+
+			dup.moveToElementText(txta);
+			dup.setEndPoint('StartToEnd', range);
+			pos.end = offset - dup.text.length;
+	  		dup.setEndPoint('StartToStart', range);
+			pos.start = offset - dup.text.length;
 
 		}
 
@@ -2388,24 +2391,28 @@ var Textarea = new Class({
 	*/
 	setSelection: function(){
 
-		var value = $A(arguments).join(''),
+		var value = $A(arguments).join('').replace(/\r/g, ''),
 			txta = this.ta,
 			scrollTop = txta.scrollTop; //cache top
 		 
-		if( window.ie ){
+		if( $defined(txta.selectionStart) ){
+
+			var start = txta.selectionStart, 
+				end = txta.selectionEnd,
+				v = txta.value;
+			txta.value = v.substr(0, start) + value + v.substr(end);
+			txta.selectionStart = start;
+			txta.selectionEnd = start + value.length;
+
+		} else { 
+
 			txta.focus();
 			var range = document.selection.createRange();
 			range.text = value;			
 			range.collapse(true);
 			range.moveStart("character", -value.length);
 			range.select();
-		} else { 
-			var start = txta.selectionStart, 
-				end = txta.selectionEnd;
-			//txta.value = txta.value.substring(0, start) + value + txta.value.substring(end);
-			txta.value = txta.value.substr(0, start) + value + txta.value.substr(end);
-			txta.selectionStart = start;
-			txta.selectionEnd = start + value.length;
+
 		}
 		txta.focus();
 		txta.scrollTop = scrollTop;		
