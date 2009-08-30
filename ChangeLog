@@ -1,3 +1,16 @@
+2009-08-30 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-150
+        
+        * Introduced the new PageViewPlugin written by Andre van Dalen.
+        This plugin counts page views and presents the statistics on page views
+        See http://www.jspwiki.org/wiki/PageViewPlugin for the complete
+        documentation.
+        A bit of i18n work for the translators too.....
+        
+        * a bit less verbosity in ReferenceManager.checkValueString(), 
+        we now only dump the illegal page name instead of dumping a stacktrace.
+        
 2009-08-30 Dirk Frederickx <brushed@apache.org>
 
         * 3.0.0-svn-149 - align with 2.8.3-svn-16

@@ -1062,10 +1062,11 @@ public class ReferenceManager implements InternalModule, WikiEventListener
      */
     private void checkValueString( String v )
     {
+        int ch = 0;
         boolean highChar = false;
         for ( int i = 0; i < v.length(); i++ )
         {
-            int ch = v.charAt( i );
+            ch = v.charAt( i );
             if ( ch < 32 || ch > 127 )
             {
                 highChar = true;
@@ -1075,7 +1076,8 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
         if ( highChar )
         {
-            Thread.dumpStack();
+            System.out.println( "non Roman value detected in String " + v );
+//            Thread.dumpStack();
         }
     }
 

@@ -51,6 +51,7 @@ public class AllTests extends TestCase
         suite.addTest( RecentChangesPluginTest.suite() );
         suite.addTest( IndexPluginTest.suite() );
         suite.addTest( InterWikiLinksPluginTest.suite() );
+        suite.addTest( PageViewPluginTest.suite() );
 
         return suite;
     }
