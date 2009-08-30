@@ -3,7 +3,7 @@
  * Styles can be overwritten by print and skin stylesheets
  * /
 
-/* COLOR scheme   
+/* COLOR scheme
 	normal font color
 	#f9f9f9 code, comment, weblogentries, (light grey)
 	#d7d7d7 table header(darker grey)
@@ -18,7 +18,7 @@
 
 /* +++ 010 LAYOUT of main ID blocks +++ */
 #wikibody {
-	margin:1em 2em; 
+	margin:1em 2em;
 	padding:0.25em;
 }
 #header, #footer {
@@ -26,7 +26,7 @@
 }
 #header .applicationlogo {
 	position:absolute;
-	left:2em; 
+	left:2em;
 	right:auto;
 	width:18%;
 }
@@ -34,8 +34,8 @@
 #footer .companylogo,
 #footer .wikiversion,
 #footer .rssfeed,
-#header .companylogo { 
-	display:none; 
+#header .companylogo {
+	display:none;
 }
 #header .userbox {
 	float:right;
@@ -61,14 +61,14 @@
 	border:1px solid #ddd;
 	margin-bottom:0.5em;
 	padding:0.25em 0.5em;
-	display:none; 
+	display:none;
 }
 #favorites .login, #favorites .logoff {
 	clear:left;
 }
-#footer .copyright { 
+#footer .copyright {
 }
-#content { 
+#content {
 	margin:1em 0;
 }
 /*#wikibody.fav-left*/ #page, #wikibody.fav-right #favorites {
@@ -89,21 +89,21 @@
 }
 #wikibody.fav-right #header .applicationlogo {
 	left:auto;
-	right:2em; 
+	right:2em;
 }
-#page { 
+#page {
 	width:80%;
 }
 #wikibody.fav-slide #page {
 	width:100%;
 }
 
-#actionsTop	{ 
+#actionsTop	{
 	float:right;
 	z-index:10;
 }
 /* ie hack */
-* html #actionsTop	{ 
+* html #actionsTop	{
 	margin-top:1px;
 }
 #actionsBottom {
@@ -134,28 +134,28 @@ fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
 :focus {
 	outline:0;
 }
-body { 
-	color:black; 
-	background:white; 
+body {
+	color:black;
+	background:white;
 	margin: 0;
 	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
 	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
 }
-table {	
-	border-collapse:collapse; 
+table {
+	border-collapse:collapse;
 	border-spacing:0;
-	empty-cells:show; 
+	empty-cells:show;
 }
 
 h1, h2, h3, h4, p, blockquote, label, ul, ol, dl, hr, .hr, .quote {
-	margin:0.5em 0; 
+	margin:0.5em 0;
 }
-th, td { 
-	padding:0.25em 0.5em; 
+th, td {
+	padding:0.25em 0.5em;
 }
-.hr { 
+.hr {
 	display:block;
-	border-bottom:1px solid #ddd; 
+	border-bottom:1px solid #ddd;
 }
 hr, .hr, .clearbox {
 	clear:both;
@@ -174,12 +174,12 @@ hr, .hr, .clearbox {
 }
 /*
 Headings:
-	The headings h2, h3 and h4 get a {{clear:left}} so they can appear 
+	The headings h2, h3 and h4 get a {{clear:left}} so they can appear
 	side by side with .commentbox-es.
-	
+
 	The {{.editsection}} and {{hashlink}} define the styling of the
 	[[Edit] and # hash-hover link on each heading.
-	
+
 DOM structure:
 >	<h2 id="section-...">Header-Title
 >	<a class="hashlink" href="...">#</a>
@@ -200,12 +200,12 @@ h3 .editsection, h3 .hashlink { font-size: 76%; }
 h4 { font-size: 116%; }
 h4 .editsection, h4 .hashlink { font-size: 86%; }
 
-a.editsection, a.hashlink {	
+a.editsection, a.hashlink {
 	font-weight:normal;
 	line-height:1.2;
 	padding:0.25em;
 	text-decoration:none;
-	color:#ccc; 
+	color:#ccc;
 }
 a.editsection:hover, a.hashlink:hover {
 	background-color:#ddd;
@@ -292,7 +292,7 @@ pre {
 	_padding-bottom:1.5em; /*take scrollbar into account on ie ugh*/
 }
 
-#previewcontent, #info, #pagecontent, #attach, #findcontent {
+#previewcontent, #info, #pagecontent, #attach, #findcontent, .diffbody {
 	overflow-y:hidden; /*safari only -- ?? */
 	_width:100%;
 	_overflow-x:auto;
@@ -313,11 +313,11 @@ a:active {
 	background-color:#eee;
 }
 /* ie6 hack */
-* html .hover { 
+* html .hover {
 	background-color:#eee;
 }
 /* ie7 hack */
-*:first-child+html .hover { 
+*:first-child+html .hover {
 	background-color:#eee;
 }
 
@@ -343,7 +343,7 @@ a.feed {
 	text-indent:16px;
 	margin:0 0.5em;
 	width:16px;
-	height:16px; 
+	height:16px;
 	text-decoration:none;
 	overflow:hidden;
 	display:block;
@@ -371,9 +371,9 @@ img {
 img.inline {
 }
 img.outlink {
-} 
+}
 img.attlink {
-} 
+}
 .applicationlogo a {
 	display:block;
 	height:64px;
@@ -583,7 +583,6 @@ td .information, td .warning, td .error {
 /* .diffnote equals .information */
 td.diffadd, td.diffrem, td.diff {
 	font:110% Monaco, "Courier New", Courier, monospace;
-	overflow:auto;
 	line-height:1;
 }
 td.diffadd {
@@ -606,12 +605,12 @@ td.diff {
 	background:#9f9;
 	text-decoration:none;
 	color:black;
-} 
+}
 .diff-deletion {
 	background:#f93;
 	text-decoration:line-through;
 	color:black;
-} 
+}
 .diff-nextprev {
 	vertical-align:super;
 	text-decoration:none;
@@ -620,18 +619,18 @@ td.diff {
 
 /* +++ 425 Edit/EditContent and CommentContent +++ */
 body.edit {
-} 
+}
 body.comment {
-} 
-#edithelp {	 
+}
+#edithelp {
 }
 
 /* +++ 430 Edit/EditContent +++ */
 .textarea-resizer {
     background:#eee url(images/resize-horizontal.gif) top center;
-	cursor:s-resize; /* css3 row-resize */ 
+	cursor:s-resize; /* css3 row-resize */
     font-size:1px;
-	height:6px; 
+	height:6px;
     line-height:6px;
     overflow:hidden;
 }
@@ -659,14 +658,14 @@ a.tool {
 a.tool:hover, .btn:hover {
 	background-color:#ddd !important;
 }
-#tools a.tool { 
-	border:none; 
+#tools a.tool {
+	border:none;
 	background-repeat:no-repeat;
 	background-image:url("images/editor-strip.gif");
 	background-color:transparent;
-	height:16px; 
+	height:16px;
 	width:16px;
-	text-indent:20px; 
+	text-indent:20px;
 	overflow:hidden;
 }
 
@@ -674,9 +673,9 @@ a.tool:hover, .btn:hover {
 #tbUNDO		{ background-position:0 -16px; width:auto !important;}
 
 /*#tbOUTLINE	{ background-position:0 0; width:auto !important;}
-#tbOUTLINE	{ 
+#tbOUTLINE	{
 	width:auto !important;
-	background-image:url("images/book_open.png") !important; 
+	background-image:url("images/book_open.png") !important;
 }
 */
 /*
@@ -684,9 +683,9 @@ label[for="edittoc"] {
 	background-repeat:no-repeat;
 	background-position:center left;
 	xxbackground-image:url("images/editor-strip.gif");
-	background-image:url("images/book_open.png") !important; 
+	background-image:url("images/book_open.png") !important;
 	background-color:transparent;
-	padding:2px 0 2px 20px; 
+	padding:2px 0 2px 20px;
 }
 */
 #tbH1 		{ background-position:0 -192px; }
@@ -744,14 +743,14 @@ label[for="edittoc"] {
 	height:150px;
 	list-style:none;
 	margin:0;
-	padding:0;	
+	padding:0;
 }
 #toctoc a {
 	display:block;
 	padding:0 0.5em;
 	cursor:pointer;
 	overflow:hidden;
-	white-space:nowrap;	
+	white-space:nowrap;
 }
 
 /* ie6 hack ensure moremenu remains properly aligned */
@@ -802,21 +801,21 @@ label[for="edittoc"] {
 	margin:0;
 	padding:0;
 }
-#findSuggestionMenu li { 
+#findSuggestionMenu li {
 	padding:0.25em 0.5em;
 	cursor:pointer;
 }
-#findSuggestionMenu .hover { 
+#findSuggestionMenu .hover {
 	background-color:rgba(0,0,0,0.5);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
 }
 /* ie6 hack */
-* html #findSuggestionMenu .hover { 
+* html #findSuggestionMenu .hover {
 	background-color:black;
 }
 /* ie7 hack */
-*:first-child+html #findSuggestionMenu .hover { 
+*:first-child+html #findSuggestionMenu .hover {
 	background-color:black;
 }
 
@@ -824,9 +823,9 @@ label[for="edittoc"] {
 /* +++ 440 Favorites +++ */
 /* fixme
 #collapseFavs {
-	position:absolute; 
-	margin-left:-1px; 
-	left:-0.5em; 
+	position:absolute;
+	margin-left:-1px;
+	left:-0.5em;
 	top:-1px;
 	width:0.5em;
 	height:100%;
@@ -912,7 +911,7 @@ label[for="edittoc"] {
 
 /* +++ 450 FindContent +++ */
 #details, #scope {
-	margin-left:2em; 
+	margin-left:2em;
 }
 .gBar {
 }
@@ -945,7 +944,7 @@ label[for="edittoc"] {
 	background-color:#f93;
 	color:black;
 	text-decoration:inherit;
-} 
+}
 
 /* +++ 455 Footer +++ */
 .copyright {
@@ -958,7 +957,7 @@ label[for="edittoc"] {
 /* +++ 460 Header +++ */
 .breadcrumbs {
 	font-size:90%;
-	padding:0 1.5em 1em 0;	 
+	padding:0 1.5em 1em 0;
 }
 
 /* +++ 465 InfoContent +++ */
@@ -966,13 +965,13 @@ label[for="edittoc"] {
 }
 #incomingLinks, #outgoingLinks, #externalLinks, #attachmentLinks, #versionhistory {
 	width:30%;
-	overflow:hidden;	
+	overflow:hidden;
 	margin-right:0.5em;
 	float:left;
-}  
+}
 #versionhistory td {
 	white-space:nowrap;
-}  
+}
 .pagination {
 	margin:0.25em;
 	padding:0.5em;
@@ -1028,7 +1027,7 @@ th.changenote, td.changenote {
 	white-space:nowrap;
 	float:none;
 }
-.pageactions li ul li.separator { 
+.pageactions li ul li.separator {
 	border-top:2px solid #ddd;
 }
 /* undo settings for nested information! */
@@ -1078,7 +1077,7 @@ a.action.logout {
 	padding:0.25em 0.5em;
 	text-decoration:none;
 	line-height:normal;
-	border:1px solid #ddd;		
+	border:1px solid #ddd;
 	background:#f9f9f9;
 	white-space:nowrap;
 }
@@ -1092,9 +1091,9 @@ a.action.more {
 }
 a.action.quick2top, a.action.quick2bottom {
  	overflow:hidden;
-	padding:0; 
+	padding:0;
 	text-indent:20px;
- 	width:20px; 
+ 	width:20px;
  	margin:0 0 0 2px;
 }
 a.action.quick2top {
@@ -1104,7 +1103,7 @@ a.action.quick2top {
 
 /*********/
 .popup ul {
-	position:absolute; 
+	position:absolute;
 	background:white;
 	border:2px solid #ddd;
 	padding:0.25em;
@@ -1121,7 +1120,7 @@ a.action.quick2top {
 }
 .popup a:hover {
 	background-color:#eee !important;
-} 
+}
 
 /* +++ 472 PageContent.jsp +++ */
 #pagecontent {
@@ -1135,19 +1134,19 @@ a.action.quick2top {
 	background-color:#ddd;
 	padding:0.5em;
 	margin:0.5em 0;
-}  
+}
 #sneakpreview {
-}  
+}
 #previewcontent {
-}  
+}
 .previewcontent {
 	background-image:url(images/preview.gif);
-}  
+}
 
 /* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
 
 /* +++ 485 SearchBox +++ */
-.spin { 
+.spin {
 	background:url(images/spin.gif) no-repeat;
 	width:16px;
 	height:16px;
@@ -1157,7 +1156,7 @@ a.action.quick2top {
 }
 #searchForm #query {
 	width:164px;
-	padding:2px 22px 2px 2px;	
+	padding:2px 22px 2px 2px;
 	vertical-align: middle;
 	color:#555;
 }
@@ -1166,13 +1165,13 @@ a.action.quick2top {
     top:5px;
 	right:3px;
 
-	margin:0; 
+	margin:0;
 	padding:0;
-	width:16px; 
+	width:16px;
 	height:16px;
-	border:none; 
+	border:none;
 	background: url(images/search.gif) no-repeat center;
-	overflow:hidden;	
+	overflow:hidden;
     cursor:pointer;
 }
 #searchboxMenu {
@@ -1196,19 +1195,19 @@ a.action.quick2top {
 	padding:0 0.5em;
 }
 
-#searchTools a:hover, #searchboxMenu li:hover { 
+#searchTools a:hover, #searchboxMenu li:hover {
 	background:#eee;
 }
 #searchboxMenu div {
 	margin:0.5em 0;
 }
-#searchTools { 
+#searchTools {
 	text-align:left;
 }
 
 /* +++ 490 ViewTemplate +++ */
 body.view {
-	/*background-image:white;*/ 
+	/*background-image:white;*/
 }
 
 
@@ -1252,13 +1251,13 @@ body.view {
 
 /* +++ 625 Table of contents plugin +++ */
 div.toc {
-	width:60%; 
+	width:60%;
 	float:left;
 	clear:left;
 }
 /* duplicate toc items links back to the first rendered table of contents */
 a.toc {
-	color:grey;	
+	color:grey;
 	padding:0.25em;
 }
 a.toc:hover {
@@ -1337,7 +1336,7 @@ a.toc:hover {
 	margin-left:0 !important;
 }
 .archiveyear:after {
-	content:" AD" 
+	content:" AD"
 }
 
 .weblogcommentstitle {
@@ -1359,7 +1358,7 @@ a.toc:hover {
 .recentchanges {
 	table-layout:fixed;
 } /*faster renderer */
-.recentchanges .changenote { 
+.recentchanges .changenote {
 	font-style:italic;
 }
 .recentchanges td {
@@ -1374,11 +1373,11 @@ a.toc:hover {
 }
 .recentchanges tr.odd td {
 	background-color:transparent;
-} 
+}
 
 
 /* +++ 800 JSPWiki JSP Taglibs +++ */
-   
+
 /* +++ 805 CalendarTag +++ */
 div.calendar {
 	border:1px solid black;
@@ -1401,9 +1400,9 @@ table.calendar tr.weekdays {
 }
 
 /* +++ 900 "Special-effects" JavaScript styles +++ */
-   
+
 /* +++ 910 Tabbed Pages +++ */
-/* use absolute position trick to avoid page bump when inserting tabmenu 
+/* use absolute position trick to avoid page bump when inserting tabmenu
  * "tabs" surrounds the actual tab-content :only border right-bottom-left
  * "tabmenu" visualises the actuals tabs :border-bottom to close the tabs box
  * "tabmenu a" for the actual tabs :border left-top-right to draw the tab
@@ -1427,7 +1426,7 @@ table.calendar tr.weekdays {
 .tabmenu {
 	padding:0 1em;
 	font-weight:bold;
-} 
+}
 /* nested tabs should not allow floated stuff to appear next to the tabmenu - ugh */
 .tabs .tabmenu {
 	clear:both;
@@ -1447,12 +1446,10 @@ table.calendar tr.weekdays {
 	margin:0 0 -1px -1px;
 	padding:0.25em 0.5em;
 	border:1px solid #ddd;
-	border-bottom:none;
 	color:gray;
 	background:#f9f9f9;
 	text-decoration:none;
 	cursor:pointer;
-	white-space:nowrap;
 	line-height:normal;
 }
 .tabmenu a:hover {
@@ -1489,7 +1486,7 @@ table.calendar tr.weekdays {
 .menu {
     clear:both; /* check out */
 	color:gray;
-	font-weight:bold; 
+	font-weight:bold;
 }
 .menu.top {
 	margin-left:0.5em; /* small left indent of first toggle */
@@ -1508,7 +1505,7 @@ table.calendar tr.weekdays {
 	cursor:pointer;
 	padding:0.25em 0.5em;
 }
-.menu.top .toggle { 
+.menu.top .toggle {
 	float:left;
 	margin:0 0 -1px -1px; /* adjacent toggle will stick: let 1px border overlap.*/
 	display:inline;
@@ -1523,7 +1520,7 @@ table.calendar tr.weekdays {
 	background:transparent;
 	cursor:default;
 	color:black;
-} 
+}
 .menu.top .toggle.active {
 	border-bottom:1px solid white;
 }
@@ -1532,29 +1529,29 @@ table.calendar tr.weekdays {
 }
 .menu.right .toggle.active {
 	border-left:1px solid white;
-} 
+}
 .tabbedAccordion {
 	padding:0.5em;
 }
 .leftAccordion, .rightAccordion {
-	margin-bottom:0.5em;	
+	margin-bottom:0.5em;
 }
 .leftAccordion .tab, .rightAccordion .tab {
 	border:1px solid #ddd !important;
 	margin:0 0 -2px 0; /* trick :: -2px to reveal top and bottom borders the tabs */
 	padding:0.25em 0.5em;
-} 
+}
 
 /* ie only hack no needed ?
 * html .togglemenu {
 	margin-top:1px;
-}  
+}
 */
 
 /* margin is not compatible with scrollHeigth used by accordion - replace it by padding */
 /*
-.tab h1, .tab h2, .tab h3, .tab h4, 
-.tab p, .tab pre, .tab blockquote, .tab label, 
+.tab h1, .tab h2, .tab h3, .tab h4,
+.tab p, .tab pre, .tab blockquote, .tab label,
 .tab ul, .tab ol, .tab dl, .xxtab hr {
 	margin:0 auto;
 	padding-top:0.5em;
@@ -1583,7 +1580,7 @@ table.calendar tr.weekdays {
 }
 .tip-tip {
 	color:white;
-	width:auto; /*240px;*/ 
+	width:auto; /*240px;*/
 	z-index:100;
 	font-size:90%;
 	background-color:rgba(0,0,0,0.7);
@@ -1636,7 +1633,7 @@ div.collapse li {
 	padding-left:1.5em;
 }
 /* ie7 hack */
-*:first-child+html .collapse .collapsebody, 
+*:first-child+html .collapse .collapsebody,
 *:first-child+html .collapsebox .collapse .collapsebody {
 	float:left;
 	padding-left:0.5em;
@@ -1648,7 +1645,7 @@ div.collapse li {
 }
 
 
-/* collapse icons */   
+/* collapse icons */
 .collapseBullet, .collapseOpen, .collapseClose {
 	clear:left;
 	float:left;
@@ -1668,7 +1665,7 @@ div.collapse li {
     clear:right; /* avoid clash with intern floated bullet */
 	border:1px solid #ddd;
 	margin:0 0 0.5em 0;
-}  
+}
 .collapsetitle {
 	margin:0;
 	padding:0.25em 0;
@@ -1796,7 +1793,7 @@ a.slimbox:hover {
 .categoryLink {
 	border-bottom:2px solid #545454;
 	text-decoration:none;
-} 
+}
 .categoryPopup {
 	color:white;
 	z-index:100;
@@ -1853,7 +1850,7 @@ a.slimbox:hover {
 	display:block;
 	padding:0 8px;
 }
-.categoryPopup .hover { 
+.categoryPopup .hover {
 	background-color:rgba(0,0,0,0.5);
 	-moz-border-radius:10px;
 	-webkit-border-radius:5px;
@@ -1869,7 +1866,7 @@ a.slimbox:hover {
 
 
 /* Pretty printing styles. Used with prettify.js. */
-pre.prettyprint {   
+pre.prettyprint {
 }
 
 .str {color: #489a1b; } /* string 080*/
