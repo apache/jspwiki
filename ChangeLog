@@ -1,3 +1,21 @@
+2009-08-30 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-149 - align with 2.8.3-svn-16
+                
+        * JSPWIKI-577: tabbed sections with many tabs with long names will float the 
+        tabs to a next line. Fixed the 'jumping' behavior of clicking this wide tabs,
+        which was caused by a superfluous bottom-border css style.
+
+        * Open/Close of collapsible boxes is now only possible by clicking the +/- icon.
+        Any clicks on the header-bar will not change the status of the 
+        collapsible box anymore. E.G. in the Info tab, when looking at page 
+        differences between 2 versions, you can now click the version drop-downs
+        without changing the status of the collapsible box.
+
+        * Implemented the standard css overflow treatment of the 'diff' body. Horizontal 
+        scroll-bars will only be shown when looking at wide content.
+        This is the same overflow treatment as the page content.
+
 2009-08-25 Dirk Frederickx <brushed@apache.org>
 
         * 3.0.0-svn-148
