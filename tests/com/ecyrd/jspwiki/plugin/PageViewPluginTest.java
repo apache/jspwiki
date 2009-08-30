@@ -160,11 +160,14 @@ public class PageViewPluginTest extends TestCase
         WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
         String result = testEngine.getHTML( contextPV, pageviews );
-        System.out.println( result );
+//        System.out.println( result );
 
         assertTrue( result.contains( "Test Page 03" ) );
 
         assertFalse( result.contains( "Test Page 04" ) );
+        
+        TestEngine.deleteTestPage( "TestPage03" );
+        TestEngine.deleteTestPage( "TestPage04" );
     }
 
 

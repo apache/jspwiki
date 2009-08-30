@@ -128,7 +128,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
     public void initialize( WikiEngine engine )
     {
 
-        log.error( "initializing PageViewPlugin" );
+        log.info( "initializing PageViewPlugin" );
 
         synchronized( this )
         {
@@ -148,7 +148,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
     private void cleanup()
     {
 
-        log.error( "cleaning up PageView Manager" );
+        log.info( "cleaning up PageView Manager" );
 
         c_singleton = null;
     }
@@ -212,7 +212,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         public synchronized void initialize( WikiEngine engine )
         {
 
-            log.error( "initializing PageView Manager" );
+            log.info( "initializing PageView Manager" );
 
             m_workDir = engine.getWorkDir();
 
@@ -246,7 +246,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
         private synchronized void handleShutdown()
         {
 
-            log.error( "handleShutdown: The counter store thread was shut down." );
+            log.info( "handleShutdown: The counter store thread was shut down." );
 
             cleanup();
 
@@ -281,7 +281,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                 if( event.getType() == WikiEngineEvent.SHUTDOWN )
                 {
 
-                    log.error( "Detected wiki engine shutdown" );
+                    log.info( "Detected wiki engine shutdown" );
                     handleShutdown();
                 }
             }
@@ -579,7 +579,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
             if( m_counters != null && m_storage != null )
             {
 
-                    log.error( "loadCounters" );
+                    log.warn( "loadCounters" );
                 synchronized( this )
                 {
 
@@ -623,7 +623,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
                     }
 
                 
-                        log.error( "loadCounters: counters.size=" + m_counters.size() );
+                        log.info( "loadCounters: counters.size=" + m_counters.size() );
                 }
             }
         }
@@ -637,8 +637,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
             if( m_counters != null && m_storage != null && m_dirty )
             {
 
-       
-                    log.error( "storeCounters: counters.size=" + m_counters.size() );
+                    log.info( "storeCounters: counters.size=" + m_counters.size() );
+                    
                 synchronized( this )
                 {
 
