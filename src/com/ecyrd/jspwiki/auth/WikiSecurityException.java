@@ -46,7 +46,7 @@ public class WikiSecurityException
     /**
      *  Constructs an exception with a supplied cause.
      *  @param msg the message to supply to the exception
-     *  @param the cause
+     *  @param cause the cause
      */
     public WikiSecurityException( String msg, Throwable cause )
     {

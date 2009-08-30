@@ -1,3 +1,17 @@
+2009-08-30 Harry Metske <metskem@apache.org>
+
+        * 2.8.3-svn-17
+                
+        * Introduced the new PageViewPlugin written by Andre van Dalen.
+        This plugin counts page views and presents the statistics on page views
+        See http://www.jspwiki.org/wiki/PageViewPlugin for the complete
+        documentation.
+        
+        * Minor javadoc error in WikiSecurityException
+        
+        * Commented out log4j logger stmt in jspwiki.properties.tmpl causing duplicate
+        log entries during tests
+        
 2009-08-30 Dirk Frederickx <brushed@apache.org>
 
         * 2.8.3-svn-16

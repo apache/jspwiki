@@ -26,6 +26,7 @@ public class AllTests extends TestCase
         suite.addTest( TableOfContentsTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );
         suite.addTest( RecentChangesPluginTest.suite() );
+        suite.addTest( PageViewPluginTest.suite() );
 
         return suite;
     }
