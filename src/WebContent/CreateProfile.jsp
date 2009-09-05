@@ -20,7 +20,7 @@
 --%>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.UserProfileActionBean" event="create" id="wikiActionBean" />
-<s:layout-render name="">
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <jsp:include page="${templates['CreateProfileContent.jsp']}" />
   </s:layout-component>
