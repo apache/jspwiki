@@ -462,7 +462,7 @@
     <attribute name="src"/>
     <attribute name="args" default=""/>   
     <sequential>
-      <java jar="${tests}/lib/yuicompressor-2.3.3.jar"
+      <java jar="${tests}/lib/yuicompressor-2.4.2.jar"
         output="${tmpdir}/compress/webdocs/@{src}"
         fork="true">
         <arg line="'${code.web}/@{src}' @{args}" />
