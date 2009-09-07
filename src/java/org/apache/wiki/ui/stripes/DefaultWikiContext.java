@@ -129,8 +129,8 @@ public class DefaultWikiContext implements WikiContext
             copy.m_variableMap = (HashMap<String, Object>) m_variableMap.clone();
             copy.m_request = m_request;
             copy.m_session = m_session;
-            copy.m_page = (WikiPage) m_page.clone();
-            copy.m_realPage = (WikiPage) m_realPage.clone();
+            copy.m_page = m_page == null ? null : (WikiPage) m_page.clone();
+            copy.m_realPage = m_realPage == null ? null : (WikiPage) m_realPage.clone();
             return copy;
         }
         catch( CloneNotSupportedException e )
