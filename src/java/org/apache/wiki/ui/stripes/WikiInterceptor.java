@@ -24,40 +24,43 @@ package org.apache.wiki.ui.stripes;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.action.RedirectResolution;
+import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.controller.*;
+
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.action.LoginActionBean;
-import org.apache.wiki.action.WikiActionBean;
-import org.apache.wiki.action.WikiContextFactory;
+import org.apache.wiki.action.*;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-
-import net.sourceforge.stripes.action.RedirectResolution;
-import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.controller.*;
+import org.apache.wiki.preferences.Preferences;
+import org.slf4j.MDC;
 
 /**
  * <p>
  * Stripes {@link net.sourceforge.stripes.controller.Interceptor} that
  * instantiates the correct WikiContext associated with JSPs, checks for access,
- * and redirects users if necessary. The interceptor executes three times: the first
- * time is after the first lifecycle state, <em>aka</em>
- * {@link  net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
+ * and redirects users if necessary. The interceptor executes three times: the
+ * first time is after the first lifecycle state, <em>aka</em>
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
  * but before the second stage.
  * {@link net.sourceforge.stripes.controller.LifecycleStage#HandlerResolution}.
  * The second time the interceptor executes is after the second lifecycle stage,
  * {@link net.sourceforge.stripes.controller.LifecycleStage#HandlerResolution}.
  * The third time the interceptor executes is after the third lifecycle stage,
  * aka
- * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation},
- * but before the fourth stage
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#BindingAndValidation}
+ * , but before the fourth stage
  * {@link net.sourceforge.stripes.controller.LifecycleStage#CustomValidation}.
  * See the
  * </p>
@@ -69,8 +72,8 @@ import net.sourceforge.stripes.controller.*;
  * </p>
  * <ul>
  * <li><code>wikiEngine</code> - the {@link org.apache.wiki.WikiEngine}</li>
- * <li><code>wikiSession</code> - the user's
- * {@link org.apache.wiki.WikiSession}</li>
+ * <li><code>wikiSession</code> - the user's {@link org.apache.wiki.WikiSession}
+ * </li>
  * <li><code>wikiActionBean</code> - the
  * {@link org.apache.wiki.action.WikiActionBean} injected by Stripes</li>
  * <li><code>wikiPage</code> - the {@link org.apache.wiki.api.WikiPage}
@@ -80,8 +83,8 @@ import net.sourceforge.stripes.controller.*;
  * <p>
  * After the intercept method fires, calling classes can obtain the saved
  * WikiActionBean by calling
- * {@link WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}. This
- * is the recommended method that JSP scriptlet code should use.
+ * {@link WikiInterceptor#findActionBean(javax.servlet.ServletRequest)}. This is
+ * the recommended method that JSP scriptlet code should use.
  * </p>
  * <p>
  * Because these objects are saved as attributes, they are available to JSPs as
@@ -89,11 +92,20 @@ import net.sourceforge.stripes.controller.*;
  * <code>${wikiSession}</code>, <code>${wikiActionBean}</code> and
  * <code>${wikiPage}</code>.
  * </p>
- * 
  */
 @Intercepts( { LifecycleStage.ActionBeanResolution, LifecycleStage.HandlerResolution, LifecycleStage.CustomValidation } )
 public class WikiInterceptor implements Interceptor
 {
+    /**
+     * Internal flag indicating whether the WikiEngine has been configured properly. 
+     */
+    private boolean m_isConfigured = false;
+    
+    /**
+     * Internal flag indicating whether the authentication Keychain has been unlocked.
+     */
+    private boolean m_isUnlocked = false;
+    
     private static final Logger log = LoggerFactory.getLogger( WikiInterceptor.class );
 
     /**
@@ -119,17 +131,34 @@ public class WikiInterceptor implements Interceptor
      */
     public Resolution intercept( ExecutionContext context ) throws Exception
     {
-        if( LifecycleStage.ActionBeanResolution.equals( context.getLifecycleStage() ) )
+        switch( context.getLifecycleStage() )
         {
-            return interceptAfterActionBeanResolution( context );
-        }
-        else if( LifecycleStage.HandlerResolution.equals( context.getLifecycleStage() ) )
-        {
-            return interceptAfterHandlerResolution( context );
-        }
-        else if( LifecycleStage.CustomValidation.equals( context.getLifecycleStage() ) )
-        {
-            return interceptAfterBindingAndValidation( context );
+            case RequestInit:
+            {
+                HttpServletRequest request = context.getActionBeanContext().getRequest();
+                WikiEngine engine = ((WikiActionBeanContext)context.getActionBeanContext()).getEngine();
+                MDC.put( engine.getApplicationName() + ":" + request.getRequestURI(), "WikiServletFilter" );
+                break;
+            }
+            case ActionBeanResolution:
+            {
+                return interceptAfterActionBeanResolution( context );
+            }
+            case HandlerResolution:
+            {
+                return interceptAfterHandlerResolution( context );
+            }
+            case CustomValidation:
+            {
+                return interceptAfterBindingAndValidation( context );
+            }
+            case RequestComplete:
+            {
+                HttpServletRequest request = context.getActionBeanContext().getRequest();
+                WikiEngine engine = ((WikiActionBeanContext)context.getActionBeanContext()).getEngine();
+                MDC.remove( engine.getApplicationName() + ":" + request.getRequestURI() );
+                break;
+            }
         }
         return null;
     }
@@ -137,9 +166,11 @@ public class WikiInterceptor implements Interceptor
     /**
      * After the Stripes event handler method has been identified, this method
      * sets the corresponding JSPWiki request context for the WikiContext.
-     * Because Stripes event handler methods correspond exactly one-to-one
-     * with pre-3.0 JSPWiki requests contexts, we allows Stripes to identify the
-     * handler method first, then make sure the WikiContext's context is synchronized.
+     * Because Stripes event handler methods correspond exactly one-to-one with
+     * pre-3.0 JSPWiki requests contexts, we allows Stripes to identify the
+     * handler method first, then make sure the WikiContext's context is
+     * synchronized.
+     * 
      * @param context the execution context
      * @return always returns <code>null</code>
      */
@@ -164,16 +195,76 @@ public class WikiInterceptor implements Interceptor
             String requestContext = eventInfo.getRequestContext();
             actionBean.getContext().setRequestContext( requestContext );
         }
+        
+        // If it's the VIEW context, set page to "front page" to be safe
+        if ( actionBean instanceof ViewActionBean )
+        {
+            WikiEngine engine = actionBean.getContext().getEngine();
+            ((ViewActionBean) actionBean).setPage( engine.getFrontPage( null ) );
+        }
+        
+        // Make sure the WikiEngine is configured
+        r = checkConfiguration( context );
+        if( r != null )
+        {
+            return r;
+        }
         return null;
+    }
+
+    /**
+     * After the {@link LifecycleStage#ActionBeanResolution} stage fires, this
+     * method intercepts all requests and redirects to the
+     * {@link org.apache.wiki.action.InstallActionBean} if the WikiEngine has
+     * not been configured yet.
+     */
+    protected Resolution checkConfiguration( ExecutionContext context ) throws Exception
+    {
+        // If already configured and unlocked, exit quickly.
+        if ( m_isConfigured && m_isUnlocked )
+        {
+            return null;
+        }
+        
+        // Is the wiki is already being installed, don't interrupt.
+        ActionBean actionBean = context.getActionBean();
+        if ( actionBean instanceof InstallActionBean )
+        {
+            return null;
+        }
+
+        // If base URL and admin password not set, redirect to Installer
+        ServletContext servletContext = context.getActionBeanContext().getServletContext();
+        WikiEngine engine = WikiEngine.getInstance( servletContext, null );
+        Properties props = engine.getWikiProperties();
+        boolean hasBaseUrl = isPropertySet( WikiEngine.PROP_BASEURL, props );
+        boolean hasAdminPassword = isPropertySet( InstallActionBean.PROP_ADMIN_PASSWORD_HASH, props );
+        if( hasBaseUrl && hasAdminPassword )
+        {
+            m_isConfigured = true;
+        }
+        else
+        {
+            return new RedirectResolution( InstallActionBean.class );
+        }
+
+        // These are not the droids you were looking for
+        return null;
+    }
+
+    private boolean isPropertySet( String name, Properties props )
+    {
+        String value = props.getProperty( name );
+        return value != null && value.length() > 0;
     }
 
     /**
      * After the Stripes
      * {@link net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
      * executes, this method injects the current WikiEngine, WikiSession and
-     * WikiActionBean into request scope, and returns <code>null</code>.
-     * After the objects are injected, downstream classes like WikiTagBase can
-     * use them. The attribute can also be accessed as variables using the JSP
+     * WikiActionBean into request scope, and returns <code>null</code>. After
+     * the objects are injected, downstream classes like WikiTagBase can use
+     * them. The attribute can also be accessed as variables using the JSP
      * Expression Language (example: <code>${wikiPage}</code>).
      * 
      * @param context the execution context
@@ -192,7 +283,7 @@ public class WikiInterceptor implements Interceptor
         {
             return r;
         }
-
+        
         // Retrieve the ActionBean, its ActionBeanContext, and HTTP request
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
         WikiActionBeanContext actionBeanContext = actionBean.getContext();
@@ -204,7 +295,7 @@ public class WikiInterceptor implements Interceptor
             WikiEngine engine = actionBeanContext.getEngine();
             WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
             actionBeanContext.setWikiSession( wikiSession );
-            
+
             // Stash WikiEngine as a request attribute (can be
             // used later as ${wikiEngine} in EL markup)
             request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, engine );
@@ -222,6 +313,9 @@ public class WikiInterceptor implements Interceptor
         // Stash the WikiContext
         WikiContextFactory.saveContext( request, actionBean.getContext() );
 
+        // Set up user preferences
+        Preferences.setupPreferences( request );
+        
         if( log.isDebugEnabled() )
         {
             log.debug( "WikiInterceptor resolved ActionBean: " + actionBean );
@@ -246,11 +340,11 @@ public class WikiInterceptor implements Interceptor
      * To determine if the user is allowed to access the target event method,
      * the method is examined to see if contains a
      * {@link org.apache.wiki.ui.stripes.HandlerPermission}) annotation that
-     * specifies the required {@link java.security.Permission}. If the user
-     * does not possess the Permission -- that is,
+     * specifies the required {@link java.security.Permission}. If the user does
+     * not possess the Permission -- that is,
      * {@link org.apache.wiki.auth.AuthorizationManager#checkPermission(WikiSession, Permission)}
-     * returns <code>false</code> -- this method returns a RedirectResolution
-     * to the login page, with all current parameters appended.
+     * returns <code>false</code> -- this method returns a RedirectResolution to
+     * the login page, with all current parameters appended.
      * </p>
      * 
      * @param context the execution context

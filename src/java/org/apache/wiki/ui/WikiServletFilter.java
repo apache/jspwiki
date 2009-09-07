@@ -21,12 +21,10 @@
 package org.apache.wiki.ui;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
@@ -35,8 +33,6 @@ import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-import org.apache.wiki.preferences.Preferences;
-import org.slf4j.MDC;
 
 
 /**
@@ -57,9 +53,7 @@ import org.slf4j.MDC;
 public class WikiServletFilter implements Filter
 {
     protected static final Logger log = LoggerFactory.getLogger( WikiServletFilter.class );
-    protected WikiEngine m_engine = null;
-    private boolean m_wikiInitialized = false;
-    private FilterConfig m_config =null;
+    private WikiEngine m_engine = null;
 
     /**
      *  Creates a Wiki Servlet Filter.
@@ -77,23 +71,8 @@ public class WikiServletFilter implements Filter
      */
     public void init( FilterConfig config ) throws ServletException
     {
-        // save the reference to config, we need it when we lazy init the wiki in initWiki()
-        m_config = config;
     }
 
-    /**
-     *  This filter should initialize after the StripesFilter has set up the WikiRuntimeConfiguration. 
-     *  To make sure this happens, we do lazy initialization here.
-     */
-    private void initWiki()
-    {
-        log.info( "servlet filter " + this.getClass().getName() + " initializing" );
-        ServletContext context = m_config.getServletContext();
-        m_engine = WikiEngine.getInstance( context, null );
-        m_wikiInitialized = true;
-        log.warn( "servlet filter " + this.getClass().getName() + " initialized" );
-    }
-    
     /**
      * Destroys the WikiServletFilter.
      */
@@ -115,67 +94,33 @@ public class WikiServletFilter implements Filter
     */
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException
     {
-        // one time init first
-        if( !m_wikiInitialized )
-            initWiki();
-        
         //
         //  Sanity check; it might be true in some conditions, but we need to know where.
         //
         if( chain == null )
         {
-            throw new ServletException("FilterChain is null, even if it should not be.  Please report this to the jspwiki development team.");
+            throw new ServletException("FilterChain is null, but it should not be!");
         }
         
-        if( m_engine == null )
+        // Lazily obtain the WikiEngine
+        if ( m_engine == null )
         {
-            PrintWriter out = response.getWriter();
-            out.print("<html><head><title>Fatal problem with JSPWiki</title></head>");
-            out.print("<body>");
-            out.print("<h1>JSPWiki has not been started</h1>");
-            out.print("<p>JSPWiki is not running.  This is probably due to a configuration error in your jspwiki.properties file, ");
-            out.print("or a problem with your servlet container.  Please double-check everything before issuing a bug report ");
-            out.print("at jspwiki.org.</p>");
-            out.print("<p>We apologize for the inconvenience.  No, really, we do.  We're trying to ");
-            out.print("JSPWiki as easy as we can, but there is only so much we have time to test ");
-            out.print("platforms.</p>");
-            out.print( "<p>Please go to the <a href='Install.jsp'>installer</a> to continue.</p>" );
-            out.print("</body></html>");
-            return;
-        }   
+            ServletContext servletContext = ((HttpServletRequest)request).getSession().getServletContext();
+            m_engine = WikiEngine.getInstance( servletContext, null );
+            if ( m_engine == null )
+            {
+                throw new ServletException( "WikiEngine was not started!" );
+            }
+        }
         
         // If we haven't done so, wrap the request
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        // Set up user preferences
-        Preferences.setupPreferences( httpRequest );
-        
-        // Set the character encoding
-        httpRequest.setCharacterEncoding( m_engine.getContentEncoding() );
-        
-        if( m_engine.getBaseURL().length() == 0 && !httpRequest.getRequestURI().endsWith("Install.jsp") )
-        {
-            PrintWriter out = response.getWriter();
-            
-            out.print( "<html><head><title>JSPWiki installation start</title></head>" );
-            out.print( "<body>" );
-            out.print( "<h1>JSPWiki installation</h1>" );
-            out.print( "<p>Hello!  It appears that this is your first jspwiki installation." );
-            out.print( "(Or, you have removed jspwiki.baseURL from your property file.) " );
-            out.print( "Therefore, you will need to start the installation process. " );
-            out.print( "Please <a href='Install.jsp'>continue to the installer</a>." );
-            out.print( "</p>");
-            out.print( "<p>If you just used the installer, then please restart your servlet container to get rid of this message.</p>" );
-            out.print("</body></html>");            
-            return;
-        }
-        
         if ( !isWrapped( request ) )
         {
             // Prepare the WikiSession
             try
             {
                 // Execute the login stack
+                HttpServletRequest httpRequest = (HttpServletRequest) request;
                 m_engine.getAuthenticationManager().login( httpRequest );
                 WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 
@@ -194,14 +139,11 @@ public class WikiServletFilter implements Filter
 
         try
         {
-            MDC.put( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI(), "WikiServletFilter" );
-            
-            chain.doFilter( httpRequest, response );
+            chain.doFilter( request, response );
         }
         finally
         {
             m_engine.release(); // No longer used until next request.
-            MDC.remove( m_engine.getApplicationName() + ":" + ((HttpServletRequest) request).getRequestURI() );
         }
 
     }
