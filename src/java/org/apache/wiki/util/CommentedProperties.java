@@ -192,7 +192,7 @@ public class CommentedProperties extends Properties
 
     private void writeText( BufferedWriter writer, Object entry, EscapeMode mode ) throws IOException
     {
-        String e = entry.toString();
+        String e = entry == null ? "" : entry.toString();
         boolean leadingSpaces = true;
         for( int i = 0; i < e.length(); i++ )
         {
