@@ -1552,6 +1552,16 @@ public class WikiEngine
     }
 
     /**
+     * Restarts the WikiEngine.
+     */
+    public void restart() throws WikiException
+    {
+        shutdown();
+        m_properties = PropertyReader.loadWebAppProps( m_servletContext );
+        initialize( m_properties );
+    }
+
+    /**
      * Protected method that signals that the WikiEngine will be
      * shut down by the servlet container. It is called by
      * {@link WikiServlet#destroy()}. When this method is called,
