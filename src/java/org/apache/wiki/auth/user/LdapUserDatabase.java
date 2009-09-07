@@ -183,10 +183,7 @@ public class LdapUserDatabase extends AbstractUserDatabase
      */
     public boolean validatePassword( String loginName, String password )
     {
-        String userPattern = m_cfg.loginIdPattern;
-        String username = userPattern.replace( "{0}", loginName );
-
-        Hashtable<String, String> env = m_cfg.newJndiEnvironment( username, password );
+        Hashtable<String, String> env = m_cfg.newJndiEnvironment( loginName, password );
         try
         {
             new InitialLdapContext( env, null );

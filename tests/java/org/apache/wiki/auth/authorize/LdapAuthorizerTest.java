@@ -75,7 +75,7 @@ public class LdapAuthorizerTest extends TestCase
         props.put( AuthorizationManager.PROP_AUTHORIZER, LdapAuthorizer.class.getCanonicalName() );
         props.put( LdapConfig.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_IS_IN_ROLE_FILTER, "(&(&(objectClass=groupOfUniqueNames)(cn={0}))(uniqueMember={1}))" );
-        props.put( LdapConfig.PROPERTY_BIND_DN, "uid=Fred,ou=people,dc=jspwiki,dc=org" );
+        props.put( LdapConfig.PROPERTY_BIND_DN, "Fred" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "test-keychain" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
 

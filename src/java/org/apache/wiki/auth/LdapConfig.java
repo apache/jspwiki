@@ -53,42 +53,43 @@ import org.freshcookies.security.Keychain;
  * </p>
  * <ul>
  * <li>{@link #PROPERTY_CONNECTION_URL} - the connection string for the LDAP
- * server, for example <code>ldap://ldap.jspwiki.org:389/</code>.</li>
+ * server, for example {@code ldap://ldap.jspwiki.org:389/}.</li>
  * <li>{@link #PROPERTY_LOGIN_ID_PATTERN} - optional string pattern indicating
  * how the login id should be formatted into a credential the LDAP server will
  * understand. The exact credential pattern varies by LDAP server. OpenLDAP
  * expects login IDs that match a distinguished name. Active Directory, on the
  * other hand, requires just the "short" login ID that is not in DN format. The
  * user ID supplied during the login will be substituted into the
- * <code>{0}</code> token in this pattern. Valid examples of login ID patterns
- * include <code>uid={0},ou=users,dc=jspwiki,dc=org</code> (for OpenLDAP) and
- * <code>{0}</code> (for Active Directory).</li>
+ * {@code \{0\}} token in this pattern, and the user base will be 
+ * substituted into the {@code \{1\}} token. Valid examples of login ID patterns
+ * include {@code uid=\{0\},\{1\}} (for OpenLDAP) and
+ * {@code \{0\}} (for Active Directory).</li>
  * <li>{@link #PROPERTY_USER_BASE} - the distinguished name of the base location
  * where user objects are located. This is generally an organizational unit (OU)
- * DN, such as <code>ou=people,dc=jspwiki,dc=org</code>. The user base and all
+ * DN, such as {@code ou=people,dc=jspwiki,dc=org}. The user base and all
  * of its subtrees will be searched. For directories that contain multiple OUs
  * where users are located, use a higher-level base location (e.g.,
- * <code>dc=jspwiki,dc=org</code>).</li>
+ * {@code dc=jspwiki,dc=org}).</li>
  * <li>{@link #PROPERTY_USER_FILTER} - an RFC 2254 search filter string used for
  * locating the actual user object within the user base. The user ID supplied
- * during the login will be substituted into the <code>{0}</code> token in this
+ * during the login will be substituted into the {@code \{0\}} token in this
  * filter, if it contains one. Only the first match will be selected, so it is
  * important that this filter selects unique objects. For example, if the user
- * filter is <code>(&(objectClass=inetOrgPerson)(uid={0}))</code> and the user
- * name supplied during login is <code>fflintstone</code>, the the first object
+ * filter is {@code (&(objectClass=inetOrgPerson)(uid=\{0\}))} and the user
+ * name supplied during login is {@code fflintstone}, the the first object
  * within {@link #PROPERTY_USER_BASE} that matches the filter
- * <code>(&(objectClass=inetOrgPerson)(uid=fflintstone))</code> will be
+ * {@code (&(objectClass=inetOrgPerson)(uid=fflintstone))} will be
  * selected. A suitable value for this property that works with Active Directory
- * 2000 and later is <code>(&(objectClass=person)(sAMAccountName={0}))</code>.</li>
+ * 2000 and later is {@code (&(objectClass=person)(sAMAccountName=\{0\}))}.</li>
  * <li>{@link #PROPERTY_SSL} - Optional parameter that specifies whether to use
- * SSL when connecting to the LDAP server. Values like <code>true</code> or
- * <code>on</code> indicate that SSL should be used. If this parameter is not
+ * SSL when connecting to the LDAP server. Values like {@code true} or
+ * {@code on} indicate that SSL should be used. If this parameter is not
  * supplied, SSL will not be used.</li>
  * <li>{@link #PROPERTY_AUTHENTICATION} - Optional parameter that specifies the
  * type of authentication method to be used. Valid values include
- * <code>simple</code> for plaintext username/password, and
- * <code>DIGEST-MD5</code> for digested passwords. Note that if SSL is not used,
- * for safety reasons this method will default to <code>DIGEST-MD5</code> to
+ * {@code simple} for plaintext username/password, and
+ * {@code DIGEST-MD5} for digested passwords. Note that if SSL is not used,
+ * for safety reasons this method will default to {@code DIGEST-MD5} to
  * prevent password interception.</li>
  * </ul>
  * <p>
@@ -134,19 +135,19 @@ public class LdapConfig
     /**
      * Property that supplies the filter for finding users within the role base
      * that possess a given role, e.g. {@code
-     * (&(objectClass=groupOfUniqueNames)(cn= 0})(uniqueMember={1}))} .
+     * (&(objectClass=groupOfUniqueNames)(cn=\{0\})(uniqueMember=\{1\}))} .
      */
     public static final String PROPERTY_IS_IN_ROLE_FILTER = "ldap.isInRoleFilter";
 
     /**
      * Property that specifies the pattern for the username used to log in to
      * the LDAP server. This pattern maps the username supplied at login time by
-     * the user to a username format the LDAP server can recognized. Usually
-     * this is a pattern that produces a full DN, for example {@code uid= 0}
-     * ,ou=people,dc=jspwiki,dc=org}. However, sometimes (as with Active
+     * the user to a username format the LDAP server can recognized. The Usually
+     * this is a pattern that produces a full DN, for example {@code uid=\{0\}
+     * ,\{1\}}. However, sometimes (as with Active
      * Directory 2003 and later) only the userid is used, in which case the
-     * principal will simply be {@code 0} . The default value if not supplied is
-     * {@code 0} .
+     * principal will simply be \{0\} . The default value if not supplied is
+     * \{0\} .
      */
     public static final String PROPERTY_LOGIN_ID_PATTERN = "ldap.loginIdPattern";
 
@@ -209,6 +210,7 @@ public class LdapConfig
         // OpenLDAP defaults
         options = new HashMap<String, String>();
         options.put( PROPERTY_IS_IN_ROLE_FILTER, "(&(&(objectClass=groupOfUniqueNames)(cn={0}))(uniqueMember={1}))" );
+        options.put( PROPERTY_LOGIN_ID_PATTERN, "uid={0},{1}" );
         options.put( PROPERTY_USER_LOGIN_NAME_ATTRIBUTE, "uid" );
         options.put( PROPERTY_USER_OBJECT_CLASS, "inetOrgPerson" );
         options.put( PROPERTY_USER_FILTER, "(&(objectClass=inetOrgPerson)(uid={0}))" );
@@ -522,7 +524,8 @@ public class LdapConfig
         {
             authentication = parsedAuthentication;
         }
-        loginIdPattern = getProperty( props, PROPERTY_LOGIN_ID_PATTERN, defaultLoginIdPattern );
+        String parsedLoginIdPattern = getProperty( props, PROPERTY_LOGIN_ID_PATTERN, defaultLoginIdPattern );
+        loginIdPattern = userBase == null ? parsedLoginIdPattern : parsedLoginIdPattern.replace( "{1}", userBase );
 
         // Optional user object attributes
         userObjectClass = getProperty( props, PROPERTY_USER_OBJECT_CLASS, defaultUserObjectClass );
@@ -613,6 +616,12 @@ public class LdapConfig
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put( Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory" );
 
+        // Create fully qualified username
+        if ( loginIdPattern != null && username != null )
+        {
+            username = loginIdPattern.replace( "{0}", username );
+        }
+
         // LDAP server to authenticate to
         env.put( Context.PROVIDER_URL, connectionUrl );
 
@@ -620,11 +629,10 @@ public class LdapConfig
         if( username != null )
         {
             env.put( Context.SECURITY_PRINCIPAL, username );
-            env.put( Context.SECURITY_CREDENTIALS, password );
         }
-        else
+        if ( password != null )
         {
-
+            env.put( Context.SECURITY_CREDENTIALS, password );
         }
 
         // Use SSL?
@@ -653,7 +661,7 @@ public class LdapConfig
             throw new KeyStoreException( "LdapConfig was initialized without a keychain!" );
         }
         KeyStore.Entry password = m_keychain.getEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY );
-        if( password instanceof Keychain.Password )
+        if( password != null && password instanceof Keychain.Password )
         {
             return ((Keychain.Password) password).getPassword();
         }
