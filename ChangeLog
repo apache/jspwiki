@@ -1,3 +1,30 @@
+2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-152
+
+        * [JSPWIKI-599]: fixed NPEs in DefaultWikiContext.
+
+        * Fixed bug in CommentedProperties.
+
+        * Install.jsp received the Stripes treatment and moved to
+        admin/Installer.jsp. Key new features include the ability to
+        configure and test LDAP user/role lookups dynamically via
+        AJAX. Additional security configuration enhancements
+        are planned, for example JavaMail live config/testing.
+        InstallActionBean also features "instant setup" --
+        changes can be applied WITHOUT restarting the webapp.
+
+        * On a related note, WikiEngine gains a new method restart()
+        which does what you'd imagine. InstallActionBean relies
+        on restart() to make "instant setup" possible.
+
+        * As a result of the new install process, certain
+        non-public functions moved from WikiServletFilter into
+        WikiInterceptor.
+        
+        * Fixed small bugs in Ldap support code and
+        added sample keychain to tests/etc.
+
 2009-09-06 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-151
