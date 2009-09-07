@@ -81,7 +81,7 @@ public class DefaultURLConstructor
         c_urlPatterns.put( WikiContext.CREATE_GROUP, "%uNewGroup.jsp" );
         c_urlPatterns.put( WikiContext.ERROR, "%uError.jsp" );
         c_urlPatterns.put( WikiContext.FIND, "%uSearch.jsp" );
-        c_urlPatterns.put( WikiContext.INSTALL, "%uInstall.jsp" );
+        c_urlPatterns.put( WikiContext.INSTALL, "%uadmin/Install.jsp" );
         c_urlPatterns.put( WikiContext.LOGIN, "%uLogin.jsp?redirect=%n" );
         c_urlPatterns.put( WikiContext.LOGOUT, "%uLogout.jsp" );
         c_urlPatterns.put( WikiContext.MESSAGE, "%uMessage.jsp" );

@@ -59,7 +59,11 @@ public class SpamInterceptor implements Interceptor
     public Resolution intercept( ExecutionContext context ) throws Exception
     {
         // Execute all other interceptors first
-        context.proceed();
+        Resolution r = context.proceed();
+        if ( r != null )
+        {
+            return r;
+        }
 
         // Is the target handler protected by a @SpamProtect annotation?
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();

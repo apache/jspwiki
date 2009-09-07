@@ -556,7 +556,7 @@ Section: ReusableStyles
 .additinfo {
 	background-color:#e0e0ff/*#INFO#*/;
 }
-.diffnote, .information, .warning, .error {
+div.diffnote, div.information, div.warning, div.error {
 	display:block;
 	clear:both;
 	margin:1em 0;
@@ -573,7 +573,7 @@ td .information, td .warning, td .error {
 .warning {
 	background:#ffff80/*#WARNING*/ url(images/exclamation.gif) 8px 1em no-repeat;
 }
-.error {
+div.error {
 	background:#ffe0e0/*#ERROR#*/ url(images/error.gif) 8px 1em no-repeat;
 	color:#c00;
 }
@@ -2677,3 +2677,22 @@ Style: ColorDialog
 	top:-8px;
 	left:-1px;
 }
+
+/*
+Style: formcontainer -- for table-less forms. Elements can simply be
+                        laid out as <label><input|select> and they will be
+                        placed into a pseudo-2-column layout without
+                        the need for using tables. If a "description"
+                        for the form element is needed, a div with
+                        class="description" can be added immediately
+                        after the input or select tags.
+*/
+div.formcontainer {width:100%; margin:1em;}
+div.formcontainer div {padding:0.2em 0px; vertical-align:top;}
+div.formcontainer label {font-weight:bold; width:13em; float:left; margin:0em 0.25em 0 0.25em;}
+div.formcontainer input,select {margin: 0.25em 0 0.25em 14em;}
+div.formcontainer label+input,label+select {margin:0 0 0 0;}
+div.formcontainer * div.description {margin-left:14em;}
+div.formcontainer input[type='submit']{margin:0;}
+label.error{background:none; color:#c00;}
+input.error{background:#ffe0e0;}
