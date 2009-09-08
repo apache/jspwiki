@@ -44,10 +44,9 @@
       <div id="page">
         <div id="pagecontent">
         
-          <h1><fmt:message key="install.jsp.intro.title" /></h1>
-          <p><fmt:message key="install.jsp.intro.p1" /></p>
-          <p><fmt:message key="install.jsp.intro.p2" /></p>
-          <p><fmt:message key="install.jsp.intro.p3" /></p>
+          <h1><fmt:message key="install.title" /></h1>
+          <p><fmt:message key="install.intro.p1" /></p>
+          <p><fmt:message key="install.intro.p2" /></p>
           
           <!-- Any messages or errors? -->
           <div class="instructions"><s:messages /></div>
@@ -57,52 +56,65 @@
             <s:form beanclass="org.apache.wiki.action.InstallActionBean">
             
               <!-- Admin password, application name, base URL and page directory -->
-              <h3><fmt:message key="install.jsp.basics.title" /></h3>
+              <h3><fmt:message key="install.basics" /></h3>
               <div>
                 <s:label for="adminPassword" />
                 <s:text name="adminPassword" size="20" />
                 <s:errors field="adminPassword" />
-                <div class="description"><fmt:message key="adminPassword.description" /></div>
+                <div class="description"><fmt:message key="install.adminPassword.description" /></div>
               </div>
               
               <div>
                 <s:label for="properties.jspwiki.jspwiki_applicationName" />
                 <s:text name="properties.jspwiki.jspwiki_applicationName" size="20" />
                 <s:errors field="properties.jspwiki.jspwiki_applicationName" />
-                <div class="description"><fmt:message key="applicationName.description" /></div>
+                <div class="description"><fmt:message key="install.applicationName.description" /></div>
               </div>
               <div>
                 <s:label for="properties.jspwiki.jspwiki_baseURL" />
                 <s:text name="properties.jspwiki.jspwiki_baseURL" size="40" />
                 <s:errors field="properties.jspwiki.jspwiki_baseURL" />
-                <div class="description"><fmt:message key="baseURL.description" /></div>
+                <div class="description"><fmt:message key="install.baseURL.description" /></div>
               </div>
               <div>
-                <s:label for="properties.jspwiki.jspwiki_fileSystemProvider_pageDir" />
-                <s:text name="properties.jspwiki.jspwiki_fileSystemProvider_pageDir" size="50" />
-                <s:errors field="properties.jspwiki.jspwiki_fileSystemProvider_pageDir" />
-                <div class="description"><fmt:message key="pageDir.description" /></div>
+                <s:label for="properties.priha.priha_provider_defaultProvider_directory" />
+                <s:text name="properties.priha.priha_provider_defaultProvider_directory" size="50" />
+                <s:errors field="properties.priha.priha_provider_defaultProvider_directory" />
+                <div class="description"><fmt:message key="install.pageDir.description" /></div>
               </div>
               
-              <!-- Advanced settings: logging/work directories -->
-              <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
+              <!-- Advanced settings: security, logging/work directories -->
+              <h3><fmt:message key="install.advanced" /></h3>
               <div>
-                <s:label for="properties.log4j.log4j_appender_FileLog_File" />
-                <s:text name="properties.log4j.log4j_appender_FileLog_File" size="50" />
-                <s:errors field="properties.log4j.log4j_appender_FileLog_File" />
-                <div class="description"><fmt:message key="logFile.description" /></div>
+                <s:label for="logDirectory" />
+                <s:text name="logDirectory" size="50" />
+                <s:errors field="logDirectory" />
+                <div class="description"><fmt:message key="install.logDirectory.description" /></div>
               </div>
               <div>
                 <s:label for="properties.jspwiki.jspwiki_workDir" />
                 <s:text name="properties.jspwiki.jspwiki_workDir" size="40" />
                 <s:errors field="properties.jspwiki.jspwiki_workDir" />
-                <div class="description"><fmt:message key="workDir.description" /></div>
+                <div class="description"><fmt:message key="install.workDir.description" /></div>
+              </div>
+              <div>
+                <s:label for="properties.jspwiki.jspwiki_userdatabase" />
+                <s:select id="userdatabase" name="properties.jspwiki.jspwiki_userdatabase">
+                  <s:option value="org.apache.wiki.auth.user.XMLUserDatabase">XML (default)</s:option>
+                  <s:option value="org.apache.wiki.auth.user.LdapUserDatabase">LDAP</s:option>
+                </s:select>
+                <s:errors field="properties.jspwiki.jspwiki_userdatabase" />
+                <div class="description"><fmt:message key="install.userdatabase.description" /></div>
+              </div>
+              <div>
+                <s:button id="ldap.showConfig" name="ldap.showConfig"
+                  onclick="$('ldapDivConfig').style.display='block'; $('ldap.showConfig').style.display='none';" />
               </div>
             
-              <!-- LDAP -->
-              <h3><fmt:message key="install.ldap.title" /></h3>
-              <p><fmt:message key="install.ldap.description" /></p>
-              <div id="security.ldap">
+              <!-- LDAP config -->
+              <div id="ldapDivConfig" style="display:none;">
+                <h3><fmt:message key="install.ldap" /></h3>
+                <p><fmt:message key="install.ldap.description" /></p>
                 <div>
                   <s:label for="properties.jspwiki.ldap_config" />
                   <s:select id="ldap.config" name="properties.jspwiki.ldap_config">
@@ -136,16 +148,16 @@
                 <div class="description" id="ldapConnResults"></div>
                 <!-- LDAP authentication settings and test button -->
                 <div>
-                  <s:label for="properties.jspwiki.ldap_bindDN" />
-                  <s:text name="properties.jspwiki.ldap_bindDN" size="40" />
-                  <s:errors field="properties.jspwiki.ldap_bindDN" />
-                  <div class="description"><fmt:message key="ldap.bindDN.description" /></div>
+                  <s:label for="properties.jspwiki.ldap_bindUser" />
+                  <s:text name="properties.jspwiki.ldap_bindUser" size="40" />
+                  <s:errors field="properties.jspwiki.ldap_bindUser" />
+                  <div class="description"><fmt:message key="ldap.bindUser.description" /></div>
                 </div>
                 <div>
-                  <s:label for="bindDNpassword" />
-                  <s:text name="bindDNpassword" size="20" />
-                  <s:errors field="bindDNpassword" />
-                  <div class="description"><fmt:message key="ldap.bindDNpassword.description" /></div>
+                  <s:label for="bindPassword" />
+                  <s:text name="bindPassword" size="20" />
+                  <s:errors field="bindPassword" />
+                  <div class="description"><fmt:message key="ldap.bindPassword.description" /></div>
                 </div>
                 <s:button name="testLdapAuthentication" onclick="Stripes.executeEvent(form, this.name, 'ldapAuthResults');" />
                 <div class="description" id="ldapAuthResults"></div>
@@ -170,11 +182,7 @@
               </div>
               
               <!-- Save the configuration -->
-              <p>
-                <fmt:message key="install.configure.description">
-                  <fmt:param>${wikiActionBean.properties.jspwiki.path}</fmt:param>
-                </fmt:message>
-              <p>
+              <p><fmt:message key="install.configure.description" /><p>
               <s:submit name="save" />
 
             </s:form>

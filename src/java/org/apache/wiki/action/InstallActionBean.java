@@ -48,9 +48,11 @@ import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.LdapConfig;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.LdapAuthorizer;
+import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.user.LdapUserDatabase;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.util.CommentedProperties;
 import org.apache.wiki.util.CryptoUtil;
@@ -286,38 +288,6 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         }
 
         /**
-         * Simply sanitizes any path which contains backslashes (sometimes
-         * Windows users may have them) by expanding them to double-backslashes
-         * 
-         * @param key the key of the setting to sanitize
-         */
-        private void sanitizePath( String key )
-        {
-            String s = m_settings.get( key );
-            s = TextUtil.replaceString( s, "\\", "\\\\" );
-            s = s.trim();
-            m_settings.put( key, s );
-        }
-
-        /**
-         * Simply sanitizes any URL which contains backslashes (sometimes
-         * Windows users may have them)
-         * 
-         * @param key the key of the setting to sanitize
-         */
-        private void sanitizeURL( String key )
-        {
-            String s = m_settings.get( key );
-            s = TextUtil.replaceString( s, "\\", "/" );
-            s = s.trim();
-            if( !s.endsWith( "/" ) )
-            {
-                s = s + "/";
-            }
-            m_settings.put( key, s );
-        }
-
-        /**
          * Converts a key from the format Stripes can use into normal properties
          * form.
          * 
@@ -342,7 +312,11 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
 
     private static final String CONFIG_WORK_DIR = "jspwiki_workDir";
 
-    private static final String CONFIG_PAGE_DIR = "jspwiki_fileSystemProvider_pageDir";
+    private static final String CONFIG_PAGE_DIR = "priha_provider_defaultProvider_directory";
+
+    private static final String CONFIG_USERDATABASE = "jspwiki_userdatabase";
+
+    private static final String CONFIG_AUTHORIZER = "jspwiki_authorizer";
 
     private static final String CONFIG_LDAP_SSL = "ldap_ssl";
 
@@ -360,7 +334,7 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         }
     }
 
-    private String m_bindDNpassword = null;
+    private String m_bindPassword = null;
 
     private String m_adminPassword = null;
 
@@ -368,7 +342,7 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
 
     private File m_keychainPath = null;
 
-    private String m_keychainPassword = null;
+    private String m_logDirectory = null;
 
     /**
      * PropertiesMap object for configuring {@code jspwiki.properties}
@@ -404,13 +378,23 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
     }
 
     /**
-     * Returns the LDAP bind-DN password.
+     * Returns the LDAP binding password.
      * 
      * @return the password
      */
-    public String getBindDNpassword()
+    public String getBindPassword()
     {
-        return m_bindDNpassword;
+        return m_bindPassword;
+    }
+
+    /**
+     * Returns the directory where log files are stored.
+     * 
+     * @return the directory
+     */
+    public String getLogDirectory()
+    {
+        return m_logDirectory;
     }
 
     public Map<String, PropertiesMap<String, String>> getProperties()
@@ -471,17 +455,40 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         log4j.load();
         m_properties.put( "log4j", log4j );
 
-        // Create a new keychain with random password
-        m_keychainPassword = TextUtil.generateRandomPassword() + TextUtil.generateRandomPassword();
-        jspwiki.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "keychain" );
-        m_keychainPath = new File( path, "/WEB-INF/keychain" );
-        m_keychain = new Keychain();
-        m_keychain.load( null, m_keychainPassword.toCharArray() );
+        // Load priha.properties
+        PropertiesMap<String, String> priha;
+        priha = new PropertiesMap<String, String>( new File( path, "/WEB-INF/classes/priha.properties" ) );
+        priha.load();
+        m_properties.put( "priha", priha );
+
+        // Get the log directory
+        m_logDirectory = log4j.get( CONFIG_LOG_FILE );
+        if( m_logDirectory == null )
+        {
+            m_logDirectory = System.getProperty( "java.io.tmpdir" );
+        }
+        File logs = new File( m_logDirectory );
+        if( logs.exists() && !logs.isDirectory() )
+        {
+            logs = logs.getParentFile();
+            if( logs == null )
+            {
+                logs = new File( System.getProperty( "java.io.tmpdir" ) );
+            }
+        }
+        m_logDirectory = logs.getAbsolutePath();
+
+        // Load the Keychain (or create new one with random password)
+        initKeychain( path, jspwiki );
 
         // Set some sensible defaults
+        if( !jspwiki.containsKey( CONFIG_USERDATABASE ) )
+        {
+            jspwiki.put( CONFIG_USERDATABASE, XMLUserDatabase.class.getName() );
+        }
         if( !jspwiki.containsKey( CONFIG_WORK_DIR ) )
         {
-            jspwiki.put( CONFIG_WORK_DIR, "/tmp/" );
+            jspwiki.put( CONFIG_WORK_DIR, System.getProperty( "java.io.tmpdir" ) );
         }
         if( !jspwiki.containsKey( PropertiesMap.escapedKey( WikiEngine.PROP_ENCODING ) ) )
         {
@@ -511,38 +518,55 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
     @WikiRequestContext( "install" )
     public Resolution install()
     {
-        // Has admin password been set?
-        if( !getAdminExists() )
-        {
-            List<Message> messages = getContext().getMessages();
-            messages.add( new LocalizableMessage( "install.jsp.install.msg.admin.notexists" ) );
-        }
-
         return new ForwardResolution( "/admin/Install.jsp" );
     }
 
+    /**
+     * Saves the properties files with updated settings, and restarts the wiki.
+     * 
+     * @return if successful, always returns a {@link ForwardResolution} to
+     *         {@code /admin/InstallSuccess.jsp}.
+     * @throws Exception
+     */
     @HandlesEvent( "save" )
     public Resolution save() throws Exception
     {
         // Sanitize any paths
         PropertiesMap<String, String> jspwiki = m_properties.get( "jspwiki" );
-        jspwiki.sanitizeURL( CONFIG_BASE_URL );
-        jspwiki.sanitizePath( CONFIG_PAGE_DIR );
-        jspwiki.sanitizePath( CONFIG_WORK_DIR );
+        jspwiki.put( CONFIG_BASE_URL, sanitizeURL( jspwiki.get( CONFIG_BASE_URL ) ) );
+        jspwiki.put( CONFIG_WORK_DIR, sanitizeDir( jspwiki.get( CONFIG_WORK_DIR ) ) );
         PropertiesMap<String, String> log4j = m_properties.get( "log4j" );
-        log4j.sanitizePath( CONFIG_LOG_FILE );
+        log4j.put( CONFIG_LOG_FILE, sanitizeDir( m_logDirectory ) + "jspwiki.log" );
+        PropertiesMap<String, String> priha = m_properties.get( "priha" );
+        priha.put( CONFIG_PAGE_DIR, sanitizeDir( priha.get( CONFIG_PAGE_DIR ) ) );
+
+        // Set the correct userdatabase and authorizer
+        String userdatabase = jspwiki.get( CONFIG_USERDATABASE );
+        if( LdapUserDatabase.class.getName().equals( userdatabase ) )
+        {
+            jspwiki.put( CONFIG_AUTHORIZER, LdapAuthorizer.class.getName() );
+        }
+        else
+        {
+            jspwiki.put( CONFIG_AUTHORIZER, WebContainerAuthorizer.class.getName() );
+        }
 
         // Hash the admin password
         String passwordHash = CryptoUtil.getSaltedPassword( m_adminPassword.getBytes() );
         jspwiki.put( CONFIG_ADMIN_PASSWORD_HASH, passwordHash );
 
         // Save the keychain
-        m_keychain.store( new FileOutputStream( m_keychainPath ), m_keychainPassword.toCharArray() );
-        jspwiki.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, m_keychainPassword );
+        String password = jspwiki.get( AuthenticationManager.PROP_KEYCHAIN_PASSWORD );
+        if( password == null )
+        {
+            throw new WikiSecurityException( "Keychain password missing; this should not happen." );
+        }
+        m_keychain.store( new FileOutputStream( m_keychainPath ), password.toCharArray() );
 
         // Save each properties file
         jspwiki.store();
         log4j.store();
+        priha.store();
 
         // Restart the WikiEngine
         WikiEngine engine = getContext().getEngine();
@@ -556,52 +580,63 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
      * 
      * @param password the admin password
      */
-    @Validate( required = true, minlength = 16 )
+    @Validate( required = true, on = "save", minlength = 16 )
     public void setAdminPassword( String password )
     {
         m_adminPassword = password;
     }
 
     /**
-     * Sets the LDAP bind-DN password. Optional when LDAP is selected for
+     * Sets the LDAP binding password. Optional when LDAP is selected for
      * authentication and user/role storage.
      * 
      * @param password
      */
     @Validate( required = false )
-    public void setBindDNpassword( String password ) throws KeyStoreException
+    public void setBindPassword( String password ) throws KeyStoreException
     {
-        m_bindDNpassword = password;
+        m_bindPassword = password;
         if( password != null )
         {
-            KeyStore.Entry keypass = new Keychain.Password( m_bindDNpassword );
-            m_keychain.setEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY, keypass );
+            KeyStore.Entry keypass = new Keychain.Password( m_bindPassword );
+            m_keychain.setEntry( LdapConfig.KEYCHAIN_LDAP_BIND_PASSWORD, keypass );
         }
+    }
+
+    /**
+     * Sets the directory where log files are stored.
+     * 
+     * @param dir the log directory
+     */
+    @Validate( required = true, on = "save" )
+    public void setLogDirectory( String dir )
+    {
+        m_logDirectory = dir;
     }
 
     /**
      * @param properties
      */
     @ValidateNestedProperties( {
-                                @Validate( field = "jspwiki.jspwiki_applicationName", required = true, on = "save", label = "install.installer.default.appname" ),
-                                @Validate( field = "jspwiki.jspwiki_baseURL", required = true, on = "save", label = "install.installer.validate.baseurl" ),
-                                @Validate( field = "jspwiki.jspwiki_fileSystemProvider_pageDir", required = true, on = "save", label = "install.installer.default.pagedir" ),
-                                @Validate( field = "jspwiki.jspwiki_workDir", required = true, on = "save", label = "install.installer.validate.workdir" ),
-                                @Validate( field = "log4j.log4j_appender_FileLog_File", required = true, on = "save", label = "install.installer.validate.logdir" ),
+                                @Validate( field = "jspwiki.jspwiki_applicationName", required = true, on = "save" ),
+                                @Validate( field = "jspwiki.jspwiki_baseURL", required = true, on = "save" ),
+                                @Validate( field = "priha.priha_provider_defaultProvider_directory", required = true, on = "save" ),
+                                @Validate( field = "jspwiki.jspwiki_workDir", required = true, on = "save" ),
+                                @Validate( field = "jspwiki.jspwiki_userdatabase", required = true, on = "save" ),
                                 @Validate( field = "jspwiki.ldap_connectionURL", required = true, on = { "testLdapConnection",
                                                                                                         "testLdapAuthentication",
                                                                                                         "testLdapUsers",
-                                                                                                        "testLdapRoles" }, label = "properties.jspwiki.ldap_connectionURL" ),
-                                @Validate( field = "jspwiki.ldap_bindDN", required = true, on = "testLdapAuthentication", label = "properties.jspwiki.ldap_bindDN" ),
-                                @Validate( field = "jspwiki.ldap_userBase", required = true, on = "testLdapUsers", label = "properties.jspwiki.ldap_userBase" ),
-                                @Validate( field = "jspwiki.ldap_roleBase", required = true, on = "testLdapRoles", label = "properties.jspwiki.ldap_roleBase" ) } )
+                                                                                                        "testLdapRoles" } ),
+                                @Validate( field = "jspwiki.ldap_bindUser", required = true, on = "testLdapAuthentication" ),
+                                @Validate( field = "jspwiki.ldap_userBase", required = true, on = "testLdapUsers" ),
+                                @Validate( field = "jspwiki.ldap_roleBase", required = true, on = "testLdapRoles" ) } )
     public void setProperties( Map<String, PropertiesMap<String, String>> properties )
     {
         m_properties = properties;
     }
 
     /**
-     * AJAX event method that tests LDAP authentication based on the bind-DN
+     * AJAX event method that tests LDAP authentication based on the bind-user
      * settings, returning any results as an array of JavaScript strings.
      * 
      * @return the results
@@ -610,7 +645,7 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
     @HandlesEvent( "testLdapAuthentication" )
     public Resolution testLdapAuthentication() throws WikiSecurityException
     {
-        // Call the main connection method (the bind-DN property is
+        // Call the main connection method (the bindUser property is
         // required for this method, though, so we are guaranteed to
         // do this with a username/password
         return testLdapConnection();
@@ -652,22 +687,13 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
      * @throws WikiSecurityException
      */
     @HandlesEvent( "testLdapRoles" )
-    public Resolution testLdapRoleLoolup() throws WikiSecurityException
+    public Resolution testLdapRoleLookup() throws WikiSecurityException
     {
         WikiEngine engine = getContext().getEngine();
         PropertiesMap<String, String> jspwiki = m_properties.get( "jspwiki" );
         List<String> messages = new ArrayList<String>();
         try
         {
-            // Make sure keychain is unlocked
-            Keychain keychain = engine.getAuthenticationManager().getKeychain();
-            if( !keychain.isLoaded() )
-            {
-                keychain.load( null, m_keychainPassword.toCharArray() );
-                Keychain.Password password = new Keychain.Password( m_bindDNpassword );
-                keychain.setEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY, password );
-            }
-
             // Initialize a new user authorizer
             Authorizer authorizer = new LdapAuthorizer();
             authorizer.initialize( engine, jspwiki.m_props );
@@ -710,15 +736,6 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         List<String> messages = new ArrayList<String>();
         try
         {
-            // Make sure keychain is unlocked
-            Keychain keychain = engine.getAuthenticationManager().getKeychain();
-            if( !keychain.isLoaded() )
-            {
-                keychain.load( null, m_keychainPassword.toCharArray() );
-                Keychain.Password password = new Keychain.Password( m_bindDNpassword );
-                keychain.setEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY, password );
-            }
-
             // Initialize a new user database
             UserDatabase db = new LdapUserDatabase();
             db.initialize( engine, jspwiki.m_props );
@@ -751,8 +768,53 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
     }
 
     /**
-     * Initializes an LDAP connection, using the bind-DN username and password
-     * if supplied.
+     * Initializes the Keychain by attempting to unlock it first based on
+     * current {@code jspwiki.properties} settings. If this fails, a new
+     * Keychain is created at {@code /WEB-INF/keychain}. It is not persisted to
+     * disk until {@link #save()} is called.
+     * 
+     * @param path the webapp root path
+     * @param jspwiki the PropertiesMap containing the current {@code
+     *            jspwiki.properties}.
+     * @throws IOException if the new Keychain cannot be loaded (this should
+     *             never be thrown under normal conditions)
+     * @throws NoSuchAlgorithmException if the new Keychain cannot be loaded
+     *             (this should never be thrown under normal conditions)
+     */
+    private void initKeychain( String path, PropertiesMap<String, String> jspwiki ) throws IOException, NoSuchAlgorithmException
+    {
+        AuthenticationManager authMgr = getContext().getEngine().getAuthenticationManager();
+        m_keychain = authMgr.getKeychain();
+        boolean keychainUnlocked = false;
+        String password = null;
+        if( !m_keychain.isLoaded() )
+        {
+            password = jspwiki.get( AuthenticationManager.PROP_KEYCHAIN_PASSWORD );
+            if( password != null )
+            {
+                try
+                {
+                    authMgr.unlockKeychain( password );
+                    keychainUnlocked = true;
+                }
+                catch( WikiSecurityException e )
+                {
+                }
+            }
+        }
+        if( !keychainUnlocked )
+        {
+            password = TextUtil.generateRandomPassword() + TextUtil.generateRandomPassword();
+            m_keychain.load( null, password.toCharArray() );
+        }
+        jspwiki.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "keychain" );
+        jspwiki.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, password );
+        m_keychainPath = new File( path, "/WEB-INF/keychain" );
+    }
+
+    /**
+     * Initializes an LDAP connection, using the bind-user and password if
+     * supplied.
      * 
      * @return the initialized connection
      * @throws NamingException if a connection cannot be made to the LDAP server
@@ -763,18 +825,55 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         PropertiesMap<String, String> jspwiki = m_properties.get( "jspwiki" );
         LdapConfig config = LdapConfig.getInstance( m_keychain, jspwiki.m_props, new String[0] );
         Hashtable<String, String> env;
-        if( !jspwiki.containsKey( "ldap_bindDN" ) )
+        if( !jspwiki.containsKey( "ldap_bindUser" ) )
         {
             env = config.newJndiEnvironment();
             messages.add( "Binding as anonymous user." );
         }
         else
         {
-            String username = jspwiki.get( "ldap_bindDN" );
-            env = config.newJndiEnvironment( username, m_bindDNpassword );
+            String username = jspwiki.get( "ldap_bindUser" );
+            env = config.newJndiEnvironment( username, m_bindPassword );
             Object principal = env.get( Context.SECURITY_PRINCIPAL );
             messages.add( "Binding with principal: " + principal.toString() );
         }
         return new InitialLdapContext( env, null );
     }
+
+    /**
+     * Simply sanitizes any path which contains backslashes (sometimes Windows
+     * users may have them) by expanding them to double-backslashes
+     * 
+     * @param key the key of the setting to sanitize
+     */
+    private String sanitizeDir( String dir )
+    {
+        String s = dir;
+        s = TextUtil.replaceString( s, "\\", "\\\\" );
+        s = s.trim();
+        if( !s.endsWith( "\\" ) || !s.endsWith( "/" ) )
+        {
+            s = s + "/";
+        }
+        return s;
+    }
+
+    /**
+     * Simply sanitizes any URL which contains backslashes (sometimes Windows
+     * users may have them)
+     * 
+     * @param key the key of the setting to sanitize
+     */
+    private String sanitizeURL( String url )
+    {
+        String s = url;
+        s = TextUtil.replaceString( s, "\\", "/" );
+        s = s.trim();
+        if( !s.endsWith( "/" ) )
+        {
+            s = s + "/";
+        }
+        return s;
+    }
+
 }

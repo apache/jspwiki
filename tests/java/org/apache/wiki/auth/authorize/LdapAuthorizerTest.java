@@ -49,7 +49,7 @@ public class LdapAuthorizerTest extends TestCase
         Keychain keychain = new Keychain();
         keychain.load( null, "keychain-password".toCharArray() );
         Keychain.Password password = new Keychain.Password( "password" );
-        keychain.setEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY, password );
+        keychain.setEntry( LdapConfig.KEYCHAIN_LDAP_BIND_PASSWORD, password );
         File file = new File("tests/etc/WEB-INF/test-keychain" );
         OutputStream stream = new FileOutputStream( file );
         keychain.store( stream, "keychain-password".toCharArray() );
@@ -75,7 +75,7 @@ public class LdapAuthorizerTest extends TestCase
         props.put( AuthorizationManager.PROP_AUTHORIZER, LdapAuthorizer.class.getCanonicalName() );
         props.put( LdapConfig.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_IS_IN_ROLE_FILTER, "(&(&(objectClass=groupOfUniqueNames)(cn={0}))(uniqueMember={1}))" );
-        props.put( LdapConfig.PROPERTY_BIND_DN, "Fred" );
+        props.put( LdapConfig.PROPERTY_BIND_USER, "Fred" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "test-keychain" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
 
@@ -246,7 +246,7 @@ public class LdapAuthorizerTest extends TestCase
         // Set the Authorizer properties
         props.put( AuthorizationManager.PROP_AUTHORIZER, LdapAuthorizer.class.getCanonicalName() );
         props.put( LdapConfig.PROPERTY_ROLE_BASE, "OU=Distribution Lists,OU=.Global,OU=forrester,DC=forrester,DC=loc" );
-        props.put( LdapConfig.PROPERTY_BIND_DN, "ajaquith" );
+        props.put( LdapConfig.PROPERTY_BIND_USER, "ajaquith" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "/Users/arj/workspace/ldap/forrester" );
         props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
         
@@ -261,7 +261,7 @@ public class LdapAuthorizerTest extends TestCase
         Keychain keychain = new Keychain();
         InputStream stream = new FileInputStream( new File( "/Users/arj/workspace/ldap/forrester") );
         keychain.load( stream, "keychain-password".toCharArray() );
-        Keychain.Password password = (Keychain.Password)keychain.getEntry( LdapConfig.KEYCHAIN_BIND_DN_ENTRY );
+        Keychain.Password password = (Keychain.Password)keychain.getEntry( LdapConfig.KEYCHAIN_LDAP_BIND_PASSWORD );
         
         //
         // 2. Test the LdapAuthorizer

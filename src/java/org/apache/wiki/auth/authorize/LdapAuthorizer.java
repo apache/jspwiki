@@ -23,19 +23,20 @@ import org.apache.wiki.auth.user.LdapUserDatabase;
 /**
  * <p>
  * Authorizer whose Roles are supplied by LDAP groups. This Authorizer is often
- * used in conjunction with {@link LdapUserDatabase} for authentication. This can
- * be done either as part of the web container authentication configuration or
- * (more likely) as part of JSPWiki's own native authentication configuration.
+ * used in conjunction with {@link LdapUserDatabase} for authentication. This
+ * can be done either as part of the web container authentication configuration
+ * or (more likely) as part of JSPWiki's own native authentication
+ * configuration.
  * </p>
  * <p>
  * When {@link #initialize(WikiEngine, Properties)} executes, a new instance of
  * {@link org.apache.wiki.auth.LdapConfig} is created and configured based on
- * the settings in <code>jspwiki.properties</code>. The properties that are
- * required in order for LdapAuthorizer to function correctly are
+ * the settings in {@code jspwiki.properties}. The properties that are required
+ * in order for LdapAuthorizer to function correctly are
  * {@link LdapConfig#PROPERTY_CONNECTION_URL},
  * {@link LdapConfig#PROPERTY_ROLE_BASE} and
  * {@link LdapConfig#PROPERTY_IS_IN_ROLE_FILTER}. Additional properties that can
- * be set include {@link LdapConfig#PROPERTY_BIND_DN},
+ * be set include {@link LdapConfig#PROPERTY_BIND_USER},
  * {@link LdapConfig#PROPERTY_AUTHENTICATION} and
  * {@link LdapConfig#PROPERTY_SSL}. See the documentation for that LdapConfig
  * for more details.
@@ -176,35 +177,33 @@ public class LdapAuthorizer implements Authorizer
     /**
      * {@inheritDoc}
      * <p>
-     * This implementation returns <code>true</code> when the user login
-     * Principal contained in the WikiSession's Subject belongs to an LDAP group
-     * found in the role-base DN. The login Principal is assumed to be a valid
-     * DN. The scope searched is provided by
-     * {@link LdapConfig#PROPERTY_ROLE_BASE}, and the filter to match roles is
-     * provided by {@link LdapConfig#PROPERTY_IS_IN_ROLE_FILTER}.
+     * This implementation returns {@code true} when the user login Principal
+     * contained in the WikiSession's Subject belongs to an LDAP group found in
+     * the role-base DN. The login Principal is assumed to be a valid JSPWiki
+     * login name and is transformed into a full DN before the search by
+     * consulting {@link LdapConfig#getUserDn(String)}. The scope searched is
+     * provided by {@link LdapConfig#PROPERTY_ROLE_BASE}, and the filter to
+     * match roles is provided by {@link LdapConfig#PROPERTY_IS_IN_ROLE_FILTER}.
      * </p>
      * <p>
      * For example, consider a WikiSession whose subject contains three user
-     * principals, the two built-in roles <code>ALL</code> and
-     * <code>AUTHENTICATED</code>, and a group principal <code>MyGroup</code>:
+     * principals, the two built-in roles {@code ALL} and {@code AUTHENTICATED},
+     * and a group principal {@code MyGroup}. We assume the user names are
+     * stored in the user-base DN {@code ou=people,dc=jspwiki,dc=org}:
      * </p>
-     * <blockquote>
-     * <code>WikiPrincipal.LOGIN_NAME "uid=biggie.smalls,ou=people,dc=jspwiki,dc=org"<br/>
+     * <blockquote> {@code WikiPrincipal.LOGIN_NAME "biggie.smalls"<br/>
      * WikiPrincipal.FULL_NAME "Biggie Smalls"<br/>
      * WikiPrincipal.WIKI_NAME "BiggieSmalls"<br/>
-     * Role.ALL
-     * Role.AUTHENTICATED
-     * GroupPrincipal "MyGroup"</code></blockquote>
+     * Role.ALL Role.AUTHENTICATED GroupPrincipal "MyGroup"}</blockquote>
      * <p>
-     * In this case, the DN
-     * <code>uid=biggie.smalls,ou=people,dc=jspwiki,dc=org</code> would be
-     * examined for membership in an LDAP group whose common name matches
-     * <code>role</code>. Given an is-in-role filter of
-     * <code>(&(objectClass=groupOfUniqueNames)(cn={0})(uniqueMember={1}))</code>
-     * , an LDAP search would be constructed to find objects whose
-     * <code>objectClass</code> was of type <code>groupOfUniqueNames</code> and
-     * whose <code>uniqueMember<code> attribute contained the value
-     * <code>uid=biggie.smalls,ou=people,dc=jspwiki,dc=org</code>.
+     * In this case, the DN {@code
+     * uid=biggie.smalls,ou=people,dc=jspwiki,dc=org} would be examined for
+     * membership in an LDAP group whose common name matches {@code role}. Given
+     * an is-in-role filter of {@code (&(objectClass=groupOfUniqueNames)(cn=\
+     * 0\})(uniqueMember=\{1\}))}, an LDAP search would be constructed to find
+     * objects whose {@code objectClass} was of type {@code groupOfUniqueNames}
+     * and whose {@code uniqueMember} attribute contained the value {@code
+     * uid=biggie.smalls,ou=people,dc=jspwiki,dc=org}.
      * </p>
      */
     public boolean isUserInRole( WikiSession session, Principal role )

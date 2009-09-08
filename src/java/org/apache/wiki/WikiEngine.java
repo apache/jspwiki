@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.Principal;
@@ -36,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.time.StopWatch;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.api.FilterException;
@@ -1556,7 +1559,19 @@ public class WikiEngine
      */
     public void restart() throws WikiException
     {
+        // Shut down the wiki
         shutdown();
+        
+        // Restart logging
+        // FIXME: use introspection instead
+        LogManager.resetConfiguration();
+        ClassLoader cl = this.getClass().getClassLoader();
+        URL log4jprops = cl.getResource( "log4j.properties" );
+        if (log4jprops != null) {
+            PropertyConfigurator.configure(log4jprops);
+        }
+        
+        // Restart the wiki
         m_properties = PropertyReader.loadWebAppProps( m_servletContext );
         initialize( m_properties );
     }

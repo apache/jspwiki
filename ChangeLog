@@ -1,3 +1,10 @@
+2009-08-16 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-153
+
+        * Fixing a few stray bugs, and a bit of tidying up: resource
+        bundles, comments, method names, etc.
+        
 2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-152
