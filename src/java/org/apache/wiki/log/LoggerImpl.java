@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 public class LoggerImpl implements org.apache.wiki.log.Logger, Serializable
 {
     private static final long serialVersionUID = 1L;
-    Logger m_slf4jLogger = null;
+    Logger m_slf4jLogger;
     
     /**
      * @param loggerName The name of the SFL4J Logger to find

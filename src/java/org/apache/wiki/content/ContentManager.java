@@ -673,11 +673,11 @@ public class ContentManager implements WikiEventListener
 
                 m_pageLocks.put( page.getName(), lock );
 
-                log.debug( "Locked page "+page.getName()+" for "+user);
+                log.debug( "Lock set : "+ lock);
             }
             else
             {
-                log.debug( "Page "+page.getName()+" already locked by "+lock.getLocker() );
+                log.debug( "The lock  " + lock + " already exists" );
                 lock = null; // Nothing to return
             }
         }
@@ -698,7 +698,7 @@ public class ContentManager implements WikiEventListener
         {
             m_pageLocks.remove( lock.getPage() );
 
-            log.debug( "Unlocked page "+lock.getPage() );
+            log.debug( "Released lock " + lock );
         }
 
         fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage(), NO_ARGS );
@@ -1069,10 +1069,7 @@ public class ContentManager implements WikiEventListener
                     {
                         i.remove();
 
-                        log.debug( "Reaped lock: "+p.getPage()+
-                                   " by "+p.getLocker()+
-                                   ", acquired "+p.getAcquisitionTime()+
-                                   ", and expired "+p.getExpiryTime() );
+                        log.error( "Reaped lock: " + p );
                     }
                 }
             }

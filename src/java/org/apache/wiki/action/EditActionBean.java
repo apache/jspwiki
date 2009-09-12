@@ -109,11 +109,8 @@ public class EditActionBean extends AbstractPageActionBean
         HttpSession session = getContext().getRequest().getSession();
         WikiEngine engine = getContext().getEngine();
         PageLock lock = (PageLock) session.getAttribute( LOCK_PREFIX + pagereq );
-        if( lock != null )
-        {
-            engine.getContentManager().unlockPage( lock );
-            session.removeAttribute( LOCK_PREFIX + pagereq );
-        }
+        engine.getContentManager().unlockPage( lock );
+        session.removeAttribute( LOCK_PREFIX + pagereq );
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", pagereq );
     }
 
@@ -426,10 +423,14 @@ public class EditActionBean extends AbstractPageActionBean
             {
                 engine.saveText( wikiContext, m_text );
             }
+            PageLock lock = (PageLock) session.getAttribute( LOCK_PREFIX + pagereq );
+            engine.getContentManager().unlockPage( lock );
             session.removeAttribute( LOCK_PREFIX +page.getName() );
         }
         catch( DecisionRequiredException ex )
         {
+            PageLock lock = (PageLock) session.getAttribute( LOCK_PREFIX + pagereq );
+            engine.getContentManager().unlockPage( lock );
             session.removeAttribute( LOCK_PREFIX +page.getName() );
             return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", "ApprovalRequiredForPageChanges" );
         }

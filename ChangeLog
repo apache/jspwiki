@@ -1,3 +1,11 @@
+2009-09-12 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-154
+        
+        * JSPWIKI-598: Fixed EditActionBean to also release the PageLock
+        after saving a page.
+        * Fixed a few checkstyle warnings 
+        
 2009-08-16 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-153

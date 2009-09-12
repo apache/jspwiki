@@ -114,6 +114,22 @@ public class PageLock
 
         return (time / (1000L * 60)) + 1;
     }
+
+    /**
+     * Returns true if the lock is expired.
+     * 
+     * @return true if lock is expired
+     */
+    public boolean isExpired()
+    {
+        return m_lockExpiry.before( new Date() );
+    }
     
-    // FIXME: Should really have a isExpired() method as well.
+    /**
+     * Returns all available information on the lock
+     */
+    public String toString() 
+    {
+        return "pagename:" + getPage() + ",locker:" + getLocker() + ",acquired:" + getAcquisitionTime() + ",expiry:" + getExpiryTime();
+    }
 }

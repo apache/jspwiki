@@ -55,7 +55,7 @@ public final class LoggerFactory
     private static boolean c_isLog4jPresent = true;
     
     //     it appears that after shutting down JSPWiki, we get new requests for Loggers, to prevent this we "close the door" :
-    private static boolean c_isLoggerFactoryClosed= false;
+    private static boolean c_isLoggerFactoryClosed;
 
     private static final String SLF4J_LOG4J_ADAPTER_CLASS = "org.slf4j.impl.Log4jLoggerAdapter";
 
@@ -63,7 +63,7 @@ public final class LoggerFactory
 
     private static HashMap<String, LoggerImpl> c_registeredLoggers = new HashMap<String, LoggerImpl>( 200 );
     
-    private static String c_wikiName = null;
+    private static String c_wikiName;
 
     /**
      *  Attempt to install the SLF4J bridge handlers.  However, since those
