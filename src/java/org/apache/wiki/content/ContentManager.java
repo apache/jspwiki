@@ -20,6 +20,8 @@
  */
 package org.apache.wiki.content;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,6 +39,7 @@ import javax.jcr.version.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -234,11 +237,32 @@ public class ContentManager implements WikiEventListener
             
             if( "priha".equals(repositoryName) )
             {
+                // FIXME: Should really use reflection to find this class - this requires
+                //        an unnecessary compile-time presence of priha.jar.
                 try
                 {
-                    // FIXME: Should really use reflection to find this class - this requires
-                    //        an unnecessary compile-time presence of priha.jar.
-                    m_repository = RepositoryManager.getRepository();
+                    // Try loading priha.properties from the classpath
+                    Properties prihaProps = new Properties();
+                    InputStream in = null;
+                    boolean propsLoaded = false;
+                    try
+                    {
+                        ServletContext servletContext = engine.getServletContext();
+                        in = servletContext.getResourceAsStream( "/WEB-INF/classes/priha.properties" );
+                        if ( in != null )
+                        {
+                            prihaProps.load( in );
+                            m_repository = RepositoryManager.getRepository( prihaProps );
+                            propsLoaded = true;
+                        }
+                    }
+                    catch( IOException ioe ) { }
+                    
+                    // Fallback: just use the default repository
+                    if ( !propsLoaded )
+                    {
+                        m_repository = RepositoryManager.getRepository();
+                    }
                 }
                 catch( ConfigurationException e1 )
                 {

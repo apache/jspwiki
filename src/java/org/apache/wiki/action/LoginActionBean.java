@@ -280,7 +280,6 @@ public class LoginActionBean extends AbstractActionBean
 
         // The user hasn't logged in yet, so send them to the login page
         ForwardResolution r = new ForwardResolution( "/Login.jsp" );
-        r.addParameter( "tab", "logincontent" );
         return r;
     }
 

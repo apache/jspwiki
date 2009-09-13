@@ -482,6 +482,10 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         initKeychain( path, jspwiki );
 
         // Set some sensible defaults
+        if( !jspwiki.containsKey( CONFIG_BASE_URL ) )
+        {
+            jspwiki.put( CONFIG_BASE_URL, "http://localhost:8080/JSPWiki" );
+        }
         if( !jspwiki.containsKey( CONFIG_USERDATABASE ) )
         {
             jspwiki.put( CONFIG_USERDATABASE, XMLUserDatabase.class.getName() );
@@ -501,6 +505,11 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         if( !jspwiki.containsKey( CONFIG_ADMIN_PASSWORD_HASH ) )
         {
             m_adminPassword = TextUtil.generateRandomPassword() + TextUtil.generateRandomPassword();
+        }
+        if ( !priha.containsKey( CONFIG_PAGE_DIR ) )
+        {
+            String pageDir = sanitizeDir( System.getProperty( "java.io.tmpdir" ) ) + "priha/fileprovider";
+            priha.put( CONFIG_PAGE_DIR, pageDir );
         }
 
         return null;
@@ -567,6 +576,9 @@ public class InstallActionBean extends AbstractActionBean implements ValidationE
         jspwiki.store();
         log4j.store();
         priha.store();
+
+        // Flush the WikiSession
+        getContext().getWikiSession().invalidate();
 
         // Restart the WikiEngine
         WikiEngine engine = getContext().getEngine();
