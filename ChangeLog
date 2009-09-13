@@ -1,3 +1,37 @@
+2009-09-13 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-155
+
+        * Fixed bug preventing re-init of Priha repository after installation.
+        "Instant install" using Priha for JCR, and LDAP or XML for auth/user
+        storage now works as expected.
+
+        * The "superuser" (su) feature has been implemented. This user can do anything,
+        and can log in even when the UserManager is not working. The password is
+        hashed and stored in jspwiki.properties.
+
+        * Fixed WikiSession/SessionMonitor caching problem that was preventing
+        logins after "instant install" WikiEngine restarts.
+
+        * Fixed bug in JCRWikiPage preventing attachments from being listed.
+        Attachment uploads and downloads work again.
+        
+        * Fixed Parser/Renderer bug that made them allergic to WikiContexts that
+        do not have "pages" (e.g., UserPreferences). Because WikiContexts are
+        *not* guaranteed to have pages in 3.0, this was important to fix.
+        Fixed related bug in TranslateTag; we now render the body content by calling
+        RenderingManager directly, rather than inefficiently channeling it through
+        WikiEngine (and looking up nonexistent cached documents, etc.).
+
+        * Fiddly tweaks to make bunches of compiler warnings/verification errors
+        go away.
+
+        * Upgraded Stripes to 1.5.2-beta, which fixes an important layout bug.
+        Added a WikiPageFormatter class that will render WikiPage objects passed
+        to Stripes tags as the page name, rather than contents of toString().
+        
+        * SearchBox and a few other JSPs received the Stripes forms-tag treatment.
+
 2009-09-12 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-154
@@ -6,14 +40,14 @@
         after saving a page.
         * Fixed a few checkstyle warnings 
         
-2009-08-16 Andrew Jaquith <ajaquith AT apache DOT org>
+2009-09-08 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-153
 
         * Fixing a few stray bugs, and a bit of tidying up: resource
         bundles, comments, method names, etc.
         
-2009-08-15 Andrew Jaquith <ajaquith AT apache DOT org>
+2009-09-07 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-152
 
