@@ -32,9 +32,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.rpc.json.JSONRPCManager;
@@ -49,7 +47,7 @@ import org.apache.wiki.rpc.json.JSONRPCManager;
  *  web.xml for the wiki web application.
  *  </p>
  */
-public class SessionMonitor implements HttpSessionListener, ServletContextListener
+public class SessionMonitor implements HttpSessionListener, ServletContextListener, WikiEventListener
 {
     private static Logger log = LoggerFactory.getLogger( SessionMonitor.class );
 
@@ -83,7 +81,7 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
             if( monitor == null )
             {
                 monitor = new SessionMonitor(engine);
-
+                engine.addWikiEventListener( monitor );
                 c_monitors.put( engine, monitor );
             }
         }
@@ -127,6 +125,33 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
         }
 
         return wikiSession;
+    }
+    
+    /**
+     * Listens for the WikiEngine shutdown event, and
+     * when received, flushes the session cache and removes
+     * the SessionMonitor instance from the global map.
+     * 
+     * @param event The wiki event to inspect.
+     */
+    public void actionPerformed( WikiEvent event )
+    {
+
+        if( event instanceof WikiEngineEvent )
+        {
+            if( event.getType() == WikiEngineEvent.SHUTDOWN )
+            {
+                log.info( "SessionMonitor detected wiki engine shutdown: flushing session cache and killing self." );
+                synchronized( m_sessions )
+                {
+                    m_sessions.clear();
+                }
+                synchronized( c_monitors )
+                {
+                    c_monitors.remove( m_engine );
+                }
+            }
+        }
     }
     /**
      * <p>Looks up the wiki session associated with a user's Http session

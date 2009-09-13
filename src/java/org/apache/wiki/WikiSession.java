@@ -604,6 +604,8 @@ public final class WikiSession implements WikiEventListener
     /**
      * Invalidates the WikiSession and resets its Subject's
      * Principals to the equivalent of a "guest session".
+     * This method also adds the session as a listener
+     * for GroupManager, AuthenticationManager and UserManager events.
      */
     public final void invalidate()
     {
@@ -613,6 +615,14 @@ public final class WikiSession implements WikiEventListener
         m_subject.getPrincipals().add( Role.ALL );
         m_userPrincipal = WikiPrincipal.GUEST;
         m_loginPrincipal = WikiPrincipal.GUEST;
+        
+        // Add the session as listener for GroupManager, AuthManager, UserManager events
+        GroupManager groupMgr = m_engine.getGroupManager();
+        AuthenticationManager authMgr = m_engine.getAuthenticationManager();
+        UserManager userMgr = m_engine.getUserManager();
+        groupMgr.addWikiEventListener( this );
+        authMgr.addWikiEventListener( this );
+        userMgr.addWikiEventListener( this );
     }
 
     /**
@@ -755,8 +765,8 @@ public final class WikiSession implements WikiEventListener
      * Static factory method that creates a new "guest" session containing a single
      * user Principal {@link org.apache.wiki.auth.WikiPrincipal#GUEST},
      * plus the role principals {@link Role#ALL} and
-     * {@link Role#ANONYMOUS}. This method also adds the session as a listener
-     * for GroupManager, AuthenticationManager and UserManager events.
+     * {@link Role#ANONYMOUS}. This method also calls {{@link #invalidate()}
+     * to ensure the session principals and listeners are properly set up.
      * @param engine the wiki engine
      * @return the guest wiki session
      */
@@ -765,15 +775,6 @@ public final class WikiSession implements WikiEventListener
         WikiSession session = new WikiSession();
         session.m_engine = engine;
         session.invalidate();
-
-        // Add the session as listener for GroupManager, AuthManager, UserManager events
-        GroupManager groupMgr = engine.getGroupManager();
-        AuthenticationManager authMgr = engine.getAuthenticationManager();
-        UserManager userMgr = engine.getUserManager();
-        groupMgr.addWikiEventListener( session );
-        authMgr.addWikiEventListener( session );
-        userMgr.addWikiEventListener( session );
-
         return session;
     }
 
