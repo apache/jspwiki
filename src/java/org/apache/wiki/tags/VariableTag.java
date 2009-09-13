@@ -106,7 +106,10 @@ public class VariableTag
         {
             value = msg;
         }
-        out.write( TextUtil.replaceEntities(value) );
+        if ( value != null )
+        {
+            out.write( TextUtil.replaceEntities(value) );
+        }
         return SKIP_BODY;
     }
 }

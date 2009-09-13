@@ -343,12 +343,12 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
                 {
                     ReferenceManager refManager = engine.getReferenceManager();
 
-                    Iterator iter = refManager.findCreated().iterator();
+                    Iterator<String> iter = refManager.findCreated().iterator();
 
                     while ( iter != null && iter.hasNext() )
                     {
 
-                        String name = (String) iter.next();
+                        String name = iter.next();
                         boolean use = false;
 
                         for( int n = 0; !use && n < refer.length; n++ )

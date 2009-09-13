@@ -28,6 +28,9 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.render.RenderingManager;
 
 
 /**
@@ -49,26 +52,22 @@ public class TranslateTag
         {
             WikiContext context = WikiContextFactory.findContext( pageContext );
 
-            //
-            //  Because the TranslateTag should not affect any of the real page attributes
-            //  we have to make a clone here.
-            //
-            
-            context = context.deepClone();
-            
-            //
-            //  Get the page data.
-            //
+            // Get the body content (wiki markup) to be rendered
             BodyContent bc = getBodyContent();
             String wikiText = bc.getString();
+            if ( wikiText != null ) wikiText.trim();
             bc.clearBody();
 
-            if( wikiText != null )
+            if( wikiText != null && wikiText.length() > 0 )
             {
-                wikiText = wikiText.trim();
-            
-                String result = context.getEngine().textToHTML( context, wikiText );
-
+                // Parse the wiki markup
+                RenderingManager renderer = context.getEngine().getRenderingManager();
+                MarkupParser mp = renderer.getParser( context, wikiText );
+                mp.disableAccessRules();
+                WikiDocument doc = mp.parse();
+                
+                // Get the text directly from the RenderingManager, without caching
+                String result = renderer.getHTML( context, doc );
                 getPreviousOut().write( result );
             }
         }

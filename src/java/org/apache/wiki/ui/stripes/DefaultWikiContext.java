@@ -55,7 +55,7 @@ public class DefaultWikiContext implements WikiContext
 
     private HashMap<String, Object> m_variableMap = new HashMap<String, Object>();
 
-    private String m_requestContext = null;
+    private String m_requestContext = WikiContext.NONE;
 
     private WikiSession m_session = null;
     

@@ -326,7 +326,8 @@ public class JSPWikiMarkupParser
         //
         Properties props      = m_engine.getWikiProperties();
 
-        String cclinks = (String)m_context.getPage().getAttribute( PROP_CAMELCASELINKS );
+        WikiPage page = m_context.getPage();
+        String cclinks = page == null ? null : (String)page.getAttribute( PROP_CAMELCASELINKS );
 
         if( cclinks != null )
         {
@@ -540,6 +541,7 @@ public class JSPWikiMarkupParser
         ResourceBundle rb = m_context.getBundle(InternationalizationManager.CORE_BUNDLE);
         Object[] args = { link };
 
+        String pageName = m_context.getPage() == null ? DUMMY_PAGE : m_context.getPage().getName();
         switch(type)
         {
             case READ:
@@ -562,12 +564,12 @@ public class JSPWikiMarkupParser
                 //  to make sure the links are unique across Wiki.
                 //
             case LOCALREF:
-                el = createAnchor( LOCALREF, "#ref-"+m_context.getPage().getName()+"-"+link, "["+text+"]", "" );
+                el = createAnchor( LOCALREF, "#ref-"+pageName+"-"+link, "["+text+"]", "" );
                 break;
 
             case LOCAL:
                 el = new Element("a").setAttribute("class","footnote");
-                el.setAttribute("name", "ref-"+m_context.getPage().getName()+"-"+link.substring(1));
+                el.setAttribute("name", "ref-"+pageName+"-"+link.substring(1));
                 el.addContent("["+text+"]");
                 break;
 
@@ -1230,7 +1232,8 @@ public class JSPWikiMarkupParser
     {
         Element el = null;
 
-        String pageName = m_context.getPage().getName();
+        WikiPage page = m_context.getPage();
+        String pageName = page == null ? DUMMY_PAGE : m_context.getPage().getName();
 
         String outTitle = makeSectionTitle( title );
 
@@ -1456,7 +1459,10 @@ public class JSPWikiMarkupParser
                 val = m_engine.getVariableManager().expandVariables( m_context,
                                                                      val );
 
-                m_context.getPage().setAttribute( name, val );
+                if ( m_context.getPage() != null )
+                {
+                    m_context.getPage().setAttribute( name, val );
+                }
             }
         }
         catch( Exception e )
@@ -2749,6 +2755,9 @@ public class JSPWikiMarkupParser
     
     /** The token is to be ignored. */
     protected static final int IGNORE    = 2;
+    
+    /** Dummy page name used when the WikiContext does not have a page associated with it. */
+    private static final String DUMMY_PAGE = "__no_page__";
 
     /**
      *  Return CHARACTER, if you think this was a plain character; ELEMENT, if

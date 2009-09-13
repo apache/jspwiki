@@ -306,7 +306,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     }
 
     /**
-     *   Convinience method for rendering, using the default parser and renderer.  Note that
+     *   Convenience method for rendering, using the default parser and renderer.  Note that
      *   you can't use this method to do any arbitrary rendering, as the pagedata MUST
      *   be the data from the that the WikiContext refers to - this method caches the HTML
      *   internally, and will return the cached version.  If the pagedata is different
