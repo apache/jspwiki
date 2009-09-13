@@ -1,3 +1,14 @@
+2009-09-12 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-156
+        
+        * JSPWIKI-595: Fixed EditActionBean to set the ChangeNote
+        when saving a page.
+        
+        * Fixed a bunch of JavaDoc errors and CheckStyle warnings
+        
+        * Added more error logging to JCRWikiPage
+        
 2009-09-13 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-155

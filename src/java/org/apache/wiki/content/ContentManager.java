@@ -1093,7 +1093,7 @@ public class ContentManager implements WikiEventListener
                     {
                         i.remove();
 
-                        log.error( "Reaped lock: " + p );
+                        log.info( "Reaped lock: " + p );
                     }
                 }
             }

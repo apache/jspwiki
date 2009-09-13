@@ -50,10 +50,11 @@ public class HistoryIteratorTag extends IteratorTag<WikiPage>
 
     private static final Collection<WikiPage> EMPTY_COLLECTION = Collections.unmodifiableCollection( new ArrayList<WikiPage>() );
 
-    static Logger log = LoggerFactory.getLogger( HistoryIteratorTag.class );
+   private  static final Logger log = LoggerFactory.getLogger( HistoryIteratorTag.class );
 
     /**
      * Returns the historical versions of the current WikiPage.
+     * @return a collection of {@link org.apache.content.WikiPage} objects
      */
     @Override
     protected Collection<WikiPage> initItems()
@@ -69,7 +70,7 @@ public class HistoryIteratorTag extends IteratorTag<WikiPage>
         }
         catch( PageNotFoundException e )
         {
-            log.error( "Provider claims page " + page.getName() + " doesn't exists, right after it said it did. This is odd!", e );
+            log.error( "Provider claims page " + page.getName() + " doesn't exist, right after it said it did. This is odd!", e );
         }
         catch( ProviderException e )
         {

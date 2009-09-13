@@ -35,6 +35,8 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.log.Logger;
+import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.ProviderException;
 
 
@@ -61,14 +63,19 @@ public class JCRWikiPage
 
     private static final String ATTR_CONTENT = "wiki:content";
 
-    public static final String ATTR_VERSION  = "wiki:version";
+    /** The name of the version attribute */
+    public static final String ATTR_VERSION = "wiki:version";
     
+    /** The name of the contentType  attribute */
     public  static final String CONTENTTYPE  = "wiki:contentType";
     
+    private WikiPath m_path;
 
-    private       WikiPath   m_path;
-    private       WikiEngine m_engine;
-    private String           m_jcrPath = null;
+    private WikiEngine m_engine;
+
+    private String m_jcrPath;
+    
+    private static final Logger log = LoggerFactory.getLogger( JCRWikiPage.class);
     
     /** 
      * Use {@link WikiEngine#createPage(WikiPath)} instead. 
@@ -84,10 +91,10 @@ public class JCRWikiPage
     /**
      *  Creates a JCRWikiPage using the default path.
      *  
-     *  @param engine
-     *  @param node
-     *  @throws RepositoryException
-     *  @throws ProviderException
+     *  @param engine a reference to the {@link org.apache.wiki.WikiEngine}
+     *  @param node the JCR {@link javax.jcr.Node}
+     *  @throws ProviderException if the provider failed
+     *  @throws RepositoryException If the page cannot be located.
      */
     public JCRWikiPage(WikiEngine engine, Node node)
         throws RepositoryException, ProviderException
@@ -101,10 +108,10 @@ public class JCRWikiPage
      *  default page hierarchy, for example when you need to create
      *  a temporary storage for workflows.
      *  
-     *  @param engine
-     *  @param name
-     *  @param node
-     *  @throws RepositoryException
+     *  @param engine a reference to the {@link org.apache.wiki.WikiEngine}
+     *  @param name the {@link org.apache.wiki.api.WikiPath}
+     *  @param node the JCR {@link javax.jcr.Node}
+     *  @throws RepositoryException If the page cannot be located.
      */
     public JCRWikiPage(WikiEngine engine, WikiPath name, Node node) 
         throws RepositoryException
@@ -125,24 +132,24 @@ public class JCRWikiPage
         return m_engine.getContentManager().getJCRNode(m_jcrPath);
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getName()
+    /**
+     * {@inheritDoc}
      */
     public String getName()
     {
         return m_path.getPath();
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getQualifiedName()
+    /**
+     * {@inheritDoc}
      */
     public WikiPath getPath()
     {
         return m_path;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getAttribute(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public Serializable getAttribute( String key )
     {
@@ -159,9 +166,17 @@ public class JCRWikiPage
                 throw new IllegalStateException( "The value returned by " + key + " was not a Serializable, as expected.");
             }
         }
-        catch( ItemNotFoundException e ) {}
-        catch( RepositoryException e ) {} // FIXME: Should log this at least.
-        
+        catch( ItemNotFoundException e )
+        {
+            log.error( "ItemNotFoundException occurred while getting Attribute " + key, e );
+        }
+        catch( RepositoryException e )
+        {
+            // the following exception still occurs quite often, so no stacktrace for now
+            log.warn( "RepositoryException occurred while getting Attribute " + key + " : "  +  e );
+        }
+        // until this is fixed we want some more diagnostic info 
+        log.warn("attribute value for key " + key + " is not Serializable, returning null value");
         return null;
     }
 
@@ -170,8 +185,8 @@ public class JCRWikiPage
      *  
      *  @param key the key for which we want the property
      *  @return Property
-     *  @throws PathNotFoundException
-     *  @throws RepositoryException
+     *  @throws PathNotFoundException if the path to the property cannot be found
+     *  @throws RepositoryException general {@link javax.jcr.RepositoryException} exception
      */
     public Property getProperty( String key ) throws PathNotFoundException, RepositoryException
     {
@@ -184,8 +199,10 @@ public class JCRWikiPage
         {
             case PropertyType.STRING:
                 return property.getString();
+            default:
+                break;
         }
-        
+
         return property.getString();
     }
 
@@ -200,9 +217,15 @@ public class JCRWikiPage
             // the right thing to do here.
             getJCRNode().setProperty( key, attribute.toString() );
         }
-        catch(RepositoryException e) {} // FIXME: Should log
+        catch(RepositoryException e) 
+        {
+            log.error( "Exception occurred while setting (Serializable) attribute " + key, e );
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setAttribute( String key, Date attribute )
     {
         try
@@ -211,11 +234,14 @@ public class JCRWikiPage
             c.setTime( attribute );
             getJCRNode().setProperty( key, c );
         }
-        catch(RepositoryException e) {} // FIXME: Should log        
+        catch(RepositoryException e) 
+        {
+            log.error( "Exception occurred while setting (Date) attribute " + key, e );
+        }
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getAttributes()
+    /**
+     * {@inheritDoc}
      */
     //
     // This method will be removed, since it makes no sense to get
@@ -226,8 +252,8 @@ public class JCRWikiPage
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#removeAttribute(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public Serializable removeAttribute( String key )
     {
@@ -266,21 +292,21 @@ public class JCRWikiPage
         }
         catch( RepositoryException e )
         {
-            // FIXME: Should rethrow
+            log.warn( "RepositoryException while getting lastModified : " + e ); 
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setLastModified(java.util.Date)
+    /**
+     * {@inheritDoc}
      */
     public void setLastModified( Date date )
     {
         setAttribute( LASTMODIFIED, date );
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getVersion()
+    /**
+     * {@inheritDoc}
      */
     public int getVersion()
     {
@@ -297,8 +323,8 @@ public class JCRWikiPage
         return 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getSize()
+    /**
+     * {@inheritDoc}
      */
     public long getSize()
     {
@@ -311,8 +337,8 @@ public class JCRWikiPage
         return -1;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getAcl()
+    /**
+     * {@inheritDoc}
      */
     public Acl getAcl()
     {
@@ -334,18 +360,15 @@ public class JCRWikiPage
         }
         catch( RepositoryException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "RepositoryException occurred while getting ACL ", e );
         }
         catch( IOException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "IOException occurred while getting ACL ", e );
         }
         catch( ClassNotFoundException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "ClassNotFoundException occurred while getting ACL ", e );
         }
         finally
         {
@@ -362,8 +385,8 @@ public class JCRWikiPage
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setAcl(org.apache.wiki.auth.acl.Acl)
+    /**
+     * {@inheritDoc}
      */
     public void setAcl( Acl acl )
     {
@@ -381,55 +404,49 @@ public class JCRWikiPage
         }
         catch( IOException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "IOException occurred while setting ACL ", e );
         }
         catch( ValueFormatException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "ValueFormatException occurred while setting ACL ", e );
         }
         catch( VersionException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "VersionException occurred while setting ACL ", e );
         }
         catch( LockException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "LockException occurred while setting ACL ", e );
         }
         catch( ConstraintViolationException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "ConstraintViolationException occurred while setting ACL ", e );
         }
         catch( RepositoryException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error( "RepositoryException occurred while setting ACL ", e );
         }
         
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#setAuthor(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public void setAuthor( String author )
     {
         setAttribute( AUTHOR, author );
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getAuthor()
+    /**
+     * {@inheritDoc}
      */
     public String getAuthor()
     {
         return (String)getAttribute( AUTHOR );
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#getWiki()
+    /**
+     * {@inheritDoc}
      */
     // FIXME: Should we rename this method?
     public String getWiki()
@@ -437,16 +454,16 @@ public class JCRWikiPage
         return m_path.getSpace();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#toString()
+    /**
+     * {@inheritDoc}
      */
     public String toString()
     {
         return "WikiPage ["+m_path+",ver="+getVersion()+",mod="+getLastModified()+"]";
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#clone()
+    /**
+     * {@inheritDoc}
      */
     public Object clone()
     {
@@ -493,14 +510,17 @@ public class JCRWikiPage
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.WikiPage#hashCode()
+    /**
+     *  {@inheritDoc}
      */
     public int hashCode()
     {
         return m_path.hashCode() * getVersion();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public InputStream getContentAsStream() throws ProviderException
     {
         try
@@ -519,22 +539,34 @@ public class JCRWikiPage
         return null;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getContentType()
     {
         return (String)getAttribute( CONTENTTYPE );
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public List<WikiPath> getReferrers() throws ProviderException
     {
         return m_engine.getReferenceManager().getReferredBy( m_path );
     }
     
+    /**
+     *  {@inheritDoc}
+     */
     public List<WikiPath> getRefersTo() throws ProviderException
     {
         return m_engine.getReferenceManager().getRefersTo( m_path );
     }
     
 
+    /**
+     *  {@inheritDoc}
+     */
     public void setContent( InputStream in ) throws ProviderException
     {
         try
@@ -547,6 +579,9 @@ public class JCRWikiPage
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void setContentType( String contentType )
     {
         setAttribute( CONTENTTYPE, contentType );
@@ -567,6 +602,9 @@ public class JCRWikiPage
         }
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public String getContentAsString() throws ProviderException
     {
         try
@@ -586,6 +624,9 @@ public class JCRWikiPage
         return null;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void setContent( String content ) throws ProviderException
     {
         try
@@ -617,6 +658,9 @@ public class JCRWikiPage
         return m_path.getName();
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public boolean isLatest() throws RepositoryException
     {
         // TODO: This is a bit kludgish, but works.
@@ -637,6 +681,9 @@ public class JCRWikiPage
         
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public void setFileName( String name )
     {
         // TODO Auto-generated method stub
@@ -718,6 +765,9 @@ public class JCRWikiPage
         return (JCRWikiPage)p;
     }
 
+    /**
+     *  {@inheritDoc}
+     */
     public JCRWikiPage getCurrentVersion() throws ProviderException
     {
         try
