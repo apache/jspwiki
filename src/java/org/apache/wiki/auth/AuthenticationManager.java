@@ -20,10 +20,7 @@
  */
 package org.apache.wiki.auth;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
@@ -39,6 +36,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.action.InstallActionBean;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
@@ -49,6 +47,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.util.CryptoUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 import org.freshcookies.security.Keychain;
@@ -133,6 +132,11 @@ public final class AuthenticationManager
      *  @deprecated use {@link #SECURITY_OFF} instead
      */
     protected static final String             SECURITY_CONTAINER = "container";
+
+    /**
+     * The superuser username.
+     */
+    protected static final String SUPERUSER = "su";
 
     /** The default {@link javax.security.auth.spi.LoginModule} class name to use for custom authentication. */
     private static final String                 DEFAULT_LOGIN_MODULE = "org.apache.wiki.auth.login.UserDatabaseLoginModule";
@@ -495,6 +499,29 @@ public final class AuthenticationManager
             delayLogin(username);
         }
         
+        // Did the user log in as the superuser?
+        boolean isSu = false;
+        if ( SUPERUSER.equals( username ) )
+        {
+            String passwordHash = m_engine.getWikiProperties().getProperty( InstallActionBean.PROP_ADMIN_PASSWORD_HASH );
+            if ( passwordHash != null && passwordHash.length() > 0 )
+            {
+                try
+                {
+                    isSu = CryptoUtil.verifySaltedPassword( password.getBytes(), passwordHash );
+                }
+                catch( NoSuchAlgorithmException e ) { }
+                catch( UnsupportedEncodingException e ) { }
+            }
+        }
+        if ( isSu )
+        {
+            fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, new WikiPrincipal( "su", WikiPrincipal.LOGIN_NAME ), session );
+            fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, Role.SUPERUSER, session );
+            return true;
+        }
+        
+        // No, so try logging in with JAAS
         CallbackHandler handler = new WikiCallbackHandler(
                 m_engine,
                 request,

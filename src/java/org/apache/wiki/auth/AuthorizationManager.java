@@ -192,6 +192,13 @@ public final class AuthorizationManager
 
         Principal user = session.getLoginPrincipal();
 
+        // Always allow the action if user is superuser
+        if ( hasRoleOrPrincipal( session, Role.SUPERUSER ) )
+        {
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+            return true;
+        }
+
         // Always allow the action if user has AllPermission
         Permission allPermission = new AllPermission( m_engine.getApplicationName() );
         boolean hasAllPermission = checkStaticPermission( session, allPermission );
