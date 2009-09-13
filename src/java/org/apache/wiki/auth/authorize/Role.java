@@ -46,6 +46,12 @@ public final class Role implements Principal, Serializable
     /** If the user has authenticated with the Container or UserDatabase */
     public static final Role AUTHENTICATED = new Role( "Authenticated" );
 
+    /**
+     * If the user is the superuser.
+     * @since 3.0
+     */
+    public static final Role SUPERUSER = new Role( "SU" );
+
     private final String   m_name;
 
     /**
@@ -83,7 +89,7 @@ public final class Role implements Principal, Serializable
      * Returns <code>true</code> if the supplied name is identical to the name
      * of a built-in Role; that is, the value returned by <code>getName()</code>
      * for built-in Roles {@link #ALL}, {@link #ANONYMOUS},
-     * {@link #ASSERTED}, or {@link #AUTHENTICATED}.
+     * {@link #ASSERTED}, {@link #AUTHENTICATED} or {@link #SUPERUSER}.
      * @param name the name to be tested
      * @return <code>true</code> if the name is reserved; <code>false</code>
      *         if not
@@ -92,7 +98,7 @@ public final class Role implements Principal, Serializable
     {
         return  name.equals( ALL.m_name ) ||
                 name.equals( ANONYMOUS.m_name ) || name.equals( ASSERTED.m_name ) ||
-                name.equals( AUTHENTICATED.m_name );
+                name.equals( AUTHENTICATED.m_name ) || name.equals( SUPERUSER );
     }
 
     /**
