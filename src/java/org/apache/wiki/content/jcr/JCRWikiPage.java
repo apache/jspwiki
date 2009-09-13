@@ -677,7 +677,7 @@ public class JCRWikiPage
                 //
                 if( n.getName().indexOf( ':' ) == -1 )
                 {                
-                    pages.add( new JCRWikiPage( m_engine, iter.nextNode() ) );
+                    pages.add( new JCRWikiPage( m_engine, n ) );
                 }
             }
         }
