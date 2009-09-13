@@ -124,7 +124,8 @@ public class FileBasedActionResolver extends NameBasedActionResolver
         // Must be a new ActionBean we haven't processed yet, AND we have a
         // binding for it.
         UrlBinding prototype = UrlBindingFactory.parseUrlBinding( clazz, binding );
-        UrlBindingFactory.getInstance().addBinding( clazz, prototype );
+        UrlBindingFactory factory = super.getUrlBindingFactory();
+        factory.addBinding( clazz, prototype );
         m_processed.add( clazz );
         return prototype.toString();
     }

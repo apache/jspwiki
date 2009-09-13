@@ -20,17 +20,14 @@
  */
 package org.apache.wiki.ui.stripes;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.controller.DispatcherServlet;
 import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.controller.UrlBindingFactory;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
@@ -62,16 +59,7 @@ public class FileBasedActionResolverTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
-
-        // Flush the existing bindings; we need to do this because Stripes doesn't between launches
-        UrlBindingFactory factory = UrlBindingFactory.getInstance();
-        Collection<Class<? extends ActionBean>> beanClasses = factory.getPathMap().values();
-        for ( Class<? extends ActionBean> beanClass : beanClasses )
-        {
-            factory.removeBinding( beanClass );
-        }
-        
-}
+    }
     
     public void testViewActionBean() throws Exception
     {
