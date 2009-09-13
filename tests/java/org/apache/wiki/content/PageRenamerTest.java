@@ -476,7 +476,7 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
         assertEquals( "page not renamed", "[Test Page Referred|TestPageReferredNew]", data.trim() );
 
-        Collection refs = findReferrers( "TestPageReferred" );
+        Collection<WikiPath> refs = findReferrers( "TestPageReferred" );
         assertNull( "oldpage", refs );
 
         refs = findReferrers( "TestPageReferredNew" );
@@ -496,7 +496,7 @@ public class PageRenamerTest extends TestCase
         String data = m_engine.getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
         assertEquals( "page not renamed", "[link one|Link uno] [link two]", data.trim() );
 
-        Collection refs = findReferrers( "Link one" );
+        Collection<WikiPath> refs = findReferrers( "Link one" );
         assertNull( "oldpage", refs );
 
         refs = findReferrers( "Link uno" );

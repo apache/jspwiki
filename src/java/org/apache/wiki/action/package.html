@@ -173,8 +173,8 @@ is requested, Stripes invokes ViewActionBean's <code>setChangenote</code>
 method and passes the String "Finished". This is all done completely
 automatically -- there is no code to write.</p>
 
-<blockquote><a name="1" /><strong>Guideline #1
-for JSPWiki developers</strong>: processing code that extracts request parameters
+<blockquote><a name="1"><strong>Guideline #1
+for JSPWiki developers</strong></a>: processing code that extracts request parameters
 should be moved into WikiActionBean getter and setter fields. For
 example, if the parameter <code>foo</code> is needed, add methods <code>setFoo</code>
 and <code>getFoo</code> to the ActionBean). The field types can be any
@@ -241,8 +241,8 @@ expression <code>context</code>, a property of <code>wikiActionBean</code>.
 EL syntax can be used to navigate much more complicated object graphs
 than this, but you get the idea. What could be easier?</p>
 
-<blockquote><a name="2" /><strong>Guideline #2
-for JSPWiki developers</strong>: JSPs should not attempt to instantiate
+<blockquote><a name="2"><strong>Guideline #2
+for JSPWiki developers</strong></a>: JSPs should not attempt to instantiate
 WikiContexts directly. Instead, they <em>must</em> include a <code>&lt;stripes:useActionBean
 beanclass="org.apache.wiki.action.<em>foo</em>Bean" event="foo"
 id="wikiActionBean" /&gt;</code> element that tells JSPWiki which
@@ -284,13 +284,13 @@ submission, because Stripes' form tags cause forms to be posted to <code>.action
 URLs. For this reason, automatic binding also causes fields to be
 validated as well (more on this shortly).</p>
 
-<blockquote><a name="3" /><strong>Guideline #3
-for JSPWiki developers</strong>: every WikiActionBean subclass should contain a
+<blockquote><a name="3"><strong>Guideline #3
+for JSPWiki developers</strong></a>: every WikiActionBean subclass should contain a
 class-level <code>@UrlBinding</code> annotation that tells Stripes how
 to locate the bean when user submit forms.</blockquote>
 
-<blockquote><a name="4" /><strong>Guideline #4
-for JSPWiki developers</strong>: JSPs can -- and should -- use JSP 2.0 EL syntax
+<blockquote><a name="4"><strong>Guideline #4
+for JSPWiki developers</strong></a>: JSPs can -- and should -- use JSP 2.0 EL syntax
 to access properties of the current WikiActionBean. JSPWiki guarantees
 that when the <code>&lt;useActionBean&gt;</code> tag is present, the
 ActionBean will be made available as the page attibute <code>wikiActionBean</code>.
@@ -356,8 +356,8 @@ case <code>createAssertedName</code>, As you can see from the code
 snippet, the event name "createAssertedName" matches the value of the <code>@HandlerEvent</code>
 annotation.</p>
 
-<blockquote><a name="5" /><strong>Guideline #5
-for JSPWiki developers</strong>: processing code that handles form POST
+<blockquote><a name="5"><strong>Guideline #5
+for JSPWiki developers</strong></a>: processing code that handles form POST
 activities (that would have ordinarily gone into top-level JSPs) should
 <em>always</em> be moved into WikiActionBean event handler methods.
 These methods should contain a <code>@HandlesEvent</code> annotation
@@ -369,8 +369,8 @@ element's <code>beanclass</code> attribute should contain the name of
 the ActionBean class the event pertains to. Example: <code>&lt;stripes:form
 beanclass="UserPreferencesAction.class"&gt;</code></blockquote>
 
-<blockquote><a name="6" /><strong>Guideline #6
-for JSPWiki developers</strong>: all <code>&lt;form&gt;</code> tags and related
+<blockquote><a name="6"><strong>Guideline #6
+for JSPWiki developers</strong></a>: all <code>&lt;form&gt;</code> tags and related
 markup (such as <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>,
 <code>&lt;option&gt;</code>) should use the Stripes tags instead (<em>e.g.</em>,
 <code>&lt;stripes:form&gt;</code>, <code><a
@@ -422,8 +422,8 @@ other types</a>. It "knows" which converter to invoke because of the field's
 type. In addition to Stripes' own converters, JSPWiki 3.0 contains
 converters for fields of type WikiPage, Group and Principal.</p>
 
-<blockquote><a name="7" /><strong>Guideline #7
-for JSPWiki developers</strong>: When creating WikiActionBeans, all fields that
+<blockquote><a name="7"><strong>Guideline #7
+for JSPWiki developers</strong></a>: When creating WikiActionBeans, all fields that
 require validation should have <code>@validate</code> annotations on
 their setter methods.</blockquote>
 
@@ -433,7 +433,7 @@ differently in JSPWiki 3.0 than in previous versions. Previously,
 redirects were implemented directly in JSP scriptlet code. For example,
 consider this snippet from <code>Edit.jsp</code>:</p>
 
-<pre>if( change != null && change.getTime() != pagedate )
+<pre>if( change != null &amp;&amp; change.getTime() != pagedate )
 {
     //
     // Someone changed the page while we were editing it!
@@ -505,8 +505,8 @@ proceed. Stripes contains four easy-to-use Resolutions:</p>
 	generated images/charts and XML islands.</li>
 </ul>
 
-<blockquote><a name="8" /><strong>Guideline #8
-for JSPWiki developers</strong>: event handler methods should return
+<blockquote><a name="8"><strong>Guideline #8
+for JSPWiki developers</strong></a>: event handler methods should return
 ForwardResolutions when the target is a "display JSP" that renders a
 page. Hander methods that need to redirect the user to destinations
 elsewhere in the application should return RedirectResolutions that
@@ -521,7 +521,7 @@ EditActionBean event handler as follows:
 &#064;HandlesEvent("save")
 public Resolution save()
 {
-  if( m_change != null && m_change.getTime() != m_pagedate )
+  if( m_change != null &amp;&amp; m_change.getTime() != m_pagedate )
   {
       //
       // Someone changed the page while we were editing it!
@@ -552,13 +552,13 @@ WikiActionBean editContext = (WikiActionBean)scope.get( "/EditActionBean" );</pr
 <p>After retrieving the previously-flashed EditActionBean, its
 contents can be retrieved and manipulated like any other bean.</p>
 
-<blockquote><a name="9" /><strong>Guideline #10
-for JSPWiki developers</strong>: client-side code that need to retrieve AJAX or
+<blockquote><a name="9"><strong>Guideline #10
+for JSPWiki developers</strong></a>: client-side code that need to retrieve AJAX or
 JSON data from JSPWiki should POST to a WikiActionBean event handler,
 which should in turn return a <code>JavaScriptResolution</code> or a <code>StreamingResolution</code>.</blockquote>
 
-<blockquote><a name="10" /><strong>Guideline #11
-for JSPWiki developers</strong>: event handlers that need to ensure that the
+<blockquote><a name="10"><strong>Guideline #11
+for JSPWiki developers</strong></a>: event handlers that need to ensure that the
 current WikiActionBean is accessible by the next one in the request
 cycle should add themselves to "flash scope" by calling the Resolution's
 <code><a

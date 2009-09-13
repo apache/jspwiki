@@ -38,12 +38,12 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = wiki.createContext( request, "rss" );
     
-    Set allPages = wiki.getReferenceManager().findCreated();
+    Set<String> allPages = wiki.getReferenceManager().findCreated();
     
     response.setContentType("text/plain; charset=UTF-8");
-    for( Iterator i = allPages.iterator(); i.hasNext(); )
+    for( Iterator<String> i = allPages.iterator(); i.hasNext(); )
     {
-        String pageName = (String)i.next();
+        String pageName = i.next();
         
         // Let's not add attachments.
         // TODO: This is a kludge and not forward-compatible.

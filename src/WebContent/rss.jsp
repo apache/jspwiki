@@ -88,13 +88,13 @@
     SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     Properties properties = wiki.getWikiProperties();
-    String channelDescription = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
-    String channelLanguage    = wiki.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
+    String channelDescription = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_DESCRIPTION );
+    String channelLanguage    = WikiEngine.getRequiredProperty( properties, RSSGenerator.PROP_CHANNEL_LANGUAGE );
 
     //
     //  Now, list items.
     //
-    List changed;
+    List<WikiPage> changed;
     
     if( mode.equals("blog") )
     {
@@ -115,9 +115,9 @@
     boolean hasChanged = false;
     Date    latest     = new Date(0);
 
-    for( Iterator i = changed.iterator(); i.hasNext(); )
+    for( Iterator<WikiPage> i = changed.iterator(); i.hasNext(); )
     {
-        WikiPage p = (WikiPage) i.next();
+        WikiPage p = i.next();
 
         if( !HttpUtil.checkFor304( request, p ) ) hasChanged = true;
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();

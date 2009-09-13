@@ -180,15 +180,21 @@ public class TestJDBCDataSource implements DataSource
         m_driver = (Driver) driverClass.newInstance();
     }
 
+    /**
+     * No-op method needed for compatibility with Java 6.
+     * @return always returns {@code false}
+     */
     public boolean isWrapperFor( Class<?> arg0 ) throws SQLException
     {
-        // unused interface methods required for JDK 6
         return false;
     }
 
+    /**
+     * No-op method needed for compatibility with Java 6.
+     * @return always returns {@code null}
+     */
     public <T> T unwrap( Class<T> arg0 ) throws SQLException
     {
-        // unused interface methods required for JDK 6
         return null;
     }
 
