@@ -43,7 +43,7 @@
         <s:hidden name="author" />
         <s:hidden name="changenote" />
         <s:hidden name="link" />
-        <s:hidden name="page" value="${wikiActionBean.page.name}" />
+        <s:hidden name="page" />
         <s:hidden name="remember" />
         <s:hidden name="startTime" />
         <s:hidden name="text" />

@@ -107,44 +107,43 @@
     </wiki:CheckVersion>
     
     <wiki:Permission permission="rename">
-    
-    <div class="formhelp">
-      <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>' />
-    </div>
-    
-    <s:form beanclass="org.apache.wiki.action.RenameActionBean" class="wikiform" id="renameform" method="post" acceptcharset="UTF-8" >
-      <p>
-        <s:hidden name="page" value="${wikiActionBean.page.name}" />
-        <s:submit name="info.rename.submit" />
-        <s:text name="renameto" value="${wikiActionBean.renameTo}" size="40" />
-        &nbsp;
-        <s:checkbox name="references" checked="${actionBean.changeReferences}" />
-        <fmt:message key="info.updatereferrers" />
-      </p>
-    </s:form>
+      <div class="formhelp">
+        <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>' />
+      </div>
+      
+      <s:form beanclass="org.apache.wiki.action.RenameActionBean" class="wikiform" id="renameform" method="post" acceptcharset="UTF-8" >
+        <p>
+          <s:hidden name="page" />
+          <s:submit name="rename" />
+          <s:text name="renameTo" size="40" />
+          &nbsp;
+          <s:checkbox name="changeReferences" />
+          <fmt:message key="info.updatereferrers" />
+        </p>
+      </s:form>
     </wiki:Permission>
     <wiki:Permission permission="!rename">
       <p><fmt:message key="info.rename.permission" /></p>
     </wiki:Permission>
     
     <wiki:Permission permission="delete">
-    <s:form beanclass="org.apache.wiki.action.DeleteActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
-      <p><s:submit name="delete" id="delete-all" /></p>
-    </s:form>
+      <s:form beanclass="org.apache.wiki.action.DeleteActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
+        <p><s:submit name="delete" id="delete-all" /></p>
+      </s:form>
     </wiki:Permission>
     <wiki:Permission permission="!delete">
       <p><fmt:message key="info.delete.permission" /></p>
     </wiki:Permission>
     
     <div class="collapsebox-closed" id="incomingLinks">
-    <h4><fmt:message key="info.tab.incoming" /></h4>
+      <h4><fmt:message key="info.tab.incoming" /></h4>
       <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>
       <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
     </div>
     
     <div class="collapsebox-closed" id="outgoingLinks">
-    <h4><fmt:message key="info.tab.outgoing" /></h4>
-    <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+      <h4><fmt:message key="info.tab.outgoing" /></h4>
+      <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
     </div>
     
     <div class="clearbox"></div>
@@ -158,67 +157,67 @@
     
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions" /></wiki:CheckVersion>
     <wiki:CheckVersion mode="notfirst">
-    <%-- if( itemcount > 1 ) { --%>
-    
-    <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" fmtkey="info.pagination" href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
-    
-    <div class="zebra-table sortable table-filter">
-    <table class="wikitable">
-      <tr>
-        <th><fmt:message key="info.version" /></th>
-        <th><fmt:message key="info.date" /></th>
-        <th><fmt:message key="info.size" /></th>
-        <th><fmt:message key="info.author" /></th>
-        <th><fmt:message key="info.changes" /></th>
-        <th class='changenote'><fmt:message key="info.changenote" /></th>
-      </tr>
-    
-      <wiki:HistoryIterator id="currentPage">
-      <% if( ( startitem == -1 ) ||
-              (  ( currentPage.getVersion() > startitem )
-              && ( currentPage.getVersion() <= startitem + pagesize ) ) )
-          {
-        %>
-      <tr>
-        <td>
-          <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
-            <wiki:PageVersion/>
-          </wiki:LinkTo>
-        </td>
-    
-        <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
-        <td style="white-space:nowrap;text-align:right;">
-          <c:set var="ff"><wiki:PageSize/></c:set>
-          <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
-        </td>
-        <td><wiki:Author/></td>
-    
-        <td>
-          <wiki:CheckVersion mode="notfirst">
-            <wiki:DiffLink version="current" newVersion="previous"><fmt:message key="info.difftoprev" /></wiki:DiffLink>
-            <wiki:CheckVersion mode="notlatest"> | </wiki:CheckVersion>
-          </wiki:CheckVersion>
-          <wiki:CheckVersion mode="notlatest">
-            <wiki:DiffLink version="latest" newVersion="current"><fmt:message key="info.difftolast" /></wiki:DiffLink>
-          </wiki:CheckVersion>
-        </td>
-    
-          <td class="changenote">
-            <%
-              String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
-              changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
-            %>
-            <%= changeNote %>
+      <%-- if( itemcount > 1 ) { --%>
+      
+      <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" fmtkey="info.pagination" href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
+      
+      <div class="zebra-table sortable table-filter">
+      <table class="wikitable">
+        <tr>
+          <th><fmt:message key="info.version" /></th>
+          <th><fmt:message key="info.date" /></th>
+          <th><fmt:message key="info.size" /></th>
+          <th><fmt:message key="info.author" /></th>
+          <th><fmt:message key="info.changes" /></th>
+          <th class='changenote'><fmt:message key="info.changenote" /></th>
+        </tr>
+      
+        <wiki:HistoryIterator id="currentPage">
+        <% if( ( startitem == -1 ) ||
+                (  ( currentPage.getVersion() > startitem )
+                && ( currentPage.getVersion() <= startitem + pagesize ) ) )
+            {
+          %>
+        <tr>
+          <td>
+            <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
+              <wiki:PageVersion/>
+            </wiki:LinkTo>
           </td>
-    
-      </tr>
-      <% } %>
-      </wiki:HistoryIterator>
-    
-    </table>
-    </div>
-    ${pagination}
-    <%-- } /* itemcount > 1 */ --%>
+      
+          <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+          <td style="white-space:nowrap;text-align:right;">
+            <c:set var="ff"><wiki:PageSize/></c:set>
+            <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
+          </td>
+          <td><wiki:Author/></td>
+      
+          <td>
+            <wiki:CheckVersion mode="notfirst">
+              <wiki:DiffLink version="current" newVersion="previous"><fmt:message key="info.difftoprev" /></wiki:DiffLink>
+              <wiki:CheckVersion mode="notlatest"> | </wiki:CheckVersion>
+            </wiki:CheckVersion>
+            <wiki:CheckVersion mode="notlatest">
+              <wiki:DiffLink version="latest" newVersion="current"><fmt:message key="info.difftolast" /></wiki:DiffLink>
+            </wiki:CheckVersion>
+          </td>
+      
+            <td class="changenote">
+              <%
+                String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
+                changeNote = (changeNote != null) ? TextUtil.replaceEntities( changeNote ) : "" ;
+              %>
+              <%= changeNote %>
+            </td>
+      
+        </tr>
+        <% } %>
+        </wiki:HistoryIterator>
+      
+      </table>
+      </div>
+      ${pagination}
+      <%-- } /* itemcount > 1 */ --%>
     </wiki:CheckVersion>
   </wiki:Tab>
 

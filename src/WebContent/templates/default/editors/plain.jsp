@@ -45,14 +45,14 @@
   
     <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
     <p id="submitbuttons">
-      <s:hidden name="page"><wiki:Variable var='pagename' /></s:hidden>
+      <s:hidden name="page" />
       <s:hidden name="startTime" />
       <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
       <wiki:CheckRequestContext context='edit'>
         <s:submit name="save" accesskey="s" title="${saveTitle}" />
       </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context='comment'>
-        <s:submit name="comment" accesskey="s" title="${saveTitle}"><fmt:message key="editor.plain.save.submit"/></s:submit> 
+        <s:submit name="comment" accesskey="s" title="${saveTitle}" /> 
       </wiki:CheckRequestContext>
     
       <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
@@ -74,7 +74,6 @@
       </tr>
       
       <wiki:CheckRequestContext context="comment">
-      <%--<fieldset><legend><fmt:message key="editor.commentsignature" /></legend>--%>
       <tr>
         <td><s:label for="author" accesskey="n" name="author" /></td>
         <td><s:text id="author" name="author" />
@@ -86,7 +85,6 @@
         <td><s:label for="link" accesskey="m" name="editor.plain.email" /></td>
         <td><s:text id="link" name="link" size="24" /></td>
       </tr>
-      <%--</fieldset>--%>
       </wiki:CheckRequestContext>
         
     </table>
@@ -123,34 +121,34 @@
     </fieldset>
 
     <fieldset class="unit">
-    <legend><fmt:message key='editor.plain.style'/></legend>
-    <a href="#" class="tool tB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
-    <a href="#" class="tool tI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
-    <a href="#" class="tool tMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
-    <a href="#" class="tool tCSS" title="<fmt:message key='editor.plain.tbCSS.title'/>">%%</a>
-    <a href="#" class="tool tFONT" title="<fmt:message key='editor.plain.tbFONT.title'/>">font</a>
-    <a href="#" class="tool tCOLOR" title="<fmt:message key='editor.plain.tbCOLOR.title'/>">color</a>
-    <!--
-    <a href="#" class="tool tSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
-    <a href="#" class="tool tSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
-    <a href="#" class="tool tSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
-    -->
+      <legend><fmt:message key='editor.plain.style'/></legend>
+      <a href="#" class="tool tB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
+      <a href="#" class="tool tI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
+      <a href="#" class="tool tMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
+      <a href="#" class="tool tCSS" title="<fmt:message key='editor.plain.tbCSS.title'/>">%%</a>
+      <a href="#" class="tool tFONT" title="<fmt:message key='editor.plain.tbFONT.title'/>">font</a>
+      <a href="#" class="tool tCOLOR" title="<fmt:message key='editor.plain.tbCOLOR.title'/>">color</a>
+      <!--
+      <a href="#" class="tool tSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
+      <a href="#" class="tool tSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
+      <a href="#" class="tool tSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
+      -->
     </fieldset>
 
     <fieldset class="unit">
-    <legend><fmt:message key='editor.plain.extra'/></legend>
-    <a href="#" class="tool tACL" title="<fmt:message key='editor.plain.tbACL.title'/>">acl</a>
-    <a href="#" class="tool tIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
-    <a href="#" class="tool tTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
-    <a href="#" class="tool tPLUGIN" title="<fmt:message key='editor.plain.tbPLUGIN.title'/>">plugin</a>
-    <%-- 
-    <a href="#" class="tool tTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>  
-    --%>
-    <a href="#" class="tool tDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
-    <a href="#" class="tool tCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
-    <a href="#" class="tool tTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
-    <a href="#" class="tool tSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
-    <%-- --%>
+      <legend><fmt:message key='editor.plain.extra'/></legend>
+      <a href="#" class="tool tACL" title="<fmt:message key='editor.plain.tbACL.title'/>">acl</a>
+      <a href="#" class="tool tIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
+      <a href="#" class="tool tTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
+      <a href="#" class="tool tPLUGIN" title="<fmt:message key='editor.plain.tbPLUGIN.title'/>">plugin</a>
+      <%-- 
+      <a href="#" class="tool tTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>  
+      --%>
+      <a href="#" class="tool tDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
+      <a href="#" class="tool tCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
+      <a href="#" class="tool tTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
+      <a href="#" class="tool tSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
+      <%-- --%>
     </fieldset>
 
     <fieldset class="unit lastUnit">
@@ -164,22 +162,22 @@
     </fieldset>
 
     <div class="clearbox">
-    <p id="findDialog" style="display:none;">
-      <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/>--%>
-      <input type="text" name="tbFIND" id="tbFIND" size="16" value="find"/>
-      <%--</label>--%>
-      <label for="tbMatchCASE"><input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-        <fmt:message key="editor.plain.matchcase"/></label>
-    	<label for="tbREGEXP" ><input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-    	  <fmt:message key="editor.plain.regexp"/></label>
-
-      <%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/>--%>
-        <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
-      <%--</label>--%>
-      <a class="btn" id="doreplace"><span><span><fmt:message key='editor.plain.find.submit' /></span></span></a>
-    	<label for="tbGLOBAL"><input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-    	  <fmt:message key="editor.plain.global"/></label>
-    </p>
+      <p id="findDialog" style="display:none;">
+        <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/>--%>
+        <input type="text" name="tbFIND" id="tbFIND" size="16" value="find"/>
+        <%--</label>--%>
+        <label for="tbMatchCASE"><input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
+          <fmt:message key="editor.plain.matchcase"/></label>
+      	<label for="tbREGEXP" ><input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
+      	  <fmt:message key="editor.plain.regexp"/></label>
+  
+        <%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/>--%>
+          <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
+        <%--</label>--%>
+        <a class="btn" id="doreplace"><span><span><fmt:message key='editor.plain.find.submit' /></span></span></a>
+      	<label for="tbGLOBAL"><input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
+      	  <fmt:message key="editor.plain.global"/></label>
+      </p>
     </div>
 
     </div><%-- end of the toolbar --%>
