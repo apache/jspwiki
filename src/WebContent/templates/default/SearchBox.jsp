@@ -18,40 +18,36 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%-- Provides a simple searchbox that can be easily included anywhere on the page --%>
 <%-- Powered by jswpwiki-common.js//SearchBox --%>
 
-<form action="<wiki:Link jsp='Search.jsp' format='url'/>"
-        class="wikiform"
-           id="searchForm" accept-charset="<wiki:ContentEncoding />">
+<s:form beanclass="org.apache.wiki.action.SearchActionBean" class="wikiform" id="searchForm" acceptcharset="UTF-8">
 
-  <input onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
-        onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
-           type="text" value="<fmt:message key='sbox.search.submit'/>"
-           name="query" id="query"
-           size="20" 
-      accesskey="f" />
-  <button type="submit"
-  		 name="searchSubmit" id="searchSubmit"
-  		value="<fmt:message key='find.submit.go'/>"
-  		title="<fmt:message key='find.submit.go'/>"></button>
+  <c:set var="goTitle" scope="page"><fmt:message key="find.submit.go"/></c:set>
+  <s:text onblur="if( this.value == '' ) { this.value = this.defaultValue }; return true; "
+         onfocus="if( this.value == this.defaultValue ) { this.value = ''}; return true; "
+            name="query" id="query"
+            size="20" 
+       accesskey="f"><fmt:message key='sbox.search.submit'/></s:text>
+  <s:submit name="search" id="searchSubmit" title="${goTitle}" value="${goTitle}" />
 
   <div id="searchboxMenu" style='visibility:hidden;'>
     <div id="searchTools">
       <a href="#" id='quickView' class='btn'
-      onclick="SearchBox.navigate( '<wiki:Link format="url" page="Main"/>','<fmt:message key="sbox.view.title"/>' );"
+      onclick="SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.ViewActionBean"/>','<fmt:message key="sbox.view.title"/>' );"
         title="<fmt:message key="sbox.view.title"/>"><span><span><fmt:message key="sbox.view"/></span></span></a>
       <a href="#" id='quickEdit' class='btn'
-      onclick="SearchBox.navigate( '<wiki:Link format="url" context="edit" page="Main"/>','<fmt:message key="sbox.edit.title"/>' );"
+      onclick="SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.EditActionBean"><s:param name="page" value="Main"/></s:url>','<fmt:message key="sbox.edit.title"/>' );"
         title="<fmt:message key="sbox.edit.title"/>"><span><span><fmt:message key="sbox.edit"/></span></span></a>
       <a href="#" id='quickClone' class='btn'	
-      onclick="return SearchBox.navigate( '<wiki:Link format="url" page="Main" context="edit" />', '<fmt:message key="sbox.clone.title"/>', true );"
+      onclick="return SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.EditActionBean"><s:param name="page" value="Main"/></s:url>', '<fmt:message key="sbox.clone.title"/>', true );"
         title="<fmt:message key="sbox.clone.title"/>"><span><span><fmt:message key="sbox.clone"/></span></span></a>
       <a href="#" id="advancedSearch" class='btn'
-      onclick="SearchBox.navigate( '<wiki:BaseURL />Search.jsp?query=Main','<wiki:Variable var="pagename"/>' )"
+      onclick="SearchBox.navigate( '<s:url beanclass="org.apache.wiki.action.SearchActionBean"><s:param name="query" value="Main"/></s:url>','<wiki:PageName/>' )"
         title="<fmt:message key="sbox.find.title"/> [ f ]"><span><span><fmt:message key="sbox.find"/></span></span></a>
     </div>
     <div id="searchResult">
@@ -66,4 +62,4 @@
     </div>
   </div>
 
-</form>
+</s:form>
