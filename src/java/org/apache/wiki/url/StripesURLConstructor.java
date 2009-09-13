@@ -60,7 +60,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
      * Contains the absolute path of the JSPWiki Web application without the
      * actual servlet; in other words, the absolute or relative path to this
      * webapp's root path. If no base URL is specified in
-     * <code>jspwiki.properties</code>, the value will be an empty string.
+     * {@code jspwiki.properties}, the value will be an empty string.
      * Note that the trailing slash is removed.
      */
     private String m_pathPrefix;
@@ -84,14 +84,14 @@ public class StripesURLConstructor extends DefaultURLConstructor
      * absolute if the WikiEngine was configured to return absolute URLs;
      * otherwise, the URL will be relative to the webapp context root. If the
      * ActionBean class is not a WikiContext subclass, the value of the
-     * <code>page</code> parameter is ignored.
+     * {@code page} parameter is ignored.
      * 
      * @param context the wiki request context to use
      * @param name the target of the action, typically the wiki page
-     * @param absolute If <code>true</code>, will generate an absolute URL
+     * @param absolute If {@code true}, will generate an absolute URL
      *            regardless of properties setting.
      * @param parameters the query parameters to append to the end of the URL; may
-     *            be <code>null</code> if no parameters
+     *            be {@code null} if no parameters
      * @return the URL
      */
     @Override
@@ -230,7 +230,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
             ActionResolver resolver = stripesConfig.getActionResolver();
             if( resolver instanceof AnnotatedClassActionResolver )
             {
-                return UrlBindingFactory.getInstance();
+                return ((AnnotatedClassActionResolver) resolver).getUrlBindingFactory();
             }
         }
         return null;
