@@ -26,6 +26,8 @@
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
+<%@ page import="org.apache.wiki.content.jcr.JCRWikiPage" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page errorPage="/Error.jsp" %>
 <%
   int MAXATTACHNAMELENGTH = 30;
@@ -120,7 +122,7 @@
                 <td style="text-align:center;">
                   <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title' />"><wiki:PageVersion/></a>
                 </td>
-            	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+            	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString()) %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" /></td>
                 <td><wiki:Author/></td>
                 <wiki:Permission permission="delete">
                   <td>

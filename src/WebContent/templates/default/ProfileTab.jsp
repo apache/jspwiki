@@ -126,14 +126,14 @@
        <td><fmt:message key="prefs.creationdate" /></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="created"/>--%>
- 	     <fmt:formatDate value="${profile.Created}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+ 	     <fmt:formatDate value="${profile.Created}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      <tr class="additinfo">
        <td><fmt:message key="prefs.profile.lastmodified" /></td>
        <td class="formvalue">
          <%--<wiki:UserProfile property="modified"/>--%>
- 	     <fmt:formatDate value="${profile.LastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+ 	     <fmt:formatDate value="${profile.LastModified}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
        </td>
      </tr>
      </wiki:UserProfile>

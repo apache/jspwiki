@@ -29,6 +29,8 @@
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="org.apache.wiki.content.jcr.JCRWikiPage" %>
 <%
   WikiContext c = WikiContextFactory.findContext( pageContext );
   WikiPage wikiPage = c.getPage();
@@ -171,7 +173,7 @@
               <fmt:formatNumber value="<%=Double.toString(att.getSize()/1000.0) %>" groupingUsed="false" maxFractionDigits="1" minFractionDigits="1" />&nbsp;<fmt:message key="info.kilobytes" />
             </td>
       	    <td style="white-space:nowrap;">
-      	      <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+      	      <fmt:formatDate value="<%= new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString()) %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
       	    </td>
             <td><wiki:Author/></td>
             <td class='changenote'>

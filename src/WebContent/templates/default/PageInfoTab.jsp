@@ -85,7 +85,7 @@
       <fmt:param><wiki:PageVersion>1</wiki:PageVersion></fmt:param>
       <fmt:param>
         <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />" title="<fmt:message key='info.pagediff.title' />">
-          <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+          <fmt:formatDate value="<%= wikiPage.getLastModified() %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
         </a>
       </fmt:param>
       <fmt:param><wiki:Author/></fmt:param>
@@ -98,7 +98,7 @@
     <fmt:message key='info.createdon'>
       <fmt:param>
         <wiki:Link version="1">
-          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+          <fmt:formatDate value="<%= firstPage.getLastModified() %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
         </wiki:Link>
       </fmt:param>
       <fmt:param><%= creationAuthor %></fmt:param>
@@ -185,7 +185,7 @@
             </wiki:LinkTo>
           </td>
       
-          <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+          <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" /></td>
           <td style="white-space:nowrap;text-align:right;">
             <c:set var="ff"><wiki:PageSize/></c:set>
             <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />

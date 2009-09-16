@@ -1,3 +1,12 @@
+2009-09-16 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-157
+        
+        * JSPWIKI-601: lastModified dates were not shown in page versions, replaced 
+        prefs.DateFormat with prefs.TimeFormat on multiple places.
+        Also attachment created dates were not shown (attachments don't have
+        a lastModified date, but a created Date).
+
 2009-09-12 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-156

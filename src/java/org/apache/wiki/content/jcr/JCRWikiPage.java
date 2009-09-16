@@ -65,9 +65,15 @@ public class JCRWikiPage
 
     /** The name of the version attribute */
     public static final String ATTR_VERSION = "wiki:version";
+
+    /** The name of the created attribute */
+    public static final String ATTR_CREATED = "wiki:created";
     
     /** The name of the contentType  attribute */
     public  static final String CONTENTTYPE  = "wiki:contentType";
+    
+    /** The ISO8601:2000 dateformat */
+    public static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     
     private WikiPath m_path;
 
@@ -173,10 +179,10 @@ public class JCRWikiPage
         catch( RepositoryException e )
         {
             // the following exception still occurs quite often, so no stacktrace for now
-            log.warn( "RepositoryException occurred while getting Attribute " + key + " : "  +  e );
+            log.info( "RepositoryException occurred while getting Attribute " + key + " : "  +  e );
         }
         // until this is fixed we want some more diagnostic info 
-        log.warn("attribute value for key " + key + " is not Serializable, returning null value");
+        log.info("attribute value for key " + key + " is not Serializable, returning null value");
         return null;
     }
 
@@ -269,7 +275,7 @@ public class JCRWikiPage
             }
             else
             {
-                throw new IllegalStateException( "The value returned by " + key + " was not a Serializalble, as expected.");
+                throw new IllegalStateException( "The value returned by " + key + " was not a Serializable, as expected.");
             }
         }
         catch(RepositoryException e) {}

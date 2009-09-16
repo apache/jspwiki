@@ -450,9 +450,9 @@ public class ContentManager implements WikiEventListener
         
         nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
         
-        if( !nd.hasProperty( "wiki:created" ) )
+        if( !nd.hasProperty( JCRWikiPage.ATTR_CREATED ) )
         {
-            nd.setProperty( "wiki:created", Calendar.getInstance() );
+            nd.setProperty( JCRWikiPage.ATTR_CREATED, Calendar.getInstance() );
         }
         
         if( nd.isNew() )
