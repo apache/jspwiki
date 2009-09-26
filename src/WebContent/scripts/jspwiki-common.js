@@ -64,7 +64,7 @@ function $getText(el) {
 /*
 Global: mootools-extensions
 */
-String.extend({
+String.implement({
 
 	/*
 	Function: deCamelize
@@ -89,45 +89,18 @@ String.extend({
 	> "this is a long string".trunc(7); //returns "this is..."
 	*/
 	trunc: function(size, elips){
-
 		return this.slice(0,size) + ((this.length<size) ? '' : (elips||'...'));
-
-	},
-
-	/*
-	Function: stripScipts
-		Strips the String of its <script> tags and anything in between them.
-
-	Examples:
-	> var myString = "<script>alert('Hello')</script>Hello, World.";
-	> myString.stripScripts(); //Returns "Hello, World."
-	*/
-	stripScripts: function(){
-		return this.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, '');
 	}
+
 });
 
-/*
-Function: getLast
-	Returns the last item from the array.
-	(credit: mootools v1.2, bugfix doesn't work when last element is '')
-
-Examples:
-> ['Cow', 'Pig', 'Dog', 'Cat'].getLast(); //returns 'Cat'
-*/
-//Array.extend seems not to overwrite the native getLast function
-Array.prototype.getLast = function(){
-	return (this.length) ? this[this.length - 1] : null;
-}
-
-
-Element.extend({
+Element.implement({
 
 	/*
-	Function: wraps
-		This method moves this Element around its target.
+	Function: wrapContent
+		This method moves this Element around its content.(child-nodes)
 		The Element is moved to the position of the passed element and becomes the parent.
-		(credit: mootools v1.2)
+		All child-nodes are moved to the new element.
 
 	Arguments:
 		el - (mixed) The id of an element or an Element.
@@ -140,19 +113,20 @@ Element.extend({
 	>	<div id="myFirstElement"></div>
 	JavaScript
 	>	var mySecondElement = new Element('div', {id: 'mySecondElement'});
-	>	mySecondElement.wraps($('myFirstElement'));
+	>	mySecondElement.wrapContent($('myFirstElement'));
 	Resulting HTML
 	>	<div id="mySecondElement">
     >		<div id="myFirstElement"></div>
 	>	</div>
 	*/
-	wraps: function(el){
+	wrapContent : function(el){
 		while( el.firstChild ) this.appendChild( el.firstChild );
 		el.appendChild( this ) ;
 		return this;
 	},
 
 	/*
+	FIXME 123!
 	Function: visible
 		Check if the current element and all its parents are visible.
 
@@ -169,11 +143,21 @@ Element.extend({
 			el = el.getParent();
 		}
 		return true;
+
+		//isDisplayed: function(){
+		//		return this.getStyle('display') != 'none';
+		//	},
+		//
+		//isVisible: function(){
+		//		var w = this.offsetWidth, h = this.offsetHeight;
+		//		return (w == 0 && h == 0) ? false : (w > 0 && h > 0) ? true : this.isDisplayed();
+		//  },
 	},
 
 	/*
 	Function: hide
 		Hide the element: set 'display' style to 'none'.
+		Ref. mootools.1.2.3
 
 	Returns:
 		(element) - This Element
@@ -182,12 +166,20 @@ Element.extend({
 	>	$('thisElement').hide();
 	*/
  	hide: function() {
-		return this.setStyle('display','none');
+		//return this.setStyle('display','none');
+		var d;
+		try {
+			// IE fails here if the element is not in the dom
+			if ((d = this.getStyle('display')) == 'none') d = null;
+		} catch(e){}
+ 
+		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
 	},
 
 	/*
 	Function: show
 		Show the element: set 'display' style to '' (default display style)
+		Ref. mootools.1.2.3
 
 	Returns:
 		(element) - This Element
@@ -195,8 +187,9 @@ Element.extend({
 	Examples:
 	>	$('thisElement').show();
 	*/
-	show: function() {
-		return this.setStyle('display','');
+	show: function(display) {
+		//return this.setStyle('display','');
+		return this.setStyle('display', display || this.retrieve('originalDisplay') || 'block');
 	},
 
 	/*
@@ -211,6 +204,7 @@ Element.extend({
 	*/
 	toggle: function() {
 		return this.visible() ? this.hide() : this.show();
+		//return this[this.isDisplayed() ? 'hide' : 'show']();
 	},
 
 	/*
@@ -238,24 +232,45 @@ Element.extend({
 	/*
 	Function: getDefaultValue
 		Returns the default value of a form element.
-		Inspired by getValue() of mootools, v1.1
+		Inspired by get('value') of mootools, v1.1
+
+	Note:
+		Checkboxes treat default-values in a different way.
+		Compare the {{checked}} property vs the {{defaultChecked}} property.
+		When equal, return the defaultValue (which btw equals to the value).
+		Otherwise, return false.  (FFS: or may be better undefined ?)
 
 	Returns:
-		(element) - This Element
+		(element) - the default value of the element; or false if not applicable.
 
 	Examples:
 	> $('thisElement').getDefaultValue();
 	*/
 	getDefaultValue: function(){
-		switch(this.getTag()){
+
+	    var self = this,
+	    	type = self.get('type'),
+	    	values = [];
+
+		switch( self.get('tag') ){
+
 			case 'select':
-				var values = [];
-				$each(this.options, function(option){
+
+				$each(self.options, function(option){
 					if( option.defaultSelected ) values.push($pick(option.value, option.text));
 				});
-				return (this.multiple) ? values : values[0];
-			case 'input': if (!(this.defaultChecked && ['checkbox', 'radio'].contains(this.type)) && !['hidden', 'text', 'password'].contains(this.type)) break;
-			case 'textarea': return this.defaultValue;
+				return (self.multiple) ? values : values[0];
+
+			case 'input':
+
+				if( ('checkbox'==type) && (self.checked != self.defaultChecked)) break;
+
+				if(	!'checkbox|radio|hidden|text|password'.test(type) ) break;
+
+			case 'textarea':
+
+				return self.defaultValue;
+
 		}
 		return false;
 	},
@@ -295,7 +310,12 @@ Element.extend({
 	}
 
 });
-
+/*
+Shortcuts:
+	$E : synonym for document.getElement(css-selector)
+*/
+var $E = document.getElement.bind(document);
+//var $ = document.id;
 
 /*
 Class: Observer
@@ -303,11 +323,14 @@ Class: Observer
 
 Example:
 >	$(formInput).observe(function(){
->		alert('my value changed to '+this.getValue() );
+>		alert('my value changed to '+this.get('value') );
 >	});
 
 */
 var Observer = new Class({
+
+	Implements: Options,
+
 	options: {
 		event: 'keyup',
 		delay: 300
@@ -319,7 +342,7 @@ var Observer = new Class({
 		self.callback = fn;
 		self.timeout = null;
 		self.listener = self.fired.bind(self);
-		self.value = el.getValue();
+		self.value = el.get('value');
 		el.set({autocomplete:'off'}).addEvent(self.options.event, self.listener);
 	},
 	fired: function(){
@@ -340,9 +363,8 @@ var Observer = new Class({
 		this.clear();
 	}
 });
-Observer.implement(new Options);
 
-Element.extend({
+Element.implement({
 	observe: function(fn, options){
 		return new Observer(this, fn, options);
 	}
@@ -374,23 +396,20 @@ Function: localize
 	Uses the [LocalideString] global hash.
 
 Examples:
->	"moreInfo".localize() =='More';
->	"imageInfo".localize(2,4); => "Image {0} of {1}" becomes "Image 2 of 4
+>	"moreInfo".localize() =="More";
+>	"imageInfo".localize(2,4); => "Image {0} of {1}" becomes "Image 2 of 4"
 
 */
-String.extend({
+String.implement({
 	localize: function(){
-		var s = LocalizedStrings["javascript."+this],
-			args = arguments;
-
-		if(!s) return("???" + this + "???");
+		var s = LocalizedStrings["javascript."+this] || "???"+this+"???",
+			args = arguments; /* propagate to the closure function */
 
 		return s.replace(/\{(\d)\}/g, function(m){
 			return args[m.charAt(1)] || "???"+m.charAt(1)+"???";
 		});
 	}
 });
-
 
 /*
 Class: Wiki
@@ -430,20 +449,25 @@ var Wiki = {
 
 		if(self.prefs) return; //already initialised
 
+		/* FIXME: ID on top tabs, should move server side */
+		if( $E('div.tabs') ){
+			$E('div.tabs').id="toptab";
+			$E('div.tabmenu').id="toptabmenu";
+        }
+
 		// read all meta elements starting with wiki
 		$$('meta').each( function(el){
-			var n = el.getProperty('name') || '';
-			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.getProperty('content');
+			var n = el.get('name') || '';
+			if( n.indexOf('wiki') == 0 ) this[n.substr(4)] = el.get('content');
 		}, self);
 
 		self.BasePath = (self.BaseUrl) ?
 			self.BaseUrl.slice(self.BaseUrl.indexOf(host)+host.length,-1) : '';
-
 		// if JSPWiki is installed in the root, then we have to make sure that
 		// the cookie-cutter works properly here.
 		if(self.BasePath == '') self.BasePath = '/';
 
-		self.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
+		self.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:self.BasePath, duration:20});
 
 		self.allowEdit = !!$E('a.edit'); //deduct permission level
 		self.url = null;
@@ -461,25 +485,30 @@ var Wiki = {
 		self.makeMenuFx('morebutton', 'morepopup');
 		self.addEditLinks();
 
-		self.renderPage( $('page'), Wiki.PageName);
+		self.renderPage( $('page'), self.PageName);
 		self.renderPage( $('favorites'), "Favorites");
 
-		//self.addCollapsableFavs();
-		self.splitbar();
+		self.splitbar(); //add splitbar between favorites and page content
 
 		//jump back to the section previously being edited
 		if( document.referrer.test( /\&section=(\d+)$/ ) ){
 			var section = RegExp.$1.toInt(),
-				els = this.getSections();
+				els = self.getSections();
 			if( els && els[section] ){
 				var el = els[section];
 				window.scrollTo( el.getLeft(), el.getTop() );
 			}
 		}
 
+		//fixme: new SearchBox($('xxx'));
 		SearchBox.initialize();
+
+		//fixme;
+		// HighlightWord( $('pagecontent'), self.prefs.get('PrevQuery') )
+		// self.prefs.set('PrevQuery','');
 		HighlightWord.initialize();
 		self.setFocus();
+
 	},
 
 	/*
@@ -507,7 +536,7 @@ var Wiki = {
 		//return alert(msg); //standard js
 
 		this.dialog
-			.setBody( new Element('p').setHTML(msg) )
+			.setBody( new Element('p').set('html',msg) )
 			.setButtons({ Ok:Class.empty })
 			.show();
 	},
@@ -526,7 +555,7 @@ var Wiki = {
 		//return callback( confirm(msg) ); //standard js
 
 		this.dialog
-			.setBody( new Element('p').setHTML(msg) )
+			.setBody( new Element('p').set('html',msg) )
 			.setButtons({
 				Ok:function(){ callback(true); },
 				Cancel:function(){ callback(false); }
@@ -554,7 +583,7 @@ var Wiki = {
 		var input;
 
 		this.dialog.setBody([
-				new Element('p').setHTML(msg),
+				new Element('p').set('html',msg),
 				new Element('form').adopt(
 					input = new Element('input',{
 						name:'prompt',
@@ -565,7 +594,7 @@ var Wiki = {
 				)
 			])
 			.setButtons({
-				Ok:function(){ callback( input.getValue() ) },
+				Ok:function(){ callback( input.get('value') ) },
 				Cancel:Class.empty
 			})
 			.show();
@@ -656,12 +685,13 @@ var Wiki = {
 		menu = $(menu);
 		if(!btn || !menu) return;
 
-		var	popfx = menu.effect('opacity', {wait:false}).set(0);
+		//var	popfx = menu.effect('opacity', {wait:false}).set(0);
+		menu.fade('hide');
 		btn.adopt(menu).set({
 			href:'#',
 			events:{
-				'mouseout': function(){ popfx.start(0) },
-				'mouseover': function(){ Wiki.locatemenu(btn,menu); popfx.start(0.9) }
+				'mouseout': function(){ menu.fade(0) /*popfx.start(0)*/ },
+				'mouseover': function(){ Wiki.locatemenu(btn,menu); menu.fade(0.9) /*popfx.start(0.9)*/ }
 			}
 		});
 	},
@@ -772,7 +802,7 @@ var Wiki = {
 			self,
 			["progressTracker.getProgress",[progress],function(result){
 				result = result.stripScripts(); //xss vulnerability
-				if(!result.code) bar.getFirst().setStyle('width',result+'%').setHTML(result+'%');
+				if(!result.code) bar.getFirst().setStyle('width',result+'%').set('html',result+'%');
 			}]
 		);
 		return self.submitOnce(form);
@@ -867,7 +897,7 @@ var Wiki = {
 				'position':'relative',
 				'padding': tabs.getStyle('padding') // take over padding from original .tabs
 			}
-		}).wraps(tabs.setStyle('padding','0'));
+		}).wrapContent(tabs.setStyle('padding','0'));
 
 		var pointer = new Element('div', {'id':'collapseFavsPointer'}).hide().inject(body),
 			movePointer = function(e){
@@ -897,7 +927,7 @@ var Wiki = {
 	addEditLinks: function(){
 
 
-//fixme: SectionEditing is not properly save when updating userprefs !
+//fixme: SectionEditing is not properly saved when updating userprefs !
 //alert(this.prefs.keys()+"\n"+this.prefs.values());
 
 		if( $("previewcontent") || !this.allowEdit || this.prefs.get('SectionEditing') != 'on') return;
@@ -905,7 +935,7 @@ var Wiki = {
 		var url = this.EditUrl;
 		url = url + (url.contains('?') ? '&' : '?') + 'section=';
 
-		var aa = new Element('a',{'class':'editsection'}).setHTML('quick.edit'.localize()),
+		var aa = new Element('a',{'class':'editsection'}).set('html','quick.edit'.localize()),
 			i = 0;
 
 		this.getSections().each( function(el){
@@ -942,14 +972,15 @@ var Wiki = {
 		//FIXME: under contstruction
 		var params = options.action+'=&'+options.params.toQueryString();
 
-  		new Ajax( url, {
-			postBody: params,
+  		new Request.HTML({
+  			url:url,
+			data: params,
 			method: 'post',
 			update: options.update,
 			onComplete: function( result ){
 				options.onComplete( result );
 			}
-		}).request();
+		}).send();
 
 	},
 
@@ -988,23 +1019,23 @@ var Wiki = {
 
 		if(this.JsonUrl){
 
-			new Ajax(this.JsonUrl, {
-				postBody: Json.toString({
+			new Request({
+				url: this.JsonUrl,
+				data: JSON.encode({
 					'id':this.$jsonid++,
 					'method':method,
 					'params':params
 				}),
 				method: 'post',
 				onComplete: function(result){
-					var r = Json.evaluate(result,true);
+					var r = JSON.decode(result,true);
 					fn(r.result || r.error || null);
 					/*if( r ){
 						if(r.result){ fn(r.result) }
 						else if(r.error){ fn(r.error) }
 					}*/
 				}
-			}).request();
-
+			}).send();
 		}
 	}
 
@@ -1025,16 +1056,17 @@ Example:
 */
 Wiki.registerPlugin( function(page,name){
 	var i = 0,
-		lnk = new Element('a',{'class':'slimbox'}).setHTML('&raquo;');
+		lnk = new Element('a',{'class':'slimbox'}).set('html','&raquo;');
 
-	$ES('*[class^=slimbox]',page).each(function(slim){
+
+	page.getElements('*[class^=slimbox]').each(function(slim){
 		var group = 'lightbox'+ i++,
 			parm = slim.className.split('-')[1] || 'img ajax',
 			filter = [];
 		if(parm.test('img')) filter.extend(['img.inline', 'a.attachment']);
 		if(parm.test('ajax')) filter.extend(['a.wikipage', 'a.external']);
 
-		$ES(filter.join(','),slim).each(function(el){
+		slim.getElements(filter.join(',')).each(function(el){
 			var href = el.src||el.href,
 				rel = (el.className.test('inline|attachment')) ? 'img' : 'ajax';
 
@@ -1043,290 +1075,35 @@ Wiki.registerPlugin( function(page,name){
 			lnk.clone().setProperties({
 				'href':href,
 				'rel':group+' '+rel,
-				'title':el.alt||el.getText()
+				'title':el.alt||el.get('text')
 			}).injectAfter(el);//.injectBefore(el);
 
-			if(el.src) el.replaceWith(new Element('a',{
+			//if(el.src) el.replaces(new Element('a',{
+			//	'class':'attachment',
+			//	'href':el.src
+			//}).set('html',el.alt||el.get('text')));
+
+			if(el.src) new Element('a',{
 				'class':'attachment',
-				'href':el.src
-			}).setHTML(el.alt||el.getText()));
+				href:el.src,
+				html:el.alt||el.get('text')
+			}).replaces(el);
+
 		});
 	});
-	if(i) Lightbox.init();
-	//new Asset.javascript(Wiki.TemplateUrl+'scripts/slimbox.js');
+
+return; //FIXME
+	//if(i) Lightbox.init();
+	/* TODO: new slimbox invocation code, based on Slimbox v1.7 */
+	$$(document.links).filter(function(el) {
+		return el.rel && el.rel.test(/^lightbox/i);
+	}).slimbox({/* Put custom options here */}, null, function(el) {
+		return (this == el) || ((this.rel.length > 8) && (this.rel == el.rel));
+	});
+
+
 })
 
-
-/*
-Class: Slimbox
-	Slimbox v1.31 - The ultimate lightweight Lightbox clone
-	by Christophe Beyls (http://www.digitalia.be) - MIT-style license.
-	Inspired by the original Lightbox v2 by Lokesh Dhakar.
-
-	Updated by Dirk Frederickx to fit JSPWiki needs
-	- minimum size of image canvas
-	- add maximum size of image w.r.t window size
-	- CLOSE icon -> close x text iso icon
-	- {{prev, next}} links added in visible part of screen
-	- add size of picture to info window
-	- spacebar, down arrow, enter : next image
-	- up arrow : prev image
-	- allow the same picture occuring several times
-	- add support for external page links  => slimbox_ex
-*/
-var Lightbox = {
-
-	init: function(options){
-		this.options = $extend({
-			resizeDuration: 400,
-			resizeTransition: false, /*Fx.Transitions.sineInOut,*/
-			initialWidth: 250,
-			initialHeight: 250,
-			animateCaption: true,
-			errorMessage: "slimbox.error".localize()
-		}, options || {});
-
-		this.anchors=[];
-		$each(document.links, function(el){
-			if (el.rel && el.rel.test(/^lightbox/i)){
-				el.onclick = this.click.pass(el, this);
-				this.anchors.push(el);
-			}
-		}, this);
-		this.eventKeyDown = this.keyboardListener.bindAsEventListener(this);
-		this.eventPosition = this.position.bind(this);
-
-		/*	Build float panel
-			<div id="lbOverlay"></div>
-			<div id="lbCenter">
-				<div id="lbImage">
-					<!-- img or iframe element is inserted here -->
-				</div>
-			</div>
-			<div id="lbBottomContainer">
-				<div id="lbBottom">
-					<div id="lbCaption">
-					<div id="lbNumber">
-					<a id="lbCloseLink"></a>
-					<div style="clear:both;"></div>
-				</div>
-			</div>
-		*/
-		this.overlay = new Element('div', {'id': 'lbOverlay'}).inject(document.body);
-
-		this.center = new Element('div', {'id': 'lbCenter', 'styles': {'width': this.options.initialWidth, 'height': this.options.initialHeight, 'marginLeft': -(this.options.initialWidth/2), 'display': 'none'}}).inject(document.body);
-		new Element('a', {'id': 'lbCloseLink', 'href':'#', 'title':'slimbox.close.title'.localize()}).inject(this.center).onclick = this.overlay.onclick = this.close.bind(this);
-		this.image = new Element('div', {'id': 'lbImage'}).inject(this.center);
-
-		this.bottomContainer = new Element('div', {'id': 'lbBottomContainer', 'styles': {'display': 'none'}}).inject(document.body);
-		this.bottom = new Element('div', {'id': 'lbBottom'}).inject(this.bottomContainer);
-		//new Element('a', {'id': 'lbCloseLink', 'href': '#', 'title':'slimbox.close.title'.localize()}).setHTML('slimbox.close'.localize()).inject(this.bottom).onclick = this.overlay.onclick = this.close.bind(this);
-		this.caption = new Element('div', {'id': 'lbCaption'}).inject(this.bottom);
-
-		var info = new Element('div').inject(this.bottom);
-		this.prevLink = new Element('a', {'id': 'lbPrevLink', 'href': '#', 'styles': {'display': 'none'}}).setHTML("slimbox.previous".localize()).inject(info);
-		this.number = new Element('span', {'id': 'lbNumber'}).inject(info);
-		this.nextLink = this.prevLink.clone().setProperties({'id': 'lbNextLink' }).setHTML("slimbox.next".localize()).inject(info);
-		this.prevLink.onclick = this.previous.bind(this);
-		this.nextLink.onclick = this.next.bind(this);
-
- 		this.error = new Element('div').setProperty('id', 'lbError').setHTML(this.options.errorMessage);
-		new Element('div', {'styles': {'clear': 'both'}}).inject(this.bottom);
-
-		var nextEffect = this.nextEffect.bind(this);
-		this.fx = {
-			overlay: this.overlay.effect('opacity', {duration: 500}).hide(),
-			resize: this.center.effects($extend({duration: this.options.resizeDuration, onComplete: nextEffect}, this.options.resizeTransition ? {transition: this.options.resizeTransition} : {})),
-			image: this.image.effect('opacity', {duration: 500, onComplete: nextEffect}),
-			bottom: this.bottom.effect('margin-top', {duration: 400, onComplete: nextEffect})
-		};
-
-		this.fxs = new Fx.Elements([this.center, this.image], $extend({duration: this.options.resizeDuration, onComplete: nextEffect}, this.options.resizeTransition ? {transition: this.options.resizeTransition} : {}));
-
-		this.preloadPrev = new Image();
-		this.preloadNext = new Image();
-	},
-
-	click: function(link){
-		var rel = link.rel.split(' ');
-		if (rel[0].length == 8) return this.open([[url, title, rel[1]]], 0);
-
-		var imageNum=0, images = [];
-		this.anchors.each(function(el){
-			var elRel = el.rel.split(' ');
-			if (elRel[0]!=rel[0]) return;
-			if((el.href==link.href) && (el.title==link.title)) imageNum = images.length;
-			images.push([el.href, el.title, elRel[1]]);
-		});
-		return this.open(images, imageNum);
-	},
-
-	open: function(images, imageNum){
-		this.images = images;
-		this.position();
-		this.setup(true);
-		this.top = window.getScrollTop() + (window.getHeight() / 15);
-		this.center.setStyles({top: this.top, display: ''});
-		this.fx.overlay.start(0.7);
-		return this.changeImage(imageNum);
-	},
-
-	position: function(){
-		this.overlay.setStyles({top: window.getScrollTop(), height: window.getHeight()});
-	},
-
-	setup: function(open){
-		var elements = $A(document.getElementsByTagName('object'));
-		elements.extend(document.getElementsByTagName(window.ie ? 'select' : 'embed'));
-		elements.each(function(el){
-			if (open) el.lbBackupStyle = el.style.visibility;
-			el.style.visibility = open ? 'hidden' : el.lbBackupStyle;
-		});
-		var fn = open ? 'addEvent' : 'removeEvent';
-		window[fn]('scroll', this.eventPosition)[fn]('resize', this.eventPosition);
-		document[fn]('keydown', this.eventKeyDown);
-		this.step = 0;
-	},
-
-	keyboardListener: function(event){
-		switch (event.keyCode){
-			case 27: case 88: case 67: this.close(); break;
-			case 37: case 38: case 80: this.previous(); break;
-			case 13: case 32: case 39: case 40: case 78: this.next(); break;
-			default: return;
-		}
-		new Event(event).stop();
-	},
-
-	previous: function(){
-		return this.changeImage(this.activeImage-1);
-	},
-
-	next: function(){
-		return this.changeImage(this.activeImage+1);
-	},
-
-	changeImage: function(imageNum){
-		if (this.step || (imageNum < 0) || (imageNum >= this.images.length)) return false;
-		this.step = 1;
-		this.activeImage = imageNum;
-
-		this.center.style.backgroundColor = '';
-		this.bottomContainer.style.display = this.prevLink.style.display = this.nextLink.style.display = 'none';
-		this.fx.image.hide();
-		this.center.className = 'lbLoading';
-
-		this.preload = new Image();
-		this.image.empty().setStyle('overflow','hidden');
-		if( this.images[imageNum][2] == 'img' ){
-			this.preload.onload = this.nextEffect.bind(this);
-			this.preload.src = this.images[imageNum][0];
-		} else if( this.images[imageNum][2] == 'element' ){
-			/**/
-			this.so = this.images[imageNum][0];
-			this.so.setProperties({
-				width: '120px',
-				height: '120px'
-			});
-			this.so.inject(this.image);
-			this.nextEffect();
-		} else {
-			this.iframeId = "lbFrame_"+new Date().getTime();	// Safari would not update iframe content that has static id.
-			this.so = new Element('iframe').setProperties({
-				id: this.iframeId,
-//				width: this.contentsWidth,
-//				height: this.contentsHeight,
-				frameBorder:0,
-				scrolling:'auto',
-				src:this.images[imageNum][0]
-			}).inject(this.image);
-			this.nextEffect();	//asynchronous loading?
-		}
-		return false;
-	},
-
-	ajaxFailure: function (){
-		this.ajaxFailed = true;
-		this.image.setHTML('').adopt(this.error.clone());
-		this.nextEffect();
-	},
-
-	nextEffect: function(){
-		switch (this.step++){
-		case 1:
-			this.center.className = '';
-			this.caption.empty().adopt(new Element('a', {
-					'href':this.images[this.activeImage][0],
-					'title':"slimbox.directLink".localize()
-				}).setHTML(this.images[this.activeImage][1] || ''));
-
-			var type = (this.images[this.activeImage][2]=='img') ? "slimbox.info" : "slimbox.remoteRequest";
-			this.number.setHTML((this.images.length == 1) ? '' : type.localize(this.activeImage+1, this.images.length));
-			this.image.style.backgroundImage = 'none';
-
-			var w = Math.max(this.options.initialWidth,this.preload.width),
-				h = Math.max(this.options.initialHeight,this.preload.height),
-				ww = Window.getWidth()-10,
-				wh = Window.getHeight()-120;
-			//if(this.images[this.activeImage][2]!='img' &&!this.ajaxFailed){ w = 6000; h = 3000; }
-			if(w > ww) { h = Math.round(h * ww/w); w = ww; }
-			if(h > wh) { w = Math.round(w * wh/h); h = wh; }
-
-			this.image.style.width = this.bottom.style.width = w+'px';
-			this.image.style.height = /*this.prevLink.style.height = this.nextLink.style.height = */ h+'px';
-
-			if( this.images[this.activeImage][2]=='img') {
-				this.image.style.backgroundImage = 'url('+this.images[this.activeImage][0]+')';
-
-				if (this.activeImage) this.preloadPrev.src = this.images[this.activeImage-1][0];
-				if (this.activeImage != (this.images.length - 1)) this.preloadNext.src = this.images[this.activeImage+1][0];
-
-				this.number.setHTML(this.number.innerHTML+'&nbsp;&nbsp;['+this.preload.width+'&#215;'+this.preload.height+']');
-			} else {
-				this.so.style.width=w+'px';
-				this.so.style.height=h+'px';
-			}
-
-			if (this.options.animateCaption) this.bottomContainer.setStyles({height: '0px', display: ''});
-
-			this.fxs.start({
-				'0': { height: [this.image.offsetHeight], width: [this.image.offsetWidth], marginLeft: [-this.image.offsetWidth/2] },
-				'1': { opacity: [1] }
-			});
-
-			break;
-		case 2:
-			//this.center.style.backgroundColor = '#000';
-			this.image.setStyle('overflow','auto');
-			this.bottomContainer.setStyles({ top: (this.top + this.center.clientHeight)+'px', marginLeft: this.center.style.marginLeft });
-			if (this.options.animateCaption){
-				this.fx.bottom.set(-this.bottom.offsetHeight);
-				this.bottomContainer.style.height = '';
-				this.fx.bottom.start(0);
-				break;
-			}
-			this.bottomContainer.style.height = '';
-		case 3:
-			if (this.activeImage) this.prevLink.style.display = '';
-			if (this.activeImage != (this.images.length - 1)) this.nextLink.style.display = '';
-			this.step = 0;
-		}
-	},
-
-	close: function(){
-		if (this.step < 0) return;
-		this.step = -1;
-		if (this.preload){
-			this.preload.onload = Class.empty;
-			this.preload = null;
-		}
-		for (var f in this.fx) this.fx[f].stop();
-		this.center.style.display = this.bottomContainer.style.display = 'none';
-		this.fx.overlay.chain(this.setup.pass(false, this)).start(0);
-		this.image.empty();
-		return false;
-	}
-};
 
 
 /*
@@ -1365,12 +1142,12 @@ var TabbedSection = {
 	render: function(page, name){
 
 		// add click handlers to existing tabmenu's, generated by <wiki:tabbedSection>
-		$ES('.tabmenu a',page).each(function(el){
+		page.getElements('.tabmenu a').each(function(el){
 			if(!el.href) el.addEvent('click', this.click);
 		},this);
 
 		// convert tabbedSections into tabmenu's with click handlers
-		$ES('.tabbedSection',page).each( function(tt){
+		page.getElements('.tabbedSection').each( function(tt){
 			if(tt.hasClass('tabs')) return;
 			tt.addClass('tabs'); //css styling on tabs
 
@@ -1543,14 +1320,17 @@ var SearchBox = {
 		this.query = q;
 		q.observe(this.ajaxQuickSearch.bind(this) );
 
-		this.hover = $('searchboxMenu').setProperty('visibility','visible')
-			.effect('opacity', {wait:false}).set(0);
+		//this.hover = $('searchboxMenu').setProperty('visibility','visible')
+		//.effect('opacity', {wait:false}).set(0);
+		var menu = $('searchboxMenu').set('visibility','visible').fade('hide');
 
 		$(q.form).addEvent('submit',this.submit.bind(this))
 			//FIXME .addEvent('blur',function(){ this.hasfocus=false; this.hover.start(0) }.bind(this))
 			//FIXME .addEvent('focus',function(){ this.hasfocus=true; this.hover.start(0.9) }.bind(this))
-			  .addEvent('mouseout',function(){ this.hover.start(0) }.bind(this))
-			  .addEvent('mouseover',function(){ Wiki.locatemenu(this.query, $('searchboxMenu') ); this.hover.start(0.9) }.bind(this));
+			  .addEvent('mouseout',function(){ menu.fade(0) /*this.hover.start(0)*/ }.bind(this))
+			  .addEvent('mouseover',function(){
+			  	Wiki.locatemenu(this.query, $('searchboxMenu') );
+			  	menu.fade(0.9) /*this.hover.start(0.9)*/ }.bind(this));
 
 		/* use advanced search-input on safari - experimental */
 		//if(window.webkit){
@@ -1567,18 +1347,19 @@ var SearchBox = {
 				new Element('a',{
 					'href':'#',
 					'events': {'click':function(){ q.value = el; q.form.submit(); }}
-					}).setHTML(el).inject( new Element('li').inject(ul) );
+					}).set('html',el).inject( new Element('li').inject(ul) );
 			});
 		//}
 	},
 
 	onPageLoadFullSearch : function(){
+
 		var q2 = $("query2"); if( !q2 ) return;
 		this.query2 = q2;
 
 		var changescope = function(){
 			var qq = this.query2.value.replace(/^(?:author:|name:|contents:|attachment:)/,'');
-			this.query2.value = $('scope').getValue() + qq;
+			this.query2.value = $('scope').get('value') + qq;
 			this.runfullsearch();
 		}.bind(this);
 
@@ -1605,6 +1386,7 @@ var SearchBox = {
 	},
 
 	runfullsearch: function(e){
+
 		var q2 = this.query2.value;
 		if( !q2 || (q2.trim()=='')) {
 			$('searchResult2').empty();
@@ -1626,8 +1408,11 @@ var SearchBox = {
 			onComplete: function() {
 				$('spin').hide();
 				//FIXME: stripes generates a whole web-page iso of page fragment with searchresults.
-				var x = $E('#searchResult2',$('searchResult2'));
-				$('searchResult2').replaceWith( x );
+				//var x = $E('#searchResult2',$('searchResult2'));
+				var res = $('searchResult2');
+			console.log(res.innerHTML);
+				res.replaces( res );
+				//res.replaces( res.getElement('#searchResult2') );
 				GraphBar.render($('searchResult2'));
 				Wiki.prefs.set('PrevQuery', q2);
 			}
@@ -1659,7 +1444,7 @@ var SearchBox = {
 			$('searchOutput').empty();
 			return;
 		}
-		$('searchTarget').setHTML('('+qv+') :');
+		$('searchTarget').set('html','('+qv+') :');
 		$('searchSpin').show();
 
 		Wiki.jsonrpc('search.findPages', [qv,20], function(result){
@@ -1669,8 +1454,8 @@ var SearchBox = {
 
 				result.list.each(function(el){
 					new Element('li').adopt(
-						new Element('a',{'href':Wiki.toUrl(el.map.page) }).setHTML(el.map.page),
-						new Element('span',{'class':'small'}).setHTML(" ("+el.map.score+")")
+						new Element('a',{'href':Wiki.toUrl(el.map.page) }).set('html',el.map.page),
+						new Element('span',{'class':'small'}).set('html'," ("+el.map.score+")")
 					).inject(frag);
 				});
 				$('searchOutput').empty().adopt(frag);
@@ -1740,9 +1525,9 @@ Examples:
 Credit:
   mootools 1.11
 */
-var Color = new Class({
+var Color = (function(){
 
-	colors: {
+var htmlColors = {
 		aqua:[0,255,255],
 		azure:[240,255,255],
 		beige:[245,245,220],
@@ -1786,19 +1571,33 @@ var Color = new Class({
 		silver:[192,192,192],
 		white:[255,255,255],
 		yellow:[255,255,0]
-	},
+};
+return new Class({
 
 	initialize: function(color, type){
-
-		if(!color) return false;
-		type = type || (color.push ? 'rgb' : 'hex');
-		var rgb = (type=='rgb') ? color : this.colors[color.trim().toLowerCase()] || color.toString().hexToRgb(true);
-		if(!rgb) return false;
-		rgb.hex = rgb.rgbToHex();
-		return $extend(rgb, Color.prototype);
-
+		if (arguments.length >= 3){
+			type = 'rgb'; color = Array.slice(arguments, 0, 3);
+		} else if (typeof color == 'string'){
+			if (color.match(/rgb/)) color = color.rgbToHex().hexToRgb(true);
+			//else if (color.match(/hsb/)) color = color.hsbToRgb();
+			else color = htmlColors[color.trim().toLowerCase()] || color.hexToRgb(true);
+		}
+		type = type || 'rgb';
+		/*
+		switch (type){
+			case 'hsb':
+				var old = color;
+				color = color.hsbToRgb();
+				color.hsb = old;
+			break;
+			case 'hex': color = color.hexToRgb(true); break;
+		}
+		*/
+		color.rgb = color.slice(0, 3);
+		//color.hsb = color.hsb || color.rgbToHsb();
+		color.hex = color.rgbToHex();
+		return $extend(color, this);
 	},
-
 
 	/*
 	Method: mix
@@ -1824,7 +1623,7 @@ var Color = new Class({
 	*/
 	mix: function(){
 		var colors = $A(arguments),
-			rgb = this.copy(),
+			rgb = $A(this),
 			alpha = (($type(colors.getLast()) == 'number') ? colors.pop() : 50)/100,
 			alphaI = 1-alpha;
 
@@ -1858,109 +1657,209 @@ var Color = new Class({
 	}
 });
 
+})()
+
 /*
 Class: GraphBar
-	Object: also used on the findpage
- ** %%graphBars ... %%
- ** convert numbers inside %%gBar ... %% tags to graphic horizontal bars
- ** no img needed.
+	Generate horizontal or vertical bars, without using any images.
+	Support any color, gradient bars, progress and gauge bars.
+	The length of the bars can be based on numbers or dates.
+	Allow to specify maximum and minimum values.
 
- ** supported parameters: bar-color and bar-maxsize
+>	%%graphBars
+>		%%gBar 25 /%
+>	/%
 
-Examples:
+	Graphbar parameters can be passed in class constructor (options)
+	or as call-name parameters.
+
+>	%%graphBars-min50-max3000-progress-lime-0f0f0f
+>		%%gBar 25 /%
+>	/%
+
+	Other example of wiki-markup
 > %%graphBars-e0e0e0 ... %%  use color #e0e0e0, default size 120
 > %%graphBars-blue-red ... %%  blend colors from blue to red
 > %%graphBars-red-40 ... %%  use color red, maxsize 40 chars
 > %%graphBars-vertical ... %%  vertical bars
 > %%graphBars-progress ... %%  progress bars in 2 colors
 > %%graphBars-gauge ... %%  gauge bars in gradient colors
+
+Options:
+	classPrefix - CSS classname of parent element (default = graphBars)
+	classBar - CSS classname of the bar value elements (default = gBar)
+	lowerbound - lowerbound of bar values (default:20px)
+	upperbound - upperbound of bar values (default:320px)
+	vwidth - vertical bar width in px(default:20px)
+	isHorizontal - horizontal or vertical bars (default:true)
+	isProgress - progress bar show 2 bars, always summing up to 100%
+	isGauge - gauge bars have colour gradient related to the size/value of the bar
+
+
+DOM-structure:
+	Original DOM-structure
+>	<span class="gBar">100 </span>
+
+	Is converted to following horizontal bar
+>	<span class="graphBar" style="border-left-width: 20px;">x</span>
+>	<span class="gBar">100 </span>
+
+	or is converted to following vertical bar
+>   <div style="height: 77px; position: relative;">
+>       <span class="graphBar"
+>             style="border-color: rgb(255, 0, 0);
+>                    border-bottom-width: 20px;
+>                    position: absolute;
+>                    width: 20px;
+>                    bottom: 0px;"/>
+>       <span style="position: relative; top: 40px;"> 20 </span>
+>    </div>
+
+	or is converted to following progress bar
+>	<span class="graphBar" style="border-color: rgb(0, 128, 0); border-left-width: 20px;">x</span>
+>	<span class="graphBar" style="border-color: rgb(0, 255, 0); border-left-width: 300px; margin-left: -1ex;">x</span>
+>	<span class="gBar">100 </span>
+
+
+Examples:
+>	new GraphBar( dom-element, { options });
+
 */
+Wiki.registerPlugin( function(page,name){
 
-var GraphBar =
-{
-	render: function(page, name){
-		$ES('*[class^=graphBars]',page).each( function(g){
-			var lbound = 20,	//max - lowerbound size of bar
-				ubound = 320,	//min - upperbound size of bar
-				vwidth = 20,	//vertical bar width
-				color1 = null,	// bar color
-				color2 = null,	// 2nd bar color used depending on bar-type
-				isGauge = false,	// gauge bar
-				isProgress = false,	// progress bar
-				isHorizontal = true,// horizontal or vertical orientation
-				parms = g.className.substr(9).split('-'),
-				barName = parms.shift(); //first param is optional barName
+	page.getElements('div[class^=graphBars]').each( function(el){
+		new GraphBar(el);
+	});
 
-			parms.each(function(p){
-				p = p.toLowerCase();
-				if(p == "vertical") { isHorizontal = false; }
-				else if(p == "progress") { isProgress = true;  }
-				else if(p == "gauge") { isGauge = true; }
-				else if(p.indexOf("min") == 0) { lbound = p.substr(3).toInt(); }
-				else if(p.indexOf("max") == 0) { ubound = p.substr(3).toInt(); }
-				else if(p != "") {
-					p = new Color(p,'hex'); if(!p.hex) return;
-					if(!color1) color1 = p;
-					else if(!color2) color2 = p;
-				}
-			});
-			if( !color2 && color1) color2 = (isGauge || isProgress) ? color1.invert() : color1;
+});
 
-			if( lbound > ubound ) { var m = ubound; ubound=lbound; ubound=m; }
-			var size = ubound-lbound;
+var GraphBar = new Class({
 
-			var bars = $ES('.gBar'+barName, g); //collect all gBar elements
-			if( (bars.length==0) && barName && (barName!="")){  // check table data
-				bars = this.getTableValues(g, barName);
-			}
-			if( !bars ) return;
+	Implements: Options,
 
-			var barData = this.parseBarData( bars, lbound, size ),
-				border = (isHorizontal ? 'borderLeft' : 'borderBottom');
-
-			bars.each(function(b,j){
-				var bar1 = $H().set(border+'Width',barData[j]),
-					bar2 = $H(), // 2nd bar only valid ico 'progress'
-					barEL = new Element('span',{'class':'graphBar'}),
-					pb = b.getParent(); // parent of gBar element
-
-				if(isHorizontal){
-					barEL.setHTML('x');
-					if(isProgress){
-						bar2.extend(bar1.obj);
-						bar1.set(border+'Width',ubound-barData[j]).set('marginLeft','-1ex');
-					}
-				} else { // isVertical
-					if(pb.getTag()=='td') { pb = new Element('div').wraps(pb); }
-
-					pb.setStyles({'height':ubound+b.getStyle('lineHeight').toInt(), 'position':'relative'});
-					b.setStyle('position', 'relative'); //needed for inserted spans ;-)) hehe
-					if( !isProgress ) { b.setStyle('top', (ubound-barData[j])); }
-
-					bar1.extend({'position':'absolute', 'width':vwidth, 'bottom':'0'});
-					if(isProgress){
-						bar2.extend(bar1.obj).set(border+'Width', ubound);
-					}
-				}
-				if(isProgress){
-					if(color1){ bar1.set('borderColor', color1.hex); }
-					if(color2){
-						bar2.set('borderColor', color2.hex);
-					} else {
-						bar1.set('borderColor', 'transparent');
-					}
-				} else if(color1){
-					var percent = isGauge ? (barData[j]-lbound)/size : j/(bars.length-1);
-					bar1.set('borderColor', color1.mix(color2, 100 * percent).hex);
-				}
-
-				if(bar2.length > 0){ barEL.clone().setStyles(bar2.obj).injectBefore(b); };
-				if(bar1.length > 0){ barEL.setStyles(bar1.obj).injectBefore(b); };
-
-			},this);
-
-		},this);
+	options: {
+		classPrefix:"graphBars",
+		classBar:"gBar",
+		lowerbound:20,
+		upperbound:320,
+		vwidth:20, //vertical bar width
+		isHorizontal:true,
+		isProgress:false,
+		isGauge:false
 	},
+
+	initialize: function(el, options){
+
+		this.setOptions(options);
+		this.parseParameters( el );
+
+		var self = this,
+			options = self.options,
+			bars = el.getElements('.'+ options.classBar + options.barName), //collect all gBar elements
+			color1 = self.color1,
+			color2 = self.color2,
+			border = (options.isHorizontal ? 'borderLeft' : 'borderBottom'),
+			isProgress = options.isProgress,
+			isGauge = options.isGauge,
+
+			tmp = options.upperbound,
+			ubound = Math.max(tmp, options.lowerbound),
+			lbound = (tmp == ubound) ? options.lowerbound : tmp;
+
+		if( !color2 && color1)
+			color2 = (isGauge || isProgress) ? color1.invert() : color1;
+
+		if( bars.length == 0 ) bars = self.getTableValues(el, options.barName);
+
+		if( bars ){
+
+			var barData = self.parseBarData( bars, lbound, ubound-lbound );
+
+			bars.each( function(el, index){
+
+				var bar = {},
+					progressbar = {},
+					value = barData[index],
+					barEL = new Element('span',{'class':'graphBar'}),
+					pb = el.getParent(); // parent of gBar element
+
+				bar[ border+'Width' ] = value;
+
+				if( options.isHorizontal ){
+
+					barEL.set('html','x');
+
+					if( isProgress ){
+						$extend( progressbar, bar );
+						bar[border+'Width'] = ubound - value;
+						bar.marginLeft='-1ex';
+					}
+
+				} else { // isVertical
+
+					if( pb.get('tag')=='td' ) pb = new Element('div').wrapContent(pb);
+
+					pb.setStyles({
+						height: ubound + el.getStyle('lineHeight').toInt(),
+						position: 'relative'
+					});
+					el.setStyle('position', 'relative'); //needed for inserted spans ;-)) hehe
+					if( !isProgress ) el.setStyle('top', ubound - value );
+
+					$extend( bar, {position:'absolute', width:options.vwidth, bottom:0} );
+
+					if( isProgress ) $extend(progressbar,bar)[border+'Width'] = ubound;
+
+				}
+
+				if( isProgress ){
+
+					if( color1 ) bar.borderColor = color1.hex;
+
+					if( color2 ){ progressbar.borderColor = color2.hex }
+					else        { bar.borderColor = 'transparent' }
+
+				} else if( color1 ){
+
+					var percent = isGauge ? (value-lbound)/(ubound-lbound) : index/(bars.length-1);
+					bar.borderColor = color1.mix(color2, 100 * percent).hex;
+
+				}
+
+				if( isProgress ) barEL.clone().setStyles(progressbar).injectBefore(el);
+				barEL.setStyles(bar).injectBefore(el);
+
+
+			});
+		}
+
+	},
+
+	parseParameters: function( el ){
+
+		var self = this,
+			options = self.options,
+			parms = el.className.slice( options.classPrefix.length ).split('-');
+
+		options.barName = parms.shift(), //first param is optional barName
+
+		parms.each( function( p ){
+			p = p.toLowerCase();
+			if(p == "vertical") { options.isHorizontal = false; }
+			else if(p == "progress") { options.isProgress = true;  }
+			else if(p == "gauge") { options.isGauge = true; }
+			else if(p.indexOf("min") == 0) { options.lowerbound = p.slice(3).toInt(); }
+			else if(p.indexOf("max") == 0) { options.upperbound = p.slice(3).toInt(); }
+
+			else if(p != "") {
+				p = new Color(p,'hex'); if(!p.hex) return;
+				if( !self.color1 ) self.color1 = p;
+				else if( !self.color2 ) self.color2 = p;
+			}
+		});
+
+	},
+
 
 	/*
 	Function: parseBarData
@@ -1973,12 +1872,13 @@ var GraphBar =
 			num=true,
 			ddd=num;
 
-		nodes.each(function(n,i){
-			var v = n.getText();
+		nodes.each(function( n ){
+			var v = n.get('text');
 			barData.push(v);
 			num &= !isNaN(v.toFloat());
 			ddd &= !isNaN(Date.parse(v));
 		});
+
 		barData = barData.map(function(b){
 			if( ddd ){ b = new Date(Date.parse(b) ).valueOf(); }
 			else if( num ){ b = b.match(/([+-]?\d+(:?\.\d+)?(:?e[-+]?\d+)?)/)[0].toFloat(); }
@@ -1990,9 +1890,11 @@ var GraphBar =
 
 		if(maxValue==minValue) maxValue=minValue+1; /* avoid div by 0 */
 		size = size/(maxValue-minValue);
+
 		return barData.map(function(b){
 			return ( (size*(b-minValue)) + lbound).toInt();
 		});
+
 	},
 
 	/*
@@ -2003,16 +1905,18 @@ var GraphBar =
 		* insert SPANs as place-holder of the missing gBars
 	*/
 	getTableValues: function(node, fieldName){
-		var table = $E('table', node); if(!table) return false;
-		var tlen = table.rows.length, h, r, result, i;
+
+		var table = node.getElement('table');
+		if(!table) return false;
+		var tlen = table.rows.length, h, l, r, result, i;
 
 		if( tlen > 1 ){ /* check for COLUMN based table */
 			r = table.rows[0];
-			for( h=0; h < r.cells.length; h++ ){
+			for( h=0, l=r.cells.length; h<l; h++ ){
 				if( $getText( r.cells[h] ).trim() == fieldName ){
 					result = [];
 					for( i=1; i< tlen; i++)
-						result.push( new Element('span').wraps(table.rows[i].cells[h]) );
+						result.push( new Element('span').wrapContent(table.rows[i].cells[h]) );
 					return result;
 				}
 			}
@@ -2021,16 +1925,14 @@ var GraphBar =
 			r = table.rows[h];
 			if( $getText( r.cells[0] ).trim() == fieldName ){
 				result = [];
-				for( i=1; i< r.cells.length; i++)
-					result.push( new Element('span').wraps(r.cells[i]) );
+				for( i=1,l=r.cells.length; i<l ; i++)
+					result.push( new Element('span').wrapContent(r.cells[i]) );
 				return result;
 			}
 		}
 		return false;
 	}
-}
-Wiki.registerPlugin(GraphBar);
-//FIXME:convert to class
+});
 
 
 /*
@@ -2049,24 +1951,26 @@ var Collapsible =
 		//var cookie = "";  //activate this line if you want to deactivatie cookie handling
 
 		if(!this.bullet) {
-			this.bullet = new Element('div',{'class':'collapseBullet'}).setHTML('&bull;');
+			this.bullet = new Element('div',{'class':'collapseBullet'}).set('html','&bull;');
 		}
 
 		this.pims.push({
 			'name':cookie,
 			'value':'',
-			'initial': (cookie ? Cookie.get(cookie) : "")
+			'initial': (cookie ? Cookie.read(cookie) : "")
 		});
-		$ES('.collapse', page).each(function(el){
-			if(!$E('.collapseBullet',el)) this.collapseNode(el); // no nesting
+		page.getElements('.collapse').each(function(el){
+			//CHECK: if(!$-E('.collapseBullet',el)) this.collapseNode(el); // no nesting
+			if(!el.getElement('.collapseBullet')) this.collapseNode(el); // no nesting
 		}, this);
-		$ES('.collapsebox,.collapsebox-closed', page).each(function(el){
+		page.getElements('.collapsebox,.collapsebox-closed').each(function(el){
 			this.collapseBox(el);
 		}, this);
 	},
 
 	collapseBox: function(el){
-		if($E('.collapsetitle',el)) return; //been here before
+		//CHECK: if($-E('.collapsetitle',el)) return; //been here before
+		if(el.getElement('.collapsetitle')) return; //been here before
 		var title = el.getFirst(); if( !title ) return;
 
 		var body = new Element('div', {'class':'collapsebody'}),
@@ -2088,8 +1992,10 @@ var Collapsible =
 		DOM tree as the first child of the listitem contained by the sublist.
 	*/
 	collapseNode: function(node){
-		$ES('li',node).each(function(li){
-			var ulol = $E('ul',li) || $E('ol',li);
+		node.getElements('li').each(function(li){
+			//CHECK: var ulol = $-E('ul',li) || $-E('ol',li);
+			//var ulol = li.getElement('ul') || li.getElement('ol');
+			var ulol = li.getElement('ul,ol');
 
 			//dont insert bullet when LI is 'empty': no text or no non-ul/ol tags
 			var emptyLI = true;
@@ -2101,9 +2007,9 @@ var Collapsible =
 			}
 			if( emptyLI ) return;
 
-			new Element('div',{'class':'collapsebody'}).wraps(li);
+			new Element('div',{'class':'collapsebody'}).wrapContent(li);
 			var bullet = this.bullet.clone().injectTop(li);
-			if(ulol) this.newBullet(bullet, ulol, (ulol.getTag()=='ul'));
+			if(ulol) this.newBullet(bullet, ulol, (ulol.get('tag')=='ul'));
 		},this);
 	},
 
@@ -2112,11 +2018,21 @@ var Collapsible =
 		isopen = this.parseCookie(isopen);
 		if(!clicktarget) clicktarget = bullet;
 
+		/*
 		var bodyfx = body.setStyle('overflow','hidden')
 			.effect('height', {
 				wait:false,
 				onStart:this.renderBullet.bind(bullet),
 				onComplete:function(){ if(bullet.hasClass('collapseOpen')) body.setStyle('height','auto'); }
+			});
+		*/
+		body.setStyle('overflow','hidden');
+		var bodyfx = new Fx.Tween( body, {
+				//wait:false,
+				onStart:this.renderBullet.bind(bullet),
+				onComplete:function(){
+					if(bullet.hasClass('collapseOpen')) body.setStyle('height','auto');
+				}
 			});
 
 		bullet.className = (isopen ? 'collapseClose' : 'collapseOpen'); //ready for rendering
@@ -2124,27 +2040,28 @@ var Collapsible =
 			.addHover();
 
 		bodyfx.fireEvent('onStart');
-		if(!isopen) bodyfx.set(0);
+		if(!isopen) bodyfx.set('height',0);
 	},
 
 	renderBullet: function(){
 		if(this.hasClass('collapseClose')){
-			this.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).setHTML('-'); /* &raquo; */
+			this.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).set('html','-'); /* &raquo; */
 		} else {
-			this.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).setHTML('+'); /* &laquo; */
+			this.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).set('html','+'); /* &laquo; */
 		}
 	},
 
 	clickBullet: function(event, ck, bulletidx, bodyfx){
 		var collapse = this.hasClass('collapseOpen'),
-			bodyHeight = bodyfx.element.scrollHeight;
+			bodyHeight = bodyfx.element.scrollHeight; //CHECKME: does this work -- refactor
+			//FIXME: better use the morph style ???
 
 		if(event.target==this){ /* don't handle clicks on nested elements */
 
-			if(collapse) bodyfx.start(bodyHeight, 0); else bodyfx.start(bodyHeight);
+			if(collapse) bodyfx.start('height', bodyHeight, 0); else bodyfx.start('height',bodyHeight);
 
 			ck.value = ck.value.slice(0,bulletidx) + (collapse ? 'c' : 'o') + ck.value.slice(bulletidx+1);
-			if(ck.name) Cookie.set(ck.name, ck.value, {path:Wiki.BasePath, duration:20});
+			if(ck.name) Cookie.write(ck.name, ck.value, {path:Wiki.BasePath, duration:20});
 
 		}
 	},
@@ -2195,15 +2112,17 @@ DOM structure
 */
 Wiki.registerPlugin( function(page,name){
 
-	$ES('*[class^=commentbox]',page).each(function(el){
+	page.getElements('div[class^=commentbox]').each(function(el){
 		var legend = el.className.split('-')[1];
   		if( legend ){
   			new Element('fieldset',{'class':'commentbox'}).adopt(
-  				new Element('legend').setHTML( legend.deCamelize() )
-  			).wraps(el).injectBefore(el);
-  			el.remove();
+  				new Element('legend').set('html', legend.deCamelize() )
+  			).wrapContent(el).injectBefore(el);
+  			el.dispose();
   		}
 	});
+
+
 });
 
 
@@ -2211,11 +2130,14 @@ Wiki.registerPlugin( function(page,name){
 Class: TableAdds
 	Add support for sorting, filtering and zebra-striping of tables.
 	TODO: add support for row-grouping
+	TODO: add support for check-box filtering (ref excel like)
 
 Credit:
 	Filters inspired by http://www.codeproject.com/jscript/filter.asp
 */
 var TableAdds = new Class({
+
+	Implements: Options,
 
 	options: {
 		//sort: true,
@@ -2239,7 +2161,7 @@ var TableAdds = new Class({
 		if( !self) {
 			this.table = table;
 			this.head = $A(table.rows[0].cells).filter(function(el){
-							return el.getTag()=='th';
+							return el.get('tag')=='th';
 						});
 			table.TableAdds = self = this;
 		}
@@ -2336,8 +2258,9 @@ var TableAdds = new Class({
 		rows.each( function(r){ frag.appendChild(r); });
 		this.table.appendChild(frag);
 
-		var zebra = this.zebra;
-		if( zebra ) zebra();
+		//var zebra = this.zebra;
+		//if( zebra ) zebra();
+		$try( this.zebra );
 	},
 
 	/*
@@ -2354,7 +2277,7 @@ var TableAdds = new Class({
 
 		var rows = this.getRows(),
 			select = this.head[column].getLast(), //get select element
-			value = filtervalue || select.getValue(),
+			value = filtervalue || select.get('value'),
 			isAll = (value == this.options.title.all),
 			filters = this.filters;
 
@@ -2425,7 +2348,7 @@ var TableAdds = new Class({
 	*/
 	getRows: function(){
 
-		if( !this.rows ) this.rows = $A(this.table.rows).copy(1);
+		if( !this.rows ) this.rows = $A(this.table.rows).slice(1);
 		return this.rows;
 
 	},
@@ -2500,6 +2423,7 @@ var TableAdds = new Class({
 		Parse the column and guess its data-type.
 		Then convert all values according to that data-type.
 		The result is cached in rows~[n].data.
+		Empty rows will sort based on the title attribute of the cells.
 
 	Supported data-types:
 		numeric - numeric value, with . as decimal separator
@@ -2519,7 +2443,7 @@ var TableAdds = new Class({
 		//check cached table data
 		if( rows[0].data && rows[0].data[column] ) return;
 
-		var num=true, ddd=num, ip4=num, euro=num, kmgt=num;
+		var num=true, flt = num, ddd=num, ip4=num, euro=num, kmgt=num, empty=num;
 
 		rows.each( function( r,iii ){
 
@@ -2531,11 +2455,13 @@ var TableAdds = new Class({
 				if( !r.data ) r.data=[];
 				r.data[column] = v;
 
-				num &= !isNaN(v.toFloat());
+				num &= v.test(/\d+/);
+				flt &= !isNaN(v.toFloat());
 				ddd &= !isNaN(Date.parse(v));
 				ip4 &= v.test(/(?:\d{1,3}\.){3}\d{1,3}/); //169.169.0.1
-				euro &= v.test(/^[£$€][0-9.,]+/);
-				kmgt &= v.test(/(?:[0-9.,]+)\s*(?:[kmgt])b/); //2 MB, 4GB, 1.2kb, 8Tb
+				euro &= v.test(/^[£$€][\d.,]+/);
+				kmgt &= v.test(/(?:[\d.,]+)\s*(?:[kmgt])b/); //2 MB, 4GB, 1.2kb, 8Tb
+				empty &= (v=='');
 			}
 		});
 
@@ -2546,13 +2472,13 @@ var TableAdds = new Class({
 
 			if( kmgt ){
 
-				val = val.match(/([0-9.,]+)\s*([kmgt])b/) || [0,0,''];
+				val = val.match(/([\d.,]+)\s*([kmgt])b/) || [0,0,''];
 				z = {m:3, g:6, t:9}[ val[2] ] || 0;
 				val = val[1].replace(/,/g,'').toFloat() * Math.pow(10, z);
 
 			} else if( euro ){
 
-				val = val.replace(/[^0-9.]/g,'').toFloat();
+				val = val.replace(/[^\d.]/g,'').toFloat();
 
 			} else if( ip4 ){
 
@@ -2563,13 +2489,17 @@ var TableAdds = new Class({
 
 				val = Date.parse( val );
 
-			} else if( num ){
+			} else if( flt ){
 
 				val = val.match(/([+-]?\d+(:?\.\d+)?(:?e[-+]?\d+)?)/)[0].toFloat();
 
+			} else if( num ){
+
+				val = val.match(/\d+/)[0].toInt();
+
 			}
 
-			r.data[column] = val;
+			r.data[column] = empty ? r.cells[column].get('title') : val;
 
 		});
 
@@ -2594,7 +2524,6 @@ var TableAdds = new Class({
 	}
 
 });
-TableAdds.implement(new Options);
 
 /*
 Script: TableAdds
@@ -2621,6 +2550,7 @@ Odd/Even coloring of tables (zebra style):
 */
 Wiki.registerPlugin( function(page, name){
 
+
 	var title = {
 		all: "filter.all".localize(),
 		sort: "sort.click".localize(),
@@ -2628,17 +2558,17 @@ Wiki.registerPlugin( function(page, name){
 		descending: "sort.descending".localize()
 	};
 
-	$ES('.sortable table',page).each( function(table){
+	page.getElements('.sortable table').each( function(table){
 		new TableAdds(table, {sort:true, title: title});
 	});
 
-	$ES('.table-filter table',page).each( function(table){
+	page.getElements('.table-filter table').each( function(table){
 		new TableAdds(table, {filter:true, title: title});
 	});
 
-	$ES('*[class^=zebra]',page).each( function(el){
+	page.getElements('*[class^=zebra]').each( function(el){
 		var parms = el.className.split('-').splice(1);
-		$ES('table',el).each(function(table){
+		el.getElements('table').each(function(table){
 			new TableAdds(table, {zebra: parms});
 		});
 	});
@@ -2654,37 +2584,37 @@ var Categories =
 {
 	render: function(page, name){
 
-		$ES('.category a.wikipage',page).each(function(link){
+		page.getElements('.category a.wikipage').each(function(link){
 
 			var page = Wiki.toPageName(link.href);
 			if(!page) return;
+
 			var wrap = new Element('span').injectBefore(link).adopt(link),
-				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap),
-				popfx = popup.effect('opacity',{wait:false}).set(0);
+				popup = new Element('div',{'class':'categoryPopup'}).inject(wrap).fade('hide');
 
 			link.addClass('categoryLink')
-				.setProperties({ href:'#', title: "category.title".localize(page) })
-				.addEvent('click', function(e){
-				new Event(e).stop();  //dont jump to top of page ;-)
+				.set({ href:'#', title: "category.title".localize(page) })
+				.addEvent('click', function(event){
 
-				new Ajax( Wiki.TemplateUrl + 'AJAXCategories.jsp', {
-					postBody: '&page=' + page,
+				event.stop();  //dont jump to top of page ;-)
+				new Request.HTML({
+					url:Wiki.TemplateUrl + 'AJAXCategories.jsp',
+					data: '&page=' + page,
 					update: popup,
 					onComplete: function(){
-						link.setProperty('title', '').removeEvent('click');
+						link.set('title', '')
+							.removeEvent('click');
 						wrap.addEvents({
-							'mouseover': function(e){ popfx.start(0.9); },
-							'mouseout': function(e){ popfx.start(0); }
+							'mouseover': function(){ popup.fade(0.9) },
+							'mouseout': function(){ popup.fade(0) }
 						});
 						popup.setStyles({
-							'left': link.getPosition().x,
-							'top': link.getPosition().y+16
-						});
-						popfx.start(0.9);
-
-						$ES('li,div.categoryTitle',popup).addHover();
+							left: link.getPosition().x,
+							top: link.getPosition().y+16
+						}).fade(0.9).getElements('li,div.categoryTitle').addHover();
 					}
-				}).request();
+				}).send();
+
 			});
 		});
 	}
@@ -2709,6 +2639,7 @@ var HighlightWord =
 	initialize: function (){
 		var q = Wiki.prefs.get('PrevQuery');
 		Wiki.prefs.set('PrevQuery', '');
+
 		if( !q && document.referrer.test("(?:\\?|&)(?:q|query)=([^&]*)","g") ) q = RegExp.$1;
 
 		if( q ){
@@ -2746,7 +2677,9 @@ var HighlightWord =
 		s = s.replace(/</g,'&lt;'); // pre text elements may contain <xml> element
 
 		if( this.reMatch.test( s ) ){
-			var tmp = new Element('span').setHTML(s.replace(this.reMatch,"<span class='searchword'>$1</span>")),
+			var tmp = new Element('span',{
+				'html': s.replace(this.reMatch,"<span class='searchword'>$1</span>")
+				}),
 				f = document.createDocumentFragment();
 
 			while( tmp.firstChild ) f.appendChild( tmp.firstChild );
@@ -2760,7 +2693,7 @@ var HighlightWord =
 Class: Dialog
 	Simplified implementation of a Dialog box. Acts as a base class
 	for other dialog classes.
-	It is based on mootools v1.11, depending on the Drag.Base class.
+	It is based on mootools v1.2.3, depending on the Drag class.
 
 Arguments:
 	options - optional, see options below
@@ -2799,6 +2732,8 @@ Example:
 */
 var Dialog = new Class({
 
+	Implements: [Events, Options],
+
 	options:{
 		className: 'dialog',
 		//style:{ dialog-box overrule css styles}
@@ -2828,7 +2763,7 @@ var Dialog = new Class({
 				new Element('a',{
 					'class':'closer',
 					'events':{ 'click': this.hide.bind(this) }
-				}).setHTML('&#215;')
+				}).set('html','&#215;')
 			),
 			body = new Element('div',{'class':'body'}),
 			buttons = new Element('div',{'class':'buttons'})
@@ -2843,7 +2778,7 @@ var Dialog = new Class({
 		self.setButtons( options.buttons );
 
 		if( options.draggable ){
-			new Drag.Base(el);
+			new Drag(el);
 			el.setStyle('cursor','move');
 		}
 
@@ -2908,7 +2843,7 @@ var Dialog = new Class({
 		content - string or DOM element
 	Example:
 		> setBody( "this is a new dialog content");
-		> setBody( new Element('span',{'class','error'}).setHTML('Error encountered') );
+		> setBody( new Element('span',{'class','error'}).set('html','Error encountered') );
 	*/
 	setBody: function(content){
 
@@ -2916,7 +2851,7 @@ var Dialog = new Class({
 			type = $type(content);
 
 		if( type=='string'){
-			body.setHTML(content)
+			body.set('html',content)
 		} else if( type=='element'){
 			body.adopt(content.show());
 		};
@@ -2946,7 +2881,7 @@ var Dialog = new Class({
 					}
 				}).adopt(
 					new Element('span').adopt(
-						new Element('span').setHTML(btn.localize())
+						new Element('span').set('html',btn.localize())
 					)
 				).inject(buttonDiv);
 			}
@@ -2973,18 +2908,20 @@ var Dialog = new Class({
 
 			//center dialog box
 			var w = window.getSize(),
+				ws = window.getScroll(),
 				pos = this.element.getCoordinates();
+
 			pos = {
-				left: w.scroll.x + w.size.x/2 - pos.width/2,
-				top: w.scroll.y + w.size.y/2 - pos.height/2
+				left: ws.x + w.x/2 - pos.width/2,
+				top: ws.y + w.y/2 - pos.height/2
 			}
 
 		}
 
 		this.element.setStyles(pos);
 		//fixme: centering the dialog box does not yet work
-		//alert(Json.toString(pos));
-		//alert(Json.toString(this.element.getCoordinates()) );
+		//alert(JSON.encode(pos));
+		//alert(JSON.encode(this.element.getCoordinates()) );
 	},
 	/*
 	Function: resize
@@ -3004,7 +2941,6 @@ var Dialog = new Class({
 	}
 
 });
-Dialog.implement(new Options, new Events); //mootools v1.1
 
 
 /*

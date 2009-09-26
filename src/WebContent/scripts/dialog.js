@@ -2,7 +2,7 @@
 /*
 Class: SelectionDialog
 	A selection dialog generates a dialog box, with a set
-	of selectable/clickable items. 
+	of selectable/clickable items.
 
 Arguments:
 	options - see [Dialog] object
@@ -14,7 +14,7 @@ Options:
 
 Inherits from:
 	[Dialog]
-	
+
 Example:
 	(start code)
 	new SelectionDialog({
@@ -35,17 +35,19 @@ Example:
 	});
 	(end code)
 */
-var SelectionDialog = Dialog.extend({
+var SelectionDialog = new Class({
 
-	options: { 
+	Extends: Dialog,
+	options: {
 		//onSelect: function(value){},
 		//autoClose: false
-	},	
+	},
 
 	initialize:function( options ){
 
 		this.parent(options);
 		this.element.addClass('selectionDialog');
+
 		this.setBody(options.body)
 			.resetPosition();
 	},
@@ -63,34 +65,34 @@ var SelectionDialog = Dialog.extend({
 
 			var els = [], onselect = this.onSelect.bind(this), i;
 			for( i in content ){
-				els.push( new Element('li',{ 
-					'title': content[i],
-					'events': {
-						'click': onselect,
-						'mouseout': function(){ this.removeClass('hover') },
-						'mouseover': function(){ this.addClass('hover') }
+				els.push( new Element('li',{
+					title: content[i],
+					events: {
+						click: onselect,
+						mouseout: function(){ this.removeClass('hover') },
+						mouseover: function(){ this.addClass('hover') }
 					}
-				}).setHTML( i/*.trunc(36)*/ ) );
+				}).set('html', i/*.trunc(36)*/ ) );
 			};
-			
+
 			this.parent( new Element('ul').adopt(els) );
 			//this.body.empty().adopt( new Element('ul').adopt(els) );
 		}
-		
+
 		return this;
 	},
 	/*
 	Function: onSelect
-		Click event handler for selectable items. 
+		Click event handler for selectable items.
 		When the autoClose option is set, the dialog will be hidden.
 		Fires the 'onSelect' event.
 	*/
 	onSelect: function(event){
 
-		if( event ){ event = new Event(event).stop() }; 
-		if( this.options.autoClose ) this.hide();		
-				
-		this.fireEvent('onSelect', event.target.getProperty('title')); 
+		if( event ){ event = new Event(event).stop() };
+		if( this.options.autoClose ) this.hide();
+
+		this.fireEvent('onSelect', event.target.get('title'));
 	}
 
 });
@@ -109,7 +111,7 @@ Options:
 
 Inherits from:
 	[SelectionDialog]
-	
+
 Example
 	(start code)
 	dialog= new FontDialog({
@@ -119,38 +121,39 @@ Example
 	});
 	(end)
 */
-var FontDialog = SelectionDialog.extend({
+var FontDialog = new Class({
 
-	options: { 
+	Extends:SelectionDialog,
+	options: {
 		fonts: {
 			'Arial':'arial',
 			'Comic Sans':'comic sans ms',
 			'Courier New':'courier new',
-			'Georgia':'georgia', 
-			'Helvetica':'helvetica', 
-			'Impact':'impact', 
-			'Times':'times new roman', 
-			'Trebuchet':'trebuchet ms', 
+			'Georgia':'georgia',
+			'Helvetica':'helvetica',
+			'Impact':'impact',
+			'Times':'times new roman',
+			'Trebuchet':'trebuchet ms',
 			'Verdana':'verdana'
 		}
-	},	
+	},
 
 	initialize:function(options){
 
 		options.body = options.fonts ? options.fonts : this.options.fonts;
 		this.parent(options);
 		this.element.addClass('fontDialog');
-		$ES('li',this.body).each(function(li){
-			li.setStyle('font-family', li.getProperty('title') );
+		this.body.getElements('li').each(function(li){
+			li.setStyle('font-family', li.get('title') );
 		});
 	}
-	
+
 });
 
 /*
 Class: CharsDialog
 	The CharsDialog is a Dialog object, to support selection of special
-	character. 
+	character.
 
 Arguments:
 	options - optional, see options below
@@ -161,10 +164,11 @@ Options:
 Inherits from:
 	[Dialog]
 */
-var CharsDialog = Dialog.extend({
+var CharsDialog = new Class({
 
-	options: { 
-		//onChange: Class.empty, 
+	Extends: Dialog,
+	options: {
+		//onChange: Class.empty,
 		//autoClose: false,
 		chars: [
 			'&nbsp;','&iexcl;','&cent;','&pound;','&yen;','&sect;','&uml;','&copy;','&laquo;','&not;','&reg;',
@@ -177,18 +181,18 @@ var CharsDialog = Dialog.extend({
 			'&#8218;','&#402;','&#8222;','&#8230;','&#8224;','&#8225;','&#710;','&#8240;','&#8249;','&#338;','&#8216;',
 			'&#8217;','&#8220;','&#8221;','&#8226;','&#8211;','&#8212;','&#732;','&#8482;','&#8250;','&#339;','&#376;'
 		]
-	},	
+	},
 
 	initialize:function(options){
 		this.parent(options);
 		this.element.addClass('charsDialog');
 
 		/* inspired by smarkup */
-		var arr = [], 
+		var arr = [],
 			chars = this.options.chars,
 			rowCount = chars.length / 11, //fixme: fixed width of table !!
 			onselect = this.onSelect.bind(this);
-		
+
 		for (var i = 0; i < rowCount; i++) {
 			arr.push( '<tr>' );
 			for (var j = i * 11; j < (i * 11 + 11); j++) {
@@ -196,20 +200,20 @@ var CharsDialog = Dialog.extend({
 			}
 			arr.push( '</tr>' );
 		}
-		
+
 		this.body.adopt( new Element('table',{
 			'class':'charsDialog',
 			'events':{ 'click': onselect }
-		}).setHTML( '<tbody>', arr.join(''), '</tbody>' )
+		}).set('html', '<tbody>', arr.join(''), '</tbody>' )
 		);
-		
+
 		this.resetPosition();
 
 	},
 
 	onSelect: function(e){
 		if( this.options.autoClose ) this.hide();
-		this.fireEvent('onSelect', e.target.getProperty('title')); 
+		this.fireEvent('onSelect', e.target.get('title'));
 	}
 
 });
@@ -217,7 +221,7 @@ var CharsDialog = Dialog.extend({
 
 /*
 Class: ColorDialog
-	The ColorDialog is a [Dialog] which allow visual entry of hexadecimal color 
+	The ColorDialog is a [Dialog] which allow visual entry of hexadecimal color
 	values.
 
 Inspiration:
@@ -232,7 +236,7 @@ Example:
 	(start code)
 	<script>
 		var cd = new ColorDialog( {
-			relativeTo: $('colorButton'), 
+			relativeTo: $('colorButton'),
 			wheelImage:'circle.png',
 			onChange:function(color){ $('mytarget').setStyle('background',color); }
 		});
@@ -240,25 +244,26 @@ Example:
 	</script>
 	(end code)
 */
-var ColorDialog = Dialog.extend({
+var ColorDialog = new Class({
 
+	Extends: Dialog,
 	options: {
 		//onChange: function(color){},
 		colorImage: 'images/circle-256.png',
 		resize:{x:[96,400],y:[96,400]}  //min/max limits for the resizer
-	},	
+	},
 
 	initialize: function(options){
-	
+
 		var self = this;
-		self.parent(options);	
+		self.parent(options);
 		self.element.addClass('colorDialog');
 		self.hsv = [0,0,100];//starting color.
-		self.color = new Element('span').setHTML('#ffffff').injectTop(self.caption);
+		self.color = new Element('span').set('html','#ffffff').injectTop(self.caption);
 		self.cursor = new Element('div',{
 			'class':'cursor',
 			'styles':{'top':86,'left':68}
-			//funny calc -- checkout the dialog css defs 
+			//funny calc -- checkout the dialog css defs
 			// 86=64+32-8 (-8=offset circle)
 			// 68=64+10-5-1 (5=half cursor size, -1=offset circle)
 		});
@@ -268,8 +273,8 @@ var ColorDialog = Dialog.extend({
 		);
 
 		self.resize( 128 ); //default size of the body/wheel
-		
-		new Drag.Base(self.cursor,{
+
+		new Drag(self.cursor,{
 			handle:self.body,
 			snap:0,
 			//also update the wheel on mouse-down
@@ -293,34 +298,34 @@ var ColorDialog = Dialog.extend({
 		Recalculate the HSV-color based on x/y mouse coordinates.
 		After recalculation, the color-wheel cursor is repositioned
 		and the 'onChange' event is fired.
-		
+
 	Arguments:
 		page - object with {{ {x:.., y:.. } }} coordinates
 	*/
 	setHSV: function( page ){
 
-		var body = this.body.getCoordinates(), 
+		var body = this.body.getCoordinates(),
 			v = [page.x - body.left + 5, page.y - body.top +28 ],
 			W = body.width,
-			W2 = W/2, 
-			W3 = W2/2, 
+			W2 = W/2,
+			W3 = W2/2,
 
-			x = v[0]-W2-3, 
+			x = v[0]-W2-3,
 			y = W-v[1]-W2+21,
 			SV = Math.sqrt(Math.pow(x,2)+Math.pow(y,2)),
 			hue = Math.atan2(x,y)/(Math.PI*2);
-			
+
 		this.hsv = [
 				hue>0?(hue*360):((hue*360)+360),
-				SV<W3?(SV/W3)*100:100, 
+				SV<W3?(SV/W3)*100:100,
 				SV>=W3?Math.max(0,1-((SV-W3)/(W3)))*100:100
 			];
 
-		var hexVal = this.hsv.hsv2rgb().rgbToHex(); 
-		this.color.setHTML( hexVal ).setStyles({
+		var hexVal = this.hsv.hsv2rgb().rgbToHex();
+		this.color.set('html', hexVal ).setStyles({
 			'color': new Color(hexVal).invert().hex,
-			'background-color': hexVal 
-		}); 
+			'background-color': hexVal
+		});
 		this.moveCursor( W );
 		this.fireEvent('onChange', hexVal);
 
@@ -329,7 +334,7 @@ var ColorDialog = Dialog.extend({
 	/*
 	Function: moveCursor
 		Reposition the cursor based on the width argument
-		
+
 	Argument
 		width - in px
 	*/
@@ -343,10 +348,10 @@ var ColorDialog = Dialog.extend({
 		this.cursor.setStyles({
 			left: Math.round(Math.abs(Math.round(Math.sin(rad)*hyp) + W2 + 3)),  //+1
 			top: Math.round(Math.abs(Math.round(Math.cos(rad)*hyp) - W2 - 21))  //-18
-		});	
+		});
 
 	}
-		
+
 });
 ColorDialog.implement(new Options); //mootools v1.1
 
@@ -354,23 +359,23 @@ ColorDialog.implement(new Options); //mootools v1.1
 Function: hsv2rgb
 	Convert HSV values into RGB values
 */
-Array.extend({
-	hsv2rgb: function(){ 
+Array.implement({
+	hsv2rgb: function(){
 		// easyrgb.com/math.php?MATH=M21#text21
 	    var R,G,A,B,C,F,
 	    	S=this[1]/100,
 	    	V=this[2]/100,
 	    	H=this[0]/360;
 
-	    if( S>0 ){ 
-	    
+	    if( S>0 ){
+
 	    	if(H>=1) H=0;
-	        H=6*H; 
+	        H=6*H;
 	        F=H-Math.floor(H);
 	        A=Math.round(255*V*(1-S));
 	        B=Math.round(255*V*(1-(S*F)));
 	        C=Math.round(255*V*(1-(S*(1-F))));
-	        V=Math.round(255*V); 
+	        V=Math.round(255*V);
 
 	        switch(Math.floor(H)) {
 	            case 0: R=V; G=C; B=A; break;
@@ -389,7 +394,7 @@ Array.extend({
 
 /*
 Class: FormDialog
-	The FormDialog is a dialog 
+	The FormDialog is a dialog
 
 Example:
 	(start code)
@@ -401,8 +406,9 @@ Example:
 		}
 	(end)
 */
-var FormDialog = Dialog.extend({
+var FormDialog = new Class({
 	//todo
+	Extends: Dialog
 });
 
 
@@ -417,9 +423,9 @@ Class: TableDialog
 	- allow to extend colums
 	- allow to extend rows
 	- automatically converts wiki to table and vice-versa
-	- FFS: support [{Table plugin syntax to merge cells 
+	- FFS: support [{Table plugin syntax to merge cells
 	  This requires to select multiple cells:  join/unjoin cells
-	
+
 Example:
 	(start code)
 	WikiTableDialog( wiki-markup ?? textarea,{
@@ -429,6 +435,7 @@ Example:
 	})
 	(end)
 */
-var TableDialog = Dialog.extend({
+var TableDialog = new Class({
 	//todo
+	Extends: Dialog
 });

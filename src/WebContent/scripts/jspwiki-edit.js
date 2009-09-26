@@ -1,4 +1,4 @@
-/*! 
+/*!
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,21 +16,20 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 */
 
 /*
-Function: toISODate
+Function: toISOString
 	Return the current date in ISO8601 format 'yyyy-mm-dd'.
-	(ref. EcmaScript 5)	
+	(ref. EcmaScript 5)
 
 Example:
-> alert( new Date().toISODate() ); // alerts 2009-05-21
-> alert( new Date().toISODate() ); // alerts 2009-05-21T16:06:05.000TZ
+> alert( new Date().toISOString() ); // alerts 2009-05-21
+> alert( new Date().toISOString() ); // alerts 2009-05-21T16:06:05.000TZ
 */
-$native(Date);
 Date.extend({
-	toISODate: function(){
+	toISOString: function(){
 		var d = this,
 			dd = d.getDate(),
 			mm = d.getMonth()+1;
@@ -45,17 +44,19 @@ Date.extend({
 Class: WikiEditor
 	The WikiEditor class implement all JSPWiki's plain editor support functions.
 	It uses the [SnipEditor] class to enhance the textarea object.
-	
-	The WikiEditor contains all JSPWiki's specific snippets to ease the entry of 
-	the JSPWiki markup syntax.	
+
+	The WikiEditor contains all JSPWiki's specific snippets to ease the entry of
+	the JSPWiki markup syntax.
 */
-var WikiEdit = 
+
+
+var WikiEdit =
 {
 	initialize: function(){
 
 		//should always run first, but seems not guaranteed on ie so let's do this for sure
-		Wiki.initialize(); 
-		
+		Wiki.initialize();
+
 		var txta = $('editorarea'),
 			self = this,
 			snipe,
@@ -65,19 +66,38 @@ var WikiEdit =
 			tileBtns, tileFn,
  			height = prefs.get('EditorSize');
 
+		/*
+			Install an onbeforeunload handler.
+
+			This handler is called ''before'' the page unloads.
+			If a string is returned, the user will be prompted with a warning
+			popup, to allow to cancel the page unload.
+			(eg. warning when moving to another page without first saving )
+
+			Remove the onsubmit handler on regular exit of the page.
+		*/
 		window.onbeforeunload = function(){
-			if( txta.value != txta.defaultValue ) return "edit.areyousure".localize();
+			if( txta.get('value') != txta.get('defaultValue')) return "edit.areyousure".localize();
 		};
 
+		$('editform').addEvent('submit',function(){
+			window.onbeforeunload = null;
+		});
+
+		/*
+			Initialize user-prefered height.
+		*/
 		if( height ) txta.setStyle('height',height);
 
-		// open the new snipEditor
+		/*
+			Initialize the snippet editor.
+		*/
 		snipe = self.snipEditor = new SnipEditor( txta, {
 
-			tabsnips: self.tabSnippets, 
+			tabsnips: self.tabSnippets,
 			// tabcompletion => set by this.configFn()
-			// directsnips => set by this.configFn() 
-			suggestsnips: self.suggestSnippets(), 
+			// directsnips => set by this.configFn()
+			suggestsnips: self.suggestSnippets(),
 
   			buttons: $$('a.tool'),
 
@@ -113,21 +133,23 @@ var WikiEdit =
 
   			next: $('nextInput'),
 
-  			onresize:function(height){  
+  			onresize:function(height){
   				//save the height in the preference cookie
-  				prefs.set('EditorSize',height); 
+  				prefs.set('EditorSize',height);
   			}
 
   		});
 
-		//initialize the configuration dialog and link it to the buttons
+		/*
+			Initialize the configuration dialog and link it to the buttons
+		*/
 		configFn = function(){
 			snipe.set('directsnips', $('smartpairs').checked ? self.directSnippets : {})
 				.set('tabcompletion', $('tabcompletion').checked == true );
 		};
 		['smartpairs', 'tabcompletion'].each( function(id){
 			var element = $(id);
-			if( element ){ 
+			if( element ){
 				element.setProperty( 'checked', prefs.get(id) || false )
 					.addEvent( 'click', function(e){
 						configFn();
@@ -136,14 +158,16 @@ var WikiEdit =
 			}
 		});
 		configFn();
-		
-		//initialize the preview layout buttons: tile-vert or tile-horz
+
+		/*
+			Initialize the preview layout buttons: tile-vert or tile-horz
+		*/
 		tileBtns = $$('.tHORZ','.tVERT');
 		tileFn = function(tile){
 
 			prefs.set('previewLayout',tile);
 			tileBtns.each(function(el){
-				el[( el.getText()==tile ) ? 'hide': 'show']();
+				el[( el.get('text')==tile ) ? 'hide': 'show']();
 			});
 
 			tile = (tile=='tile-vert') ? 'size1of1':'size1of2';
@@ -152,20 +176,21 @@ var WikiEdit =
 			});
 		};
 		tileBtns.each( function(el){
-			el.addEvent( 'click',function(){ tileFn(this.getText()); });
+			el.addEvent( 'click',function(){ tileFn(this.get('text')); });
 		});
 		tileFn( prefs.get('previewLayout')||'tile-vert' );
 
 
 		//add a localized hover title to the resize drag-bar
-		$E('.editor-container .resize-bar').set({'title':'edit.resize'.localize()});
+		//CHECK !v1.2.3.
+		document.getElement('.editor-container .resize-bar').set('title', 'edit.resize'.localize());
 
 		// Select the right section of the page:  URL?section=0..n
 		// cursor = -2 (all) or 0..n (section# - first section is 0)
 		tocCursor = location.search.match(/[&?]section=(\d+)/);
 		snipe.selectTocItem( tocCursor ? tocCursor[1].toInt() : -2 );
 
-		self.initializePreview( snipe );		
+		self.initializePreview( snipe );
 	},
 
 	/*
@@ -173,7 +198,7 @@ var WikiEdit =
 		DirectSnippet definitions for JSPWiki, aka ''smartpairs''.
 		These snippets are directly expanded on keypress.
 	*/
-	directSnippets: { 
+	directSnippets: {
 		'"' : '"',
 		'(' : ')',
 		'[' : ']',
@@ -185,7 +210,7 @@ var WikiEdit =
 			}
 		}
 	},
-	
+
 	/*
 	Function: tabSnippets
 		TabSnippet definitions for JSPWiki.
@@ -196,8 +221,8 @@ var WikiEdit =
 	Example:
 	Clicking following link(button) with text "br" inserts a "\\" followed by a nexline
 	>  <a href="#" class="tool" id="tbBR" title="key='editor.plain.tbBR.title'">br</a>
-	
-	The keystrokes {{nl<TAB>}} are converted to "\\" followed by a newline, 
+
+	The keystrokes {{nl<TAB>}} are converted to "\\" followed by a newline,
 	when the ''tabcompletion'' flag is on.
 	>	'nl':'\\\\\n'
 
@@ -224,12 +249,12 @@ var WikiEdit =
 		"br": "\\\\\n",
 		"nl": { synonym: "br" },
 		"hr": "\n----\n",
-		"h1": "\n!!!{Heading 1 title}\n", 
+		"h1": "\n!!!{Heading 1 title}\n",
 		"h2": "\n!!{Heading 2 title}\n",
 		"h3": "\n!{Heading 3 title}\n",
 
 		"font": {
-			nScope: { 
+			nScope: {
 				"%%(":")",
 				"font-family:":";"
 			},
@@ -243,9 +268,9 @@ var WikiEdit =
 			snippet: "{special}",
 			nScope: { "%%(":")" }
 		},
-		
-		
-		"dl": "\n;{term}:{definition-text} ", 
+
+
+		"dl": "\n;{term}:{definition-text} ",
 		"sub": "%%sub {subscript text}/% ",
 		"sup": "%%sup {superscript text}/% ",
 		"strike": "%%strike {strikethrough text}/% ",
@@ -258,20 +283,20 @@ var WikiEdit =
 			snippet:"[{link text}|{pagename or url}|{attributes}] ",
 			attributes:"acceskey=X|title=description|target:_blank"
 		},
-/*		'accesskey', 'charset', 'class', 'hreflang', 'id', 'lang', 'dir', 
+/*		'accesskey', 'charset', 'class', 'hreflang', 'id', 'lang', 'dir',
 		'rel', 'rev', 'style', 'tabindex', 'target', 'title', 'type'
 		- link-text
 		- wiki-page or url
 		- description:title
-		
-		
-		
+
+
+
 		- target: _blank --new-- window yes or no
 */
 
 		"bold": "__{bold text}__ ",
 		"italic": "''{italic text}'' ",
-		
+
 		"acl": {
 			snippet: "\n[\{ALLOW {permission} {principal(,principal)} \}]\n",
 			permission: "view|edit|modify|comment|rename|upload|delete",
@@ -281,12 +306,12 @@ var WikiEdit =
 			}
 		},
 		"allow": { synonym: "acl" },
-	
+
 		"img": {
 			snippet:"\n[\\{Image src='{img.jpg}' width='{400px}' height='{300px}' align='{text-align}' style='{css-style}' class='{css-class}' }]\n",
 			'text-align':'left|center|right'
 		},
-				
+
 		"plugin": {
 			snippet:"\n[\\{{plugin}}]\n",
 			plugin: {
@@ -305,7 +330,7 @@ var WikiEdit =
 			}
 		},
 		"tab": {
-			nScope: { 
+			nScope: {
 				"%%(":")",
 				"%%tabbedSection":"/%"
 			},
@@ -321,21 +346,21 @@ var WikiEdit =
 		},
 		"table": "\n||heading-1||heading-2\n| cell11   | cell12\n| cell21   | cell22\n",
 		"quote": "\n%%quote \n{quoted text}\n/%\n",
-	
+
 		"sign": function(){
 			var name = Wiki.UserName || 'UserName';
-			return "\\\\--" + name + ", "+ new Date().toISODate() + "\n";
+			return "\\\\--" + name + ", "+ new Date().toISOString() + "\n";
 		},
 
 		"date": function(k) {
-			return new Date().toISODate()+' ';
-			//return "[{Date value='" + d.toISODate() + "' }]"
-			//return "[{Date " + d.toISODate() + " }]"
+			return new Date().toISOString()+' ';
+			//return "[{Date value='" + d.toISOString() + "' }]"
+			//return "[{Date " + d.toISOString() + " }]"
 		},
 		"lorem" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n",
 		"Lorem" : { synonym: "lorem" }
-	}, 
-		
+	},
+
 	/*
 	Function: suggestSnippets
 		Suggest-Snippet definitions for JSPWiki.
@@ -384,7 +409,7 @@ var WikiEdit =
 			},
 			dialog: [SelectionDialog, {
 				body:'',
-				caption:'Link Suggestion Dialog', 
+				caption:'Link Suggestion Dialog',
 				onShow:this.updateSuggest.bind(this),
 				onSelect:this.updateLink.bind(this)
 			}]
@@ -392,7 +417,7 @@ var WikiEdit =
 
 		};
 	},
-	
+
 	/*
 	Function: suggestLink
 		Suggest list of page of page/attachement names based on the
@@ -402,9 +427,9 @@ var WikiEdit =
 
 		var txta = this.snipEditor.get('textarea'),
 			caret = txta.getSelectionRange();
-		
+
 		//extend the selection till next ] or end of the line
-		if( caret.thin ){ 
+		if( caret.thin ){
 			var end = txta.getTillEnd().search( /[\n\r\]]/ );
 			if( end!=-1 ) txta.setSelectionRange( caret.start, caret.start + end );
 		}
@@ -421,45 +446,45 @@ var WikiEdit =
 			fromStart = txta.getFromStart(),
 			//match '[' + 'any char except \n or ]' at end of the string
 			searchword = fromStart.match( /\[([^\n\r\]]*)$/ )[1];
-	
+
 		if(searchword.indexOf('|') != -1) searchword = searchword.split('|')[1];
 		this.suggestPrefix = searchword.length;
-		
+
 		//ifn o searchword, then get list of page attachments
 		if(searchword == "" ) searchword = Wiki.PageName + '/';
-		//alert(searchword);		
-		
+		//alert(searchword);
+
 		Wiki.jsonrpc('search.getSuggestions', [searchword,30], function(result,exception){
 			//offline testing:
 			//var result = {list:['result1', 'result longer 2', 'result very longereererere 3', 'results moremore']};
 			//var exception;
-		
-			if( exception ){ 
 
-				alert( exception.message ); 
+			if( exception ){
 
-			} else if( !result.list || ( result.list.length == 0 ) ){ 
+				alert( exception.message );
+
+			} else if( !result.list || ( result.list.length == 0 ) ){
 
 				dialog.hide();
 
 			} else {
-			
+
 				dialog.setBody( result.list );
 
 			}
 
 		});
-		
+
 	},
-	
+
 	/*
 	Function: jspwikiTOC
 		Convert a jspwiki-markup page to an array of page sections.
 		Each section starts with a JSPWiki header line. ( !, !! !!! )
-		This function is a callback function for the [SnipEditor]. 
+		This function is a callback function for the [SnipEditor].
 		It is called by [snipeditor.buildToc] every time the textarea of the
 		snipeditor is being changed.
-	
+
 	Returns:
 		This function returns a array of objects [{title, start, indent}]
 		title - (string) title of the section without markup characters
@@ -467,12 +492,12 @@ var WikiEdit =
 	 	indent - (integer) indentation or nesting level of the section 0,1...n
 	*/
 	jspwikiTOC: function( text ){
-		
+
 		// mask any header line inside a {{{ ... }}} but keep length of the text unchanged!
 		text = text.replace(/\{\{\{([\s\S]*?)\}\}\}/g, function(match){
 			return match.replace( /^!/mg, ' ' );
 		});
-			
+
 		var result = [],
 			DELIM = '\u00a4',
 			// after the regexp and split text, you'll get an array:
@@ -480,7 +505,7 @@ var WikiEdit =
 			// [1,odd] : header markup !, !! or !!!
 			// [2,even] : remainder of the section, starting with header title
 			tt = text.replace( /^([!]{1,3})/mg, DELIM+"$1"+DELIM ).split(DELIM),
-				
+
 			pos = tt.shift().length,  //get length of the first element, prior to first section
 			count = tt.length;
 
@@ -491,8 +516,8 @@ var WikiEdit =
 				title = tt[i+1].split(/[\r\n]/)[0]
 					//remove unescaped(~) inline wiki markup __,'',{{,}}, %%(*), /%
 					.replace(/(^|[^~])(__|''|\{\{|\}\}|%%\([^\)]+\)|%%\S+\s|%%\([^\)]+\)|\/%)/g,'$1')
-				    //and remove wiki-markup escape chars ~ 			
-					.replace(/~([^~])/g, '$1'); 
+				    //and remove wiki-markup escape chars ~
+					.replace(/~([^~])/g, '$1');
 
 			//Indent: convert length of header markup (!!!,!!,!) into #indent-level:  3,2,1 => 0,1,2
 			result.push({'title':title, 'start':pos, 'indent':3-hlen})
@@ -501,33 +526,33 @@ var WikiEdit =
 
 		return result;
 	},
-	
+
 	/*
 	Function: initializePreview
 		Initialize textarea preview functionality.
 		When #autopreview checkbox is checked, bind the
 		[refreshPreview] handler to the {{preview}} event
 		of the textarea.
-		
-		Finally, send periodically the preview event. 
+
+		Finally, send periodically the preview event.
 	*/
-	initializePreview : function( snipe ){
-	
+	initializePreview: function( snipe ){
+
 		var autopreview = 'autopreview',
 			self = this,
 			prefs = Wiki.prefs,
 			refreshFn = self.refreshPreview.bind(self);
 
 		$(autopreview)
-			.setProperty('checked', prefs.get(autopreview) || false)
+			.set('checked', prefs.get(autopreview) || false)
 			.addEvent('click', function(){
 				prefs.set(autopreview, this.checked);
 				refreshFn();
 			})
 			.fireEvent('click');
-		
-		self.refreshPreview.periodical(3000, self);
-		snipe.toElement().addEvent('change',refreshFn);
+
+		refreshFn.periodical(3000);
+		$(snipe).addEvent('change',refreshFn);
     },
 
 
@@ -535,8 +560,7 @@ var WikiEdit =
 	Function: refreshPreview
 		Make AJAX call to the backend to convert the contents of the textarea
 		(wiki markup) to HTML.
-		
-		
+
 	*/
 	refreshPreview: function(){
 
@@ -548,7 +572,7 @@ var WikiEdit =
     		spin = $('previewspin');
 
 
-		if( !$('autopreview').checked ){ 
+		if( !$('autopreview').checked ){
 
 			if( self.previewcache ){
 				preview.empty();
@@ -557,18 +581,19 @@ var WikiEdit =
 
 		} else if( self.previewcache != text ){
 
-			self.previewcache = text;		
-    		
-			new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page=" + page, { 
-				postBody: 'wikimarkup=' + encodeURIComponent( text ),
+			self.previewcache = text;
+
+			new Request.HTML({
+				url:Wiki.TemplateUrl + "/AJAXPreview.jsp?page=" + page,
+				data: 'wikimarkup=' + encodeURIComponent( text ),
 				update: preview,
 				onRequest: function(){ spin.show(); },
 				onComplete: function(){ spin.hide(); Wiki.renderPage(preview, page); }
-			}).request();
-		
+			}).send();
+
 		}
 	}
-	
+
 }
 
 /*
@@ -581,30 +606,30 @@ window.addEvent('domready', function(){ WikiEdit.initialize() } );
 
 /*
 Class: SnipEditor
-	The SnipEditor class enriches a TEXTAREA object with many capabilities, 
-	including tab-autocompletion, auto-indentation, smart typing pairs, suggestion 
+	The SnipEditor class enriches a TEXTAREA object with many capabilities,
+	including tab-autocompletion, auto-indentation, smart typing pairs, suggestion
 	popups, live-preview, textarea resizing, toggle buttons etc.
-	The configuration of the snip-editor is done through Snippet objects. 
+	The configuration of the snip-editor is done through Snippet objects.
 	See [getSnippet] for more info on how to define snippets.
 
 Credit:
-	The SnipEditor was inspired by postEditor (by Daniel Mota aka IceBeat, 
+	The SnipEditor was inspired by postEditor (by Daniel Mota aka IceBeat,
 	http://icebeat.bitacoras.com ) and ''textMate'' (http://macromates.com/).
 	It has been written to fit with needs of the JSPWIKI project.
-	The main changes and enhancements include support for suggestion-popups, toolbar 
-	driven toggle buttons, simplified the snippet definition, 
+	The main changes and enhancements include support for suggestion-popups, toolbar
+	driven toggle buttons, simplified the snippet definition,
 	and compatible with IE6/7. (ugh)
-	
+
 	Dirk Frederickx, Oct-Dec 2008
-	
+
 Arguments:
 	el - textarea element
 	options - optional, see options below
 
 Options:
-	tab - (string) number of spaces used to insert/remove a tab in the textarea; 
+	tab - (string) number of spaces used to insert/remove a tab in the textarea;
 		default is 4
-	tabcompletion - (boolean, default true) when set to true, 
+	tabcompletion - (boolean, default true) when set to true,
 	    the tabSnippet keywords will be expanded
 		when pressing the TAB key.  See also [tabSnippet]
 	tabsnips - (snippet-object) set of snippets, which will be expanded when
@@ -614,11 +639,11 @@ Options:
 	suggestsnips - (snippet-object) set of snippets which are triggered at
 		key-up or mouse click events. Typically suggestsnips are used to generate
 		help dialog popups.
-	buttons - (array of Elements), each button elemnet will bind its click-event 
+	buttons - (array of Elements), each button elemnet will bind its click-event
 	    with [onButtonClick}. When the click event fires, the {{rel}} attribute
 	    or the text of the element will be used as snippet keyword.
 	    See also [tabSnippet].
-	dialogs - set of dialogs, consisting of either a Dialog object, 
+	dialogs - set of dialogs, consisting of either a Dialog object,
 		or a set of {dialog-options} for the predefined
 		dialogs suchs as Font, Color and Special.
 		See property [initializeDialogs] and [openDialog]
@@ -626,7 +651,7 @@ Options:
 	next - (Element), when pressing Shift-Enter, the textarea will ''blur'' and
 		this ''next'' element will ge the focus.
 		This compensates the overwritting default TAB handling of the browser.
-	onresize - (function, optional), when present, a textarea resize bar 
+	onresize - (function, optional), when present, a textarea resize bar
 		with css class {{resize-bar}} is added after the textarea,
 		allowing to resize the heigth of the textarea.
 		This onresize callback function is called whenever
@@ -635,16 +660,16 @@ Options:
 Dependencies:
 	[Textarea]
 	[UndoRedo]
-	
+
 Example:
 	(start code)
 	<script>
 		new SnipEditor( "mainTextarea", {
-			tabsnips: { bold:"**{bold text}**", italic:"''{italice text}''" }, 
+			tabsnips: { bold:"**{bold text}**", italic:"''{italice text}''" },
 			tabcompletion:true,
-			directsnips: { '(':')', '[' : ']' }, 
+			directsnips: { '(':')', '[' : ']' },
 			buttons: $$('a.tool'),
-			next:'nextInputField' 
+			next:'nextInputField'
 	  	});
   	</script>
 	(end)
@@ -652,6 +677,7 @@ Example:
 */
 var SnipEditor = new Class({
 
+	Implements: Options,
 	options: {
 		tab: "    ", //default tab = 4 spaces
 		tabcompletion: true,
@@ -694,10 +720,10 @@ var SnipEditor = new Class({
 				.removeProperty('id')
 				.removeProperty('name')
 				.injectBefore( main.hide() )
-				.addEvent('change', self.onChangeTXTA.bind( self ) ); 
-				// Make sure to catch ALL {{change}} events, and copy the 
-				// content of txta back to the main textarea. 
-				// This includes the ''last'' change event, just before firing 
+				.addEvent('change', self.onChangeTXTA.bind( self ) );
+				// Make sure to catch ALL {{change}} events, and copy the
+				// content of txta back to the main textarea.
+				// This includes the ''last'' change event, just before firing
 				// the submit event of the form.
 
 		self.textarea = new Textarea( txta );
@@ -708,7 +734,7 @@ var SnipEditor = new Class({
 		self.initializeResizing( txta );
 
 		var keystroke = self.onKeystroke.bind( self ),
-			btns = options.buttons,
+			btns = $$(options.buttons),
 			find = options.findForm.submit,
 			suggest = self.suggestSnippet.bind( self );
 
@@ -725,14 +751,14 @@ var SnipEditor = new Class({
 			.addEvent( 'keyup', suggest );
 
 	},
-	
-		
+
+
 	/*
 	Function: toElement
 		Retrieve textarea DOM element;
-		This allows the dollar function to return 
+		This allows the dollar function to return
 		the element when passed an instance of the class. (mootools 1.2.x)
-		
+
 	Example:
 	>	var snipe = new SnipEditor('textarea-element');
 	>	$('textarea-element') == snipe.toElement();
@@ -741,21 +767,21 @@ var SnipEditor = new Class({
 	*/
 	toElement: function(){
 		return this.textarea.toElement();
-	},	
-	
+	},
+
 	/*
 	Function: get
-		Retrieve some of the public properties of the snip-editor: 
+		Retrieve some of the public properties of the snip-editor:
 		textarea, resize object.
 
 	Arguments:
 		item - 'resize' or 'textarea'
 	*/
 	get: function(item){
-		return( /textarea|dialogs|tabcompletion|tabsnips|directsnips|suggestsnips/.test(item) 
+		return( /textarea|dialogs|tabcompletion|tabsnips|directsnips|suggestsnips/.test(item)
 			? this[item] : null )
 	},
-	
+
 	/*
 	Function: set
 		Set/Reset some of the options of the snip-editor.
@@ -775,13 +801,13 @@ var SnipEditor = new Class({
 
 	/*
 	Function: onKeystroke
-		This is a cross-browser keystroke handler for keyPress and keyDown 
+		This is a cross-browser keystroke handler for keyPress and keyDown
 		events on the textarea.
 
 	Note:
 		The KeyPress is used to accept regular character keys.
 		The KeyDown event captures all special keys, such as Enter, Del, Backspace, Esc, ...
-		To work around some browser incompatibilities, a hack with the {{event.which}} 
+		To work around some browser incompatibilities, a hack with the {{event.which}}
 		attribute is used to grab the actual special chars.
 		Ref. keyboard event paper by Jan Wolter, http://unixpapa.com/js/key.html
 		Todo: check on Opera
@@ -791,26 +817,27 @@ var SnipEditor = new Class({
 	*/
 	onKeystroke: function(e){
 
-		e = new Event(e);
+		//e = new Event(e);
+		console.log("keystroke "+e.shift+" "+e.type );
 
 		if( e.type=='keydown' ){
 
 			//Only accept special keys via keydown event
-			if( !Event.keys[e.key] ) return;
+			if( !Event.Keys[e.key] ) return;
 
 		} else { // e.type=='keypress'
 
 			//Only accept regular character keys via keypress event
 			//Note: cross-browser hack with 'which' attribute for special chars
-			if( $chk(e.event.which) && (e.event.which==0) ) return; 
+			if( $chk(e.event.which) && (e.event.which==0) ) return;
 
 			//Reset faulty 'special char' treatment by mootools
-			e.key = String.fromCharCode(e.code).toLowerCase(); 
+			e.key = String.fromCharCode(e.code).toLowerCase();
 
 		}
 
 	    if( e.shift && e.key=='enter' ){
-	    
+
 	    	//Exit and jump to the next element
 	    	e.stop();
 	    	this.clearActiveSnip();
@@ -818,40 +845,40 @@ var SnipEditor = new Class({
 	    	return;
 
 	    }
-	    
+
 	    var self = this,
 	    	txta = self.textarea,
 	    	el = txta.toElement(),
 	    	caret = txta.getSelectionRange(),
-			top = el.scrollTop, 
+			top = el.scrollTop,
 			left = el.scrollLeft;
-	    
+
 		if( this.directSnippet(e, txta, caret) ) return;
 
 		el.focus();
 
 		switch( e.key ){
 
-			case 'tab': 
+			case 'tab':
 
 				e.stop();
-	
+
 				if( self.activeSnip ){
 
 					return self.nextParameter(txta, caret);
 
 				} else {
-				
+
 					if( self.tabSnippet(e, txta, caret) ) return;
 
 					self.convertTabToSpaces(e, txta, caret);
 
 				}
-				
+
 				break;
 
 			case 'up' :
-			case 'down': 
+			case 'down':
 			case 'esc': self.clearActiveSnip(); return;
 
 			case 'enter': self.onEnter(e, txta, caret); break;
@@ -866,7 +893,7 @@ var SnipEditor = new Class({
 		el.scrollLeft = left;
 
 	},
-	
+
 	/*
 	Function: onEnter
 		When the Enter key is pressed, the next line will be ''auto-indented''
@@ -878,7 +905,7 @@ var SnipEditor = new Class({
 		caret - caret object, indicating the start/end of the textarea selection
 	*/
 	onEnter: function(e, txta, caret) {
-		
+
 		//if( this.activeSnip ){
 			//fixme
 			//how to 'continue previous snippet ??
@@ -888,7 +915,7 @@ var SnipEditor = new Class({
 		//}
 
 		this.clearActiveSnip();
-		
+
 		if( caret.thin ){
 
 			var fromStart = txta.getFromStart(),
@@ -896,13 +923,13 @@ var SnipEditor = new Class({
 				indent = prevline.match( /^\s+/gi );
 
 			if( indent ){
-				e.stop(); 
+				e.stop();
 				txta.insertAfter( '\n' + indent.join('') );
 			}
 
 		}
 	},
-	
+
 	/*
 	Function: onBackspace
 		Remove single-character directsnips such as {{ (), [], {} }}
@@ -916,7 +943,7 @@ var SnipEditor = new Class({
 
 		if( caret.thin  && (caret.start > 0) ){
 
-			var key = txta.getValue().charAt(caret.start-1), 
+			var key = txta.getValue().charAt(caret.start-1),
 				snip = this.getSnippet( this.options.directsnips );
 
 			if( snip && (snip.snippet == txta.getValue().charAt(caret.start)) ){
@@ -949,7 +976,7 @@ var SnipEditor = new Class({
 				.setSelection('');
 
 		}
-	},	
+	},
 
 
 	/*
@@ -967,19 +994,19 @@ var SnipEditor = new Class({
 		var form = this.options.findForm,
 			dialog = form.findDialog,
 			showDialog = ( dialog.getStyle('display')=='none' );
-			
-		dialog.setStyle( 'display', showDialog ? '' : 'none' );	
+
+		dialog.setStyle( 'display', showDialog ? '' : 'none' );
 		showDialog ? form.findInput.focus() : this.toElement().focus();
-		
+
 	},
-	
+
 	/*
 	Function: onFindAndReplace
 		Perform the find and replace operation on either the full textarea
-		or the selection of the textarea. It supports 
+		or the selection of the textarea. It supports
 		regular expressions, case-(in)sensitive replace and global replace.
 		This is an event handler, typically linked with the submit button of the
-		find and replace dialog. 
+		find and replace dialog.
 
 	Arguments:
 		e - event
@@ -995,21 +1022,21 @@ var SnipEditor = new Class({
 			isRegExp	= (fo.isRegExp) ? fo.isRegExp.checked : false,
 			reGlobal	= (fo.isReplaceGlobal && fo.isReplaceGlobal.checked) ? 'g' : '',
 			reMatchCase	= (fo.isMatchCase && fo.isMatchCase.checked) ? '' : 'i';
-			
+
 		if( findText == '' ) return;
 
 		var sel = txta.getSelection() || '',
 			data = (sel=='') ? txta.getValue() : sel;
-			
+
 		if( !isRegExp ) findText = findText.escapeRegExp();
-		
+
 		var re = new RegExp(findText, reGlobal + reMatchCase + 'm'); //multiline
 
 		if( data.match(re) ){
 
 			this.undoredo.onChange();
-			data = data.replace(re, replaceText);  
-			(sel=='') ? txta.toElement().value = data : txta.setSelection(data);			
+			data = data.replace(re, replaceText);
+			(sel=='') ? txta.toElement().value = data : txta.setSelection(data);
 
 		} else {
 
@@ -1021,8 +1048,8 @@ var SnipEditor = new Class({
 
 	/*
 	Function: setActiveSnip
-		The activeSnip contains an array with ''{parameters}'' used to step through 
-		each parameter when pressing subsequent tabs. 
+		The activeSnip contains an array with ''{parameters}'' used to step through
+		each parameter when pressing subsequent tabs.
 		It also contains a ref to the related snippet and snippet key.
 		See also nextParameter(..)
 		As long the snippet is active, the textarea gets the css class {{activeSnip}}.
@@ -1048,7 +1075,7 @@ var SnipEditor = new Class({
 	clearActiveSnip: function(){
 
 		var self = this;
-		
+
 	    self.activeSnip = null;
 		self.hideDialog();
 		self.toElement().removeClass('activeSnip').focus();
@@ -1060,10 +1087,10 @@ var SnipEditor = new Class({
 		found or not in scope.
 
 	About snippets:
-	In the simplest case, you can use snippets to insert plain text that you do not 
-	want to type again and again. The snippet is expanded when hitting 
+	In the simplest case, you can use snippets to insert plain text that you do not
+	want to type again and again. The snippet is expanded when hitting
 	the Tab key: the ''snippet'' is replaced by ''snippet expansion text''.
-	
+
 	(start code)
 	var tabSnippets = {
 		<snippet1> : <snippet expansion text>,
@@ -1073,8 +1100,8 @@ var SnipEditor = new Class({
 
 	See also [DirectSnippets].
 
-	For example, following snippet will expand the ''toc'' text into the 
-	TableOfContents wiki plugin call. Don't forget to escape '{' and '}'  
+	For example, following snippet will expand the ''toc'' text into the
+	TableOfContents wiki plugin call. Don't forget to escape '{' and '}'
 	with a backslash, because they have a special meaning. (see below)
 	Use the '\n' charater to define multi-line snippets. Start the snippet
 	with '\n' to make sure the snippet starts on a new line.
@@ -1083,17 +1110,17 @@ var SnipEditor = new Class({
 	"toc": "\n[\{TableOfContents \}]\n"
 	(end)
 
-	After tab-completion, the caret is placed just after the expanded snippet. 
+	After tab-completion, the caret is placed just after the expanded snippet.
 
 	Snippet parameters:
 	If you want, you can put ''{parameters}'' inside the snippet. Pressing the tab
-	will jump to the next parameter. If you are ok with the default value, 
+	will jump to the next parameter. If you are ok with the default value,
 	just tab over it. If not, start typing to overwrite it.
-	
+
 	(start code)
 	"bold": "__{some bold text}__"
 	(end)
-   
+
 	You can have multiple ''{parameters}'' too. Pressing more tabs will get you there.
 
 	(start code)
@@ -1101,9 +1128,9 @@ var SnipEditor = new Class({
 	(end)
 
 	Extended snippet syntax:
-	So far we discussed the simple snippet syntax. In order to unlock more advanced 
+	So far we discussed the simple snippet syntax. In order to unlock more advanced
 	snippet features, you'll need to use the extended snippet syntax.
-	
+
 	(start code)
 	"toc": {
 		snippet : "\n[\{TableOfContents \}]\n"
@@ -1119,20 +1146,20 @@ var SnipEditor = new Class({
 	Snippet synonyms:
 	Instead of defining the snippet text, you can also refer to another snippet.
 	This allows you to create synonyms.
-	
+
 	(start code)
-	"allow": { 
-		synonym: "acl" 
+	"allow": {
+		synonym: "acl"
 	}
 	(end)
 
 	Dynamic snippets:
-	Next to static snippet texts, you can also dynamically generate 
+	Next to static snippet texts, you can also dynamically generate
 	the snippet text through a javascript function. For example, you could
 	use ajax calls to populate the snippet on the fly. The function should return
 	either the string (simple snippet syntax) or a snippet object.
 	(eg return {{ { snippet:"..." } }} )
-	
+
 	(start code)
 	"date": function(e, textarea){
 		return new Date().toLocaleString();
@@ -1154,9 +1181,9 @@ var SnipEditor = new Class({
 	Parameter dialog boxes:
 	To help the entry of parameters, you can specify a predefined set of choices
 	for a ''{parameter}'', as a string (with | separator), js array or js object.
-	A parameter dialog box will be displayed to provide easy selection of 
+	A parameter dialog box will be displayed to provide easy selection of
 	one of the choices.  See [SelectionDialog].
-	
+
 	Example of parameter suggestion-list:
 
 	(start code)
@@ -1177,13 +1204,13 @@ var SnipEditor = new Class({
 		}
 	}
 	(end)
-	
+
 	You can also define global dialog boxes via the ''dialogs'' option, which
-	can be re-used in any snippet.	
-	
+	can be re-used in any snippet.
+
 	(start code)
 	new SnipEditor( $('myTextarea'), {
-		...	
+		...
 		tabSnippet: {
 			acl: "[\{ALLOW {permission} \}]"
 		},
@@ -1197,7 +1224,7 @@ var SnipEditor = new Class({
 
 	Arguments:
 		snips - snippet collection object for lookup of the key
-		key - (optional) snippet key. If not present, retreive the key from 
+		key - (optional) snippet key. If not present, retreive the key from
 		 	the textarea just to the left of the caret. (i.e. tab-completion)
 
 	Returns:
@@ -1216,7 +1243,7 @@ var SnipEditor = new Class({
 		var txta = this.textarea,
 			fromStart = txta.getFromStart(),
 			snip = false;
-			
+
 		if( key ){
 
 			snip = snips[key];
@@ -1225,7 +1252,7 @@ var SnipEditor = new Class({
 
 			//lookup key and snippet backwards from the text preceeding the caret
 			var len = fromStart.length;
-				
+
 			for( var sn in snips ){
 				if( (len >= sn.length) && (sn == fromStart.slice( - sn.length ) ) ){
 					snip = snips[sn];
@@ -1261,7 +1288,7 @@ var SnipEditor = new Class({
 		if(last) parms.push( s.slice(s.lastIndexOf(last) + last.length) );
 
 		//collapse \n of previous line if the snippet starts with \n
-		if( (s.indexOf('\n')==0) 
+		if( (s.indexOf('\n')==0)
 		&& ( fromStart.slice(0, -key.length ).test( /(^|\n\s*)$/g ) ) ) {
 			s = s.substr(1);
 		}
@@ -1270,24 +1297,24 @@ var SnipEditor = new Class({
 
 		//auto-indent the snippet's internal \n
 		var prevline = fromStart.split('\r?\n').pop(),
-			indent = prevline.match(/^\s+/gi); 
+			indent = prevline.match(/^\s+/gi);
 		if( indent ) s = s.replace( /\n/g, '\n' + indent.join('') );
 
 		//complete the snip object
 		snip.text = s;
 		snip.parms = parms;
 
-		return snip; 				
+		return snip;
 	},
-	
+
 	/*
 	Function: inScope
-		Sometimes it is useful to restrict the scope of a snippet, and only perform 
+		Sometimes it is useful to restrict the scope of a snippet, and only perform
 		the tab-completion in specifc parts of the text. The scope parameter allows
-		you to do that by defining start and end delimiting strings. 
+		you to do that by defining start and end delimiting strings.
 		For example, the following "fn" snippet will only expands when it appears
-		inside the scope of a script tag. 
-	
+		inside the scope of a script tag.
+
 		(start code)
 		"fn": {
 			snippet: "function( {args} )\{ \n    {body}\n\}\n",
@@ -1297,7 +1324,7 @@ var SnipEditor = new Class({
 
 		The opposite is possible too. Use the 'nScope' or not-in-scope parameter
 		to make sure the snippet is only inserted when not in scope.
-	
+
 		(start code)
 		"special": {
 			snippet: "{special}",
@@ -1318,7 +1345,7 @@ var SnipEditor = new Class({
 
 			if( $type( snip.scope )=='function' ){
 
-				return snip.scope( this.textarea ); 
+				return snip.scope( this.textarea );
 
 			} else {
 
@@ -1333,14 +1360,14 @@ var SnipEditor = new Class({
 		}
 
 		if( snip.nScope ){
-		
+
 			for( var key in snip.nScope ){
 
 				var open = text.lastIndexOf(key);
 				if( (open > -1) && (text.indexOf( snip.nScope[key], open ) == -1) ) return false;
 
 			}
-		
+
 		}
 		return true;
 	},
@@ -1351,7 +1378,7 @@ var SnipEditor = new Class({
 		Direct snippet are invoked immediately when the key is pressed
 		as opposed to a [tabSnippet] which are expanded after pressing the Tab key.
 
-		Direct snippets are typically used for smart typing pairs, 
+		Direct snippets are typically used for smart typing pairs,
 		such as {{ (), [] or {}. }}
 		Direct snippets can also be defined through javascript functions
 		or restricted to a certain scope. (ref. [getSnippet], [inScope] )
@@ -1369,7 +1396,7 @@ var SnipEditor = new Class({
 
 	Example:
 	(start code)
-	directSnippets: { 
+	directSnippets: {
 		'"' : '"',
 		'(' : ')',
 		'{' : '}',
@@ -1384,13 +1411,13 @@ var SnipEditor = new Class({
 		}
 	}
 	(end)
-	
+
 	*/
 	directSnippet: function(e, txta, caret){
 
 		var snip = this.getSnippet( this.options.directsnips, e.key );
 		if(!snip) return false;
-		
+
 		e.stop();
 
 		txta.setSelection( e.key, txta.getSelection(), snip.snippet )
@@ -1413,13 +1440,13 @@ var SnipEditor = new Class({
 	*/
 	tabSnippet: function(e, txta, caret){
 
-		if( !this.options.tabcompletion ) return;	
-		            
+		if( !this.options.tabcompletion ) return;
+
 		if( caret.thin ){
 			var snip = this.getSnippet( this.options.tabsnips );
 		}
 		if( !snip ) return false;
-		
+
 		this.undoredo.onChange();
 
 		//replace the snippet key by the snippet text
@@ -1440,18 +1467,18 @@ var SnipEditor = new Class({
 			this.nextParameter(txta, caret);
 
 		}
-		
+
 		return true;
 	},
 
 	/*
 	Function: onButtonClick
 		This function is a Click event handler.
-		It looks up the snippet based on the rel-attribute or the text value 
+		It looks up the snippet based on the rel-attribute or the text value
 		of the clicked element, and inserts its value in the textarea.
 
 		When text was selected prior to the click event, the selection will
-		be injects in one of the snippet {parameter}. 
+		be injects in one of the snippet {parameter}.
 
 		Additionally, when the snippet only contains one {parameter},
 		the snippet will toggle: i.e. remove the snippet when already present,
@@ -1471,28 +1498,28 @@ var SnipEditor = new Class({
 
 		var self = this,
 			el = e.target,
-			key = el.getProperty('rel') || el.getText(); 
+			key = el.get('rel') || el.get('text');
 
 		//toggle previously activate dialog, if it is the same command !!fixme
 		if( self.activeDialog ) return self.hideDialog();
 
-		//catch predefined commands 
+		//catch predefined commands
 		if( key=='undo' ) return self.undoredo.onUndo();
 		if( key=='redo' ) return self.undoredo.onRedo();
 		if( key=='find' ) return self.toggleFindAndReplace();
 
 
 		var snip = self.getSnippet( self.options.tabsnips, key );
-		self.relativeTo = el; //this is a button event -- used to positon the dialog 
+		self.relativeTo = el; //this is a button event -- used to positon the dialog
 
 		if( !snip ){
 
 			//check if this is a button-only dialog command
-			if( self.dialogs[key] ) self.openDialog( key );	
+			if( self.dialogs[key] ) self.openDialog( key );
 			return;
 		}
-		
-		var txta = self.textarea, 
+
+		var txta = self.textarea,
 			caret = txta.getSelectionRange();
 
 		self.undoredo.onChange();
@@ -1504,7 +1531,7 @@ var SnipEditor = new Class({
 		if( !caret.thin ){
 
 			//when text was selected, inject it the first undefined {parameter}
-			var dialogs = self.dialogs; 
+			var dialogs = self.dialogs;
 
 			snip.parms.slice(0,-1).some( function(parm,i){
 
@@ -1516,7 +1543,7 @@ var SnipEditor = new Class({
 
 			});
 		}
- 
+
 		//now insert the snippet text
 		txta.setSelection( s );
 
@@ -1531,19 +1558,19 @@ var SnipEditor = new Class({
 			//this snippet has one or more parameters
 			//store the active snip and process the first {parameter}
 			self.setActiveSnip( snip );
-			//alert(Json.toString(snip));
+			//alert(JSON.encode(snip));
 			caret = txta.getSelectionRange(); //update new caret
-			
+
 			self.nextParameter(txta, caret);
-	
+
 		}
 
 	},
 
 	/*
 	Function: toggleSnippet
-		This helper function toggles a snippet. 
-		The snippet should consists of exactly one parameter.		
+		This helper function toggles a snippet.
+		The snippet should consists of exactly one parameter.
 		It is called by the onButtonClick event handler.
 
 	Arguments:
@@ -1556,10 +1583,10 @@ var SnipEditor = new Class({
 		var selection = txta.getSelection();
 
 		// First validate the toggle conditions:
-		// 1) check if some text was selected, 
+		// 1) check if some text was selected,
 		// 2) check whether there is exactly one {parameter} in the snippet
 		if( (selection=='') || (snip.parms.length!= 2) ) return false;
-				
+
 		var s = snip.text,
 			//get the first and last textual parts of the snippet
 			//the last marker already contains the final text part of the snippet
@@ -1582,7 +1609,7 @@ var SnipEditor = new Class({
 		} else if( txta.getFromStart().test(fst+'$') && txta.getTillEnd().test('^'+lst) ){
 
 			txta.setSelectionRange(caret.start-fst.length, caret.end+lst.length);
-			
+
 		} else {
 
 			//insert snippet
@@ -1590,8 +1617,8 @@ var SnipEditor = new Class({
 				.setSelectionRange( caret.start + fst.length );
 		}
 
-		txta.setSelection( selection );	
-		return true;	
+		txta.setSelection( selection );
+		return true;
 	},
 
 	/*
@@ -1599,13 +1626,13 @@ var SnipEditor = new Class({
 		Suggestion snippets are dialog-boxes appearing as you type.
 		When clicking items in the suggest dialogs, content is inserted
 		in the textarea.
-		
-		
+
+
 	Example:
 	> FIXME!!
 	(start code)
 	suggestionSnippets: [
-		{ // 0 : page links  
+		{ // 0 : page links
 			scope:{ '[':']'	},
 			snippet: function(e, textarea){
 				ajax = <retrieve suggestion list>.join('|');
@@ -1613,7 +1640,7 @@ var SnipEditor = new Class({
 			}
 		},
 		{ // 1 : color dialog
-			scope:{ 
+			scope:{
 				'%%(color:#':';',
 				'%%(background-color:#':';'
 			},
@@ -1624,10 +1651,10 @@ var SnipEditor = new Class({
 		}
 	]
 	(end)
-	
+
 	*/
 	suggestSnippet: function(){
-	
+
 		var self = this,
 			txta = self.textarea,
 			fromStart = txta.getFromStart(),
@@ -1640,7 +1667,7 @@ var SnipEditor = new Class({
 
 				var snip = snips[sn];
 				if( self.inScope(snip, fromStart) ){
-				
+
 					//alert('bingo '+sn);
 					//get dialog
 					if( !dialogs[sn] ){
@@ -1650,7 +1677,7 @@ var SnipEditor = new Class({
 						//if( !dialog ) continue; //bad snippet def.
 						dialogs[sn] = snip.dialog;
 					}
-					self.openDialog( sn ); 
+					self.openDialog( sn );
 					return; //found
 				}
 			}
@@ -1678,12 +1705,12 @@ var SnipEditor = new Class({
 
 			parameter = parms.shift();
 			pos = txta.getValue().indexOf(parameter, caret.start);
-				
+
 			if( pos > -1 ){
-			
+
 				//found the next {parameter} or possibly the end of the snippet
 				this.hideDialog();
-			
+
 				if( parms.length > 0 ){
 
 					// select the next {parameter}
@@ -1693,18 +1720,18 @@ var SnipEditor = new Class({
 					this.undoredo.onChange();
 
 					// open a suggestion dialog, if any
-					this.openDialog( parameter );	
+					this.openDialog( parameter );
 
 					return; // and retain the activeSnip for subsequent {parameters}
-				
+
 				} else {
 
 					// no more {parameters}, move the caret after the end of the snippet
 					txta.setSelectionRange( pos + parameter.length );
-					
+
 				}
-			}		
-		}		
+			}
+		}
 
 		this.clearActiveSnip();
 
@@ -1716,9 +1743,9 @@ var SnipEditor = new Class({
 		While dragging the textarea, also updates the size of the
 		''toc'' overlay menu. Notice the addtion of 10px (8+2)
 		to compensate for padding and borders. (CHECK)
-		
+
 		When done, call the onresize callback handler.
-		
+
 	Arguments:
 		txta - Textarea object
 	*/
@@ -1730,9 +1757,9 @@ var SnipEditor = new Class({
 		if( resizeFn ){
 
 			txta.makeResizable({
-				handle: new Element('div',{'class': 'resize-bar' }).injectAfter(txta), 
-				modifiers: { x:false, y:'height' },
-				onDrag: function() { 
+				handle: new Element('div',{'class': 'resize-bar'}).injectAfter(txta),
+				modifiers: { x:null },
+				onDrag: function() {
 					var toc = self.toc.element;
 					if( toc ) toc.setStyle('height', 10+this.value.now.y ) ;
 				},
@@ -1740,34 +1767,34 @@ var SnipEditor = new Class({
 			});
 
 		}
-	
+
 	},
 
 	/*
 	Function: initializeDialogs
 		Prepare the set of predefined parameter dialog for fonts, colors, special.
 		And mixin the parameters from the dialog options.
-		
-		The snipEditor dialog options contain entries xxx either 
-		- a pre-created Dialog object, 
+
+		The snipEditor dialog options contain entries xxx either
+		- a pre-created Dialog object,
 		- an array with ~[Dialog-object, {Dialog options}~]
 			This will be initialised during the first invocation of the dialog.
-		- a set of ''{dialog-options}'' which will overwrite some of the options of  
+		- a set of ''{dialog-options}'' which will overwrite some of the options of
 			the predefined dialogs suchs as Font, Color and Special.
 	*/
 	initializeDialogs: function(){
-	
+
 		var select = this.onSelectDialog.bind(this),
 			change = this.onChangeDialog.bind(this);
-			
+
 		this.dialogs = {
 				fonts: [FontDialog, {caption:'Fonts', autoClose:true, onSelect:select}],
 				colors: [ColorDialog, {colorImage:'../dialog/circle-256.png', onChange:change}],
 				special: [CharsDialog, {caption:'Special Chars', autoClose:true, onSelect:select}]
 		};
 
-		//process the snipeditor.options.dialogs		
-		var dlgs = this.options.dialogs, 
+		//process the snipeditor.options.dialogs
+		var dlgs = this.options.dialogs,
 			dialogs = this.dialogs;
 		for( var d in dlgs ){
 
@@ -1797,10 +1824,10 @@ var SnipEditor = new Class({
 	onSelectDialog: function( newtext ){
 
 		var txta = this.textarea;
-		
+
 		txta.setSelection( newtext )
 			.setSelectionRange( txta.getSelectionRange().end );
-			
+
 		this.nextParameter(txta, txta.getSelectionRange() );
 
 	},
@@ -1819,7 +1846,7 @@ var SnipEditor = new Class({
 		this.textarea.setSelection( newtext );
 
 	},
-	
+
 
 	/*
 	Function: openDialog
@@ -1847,9 +1874,9 @@ var SnipEditor = new Class({
 			//suggestion defined inside the snippet takes precedences.
 			dialog = new SelectionDialog({
 				body: suggest,
-				caption: parm, 
+				caption: parm,
 				onSelect: self.onSelectDialog.bind(self)
-			});	
+			});
 
 		} else if( dialog ){
 
@@ -1873,7 +1900,7 @@ var SnipEditor = new Class({
 		self.activeDialog = dialog.show();
 
 	},
-	
+
 	/*
 	Function: hideDialog
 		Clear the active dialog and hide it.
@@ -1881,21 +1908,21 @@ var SnipEditor = new Class({
 	hideDialog: function(){
 
 		var active = this.activeDialog;
-		if( active ){ 
+		if( active ){
 			active.hide();
 			this.activeDialog = null;
 		}
 
 	},
-	
+
 	/*
 	Function: initializeToc
 		Initialize the Table-Of-Contents of the textarea.
 		This clickable TOC allows the user to quickly zoom-in or
 		swith between section of the textarea.
-		
+
 		The sections are delimitted by header lines.
-		
+
 		The textarea is cloned into a main and work area.
 		The workarea is used for actual editing.
 		The mainarea reflects at all times the whole document.
@@ -1903,14 +1930,14 @@ var SnipEditor = new Class({
 		The TOC is injected in a #snipetoc element, with absolute position,
 		such that is mapped perfectly behind the visible textarea.
 		The #snipetoc is resized equally to the textarea.
-		
+
 	*/
 	initializeToc: function( txta ){
-		
+
 		var self = this,
 			onChangeTXTA = self.onChangeTXTA.bind(self),
 			buildToc = self.buildToc.bind(self);
-			
+
 		if( self.options.toc.tocParser ){
 
 			self.toc = { /*items:[], begin:0, end:0,*/ cursor:0 };
@@ -1924,31 +1951,31 @@ var SnipEditor = new Class({
 					'height': 10+txta.getStyle('height').toInt()
 				},
 				'events':{
-					'mouseenter':function(){ 
+					'mouseenter':function(){
 						onChangeTXTA();
-						$('snipetoc').removeClass('hidden'); 
+						$('snipetoc').removeClass('hidden');
 					},
 					'mouseleave':function(){ $('snipetoc').addClass('hidden'); }
 				}
 			}).adopt( self.toc.elements = new Element('ul') )
 				.injectBefore( txta );
-				
+
 			buildToc(); /*CHECK*/
 
 		}
-	},	
-	
+	},
+
 	/*
 	Function: buildToc
 		UPDATE/RFEFRESH the textarea table-of-contents selection list
 		This function is called at startup, and everytime the section textarea changes.
-		
-	Postcondition: 
+
+	Postcondition:
 		The section-edit dropdown contains following entries
 		* 0: ( all )
 		* 1: start-of-page (if applicable)
 		* 2..n: page sections
-	 */  
+	 */
 	 buildToc: function(){
 
 		var self = this,
@@ -1962,10 +1989,10 @@ var SnipEditor = new Class({
 						'styles': {	'padding-left':(item.indent+0.5)+'em' },
 						'title':item.title,
 						'events':{
-							'click':self.selectTocItem.pass([index], self) 
+							'click':self.selectTocItem.pass([index], self)
 						}
-					}).setHTML(item.title.trunc(30))
-				); 
+					}).set('html',item.title.trunc(30))
+				);
 			},
 
 			liArr = [ newItem({title: options.all, start:0, indent:0}, -2) ],
@@ -1980,8 +2007,8 @@ var SnipEditor = new Class({
 				liArr.push( newItem({title: options.startOfPage, start:0, indent:0}, -1) );
 			}
 
-			items.each( function(item, index){ 
-				liArr.push( newItem( item, index ) ); 
+			items.each( function(item, index){
+				liArr.push( newItem( item, index ) );
 			},self);
 
 		}
@@ -1990,7 +2017,7 @@ var SnipEditor = new Class({
 
 	},
 
-	/* 
+	/*
 	Function: tocCursor
 
 	Arguments:
@@ -2004,23 +2031,23 @@ var SnipEditor = new Class({
 		var toc = this.toc,
 			els = toc.elements.getChildren(),
 			offset = ((toc.items.length==0) || (toc.items[0].start>0)) ? 2 : 1;
-			
+
 		if( cursor < -2 ) cursor = -2;
 		this.toc.cursor = cursor;
 
 		els.removeClass('cursor');
-		if( els[cursor+offset] ) els[cursor+offset].addClass('cursor'); 
+		if( els[cursor+offset] ) els[cursor+offset].addClass('cursor');
 
 		$('snipetoc').addClass('hidden');
 	},
 
-	/* 
+	/*
 	Function: selectTocItem
 		Copy the right section of the main textarea to the work
 		textarea.
 
-		This event handler is called when the user clicks one of the 
-		entries of the Table Of contents. 
+		This event handler is called when the user clicks one of the
+		entries of the Table Of contents.
 
 	Arguments:
 		cursor - index of the display table of contents item
@@ -2030,12 +2057,12 @@ var SnipEditor = new Class({
 	*/
 	selectTocItem: function( cursor ){
 
-		var txta = this.toElement(), 
+		var txta = this.toElement(),
 			main = this.mainarea.value,
 			toc = this.toc,
 			items = toc.items;
-			
-		//FIXME : what if no toc undefined : eg wiki-comments.	
+
+		//FIXME : what if no toc undefined : eg wiki-comments.
 
 		//default : show all
 		toc.begin = 0;
@@ -2048,7 +2075,7 @@ var SnipEditor = new Class({
 
 		} else if(cursor >= 0  && cursor < items.length){
 
-			toc.begin = items[cursor].start; 
+			toc.begin = items[cursor].start;
 			if( cursor+1 < items.length ) toc.end = items[cursor+1].start;
 
 		} else {
@@ -2056,7 +2083,7 @@ var SnipEditor = new Class({
 			cursor = -2;
 
 		}
-		
+
 		this.tocCursor( cursor );
 
 		txta.value = main.slice( toc.begin, toc.end );
@@ -2068,20 +2095,20 @@ var SnipEditor = new Class({
 	Function: onChangeTXTA
 		This event handler is invoked when text is changed in the textarea.
 		It's main duty is to copy the textarea back into the main textarea,
-		on the right location.  When done, the snip toc is refreshed.		
-		
-		This {{change}} event fires when: 
+		on the right location.  When done, the snip toc is refreshed.
+
+		This {{change}} event fires when:
 		# {{change}} event on the textarea
-		  This event also fires just before the form is submitted. 
+		  This event also fires just before the form is submitted.
 		# user clicks a toolbar-button
 
 		This handler is also invoked when the {{mouseover}} event fires
 		to make the toc menu visible.
 
 	*/
-	onChangeTXTA: function(){	
+	onChangeTXTA: function(){
 
-		var	txta = this.toElement(),	
+		var	txta = this.toElement(),
 			main = this.mainarea,
 			toc = this.toc;
 
@@ -2092,7 +2119,7 @@ var SnipEditor = new Class({
 			var	s = main.value,
 				//insert \n to ensure the next section always starts on a new line.
 				linefeed = (txta.value.slice(-1) != '\n')  ? '\n' : '';
-			
+
 			main.value = s.slice(0, toc.begin) + txta.value + linefeed + s.slice(toc.end);
 			toc.end = toc.begin + txta.value.length;
 
@@ -2104,7 +2131,7 @@ var SnipEditor = new Class({
 	Function: convertTabToSpaces
 		Convert tabs to spaces. When no snippets are detected, the default
 		treatment of the TAB key is to insert a number of spaces.
-		Indentation is applied in case of multi-line selections. 
+		Indentation is applied in case of multi-line selections.
 
 	Arguments:
 		e - event
@@ -2165,33 +2192,33 @@ var SnipEditor = new Class({
 	Function: getState
 		Get the current state of the SnipEditor which consist of
 		the content and selection of the textarea.
-		It implements the ''Undoable'' interface called from the 
+		It implements the ''Undoable'' interface called from the
 		[UndoRedo] class.
 	*/
 	getState: function(){
 
 		var txta = this.textarea,
-			el = txta.toElement(); 
+			el = txta.toElement();
 
-		return { 
+		return {
 			main: this.mainarea.value,
-			value: el.getValue(), 
-			cursor: txta.getSelectionRange(), 
-			scrollTop: el.scrollTop, 
+			value: el.get('value'),
+			cursor: txta.getSelectionRange(),
+			scrollTop: el.scrollTop,
 			scrollLeft: el.scrollLeft
 		};
 	},
 
 	/*
 	Function: putState
-		Set a state of the SnipEditor. 
+		Set a state of the SnipEditor.
 		This works in conjunction with the [UndoRedo] class.
 	*/
 	putState: function(o){
 
 		var self = this,
 			txta = self.textarea,
-			el = txta.toElement(); 
+			el = txta.toElement();
 
 		self.clearActiveSnip();
 		self.mainarea.value = o.main;
@@ -2203,7 +2230,6 @@ var SnipEditor = new Class({
 	}
 
 });
-SnipEditor.implement(/*new Events,*/ new Options);
 
 
 /*
@@ -2232,9 +2258,9 @@ var Textarea = new Class({
 	/*
 	Function: toElement
 		Return the DOM textarea element.
-		This allows the dollar function to return 
+		This allows the dollar function to return
 		the element when passed an instance of the class. (mootools 1.2.x)
-		
+
 	Example:
 	>	var txta = new Textarea('textarea-element');
 	>	$('textarea-element') == txta.toElement();
@@ -2267,24 +2293,24 @@ var Textarea = new Class({
 	getTillEnd: function(){
 		return this.ta.value.slice( this.getSelectionRange().end );
 	},
-	
+
 	/*
 	Function: getSelection
 		Returns the selected text as a string
-	
+
 	Note:
-		IE fixme: this may return any selection, not only selected text in this textarea 
-			//if(window.ie) return document.selection.createRange().text;
+		IE fixme: this may return any selection, not only selected text in this textarea
+			//if(Browser.Engine.trident) return document.selection.createRange().text;
 	*/
 	getSelection: function(){
 
 		var cur = this.getSelectionRange();
-		return this.ta.getValue().slice(cur.start, cur.end);
+		return this.ta.get('value').slice(cur.start, cur.end);
 
 	},
-	
+
 	/*
-	Function: setSelectionRange 
+	Function: setSelectionRange
 		Selects the selection range of the textarea from start to end
 
 	Arguments:
@@ -2309,7 +2335,7 @@ var Textarea = new Class({
             	diff = value.substr(start, end - start).replace(/\r/g, '').length;
 
             start = value.substr(0, start).replace(/\r/g, '').length;
-           
+
 			var range = txta.createTextRange();
 			range.collapse(true);
 			range.moveEnd('character', start + diff);
@@ -2324,7 +2350,7 @@ var Textarea = new Class({
 
 	/*
 	Function: getSelectionRange
-		Returns an object describing the textarea selection range. 
+		Returns an object describing the textarea selection range.
 
 	Returns:
 		{{ { 'start':number, 'end':number, 'thin':boolean } }}
@@ -2340,7 +2366,7 @@ var Textarea = new Class({
 			range = document.selection.createRange(),
 			re = this.createTextRange(),
 			dupe = re.duplicate();
-		re.moveToBookmark(range.getBookmark());	
+		re.moveToBookmark(range.getBookmark());
 		dupe.setEndPoint('EndToStart', re);
 		return { start: dupe.text.length, end: dupe.text.length + range.text.length, length: range.text.length, text: range.text };
 	},
@@ -2355,7 +2381,7 @@ var Textarea = new Class({
 			pos = { start: txta.selectionStart, end: txta.selectionEnd };
 
 		} else {
-		
+
 	  		var range = document.selection.createRange();
 			if (!range || range.parentElement() != txta) return pos;
 	 		var dup = range.duplicate(),
@@ -2375,7 +2401,7 @@ var Textarea = new Class({
 	},
 
 	/*
-	Function: setSelection 
+	Function: setSelection
 		Replaces the selection with a new value (concatenation of arguments).
 		On return, the selection is set to the replaced text string.
 
@@ -2394,28 +2420,28 @@ var Textarea = new Class({
 		var value = $A(arguments).join('').replace(/\r/g, ''),
 			txta = this.ta,
 			scrollTop = txta.scrollTop; //cache top
-		 
+
 		if( $defined(txta.selectionStart) ){
 
-			var start = txta.selectionStart, 
+			var start = txta.selectionStart,
 				end = txta.selectionEnd,
 				v = txta.value;
 			txta.value = v.substr(0, start) + value + v.substr(end);
 			txta.selectionStart = start;
 			txta.selectionEnd = start + value.length;
 
-		} else { 
+		} else {
 
 			txta.focus();
 			var range = document.selection.createRange();
-			range.text = value;			
+			range.text = value;
 			range.collapse(true);
 			range.moveStart("character", -value.length);
 			range.select();
 
 		}
 		txta.focus();
-		txta.scrollTop = scrollTop;		
+		txta.scrollTop = scrollTop;
 		txta.fireEvent('change');
 		return this;
 
@@ -2432,14 +2458,14 @@ var Textarea = new Class({
 		Textarea object
 	*/
 	insertAfter: function(){
-	
+
 		var value = $A(arguments).join('');
 
 		return this.setSelection( value )
-			.setSelectionRange( this.getSelectionRange().start + value.length );				
+			.setSelectionRange( this.getSelectionRange().start + value.length );
 
 	},
-	
+
 	/*
 	Function: isCaretAtStartOfLine
 		Returns boolean indicating whether caret is at the start of newline
@@ -2450,7 +2476,7 @@ var Textarea = new Class({
 	    return( (i<=0) || ( this.ta.value.charAt( i-1 ).test( /[\n\r]/ ) ) );
 
 	}
-	
+
 });
 Textarea.implement(new Events);
 
@@ -2476,8 +2502,8 @@ Example:
 	(start code)
 	<script>
 		var undoredo = new UndoRedo(this, {
-			redoElement:'redoID', 
-			undoElement:'undoID' 
+			redoElement:'redoID',
+			undoElement:'undoID'
 		});
 
 		//when a change occurs on the calling object which needs to be persisted
@@ -2487,13 +2513,15 @@ Example:
 */
 var UndoRedo = new Class({
 
+	Implements: Options,
+
 	options: {
 		maxundo:40
 	},
 	initialize: function(obj, options){
 
 		this.setOptions(options);
-		this.obj = obj; 
+		this.obj = obj;
 		this.redo = [];
 		this.undo = [];
 
@@ -2510,7 +2538,7 @@ var UndoRedo = new Class({
 	Function: onChange
 		Call the onChange function to persist the current state of the undo-able object.
 		The UndoRedo class will call the {{obj.getState()}} to retrieve the state info.
-		
+
 	Arguments:
 		state - (optional) state object to be persisted. If not present,
 			the state will be retrieved via a call to the {{obj.getState()}} function.
@@ -2539,7 +2567,7 @@ var UndoRedo = new Class({
 		}
 
 		this.buttonCSS();
-	},	
+	},
 
 	/*
 	Function: onRedo
@@ -2557,17 +2585,16 @@ var UndoRedo = new Class({
 
 		this.buttonCSS();
 	},
-	
+
 	/*
 	Function: buttonCSS
 		Helper function to change the css style of the undo/redo buttons.
 	*/
 	buttonCSS: function(){
-		
+
 		if(this.undoEL) this.undoEL[ (this.undo.length == 0) ? 'addClass' : 'removeClass' ]('disabled');
 		if(this.redoEL) this.redoEL[ (this.redo.length == 0) ? 'addClass' : 'removeClass' ]('disabled');
 
 	}
 
 });
-UndoRedo.implement(new Options);

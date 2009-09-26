@@ -1,4 +1,4 @@
-/*! 
+/*!
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,12 +16,12 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 /*
 Script: jspwiki-commonstyles.js
-	Contains additional Dynmic Styles 
+	Contains additional Dynmic Styles
 
 	* [Reflection]: add reflection to images
 	* [Accordion]: horizontal and vertical accordions
@@ -32,8 +32,13 @@ Script: jspwiki-commonstyles.js
 
 License:
 	http://www.apache.org/licenses/LICENSE-2.0
+
+Depends:
+	Depends on mootools-more, v1.2.3.1.
+	Includes Fx.Accordion, Drag, Tips, Hash.Cookie
+
 */
-  
+
 /*
 Script: Reflection
 	Add reflection effect to images.
@@ -42,9 +47,9 @@ Script: Reflection
 Arguments:
 
 Options:
-	height - (optional) 1..100. Height value of the reflection image, 
+	height - (optional) 1..100. Height value of the reflection image,
 	  in percent of the height of the reflected image (default = 30%)
-	opacity - (optional) 1..100. Opacity or transparency value of the 
+	opacity - (optional) 1..100. Opacity or transparency value of the
 	  reflection image (default = 50%, 100 means not transparent)
 
 Example:
@@ -54,9 +59,9 @@ Example:
 */
 Wiki.registerPlugin( function(page, name){
 
-	$ES('*[class^=reflection]',page).each( function(r){
+	page.getElements('div[class^=reflection]').each( function(r){
 		var parms = r.className.split('-');
-		$ES('img', r).reflect({ height:parms[1]/100, width:parms[2]/100 });
+		r.getElements('img').reflect({ height:parms[1]/100, width:parms[2]/100 });
 	});
 
 });
@@ -64,68 +69,62 @@ Wiki.registerPlugin( function(page, name){
 /*
 Element: reflect
 	Extend the base Element class with a reflect and unreflect methods.
-	
+
 Credits:
->	reflection.js for mootools v1.32
+>	reflection.js for mootools v1.42
 >	(c) 2006-2008 Christophe Beyls, http://www.digitalia.be
 >	MIT-style license.
 */
-Element.extend({
+Element.implement({
 	reflect: function(options) {
+
 		var img = this,
 			oHeight = options.height || 0.33,
 			oOpacity = options.opacity || 0.5;
-			
-		if (img.getTag() == "img") {
+
+		if (img.get("tag") == "img") {
 
 			img.unreflect();
 
 			function doReflect() {
-				var reflection, 
-					imgW = img.width,
-					imgH = img.height,
-					reflectionHeight = Math.floor(imgH * oHeight), 
-					wrapper, 
-					context, 
-					gradient;
+				var reflection, reflectionHeight = Math.floor(img.height * oHeight), wrapper, context, gradient;
 
-				if (window.ie) {
+				if (Browser.Engine.trident) {
 					reflection = new Element("img", {src: img.src, styles: {
-						width: imgW,
-						height: imgH,
-						marginBottom: -imgH + reflectionHeight,
-						filter: "flipv progid:DXImageTransform.Microsoft.Alpha(opacity=" + (oOpacity * 100) + 
-								", style=1, finishOpacity=0, startx=0, starty=0, finishx=0, finishy=" + (oHeight * 100) + ")"
+						width: img.width,
+						height: img.height,
+						marginBottom: -img.height + reflectionHeight,
+						filter: "flipv progid:DXImageTransform.Microsoft.Alpha(opacity=" + (oOpacity * 100) + ",style=1,finishOpacity=0,startx=0,starty=0,finishx=0,finishy=" + (oHeight * 100) + ")"
 					}});
 				} else {
-					reflection = new Element("canvas",{width: imgW, height: reflectionHeight});
+					reflection = new Element("canvas");
 					if (!reflection.getContext) return;
 					try {
-						context = reflection.getContext("2d");
+						context = reflection.setProperties({width: img.width, height: reflectionHeight}).getContext("2d");
 						context.save();
-						context.translate(0, imgH-1);
+						context.translate(0, img.height-1);
 						context.scale(1, -1);
-						context.drawImage(img, 0, 0, imgW, imgH);
+						context.drawImage(img, 0, 0, img.width, img.height);
 						context.restore();
 						context.globalCompositeOperation = "destination-out";
 
 						gradient = context.createLinearGradient(0, 0, 0, reflectionHeight);
-						gradient.addColorStop(0, "rgba(255, 255, 255, " + (1 - oOpacity) + ")");
-						gradient.addColorStop(1, "rgba(255, 255, 255, 1.0)");
+						gradient.addColorStop(0, "rgba(255,255,255," + (1 - oOpacity) + ")");
+						gradient.addColorStop(1, "rgba(255,255,255,1.0)");
 						context.fillStyle = gradient;
-						context.rect(0, 0, imgW, reflectionHeight);
+						context.rect(0, 0, img.width, reflectionHeight);
 						context.fill();
-					} catch(e) {
+					} catch (e) {
 						return;
 					}
 				}
 				reflection.setStyles({display: "block", border: 0});
 
-				wrapper = new Element(($(img.parentNode).getTag() == "a") ? "span" : "div").injectAfter(img).adopt(img, reflection);
+				wrapper = new Element(($(img.parentNode).get("tag") == "a") ? "span" : "div").injectAfter(img).adopt(img, reflection);
 				wrapper.className = img.className;
-				wrapper.style.cssText = img._reflected = img.style.cssText;
-				wrapper.setStyles({width: imgW, height: imgH + reflectionHeight, overflow: "hidden"});
-				img.style.cssText = "display: block; border: 0px";
+				img.store("reflected", wrapper.style.cssText = img.style.cssText);
+				wrapper.setStyles({width: img.width, height: img.height + reflectionHeight, overflow: "hidden"});
+				img.style.cssText = "display:block;border:0";
 				img.className = "reflected";
 			}
 
@@ -137,32 +136,18 @@ Element.extend({
 	},
 
 	unreflect: function() {
-		var img = this, wrapper;
-		img.onload = Class.empty;
+		var img = this, reflected = this.retrieve("reflected"), wrapper;
+		img.onload = $empty;
 
-		if (img._reflected !== undefined) {
+		if (reflected !== null) {
 			wrapper = img.parentNode;
 			img.className = wrapper.className;
-			img.style.cssText = img._reflected;
-			img._reflected = undefined;
+			img.style.cssText = reflected;
+			img.store("reflected", null);
 			wrapper.parentNode.replaceChild(img, wrapper);
 		}
 
 		return img;
-	}
-});
-
-Elements.extend({
-	reflect: function(options) {
-		return this.forEach(function(el) {
-			el.reflect(options);
-		});
-	},
-
-	unreflect: function() {
-		return this.forEach(function(el) {
-			el.unreflect();
-		});
 	}
 });
 
@@ -196,8 +181,8 @@ var WikiAccordion = {
 		var toggle = new Element('div',{'class':'toggle'}),
 			bullet = new Element('div',{'class':'collapseBullet'});
 
-		$ES('.accordion, .tabbedAccordion, .leftAccordion, .rightAccordion',page).each( function(tt){
-			
+		page.getElements('div.accordion, div.tabbedAccordion, div.leftAccordion, div.rightAccordion').each( function(tt){
+
 			var toggles=[], contents=[], accordion=null, menu=false;
 			if(tt.hasClass('tabbedAccordion')){
 				menu = new Element('div',{'class':'menu top'}).injectBefore(tt);
@@ -208,11 +193,11 @@ var WikiAccordion = {
 			else if(tt.hasClass('rightAccordion')){
 				menu = new Element('div',{'class':'menu right'}).injectBefore(tt);
 			}
-			
+
 			tt.getChildren().each(function(tab) {
 				if( !tab.className.test('^tab-') ) return;
 
-				//FIXME use class to make tabs visible during printing 
+				//FIXME use class to make tabs visible during printing
 				//(i==0) ? tab.removeClass('hidetab'): tab.addClass('hidetab');
 
 				var title = tab.className.substr(4).deCamelize(),
@@ -223,30 +208,30 @@ var WikiAccordion = {
 				var i = toggles.length-1;
 				contents.push(tab
 					.addClass('tab')
-					.addEvent('onShow', function(){	accordion.display(i); }) 
+					.addEvent('onShow', function(){	accordion.display(i); })
 				);
 			});
-			
-			accordion = new Accordion(toggles, contents, { 
+
+			accordion = new Accordion(toggles, contents, {
 				height: true,
 				alwaysHide: !menu,
 				onComplete: function(){
 					var el = $(this.elements[this.previous]);
-					if (el.offsetHeight > 0) el.setStyle('height', 'auto');  
+					if (el.offsetHeight > 0) el.setStyle('height', 'auto');
 				},
-				onActive: function(toggle,content){                          
-					toggle.addClass('active'); 
+				onActive: function(toggle,content){
+					toggle.addClass('active');
 					var b = toggle.getFirst();/*bullet*/
-					if(b) b.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).setHTML('-'); /* &raquo; */
-					content.addClass('active');//.removeClass('xhidetab'); 
+					if(b) b.setProperties({'title':'collapse'.localize(), 'class':'collapseOpen'}).set('html','-'); /* &raquo; */
+					content.addClass('active');//.removeClass('xhidetab');
 				},
-				onBackground: function(toggle,content){ 
+				onBackground: function(toggle,content){
 					content.setStyle('height', content['offsetHeight']);
-					toggle.removeClass('active'); 
+					toggle.removeClass('active');
 					var b = toggle.getFirst();/*bullet*/
-					if(b) b.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).setHTML('+'); /* &laquo; */
+					if(b) b.setProperties({'title':'expand'.localize(), 'class':'collapseClose'}).set('html','+'); /* &laquo; */
 					content.removeClass('active');//.addClass('xhidetab');
-				} 
+				}
 			});
 		});
 		bullet=toggle=null; //avoid memory leaks
@@ -304,14 +289,14 @@ var RoundedCorners =
 		 [ { margin: "2px", height: "1px", borderSide: "0", borderTop: "1px" }
 		 , { margin: "1px", height: "1px", borderSide: "1px" }
 		 ] ,
-		'b' : /* big */ 
+		'b' : /* big */
 		 [ { margin: "8px", height: "1px", borderSide: "0", borderTop: "1px" }
 		 , { margin: "6px", height: "1px", borderSide: "2px" }
 		 , { margin: "4px", height: "1px", borderSide: "1px" }
 		 , { margin: "3px", height: "1px", borderSide: "1px" }
 		 , { margin: "2px", height: "1px", borderSide: "1px" }
 		 , { margin: "1px", height: "3px", borderSide: "1px" }
-		 ] 
+		 ]
 	},
 
 	/**
@@ -333,12 +318,12 @@ var RoundedCorners =
 		}
 
 		for(var selector in this.$registry){  // CHECK NEEDED
-			var n = $$(selector), 
+			var n = $$(selector),
 				p = this.$registry[selector];
 			this.exec(n, p[0], p[1], p[2], p[3]);
 		}
 
-		$ES('*[class^=roundedCorners]',page).each(function(el){ 
+		page.getElements('div[class^=roundedCorners]').each(function(el){
 			var p = el.className.split('-');
 			if(p.length >= 2) this.exec([el], p[1], p[2], p[3], p[4] );
 		},this);
@@ -355,7 +340,7 @@ var RoundedCorners =
 
 		nodes.each(function(n){
 			if( n.$passed ) return;
-						
+
 			var top = this.addCorner(this.$Top, c[0], c[1], color, borderColor, n),
 				bottom = this.addCorner(this.$Bottom, c[2], c[3], color, borderColor, n);
 
@@ -398,7 +383,7 @@ var RoundedCorners =
 		corner = this.getTemplate(corner, left+right);
 		if(!corner) return false;
 
-		var padl = n.getStyle('padding-left').toInt(), 
+		var padl = n.getStyle('padding-left').toInt(),
 			padr = n.getStyle('padding-right').toInt();
 		var node = new Element('b',{'class':'roundedCorners','styles':{
 			'display':'block',
@@ -416,9 +401,9 @@ var RoundedCorners =
 
 			if(border.hex){
 				el.setStyles({'border-color':border.hex,'border-style':'solid'});
-				
-				if(line.borderTop){ 
-					el.setStyles({'border-top-width':line.borderTop,'height':'0'});				
+
+				if(line.borderTop){
+					el.setStyles({'border-top-width':line.borderTop,'height':'0'});
 				}
 			}
 			if(left != 'n') el.setStyle('margin-left', line.margin);
@@ -439,8 +424,8 @@ var RoundedCorners =
 	addBody: function(n, color, border){
 
 		var padl = n.getStyle('padding-left').toInt(),
-			padr = n.getStyle('padding-right').toInt();	
-			
+			padr = n.getStyle('padding-right').toInt();
+
 		var container = new Element('div',{'styles':{
 			'overflow':'hidden',
 			'margin-left':-1*padl,
@@ -448,7 +433,7 @@ var RoundedCorners =
 			'padding-left':(padl==0) ? 4 : padl,
 			'padding-right':(padr==0) ? 4 : padr,
 			'background-color':color.hex
-		} }).wraps(n);
+		} }).wrapContent(n);
 
 		if(border.hex){
 			//n.setStyles('border','');
@@ -464,10 +449,33 @@ Wiki.registerPlugin( RoundedCorners );
 Script: Tips
 	Add mouse-hover Tips to your pages.
 	Depends on Mootools Tips plugin.
+	{{ %%tip-<tip-caption>   <tip body>  /% }}
 
 Argument:
-	caption - (optional) 
-	
+	caption - (optional)
+
+DOM Structure:
+(start code)
+<div class="tip-TipCaption"> ...tip-body... </div>
+
+<span class="tip-anchor">Tip Caption</span>
+<div class="tip" display:none>
+	<span> ... </span>
+</div>
+
+<div class="tip-anchor">Tip Caption</div>
+
+At the bottom of the page:
+<div class="tip" style="...show/hide...">
+	<div class="tip-top">
+	<div class="tip">
+		<div class="tip-title"> Tip Caption </div>
+		<div class="tip-text"> ...tip-body... </div>
+	</div>
+	<div class="tip-bottom">
+</div>
+(end)
+
 Example:
 >  %%tip-ClickHere some tip text /%
 
@@ -476,26 +484,24 @@ Wiki.registerPlugin( function(page, name){
 
 	var tips = [];
 
-	$ES('*[class^=tip]',page).each( function(t){
+	page.getElements('div[class^=tip],span[class^=tip]').each( function(t){
 
-		var parms = t.className.split('-');
-		if( parms.length>1 || parms[0] == 'tip' ){
+		var parms = t.hide().className.split('-');
+		if( parms.length > 1 || parms[0] == 'tip' ){
 
-			t.className = "tip";
+			var body = new Element('span').wrapContent(t),
+				caption = parms[1] ? parms[1].deCamelize() : "tip.default.title".localize();
 
-			var body = new Element('span').wraps(t).hide(),
-				caption = (parms[1]) ? parms[1].deCamelize(): "tip.default.title".localize();
-
-			tips.push( 
-				new Element('span',{
-					'class': 'tip-anchor',
-					title: caption + '::' + body.innerHTML
-				}).setHTML(caption).inject(t)
+			tips.push(
+				new Element('span',{ 'class': 'tip-anchor',	html: caption })
+				.store('tip:title',caption)
+				.store('tip:text',body)
+				.inject(t,'before')
 			);
 		}
 	});
 
-	if( tips.length>0 ) new Tips( tips , {className:'tip', 'Xfixed':true} );
+	new Tips( tips );
 
 });
 
@@ -504,7 +510,7 @@ Wiki.registerPlugin( function(page, name){
 Script: Columns
 	Format the page content side by side, in columns, like in a newspaper.
 	HR elements (in wiki {{----}} markup) are used to separate the columns.
-	Column widths are equal and automatically calculated. 
+	Column widths are equal and automatically calculated.
 	Optionally, you can specify the width in pixel(px) for the columns.
 
 Arguments:
@@ -519,36 +525,37 @@ Example:
 */
 Wiki.registerPlugin( function(page, name){
 
-	$ES('*[class^=columns]',page).each( function(block){
+	page.getElements('div[class^=columns]').each( function(block){
 
 		var parms = block.className.split('-'),
-			columnBreaks = $ES('hr', block);
+			columnBreaks = block.getElements('hr');
 
 		if( columnBreaks && columnBreaks.length>0 ){
 
 			var columnCount = columnBreaks.length + 1,
 				width = ( parms[1] ) ? parms[1]/columnCount+'px' : 95/columnCount+'%',
-				wrapper = new Element('div', { 'class':'col', 'styles':{ 'width':width } }),
+				wrapper = new Element('div', { 'class':'col', styles:{ width:width } }),
 				col = wrapper.clone().injectTop(block),
 				n;
-				
+
 			block.className='columns';
-			
+
+			//use native DOM to also copy text-elements.
 			while( n = col.nextSibling ){
 
 				if( n.tagName && n.tagName.toLowerCase() == 'hr' ){
-					$(n).replaceWith( col = wrapper.clone() );
+					col = wrapper.clone().replaces(n);
 				} else {
 					col.appendChild( n );
 				}
 
 			}
 
-			new Element('div',{styles:{clear:'both'}}).inject( block );
+			new Element('div',{ style:'clear:both'}).inject( block );
 			//wrapper.empty(); //memory leak
 		}
 	});
-	
+
 });
 
 /*
@@ -574,11 +581,11 @@ Example:
 */
 Wiki.registerPlugin( function(page, name){
 
-	var els = $ES('.prettify pre, .prettify code', page); 
+	var els = page.getElements('div.prettify pre, div.prettify code');
 
 	if( els && els.length>0 ){
 
-		els.addClass('prettyprint');		
+		els.addClass('prettyprint');
 		prettyPrint(page);
 
 	}

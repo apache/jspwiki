@@ -1,4 +1,4 @@
-/*! 
+/*!
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 */
 
 /*
@@ -36,31 +36,34 @@ Dependencies:
 	Based on http://mootools.net/ v1.11
 	*	Core, Class,  Native, Element(ex. Dimensions), Window,
 	*	Effects(ex. Scroll), Drag(Base), Remote, Plugins(Hash.Cookie, Tips, Accordion)
-	
+
 */
 
 /*
 Class: Stripes
 	The main javascript class to support basic jspwiki functions.
+
+	Fixme: update to mootool 1.2.3
 */
 var Stripes = {
-  executeEvent: function( form, event, divTarget ){
-    params = event + "=&" + $(form).toQueryString();
-    new Ajax(form.action, {
-      postBody: params,
-      method: 'post',
+	executeEvent: function( form, event, divTarget ){
+		params = event + "=&" + $(form).toQueryString();
+
+		new Request(form.action, {
+			postBody: params,
+			method: 'post',
 			onComplete: function(response){
-			  // Clear the results div
-			  $(divTarget).empty();
-        // Build new results if we got a response
-        if(response) var results = eval(response);
-        if(results){
-          var target = $(divTarget);
-          results.each(function(result,i) {
-            var p = new Element('p').setHTML(result).injectInside(divTarget);
-          });
-        }
-      }
-		}).request();
-  }
+				// Clear the results div
+				$(divTarget).empty();
+				// Build new results if we got a response
+				if(response) var results = eval(response);
+				if(results){
+					var target = $(divTarget).addClass("warning");
+					results.each(function(result,i) {
+						var p = new Element('p').setHTML(result).injectInside(divTarget);
+					});
+				}
+			}
+		}).send();
+	}
 }

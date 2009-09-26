@@ -1,4 +1,4 @@
-/* 
+/*!
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,70 +16,87 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
- 
+
 /**
  ** Javascript routines to support JSPWiki UserPreferences
  ** since v.2.6.0
- ** uses mootools v1.1
  **/
 
 var WikiPreferences =
 {
 	/*
-	Function: onPageLoad()
-		Register a onbeforeunload handler to show a popup when the user leaves
-		the Preferences page without saving.
-	*/
-	onPageLoad: function(){
+	Function: initialize()
+		Initialze submit and onberforeunload handlers to support the
+		UserPreferences page.
 
-		window.onbeforeunload = (function(){
+		Register a onbeforeunload handler to show a warning popup
+		when the user leaves the Preferences page without saving.
 
-			if( $('prefs').getFormElements().some(function(el){
-				return (el.getValue() != el.getDefaultValue());  
-			}) ) return "prefs.areyousure".localize();
-
-		}).bind(this);
-
-		/*
-		Make an immedieate change to the position of the Favorites block 
-		(aka left-menu) according to the setting prefOrientation dropdown.
-		The setting is persisted only when submitting the form. (savePrefs)
-		*/
-		$('prefOrientation').addEvent('click',function(){
-			$('wikibody')
-				.removeClass('fav-left|fav-right')
-				.addClass(this.getValue());
-		});
-
- 	},
-
-	/*
-	Function: savePrefs()
-		Save all user preferences to the Wiki UserPrefs cookie.
-		This function is called as form onsubmit handler of the UserPref page.
-
-		FIXME: could this be done server side -- no since some prefs are only 
+		Register a submit handler on the main preferences form,
+		in order to save the settings to the UserPref cookies.
+		Note: this could be done server side, but some of the prefs are only
 		known client-side, only persisted through cookies.
 	*/
-	savePrefs: function(){
-		var prefs = {
-			'prefSkin':'SkinName',
-			'prefTimeZone':'TimeZone',
-			'prefTimeFormat':'DateFormat',
-			'prefOrientation':'Orientation',
-			'editor':'editor',
-			'prefLanguage':'Language',
-			'prefSectionEditing':'SectionEditing'
-		};
-		for(var el in prefs){
-			if($(el)) Wiki.prefs.set(prefs[el],$(el).getValue());
-		};
-	}
-}
+	initialize: function(){
 
-window.addEvent('load', WikiPreferences.onPageLoad.bind(WikiPreferences) );
+		var self = this,
+			wikiprefs = Wiki.prefs,
+			p;
+
+		window.onbeforeunload = function(){
+
+			if( $('prefs').getElements('input, select').some(function(el){
+
+				return ((el.type != "submit") && (el.get('value') != el.getDefaultValue()));
+
+			}) ) return "prefs.areyousure".localize();
+
+		};
+
+
+		$('setCookie').addEvent('submit', function(){
+
+ 			window.onbeforeunload = null;
+
+ 			/* see org.apache.wiki.preferences.Preferences.java */
+			var prefs = {
+				skin:'Skin',
+				timeZone:'TimeZone',
+				timeFormat:'DateFormat',
+				orientation:'Orientation',
+				editor:'Editor',
+				locale:'Locale',
+				sectionEditing:'SectionEditing'
+			};
+
+			for( var el in prefs ){
+				if( p = $(el) ) wikiprefs.set( prefs[el], p.get('value') );
+			};
+
+			//CHECK: covered by stripes ?
+			//Wiki.submitOnce(this);
+
+		});
+
+		/*
+		Make an immediate change to the position of the Favorites block
+		(aka left-menu) according to the setting prefOrientation dropdown.
+		The setting is persisted only when submitting the form. (savePrefs)
+
+		FIXME: value of selection is now LEFT or RIGHT iso fav-left/fav-right
+		*/
+		$('orientation').addEvent('change',function(){
+			$('wikibody')
+				.removeClass('fav-left|fav-right')
+				.addClass( 'fav-'+this.get('value').toLowerCase() );
+		});
+
+ 	}
+
+}
+window.addEvent('domready', WikiPreferences.initialize );
 
 // refactor me
 var WikiGroup =
@@ -101,7 +118,7 @@ var WikiGroup =
 		this.groups[group] = { members: members, groupInfo: groupInfo };
 
 		var g = $("grouptemplate");
-			gg = g.clone().removeProperty('id').setHTML(group).inject(g.getParent()).show();
+			gg = g.clone().removeProperty('id').set('html',group).inject(g.getParent()).show();
 
 		if(isSelected || !this.cursor) this.onMouseOverGroup(gg);
 	} ,
