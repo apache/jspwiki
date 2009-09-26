@@ -9,6 +9,8 @@
 
         * JSPWIKI-600: javascript error on getCoordinates()
         Now OK with mootools v1.2.3
+        
+        * JSPWIKI-591: # sign behind headlines is now hidden on the printed wiki page
 
         * Added unit test on Javascript.
         The JSSPec unit tests were ported to the Jasmine
