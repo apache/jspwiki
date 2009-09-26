@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -27,14 +27,17 @@
         This is a plain editor for JSPWiki.
 --%>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
-  
+
   <%-- Print any validation errors --%>
   <s:errors />
-  
-  <s:form beanclass="org.apache.wiki.action.EditActionBean" class="wikiform"
-    id="editform" method="post" acceptcharset="UTF-8" enctype="application/x-www-form-urlencoded" 
-    onsubmit="window.onbeforeunload = null;">
-    
+
+  <s:form beanclass="org.apache.wiki.action.EditActionBean"
+              class="wikiform"
+                 id="editform"
+             method="post"
+      acceptcharset="UTF-8"
+            enctype="application/x-www-form-urlencoded">
+
     <%-- If any conflicts, print the conflicting text here --%>
     <c:if test="${not empty wikiActionBean.conflictText}">
       <p>
@@ -42,7 +45,7 @@
         <s:textarea name="conflictText" readonly="true" />
       </p>
     </c:if>
-  
+
     <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
     <p id="submitbuttons">
       <s:hidden name="page" />
@@ -52,12 +55,12 @@
         <s:submit name="save" accesskey="s" title="${saveTitle}" />
       </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context='comment'>
-        <s:submit name="comment" accesskey="s" title="${saveTitle}" /> 
+        <s:submit name="comment" accesskey="s" title="${saveTitle}" />
       </wiki:CheckRequestContext>
-    
+
       <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
       <s:submit name="preview" accesskey="v" title="${previewTitle}" />
-    
+
       <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
       <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
     </p>
@@ -72,7 +75,7 @@
           <s:text name="changenote" id="changenote" size="50" maxlength="80" />
         </td>
       </tr>
-      
+
       <wiki:CheckRequestContext context="comment">
       <tr>
         <td><s:label for="author" accesskey="n" name="author" /></td>
@@ -86,9 +89,9 @@
         <td><s:text id="link" name="link" size="24" /></td>
       </tr>
       </wiki:CheckRequestContext>
-        
+
     </table>
-    
+
     <%-- Toolbar --%>
     <div id="toolbar" class="line">
 
@@ -97,7 +100,7 @@
       <input type="checkbox" name="tabcompletion" id="tabcompletion" /><fmt:message key="editor.plain.tabcompletion"/></label>
       <br />
       <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>">
-      <input type="checkbox" name="smartpairs" id="smartpairs" /><fmt:message key="editor.plain.smartpairs"/></label>	  
+      <input type="checkbox" name="smartpairs" id="smartpairs" /><fmt:message key="editor.plain.smartpairs"/></label>
     </div>
 
     <fieldset class="unit">
@@ -141,8 +144,8 @@
       <a href="#" class="tool tIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
       <a href="#" class="tool tTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
       <a href="#" class="tool tPLUGIN" title="<fmt:message key='editor.plain.tbPLUGIN.title'/>">plugin</a>
-      <%-- 
-      <a href="#" class="tool tTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>  
+      <%--
+      <a href="#" class="tool tTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>
       --%>
       <a href="#" class="tool tDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
       <a href="#" class="tool tCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
@@ -161,23 +164,21 @@
 
     </fieldset>
 
-    <div class="clearbox">
-      <p id="findDialog" style="display:none;">
-        <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/>--%>
-        <input type="text" name="tbFIND" id="tbFIND" size="16" value="find"/>
-        <%--</label>--%>
-        <label for="tbMatchCASE"><input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-          <fmt:message key="editor.plain.matchcase"/></label>
-      	<label for="tbREGEXP" ><input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-      	  <fmt:message key="editor.plain.regexp"/></label>
-  
-        <%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/>--%>
-          <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
-        <%--</label>--%>
-        <a class="btn" id="doreplace"><span><span><fmt:message key='editor.plain.find.submit' /></span></span></a>
-      	<label for="tbGLOBAL"><input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-      	  <fmt:message key="editor.plain.global"/></label>
-      </p>
+    <div id="findDialog" style="display:none;clear:both;">
+      <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/>--%>
+      <input type="text" name="tbFIND" id="tbFIND" size="16" value="find"/>
+      <%--</label>--%>
+      <label for="tbMatchCASE"><input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
+        <fmt:message key="editor.plain.matchcase"/></label>
+    	<label for="tbREGEXP" ><input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
+    	  <fmt:message key="editor.plain.regexp"/></label>
+
+      <%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/>--%>
+        <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
+      <%--</label>--%>
+      <a class="btn" id="doreplace"><span><span><fmt:message key='editor.plain.find.submit' /></span></span></a>
+    	<label for="tbGLOBAL"><input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
+    	  <fmt:message key="editor.plain.global"/></label>
     </div>
 
     </div><%-- end of the toolbar --%>
@@ -185,13 +186,13 @@
     <%-- You knew this would be here somewhere. Yes, it's the textarea where the user
          actually edits stuff. --%>
     <div id="editor-content" class="line" style="clear:both;">
-  
+
       <div class="unit size1of2">
         <div class="editor-container">
         <%-- js-insert: <div id="snipetoc"><ul>...</ul></div> --%>
         <s:textarea id="editorarea" name="text" class="editor" rows="20" cols="80" />
-        <%-- js insert: <div class="resize-bar"></div>  --%>        
-        </div>  
+        <%-- js insert: <div class="resize-bar"></div>  --%>
+        </div>
       </div>
 
       <div class="unit size1of2 lastUnit">
@@ -204,5 +205,5 @@
     <%-- Spam detection fields --%>
     <wiki:SpamProtect />
   </s:form>
-  
+
 </div>

@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
@@ -41,7 +41,7 @@
 <wiki:TabbedSection defaultTab="attach">
 
   <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v" url="Wiki.jsp?page=${wikiActionBean.page.name}"/>
-      
+
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
     <div id="addattachment">
       <h3><fmt:message key="attach.add" /></h3>
@@ -66,7 +66,7 @@
             <td><s:label for="attachnote" name="attach.add.changenote" /></td>
             <td><s:text name="changenote" id="attachnote" maxlength="80" size="60" /></td>
           </tr>
-      
+
           <tr>
             <td></td>
             <td>
@@ -74,7 +74,7 @@
               <div id="progressbar"><div class="ajaxprogress"></div></div>
             </td>
           </tr>
-      
+
           </table>
         </s:form>
       </wiki:Permission>
@@ -82,23 +82,23 @@
         <div class="formhelp"><fmt:message key="attach.add.permission" /></div>
       </wiki:Permission>
     </div>
-    
+
     <wiki:HasAttachments>
-    
+
       <h3><fmt:message key="attach.list" /></h3>
-    
+
       <%--<small><fmt:message key="attach.listsubtitle"/></small>--%>
-    
+
       <wiki:Permission permission="delete">
         <%-- hidden delete form --%>
       </wiki:Permission>
-    
+
       <div class="zebra-table">
         <div class="slimbox-img sortable">
           <table class="wikitable">
             <tr>
-              <th><fmt:message key="info.attachment.name" /></th>
               <th><fmt:message key="info.attachment.type" /></th>
+              <th><fmt:message key="info.attachment.name" /></th>
               <th><fmt:message key="info.size" /></th>
               <th><fmt:message key="info.version" /></th>
               <th><fmt:message key="info.date" /></th>
@@ -106,47 +106,55 @@
               <wiki:Permission permission="delete"><th><fmt:message key="info.actions" /></th></wiki:Permission>
               <th class="changenote"><fmt:message key="info.changenote" /></th>
             </tr>
-        
+
             <wiki:AttachmentsIterator id="att">
     <%
       String name = att.getFileName();
       String sname = name;
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
+
+      String mimetype = att.getContentType().replace('/','-');
+
+      java.util.Date modified = new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString());
     %>
               <tr>
+              	<%-- The 'title' attribute is used to sort empty cells --%>
+                <td title="<%= att.getContentType() %>"><div class="mime <%= mimetype %>" /></td>
                 <td><wiki:LinkTo title="<%= name %>"><%= sname %></wiki:LinkTo></td>
-                <td><div class="attachtype"><%= att.getContentType() %></div></td>
                 <td style="white-space:nowrap;text-align:right;">
                   <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
                 </td>
                 <td style="text-align:center;">
                   <a href="<wiki:PageInfoLink format='url' />" title="<fmt:message key='attach.moreinfo.title' />"><wiki:PageVersion/></a>
                 </td>
-            	  <td style="white-space:nowrap;"><fmt:formatDate value="<%= new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString()) %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" /></td>
-                <td><wiki:Author/></td>
+          	    <td jspwiki:sortvalue="<%= modified.getTime() %>">
+            	    <fmt:formatDate value="<%= modified %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
+            	</td>
+                <td style="white-space:nowrap;" ><wiki:Author/></td>
                 <wiki:Permission permission="delete">
                   <td>
                     <input type="button" value="<fmt:message key='attach.delete' />" src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />" onclick="$('deleteForm').setProperty('action',this.src); $('delete-all').click();" />
                   </td>
                 </wiki:Permission>
                 <td class="changenote">
-    <%
+<%
+        //FIXME: should probably also become a JCRWikiPage attriute.
         String changeNote = TextUtil.replaceEntities((String)att.getAttribute(WikiPage.CHANGENOTE));
         if( changeNote != null ) {
         %><%=changeNote%><%
         }
-    %>
+%>
                 </td>
               </tr>
             </wiki:AttachmentsIterator>
-        
+
           </table>
         </div>
       </div>
-    
+
     </wiki:HasAttachments>
   </wiki:Tab>
-  
+
   <wiki:Tab id="info" titleKey="info.tab" url="PageInfo.jsp?page=${wikiActionBean.page.name}" accesskey="i" />
 
 </wiki:TabbedSection>

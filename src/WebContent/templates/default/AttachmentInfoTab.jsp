@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
@@ -29,8 +29,8 @@
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.api.WikiPage" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.apache.wiki.content.jcr.JCRWikiPage" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%
   WikiContext c = WikiContextFactory.findContext( pageContext );
   WikiPage wikiPage = c.getPage();
@@ -82,9 +82,9 @@
 <wiki:TabbedSection defaultTab="info">
 
   <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v" url="Wiki.jsp?page=${wikiActionBean.page.name}"/>
-      
+
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a" url="Attachments.jsp?page=${wikiActionBean.page.name}" />
-  
+
   <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
     <h3><fmt:message key="info.uploadnew" /></h3>
     <wiki:Permission permission="upload">
@@ -94,10 +94,10 @@
           onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"
             method="post" accept-charset="<wiki:ContentEncoding/>"
             enctype="multipart/form-data" >
-    
+
         <%-- Do NOT change the order of wikiname and content, otherwise the
             servlet won't find its parts. --%>
-    
+
         <table>
           <tr>
             <td colspan="2"><div class="formhelp"><fmt:message key="info.uploadnew.help" /></div></td>
@@ -124,11 +124,11 @@
         </table>
       </form>
     </wiki:Permission>
-    
+
     <wiki:Permission permission="!upload">
       <div class="formhelp"><fmt:message key="attach.add.permission" /></div>
     </wiki:Permission>
-    
+
     <wiki:Permission permission="delete">
       <h3><fmt:message key="info.deleteattachment"/></h3>
       <s:form beanclass="org.apache.wiki.action.ViewActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
@@ -137,7 +137,7 @@
         </div>
       </s:form>
     </wiki:Permission>
-    
+
     <%-- FIXME why not add pagination here - no need for large amounts of attach versions on one page --%>
     <h3><fmt:message key='info.attachment.history' /></h3>
     <div class="zebra-table">
@@ -152,38 +152,46 @@
             <th><fmt:message key="info.author" /></th>
             <th class='changenote'><fmt:message key="info.changenote" /></th>
           </tr>
-      
+
           <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
           <%
             String name = att.getName(); //att.getFileName();
-            int dot = name.lastIndexOf(".");
-            String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
-      
             String sname = name;
             if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
+
+            String mimetype = att.getContentType().replace('/','-');
+
+           java.util.Date modified = new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString());
+
           %>
           <tr>
-            <td>
-              <div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div>
-            </td>
+          	<%-- The 'title' attribute is used to sort empty cells --%>
+            <td title="<%= att.getContentType() %>"><div class="mime <%= mimetype %>" /></td>
             <td>
               <a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />" title="<%= name %>" class="attachment"><wiki:PageVersion /></a>
             </td>
             <td style="white-space:nowrap;text-align:right;">
-              <fmt:formatNumber value="<%=Double.toString(att.getSize()/1000.0) %>" groupingUsed="false" maxFractionDigits="1" minFractionDigits="1" />&nbsp;<fmt:message key="info.kilobytes" />
+              <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
             </td>
-      	    <td style="white-space:nowrap;">
-      	      <fmt:formatDate value="<%= new SimpleDateFormat(JCRWikiPage.DATEFORMAT_ISO8601_2000).parse(att.getAttribute(JCRWikiPage.ATTR_CREATED).toString()) %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
-      	    </td>
-            <td><wiki:Author/></td>
-            <td class='changenote'>
-            <%
-                String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
-                if( changeNote != null ) {
-                    changeNote = TextUtil.replaceEntities(changeNote);
-                %><%=changeNote%><%
-                }
-            %>
+      	    <td style="xwhite-space:nowrap;" jspwiki:sortvalue="<%= modified.getTime() %>">
+            	    <fmt:formatDate value="<%= modified %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
+            </td>
+            <td style="white-space:nowrap;" ><wiki:Author/></td>
+            <%--
+            <wiki:Permission permission="delete">
+                  <td>
+                    <input type="button" value="<fmt:message key='attach.delete' />" src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />" onclick="$('deleteForm').setProperty('action',this.src); $('delete-all').click();" />
+              </td>
+            </wiki:Permission>
+            --%>
+            <td class="changenote">
+<%
+        //FIXME: should probably also become a JCRWikiPage attriute.
+        String changeNote = TextUtil.replaceEntities((String)att.getAttribute(WikiPage.CHANGENOTE));
+        if( changeNote != null ) {
+        %><%=changeNote%><%
+        }
+%>
             </td>
           </tr>
           </wiki:HistoryIterator>

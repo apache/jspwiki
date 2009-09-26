@@ -219,8 +219,8 @@ body {
 	/*font: 12px/1.5 "Lucida Grande", Arial, Helvetica, Sans-Serif;*/
 	/*font:13px/1.231 arial,helvetica,clean,sans-serif;*/
 	font:76%/140% Verdana,Arial,Helvetica,sans-serif;
-	*font-size:small;
-	*font:x-small;
+	_font-size:small;
+	_font:x-small;
 }
 table {
 	border-collapse:collapse;
@@ -284,7 +284,7 @@ DOM structure:
 h2, h3, h4 {
 	clear:left;
 	margin:1em 0 0.5em 0;
-	padding:0.25em;
+	padding:0.25em 0;
 	line-height:1.2;
 }
 h2 { font-size: 150%; }
@@ -383,6 +383,62 @@ fieldset {
 .wikiform option {
 	padding:0 0.25em;
 }
+
+/*
+Style: formcontainer
+	Support table-less forms.
+	Elements can simply be laid out as {{<label><input|select>}}
+	and they will be placed into a pseudo-2-column layout without
+    the need for using tables. If a "description" for the form element
+    is needed, a div with class="description" can be added immediately
+    after the input or select tags.
+
+TODO: refactor other wiki-forms to become table-less.
+*/
+div.formcontainer {
+	width:100%;
+	margin:1em;
+}
+div.formcontainer div {
+	padding:0.2em 0;
+	vertical-align:top;
+}
+div.formcontainer label {
+	font-weight:bold;
+	width:13em;
+	float:left;
+	margin:0em 0.25em 0 0.25em;
+}
+div.formcontainer input,
+dir.formcontainer select {
+	margin: 0.25em 0 0.25em 14em;
+}
+/* FIXME: does not work in ie ? */
+div.formcontainer label+input,
+div.formcontainer label+select {
+	margin:0;
+}
+div.formcontainer * div.description {
+	margin-left:14em;
+}
+/* fixme : better reuse the warning css class */
+div.formcontainer * div.description.warning{
+	background:#ffff80;
+}
+/* FIXME: does not work in ie ? */
+div.formcontainer input[type='submit']{
+	margin:0;
+}
+label.error{
+	background:none;
+	color:#c00;
+}
+input.error{
+	background:#ffe0e0;
+}
+
+
+
 
 /*
 PRE and xflow:
@@ -543,6 +599,13 @@ Section: ReusableStyles
 	padding-left:1em;
 	display:block;
 }
+.page-break	{
+	display:block;
+	height:2px;
+	/*background:url(page-break.jpg) 0 center repeat-x; */
+	border-top:2px dashed #bbb/*#BORDER#*/;
+	margin:1em 0;
+}
 .ltr {
 	direction:ltr;
 }
@@ -556,7 +619,7 @@ Section: ReusableStyles
 .additinfo {
 	background-color:#e0e0ff/*#INFO#*/;
 }
-div.diffnote, div.information, div.warning, div.error {
+.diffnote, .information, .warning, .error {
 	display:block;
 	clear:both;
 	margin:1em 0;
@@ -573,7 +636,7 @@ td .information, td .warning, td .error {
 .warning {
 	background:#ffff80/*#WARNING*/ url(images/exclamation.gif) 8px 1em no-repeat;
 }
-div.error {
+.error {
 	background:#ffe0e0/*#ERROR#*/ url(images/error.gif) 8px 1em no-repeat;
 	color:#c00;
 }
@@ -642,33 +705,32 @@ Style: AttachmentTab
 	Add attachment icons per type of attachement.
 
 DOM structure
->	<div class="att-img gif> ... </div>
+>	<div class="mime image-gif"> ... </div>
 
 */
-.att-img {
+.mime {
 	height:16px;
-	padding-left:20px;
+	padding-left:18px;
 	background:url(images/attach-strip.png) no-repeat;
 }
-.att-img.gif	{ background-position:0 -112px;	}
-.att-img.png	{ background-position:0 -112px;	}
-.att-img.bmp	{ background-position:0 -112px;	}
-.att-img.jpg	{ background-position:0 -112px;	}
-.att-img.jpeg	{ background-position:0 -112px;	}
-.att-img.text	{ background-position:0 -16px;	}
-.att-img.txt	{ background-position:0 -16px;	}
-.att-img.zip	{ background-position:0 -128px;	}
-.att-img.jar	{ background-position:0 -128px;	}
-.att-img.tar	{ background-position:0 -128px;	}
-.att-img.pdf	{ background-position:0 -80px;	}
-.att-img.doc	{ background-position:0 -32px;	}
-.att-img.xls	{ background-position:0 -48px;	}
-.att-img.ppt	{ background-position:0 -64px;	}
-.att-img.swf	{ background-position:0 -96px;	}
-.att-img.mov	{ background-position:0 -160px;	}
-.att-img.mp3	{ background-position:0 -144px;	}
-.att-img.wav	{ background-position:0 -144px;	}
-
+.image-gif { background-position:0 -112px;	}
+.image-png { background-position:0 -112px;	}
+.image-bmp { background-position:0 -112px;	}
+.image-jpg { background-position:0 -112px;	}
+.image-jpeg { background-position:0 -112px;	}
+.text-plain { background-position:0 -16px;	}
+.text-html { background-position:0 -16px;	}
+.application-zip	{ background-position:0 -128px;	}
+/*.att-img.jar	{ background-position:0 -128px;	}*/
+.application-x-tar { background-position:0 -128px;	}
+.application-pdf { background-position:0 -80px;	}
+.application-msword { background-position:0 -32px;	}
+.application-vnd.ms-excel { background-position:0 -48px;	}
+.application-vnd.ms-powerpoint { background-position:0 -64px;	}
+.application-x-shockwave-flash { background-position:0 -96px;	}
+.audio-mpeg	{ background-position:0 -144px;	}
+.video.quicktime { background-position:0 -160px;	}
+.video-x-ms-wmv { background-position:0 -144px;	}
 
 /*
 Experimental:
@@ -789,6 +851,7 @@ Section: Editors
 >	body.edit
 >	body.comment
 >	#edithelp
+>	#editcontent
 */
 
 /*
@@ -1230,7 +1293,7 @@ DOM Structure:
 </div>
 (end)
 
->	#infocontent
+>	#info
 >	#incomingLinks
 >	#outgoingLinks
 */
@@ -2136,47 +2199,43 @@ Wiki-markup:
 > %%tip-TipCaption ... /%
 
 DOM structure:
+(start code)
+<span class="tip anchor">Tip Caption</span>
 
+<div style="...show/hide...">
+	<div class="tip-top">
+	<div class="tip">
+		<div class="tip-title"> Tip Caption </div>
+		<div class="tip-text"> ...tip-body... </div>
+	</div>
+	<div class="tip-bottom">
+</div>
+(end)
 */
 .tip-anchor {
 	border-bottom:2px solid #545454;
 	cursor:pointer;
 }
-.tip-tip {
-	color:white;
-	width:auto; /*240px;*/
+.tip {
+	width:auto;
+	_width:240px;
+	padding:0.5em 1em;
 	z-index:100;
 	font-size:90%;
+	color:white;
 	background-color:rgba(0,0,0,0.7);
 	-moz-border-radius:10px;
-	-webkit-border-radius:5px;
+	-webkit-border-radius:10px;
 	-webkit-box-shadow:0 0 5px rgba(0, 0, 0, 0.5);
 }
 .tip-title {
 	font-weight:bold;
-	padding:8px 8px 4px;
+	_background:url(images/tip.png) top left;
 }
-* html .tip-title {
-	background:url(images/tip.png) top left;
+.tip .wikitable th {
+	background:none;
 }
-/*ie7 hack */
-*:first-child+html .tip-title {
-	background:url(images/tip.png) top left;
-}
-.tip-text {
-	padding:4px 8px 8px;
-}
-.tip-text th {
-	background:grey !important;
-}
-* html .tip-text {
-	background:url(images/tip.png) bottom right;
-}
-/*ie7 hack */
-*:first-child+html .tip-text {
-	background:url(images/tip.png) bottom right;
-}
-.tip-tip a {
+.tip a {
 	color: white !important;
 }
 
@@ -2193,23 +2252,21 @@ div.collapse ul, div.collapse ol {
 div.collapse li {
 	list-style-type:none;
 }
-.collapse .collapsebody, .collapsebox .collapse .collapsebody {
+.collapse .collapsebody, .collapsebox .collapsebody {
 	padding-left:1.5em;
-	*float:left; /* ie6, ie7 hack */
-	*padding-left:0.5em; /* ie6, ie7 hack */
+	_float:left; /* ie6, ie7 hack */
+	_padding-left:0.5em; /* ie6, ie7 hack */
 }
-/* ie7 hack ./
-*:first-child+html .collapse .collapsebody,
-*:first-child+html .collapsebox .collapse .collapsebody {
-	float:left;
-	padding-left:0.5em;
-}
-/* ie6 hack ./
-* html .collapse .collapsebody, * html .collapsebox .collapse .collapsebody {
-	float:left;
-	padding-left:0.5em;
-}
+/*
+Make sure to print collapsed items as it they were not collapsed.
+This requires some smart 'specific' css selector rules, in order to
+overwrite the style set by the mootools animation routines.
 */
+@media print {
+.collapse .collapsebody ul, .collapsebox div.collapsebody  {
+	height:auto !important;
+}
+}
 
 /* collapse icons */
 .collapseBullet, .collapseOpen, .collapseClose {
@@ -2678,21 +2735,104 @@ Style: ColorDialog
 	left:-1px;
 }
 
+
 /*
-Style: formcontainer -- for table-less forms. Elements can simply be
-                        laid out as <label><input|select> and they will be
-                        placed into a pseudo-2-column layout without
-                        the need for using tables. If a "description"
-                        for the form element is needed, a div with
-                        class="description" can be added immediately
-                        after the input or select tags.
+Section: Print-media
+	CSS rule to improve page rendering during printing.
+	Printing is focused on the page-content; surrounding blocks
+	like the favorites side-bar, login-sections, search box,
+	menu dropdowns etc. are hidden.
+
+	Tabbed sections are all printed sequentially.
+
 */
-div.formcontainer {width:100%; margin:1em;}
-div.formcontainer div {padding:0.2em 0px; vertical-align:top;}
-div.formcontainer label {font-weight:bold; width:13em; float:left; margin:0em 0.25em 0 0.25em;}
-div.formcontainer input,select {margin: 0.25em 0 0.25em 14em;}
-div.formcontainer label+input,label+select {margin:0 0 0 0;}
-div.formcontainer * div.description {margin-left:14em;}
-div.formcontainer input[type='submit']{margin:0;}
-label.error{background:none; color:#c00;}
-input.error{background:#ffe0e0;}
+@media print {
+
+.applicationlogo, .companylogo, .titlebox, .userbox,
+.searchbox, .breadcrumbs, .pageactions, .quicklinks,
+#actionsTop, #actionsBottom, #favorites,
+#addattachment, #findhelp,
+a.editsection, a.hashlink,
+.collapsebox .collapseOpen, .collapsebox .collapseClose,
+.table-filter .filterrow,
+.tabmenu {
+	display:none;
+}
+#attachments, #addcomment,
+/*#pagelinks,*/
+#pagecontent, #editcontent, #previewcontent, #diffcontent, #infocontent,
+#findquery, #userPrefs,
+#pagecontent .tabmenu {
+	display:block;
+	visibility:visible;
+}
+tt,pre {
+	overflow:visible;
+}
+
+/* Show links as normal text (maybe show urls at the bottom of the page) */
+a {
+	text-decoration:none;
+}
+/*print href of each link
+a:after 		{ content:attr(href); color:grey;
+          		  font-family:"Courier New", Courier, mono; font-size:8pt; }
+*/
+
+/* Give the content what it deserves. */
+html>body #previewcontent, html>body #info, html>body #pagecontent, html>body #attach, html>body #findcontent {
+	overflow:visible;
+}
+/* ie to check */
+* html #previewcontent, * html #info, * html #pagecontent, * html #attach, * html #findcontent {
+	overflow-x:visible;
+}
+/* use !important to overwrite css style on following specified blocks */
+.pagename, #header, #footer, #page {
+	width:100% !important;
+	margin:0 !important;
+	padding:0 !important;
+	float:none !important;
+	clear:both !important;
+	position:static !important;
+	overflow:visible !important;
+}
+.pagename {
+	font-size:250%;
+	margin-bottom:1.5em;
+	padding-bottom:0.5em;
+	border-bottom:3px solid #555;
+	color:#555;
+}
+/* hidden tabs are made visible during print
+ * e.g. when printing a page, also the attachment list gets printed
+ */
+.hidetab {
+	display:block;
+	margin:1em 0;
+}
+.tabs {
+	border:none;
+}
+/* todo : open all accordion sections */
+a.slimbox {
+	display:none;
+}
+/* ff bug : avoid floats during printing */
+.commentbox {
+	float:none;
+}
+/*
+Style: Page-break
+	Force a new page with ths explicit %%page-break style.
+	FIXME
+*/
+.page-break {
+	height:0;
+	page-break-before:always;
+	margin:0;
+	xborder-top:none;
+}
+
+
+} /* end of @media print */

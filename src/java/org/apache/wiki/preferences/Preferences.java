@@ -548,7 +548,7 @@ public class Preferences extends HashMap<String, String>
             }
         }
 
-        String prefTimeZone = Preferences.getPreference( context.getHttpRequest().getSession(), "TimeZone" );
+        String prefTimeZone = Preferences.getPreference( context.getHttpRequest().getSession(), PREFS_TIME_ZONE );
         TimeZone timeZone = TimeZone.getTimeZone( prefTimeZone );
 
         Date d = new Date(); // current date

@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,13 +16,13 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 
@@ -34,11 +34,15 @@
   </div>
 </c:if>
 
-<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" class="wikiform" id="setCookie" method="post" acceptcharset="UTF-8">
+<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean"
+            class="wikiform"
+               id="setCookie"
+           method="post"
+    acceptcharset="UTF-8">
 <table>
   <tr>
   <td><s:label for="assertedName" /></td>
-  <td> 
+  <td>
     <s:text id="assertedName" name="assertedName" size="20"><wiki:UserProfile property='wikiname' /></s:text>
     <s:errors field="assertedName" />
   </td>
@@ -66,22 +70,22 @@
   <td>
     <select id="editor" name="editor">
       <wiki:EditorIterator id="edt">
-        <option <%=edt.isSelected()%>value="<%=edt.getName()%>"><%=edt.getName()%></option>
+        <option <%=edt.isSelected()%> value="<%=edt.getName()%>"><%=edt.getName()%></option>
       </wiki:EditorIterator>
     </select>
     <s:errors field="editor" />
   </td>
   </tr>
-  
+
   <tr>
   <td><s:label for="sectionEditing" /></td>
   <td>
-    <s:checkbox id="sectionEditing" name="sectionEditing" checked="true" />
+    <s:checkbox id="sectionEditing" name="sectionEditing"  />
     <s:errors field="sectionEditing" />
     <fmt:message key="prefs.user.sectionediting.text" />
   </td>
   </tr>
-  
+
   <tr>
   <td><s:label for="skin" /></td>
   <td>
@@ -136,19 +140,6 @@
 
   <%--
   <tr>
-  <td><label for="showQuickLinks">Show Quick Links</label></td>
-  <td>
-    <s:checkbox id="showQuickLinks" name="showQuickLinks" checked="true" />
-         <span class="quicklinks"><span 
-               class='quick2Top'><a href='#wikibody' title='Go to Top' >&laquo;</a></span><span 
-               class='quick2Prev'><a href='#' title='Go to Previous Section'>&lsaquo;</a></span><span 
-               class='quick2Edit'><a href='#' title='Edit this section'>&bull;</a></span><span 
-               class='quick2Next'><a href='#' title='Go to Next Section'>&rsaquo;</a></span><span 
-               class='quick2Bottom'><a href='#footer' title='Go to Bottom' >&raquo;</a></span></span>
-  </td>
-  </tr>
-
-  <tr>
   <td><label for="showCalendar">Show Calendar</label></td>
   <td>
     <s:checkbox id="showCalendar" name="showCalendar" checked="true" />
@@ -166,13 +157,16 @@
 
 </table>
 </s:form>
-  
+
 <!-- Clearing the 'asserted name' and other prefs in the cookie -->
 <%--wiki:UserCheck status="asserted"--%>
 
 <h3><fmt:message key='prefs.clear.heading' /></h3>
 
-<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean" id="clearCookie" method="post" acceptcharset="UTF-8">
+<s:form beanclass="org.apache.wiki.action.UserPreferencesActionBean"
+               id="clearCookie"
+           method="post"
+    acceptcharset="UTF-8">
   <div>
     <s:submit name="clearAssertedName" />
   </div>

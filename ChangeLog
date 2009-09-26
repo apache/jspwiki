@@ -1,3 +1,38 @@
+2009-09-26 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-158 - upgrade mootools library
+
+        * Upgraded the mootools library to the latest stable version v1.2.3.
+        JSPWiki now includes the mootools-core.js and a selection of the
+        mootools-more.js. 
+        All js routines were updated.  But expect some stuff still to be broken.
+
+        * JSPWIKI-600: javascript error on getCoordinates()
+        Now OK with mootools v1.2.3
+
+        * Added unit test on Javascript.
+        The JSSPec unit tests were ported to the Jasmine
+        testing framework (http://github.com/pivotal/jasmine)
+        with a *compatible* MIT license.
+        Simply open /tests/javascript/jasmine-runner.html to execute the tests.
+
+        * The print css stylesheet is now included in the standard jspwiki.css
+        (@media print) to reduce download time.
+
+        * All javascript handlers are removed from the JSP's. (unobtrusive js)
+        All submit/click handlers are not installed from the javascript
+       at the time of the page-load.
+
+       * Aligned the javascript names of the UserPreferences cookies with 
+       the new names used by the org.apache.wiki.preferences class.
+       Cookie handling seems not yet 100% ok.
+       
+       * Several tweaks on AttachementInfoTab.jsp and AttachmentTab.jsp.
+       
+       * Few small tweaks on Preferences and EditorManager on the handling of the
+       UserPreferences. However, still several bugs to be fixed.
+
+
 2009-09-16 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-157

@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
@@ -76,9 +76,9 @@
 <wiki:TabbedSection defaultTab="info">
 
   <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v" url="Wiki.jsp?page=${wikiActionBean.page.name}"/>
-      
+
   <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a" url="Attachments.jsp?page=${wikiActionBean.page.name}" />
-  
+
   <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
     <p>
     <fmt:message key='info.lastmodified'>
@@ -92,7 +92,7 @@
     </fmt:message>
     <wiki:RSSImageLink mode="wiki" />
     </p>
-    
+
     <wiki:CheckVersion mode="notfirst">
     <p>
     <fmt:message key='info.createdon'>
@@ -105,12 +105,12 @@
     </fmt:message>
     </p>
     </wiki:CheckVersion>
-    
+
     <wiki:Permission permission="rename">
       <div class="formhelp">
         <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>' />
       </div>
-      
+
       <s:form beanclass="org.apache.wiki.action.RenameActionBean" class="wikiform" id="renameform" method="post" acceptcharset="UTF-8" >
         <p>
           <s:hidden name="page" />
@@ -125,7 +125,7 @@
     <wiki:Permission permission="!rename">
       <p><fmt:message key="info.rename.permission" /></p>
     </wiki:Permission>
-    
+
     <wiki:Permission permission="delete">
       <s:form beanclass="org.apache.wiki.action.DeleteActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
         <p><s:submit name="delete" id="delete-all" /></p>
@@ -134,33 +134,33 @@
     <wiki:Permission permission="!delete">
       <p><fmt:message key="info.delete.permission" /></p>
     </wiki:Permission>
-    
-    <div class="collapsebox-closed" id="incomingLinks">
-      <h4><fmt:message key="info.tab.incoming" /></h4>
-      <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>
-      <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+
+    <div class='line'>
+      <div class="collapsebox-closed unit size1of2" id="incomingLinks">
+        <h4><fmt:message key="info.tab.incoming" /></h4>
+        <wiki:LinkTo><wiki:PageName/></wiki:LinkTo>
+        <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+      </div>
+
+      <div class="collapsebox-closed lastUnit size1of2 " id="outgoingLinks">
+        <h4><fmt:message key="info.tab.outgoing" /></h4>
+        <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+      </div>
     </div>
-    
-    <div class="collapsebox-closed" id="outgoingLinks">
-      <h4><fmt:message key="info.tab.outgoing" /></h4>
-      <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
-    </div>
-    
-    <div class="clearbox"></div>
-    
+
     <%-- DIFF section --%>
     <wiki:CheckRequestContext context='diff'>
       <wiki:Include page="DiffTab.jsp" />
     </wiki:CheckRequestContext>
     <%-- DIFF section --%>
-    
-    
+
+
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions" /></wiki:CheckVersion>
     <wiki:CheckVersion mode="notfirst">
       <%-- if( itemcount > 1 ) { --%>
-      
+
       <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9" fmtkey="info.pagination" href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
-      
+
       <div class="zebra-table sortable table-filter">
       <table class="wikitable">
         <tr>
@@ -171,7 +171,7 @@
           <th><fmt:message key="info.changes" /></th>
           <th class='changenote'><fmt:message key="info.changenote" /></th>
         </tr>
-      
+
         <wiki:HistoryIterator id="currentPage">
         <% if( ( startitem == -1 ) ||
                 (  ( currentPage.getVersion() > startitem )
@@ -184,14 +184,15 @@
               <wiki:PageVersion/>
             </wiki:LinkTo>
           </td>
-      
+
           <td><fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" /></td>
           <td style="white-space:nowrap;text-align:right;">
             <c:set var="ff"><wiki:PageSize/></c:set>
             <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1' />&nbsp;<fmt:message key="info.kilobytes" />
           </td>
+
           <td><wiki:Author/></td>
-      
+
           <td>
             <wiki:CheckVersion mode="notfirst">
               <wiki:DiffLink version="current" newVersion="previous"><fmt:message key="info.difftoprev" /></wiki:DiffLink>
@@ -201,7 +202,7 @@
               <wiki:DiffLink version="latest" newVersion="current"><fmt:message key="info.difftolast" /></wiki:DiffLink>
             </wiki:CheckVersion>
           </td>
-      
+
             <td class="changenote">
               <%
                 String changeNote = (String)currentPage.getAttribute( WikiPage.CHANGENOTE );
@@ -209,11 +210,11 @@
               %>
               <%= changeNote %>
             </td>
-      
+
         </tr>
         <% } %>
         </wiki:HistoryIterator>
-      
+
       </table>
       </div>
       ${pagination}

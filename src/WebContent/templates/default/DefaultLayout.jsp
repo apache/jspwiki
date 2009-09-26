@@ -1,4 +1,4 @@
-<%-- 
+<%--
     JSPWiki - a JSP-based WikiWiki clone.
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -16,7 +16,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -28,11 +28,11 @@
      This file contains the default layout used by all JSPWiki 3 pages.
      The default layout contains the HTML doctype declaration, header,
      and page layout. It can be customized in the following ways:
-     
+
      1) Top-level JSPs can define default components, as defined by
         Stripes <s:layout-component name="foo"> elements. Named components
         that can be overridden include:
-        
+
           headTitle           : The HTML page title, which will be rendered
                                 in the <title> element. Default=wiki: pagename
           stylesheet          : Link tags to external stylesheets. Default=blank
@@ -43,10 +43,10 @@
           jsfunction          : JavaScript functions. Default=blank
           headMetaRobots      : Search engine options. Default=noindex,nofollow
           content             : The page contents. Default=blank
-          
+
      2) DefaultLayout injects additional JSPs that are meant to be
         customized. These include:
-          
+
           commonheader.jsp    : A "local header" that can contain company logos
                                 or other markup. Default=blank
 
@@ -73,7 +73,9 @@
     --%>
     <link rel="stylesheet" media="screen, projection, print" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css' />" />
     <%-- put this at the top, to avoid double load when not yet cached --%>
+    <%-- FIXME : @media print is included in jspwiki.css
     <link rel="stylesheet" type="text/css" media="print" href="<wiki:Link format='url' templatefile='jspwiki_print.css' />" />
+    --%>
     <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css' />" title="Print friendly" />
     <link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css' />" title="Standard" />
     <s:layout-component name="stylesheet" />
@@ -111,8 +113,13 @@
     <%--
 
          JavaScript
+
+    <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.3/mootools.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.3/mootools-yui-compressed.js"></script>
     --%>
-    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js' />"></script>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-core.js' />"></script>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-more.js' />"></script>
+
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/prettify.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-commonstyles.js' />"></script>
@@ -137,7 +144,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="wikiContext" content='${wikiContext.requestContext}' />
     <meta name="wikiBaseUrl" content='<wiki:BaseURL/>' />
-    <meta name="wikiPageUrl" content='<wiki:Link format="url" page="${wikiContext.page.name}" />' />
+    <meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
     <meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
     <meta name="wikiJsonUrl" content='<%=  WikiContextFactory.findContext(pageContext).getURL( WikiContext.NONE, "JSON-RPC" ) %>' /><%--unusual pagename--%>
     <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
@@ -159,15 +166,15 @@
 
     <wiki:Include page="localheader.jsp" />
 
-    
+
   </head>
 
   <body class="${wikiContext.requestContext}">
 
     <div id="wikibody" class="${prefs.Orientation}">
-     
+
       <wiki:Include page="Header.jsp" />
-    
+
       <div id="content">
         <div id="page">
           <wiki:Include page="PageActionsTop.jsp" />
@@ -177,9 +184,9 @@
         <wiki:Include page="Favorites.jsp" />
       	<div class="clearbox"></div>
       </div>
-    
+
       <wiki:Include page="Footer.jsp" />
-    
+
     </div>
   </body>
 
