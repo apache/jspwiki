@@ -35,7 +35,7 @@ import org.apache.wiki.providers.ProviderException;
  *   <LI><b>latest</b> - Include body, if the page is the latest version.</li>
  *   <LI><b>notlatest</b> - Include body, if the page is NOT the latest version.</li>
  *   <li><b>first</b> - Include body, if page is the first version (version 1)</li>
- *   <li><b>notfirst</b> - Include bodt, if page is NOT the first version (version 1)</li> 
+ *   <li><b>notfirst</b> - Include body, if page is NOT the first version (version 1)</li> 
  *  </UL>
  *  If the page does not exist, body content is never included.
  *

@@ -1,3 +1,15 @@
+2009-09-26 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-159
+        
+        * added a few missing i18n keys (English and Dutch)
+        
+        * removed invalid char from WikiPageFormatter causing compile warnings
+        
+        * typo in CheckVersionTag
+        
+        * upgrade priha 0.1.32 => 0.3.2
+        
 2009-09-26 Dirk Frederickx <brushed@apache.org>
 
         * 3.0.0-svn-158 - upgrade mootools library

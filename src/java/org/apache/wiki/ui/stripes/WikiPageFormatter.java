@@ -24,7 +24,7 @@ public class WikiPageFormatter implements Formatter<WikiPage>
      * <li>if the WikiPage is null, returns the empty string</li>
      * <li>if the WikiPage belongs to the default space, the path name without
      * space is returned</li>
-     * <li>otherwise, the full path name, including the space, is returned</li>
+     * <li>otherwise, the full path name, including the space, is returned</li>
      * </ul>
      */
     public String format( WikiPage input )
