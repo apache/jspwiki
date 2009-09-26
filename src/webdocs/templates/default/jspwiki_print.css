@@ -6,7 +6,7 @@
 .searchbox, .breadcrumbs, .pageactions, .quicklinks,
 #actionsTop, #actionsBottom, #favorites,
 #addattachment, #findhelp,
-.editsection,
+a.editsection, a.hashlink,
 .collapsebox .collapseOpen, .collapsebox .collapseClose, 
 .table-filter .filterrow, 
 .tabmenu { 

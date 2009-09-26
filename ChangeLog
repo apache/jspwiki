@@ -1,3 +1,10 @@
+2009-09-26 Dirk Frederickx <brushed@apache.org>
+
+        * 2.8.3-svn-19
+        
+         * JSPWIKI-591: # sign behind headlines is now hidden on the printed wiki page
+       
+        
 2009-09-06 Harry Metske <metskem@apache.org>
 
         * 2.8.3-svn-18
