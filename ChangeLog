@@ -1,3 +1,8 @@
+2009-09-27 Dirk Frederickx <brushed@apache.org>
+
+        * 3.0.0-svn-160 - fixed illegal char in jspwiki-common.js.
+        Failed on yui compressor.
+
 2009-09-26 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-159

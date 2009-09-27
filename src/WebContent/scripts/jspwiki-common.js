@@ -172,7 +172,7 @@ Element.implement({
 			// IE fails here if the element is not in the dom
 			if ((d = this.getStyle('display')) == 'none') d = null;
 		} catch(e){}
- 
+
 		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
 	},
 
