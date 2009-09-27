@@ -528,9 +528,6 @@
     <compressjs src="/templates/default/jspwiki.css"
       			args="--line-break 0" />
     
-    <compressjs src="/templates/default/jspwiki_print.css"
-      			args="--line-break 0" />   	
-
     <mkdir dir="${tmpdir}/compress/webdocs/templates/default/skins/OrderedList"/>   	
    	<compressjs src="/templates/default/skins/OrderedList/skin.css"
       			args="--line-break 0" />
