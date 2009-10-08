@@ -46,8 +46,8 @@
 
      2) DefaultLayout injects additional JSPs that are meant to be
         customized. These include:
-
-          commonheader.jsp    : A "local header" that can contain company logos
+          
+          localheader.jsp     : A "local header" that can contain company logos
                                 or other markup. Default=blank
 
 --%>

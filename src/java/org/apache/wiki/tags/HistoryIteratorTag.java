@@ -54,7 +54,7 @@ public class HistoryIteratorTag extends IteratorTag<WikiPage>
 
     /**
      * Returns the historical versions of the current WikiPage.
-     * @return a collection of {@link org.apache.content.WikiPage} objects
+     * @return a collection of {@link org.apache.wiki.api.WikiPage} objects
      */
     @Override
     protected Collection<WikiPage> initItems()

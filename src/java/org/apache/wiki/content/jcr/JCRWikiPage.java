@@ -115,7 +115,7 @@ public class JCRWikiPage
      *  a temporary storage for workflows.
      *  
      *  @param engine a reference to the {@link org.apache.wiki.WikiEngine}
-     *  @param name the {@link org.apache.wiki.api.WikiPath}
+     *  @param name the {@link org.apache.wiki.content.WikiPath}
      *  @param node the JCR {@link javax.jcr.Node}
      *  @throws RepositoryException If the page cannot be located.
      */
@@ -229,9 +229,6 @@ public class JCRWikiPage
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setAttribute( String key, Date attribute )
     {
         try
@@ -303,9 +300,6 @@ public class JCRWikiPage
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setLastModified( Date date )
     {
         setAttribute( LASTMODIFIED, date );
@@ -553,9 +547,6 @@ public class JCRWikiPage
         return (String)getAttribute( CONTENTTYPE );
     }
 
-    /**
-     *  {@inheritDoc}
-     */
     public List<WikiPath> getReferrers() throws ProviderException
     {
         return m_engine.getReferenceManager().getReferredBy( m_path );
@@ -585,9 +576,6 @@ public class JCRWikiPage
         }
     }
 
-    /**
-     *  {@inheritDoc}
-     */
     public void setContentType( String contentType )
     {
         setAttribute( CONTENTTYPE, contentType );
@@ -664,9 +652,6 @@ public class JCRWikiPage
         return m_path.getName();
     }
 
-    /**
-     *  {@inheritDoc}
-     */
     public boolean isLatest() throws RepositoryException
     {
         // TODO: This is a bit kludgish, but works.
@@ -771,9 +756,6 @@ public class JCRWikiPage
         return (JCRWikiPage)p;
     }
 
-    /**
-     *  {@inheritDoc}
-     */
     public JCRWikiPage getCurrentVersion() throws ProviderException
     {
         try
