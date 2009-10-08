@@ -79,11 +79,9 @@ Deployment File may indicate one of the following:
 </xsd:documentation>
 </xsd:annotation>
 
-  <xsd:import namespace="http://www.w3.org/XML/1998/namespace"
-	      schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
 
-  <xsd:include schemaLocation=
-	"http://www.ibm.com/webservices/xsd/j2ee_web_services_client_1_1.xsd"/>
+  <xsd:include schemaLocation="j2ee_web_services_client_1_1.xsd"/>
 
 
 <!-- **************************************************** -->
