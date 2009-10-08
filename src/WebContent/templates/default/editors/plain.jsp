@@ -69,24 +69,24 @@
     <table>
       <tr>
         <td>
-          <s:label for="changenote" name="changenote" />
+          <s:label for="changeNote" />
         </td>
         <td>
-          <s:text name="changenote" id="changenote" size="50" maxlength="80" />
+          <s:text name="changeNote" size="50" maxlength="80" />
         </td>
       </tr>
 
       <wiki:CheckRequestContext context="comment">
       <tr>
-        <td><s:label for="author" accesskey="n" name="author" /></td>
-        <td><s:text id="author" name="author" />
-            <s:checkbox id="remember" name="remember" />
-            <s:label for="remember" name="remember" />
+        <td><s:label for="author" accesskey="n" /></td>
+        <td><s:text name="author" />
+            <s:checkbox name="remember" />
+            <s:label for="remember" />
         </td>
       </tr>
       <tr>
-        <td><s:label for="link" accesskey="m" name="editor.plain.email" /></td>
-        <td><s:text id="link" name="link" size="24" /></td>
+        <td><s:label for="email" accesskey="m" /></td>
+        <td><s:text name="email" size="24" /></td>
       </tr>
       </wiki:CheckRequestContext>
 
@@ -96,11 +96,9 @@
     <div id="toolbar" class="line">
 
     <div id="configDialog" style="display:none;">
-      <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>">
-      <input type="checkbox" name="tabcompletion" id="tabcompletion" /><fmt:message key="editor.plain.tabcompletion"/></label>
+      <s:checkbox name="options.tabCompletion" id="tabCompletion" /><fmt:message key="editor.plain.tabcompletion"/>
       <br />
-      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>">
-      <input type="checkbox" name="smartpairs" id="smartpairs" /><fmt:message key="editor.plain.smartpairs"/></label>
+      <s:checkbox name="options.smartPairs" id="smartPairs" /><fmt:message key="editor.plain.smartpairs"/>
     </div>
 
     <fieldset class="unit">
@@ -159,26 +157,17 @@
 
       <a href="#" class="tool tHORZ" title="<fmt:message key='editor.plain.tbHORZ.title'/>">tile-horz</a>
       <a href="#" class="tool tVERT" title="<fmt:message key='editor.plain.tbVERT.title'/>">tile-vert</a>
-      <label for="autopreview" title="<fmt:message key='editor.plain.livepreview.title'/>">
-      <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />On</label>
-
+      <label for="options.livePreview" title="<fmt:message key='editor.plain.livepreview.title'/>">
+      <s:checkbox name="options.livePreview" />On
     </fieldset>
 
     <div id="findDialog" style="display:none;clear:both;">
-      <%--<label for="tbFIND" ><fmt:message key="editor.plain.find"/>--%>
       <input type="text" name="tbFIND" id="tbFIND" size="16" value="find"/>
-      <%--</label>--%>
-      <label for="tbMatchCASE"><input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-        <fmt:message key="editor.plain.matchcase"/></label>
-    	<label for="tbREGEXP" ><input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-    	  <fmt:message key="editor.plain.regexp"/></label>
-
-      <%--<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/>--%>
-        <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
-      <%--</label>--%>
-      <a class="btn" id="doreplace"><span><span><fmt:message key='editor.plain.find.submit' /></span></span></a>
-    	<label for="tbGLOBAL"><input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-    	  <fmt:message key="editor.plain.global"/></label>
+      <s:checkbox name="options.findMatchCase" /><fmt:message key="editor.plain.matchcase"/>
+      <s:checkbox name="options.findRegex" /><fmt:message key="editor.plain.regexp"/>
+      <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
+      <s:button class="btn" id="doreplace" name="findAndReplace" />
+      s:checkbox name="options.findGlobal" /><fmt:message key="editor.plain.global"/>
     </div>
 
     </div><%-- end of the toolbar --%>
