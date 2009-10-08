@@ -1,3 +1,28 @@
+2009-10-07 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-161
+        
+        * First checkin of new content-inspection package, designed to
+        refactor SpamFilter functions into a series of stacked Inspector
+        classes that can analyze and score content in multiple ways,
+        including for spam detection. See the package.html and Javadocs
+        for detailed descriptions on the API design. These features will
+        be used by ANY and ALL ActionBeans to allow for spam filtering
+        via the @SpamProtect annotation and SpamProtect JSP tag. Three
+        notable limitations of this checkin: 1) no CAPTCHA integration
+        yet; 2) Comment.jsp is temporarily broken; 3) User registration
+        not hooked into content inspection just yet. All will be addressed
+        soon.
+        
+        * Plain editor and related bundle messages slightly refactored to
+        make the JSP markup more concise and logical. Certain JavaScript
+        hooks are broken; I'll need to work with Dirk to fix this.
+        
+        * Bug fix: Ant schema-checking no longer requires a web connection
+        because we include all the needed schema in the local build. Yay!
+        
+        * General Javadoc and minor test tweaks.
+        
 2009-09-27 Dirk Frederickx <brushed@apache.org>
 
         * 3.0.0-svn-160 - fixed illegal char in jspwiki-common.js.
