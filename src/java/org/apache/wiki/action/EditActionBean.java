@@ -24,7 +24,9 @@ package org.apache.wiki.action;
 import java.io.IOException;
 import java.net.URI;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -76,15 +78,13 @@ public class EditActionBean extends AbstractPageActionBean
 
     private boolean m_captcha = false;
 
-    private String m_conflictText = null;
+    private Map<String,Boolean> m_options = new HashMap<String,Boolean>();
 
-    private boolean m_remember = true;
+    private String m_conflictText = null;
 
     private String m_htmlPageText = null;
 
-    private boolean m_livePreview = false;
-
-    private String m_link = null;
+    private String m_email = null;
 
     private long m_startTime = -1;
 
@@ -232,7 +232,7 @@ public class EditActionBean extends AbstractPageActionBean
     /*
      * Returns the changenote for this upload.
      */
-    public String getChangenote()
+    public String getChangeNote()
     {
         return m_changeNote;
     }
@@ -258,34 +258,23 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Returns the link.
+     * Returns the email.
      * 
-     * @return the link
+     * @return the email
      */
-    public String getLink()
+    public String getEmail()
     {
-        return m_link;
+        return m_email;
     }
 
     /**
-     * Returns <code>true</code> if the "live preview" feature is turned on;
-     * <code>false</code> otherwise
-     * 
-     * @return the "live preview" setting
+     * Returns the optional settings for the editor. Each setting name is a key in the map,
+     * with the vale expressed as a Boolean.
+     * @return the options map
      */
-    public boolean getLivePreview()
+    public Map<String,Boolean> getOptions()
     {
-        return m_livePreview;
-    }
-
-    /**
-     * Returns the flag indicating whether the author name should be remembered.
-     * 
-     * @return the remember-me flag
-     */
-    public boolean getRemember()
-    {
-        return m_remember;
+        return m_options;
     }
 
     /**
@@ -501,12 +490,12 @@ public class EditActionBean extends AbstractPageActionBean
     /**
      * Sets the changenote for this upload; usually a short comment.
      * 
-     * @param changenote the change note
+     * @param changeNote the change note
      */
     @Validate( required = false )
-    public void setChangenote( String changenote )
+    public void setChangeNote( String changeNote )
     {
-        m_changeNote = changenote;
+        m_changeNote = changeNote;
     }
 
     /**
@@ -527,37 +516,24 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Sets the link.
+     * Sets the email.
      * 
-     * @param link the link
+     * @param email the email
      */
     @Validate( required = false )
-    public void setLink( String link )
+    public void setEmail( String email )
     {
-        m_link = link;
+        m_email = email;
     }
 
     /**
-     * Returns <code>true</code> if the "live preview" feature is turned on;
-     * <code>false</code> otherwise
-     * 
-     * @param livePreview the "live preview" setting
+     * Sets the optional settings for the editor. Each setting name is a key in the map,
+     * with the vale expressed as a Boolean. Common option names include:
+     * {@code remember}, {@code livePreview}, {@code tabCompletion}, and {@code smartPairs}.
      */
-    @Validate( required = false )
-    public void setLivePreview( boolean livePreview )
+    public void setOptions( Map<String,Boolean> options )
     {
-        m_livePreview = livePreview;
-    }
-
-    /**
-     * Sets the flag indicating that the author name should be remembered.
-     * 
-     * @param remember the remember-me flag
-     */
-    @Validate( required = false )
-    public void setRemember( boolean remember )
-    {
-        m_remember = remember;
+        m_options = options;
     }
 
     /**
