@@ -49,7 +49,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
-import org.apache.wiki.filters.SpamFilter;
+import org.apache.wiki.content.inspect.BotTrapInspector;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
@@ -177,13 +177,13 @@ public class TestEngine extends WikiEngine
     public static void addSpamProtectParams( MockRoundtrip trip )
     {
         // Add the trap + token params
-        String paramValue = CryptoUtil.encrypt( "TRAPAA\nTOKENA" );
-        trip.addParameter( "TRAPAA", new String[0] );
+        String paramValue = CryptoUtil.encrypt( "TOKENA" );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
 
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
     }
     
     public static void emptyWorkDir()

@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import net.sourceforge.stripes.util.CryptoUtil;
 
+import org.apache.wiki.content.inspect.BotTrapInspector;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 
@@ -42,12 +43,14 @@ import org.apache.wiki.ui.stripes.SpamInterceptor;
  * annotated with the {@link org.apache.wiki.ui.stripes.SpamProtect} annotation.
  * </p>
  * <p>
- * This tag will inject the following parameters:
+ * This tag must be added as a child of an existing &lt;form&gt; or
+ * &lt;stripes:form&gt; element. The SpamProtect tag will cause the
+ * following parameters into the form:
  * </p>
  * <ol>
  * <li><b>An UTF-8 detector parameter called <code>encodingcheck</code>.</b>
- * This parameter contains a single non-Latin1. SpamInterceptor verifies that
- * the non-Latin1 character has not been mangled by a badly behaving robot or
+ * This parameter contains a single non-Latin1 character. SpamInterceptor verifies
+ * that the non-Latin1 character has not been mangled by a badly behaving robot or
  * user client. Many bots assume a form is Latin1. This also prevents the "hey,
  * my edit destroyed all UTF-8 characters" problem.</li>
  * <li><b>A token field </b>, which has a random name and fixed value</b>
@@ -64,7 +67,7 @@ import org.apache.wiki.ui.stripes.SpamInterceptor;
  * to be empty.</li>
  * </li>
  * <li><b>An an encrypted parameter</b> called
- * {@link SpamFilter#REQ_SPAM_PARAM}, whose contents are the names of
+ * {@link BotTrapInspector#REQ_SPAM_PARAM}, whose contents are the names of
  * parameters 2 and 3, separated by a carriage return character. These contents
  * are then encrypted.</li>
  * </ol>
@@ -91,7 +94,7 @@ public class SpamProtectTag extends WikiTagBase
         HttpServletRequest request = (HttpServletRequest) this.pageContext.getRequest();
 
         // Inject honey-trap param (should always be submitted with no value)
-        String trapParam = getUniqueID();
+        String trapParam = BotTrapInspector.REQ_TRAP_PARAM;
         out.write( "<div style=\"display: none;\">" );
         out.write( "<input type=\"hidden\" name=\"" );
         out.write( trapParam );
@@ -103,11 +106,11 @@ public class SpamProtectTag extends WikiTagBase
         out.write( "<input name=\"" + tokenParam + "\" type=\"hidden\" value=\"" + tokenValue + "\" />\n" );
 
         // Inject UTF-8 detector
-        out.write( "<input name=\""+ SpamFilter.REQ_ENCODING_CHECK + "\" type=\"hidden\" value=\"\u3041\" />\n" );
+        out.write( "<input name=\""+ BotTrapInspector.REQ_ENCODING_CHECK + "\" type=\"hidden\" value=\"\u3041\" />\n" );
 
-        // Add encrypted parameter indicating the names of the trap and token fields
-        String encryptedParam = CryptoUtil.encrypt( trapParam + "\n" + tokenParam );
-        out.write( "<input name=\""+ SpamFilter.REQ_SPAM_PARAM+"\" type=\"hidden\" value=\""+encryptedParam+"\" />\n" );
+        // Add encrypted parameter indicating the name of the token field
+        String encryptedParam = CryptoUtil.encrypt( tokenParam );
+        out.write( "<input name=\""+ BotTrapInspector.REQ_SPAM_PARAM+"\" type=\"hidden\" value=\""+encryptedParam+"\" />\n" );
     }
 
     private static String getUniqueID()

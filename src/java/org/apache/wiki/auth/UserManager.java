@@ -25,14 +25,20 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wiki.*;
+import org.apache.wiki.NoRequiredPropertyException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
@@ -43,8 +49,6 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.filters.PageFilter;
-import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -498,24 +502,6 @@ public final class UserManager
         InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         ResourceBundle rb = context.getBundle( InternationalizationManager.CORE_BUNDLE );
 
-        //
-        //  Query the SpamFilter first
-        //
-        
-        List<PageFilter> ls = m_engine.getFilterManager().getFilterList();
-        for( PageFilter pf : ls )
-        {
-            if( pf instanceof SpamFilter )
-            {
-                if( ((SpamFilter)pf).isValidUserProfile( context, profile ) == false )
-                {
-                    session.addMessage( SESSION_MESSAGES, "Invalid userprofile" );
-                    return;
-                }
-                break;
-            }
-        }
-        
         // If container-managed auth and user not logged in, throw an error
         if ( m_engine.getAuthenticationManager().isContainerAuthenticated()
              && !context.getWikiSession().isAuthenticated() )

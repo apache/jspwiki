@@ -21,6 +21,7 @@
 
 package org.apache.wiki.ui.stripes;
 
+import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -31,7 +32,7 @@ import net.sourceforge.stripes.util.CryptoUtil;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.action.TestActionBean;
-import org.apache.wiki.filters.SpamFilter;
+import org.apache.wiki.content.inspect.BotTrapInspector;
 
 public class SpamInterceptorTest extends TestCase
 {
@@ -60,17 +61,29 @@ public class SpamInterceptorTest extends TestCase
         m_engine.shutdown();
     }
 
+    public void testGetBeanProperties() throws Exception
+    {
+        TestActionBean bean = new TestActionBean();
+        bean.setAcl( "ACL" );
+        bean.setText( "Sample text" );
+        Map<String, Object> map = SpamInterceptor.getBeanProperties( bean, new String[] { "text", "acl", "nonExistentProperty" } );
+        assertEquals( 2, map.size() );
+        Object value = map.get( "text" );
+        assertEquals( "Sample text", value );
+        value = map.get( "acl" );
+        assertEquals( "ACL", value );
+    }
+
     public void testInvalidToken() throws Exception
     {
         // Add the trap + token params, but fill in the trap param
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
-        String paramValue = CryptoUtil.encrypt( "TRAPAA\nTOKENA" );
-        trip.addParameter( "TRAPAA", new String[0] );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( "TOKENA", new String[0] );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
         
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
@@ -85,13 +98,12 @@ public class SpamInterceptorTest extends TestCase
     {
         // Add the trap + token params, but fill in the trap param
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
-        String paramValue = CryptoUtil.encrypt( "TRAPAA\nTOKENA" );
-        trip.addParameter( "TRAPAA", "BotFilledValue" );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, "BotFilledThisIn" );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
@@ -106,12 +118,11 @@ public class SpamInterceptorTest extends TestCase
     {
         // Add the trap param (but not the token param)
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
-        String paramValue = CryptoUtil.encrypt( "TRAPAA" );
-        trip.addParameter( "TRAPAA", new String[0] );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "" ) );
 
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
@@ -126,20 +137,19 @@ public class SpamInterceptorTest extends TestCase
     {
         // Add token param (but not the trap param)
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
-        String paramValue = CryptoUtil.encrypt( "TOKENA" );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...and that we passed the token check
+        assertEquals( null, trip.getDestination() );
     }
 
     public void testMissingUTF8Check() throws Exception
@@ -147,9 +157,9 @@ public class SpamInterceptorTest extends TestCase
         // Add the trap + token params
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
         String paramValue = CryptoUtil.encrypt( "TRAPAA\nTOKENA" );
-        trip.addParameter( "TRAPAA", new String[0] );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
@@ -160,13 +170,13 @@ public class SpamInterceptorTest extends TestCase
         assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
     }
 
-    public void testNoTokens() throws Exception
+    public void testNoToken() throws Exception
     {
-        // Execute the SpamProtect-ed handler with no tokens
+        // Execute the SpamProtect-ed handler with no token
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
 
         // Add the UTF-8 token
-        trip.addParameter( SpamFilter.REQ_ENCODING_CHECK, "\u3041" );
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );
@@ -177,7 +187,7 @@ public class SpamInterceptorTest extends TestCase
         assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
     }
 
-    public void testTokens() throws Exception
+    public void testToken() throws Exception
     {
         // Add the trap + token params
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
@@ -191,23 +201,4 @@ public class SpamInterceptorTest extends TestCase
         // ...and that we passed the token check
         assertEquals( null, trip.getDestination() );
     }
-
-    public void testWrongOrder() throws Exception
-    {
-        // Add token param (but not the trap param)
-        MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
-        String paramValue = CryptoUtil.encrypt( "TOKENA\nTRAPAA" );
-        trip.addParameter( "TRAPAA", new String[0] );
-        trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
-        trip.addParameter( SpamFilter.REQ_SPAM_PARAM, paramValue );
-
-        // Verify that we got the ActionBean...
-        trip.execute( "test" );
-        TestActionBean bean = trip.getActionBean( TestActionBean.class );
-        assertEquals( null, bean.getPage() );
-
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
-    }
-
 }
