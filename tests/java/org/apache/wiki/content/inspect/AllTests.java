@@ -19,7 +19,7 @@
     under the License.    
  */
 
-package org.apache.wiki.content;
+package org.apache.wiki.content.inspect;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -34,15 +34,11 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki content unit tests");
-
-        suite.addTest( PageRenamerTest.suite() );
-        suite.addTest( WikiPathTest.suite() );
-        suite.addTest( ContentManagerTest.suite() );
-        suite.addTest( ReferenceManagerTest.suite() );
-        suite.addTest( org.apache.wiki.content.inspect.AllTests.suite() );
-        suite.addTest( org.apache.wiki.content.resolver.AllTests.suite() );
-
+        TestSuite suite = new TestSuite("JSPWiki content inspector tests");
+        suite.addTest( InspectionTest.suite() );
+        suite.addTest( InspectionPlanTest.suite() );
+        suite.addTest( ReputationManagerTest.suite() );
+        suite.addTest( SpamInspectionFactoryTest.suite() );
         return suite;
     }
 }
