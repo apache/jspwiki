@@ -10,7 +10,7 @@ Tienes algunas páginas ya configuradas de salida:
 * Para un vistazo rápido sobre qué es una Wiki, mira [Wiki en un minuto|OneMinuteWiki].
 * Para una serie de buenas prácticas trabajando con una wiki, mira [WikiEtiqueta|WikiEtiquette].
 
-!Problemas con la instación
+!Problemas con la instalación
 
 * Si funcionas con Microsoft Windows, o tienes problemas con UTF-8 probablemente quieras echar un ojo
   a los [consejos de instalación|InstallationTips] para más información.
