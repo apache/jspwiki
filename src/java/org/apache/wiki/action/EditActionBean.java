@@ -24,11 +24,15 @@ package org.apache.wiki.action;
 import java.io.IOException;
 import java.net.URI;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sourceforge.stripes.action.*;
@@ -41,7 +45,11 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.login.CookieAssertionLoginModule;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.content.ContentManager;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.lock.PageLock;
@@ -49,11 +57,14 @@ import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.SpamProtect;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
+import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.DecisionRequiredException;
 import org.jdom.JDOMException;
@@ -117,12 +128,57 @@ public class EditActionBean extends AbstractPageActionBean
     @HandlesEvent( "comment" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.COMMENT_ACTION )
     @WikiRequestContext( "comment" )
-    public Resolution comment()
+    public Resolution comment() throws ProviderException
     {
+        WikiActionBeanContext wikiContext = getContext();
+        HttpServletRequest request = wikiContext.getRequest();
+        HttpSession session = request.getSession();
+        Principal user = wikiContext.getCurrentUser();
+        WikiPage page = getPage();
+        String pageName = page.getName();
+
+        log.info("Commenting page "+pageName+". User="+request.getRemoteUser()+", host="+request.getRemoteAddr() );
+        
         // Set the editing start time (will be written to the JSPs as encrypted parameter)
         setStartTime( System.currentTimeMillis() );
 
-        return null;
+        // If page is locked, make sure we tell the user
+        List<Message> messages = wikiContext.getMessages();
+        WikiEngine engine = wikiContext.getEngine();
+        ContentManager mgr = engine.getContentManager();
+        PageLock lock = mgr.getCurrentLock( page );
+        if( lock != null )
+        {
+            messages.add( new LocalizableMessage( "edit.locked", lock.getLocker(), lock.getTimeLeft() ) );
+        }
+
+        // If user is not editing the latest one, tell user also
+        ValidationErrors errors = getContext().getValidationErrors();
+        WikiPage latest;
+        try
+        {
+            latest = engine.getPage( page.getName() );
+        }
+        catch( PageNotFoundException e )
+        {
+            latest = page;
+        }
+        if( latest.getVersion() != page.getVersion() )
+        {
+            errors.addGlobalError( new LocalizableError( "edit.restoring", page.getVersion() ) );
+        }
+
+        // Attempt to lock the page.
+        lock = mgr.lockPage( page, user.getName() );
+        if( lock != null )
+        {
+            session.setAttribute( LOCK_PREFIX + pageName, lock );
+        }
+
+        // The comment field is initialized with nothing
+        m_text = "";
+
+        return new ForwardResolution( "/Comment.jsp" );
     }
 
     /**
@@ -298,23 +354,48 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Initializes default values that must be set in order for events to work
+     * <p>Initializes default values that must be set in order for events to work
      * properly. This method before after binding and validation of the
      * ActionBean's other properties, to make sure that the values we want are
-     * bound. The values set includes the <code>author</code> property, which
-     * is set to the value passed in the request parameter <code>author</code>
-     * if the user is anonymous. In all other cases, the author is always set to
-     * the name of the Principal returned by
-     * {@link WikiSession#getUserPrincipal()}.
+     * bound. The values set includes:</p>
+     * <ul>
+     * <li>the {@code author} property, which
+     * is set to the value passed in the request parameter {@code author}
+     * or {@code Anonymous Coward} if the user is anonymous. In all other cases,
+     * the author is always set to the name of the Principal returned by
+     * {@link WikiSession#getUserPrincipal()}.</li>
+     * <li>the {@code email} property, which for authenticated users is set
+     * to their user profile's e-mail address</li>
+     * </ul>
      */
     @After( stages = LifecycleStage.BindingAndValidation )
     public void initDefaultValues()
     {
         // Set author: prefer authenticated/asserted principals first
         WikiSession wikiSession = getContext().getWikiSession();
-        if( getAuthor() == null || !wikiSession.isAnonymous() )
+        if( m_author == null && wikiSession.isAnonymous() )
+        {
+            Principal author = wikiSession.getUserPrincipal();
+            if ( author instanceof WikiPrincipal &&
+                WikiPrincipal.IP_ADDRESS.equals( ((WikiPrincipal)author).getType() ) )
+            {
+                setAuthor( "Anonymous Coward" );
+            }
+        }
+        else
         {
             setAuthor( wikiSession.getUserPrincipal().getName() );
+        }
+        
+        // Set email if user is authenticated
+        if ( wikiSession.isAuthenticated() )
+        {
+            UserManager mgr = getContext().getEngine().getUserManager();
+            UserProfile profile = mgr.getUserProfile( wikiSession );
+            if ( profile.getEmail() != null )
+            {
+                m_email = profile.getEmail();
+            }
         }
     }
 
@@ -406,16 +487,36 @@ public class EditActionBean extends AbstractPageActionBean
                 session.removeAttribute( "captcha" );
             }
 
+            // If this is an append, add a separation line and the author's details
             if( m_append )
             {
                 StringBuffer pageText = new StringBuffer( engine.getText( pagereq ) );
+                if( pageText.length() > 0 )
+                {
+                    pageText.append( "\n\n----\n\n" );
+                }
                 pageText.append( m_text );
+                if( m_author != null && m_author.length() > 0 )
+                {
+                    String signature = m_author;
+                    if( m_email != null && m_email.length() > 0 )
+                    {
+                        String link = HttpUtil.guessValidURI( m_email );
+                        signature = "["+m_author+"|"+link+"]";
+                    }
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext ,  TimeFormat.DATETIME);
+                    pageText.append("\n\n--"+signature+", "+fmt.format(cal.getTime()));
+                }
                 engine.saveText( wikiContext, pageText.toString() );
             }
             else
             {
                 engine.saveText( wikiContext, m_text );
             }
+            
+            //  We expire ALL locks at this moment, simply because someone has
+            //  already broken it.
             PageLock lock = (PageLock) session.getAttribute( LOCK_PREFIX + pagereq );
             engine.getContentManager().unlockPage( lock );
             session.removeAttribute( LOCK_PREFIX +page.getName() );
@@ -452,14 +553,22 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Sets the author.
+     * If the WikiSession is anonymous or asserted, sets the author and
+     * causes the "assertion cookie" to be set in the HTTP response. If the
+     * user is authenticated, this method does nothing.
      * 
      * @param author the author
      */
     @Validate( required = false )
     public void setAuthor( String author )
     {
-        m_author = author;
+        WikiSession session = getContext().getWikiSession();
+        if ( !session.isAuthenticated() )
+        {
+            m_author = TextUtil.replaceEntities( author );
+            HttpServletResponse response = getContext().getResponse();
+            CookieAssertionLoginModule.setUserCookie( response, m_author );
+        }
     }
 
     /**
@@ -516,14 +625,35 @@ public class EditActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Sets the email.
+     * Sets the e-mail address for the user, and causes a Cookie called
+     * {@code link} to be written to the HTTP response. If the user
+     * is authenticated, this method will check to see if {@code email} is
+     * different from the one in the user's UserProfile. If it is,
+     * it will add a message to the user indicating that it is different
+     * and can be changed in their user profile if desired.
      * 
-     * @param email the email
+     * @param email the email address
      */
-    @Validate( required = false )
+    @Validate( required = false, converter = EmailTypeConverter.class )
     public void setEmail( String email )
     {
         m_email = email;
+        Cookie linkcookie = new Cookie("link", email );
+        linkcookie.setMaxAge(1001*24*60*60);
+        getContext().getResponse().addCookie( linkcookie );
+        
+        // If authenticated, is the e-mail different than the one on file?
+        WikiSession session = getContext().getWikiSession();
+        if ( session.isAuthenticated() )
+        {
+            WikiEngine engine = getContext().getEngine();
+            UserProfile profile = engine.getUserManager().getUserProfile( session );
+            if ( email.equals( profile.getEmail() ) )
+            {
+                Message message = new LocalizableMessage( "changed.email" );
+                getContext().getMessages().add( message );
+            }
+        }
     }
 
     /**

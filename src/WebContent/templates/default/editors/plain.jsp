@@ -28,7 +28,8 @@
 --%>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
-  <%-- Print any validation errors --%>
+  <%-- Print any messages or validation errors --%>
+  <s:messages />
   <s:errors />
 
   <s:form beanclass="org.apache.wiki.action.EditActionBean"
@@ -77,17 +78,16 @@
       </tr>
 
       <wiki:CheckRequestContext context="comment">
-      <tr>
-        <td><s:label for="author" accesskey="n" /></td>
-        <td><s:text name="author" />
-            <s:checkbox name="remember" />
-            <s:label for="remember" />
-        </td>
-      </tr>
-      <tr>
-        <td><s:label for="email" accesskey="m" /></td>
-        <td><s:text name="email" size="24" /></td>
-      </tr>
+        <tr>
+          <td><s:label for="author" accesskey="n" /></td>
+          <td><s:text name="author" /></td>
+        </tr>
+        <wiki:UserCheck status="authenticated">
+          <tr>
+            <td><s:label for="email" accesskey="m" /></td>
+            <td><s:text name="email" size="24" /></td>
+          </tr>
+        </wiki:UserCheck>
       </wiki:CheckRequestContext>
 
     </table>
@@ -102,23 +102,23 @@
     </div>
 
     <fieldset class="unit">
-    <legend><fmt:message key='editor.plain.action'/></legend>
-    <a href="#" class="tool tUNDO" title="<fmt:message key='editor.plain.undo.title'/>">undo</a>
-    <a href="#" class="tool tREDO" title="<fmt:message key='editor.plain.redo.title'/>">redo</a>
-    <a href="#" class="tool tSEARCH" title="<fmt:message key='editor.plain.find.title'/>">find</a>
-    <a href="#" class="tool tCONFIG" title="<fmt:message key='editor.plain.config.title'/>">config</a>
+      <legend><fmt:message key='editor.plain.action'/></legend>
+      <a href="#" class="tool tUNDO" title="<fmt:message key='editor.plain.undo.title'/>">undo</a>
+      <a href="#" class="tool tREDO" title="<fmt:message key='editor.plain.redo.title'/>">redo</a>
+      <a href="#" class="tool tSEARCH" title="<fmt:message key='editor.plain.find.title'/>">find</a>
+      <a href="#" class="tool tCONFIG" title="<fmt:message key='editor.plain.config.title'/>">config</a>
     </fieldset>
 
     <fieldset class="unit">
-    <legend><fmt:message key='editor.plain.insert'/></legend>
-    <a href="#" class="tool tLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
-    <a href="#" class="tool tH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
-    <a href="#" class="tool tH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
-    <a href="#" class="tool tH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
-    <a href="#" class="tool tPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
-    <a href="#" class="tool tHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
-    <a href="#" class="tool tBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
-    <a href="#" class="tool tCHAR" title="<fmt:message key='editor.plain.tbCHAR.title'/>">special</a>
+      <legend><fmt:message key='editor.plain.insert'/></legend>
+      <a href="#" class="tool tLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
+      <a href="#" class="tool tH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
+      <a href="#" class="tool tH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
+      <a href="#" class="tool tH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
+      <a href="#" class="tool tPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
+      <a href="#" class="tool tHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
+      <a href="#" class="tool tBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
+      <a href="#" class="tool tCHAR" title="<fmt:message key='editor.plain.tbCHAR.title'/>">special</a>
     </fieldset>
 
     <fieldset class="unit">
@@ -157,7 +157,7 @@
 
       <a href="#" class="tool tHORZ" title="<fmt:message key='editor.plain.tbHORZ.title'/>">tile-horz</a>
       <a href="#" class="tool tVERT" title="<fmt:message key='editor.plain.tbVERT.title'/>">tile-vert</a>
-      <label for="options.livePreview" title="<fmt:message key='editor.plain.livepreview.title'/>">
+      <s:label for="options.livePreview" title="<fmt:message key='editor.plain.livepreview.title'/>" />
       <s:checkbox name="options.livePreview" />On
     </fieldset>
 
@@ -167,7 +167,7 @@
       <s:checkbox name="options.findRegex" /><fmt:message key="editor.plain.regexp"/>
       <input type="text" name="tbREPLACE" id="tbREPLACE" size="16" />
       <s:button class="btn" id="doreplace" name="findAndReplace" />
-      s:checkbox name="options.findGlobal" /><fmt:message key="editor.plain.global"/>
+      <s:checkbox name="options.findGlobal" /><fmt:message key="editor.plain.global"/>
     </div>
 
     </div><%-- end of the toolbar --%>
@@ -187,7 +187,7 @@
       <div class="unit size1of2 lastUnit">
         <div id="previewspin" class="spin" style="display:none;"><fmt:message key="common.ajax.loading"/></div>
         <div id="livepreview" class="xflow"></div>
-	  </div>
+	    </div>
 
     </div>
 

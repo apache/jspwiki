@@ -36,28 +36,22 @@
   </wiki:Tab>
 
   <wiki:Tab id="commentcontent" titleKey="comment.tab.addcomment">
-
-  <wiki:Editor/>
+    <wiki:Editor/>
   </wiki:Tab>
 
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp" />
-  </wiki:Tab>
+  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a" url="Attachments.jsp?page=${wikiActionBean.page.name}" />
   
-  <wiki:Tab id="info" titleKey="info.tab"
-           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-           accesskey="i" >
-  </wiki:Tab>
+  <wiki:Tab id="info" titleKey="info.tab" url="PageInfo.jsp?page=${wikiActionBean.page.name}" accesskey="i" />
     
-  <wiki:Tab id="edithelp" titleKey="edit.tab.help">
+  <wiki:Tab id="edithelp" titleKey="edit.tab.help" accesskey="h">
+    <wiki:InsertPage page="EditPageHelp" />
     <wiki:NoSuchPage page="EditPageHelp">
       <div class="error">
-         <fmt:message key="comment.edithelpmissing">
-            <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
-         </fmt:message>
+        <fmt:message key="comment.edithelpmissing">
+          <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
+        </fmt:message>
       </div>
-    </wiki:NoSuchPage>
-
-    <wiki:InsertPage page="EditPageHelp" />
+    </wiki:NoSuchPage>  
   </wiki:Tab>
+
 </wiki:TabbedSection>

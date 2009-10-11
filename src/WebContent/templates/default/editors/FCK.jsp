@@ -51,7 +51,7 @@
     TemplateManager.addResourceRequest( context, "script", "scripts/fckeditor/fckeditor.js" );
  %>   
 <wiki:CheckRequestContext context="edit">
-<wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
+  <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
   String clone = request.getParameter( "clone" ); 
   if( clone != null )
@@ -73,7 +73,7 @@
     }
   }
 %>
-</wiki:NoSuchPage>
+  </wiki:NoSuchPage>
 <%
     if( usertext == null )
     {
@@ -106,19 +106,34 @@
        protocol = "https://";
    }   
 %>
-
-<form accept-charset="<wiki:ContentEncoding/>" method="post" 
-      action="<wiki:CheckRequestContext context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>" 
-      name="editform" id="editform"
-      enctype="application/x-www-form-urlencoded">
-    <p>
-        <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-        <input name="page" type="hidden" value="<wiki:Variable var="pagename" />" />
-        <input name="action" type="hidden" value="save" />
-        <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
-    </p>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
-<script type="text/javascript">
+
+  <%-- Print any messages or validation errors --%>
+  <s:messages />
+  <s:errors />
+
+  <s:form beanclass="org.apache.wiki.action.EditActionBean"
+              class="wikiform"
+                 id="editform"
+             method="post"
+      acceptcharset="UTF-8"
+            enctype="application/x-www-form-urlencoded">
+
+    <%-- If any conflicts, print the conflicting text here --%>
+    <c:if test="${not empty wikiActionBean.conflictText}">
+      <p>
+        <s:label for="conflictText" />
+        <s:textarea name="conflictText" readonly="true" />
+      </p>
+    </c:if>
+    
+    <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
+    <p id="submitbuttons">
+      <s:hidden name="page" />
+      <s:hidden name="startTime" />
+    </p>
+    
+    <script type="text/javascript">
 //<![CDATA[
 
    var oFCKeditor = new FCKeditor( 'htmlPageText' );
@@ -135,37 +150,43 @@
    oFCKeditor.Create();
 
 //]]>
-</script>
-
-<noscript>
-  <div class="error"><fmt:message key="editor.fck.noscript" /></div>
-</noscript>
-
-   <p>
-     <label for="changenote"><fmt:message key='editor.plain.changenote' /></label>
-     <input type="text" id="changenote" name="changenote" size="80" maxlength="80" value="<c:out value='${changenote}' />" />
-   </p>
-   <wiki:CheckRequestContext context="comment">
-    <fieldset>
-	<legend><fmt:message key="editor.commentsignature" /></legend>
+    </script>
+    
+    <noscript>
+      <div class="error"><fmt:message key="editor.fck.noscript" /></div>
+    </noscript>
+    
     <p>
-    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name" /></label>
-    <input type="text" name="author" id="authorname" value="<c:out value='${sessionScope.author}' />" />
-    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-    <label for="rememberme"><fmt:message key="editor.plain.remember" /></label>
+      <s:label for="changeNote" />
+      <s:text name="changeNote" size="50" maxlength="80" />
     </p>
-	<%--FIXME: seems not to read the email of the user, but some odd previously cached value --%>
+    
+    <wiki:CheckRequestContext context="comment">
+      <fieldset>
+        <legend><fmt:message key="editor.commentsignature" /></legend>
+        <p><s:label for="author" accesskey="n" />&nbsp;<s:text name="author" /></p>
+        <p><s:label for="email" accesskey="m" />&nbsp;<s:text name="email" size="24" /></p>
+      </fieldset>
+    </wiki:CheckRequestContext>
+    
     <p>
-    <label for="link" accesskey="m"><fmt:message key="editor.plain.email" /></label>
-    <input type="text" name="link" id="link" size="24" value="<c:out value='${sessionScope.link}' />" />
+      <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
+      <wiki:CheckRequestContext context='edit'>
+        <s:submit name="save" accesskey="s" title="${saveTitle}" />
+      </wiki:CheckRequestContext>
+      <wiki:CheckRequestContext context='comment'>
+        <s:submit name="comment" accesskey="s" title="${saveTitle}" />
+      </wiki:CheckRequestContext>
+      
+      <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
+      <s:submit name="preview" accesskey="v" title="${previewTitle}" />
+      
+      <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
+      <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
     </p>
-    </fieldset>
-  </wiki:CheckRequestContext>
 
-  <p>
-    <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit" />' />
-    <input name='preview' type='submit' value='<fmt:message key="editor.plain.preview.submit" />' />
-    <input name='cancel' type='submit' value='<fmt:message key="editor.plain.cancel.submit" />' />
-  </p>
+    <%-- Spam detection fields --%>
+    <wiki:SpamProtect />
+  </s:form>
+
 </div>
-</form>
