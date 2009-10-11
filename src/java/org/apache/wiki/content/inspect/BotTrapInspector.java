@@ -28,6 +28,15 @@ public class BotTrapInspector implements Inspector
     {
     }
 
+    /**
+     * Returns {@link Finding.Result#FAILED} if any of the spam parameters are invalid;
+     * {@code null} otherwise.
+     * @param inspection the current Inspection
+     * @param content the content that is being inspected
+     * @param change the subset of the content that represents the added or
+     *            deleted text since the last change
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
+     */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {
         WikiContext context = inspection.getContext();
@@ -73,6 +82,6 @@ public class BotTrapInspector implements Inspector
             return new Finding[] { new Finding( Topic.SPAM, Finding.Result.FAILED, "Bot detected: missing UTF-8 parameter." ) };
         }
 
-        return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "Spam parameters ok." ) };
+        return null;
     }
 }

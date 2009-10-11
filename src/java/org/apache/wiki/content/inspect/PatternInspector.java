@@ -53,14 +53,13 @@ public class PatternInspector implements Inspector
     }
 
     /**
-     * Checks that the changed content does not contain any text that matches
-     * patterns on the spam blacklist.
-     * 
+     * Returns {@link Finding.Result#FAILED} if any contents are contained on
+     * the banned-word pattern blacklist; {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that
+     * @param content the content that is being inspected
      * @param change the subset of the content that represents the added or
      *            deleted text since the last change
-     * @throws InspectionInterruptedException if the inspection must be halted
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {
@@ -72,7 +71,7 @@ public class PatternInspector implements Inspector
         //
         if( m_spamPatterns == null || context.getPage().getName().equals( m_forbiddenWordsPage ) )
         {
-            return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "No bad patterns defined." ) };
+            return null;
         }
 
         String ch = change.toString();
@@ -93,7 +92,7 @@ public class PatternInspector implements Inspector
                                                                                        + inspection.getUid() + ")" ) };
             }
         }
-        return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "No bad patterns in the proposed change." ) };
+        return null;
     }
 
     /**

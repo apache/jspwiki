@@ -1,3 +1,16 @@
+2009-10-11 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-162
+
+        * Many unit test fixes. Minor tweaks to Inspector classes.
+        Implemented ContentManager.pageExists() for versions; the
+        lack of this feature was causing several tests to fail.
+        When LDAP test harness is running, overall test scores
+        are back up to 96%.
+        
+        * Comment.jsp receives the Stripes treatment (initial checkin;
+        not fully tested yet).
+
 2009-10-09 Juan Pablo Santos <juanpablo.santos@gmail.com>
 
         * updated es translation (no version bump).

@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.action.ViewActionBean;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.ContentManager;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -105,7 +106,8 @@ public class ViewActionBeanTest extends TestCase
 
         // ...we should get a dummy page for the 'page' property
         ViewActionBean bean = trip.getActionBean(ViewActionBean.class);
-        assertNull( bean.getPage() );
+        assertNotNull( bean.getPage() );
+        assertEquals( m_engine.getFrontPage( ContentManager.DEFAULT_SPACE ), bean.getPage() );
         
         // ...and the destination should be Search.jsp
         assertEquals("/Search.jsp", trip.getDestination() );

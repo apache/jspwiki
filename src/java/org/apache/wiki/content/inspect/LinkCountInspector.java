@@ -52,6 +52,15 @@ public class LinkCountInspector implements Inspector
         m_maxUrls = TextUtil.getIntegerProperty( config.getProperties(), PROP_MAXURLS, m_maxUrls );
     }
 
+    /**
+     * Returns {@link Finding.Result#FAILED} if the proposed change contains too many
+     * links; {@code null} otherwise.
+     * @param inspection the current Inspection
+     * @param content the content that is being inspected
+     * @param change the subset of the content that represents the added or
+     *            deleted text since the last change
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
+     */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {
         // Calculate the number of links in the addition.
@@ -73,7 +82,7 @@ public class LinkCountInspector implements Inspector
             return new Finding[] { new Finding( Topic.SPAM, Finding.Result.FAILED, "You look like a spammer to me. (Incident code "
                                                                                    + inspection.getUid() + ")" ) };
         }
-        return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "Change does not have too many links." ) };
+        return null;
     }
 
 }

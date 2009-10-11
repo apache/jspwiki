@@ -577,7 +577,7 @@ public class ContentManager implements WikiEventListener
         
             QueryManager mgr = session.getWorkspace().getQueryManager();
             
-            Query q = mgr.createQuery( "/jcr:root/"+JCR_PAGES_NODE+((space != null) ? ("/"+space) : "")+"/*", Query.XPATH );
+            Query q = mgr.createQuery( "/jcr:root/"+JCR_PAGES_NODE+((space != null) ? ("/"+space) : "/*")+"/*", Query.XPATH );
             
             QueryResult qr = q.execute();
             
@@ -641,7 +641,7 @@ public class ContentManager implements WikiEventListener
      */
     private boolean isSpaceRoot(Node nd) throws RepositoryException
     {
-        return nd.getPath().startsWith( "/"+JCR_PAGES_NODE ) && nd.getDepth() == 2;
+        return nd != null && nd.getPath().startsWith( "/"+JCR_PAGES_NODE ) && nd.getDepth() == 2;
     }
     
     /**
@@ -920,6 +920,22 @@ public class ContentManager implements WikiEventListener
         try
         {
             node = getJCRNode( jcrPath );
+            if ( node == null )
+            {
+                return false;
+            }
+            
+            if ( version == WikiProvider.LATEST_VERSION )
+            {
+                return !node.isNew();
+            }
+            
+            String v = Integer.toString( version );
+            if ( node.hasNode( WIKI_VERSIONS ) )
+            {
+                Node versions = node.getNode( WIKI_VERSIONS );
+                return versions.hasNode( v ) && !versions.getNode( v ).isNew();
+            }
         }
         catch ( PathNotFoundException e )
         {
@@ -930,9 +946,7 @@ public class ContentManager implements WikiEventListener
         {
             throw new ProviderException( "Unable to check for page existence", e );
         }
-        
-        // Node "exists" only if it's been saved already.
-        return  !node.isNew();
+        return false;
     }
 
     /**

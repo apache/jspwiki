@@ -33,6 +33,11 @@ public class UserInspector implements Inspector
      * ignore authenticated users, this method returns
      * {@link Finding.Result#PASSED}. Otherwise, the method returns {@code null}
      * but does not affect the score in any way.
+     * @param inspection the current Inspection
+     * @param content the content that is being inspected
+     * @param change the subset of the content that represents the added or
+     *            deleted text since the last change
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {

@@ -19,6 +19,15 @@ public class BanListInspector implements Inspector
     {
     }
 
+    /**
+     * Returns {@link Finding.Result#FAILED} if the IP address is banned;
+     * {@code null} otherwise.
+     * @param inspection the current Inspection
+     * @param content the content that is being inspected
+     * @param change the subset of the content that represents the added or
+     *            deleted text since the last change
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
+     */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {
         ReputationManager banList = inspection.getPlan().getReputationManager();
@@ -35,6 +44,6 @@ public class BanListInspector implements Inspector
                                                         + " seconds of ban left)" ) };
             }
         }
-        return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "IP address is ok." ) };
+        return null;
     }
 }

@@ -55,6 +55,9 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
     
     /** WikiPrincipal type denoting a user's wiki name. */
     public static final String WIKI_NAME  = "wikiName";
+
+    /** WikiPrincipal type denoting an IP address. */
+    public static final String IP_ADDRESS = "ipAddress";
     
     /** Generic WikiPrincipal of unspecified type. */
     public static final String UNSPECIFIED  = "unspecified";
@@ -66,7 +69,7 @@ public final class WikiPrincipal implements Principal, Comparable<Principal>, Se
     
     static
     {
-        VALID_TYPES = new String[] { FULL_NAME, LOGIN_NAME, WIKI_NAME, UNSPECIFIED };
+        VALID_TYPES = new String[] { FULL_NAME, LOGIN_NAME, WIKI_NAME, IP_ADDRESS, UNSPECIFIED };
         Arrays.sort( VALID_TYPES );
     }
 

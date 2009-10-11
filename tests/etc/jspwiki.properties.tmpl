@@ -1,4 +1,4 @@
-# 
+`# 
 #    JSPWiki - a JSP-based WikiWiki clone.
 #
 #    Licensed to the Apache Software Foundation (ASF) under one
@@ -139,3 +139,12 @@ jspwiki.urlConstructor = StripesURLConstructor
 admin.passwordHash={SSHA}JtQ3xFdBNDuYw5R8u8nhsg5xqsUpbiZhvOoisQ==
 jspwiki.keychainPassword=Ga5ZrVe859WUPqG8
 
+# Spam inspector weights
+inspectorWeight.spam.org.apache.wiki.content.inspect.AkismetInspector=0.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.BanListInspector=1.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.BotTrapInspector=1.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.ChangeRateInspector=1.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.LinkCountInspector=1.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.PatternInspector=1.0
+inspectorWeight.spam.org.apache.wiki.content.inspect.UserInspector=0.0
+spamScoreLimit=-0.5

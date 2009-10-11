@@ -48,7 +48,7 @@ import org.apache.wiki.content.inspect.*;
  * event handler resolution, and just after parameter binding, but before any
  * other custom validation routines have run.
  */
-@Intercepts( { LifecycleStage.HandlerResolution } )
+@Intercepts( { LifecycleStage.CustomValidation } )
 public class SpamInterceptor implements Interceptor
 {
     /**
@@ -57,9 +57,10 @@ public class SpamInterceptor implements Interceptor
      * creates a new {@link Inspection} for each ActionBean parameter indicated
      * by the annotation. The {@link InspectionPlan} for the Inspection is
      * obtained by calling
-     * {@link SpamInspectionFactory#getInspectionPlan(WikiEngine, java.util.Properties)}
-     * . If any of the modifications are determined to be spam, a Stripes
+     * {@link SpamInspectionFactory#getInspectionPlan(WikiEngine, java.util.Properties)}.
+     * If any of the modifications are determined to be spam, a Stripes
      * {@link ValidationError} is added to the ActionBeanContext.
+     * @return always returns {@code null}
      */
     public Resolution intercept( ExecutionContext context ) throws Exception
     {
@@ -140,10 +141,11 @@ public class SpamInterceptor implements Interceptor
                 PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( propExpression, actionBean );
                 Object value = evaluation.getValue();
                 {
-                    if( value != null )
+                    if ( value == null )
                     {
-                        map.put( beanProperty, value );
+                        value = "";
                     }
+                    map.put( beanProperty, value );
                 }
             }
             catch( NoSuchPropertyException e )

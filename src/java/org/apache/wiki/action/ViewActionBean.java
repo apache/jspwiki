@@ -22,10 +22,14 @@
 package org.apache.wiki.action;
 
 import java.net.URI;
+import java.util.List;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
+import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.Validate;
+import net.sourceforge.stripes.validation.ValidationError;
+import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
@@ -39,7 +43,6 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
 /**
  * Displays the wiki page a users requested, resolving special page names and
  * redirecting if needed.
- * 
  */
 @UrlBinding( "/Wiki.action" )
 public class ViewActionBean extends AbstractPageActionBean
@@ -90,7 +93,7 @@ public class ViewActionBean extends AbstractPageActionBean
     {
         return new ForwardResolution( "/PageInfo.jsp" );
     }
-    
+
     /**
      * <p>
      * After the binding and validation
@@ -118,12 +121,13 @@ public class ViewActionBean extends AbstractPageActionBean
     {
         WikiEngine engine = getContext().getEngine();
 
-        if ( getPage() == null )
+        if( isSpecialPageView() )
         {
-            // The page might be null because it's a special page WikiPageTypeConverter
+            // The page might be null because it's a special page
+            // WikiPageTypeConverter
             // refused to convert. If so, redirect.
             String pageName = getContext().getRequest().getParameter( "page" );
-            if ( pageName != null )
+            if( pageName != null )
             {
                 URI uri = getContext().getEngine().getSpecialPageReference( pageName );
                 if( uri != null )
@@ -164,20 +168,21 @@ public class ViewActionBean extends AbstractPageActionBean
             return new RedirectResolution( getContext().getViewURL( specialUrl ) );
         }
 
-        // Ok, the page exists. If attachment, make sure it's directed to the "info" handler
+        // Ok, the page exists. If attachment, make sure it's directed to the
+        // "info" handler
         WikiPage page = getPage();
         String handler = getContext().getEventName();
-        if ( getPage().isAttachment() && !"info".equals( handler ) )
+        if( getPage().isAttachment() && !"info".equals( handler ) )
         {
             return new RedirectResolution( ViewActionBean.class, "info" ).addParameter( "page", page.getPath().toString() );
         }
-        
+
         return null;
     }
 
     /**
-     * {@inheritDoc}. This method overrides the superclass method
-     * by disabling validation of the <code>page</code> field.
+     * {@inheritDoc}. This method overrides the superclass method by disabling
+     * validation of the <code>page</code> field.
      */
     @Override
     @Validate( required = false )
@@ -185,7 +190,7 @@ public class ViewActionBean extends AbstractPageActionBean
     {
         super.setPage( page );
     }
-    
+
     /**
      * Sets the name to rename the page to
      * 
@@ -211,5 +216,34 @@ public class ViewActionBean extends AbstractPageActionBean
     public Resolution view()
     {
         return new ForwardResolution( "/Wiki.jsp" );
+    }
+
+    /**
+     * Returns {@code true} if the WikiPageTypeConverter, upon converting the
+     * page, determined that the page name parameter actually referred to a
+     * special page.
+     * 
+     * @return {@code true} if the {@code page} parameter referred to a special
+     *         page; {@code false} otherwise.
+     */
+    private boolean isSpecialPageView()
+    {
+        ValidationErrors errors = getContext().getValidationErrors();
+        List<ValidationError> fieldErrors = errors.get( "page" );
+        if( fieldErrors == null )
+        {
+            return false;
+        }
+        for( ValidationError error : fieldErrors )
+        {
+            if( error instanceof LocalizableError )
+            {
+                if( "edit.specialPage".equals( ((LocalizableError) error).getMessageKey() ) )
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

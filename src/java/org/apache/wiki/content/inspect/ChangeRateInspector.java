@@ -49,6 +49,15 @@ public class ChangeRateInspector implements Inspector
                   + " mins, max page changes/m inute: " + m_limitSinglePageChanges );
     }
 
+    /**
+     * Returns {@link Finding.Result#FAILED} if the user has recently submitted too many
+     * aggregate or identical changes; {@code null} otherwise.
+     * @param inspection the current Inspection
+     * @param content the content that is being inspected
+     * @param change the subset of the content that represents the added or
+     *            deleted text since the last change
+     * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
+     */
     public Finding[] inspect( Inspection inspection, String content, Change change )
     {
         HttpServletRequest req = inspection.getContext().getHttpRequest();
@@ -97,7 +106,7 @@ public class ChangeRateInspector implements Inspector
             return new Finding[] { new Finding( Topic.SPAM, Finding.Result.FAILED, "You look like a spammer to me. (Incident code "
                                                                                    + inspection.getUid() + ")" ) };
         }
-        return new Finding[] { new Finding( Topic.SPAM, Finding.Result.PASSED, "Passed change-rate and change-similarity tests." ) };
+        return null;
     }
 
 }

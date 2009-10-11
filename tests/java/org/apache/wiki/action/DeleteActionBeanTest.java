@@ -29,6 +29,7 @@ import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.Users;
 
@@ -43,6 +44,7 @@ public class DeleteActionBeanTest extends TestCase
         try
         {
             TestEngine.emptyWorkDir();
+            props.load( TestEngine.findTestProperties() );
             m_engine = new TestEngine( props );
         }
         catch( Exception e )
@@ -162,8 +164,8 @@ public class DeleteActionBeanTest extends TestCase
         assertEquals( 0, errors.size() );
 
         // Verify that there is only one version left
+        assertTrue( m_engine.pageExists( "Test", WikiProvider.LATEST_VERSION ) );
         assertFalse( m_engine.pageExists( "Test", 1 ) );
-        assertTrue( m_engine.pageExists( "Test", 2 ) );
     }
 
     public void testValidation() throws Exception

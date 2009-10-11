@@ -51,7 +51,7 @@ public class SpamInspectionFactoryTest extends TestCase
 
     private TestEngine m_engine;
 
-    private static final float PERFECT_SCORE = 62f;
+    private static final float PERFECT_SCORE = 0f;
 
     public SpamInspectionFactoryTest( String s )
     {
@@ -92,7 +92,7 @@ public class SpamInspectionFactoryTest extends TestCase
         // Running the inspection should cause the BanListInspector to fail
         String newText = "Sample text";
         inspection.inspect( newText, null );
-        assertEquals( PERFECT_SCORE - 2 * 2f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -2f, inspection.getScore( Topic.SPAM ) );
     }
 
     /**
@@ -124,7 +124,7 @@ public class SpamInspectionFactoryTest extends TestCase
             inspection.inspect( newText, null );
         }
         // Our change-rate check should fail
-        assertEquals( PERFECT_SCORE - 2 * 4f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -4f, inspection.getScore( Topic.SPAM ) );
     }
 
     /**
@@ -153,7 +153,7 @@ public class SpamInspectionFactoryTest extends TestCase
         inspection.inspect( newText, null );
 
         // Link-count check should fail
-        assertEquals( PERFECT_SCORE - 2 * 8f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -8f, inspection.getScore( Topic.SPAM ) );
     }
 
     /**
@@ -186,7 +186,7 @@ public class SpamInspectionFactoryTest extends TestCase
         }
         inspection.inspect( newText, null );
         // Our similarity check should fail
-        assertEquals( PERFECT_SCORE - 2 * 4f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -4f, inspection.getScore( Topic.SPAM ) );
     }
     
     /**
@@ -218,14 +218,14 @@ public class SpamInspectionFactoryTest extends TestCase
         request.getParameterMap().remove( BotTrapInspector.REQ_ENCODING_CHECK );
         inspection = createInspection( request );
         inspection.inspect( newText, null );
-        assertEquals( PERFECT_SCORE - 2 * 16f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Removing the encrypted spam param suggests we have a bot
         setupSpamParams( request );
         request.getParameterMap().remove( BotTrapInspector.REQ_SPAM_PARAM );
         inspection = createInspection( request );
         inspection.inspect( newText, null );
-        assertEquals( PERFECT_SCORE - 2 * 16f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Supplying a non-null value for the first (trap) spam param should
         // trigger the bot trap
@@ -233,14 +233,14 @@ public class SpamInspectionFactoryTest extends TestCase
         request.getParameterMap().put( BotTrapInspector.REQ_TRAP_PARAM, new String[] { "botSuppliedValue" } );
         inspection = createInspection( request );
         inspection.inspect( newText, null );
-        assertEquals( PERFECT_SCORE - 2 * 16f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Removing the second (token) spam param should trip it also
         setupSpamParams( request );
         request.getParameterMap().remove( "TOKENA" );
         inspection = createInspection( request );
         inspection.inspect( newText, null );
-        assertEquals( PERFECT_SCORE - 2 * 16f, inspection.getScore( Topic.SPAM ) );
+        assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // / Re-run the inspection with all parameters intact
         setupSpamParams( request );
@@ -265,7 +265,8 @@ public class SpamInspectionFactoryTest extends TestCase
     public void testGetScoreLimit() throws Exception
     {
         SpamInspectionFactory.getInspectionPlan( m_engine, m_props );
-        assertEquals( SpamInspectionFactory.DEFAULT_SCORE_LIMIT, SpamInspectionFactory.defaultSpamLimit( m_engine ) );
+        // the value in the test properties file
+        assertEquals( -0.5f, SpamInspectionFactory.defaultSpamLimit( m_engine ) );
     }
 
     public void testGetWeight() throws Exception

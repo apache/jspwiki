@@ -83,7 +83,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
         {
             m_handler.handle( callbacks );
             HttpServletRequest request = hcb.getRequest();
-            WikiPrincipal ipAddr = new WikiPrincipal( request.getRemoteAddr() );
+            WikiPrincipal ipAddr = new WikiPrincipal( request.getRemoteAddr(), WikiPrincipal.IP_ADDRESS );
             if ( log.isDebugEnabled() )
             {
                 HttpSession session = request.getSession( false );

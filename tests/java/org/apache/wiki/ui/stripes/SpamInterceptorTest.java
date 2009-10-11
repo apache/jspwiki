@@ -88,10 +88,11 @@ public class SpamInterceptorTest extends TestCase
         // Verify that we got the ActionBean...
         trip.execute( "test" );
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
-        assertEquals( null, bean.getPage() );
+        assertNull( bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...but that we failed the token check (sent back to source page to display errors)
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        assertEquals( 1, trip.getValidationErrors().size() );
     }
 
     public void testInvalidTrap() throws Exception
@@ -110,8 +111,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...but that we failed the token check (sent back to source page to display errors)
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        assertEquals( 1, trip.getValidationErrors().size() );
     }
 
     public void testMissingToken() throws Exception
@@ -129,8 +131,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...but that we failed the token check (sent back to source page to display errors)
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        assertEquals( 1, trip.getValidationErrors().size() );
     }
 
     public void testMissingTrap() throws Exception
@@ -166,8 +169,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...but that we failed the token check (sent back to source page to display errors)
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        assertEquals( 1, trip.getValidationErrors().size() );
     }
 
     public void testNoToken() throws Exception
@@ -183,8 +187,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check
-        assertEquals( "/Wiki.action?view=&page=SessionExpired", trip.getDestination() );
+        // ...but that we failed the token check (sent back to source page to display errors)
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        assertEquals( 1, trip.getValidationErrors().size() );
     }
 
     public void testToken() throws Exception
@@ -192,6 +197,7 @@ public class SpamInterceptorTest extends TestCase
         // Add the trap + token params
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
         TestEngine.addSpamProtectParams( trip );
+        trip.addParameter( "text", "test value" );
 
         // Verify that we got the ActionBean...
         trip.execute( "test" );

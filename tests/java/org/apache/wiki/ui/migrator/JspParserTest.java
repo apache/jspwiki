@@ -340,12 +340,12 @@ public class JspParserTest extends TestCase
         JspParser parser = new JspParser();
         JspDocument doc = parser.parse( s );
 
-        // Should result in 14 nodes parsed (7 tags/directives + 7
+        // Should result in 16 nodes parsed (8 tags/directives + 8
         // text/whitespace nodes
         Node node;
         Node attribute;
         List<Node> nodes = doc.getNodes();
-        assertEquals( 14, nodes.size() );
+        assertEquals( 16, nodes.size() );
         int i = 0;
 
         // Test line 1 aka nodes 0+1
@@ -353,11 +353,34 @@ public class JspParserTest extends TestCase
         assertEquals( 1, node.getLine() );
         assertEquals( 1, node.getColumn() );
         assertEquals( 0, node.getStart() );
-        assertEquals( 79, node.getEnd() );
+        assertEquals( 867, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.JSP_COMMENT, node.getType() );
+        assertEquals( NodeType.ROOT, node.getParent().getType() );
+        assertEquals( 8, node.getSiblings().size() );
+        i++;
+        node = nodes.get( i );
+        assertEquals( 20, node.getLine() );
+        assertEquals( 5, node.getColumn() );
+        assertEquals( 867, node.getStart() );
+        assertEquals( 868, node.getEnd() );
+        assertEquals( 0, node.getChildren().size() );
+        assertEquals( NodeType.TEXT, node.getType() );
+        assertEquals( NodeType.ROOT, node.getParent().getType() );
+        assertEquals( 8, node.getSiblings().size() );
+        assertEquals( "(TEXT)", node.getName() );
+        i++;
+        
+        // Test line 21 aka nodes 2+3
+        node = nodes.get( i );
+        assertEquals( 21, node.getLine() );
+        assertEquals( 1, node.getColumn() );
+        assertEquals( 868, node.getStart() );
+        assertEquals( 947, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.JSP_DIRECTIVE, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "taglib", node.getName() );
         assertEquals( 2, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
@@ -368,27 +391,27 @@ public class JspParserTest extends TestCase
         assertEquals( "stripes", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 1, node.getLine() );
+        assertEquals( 21, node.getLine() );
         assertEquals( 80, node.getColumn() );
-        assertEquals( 79, node.getStart() );
-        assertEquals( 80, node.getEnd() );
+        assertEquals( 947, node.getStart() );
+        assertEquals( 948, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 2 aka nodes 2+3
+        // Test line 22 aka nodes 4+5
         node = nodes.get( i );
-        assertEquals( 2, node.getLine() );
+        assertEquals( 22, node.getLine() );
         assertEquals( 1, node.getColumn() );
-        assertEquals( 80, node.getStart() );
-        assertEquals( 189, node.getEnd() );
+        assertEquals( 948, node.getStart() );
+        assertEquals( 1057, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "stripes:useActionBean", node.getName() );
         assertEquals( 3, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
@@ -396,27 +419,27 @@ public class JspParserTest extends TestCase
         assertEquals( "org.apache.wiki.action.LoginActionBean", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 2, node.getLine() );
+        assertEquals( 22, node.getLine() );
         assertEquals( 110, node.getColumn() );
-        assertEquals( 189, node.getStart() );
-        assertEquals( 190, node.getEnd() );
+        assertEquals( 1057, node.getStart() );
+        assertEquals( 1058, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 3 aka nodes 4+5
+        // Test line 23 aka nodes 6+7
         node = nodes.get( i );
-        assertEquals( 3, node.getLine() );
+        assertEquals( 23, node.getLine() );
         assertEquals( 1, node.getColumn() );
-        assertEquals( 190, node.getStart() );
-        assertEquals( 257, node.getEnd() );
+        assertEquals( 1058, node.getStart() );
+        assertEquals( 1125, node.getEnd() );
         assertEquals( 4, node.getChildren().size() );
         assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "stripes:layout-render", node.getName() );
         assertEquals( 1, ((Tag) node).getAttributes().size() );
         attribute = ((Tag) node).getAttributes().get( 0 );
@@ -424,10 +447,10 @@ public class JspParserTest extends TestCase
         assertEquals( "/templates/default/DefaultLayout.jsp", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 3, node.getLine() );
+        assertEquals( 23, node.getLine() );
         assertEquals( 68, node.getColumn() );
-        assertEquals( 257, node.getStart() );
-        assertEquals( 260, node.getEnd() );
+        assertEquals( 1125, node.getStart() );
+        assertEquals( 1128, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -435,12 +458,12 @@ public class JspParserTest extends TestCase
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 4 aka nodes 6+7
+        // Test line 24 aka nodes 8+9
         node = nodes.get( i );
-        assertEquals( 4, node.getLine() );
+        assertEquals( 24, node.getLine() );
         assertEquals( 3, node.getColumn() );
-        assertEquals( 260, node.getStart() );
-        assertEquals( 301, node.getEnd() );
+        assertEquals( 1128, node.getStart() );
+        assertEquals( 1169, node.getEnd() );
         assertEquals( 3, node.getChildren().size() );
         assertEquals( NodeType.START_TAG, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -452,10 +475,10 @@ public class JspParserTest extends TestCase
         assertEquals( "content", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 4, node.getLine() );
+        assertEquals( 24, node.getLine() );
         assertEquals( 44, node.getColumn() );
-        assertEquals( 301, node.getStart() );
-        assertEquals( 306, node.getEnd() );
+        assertEquals( 1169, node.getStart() );
+        assertEquals( 1174, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -463,12 +486,12 @@ public class JspParserTest extends TestCase
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 5 aka nodes 8+9
+        // Test line 25 aka nodes 10+11
         node = nodes.get( i );
-        assertEquals( 5, node.getLine() );
+        assertEquals( 25, node.getLine() );
         assertEquals( 5, node.getColumn() );
-        assertEquals( 306, node.getStart() );
-        assertEquals( 364, node.getEnd() );
+        assertEquals( 1174, node.getStart() );
+        assertEquals( 1232, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.EMPTY_ELEMENT_TAG, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -480,10 +503,10 @@ public class JspParserTest extends TestCase
         assertEquals( "/templates/default/LoginContent.jsp", attribute.getValue() );
         i++;
         node = nodes.get( i );
-        assertEquals( 5, node.getLine() );
+        assertEquals( 25, node.getLine() );
         assertEquals( 63, node.getColumn() );
-        assertEquals( 364, node.getStart() );
-        assertEquals( 367, node.getEnd() );
+        assertEquals( 1232, node.getStart() );
+        assertEquals( 1235, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -491,12 +514,12 @@ public class JspParserTest extends TestCase
         assertEquals( "(TEXT)", node.getName() );
         i++;
         
-        // Test line 6 aka nodes 10+11
+        // Test line 26 aka nodes 12+13
         node = nodes.get( i );
-        assertEquals( 6, node.getLine() );
+        assertEquals( 26, node.getLine() );
         assertEquals( 3, node.getColumn() );
-        assertEquals( 367, node.getStart() );
-        assertEquals( 394, node.getEnd() );
+        assertEquals( 1235, node.getStart() );
+        assertEquals( 1262, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.END_TAG, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -505,10 +528,10 @@ public class JspParserTest extends TestCase
         assertEquals( 0, ((Tag) node).getAttributes().size() );
         i++;
         node = nodes.get( i );
-        assertEquals( 6, node.getLine() );
+        assertEquals( 26, node.getLine() );
         assertEquals( 30, node.getColumn() );
-        assertEquals( 394, node.getStart() );
-        assertEquals( 395, node.getEnd() );
+        assertEquals( 1262, node.getStart() );
+        assertEquals( 1263, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.START_TAG, node.getParent().getType() );
@@ -516,28 +539,28 @@ public class JspParserTest extends TestCase
         assertEquals( "(TEXT)", node.getName() );
         i++;
 
-        // Test line 7 aka nodes 12+13
+        // Test line 27 aka nodes 14+15
         node = nodes.get( i );
-        assertEquals( 7, node.getLine() );
+        assertEquals( 27, node.getLine() );
         assertEquals( 1, node.getColumn() );
-        assertEquals( 395, node.getStart() );
-        assertEquals( 419, node.getEnd() );
+        assertEquals( 1263, node.getStart() );
+        assertEquals( 1287, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.END_TAG, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "stripes:layout-render", node.getName() );
         assertEquals( 0, ((Tag) node).getAttributes().size() );
         i++;
         node = nodes.get( i );
-        assertEquals( 7, node.getLine() );
+        assertEquals( 27, node.getLine() );
         assertEquals( 25, node.getColumn() );
-        assertEquals( 419, node.getStart() );
-        assertEquals( 420, node.getEnd() );
+        assertEquals( 1287, node.getStart() );
+        assertEquals( 1288, node.getEnd() );
         assertEquals( 0, node.getChildren().size() );
         assertEquals( NodeType.TEXT, node.getType() );
         assertEquals( NodeType.ROOT, node.getParent().getType() );
-        assertEquals( 6, node.getSiblings().size() );
+        assertEquals( 8, node.getSiblings().size() );
         assertEquals( "(TEXT)", node.getName() );
         i++;
     }
