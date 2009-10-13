@@ -128,7 +128,6 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
-        testEngine.shutdown();
         TestEngine testEngine2 = new TestEngine( props );
 
         WikiContext context = testEngine2.getWikiContextFactory().newViewContext( testEngine2.createPage( PAGE_NAME ) );
@@ -136,6 +135,8 @@ public class JSPWikiMarkupParserTest extends TestCase
                                                          new BufferedReader( new StringReader(src)) );
 
         XHTMLRenderer conv = new XHTMLRenderer( context, r.parse() );
+
+        testEngine2.shutdown();
 
         return conv.getString();
     }

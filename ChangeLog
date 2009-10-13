@@ -1,3 +1,15 @@
+2009-10-13 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-163
+        
+        TestEngine.emptyWorkdir() was only emptying the workdir if the
+        workdir contains a file called "refmgr.ser" (dunno why), causing the 
+        PageViewPluginTest to fail.
+        Got rid of a bunch of error messages in the log by adding 
+        engine.shutdown() statements to testcases.
+        Still a lot Stripes messages "..Configuration object cannot be located.."
+        remaining.
+        
 2009-10-11 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-162

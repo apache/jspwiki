@@ -35,16 +35,24 @@ import junit.framework.TestSuite;
 public class SpecialPageNameResolverTest extends TestCase
 {
     private SpecialPageNameResolver resolver;
+    WikiEngine m_engine ;
     
     public void setUp() throws Exception
     {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        WikiEngine engine = new TestEngine( props );
+        m_engine = new TestEngine( props );
         
-        resolver = new SpecialPageNameResolver(engine);
+        resolver = new SpecialPageNameResolver(m_engine);
     }
-    
+
+    public void tearDown() throws Exception
+    {
+        m_engine.deletePage( "SinglePage" );
+        m_engine.deletePage( "PluralPages" );
+        m_engine.shutdown();
+    }
+        
     public void testSpecialPageReference()
     {
         URI uri;

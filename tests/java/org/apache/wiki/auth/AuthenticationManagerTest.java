@@ -123,6 +123,12 @@ public class AuthenticationManagerTest extends TestCase
         m_session = WikiSessionTest.adminSession( m_engine );
     }
 
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        m_engine.shutdown();
+    }
+
     /**
      * Tests a dummy WebAuthorizer that is guaranteed to return true for one
      * role for each of the two <code>isInRole</code> methods.
@@ -134,6 +140,7 @@ public class AuthenticationManagerTest extends TestCase
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put( AuthorizationManager.PROP_AUTHORIZER, "org.apache.wiki.auth.AuthenticationManagerTest$DummyAuthorizer" );
+        m_engine.shutdown();
         m_engine = new TestEngine( props );
 
         // Start a session without any container roles: DummyAuthorizer should ALWAYS allow AuthorizerRole
@@ -169,6 +176,7 @@ public class AuthenticationManagerTest extends TestCase
 
         // Init the engine and verify that we initialized with a custom auth
         // login module
+        m_engine.shutdown();
         WikiEngine engine = new TestEngine( props );
         AuthenticationManager authMgr = engine.getAuthenticationManager();
         assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
@@ -186,6 +194,7 @@ public class AuthenticationManagerTest extends TestCase
 
         // Init the engine and verify that we initialized with the correct
         // options
+        m_engine.shutdown();
         WikiEngine engine = new TestEngine( props );
         AuthenticationManager authMgr = engine.getAuthenticationManager();
         Map<String, String> options = authMgr.m_loginModuleOptions;

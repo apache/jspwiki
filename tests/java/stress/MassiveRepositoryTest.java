@@ -51,6 +51,7 @@ public class MassiveRepositoryTest extends TestCase
     {
         engine.emptyRepository();
         super.tearDown();
+        engine.shutdown();
     }
 
     private String getName( int i )

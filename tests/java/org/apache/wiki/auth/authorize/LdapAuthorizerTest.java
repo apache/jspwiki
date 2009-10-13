@@ -85,11 +85,15 @@ public class LdapAuthorizerTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        File file = new File("tests/etc/WEB-INF/test-keychain" );
-        if ( file.exists() )
+        File file = new File( "tests/etc/WEB-INF/test-keychain" );
+        if( file.exists() )
         {
             file.delete();
         }
+
+        super.tearDown();
+        m_engine.shutdown();
+
     }
 
     public void testGetRoles() throws Exception

@@ -53,6 +53,8 @@ public class GroupsTest extends TestCase
         super.tearDown();
         
         m_testEngine.deletePage( "Test" );
+        
+        m_testEngine.shutdown();
     }
     
     public void testTag() throws Exception

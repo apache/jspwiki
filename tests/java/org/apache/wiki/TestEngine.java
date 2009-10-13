@@ -199,7 +199,7 @@ public class TestEngine extends WikiEngine
             {
                 File f = new File( workdir );
 
-                if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() )
+                if( f.exists() && f.isDirectory()  )
                 {
                     deleteAll( f );
                 }

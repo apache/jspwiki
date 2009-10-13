@@ -53,6 +53,7 @@ public class EnglishPluralsPageNameResolverTest extends TestCase
     {
         m_engine.deletePage( "SinglePage" );
         m_engine.deletePage( "PluralPages" );
+        m_engine.shutdown();
     }
     
     public void testFinalPageName() throws Exception

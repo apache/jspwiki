@@ -54,6 +54,7 @@ public class RenderingManagerTest extends TestCase
     protected void tearDown() throws Exception
     {
         m_engine.deletePage( "TestPage" );
+        m_engine.shutdown();
     }
         
     /**

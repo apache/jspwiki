@@ -69,6 +69,8 @@ public final class StressTestSpeed extends TestCase
         f = new File( files, "RCS" );
 
         f.delete();
+        
+        engine.shutdown();
     }
 
     public void testSpeed1()

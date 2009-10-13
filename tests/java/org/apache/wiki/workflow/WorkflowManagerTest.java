@@ -23,7 +23,6 @@ package org.apache.wiki.workflow;
 import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -35,7 +34,7 @@ public class WorkflowManagerTest extends TestCase
 {
     protected Workflow w;
     protected WorkflowManager wm;
-    protected WikiEngine m_engine;
+    protected TestEngine m_engine;
     
     protected void setUp() throws Exception
     {

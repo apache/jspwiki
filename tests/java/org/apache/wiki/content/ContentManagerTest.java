@@ -67,6 +67,7 @@ public class ContentManagerTest extends TestCase
         }
         
         super.tearDown();
+        m_engine.shutdown();
     }
 
     public void testContentManagerGet() throws WikiException
