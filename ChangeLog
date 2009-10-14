@@ -1,3 +1,10 @@
+2009-10-13 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-164
+
+        * Additional unit test fixes. Pass rate is now over 97% when LDAP test
+        harness running. Checked in Priha 0.5.2.
+
 2009-10-13 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-163
