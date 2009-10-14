@@ -126,97 +126,94 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                 try
                 {
                     Date lastmod = pageref.getLastModified();
-
-                    if( lastmod == null || lastmod.before( sincedate.getTime() ) )
+                    if( lastmod != null && lastmod.after( sincedate.getTime() ) )
                     {
-                        break;
-                    }
-                
-                    if( !isSameDay( lastmod, olddate ) )
-                    {
-                        tr row = new tr();
-                        td col = new td();
-                    
-                        col.setColSpan(tablewidth).setClass("date"); 
-                        col.addElement( new b().addElement(fmt.format(lastmod)) );
-
-                        rt.addElement(row);
-                        row.addElement(col);                    
-                        olddate = lastmod;
-                    }
-
-                    String link = context.getURL( pageref.isAttachment() ? WikiContext.ATTACH : WikiContext.VIEW, 
-                                                  pageref.getName() ) ;
-                
-                    a linkel = new a(link,engine.beautifyTitle(pageref.getPath()));
-                
-                    tr row = new tr();
-                
-                    td col = new td().setWidth("30%").addElement(linkel);
-
-                    //
-                    //  Add the direct link to the attachment info.
-                    //
-                    if( pageref.isAttachment() )
-                    {
-                        linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
-                        linkel.setClass("infolink");
-                        linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
-
-                        col.addElement( linkel );
-                    }
-
-                
-                    row.addElement(col);
-                    rt.addElement(row);
-                
-                    if( pageref.isAttachment() )
-                    {
-                        row.addElement( new td(tfmt.format(lastmod)).setClass("lastchange") );
-                    }
-                    else
-                    {
-                        td infocol = (td) new td().setClass("lastchange");
-                        infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
-                        row.addElement(infocol);
-                    }
-
-                    //
-                    //  Display author information.
-                    //
-
-                    if( showAuthor )
-                    {
-                        String author = pageref.getAuthor();
-
-                        td authorinfo = new td();
-                        authorinfo.setClass("author");
-                    
-                        if( author != null )
+                        if( !isSameDay( lastmod, olddate ) )
                         {
-                            if( engine.pageExists(author) )
-                            {
-                                authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
-                            }
-                            else
-                            {
-                                authorinfo.addElement(author);
-                            }
+                            tr row = new tr();
+                            td col = new td();
+                        
+                            col.setColSpan(tablewidth).setClass("date"); 
+                            col.addElement( new b().addElement(fmt.format(lastmod)) );
+
+                            rt.addElement(row);
+                            row.addElement(col);                    
+                            olddate = lastmod;
+                        }
+
+                        String link = context.getURL( pageref.isAttachment() ? WikiContext.ATTACH : WikiContext.VIEW, 
+                                                      pageref.getName() ) ;
+                    
+                        a linkel = new a(link,engine.beautifyTitle(pageref.getPath()));
+                    
+                        tr row = new tr();
+                    
+                        td col = new td().setWidth("30%").addElement(linkel);
+
+                        //
+                        //  Add the direct link to the attachment info.
+                        //
+                        if( pageref.isAttachment() )
+                        {
+                            linkel = new a().setHref(context.getURL(WikiContext.INFO,pageref.getName()));
+                            linkel.setClass("infolink");
+                            linkel.addElement( new img().setSrc(context.getURL(WikiContext.NONE, "images/attachment_small.png")));
+
+                            col.addElement( linkel );
+                        }
+
+                    
+                        row.addElement(col);
+                        rt.addElement(row);
+                    
+                        if( pageref.isAttachment() )
+                        {
+                            row.addElement( new td(tfmt.format(lastmod)).setClass("lastchange") );
                         }
                         else
                         {
-                            authorinfo.addElement( context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "common.unknownauthor" ) );
+                            td infocol = (td) new td().setClass("lastchange");
+                            infocol.addElement( new a(context.getURL(WikiContext.DIFF, pageref.getName(), "r1=-1"),tfmt.format(lastmod)) );
+                            row.addElement(infocol);
                         }
 
-                        row.addElement( authorinfo );
-                    }
+                        //
+                        //  Display author information.
+                        //
 
-                    // Change note
-                    if( showChangenote )
-                    {
-                        String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
-                    
-                        row.addElement( new td(changenote != null ? TextUtil.replaceEntities(changenote) : "").setClass("changenote") );
+                        if( showAuthor )
+                        {
+                            String author = pageref.getAuthor();
+
+                            td authorinfo = new td();
+                            authorinfo.setClass("author");
+                        
+                            if( author != null )
+                            {
+                                if( engine.pageExists(author) )
+                                {
+                                    authorinfo.addElement( new a(context.getURL(WikiContext.VIEW, author),author) );
+                                }
+                                else
+                                {
+                                    authorinfo.addElement(author);
+                                }
+                            }
+                            else
+                            {
+                                authorinfo.addElement( context.getBundle(InternationalizationManager.CORE_BUNDLE).getString( "common.unknownauthor" ) );
+                            }
+
+                            row.addElement( authorinfo );
+                        }
+
+                        // Change note
+                        if( showChangenote )
+                        {
+                            String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
+                        
+                            row.addElement( new td(changenote != null ? TextUtil.replaceEntities(changenote) : "").setClass("changenote") );
+                        }
                     }
                 }
                 catch( ProviderException e )
@@ -224,7 +221,6 @@ public class RecentChangesPlugin extends AbstractFilteredPlugin
                 	// Rethrow any exceptions if isAttachment() fails.
                     throw new PluginException( "Could not determine whether WikiPage " + pageref.getName() + " is an attachment.", e );
                 }
-                
                 
                 //  Revert note
 /*                

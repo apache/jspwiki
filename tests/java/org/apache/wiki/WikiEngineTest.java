@@ -820,8 +820,8 @@ public class WikiEngineTest extends TestCase
         m_engine.deletePage( NAME1 );
         WikiPage page = m_engine.createPage( WikiPath.valueOf( NAME1 ) );
 
-        assertEquals( "Page does not exist",
-                      true,
+        assertEquals( "Page was saved to disk, but should not have been.",
+                      false,
                       m_engine.pageExists( page ) );
     }
 

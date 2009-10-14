@@ -102,6 +102,11 @@ public class InsertPage
             try
             {
                 WikiPath pageName = engine.getFinalPageName( context.getPage().getPath().resolve( includedPage ) );
+                if ( pageName == null )
+                {
+                    String includedPageNoSpaces = includedPage.replace( " ", "" ); //Trim any spaces in the name
+                    pageName = engine.getFinalPageName( context.getPage().getPath().resolve( includedPageNoSpaces ) );
+                }
                 if( pageName != null )
                 {
                     page = engine.getPage( pageName );

@@ -1662,6 +1662,11 @@ public class JSPWikiMarkupParser
                     linkref = linkref.substring( 0, hashMark );
 
                     linkref = MarkupParser.cleanLink( linkref );
+                    if ( linkExists( linkref ) == null )
+                    {
+                        String legacyLinkref = MarkupParser.wikifyLink( linkref );
+                        linkref = linkExists( legacyLinkref ) != null ? legacyLinkref : linkref;
+                    }
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
@@ -1681,6 +1686,11 @@ public class JSPWikiMarkupParser
                 {
                     // It's an internal Wiki link
                     linkref = MarkupParser.cleanLink( linkref );
+                    if ( linkExists( linkref ) == null )
+                    {
+                        String legacyLinkref = MarkupParser.wikifyLink( linkref );
+                        linkref = linkExists( legacyLinkref ) != null ? legacyLinkref : linkref;
+                    }
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 

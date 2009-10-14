@@ -58,17 +58,13 @@ public class ReferredPagesPluginTest extends TestCase
         m_engine.saveText( "IPointToSomeoneElseToo", "Reference to [SomeBodyPointsToMe]." );
         m_engine.saveText( "SomeBodyPointsToMeToo", "Somebody points to this page too" );
         m_engine.saveText( "IPointToTwoPages", "Reference to [SomeBodyPointsToMe]  and   [SomeBodyPointsToMeToo]." );
-
-//        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "IPointToSomeoneElse" ) );
         m_manager = new PluginManager( m_engine, m_props );
     }
 
     public void tearDown() throws Exception
     {
         m_engine.emptyRepository();
-        
         TestEngine.emptyWorkDir();
-        
         m_engine.shutdown();
     }
 

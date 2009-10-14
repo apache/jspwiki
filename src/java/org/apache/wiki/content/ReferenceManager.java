@@ -967,9 +967,9 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     /**
      * Removes a String value from a given JCR node and
      * {@link javax.jcr.Property}. The property is assumed to return an array
-     * of {@link javax.jcr.Value} objects. The node is created if it does not
-     * exist. Modifications to the underlying JCR node are saved by the
-     * current JCR {@link Session}.
+     * of {@link javax.jcr.Value} objects. The node is <em>not</em> created if it does not
+     * exist because by definition the property is already removed! Modifications to the
+     * underlying JCR node are saved by the current JCR {@link Session}.
      * 
      * @param jcrNode the JCR path to the node
      * @param property the property to add to
@@ -994,10 +994,8 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         }
         catch( PathNotFoundException e )
         {
-            if( !s.itemExists( jcrNode ) )
-            {
-                node = cm.createJCRNode( jcrNode );
-            }
+            // If parent node doesn't exist, it's (by definition) already removed
+            return;
         }
 
         // Retrieve the property; remove all instances of value

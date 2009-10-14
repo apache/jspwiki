@@ -309,6 +309,12 @@ public abstract class MarkupParser
                     continue;
 
                 wasSpace = true;
+
+                // Make sure we capitalize the next letter for old-style wiki links
+                if ( LEGACY_CHARS_ALLOWED.equals( allowedChars ) )
+                {
+                    isWord = true;
+                }
             }
             else
             {

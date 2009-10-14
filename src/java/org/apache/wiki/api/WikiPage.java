@@ -111,6 +111,8 @@ public interface WikiPage extends Comparable<WikiPage>
 
     /**
      *  Returns the date when this page was last modified.
+     *  If the page has never been modified (because it has never
+     *  been saved, for example), this method returns {@code null}.
      *  
      *  @return The last modification date
      */

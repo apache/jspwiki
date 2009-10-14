@@ -1238,7 +1238,8 @@ public class WikiEngine
 
     /**
      *  Returns true, if the requested page (or an alias) exists with the
-     *  requested version.
+     *  requested version. A page "exists" if it has been
+     *  previously saved to disk.
      *
      *  @param page Page name
      *  @param version Page version
@@ -1259,7 +1260,8 @@ public class WikiEngine
 
     /**
      *  Returns true, if the requested page (or an alias) exists, with the
-     *  specified version in the WikiPage.
+     *  specified version in the WikiPage. A page "exists" if it has been
+     *  previously saved to disk.
      *
      *  @param page A WikiPage object describing the name and version.
      *  @return true, if the page (or alias, or attachment) exists.

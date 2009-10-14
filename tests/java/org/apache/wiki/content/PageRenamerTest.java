@@ -23,6 +23,7 @@ package org.apache.wiki.content;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -72,8 +73,8 @@ public class PageRenamerTest extends TestCase
     public void testSimpleRename()
         throws Exception
     {
-        // Count the numberof existing references
-        int refCount = m_engine.getReferenceManager().findCreated().size();
+        // Count the number of existing references
+        int pageCount = m_engine.getPageCount();
         
         m_engine.saveText("TestPage", "the big lazy dog thing" );
         
@@ -96,11 +97,11 @@ public class PageRenamerTest extends TestCase
         
         // Refmgr
         
-        Collection<String> refs = m_engine.getReferenceManager().findCreated();
+        Set<String> pages = m_engine.getReferenceManager().findCreated();
         
-        assertTrue( "FooTest does not exist", refs.contains("Main:FooTest") );
-        assertFalse( "TestPage exists", refs.contains("Main:TestPage") );
-        assertEquals( "wrong list size", refCount+1, refs.size() );
+        assertTrue( "FooTest does not exist", pages.contains( "Main:FooTest" ) );
+        assertFalse( "TestPage exists", pages.contains( "Main:TestPage" ) );
+        assertEquals( "wrong list size", pageCount+1, pages.size() );
     }
     
     public void testReferrerChange()

@@ -108,7 +108,7 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
     private static final String STR_GLOBSTAR = "*";
 
     /** Constant for file storage. */
-    private static final String COUNTER_PAGE = "PageCount.txt";
+    protected static final String COUNTER_PAGE = "PageCount.txt";
 
     /** Constant for storage interval in seconds. */
     private static final int STORAGE_INTERVAL = 60;

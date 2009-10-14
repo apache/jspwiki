@@ -47,11 +47,10 @@ public class RecentChangesPluginTest extends TestCase
 
         m_engine = new TestEngine( m_props );
 
-        m_engine.saveText( "TestPage01", "Some Text for testing 01" );
-        m_engine.saveText( "TestPage02", "Some Text for testing 02" );
-        m_engine.saveText( "TestPage03", "Some Text for testing 03" );
+        m_engine.saveText( "RecentChangesPlugin01", "Some Text for testing 01" );
+        m_engine.saveText( "RecentChangesPlugin02", "Some Text for testing 02" );
+        m_engine.saveText( "RecentChangesPlugin03", "Some Text for testing 03" );
 
-//        context = engine.getWikiContextFactory().newViewContext( null, null, engine.createPage( "TestPage01" ) );
         m_pluginmanager = new PluginManager( m_engine, m_props );
     }
 
@@ -70,16 +69,16 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testSimple() throws Exception
     {
-        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage01" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "RecentChangesPlugin01" ) );
 
         String res = m_pluginmanager.execute( m_context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}" );
 
         // we don't want to compare the complete html returned, but check if certain Strings are present and other 
         // Strings are not present
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin01'>RecentChangesPlugin01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin02'>RecentChangesPlugin02</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin03'>RecentChangesPlugin03</a>" ));
 
     }
 
@@ -90,15 +89,15 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmInclude() throws Exception
     {
-        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage02" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "RecentChangesPlugin02" ) );
 
         String res = m_pluginmanager.execute( m_context,
-                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
+                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='RecentChangesPlugin02*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin01'>RecentChangesPlugin01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin02'>RecentChangesPlugin02</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin03'>RecentChangesPlugin03</a>" ));
 
     }
 
@@ -109,14 +108,14 @@ public class RecentChangesPluginTest extends TestCase
      */
     public void testParmExclude() throws Exception
     {
-        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "TestPage03" ) );
+        m_context = m_engine.getWikiContextFactory().newViewContext( null, null, m_engine.getPage(  "RecentChangesPlugin03" ) );
 
-        String res = m_pluginmanager.execute( m_context, "{INSERT RecentChangesPlugin exclude='TestPage03*'}" );
+        String res = m_pluginmanager.execute( m_context, "{INSERT RecentChangesPlugin exclude='RecentChangesPlugin03*'}" );
         
         assertTrue(res.contains( "<table cellpadding='4' class='recentchanges'>"));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage01'>TestPage01</a>" ));
-        assertTrue(res.contains( "<a href='/Wiki.jsp?page=TestPage02'>TestPage02</a>" ));
-        assertFalse(res.contains( "<a href='/Wiki.jsp?page=TestPage03'>TestPage03</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin01'>RecentChangesPlugin01</a>" ));
+        assertTrue(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin02'>RecentChangesPlugin02</a>" ));
+        assertFalse(res.contains( "<a href='/Wiki.jsp?page=RecentChangesPlugin03'>RecentChangesPlugin03</a>" ));
 
     }
 

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.jcr.RepositoryException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -208,6 +209,10 @@ public class TestEngine extends WikiEngine
         catch( IOException e ) {} // Fine
     }
     
+    /**
+     * Empties the page directory and re-initializes the references database.
+     * @throws ProviderException
+     */
     public void emptyRepository() throws ProviderException
     {
         Collection<WikiPage> pages = getContentManager().getAllPages( null );
@@ -215,6 +220,14 @@ public class TestEngine extends WikiEngine
         for( WikiPage p : pages )
         {
             getContentManager().deletePage( p );
+        }
+        try
+        {
+            getReferenceManager().rebuild();
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException( "Could not rebuild reference database.", e );
         }
     }
     

@@ -455,7 +455,7 @@ public class ContentManager implements WikiEventListener
             nd.setProperty( JCRWikiPage.ATTR_CREATED, Calendar.getInstance() );
         }
         
-        if( nd.isNew() )
+        if( isNew( nd ) )
         {
             // New node, so nothing to check in
             nd.getParent().save();
@@ -634,14 +634,34 @@ public class ContentManager implements WikiEventListener
     }
 
     /**
-     *  Returns true, if this Node is the root node of a space.
+     *  Returns {@code true} if this Node is the root node of a space.
      *  
      *  @param nd Node to check
      *  @return true, if this is a root node of a space.
      */
-    private boolean isSpaceRoot(Node nd) throws RepositoryException
+    private boolean isSpaceRoot( Node nd ) throws RepositoryException
     {
         return nd != null && nd.getPath().startsWith( "/"+JCR_PAGES_NODE ) && nd.getDepth() == 2;
+    }
+    
+    /**
+     * Returns {@code true} if the JCR node contains the attribute
+     * {@link JCRWikiPage#ATTR_CREATED}; {@code false} otherwise.
+     * @param nd the node to check
+     * @return whether the node has been previously saved
+     */
+    private boolean isNew( Node nd )
+    {
+        try
+        {
+            return !nd.hasProperty( JCRWikiPage.ATTR_CREATED );
+        }
+        catch( RepositoryException e )
+        {
+            log.error( "Could not obtain attribute " + JCRWikiPage.ATTR_CREATED + " from node " + nd.toString() );
+            e.printStackTrace();
+        }
+        return true;
     }
     
     /**
@@ -890,16 +910,14 @@ public class ContentManager implements WikiEventListener
         }
         
         // Node "exists" only if it's been saved already.
-        return  !node.isNew();
+        return !isNew( node );
     }
     
     /**
      *  Returns <code>true</code> if a given page exists for a specific version.
      *  For the page to "exist" the page must have been previously added
-     *  (for example, by {@link #addPage(WikiPath, String)}), although it need not
-     *  have been saved. This is unlike the {@link WikiEngine} version of
-     *  <code>pageExists</code>, which requires the page to be saved before it
-     *  is considered to exist.
+     *  (for example, by {@link #addPage(WikiPath, String)}), and it must
+     *  have been previously saved.
      *  
      *  @param wikiPath  the {@link WikiPath} to check for
      *  @param version The version to check
@@ -927,14 +945,14 @@ public class ContentManager implements WikiEventListener
             
             if ( version == WikiProvider.LATEST_VERSION )
             {
-                return !node.isNew();
+                return !isNew( node );
             }
             
             String v = Integer.toString( version );
             if ( node.hasNode( WIKI_VERSIONS ) )
             {
                 Node versions = node.getNode( WIKI_VERSIONS );
-                return versions.hasNode( v ) && !versions.getNode( v ).isNew();
+                return versions.hasNode( v ) && !isNew( versions.getNode( v ) );
             }
         }
         catch ( PathNotFoundException e )
@@ -1353,10 +1371,14 @@ public class ContentManager implements WikiEventListener
         try
         {
             page = engine.getPage( toPage );
+            if ( engine.pageExists( fromPage.toString() ) )
+            {
+                throw new InternalWikiException( "Rename failed: fromPage " + fromPage + " still exists after move!" );
+            }
         }
         catch ( PageNotFoundException e )
         {
-            throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
+            throw new InternalWikiException( "Rename failed: toPage " + toPage + " not found after move!" );
         }
         page.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
         page.setAuthor( context.getCurrentUser().getName() );
@@ -1468,7 +1490,7 @@ public class ContentManager implements WikiEventListener
             Node nd = session.getRootNode().addNode( jcrPath );
             
             nd.addMixin( "mix:referenceable" );
-            nd.setProperty( JCRWikiPage.CONTENTTYPE, contentType );
+            nd.setProperty( JCRWikiPage.CONTENT_TYPE, contentType );
             
             JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
             

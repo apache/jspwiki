@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.plugin.PluginManager;
 
@@ -49,13 +50,14 @@ public class UndefinedPagesPluginTest extends TestCase
         throws Exception
     {
         m_props.load( TestEngine.findTestProperties() );
+        m_props.setProperty( WikiEngine.PROP_BEAUTIFYTITLE, "false" );
 
         m_engine = new TestEngine(m_props);
 
-        m_engine.saveText( "TestPage", "Reference to [Foobar]." );
-        m_engine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
+        m_engine.saveText( "UndefinedPagesPluginTest", "Reference to [UndefinedRef]." );
+        m_engine.saveText( "UndefinedRef", "Reference to [UndefinedRef2], [UndefinedRefs]" );
 
-        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "TestPage") );
+        m_context = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "UndefinedPagesPluginTest") );
         m_manager = new PluginManager( m_engine, m_props );
     }
 
@@ -79,12 +81,12 @@ public class UndefinedPagesPluginTest extends TestCase
     public void testSimpleUndefined()
         throws Exception
     {
-        WikiContext context2 = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "Foobar") );
+        WikiContext context2 = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage( "UndefinedRef") );
 
         String res = m_manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin");
 
-        String exp = "[Foobar 2]\\\\";
+        String exp = "[UndefinedRef2]\\\\";
 
         assertEquals( wikitize(exp), res );
     }

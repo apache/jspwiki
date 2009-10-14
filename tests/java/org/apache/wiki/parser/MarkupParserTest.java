@@ -59,6 +59,16 @@ public class MarkupParserTest extends TestCase
         assertEquals( "Clean (link)", MarkupParser.cleanLink("Clean (link)") );
     }
 
+    public void testCleanLinkWithSpaces()
+    {
+        assertEquals( "Hyperlink too", MarkupParser.cleanLink("hyperlink  too") );
+    }
+    
+    public void testWikifyLinkWithSpaces()
+    {
+        assertEquals( "HyperlinkToo", MarkupParser.wikifyLink("hyperlink  too") );
+    }
+
     public static Test suite()
     {
         TestSuite suite = new TestSuite(MarkupParserTest.class);

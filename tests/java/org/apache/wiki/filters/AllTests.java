@@ -33,10 +33,7 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite("PageFilter tests");
-
         suite.addTest( FilterManagerTest.suite() );
-        suite.addTest( SpamFilterTest.suite() );
-
         return suite;
     }
 }

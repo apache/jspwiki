@@ -55,7 +55,8 @@ public class JCRWikiPage
 {
     private static final long serialVersionUID = 1L;
 
-    private static final String LASTMODIFIED = "wiki:lastModified";
+    /** The name of the attribute that stores the last-modified timestamp. */
+    private static final String LAST_MODIFIED = "wiki:lastModified";
 
     private static final String AUTHOR       = "wiki:author";
 
@@ -70,7 +71,7 @@ public class JCRWikiPage
     public static final String ATTR_CREATED = "wiki:created";
     
     /** The name of the contentType  attribute */
-    public  static final String CONTENTTYPE  = "wiki:contentType";
+    public  static final String CONTENT_TYPE  = "wiki:contentType";
     
     /** The ISO8601:2000 dateformat */
     public static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -288,9 +289,9 @@ public class JCRWikiPage
     {
         try
         {
-            if ( getJCRNode().hasProperty( LASTMODIFIED ) )
+            if ( getJCRNode().hasProperty( LAST_MODIFIED ) )
             {
-                return getJCRNode().getProperty( LASTMODIFIED ).getDate().getTime();
+                return getJCRNode().getProperty( LAST_MODIFIED ).getDate().getTime();
             }
         }
         catch( RepositoryException e )
@@ -302,7 +303,7 @@ public class JCRWikiPage
 
     public void setLastModified( Date date )
     {
-        setAttribute( LASTMODIFIED, date );
+        setAttribute( LAST_MODIFIED, date );
     }
 
     /**
@@ -544,7 +545,7 @@ public class JCRWikiPage
      */
     public String getContentType()
     {
-        return (String)getAttribute( CONTENTTYPE );
+        return (String)getAttribute( CONTENT_TYPE );
     }
 
     public List<WikiPath> getReferrers() throws ProviderException
@@ -578,7 +579,7 @@ public class JCRWikiPage
 
     public void setContentType( String contentType )
     {
-        setAttribute( CONTENTTYPE, contentType );
+        setAttribute( CONTENT_TYPE, contentType );
     }
     
     /**

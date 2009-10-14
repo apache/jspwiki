@@ -22,15 +22,19 @@ package org.apache.wiki.ui.stripes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.controller.DispatcherServlet;
+import net.sourceforge.stripes.controller.DynamicMappingFilter;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.action.InstallActionBean;
 import org.apache.wiki.action.ViewActionBean;
 
 
@@ -54,6 +58,12 @@ public class FileBasedActionResolverTest extends TestCase
         
         // Set the configured servlet context
         m_servletContext = servletContext;
+
+        // Set the admin password and base URL so that the Installer interceptor doesnt't trip
+        WikiEngine engine = WikiEngine.getInstance( servletContext, null );
+        Properties props = engine.getWikiProperties();
+        props.setProperty( InstallActionBean.PROP_ADMIN_PASSWORD_HASH, "foobar" );
+        props.setProperty( WikiEngine.PROP_BASEURL, "http://127.0.0.1" );
     }
 
     protected void tearDown() throws Exception
