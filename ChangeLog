@@ -1,3 +1,9 @@
+2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-166
+
+        * We are getting damned close to a nice clean build. 98%+
+
 2009-10-14 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-165

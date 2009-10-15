@@ -55,8 +55,12 @@ public class RenameActionBeanTest extends TestCase
         }
     }
 
-    public void tearDown()
+    public void tearDown() throws Exception
     {
+        m_engine.deletePage( "ReferstoTest" );
+        m_engine.deletePage( "Test" );
+        m_engine.deletePage( "TestCollision" );
+        m_engine.deletePage( "TestRenamed" );
         m_engine.shutdown();
     }
     
@@ -87,9 +91,6 @@ public class RenameActionBeanTest extends TestCase
         assertEquals( 1, errors.size() );
         assertTrue( errors.containsKey("renameTo") );
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
-    
-        // Delete test page
-        m_engine.deletePage( "Test" );
     }
     
     public void testValidationWithCollision() throws Exception {
@@ -113,10 +114,6 @@ public class RenameActionBeanTest extends TestCase
         assertEquals( 1, errors.size() );
         assertTrue ( errors.containsKey( "renameTo" ) );
         assertEquals(MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
-    
-        // Delete test page
-        m_engine.deletePage( "Test" );
-        m_engine.deletePage( "TestCollision" );
     }
     
     public void testRename() throws Exception {
@@ -138,9 +135,6 @@ public class RenameActionBeanTest extends TestCase
         assertEquals( "/Wiki.action?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
-    
-        // Delete test page
-        m_engine.deletePage( "TestRenamed" );
     }
     
     public void testRenameReferences() throws Exception {
@@ -170,7 +164,6 @@ public class RenameActionBeanTest extends TestCase
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
         referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
         assertFalse( referringText.contains("[TestRenamed]"));
-        m_engine.deletePage( "TestRenamed" );
     }
     
     public void testRenameReferencesChangeRefsFalse() throws Exception {
@@ -217,9 +210,6 @@ public class RenameActionBeanTest extends TestCase
         referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
         assertTrue( referringText.contains("[TestRenamed]"));
         m_engine.deletePage( "TestRenamed" );
-        
-        // Clean up
-        m_engine.deletePage( "ReferstoTest" );
     }
     
     public void testRenameToSameName() throws Exception {
@@ -234,9 +224,6 @@ public class RenameActionBeanTest extends TestCase
         trip.execute("rename");
         errors = trip.getValidationErrors();
         assertEquals( 1, errors.size() );
-        m_engine.deletePage( "Test" );
-        
-        // Clean up
         m_engine.deletePage( "Test" );
     }
     

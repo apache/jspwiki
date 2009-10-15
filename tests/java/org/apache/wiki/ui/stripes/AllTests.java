@@ -31,6 +31,7 @@ public class AllTests extends TestCase
         TestSuite suite = new TestSuite("Stripes UI tests");
         suite.addTest( FileBasedActionResolverTest.suite() );
         suite.addTest( HandlerInfoTest.suite() );
+        suite.addTest( IsOneOfTest.suite() );
         suite.addTest( ShortUrlRedirectFilterTest.suite() );
         suite.addTest( SpamInterceptorTest.suite() );
         return suite;

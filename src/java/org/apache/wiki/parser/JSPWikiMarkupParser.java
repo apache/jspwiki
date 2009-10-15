@@ -444,12 +444,14 @@ public class JSPWikiMarkupParser
             if( page == null || page.length() == 0 ) return null;
 
             WikiPath path = WikiPath.valueOf( page );
-            WikiPath finalPath = m_engine.getFinalPageName( path );
-            path = finalPath != null ? finalPath : path;
-            if ( m_engine.pageExists( path.toString() ) )
+            WikiPath resolved = m_engine.getFinalPageName( path );
+            if ( resolved != null )
             {
-                String pageLink = ContentManager.DEFAULT_SPACE.equals( path.getSpace() ) ? path.getPath() : path.toString();
-                return pageLink;
+                return ContentManager.DEFAULT_SPACE.equals( resolved.getSpace() ) ? resolved.getPath() : resolved.toString();
+            }
+            else if ( m_engine.pageExists( path.toString() ) )
+            {
+                return ContentManager.DEFAULT_SPACE.equals( path.getSpace() ) ? path.getPath() : path.toString();
             }
             return null;
         }

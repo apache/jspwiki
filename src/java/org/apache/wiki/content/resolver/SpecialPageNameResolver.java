@@ -71,7 +71,9 @@ public class SpecialPageNameResolver extends PageNameResolver
 
     /**
      * Determines whether a "page" exists by examining the list of special pages
-     * and querying the page manager.
+     * and querying the page manager. The WikiPath will be tried with its qualifying
+     * space, and without. This means that if the value of {@code page} is "Main:FindPage",
+     * special pages called "FindPage" or "Main:FindPage" would match.
      * 
      * @param page the page to seek
      * @return <code>true</code> if the page exists, <code>false</code>
@@ -79,7 +81,7 @@ public class SpecialPageNameResolver extends PageNameResolver
      */
     protected final boolean simplePageExists( WikiPath page ) throws ProviderException
     {
-        if( m_specialRedirects.containsKey( page ) )
+        if( m_specialRedirects.containsKey( page ) || m_specialRedirects.containsKey( page.getPath() ) )
         {
             return true;
         }

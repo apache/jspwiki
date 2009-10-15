@@ -65,7 +65,7 @@ import org.apache.wiki.util.TextUtil;
  * when they are saved, renamed or deleted. ReferenceManager listens for the
  * events {@link ContentEvent#NODE_SAVED}, {@link ContentEvent#NODE_RENAMED}
  * and {@link ContentEvent#NODE_DELETE_REQUEST}. When one of these events is
- * detected, ReferenceManager updates the inbound and oubound link references as
+ * detected, ReferenceManager updates the inbound and outbound link references as
  * required. The end result of these choices means that ReferenceManager is
  * relatively fast at reading references, but a bit slower at updating them.
  * Given the asymmetric nature of most wikis -- there are usually far more
@@ -365,17 +365,53 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                     // ========= page renamed ==============================
 
                 case (ContentEvent.NODE_RENAMED ): {
-                    // Update references from this page
                     WikiPath toPage = path;
                     WikiPath fromPage = WikiPath.valueOf( (String) ((WikiPageEvent) event).getArgs()[0] );
                     Boolean changeReferrers = (Boolean) ((WikiPageEvent) event).getArgs()[1];
+                    List<WikiPath> referrers = getReferredBy( fromPage );
+                    
+                    // Delete all references to the old page name
                     removeLinks( fromPage );
                     setLinks( toPage, extractLinks( toPage ) );
 
-                    // Change references to the old page; use the new name
+                    // In every referrer, replace all references to the old page with the new one
                     if( changeReferrers )
                     {
-                        renameLinksTo( fromPage, toPage );
+                        ContentManager cm = m_engine.getContentManager();
+                        for( WikiPath referrer : referrers )
+                        {
+                            // In case the page was just changed from under us, let's do this
+                            // small kludge.
+                            if( referrer.equals( fromPage ) )
+                            {
+                                referrer = toPage;
+                            }
+
+                            try
+                            {
+                                WikiPage p = cm.getPage( referrer );
+
+                                String sourceText = m_engine.getPureText( p );
+
+                                String newText = renameLinks( sourceText, fromPage.getPath(), toPage.getPath() );
+
+                                if( m_camelCase )
+                                    newText = renameCamelCaseLinks( newText, fromPage.getPath(), toPage.getPath() );
+
+                                if( !sourceText.equals( newText ) )
+                                {
+                                    p.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
+                                    p.setContent( newText );
+                                    // TODO: do we want to set the author here? (We used to...)
+                                    cm.save( p );
+                                    setLinks( path, extractLinks( toPage ) );
+                                }
+                            }
+                            catch( PageNotFoundException e )
+                            {
+                                // Just continue
+                            }
+                        }
                     }
 
                     m_cm.getCurrentSession().save();
@@ -672,62 +708,6 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             }
         }
         s.save();
-    }
-
-    /**
-     * This method finds all the pages which refer to <code>oldPath</code> and
-     * change their references to <code>newPath</code>.
-     * 
-     * @param oldPath The old page
-     * @param newPath The new page
-     */
-    private void renameLinksTo( WikiPath oldPath, WikiPath newPath ) throws ProviderException, RepositoryException
-    {
-        if ( oldPath == null || newPath == null )
-        {
-            throw new IllegalArgumentException( "oldPath and newPath cannot be null!" );
-        }
-        
-        List<WikiPath> referrers = getReferredBy( oldPath );
-        if( referrers.isEmpty() )
-            return; // No referrers
-
-        for( WikiPath path : referrers )
-        {
-            // In case the page was just changed from under us, let's do this
-            // small kludge.
-            if( path.equals( oldPath.getPath() ) )
-            {
-                path = newPath;
-            }
-
-            try
-            {
-                ContentManager cm = m_engine.getContentManager();
-                WikiPage p = cm.getPage( path );
-
-                String sourceText = m_engine.getPureText( p );
-
-                String newText = renameLinks( sourceText, oldPath.toString(), newPath.toString() );
-
-                if( m_camelCase )
-                    newText = renameCamelCaseLinks( newText, oldPath.toString(), newPath.toString() );
-
-                if( !sourceText.equals( newText ) )
-                {
-                    p.setAttribute( WikiPage.CHANGENOTE, oldPath.toString() + " ==> " + newPath.toString() );
-                    p.setContent( newText );
-                    // TODO: do we want to set the author here? (We used to...)
-                    cm.save( p );
-                    setLinks( path, extractLinks( newPath ) );
-                    cm.getCurrentSession().save();
-                }
-            }
-            catch( PageNotFoundException e )
-            {
-                // Just continue
-            }
-        }
     }
 
     /**

@@ -76,20 +76,20 @@ public class PageRenamerTest extends TestCase
         // Count the number of existing references
         int pageCount = m_engine.getPageCount();
         
-        m_engine.saveText("TestPage", "the big lazy dog thing" );
+        m_engine.saveText("SimpleRename", "the big lazy dog thing" );
         
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPage("SimpleRename");
         
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
         
-        m_engine.renamePage(context, "TestPage", "FooTest", false);
+        m_engine.renamePage(context, "SimpleRename", "FooRename", false);
         
-        WikiPage newpage = m_engine.getPage("FooTest");
+        WikiPage newpage = m_engine.getPage("FooRename");
         
         assertNotNull( "no new page", newpage );
         try
         {
-            m_engine.getPage("TestPage");
+            m_engine.getPage("SimpleRename");
         
             fail( "old page not gone" );
         }
@@ -99,34 +99,35 @@ public class PageRenamerTest extends TestCase
         
         Set<String> pages = m_engine.getReferenceManager().findCreated();
         
-        assertTrue( "FooTest does not exist", pages.contains( "Main:FooTest" ) );
-        assertFalse( "TestPage exists", pages.contains( "Main:TestPage" ) );
+        assertTrue( "FooRename does not exist", pages.contains( "Main:FooRename" ) );
+        assertFalse( "SimpleRename exists", pages.contains( "Main:SimpleRename" ) );
         assertEquals( "wrong list size", pageCount+1, pages.size() );
+        m_engine.deletePage( "Main:FooRename" );
     }
     
     public void testReferrerChange()
        throws Exception
     {
-        m_engine.saveText("TestPage", "foofoo" );
-        m_engine.saveText("TestPage2", "[TestPage]");
+        m_engine.saveText("ReferrerChange", "foofoo" );
+        m_engine.saveText("ReferrerChange2", "[ReferrerChange]");
         
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPage("ReferrerChange");
         
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
         
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.renamePage(context, "ReferrerChange", "FooReferrerChange", true);
         
-        String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        // Verify that reference to ReferrerChange was renamed
+        String data = m_engine.getPureText("ReferrerChange2", WikiProvider.LATEST_VERSION);
+        assertEquals( "no rename", "[FooReferrerChange]", data.trim() );
         
-        assertEquals( "no rename", "[FooTest]", data.trim() );
+        Collection<WikiPath> refs = findReferrers("ReferrerChange");
         
-        Collection<WikiPath> refs = findReferrers("TestPage");
+        assertEquals( 0, refs.size() );
         
-        assertNull( "oldpage", refs );
-        
-        refs = findReferrers( "FooTest" );
+        refs = findReferrers( "FooReferrerChange" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "Main:ReferrerChange2" ), refs.iterator().next() );
     }
 
     public void testReferrerChangeCC()
@@ -146,11 +147,11 @@ public class PageRenamerTest extends TestCase
         assertEquals( "no rename", "FooTest", data.trim() );
         Collection<WikiPath> refs = findReferrers("TestPage");
         
-        assertNull( "oldpage", refs );
+        assertEquals( 0, refs.size() );
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "Main:TestPage2" ), refs.iterator().next() );
     }
     
     public void testReferrerChangeAnchor()
@@ -170,11 +171,11 @@ public class PageRenamerTest extends TestCase
         assertEquals( "no rename", "[FooTest#heading1]", data.trim() );
         Collection<WikiPath> refs = findReferrers("TestPage");
         
-        assertNull( "oldpage", refs );
+        assertEquals( 0, refs.size() );
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "Main:TestPage2" ), refs.iterator().next() );
     }
     
     public void testReferrerChangeMultilink()
@@ -197,11 +198,11 @@ public class PageRenamerTest extends TestCase
 
         Collection<WikiPath> refs = findReferrers("TestPage");
         
-        assertNull( "oldpage", refs );
+        assertEquals( 0, refs.size() );
         
         refs = findReferrers( "FooTest" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "Main:TestPage2" ), refs.iterator().next() );
     }
     
     public void testReferrerNoWikiName()
@@ -210,7 +211,7 @@ public class PageRenamerTest extends TestCase
         m_engine.saveText("Test","foo");
         m_engine.saveText("TestPage2", "[Test] [Test#anchor] test Test [test] [link|test] [link|test]");
         
-        WikiPage p = m_engine.getPage("TestPage");
+        WikiPage p = m_engine.getPage("Test");
         
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
      
@@ -305,7 +306,7 @@ public class PageRenamerTest extends TestCase
         assertEquals("[|FooTest]", m_engine.getText("TestPage2").trim() );
     }
 
-    private void rename( String src, String dst ) throws Exception
+    private void rename( String src, String dst ) throws WikiException, PageNotFoundException
     {
         WikiPage p = m_engine.getPage(src);
 
@@ -374,7 +375,7 @@ public class PageRenamerTest extends TestCase
             System.out.println("NPE: Bug 85 caught?");
             fail();
         }
-        catch( WikiException e )
+        catch( PageNotFoundException e )
         {
             // Expected
         }
@@ -414,7 +415,7 @@ public class PageRenamerTest extends TestCase
             System.out.println("NPE: Bug 85 caught?");
             fail();
         }
-        catch( WikiException e )
+        catch( PageNotFoundException e )
         {
             // Expected
         }
@@ -478,11 +479,11 @@ public class PageRenamerTest extends TestCase
         assertEquals( "page not renamed", "[Test Page Referred|TestPageReferredNew]", data.trim() );
 
         Collection<WikiPath> refs = findReferrers( "TestPageReferred" );
-        assertNull( "oldpage", refs );
+        assertEquals( 0, refs.size() );
 
         refs = findReferrers( "TestPageReferredNew" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPageReferring", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "TestPageReferring" ), refs.iterator().next() );
     }
 
     /** https://issues.apache.org/jira/browse/JSPWIKI-398 */
@@ -498,11 +499,11 @@ public class PageRenamerTest extends TestCase
         assertEquals( "page not renamed", "[link one|Link uno] [link two]", data.trim() );
 
         Collection<WikiPath> refs = findReferrers( "Link one" );
-        assertNull( "oldpage", refs );
+        assertEquals( 0, refs.size() );
 
         refs = findReferrers( "Link uno" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "RenameTest", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf( "RenameTest" ), refs.iterator().next() );
     }
 
     public static Test suite()
