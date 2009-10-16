@@ -53,7 +53,7 @@ public class DefaultAclManagerTest
         m_engine = new TestEngine(props);
 
         String text = "Foo";
-        m_engine.saveText( "TestDefaultPage", text );
+        m_engine.saveText( "DefaultAclManager", text );
 
         text = "Bar. [{ALLOW edit Charlie, Herman}] ";
         m_engine.saveText( "TestAclPage", text );
@@ -61,7 +61,7 @@ public class DefaultAclManagerTest
 
     public void tearDown() throws Exception
     {
-        m_engine.deletePage( "TestDefaultPage" );
+        m_engine.deletePage( "DefaultAclManager" );
         m_engine.deletePage( "TestAclPage" );
         
         m_engine.shutdown();
@@ -69,7 +69,7 @@ public class DefaultAclManagerTest
 
     public void testGetPermissions() throws Exception
     {
-        WikiPage page = m_engine.getPage( "TestDefaultPage" );
+        WikiPage page = m_engine.getPage( "DefaultAclManager" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
         assertNotNull( acl );
         assertTrue( acl.isEmpty());

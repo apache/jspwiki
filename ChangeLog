@@ -1,5 +1,12 @@
 2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
 
+        * 3.0.0-svn-167
+        
+        * All unit tests except four run successfully. These all relate
+        to page-renaming, and should yield after a bit more gentle persuasion.
+
+2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
+
         * 3.0.0-svn-166
 
         * We are getting damned close to a nice clean build. 98%+

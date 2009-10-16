@@ -63,9 +63,9 @@ public class PluginManagerTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        if ( engine.pageExists( "Testpage" ) )
+        if ( engine.pageExists( "TestPage" ) )
         {
-            engine.deletePage("Testpage");
+            engine.deletePage("TestPage");
         }
         engine.shutdown();
     }
