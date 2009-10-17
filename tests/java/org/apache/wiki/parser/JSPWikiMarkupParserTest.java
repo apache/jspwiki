@@ -2327,7 +2327,14 @@ public class JSPWikiMarkupParserTest extends TestCase
     {
         Benchmark sw = new Benchmark();
         sw.start();
+        
+        // Create the page and save it to disk.
+        if ( !testEngine.pageExists( PAGE_NAME ) )
+        {
+            testEngine.saveText( PAGE_NAME, brokenPageText );
+        }
 
+        // Test the rendering speed
         for( int i = 0; i < 100; i++ )
         {
             translate( brokenPageText );

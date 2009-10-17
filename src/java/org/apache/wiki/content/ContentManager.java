@@ -1455,7 +1455,7 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Adds new content to the repository.  To update, get a page, modify
+     *  Adds new content to the repository without saving it. To update, get a page, modify
      *  it, then store it back using save().
      *  
      *  @param path the WikiName
@@ -1470,7 +1470,7 @@ public class ContentManager implements WikiEventListener
     }
 
     /**
-     *  Add new content to the repository to a particular JCR path.
+     *  Add new content to the repository to a particular JCR path, without saving it.
      *  
      *  @param path
      *  @param jcrPath

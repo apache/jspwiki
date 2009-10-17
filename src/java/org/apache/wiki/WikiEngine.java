@@ -1869,7 +1869,8 @@ public class WikiEngine
     }
 
     /**
-     *  Creates a new WikiPage object.
+     *  Creates a new WikiPage object without saving it to the repository.
+     *  To save the page, call {@link WikiPage#save()}.
      *  
      *  @param name the WikiName of the object to create
      *  @return a new WikiPage object
