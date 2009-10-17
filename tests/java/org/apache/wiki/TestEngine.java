@@ -324,7 +324,7 @@ public class TestEngine extends WikiEngine
     public void addAttachment( String pageName, String attachmentName, byte[] data )
         throws PageAlreadyExistsException, ProviderException, IOException
     {
-        Attachment att = getContentManager().addPage( WikiPath.valueOf( pageName ).resolve( attachmentName ), "application/octet-stream" );
+        Attachment att = getContentManager().addPage( WikiPath.valueOf( pageName + "/" + attachmentName ), "application/octet-stream" );
 
         att.setContent( new ByteArrayInputStream(data) );
 

@@ -234,18 +234,18 @@ public class PageRenamerTest extends TestCase
  
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( p );
  
-        m_engine.renamePage(context, "TestPage", "FooTest", true);
+        m_engine.renamePage(context, "TestPage", "RenamedTest", true);
  
         String data = m_engine.getPureText("TestPage2", WikiProvider.LATEST_VERSION);
  
         assertEquals( "no rename", 
-                      "[FooTest/foo.txt] [linktext|FooTest/bar.jpg]", 
+                      "[RenamedTest/foo.txt] [linktext|RenamedTest/bar.jpg]", 
                       data.trim() );
 
-        WikiPage att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/foo.txt");
+        WikiPage att = m_engine.getAttachmentManager().getAttachmentInfo("RenamedTest/foo.txt");
         assertNotNull("footext",att);
         
-        att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/bar.jpg");
+        att = m_engine.getAttachmentManager().getAttachmentInfo("RenamedTest/bar.jpg");
         assertNotNull("barjpg",att);
         
         att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/bar.jpg");
@@ -258,7 +258,7 @@ public class PageRenamerTest extends TestCase
     
         assertNull( "oldpage", refs );
     
-        refs = findReferrers( "FooTest/bar.jpg" );
+        refs = findReferrers( "RenamedTest/bar.jpg" );
         assertEquals( "new size", 1, refs.size() );
         assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
     }

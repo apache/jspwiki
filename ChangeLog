@@ -1,3 +1,9 @@
+2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-168
+        
+        * All but three tests running, 99.71%. The last three seem to be Priha-related.
+        
 2009-10-14 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-167

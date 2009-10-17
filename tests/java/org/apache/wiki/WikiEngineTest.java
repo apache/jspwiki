@@ -756,6 +756,7 @@ public class WikiEngineTest extends TestCase
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
        
         Collection<WikiPath> pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
+        assertEquals( "wrong # of referrers", 1, pages.size() );
         assertEquals( "has one", "Main:OldNameTestPage", pages.iterator().next().toString() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
@@ -768,8 +769,7 @@ public class WikiEngineTest extends TestCase
         pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
         
         assertEquals( "wrong # of referrers", 1, pages.size() );
-        
-        assertEquals( "has wrong referrer", "NewNameTestPage", pages.iterator().next() );        
+        assertEquals( "has wrong referrer", "Main:NewNameTestPage", pages.iterator().next().toString() );        
     }
     
     public void testChangeNoteOldVersion2() throws Exception

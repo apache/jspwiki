@@ -98,7 +98,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
     private static final String[] NO_VALUES = new String[0];
 
-    private static final Pattern LINK_PATTERN = Pattern
+    protected static final Pattern LINK_PATTERN = Pattern
         .compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
 
     protected static final String REFERENCES_ROOT = "/wiki:references";
@@ -370,8 +370,18 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                     Boolean changeReferrers = (Boolean) ((WikiPageEvent) event).getArgs()[1];
                     List<WikiPath> referrers = getReferredBy( fromPage );
                     
+                    // Find all pages the old page referred to,
+                    // and remove the inbound links to those pages by the old page
+                    for ( WikiPath ref : getRefersTo( toPage ) )
+                    {
+                        ref = resolvePage( ref );
+                        String jcrPath = getReferredByJCRNode( ref );
+                        removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, fromPage.toString() );
+                    }
+
                     // Delete all references to the old page name
                     removeLinks( fromPage );
+                    removeLinks( toPage );
                     setLinks( toPage, extractLinks( toPage ) );
 
                     // In every referrer, replace all references to the old page with the new one
@@ -555,13 +565,34 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         
         try
         {
-            String jcrPath = getReferencedByJCRNode( destination );
+            String jcrPath = getReferredByJCRNode( destination );
+
+            // Get 'referred-by' links for this Node
             String[] links = getFromProperty( jcrPath, PROPERTY_REFERRED_BY );
             List<WikiPath> referrers = new ArrayList<WikiPath>();
             for( String link : links )
             {
                 referrers.add( WikiPath.valueOf( link ) );
             }
+
+            // Get 'referred-by' links for any child Nodes
+            try
+            {
+                NodeIterator children = m_cm.getJCRNode( jcrPath ).getNodes();
+                int childPathOffset = (REFERRED_BY + "/" + destination.getSpace() + "/").length();
+                while( children.hasNext() )
+                {
+                    Node child = children.nextNode();
+                    String childPathString = destination.getSpace() + ":" + child.getPath().substring( childPathOffset );
+                    WikiPath childPath = WikiPath.valueOf( childPathString );
+                    referrers.addAll( getReferredBy( childPath ) );
+                }
+            }
+            catch ( PathNotFoundException e )
+            {
+                // No worries
+            }
+            
             return referrers;
         }
         catch( RepositoryException e )
@@ -678,7 +709,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
     /**
      * Builds and returns the path used to store the ReferredBy data
      */
-    private String getReferencedByJCRNode( WikiPath path )
+    private String getReferredByJCRNode( WikiPath path )
     {
         if ( path == null )
         {
@@ -761,7 +792,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
         // Set the inverse 'referredBy' link for the destination (referred by
         // the source)
-        String jcrPath = getReferencedByJCRNode( page );
+        String jcrPath = getReferredByJCRNode( page );
         addToProperty( jcrPath, PROPERTY_REFERRED_BY, from.toString(), true );
     }
 
@@ -862,11 +893,13 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         
         // Set up a streamlined parser to collect links
         WikiPage page = m_engine.getPage( path );
-        LinkCollector localCollector = new LinkCollector();
+        LinkCollector pageLinks = new LinkCollector();
+        LinkCollector attachmentLinks = new LinkCollector();
         String pagedata = page.getContentAsString();
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
         MarkupParser mp = m_engine.getRenderingManager().getParser( context, pagedata );
-        mp.addLocalLinkHook( localCollector );
+        mp.addLocalLinkHook( pageLinks );
+        mp.addAttachmentLinkHook( attachmentLinks );
         mp.disableAccessRules();
 
         // Parse the page, and collect the links
@@ -882,7 +915,15 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
         // Return a WikiPath for each link
         ArrayList<WikiPath> links = new ArrayList<WikiPath>();
-        for( String s : localCollector.getLinks() )
+        for( String s : pageLinks.getLinks() )
+        {
+            WikiPath finalPath = resolvePage( WikiPath.valueOf( s ) );
+            if( !links.contains( finalPath ) )
+            {
+                links.add( finalPath );
+            }
+        }
+        for( String s : attachmentLinks.getLinks() )
         {
             WikiPath finalPath = resolvePage( WikiPath.valueOf( s ) );
             if( !links.contains( finalPath ) )
@@ -1106,7 +1147,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         // Let's pretend B and C ---> A
 
         // First, remove all inbound links from B & C to A
-        String jcrPath = getReferencedByJCRNode( page );
+        String jcrPath = getReferredByJCRNode( page );
         List<WikiPath> inboundLinks = getReferredBy( page );
         for( WikiPath source : inboundLinks )
         {
@@ -1126,7 +1167,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             jcrPath = ContentManager.getJCRPath( destination );
             removeFromProperty( jcrPath, PROPERTY_REFERS_TO, page.toString() );
 
-            jcrPath = getReferencedByJCRNode( destination );
+            jcrPath = getReferredByJCRNode( destination );
             removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, page.toString() );
         }
 
@@ -1188,7 +1229,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         List<WikiPath> oldDestinations = getRefersTo( source );
         for( WikiPath oldDestination : oldDestinations )
         {
-            String jcrPath = getReferencedByJCRNode( oldDestination );
+            String jcrPath = getReferredByJCRNode( oldDestination );
             removeFromProperty( jcrPath, PROPERTY_REFERRED_BY, source.toString() );
         }
 

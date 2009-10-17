@@ -21,7 +21,10 @@
 
 package org.apache.wiki.content;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -34,9 +37,6 @@ import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.content.ContentManager;
-import org.apache.wiki.content.ReferenceManager;
-import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.providers.ProviderException;
 
 /**
@@ -289,6 +289,25 @@ public class ReferenceManagerTest extends TestCase
 
         links = mgr.getRefersTo( WikiPath.valueOf( "Foobar2" ) );
         assertEquals( 0, links.size() );
+    }
+
+    /**
+     * Tests the link-pattern matcher in ReferenceManager, used for changing references.
+     * We test combinations of attachments, anchors and sub-pages.
+     */
+    public void testLinkPatternPage()
+    {
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [FooBar] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [Foo/Bar] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [Foo Bar] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [FooBar#anchor] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [linktext|FooBar] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [linktext|FooBar#anchor] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [FooBar/foo.txt] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [linktext|FooBar/bar.jpg] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [linktext|FooBar#anchor/bar.jpg] text" ).find() );
+        assertTrue( ReferenceManager.LINK_PATTERN.matcher( "Some [linktext|Foo/Bar#anchor/bar.jpg] text" ).find() );
+        assertFalse( ReferenceManager.LINK_PATTERN.matcher( "Some linktext|FooBar#anchor/bar.jpg] text" ).find() );
     }
 
     public void testNonExistant1() throws Exception
