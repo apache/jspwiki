@@ -1455,10 +1455,13 @@ public class ContentManager implements WikiEventListener
     }
     
     /**
-     *  Adds new content to the repository without saving it. To update, get a page, modify
-     *  it, then store it back using save().
+     *  Adds new content to the repository without saving it. To update,
+     *  get a page, modify it, then store it back using save(). If a JCR
+     *  Node with the same path already exists but has not previously been
+     *  saved, it is retained inside the WikiPage that is returned,
+     *  instead of creating a new one.
      *  
-     *  @param path the WikiName
+     *  @param path the WikiPath for the page
      *  @param contentType the type of content
      *  @return the {@link JCRWikiPage} 
      *  @throws PageAlreadyExistsException if the page already exists in the repository
@@ -1470,13 +1473,16 @@ public class ContentManager implements WikiEventListener
     }
 
     /**
-     *  Add new content to the repository to a particular JCR path, without saving it.
+     *  Add new content to the repository to a particular JCR path,
+     *  without saving it. If a JCR Node with the same path already exists
+     *  but has not previously been saved, it is retained inside the WikiPage
+     *  that is returned, instead of creating a new one.
      *  
-     *  @param path
-     *  @param jcrPath
-     *  @param contentType
-     *  @return
-     *  @throws ProviderException
+     *  @param path the WikiPath for the page
+     *  @param jcrPath the JCR path for the page
+     *  @param contentType the type of content
+     *  @return the {@link JCRWikiPage} 
+     *  @throws ProviderException if the backend fails
      */
     private JCRWikiPage addPage( WikiPath path, String jcrPath, String contentType ) 
         throws ProviderException
@@ -1485,15 +1491,32 @@ public class ContentManager implements WikiEventListener
         
         try
         {
+            // Is there an unsaved node already?
             Session session = m_sessionManager.getSession();
-        
-            Node nd = session.getRootNode().addNode( jcrPath );
+            Node nd = null;
+            try
+            {
+                nd = session.getRootNode().getNode( jcrPath );
+                if ( !isNew( nd ) )
+                {
+                    nd = null;
+                }
+            }
+            catch ( PathNotFoundException e )
+            {
+                // No worries
+            }
             
-            nd.addMixin( "mix:referenceable" );
-            nd.setProperty( JCRWikiPage.CONTENT_TYPE, contentType );
+            // Create a new node from scratch
+            if ( nd == null )
+            {
+                nd = session.getRootNode().addNode( jcrPath );
+                nd.addMixin( "mix:referenceable" );
+                nd.setProperty( JCRWikiPage.CONTENT_TYPE, contentType );
+            }
             
+            // Return the new WikiPage containing the new/re-used Node
             JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
-            
             return page;
         }
         catch( RepositoryException e )

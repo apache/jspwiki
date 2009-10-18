@@ -1,5 +1,18 @@
 2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
 
+        * 3.0.0-svn-169
+
+        * Reverted previous fix to lone failing JSPWikiMarkupParserTest
+        and added checks into ContentManager.addPage() that recycles
+        Nodes that haven't been saved yet. This fixes the edge-case
+        bug that the failing test uncovered: a caller that created
+        a particular WikiPage twice via addPage() -- without calling
+        WikiPage.save() in between invocations -- created a
+        same-named-sibling (SNS) in JCR. Instead of doing this, we
+        simply re-use this Node in the returned WikiPage. 
+
+2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
         * 3.0.0-svn-168
         
         * All but three tests running, 99.71%. The last three seem to be Priha-related.
