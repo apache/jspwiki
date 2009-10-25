@@ -1,3 +1,9 @@
+2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-171
+
+        * Additional build.xml tweaks to fix broken WAR builds.
+
 2009-10-24 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-170

@@ -185,24 +185,14 @@
   <!-- Initialising, cleaning, etc. -->
 
   <target name="init"
-          description="Initializes everything, creates directories, etc."
-          depends="mkpropertyfile">
-     <mkdir dir="${code.build}" />
-  </target>
-
-  <target name="mkpropertyfile"
-          description="Builds the correct propertyfile from the build.properties">
-     <copy file="etc/jspwiki.properties.tmpl" tofile="${code.web}/WEB-INF/jspwiki.properties" />
-     <replace file="${code.web}/WEB-INF/jspwiki.properties"
-              replacefilterfile="${build.properties}" />
+          description="Initializes everything, creates directories, etc.">
+    <mkdir dir="${code.build}" />
   </target>
 
   <!-- Removes the build directory and the tests build directory -->
   <target name="clean"
           description="Cleans away all generated files.">
     <delete dir="${build}" />
-    <delete dir="${tests.build}" />
-    <delete file="${code.web}/WEB-INF/jspwiki.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -378,6 +368,18 @@
     <delete quiet="true">
       <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar,web-fragment.xmlf,web.xml"/>
     </delete>
+
+    <!-- Build war.xml and the classes/properties files -->
+    <copy toDir="${war.build}" overwrite="true">
+      <fileset dir="etc">
+        <include name="jspwiki.properties" />
+        <include name="log4j.properties" />
+        <include name="priha.properties" />
+      </fileset>
+      <filterset>
+        <filtersfile file="${build.properties}" />
+      </filterset>
+    </copy>
     <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="false" />
   </target>
 
@@ -390,9 +392,14 @@
       <lib file="${war.build}/JSPWiki-jsp.jar" />
       <lib file="${war.build}/jasper-runtime-*.jar" />
       <lib file="${war.build}/commons-el-*.jar"  />
+      <classes dir="${war.build}">
+        <include name="log4j.properties" />
+        <include name="priha.properties" />
+      </classes>
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.js" />
       <fileset dir="${tmpdir}/compress/webdocs/" includes="**/*.css" />
       <fileset dir="${code.web}" includes="**" excludes="**/servlet-api.jar **/jsp-api.jar WEB-INF/web.xml WEB-INF/jspwiki.tld" />
+      <webinf dir="${war.build}" includes="jspwiki.properties" />
     </war>
     <copy file="${warfile}" toDir="${install.fulldir}" />
   </target>
@@ -671,7 +678,7 @@
 
   <!-- Running tests -->
 
-  <target name="tests-init" depends="mkpropertyfile">
+  <target name="tests-init">
 
     <!-- Create test files for classpath -->
     <copy toDir="${tests.classpath}" overwrite="true">
