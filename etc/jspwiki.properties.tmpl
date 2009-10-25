@@ -78,17 +78,6 @@ jspwiki.pageProvider = FileSystemProvider
 jspwiki.usePageCache = true
 
 #
-#  Determines where wiki files are kept for FileSystemProvider
-#  and RCSFileProvider
-#
-#  If you're using Windows, then you must duplicate the backslashes.
-#  For example, use:
-#
-#  jspwiki.fileSystemProvider.pageDir = C:\\Data\\jspwiki
-#
-jspwiki.fileSystemProvider.pageDir = @pagedir@
-
-#
 #  The JSPWiki working directory.  If not set, a temporary path will
 #  be used.  You can see the location of the workdir in the logs.
 #  It is HIGHLY recommended that you set this.
@@ -100,44 +89,6 @@ jspwiki.fileSystemProvider.pageDir = @pagedir@
 
 #
 #  ATTACHMENTS:
-#
-#  Use the following property to define which attachment provider
-#  you want to use.  You have basically two choices:
-#    * Set the value to BasicAttachmentProvider
-#      a simple, flat file versioning provider
-#    * Leave the value empty (or just comment the line out)
-#      the attachment functionality is disabled
-#
-jspwiki.attachmentProvider = BasicAttachmentProvider
-
-#
-#  The BasicAttachmentProvider needs to know where to store the files
-#  the user has uploaded.  It's okay to put these in the same directory
-#  as you put your text files (i.e. the pageDir setting above).
-#
-#  If you're using Windows, then you must duplicate the backslashes.
-#  For example, use:
-#
-#  jspwiki.basicAttachmentProvider.storageDir = C:\\Data\\jspwiki
-#
-jspwiki.basicAttachmentProvider.storageDir = @pagedir@
-
-#
-#  You can tell the BasicAttachmentProvider to add a flag
-#  so that browsers do not cache certain (or all) attachment
-#  types. This is useful in intranet environments. You should activate
-#  this if your users complain that their excel files are not uploaded
-#  correctly and they still do have an old version: Usually the
-#  file was uploaded correctly, but they get the locally cached version
-#  
-#  You can use regular expressions to disable the cache, e.g the
-#  following example will disable browser cache for all excel and word files
-#
-#  If you don't define this property, cache is enabled by default for
-#  all attachments
-#  
-#  jspwiki.basicAttachmentProvider.disableCache = .*\.xls|.*\.doc
-
 #
 #  You can limit the maximum size of an attachment by setting this
 #  value.  The value is in bytes, and by default all attachments

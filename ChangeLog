@@ -1,3 +1,20 @@
+2009-10-24 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-170
+        
+        * Restructured "tests" Ant target so that all test fixtures used
+        during the tests itself are now in build/tests. The original files
+        used to construct the fixtures stay in tests/etc, but nothing in
+        tests/etc are used when running the tests. The build/tests dir
+        contains classes, classpath (copied from tests/etc), db (copied
+        from etc/db), priha (the test page repository), reports (for
+        JUnit test results) and workdir. The logfile for tests is now
+        build/tests/jspwiki.log. In addition to these changes,
+        the Ant tasks "init" and "tests-init" are now hooked into the
+        Eclipse "clean" and "build project" commands as external builders.
+        These ensure that the same test fixtures are set up if run from
+        Eclipse.
+        
 2009-10-17 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-169

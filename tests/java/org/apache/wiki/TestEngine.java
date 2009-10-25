@@ -233,7 +233,7 @@ public class TestEngine extends WikiEngine
     
     public static final InputStream findTestProperties()
     {
-        return findTestProperties( "/jspwiki.properties" );
+        return findTestProperties( "/WEB-INF/jspwiki.properties" );
     }
 
     public static final InputStream findTestProperties( String properties )

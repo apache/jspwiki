@@ -100,7 +100,12 @@
   <property name="tests" value="tests" />
   <property name="tests.src" value="${tests}/java" />
   <property name="tests.build" value="${build}/tests/classes" />
+  <property name="tests.classpath" value="${build}/tests/classpath" />
+  <property name="tests.webinf" value="${tests.classpath}/WEB-INF" />
+  <property name="tests.db" value="${build}/tests/db" />
+  <property name="tests.pagedir" value="${build}/tests/priha" />
   <property name="tests.reports" value="${build}/tests/reports" />
+  <property name="tests.workdir" value="${build}/tests/workdir" />
   
   <!-- The location of the JAR file for the test classes -->
   <property name="testjarfile" location="${build}/${ant.project.name}-tests.jar" />
@@ -154,9 +159,9 @@
      </fileset>
   </path>
 
-  <!-- The path used for running tests.  We add the tests/etc directory
+  <!-- The path used for running tests.  We add the tests.classpath directory
        to the base path defined above, since we put all the relevant
-       .properties-files in tests/etc. -->
+       .properties-files there. -->
   <path id="path.tests">
      <pathelement location="${jarfile}" />
      <pathelement location="${testjarfile}" />
@@ -168,7 +173,7 @@
         <include name="*.jar" />
      </fileset>
      <pathelement path="${code.i18n}"/>
-     <pathelement path="${tests}/etc" />
+     <pathelement path="${tests.classpath}" />
   </path>
 
   <!-- The prefix to use when reading environment variables -->
@@ -183,18 +188,12 @@
           description="Initializes everything, creates directories, etc."
           depends="mkpropertyfile">
      <mkdir dir="${code.build}" />
-     <mkdir dir="${tests.build}" />
-     <mkdir dir="${tests.reports}" />
-     <mkdir dir="${@tests.pagedir@}" />
   </target>
 
   <target name="mkpropertyfile"
           description="Builds the correct propertyfile from the build.properties">
      <copy file="etc/jspwiki.properties.tmpl" tofile="${code.web}/WEB-INF/jspwiki.properties" />
-     <copy file="${tests}/etc/jspwiki.properties.tmpl" tofile="${tests}/etc/jspwiki.properties" />
      <replace file="${code.web}/WEB-INF/jspwiki.properties"
-              replacefilterfile="${build.properties}" />
-     <replace file="${tests}/etc/jspwiki.properties"
               replacefilterfile="${build.properties}" />
   </target>
 
@@ -204,7 +203,6 @@
     <delete dir="${build}" />
     <delete dir="${tests.build}" />
     <delete file="${code.web}/WEB-INF/jspwiki.properties" />
-    <delete file="${tests}/etc/jspwiki.properties" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -674,40 +672,60 @@
   <!-- Running tests -->
 
   <target name="tests-init" depends="mkpropertyfile">
-      <!-- Build up the /etc directory for testing -->
-      <delete file="${tests}/etc/userdatabase.xml" />
-      <delete file="${tests}/etc/userdatabase.xml.old" />
-      <copy file="${tests}/etc/userdatabase.xml.tmpl" toFile="${tests}/etc/userdatabase.xml"/>
-      <delete file="${tests}/etc/groupdatabase.xml" />
-      <delete file="${tests}/etc/groupdatabase.xml.old" />
-      <copy file="${tests}/etc/groupdatabase.xml.tmpl" toFile="${tests}/etc/groupdatabase.xml"/>
-      <mkdir dir="${tests}/etc/WEB-INF" />
 
-      <!-- Create web.xml files for testing -->
-      <copy file="${code.web}/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
+    <!-- Create test files for classpath -->
+    <copy toDir="${tests.classpath}" overwrite="true">
+      <fileset dir="${tests}/etc">
+        <include name="CommentedPropertiesTest.properties" />
+        <include name="log4j.properties" />
+        <include name="priha.properties" />
+      </fileset>
+    </copy>
+        
+    <!-- Create test WEB-INF -->
+    <copy toDir="${tests.webinf}" overwrite="true">
+      <fileset dir="${tests}/etc">
+        <include name="filters.xml" />
+        <include name="groupdatabase.xml" />
+        <include name="jspwiki_vers.properties" />
+        <include name="jspwiki_rcs.properties" />
+        <include name="jspwiki.policy" />
+        <include name="jspwiki.properties" />
+        <include name="jspwiki-testUserPolicy.policy" />
+        <include name="keychain" />
+        <include name="urlpattern.properties" />
+        <include name="userdatabase.xml" />
+      </fileset>
+    </copy>
+    
+    <!-- Create web.xml files for testing -->
+    <copy file="${code.web}/WEB-INF/web.xml" tofile="${webtests.build}/web.xml.custom" overwrite="true" />
 
-      <!-- For web unit tests, turn off SSL (self-signed certs b0rk
-           the tests) and enable JDBC refs -->
-      <replace file="${webtests.build}/web.xml.custom"
-               token="CONFIDENTIAL" value="NONE" />
-      <replace file="${webtests.build}/web.xml.custom"
-               token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
-      <replace file="${webtests.build}/web.xml.custom"
-               token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
+    <!-- For web unit tests, turn off SSL (self-signed certs b0rk
+          the tests) and enable JDBC refs -->
+    <replace file="${webtests.build}/web.xml.custom"
+              token="CONFIDENTIAL" value="NONE" />
+    <replace file="${webtests.build}/web.xml.custom"
+              token="&lt;!--  REMOVE ME TO ENABLE JDBC DATABASE" value="" />
+    <replace file="${webtests.build}/web.xml.custom"
+              token="REMOVE ME TO ENABLE JDBC DATABASE  --&gt;" value="" />
 
-      <!-- For unit testing, turn on container auth -->
-      <copy file="${webtests.build}/web.xml.custom"
-          tofile="${webtests.build}/web.xml.container" overwrite="true" />
-      <replace file="${webtests.build}/web.xml.container"
-               token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
-      <replace file="${webtests.build}/web.xml.container"
-               token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
-      <copy file="${webtests.build}/web.xml.container"
-          tofile="${tests}/etc/WEB-INF/web.xml" overwrite="true" />
-
-      <!-- Copy jspwiki.properties to the test WEB-INF -->
-      <copy file="${code.web}/WEB-INF/jspwiki.properties"
-          tofile="${tests}/etc/WEB-INF/jspwiki.properties" overwrite="true" />
+    <!-- For unit testing, turn on container auth -->
+    <copy file="${webtests.build}/web.xml.custom"
+        tofile="${webtests.build}/web.xml.container" overwrite="true" />
+    <replace file="${webtests.build}/web.xml.container"
+              token="&lt;!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH" value="" />
+    <replace file="${webtests.build}/web.xml.container"
+              token="REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH  --&gt;" value="" />
+              
+    <mkdir dir="${tests.build}" />
+    <mkdir dir="${tests.classpath}/WEB-INF" />
+    <mkdir dir="${tests.reports}" />
+    <mkdir dir="${tests.pagedir}" />
+    <mkdir dir="${tests.workdir}" />
+    <copy file="${webtests.build}/web.xml.container"
+        tofile="${tests.classpath}/WEB-INF/web.xml" overwrite="true" />
+        
   </target>
 
   <!-- This target runs the JUnit tests that are available
@@ -814,7 +832,7 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="${tests}/etc/jspwiki.properties"
+    <copy file="${tests.classpath}/jspwiki.properties"
         toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
     <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
       <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
@@ -921,7 +939,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <fileset dir="etc">
           <include name="jspwiki.policy" />
         </fileset>
-        <fileset dir="${tests}/etc" includes="userdatabase.xml groupdatabase.xml" />
+        <fileset dir="${tests.classpath}" includes="userdatabase.xml groupdatabase.xml" />
       </copy>
       <copy toFile="@{context.dir}/webapp/WEB-INF/web.xml" file="@{webxml}" flatten="true" />
       
@@ -945,7 +963,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
         <fileset dir="etc" includes="oscache.properties" />
       </copy>
       <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
-        <fileset dir="${tests}/etc" includes="log4j.properties" />
+        <fileset dir="${tests.classpath}" includes="log4j.properties" />
         <filterset>
           <filter token="logfile" value="@{context.dir}/jetty.log" />
         </filterset>
@@ -1089,7 +1107,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
        The complete list of customizable table properties are found
        in etc/jspwiki.properties.tmpl. If you don't customize them,
        JSPWiki will use some sensible defaults. For unit testing purposes,
-       this script will always use the defaults from 'tests/etc/jspwiki.properties',
+       this script will always use the defaults from '${tests.classpath}/jspwiki.properties',
        then apply any custom properties defined in your build.properties file.
 
        All of this may sound complicated, but it really isn't. If you use Hypersonic,
@@ -1159,7 +1177,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <check-file file="${jdbc.driver.jar}"            prop="jdbc.jar.present" />
 
     <!-- Bulk-copy the table setup/teardown scripts -->
-    <property name="tests.db.scripts" value="${tests}/etc/db/${jdbc.driver.id}" />
+    <mkdir dir="${tests.db}" />
+    <property name="tests.db.scripts" value="${tests.db}/${jdbc.driver.id}" />
     <mkdir dir="${tests.db.scripts}" />
     <copy toDir="${tests.db.scripts}" overwrite="true">
       <fileset dir="${db.scripts}" />
@@ -1182,7 +1201,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     <property name="db.props.exist" value="true" />
 
     <!-- Dump all of the JDBC properties where our test scripts can find them -->
-    <echoproperties prefix="jdbc." destfile="${tests}/etc/db/jdbc.properties" />
+    <echoproperties prefix="jdbc." destfile="${tests.db}/jdbc.properties" />
   </target>
 
   <target name="db-setup" depends="db-properties,hsql-init" if="db.props.exist">
@@ -1231,8 +1250,8 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
   <target name="hsql-check-start" depends="db-properties">
     <echo message="Checking to see if Hypersonic JDBC server is running already." />
-    <property file="${tests}/etc/db/hsql/server.properties" prefix="hsql" />
-    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from ${tests.src}/etc/db/hsql/server.properties</fail>
+    <property file="${tests.db}/hsql/server.properties" prefix="hsql" />
+    <fail unless="hsql.server.port">Failed to load Hypersonic JDBC properties from ${tests.db}/hsql/server.properties</fail>
     <condition property="hsql.up">
       <socket server="localhost" port="${hsql.server.port}" />
     </condition>
@@ -1241,17 +1260,17 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
   <target name="hsql-start" depends="hsql-check-start" unless="hsql.up"
     description="Starts the Hypersonic database for testing.">
     <echo message="Starting up Hypersonic JDBC server on localhost." />
-    <delete file="${tests}/etc/db/hsql/jspwiki.lck"/>
+    <delete file="${tests.db}/hsql/jspwiki.lck"/>
     <java fork="yes" spawn="yes" classname="org.hsqldb.Server"
-      dir="${tests}/etc/db/hsql">
+      dir="${tests.db}/hsql">
       <classpath>
         <pathelement location="${jdbc.driver.jar}" />
       </classpath>
     </java>
     <sleep seconds="5" />
-    <available file="${tests}/etc/db/hsql/jspwiki.lck" property="hsql.up"/>
+    <available file="${tests.db}/hsql/jspwiki.lck" property="hsql.up"/>
     <fail unless="hsql.up">Hypersonic didn't appear to start up properly. You can start it manually from the command line as follows:
-   cd tests/etc/db/hsql
+   cd build/tests/etc/db/hsql
    java -cp ${jdbc.driver.jar} org.hsqldb.Server
     </fail>
     <echo message="Done." />
@@ -1267,7 +1286,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       SHUTDOWN
     </sql>
     <!-- The lock file should be deleted automatically, but just in case... -->
-    <delete file="${tests}/etc/db/hsql/jspwiki.lck" />
+    <delete file="${tests.db}/hsql/jspwiki.lck" />
     <echo message="Done." />
   </target>
 

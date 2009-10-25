@@ -45,15 +45,6 @@ public class LdapAuthorizerTest extends TestCase
 
     protected void setUp() throws Exception
     {
-        // Create the Keychain
-        Keychain keychain = new Keychain();
-        keychain.load( null, "keychain-password".toCharArray() );
-        Keychain.Password password = new Keychain.Password( "password" );
-        keychain.setEntry( LdapConfig.KEYCHAIN_LDAP_BIND_PASSWORD, password );
-        File file = new File("tests/etc/WEB-INF/test-keychain" );
-        OutputStream stream = new FileOutputStream( file );
-        keychain.store( stream, "keychain-password".toCharArray() );
-
         // Create the TestEngine properties
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
@@ -76,8 +67,6 @@ public class LdapAuthorizerTest extends TestCase
         props.put( LdapConfig.PROPERTY_ROLE_BASE, "ou=roles,dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_IS_IN_ROLE_FILTER, "(&(&(objectClass=groupOfUniqueNames)(cn={0}))(uniqueMember={1}))" );
         props.put( LdapConfig.PROPERTY_BIND_USER, "Fred" );
-        props.put( AuthenticationManager.PROP_KEYCHAIN_PATH, "test-keychain" );
-        props.put( AuthenticationManager.PROP_KEYCHAIN_PASSWORD, "keychain-password" );
 
         m_engine = new TestEngine( props );
         assertEquals( LdapUserDatabase.class, m_engine.getUserManager().getUserDatabase().getClass() );
@@ -85,15 +74,8 @@ public class LdapAuthorizerTest extends TestCase
 
     protected void tearDown() throws Exception
     {
-        File file = new File( "tests/etc/WEB-INF/test-keychain" );
-        if( file.exists() )
-        {
-            file.delete();
-        }
-
         super.tearDown();
         m_engine.shutdown();
-
     }
 
     public void testGetRoles() throws Exception

@@ -704,7 +704,7 @@ public class WikiEngineTest extends TestCase
     public void testOldVersionVars() throws Exception
     {
             Properties pr = new Properties();
-            pr.load( TestEngine.findTestProperties( "/jspwiki_vers.properties" ) );
+            pr.load( TestEngine.findTestProperties( "/WEB-INF/jspwiki_vers.properties" ) );
 
             m_engine.shutdown();
             m_engine = new TestEngine( pr );

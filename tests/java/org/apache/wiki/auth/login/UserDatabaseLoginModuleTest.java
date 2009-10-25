@@ -124,7 +124,6 @@ public class UserDatabaseLoginModuleTest extends TestCase
     {
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
-        props.put(XMLUserDatabase.PROP_USERDATABASE, "tests/etc/userdatabase.xml");
         m_engine  = new TestEngine(props);
         m_db = new XMLUserDatabase();
         m_subject = new Subject();

@@ -39,7 +39,7 @@ public class CommentedPropertiesTest extends TestCase
 
     public void setUp() throws IOException
     {
-        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
+        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "CommentedPropertiesTest.properties" );
         m_props.load( in );
         in.close();
     }
@@ -165,14 +165,14 @@ public class CommentedPropertiesTest extends TestCase
     public void testStore() throws Exception
     {
         // Write results to a new file
-        File outFile = createFile( "test2.properties" );
+        File outFile = createFile( "CommentedPropertiesTest2.properties" );
         OutputStream out = new FileOutputStream( outFile );
         m_props.store( out, null );
         out.close();
 
         // Load the file into new props object; should return identical strings
         Properties props2 = new CommentedProperties();
-        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test2.properties" );
+        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "CommentedPropertiesTest2.properties" );
         props2.load( in );
         in.close();
         assertEquals( m_props.toString(), props2.toString() );
@@ -181,14 +181,14 @@ public class CommentedPropertiesTest extends TestCase
         m_props.remove( "testProp1" );
         m_props.remove( "testProp2" );
         m_props.remove( "testProp3" );
-        outFile = createFile( "test3.properties" );
+        outFile = createFile( "CommentedPropertiesTest3.properties" );
         out = new FileOutputStream( outFile );
         m_props.store( out, null );
         out.close();
 
         // Load the new file; should not have props1/2/3 & is shorter
         Properties props3 = new CommentedProperties();
-        in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test3.properties" );
+        in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "CommentedPropertiesTest3.properties" );
         props3.load( in );
         in.close();
         assertNotSame( m_props.toString(), props3.toString() );
@@ -199,12 +199,12 @@ public class CommentedPropertiesTest extends TestCase
         assertTrue( props3.containsKey( "testProp5" ) );
 
         // Clean up
-        File file = getFile( "test2.properties" );
+        File file = getFile( "CommentedPropertiesTest2.properties" );
         if( file != null && file.exists() )
         {
             file.delete();
         }
-        file = getFile( "test3.properties" );
+        file = getFile( "CommentedPropertiesTest3.properties" );
         if( file != null && file.exists() )
         {
             file.delete();
@@ -213,11 +213,11 @@ public class CommentedPropertiesTest extends TestCase
 
     private File createFile( String file ) throws URISyntaxException
     {
-        // Get the test.properties file
-        URL url = CommentedPropertiesTest.class.getClassLoader().getResource( "test.properties" );
+        // Get the test properties file
+        URL url = CommentedPropertiesTest.class.getClassLoader().getResource( "CommentedPropertiesTest.properties" );
         if( url == null )
         {
-            throw new IllegalStateException( "Very odd. We can't find test.properties!" );
+            throw new IllegalStateException( "Very odd. We can't find CommentedPropertiesTest.properties!" );
         }
 
         // Construct new file in same directory
@@ -228,11 +228,11 @@ public class CommentedPropertiesTest extends TestCase
 
     private File getFile( String name )
     {
-        // Get the test.properties file
+        // Get the test properties file
         URL url = CommentedPropertiesTest.class.getClassLoader().getResource( name );
         if( url == null )
         {
-            throw new IllegalStateException( "Very odd. We can't find test.properties!" );
+            throw new IllegalStateException( "Very odd. We can't find CommentedPropertiesTest.properties!" );
         }
         // Return the file
         File file = null;
