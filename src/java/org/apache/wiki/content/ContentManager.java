@@ -1348,16 +1348,20 @@ public class ContentManager implements WikiEventListener
         WikiEngine engine = context.getEngine();
         WikiPath fromPage = WikiPath.valueOf( renameFrom );
         WikiPath toPage = WikiPath.valueOf( renameTo );
-        if ( !engine.pageExists( fromPage.toString() ) )
-        {
-            // TODO: Should localize this
-            throw new WikiException("Cannot rename: source page '"+fromPage.toString() + "' does not exist." );
-        }
-        if ( engine.pageExists( toPage.toString() ) )
-        {
-            // TODO: Should localize this
-            throw new WikiException("Cannot rename: destination page '"+toPage.toString() + "' already exists." );
-        }
+        
+        // TODO: This is unnecessary; move() should throw an exception
+//        if ( !engine.pageExists( fromPage.toString() ) )
+//        {
+//            // TODO: Should localize this
+//            throw new WikiException("Cannot rename: source page '"+fromPage.toString() + "' does not exist." );
+//        }
+//        
+        // TODO: Unnecessary, move() will check this
+//        if ( engine.pageExists( toPage.toString() ) )
+//        {
+//            // TODO: Should localize this
+//            throw new WikiException("Cannot rename: destination page '"+toPage.toString() + "' already exists." );
+//        }
         
         //
         //  Do the actual rename by changing from the frompage to the topage, including
