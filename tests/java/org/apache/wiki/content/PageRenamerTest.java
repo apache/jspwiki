@@ -248,19 +248,27 @@ public class PageRenamerTest extends TestCase
         att = m_engine.getAttachmentManager().getAttachmentInfo("RenamedTest/bar.jpg");
         assertNotNull("barjpg",att);
         
-        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/bar.jpg");
-        assertNull("testpage/bar.jpg exists",att);
+        try
+        {
+            att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/bar.jpg");
+            fail("testpage/bar.jpg exists");
+        }
+        catch( PageNotFoundException e ) {}
         
-        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
-        assertNull("testpage/foo.txt exists",att);
+        try
+        {
+            att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
+            fail("testpage/foo.txt exists");
+        }
+        catch( PageNotFoundException e ) {}
         
         Collection<WikiPath> refs = findReferrers("TestPage/bar.jpg");
     
-        assertNull( "oldpage", refs );
+        assertTrue( "oldpage", refs.isEmpty() );
     
         refs = findReferrers( "RenamedTest/bar.jpg" );
         assertEquals( "new size", 1, refs.size() );
-        assertEquals( "wrong ref", "TestPage2", refs.iterator().next() );
+        assertEquals( "wrong ref", WikiPath.valueOf("Main:TestPage2"), refs.iterator().next() );
     }
 
     public void testSamePage() throws Exception
