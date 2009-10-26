@@ -1,5 +1,15 @@
 2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
 
+        * 3.0.0-svn-172
+
+        * Upgraded Priha to 0.5.5. Fixed several unit tests that broke as
+        a result. Note that Priha is now *extremely* sensitive to incomplete
+        shutdowns of JCR, particularly in unit tests. Unit tests *must*
+        be very sure to call WikiEngine.shutdown() every time a WikiEngine
+        is started up. Also, removed XML schema (not needed any more).
+
+2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
         * 3.0.0-svn-171
 
         * Additional build.xml tweaks to fix broken WAR builds.

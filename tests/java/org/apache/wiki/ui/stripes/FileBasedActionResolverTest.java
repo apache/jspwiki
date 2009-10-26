@@ -28,7 +28,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.controller.DispatcherServlet;
-import net.sourceforge.stripes.controller.DynamicMappingFilter;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
@@ -41,6 +40,7 @@ import org.apache.wiki.action.ViewActionBean;
 public class FileBasedActionResolverTest extends TestCase
 {
     private MockServletContext m_servletContext = null;
+    private WikiEngine m_engine = null;
 
     public void setUp()
     {
@@ -60,8 +60,8 @@ public class FileBasedActionResolverTest extends TestCase
         m_servletContext = servletContext;
 
         // Set the admin password and base URL so that the Installer interceptor doesnt't trip
-        WikiEngine engine = WikiEngine.getInstance( servletContext, null );
-        Properties props = engine.getWikiProperties();
+        m_engine = WikiEngine.getInstance( servletContext, null );
+        Properties props = m_engine.getWikiProperties();
         props.setProperty( InstallActionBean.PROP_ADMIN_PASSWORD_HASH, "foobar" );
         props.setProperty( WikiEngine.PROP_BASEURL, "http://127.0.0.1" );
     }
@@ -69,6 +69,7 @@ public class FileBasedActionResolverTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        m_engine.shutdown();
     }
     
     public void testViewActionBean() throws Exception

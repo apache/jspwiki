@@ -711,7 +711,6 @@ public final class SecurityVerifier
      * resolves to an existing file, and the policy file contained therein
      * represents a valid policy.
      */
-    @SuppressWarnings("unchecked")
     protected final void verifyPolicy()
     {
         // Look up the policy file and set the status text.

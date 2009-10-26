@@ -78,6 +78,8 @@ public class OutcomeTest extends TestCase
 
         o = Outcome.DECISION_REASSIGN;
         assertEquals("Reassign", i18n.get(core, english, o.getMessageKey()));
+
+        engine.shutdown();
     }
 
     public void testIsCompletion()

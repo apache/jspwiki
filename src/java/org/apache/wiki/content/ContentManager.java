@@ -476,51 +476,58 @@ public class ContentManager implements WikiEventListener
     public void shutdown()
     {
         release();
+        if ( m_repository == null )
+        {
+            return;
+        }
         
         //
-        //  If this is a Jackrabbit Repository, we'll call it's shutdown() method
+        //  If this is either Jackrabbit or Priha, we'll call it's shutdown() method
         //  to make sure it's really shut down.
         //
-        // FIXME: I am not too sure whether this really works.
-        try
+        String[] jcrRepoClassNames = { "org.apache.jackrabbit.core.JackrabbitRepository",
+                                    "org.priha.core.RepositoryImpl" };
+        for ( String jcrRepoClassName : jcrRepoClassNames )
         {
-            Class<Repository> jcrRepoClass = (Class<Repository>)Class.forName( "org.apache.jackrabbit.core.JackrabbitRepository" );
-            if( m_repository.getClass().isAssignableFrom(jcrRepoClass) )
+            // FIXME: I am not too sure whether this really works.
+            try
             {
-                log.info( "Shutting down Jackrabbit repository..." );
-                Method m = jcrRepoClass.getMethod( "shutdown" );
-                
-                m.invoke( m_repository );
+                Class<Repository> jcrRepoClass = (Class<Repository>)Class.forName( jcrRepoClassName );
+                if( m_repository.getClass().isAssignableFrom(jcrRepoClass) )
+                {
+                    log.info( "Shutting down JCR repository..." );
+                    Method m = jcrRepoClass.getMethod( "shutdown" );
+                    m.invoke( m_repository );
+                }
             }
-        }
-        catch( ClassNotFoundException e )
-        {
-            // Fine.
-        }
-        catch( SecurityException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch( NoSuchMethodException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch( IllegalArgumentException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch( IllegalAccessException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch( InvocationTargetException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            catch( ClassNotFoundException e )
+            {
+                // Fine.
+            }
+            catch( NoSuchMethodException e )
+            {
+                log.error( "No shutdown() method for repository class " + m_repository.getClass().getName() );
+            }
+            catch( SecurityException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( IllegalArgumentException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( IllegalAccessException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            catch( InvocationTargetException e )
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         
         m_repository = null;

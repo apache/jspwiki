@@ -89,7 +89,7 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
     @SuppressWarnings("unchecked")
     public Enumeration<Locale> getLocales()
     {
-        Enumeration<Locale> requestLocales = (Enumeration<Locale>)super.getLocales();
+        Enumeration<Locale> requestLocales = super.getLocales();
         if( m_locale == null )
         {
             return requestLocales;
@@ -97,9 +97,9 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper
 
         Vector<Locale> locales = new Vector<Locale>();
         locales.add( m_locale );
-        for( Enumeration e = requestLocales; e.hasMoreElements(); )
+        for( Enumeration<Locale> e = requestLocales; e.hasMoreElements(); )
         {
-            locales.add( (Locale)e.nextElement() );
+            locales.add( e.nextElement() );
         }
         return locales.elements();
     }

@@ -57,7 +57,7 @@ public class HandlerInfoTest extends TestCase
         }
     }
 
-    protected void tearDown() throws Exception
+    public void tearDown() throws Exception
     {
         super.tearDown();
         m_engine.shutdown();
@@ -189,24 +189,16 @@ public class HandlerInfoTest extends TestCase
 
     public void testNotEvaluatedPermissionAnnotation() throws Exception
     {
-        MockRoundtrip trip;
-        EditActionBean bean;
-        Method method;
-        HandlerInfo handlerInfo;
-        Permission perm;
-
         // Set up a new EditActionBean without a page parameter
-        trip = m_engine.guestTrip( "/Edit.action" );
-        trip.execute( "edit" );
-        bean = trip.getActionBean( EditActionBean.class );
+        EditActionBean bean = new EditActionBean();
         
         // The view handler should NOT return an "edit" PagePermission (because
         // EL can't evaluate)
-        method = EditActionBean.class.getMethod( "edit", new Class[0] );
+        Method method = EditActionBean.class.getMethod( "edit", new Class[0] );
         Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( EditActionBean.class );
-        handlerInfo = handlerInfos.get( method );
+        HandlerInfo handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
-        perm = handlerInfo.getPermission( bean );
+        Permission perm = handlerInfo.getPermission( bean );
         assertNull( perm );
     }
 

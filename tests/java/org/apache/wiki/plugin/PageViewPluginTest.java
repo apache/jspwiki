@@ -70,6 +70,7 @@ public class PageViewPluginTest extends TestCase
             m_engine.deletePage( "PageViewPluginTest01" );
             m_engine.deletePage( "PageViewPluginTest02" );
             m_engine.deletePage( "PageViews" );
+            m_engine.shutdown();
         }
         catch( ProviderException e )
         {

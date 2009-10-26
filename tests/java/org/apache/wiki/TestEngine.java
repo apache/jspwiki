@@ -65,6 +65,8 @@ import org.apache.wiki.util.TextUtil;
  *  <p>Simple test engine that always assumes pages are found. The version of TestEngine that is part of JSPWiki 3.0
  *  differs slightly from earlier versions. In particular, it integrates the Stripes framework's mock objects to simulate
  *  servlet testing.</p>
+ *  <p>JUnit test classes <em>must</em> call {@link #shutdown()} at the end of tests so that the
+ *  Priha JCR backend used for testing is properly shut down.</p>
  *  <p>Because of its use of Stripes mock objects, TestEngine needs to be able to find the various ActionBean
  *  implementations provided in JSPWiki. Therefore, it is <em>extremely</em> sensitive to changes in the build
  *  path. In particular, the mock servlet filter used by TestEngine hard-wires in the relative location
@@ -72,7 +74,7 @@ import org.apache.wiki.util.TextUtil;
  *  Ant build scripts use for placing generated Java class files. The Eclipse project configuration must configure
  *  itself the same way. To run unit tests in Eclipse, the <code>build</code> directory absolutely <em>must</em>
  *  place generated class files in this directory, rather than the Eclipse default of <code>classes</code>. If
- *  unit tests do not run in Eclipse for some reason, this is the likeliest culprit.
+ *  unit tests do not run in Eclipse for some reason, this is the likeliest culprit.</p>
  */
 public class TestEngine extends WikiEngine
 {

@@ -193,6 +193,7 @@
   <target name="clean"
           description="Cleans away all generated files.">
     <delete dir="${build}" />
+    <mkdir dir="${tests.classpath}" />
     <delete>
       <fileset dir="." includes="**/*~" defaultexcludes="no"/>
       <fileset dir="." includes="**/#*#" defaultexcludes="no"/>
@@ -322,7 +323,7 @@
          <fileset dir="${code.build}" includes="**/*.class" />
          <fileset dir="${code.src}" includes="org/**/*.properties" />
          <!--fileset dir="${code.src}" includes="templates/**/*.properties" /-->
-         <fileset dir="etc" includes="ini/*.xml ini/*.properties priha.properties" />
+         <fileset dir="etc" includes="ini/*.xml ini/*.properties" />
          <metainf dir="${code.web}/WEB-INF" includes="jspwiki.tld" />
       </jar>
   </target>
@@ -357,19 +358,14 @@
            of the WAR-file.
    -->
    
-  <target name="war-init" depends="installinit">
+  <target name="war" depends="installinit,jar,jar-compiled-jsps,compressedjs"
+          description="Builds the WAR file for installation.">
     <mkdir dir="${war.build}" />
-    <echo>Validating web.xml</echo>
-    <schemavalidate file="${code.web}/WEB-INF/web.xml">
-      <schema namespace="http://java.sun.com/xml/ns/j2ee"
-        file="etc/schema/web-app_2_4.xsd" />
-    </schemavalidate>
-    <!-- Clean up stuff from last time -->
+    
+    <!-- Build war.xml and the classes/properties files -->
     <delete quiet="true">
       <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar,web-fragment.xmlf,web.xml"/>
     </delete>
-
-    <!-- Build war.xml and the classes/properties files -->
     <copy toDir="${war.build}" overwrite="true">
       <fileset dir="etc">
         <include name="jspwiki.properties" />
@@ -381,10 +377,8 @@
       </filterset>
     </copy>
     <copy file="${code.web}/WEB-INF/web.xml" toFile="${war.build}/web.xml" overwrite="false" />
-  </target>
 
-  <target name="war" depends="war-init,jar,jar-compiled-jsps,compressedjs"
-          description="Builds the WAR file for installation.">
+    <!-- Build the actual WAR file -->
     <delete file="${warfile}" />
     <war destfile="${warfile}"
          webxml="${war.build}/web.xml" duplicate="preserve">
@@ -685,7 +679,6 @@
       <fileset dir="${tests}/etc">
         <include name="CommentedPropertiesTest.properties" />
         <include name="log4j.properties" />
-        <include name="priha.properties" />
       </fileset>
     </copy>
         
@@ -702,6 +695,14 @@
         <include name="keychain" />
         <include name="urlpattern.properties" />
         <include name="userdatabase.xml" />
+      </fileset>
+    </copy>
+    
+    <!-- Create test WEB-INF/classes -->
+    <mkdir dir="${tests.webinf}/classes" />
+    <copy toDir="${tests.webinf}/classes" overwrite="true">
+      <fileset dir="${tests}/etc">
+        <include name="priha.properties" />
       </fileset>
     </copy>
     
@@ -1151,7 +1152,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
     <!-- Here's a neat trick: import the JDBC runtime props from jspwiki.properties -->
     <echo message="Getting JDBC runtime properties." />
-    <loadproperties srcFile="${code.web}/WEB-INF/jspwiki.properties">
+    <loadproperties srcFile="${tests}/etc/jspwiki.properties">
       <filterchain>
         <linecontainsregexp>
           <regexp pattern="^[jspwiki.userdatabase|jspwiki.groupdatabase]"/>

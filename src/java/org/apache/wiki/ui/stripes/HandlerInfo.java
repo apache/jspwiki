@@ -37,6 +37,7 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
+import net.sourceforge.stripes.util.bean.EvaluationException;
 import net.sourceforge.stripes.util.bean.PropertyExpression;
 import net.sourceforge.stripes.util.bean.PropertyExpressionEvaluation;
 
@@ -394,7 +395,12 @@ public class HandlerInfo
         if( m_permissionTargetExpression != null )
         {
             PropertyExpressionEvaluation evaluation = new PropertyExpressionEvaluation( m_permissionTargetExpression, object );
-            Object value = evaluation.getValue();
+            Object value = null;
+            try
+            {
+                value = evaluation.getValue();
+            }
+            catch ( EvaluationException e ) { }
             if ( value != null )
             {
                 target = value.toString();

@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.ModuleData;
 import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.attachment.AttachmentManager;

@@ -31,6 +31,7 @@ import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.ViewActionBean;
 
 
@@ -61,6 +62,8 @@ public class ShortUrlRedirectFilterTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        WikiEngine engine = WikiEngine.getInstance( m_servletContext, null );
+        engine.shutdown();
     }
     
     public void testRedirectEdit() throws Exception

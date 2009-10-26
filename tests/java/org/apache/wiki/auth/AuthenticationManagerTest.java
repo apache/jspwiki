@@ -180,6 +180,7 @@ public class AuthenticationManagerTest extends TestCase
         WikiEngine engine = new TestEngine( props );
         AuthenticationManager authMgr = engine.getAuthenticationManager();
         assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
+        engine.shutdown();
     }
 
     public void testCustomJAASLoginModuleOptions() throws Exception
@@ -205,6 +206,7 @@ public class AuthenticationManagerTest extends TestCase
         assertEquals( "value1", options.get( "key1" ) );
         assertEquals( "value2", options.get( "key2" ) );
         assertEquals( "value3", options.get( "key3" ) );
+        engine.shutdown();
     }
 
     public void testIsUserPrincipal()
