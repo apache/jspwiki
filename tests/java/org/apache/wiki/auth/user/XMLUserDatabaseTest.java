@@ -64,9 +64,16 @@ public class XMLUserDatabaseTest extends TestCase
   
   protected void tearDown() throws Exception
   {
-      assertEquals( 8, m_db.getWikiNames().length );
-      super.tearDown();
-      m_engine.shutdown();
+      try
+      {
+          // If this fails, shutdown() is never called unless it's wrapped in a finally block.
+          assertEquals( 8, m_db.getWikiNames().length );
+      }
+      finally
+      {
+          super.tearDown();
+          m_engine.shutdown();
+      }
   }
 
   public void testDeleteByLoginName() throws WikiSecurityException

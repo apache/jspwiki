@@ -85,6 +85,7 @@ public class JDBCGroupDatabaseTest extends TestCase
                                "please make sure that you have started your database "+
                                "(e.g. by running ant hsql-start)");
 
+            m_engine.shutdown();
             throw (SQLException) e.fillInStackTrace();
         }
 
@@ -95,12 +96,17 @@ public class JDBCGroupDatabaseTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        if ( m_conn != null )
+        try
         {
-            m_conn.close();
+            if ( m_conn != null )
+            {
+                m_conn.close();
+            }
         }
-        
-        m_engine.shutdown();
+        finally
+        {
+            m_engine.shutdown();
+        }
     }
 
     public void testDelete() throws WikiException
