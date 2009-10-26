@@ -840,9 +840,9 @@
     <mkdir dir="${webtests.build}" />
   
     <!-- Create the master jspwiki.properties template for all webtests -->
-    <copy file="${tests.classpath}/jspwiki.properties"
-        toFile="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
-    <propertyfile file="${webtests.build}/jspwiki.properties.tmpl">
+    <copy file="${tests}/etc/jspwiki.properties"
+        toFile="${webtests.build}/jspwiki.properties" flatten="true" />
+    <propertyfile file="${webtests.build}/jspwiki.properties">
       <entry key="jspwiki.authorizer" value="org.apache.wiki.auth.authorize.WebContainerAuthorizer" />
       <entry key="jspwiki.userdatabase" value="org.apache.wiki.auth.user.XMLUserDatabase" />
       <entry key="jspwiki.groupdatabase" value="org.apache.wiki.auth.authorize.XMLGroupDatabase" />
@@ -954,7 +954,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       <!-- Create the jspwiki.properties file -->
       <mkdir dir="@{context.dir}/workdir" />
       <copy toFile="@{context.dir}/webapp/WEB-INF/jspwiki.properties"
-        file="${webtests.build}/jspwiki.properties.tmpl" flatten="true" />
+        file="${webtests.build}/jspwiki.properties" flatten="true" />
         <propertyfile file="@{context.dir}/webapp/WEB-INF/jspwiki.properties">
           <entry key="jspwiki.baseURL"                            value="http://localhost:${webtests.port}/@{context}/" />
           <entry key="jspwiki.workDir"                            value="@{context.path}/workdir" />
@@ -967,9 +967,12 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
       </propertyfile>
 
       <!-- Copy the classes -->
-      <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
-        <fileset dir="etc" includes="oscache.properties" />
-      </copy>
+        <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
+          <fileset dir="etc" includes="priha.properties" />
+        </copy>
+        <copy toDir="@{context.dir}/webapp/WEB-INF">
+          <fileset dir="tests/etc" includes="keychain" />
+        </copy>
       <copy toDir="@{context.dir}/webapp/WEB-INF/classes">
         <fileset dir="${tests.classpath}" includes="log4j.properties" />
         <filterset>
@@ -1021,7 +1024,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
            <path refid="path.tests" />
         </classpath>
         <sysproperty key="java.io.tmpdir" value="${webtests.temp}" />
-        <sysproperty key="log4j.debug" value="yesplease" />
+        <sysproperty key="log4j.debug" value="true" />
         <!--
         <jvmarg value="-Xdebug" />
         <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n" />
@@ -1113,7 +1116,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
          DROP TABLE @jspwiki.userdatabase.table@ IF EXISTS;
 
        The complete list of customizable table properties are found
-       in etc/jspwiki.properties.tmpl. If you don't customize them,
+       in etc/jspwiki.properties. If you don't customize them,
        JSPWiki will use some sensible defaults. For unit testing purposes,
        this script will always use the defaults from '${tests.classpath}/jspwiki.properties',
        then apply any custom properties defined in your build.properties file.
@@ -1129,7 +1132,7 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
 
        1) Configure the Jdbc.* properties in build.properties, as described
           above
-       2) Configure table and column mappings in etc/jspwiki.properties.tmpl
+       2) Configure table and column mappings in etc/jspwiki.properties
        3) Configure your web container to create a JDBC DataSource
           (by default, the JNDI name is jdbc/UserDatabase)
        4) Put the JDBC driver jar in a place where your web container will
