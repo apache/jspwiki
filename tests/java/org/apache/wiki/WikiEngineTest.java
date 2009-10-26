@@ -703,27 +703,27 @@ public class WikiEngineTest extends TestCase
      */
     public void testOldVersionVars() throws Exception
     {
-            Properties pr = new Properties();
-            pr.load( TestEngine.findTestProperties( "/WEB-INF/jspwiki_vers.properties" ) );
+        Properties pr = new Properties();
+        pr.load( TestEngine.findTestProperties( "/WEB-INF/jspwiki.properties" ) );
 
-            m_engine.shutdown();
-            m_engine = new TestEngine( pr );
+        m_engine.shutdown();
+        m_engine = new TestEngine( pr );
 
-            m_engine.saveText( NAME1, "[{SET foo=bar}]" );
+        m_engine.saveText( NAME1, "[{SET foo=bar}]" );
 
-            m_engine.saveText( NAME1, "[{SET foo=notbar}]" );
+        m_engine.saveText( NAME1, "[{SET foo=notbar}]" );
 
-            WikiPage v1 = m_engine.getPage( NAME1, 1 );
+        WikiPage v1 = m_engine.getPage( NAME1, 1 );
 
-            WikiPage v2 = m_engine.getPage( NAME1, 2 );
+        WikiPage v2 = m_engine.getPage( NAME1, 2 );
 
-            assertEquals( "V1", "bar", v1.getAttribute( "foo" ) );
+        assertEquals( "V1", "bar", v1.getAttribute( "foo" ) );
 
-            // FIXME: The following must run as well
-            assertEquals( "V2", "notbar", v2.getAttribute( "foo" ) );
-
-            m_engine.deletePage( NAME1 );
-        }
+        // FIXME: The following must run as well
+        assertEquals( "V2", "notbar", v2.getAttribute( "foo" ) );
+            
+        m_engine.deletePage( NAME1 );
+    }
     
     public void testSpacedNames1()
         throws Exception
