@@ -20,20 +20,25 @@
  */
 package org.apache.wiki.auth.user;
 
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.security.Principal;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.wiki.JSPWikiTestBase;
+import org.apache.wiki.NotExecutableException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.*;
 
 /**
  */
-public class LdapUserDatabaseTest extends TestCase
+public class LdapUserDatabaseTest extends JSPWikiTestBase
 {
-
+    private static final String LDAP_HOST = "127.0.0.1";
+    private static final int    LDAP_PORT = 4890;
+    
     private LdapUserDatabase m_db;
 
     private TestEngine m_engine = null;
@@ -44,10 +49,27 @@ public class LdapUserDatabaseTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
+        
+        //
+        //  First check if the LDAP server exists.
+        //
+        
+        try
+        {
+            Socket socket = new Socket( LDAP_HOST, LDAP_PORT );
+            socket.connect( new InetSocketAddress(0) );
+            socket.close();
+        }
+        catch( ConnectException e )
+        {
+            // OK, so there is no LDAP server existing.
+            throw new NotExecutableException();
+        }
+
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
         props.put( UserManager.PROP_DATABASE, "org.apache.wiki.auth.user.LdapUserDatabase" );
-        props.put( LdapConfig.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890/" );
+        props.put( LdapConfig.PROPERTY_CONNECTION_URL, "ldap://"+LDAP_HOST+":"+LDAP_PORT );
         props.put( LdapConfig.PROPERTY_USER_BASE, "ou=people,dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_AUTHENTICATION, "simple" );
         props.put( LdapConfig.PROPERTY_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );

@@ -20,7 +20,12 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +33,8 @@ import java.util.Properties;
 
 import javax.security.auth.login.LoginException;
 
-import junit.framework.TestCase;
-
+import org.apache.wiki.JSPWikiTestBase;
+import org.apache.wiki.NotExecutableException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.*;
@@ -39,12 +44,31 @@ import org.freshcookies.security.Keychain;
 
 /**
  */
-public class LdapAuthorizerTest extends TestCase
+public class LdapAuthorizerTest extends JSPWikiTestBase
 {
     private TestEngine m_engine;
 
+    private static final String LDAP_HOST = "127.0.0.1";
+    private static final int    LDAP_PORT = 4890;
+    
     protected void setUp() throws Exception
     {
+        //
+        //  First check if the LDAP server exists.
+        //
+        
+        try
+        {
+            Socket socket = new Socket( LDAP_HOST, LDAP_PORT );
+            socket.connect( new InetSocketAddress(0) );
+            socket.close();
+        }
+        catch( ConnectException e )
+        {
+            // OK, so there is no LDAP server existing.
+            throw new NotExecutableException();
+        }
+        
         // Create the TestEngine properties
         Properties props = new Properties();
         props.load( TestEngine.findTestProperties() );
@@ -52,7 +76,7 @@ public class LdapAuthorizerTest extends TestCase
         // Set the LoginModule options
         props.put( UserManager.PROP_READ_ONLY_PROFILES, "true" );
         props.put( AuthenticationManager.PROP_LOGIN_MODULE, UserDatabaseLoginModule.class.getCanonicalName() );
-        props.put( LdapConfig.PROPERTY_CONNECTION_URL, "ldap://127.0.0.1:4890" );
+        props.put( LdapConfig.PROPERTY_CONNECTION_URL, "ldap://"+LDAP_HOST+":"+LDAP_PORT );
         props.put( LdapConfig.PROPERTY_LOGIN_ID_PATTERN, "uid={0},ou=people,dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_USER_BASE, "dc=jspwiki,dc=org" );
         props.put( LdapConfig.PROPERTY_USER_FILTER, "(&(objectClass=inetOrgPerson)(uid={0}))" );

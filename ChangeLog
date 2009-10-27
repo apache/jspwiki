@@ -1,3 +1,13 @@
+2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-174
+
+        * Added code to test harness to check for existence of LDAP server
+        before trying to execute tests.
+        
+        * Introduced JSPWikiTestBase which testcases should extend if
+        they wish to throw NotExecutableExceptions.
+        
 2009-10-26 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-173
