@@ -1,3 +1,18 @@
+2009-10-26 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-173
+
+        * Fixed single last unit test bug. Although LDAP tests won't work
+        if a test LDAP server isn't running, all other unit tests run
+        100% clean. This is the first time that has happened in at
+        least a year. Test times: 7 minutes 51 seconds for 1024 tests.
+
+        * Added Ant script to start OpenLDAP test fixture if
+        available.
+
+        * Fixed JCRWikiPage bug that was causing JCR exceptions when
+        attributes were not set. 
+
 2009-10-25 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-172

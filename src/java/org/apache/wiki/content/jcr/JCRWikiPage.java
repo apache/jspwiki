@@ -136,7 +136,17 @@ public class JCRWikiPage
      */
     public Node getJCRNode() throws RepositoryException
     {
-        return m_engine.getContentManager().getJCRNode(m_jcrPath);
+        Node node;
+        try
+        {
+            node = m_engine.getContentManager().getJCRNode(m_jcrPath);
+        }
+        catch ( PathNotFoundException e )
+        {
+            // If the Node was never created, create one now
+            node = m_engine.getContentManager().createJCRNode( m_jcrPath );
+        }
+        return node;
     }
     
     /**
@@ -157,6 +167,8 @@ public class JCRWikiPage
 
     /**
      * {@inheritDoc}
+     * This implementation looks up the JCR {@link Property} with the name {@code key}.
+     * If the attribute is found, its value is found. If not, {@code null} is returned.
      */
     public Serializable getAttribute( String key )
     {
@@ -173,6 +185,11 @@ public class JCRWikiPage
                 throw new IllegalStateException( "The value returned by " + key + " was not a Serializable, as expected.");
             }
         }
+        catch( PathNotFoundException e )
+        {
+            // This just means the attribute does not exist. No worries...
+            return null;
+        }
         catch( ItemNotFoundException e )
         {
             log.error( "ItemNotFoundException occurred while getting Attribute " + key, e );
@@ -182,8 +199,6 @@ public class JCRWikiPage
             // the following exception still occurs quite often, so no stacktrace for now
             log.info( "RepositoryException occurred while getting Attribute " + key + " : "  +  e );
         }
-        // until this is fixed we want some more diagnostic info 
-        log.info("attribute value for key " + key + " is not Serializable, returning null value");
         return null;
     }
 
@@ -224,7 +239,7 @@ public class JCRWikiPage
             // the right thing to do here.
             getJCRNode().setProperty( key, attribute.toString() );
         }
-        catch(RepositoryException e) 
+        catch( RepositoryException e ) 
         {
             log.error( "Exception occurred while setting (Serializable) attribute " + key, e );
         }

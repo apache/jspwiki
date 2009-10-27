@@ -103,9 +103,11 @@
   <property name="tests.classpath" value="${build}/tests/classpath" />
   <property name="tests.webinf" value="${tests.classpath}/WEB-INF" />
   <property name="tests.db" value="${build}/tests/db" />
+  <property name="tests.ldap" value="${build}/tests/ldap" />
   <property name="tests.pagedir" value="${build}/tests/priha" />
   <property name="tests.reports" value="${build}/tests/reports" />
   <property name="tests.workdir" value="${build}/tests/workdir" />
+  <available property="openldap" file="/usr/libexec/slapd" value="/usr/libexec/slapd" />
   
   <!-- The location of the JAR file for the test classes -->
   <property name="testjarfile" location="${build}/${ant.project.name}-tests.jar" />
@@ -756,7 +758,7 @@
 
        More info http://ant.apache.org/faq.html#delegating-classloader
    -->
-  <target name="tests" depends="jar,tests-init,jartests,tests-db-init"
+  <target name="tests" depends="jar,tests-init,jartests,tests-db-init,tests-ldap-init"
           description="Runs the JUnit tests.">
 
     <junit printsummary="yes" haltonfailure="no" fork="yes" forkmode="once" maxmemory="512m">
@@ -1298,6 +1300,74 @@ If all of the tests ran successfully, the reports will all be "green."</echo>
     </sql>
     <!-- The lock file should be deleted automatically, but just in case... -->
     <delete file="${tests.db}/hsql/jspwiki.lck" />
+    <echo message="Done." />
+  </target>
+
+  <!-- ============================================================== -->
+
+  <!-- OpenLDAP server startup/shutdown (for testing LDAP integration) -->
+
+  <!-- Special "init" target for OpenLDAP -->
+  <target name="tests-ldap-init" depends="ldap-check-start,ldap-start" if="openldap" />
+
+  <target name="ldap-check-start" if="openldap">
+    <echo message="Checking to see if OpenLDAP server is running already." />
+    <condition property="ldap.up">
+      <socket server="localhost" port="4890" />
+    </condition>
+  </target>
+
+  <target name="ldap-start" depends="ldap-check-start" unless="ldap.up" if="openldap"
+    description="Starts OpenLDAP for testing.">
+    <echo message="Starting OpenLDAP server on localhost." />
+    <delete dir="${tests.ldap}" />
+    <mkdir dir="${tests.ldap}" />
+    <mkdir dir="${tests.ldap}/data" />
+    <exec executable="${openldap}" dir="." spawn="true">
+      <arg value="-f" />
+      <arg value="${basedir}/etc/ldap/slapd.conf" />
+      <arg value="-h" />
+      <arg value="ldap://127.0.0.1:4890/" />
+      <arg value="-d" />
+      <arg value="-1" />
+      <arg value="-u" />
+      <arg value="${env.USER}" />
+    </exec>
+    <sleep seconds="3" />
+    <echo message="Loading sample schema." />
+    <exec executable="ldapadd" dir=".">
+      <arg value="-x" />
+      <arg value="-h" />
+      <arg value="127.0.0.1" />
+      <arg value="-p" />
+      <arg value="4890" />
+      <arg value="-D" />
+      <arg value="cn=Manager,dc=jspwiki,dc=org" />
+      <arg value="-w" />
+      <arg value="test" />
+      <arg value="-f" />
+      <arg value="${basedir}/etc/ldap/test.ldif" />
+    </exec>
+    <sleep seconds="3" />
+    <available file="${tests.ldap}/slapd.pid" property="ldap.up"/>
+    <fail unless="ldap.up">OpenLDAP didn't appear to start up properly. You can start it manually from the command line as follows:
+   ${openldap} -f etc/ldap/slapd.conf -h "ldap://127.0.0.1:4890/" -d -1 -u ${env.USER}
+    </fail>
+    <echo message="Done." />
+  </target>
+
+  <target name="ldap-stop" depends="ldap-check-start" if="ldap.up"
+    description="Shuts down the OpenLDAP test server, if it's up.">
+    <echo message="Shutting down OpenLDAP server on localhost." />
+    <exec executable="killall">
+      <arg value="-u" />
+      <arg value="arj" />
+      <arg value="-c" />
+      <arg value="slapd" />
+    </exec>
+    <delete dir="${tests.ldap}/data" />
+    <delete file="${tests.ldap}/slapd.args" />
+    <delete file="${tests.ldap}/slapd.pid" />
     <echo message="Done." />
   </target>
 

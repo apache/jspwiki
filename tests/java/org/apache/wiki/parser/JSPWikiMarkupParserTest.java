@@ -69,9 +69,11 @@ public class JSPWikiMarkupParserTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        testEngine.emptyRepository();
-        
-        testEngine.shutdown();
+        if ( testEngine != null )
+        {
+            testEngine.emptyRepository();
+            testEngine.shutdown();
+        }
     }
 
     private void newPage( String name )
@@ -128,6 +130,8 @@ public class JSPWikiMarkupParserTest extends TestCase
         props.load( TestEngine.findTestProperties() );
 
         props.setProperty( "jspwiki.translatorReader.useRelNofollow", "true" );
+        testEngine.shutdown();
+
         TestEngine testEngine2 = new TestEngine( props );
 
         WikiContext context = testEngine2.getWikiContextFactory().newViewContext( testEngine2.createPage( PAGE_NAME ) );
@@ -531,6 +535,8 @@ public class JSPWikiMarkupParserTest extends TestCase
 
         assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\" rel=\"nofollow\">link</a>",
                       translate_nofollow(src) );
+
+        testEngine = null;
     }
 
     //
