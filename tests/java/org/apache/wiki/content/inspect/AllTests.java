@@ -34,11 +34,13 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki content inspector tests");
-        suite.addTest( InspectionTest.suite() );
+        TestSuite suite = new TestSuite("Content inspection tests");
+
         suite.addTest( InspectionPlanTest.suite() );
+        suite.addTest( InspectionTest.suite() );
         suite.addTest( ReputationManagerTest.suite() );
         suite.addTest( SpamInspectionFactoryTest.suite() );
+
         return suite;
     }
 }

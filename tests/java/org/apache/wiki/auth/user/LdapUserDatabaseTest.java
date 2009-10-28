@@ -57,7 +57,10 @@ public class LdapUserDatabaseTest extends JSPWikiTestBase
         try
         {
             Socket socket = new Socket( LDAP_HOST, LDAP_PORT );
-            socket.connect( new InetSocketAddress(0) );
+            if ( !socket.isConnected() )
+            {
+                socket.connect( new InetSocketAddress(0) );
+            }
             socket.close();
         }
         catch( ConnectException e )

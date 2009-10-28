@@ -33,7 +33,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("ACL tests");
+        TestSuite suite = new TestSuite("Auth: ACL tests");
 
         suite.addTest( AclEntryImplTest.suite() );
         suite.addTest( AclImplTest.suite() );

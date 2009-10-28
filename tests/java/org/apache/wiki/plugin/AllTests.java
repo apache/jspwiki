@@ -36,22 +36,22 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki plugins");
+        TestSuite suite = new TestSuite("Plugin tests");
 
         suite.addTest( CounterPluginTest.suite() );
+        suite.addTest( DenouncePluginTest.suite() );
         suite.addTest( GroupsTest.suite() );
+        suite.addTest( IndexPluginTest.suite() );
         suite.addTest( InsertPageTest.suite() );
+        suite.addTest( InterWikiLinksPluginTest.suite() );
+        suite.addTest( PageViewPluginTest.suite() );
         suite.addTest( PluginIndexPluginTest.suite() );
         suite.addTest( PluginManagerTest.suite() );
+        suite.addTest( RecentChangesPluginTest.suite() );
+        suite.addTest( ReferredPagesPluginTest.suite() );
         suite.addTest( ReferringPagesPluginTest.suite() );
         suite.addTest( TableOfContentsTest.suite() );
         suite.addTest( UndefinedPagesPluginTest.suite() );
-        suite.addTest( DenouncePluginTest.suite() );
-        suite.addTest( ReferredPagesPluginTest.suite() );
-        suite.addTest( RecentChangesPluginTest.suite() );
-        suite.addTest( IndexPluginTest.suite() );
-        suite.addTest( InterWikiLinksPluginTest.suite() );
-        suite.addTest( PageViewPluginTest.suite() );
 
         return suite;
     }

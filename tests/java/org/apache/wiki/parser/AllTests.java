@@ -39,9 +39,10 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("Parser tests");
 
+        suite.addTest( CreoleToJSPWikiTranslatorTest.suite() );
         suite.addTest( JSPWikiMarkupParserTest.suite() );
         suite.addTest( MarkupParserTest.suite() );
-        suite.addTest( CreoleToJSPWikiTranslatorTest.suite() );
+
         return suite;
     }
 }

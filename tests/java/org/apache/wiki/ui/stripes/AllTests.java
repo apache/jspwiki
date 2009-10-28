@@ -28,12 +28,14 @@ public class AllTests extends TestCase
 {
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("Stripes UI tests");
+        TestSuite suite = new TestSuite("UI: Stripes support package tests");
+
         suite.addTest( FileBasedActionResolverTest.suite() );
         suite.addTest( HandlerInfoTest.suite() );
         suite.addTest( IsOneOfTest.suite() );
         suite.addTest( ShortUrlRedirectFilterTest.suite() );
         suite.addTest( SpamInterceptorTest.suite() );
+
         return suite;
     }
 

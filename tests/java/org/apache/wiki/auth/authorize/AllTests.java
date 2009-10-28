@@ -35,12 +35,14 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite( "Authorizer, group and group database tests" );
+        TestSuite suite = new TestSuite( "Auth: authorizer, group and group database tests" );
+
         suite.addTestSuite( GroupTest.class );
         suite.addTestSuite( JDBCGroupDatabaseTest.class );
-        suite.addTestSuite( XMLGroupDatabaseTest.class );
         suite.addTestSuite( LdapAuthorizerTest.class );
         suite.addTestSuite( WebContainerAuthorizerTest.class );
+        suite.addTestSuite( XMLGroupDatabaseTest.class );
+
         return suite;
     }
 }

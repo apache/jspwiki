@@ -37,15 +37,13 @@ public class AllTests extends TestCase
     {
         TestSuite suite = new TestSuite("Utility suite tests");
 
-        suite.addTest( FileUtilTest.suite() );
-        suite.addTest( TextUtilTest.suite() );
-        suite.addTest( PropertyReaderTest.suite() );
-
         suite.addTest( ClassUtilTest.suite() );
         suite.addTest( CommentedPropertiesTest.suite() );
         suite.addTest( CryptoUtilTest.suite() );
+        suite.addTest( FileUtilTest.suite() );
         suite.addTest( MailUtilTest.suite() );
         suite.addTest( PriorityListTest.suite() );
+        suite.addTest( PropertyReaderTest.suite() );
         suite.addTest( SerializerTest.suite() );
         suite.addTest( TextUtilTest.suite() );
         suite.addTest( TimedCounterListTest.suite() );

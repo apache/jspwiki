@@ -34,10 +34,10 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki Content Resolver Unit Tests");
+        TestSuite suite = new TestSuite("Content resolver tests");
 
-        suite.addTest( SpecialPageNameResolverTest.suite() );
         suite.addTest( EnglishPluralsPageNameResolverTest.suite() );
+        suite.addTest( SpecialPageNameResolverTest.suite() );
 
         return suite;
     }

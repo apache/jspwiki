@@ -35,11 +35,13 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite( "User profile and database tests" );
-        suite.addTestSuite( UserProfileTest.class );
+        TestSuite suite = new TestSuite( "Auth: user profile and database tests" );
+
         suite.addTestSuite( JDBCUserDatabaseTest.class );
         suite.addTestSuite( LdapUserDatabaseTest.class );
+        suite.addTestSuite( UserProfileTest.class );
         suite.addTestSuite( XMLUserDatabaseTest.class );
+
         return suite;
     }
 }

@@ -33,7 +33,7 @@ public class AllTests extends TestCase
 {
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("DIFF tests");
+        TestSuite suite = new TestSuite("Diff tests");
 
         suite.addTest( ContextualDiffProviderTest.suite() );
 

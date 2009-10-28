@@ -34,16 +34,11 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("AAA package tests");
+        TestSuite suite = new TestSuite("Auth: top-level package tests");
 
         suite.addTest( AuthenticationManagerTest.suite() );
         suite.addTest( AuthorizationManagerTest.suite() );
         suite.addTest( GroupManagerTest.suite() );
-        suite.addTest( org.apache.wiki.auth.acl.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.authorize.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.login.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.permissions.AllTests.suite() );
-        suite.addTest( org.apache.wiki.auth.user.AllTests.suite() );
         suite.addTestSuite( UserManagerTest.class );
         
         return suite;

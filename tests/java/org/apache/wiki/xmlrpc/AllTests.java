@@ -32,7 +32,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("XMLRPC tests");
+        TestSuite suite = new TestSuite("XML-RPC tests");
 
         suite.addTest( RPCHandlerTest.suite() );
 

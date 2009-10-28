@@ -35,12 +35,14 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite( "Permissions tests" );
-        suite.addTestSuite( AllPermissionTest.class );
+        TestSuite suite = new TestSuite( "Auth: permission tests" );
+
         suite.addTestSuite( AllPermissionCollectionTest.class );
+        suite.addTestSuite( AllPermissionTest.class );
         suite.addTestSuite( GroupPermissionTest.class );
         suite.addTestSuite( PagePermissionTest.class );
         suite.addTestSuite( WikiPermissionTest.class );
+
         return suite;
     }
 }

@@ -35,18 +35,23 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki Unit Tests");
+        TestSuite suite = new TestSuite("JSPWiki top-level tests");
 
         suite.addTest( ReleaseTest.suite() );
         suite.addTest( VariableManagerTest.suite() );
-        // This is obsolete and not maintained anymore
-        // suite.addTest( TranslatorReaderTest.suite() );
-        suite.addTest( WikiSessionTest.suite() );
         suite.addTest( WikiEngineTest.suite() );
+        suite.addTest( WikiSessionTest.suite() );
         suite.addTest( org.apache.wiki.action.AllTests.suite() );
-        suite.addTest( org.apache.wiki.content.AllTests.suite() );
         suite.addTest( org.apache.wiki.attachment.AllTests.suite() );
         suite.addTest( org.apache.wiki.auth.AllTests.suite() );
+        suite.addTest( org.apache.wiki.auth.acl.AllTests.suite() );
+        suite.addTest( org.apache.wiki.auth.authorize.AllTests.suite() );
+        suite.addTest( org.apache.wiki.auth.login.AllTests.suite() );
+        suite.addTest( org.apache.wiki.auth.permissions.AllTests.suite() );
+        suite.addTest( org.apache.wiki.auth.user.AllTests.suite() );
+        suite.addTest( org.apache.wiki.content.AllTests.suite() );
+        suite.addTest( org.apache.wiki.content.inspect.AllTests.suite() );
+        suite.addTest( org.apache.wiki.content.resolver.AllTests.suite() );
         suite.addTest( org.apache.wiki.diff.AllTests.suite() );
         suite.addTest( org.apache.wiki.filters.AllTests.suite() );
         suite.addTest( org.apache.wiki.htmltowiki.AllTests.suite() );
@@ -56,10 +61,10 @@ public class AllTests extends TestCase
         suite.addTest( org.apache.wiki.rss.AllTests.suite() );
         suite.addTest( org.apache.wiki.search.AllTests.suite() );
         suite.addTest( org.apache.wiki.ui.AllTests.suite() );
+        suite.addTest( org.apache.wiki.ui.migrator.AllTests.suite() );
+        suite.addTest( org.apache.wiki.ui.stripes.AllTests.suite() );
         suite.addTest( org.apache.wiki.url.AllTests.suite() );
         suite.addTest( org.apache.wiki.util.AllTests.suite() );
-        // These are not runnable without a running tomcat
-        //suite.addTest( org.apache.wiki.web.AllTests.suite() );
         suite.addTest( org.apache.wiki.workflow.AllTests.suite() );
         suite.addTest( org.apache.wiki.xmlrpc.AllTests.suite() );
         

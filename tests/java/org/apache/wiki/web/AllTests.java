@@ -34,7 +34,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki web unit tests");
+        TestSuite suite = new TestSuite("Web unit tests");
         return suite;
     }
 }

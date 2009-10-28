@@ -34,14 +34,12 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("JSPWiki content unit tests");
+        TestSuite suite = new TestSuite("Content manager tests");
 
-        suite.addTest( PageRenamerTest.suite() );
-        suite.addTest( WikiPathTest.suite() );
         suite.addTest( ContentManagerTest.suite() );
+        suite.addTest( PageRenamerTest.suite() );
         suite.addTest( ReferenceManagerTest.suite() );
-        suite.addTest( org.apache.wiki.content.inspect.AllTests.suite() );
-        suite.addTest( org.apache.wiki.content.resolver.AllTests.suite() );
+        suite.addTest( WikiPathTest.suite() );
 
         return suite;
     }

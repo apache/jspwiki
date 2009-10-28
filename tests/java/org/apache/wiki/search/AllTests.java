@@ -33,7 +33,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("Search engines");
+        TestSuite suite = new TestSuite("Search engine tests");
 
         suite.addTest( SearchManagerTest.suite() );
 

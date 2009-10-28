@@ -32,8 +32,10 @@ public class AllTests extends TestCase
 {
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("UI tests");
+        TestSuite suite = new TestSuite("UI: top-level tests");
+
         suite.addTest( InputValidatorTest.suite() );
+
         return suite;
     }
 

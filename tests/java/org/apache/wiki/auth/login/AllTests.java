@@ -35,11 +35,13 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite( "Login module tests" );
+        TestSuite suite = new TestSuite( "Auth: login module tests" );
+
         suite.addTestSuite( AnonymousLoginModuleTest.class );
         suite.addTestSuite( CookieAssertionLoginModuleTest.class );
         suite.addTestSuite( UserDatabaseLoginModuleTest.class );
         suite.addTestSuite( WebContainerLoginModuleTest.class );
+
         return suite;
     }
 }

@@ -36,6 +36,7 @@ public class AllTests extends TestCase
     public static Test suite()
     {
         TestSuite suite = new TestSuite( "Workflow tests" );
+
         suite.addTestSuite( ApprovalWorkflowTest.class );
         suite.addTestSuite( DecisionQueueTest.class );
         suite.addTestSuite( FactTest.class );
@@ -44,6 +45,7 @@ public class AllTests extends TestCase
         suite.addTestSuite( TaskTest.class );
         suite.addTestSuite( WorkflowManagerTest.class );
         suite.addTestSuite( WorkflowTest.class );
+
         return suite;
     }
 }

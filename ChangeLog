@@ -1,3 +1,25 @@
+2009-10-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-175
+
+        * Tweaked the svn:ignore property for the etc/ and tests/etc/
+        directories. This should allow the trunk .xml files to
+        update working copies properly.
+
+        * Fixed Janne's slightly dodgy LDAP-server-existence-checking
+        code. ;)  Tweaked unit test names and order to match the command
+        line (ant tests) version. Removed redundant 2nd execution of
+        TextUtilTest inside its package's AllTests class, and added
+        in the ui.stripes.AllTests suite. These two changes mean that
+        all 3 test methods: guitests, tests, and Eclipse all report
+        1024 tests. Eclipse tests show a classpath error in
+        HtmlStringToWikiTranslatorTest that is throwing 14 errors.
+        I'm too tired at this point to fix this. Other than that,
+        we are cleaner than Janne's baby's bottom after a diaper change.
+        That is to say, not perfect but perfectly presentable.
+        
+        * Now, on to the JSP and War issues...
+
 2009-10-26 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-174

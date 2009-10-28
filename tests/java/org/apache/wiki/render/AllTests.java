@@ -37,7 +37,7 @@ public class AllTests extends TestCase
 
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("rendering tests");
+        TestSuite suite = new TestSuite("Rendering tests");
 
         suite.addTest( CreoleRendererTest.suite() );
         suite.addTest( RenderingManagerTest.suite() );
