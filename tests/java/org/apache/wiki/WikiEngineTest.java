@@ -72,11 +72,16 @@ public class WikiEngineTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        m_engine.emptyRepository();
+        try
+        {
+            m_engine.emptyRepository();
         
-        TestEngine.emptyWorkDir();
-        
-        m_engine.shutdown();
+            TestEngine.emptyWorkDir();
+        }
+        finally
+        {
+            m_engine.shutdown();
+        }
     }
     
     public void testNonExistantDirectory()
