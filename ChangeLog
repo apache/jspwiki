@@ -1,3 +1,8 @@
+2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * Priha 0.6.0, no other changes.  This new version functions
+        correctly also on case-insensitive file systems.
+        
 2009-10-27 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-175
