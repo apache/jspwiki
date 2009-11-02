@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.providers.ProviderException;
@@ -132,6 +133,24 @@ public class ContentManagerTest extends TestCase
 
         allPages = m_mgr.getAllPages( null );
         assertEquals( 2, allPages.size() );
+    }
+
+    public void testPageExists() throws Exception
+    {
+        WikiPath path = WikiPath.valueOf( "ContentManagerTest-PageExists" );
+
+        // Save a new page
+        m_engine.saveText( path.toString(), "This is the first version" );
+        assertTrue( m_mgr.pageExists( path, WikiProvider.LATEST_VERSION ) );
+        assertTrue( m_mgr.pageExists( path, 1 ) );
+
+        // Save another version
+        m_engine.saveText( path.toString(), "This is the second version" );
+        assertTrue( m_mgr.pageExists( path, WikiProvider.LATEST_VERSION ) );
+        assertTrue( m_mgr.pageExists( path, 2 ) );
+        assertTrue( m_mgr.pageExists( path, 1 ) );
+
+        m_engine.deletePage( path.toString() );
     }
 
     public void testVersions() throws Exception

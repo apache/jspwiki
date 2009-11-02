@@ -115,22 +115,79 @@ public class ViewActionBeanTest extends TestCase
 
     
     public void testView() throws Exception {
-        // Save page Test
-        m_engine.saveText("Test", "This is a test.");
-        WikiPage page = m_engine.getPage("Test");
-        assertNotNull("Did not save page Test!", page);
+        String pageName = "ViewActionBeanTest";
+
+        // Save test page
+        m_engine.saveText( pageName, "This is a test." );
+        WikiPage page = m_engine.getPage( pageName );
+        assertNotNull("Did not save page " + pageName + "!", page);
         
-        // Set the 'page' request parameter to 'Test'...
-        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action");
-        trip.setParameter("page", "Test");
-        trip.execute("view");
+        // Set the 'page' request parameter to 'ViewActionBeanTest'...
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.setParameter( "page", pageName );
+        trip.execute( "view" );
 
         // ...we should automatically see Test bound to the ActionBean (nice!)
-        ViewActionBean bean = trip.getActionBean(ViewActionBean.class);
+        ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertEquals( page, bean.getPage() );
         
         // ...and the destination should be Wiki.jsp (aka display JSP)
-        assertEquals("/Wiki.jsp", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
+    }
+
+    public void testViewVersion() throws Exception {
+        String pageName = "ViewActionBeanTest";
+        m_engine.deletePage( pageName );
+
+        // Save test page
+        m_engine.saveText( pageName, "This is the first version." );
+        WikiPage page = m_engine.getPage( pageName );
+        assertNotNull("Did not save page " + pageName + "!", page);
+        
+        // Go get the first version
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.setParameter( "page", pageName );
+        trip.execute( "view" );
+        ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
+        assertEquals( page, bean.getPage() );
+        String pageText = page.getContentAsString();
+        assertEquals( "This is the first version.\r\n", pageText );
+        
+        // Save a second version
+        m_engine.saveText( pageName, "This is the second version." );
+        WikiPage pageV1 = m_engine.getPage( pageName, 1 );
+        WikiPage pageV2 = m_engine.getPage( pageName, 2 );
+        
+        // Go get the first version again
+        trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.setParameter( "page", pageName );
+        trip.setParameter( "version", "1" );
+        trip.execute( "view" );
+        bean = trip.getActionBean( ViewActionBean.class );
+        assertEquals( pageV1, bean.getPage() );
+        pageText = pageV1.getContentAsString();
+        assertEquals( "This is the first version.\r\n", pageText );
+        
+        // Go get the second version
+        trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.setParameter( "page", pageName );
+        trip.setParameter( "version", "2" );
+        trip.execute( "view" );
+        bean = trip.getActionBean( ViewActionBean.class );
+        assertEquals( pageV2, bean.getPage() );
+        pageText = pageV2.getContentAsString();
+        assertEquals( "This is the second version.\r\n", pageText );
+        
+        // Go get the "latest" version
+        trip = m_engine.guestTrip( "/Wiki.action" );
+        trip.setParameter( "page", pageName );
+        trip.execute( "view" );
+        bean = trip.getActionBean( ViewActionBean.class );
+        assertEquals( pageV2, bean.getPage() );
+        pageText = pageV2.getContentAsString();
+        assertEquals( "This is the second version.\r\n", pageText );
+        
+        m_engine.deletePage( pageName );
     }
     
     public static Test suite()

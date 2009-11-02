@@ -32,12 +32,15 @@ import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 /**
@@ -50,6 +53,8 @@ public class ViewActionBean extends AbstractPageActionBean
     private static final Logger log = LoggerFactory.getLogger( ViewActionBean.class );
 
     private String m_renameTo = null;
+
+    private int m_version = WikiProvider.LATEST_VERSION; 
 
     public ViewActionBean()
     {
@@ -78,6 +83,15 @@ public class ViewActionBean extends AbstractPageActionBean
     public String getRenameTo()
     {
         return m_renameTo;
+    }
+
+    /**
+     * Returns the version of the page.
+     * @return the version
+     */
+    public int getVersion()
+    {
+        return m_version;
     }
 
     /**
@@ -119,17 +133,18 @@ public class ViewActionBean extends AbstractPageActionBean
     @After( stages = LifecycleStage.BindingAndValidation )
     public Resolution resolvePage() throws WikiException
     {
-        WikiEngine engine = getContext().getEngine();
+        WikiActionBeanContext context = getContext();
+        WikiEngine engine = context.getEngine();
 
         if( isSpecialPageView() )
         {
             // The page might be null because it's a special page
             // WikiPageTypeConverter
             // refused to convert. If so, redirect.
-            String pageName = getContext().getRequest().getParameter( "page" );
+            String pageName = context.getRequest().getParameter( "page" );
             if( pageName != null )
             {
-                URI uri = getContext().getEngine().getSpecialPageReference( pageName );
+                URI uri = engine.getSpecialPageReference( pageName );
                 if( uri != null )
                 {
                     return new RedirectResolution( uri.toString() );
@@ -149,34 +164,49 @@ public class ViewActionBean extends AbstractPageActionBean
         }
 
         // If page still missing, it's an error condition
-        if( getPage() == null )
+        WikiPage page = getPage();
+        if( page == null )
         {
             throw new WikiException( "Page not supplied, and WikiEngine does not define a front page! This is highly unusual." );
         }
 
         // Is there an ALIAS attribute in the wiki page?
-        String specialUrl = (String) getPage().getAttribute( WikiPage.ALIAS );
+        String specialUrl = (String) page.getAttribute( WikiPage.ALIAS );
         if( specialUrl != null )
         {
-            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
+            return new RedirectResolution( context.getViewURL( specialUrl ) );
         }
 
         // Is there a REDIRECT attribute in the wiki page?
-        specialUrl = (String) getPage().getAttribute( WikiPage.REDIRECT );
+        specialUrl = (String) page.getAttribute( WikiPage.REDIRECT );
         if( specialUrl != null )
         {
-            return new RedirectResolution( getContext().getViewURL( specialUrl ) );
+            return new RedirectResolution( context.getViewURL( specialUrl ) );
         }
 
         // Ok, the page exists. If attachment, make sure it's directed to the
         // "info" handler
-        WikiPage page = getPage();
-        String handler = getContext().getEventName();
-        if( getPage().isAttachment() && !"info".equals( handler ) )
+        String handler = context.getEventName();
+        if( page.isAttachment() && !"info".equals( handler ) )
         {
             return new RedirectResolution( ViewActionBean.class, "info" ).addParameter( "page", page.getPath().toString() );
         }
 
+        // Now, retrieve the requested page or attachment version
+        if ( engine.pageExists( page.getPath().toString(), m_version ) )
+        {
+            try
+            {
+                page = engine.getPage( page.getPath().toString(), m_version );
+                setPage( page );
+            }
+            catch( PageNotFoundException e )
+            {
+                // Shouldn't happen!
+                throw new WikiException( "Did not retrieve the page even though it exists. "
+                                         + " This is a BUG. ", e );
+            }
+        }
         return null;
     }
 
@@ -199,6 +229,16 @@ public class ViewActionBean extends AbstractPageActionBean
     public void setRenameTo( String renameTo )
     {
         m_renameTo = renameTo;
+    }
+
+    /**
+     * Sets the version of the page to show. If not set, defaults to
+     * {@link WikiProvider#LATEST_VERSION}.
+     * @param version the version
+     */
+    public void setVersion( int version )
+    {
+        m_version = version;
     }
 
     /**

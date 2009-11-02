@@ -468,7 +468,7 @@ public class EditActionBean extends AbstractPageActionBean
                   + m_author + ", Host=" + getContext().getRequest().getRemoteAddr() );
 
         // Set author information and other metadata
-        WikiPage modifiedPage = (WikiPage) wikiContext.getPage().clone();
+        WikiPage modifiedPage = (WikiPage)page.clone();
         modifiedPage.setAuthor( m_author );
         if( m_changeNote != null )
         {

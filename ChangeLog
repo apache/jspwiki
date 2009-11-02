@@ -1,3 +1,15 @@
+2009-11-01 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-176
+
+        * Fixed bug in ContentManager.pageExists() that caused tests
+        for version 1 of pages to fail if there had been no other
+        versions saved yet. Shockingly, we had never tested for this
+        condition before. As a result, webapp page-viewing actions
+        now work again. Related: added versioning to ViewActionBean,
+        which hadn't been added previously because the versioning
+        code hadn't stabilized until recently.
+
 2009-10-26 Janne Jalkanen <jalkanen@apache.org>
 
         * Priha 0.6.0, no other changes.  This new version functions

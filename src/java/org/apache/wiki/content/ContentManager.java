@@ -950,17 +950,33 @@ public class ContentManager implements WikiEventListener
                 return false;
             }
             
-            if ( version == WikiProvider.LATEST_VERSION )
+            // Is Node's current version the one we want?
+            if ( node.hasProperty( JCRWikiPage.ATTR_VERSION ) )
+            {
+                Property versionProperty = node.getProperty( JCRWikiPage.ATTR_VERSION );
+                try
+                {
+                    if ( version == versionProperty.getLong() )
+                    {
+                        return true;
+                    }
+                }
+                catch ( ValueFormatException e ) {
+                    throw new ProviderException("Property " + JCRWikiPage.ATTR_VERSION + 
+                                                " for node " + jcrPath + " cannot be " +
+                                                " coerced to a Long. This is strange." );
+                }
+            }
+
+            boolean noVersions = !node.hasNode( WIKI_VERSIONS );
+            if ( version == WikiProvider.LATEST_VERSION || noVersions )
             {
                 return !isNew( node );
             }
             
             String v = Integer.toString( version );
-            if ( node.hasNode( WIKI_VERSIONS ) )
-            {
-                Node versions = node.getNode( WIKI_VERSIONS );
-                return versions.hasNode( v ) && !isNew( versions.getNode( v ) );
-            }
+            Node versions = node.getNode( WIKI_VERSIONS );
+            return versions.hasNode( v ) && !isNew( versions.getNode( v ) );
         }
         catch ( PathNotFoundException e )
         {
@@ -971,7 +987,6 @@ public class ContentManager implements WikiEventListener
         {
             throw new ProviderException( "Unable to check for page existence", e );
         }
-        return false;
     }
 
     /**
