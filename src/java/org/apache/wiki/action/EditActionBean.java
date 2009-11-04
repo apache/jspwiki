@@ -530,10 +530,7 @@ public class EditActionBean extends AbstractPageActionBean
         }
         catch( RedirectException ex )
         {
-            // Should work, but doesn't
-            wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME:
-            session.setAttribute( "message", ex.getMessage() );
-            return new RedirectResolution( ex.getRedirect() ).flash( this );
+            throw new WikiException("Strange redirection: " + ex.getMessage(), ex);
         }
 
         return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", pagereq );

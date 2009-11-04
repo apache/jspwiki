@@ -47,12 +47,10 @@ public class ShortUrlRedirectFilterTest extends TestCase
         
         // Add extension classes
         Map<String,String> filterParams = new HashMap<String,String>();
-//        filterParams.put("ActionResolver.Class", "org.apache.wiki.ui.stripes.FileBasedActionResolver");
         filterParams.put("ActionResolver.Packages", "org.apache.wiki.action");
         filterParams.put("Extension.Packages", "org.apache.wiki.ui.stripes");
         filterParams.put( "ExceptionHandler.Class", "org.apache.wiki.ui.stripes.WikiExceptionHandler" );
         servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
-
         servletContext.addFilter( ShortUrlRedirectFilter.class, "Redirect filter", null );
 
         // Set the configured servlet context

@@ -133,9 +133,26 @@ public class EditActionBeanTest extends TestCase
         ValidationErrors errors = trip.getValidationErrors();
         assertEquals( 0, errors.size() );
         assertEquals( page, bean.getPage() );
+        assertEquals( "This is the edited text\r\n", page.getContentAsString() );
 
         // ...and the destination should be Wiki.action (aka display JSP)
         assertEquals( "/Wiki.action?view=&page=" + pageName, trip.getDestination() );
+        
+        // Save the page one more time!
+        trip = m_engine.guestTrip( "/Edit.action" );
+        trip.setParameter( "page", pageName );
+        startTime = String.valueOf( System.currentTimeMillis() );
+        trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
+        trip.addParameter( "text", "This is the third revision." );
+        TestEngine.addSpamProtectParams( trip );
+        trip.execute( "save" );
+        
+        // ...and the text should again be the same as our revision
+        bean = trip.getActionBean( EditActionBean.class );
+        errors = trip.getValidationErrors();
+        assertEquals( 0, errors.size() );
+        assertEquals( page, bean.getPage() );
+        assertEquals( "This is the third revision.\r\n", page.getContentAsString() );
 
         // Delete the test page
         m_engine.deletePage( pageName );

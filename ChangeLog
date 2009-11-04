@@ -1,3 +1,11 @@
+2009-11-03 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-177
+
+        * Fixed bug causing concatenation of edited page text.
+        Root cause: over-eager use of flash-scope in EditActionBean.
+        Upgraded Stripes to 1.6-beta.
+
 2009-11-01 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-176
