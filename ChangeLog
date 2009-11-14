@@ -1,5 +1,13 @@
 2009-11-14 Harry Metske <metskem@apache.org>
 
+        * 3.0.0-svn-179
+        
+        * JSPWIKI-608, EditActionBean should not warn for page.lock after preview
+        
+        * some CoreResources files had no value for assertedName, causing a weird Preferences page
+        
+2009-11-14 Harry Metske <metskem@apache.org>
+
         * 3.0.0-svn-178
         
         * placeholders in edit.locked i18n key were not properly numbered in some languages

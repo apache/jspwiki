@@ -219,7 +219,7 @@ public class EditActionBean extends AbstractPageActionBean
         WikiEngine engine = wikiContext.getEngine();
         ContentManager mgr = engine.getContentManager();
         PageLock lock = mgr.getCurrentLock( page );
-        if( lock != null )
+        if( lock != null && !lock.getLocker().equals( wikiContext.getCurrentUser().getName() ) )
         {
             messages.add( new LocalizableMessage( "edit.locked", lock.getLocker(), lock.getTimeLeft() ) );
         }
