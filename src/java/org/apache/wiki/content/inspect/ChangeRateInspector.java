@@ -46,7 +46,7 @@ public class ChangeRateInspector implements Inspector
         m_limitSimilarChanges = TextUtil.getIntegerProperty( props, PROP_SIMILARCHANGES, m_limitSimilarChanges );
 
         log.info( "# Spam filter initialized.  Temporary ban time " + config.getReputationManager().getBanTime()
-                  + " mins, max page changes/m inute: " + m_limitSinglePageChanges );
+                  + " mins, max page changes/minute: " + m_limitSinglePageChanges );
     }
 
     /**

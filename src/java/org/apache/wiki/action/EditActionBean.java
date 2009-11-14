@@ -83,7 +83,7 @@ public class EditActionBean extends AbstractPageActionBean
 
     private String m_text = null;
 
-    private String m_changeNote = null;
+    private String m_changenote = null;
 
     private boolean m_append = false;
 
@@ -176,7 +176,7 @@ public class EditActionBean extends AbstractPageActionBean
         }
 
         // The comment field is initialized with nothing
-        m_text = "";
+        setText( "" );
 
         return new ForwardResolution( "/Comment.jsp" );
     }
@@ -248,7 +248,7 @@ public class EditActionBean extends AbstractPageActionBean
         }
 
         // Load the page text
-        m_text = engine.getPureText( page );
+        setText( engine.getPureText( page ) );
 
         return new ForwardResolution( "/Edit.jsp" );
     }
@@ -288,9 +288,9 @@ public class EditActionBean extends AbstractPageActionBean
     /*
      * Returns the changenote for this upload.
      */
-    public String getChangeNote()
+    public String getChangenote()
     {
-        return m_changeNote;
+        return m_changenote;
     }
 
     /**
@@ -394,7 +394,7 @@ public class EditActionBean extends AbstractPageActionBean
             UserProfile profile = mgr.getUserProfile( wikiSession );
             if ( profile.getEmail() != null )
             {
-                m_email = profile.getEmail();
+                setEmail( profile.getEmail() );
             }
         }
     }
@@ -436,10 +436,10 @@ public class EditActionBean extends AbstractPageActionBean
             String conflictText = page.getContentAsString();
             conflictText = StringEscapeUtils.escapeXml( conflictText );
             conflictText = TextUtil.replaceString( conflictText, "\n", "<br />" );
-            m_conflictText = conflictText;
+            setConflictText( conflictText );
 
             // Create a validation error
-            errors.add( "text", new LocalizableError( "edit.conflict" ) );
+            errors.add( "text", new LocalizableError( "edit.conflict") );
         }
         
         // Is the user trying to edit a special page? Tsk, tsk.
@@ -470,9 +470,9 @@ public class EditActionBean extends AbstractPageActionBean
         // Set author information and other metadata
         WikiPage modifiedPage = (WikiPage)page.clone();
         modifiedPage.setAuthor( m_author );
-        if( m_changeNote != null )
+        if( m_changenote != null )
         {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, m_changeNote );
+            modifiedPage.setAttribute( WikiPage.CHANGENOTE, m_changenote );
         }
 
         // If this is an append, add it to the page.
@@ -596,12 +596,12 @@ public class EditActionBean extends AbstractPageActionBean
     /**
      * Sets the changenote for this upload; usually a short comment.
      * 
-     * @param changeNote the change note
+     * @param changenote the change note
      */
     @Validate( required = false )
-    public void setChangeNote( String changeNote )
+    public void setChangenote( String changenote )
     {
-        m_changeNote = changeNote;
+        m_changenote = changenote;
     }
 
     /**

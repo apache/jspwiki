@@ -70,10 +70,10 @@
     <table>
       <tr>
         <td>
-          <s:label for="changeNote" />
+          <s:label for="changenote" />
         </td>
         <td>
-          <s:text name="changeNote" size="50" maxlength="80" />
+          <s:text name="changenote" size="50" maxlength="80" />
         </td>
       </tr>
 

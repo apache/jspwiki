@@ -1,3 +1,15 @@
+2009-11-14 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-178
+        
+        * placeholders in edit.locked i18n key were not properly numbered in some languages
+        
+        * EditActionBean's property changeNote changed to changenote (Stripes could't find it)
+        
+        * EditActionBean now uses it's own setters for member vars.
+        
+        * minor typo in ChangeRateInspector 
+        
 2009-11-03 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-177
