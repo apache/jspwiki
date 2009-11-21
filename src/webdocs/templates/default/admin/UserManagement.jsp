@@ -55,7 +55,7 @@ function addNew()
    <div id="userlist">
       <select name="userid" id="userid" size="16" onchange="javascript:refreshUserInfo()">
          <c:forEach var="user" items="${engine.userManager.userDatabase.wikiNames}">
-            <option><c:out value="${user.name}" escapeXml="true"/></option>
+            <option value="${user.name}"><c:out value="${user.name}" escapeXml="true"/></option>
          </c:forEach>
       </select>
    </div>

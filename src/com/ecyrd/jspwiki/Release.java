@@ -57,7 +57,7 @@ public final class Release
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "";
+    private static final String    POSTFIX       = "svn";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -66,7 +66,7 @@ public final class Release
     public static final int        REVISION      = 8;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 3;
+    public static final int        MINORREVISION = 4;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just
      *  so that people can add other identifiers to it.  The build number is incremented
@@ -77,7 +77,7 @@ public final class Release
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "";
+    public static final String     BUILD         = "1";
     
     /**
      *  This is the generic version string you should use
