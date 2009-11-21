@@ -1,3 +1,11 @@
+2009-11-21 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-180
+        
+         * JSPWIKI-612: fix UserManagement.jsp 's option in user select box 
+         (I like to add the name of the person who discovered this bug, but
+         the codepage ISO8859-1 doesn't allow that)
+       
 2009-11-14 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-179
