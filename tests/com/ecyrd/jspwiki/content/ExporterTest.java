@@ -34,6 +34,7 @@ public class ExporterTest extends TestCase
         m_engine.deletePage("FooBar");
     }
     
+    // FIXME: Not yet completed.
     public void testExport1() throws Exception
     {
         m_engine.saveText( "FooBar", "test" );
@@ -42,7 +43,7 @@ public class ExporterTest extends TestCase
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        Exporter x = new Exporter(m_engine,out);
+        Exporter x = new Exporter(m_engine,out,false);
         
         x.export();
         

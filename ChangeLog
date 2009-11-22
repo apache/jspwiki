@@ -1,3 +1,10 @@
+2008-04-04  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.4-svn-2
+        
+        * Added export script (export.sh); disabled attachment export for now to test
+        proper exporting.
+        
 2009-11-21 Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-1

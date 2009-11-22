@@ -47,11 +47,15 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  *  name set in jspwiki.properties, and the name of the page.  This means
  *  that it is possible to get collisions, if you have two wikis with
  *  the same appname.
+ *  <p>
+ *  The exported WikiSpace name is always "main".  You can edit the XML
+ *  file by hand if you wish to import it to a different wikispace.
  */
 public class Exporter
 {
     private WikiEngine m_engine;
     private PrintWriter m_out;
+    private boolean     m_verbose = false;
     
     private MimetypesFileTypeMap m_mimeTypes = new MimetypesFileTypeMap();
     
@@ -72,10 +76,11 @@ public class Exporter
      * 
      *  @throws UnsupportedEncodingException If your platform does not support UTF-8
      */
-    public Exporter(WikiEngine engine, OutputStream outStream) throws UnsupportedEncodingException
+    public Exporter(WikiEngine engine, OutputStream outStream, boolean verbose) throws UnsupportedEncodingException
     {
         m_engine = engine;
         m_out = new PrintWriter( new OutputStreamWriter(outStream,"UTF-8") );
+        m_verbose = verbose;
     }
     
     /**
@@ -94,7 +99,7 @@ public class Exporter
         
         m_out.println("<!--");
         m_out.println("This is an JSR-170 -compliant Document Tree export of a jspwiki 2.8 repository.\n"+
-                      "It is meant to be imported to the /wiki:spaces/ node of the JCR repository, as it\n"+
+                      "It is meant to be imported to the /pages/ node of the JCR repository, as it\n"+
                       "describes an entire wiki space.");
         m_out.println("-->");
         
@@ -104,7 +109,7 @@ public class Exporter
                       "xmlns:mix='http://www.jcp.org/jcr/mix/1.0' "+ 
                       "xmlns:sv='http://www.jcp.org/jcr/sv/1.0' "+ 
                       "xmlns:wiki='"+NS_JSPWIKI+"'\n"+ 
-                      "         sv:name='"+m_engine.getApplicationName()+"'>" );
+                      "         sv:name='main'>" );
         
         for( WikiPage p : allPages )
         {
@@ -166,6 +171,15 @@ public class Exporter
     
     protected void exportPage( WikiPage p ) throws IOException, ProviderException
     {
+        if( p.getName().contains( "/" ) && !(p instanceof Attachment) )
+        {
+            System.err.println("Unable to export '"+p.getName()+"', as it contains an illegal character.  With old repositories, this may sometimes happen.");
+            return;
+        }
+     
+        if( m_verbose )
+            System.out.println("Exporting "+p.getName());
+        
         exportCommonHeader(p);
 
         Map<String,Object> attrMap = p.getAttributes();
@@ -220,13 +234,14 @@ public class Exporter
         //
         //  Finally, list attachment.  According to JCR rules, these must be last.
         //
+        /*
         Collection<Attachment> atts = m_engine.getAttachmentManager().listAttachments( p );
         
         for( Attachment a : atts )
         {
             exportPage( a );
         }
-        
+        */
         m_out.println(" </sv:node>");
         
         m_out.flush();
@@ -272,6 +287,7 @@ public class Exporter
         m_out.flush();  
     }
     
+    // FIXME: Would be useful if this actually had some options checking.
     public static void main( String[] argv ) throws IOException
     {
         if( argv.length < 2 )
@@ -306,7 +322,7 @@ public class Exporter
             out = new BufferedOutputStream( new FileOutputStream(outFile) );
             WikiEngine engine = new WikiEngine(props);
             
-            Exporter x = new Exporter(engine, out );
+            Exporter x = new Exporter(engine, out, false );
             
             x.export();
         }
