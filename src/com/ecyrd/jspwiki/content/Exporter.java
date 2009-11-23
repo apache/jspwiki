@@ -59,6 +59,8 @@ public class Exporter
     
     private MimetypesFileTypeMap m_mimeTypes = new MimetypesFileTypeMap();
     
+    private TreeSet<String>   m_exportedPageTitles = new TreeSet<String>();
+    
     private static final String NS_JSPWIKI = "http://www.jspwiki.org/ns#";
     private static final String STRING = "String";
     private static final String JSPWIKI_CONTENT_TYPE = "text/x-wiki.jspwiki";
@@ -171,16 +173,35 @@ public class Exporter
     
     protected void exportPage( WikiPage p ) throws IOException, ProviderException
     {
-        if( p.getName().contains( "/" ) && !(p instanceof Attachment) )
+        String title = p.getName();
+        
+        if( title.contains( "/" ) && !(p instanceof Attachment) )
         {
-            System.err.println("Unable to export '"+p.getName()+"', as it contains an illegal character.  With old repositories, this may sometimes happen.");
-            return;
+            title = title.replace( '/', '_' );
+            System.err.println("Page '"+p.getName()+"' will be renamed to '"+title+"', as it contains an illegal character.");
         }
      
-        if( m_verbose )
-            System.out.println("Exporting "+p.getName());
+        title = title.toLowerCase();
         
-        exportCommonHeader(p);
+        String tryTitle = title;
+        int idx = 1;
+        while( m_exportedPageTitles.contains( tryTitle ) )
+        {
+            tryTitle = title + "-" + idx++;
+        }
+        
+        if( !tryTitle.equals( title ) )
+        {
+            System.err.println( "New case independence rules state that page '"+p.getName()+"' will be renamed to '"+tryTitle+"', as there is a conflict already with a page with a similar title." );
+            title = tryTitle;
+        }
+        
+        m_exportedPageTitles.add( title );
+        
+        if( m_verbose )
+            System.out.println("Exporting "+title);
+        
+        exportCommonHeader(title, p);
 
         Map<String,Object> attrMap = p.getAttributes();
         
@@ -247,9 +268,9 @@ public class Exporter
         m_out.flush();
     }
     
-    private void exportCommonHeader( WikiPage p ) throws IOException
+    private void exportCommonHeader( String title, WikiPage p ) throws IOException
     {
-        m_out.println(" <sv:node sv:name='"+StringEscapeUtils.escapeXml( p.getName() )+"'>");
+        m_out.println(" <sv:node sv:name='"+StringEscapeUtils.escapeXml( title )+"'>");
         
         exportProperty( "jcr:primaryType", "nt:unstructured", NAME );
         exportProperty( "jcr:mixinTypes", 
@@ -261,11 +282,13 @@ public class Exporter
         exportProperty( "wiki:lastModified", m_isoFormat.format(p.getLastModified()), DATE );
 
         exportProperty( "wiki:contentType", guessMimeType( p ), STRING );
+        
+        exportProperty( "wiki:title", p.getName(), STRING );
     }
     
     protected void exportPage( Attachment att ) throws IOException, ProviderException
     {
-        exportCommonHeader(att);
+        exportCommonHeader(att.getName().toLowerCase(), att);
         
         m_out.println("  <sv:property sv:name='"+att.getFileName()+"' sv:type='"+BINARY+"'>");
         
@@ -322,7 +345,7 @@ public class Exporter
             out = new BufferedOutputStream( new FileOutputStream(outFile) );
             WikiEngine engine = new WikiEngine(props);
             
-            Exporter x = new Exporter(engine, out, false );
+            Exporter x = new Exporter(engine, out, true );
             
             x.export();
         }

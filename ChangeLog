@@ -1,4 +1,13 @@
-2008-04-04  Janne Jalkanen <jalkanen@apache.org>
+2009-11-24  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.4-svn-3
+        
+        * Fixed export to deal better with broken repositories: automatic renaming
+        of case-conflicts (on systems where they are possible).
+        
+        * Export now properly exports in lower-case.
+        
+2009-11-23  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.4-svn-2
         
