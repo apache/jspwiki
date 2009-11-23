@@ -274,7 +274,7 @@ public class Exporter
         
         exportProperty( "jcr:primaryType", "nt:unstructured", NAME );
         exportProperty( "jcr:mixinTypes", 
-                        new String[] {"mix:referenceable","mix:versionable","mix:lockable"}, 
+                        new String[] {"mix:referenceable","mix:lockable"}, 
                         NAME );
         exportProperty( "wiki:author", p.getAuthor(), STRING );
         exportProperty( "jcr:uuid", mkUuid(p), STRING); 
