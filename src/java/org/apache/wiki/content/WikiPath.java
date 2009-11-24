@@ -193,22 +193,24 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
      * String representation. This is to fulfil the general contract of
      * equals().
      * 
-     * @return int
+     * @return {@inheritDoc}
      */
+    // FIXME: Slow, since it creates a new String every time.
     public int hashCode()
     {
-        return m_stringRepresentation.hashCode();
+        return m_stringRepresentation.toLowerCase().hashCode();
     }
 
     /**
      * A WikiPath is compared using it's toString() method.
      * 
      * @param o The Object to compare against.
-     * @return int
+     * @return {@inheritDoc}
      */
+    // FIXME: Slow, since it creates a new String every time.
     public int compareTo( WikiPath o )
     {
-        return toString().compareTo( o.toString() );
+        return toString().toLowerCase().compareTo( o.toString().toLowerCase() );
     }
 
     /**
@@ -226,11 +228,11 @@ public final class WikiPath implements Serializable, Comparable<WikiPath>
         {
             WikiPath n = (WikiPath) o;
 
-            return m_space.equals( n.m_space ) && m_path.equals( n.m_path );
+            return m_space.equalsIgnoreCase( n.m_space ) && m_path.equalsIgnoreCase( n.m_path );
         }
         else if( o instanceof String )
         {
-            return toString().equals( o );
+            return toString().equalsIgnoreCase( (String)o );
         }
         return false;
     }
