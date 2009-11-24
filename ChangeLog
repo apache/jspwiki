@@ -1,3 +1,13 @@
+2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-181
+        
+        * Added first iteration of import code, which works with 2.8.4-svn-3. Known
+        problems: Attachments are not yet imported. Existence of ACLs breaks code.
+        
+        * WikiPath is now case-insensitive in equals() to support proper wikipage
+        case-insensitiveness.
+
 2009-11-21 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-180
