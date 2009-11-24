@@ -20,9 +20,7 @@
  */
 package org.apache.wiki.content;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Permission;
@@ -35,7 +33,8 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.*;
+import javax.jcr.version.OnParentVersionAction;
+import javax.jcr.version.VersionException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -43,7 +42,10 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wiki.*;
+import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
@@ -113,10 +115,11 @@ public class ContentManager implements WikiEventListener
      */
     public static final String DEFAULT_SPACE = "Main";
     
-    private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE;
+    private static final String JCR_DEFAULT_SPACE = "pages/"+DEFAULT_SPACE.toLowerCase();
 
     private static final String JCR_PAGES_NODE = "pages";
-
+    private static final String JCR_PAGES_PATH = "/"+JCR_PAGES_NODE+"/";
+    
     private static final long serialVersionUID = 2L;
     
     /** Workflow attribute for storing the ACL. */
@@ -248,7 +251,12 @@ public class ContentManager implements WikiEventListener
                     try
                     {
                         ServletContext servletContext = engine.getServletContext();
-                        in = servletContext.getResourceAsStream( "/WEB-INF/classes/priha.properties" );
+                        
+                        System.err.println(servletContext);
+                        
+                        if( servletContext != null )
+                            in = servletContext.getResourceAsStream( "/WEB-INF/classes/priha.properties" );
+                        
                         if ( in != null )
                         {
                             prihaProps.load( in );
@@ -337,13 +345,49 @@ public class ContentManager implements WikiEventListener
         //  Make sure at least the default "Main" wikispace exists.
         //
             
-        if( !root.hasNode( JCR_DEFAULT_SPACE ) )
+        if( !hasSpace( session, JCR_DEFAULT_SPACE ) )
         {
-            root.addNode( JCR_DEFAULT_SPACE );
+            createSpace( session, DEFAULT_SPACE );
         }
             
         session.save();
 
+    }
+    
+    /**
+     *  Returns true, if a WikiSpace by this name exists.
+     *  
+     *  @param spaceName The name of the WikiSpace to check for.  The space name is case-insensitive.
+     *  @return True, if the given space exists; false otherwise.
+     *  @throws RepositoryException If something goes wrong. 
+     */
+    // TODO: This method is definitely a candidate for public consumption, but I think
+    //       the method signature should be different, i.e. there should be no need for
+    //       a Session object.
+    private boolean hasSpace( Session s, String spaceName ) throws RepositoryException
+    {
+        return s.itemExists( JCR_PAGES_PATH+spaceName.toLowerCase() );
+    }
+    
+    /**
+     *  Creates a WikiSpace by the given name. The Session must still be save()d by the caller.
+     *  Space will not be added if it already exists.
+     *  
+     *  @param spaceName The name of the space to create.  The name is case-insensitive (i.e. it will always
+     *                   be created in lower case, regardless of the case of the argument.) 
+     *  @throws RepositoryException
+     */
+    // TODO: This method is definitely a candidate for public consumption, but I think
+    //       the method signature should be different, i.e. there should be no need for
+    //       a Session object.
+    private void createSpace( Session s, String spaceName ) throws RepositoryException
+    {
+        String path = JCR_PAGES_NODE+"/"+spaceName.toLowerCase();
+        
+        if( !s.itemExists( "/"+path ) )
+        {
+            s.getRootNode().addNode( path );
+        }
     }
     
     /**
@@ -573,6 +617,7 @@ public class ContentManager implements WikiEventListener
      *  @param space the name of the wiki space containing the pages to get.  May be
      *  <code>null</code>, in which case gets all spaces
      *  @throws ProviderException if the backend has problems.
+     *  @return The List of all WikiPages in a given space.
      */
     public List<WikiPage> getAllPages( String space )
         throws ProviderException
@@ -1448,8 +1493,8 @@ public class ContentManager implements WikiEventListener
         String spaceName;
         String spacePath;
         
-        spaceName = wikiName.getSpace();
-        spacePath = wikiName.getPath();
+        spaceName = wikiName.getSpace().toLowerCase();
+        spacePath = wikiName.getPath().toLowerCase();
                
         return "/"+JCR_PAGES_NODE+"/"+spaceName+"/"+spacePath;
     }
@@ -1911,5 +1956,90 @@ public class ContentManager implements WikiEventListener
         }
         
         return current;
+    }
+
+    /**
+     *  Allows importing of content into a particular WikiSpace.  The content MUST
+     *  be in the JSPWiki export format (which is essentially a dump of the System View
+     *  of the repository for a particular WikiSpace).
+     *  
+     *  @param wikiSpace The space to load in.  Must be specified.  Must not exist in advance.
+     *  @param xmlfile The file to load the data from.
+     *  @throws LoginException
+     *  @throws RepositoryException
+     *  @throws FileNotFoundException
+     *  @throws IOException
+     *  @throws PageAlreadyExistsException If the space already exists.
+     * @throws ProviderException 
+     */
+    // FIXME: Still under development, so error handling is sucky.
+    // FIXME: Should probably take in an INputStream, not a filename.
+    // FIXME: Should really be very careful when removing an existing wikispace.
+    public void importXML( String xmlfile ) throws LoginException, RepositoryException, FileNotFoundException, IOException, PageAlreadyExistsException, ProviderException
+    {
+        Session s = getCurrentSession();
+        String wikiSpace;
+        
+        //
+        //  Figure out the name of the wikispace we're trying to load in.  I'm trying to avoid loading the entire
+        //  file into a DOM here, but this is definitely a FIXME-grade hack.
+        //
+        FileReader fr = new FileReader(xmlfile);
+        try
+        {
+            char[] guessBuffer = new char[1024];
+            fr.read(guessBuffer);
+            String g = new String(guessBuffer);
+            int a = g.indexOf( "sv:name=" );
+            if( a < 0 )
+            {
+                throw new IOException("Invalid format "+g);
+            }
+            a += "sv:name=".length();
+            
+            int b = g.indexOf( "'", a+2 );
+            int c = g.indexOf( "\"", a+2 );
+
+            if( b > 0 && c > 0 ) b = Math.min( c, b ); else b = Math.max( c, b );
+            
+            if( b < 0 )
+            {
+                throw new IOException("Invalid format "+g);
+            }
+            
+            wikiSpace = g.substring( a+1,b );
+        
+            System.out.println("SPACE = "+wikiSpace);
+        }
+        finally
+        {
+            fr.close();
+        }
+        
+        //
+        //  Urgh. Hack over.
+        //
+        String jcrPath = JCR_PAGES_PATH+wikiSpace;
+        
+        if( s.itemExists( jcrPath ) )
+        {
+            log.warn( "Space '"+wikiSpace+"' exists; removing it first (no merges)..." );
+            List<WikiPage> allPages = getAllPages( wikiSpace );
+            for( WikiPage p : allPages )
+            {
+                deletePage( p );
+            }
+            
+            s.getItem( jcrPath ).remove();
+        }
+
+        s.save();
+        
+        Workspace ws = s.getWorkspace();
+        
+        log.info( "Importing content from %s to %s", xmlfile, JCR_PAGES_PATH );
+        
+        ws.importXML( JCR_PAGES_PATH, new FileInputStream(xmlfile), ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW );
+       
     }
 }
