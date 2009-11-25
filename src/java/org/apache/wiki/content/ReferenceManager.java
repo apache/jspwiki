@@ -413,7 +413,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                                     p.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
                                     p.setContent( newText );
                                     // TODO: do we want to set the author here? (We used to...)
-                                    cm.save( p );
+//                                    cm.save( p );
                                     setLinks( path, extractLinks( toPage ) );
                                 }
                             }
@@ -1034,6 +1034,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                     newValues.add( valueString );
                 }
             }
+            /*
             if( newValues.size() == 0 )
             {
                 // There seems to be a bug in Priha that causes property files to bloat,
@@ -1041,6 +1042,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
                 p.remove();
                 s.save();
             }
+            */
         }
         catch( PathNotFoundException e )
         {
@@ -1052,7 +1054,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
         {
             node.setProperty( property, newValues.toArray( new String[newValues.size()] ) );
         }
-        s.save();
+//        s.save();
     }
     
     /**
