@@ -150,10 +150,39 @@
 
     <%-- DIFF section --%>
     <wiki:CheckRequestContext context='diff'>
-      <wiki:Include page="DiffTab.jsp" />
+      <s:form beanclass="org.apache.wiki.action.DiffActionBean" method="get" acceptcharset="UTF-8">
+        <div class="collapsebox" id="diffcontent">
+          <h4>
+            <s:hidden name="page" value="${wikiActionBean.page.name}" />
+            <fmt:message key="diff.difference">
+              <fmt:param>
+                <s:select id="r1" name="r1" value="${wikiActionBean.r1}" onchange="this.form.submit();">
+                  <s:options-collection collection="${wikiActionBean.history}" value="version" label="version" />
+                </s:select>
+              </fmt:param>
+              <fmt:param>
+                <s:select id="r2" name="r2" value="${wikiActionBean.r2}" onchange="this.form.submit();">
+                  <s:options-collection collection="${wikiActionBean.history}" value="version" label="version" />
+                </s:select>
+              </fmt:param>
+            </fmt:message>
+          </h4>
+        
+          <c:if test='${diffprovider eq "ContextualDiffProvider"}'>
+            <div class="diffnote">
+              <a href="#change-1" title="<fmt:message key='diff.gotofirst.title' />" class="diff-nextprev">
+                 <fmt:message key="diff.gotofirst" />
+              </a>&raquo;&raquo;
+            </div>
+          </c:if>
+        
+          <div class="diffbody">
+            <wiki:InsertDiff><i><fmt:message key="diff.nodiff" /></i></wiki:InsertDiff> 
+          </div>
+        </div>
+      </s:form>
     </wiki:CheckRequestContext>
     <%-- DIFF section --%>
-
 
     <wiki:CheckVersion mode="first"><fmt:message key="info.noversions" /></wiki:CheckVersion>
     <wiki:CheckVersion mode="notfirst">

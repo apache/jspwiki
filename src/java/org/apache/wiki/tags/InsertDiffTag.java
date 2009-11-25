@@ -23,10 +23,11 @@ package org.apache.wiki.tags;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.action.DiffActionBean;
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 
@@ -47,10 +48,12 @@ public class InsertDiffTag
 {
     private static final long serialVersionUID = 0L;
     
-    /** Attribute which is used to store the old page content to the Page Context */
+    /** Attribute which is used to store the old page content to the Page Context
+     * @deprecated Use {@link org.apache.wiki.action.DiffActionBean#getR1()} instead. */
     public static final String ATTR_OLDVERSION = "olddiff";
 
-    /** Attribute which is used to store the new page content to the Page Context */
+    /** Attribute which is used to store the new page content to the Page Context
+    * @deprecated Use {@link org.apache.wiki.action.DiffActionBean#getR2()} instead. */
     public static final String ATTR_NEWVERSION = "newdiff";
 
     protected String m_pageName;
@@ -82,8 +85,16 @@ public class InsertDiffTag
 
     /** {@inheritDoc} */
     public final int doWikiStartTag()
-        throws IOException
+        throws IOException, WikiException
     {
+        // Get old and new page version
+        if ( m_wikiActionBean == null || !( m_wikiActionBean instanceof DiffActionBean ) )
+        {
+            throw new WikiException( "No DiffActionBean found!" );
+        }
+        int vernew = ((DiffActionBean)m_wikiActionBean).getR2();
+        int verold = ((DiffActionBean)m_wikiActionBean).getR1();
+        
         WikiEngine engine = m_wikiContext.getEngine();
         WikiContext ctx;
         
@@ -108,20 +119,13 @@ public class InsertDiffTag
             }
         }
 
-        Integer vernew = (Integer) pageContext.getAttribute( ATTR_NEWVERSION,
-                                                             PageContext.REQUEST_SCOPE );
-        Integer verold = (Integer) pageContext.getAttribute( ATTR_OLDVERSION,
-                                                             PageContext.REQUEST_SCOPE );
-
         log.info("Request diff between version "+verold+" and "+vernew);
 
         if( ctx.getPage() != null )
         {
             JspWriter out = pageContext.getOut();
 
-            String diff = engine.getDiff( ctx, 
-                                          vernew.intValue(), 
-                                          verold.intValue() );
+            String diff = engine.getDiff( ctx, vernew, verold );
 
             if( diff.length() == 0 )
             {
