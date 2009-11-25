@@ -63,7 +63,7 @@ public class DefaultURLConstructor
     {
         c_urlPatterns.put( WikiContext.ATTACH, "%uattach/%n" );
         c_urlPatterns.put( WikiContext.COMMENT, "%uComment.jsp?page=%n" );
-        c_urlPatterns.put( WikiContext.CONFLICT, "%uPageModified.jsp?page=%n" );
+        c_urlPatterns.put( WikiContext.CONFLICT, "%uEdit.jsp?page=%n" );
         c_urlPatterns.put( WikiContext.DELETE, "%uDelete.jsp?page=%n" );
         c_urlPatterns.put( WikiContext.DIFF, "%uDiff.jsp?page=%n" );
         c_urlPatterns.put( WikiContext.EDIT, "%uEdit.jsp?page=%n" );

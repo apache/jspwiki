@@ -57,7 +57,7 @@ var WikiEdit =
 		//should always run first, but seems not guaranteed on ie so let's do this for sure
 		Wiki.initialize();
 
-		var txta = $('editorarea'),
+		var txta = $('wikiText'),
 			self = this,
 			snipe,
 			config,

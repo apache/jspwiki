@@ -634,7 +634,7 @@ var Wiki = {
 	*/
 	setFocus: function(){
 		/* plain.jsp,   login.jsp,   prefs/profile, prefs/prefs, find */
-		['editorarea','j_username','loginname','assertedName','query2'].some(function(el){
+		['wikiText','j_username','loginname','assertedName','query2'].some(function(el){
 			el = $(el);
 			return el && el.visible() ? !!el.focus() : false;
 		});

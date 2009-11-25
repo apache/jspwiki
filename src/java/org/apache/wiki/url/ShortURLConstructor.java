@@ -137,7 +137,7 @@ public class ShortURLConstructor
         }
         else if( context.equals(WikiContext.CONFLICT) )
         {
-            return doReplacement( viewurl+"?do=PageModified", name, absolute ); 
+            return doReplacement( viewurl+"?do=Edit", name, absolute ); 
         }
         else if( context.equals(WikiContext.PREFS) )
         {

@@ -80,7 +80,7 @@ public interface WikiContext
     public static final String    MESSAGE  = HandlerInfo.getHandlerInfo( MessageActionBean.class, "message" ).getRequestContext();
 
     /** User is viewing a DIFF between the two versions of the page. */
-    public static final String    DIFF     = HandlerInfo.getHandlerInfo( EditActionBean.class, "diff" ).getRequestContext();
+    public static final String    DIFF     = HandlerInfo.getHandlerInfo( DiffActionBean.class, "diff" ).getRequestContext();
 
     /** User is viewing page history. */
     public static final String    INFO     = HandlerInfo.getHandlerInfo( ViewActionBean.class, "info" ).getRequestContext();
@@ -90,7 +90,7 @@ public interface WikiContext
 
     /** User has an internal conflict, and does quite not know what to
         do. Please provide some counseling. */
-    public static final String    CONFLICT = HandlerInfo.getHandlerInfo( PageModifiedActionBean.class, "conflict" ).getRequestContext();
+    public static final String    CONFLICT = HandlerInfo.getHandlerInfo( EditActionBean.class, "edit" ).getRequestContext();
 
     /** An error has been encountered and the user needs to be informed. */
     public static final String    ERROR    = HandlerInfo.getHandlerInfo( ErrorActionBean.class, "error" ).getRequestContext();

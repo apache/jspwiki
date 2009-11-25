@@ -45,19 +45,19 @@
         <s:label for="conflictText" />
         <s:textarea name="conflictText" readonly="true" />
       </p>
+      <p>
+        <s:checkbox name="overrideConflict" />
+        <fmt:message key="overrideConflict" />
+      </p>
     </c:if>
 
     <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
     <p id="submitbuttons">
       <s:hidden name="page" />
       <s:hidden name="startTime" />
+      <s:hidden name="append" />
       <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
-      <wiki:CheckRequestContext context='edit'>
-        <s:submit name="save" accesskey="s" title="${saveTitle}" />
-      </wiki:CheckRequestContext>
-      <wiki:CheckRequestContext context='comment'>
-        <s:submit name="comment" accesskey="s" title="${saveTitle}" />
-      </wiki:CheckRequestContext>
+      <s:submit name="save" accesskey="s" title="${saveTitle}" />
 
       <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
       <s:submit name="preview" accesskey="v" title="${previewTitle}" />
@@ -76,20 +76,18 @@
           <s:text name="changenote" size="50" maxlength="80" />
         </td>
       </tr>
-
-      <wiki:CheckRequestContext context="comment">
+      <wiki:UserCheck status="anonymous">
         <tr>
           <td><s:label for="author" accesskey="n" /></td>
           <td><s:text name="author" /></td>
         </tr>
-        <wiki:UserCheck status="authenticated">
+        <wiki:CheckRequestContext context="comment">
           <tr>
             <td><s:label for="email" accesskey="m" /></td>
             <td><s:text name="email" size="24" /></td>
           </tr>
-        </wiki:UserCheck>
-      </wiki:CheckRequestContext>
-
+        </wiki:CheckRequestContext>
+      </wiki:UserCheck>
     </table>
 
     <%-- Toolbar --%>
@@ -179,7 +177,7 @@
       <div class="unit size1of2">
         <div class="editor-container">
         <%-- js-insert: <div id="snipetoc"><ul>...</ul></div> --%>
-        <s:textarea id="editorarea" name="text" class="editor" rows="20" cols="80" />
+        <s:textarea id="wikiText" name="wikiText" class="editor" rows="20" cols="80" />
         <%-- js insert: <div class="resize-bar"></div>  --%>
         </div>
       </div>
