@@ -21,14 +21,23 @@
 
 package org.apache.wiki.action;
 
-import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.ui.stripes.HandlerPermission;
-import org.apache.wiki.ui.stripes.WikiRequestContext;
+import java.security.Permission;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.action.UrlBinding;
 
+import org.apache.wiki.WikiEngine;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 @UrlBinding( "/rss.jsp" )
 public class RSSActionBean extends AbstractActionBean
@@ -39,5 +48,44 @@ public class RSSActionBean extends AbstractActionBean
     public Resolution rss()
     {
         return null;
+    }
+
+    /**
+     * Generates a StreamingResolution with the names and URLs of all pages the
+     * user as has access to, following the SisterSites standard. This event
+     * method respects ACLs on pages.
+     * 
+     * @see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
+     * @return
+     */
+    @HandlesEvent( "sisterSites" )
+    public Resolution sisterSites()
+    {
+        Resolution r = new StreamingResolution( "text/plain; charset=UTF-8" )
+        {
+            @SuppressWarnings("deprecation")
+            @Override
+            protected void stream( HttpServletResponse response ) throws Exception
+            {
+                WikiEngine engine = getContext().getEngine();
+                AuthorizationManager mgr = engine.getAuthorizationManager();
+                WikiSession session = getContext().getWikiSession();
+                Set<String> allPages = engine.getReferenceManager().findCreated();
+                for( String page : allPages )
+                {
+                    if( page.indexOf( "/" ) == -1 )
+                    {
+                        Permission permission = PermissionFactory.getPagePermission( page, PagePermission.VIEW_ACTION );
+                        if ( mgr.checkPermission( session, permission ) )
+                        {
+                            String url = engine.getViewURL( page );
+                            response.getWriter().write( url + " " + page + "\n" );
+                        }
+                    }
+                }
+            }
+            
+        };
+        return r;
     }
 }
