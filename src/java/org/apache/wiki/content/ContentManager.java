@@ -1586,6 +1586,8 @@ public class ContentManager implements WikiEventListener
                 nd.setProperty( JCRWikiPage.CONTENT_TYPE, contentType );
             }
             
+            nd.setProperty( JCRWikiPage.ATTR_TITLE, path.getName() );
+            
             // Return the new WikiPage containing the new/re-used Node
             JCRWikiPage page = new JCRWikiPage(m_engine, path, nd);
             return page;

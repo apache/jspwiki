@@ -64,17 +64,20 @@ public class JCRWikiPage
 
     private static final String ATTR_CONTENT = "wiki:content";
 
+    public static final String ATTR_TITLE   = "wiki:title";
+
     /** The name of the version attribute */
-    public static final String ATTR_VERSION = "wiki:version";
+    public static final String ATTR_VERSION  = "wiki:version";
 
     /** The name of the created attribute */
-    public static final String ATTR_CREATED = "wiki:created";
+    public static final String ATTR_CREATED  = "wiki:created";
     
     /** The name of the contentType  attribute */
-    public  static final String CONTENT_TYPE  = "wiki:contentType";
+    public static final String CONTENT_TYPE  = "wiki:contentType";
+    
     
     /** The ISO8601:2000 dateformat */
-    public static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     
     private WikiPath m_path;
 
@@ -154,7 +157,15 @@ public class JCRWikiPage
      */
     public String getName()
     {
-        return m_path.getPath();
+        //return m_path.getPath();
+        try
+        {
+            return getProperty(ATTR_TITLE).getString();
+        }
+        catch( Exception e )
+        {
+            return m_path.getPath();
+        }
     }
     
     /**
