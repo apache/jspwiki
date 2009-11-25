@@ -66,9 +66,11 @@ public class ContentManagerTest extends TestCase
         {
             // No worries; it just means one of our unit tests never created TestPage...
         }
-        
-        super.tearDown();
-        m_engine.shutdown();
+        finally
+        {
+            super.tearDown();
+            m_engine.shutdown();
+        }
     }
 
     public void testContentManagerGet() throws WikiException

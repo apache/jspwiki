@@ -79,9 +79,15 @@ public class AttachmentManagerTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        TestEngine.emptyWorkDir();
-        m_engine.emptyRepository();
-        m_engine.shutdown();
+        try
+        {
+            TestEngine.emptyWorkDir();
+            m_engine.emptyRepository();
+        }
+        finally
+        {
+            m_engine.shutdown();
+        }
     }
 /*
     public void testEnabled()        

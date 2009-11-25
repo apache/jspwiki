@@ -81,35 +81,40 @@ public class ReferenceManagerTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        engine.deletePage( "TestPage" );
-        engine.deletePage( "Foobar" );
-        engine.deletePage( "Foobars" );
-        engine.deletePage( "Foobar2" );
-        engine.deletePage( "Foobar2s" );
-        engine.deletePage( "BugCommentPreviewDeletesAllComments" );
-        engine.deletePage( "FatalBugs" );
-        engine.deletePage( "RandomPage" );
-        engine.deletePage( "NewBugs" );
-        engine.deletePage( "OpenBug" );
-        engine.deletePage( "OpenBugs" );
-        engine.deletePage( "NewBug" );
-        engine.deletePage( "BugOne" );
-        engine.deletePage( "BugTwo" );
-        Session s = engine.getContentManager().getCurrentSession();
         try
         {
-            s.getRootNode().getNode( "/TestAddToProperty" ).remove();
-            s.save();
+            engine.deletePage( "TestPage" );
+            engine.deletePage( "Foobar" );
+            engine.deletePage( "Foobars" );
+            engine.deletePage( "Foobar2" );
+            engine.deletePage( "Foobar2s" );
+            engine.deletePage( "BugCommentPreviewDeletesAllComments" );
+            engine.deletePage( "FatalBugs" );
+            engine.deletePage( "RandomPage" );
+            engine.deletePage( "NewBugs" );
+            engine.deletePage( "OpenBug" );
+            engine.deletePage( "OpenBugs" );
+            engine.deletePage( "NewBug" );
+            engine.deletePage( "BugOne" );
+            engine.deletePage( "BugTwo" );
+            Session s = engine.getContentManager().getCurrentSession();
+            try
+            {
+                s.getRootNode().getNode( "/TestAddToProperty" ).remove();
+                s.save();
+            }
+            catch ( PathNotFoundException e ) {}
+            try
+            {
+                s.getRootNode().getNode( "/TestRemoveFromProperty" ).remove();
+                s.save();
+            }
+            catch ( PathNotFoundException e ) {}
         }
-        catch ( PathNotFoundException e ) {}
-        try
+        finally
         {
-            s.getRootNode().getNode( "/TestRemoveFromProperty" ).remove();
-            s.save();
+            engine.shutdown();
         }
-        catch ( PathNotFoundException e ) {}
-
-        engine.shutdown();
     }
 
     /**

@@ -57,11 +57,17 @@ public class RenameActionBeanTest extends TestCase
 
     public void tearDown() throws Exception
     {
-        m_engine.deletePage( "ReferstoTest" );
-        m_engine.deletePage( "Test" );
-        m_engine.deletePage( "TestCollision" );
-        m_engine.deletePage( "TestRenamed" );
-        m_engine.shutdown();
+        try
+        {
+            m_engine.deletePage( "ReferstoTest" );
+            m_engine.deletePage( "Test" );
+            m_engine.deletePage( "TestCollision" );
+            m_engine.deletePage( "TestRenamed" );
+        }
+        finally
+        {
+            m_engine.shutdown();
+        }
     }
     
     public void testValidation() throws Exception {

@@ -54,15 +54,20 @@ public class PageRenamerTest extends TestCase
         
         TestEngine.emptyWorkDir();
         m_engine = new TestEngine(props);
-
-        m_engine.emptyRepository();
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
-               
-        m_engine.shutdown();
+
+        try
+        {
+            m_engine.emptyRepository();
+        }
+        finally
+        {
+            m_engine.shutdown();
+        }
     }
 
     private List<WikiPath> findReferrers(String path) throws ProviderException
