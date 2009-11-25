@@ -1,3 +1,14 @@
+2009-11-26 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-183
+        
+        * Added wiki:title attribute to carry the case correctly so
+        that we're no longer relying on the WikiPath for the title.
+        
+        * Sped up ReferenceManager by insisting not calling save() on
+        every occasion.  We still should probably not call save() at all
+        and do it at the end of any event handling.
+        
 2009-11-25 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-182 aka "the Thanksgiving Turkey build"
