@@ -1,4 +1,22 @@
-2009-10-26 Janne Jalkanen <jalkanen@apache.org>
+2009-11-25 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-182 aka "the Thanksgiving Turkey build"
+
+        * EditActionBean received significant tweaks. Page-conflict
+        logic got stuffed into EditActionBean, and PageModifiedActionBean
+        went down the gullet as a result. Commenting is now fully baked;
+        it now uses Stripes.
+        
+        * Diff.jsp received the Stripes treatment.
+
+        * SisterSites received the Stripes treatment. We didn't need
+        to do it just yet. It's all just gravy at this point in the release cycle.
+
+        * Fans of bad wordplay are invited to blow cranberries
+        -- I mean, rasberries -- in my general direction.
+
+
+2009-11-24 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-181
         
