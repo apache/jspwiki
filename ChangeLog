@@ -1,5 +1,14 @@
 2009-11-26 Janne Jalkanen <jalkanen@apache.org>
 
+        * 3.0.0-svn-184
+        
+        * wiki:title was not properly copied upon rename operation.
+        
+        * checkin() did not propery bump the version number when saving,
+        resulting in versions being in the history, but all with version 0.
+        
+2009-11-26 Janne Jalkanen <jalkanen@apache.org>
+
         * 3.0.0-svn-183
         
         * Added wiki:title attribute to carry the case correctly so
