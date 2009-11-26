@@ -405,6 +405,7 @@ public class ContentManager implements WikiEventListener
      *  
      *  @param page
      *  @throws RepositoryException 
+     *  @throws ItemExistsException If the version already exists.
      */
     private void checkin( String path, int currentVersion ) throws RepositoryException
     {
@@ -429,7 +430,14 @@ public class ContentManager implements WikiEventListener
                 versions = nd.getNode( WIKI_VERSIONS );
             }
             
-            Node newVersion = versions.addNode( Integer.toString( currentVersion ) );
+            String versionName = Integer.toString( currentVersion );
+            
+            if( versions.hasNode( versionName ) )
+            {
+                throw new ItemExistsException("Version already exists: "+currentVersion+". This is a JSPWiki internal error, please report!");
+            }
+            
+            Node newVersion = versions.addNode( versionName );
             
             newVersion.addMixin( "mix:referenceable" );
             
@@ -492,7 +500,9 @@ public class ContentManager implements WikiEventListener
 
         int version = page.getVersion();
         
-        nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
+        version++; // New version is always one newer.
+        
+        nd.setProperty( JCRWikiPage.ATTR_VERSION, version );
         
         if( !nd.hasProperty( JCRWikiPage.ATTR_CREATED ) )
         {
@@ -1453,7 +1463,8 @@ public class ContentManager implements WikiEventListener
         }
         page.setAttribute( WikiPage.CHANGENOTE, fromPage.toString() + " ==> " + toPage.toString() );
         page.setAuthor( context.getCurrentUser().getName() );
-
+        page.setAttribute( JCRWikiPage.ATTR_TITLE, renameTo );
+        
         // Tell everyone we moved the page
         fireEvent( ContentEvent.NODE_RENAMED, toPage.toString(), fromPage.toString(), Boolean.valueOf( changeReferrers ) );
         
