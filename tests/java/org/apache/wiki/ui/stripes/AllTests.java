@@ -33,6 +33,7 @@ public class AllTests extends TestCase
         suite.addTest( FileBasedActionResolverTest.suite() );
         suite.addTest( HandlerInfoTest.suite() );
         suite.addTest( IsOneOfTest.suite() );
+        suite.addTest( LineDelimitedTypeConverterTest.suite() );
         suite.addTest( ShortUrlRedirectFilterTest.suite() );
         suite.addTest( SpamInterceptorTest.suite() );
 
