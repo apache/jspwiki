@@ -121,7 +121,8 @@ public interface WikiPage extends Comparable<WikiPage>
     /**
      *  Returns the version that this WikiPage instance represents.
      *  
-     *  @return the version number of this page.
+     *  @return the version number of this page. Return zero, if the wikipage
+     *  is not yet saved and the version cannot be determined.
      */
     public int getVersion();
 
