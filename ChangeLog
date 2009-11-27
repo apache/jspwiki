@@ -1,10 +1,38 @@
+2009-11-27 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-185
+
+        * Significantly re-worked GroupActionBean and related JSPs.
+        Event handlers save and saveNew were combined. Message keys
+        were moved and/or renamed to make the *GroupContent.jsp pages
+        simpler.
+
+        * NewBlogEntry.jsp received the Stripes treatment; its logic
+        moved to EditActionBean.blog().
+        
+        * rss.jsp received the Stripes treatment; its logic moved
+        to RSSActionBean.rss(). ** not fully tested yet **.
+        SisterSites.jsp logic also moved to RSSActionBean.sisterSites().
+        
+        * Default template AJAXCategories.jsp logic moved to
+        ViewActionBean.ajaxCategories(). AJAXPreview.jsp logic moved
+        to EditActionBean.ajaxPreview(). Script files jspwiki-common.js
+        and jspwiki-edit.js were slightly tweaked.
+        ** not fully tested yet **
+        
+        * LineDelimitedTypeConverter was changed to handle linefeeds
+        and comma-delimited text strings equally. So far, only
+        EditGroup.jsp uses this feature.
+        
+        * The trunk is still more broken that it should be.
+
 2009-11-26 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-184
         
         * wiki:title was not properly copied upon rename operation.
         
-        * checkin() did not propery bump the version number when saving,
+        * checkin() did not properly bump the version number when saving,
         resulting in versions being in the history, but all with version 0.
         
 2009-11-26 Janne Jalkanen <jalkanen@apache.org>
