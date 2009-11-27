@@ -118,9 +118,9 @@ public class ContentManagerTest extends TestCase
     
     public void testPaths() throws Exception
     {
-        assertEquals( "One", "/pages/Main/MainPage", ContentManager.getJCRPath( WikiPath.valueOf("Main:MainPage") ) );
+        assertEquals( "One", "/pages/main/mainpage", ContentManager.getJCRPath( WikiPath.valueOf("Main:MainPage") ) );
         
-        assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/Main/MainPage" ) );
+        assertEquals( "Back", WikiPath.valueOf("Main:MainPage"), ContentManager.getWikiPath( "/pages/main/mainpage" ) );
     }
     
     public void getAllPages() throws Exception
@@ -153,6 +153,8 @@ public class ContentManagerTest extends TestCase
         assertTrue( m_mgr.pageExists( path, 1 ) );
 
         m_engine.deletePage( path.toString() );
+        
+        assertFalse( m_mgr.pageExists( path ) );
     }
 
     public void testVersions() throws Exception

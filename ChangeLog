@@ -1,3 +1,15 @@
+2009-11-28 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-186
+        
+        * ContentManager.isNew() was checking if ATTR_CREATED exists
+        after it had ensured it had one to determine whether page is new
+        or not. Oops.
+        
+        * More fixes to ContentManager.checkin() and save() as it was
+        accidentally creating old pages with wrong version numbers, which
+        in turn caused deletions to fail in some places.
+        
 2009-11-27 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-185

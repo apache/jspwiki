@@ -409,47 +409,35 @@ public class ContentManager implements WikiEventListener
      */
     private void checkin( String path, int currentVersion ) throws RepositoryException
     {
-        Session copierSession = null;
+        Session copierSession = getCurrentSession();
         
-        try
+        // If the item does not exist yet, there is nothing to copy.
+        if( !copierSession.itemExists( path ) ) return;
+            
+        Node nd = (Node)copierSession.getItem( path );
+        Node versions;
+            
+        if( !nd.hasNode( WIKI_VERSIONS ) )
         {
-            copierSession = m_sessionManager.newSession();
-            
-            // If the item does not exist yet, there is nothing to copy.
-            if( !copierSession.itemExists( path ) ) return;
-            
-            Node nd = (Node)copierSession.getItem( path );
-            Node versions;
-            
-            if( !nd.hasNode( WIKI_VERSIONS ) )
-            {
-                versions = nd.addNode( WIKI_VERSIONS );
-            }
-            else
-            {
-                versions = nd.getNode( WIKI_VERSIONS );
-            }
-            
-            String versionName = Integer.toString( currentVersion );
-            
-            if( versions.hasNode( versionName ) )
-            {
-                throw new ItemExistsException("Version already exists: "+currentVersion+". This is a JSPWiki internal error, please report!");
-            }
-            
-            Node newVersion = versions.addNode( versionName );
-            
-            newVersion.addMixin( "mix:referenceable" );
-            
-            copyProperties( nd, newVersion );
-            
-            copierSession.save();
+            versions = nd.addNode( WIKI_VERSIONS );
         }
-        finally
+        else
         {
-            if( copierSession != null ) copierSession.logout();
+            versions = nd.getNode( WIKI_VERSIONS );
         }
-        
+            
+        String versionName = Integer.toString( currentVersion );
+            
+        if( versions.hasNode( versionName ) )
+        {
+            throw new ItemExistsException("Version already exists: "+currentVersion+". This is a JSPWiki internal error, please report!");
+        }
+            
+        Node newVersion = versions.addNode( versionName );
+            
+        newVersion.addMixin( "mix:referenceable" );
+            
+        copyProperties( nd, newVersion );
     }
 
     private void copyProperties( Node source, Node dest )
@@ -499,24 +487,23 @@ public class ContentManager implements WikiEventListener
         Node nd = getJCRNode( getJCRPath( path ) );
 
         int version = page.getVersion();
-        
-        version++; // New version is always one newer.
-        
-        nd.setProperty( JCRWikiPage.ATTR_VERSION, version );
-        
-        if( !nd.hasProperty( JCRWikiPage.ATTR_CREATED ) )
-        {
-            nd.setProperty( JCRWikiPage.ATTR_CREATED, Calendar.getInstance() );
-        }
-        
+
         if( isNew( nd ) )
         {
+            nd.setProperty( JCRWikiPage.ATTR_VERSION, 1 );
+            nd.setProperty( JCRWikiPage.ATTR_CREATED, Calendar.getInstance() );
+            
             // New node, so nothing to check in
             nd.getParent().save();
         }
         else
         {
+            // First, check in the old node, then set version for the new one
+            
             checkin( getJCRPath( path ), version );
+                        
+            nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
+            
             nd.save();
         }
         
