@@ -2598,7 +2598,7 @@ var Categories =
 
 				event.stop();  //dont jump to top of page ;-)
 				new Request.HTML({
-					url:Wiki.TemplateUrl + 'AJAXCategories.jsp',
+					url:Wiki.BaseUrl + '/View.action?ajaxCategories=',
 					data: '&page=' + page,
 					update: popup,
 					onComplete: function(){

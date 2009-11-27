@@ -584,8 +584,8 @@ var WikiEdit =
 			self.previewcache = text;
 
 			new Request.HTML({
-				url:Wiki.TemplateUrl + "/AJAXPreview.jsp?page=" + page,
-				data: 'wikimarkup=' + encodeURIComponent( text ),
+				url:Wiki.BaseUrl + "/Edit.action?ajaxPreview=&page=" + page,
+				data: 'wikiText=' + encodeURIComponent( text ),
 				update: preview,
 				onRequest: function(){ spin.show(); },
 				onComplete: function(){ spin.hide(); Wiki.renderPage(preview, page); }

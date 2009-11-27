@@ -21,8 +21,12 @@
 
 package org.apache.wiki.action;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.controller.LifecycleStage;
@@ -31,14 +35,17 @@ import net.sourceforge.stripes.validation.Validate;
 import net.sourceforge.stripes.validation.ValidationError;
 import net.sourceforge.stripes.validation.ValidationErrors;
 
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
@@ -59,6 +66,43 @@ public class ViewActionBean extends AbstractPageActionBean
     public ViewActionBean()
     {
         super();
+    }
+
+    /**
+     * Using AJAX, returns a {@link StreamingResolution} containing
+     * divs with categories for a supplied current page.
+     * 
+     * @return always returns a {@link StreamingResolution} containing the
+     * results
+     */
+    @HandlesEvent( "ajaxCategories" )
+    public Resolution ajaxCategories()
+    {
+        Resolution r = new StreamingResolution( "text/html; charset=UTF-8" ) {
+            public void stream( HttpServletResponse response ) throws IOException
+            {
+                WikiContext context = getContext();
+                WikiPage page = getPage();
+                Writer out = response.getWriter();
+                out.write( "<div class='categoryTitle'>");
+                out.write( context.getViewURL( page.getName() ) );
+                out.write( "</div>" );
+                out.write( "<div class='categoryText'>");
+                PluginManager mgr = context.getEngine().getPluginManager();
+                String result;
+                try
+                {
+                    result = mgr.execute( context, "{ReferringPagesPlugin,page="+page.getName()+",max=20,before='*',after='\n'}" );
+                }
+                catch (PluginException e)
+                {
+                    result = e.getMessage();
+                }
+                out.write( result );
+                out.write( "</div>" );
+            }
+        };
+        return r;
     }
 
     /**
