@@ -56,9 +56,13 @@ import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.SpamProtect;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
@@ -101,6 +105,34 @@ public class EditActionBean extends AbstractPageActionBean
     private long m_startTime = -1;
 
     /**
+     * Using AJAX, returns a {@link StreamingResolution} containing
+     * a preview for the current page.
+     * 
+     * @return always returns a {@link StreamingResolution} containing the
+     * results
+     */
+    @HandlesEvent( "ajaxPreview" )
+    public Resolution ajaxPreview()
+    {
+        Resolution r = new StreamingResolution( "text/html; charset=UTF-8" ) {
+            public void stream( HttpServletResponse response ) throws IOException
+            {
+                // Parse the wiki markup
+                WikiContext context = getContext();
+                RenderingManager renderer = context.getEngine().getRenderingManager();
+                MarkupParser mp = renderer.getParser( context, m_wikiText );
+                mp.disableAccessRules();
+                WikiDocument doc = mp.parse();
+                
+                // Get the text directly from the RenderingManager, without caching
+                String result = renderer.getHTML( context, doc );
+                response.getWriter().write( result );
+            }
+        };
+        return r;
+    }
+
+    /**
      * Event handler method that cancels any locks the user possesses for the
      * current wiki page, and redirects the user to the {@link ViewActionBean}
      * "view" handler.
@@ -124,6 +156,24 @@ public class EditActionBean extends AbstractPageActionBean
         engine.getContentManager().unlockPage( lock );
         session.removeAttribute( LOCK_PREFIX + pagereq );
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", pagereq );
+    }
+
+    /**
+     * Event handler for new blog entries. The handler looks up the correct
+     * blog page and redirects the user to it.
+     * @return always returns a {@link RedirectResolution} to the editing
+     * page for the blog entry.
+     */
+    @HandlesEvent( "blog" )
+    public Resolution blog() throws ProviderException
+    {
+        // Determine the correct page to redirect to
+        WikiEngine engine = getContext().getEngine();
+        WeblogEntryPlugin p = new WeblogEntryPlugin();
+        String blogPage = p.getNewEntryPage( engine, getPage().getName() );
+
+        // Redirect to the blog page for user to edit
+        return new RedirectResolution( EditActionBean.class ).addParameter( "page", blogPage );
     }
 
     @HandlesEvent( "comment" )
