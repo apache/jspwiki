@@ -416,7 +416,10 @@ public class ContentManager implements WikiEventListener
             
         Node nd = (Node)copierSession.getItem( path );
         Node versions;
-            
+         
+        //
+        //  Ensure that the versions subnode exists.
+        //
         if( !nd.hasNode( WIKI_VERSIONS ) )
         {
             versions = nd.addNode( WIKI_VERSIONS );
@@ -426,6 +429,11 @@ public class ContentManager implements WikiEventListener
             versions = nd.getNode( WIKI_VERSIONS );
         }
             
+        //
+        //  Figure out the path to store the contents of the current version,
+        //  create the Node, and copy the properties from the current version
+        //  to it.
+        //
         String versionName = Integer.toString( currentVersion );
             
         if( versions.hasNode( versionName ) )
