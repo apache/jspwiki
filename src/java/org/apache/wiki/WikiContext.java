@@ -111,7 +111,7 @@ public interface WikiContext
     public static final String    DELETE_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "delete" ).getRequestContext();
 
     /** User is editing an existing group. */
-    public static final String    EDIT_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "save" ).getRequestContext();
+    public static final String    EDIT_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "edit" ).getRequestContext();
 
     /** User is viewing an existing group */
     public static final String    VIEW_GROUP = HandlerInfo.getHandlerInfo( GroupActionBean.class, "view" ).getRequestContext();
