@@ -24,8 +24,11 @@ package org.apache.wiki.ui.stripes;
 import net.sourceforge.stripes.validation.OneToManyTypeConverter;
 
 /**
- * Overrides {@link net.sourceforge.stripes.validation.OneToManyTypeConverter} so
- * that multiple items parsed by the converter use carriage return delimiters, instead of spaces and commas.
+ * More flexible version of
+ * {@link net.sourceforge.stripes.validation.OneToManyTypeConverter} that allows
+ * converted strings to be delimited by carriage return, carriage return +
+ * linefeed, or commas. Leading and trailing whitespace after the CR or CR/LF is
+ * trimmed.
  */
 public class LineDelimitedTypeConverter extends OneToManyTypeConverter
 {
@@ -33,7 +36,6 @@ public class LineDelimitedTypeConverter extends OneToManyTypeConverter
     @Override
     protected String getSplitRegex()
     {
-        return "\n";
+        return "\\s*((\\r*?\\n)|,+)+?\\s*";
     }
-    
 }
