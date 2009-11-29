@@ -22,6 +22,7 @@
 package org.apache.wiki.content;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Test;
@@ -33,6 +34,8 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.providers.ProviderException;
+
+import stress.Benchmark;
 
 
 public class ContentManagerTest extends TestCase
@@ -224,7 +227,14 @@ public class ContentManagerTest extends TestCase
     {
         WikiPage p = m_mgr.addPage( WikiPath.valueOf( "TestPage" ), ContentManager.JSPWIKI_CONTENT_TYPE );
         
+        Benchmark b = new Benchmark();
+        b.start();
+        
         storeVersions( p, 100 );
+        
+        b.stop();
+        
+        System.out.println( "100 versions stored in "+b+", "+b.toString( 100 ) + " stores/second");
         
         p = m_engine.getPage( "TestPage", 100 );
         assertEquals( "content 100","Test 100", p.getContentAsString() );
@@ -239,6 +249,94 @@ public class ContentManagerTest extends TestCase
         assertEquals( "version 51", 51, p.getVersion() );
     }
     
+    public void testDeleteLastVersion() throws Exception
+    {
+        WikiPage p = m_engine.createPage("TestPage");
+        
+        storeVersions( p, 3 );
+        
+        WikiPage current = m_engine.getPage( "TestPage" );
+        
+        assertEquals( current.getVersion(), 3 );
+        
+        m_engine.deleteVersion( current );
+        
+        assertFalse( m_engine.pageExists( "TestPage", 3 ));
+        
+        current = m_engine.getPage("TestPage");
+        
+        assertEquals( current.getVersion(), 2 );
+        
+        try
+        {
+            m_engine.getPage("TestPage",3);
+            fail("Got v3");
+        }
+        catch(PageNotFoundException e) {}
+    }
+    
+    public void testDeleteInTheMiddle() throws Exception
+    {
+        WikiPage p = m_engine.createPage("TestPage");
+        
+        storeVersions( p, 3 );
+        
+        WikiPage current = m_engine.getPage( "TestPage", 2 );
+        
+        assertEquals( current.getVersion(), 2 );
+        
+        m_engine.deleteVersion( current );
+        
+        assertFalse( m_engine.pageExists( "TestPage", 2 ));
+        
+        current = m_engine.getPage("TestPage");
+        
+        assertEquals( current.getVersion(), 3 );
+        
+        try
+        {
+            m_engine.getPage("TestPage",2);
+            fail("Got v2");
+        }
+        catch(PageNotFoundException e) {}
+        
+        List<WikiPage> vh = m_engine.getVersionHistory( "TestPage" );
+        assertEquals( 2, vh.size() );
+        assertEquals( 1, vh.get(0).getVersion() );
+        assertEquals( 3, vh.get(1).getVersion() );
+    }
+
+    public void testDeleteFirst() throws Exception
+    {
+        WikiPage p = m_engine.createPage("TestPage");
+        
+        storeVersions( p, 3 );
+        
+        WikiPage current = m_engine.getPage( "TestPage", 1 );
+        
+        assertEquals( current.getVersion(), 1 );
+        
+        m_engine.deleteVersion( current );
+        
+        assertFalse( m_engine.pageExists( "TestPage", 1 ));
+        
+        current = m_engine.getPage("TestPage");
+        
+        assertEquals( current.getVersion(), 3 );
+        
+        try
+        {
+            m_engine.getPage("TestPage",1);
+            fail("Got v1");
+        }
+        catch(PageNotFoundException e) {}
+        
+        List<WikiPage> vh = m_engine.getVersionHistory( "TestPage" );
+        assertEquals( 2, vh.size() );
+        assertEquals( 2, vh.get(0).getVersion() );
+        assertEquals( 3, vh.get(1).getVersion() );
+    }
+    
     public void testDeleteAllVersions() throws Exception
     {
         WikiPage p = m_engine.createPage( "TestPage" );
@@ -250,14 +348,24 @@ public class ContentManagerTest extends TestCase
             p = m_engine.getPage( "TestPage", i );
             
             m_engine.deleteVersion( p );
+            
+            assertFalse( "exists "+i, m_engine.pageExists( "TestPage", i ) );
+
+            try
+            {
+                p = m_engine.getPage( "TestPage", i );
+                fail("Didn't get exception for "+i);
+            }
+            catch( PageNotFoundException e ) {} // Expected
+
         }
     
         assertFalse( m_engine.pageExists( "TestPage" ) );
         
         try
         {
-            m_engine.getPage( "TestPage" );
-            fail("Didn't get exception!");
+            p = m_engine.getPage( "TestPage" );
+            fail("Didn't get exception for the whole page");
         }
         catch( PageNotFoundException e ) {} // Expected
     }
