@@ -26,6 +26,7 @@ import java.io.Serializable;
  * Events fired by {@link org.apache.wiki.content.ContentManager} when nodes are
  * created, saved or deleted.
  */
+// FIXME: The parameters expected by the different events need to be documented.
 public class ContentEvent extends WikiPageEvent
 {
     private static final long serialVersionUID = -6577147048708900469L;
