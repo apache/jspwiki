@@ -140,15 +140,9 @@ public class JCRWikiPage
     public Node getJCRNode() throws RepositoryException
     {
         Node node;
-        try
-        {
-            node = m_engine.getContentManager().getJCRNode(m_jcrPath);
-        }
-        catch ( PathNotFoundException e )
-        {
-            // If the Node was never created, create one now
-            node = m_engine.getContentManager().createJCRNode( m_jcrPath );
-        }
+        
+        node = m_engine.getContentManager().getJCRNode(m_jcrPath);
+
         return node;
     }
     
@@ -515,7 +509,7 @@ public class JCRWikiPage
     }
     
     /**
-     *  A page is equal to another page if its name and version are equal.
+     *  A page is equal to another page if its path and version are equal.
      *  
      *  {@inheritDoc}
      */
@@ -525,7 +519,7 @@ public class JCRWikiPage
         {
             WikiPage oo = (WikiPage) o;
         
-            if( oo.getName().equals( getName() ) )
+            if( oo.getPath().equals( getPath() ) )
             {
                 if( oo.getVersion() == getVersion() )
                 {
