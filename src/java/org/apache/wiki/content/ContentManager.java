@@ -488,6 +488,7 @@ public class ContentManager implements WikiEventListener
      *  </ul>
      * 
      *  @param page the page to save
+     *  @throws RepositoryException In case anything wrong happens.
      */
     public void save( WikiPage page ) throws RepositoryException
     {
@@ -1055,8 +1056,6 @@ public class ContentManager implements WikiEventListener
     public boolean deleteVersion( WikiPage page )
         throws ProviderException
     {
-        //fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
-
         JCRWikiPage jcrPage = (JCRWikiPage)page;
         
         try
@@ -1089,7 +1088,11 @@ public class ContentManager implements WikiEventListener
                 jcrPage.getJCRNode().getParent().save();
             }
             
-            //fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
+            //
+            //  Page has changed, so let's notify others.
+            //  FIXME: I'm not sure whether we should fire in what case.
+            //
+            fireEvent( ContentEvent.NODE_SAVED, page.getName(), NO_ARGS );
             
             return true;
         }
