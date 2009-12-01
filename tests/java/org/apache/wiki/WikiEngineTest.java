@@ -762,7 +762,7 @@ public class WikiEngineTest extends TestCase
        
         Collection<WikiPath> pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
         assertEquals( "wrong # of referrers", 1, pages.size() );
-        assertEquals( "has one", "Main:OldNameTestPage", pages.iterator().next().toString() );
+        assertEquals( "has one", WikiPath.valueOf("Main:OldNameTestPage"), pages.iterator().next() );
         
         WikiContext ctx = m_engine.getWikiContextFactory().newViewContext( m_engine.getPage("OldNameTestPage") );
         
