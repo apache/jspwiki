@@ -77,7 +77,7 @@ public class JSPWikiMarkupParserTest extends TestCase
     }
 
     private void newPage( String name )
-        throws WikiException
+        throws Exception
     {
         testEngine.saveText( name, "<test>" );
 

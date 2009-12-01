@@ -255,7 +255,7 @@ public class ApprovalWorkflowTest extends TestCase
         assertEquals(0, decisions.size());
     }
 
-    public void testSaveWikiPageWithException() throws WikiException
+    public void testSaveWikiPageWithException() throws Exception
     {
         // Add a PageFilter that rejects all save attempts
         m_engine.getFilterManager().addPageFilter( new AbortFilter(), 0 );

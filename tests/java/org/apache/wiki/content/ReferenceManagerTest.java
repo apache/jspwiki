@@ -515,7 +515,7 @@ public class ReferenceManagerTest extends TestCase
         assertEquals( 0, mgr.getRefersTo( destination4 ).size() );
     }
 
-    public void testSelf() throws WikiException
+    public void testSelf() throws Exception
     {
         engine.saveText( "BugOne", "BugOne" );
         Collection<WikiPath> ref = mgr.getReferredBy( WikiPath.valueOf( "BugOne" ));
