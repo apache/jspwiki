@@ -238,14 +238,17 @@ public class ContentManagerTest extends TestCase
         
         p = m_engine.getPage( "TestPage", 100 );
         assertEquals( "content 100","Test 100", p.getContentAsString() );
+        assertEquals( "content 100/2", p.getContentAsString(), m_engine.getPureText( p ) );
         assertEquals( "version 100", 100, p.getVersion() );
         
         p = m_engine.getPage( "TestPage", 1 );
         assertEquals( "content 1","Test 1", p.getContentAsString() );
+        assertEquals( "content 1/2", p.getContentAsString(), m_engine.getPureText( p ) );
         assertEquals( "version 1", 1, p.getVersion() );
         
         p = m_engine.getPage( "TestPage", 51 );
         assertEquals( "content 51","Test 51", p.getContentAsString() );
+        assertEquals( "content 51/2", p.getContentAsString(), m_engine.getPureText( p ) );
         assertEquals( "version 51", 51, p.getVersion() );
     }
     

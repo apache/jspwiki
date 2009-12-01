@@ -1421,6 +1421,7 @@ public class WikiEngine
      *  latest version.
      *  @return The page contents.  If the page does not exist,
      *          returns an empty string.
+     *  @deprecated Please use {@link WikiPage#getContentAsString()}
      */
     // FIXME: Should throw an exception on unknown page/version?
     public String getPureText( String page, int version )
@@ -1456,11 +1457,14 @@ public class WikiEngine
      *
      *  @param page A handle to the WikiPage
      *  @return String of WikiText.
+     *  @throws ProviderException If the page content cannot be read. 
+     *  @throws PageNotFoundException If the page cannot be located
      *  @since 2.1.13.
+     *  @deprecated Please use {@link WikiPage#getContentAsString()}
      */
-    public String getPureText( WikiPage page )
+    public String getPureText( WikiPage page ) throws PageNotFoundException, ProviderException
     {
-        return getPureText( page.getName(), page.getVersion() );
+        return page.getContentAsString();
     }
 
     /**
@@ -1727,19 +1731,22 @@ public class WikiEngine
      *  be of type {@link org.apache.wiki.workflow.DecisionRequiredException}. Individual
      *  PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also
      *  throw a {@link org.apache.wiki.filters.RedirectException}.
+     *  @throws PageNotFoundException 
      */
     public void saveText( WikiContext context, String text )
         throws WikiException
     {
         // Check if page data actually changed; bail if not
         WikiPage page = context.getPage();
-        String oldText = getPureText( page );
+        String oldText = page.getContentAsString();
         String proposedText = TextUtil.normalizePostData( text );
         if ( oldText != null && oldText.equals( proposedText ) )
         {
             return;
         }
 
+        if( oldText == null ) oldText = ""; // FIXME: This is not pretty.
+        
         // Check if creation of empty pages is allowed; bail if not
         boolean allowEmpty = TextUtil.getBooleanProperty( m_properties, 
                                                           PROP_ALLOW_CREATION_OF_EMPTY_PAGES, 

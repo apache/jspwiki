@@ -340,9 +340,10 @@ public class TestEngine extends WikiEngine
      * @param pageName
      * @param content
      * @throws WikiException
+     * @throws PageNotFoundException 
      */
     public void saveText( String pageName, String content )
-        throws WikiException
+        throws WikiException, PageNotFoundException
     {
         // Build new request and associate our admin session
         MockHttpServletRequest request = newHttpRequest();
@@ -366,7 +367,7 @@ public class TestEngine extends WikiEngine
             page = getPage( pageName );
         }
         catch ( PageNotFoundException e )
-        {
+        { 
             try
             {
                 page = createPage( WikiPath.valueOf( pageName ) );
@@ -382,7 +383,7 @@ public class TestEngine extends WikiEngine
     }
 
     public void saveTextAsJanne( String pageName, String content )
-        throws WikiException
+        throws WikiException, PageNotFoundException
     {
         // Build new request and associate our Janne session
         MockHttpServletRequest request = newHttpRequest();

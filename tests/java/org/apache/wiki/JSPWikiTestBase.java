@@ -3,6 +3,8 @@ package org.apache.wiki;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 
+import org.apache.wiki.content.WikiPath;
+
 /**
  *  Provides a base class for all JSPWiki tests.  Any tests which want to throw a NotExecutableException
  *  should extend from this class.
@@ -15,6 +17,5 @@ public class JSPWikiTestBase extends TestCase
     {
         super.run(new JSPWikiTestResult(testResult));
     }
-    
-    
+
 }

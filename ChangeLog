@@ -1,3 +1,18 @@
+2009-12-01 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-187
+        
+        * Bug fix: ContentManager.deleteVersion() no longer restores
+        the page (as empty) after deletion.  Oops.  (Technically,
+        JCRWikiPage.getJCRNode() was creating the page instead of throwing
+        an exception.)
+        
+        * Deprecated WikiEngine.getPureText() [use WikiPage.getContentAsString()
+        instead.]
+        
+        * ContentManager.deleteVersion() fires a NODE_SAVED instead of NODE_DELETED,
+        since deletion implies removal of the entire page.
+        
 2009-11-28 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-186
