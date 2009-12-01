@@ -91,7 +91,7 @@ public class JCRWikiPage
      * Use {@link WikiEngine#createPage(WikiPath)} instead. 
      * @deprecated 
      */
-    public JCRWikiPage( WikiEngine engine, WikiPath path )
+    protected JCRWikiPage( WikiEngine engine, WikiPath path )
     {
         m_engine  = engine;
         m_path    = path;
