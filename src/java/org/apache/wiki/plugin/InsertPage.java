@@ -32,6 +32,7 @@ import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.content.WikiPath;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -165,9 +166,18 @@ public class InsertPage
                 WikiContext includedContext = (WikiContext) context.clone();
                 includedContext.setPage( page );
 
-                String pageData = engine.getPureText( page );
+                String pageData;
+                
+                try
+                {
+                    pageData = page.getContentAsString();
+                }
+                catch( ProviderException e )
+                {
+                    pageData = "";
+                }
                 String moreLink = "";
-
+                
                 if( section != -1 )
                 {
                     try

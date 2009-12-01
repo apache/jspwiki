@@ -33,6 +33,7 @@ import org.apache.wiki.api.PluginException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageAlreadyExistsException;
+import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.filters.RedirectException;
 import org.apache.wiki.log.Logger;

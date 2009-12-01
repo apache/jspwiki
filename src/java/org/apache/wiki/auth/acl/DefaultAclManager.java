@@ -202,20 +202,20 @@ public class DefaultAclManager implements AclManager
     public void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException
     {
         // Remove all of the existing ACLs.
-        String pageText = m_engine.getPureText( page );
-        Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
-        String cleansedText = matcher.replaceAll( "" );
-        page.setAcl( acl );
-        if ( pageText != null && !pageText.equals( cleansedText ) )
+        try
         {
-            try
+            String pageText = page.getContentAsString();
+            Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
+            String cleansedText = matcher.replaceAll( "" );
+            page.setAcl( acl );
+            if ( pageText != null && !pageText.equals( cleansedText ) )
             {
                 page.setContent( cleansedText );
             }
-            catch ( ProviderException e )
-            {
-                throw new WikiSecurityException( "Could not set Acl. Reason: ProviderException " + e.getMessage(), e );
-            }
+        }
+        catch ( ProviderException e )
+        {
+            throw new WikiSecurityException( "Could not set Acl. Reason: ProviderException " + e.getMessage(), e );
         }
     }
 

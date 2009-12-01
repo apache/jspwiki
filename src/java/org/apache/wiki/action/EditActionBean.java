@@ -195,7 +195,7 @@ public class EditActionBean extends AbstractPageActionBean
     {
         // Load the page text
         WikiEngine engine = getContext().getEngine();
-        setWikiText( engine.getPureText( getPage() ) );
+        setWikiText( getPage().getContentAsString() );
         
         // Init edit fields and forward to the display JSP
         initEditFields( "Editing" );

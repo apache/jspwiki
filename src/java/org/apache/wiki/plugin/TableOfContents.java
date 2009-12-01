@@ -33,6 +33,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.util.TextUtil;
 
 
@@ -216,7 +217,7 @@ public class TableOfContents
 
         try
         {
-            String wikiText = engine.getPureText( page );
+            String wikiText = page.getContentAsString();
             boolean runFilters = 
                 "true".equals(engine.getVariableManager().getValue(context,WikiEngine.PROP_RUNFILTERS,"true"));
             
@@ -241,6 +242,11 @@ public class TableOfContents
             sb.append( "<ul>\n"+m_buf.toString()+"</ul>\n" );
         }
         catch( IOException e )
+        {
+            log.error("Could not construct table of contents", e);
+            throw new PluginException( rb.getString( "tableofcontents.unable.construct" ) );
+        }
+        catch( ProviderException e )
         {
             log.error("Could not construct table of contents", e);
             throw new PluginException( rb.getString( "tableofcontents.unable.construct" ) );
