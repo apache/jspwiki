@@ -1,3 +1,11 @@
+2009-12-03 Janne Jalkanen <jalkanen@apache.org>
+
+        * 3.0.0-svn-188
+        
+        * Fixed ContentManager.checkin() to use a separate Session for
+        copying - it had an off-by-one error when storing the old version.
+        This fixes quite a few tests...
+        
 2009-12-01 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-187

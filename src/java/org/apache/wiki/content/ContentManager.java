@@ -70,6 +70,8 @@ import org.apache.wiki.workflow.Workflow;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 
 /**
  *  Provides access to the content repository.  Unlike previously, in JSPWiki
@@ -409,43 +411,51 @@ public class ContentManager implements WikiEventListener
      */
     private void checkin( String path, int currentVersion ) throws RepositoryException
     {
-        Session copierSession = getCurrentSession();
+        Session copierSession = m_sessionManager.newSession();
         
-        // If the item does not exist yet, there is nothing to copy.
-        if( !copierSession.itemExists( path ) ) return;
+        try
+        {
+            // If the item does not exist yet, there is nothing to copy.
+            if( !copierSession.itemExists( path ) ) return;
             
-        Node nd = (Node)copierSession.getItem( path );
-        Node versions;
+            Node nd = (Node)copierSession.getItem( path );
+            Node versions;
          
-        //
-        //  Ensure that the versions subnode exists.
-        //
-        if( !nd.hasNode( WIKI_VERSIONS ) )
-        {
-            versions = nd.addNode( WIKI_VERSIONS );
+            //
+            //  Ensure that the versions subnode exists.
+            //
+            if( !nd.hasNode( WIKI_VERSIONS ) )
+            {
+                versions = nd.addNode( WIKI_VERSIONS );
+            }
+            else
+            {
+                versions = nd.getNode( WIKI_VERSIONS );
+            }
+            
+            //
+            //  Figure out the path to store the contents of the current version,
+            //  create the Node, and copy the properties from the current version
+            //  to it.
+            //
+            String versionName = Integer.toString( currentVersion );
+            
+            if( versions.hasNode( versionName ) )
+            {
+                throw new ItemExistsException("Version already exists: "+currentVersion+". This is a JSPWiki internal error, please report!");
+            }
+            
+            Node newVersion = versions.addNode( versionName );
+            
+            newVersion.addMixin( "mix:referenceable" );
+            
+            copyProperties( nd, newVersion );
+            copierSession.save();
         }
-        else
+        finally
         {
-            versions = nd.getNode( WIKI_VERSIONS );
+            copierSession.logout();
         }
-            
-        //
-        //  Figure out the path to store the contents of the current version,
-        //  create the Node, and copy the properties from the current version
-        //  to it.
-        //
-        String versionName = Integer.toString( currentVersion );
-            
-        if( versions.hasNode( versionName ) )
-        {
-            throw new ItemExistsException("Version already exists: "+currentVersion+". This is a JSPWiki internal error, please report!");
-        }
-            
-        Node newVersion = versions.addNode( versionName );
-            
-        newVersion.addMixin( "mix:referenceable" );
-            
-        copyProperties( nd, newVersion );
     }
 
     private void copyProperties( Node source, Node dest )
