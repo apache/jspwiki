@@ -211,7 +211,7 @@ public class RenderingManager implements WikiEventListener, InternalModule
     protected WikiDocument getRenderedDocument( WikiContext context, String pagedata )
         throws IOException
     {
-        String pageid = context.getRealPage().getName()+VERSION_DELIMITER+context.getRealPage().getVersion();
+        String pageid = context.getRealPage().getPath().toString().toLowerCase()+VERSION_DELIMITER+context.getRealPage().getVersion();
 
         if( m_documentCache != null )
         {
@@ -357,13 +357,13 @@ public class RenderingManager implements WikiEventListener, InternalModule
         {
             if( m_documentCache != null )
             {
-                String pageName = ((WikiPageEvent) event).getPageName();
+                WikiPath pageName = ((WikiPageEvent) event).getPath();
 
-                flushCache( pageName );
+                flushCache( pageName.toString() );
 
                 try
                 {
-                    Collection<WikiPath> referringPages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf(pageName) );
+                    Collection<WikiPath> referringPages = m_engine.getReferenceManager().getReferredBy(pageName);
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistant page

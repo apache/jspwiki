@@ -1,5 +1,10 @@
 2009-12-03 Janne Jalkanen <jalkanen@apache.org>
 
+        * 3.0.0-svn-189
+        
+        * JSPWIKI-616: WikiPageEvent now takes in a WikiPath instead of
+        String.
+
         * 3.0.0-svn-188
         
         * Fixed ContentManager.checkin() to use a separate Session for

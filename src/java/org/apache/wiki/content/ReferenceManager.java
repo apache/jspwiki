@@ -323,8 +323,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
             return;
         }
 
-        String pageName = ((WikiPageEvent) event).getPageName();
-        WikiPath path = pageName == null ? null : WikiPath.valueOf( pageName );
+        WikiPath path = ((WikiPageEvent) event).getPath();
         if( !isWikiPage( path ) )
         {
             return;
@@ -366,7 +365,7 @@ public class ReferenceManager implements InternalModule, WikiEventListener
 
                 case (ContentEvent.NODE_RENAMED ): {
                     WikiPath toPage = path;
-                    WikiPath fromPage = WikiPath.valueOf( (String) ((WikiPageEvent) event).getArgs()[0] );
+                    WikiPath fromPage = (WikiPath) ((WikiPageEvent) event).getArgs()[0];
                     Boolean changeReferrers = (Boolean) ((WikiPageEvent) event).getArgs()[1];
                     List<WikiPath> referrers = getReferredBy( fromPage );
                     

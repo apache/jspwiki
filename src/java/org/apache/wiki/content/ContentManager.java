@@ -526,7 +526,7 @@ public class ContentManager implements WikiEventListener
             nd.save();
         }
         
-        fireEvent( ContentEvent.NODE_SAVED, page.getName(), NO_ARGS );
+        fireEvent( ContentEvent.NODE_SAVED, page.getPath(), NO_ARGS );
     }
     
     /**
@@ -770,7 +770,7 @@ public class ContentManager implements WikiEventListener
 
         synchronized( m_pageLocks )
         {
-            fireEvent( WikiPageEvent.PAGE_LOCK, page.getName(), NO_ARGS ); // prior to or after actual lock?
+            fireEvent( WikiPageEvent.PAGE_LOCK, page.getPath(), NO_ARGS ); // prior to or after actual lock?
 
             lock = m_pageLocks.get( page.getName() );
 
@@ -808,12 +808,12 @@ public class ContentManager implements WikiEventListener
 
         synchronized( m_pageLocks )
         {
-            m_pageLocks.remove( lock.getPage() );
+            m_pageLocks.remove( lock.getPath() );
 
             log.debug( "Released lock " + lock );
         }
 
-        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPage(), NO_ARGS );
+        fireEvent( WikiPageEvent.PAGE_UNLOCK, lock.getPath(), NO_ARGS );
     }
 
     /**
@@ -1102,7 +1102,7 @@ public class ContentManager implements WikiEventListener
             //  Page has changed, so let's notify others.
             //  FIXME: I'm not sure whether we should fire in what case.
             //
-            fireEvent( ContentEvent.NODE_SAVED, page.getName(), NO_ARGS );
+            fireEvent( ContentEvent.NODE_SAVED, page.getPath(), NO_ARGS );
             
             return true;
         }
@@ -1150,7 +1150,7 @@ public class ContentManager implements WikiEventListener
     public boolean deletePage( WikiPage page )
         throws ProviderException
     {
-        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getName(), NO_ARGS );
+        fireEvent( ContentEvent.NODE_DELETE_REQUEST, page.getPath(), NO_ARGS );
 
         try
         {
@@ -1161,7 +1161,7 @@ public class ContentManager implements WikiEventListener
             
             nd.getParent().save();
             
-            fireEvent( ContentEvent.NODE_DELETED, page.getName(), NO_ARGS );
+            fireEvent( ContentEvent.NODE_DELETED, page.getPath(), NO_ARGS );
             
             return true;
         }
@@ -1474,7 +1474,7 @@ public class ContentManager implements WikiEventListener
         page.setAttribute( JCRWikiPage.ATTR_TITLE, renameTo );
         
         // Tell everyone we moved the page
-        fireEvent( ContentEvent.NODE_RENAMED, toPage.toString(), fromPage.toString(), Boolean.valueOf( changeReferrers ) );
+        fireEvent( ContentEvent.NODE_RENAMED, toPage, fromPage, Boolean.valueOf( changeReferrers ) );
         
         //
         //  Done, return the new name.
@@ -1493,7 +1493,7 @@ public class ContentManager implements WikiEventListener
      * @param pagename the wiki page name as a String
      * @param args additional arguments to pass to the event
      */
-    protected final void fireEvent( int type, String pagename, Serializable... args )
+    protected final void fireEvent( int type, WikiPath pagename, Serializable... args )
     {
         if ( WikiEventManager.isListening(this) )
         {

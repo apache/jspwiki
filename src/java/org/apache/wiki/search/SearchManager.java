@@ -31,6 +31,7 @@ import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.PageNotFoundException;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -353,7 +354,7 @@ public class SearchManager
            return; 
         }
         
-        String pageName = ((WikiPageEvent) event).getPageName();
+        WikiPath pageName = ((WikiPageEvent) event).getPath();
         switch ( event.getType() )
         {
             // If page was deleted, remove it from the index

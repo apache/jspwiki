@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.WikiPath;
 
 /**
  *  Describes a lock acquired by an user on a page.  For the most part,
@@ -38,7 +39,7 @@ public class PageLock
 {
     private static final long serialVersionUID = 0L;
     
-    private String   m_page;
+    private WikiPath m_page;
     private String   m_locker;
     private Date     m_lockAcquired;
     private Date     m_lockExpiry;
@@ -56,7 +57,7 @@ public class PageLock
                      Date acquired,
                      Date expiry )
     {
-        m_page         = page.getName();
+        m_page         = page.getPath();
         m_locker       = locker;
         m_lockAcquired = (Date)acquired.clone();
         m_lockExpiry   = (Date)expiry.clone();
@@ -67,7 +68,7 @@ public class PageLock
      *  
      *  @return The name of the page.
      */
-    public String getPage()
+    public WikiPath getPath()
     {
         return m_page;
     }
@@ -130,6 +131,6 @@ public class PageLock
      */
     public String toString() 
     {
-        return "pagename:" + getPage() + ",locker:" + getLocker() + ",acquired:" + getAcquisitionTime() + ",expiry:" + getExpiryTime();
+        return "pagename:" + getPath() + ",locker:" + getLocker() + ",acquired:" + getAcquisitionTime() + ",expiry:" + getExpiryTime();
     }
 }

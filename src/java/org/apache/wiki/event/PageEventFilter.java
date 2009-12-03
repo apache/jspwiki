@@ -162,7 +162,7 @@ public class PageEventFilter extends BasicPageFilter
             WikiPageEvent event = new WikiPageEvent(
                     context.getEngine(),
                     type,
-                    context.getPage().getName());
+                    context.getPage().getPath());
             WikiEventManager.fireEvent(this,event);
         }
     }

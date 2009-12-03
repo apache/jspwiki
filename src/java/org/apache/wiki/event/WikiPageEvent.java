@@ -23,6 +23,8 @@ package org.apache.wiki.event;
 
 import java.io.Serializable;
 
+import org.apache.wiki.content.WikiPath;
+
 /**
   * WikiPageEvent indicates a change in the state or processing of a WikiPage.
   * There are basically two types of page events:
@@ -184,7 +186,7 @@ public class WikiPageEvent extends WikiEvent
       * @since 2.4.65 */
     public static final int PAGE_DELETED = ContentEvent.NODE_DELETED;
 
-    private final String m_pagename;
+    private final WikiPath m_page;
 
     // ............
 
@@ -197,10 +199,10 @@ public class WikiPageEvent extends WikiEvent
       * @param pagename  the WikiPage being acted upon.
       * @param args additional arguments passed to the event.
       */
-    public WikiPageEvent( Object src, int type, String pagename, Serializable... args )
+    public WikiPageEvent( Object src, int type, WikiPath page, Serializable... args )
     {
         super( src, type, args );
-        m_pagename = pagename;
+        m_page = page;
     }
 
    /**
@@ -209,9 +211,9 @@ public class WikiPageEvent extends WikiEvent
      *
      * @return     the Wiki page name associated with this WikiEvent, or null.
      */
-    public String getPageName()
+    public WikiPath getPath()
     {
-        return m_pagename;
+        return m_page;
     }
 
 

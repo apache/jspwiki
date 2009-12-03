@@ -33,6 +33,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.FilterException;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.log.Logger;
@@ -443,7 +444,7 @@ public final class FilterManager extends ModuleManager
         if ( WikiEventManager.isListening( this ) && WikiPageEvent.isValidType( type ) )
         {
             WikiPage page = context.getPage();
-            String pageName = page == null ? "(no page)" : page.getName();
+            WikiPath pageName = page == null ? null : page.getPath();
             WikiEventManager.fireEvent( this, new WikiPageEvent( m_engine,type,pageName ) );
         }
     }

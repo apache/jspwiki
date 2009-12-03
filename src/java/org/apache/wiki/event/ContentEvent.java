@@ -22,6 +22,8 @@ package org.apache.wiki.event;
 
 import java.io.Serializable;
 
+import org.apache.wiki.content.WikiPath;
+
 /**
  * Events fired by {@link org.apache.wiki.content.ContentManager} when nodes are
  * created, saved or deleted.
@@ -43,7 +45,13 @@ public class ContentEvent extends WikiPageEvent
     public static final int NODE_DELETED = 221;
 
     /**
-     * Indicates that a node was successfully renamed.
+     *  Indicates that a node was successfully renamed.
+     *  Parameters are:
+     *  <ul>
+     *   <li>pagename = page which has been renamed
+     *   <li>first argument (String) = the new name of the page (FQN)
+     *   <li>second argument (Boolean) = true, if the referrers should be changed.
+     *  </ul>
      */
     public static final int NODE_RENAMED = 211;
 
@@ -61,7 +69,7 @@ public class ContentEvent extends WikiPageEvent
      * @param pagename the WikiPage being acted upon.
      * @param args additional arguments passed to the event.
      */
-    public ContentEvent( Object src, int type, String pagename, Serializable... args )
+    public ContentEvent( Object src, int type, WikiPath pagename, Serializable... args )
     {
         super( src, type, pagename, args );
     }

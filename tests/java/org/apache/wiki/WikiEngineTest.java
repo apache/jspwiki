@@ -774,7 +774,7 @@ public class WikiEngineTest extends TestCase
         pages = m_engine.getReferenceManager().getReferredBy( WikiPath.valueOf("RenameBugTestPage") );
         
         assertEquals( "wrong # of referrers", 1, pages.size() );
-        assertEquals( "has wrong referrer", "Main:NewNameTestPage", pages.iterator().next().toString() );        
+        assertEquals( "has wrong referrer", WikiPath.valueOf("Main:NewNameTestPage"), pages.iterator().next() );        
     }
     
     public void testChangeNoteOldVersion2() throws Exception
