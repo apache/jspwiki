@@ -104,8 +104,8 @@ public class PageRenamerTest extends TestCase
         
         Set<String> pages = m_engine.getReferenceManager().findCreated();
         
-        assertTrue( "FooRename does not exist", pages.contains( "Main:FooRename" ) );
-        assertFalse( "SimpleRename exists", pages.contains( "Main:SimpleRename" ) );
+        assertTrue( "FooRename does not exist", pages.contains( "Main:FooRename".toLowerCase() ) );
+        assertFalse( "SimpleRename exists", pages.contains( "Main:SimpleRename".toLowerCase() ) );
         assertEquals( "wrong list size", pageCount+1, pages.size() );
         m_engine.deletePage( "Main:FooRename" );
     }
