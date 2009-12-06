@@ -160,6 +160,12 @@ public class PageRenamer
         //  re-index the page 
         //
         engine.getSearchManager().reindexPage(toPage);
+        
+        Collection<Attachment> attachments = engine.getAttachmentManager().listAttachments( toPage );
+        for (Attachment att:attachments)
+        {
+            engine.getSearchManager().reindexPage(att);
+        }
 
 
         //
