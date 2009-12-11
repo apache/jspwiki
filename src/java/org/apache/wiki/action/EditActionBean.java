@@ -194,7 +194,6 @@ public class EditActionBean extends AbstractPageActionBean
     public Resolution edit() throws ProviderException
     {
         // Load the page text
-        WikiEngine engine = getContext().getEngine();
         setWikiText( getPage().getContentAsString() );
         
         // Init edit fields and forward to the display JSP

@@ -206,7 +206,7 @@ public class GroupActionBean extends AbstractActionBean
      *         display JSP
      */
     @HandlesEvent( "edit" )
-    @HandlerPermission( permissionClass = WikiPermission.class, target = "*", actions = WikiPermission.CREATE_GROUPS_ACTION )
+    @HandlerPermission( permissionClass = GroupPermission.class, target = "${group.name}", actions = GroupPermission.EDIT_ACTION )
     @WikiRequestContext( "editGroup" )
     public Resolution edit()
     {

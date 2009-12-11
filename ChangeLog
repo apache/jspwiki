@@ -1,3 +1,9 @@
+2009-12-10 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-190. Unit test fixes. Back up to 97.3% pass rate.
+        Page-renaming, references and related plugins are still messed up,
+        but the stuff I messed up a few checkins ago is fixed. 
+
 2009-12-03 Janne Jalkanen <jalkanen@apache.org>
 
         * 3.0.0-svn-189

@@ -67,7 +67,7 @@ public class HandlerInfoTest extends TestCase
     {
         assertEquals( "createGroup", HandlerInfo.getHandlerInfo( GroupActionBean.class, "create" ).getRequestContext() );
         assertEquals( "deleteGroup", HandlerInfo.getHandlerInfo( GroupActionBean.class, "delete" ).getRequestContext() );
-        assertEquals( "editGroup", HandlerInfo.getHandlerInfo( GroupActionBean.class, "save" ).getRequestContext() );
+        assertEquals( "editGroup", HandlerInfo.getHandlerInfo( GroupActionBean.class, "edit" ).getRequestContext() );
         assertEquals( "group", HandlerInfo.getHandlerInfo( GroupActionBean.class, "view" ).getRequestContext() );
     }
 
@@ -85,7 +85,7 @@ public class HandlerInfoTest extends TestCase
         assertEquals( "view", handlerInfo.getPermissionActions() );
         assertNull( handlerInfo.getActionsExpression() );
 
-        method = GroupActionBean.class.getMethod( "save", new Class[0] );
+        method = GroupActionBean.class.getMethod( "edit", new Class[0] );
         assertTrue( map.containsKey( method ) );
         handlerInfo = map.get( method );
         assertEquals( GroupPermission.class, handlerInfo.getPermissionClass() );
@@ -94,13 +94,13 @@ public class HandlerInfoTest extends TestCase
         assertEquals( "edit", handlerInfo.getPermissionActions() );
         assertNull( handlerInfo.getActionsExpression() );
 
-        method = GroupActionBean.class.getMethod( "saveNew", new Class[0] );
+        method = GroupActionBean.class.getMethod( "save", new Class[0] );
         assertTrue( map.containsKey( method ) );
         handlerInfo = map.get( method );
-        assertEquals( WikiPermission.class, handlerInfo.getPermissionClass() );
-        assertEquals( "*", handlerInfo.getPermissionTarget() );
+        assertNull( handlerInfo.getPermissionClass() );
+        assertNull( handlerInfo.getPermissionTarget() );
         assertNull( handlerInfo.getPermissionTargetExpression() );
-        assertEquals( WikiPermission.CREATE_GROUPS_ACTION, handlerInfo.getPermissionActions() );
+        assertNull( handlerInfo.getPermissionActions() );
         assertNull( handlerInfo.getActionsExpression() );
         
         method = GroupActionBean.class.getMethod( "delete", new Class[0] );
@@ -159,7 +159,7 @@ public class HandlerInfoTest extends TestCase
         assertNotNull( bean );
 
         // The view handler should return a "edit" GroupPermission
-        method = GroupActionBean.class.getMethod( "save", new Class[0] );
+        method = GroupActionBean.class.getMethod( "edit", new Class[0] );
         handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
         perm = handlerInfo.getPermission( bean );

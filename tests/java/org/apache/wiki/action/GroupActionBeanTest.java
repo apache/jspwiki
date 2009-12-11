@@ -222,6 +222,9 @@ public class GroupActionBeanTest extends TestCase
         assertTrue( group.isMember( new WikiPrincipal( "Princess Buttercup" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Inigo Montoya" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Miracle Max" ) ) );
+
+        // Remove the test group
+        mgr.removeGroup( "TestSaveExistingGroup" );
     }
     
     public void testSaveNewGroup() throws Exception
@@ -271,6 +274,9 @@ public class GroupActionBeanTest extends TestCase
         assertTrue( group.isMember( new WikiPrincipal( "Princess Buttercup" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Inigo Montoya" ) ) );
         assertTrue( group.isMember( new WikiPrincipal( "Miracle Max" ) ) );
+
+        // Remove the test group
+        m_engine.getGroupManager().removeGroup( "TestSaveNewGroup" );
     }
 
     private void deleteGroup( String groupName )

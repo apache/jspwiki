@@ -56,13 +56,13 @@ public class EditActionBeanTest extends TestCase
         m_engine.shutdown();
     }
 
-    public void testEditNoParameter() throws Exception
+    public void testEditNoParameters() throws Exception
     {
         // Try editing without specifying a page
         MockRoundtrip trip = m_engine.guestTrip( "/Edit.action" );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
-        trip.addParameter( "text", "This is the edited text" );
+        trip.addParameter( "wikiText", "This is the edited text" );
         TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
 
@@ -70,11 +70,12 @@ public class EditActionBeanTest extends TestCase
         EditActionBean bean = trip.getActionBean( EditActionBean.class );
         assertNull( bean.getPage() );
 
-        // ...and the "page" param should be flagged as invalid
+        // ...and the "page" and "append" params should be flagged as invalid
         ValidationErrors errors = trip.getValidationErrors();
-        assertEquals( 1, errors.size() );
+        assertEquals( 2, errors.size() );
         assertTrue( errors.hasFieldErrors() );
         assertTrue( errors.containsKey( "page" ) );
+        assertTrue( errors.containsKey( "append" ) );
 
         // ...and the destination should be the original display JSP (for
         // displaying errors)
@@ -91,7 +92,8 @@ public class EditActionBeanTest extends TestCase
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "page", "FindPage" );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
-        trip.addParameter( "text", "This is the edited text" );
+        trip.addParameter( "wikiText", "This is the edited text" );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
         TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
 
@@ -124,7 +126,8 @@ public class EditActionBeanTest extends TestCase
         trip.setParameter( "page", pageName );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
-        trip.addParameter( "text", "This is the edited text" );
+        trip.addParameter( "wikiText", "This is the edited text" );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
         TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
 
@@ -143,7 +146,8 @@ public class EditActionBeanTest extends TestCase
         trip.setParameter( "page", pageName );
         startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
-        trip.addParameter( "text", "This is the third revision." );
+        trip.addParameter( "wikiText", "This is the third revision." );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
         TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         
@@ -169,7 +173,8 @@ public class EditActionBeanTest extends TestCase
         trip.setParameter( "page", pageName );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
-        trip.addParameter( "text", "This is the edited text" );
+        trip.addParameter( "wikiText", "This is the edited text" );
+        trip.addParameter( "append", CryptoUtil.encrypt( "false" ) );
         TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
 

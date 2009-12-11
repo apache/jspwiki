@@ -68,7 +68,7 @@ public interface WikiContext
     public static final String    WORKFLOW = HandlerInfo.getHandlerInfo( WorkflowActionBean.class, "view" ).getRequestContext();
 
     /** The EDIT context - the user is editing the page. */
-    public static final String    EDIT     = HandlerInfo.getHandlerInfo( EditActionBean.class, "edit" ).getRequestContext();
+    public static final String    EDIT     = "edit";
 
     /** User is preparing for a login/authentication. */
     public static final String    LOGIN    = HandlerInfo.getHandlerInfo( LoginActionBean.class, "login" ).getRequestContext();

@@ -68,7 +68,7 @@ public class DiffActionBeanTest extends TestCase
         MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
         trip.execute( "diff" );
         DiffActionBean bean = trip.getActionBean( DiffActionBean.class );
-        assertEquals( "ContextualDiffProvider", bean.getDiffProvider() );
+        assertEquals( "TraditionalDiffProvider", bean.getDiffProvider() );
     }
     
     public void testHistory() throws Exception

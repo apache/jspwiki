@@ -28,7 +28,7 @@ public class DiffActionBean extends AbstractPageActionBean
 
     private int m_r2 = WikiProvider.LATEST_VERSION;
 
-    private String m_diffProvider = null;
+    private String m_diffProvider = "TraditionalDiffProvider";
 
     private List<WikiPage> m_history = null;
 

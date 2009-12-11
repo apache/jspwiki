@@ -248,7 +248,7 @@ public class JSPWikiJspTransformerTest extends TestCase
     
     public void testUseActionBean()
     {
-        String s = "<% engine.createContext( request, WikiContext.EDIT ); %>";
+        String s = "<% engine.createContext( request, WikiContext.COMMENT ); %>";
         JspDocument doc = new JspParser().parse( s );
 
         // Should be 1 node: scriptlet
@@ -266,7 +266,7 @@ public class JSPWikiJspTransformerTest extends TestCase
         assertEquals( "beanclass", tag.getAttributes().get( 0 ).getName() );
         assertEquals( "org.apache.wiki.action.EditActionBean", tag.getAttributes().get( 0 ).getValue() );
         assertEquals( "event", tag.getAttributes().get( 1 ).getName() );
-        assertEquals( "edit", tag.getAttributes().get( 1 ).getValue() );
+        assertEquals( "comment", tag.getAttributes().get( 1 ).getValue() );
     }
     
     public static Test suite()
