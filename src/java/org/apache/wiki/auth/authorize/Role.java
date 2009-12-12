@@ -74,15 +74,14 @@ public final class Role implements Principal, Serializable
     /**
      * Returns <code>true</code> if a supplied Role is a built-in Role:
      * {@link #ALL}, {@link #ANONYMOUS}, {@link #ASSERTED},
-     * or {@link #AUTHENTICATED}.
+     * {@link #AUTHENTICATED}, or {@link #SUPERUSER}.
      * @param role the role to check
      * @return the result of the check
      */
     public static final boolean isBuiltInRole(Role role)
     {
         return  role.equals( ALL ) || role.equals( ANONYMOUS ) ||
-                role.equals( ASSERTED ) || role.equals( AUTHENTICATED );
-
+                role.equals( ASSERTED ) || role.equals( AUTHENTICATED ) || role.equals( SUPERUSER );
     }
 
     /**

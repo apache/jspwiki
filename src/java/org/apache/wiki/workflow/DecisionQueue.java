@@ -23,8 +23,8 @@ package org.apache.wiki.workflow;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
@@ -98,7 +98,7 @@ public class DecisionQueue implements Serializable
      *            the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection<Decision> getActorDecisions(WikiSession session)
+    public List<Decision> getActorDecisions(WikiSession session)
     {
         ArrayList<Decision> decisions = new ArrayList<Decision>();
         if ( session.isAuthenticated() )

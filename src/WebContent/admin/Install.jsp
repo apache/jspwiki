@@ -98,6 +98,18 @@
                 <div class="description"><fmt:message key="install.workDir.description" /></div>
               </div>
               <div>
+                <s:label for="properties.jspwiki.jspwiki_approver_workflow_saveWikiPage" />
+                <s:text name="properties.jspwiki.jspwiki_approver_workflow_saveWikiPage" size="40" />
+                <s:errors field="properties.jspwiki.jspwiki_approver_workflow_saveWikiPage" />
+                <div class="description"><fmt:message key="install.approver.saveWikiPage.description" /></div>
+              </div>
+              <div>
+                <s:label for="properties.jspwiki.jspwiki_approver_workflow_createUserProfile" />
+                <s:text name="properties.jspwiki.jspwiki_approver_workflow_createUserProfile" size="40" />
+                <s:errors field="properties.jspwiki.jspwiki_approver_workflow_createUserProfile" />
+                <div class="description"><fmt:message key="install.approver.createUserProfile.description" /></div>
+              </div>
+              <div>
                 <s:label for="properties.jspwiki.jspwiki_userdatabase" />
                 <s:select id="userdatabase" name="properties.jspwiki.jspwiki_userdatabase">
                   <s:option value="org.apache.wiki.auth.user.XMLUserDatabase">XML (default)</s:option>

@@ -25,37 +25,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<script language="JavaScript">
-  function SubmitOutcomeIfSelected(selectId) 
-  {
-    if ( selectId.selectedIndex > 0 )
-    {
-      // alert(selectId.selectedIndex);
-      selectId.form.submit();
-    }
-  }
-</script>
 <%
   int i = 0;
   String evenOdd;
 %>
-<wiki:TabbedSection defaultTab='${param.tab} %>'>
-
-<wiki:Tab id="pagecontent" titleKey="workflow.tab">
 
 <h3><fmt:message key="workflow.heading" /></h3>
 <p><fmt:message key="workflow.instructions" /></p>
+<s:errors/>
 
 <!-- Pending Decisions -->
 <h4><fmt:message key="workflow.decisions.heading" /></h4>
 
-<c:if test="${empty decisions}">
+<c:if test="${empty wikiActionBean.decisions}">
   <div class="information">
     <fmt:message key="workflow.noinstructions" />
   </div>
 </c:if>
 
-<c:if test="${!empty decisions}">
+<c:if test="${!empty wikiActionBean.decisions}">
   <div class="formhelp">
     <fmt:message key="workflow.actor.instructions" />
   </div>
@@ -71,7 +59,7 @@
     </thead>
     <tbody>
       <% i = 1; %>
-      <c:forEach var="decision" items="${decisions}">
+      <c:forEach var="decision" items="${wikiActionBean.decisions}">
         <% evenOdd = (i % 2 == 0) ? "even" : "odd"; %>
         <tr class="<%=evenOdd%>">
           <!-- Workflow ID -->
@@ -86,22 +74,20 @@
           </td>
           <!-- Possible actions (outcomes) -->
           <td align="left">
-            <form id="<c:out value='decision.${decision.id}' />" action="<wiki:Link jsp='Workflow.jsp' format='url' />" method="POST" accept-charset="UTF-8">
-              <input type="hidden" name="action" value="decide" />
-              <input type="hidden" name="id" value="<c:out value='${decision.id}' />" />
-              <select name="outcome" onchange="SubmitOutcomeIfSelected(this)">
-                <option value="-"><fmt:message key="select.one" /></option>
-                <c:forEach var="outcome" items="${decision.availableOutcomes}"><option value="${outcome.messageKey}"><fmt:message key="${outcome.messageKey}" /></option>
-                </c:forEach>
-              </select>
-            </form>
+            <s:form id="decision.${decision.id}" beanclass="org.apache.wiki.action.WorkflowActionBean" method="POST" acceptcharset="UTF-8">
+              <input type="hidden" name="id" value="${decision.id}" />
+              <s:select name="outcome" value="${decision.defaultOutcome.messageKey}">
+                <s:options-collection collection="${decision.availableOutcomes}" value="messageKey" label="messageKey" />
+              </s:select>
+              <s:submit name="decide" />
+            </s:form>
           </td>
           <!-- Requester -->
           <td align="left"><c:out value="${decision.owner.name}" /></td>
           <!-- When did the actor start this step? -->
           <td align="left">
             <fmt:formatDate value="${decision.startTime}" pattern="${prefs.TimeFormat}" timeZone="${prefs.TimeZone}" />
-		  </td>
+    		  </td>
         </tr>
         <!-- Hidden row with Decision details, if there are any -->
         <c:if test="${!empty decision.facts}">
@@ -132,13 +118,13 @@
 <!-- Running workflows for which current user is the owner -->
 <h4><fmt:message key="workflow.workflows.heading" /></h4>
 
-<c:if test="${empty workflows}">
+<c:if test="${empty wikiActionBean.workflows}">
   <div class="information">
     <fmt:message key="workflow.noinstructions" />
   </div>
 </c:if>
 
-<c:if test="${!empty workflows}">
+<c:if test="${!empty wikiActionBean.workflows}">
   <div class="formhelp">
     <fmt:message key="workflow.owner.instructions" />
   </div>
@@ -154,7 +140,7 @@
     </thead>
     <% i = 1; %>
     <tbody>
-      <c:forEach var="workflow" items="${workflows}">
+      <c:forEach var="workflow" items="${wikiActionBean.workflows}">
         <% evenOdd = (i % 2 == 0) ? "even" : "odd"; %>
         <tr class="<%=evenOdd%>">
           <!-- Workflow ID -->
@@ -169,11 +155,10 @@
           </td>
           <!-- Actions -->
           <td align="left">
-            <form id="<c:out value='workflow.${workflow.id}' />" action="<wiki:Link jsp='Workflow.jsp' format='url' />" method="POST" accept-charset="UTF-8">
-              <input type="submit" name="submit" value="<fmt:message key="outcome.step.abort" />" />
-              <input type="hidden" name="action" value="abort" />
-              <input type="hidden" name="id" value="<c:out value="${workflow.id}" />" />
-            </form>
+            <s:form id="workflow.${workflow.id}" beanclass="org.apache.wiki.action.WorkflowActionBean" method="POST" acceptcharset="UTF-8">
+              <input type="hidden" name="id" value="${workflow.id}" />
+              <s:submit name="abort"/>
+            </s:form>
           </td>
           <!-- Current actor -->
           <td align="left"><c:out value="${workflow.currentActor.name}" /></td>
@@ -187,6 +172,3 @@
     </tbody>
   </table>
 </c:if>
-
-</wiki:Tab>
-</wiki:TabbedSection>

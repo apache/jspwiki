@@ -34,28 +34,28 @@ public final class Outcome implements Serializable
     private static final long serialVersionUID = -338361947886288073L;
 
     /** Complete workflow step (without errors) */
-    public static final Outcome STEP_COMPLETE = new Outcome( "outcome.step.complete", true );
+    public static final Outcome STEP_COMPLETE = new Outcome( "step.complete", true );
 
     /** Terminate workflow step (without errors) */
-    public static final Outcome STEP_ABORT = new Outcome( "outcome.step.abort", true );
+    public static final Outcome STEP_ABORT = new Outcome( "step.abort", true );
 
     /** Continue workflow step (without errors) */
-    public static final Outcome STEP_CONTINUE = new Outcome( "outcome.step.continue", false );
+    public static final Outcome STEP_CONTINUE = new Outcome( "step.continue", false );
 
     /** Acknowlege the Decision. */
-    public static final Outcome DECISION_ACKNOWLEDGE = new Outcome( "outcome.decision.acknowledge", true );
+    public static final Outcome DECISION_ACKNOWLEDGE = new Outcome( "decision.acknowledge", true );
 
     /** Approve the Decision (and complete the step). */
-    public static final Outcome DECISION_APPROVE = new Outcome( "outcome.decision.approve", true );
+    public static final Outcome DECISION_APPROVE = new Outcome( "decision.approve", true );
 
     /** Deny the Decision (and complete the step). */
-    public static final Outcome DECISION_DENY = new Outcome( "outcome.decision.deny", true );
+    public static final Outcome DECISION_DENY = new Outcome( "decision.deny", true );
 
     /** Put the Decision on hold (and pause the step). */
-    public static final Outcome DECISION_HOLD = new Outcome( "outcome.decision.hold", false );
+    public static final Outcome DECISION_HOLD = new Outcome( "decision.hold", false );
 
     /** Reassign the Decision to another actor (and pause the step). */
-    public static final Outcome DECISION_REASSIGN = new Outcome( "outcome.decision.reassign", false );
+    public static final Outcome DECISION_REASSIGN = new Outcome( "decision.reassign", false );
 
     private static final Outcome[] OUTCOMES = new Outcome[] { STEP_COMPLETE, STEP_ABORT, STEP_CONTINUE, DECISION_ACKNOWLEDGE,
                                                                DECISION_APPROVE, DECISION_DENY, DECISION_HOLD, DECISION_REASSIGN };

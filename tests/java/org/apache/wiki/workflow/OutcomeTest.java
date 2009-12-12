@@ -37,18 +37,18 @@ public class OutcomeTest extends TestCase
 
     public void testGetKey()
     {
-        assertEquals("outcome.decision.approve", Outcome.DECISION_APPROVE.getMessageKey());
-        assertEquals("outcome.decision.hold", Outcome.DECISION_HOLD.getMessageKey());
-        assertEquals("outcome.decision.deny", Outcome.DECISION_DENY.getMessageKey());
-        assertEquals("outcome.decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey());
+        assertEquals("decision.approve", Outcome.DECISION_APPROVE.getMessageKey());
+        assertEquals("decision.hold", Outcome.DECISION_HOLD.getMessageKey());
+        assertEquals("decision.deny", Outcome.DECISION_DENY.getMessageKey());
+        assertEquals("decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey());
     }
 
     public void testHashCode()
     {
-        assertEquals("outcome.decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode());
-        assertEquals("outcome.decision.hold".hashCode()*2, Outcome.DECISION_HOLD.hashCode());
-        assertEquals("outcome.decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode());
-        assertEquals("outcome.decision.reassign".hashCode()*2, Outcome.DECISION_REASSIGN.hashCode());
+        assertEquals("decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode());
+        assertEquals("decision.hold".hashCode()*2, Outcome.DECISION_HOLD.hashCode());
+        assertEquals("decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode());
+        assertEquals("decision.reassign".hashCode()*2, Outcome.DECISION_REASSIGN.hashCode());
     }
 
     public void testEquals()
@@ -63,21 +63,26 @@ public class OutcomeTest extends TestCase
         props.load(TestEngine.findTestProperties());
         WikiEngine engine = new TestEngine(props);
         InternationalizationManager i18n = engine.getInternationalizationManager();
-        String core = "templates.default";
+        String core = "CoreResources";
         Locale english = Locale.ENGLISH;
         Outcome o;
+        String key;
 
         o = Outcome.DECISION_APPROVE;
-        assertEquals("Approve", i18n.get(core, english, o.getMessageKey()));
+        key = "Outcome." + o.getMessageKey();
+        assertEquals("Approve", i18n.get( core, english, key ) );
 
         o = Outcome.DECISION_DENY;
-        assertEquals("Deny", i18n.get(core, english, o.getMessageKey()));
+        key = "Outcome." + o.getMessageKey();
+        assertEquals("Deny", i18n.get( core, english, key ) );
 
         o = Outcome.DECISION_HOLD;
-        assertEquals("Hold", i18n.get(core, english, o.getMessageKey()));
+        key = "Outcome." + o.getMessageKey();
+        assertEquals("Hold", i18n.get( core, english, key ) );
 
         o = Outcome.DECISION_REASSIGN;
-        assertEquals("Reassign", i18n.get(core, english, o.getMessageKey()));
+        key = "Outcome." + o.getMessageKey();
+        assertEquals("Reassign", i18n.get( core, english, key ) );
 
         engine.shutdown();
     }
@@ -98,14 +103,14 @@ public class OutcomeTest extends TestCase
     {
         try
         {
-            assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
-            assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
-            assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
-            assertEquals(Outcome.DECISION_HOLD, Outcome.forName("outcome.decision.hold"));
-            assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("outcome.decision.reassign"));
-            assertEquals(Outcome.STEP_ABORT, Outcome.forName("outcome.step.abort"));
-            assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
-            assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
+            assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("decision.acknowledge"));
+            assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("decision.approve"));
+            assertEquals(Outcome.DECISION_DENY, Outcome.forName("decision.deny"));
+            assertEquals(Outcome.DECISION_HOLD, Outcome.forName("decision.hold"));
+            assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("decision.reassign"));
+            assertEquals(Outcome.STEP_ABORT, Outcome.forName("step.abort"));
+            assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("step.complete"));
+            assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("step.continue"));
         }
         catch (NoSuchOutcomeException e)
         {
@@ -116,7 +121,7 @@ public class OutcomeTest extends TestCase
         // Look for a non-existent one
         try
         {
-            Outcome.forName("outcome.decision.nonexistent");
+            Outcome.forName("decision.nonexistent");
         }
         catch (NoSuchOutcomeException e)
         {

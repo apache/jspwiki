@@ -46,6 +46,7 @@ public class AllTests extends TestCase
         suite.addTest( UserProfileActionBeanTest.suite() );
         suite.addTest( ViewActionBeanTest.suite() );
         suite.addTest( WikiContextFactoryTest.suite() );
+        suite.addTest( WorkflowActionBeanTest.suite() );
 
         return suite;
     }

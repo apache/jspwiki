@@ -243,7 +243,7 @@ public class WorkflowManager implements WikiEventListener
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    public Collection<Workflow> getOwnerWorkflows( WikiSession session )
+    public List<Workflow> getOwnerWorkflows( WikiSession session )
     {
         List<Workflow> workflows = new ArrayList<Workflow>();
         if ( session.isAuthenticated() )
