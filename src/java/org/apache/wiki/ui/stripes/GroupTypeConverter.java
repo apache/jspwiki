@@ -1,16 +1,22 @@
-/* Copyright 2005-2006 Tim Fennell
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/* 
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
  */
 package org.apache.wiki.ui.stripes;
 
@@ -46,12 +52,12 @@ public class GroupTypeConverter implements TypeConverter<Group>
      * Converts a named wiki group into a valid
      * {@link org.apache.wiki.auth.authorize.Group} object by retrieving it
      * via the Wiki{@link org.apache.wiki.auth.authorize.GroupManager}. If
-     * the group cannot be found (perhaps because it does not exist), this
-     * method will add a validation error to the supplied Collection of errors.
-     * The error will be of type
+     * the group name is illegal, this method will add a validation error to
+     * the supplied Collection of errors. The error will be of type
      * {@link net.sourceforge.stripes.validation.LocalizableError} and will have
      * a message key of <code>group.doesnotexist</code> and a single parameter
-     * (equal to the value passed for <code>groupName</code>).
+     * (equal to the value passed for <code>groupName</code>). If the group
+     * does not exist (perhaps because it is new), {@code null} is returned.
      * 
      * @param groupName the name of the WikiPage to retrieve
      * @param targetType the type to return, which will always be of type
@@ -71,7 +77,7 @@ public class GroupTypeConverter implements TypeConverter<Group>
         }
         catch( NoSuchPrincipalException e )
         {
-            // Should never happen
+            // Group does not exist
         }
         catch( WikiSecurityException e )
         {
@@ -81,6 +87,9 @@ public class GroupTypeConverter implements TypeConverter<Group>
         return group;
     }
 
+    /**
+     * No-op method that does nothing, because setting the Locale has no effect on the conversion.
+     */
     public void setLocale( Locale locale )
     {
     };

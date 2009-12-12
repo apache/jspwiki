@@ -143,6 +143,9 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
         return null;
     }
     
+    /**
+     * No-op method that does nothing, because setting the Locale has no effect on the conversion.
+     */
     public void setLocale( Locale locale )
     {
     }

@@ -33,6 +33,11 @@ import net.sourceforge.stripes.validation.OneToManyTypeConverter;
 public class LineDelimitedTypeConverter extends OneToManyTypeConverter
 {
 
+    /**
+     * Overrides the regular expression used by the 
+     * {@link net.sourceforge.stripes.validation.OneToManyTypeConverter}
+     * with one that permits line-break characters and commas.
+     */
     @Override
     protected String getSplitRegex()
     {
