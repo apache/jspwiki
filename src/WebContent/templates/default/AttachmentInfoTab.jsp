@@ -62,7 +62,7 @@
   int pagesize = 20;
   int startitem = itemcount-1; /* itemcount==1-20 -> startitem=0-19 ... */
 
-  String parm_start = (String)request.getParameter( "start" );
+  String parm_start = request.getParameter( "start" );
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
 
   /* round to start of block: 0-19 becomes 0; 20-39 becomes 20 ... */

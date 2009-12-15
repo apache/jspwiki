@@ -77,7 +77,7 @@ public class JCRWikiPage
     
     
     /** The ISO8601:2000 dateformat */
-    private static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String DATEFORMAT_ISO8601_2000 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     
     private WikiPath m_path;
 

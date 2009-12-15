@@ -46,7 +46,7 @@
         <s:hidden name="page" />
         <s:hidden name="remember" />
         <s:hidden name="startTime" />
-        <s:hidden name="text" />
+        <s:hidden name="wikiText" />
         <%-- Spam detection fields --%>
         <wiki:SpamProtect />
       </p>
