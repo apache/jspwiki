@@ -1,3 +1,9 @@
+2009-12-15 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-192
+        
+        * JSPWIKI-618: Allow Administrators to override attachment.maxsize  (reported by Jurgen Weber)
+
 2009-12-11 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-191.

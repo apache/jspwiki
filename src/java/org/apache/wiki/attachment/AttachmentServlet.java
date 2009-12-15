@@ -543,7 +543,10 @@ public class AttachmentServlet extends HttpServlet
 
             ServletFileUpload upload = new ServletFileUpload(factory);
             upload.setHeaderEncoding("UTF-8");
-            upload.setFileSizeMax( m_maxSize );
+            if( !context.hasAdminPermissions() )
+            {
+                upload.setFileSizeMax( m_maxSize );
+            }
             upload.setProgressListener( pl );
             List<FileItem> items = upload.parseRequest( req );
             
