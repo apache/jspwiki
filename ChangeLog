@@ -1,3 +1,10 @@
+2009-12-15 Harry Metske <metskem@apache.org>
+
+        * 2.8.4-svn-5
+        
+         * JSPWIKI-619: Include geronimo-web.xml in JSPWiki.war (reported by Jurgen Weber) 
+         * JSPWIKI-618: Allow Administrators to override attachment.maxsize  (reported by Jurgen Weber) 
+
 2009-12-06 Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-4

@@ -402,7 +402,8 @@
          <include name="jspwiki.properties" />
          <include name="*.tld" />
          <include name="userdatabase.xml" />
-         <include name="groupdatabase.xml" />
+        <include name="groupdatabase.xml" />
+        <include name="geronimo-web.xml" />
        </webinf>
        <classes dir="etc" includes="oscache.properties" />
     </war>
