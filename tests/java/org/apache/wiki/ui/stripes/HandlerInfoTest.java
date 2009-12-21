@@ -25,17 +25,18 @@ import java.security.Permission;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.action.EditActionBean;
-import org.apache.wiki.action.GroupActionBean;
-import org.apache.wiki.auth.permissions.GroupPermission;
-import org.apache.wiki.auth.permissions.WikiPermission;
-import org.apache.wiki.ui.stripes.HandlerInfo;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
+
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.action.EditActionBean;
+import org.apache.wiki.action.GroupActionBean;
+import org.apache.wiki.action.ViewActionBean;
+import org.apache.wiki.auth.permissions.GroupPermission;
+import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.content.inspect.Captcha;
 
 
 public class HandlerInfoTest extends TestCase
@@ -200,6 +201,30 @@ public class HandlerInfoTest extends TestCase
         assertNotNull( handlerInfo );
         Permission perm = handlerInfo.getPermission( bean );
         assertNull( perm );
+    }
+
+    public void testSpamAnnotations() throws Exception
+    {
+        // Check the spam methods on an event that has a @SpamProtect annotation
+        Method method = EditActionBean.class.getMethod( "save", new Class[0] );
+        Map<Method,HandlerInfo> handlerInfos = HandlerInfo.getHandlerInfoCollection( EditActionBean.class );
+        HandlerInfo handlerInfo = handlerInfos.get( method );
+        assertNotNull( handlerInfo );
+        assertTrue( handlerInfo.isSpamProtected() );
+        assertEquals( Captcha.Policy.ALWAYS, handlerInfo.getCaptchaPolicy() );
+        assertNotNull( handlerInfo.getSpamProtectedFields() );
+        assertEquals( 1, handlerInfo.getSpamProtectedFields().length );
+        assertEquals( "wikiText", handlerInfo.getSpamProtectedFields()[0] );
+
+        // Check the spam methods on an event that does NOT have an annotation
+        method = ViewActionBean.class.getMethod( "view", new Class[0] );
+        handlerInfos = HandlerInfo.getHandlerInfoCollection( ViewActionBean.class );
+        handlerInfo = handlerInfos.get( method );
+        assertNotNull( handlerInfo );
+        assertFalse( handlerInfo.isSpamProtected() );
+        assertEquals( Captcha.Policy.NEVER, handlerInfo.getCaptchaPolicy() );
+        assertNotNull( handlerInfo.getSpamProtectedFields() );
+        assertEquals( 0, handlerInfo.getSpamProtectedFields().length );
     }
 
     public static Test suite()

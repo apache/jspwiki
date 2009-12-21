@@ -88,6 +88,7 @@ public class SpamInspectionFactory
      * <li>{@link BotTrapInspector}</li>
      * <li>{@link AkismetInspector}</li>
      * <li>{@link PatternInspector}</li>
+     * <li>{@link CaptchaInspector}</li>
      * </ul>
      * <p>
      * The weights for each Inspector will be determined by examining {@code
@@ -117,6 +118,8 @@ public class SpamInspectionFactory
         plan.addInspector( new BotTrapInspector(), getWeight( props, BotTrapInspector.class ) );
         plan.addInspector( new AkismetInspector(), getWeight( props, AkismetInspector.class ) );
         plan.addInspector( new PatternInspector(), getWeight( props, PatternInspector.class ) );
+        plan.addInspector( new CaptchaInspector(), getWeight( props, CaptchaInspector.class ) );
+
         c_plans.put( engine, plan );
 
         // Get the default spam score limits

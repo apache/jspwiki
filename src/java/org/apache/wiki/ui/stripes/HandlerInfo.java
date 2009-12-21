@@ -31,15 +31,17 @@ import java.util.Map;
 
 import javax.servlet.jsp.el.ELException;
 
-import org.apache.wiki.action.WikiActionBean;
-import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.auth.permissions.PermissionFactory;
-
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.util.bean.EvaluationException;
 import net.sourceforge.stripes.util.bean.PropertyExpression;
 import net.sourceforge.stripes.util.bean.PropertyExpressionEvaluation;
+
+import org.apache.wiki.action.WikiActionBean;
+import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.content.inspect.Captcha;
+import org.apache.wiki.tags.SpamProtectTag;
 
 
 /**
@@ -70,6 +72,12 @@ public class HandlerInfo
     private final PropertyExpression m_permissionActionExpression;
 
     private final String m_requestContext;
+
+    private final boolean m_spamProtected;
+
+    private final String[] m_spamProtectedFields;
+
+    private final Captcha.Policy m_captchaPolicy;
 
     /**
      * Private constructor that identifies relevant Permission and wiki request
@@ -142,6 +150,12 @@ public class HandlerInfo
         String defaultRequestContext = m_beanClass.getName() + "." + eventHandler;
         m_requestContext = requestContext != null ? requestContext.value() : defaultRequestContext;
 
+        // Store any spam-protection information
+        SpamProtect spam = method.getAnnotation( SpamProtect.class );
+        m_spamProtected = spam != null;
+        m_captchaPolicy = spam == null ? Captcha.Policy.NEVER : spam.captcha();
+        m_spamProtectedFields = spam == null ? new String[0] : spam.content();
+
         // Store the Stripes event handler name
         m_handlerName = eventHandler;
     }
@@ -181,6 +195,19 @@ public class HandlerInfo
     protected PropertyExpression getActionsExpression()
     {
         return m_permissionActionExpression;
+    }
+
+    /**
+     * Returns the CAPTCHA policy that should apply to this event method.
+     * If the event method is not annotated {@link SpamProtect}, the
+     * result will be {@link Captcha.Policy#NEVER}. Otherwise, the value
+     * supplied in the annotation value {@link SpamProtect#captcha()}
+     * will be used.
+     * @return the policy
+     */
+    public Captcha.Policy getCaptchaPolicy()
+    {
+        return m_captchaPolicy;
     }
 
     /**
@@ -457,4 +484,29 @@ public class HandlerInfo
         return perm;
     }
 
+    /**
+     * Returns the fields that should be inspected by the spam-detection system when
+     * the event handler method is intercepted by {@link SpamInterceptor}. This
+     * method is guaranteed to return a non-{@code null} String array.
+     * @return an array of Strings indicating which fields should protected,
+     * possibly a zero-length array. Methods not annotated with {@link
+     * SpamProtect} will return a zero-length array.
+     */
+    public String[] getSpamProtectedFields()
+    {
+        return m_spamProtectedFields;
+    }
+
+    /**
+     * Returns whether the handler event method contains a {@link SpamProtect}
+     * annotation and should therefore be protected by anti-spam controls.
+     * The tag {@link SpamProtectTag} generates special form parameters,
+     * and the {@link SpamInterceptor} processes these values on form submission.
+     * @return {@code true} if the method is annotated with {@link SpamProtect},
+     * and {@code false} otherwise.
+     */
+    public boolean isSpamProtected()
+    {
+        return m_spamProtected;
+    }
 }

@@ -1984,7 +1984,6 @@ public class ContentManager implements WikiEventListener
      *  be in the JSPWiki export format (which is essentially a dump of the System View
      *  of the repository for a particular WikiSpace).
      *  
-     *  @param wikiSpace The space to load in.  Must be specified.  Must not exist in advance.
      *  @param xmlfile The file to load the data from.
      *  @throws LoginException
      *  @throws RepositoryException

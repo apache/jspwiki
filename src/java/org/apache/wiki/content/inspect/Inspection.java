@@ -138,7 +138,7 @@ public class Inspection
      * returned a Finding for {@code topic}, zero ({@code 0f} will be returned.
      * The score is calculated by adding the weighted sum of
      * {@link Finding.Result#PASSED} results returned by all Inspectors, and
-     * subtracting the sume of {@link Finding.Result#FAILED}.
+     * subtracting the sum of {@link Finding.Result#FAILED}.
      * 
      * @param topic the Topic to look up
      * @return the score

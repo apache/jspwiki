@@ -200,8 +200,9 @@ public class RSSActionBean extends AbstractPageActionBean
      * user as has access to, following the SisterSites standard. This event
      * method respects ACLs on pages.
      * 
-     * @see http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide
-     * @return
+     * @see <a href="http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide">Sister
+     * Sites Implementation Guide</a>
+     * @return the streaming resolution
      */
     @HandlesEvent( "sisterSites" )
     public Resolution sisterSites()

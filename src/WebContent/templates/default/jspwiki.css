@@ -2735,6 +2735,15 @@ Style: ColorDialog
 	left:-1px;
 }
 
+/*
+Style: CAPTCHA tables and images
+*/
+table.asirraCaptcha * img {
+  width: 125px;
+}
+table.asirraCaptcha * td {
+  background:#f9f9f9;border:1px solid #ddd;padding:1em;
+}
 
 /*
 Section: Print-media

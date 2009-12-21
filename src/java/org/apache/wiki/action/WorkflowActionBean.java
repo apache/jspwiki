@@ -111,7 +111,7 @@ public class WorkflowActionBean extends AbstractActionBean
     /**
      * Returns the workflow or decision ID that is being acted on.
      * 
-     * @return
+     * @return the ID
      */
     public int getId()
     {

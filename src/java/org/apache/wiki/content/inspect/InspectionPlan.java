@@ -23,6 +23,8 @@ public class InspectionPlan
 
     private final ReputationManager m_reputationManager;
 
+    private Captcha m_captcha = null;
+
     public ReputationManager getReputationManager()
     {
         return m_reputationManager;
@@ -59,6 +61,20 @@ public class InspectionPlan
     {
         m_inspectors.put( inspector, Float.valueOf( weight ) );
         inspector.initialize( this );
+        if ( inspector instanceof CaptchaInspector )
+        {
+            m_captcha = ((CaptchaInspector)inspector).getCaptcha();
+        }
+    }
+
+    /**
+     * Returns the {@link Captcha} object, if one was initialized by
+     * a {@link CaptchaInspector} passed to {@link #addInspector(Inspector, float)}.
+     * @return the Captcha, or {@code null} if not supplied or configured
+     */
+    public Captcha getCaptcha()
+    {
+        return m_captcha;
     }
 
     public Inspector[] getInspectors()

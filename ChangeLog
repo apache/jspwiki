@@ -1,3 +1,24 @@
+2009-12-21 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-193.
+
+        * CAPTCHA has been re-written. It has been integrated into
+        the new content-inspection system and is pluggable. ActionBean
+        event handler methods that need CAPTCHA can simply add
+        (1) a @SpamProtect annotation to the method declaration
+        anf (2) a <wiki:SpamProtect/> tag inside the corresponding
+        JSP <s:form> or <form> elements. Unlike the old Captcha.jsp
+        (which is eliminated), the new system adds CAPTCHA elements
+        right onto the form that is being protected (via the
+        SpamProtect tag). The new Captcha interface specifies the
+        contract that implementations must fulfill. One CAPTCHA
+        implementation is provided, AsirraCaptcha. ReCaptcha is
+        likely, and will come later. More polish (i18n, CSS, JSP
+        formatting, Install configuration) is is needed, but the
+        current checkin works now, and will get us started. I intend
+        to add dynamic CAPTCHA at a later point (e.g., less
+        trustworthy users always get a CAPTCHA to start, etc).
+
 2009-12-15 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-192

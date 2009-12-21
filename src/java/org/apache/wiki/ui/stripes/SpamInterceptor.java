@@ -37,7 +37,10 @@ import net.sourceforge.stripes.validation.ValidationError;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.WikiActionBean;
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.inspect.*;
+import org.apache.wiki.log.Logger;
+import org.apache.wiki.log.LoggerFactory;
 
 /**
  * Stripes Interceptor that ensures that SpamFilter algorithms are applied to
@@ -51,6 +54,9 @@ import org.apache.wiki.content.inspect.*;
 @Intercepts( { LifecycleStage.CustomValidation } )
 public class SpamInterceptor implements Interceptor
 {
+
+    private static final Logger log = LoggerFactory.getLogger( SpamInterceptor.class );
+
     /**
      * Validates spam parameters contained in any requests targeting an
      * ActionBean method annotated with the {@link SpamProtect} annotation. This
@@ -71,27 +77,40 @@ public class SpamInterceptor implements Interceptor
             return r;
         }
 
-        // Is the target handler protected by a @SpamProtect annotation?
-        WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
-        WikiActionBeanContext actionBeanContext = actionBean.getContext();
+        // Get the event handler method
         Method handler = context.getHandler();
-        SpamProtect ann = handler.getAnnotation( SpamProtect.class );
-        if( ann == null )
+
+        // Find the HandlerInfo method
+        WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
+        Map<Method, HandlerInfo> eventinfos = HandlerInfo.getHandlerInfoCollection( actionBean.getClass() );
+        HandlerInfo eventInfo = eventinfos.get( handler );
+        if( eventInfo == null )
+        {
+            String message = "Event handler method " + actionBean.getClass().getName() +
+                             "#" + handler.getName() +
+                             " does not have an associated HandlerInfo object. This should not happen.";
+            log.error( message );
+            throw new WikiException( message );
+        }
+
+        // Is the target handler protected by a @SpamProtect annotation?
+        if ( !eventInfo.isSpamProtected() )
         {
             return null;
         }
 
         // Retrieve all of the bean fields named in the @SpamProtect annotation
+        WikiActionBeanContext actionBeanContext = actionBean.getContext();
         WikiEngine engine = actionBeanContext.getEngine();
         InspectionPlan plan = SpamInspectionFactory.getInspectionPlan( engine, engine.getWikiProperties() );
-        Map<String, Object> fieldValues = getBeanProperties( actionBean, ann.content() );
+        Map<String, Object> fieldValues = getBeanProperties( actionBean, eventInfo.getSpamProtectedFields() );
 
         // Create an Inspection for analyzing each field
         Inspection inspection = new Inspection( actionBeanContext, plan );
         float spamScoreLimit = SpamInspectionFactory.defaultSpamLimit( engine );
         SpamInspectionFactory.setSpamLimit( inspection, spamScoreLimit );
 
-        // Go to it!
+        // Let's get to it!
         for( Map.Entry<String, Object> entry : fieldValues.entrySet() )
         {
             String name = entry.getKey();

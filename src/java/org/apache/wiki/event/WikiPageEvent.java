@@ -196,7 +196,7 @@ public class WikiPageEvent extends WikiEvent
       * @param src    the Object that is the source of the event.
       * @param type      the type of the event (see the enumerated int values defined
       *                  in {@link org.apache.wiki.event.WikiEvent}).
-      * @param pagename  the WikiPage being acted upon.
+      * @param page the WikiPage being acted upon.
       * @param args additional arguments passed to the event.
       */
     public WikiPageEvent( Object src, int type, WikiPath page, Serializable... args )

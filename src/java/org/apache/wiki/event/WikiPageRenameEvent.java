@@ -27,8 +27,8 @@ import org.apache.wiki.content.WikiPath;
  *  WikiPageRenameEvent extends WikiPageEvent to indicate a change in
  *  the name of a WikiPage.
  *  <p>
- *  This reuses {@link #getPageName()} to return the new name of the
- *  page, with {@link #getOldPageName()} returning the old name.
+ *  This reuses {@link #getPath()} to return the new name of the
+ *  page, with {@link #getOldPath()} returning the old name.
  *
  * @see     org.apache.wiki.event.WikiPageEvent
  * @since   2.5.108
@@ -74,7 +74,7 @@ public class WikiPageRenameEvent extends WikiPageEvent
 
    /**
      * Returns the new Wiki page name associated with this event. This
-     * returns the same value as the superclass' {@link #getPageName()}.
+     * returns the same value as the superclass' {@link #getPath()}.
      * This may be null if unavailable.
      *
      * @return     the new Wiki page name associated with this WikiEvent, or null.

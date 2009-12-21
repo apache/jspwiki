@@ -22,6 +22,7 @@ package org.apache.wiki.ui.stripes;
 
 import java.lang.annotation.*;
 
+import org.apache.wiki.content.inspect.Captcha;
 import org.apache.wiki.filters.SpamFilter;
 
 /**
@@ -45,4 +46,10 @@ public @interface SpamProtect
      * array.
      */
     String[] content() default {};
+
+    /**
+     * Indicates when a CAPTCHA test should be administered to the user.
+     * @return the CAPTCHA policy
+     */
+    Captcha.Policy captcha() default Captcha.Policy.ALWAYS;
 }

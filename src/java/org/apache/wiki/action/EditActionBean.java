@@ -380,7 +380,7 @@ public class EditActionBean extends AbstractPageActionBean
      * currently possesses a {@link PageLock} for the page, a new
      * {@link LocalizableError} with the key name {@code edit.locked} is added
      * to the validation list. In addition, if the user is editing an outdated
-     * version of the page, a LocalizableError with key {@link edit.restoring}
+     * version of the page, a LocalizableError with key {@code edit.restoring}
      * is added for that condition too.
      */
     @ValidationMethod( on = "edit,comment", when = ValidationState.ALWAYS )
