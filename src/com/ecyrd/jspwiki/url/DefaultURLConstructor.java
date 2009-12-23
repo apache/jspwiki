@@ -82,7 +82,7 @@ public class DefaultURLConstructor
             }
             catch( MalformedURLException e )
             {
-                m_pathPrefix = "/JSPWiki"; // Just a guess.
+                m_pathPrefix = "/JSPWiki/"; // Just a guess.
             }
         }
     }

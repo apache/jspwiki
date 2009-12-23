@@ -223,7 +223,6 @@ public class Installer
         // Get/sanitize base URL
         nullValue = m_request.getRequestURL().toString();
         nullValue = nullValue.substring( 0, nullValue.lastIndexOf('/') )+"/";
-        nullValue = m_props.getProperty( BASE_URL, nullValue );
         parseProperty( BASE_URL, nullValue );
         sanitizeURL( BASE_URL );
         
@@ -343,6 +342,10 @@ public class Installer
         String s = m_props.getProperty( key );
         s = TextUtil.replaceString( s, "\\", "/" );
         s = s.trim();
+        if (!s.endsWith("/"))
+        {
+            s = s + "/";
+        }
         m_props.put( key, s );
     }
 

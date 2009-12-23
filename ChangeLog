@@ -1,3 +1,10 @@
+2009-12-23 Harry Metske <metskem@apache.org>
+
+        * 2.8.4-svn-6
+        
+         * JSPWIKI-621: check last fileseparator on config page, duplicate of JSPWIKI-424,
+            reported by Rolf Schumacher. 
+
 2009-12-15 Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-5

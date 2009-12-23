@@ -502,8 +502,11 @@ public class WikiEngine
                                                         m_saveUserInfo );
 
         m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
-        m_baseURL        = TextUtil.getStringProperty( props, PROP_BASEURL, "" );
-
+        m_baseURL = TextUtil.getStringProperty(props, PROP_BASEURL, "");
+        if (!m_baseURL.endsWith("/"))
+        {
+            m_baseURL = m_baseURL + "/";
+        }
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( props,
                                                         PROP_BEAUTIFYTITLE,
