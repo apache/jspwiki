@@ -37,7 +37,7 @@ public class LinkCountInspector implements Inspector
     private int m_maxUrls = 10;
 
     /**
-     * Always returns {@link Scope#FIELD}.
+     * Always returns {@link Inspector.Scope#FIELD}.
      */
     public Scope getScope()
     {

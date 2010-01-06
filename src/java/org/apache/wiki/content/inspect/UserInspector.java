@@ -23,7 +23,7 @@ public class UserInspector implements Inspector
     private boolean m_ignoreAuthenticated = false;
 
     /**
-     * Always returns {@link Scope#REQUEST}.
+     * Always returns {@link Inspector.Scope#REQUEST}.
      */
     public Scope getScope()
     {

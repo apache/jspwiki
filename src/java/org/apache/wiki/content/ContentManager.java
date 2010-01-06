@@ -70,8 +70,6 @@ import org.apache.wiki.workflow.Workflow;
 import org.priha.RepositoryManager;
 import org.priha.util.ConfigurationException;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
-
 
 /**
  *  Provides access to the content repository.  Unlike previously, in JSPWiki

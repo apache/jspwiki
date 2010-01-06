@@ -78,7 +78,7 @@ public class Inspection
      * Adds an InspectionListener for a supplied Topic. The listner object's
      * {@link InspectionListener#changedScore(Inspection, Finding)} method will
      * be called whenever an Inspector's
-     * {@link Inspector#inspect(Inspection, String, Change)} method returns a
+     * {@link Inspector#inspect(Inspection, Change)} method returns a
      * Finding whose Topic is equal to {@code topic}.
      * 
      * @param topic the Topic to listen for

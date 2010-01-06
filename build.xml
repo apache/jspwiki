@@ -311,6 +311,9 @@
     <mkdir dir="${install.src}" />
     <delete dir="${release.dir}" />
     <mkdir dir="${release.dir}" />
+    <delete quiet="true">
+      <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar,web-fragment.xmlf,web.xml"/>
+    </delete>
   </target>
 
   <!--  Builds the jar of all compiled class files -->
@@ -362,12 +365,8 @@
    
   <target name="war" depends="installinit,jar,jar-compiled-jsps,compressedjs"
           description="Builds the WAR file for installation.">
-    <mkdir dir="${war.build}" />
     
     <!-- Build war.xml and the classes/properties files -->
-    <delete quiet="true">
-      <fileset dir="${war.build}" includes="JSPWiki-jsp.jar,jasper-runtime-*.jar,commons-el-*.jar,web-fragment.xmlf,web.xml"/>
-    </delete>
     <copy toDir="${war.build}" overwrite="true">
       <fileset dir="etc">
         <include name="jspwiki.properties" />
@@ -410,8 +409,13 @@
           file so that requests for the JSPs are mapped to the
           servlets generated in step 1.
 
+       Precompiling jsp's immensely speeds up web unit tests.
+       We still copy the source jsp's into the war because TemplateManager
+       depends on it.
+       
        To use JSP pre-compilation, set the "compile.jsps"
        property in build.properties to "true".
+       
   -->
   <target name="jar-compiled-jsps" depends="jar" if="war.compile.jsps">
     <taskdef classname="org.apache.jasper.JspC" name="jasper2">
@@ -483,9 +487,7 @@
        "static.user" and "static.group" in build.properties.
        These should be set to the Unix runtime user and group
        that should own the static files, for example the
-       user "apache" and "daemon" group. If the "static.user"
-       property is not supplied, war-tomcat skips the static
-       content generation step.
+       user "apache" and "daemon" group.
 
        If not present, the target is skipped.
        File permissions are owner and group read (440),
@@ -809,7 +811,7 @@
        - 'admin' with password 'myP@5sw0rd' and roles of 'Authenticated', 'Admin'
        These are the same as the test users in tests/org.apache.wiki.auth.Users.
   -->
-  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,war">
+  <target name="webtests" depends="jar,tests-init,jartests,tests-db-init,jar-compiled-jsps,war">
     <mkdir dir="${webtests.temp}" />
     <mkdir dir="${webtests.build}" />
   

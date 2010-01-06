@@ -51,7 +51,7 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * annotated with the {@link org.apache.wiki.ui.stripes.SpamProtect} annotation.
  * If a Challenge test is required, the required content will be written to the
  * page also, based on the results of
- * {@link Challenge#formContent(org.apache.wiki.content.inspect.Inspection)}.
+ * {@link Challenge#formContent(WikiActionBeanContext)}.
  * </p>
  * <p>
  * This tag has one optional; attribute, {@code challenge}. If supplied, a
@@ -95,7 +95,7 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * with.</li>
  * <li><b>Any parameters needed by the configured {@link Challenge}</b>, if a
  * Challenge is needed. The appropriate Challenge inspector's method
- * {@link Challenge#formContent(org.apache.wiki.WikiContext)} will be called to
+ * {@link Challenge#formContent(WikiActionBeanContext)} will be called to
  * generate the relevant form parameters or any other markup needed.</li>
  * </ol>
  */
@@ -143,9 +143,9 @@ public class SpamProtectTag extends WikiTagBase
 
     /**
      * Sets the {@code challenge} attribute for this tag. Valid values are
-     * {@code password} for {@link Challenge.Request#PASSWORD} or {@code
-     * captcha} for {@link Challenge.Request#CAPTCHA}. If not supplied, the
-     * challenge will default to {@link Challenge.Request#CAPTCHA_ON_DEMAND}.
+     * {@code password} for {@link org.apache.wiki.content.inspect.Challenge.Request#PASSWORD} or {@code
+     * captcha} for {@link org.apache.wiki.content.inspect.Challenge.Request#CAPTCHA}. If not supplied, the
+     * challenge will default to {@link org.apache.wiki.content.inspect.Challenge.Request#CAPTCHA_ON_DEMAND}.
      * 
      * @param challenge the type of challenge the user should see
      */

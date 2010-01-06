@@ -53,16 +53,17 @@ import org.apache.wiki.tags.SpamProtectTag;
 /**
  * <p>
  * In collaboration with {@link org.apache.wiki.tags.SpamProtectTag}, intercepts
- * an ActionBean after the {@link LifecycleStage#CustomValidation} to determine
- * whether an ActionBean contains spam. An ActionBean contains spam if an
- * {@link Inspection} produces a {@link Topic#SPAM} score that falls lower than
+ * an ActionBean after the {@link net.sourceforge.stripes.controller.LifecycleStage#CustomValidation} 
+ * to determine whether an ActionBean contains spam. 
+ * An ActionBean contains spam if an {@link Inspection} produces 
+ * a {@link Topic#SPAM} score that falls lower than
  * the threshold configured for the WikiEngine (which is always a negative
  * number).
  * </p>
  * <p>
  * SpamInterceptor fires only when the targeted event handler method is
  * annotated with the {@link SpamProtect} annotation. It fires after the
- * {@link LifecycleStage#EventHandlingCustomValidation} stage; that is, after
+ * {@link net.sourceforge.stripes.controller.LifecycleStage#CustomValidation} stage; that is, after
  * ActionBean and event handler resolution, after parameter binding, and after
  * other all standard and custom validation routines have run. This ensures that
  * if the content needs to be inspected to see if the user needs to complete a
@@ -282,13 +283,13 @@ public class SpamInterceptor implements Interceptor
      * Retrieves the encrypted parameter {@link #CHALLENGE_REQUEST_PARAM} from
      * the HTTP request and returns its value. If the parameter is not found in
      * the request, we assume that the request was made by a spammer or other
-     * naughty person, and the method returns {@link Challenge.Request#NONE}.
+     * naughty person, and the method returns {@link org.apache.wiki.content.inspect.Challenge.Request#OMITTED}.
      * Otherwise, the value of the parameter is decrypted and returned. This
      * method is guaranteed to return a non-{@code null} value.
      * 
      * @param actionBeanContext the action bean context
      * @return the Challenge that was requested, or
-     *         {@link Challenge.Request#NONE} if the parameter
+     *         {@link org.apache.wiki.content.inspect.Challenge.Request#OMITTED} if the parameter
      *         {@link #CHALLENGE_REQUEST_PARAM} was not found.
      */
     protected Challenge.Request getChallengeRequest( ActionBeanContext actionBeanContext )

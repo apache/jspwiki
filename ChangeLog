@@ -1,3 +1,12 @@
+2010-01-06 Harry Metske <metskem@apache.org>
+
+        * 3.0.0-svn-196
+        
+        * got rid of a bunch of JavaDoc warnings
+        
+        * minor tweaks to build.xml (JSPWIKI-620), webtests
+          don't work yet => future work
+        
 2010-01-06 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-195

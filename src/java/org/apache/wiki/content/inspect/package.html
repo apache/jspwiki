@@ -5,11 +5,11 @@ on a variety of topics, such as whether a proposed page change contains
 spam. Content may be scored by initializing an {@link
 org.apache.wiki.content.inspect.Inspection} object and then calling the
 {@link
-org.apache.wiki.content.inspect.Inspection#inspect(String,Change)}
+org.apache.wiki.content.inspect.Inspection#inspect(Change...)}
 method. The Inspection's {@code inspect} method, in turn, iterates
 through a variety of previously-configured {@link
 org.apache.wiki.content.inspect.Inspector} objects and calls the {@link
-org.apache.wiki.content.inspect.Inspector#inspect(Inspection,String,Change)}
+org.apache.wiki.content.inspect.Inspector#inspect(Inspection,Change)}
 method for each one. The Inspector is free to perform whatever
 evaluations it wishes. Upon exit, each Inspector's {@code inspect}
 method is expected to return an array of {@link
@@ -55,7 +55,7 @@ results.</p>
 	org.apache.wiki.content.inspect.Inspector} interface specifies how to
 	implement a particular strategy for inspecting content. The Inspector
 	has just one primary method: {@link
-	org.apache.wiki.content.inspect.Inspector#inspect(Inspection,String,Change)}
+	org.apache.wiki.content.inspect.Inspector#inspect(Inspection, Change)}
 	which returns an array of Findings. Each Finding is constructed with the {@link
 	org.apache.wiki.content.inspect.Topic} that the finding applies to,
 	plus the {@link org.apache.wiki.content.inspect.Finding.Result}

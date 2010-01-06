@@ -2,7 +2,6 @@ package org.apache.wiki.content.inspect;
 
 import java.io.IOException;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.tags.SpamProtectTag;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.ui.stripes.SpamProtect;
@@ -20,7 +19,7 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * <ol>
  * <li><strong>formContent</strong>. When a JSP containing a &lt;SpamProtect&gt;
  * tag is encountered, the {@link SpamProtectTag#doEndTag()} method calls
- * {@link #formContent(WikiContext)} to generate any content needed to be
+ * {@link #formContent(WikiActionBeanContext)} to generate any content needed to be
  * included in the &lt;form&gt; element of the page. Note that the
  * &lt;SpamProtect&gt tag is not actually guaranteed to be inside of the form
  * element, but in practice, it should be.</li>
@@ -44,7 +43,7 @@ public interface Challenge
      * encountered on the JSP.
      * 
      * @param actionBeanContext the current ActionBeanContext. Callers can obtain the complete
-     *            request context by calling {@link ActionBeanContext#getRequest().
+     *            request context by calling {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
      * @return the form content
      */
     public String formContent( WikiActionBeanContext actionBeanContext ) throws IOException;
@@ -53,7 +52,7 @@ public interface Challenge
      * Tests the Challenge.
      * 
      * @param actionBeanContext the current ActionBeanContext. Callers can obtain the complete
-     *            request context by calling {@link ActionBeanContext#getRequest().
+     *            request context by calling {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
      * @return {@code true} if the test succeeded; {@code false} otherwise
      */
     public boolean check( WikiActionBeanContext actionBeanContext ) throws IOException;

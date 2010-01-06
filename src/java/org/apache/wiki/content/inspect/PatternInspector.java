@@ -46,7 +46,7 @@ public class PatternInspector implements Inspector
     private static final String LISTVAR = "spamwords";
 
     /**
-     * Always returns {@link Scope#FIELD}.
+     * Always returns {@link Inspector.Scope#FIELD}.
      */
     public Scope getScope()
     {

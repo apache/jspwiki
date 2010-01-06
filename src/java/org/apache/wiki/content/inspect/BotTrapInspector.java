@@ -25,7 +25,7 @@ public class BotTrapInspector implements Inspector
     public static final String REQ_SPAM_PARAM = "__wikiCheck";
 
     /**
-     * Always returns {@link Scope#REQUEST}.
+     * Always returns {@link Inspector.Scope#REQUEST}.
      */
     public Scope getScope()
     {

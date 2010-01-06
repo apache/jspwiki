@@ -10,13 +10,13 @@ import org.apache.wiki.WikiContext;
 /**
  * {@link Inspector} implementation that checks to see if the user's IP address
  * is on the list of banned addresses on the {@link ReputationManager}. If it
- * is, {@link #inspect(Inspection, String, Change)} will return a Finding with
+ * is, {@link #inspect(Inspection, Change)} will return a Finding with
  * {@link Finding.Result#FAILED}; otherwise {@code null}.
  */
 public class BanListInspector implements Inspector
 {
     /**
-     * Always returns {@link Scope#REQUEST}.
+     * Always returns {@link Inspector.Scope#REQUEST}.
      */
     public Scope getScope()
     {

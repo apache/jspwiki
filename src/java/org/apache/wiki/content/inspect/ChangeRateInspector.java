@@ -39,7 +39,7 @@ public class ChangeRateInspector implements Inspector
     private int m_limitSimilarChanges = 2;
 
     /**
-     * Always returns {@link Scope#FIELD}.
+     * Always returns {@link Inspector.Scope#FIELD}.
      */
     public Scope getScope()
     {

@@ -18,7 +18,7 @@ package org.apache.wiki.content.inspect;
 public class Finding
 {
     /**
-     * The result of the {@link Inspector#inspect(Inspection, String, Change)}
+     * The result of the {@link Inspector#inspect(Inspection, Change)}
      * method.
      */
     public static enum Result

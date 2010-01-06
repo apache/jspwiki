@@ -34,7 +34,7 @@ public class AkismetInspector implements Inspector
     }
     
     /**
-     * Always returns {@link Scope#REQUEST}.
+     * Always returns {@link Inspector.Scope#REQUEST}.
      */
     public Scope getScope()
     {

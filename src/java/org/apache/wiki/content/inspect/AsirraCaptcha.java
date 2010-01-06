@@ -80,10 +80,10 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * </ol>
  * <p>
  * This implementation splits processing of the Asirra test into two parts.
- * Method {@link #formContent(WikiContext)}, establishes the Asirra session
+ * Method {@link #formContent(WikiActionBeanContext)}, establishes the Asirra session
  * (step 1 above), parses the response (step 2), extracts the session ID and
  * image URLs, and writes all of this information to the page. Method
- * {@link #check(Inspection)} extracts the user's answers, assembles them into a
+ * {@link #check(WikiActionBeanContext)} extracts the user's answers, assembles them into a
  * response string, sends the response back to Asirra (step 3) and evaluates the
  * response (step 4).
  * </p>
@@ -219,7 +219,7 @@ public class AsirraCaptcha implements Challenge
 
     /**
      * Calls out to Asirra and returns a new challenge response, which
-     * will be shown to the user via {@link #formContent(WikiContext)}.
+     * will be shown to the user via {@link #formContent(WikiActionBeanContext)}.
      * @return the response from Asirra as a String
      * @throws IOException if Asirra cannot be contacted, or if the response
      * is malformed
