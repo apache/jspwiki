@@ -33,6 +33,8 @@ import net.sourceforge.stripes.util.CryptoUtil;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.action.TestActionBean;
 import org.apache.wiki.content.inspect.BotTrapInspector;
+import org.apache.wiki.content.inspect.Challenge;
+import org.apache.wiki.tags.SpamProtectTag;
 
 public class SpamInterceptorTest extends TestCase
 {
@@ -82,6 +84,10 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( "TOKENA", new String[0] );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
         
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
@@ -90,9 +96,10 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertNull( bean.getPage() );
 
-        // ...but that we failed the token check (sent back to source page to display errors)
-        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        // ...but that we failed the token check
         assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
     }
 
     public void testInvalidTrap() throws Exception
@@ -103,6 +110,10 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
@@ -111,9 +122,10 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check (sent back to source page to display errors)
-        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        // ...but that we failed the trap check
         assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
     }
 
     public void testMissingToken() throws Exception
@@ -123,6 +135,10 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "" ) );
 
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
@@ -131,9 +147,10 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check (sent back to source page to display errors)
-        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        // ...but that we failed the token check
         assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
     }
 
     public void testMissingTrap() throws Exception
@@ -143,6 +160,10 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
 
@@ -151,7 +172,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...and that we passed the token check
+        // ...and that we passed the inspection
+        assertEquals( 0, trip.getValidationErrors().size() );
+        assertFalse( SpamProtectTag.isSpamDetected( bean.getContext() ) );
         assertEquals( null, trip.getDestination() );
     }
 
@@ -164,20 +187,30 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
 
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
         // Verify that we got the ActionBean...
         trip.execute( "test" );
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check (sent back to source page to display errors)
-        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        // ...but that we failed the UTF-8 check
         assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
     }
 
-    public void testNoToken() throws Exception
+    public void testNoChallenge() throws Exception
     {
-        // Execute the SpamProtect-ed handler with no token
+        // Add the trap + token params
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
+        trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
+        trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
+        trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
+
+        // Omit the challenge param
 
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
@@ -187,14 +220,38 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...but that we failed the token check (sent back to source page to display errors)
-        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
+        // ...but that we failed the challenge check
         assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
+    }
+
+    public void testNoToken() throws Exception
+    {
+        // Execute the SpamProtect-ed handler with no token
+        MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
+
+        // Add the challenge param
+        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
+
+        // Add the UTF-8 token
+        trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );
+
+        // Verify that we got the ActionBean...
+        trip.execute( "test" );
+        TestActionBean bean = trip.getActionBean( TestActionBean.class );
+        assertEquals( null, bean.getPage() );
+
+        // ...but that we failed the token check
+        assertEquals( 1, trip.getValidationErrors().size() );
+        assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
+        assertEquals( null, trip.getDestination() );
     }
 
     public void testToken() throws Exception
     {
-        // Add the trap + token params
+        // Add the trap + token + challenge params
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
         TestEngine.addSpamProtectParams( trip );
         trip.addParameter( "text", "test value" );
@@ -204,7 +261,9 @@ public class SpamInterceptorTest extends TestCase
         TestActionBean bean = trip.getActionBean( TestActionBean.class );
         assertEquals( null, bean.getPage() );
 
-        // ...and that we passed the token check
+        // ...and that we passed the inspection
+        assertEquals( 0, trip.getValidationErrors().size() );
+        assertFalse( SpamProtectTag.isSpamDetected( bean.getContext() ) );
         assertEquals( null, trip.getDestination() );
     }
 }

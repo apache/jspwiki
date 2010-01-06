@@ -725,10 +725,26 @@
   </tag>
 
   <tag>
+    <description>Injects hidden anti-spam parameters into an
+      enclosing web form, which upon submission are verified
+      by SpamDetector to make sure the user isn't a spammer.
+    </description>
     <name>SpamProtect</name>
     <tagclass>org.apache.wiki.tags.SpamProtectTag</tagclass>
     <bodycontent>empty</bodycontent>
     <info>Injects hidden fields used to detect potential spam.</info>
+    <attribute>
+      <description>If this attribute is set, a challenge will always be
+        rendered. Valid values are "captcha" or "password". If this
+        attribute is not set (the default), no challenge will
+        be rendered unless SpamInterceptor has previously determined
+        that the WikiActionBean's contents are spam. In this case,
+        the challenge will always be a CAPTCHA.
+      </description>
+      <name>challenge</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
 
   <tag>

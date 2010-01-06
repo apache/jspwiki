@@ -36,7 +36,6 @@ import org.apache.wiki.action.GroupActionBean;
 import org.apache.wiki.action.ViewActionBean;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
-import org.apache.wiki.content.inspect.Captcha;
 
 
 public class HandlerInfoTest extends TestCase
@@ -211,7 +210,6 @@ public class HandlerInfoTest extends TestCase
         HandlerInfo handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
         assertTrue( handlerInfo.isSpamProtected() );
-        assertEquals( Captcha.Policy.ALWAYS, handlerInfo.getCaptchaPolicy() );
         assertNotNull( handlerInfo.getSpamProtectedFields() );
         assertEquals( 1, handlerInfo.getSpamProtectedFields().length );
         assertEquals( "wikiText", handlerInfo.getSpamProtectedFields()[0] );
@@ -222,7 +220,6 @@ public class HandlerInfoTest extends TestCase
         handlerInfo = handlerInfos.get( method );
         assertNotNull( handlerInfo );
         assertFalse( handlerInfo.isSpamProtected() );
-        assertEquals( Captcha.Policy.NEVER, handlerInfo.getCaptchaPolicy() );
         assertNotNull( handlerInfo.getSpamProtectedFields() );
         assertEquals( 0, handlerInfo.getSpamProtectedFields().length );
     }

@@ -27,7 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.wiki.content.inspect.AsirraCaptcha.Challenge;
+import org.apache.wiki.content.inspect.AsirraCaptcha.Pet;
 
 /**
  */
@@ -56,18 +56,18 @@ public class AsirraCaptchaTest extends TestCase
     
     public void testExtractChallenges()
     {
-        List<Challenge> challenges = AsirraCaptcha.extractChallenges( m_response );
-        assertEquals( 12, challenges.size() );
-        assertEquals( "401906c8e5fb9117ee4e4666758a03af", challenges.get( 0 ).id() );
-        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/401906c8e5fb9117ee4e4666758a03af.jpg", challenges.get( 0 ).url() );
-        assertEquals( "c330de41625bcee3730c04293d181016", challenges.get( 3 ).id() );
-        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/c330de41625bcee3730c04293d181016.jpg", challenges.get( 3 ).url() );
-        assertEquals( "5682da66d19d4f39b2d4cdc4618273fd", challenges.get( 6 ).id() );
-        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/5682da66d19d4f39b2d4cdc4618273fd.jpg", challenges.get( 6 ).url() );
-        assertEquals( "892a31875c881eab6a37715107ede991", challenges.get( 9 ).id() );
-        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/892a31875c881eab6a37715107ede991.jpg", challenges.get( 9 ).url() );
-        assertEquals( "ceae10e7729b37ba77133e006bab9253", challenges.get( 11 ).id() );
-        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/ceae10e7729b37ba77133e006bab9253.jpg", challenges.get( 11 ).url() );
+        List<Pet> pets = AsirraCaptcha.extractChallenges( m_response );
+        assertEquals( 12, pets.size() );
+        assertEquals( "401906c8e5fb9117ee4e4666758a03af", pets.get( 0 ).id() );
+        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/401906c8e5fb9117ee4e4666758a03af.jpg", pets.get( 0 ).url() );
+        assertEquals( "c330de41625bcee3730c04293d181016", pets.get( 3 ).id() );
+        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/c330de41625bcee3730c04293d181016.jpg", pets.get( 3 ).url() );
+        assertEquals( "5682da66d19d4f39b2d4cdc4618273fd", pets.get( 6 ).id() );
+        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/5682da66d19d4f39b2d4cdc4618273fd.jpg", pets.get( 6 ).url() );
+        assertEquals( "892a31875c881eab6a37715107ede991", pets.get( 9 ).id() );
+        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/892a31875c881eab6a37715107ede991.jpg", pets.get( 9 ).url() );
+        assertEquals( "ceae10e7729b37ba77133e006bab9253", pets.get( 11 ).id() );
+        assertEquals( "//s3.amazonaws.com/Asirra/PhotoDB/ceae10e7729b37ba77133e006bab9253.jpg", pets.get( 11 ).url() );
     }
     
     public void testExtractSession()
@@ -83,10 +83,10 @@ public class AsirraCaptchaTest extends TestCase
     {
         String challengeResponse = AsirraCaptcha.getChallengeResponse();
         String sessionId = AsirraCaptcha.extractSessionId( challengeResponse );
-        List<Challenge> challenges = AsirraCaptcha.extractChallenges( challengeResponse );
+        List<Pet> pets = AsirraCaptcha.extractChallenges( challengeResponse );
         assertNotNull( sessionId );
-        assertNotNull( challenges );
-        assertEquals( 12, challenges.size() );
+        assertNotNull( pets );
+        assertEquals( 12, pets.size() );
     }
     
 }

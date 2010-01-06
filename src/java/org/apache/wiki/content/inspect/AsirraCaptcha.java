@@ -3,6 +3,7 @@ package org.apache.wiki.content.inspect;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,12 +17,14 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 
 /**
  * <p>
- * {@link Captcha} implementation for Microsoft's Asirra anti-bot testing
+ * {@link Challenge} implementation for Microsoft's Asirra anti-bot testing
  * framework, version 3. Although Microsoft provides a handy client-side
  * JavaScript file that automates most of the test, it isn't very easy to
  * integrate without hard-coding it into JSPWiki forms. So, JSPWiki provides an
@@ -90,13 +93,13 @@ import org.apache.wiki.log.LoggerFactory;
  * Asirra JavaScript.
  * </p>
  */
-public class AsirraCaptcha implements Captcha
+public class AsirraCaptcha implements Challenge
 {
     /**
      * Convenience class that encapsulates the image of a pet,
      * some of which are cats.
      */
-    protected static class Challenge
+    protected static class Pet
     {
         private final String m_id;
 
@@ -107,7 +110,7 @@ public class AsirraCaptcha implements Captcha
          * @param id the unique ID of the animal
          * @param url the URL of the animal's picture
          */
-        public Challenge( String id, String url )
+        public Pet( String id, String url )
         {
             m_id = id;
             m_url = url;
@@ -147,6 +150,10 @@ public class AsirraCaptcha implements Captcha
      */
     protected static final Pattern CATS_PATTERN = Pattern.compile( "ImgRec\\(\"(.+?)\",\"(.+?)\",", Pattern.MULTILINE );
 
+    private static final String ASIRRA_ADOPT_ME_KEY = "org.apache.wiki.content.inspect.AsirraCaptcha.adoptMe";
+
+    private static final String ASIRRA_DESCRIPTION_KEY = "org.apache.wiki.content.inspect.AsirraCaptcha.description";
+
     private static final String CAT_PARAM_PREFIX = "asirra_cat_";
 
     /**
@@ -167,49 +174,6 @@ public class AsirraCaptcha implements Captcha
     private static Logger log = LoggerFactory.getLogger( AsirraCaptcha.class );
 
     /**
-     * 
-     * @param context
-     * @return
-     * @throws IOException
-     */
-    private static String makeFormContent( WikiContext context ) throws IOException
-    {
-        String challengeResponse = getChallengeResponse();
-        String sessionId = extractSessionId( challengeResponse );
-        List<Challenge> challenges = extractChallenges( challengeResponse );
-
-        StringBuilder b = new StringBuilder();
-        b
-            .append( "<input name=\"" + SESSION_ID_PARAM + "\" type=\"hidden\" value=\"" + CryptoUtil.encrypt( sessionId )
-                     + "\" />\n" );
-        b.append( "<table class=\"asirraCaptcha\">" );
-        int i = 0;
-        for( Challenge challenge : challenges )
-        {
-            boolean firstInRow = i % 4 == 0;
-            boolean lastInRow = (i + 1) % 4 == 0;
-            if( firstInRow )
-            {
-                b.append( "<tr>" );
-            }
-            b.append( "<td>" );
-            b.append( "<img src=\"http:" + challenge.url() + "\" />" );
-            b.append( "<br/>" );
-            b.append( "<input type=\"checkbox\" name=\"" + CAT_PARAM_PREFIX + i + "\" value=\"1\">" );
-            b.append( "Adopt me" );
-            b.append( "</input>" );
-            b.append( "</td>" );
-            if( lastInRow )
-            {
-                b.append( "</tr>" );
-            }
-            i++;
-        }
-        b.append( "</table>" );
-        return b.toString();
-    }
-
-    /**
      * Generates a parameter with a random nonce used with Asirra challenge/check requests.
      * @return {@code &rand=} plus the nonce
      */
@@ -223,17 +187,17 @@ public class AsirraCaptcha implements Captcha
      * Extracts the Asirra challenge objects from the challenge response.
      * 
      * @param challengeResponse the challenge response
-     * @return a list of {@link Challenge} objects
+     * @return a list of {@link Pet} objects
      */
-    protected static List<Challenge> extractChallenges( String challengeResponse )
+    protected static List<Pet> extractChallenges( String challengeResponse )
     {
-        List<Challenge> challenges = new ArrayList<Challenge>();
+        List<Pet> pets = new ArrayList<Pet>();
         Matcher matcher = CATS_PATTERN.matcher( challengeResponse );
         while ( matcher.find() )
         {
-            challenges.add( new Challenge( matcher.group( 1 ), matcher.group( 2 ) ) );
+            pets.add( new Pet( matcher.group( 1 ), matcher.group( 2 ) ) );
         }
-        return challenges;
+        return pets;
     }
 
     /**
@@ -279,9 +243,9 @@ public class AsirraCaptcha implements Captcha
      * @return {@code true} if Asirra agrees that the user has adopted only
      * cats, or {@code false} otherwise
      */
-    public boolean check( Inspection inspection )
+    public boolean check( WikiActionBeanContext actionBeanContext )
     {
-        HttpServletRequest request = inspection.getContext().getHttpRequest();
+        HttpServletRequest request = actionBeanContext.getRequest();
 
         // Get sessionId
         String encryptedSessionId = request.getParameter( SESSION_ID_PARAM );
@@ -311,7 +275,7 @@ public class AsirraCaptcha implements Captcha
 
             if( status == HttpStatus.SC_OK )
             {
-                if( body.indexOf( "correct" ) != -1 )
+                if( body.indexOf( "/* correct */" ) != -1 )
                 {
                     return true;
                 }
@@ -332,11 +296,49 @@ public class AsirraCaptcha implements Captcha
      * content if it specifies a value for the {@code content} attribute equal
      * to "form" or a null value.
      * 
-     * @param context the current wiki context
+     * @param context the current WikiActionBeanContext
      */
-    public String formContent( WikiContext context ) throws IOException
+    public String formContent( WikiActionBeanContext context ) throws IOException
     {
-        return makeFormContent( context );
+        String challengeResponse = getChallengeResponse();
+        String sessionId = extractSessionId( challengeResponse );
+        List<Pet> pets = extractChallenges( challengeResponse );
+
+        // Get the localized text
+        Locale locale = context.getLocale();
+        InternationalizationManager i18n = context.getEngine().getInternationalizationManager();
+        String description = i18n.get( InternationalizationManager.CORE_BUNDLE, locale, ASIRRA_DESCRIPTION_KEY );
+        String adoptMe = i18n.get( InternationalizationManager.CORE_BUNDLE, locale, ASIRRA_ADOPT_ME_KEY );
+        
+        StringBuilder b = new StringBuilder();
+        b.append( "<input name=\"" + SESSION_ID_PARAM + 
+                  "\" type=\"hidden\" value=\"" + CryptoUtil.encrypt( sessionId ) + "\" />\n" );
+        b.append( "<div class=\"asirra\">" + description + "</div>" );
+        b.append( "<table class=\"asirraCaptcha\">" );
+        int i = 0;
+        for( Pet pet : pets )
+        {
+            boolean firstInRow = i % 4 == 0;
+            boolean lastInRow = (i + 1) % 4 == 0;
+            if( firstInRow )
+            {
+                b.append( "<tr>" );
+            }
+            b.append( "<td>" );
+            b.append( "<img src=\"http:" + pet.url() + "\" />" );
+            b.append( "<br/>" );
+            b.append( "<input type=\"checkbox\" name=\"" + CAT_PARAM_PREFIX + i + "\" value=\"1\">" );
+            b.append( adoptMe );
+            b.append( "</input>" );
+            b.append( "</td>" );
+            if( lastInRow )
+            {
+                b.append( "</tr>" );
+            }
+            i++;
+        }
+        b.append( "</table>" );
+        return b.toString();
     }
 
     /**

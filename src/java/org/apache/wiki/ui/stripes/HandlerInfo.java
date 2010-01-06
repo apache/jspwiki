@@ -40,7 +40,6 @@ import net.sourceforge.stripes.util.bean.PropertyExpressionEvaluation;
 import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
-import org.apache.wiki.content.inspect.Captcha;
 import org.apache.wiki.tags.SpamProtectTag;
 
 
@@ -76,8 +75,6 @@ public class HandlerInfo
     private final boolean m_spamProtected;
 
     private final String[] m_spamProtectedFields;
-
-    private final Captcha.Policy m_captchaPolicy;
 
     /**
      * Private constructor that identifies relevant Permission and wiki request
@@ -153,7 +150,6 @@ public class HandlerInfo
         // Store any spam-protection information
         SpamProtect spam = method.getAnnotation( SpamProtect.class );
         m_spamProtected = spam != null;
-        m_captchaPolicy = spam == null ? Captcha.Policy.NEVER : spam.captcha();
         m_spamProtectedFields = spam == null ? new String[0] : spam.content();
 
         // Store the Stripes event handler name
@@ -195,19 +191,6 @@ public class HandlerInfo
     protected PropertyExpression getActionsExpression()
     {
         return m_permissionActionExpression;
-    }
-
-    /**
-     * Returns the CAPTCHA policy that should apply to this event method.
-     * If the event method is not annotated {@link SpamProtect}, the
-     * result will be {@link Captcha.Policy#NEVER}. Otherwise, the value
-     * supplied in the annotation value {@link SpamProtect#captcha()}
-     * will be used.
-     * @return the policy
-     */
-    public Captcha.Policy getCaptchaPolicy()
-    {
-        return m_captchaPolicy;
     }
 
     /**

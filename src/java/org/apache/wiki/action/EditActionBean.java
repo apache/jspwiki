@@ -89,8 +89,6 @@ public class EditActionBean extends AbstractPageActionBean
     private String m_changenote = null;
 
     private boolean m_append = false;
-
-    private boolean m_captcha = false;
     
     private boolean m_overrideConflict = false;
 
@@ -220,17 +218,6 @@ public class EditActionBean extends AbstractPageActionBean
     public String getAuthor()
     {
         return m_author;
-    }
-
-    /**
-     * Returns whether a CAPTCHA is being used for editing.
-     * 
-     * @return <code>true</code> if a CAPTCHA is in use; <code>false</code>
-     *         otherwise.
-     */
-    public boolean getCaptcha()
-    {
-        return m_captcha;
     }
 
     /*
@@ -483,12 +470,6 @@ public class EditActionBean extends AbstractPageActionBean
         {
             wikiContext.setPage( modifiedPage );
 
-            if( m_captcha )
-            {
-                wikiContext.setVariable( "captcha", Boolean.TRUE );
-                session.removeAttribute( "captcha" );
-            }
-
             // If this is an append, add a separation line and the author's details
             if( m_append )
             {
@@ -584,18 +565,6 @@ public class EditActionBean extends AbstractPageActionBean
     public void setConflictText( String conflictText )
     {
         m_conflictText = conflictText;
-    }
-
-    /**
-     * Sets a flag indicating that CAPTCHA should be used for editing.
-     * 
-     * @param captcha <code>true</code> if a CAPTCHA is in use;
-     *            <code>false</code> otherwise.
-     */
-    @Validate( required = false )
-    public void setCaptcha( boolean captcha )
-    {
-        m_captcha = captcha;
     }
 
     /**
