@@ -1,3 +1,28 @@
+2010-01-06 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-195
+
+        * Minor refactoring to content-inspection package to
+        better support multi-field inspections.
+
+        * Second of three CAPTCHA checkins. CAPTCHA is now treated
+        as a form validation problem. By default, CAPTCHA is
+        now dynamic, and is displayed only when the content
+        inspector says a form POST contains spam. Added i18n
+        support for Asirra.
+        
+        * Minor changes to SpamProtectTag. Now accepts a
+        "challenge" attribute, which can have the value
+        "captcha" or "password," which will cause a challenge
+        of that type to always be rendered, even on first
+        display. (We will use this for new user account
+        registration, for example.)
+        
+        * I plan one or two more checkins to the content-inspection
+        and CAPTCHA code: to remove some over-engineered stuff,
+        provide a configuration UI, implement a password
+        challenge, and clean up a few things.
+
 2009-12-27 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-194
@@ -6,7 +31,7 @@
 
 2009-12-21 Andrew Jaquith <ajaquith AT apache DOT org>
 
-        * 3.0.0-svn-193.
+        * 3.0.0-svn-193
 
         * CAPTCHA has been re-written. It has been integrated into
         the new content-inspection system and is pluggable. ActionBean
