@@ -28,67 +28,12 @@
 --%>
 <div style="width:100%"> <%-- Required for IE6 on Windows --%>
 
-  <%-- Print any messages or validation errors --%>
-  <s:messages />
-  <s:errors />
-
   <s:form beanclass="org.apache.wiki.action.EditActionBean"
               class="wikiform"
                  id="editform"
              method="post"
       acceptcharset="UTF-8"
             enctype="application/x-www-form-urlencoded">
-
-    <%-- If any conflicts, print the conflicting text here --%>
-    <c:if test="${not empty wikiActionBean.conflictText}">
-      <p>
-        <s:label for="conflictText" />
-        <s:textarea name="conflictText" readonly="true" />
-      </p>
-      <p>
-        <s:checkbox name="overrideConflict" />
-        <fmt:message key="overrideConflict" />
-      </p>
-    </c:if>
-
-    <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
-    <p id="submitbuttons">
-      <s:hidden name="page" />
-      <s:hidden name="startTime" />
-      <s:hidden name="append" />
-      <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
-      <s:submit name="save" accesskey="s" title="${saveTitle}" />
-
-      <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
-      <s:submit name="preview" accesskey="v" title="${previewTitle}" />
-
-      <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
-      <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
-    </p>
-
-    <%-- Fields for changenote, renaming etc. --%>
-    <table>
-      <tr>
-        <td>
-          <s:label for="changenote" />
-        </td>
-        <td>
-          <s:text name="changenote" size="50" maxlength="80" />
-        </td>
-      </tr>
-      <wiki:UserCheck status="anonymous">
-        <tr>
-          <td><s:label for="author" accesskey="n" /></td>
-          <td><s:text name="author" /></td>
-        </tr>
-        <wiki:CheckRequestContext context="comment">
-          <tr>
-            <td><s:label for="email" accesskey="m" /></td>
-            <td><s:text name="email" size="24" /></td>
-          </tr>
-        </wiki:CheckRequestContext>
-      </wiki:UserCheck>
-    </table>
 
     <%-- Toolbar --%>
     <div id="toolbar" class="line">
@@ -170,6 +115,22 @@
 
     </div><%-- end of the toolbar --%>
 
+    <%-- Print any messages or validation errors --%>
+    <s:messages />
+    <s:errors />
+
+    <%-- If any conflicts, print the conflicting text here --%>
+    <c:if test="${not empty wikiActionBean.conflictText}">
+      <p>
+        <s:label for="conflictText" />
+        <s:textarea name="conflictText" readonly="true" />
+      </p>
+      <p>
+        <s:checkbox name="overrideConflict" />
+        <fmt:message key="overrideConflict" />
+      </p>
+    </c:if>
+
     <%-- You knew this would be here somewhere. Yes, it's the textarea where the user
          actually edits stuff. --%>
     <div id="editor-content" class="line" style="clear:both;">
@@ -189,8 +150,46 @@
 
     </div>
 
-    <%-- Spam detection fields --%>
+    <%-- Fields for changenote, renaming etc. --%>
+    <table>
+      <tr>
+        <td>
+          <s:label for="changenote" />
+        </td>
+        <td>
+          <s:text name="changenote" size="50" maxlength="80" />
+        </td>
+      </tr>
+      <wiki:UserCheck status="anonymous">
+        <tr>
+          <td><s:label for="author" accesskey="n" /></td>
+          <td><s:text name="author" /></td>
+        </tr>
+        <wiki:CheckRequestContext context="comment">
+          <tr>
+            <td><s:label for="email" accesskey="m" /></td>
+            <td><s:text name="email" size="24" /></td>
+          </tr>
+        </wiki:CheckRequestContext>
+      </wiki:UserCheck>
+    </table>
+
+    <%-- Spam detection fields and optional CAPTCHA --%>
     <wiki:SpamProtect />
+
+    <%-- EditActionBean relies on these being found.  So be careful, if you make changes. --%>
+    <p id="submitbuttons">
+      <s:hidden name="page" />
+      <s:hidden name="startTime" />
+      <s:hidden name="append" />
+      <c:set var="saveTitle" scope="page"><fmt:message key="editor.plain.save.title" /></c:set>
+      <s:submit name="save" accesskey="s" title="${saveTitle}" />
+      <c:set var="previewTitle" scope="page"><fmt:message key="editor.plain.preview.title" /></c:set>
+      <s:submit name="preview" accesskey="v" title="${previewTitle}" />
+      <c:set var="cancelTitle" scope="page"><fmt:message key="editor.plain.cancel.title" /></c:set>
+      <s:submit name="cancel" accesskey="q" title="${cancelTitle}" />
+    </p>
+
   </s:form>
 
 </div>

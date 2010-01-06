@@ -51,12 +51,14 @@ import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
 import org.apache.wiki.content.inspect.BotTrapInspector;
+import org.apache.wiki.content.inspect.Challenge;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.tags.SpamProtectTag;
 import org.apache.wiki.ui.WikiServletFilter;
+import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -184,6 +186,8 @@ public class TestEngine extends WikiEngine
         trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
+        paramValue = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, paramValue );
 
         // Add the UTF-8 token
         trip.addParameter( BotTrapInspector.REQ_ENCODING_CHECK, "\u3041" );

@@ -21,9 +21,7 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.security.SecureRandom;
-import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,17 +29,19 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import net.sourceforge.stripes.controller.ActionResolver;
-import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.tag.FormTag;
 import net.sourceforge.stripes.util.CryptoUtil;
+import net.sourceforge.stripes.validation.LocalizableError;
+import net.sourceforge.stripes.validation.ValidationError;
+import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.action.WikiActionBean;
-import org.apache.wiki.content.inspect.*;
+import org.apache.wiki.api.WikiException;
+import org.apache.wiki.content.inspect.BotTrapInspector;
+import org.apache.wiki.content.inspect.Challenge;
+import org.apache.wiki.content.inspect.SpamInspectionFactory;
 import org.apache.wiki.filters.SpamFilter;
-import org.apache.wiki.ui.stripes.HandlerInfo;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
+import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 
 /**
  * <p>
@@ -49,13 +49,25 @@ import org.apache.wiki.ui.stripes.SpamInterceptor;
  * current form, which will be parsed and verified by {@link SpamInterceptor}
  * whenever the input is processed by an ActionBean event handler method
  * annotated with the {@link org.apache.wiki.ui.stripes.SpamProtect} annotation.
- * If a CAPTCHA test is required, the required content will be written to the
+ * If a Challenge test is required, the required content will be written to the
  * page also, based on the results of
- * {@link Captcha#formContent(org.apache.wiki.content.inspect.Inspection)}.
+ * {@link Challenge#formContent(org.apache.wiki.content.inspect.Inspection)}.
+ * </p>
+ * <p>
+ * This tag has one optional; attribute, {@code challenge}. If supplied, a
+ * {@link Challenge} will be rendered in the format specified. The value {@code
+ * captcha} indicates that a CAPTCHA will be rendered using the CAPTCHA object
+ * configured for the WikiEngine. The value {@code password} indicates that the
+ * user must supply their password. The password option is only available if the
+ * user is already logged in, and JSPWiki is using built-in authentication. If
+ * container authentication is used or if the user is not logged in, the {@code
+ * password} will be ignored. If {@code challenge} is not supplied, a CAPTCHA
+ * will be generated on-demand if {@link SpamInterceptor} determined that the
+ * ActionBean contains spam.
  * </p>
  * <p>
  * This tag must be added as a child of an existing &lt;form&gt; or
- * &lt;stripes:form&gt; element. If The SpamProtect tag will cause the following
+ * &lt;stripes:form&gt; element. The SpamProtect tag will cause the following
  * parameters into the form:
  * </p>
  * <ol>
@@ -66,64 +78,57 @@ import org.apache.wiki.ui.stripes.SpamInterceptor;
  * prevents the "hey, my edit destroyed all UTF-8 characters" problem.</li>
  * <li><b>A token field </b>, which has a random name and fixed value</b> This
  * means that a bot will need to actually GET the form first and parse it out
- * before it can send syntactically correct POSTs. This is a LOT more effort
+ * before it can send syntactically correct POSTs. This requires more effort
  * than just simply looking at the fields once and crafting your auto-poster to
  * conform.</li>
- * <li><b>An empty, input field hidden with CSS</b>. This parameter is meant to
+ * <li><b>An empty input field hidden with CSS</b>. This parameter is meant to
  * catch bots which do a GET and then randomly fill all fields with garbage.
  * This field <em>must</em>be empty when SpamFilter examines the contents of the
- * POST. Since it's hidden with the use of CSS, the bot would need to understand
- * CSS to bypass this check. Because the parameter is also randomized, it
- * prevents bot authors from hard-coding the fact that it needs to be empty.</li>
- * </li>
+ * POST. Since it is hidden with the use of CSS, the bot would need to
+ * understand CSS to bypass this check. Because the parameter is also
+ * randomized, it prevents bot authors from hard-coding the fact that it needs
+ * to be empty.</li> </li>
  * <li><b>An an encrypted parameter</b> called
  * {@link BotTrapInspector#REQ_SPAM_PARAM}, whose contents are the names of
  * parameters 2 and 3, separated by a carriage return character. These contents
- * are then encrypted.</li>
- * <li><b>Any parameters needed by the configured {@link Captcha}</b>, if a
- * CAPTCHA is needed. The current CAPTCHA inspector's method
- * {@link Captcha#formContent(org.apache.wiki.WikiContext)} will be called to
+ * are encrypted with a key stored server-side so that they cannot be tampered
+ * with.</li>
+ * <li><b>Any parameters needed by the configured {@link Challenge}</b>, if a
+ * Challenge is needed. The appropriate Challenge inspector's method
+ * {@link Challenge#formContent(org.apache.wiki.WikiContext)} will be called to
  * generate the relevant form parameters or any other markup needed.</li>
  * </ol>
- * <p>
- * The idea between 2 & 3 is that SpamInterceptor expects two fields with random
- * names, one of which needs to be empty, and one of which needs to be filled
- * with pre-determined data. This is quite hard for most bots to catch, unless
- * they are specifically crafted for JSPWiki and contain some amount of logic to
- * figure out the scheme.
- * </p>
  */
 public class SpamProtectTag extends WikiTagBase
 {
-    private static String getUniqueID()
-    {
-        StringBuilder sb = new StringBuilder();
-        Random rand = new SecureRandom();
+    private Challenge.Request m_challenge = Challenge.Request.CAPTCHA_ON_DEMAND;
 
-        for( int i = 0; i < 6; i++ )
-        {
-            char x = (char) ('A' + rand.nextInt( 26 ));
+    private static final String CHALLENGE_PASSWORD = "password";
 
-            sb.append( x );
-        }
+    private static final String CHALLENGE_CAPTCHA = "captcha";
 
-        return sb.toString();
-    }
+    private static final Random RANDOM = new SecureRandom();
 
     /**
-     * Writes the CAPTCHA form content and spam parameters to the curret
-     * PageContext's JSPWriter. If a CAPTCHA is not needed, it will not
-     * be written.
+     * Writes the Challenge form content and spam parameters to the current
+     * PageContext's JSPWriter. If a Challenge is not needed, it will not be
+     * written.
+     * 
+     * @throws IOException if content cannot be written to the JSPWriter
      */
     @Override
     public int doEndTag() throws JspException
     {
         try
         {
-            writeCaptchaFormContent();
+            writeChallengeFormContent();
             writeSpamParams();
         }
         catch( IOException e )
+        {
+            throw new JspException( e );
+        }
+        catch( WikiException e )
         {
             throw new JspException( e );
         }
@@ -137,30 +142,119 @@ public class SpamProtectTag extends WikiTagBase
     }
 
     /**
-     * Writes CAPTCHA-related form content to the current PageContext's
-     * JSPWriter, if a CAPTCHA is needed.
+     * Sets the {@code challenge} attribute for this tag. Valid values are
+     * {@code password} for {@link Challenge.Request#PASSWORD} or {@code
+     * captcha} for {@link Challenge.Request#CAPTCHA}. If not supplied, the
+     * challenge will default to {@link Challenge.Request#CAPTCHA_ON_DEMAND}.
      * 
-     * @throws IOException
+     * @param challenge the type of challenge the user should see
      */
-    private void writeCaptchaFormContent() throws IOException
+    public void setChallenge( String challenge )
     {
-        boolean needsCaptcha = false;
-        Captcha captcha = findCaptcha();
-        String captchaContent = null;
-        if( captcha != null )
+        if( CHALLENGE_CAPTCHA.equals( challenge.toLowerCase() ) )
         {
-            captchaContent = captcha.formContent( m_wikiContext );
-            if( captchaContent != null )
+            m_challenge = Challenge.Request.CAPTCHA;
+        }
+        else if( CHALLENGE_PASSWORD.equals( challenge.toLowerCase() ) )
+        {
+            m_challenge = Challenge.Request.PASSWORD;
+        }
+        else
+        {
+            m_challenge = Challenge.Request.CAPTCHA_ON_DEMAND;
+        }
+    }
+
+    /**
+     * Generates a new 6-character unique identifier.
+     * 
+     * @return the unique ID
+     */
+    private String getUniqueID()
+    {
+        StringBuilder sb = new StringBuilder();
+        for( int i = 0; i < 6; i++ )
+        {
+            char x = (char) ('A' + RANDOM.nextInt( 26 ));
+            sb.append( x );
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Determines whether spam has been identified earlier in the request by
+     * {@link SpamInterceptor}, based on the presence or absence of a global
+     * {@link ValidationError} with key name
+     * {@link SpamInterceptor#SPAM_VALIDATION_ERROR}.
+     * @param actionBeanContext the ActionBeanContext
+     * @return {@code true} if the ValidationError indicates that the
+     *         ActionBean's contents are spam, or {@code false} is the contents
+     *         are ok.
+     */
+    static public boolean isSpamDetected( WikiActionBeanContext actionBeanContext )
+    {
+        ValidationErrors errors = actionBeanContext.getValidationErrors();
+        if ( errors.containsKey( ValidationErrors.GLOBAL_ERROR ) )
+        {
+            for( ValidationError error : errors.get( ValidationErrors.GLOBAL_ERROR ) )
             {
-                needsCaptcha = true;
+                if( error instanceof LocalizableError )
+                {
+                    LocalizableError localError = (LocalizableError) error;
+                    if( SpamInterceptor.SPAM_VALIDATION_ERROR.equals( localError.getMessageKey() ) )
+                    {
+                        return true;
+                    }
+                }
             }
         }
-        JspWriter out = getPageContext().getOut();
-        out.write( "<input name=\"" + CaptchaInspector.CAPTCHA_NEEDED_PARAM + "\" type=\"hidden\" value=\""
-                   + CryptoUtil.encrypt( String.valueOf( Boolean.valueOf( needsCaptcha ) ) ) + "\" />\n" );
-        if( needsCaptcha )
+        return false;
+    }
+
+    /**
+     * Writes Challenge-related form content to the current PageContext's
+     * JSPWriter, if a challenge is needed. The value of the {@code challenge}
+     * attribute will always be written out as an encrypted parameter so that it
+     * can be extracted by {@link SpamInterceptor} when the form is POSTed.
+     * 
+     * @throws IOException if content cannot be written to the JSPWriter
+     */
+    private void writeChallengeFormContent() throws IOException, WikiException
+    {
+        WikiEngine engine = m_wikiContext.getEngine();
+        String challengeContent = null;
+
+        switch( m_challenge )
         {
-            out.write( captchaContent );
+            case PASSWORD: {
+                // Not implemented yet
+                break;
+            }
+            case CAPTCHA: {
+                Challenge captcha = SpamInspectionFactory.getCaptcha( engine );
+                challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
+                break;
+            }
+            case CAPTCHA_ON_DEMAND: {
+                if( isSpamDetected( (WikiActionBeanContext)m_wikiContext ) )
+                {
+                    m_challenge = Challenge.Request.CAPTCHA;
+                    Challenge captcha = SpamInspectionFactory.getCaptcha( engine );
+                    challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
+                }
+                break;
+            }
+        }
+
+        // Always output the Challenge request parameter
+        JspWriter out = getPageContext().getOut();
+        out.write( "<input name=\"" + SpamInterceptor.CHALLENGE_REQUEST_PARAM + "\" type=\"hidden\" value=\""
+                   + CryptoUtil.encrypt( String.valueOf( m_challenge.name() ) ) + "\" />\n" );
+
+        // Output any generated Challenge content
+        if( challengeContent != null )
+        {
+            out.write( challengeContent );
         }
     }
 
@@ -168,7 +262,7 @@ public class SpamProtectTag extends WikiTagBase
      * Writes hidden spam-protection parameters to the current PageContext's
      * JSPWriter.
      * 
-     * @throws IOException
+     * @throws IOException if content cannot be written to the JSPWriter
      */
     private void writeSpamParams() throws IOException
     {
@@ -193,54 +287,5 @@ public class SpamProtectTag extends WikiTagBase
         // Add encrypted parameter indicating the name of the token field
         String encryptedParam = CryptoUtil.encrypt( tokenParam );
         out.write( "<input name=\"" + BotTrapInspector.REQ_SPAM_PARAM + "\" type=\"hidden\" value=\"" + encryptedParam + "\" />\n" );
-    }
-
-    /**
-     * Determines whether to use a CAPTCHA, based on WikiActionBean being used.
-     * The WikiActionBean is determined by looking for a parent Stripes
-     * {@link net.sourceforge.stripes.tag.FormTag}. If one is found, that
-     * ActionBean is used (which makes sense, because that is where the form
-     * will be posted to). If not, we use the current ActionBean returned by
-     * {@code m_wikiActionBean} (usually a pretty good guess). If any event
-     * handler methods for the ActionBean requires a CAPTCHA, the initialized
-     * {@link Captcha} implementation will be returned.
-     * 
-     * @return the Captcha if one is required, or {@code null} is it is not
-     *         needed for this ActionBean.
-     */
-    @SuppressWarnings( "unchecked" )
-    protected Captcha findCaptcha()
-    {
-        Class<? extends WikiActionBean> actionBeanClass = null;
-
-        // Try figuring out the ActionBean the enclosing FormTag will submit to
-        FormTag tag = this.getParentTag( FormTag.class );
-        if( tag != null )
-        {
-            // Figure out the ActionBean class
-            String action = tag.getAction();
-            ActionResolver resolver = StripesFilter.getConfiguration().getActionResolver();
-            actionBeanClass = (Class<? extends WikiActionBean>) resolver.getActionBeanType( action );
-        }
-
-        // If that doesn't work, use the current ActionBean and handler event
-        if( actionBeanClass == null )
-        {
-            actionBeanClass = m_wikiActionBean.getClass();
-        }
-
-        // Now that we know what ActionBean we're looking at, do we need a
-        // Captcha for it?
-        Map<Method, HandlerInfo> events = HandlerInfo.getHandlerInfoCollection( actionBeanClass );
-        for( Map.Entry<Method, HandlerInfo> entry : events.entrySet() )
-        {
-            if( entry.getValue().getCaptchaPolicy() == Captcha.Policy.ALWAYS )
-            {
-                WikiEngine engine = m_wikiActionBean.getContext().getEngine();
-                InspectionPlan plan = SpamInspectionFactory.getInspectionPlan( engine, engine.getWikiProperties() );
-                return plan.getCaptcha();
-            }
-        }
-        return null;
     }
 }

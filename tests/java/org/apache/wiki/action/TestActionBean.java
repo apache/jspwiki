@@ -21,10 +21,10 @@
 
 package org.apache.wiki.action;
 
+import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.validation.Validate;
 
-import org.apache.wiki.action.AbstractPageActionBean;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.ui.stripes.SpamProtect;
 
@@ -34,6 +34,7 @@ import org.apache.wiki.ui.stripes.SpamProtect;
 public class TestActionBean extends AbstractPageActionBean
 {
     @SpamProtect( content = "text" )
+    @HandlesEvent( "test" )
     public Resolution test()
     {
         return null;
