@@ -24,6 +24,14 @@ public class BotTrapInspector implements Inspector
     /** Request parameter containing the encoded payload. */
     public static final String REQ_SPAM_PARAM = "__wikiCheck";
 
+    /**
+     * Always returns {@link Scope#REQUEST}.
+     */
+    public Scope getScope()
+    {
+        return Scope.REQUEST;
+    }
+
     public void initialize( InspectionPlan config )
     {
     }
@@ -32,12 +40,11 @@ public class BotTrapInspector implements Inspector
      * Returns {@link Finding.Result#FAILED} if any of the spam parameters are invalid;
      * {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         WikiContext context = inspection.getContext();
         HttpServletRequest request = context.getHttpRequest();

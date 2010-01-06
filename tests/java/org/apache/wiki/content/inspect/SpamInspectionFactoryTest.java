@@ -91,7 +91,7 @@ public class SpamInspectionFactoryTest extends TestCase
 
         // Running the inspection should cause the BanListInspector to fail
         String newText = "Sample text";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( -2f, inspection.getScore( Topic.SPAM ) );
     }
 
@@ -113,7 +113,7 @@ public class SpamInspectionFactoryTest extends TestCase
         // Running inspection with simple text change should be fine
         Inspection inspection = createInspection( request );
         String newText = "Sample text";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( PERFECT_SCORE, inspection.getScore( Topic.SPAM ) );
 
         // Now, make 100 more (slightly different) changes
@@ -121,7 +121,7 @@ public class SpamInspectionFactoryTest extends TestCase
         {
             inspection = createInspection( request );
             newText = "Sample text change " + i;
-            inspection.inspect( newText, null );
+            inspection.inspect( Change.getChange( "page", newText ) );
         }
         // Our change-rate check should fail
         assertEquals( -4f, inspection.getScore( Topic.SPAM ) );
@@ -145,12 +145,12 @@ public class SpamInspectionFactoryTest extends TestCase
         // Running inspection with simple text change should be fine
         Inspection inspection = createInspection( request );
         String newText = "Sample text";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( PERFECT_SCORE, inspection.getScore( Topic.SPAM ) );
 
         // Now, make a change with 3 URLs in it (1 more than limit)
         newText = "http://www.jspwiki.org mailto:janne@ecyrd.com https://www.freshcookies.org";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
 
         // Link-count check should fail
         assertEquals( -8f, inspection.getScore( Topic.SPAM ) );
@@ -174,7 +174,7 @@ public class SpamInspectionFactoryTest extends TestCase
         // Running inspection with simple text change should be fine
         Inspection inspection = createInspection( request );
         String newText = "Sample text";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( PERFECT_SCORE, inspection.getScore( Topic.SPAM ) );
 
         // Now, make 50 more identical changes
@@ -182,9 +182,9 @@ public class SpamInspectionFactoryTest extends TestCase
         for( int i = 0; i < 50; i++ )
         {
             inspection = createInspection( request );
-            inspection.inspect( newText, null );
+            inspection.inspect( Change.getChange( "page", newText ) );
         }
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         // Our similarity check should fail
         assertEquals( -4f, inspection.getScore( Topic.SPAM ) );
     }
@@ -211,20 +211,20 @@ public class SpamInspectionFactoryTest extends TestCase
         // anything
         Inspection inspection = createInspection( request );
         String newText = "Sample text";
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( PERFECT_SCORE, inspection.getScore( Topic.SPAM ) );
 
         // Removing the UTF-8 token suggests we have a bot
         request.getParameterMap().remove( BotTrapInspector.REQ_ENCODING_CHECK );
         inspection = createInspection( request );
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Removing the encrypted spam param suggests we have a bot
         setupSpamParams( request );
         request.getParameterMap().remove( BotTrapInspector.REQ_SPAM_PARAM );
         inspection = createInspection( request );
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Supplying a non-null value for the first (trap) spam param should
@@ -232,19 +232,19 @@ public class SpamInspectionFactoryTest extends TestCase
         setupSpamParams( request );
         request.getParameterMap().put( BotTrapInspector.REQ_TRAP_PARAM, new String[] { "botSuppliedValue" } );
         inspection = createInspection( request );
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // Removing the second (token) spam param should trip it also
         setupSpamParams( request );
         request.getParameterMap().remove( "TOKENA" );
         inspection = createInspection( request );
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( -16f, inspection.getScore( Topic.SPAM ) );
 
         // / Re-run the inspection with all parameters intact
         setupSpamParams( request );
-        inspection.inspect( newText, null );
+        inspection.inspect( Change.getChange( "page", newText ) );
         assertEquals( PERFECT_SCORE, inspection.getScore( Topic.SPAM ) );
     }
 

@@ -23,8 +23,11 @@ public class InspectionPlan
 
     private final ReputationManager m_reputationManager;
 
-    private Captcha m_captcha = null;
-
+    /**
+     * Returns the {@link ReputationManager} associated with the InspectionPlan.
+     * 
+     * @return the reputation manager
+     */
     public ReputationManager getReputationManager()
     {
         return m_reputationManager;
@@ -38,6 +41,15 @@ public class InspectionPlan
 
     private final Map<Inspector, Float> m_inspectors;
 
+    /**
+     * Constructs a new InspectionPlan with a supplied set of properties for
+     * configuration. When the plan is instantiated, a new
+     * {@link ReputationManager} will also be created. Its ban-time will be set
+     * to the value specified in the properties file by key
+     * {@link #PROP_BANTIME}.
+     * 
+     * @param props the wiki properties
+     */
     public InspectionPlan( Properties props )
     {
         super();
@@ -61,34 +73,40 @@ public class InspectionPlan
     {
         m_inspectors.put( inspector, Float.valueOf( weight ) );
         inspector.initialize( this );
-        if ( inspector instanceof CaptchaInspector )
-        {
-            m_captcha = ((CaptchaInspector)inspector).getCaptcha();
-        }
     }
 
     /**
-     * Returns the {@link Captcha} object, if one was initialized by
-     * a {@link CaptchaInspector} passed to {@link #addInspector(Inspector, float)}.
-     * @return the Captcha, or {@code null} if not supplied or configured
+     * Returns the array of {@link Inspector} objects that are part of the
+     * InspectionPlan. The order of the array reflects the order in which the
+     * Inspectors were added.
+     * 
+     * @return the array, which may be zero-length if no Inspectors were added
+     *         before calling this method
      */
-    public Captcha getCaptcha()
-    {
-        return m_captcha;
-    }
-
     public Inspector[] getInspectors()
     {
         Set<Inspector> inspectors = m_inspectors.keySet();
         return inspectors.toArray( new Inspector[inspectors.size()] );
     }
 
+    /**
+     * Returns the weight for a particular Inspector. If no weight was assigned
+     * or if the inspector does not exist, returns {0f}.
+     * 
+     * @param inspector the inspector whose weight is being sought
+     * @return the weight
+     */
     public float getWeight( Inspector inspector )
     {
         Float weight = m_inspectors.get( inspector );
         return weight == null ? 0f : weight.floatValue();
     }
 
+    /**
+     * The wiki properties used to initialize the InspectionPlan.
+     * 
+     * @return the properties
+     */
     public Properties getProperties()
     {
         return m_props;

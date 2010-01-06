@@ -68,7 +68,7 @@ public class ReputationManagerTest extends TestCase
         HttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/servlet" );
         InspectionPlan plan = new InspectionPlan( m_props );
         ReputationManager reputationManager = plan.getReputationManager();
-        Change change = Change.getChange( "changed text" );
+        Change change = Change.getChange( "page", "changed text" );
         reputationManager.addModifier( req, change );
         assertEquals( 1, reputationManager.getModifiers().length );
         Host host = reputationManager.getModifiers()[0];
@@ -76,10 +76,10 @@ public class ReputationManagerTest extends TestCase
         assertNotNull( host.getAddedTime() );
         assertNotNull( host.getReleaseTime() );
         assertNotSame( host.getAddedTime(), host.getReleaseTime() );
-        assertEquals( "changed text", host.getChange().getChange() );
+        assertEquals( "changed text", host.getChange() );
 
         req = new MockHttpServletRequest( "/JSPWiki", "/servlet" );
-        change = Change.getChange( "more changed text" );
+        change = Change.getChange( "page", "more changed text" );
         reputationManager.addModifier( req, change );
         assertEquals( 2, reputationManager.getModifiers().length );
     }

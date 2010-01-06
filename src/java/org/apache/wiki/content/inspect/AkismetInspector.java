@@ -32,17 +32,24 @@ public class AkismetInspector implements Inspector
     {
         m_akismetAPIKey = TextUtil.getStringProperty( config.getProperties(), PROP_AKISMET_API_KEY, m_akismetAPIKey );
     }
+    
+    /**
+     * Always returns {@link Scope#REQUEST}.
+     */
+    public Scope getScope()
+    {
+        return Scope.REQUEST;
+    }
 
     /**
      * Returns {@link Finding.Result#FAILED} if Akismet determines the change is
      * spam; {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         WikiContext context = inspection.getContext();
         HttpServletRequest req = context.getHttpRequest();

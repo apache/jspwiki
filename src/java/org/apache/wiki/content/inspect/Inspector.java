@@ -24,10 +24,30 @@ public interface Inspector
      * {@code null}.
      * 
      * @param inspection the current Inspection
-     * @param content the content that
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return the Findings
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change );
+    public Finding[] inspect( Inspection inspection, Change change );
+
+    /**
+     * Returns the {@link Scope} of the inspector: per-field or per-request.
+     * Request-scoped inspectors are invoked just once for the entire request.
+     * Field-scoped inspectors are invoked on every field that is being
+     * protected.
+     */
+    public Scope getScope();
+
+    /**
+     * The scope of an inspector, which can operate on individual fields or for
+     * the entire request.
+     */
+    public enum Scope
+    {
+        /** Inspector that should be executed for every field. */
+        FIELD,
+
+        /** Inspector that should be executed just once per form. */
+        REQUEST
+    }
 }

@@ -22,6 +22,14 @@ public class UserInspector implements Inspector
      */
     private boolean m_ignoreAuthenticated = false;
 
+    /**
+     * Always returns {@link Scope#REQUEST}.
+     */
+    public Scope getScope()
+    {
+        return Scope.REQUEST;
+    }
+
     public void initialize( InspectionPlan config )
     {
         Properties props = config.getProperties();
@@ -34,12 +42,11 @@ public class UserInspector implements Inspector
      * {@link Finding.Result#PASSED}. Otherwise, the method returns {@code null}
      * but does not affect the score in any way.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         WikiContext context = inspection.getContext();
         if( context.hasAdminPermissions() )

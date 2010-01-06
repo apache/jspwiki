@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.content.inspect.Inspector.Scope;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.util.TextUtil;
@@ -165,69 +166,64 @@ public class Inspection
     }
 
     /**
-     * Executes the chain of Inspector objects for a supplied content String
-     * and, optionally, the {@link Change} object associated with it. All scores
-     * are initially reset to zero when this method executes.
+     * Executes the chain of Inspector objects for a supplied number of
+     * {@link Change} objects. All scores are initially reset to zero when this
+     * method executes. The Inspectors with {@link Scope#REQUEST} execute first,
+     * in order. Then the Inspectors with {@link Scope#FIELD} execute, in order,
+     * once per Target.
      * 
-     * @param content the content String. If {@code null}, this method returns
-     *            silently.
-     * @param change the Change represented by {@code content}, relative to a
-     *            previous version. If this parameter is {@code null}, the text
-     *            is considered "all new," and a Change object will be created
-     *            by calling {@link Change#getChange(String)}.
+     * @param changes one or more field changes; that is, a field-name,
+     *            content and content-change tuple. If {@code null}, this method will
+     *            execute only the Inspectors that have scope of
+     *            {@link Scope#REQUEST}.
      */
-    public void inspect( String content, Change change )
+    public void inspect( Change... changes )
     {
-        if( content == null )
-        {
-            return;
-        }
-        if( change == null )
-        {
-            change = Change.getChange( content );
-        }
-
         m_scores.clear();
         m_findings.clear();
         Inspector[] inspectors = m_plan.getInspectors();
-        InspectionListener currentListener = null;
+
         try
         {
+            // Execute the request-scoped inspectors
             for( Inspector inspector : inspectors )
             {
-                float weight = m_plan.getWeight( inspector );
-                Finding[] findings = inspector.inspect( this, content, change );
-                if( findings != null )
+                if( inspector.getScope() == Scope.REQUEST )
                 {
-                    for( Finding finding : findings )
-                    {
-                        // Increase/decrease score here
-                        Topic topic = finding.getTopic();
-                        updateScore( topic, finding, weight );
+                    Finding[] findings = inspector.inspect( this, null );
+                    processFindings( inspector, findings );
+                }
+            }
 
-                        // Notify any listeners that the score has changed
-                        List<InspectionListener> listeners = m_listeners.get( topic );
-                        if( listeners != null )
-                        {
-                            for( InspectionListener listener : listeners )
-                            {
-                                currentListener = listener;
-                                listener.changedScore( this, finding );
-                            }
-                        }
-                        log( inspector, finding, weight );
+            if( changes == null )
+            {
+                return;
+            }
+
+            // Execute the field-scoped inspectors
+            for( Change change : changes )
+            {
+                for( Inspector inspector : inspectors )
+                {
+                    if( inspector.getScope() == Scope.FIELD )
+                    {
+                        Finding[] findings = inspector.inspect( this, change );
+                        processFindings( inspector, findings );
                     }
                 }
             }
         }
         catch( InspectionInterruptedException e )
         {
-            log.debug( "Inspection " + m_uid + " interrupted by " + currentListener.getClass().getName() );
+            log.debug( "Inspection " + m_uid + " interrupted by " + e.getSource().getClass().getName() );
         }
 
-        // Add the change to the ReputationManager's list of recent changes
+        // Add the changes to the ReputationManager's list of recent changes
         ReputationManager mgr = m_plan.getReputationManager();
-        mgr.addModifier( m_context.getHttpRequest(), change );
+        for( Change change : changes )
+        {
+            mgr.addModifier( m_context.getHttpRequest(), change );
+        }
     }
 
     /**
@@ -247,6 +243,37 @@ public class Inspection
             s.append( ' ' );
         }
         return s.toString();
+    }
+
+    /**
+     * Processes any Findings that result from an Inspector's processing
+     * @param inspector the inspector that executed
+     * @param findings the findings it produced
+     * @throws InspectionInterruptedException if any listeners interrupt processing
+     */
+    private void processFindings( Inspector inspector, Finding[] findings ) throws InspectionInterruptedException
+    {
+        float weight = m_plan.getWeight( inspector );
+        if( findings != null )
+        {
+            for( Finding finding : findings )
+            {
+                // Increase/decrease score here
+                Topic topic = finding.getTopic();
+                updateScore( topic, finding, weight );
+
+                // Notify any listeners that the score has changed
+                List<InspectionListener> listeners = m_listeners.get( topic );
+                if( listeners != null )
+                {
+                    for( InspectionListener listener : listeners )
+                    {
+                        listener.changedScore( this, finding );
+                    }
+                }
+                log( inspector, finding, weight );
+            }
+        }
     }
 
     /**

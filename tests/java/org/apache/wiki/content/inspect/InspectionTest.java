@@ -82,7 +82,7 @@ public class InspectionTest extends TestCase
             m_executed = true;
             if( m_interrupt )
             {
-                throw new InspectionInterruptedException( "Interrupted by TestInspectionListener." );
+                throw new InspectionInterruptedException( this, "Interrupted by TestInspectionListener." );
             }
         }
 
@@ -111,9 +111,14 @@ public class InspectionTest extends TestCase
         {
         }
 
-        public Finding[] inspect( Inspection inspection, String content, Change change )
+        public Finding[] inspect( Inspection inspection, Change change )
         {
             return new Finding[] { new Finding( m_topic, m_result, m_result.toString() ) };
+        }
+
+        public Scope getScope()
+        {
+            return Scope.FIELD;
         }
     }
 
@@ -133,7 +138,7 @@ public class InspectionTest extends TestCase
         WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
         Inspection inspection = new Inspection( context, plan );
-        inspection.inspect( "Sample text", null );
+        inspection.inspect( Change.getChange( "page", "Sample text" ) );
 
         // Result should be 2: +4 -2 +0
         assertEquals( 2.0f, inspection.getScore( Topic.SPAM ) );
@@ -157,7 +162,7 @@ public class InspectionTest extends TestCase
         WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
         Inspection inspection = new Inspection( context, plan );
-        inspection.inspect( "Sample text", null );
+        inspection.inspect( Change.getChange( "page", "Sample text" ) );
 
         // Result should be 2: +4 -2 +0
         assertEquals( 2.0f, inspection.getScore( Topic.SPAM ) );
@@ -184,7 +189,7 @@ public class InspectionTest extends TestCase
         WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
         WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
         Inspection inspection = new Inspection( context, plan );
-        inspection.inspect( "Sample text", null );
+        inspection.inspect( Change.getChange( "page", "Sample text" ) );
 
         // Verify that the findings were added in order
         Finding[] findings = inspection.getFindings( Topic.SPAM );
@@ -220,7 +225,7 @@ public class InspectionTest extends TestCase
         inspection.addListener( new Topic( "Topic2" ), listener2 );
 
         // Run the inspection
-        inspection.inspect( "Sample text", null );
+        inspection.inspect( Change.getChange( "page", "Sample text" ) );
 
         // Verify that Spam listener fired, but Topic2 listener did not
         assertTrue( listener.isExecuted() );
@@ -248,7 +253,7 @@ public class InspectionTest extends TestCase
         inspection.addListener( new Topic( "Topic2" ), listener2 );
 
         // Run the inspection
-        inspection.inspect( "Sample text", null );
+        inspection.inspect( Change.getChange( "page", "Sample text" ) );
 
         // Verify that Spam listener fired, but Topic2 listener did not
         assertTrue( listener.isExecuted() );

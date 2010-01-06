@@ -45,6 +45,14 @@ public class PatternInspector implements Inspector
 
     private static final String LISTVAR = "spamwords";
 
+    /**
+     * Always returns {@link Scope#FIELD}.
+     */
+    public Scope getScope()
+    {
+        return Scope.FIELD;
+    }
+
     public void initialize( InspectionPlan config )
     {
         Properties properties = config.getProperties();
@@ -56,12 +64,11 @@ public class PatternInspector implements Inspector
      * Returns {@link Finding.Result#FAILED} if any contents are contained on
      * the banned-word pattern blacklist; {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         WikiContext context = inspection.getContext();
         refreshBlacklists( context );

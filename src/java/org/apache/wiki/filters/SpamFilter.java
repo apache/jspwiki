@@ -150,7 +150,7 @@ public class SpamFilter extends BasicPageFilter
         Inspection inspection = new Inspection( context, m_plan );
         float spamScoreLimit = SpamInspectionFactory.defaultSpamLimit( m_engine );
         SpamInspectionFactory.setSpamLimit( inspection, spamScoreLimit );
-        inspection.inspect( content, change );
+        inspection.inspect( change );
         float spamScore = inspection.getScore( Topic.SPAM );
         context.setVariable( ATTR_SPAMFILTER_SCORE, spamScore );
 
@@ -184,7 +184,7 @@ public class SpamFilter extends BasicPageFilter
     private String getRedirectPage( WikiContext ctx )
     {
         if( m_useCaptcha )
-            return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page=" + ctx.getEngine().encodeName( ctx.getPage().getName() ) );
+            return ctx.getURL( WikiContext.NONE, "Challenge.jsp", "page=" + ctx.getEngine().encodeName( ctx.getPage().getName() ) );
 
         return ctx.getURL( WikiContext.VIEW, m_errorPage );
     }

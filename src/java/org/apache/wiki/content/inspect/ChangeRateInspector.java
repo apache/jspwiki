@@ -38,6 +38,14 @@ public class ChangeRateInspector implements Inspector
      */
     private int m_limitSimilarChanges = 2;
 
+    /**
+     * Always returns {@link Scope#FIELD}.
+     */
+    public Scope getScope()
+    {
+        return Scope.FIELD;
+    }
+
     public void initialize( InspectionPlan config )
     {
         Properties props = config.getProperties();
@@ -45,7 +53,7 @@ public class ChangeRateInspector implements Inspector
 
         m_limitSimilarChanges = TextUtil.getIntegerProperty( props, PROP_SIMILARCHANGES, m_limitSimilarChanges );
 
-        log.info( "# Spam filter initialized.  Temporary ban time " + config.getReputationManager().getBanTime()
+        log.info( "Spam filter initialized.  Temporary ban time " + config.getReputationManager().getBanTime()
                   + " mins, max page changes/minute: " + m_limitSinglePageChanges );
     }
 
@@ -53,12 +61,11 @@ public class ChangeRateInspector implements Inspector
      * Returns {@link Finding.Result#FAILED} if the user has recently submitted too many
      * aggregate or identical changes; {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         HttpServletRequest req = inspection.getContext().getHttpRequest();
         if( req == null )
@@ -81,7 +88,7 @@ public class ChangeRateInspector implements Inspector
             }
 
             // Has this change been seen before?
-            if( host.getChange() != null && host.getChange().equals( change ) )
+            if( host.getChange() != null && host.getChange().equals( change.getChange() ) )
             {
                 changeCounter++;
             }

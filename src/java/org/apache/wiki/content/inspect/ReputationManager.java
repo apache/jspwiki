@@ -25,7 +25,7 @@ public class ReputationManager
 
         private final String m_address;
 
-        private final Change m_change;
+        private final String m_change;
 
         /**
          * @param ipaddress
@@ -35,7 +35,7 @@ public class ReputationManager
         public Host( String ipaddress, Change change, int releaseTime )
         {
             m_address = ipaddress;
-            m_change = change;
+            m_change = change == null ? null : change.getChange();
             m_releaseTime = System.currentTimeMillis() + releaseTime * 60 * 1000L;
         }
 
@@ -49,7 +49,7 @@ public class ReputationManager
             return m_address;
         }
 
-        public Change getChange()
+        public String getChange()
         {
             return m_change;
         }

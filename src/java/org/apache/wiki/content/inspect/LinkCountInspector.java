@@ -36,6 +36,14 @@ public class LinkCountInspector implements Inspector
      */
     private int m_maxUrls = 10;
 
+    /**
+     * Always returns {@link Scope#FIELD}.
+     */
+    public Scope getScope()
+    {
+        return Scope.FIELD;
+    }
+
     public void initialize( InspectionPlan config )
     {
         m_config = config;
@@ -56,12 +64,11 @@ public class LinkCountInspector implements Inspector
      * Returns {@link Finding.Result#FAILED} if the proposed change contains too many
      * links; {@code null} otherwise.
      * @param inspection the current Inspection
-     * @param content the content that is being inspected
-     * @param change the subset of the content that represents the added or
+     * @param change the current contents, plus content that represents the added or
      *            deleted text since the last change
      * @return {@link Finding.Result#FAILED} if the test fails; {@code null} otherwise
      */
-    public Finding[] inspect( Inspection inspection, String content, Change change )
+    public Finding[] inspect( Inspection inspection, Change change )
     {
         // Calculate the number of links in the addition.
         String tstChange = change.toString();

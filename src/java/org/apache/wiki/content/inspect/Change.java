@@ -11,12 +11,16 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
 
 /**
- * Embodies the differences between two Strings, or between a proposed page text
- * and the page's current value. This class is immutable and therefore
+ * Embodies the differences between two Strings, or between a proposed text
+ * and current value for a field. This class is immutable and therefore
  * thread-safe.
  */
 public class Change
 {
+    private final String m_name;
+
+    private final String m_value;
+
     private final String m_change;
 
     private final int m_adds;
@@ -27,23 +31,25 @@ public class Change
      * Convenience method that returns a Change object representing a new text
      * string. String {@code newText} will be represented as a single add.
      * 
+     * @param name the name of the field that is being changed
      * @param newText the new text
      * @return the Change object
      */
-    public static Change getChange( String newText )
+    public static Change getChange( String name, String newText )
     {
-        return new Change( 1, 0, newText );
+        return new Change( name, newText, 1, 0, newText );
     }
 
     /**
      * Compares a proposed (new) text string against an existing (old) String,
      * and returns a Change object representing any differences between the two.
      * 
+     * @param name the name of the field that is being changed
      * @param oldText the old text
      * @param newText the new text
      * @return the change, or the empty string if there is no difference
      */
-    public static Change getChange( String oldText, String newText ) throws DifferentiationFailedException
+    public static Change getChange( String name, String oldText, String newText ) throws DifferentiationFailedException
     {
         if( oldText == null || newText == null )
         {
@@ -57,7 +63,7 @@ public class Change
 
         if( rev == null || rev.size() == 0 )
         {
-            return new Change( 0, 0, null );
+            return new Change( name, newText, 0, 0, null );
         }
 
         int adds = 0;
@@ -82,13 +88,18 @@ public class Change
                 removals++;
             }
         }
-        return new Change( adds, removals, changes.toString() );
+        return new Change( name, newText, adds, removals, changes.toString() );
+    }
+
+    public String getName()
+    {
+        return m_name;
     }
 
     /**
      * Compares a proposed text String for a page against the page's current
      * content, and returns a Change object representing any differences between
-     * the two.
+     * the two. The field's name is {@code page}.
      * 
      * @param context the wiki context containing the page. This must be a
      *            page-related WikiContext
@@ -122,12 +133,14 @@ public class Change
             }
         }
 
-        return getChange( changes.toString(), newText );
+        return getChange( "page", changes.toString(), newText );
     }
 
-    private Change( int adds, int removals, String change )
+    private Change( String name, String newText, int adds, int removals, String change )
     {
         super();
+        m_name = name;
+        m_value = newText;
         m_adds = adds;
         m_removals = removals;
         m_change = change;
@@ -136,7 +149,7 @@ public class Change
     public boolean equals( Object o )
     {
         if( o instanceof Change )
-            return m_change.equals( ((Change) o).m_change );
+            return m_name.equals( ((Change) o).m_name ) && m_change.equals( ((Change) o).m_change );
 
         return false;
     }
@@ -154,6 +167,15 @@ public class Change
     public int getRemovals()
     {
         return m_removals;
+    }
+
+    /**
+     * Returns the current (i.e., new) value of the Change. 
+     * @return the current value
+     */
+    public String getValue()
+    {
+        return m_value;
     }
 
     public int hashCode()
