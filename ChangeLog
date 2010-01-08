@@ -1,3 +1,16 @@
+2010-01-08 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-197
+
+        * Minor renaming of a few content-inspection types
+        and methods. Added default weights for the content
+        inspectors to jspwiki.properties. Removed the listener
+        code from the Inspection class. The code was good
+        and it worked nicely, but it is no longer needed due
+        to the way we integrate CAPTCHA now. We can always
+        add listeners back if we have to, but in the
+        meantime: a simpler API is a better API.
+
 2010-01-06 Harry Metske <metskem@apache.org>
 
         * 3.0.0-svn-196

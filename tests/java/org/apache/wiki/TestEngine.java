@@ -186,7 +186,7 @@ public class TestEngine extends WikiEngine
         trip.addParameter( BotTrapInspector.REQ_TRAP_PARAM, new String[0] );
         trip.addParameter( "TOKENA", trip.getRequest().getSession().getId() );
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
-        paramValue = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        paramValue = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, paramValue );
 
         // Add the UTF-8 token

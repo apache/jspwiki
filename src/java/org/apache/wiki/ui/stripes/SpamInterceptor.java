@@ -130,7 +130,7 @@ public class SpamInterceptor implements Interceptor
      * creates a new {@link Inspection} that inspects each ActionBean property
      * indicated by the {@link SpamProtect#content()}. The
      * {@link InspectionPlan} for the Inspection is obtained by calling
-     * {@link SpamInspectionFactory#getInspectionPlan(WikiEngine, java.util.Properties)}
+     * {@link SpamInspectionPlan#getInspectionPlan(WikiEngine, java.util.Properties)}
      * . If any of the modifications are determined to be spam, a Stripes
      * {@link ValidationError} is added to the ActionBeanContext.
      * 
@@ -150,31 +150,32 @@ public class SpamInterceptor implements Interceptor
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
         boolean isSpam = false;
 
-        switch( getChallengeRequest( actionBean.getContext() ) )
+        switch( getChallengeState( actionBean.getContext() ) )
         {
-            case CAPTCHA_ON_DEMAND: {
+            case CHALLENGE_NOT_PRESENTED: {
                 // First-time submission; no challenge was requested
                 isSpam = checkForSpam( actionBean, eventInfo );
                 break;
             }
 
-            case PASSWORD: {
+            case PASSWORD_PRESENTED: {
                 // Password challenge was requested
                 // Not implemented yet
                 checkForSpam( actionBean, eventInfo );
                 break;
             }
 
-            case CAPTCHA: {
+            case CAPTCHA_PRESENTED: {
                 // CAPTCHA challenge was requested
                 checkForSpam( actionBean, eventInfo );
                 WikiEngine engine = actionBean.getContext().getEngine();
-                Challenge captcha = SpamInspectionFactory.getCaptcha( engine );
+                SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( engine );
+                Challenge captcha = plan.getCaptcha();
                 isSpam = !captcha.check( actionBean.getContext() );
                 break;
             }
 
-            case OMITTED: {
+            case MISSING_STATE: {
                 // The Challenge param wasn't there. Naughty user!
                 checkForSpam( actionBean, eventInfo );
                 isSpam = true;
@@ -192,6 +193,44 @@ public class SpamInterceptor implements Interceptor
 
         // Execute next interceptors in the chain
         return context.proceed();
+    }
+
+    /**
+     * Retrieves the encrypted parameter {@link #CHALLENGE_REQUEST_PARAM} from
+     * the HTTP request and returns its value. If the parameter is not found in
+     * the request, we assume that the request was made by a spammer or other
+     * naughty person, and the method returns {@link org.apache.wiki.content.inspect.Challenge.State#MISSING_STATE}.
+     * Otherwise, the value of the parameter is decrypted and returned. This
+     * method is guaranteed to return a non-{@code null} value.
+     * 
+     * @param actionBeanContext the action bean context
+     * @return the Challenge that was requested, or
+     *         {@link org.apache.wiki.content.inspect.Challenge.State#MISSING_STATE} if the parameter
+     *         {@link #CHALLENGE_REQUEST_PARAM} was not found.
+     */
+    private Challenge.State getChallengeState( ActionBeanContext actionBeanContext )
+    {
+        HttpServletRequest request = actionBeanContext.getRequest();
+        String encryptedCaptchaParam = request.getParameter( CHALLENGE_REQUEST_PARAM );
+        if( encryptedCaptchaParam != null )
+        {
+            String captchaParam = CryptoUtil.decrypt( encryptedCaptchaParam );
+            if( captchaParam != null )
+            {
+                try
+                {
+                    Challenge.State challenge = Challenge.State.valueOf( captchaParam );
+                    return challenge;
+                }
+                catch( IllegalArgumentException e )
+                {
+                    // The decrypted Challenge.Request was a funny value
+                }
+            }
+        }
+
+        // Challenge param not found or funny value: assume it's a spammer
+        return Challenge.State.MISSING_STATE;
     }
 
     /**
@@ -239,34 +278,33 @@ public class SpamInterceptor implements Interceptor
      *         exceeds the spam threshold, or {@code false} otherwise
      * @throws DifferentiationFailedException if it is not possible to create a
      *             {@link Change} object showing what contents changed
+     * @throws WikiException if it the {@link SpamInspectionPlan} cannot be retrieved
      */
-    protected boolean checkForSpam( WikiActionBean actionBean, HandlerInfo eventInfo ) throws DifferentiationFailedException
+    protected boolean checkForSpam( WikiActionBean actionBean, HandlerInfo eventInfo ) throws DifferentiationFailedException, WikiException
     {
         // Retrieve all of the bean fields named in the @SpamProtect annotation
         WikiActionBeanContext actionBeanContext = actionBean.getContext();
         WikiEngine engine = actionBeanContext.getEngine();
-        InspectionPlan plan = SpamInspectionFactory.getInspectionPlan( engine, engine.getWikiProperties() );
+        SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( engine );
         Map<String, Object> fieldValues = getBeanProperties( actionBean, eventInfo.getSpamProtectedFields() );
 
         // Create an Inspection for analyzing the bean's contents
         Inspection inspection = new Inspection( actionBeanContext, plan );
-        float spamScoreLimit = SpamInspectionFactory.defaultSpamLimit( engine );
-        SpamInspectionFactory.setSpamLimit( inspection, spamScoreLimit );
 
         // Let's get to it!
         List<Change> changes = new ArrayList<Change>();
         for( Map.Entry<String, Object> entry : fieldValues.entrySet() )
         {
-            String name = entry.getKey();
+            String field = entry.getKey();
             String value = entry.getValue().toString();
             Change change;
-            if( "page".equals( name ) )
+            if( "page".equals( field ) )
             {
                 change = Change.getPageChange( actionBeanContext, value );
             }
             else
             {
-                change = Change.getChange( name, value );
+                change = Change.getChange( field, value );
             }
             changes.add( change );
         }
@@ -276,44 +314,6 @@ public class SpamInterceptor implements Interceptor
         float spamScore = inspection.getScore( Topic.SPAM );
 
         // Does the spam score exceed the threshold?
-        return spamScore <= spamScoreLimit;
-    }
-
-    /**
-     * Retrieves the encrypted parameter {@link #CHALLENGE_REQUEST_PARAM} from
-     * the HTTP request and returns its value. If the parameter is not found in
-     * the request, we assume that the request was made by a spammer or other
-     * naughty person, and the method returns {@link org.apache.wiki.content.inspect.Challenge.Request#OMITTED}.
-     * Otherwise, the value of the parameter is decrypted and returned. This
-     * method is guaranteed to return a non-{@code null} value.
-     * 
-     * @param actionBeanContext the action bean context
-     * @return the Challenge that was requested, or
-     *         {@link org.apache.wiki.content.inspect.Challenge.Request#OMITTED} if the parameter
-     *         {@link #CHALLENGE_REQUEST_PARAM} was not found.
-     */
-    protected Challenge.Request getChallengeRequest( ActionBeanContext actionBeanContext )
-    {
-        HttpServletRequest request = actionBeanContext.getRequest();
-        String encryptedCaptchaParam = request.getParameter( CHALLENGE_REQUEST_PARAM );
-        if( encryptedCaptchaParam != null )
-        {
-            String captchaParam = CryptoUtil.decrypt( encryptedCaptchaParam );
-            if( captchaParam != null )
-            {
-                try
-                {
-                    Challenge.Request challenge = Challenge.Request.valueOf( captchaParam );
-                    return challenge;
-                }
-                catch( IllegalArgumentException e )
-                {
-                    // The decrypted Challenge.Request was a funny value
-                }
-            }
-        }
-
-        // Challenge param not found or funny value: assume it's a spammer
-        return Challenge.Request.OMITTED;
+        return spamScore <= plan.getSpamLimit();
     }
 }

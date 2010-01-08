@@ -9,13 +9,14 @@ import org.apache.wiki.content.inspect.Finding.Result;
 import org.apache.wiki.util.TextUtil;
 
 /**
- * A plan for inspection that defines the sequence of {@link Inspector} objects
+ * <p>A plan for inspection that defines the sequence of {@link Inspector} objects
  * for analyzing content. Inspector objects are added to the InspectionPlan by
  * calling {@link #addInspector(Inspector, float)} with a desired weight,
  * expressed as a floating-point number. The InspectionPlan includes convenience
  * methods for accessing WikiEngine properties to allow each Inspector to
  * initialize itself. References to shared-state objects such as the
- * {@link ReputationManager} are included for Inspectors to use.
+ * {@link ReputationManager} are included for Inspectors to use.</p>
+ * <p>The InspectionPlan class is not thread-safe. It may be extended.</p>
  */
 public class InspectionPlan
 {

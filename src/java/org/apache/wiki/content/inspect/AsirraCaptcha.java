@@ -16,7 +16,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;

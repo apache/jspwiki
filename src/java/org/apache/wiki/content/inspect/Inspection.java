@@ -50,8 +50,6 @@ public class Inspection
 
     private final WikiContext m_context;
 
-    private final Map<Topic, List<InspectionListener>> m_listeners;
-
     private final String m_uid;
 
     /**
@@ -71,29 +69,6 @@ public class Inspection
         m_context = context;
         m_plan = plan;
         m_uid = getUniqueID();
-        m_listeners = new HashMap<Topic, List<InspectionListener>>();
-    }
-
-    /**
-     * Adds an InspectionListener for a supplied Topic. The listner object's
-     * {@link InspectionListener#changedScore(Inspection, Finding)} method will
-     * be called whenever an Inspector's
-     * {@link Inspector#inspect(Inspection, Change)} method returns a
-     * Finding whose Topic is equal to {@code topic}.
-     * 
-     * @param topic the Topic to listen for
-     * @param listener the listener that will respond to new Findings added for
-     *            this Topic
-     */
-    public void addListener( Topic topic, InspectionListener listener )
-    {
-        List<InspectionListener> listeners = m_listeners.get( topic );
-        if( listeners == null )
-        {
-            listeners = new ArrayList<InspectionListener>();
-            m_listeners.put( topic, listeners );
-        }
-        listeners.add( listener );
     }
 
     /**
@@ -183,39 +158,32 @@ public class Inspection
         m_findings.clear();
         Inspector[] inspectors = m_plan.getInspectors();
 
-        try
+        // Execute the request-scoped inspectors
+        for( Inspector inspector : inspectors )
         {
-            // Execute the request-scoped inspectors
+            if( inspector.getScope() == Scope.REQUEST )
+            {
+                Finding[] findings = inspector.inspect( this, null );
+                processFindings( inspector, findings );
+            }
+        }
+
+        if( changes == null )
+        {
+            return;
+        }
+
+        // Execute the field-scoped inspectors
+        for( Change change : changes )
+        {
             for( Inspector inspector : inspectors )
             {
-                if( inspector.getScope() == Scope.REQUEST )
+                if( inspector.getScope() == Scope.FIELD )
                 {
-                    Finding[] findings = inspector.inspect( this, null );
+                    Finding[] findings = inspector.inspect( this, change );
                     processFindings( inspector, findings );
                 }
             }
-
-            if( changes == null )
-            {
-                return;
-            }
-
-            // Execute the field-scoped inspectors
-            for( Change change : changes )
-            {
-                for( Inspector inspector : inspectors )
-                {
-                    if( inspector.getScope() == Scope.FIELD )
-                    {
-                        Finding[] findings = inspector.inspect( this, change );
-                        processFindings( inspector, findings );
-                    }
-                }
-            }
-        }
-        catch( InspectionInterruptedException e )
-        {
-            log.debug( "Inspection " + m_uid + " interrupted by " + e.getSource().getClass().getName() );
         }
 
         // Add the changes to the ReputationManager's list of recent changes
@@ -249,9 +217,8 @@ public class Inspection
      * Processes any Findings that result from an Inspector's processing
      * @param inspector the inspector that executed
      * @param findings the findings it produced
-     * @throws InspectionInterruptedException if any listeners interrupt processing
      */
-    private void processFindings( Inspector inspector, Finding[] findings ) throws InspectionInterruptedException
+    private void processFindings( Inspector inspector, Finding[] findings )
     {
         float weight = m_plan.getWeight( inspector );
         if( findings != null )
@@ -261,16 +228,6 @@ public class Inspection
                 // Increase/decrease score here
                 Topic topic = finding.getTopic();
                 updateScore( topic, finding, weight );
-
-                // Notify any listeners that the score has changed
-                List<InspectionListener> listeners = m_listeners.get( topic );
-                if( listeners != null )
-                {
-                    for( InspectionListener listener : listeners )
-                    {
-                        listener.changedScore( this, finding );
-                    }
-                }
                 log( inspector, finding, weight );
             }
         }
@@ -285,6 +242,7 @@ public class Inspection
     private void log( Inspector inspector, Finding finding, float weight )
     {
         String logMessage = finding.getMessage();
+        log.info( logMessage );
         logMessage = TextUtil.replaceString( logMessage, "\r\n", "\\r\\n" );
         logMessage = TextUtil.replaceString( logMessage, "\"", "\\\"" );
 

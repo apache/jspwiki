@@ -36,6 +36,8 @@ import org.apache.wiki.content.inspect.BotTrapInspector;
 import org.apache.wiki.content.inspect.Challenge;
 import org.apache.wiki.tags.SpamProtectTag;
 
+import com.sun.tools.javac.util.Context;
+
 public class SpamInterceptorTest extends TestCase
 {
     public static Test suite()
@@ -85,7 +87,7 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
         
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Add the UTF-8 token
@@ -99,7 +101,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the token check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testInvalidTrap() throws Exception
@@ -111,7 +113,7 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Add the UTF-8 token
@@ -125,7 +127,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the trap check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testMissingToken() throws Exception
@@ -136,7 +138,7 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "" ) );
 
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Add the UTF-8 token
@@ -150,7 +152,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the token check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testMissingTrap() throws Exception
@@ -161,7 +163,7 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, CryptoUtil.encrypt( "TOKENA" ) );
 
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Add the UTF-8 token
@@ -188,7 +190,7 @@ public class SpamInterceptorTest extends TestCase
         trip.addParameter( BotTrapInspector.REQ_SPAM_PARAM, paramValue );
 
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Verify that we got the ActionBean...
@@ -199,7 +201,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the UTF-8 check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testNoChallenge() throws Exception
@@ -223,7 +225,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the challenge check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testNoToken() throws Exception
@@ -232,7 +234,7 @@ public class SpamInterceptorTest extends TestCase
         MockRoundtrip trip = m_engine.guestTrip( "/Test.action" );
 
         // Add the challenge param
-        String challengeParam = CryptoUtil.encrypt( Challenge.Request.CAPTCHA_ON_DEMAND.name() );
+        String challengeParam = CryptoUtil.encrypt( Challenge.State.CHALLENGE_NOT_PRESENTED.name() );
         trip.addParameter( SpamInterceptor.CHALLENGE_REQUEST_PARAM, challengeParam );
 
         // Add the UTF-8 token
@@ -246,7 +248,7 @@ public class SpamInterceptorTest extends TestCase
         // ...but that we failed the token check
         assertEquals( 1, trip.getValidationErrors().size() );
         assertTrue( SpamProtectTag.isSpamDetected( bean.getContext() ) );
-        assertEquals( null, trip.getDestination() );
+        assertEquals( bean.getContext().getSourcePage(), trip.getDestination() );
     }
 
     public void testToken() throws Exception

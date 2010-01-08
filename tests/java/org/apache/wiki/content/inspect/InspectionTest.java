@@ -64,35 +64,6 @@ public class InspectionTest extends TestCase
     }
 
     /**
-     * Dummy listener class that can be configured to interrupt an Inspection.
-     */
-    static class TestInspectionListener implements InspectionListener
-    {
-        private final boolean m_interrupt;
-
-        private boolean m_executed = false;
-
-        public TestInspectionListener( boolean interrupt )
-        {
-            m_interrupt = interrupt;
-        }
-
-        public void changedScore( Inspection inspection, Finding score ) throws InspectionInterruptedException
-        {
-            m_executed = true;
-            if( m_interrupt )
-            {
-                throw new InspectionInterruptedException( this, "Interrupted by TestInspectionListener." );
-            }
-        }
-
-        public boolean isExecuted()
-        {
-            return m_executed;
-        }
-    }
-
-    /**
      * Dummy inspector class that returns a predictable Result.
      */
     static class TestInspector implements Inspector
@@ -205,61 +176,5 @@ public class InspectionTest extends TestCase
         // No findings at all for bogus topic
         findings = inspection.getFindings( new Topic( "NoFindingsTopic" ) );
         assertEquals( 0, findings.length );
-    }
-
-    public void testAddListener() throws Exception
-    {
-        InspectionPlan plan = new InspectionPlan( m_props );
-        Inspector pass = new TestInspector( Topic.SPAM, Result.PASSED );
-        Inspector pass2 = new TestInspector( Topic.SPAM, Result.PASSED );
-        plan.addInspector( pass, 2 );
-        plan.addInspector( pass2, 1 );
-
-        // Configure the inspection with 2 listeners
-        WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
-        Inspection inspection = new Inspection( context, plan );
-        TestInspectionListener listener = new TestInspectionListener( false );
-        TestInspectionListener listener2 = new TestInspectionListener( false );
-        inspection.addListener( Topic.SPAM, listener );
-        inspection.addListener( new Topic( "Topic2" ), listener2 );
-
-        // Run the inspection
-        inspection.inspect( Change.getChange( "page", "Sample text" ) );
-
-        // Verify that Spam listener fired, but Topic2 listener did not
-        assertTrue( listener.isExecuted() );
-        assertFalse( listener2.isExecuted() );
-
-        // Verify the listener did not interrupt execution
-        assertEquals( 3.0f, inspection.getScore( Topic.SPAM ) );
-    }
-
-    public void testAddInterruptingListener() throws Exception
-    {
-        InspectionPlan plan = new InspectionPlan( m_props );
-        Inspector pass = new TestInspector( Topic.SPAM, Result.PASSED );
-        Inspector pass2 = new TestInspector( Topic.SPAM, Result.PASSED );
-        plan.addInspector( pass, 2 );
-        plan.addInspector( pass2, 1 );
-
-        // Configure the inspection with 2 listeners that interrupt
-        WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( page );
-        Inspection inspection = new Inspection( context, plan );
-        TestInspectionListener listener = new TestInspectionListener( true );
-        TestInspectionListener listener2 = new TestInspectionListener( true );
-        inspection.addListener( Topic.SPAM, listener );
-        inspection.addListener( new Topic( "Topic2" ), listener2 );
-
-        // Run the inspection
-        inspection.inspect( Change.getChange( "page", "Sample text" ) );
-
-        // Verify that Spam listener fired, but Topic2 listener did not
-        assertTrue( listener.isExecuted() );
-        assertFalse( listener2.isExecuted() );
-
-        // Verify the Spam listener interrupted execution
-        assertEquals( 2f, inspection.getScore( Topic.SPAM ) );
     }
 }

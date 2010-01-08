@@ -38,7 +38,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.content.inspect.BotTrapInspector;
 import org.apache.wiki.content.inspect.Challenge;
-import org.apache.wiki.content.inspect.SpamInspectionFactory;
+import org.apache.wiki.content.inspect.SpamInspectionPlan;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
@@ -101,7 +101,7 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  */
 public class SpamProtectTag extends WikiTagBase
 {
-    private Challenge.Request m_challenge = Challenge.Request.CAPTCHA_ON_DEMAND;
+    private Challenge.State m_challenge = Challenge.State.CHALLENGE_NOT_PRESENTED;
 
     private static final String CHALLENGE_PASSWORD = "password";
 
@@ -143,9 +143,9 @@ public class SpamProtectTag extends WikiTagBase
 
     /**
      * Sets the {@code challenge} attribute for this tag. Valid values are
-     * {@code password} for {@link org.apache.wiki.content.inspect.Challenge.Request#PASSWORD} or {@code
-     * captcha} for {@link org.apache.wiki.content.inspect.Challenge.Request#CAPTCHA}. If not supplied, the
-     * challenge will default to {@link org.apache.wiki.content.inspect.Challenge.Request#CAPTCHA_ON_DEMAND}.
+     * {@code password} for {@link org.apache.wiki.content.inspect.Challenge.State#PASSWORD_PRESENTED} or {@code
+     * captcha} for {@link org.apache.wiki.content.inspect.Challenge.State#CAPTCHA_PRESENTED}. If not supplied, the
+     * challenge will default to {@link org.apache.wiki.content.inspect.Challenge.State#CHALLENGE_NOT_PRESENTED}.
      * 
      * @param challenge the type of challenge the user should see
      */
@@ -153,15 +153,15 @@ public class SpamProtectTag extends WikiTagBase
     {
         if( CHALLENGE_CAPTCHA.equals( challenge.toLowerCase() ) )
         {
-            m_challenge = Challenge.Request.CAPTCHA;
+            m_challenge = Challenge.State.CAPTCHA_PRESENTED;
         }
         else if( CHALLENGE_PASSWORD.equals( challenge.toLowerCase() ) )
         {
-            m_challenge = Challenge.Request.PASSWORD;
+            m_challenge = Challenge.State.PASSWORD_PRESENTED;
         }
         else
         {
-            m_challenge = Challenge.Request.CAPTCHA_ON_DEMAND;
+            m_challenge = Challenge.State.CHALLENGE_NOT_PRESENTED;
         }
     }
 
@@ -222,24 +222,25 @@ public class SpamProtectTag extends WikiTagBase
     private void writeChallengeFormContent() throws IOException, WikiException
     {
         WikiEngine engine = m_wikiContext.getEngine();
+        SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( engine );
         String challengeContent = null;
 
         switch( m_challenge )
         {
-            case PASSWORD: {
+            case PASSWORD_PRESENTED: {
                 // Not implemented yet
                 break;
             }
-            case CAPTCHA: {
-                Challenge captcha = SpamInspectionFactory.getCaptcha( engine );
+            case CAPTCHA_PRESENTED: {
+                Challenge captcha = plan.getCaptcha();
                 challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
                 break;
             }
-            case CAPTCHA_ON_DEMAND: {
+            case CHALLENGE_NOT_PRESENTED: {
                 if( isSpamDetected( (WikiActionBeanContext)m_wikiContext ) )
                 {
-                    m_challenge = Challenge.Request.CAPTCHA;
-                    Challenge captcha = SpamInspectionFactory.getCaptcha( engine );
+                    m_challenge = Challenge.State.CAPTCHA_PRESENTED;
+                    Challenge captcha = plan.getCaptcha();
                     challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
                 }
                 break;

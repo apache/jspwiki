@@ -39,7 +39,7 @@ public class AllTests extends TestCase
         suite.addTest( InspectionPlanTest.suite() );
         suite.addTest( InspectionTest.suite() );
         suite.addTest( ReputationManagerTest.suite() );
-        suite.addTest( SpamInspectionFactoryTest.suite() );
+        suite.addTest( SpamInspectionPlanTest.suite() );
 
         return suite;
     }

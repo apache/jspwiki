@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.jrcs.diff.DifferentiationFailedException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
 import org.apache.wiki.content.inspect.*;
 import org.apache.wiki.log.Logger;
@@ -111,7 +112,7 @@ public class SpamFilter extends BasicPageFilter
 
     private static final String ATTR_SPAMFILTER_SCORE = "spamfilter.score";
 
-    private InspectionPlan m_plan;
+    private SpamInspectionPlan m_plan;
 
     private boolean m_useCaptcha = false;
 
@@ -130,7 +131,15 @@ public class SpamFilter extends BasicPageFilter
     {
         m_errorPage = properties.getProperty( PROP_ERRORPAGE, m_errorPage );
         m_useCaptcha = properties.getProperty( PROP_CAPTCHA, "" ).equals( "asirra" );
-        m_plan = SpamInspectionFactory.getInspectionPlan( engine, properties );
+        try
+        {
+            m_plan = SpamInspectionPlan.getInspectionPlan( engine );
+        }
+        catch( WikiException e )
+        {
+            e.printStackTrace();
+            throw new RuntimeException( "Could not start PageFilter: " + e.getMessage(), e );
+        }
     }
 
     /** {@inheritDoc} */
@@ -148,14 +157,12 @@ public class SpamFilter extends BasicPageFilter
 
         // Run the Inspection
         Inspection inspection = new Inspection( context, m_plan );
-        float spamScoreLimit = SpamInspectionFactory.defaultSpamLimit( m_engine );
-        SpamInspectionFactory.setSpamLimit( inspection, spamScoreLimit );
         inspection.inspect( change );
         float spamScore = inspection.getScore( Topic.SPAM );
         context.setVariable( ATTR_SPAMFILTER_SCORE, spamScore );
 
         // Redirect user if score too low
-        if( spamScore <= spamScoreLimit )
+        if( spamScore <= m_plan.getSpamLimit() )
         {
             StringBuilder s = new StringBuilder();
             for( Finding finding : inspection.getFindings( Topic.SPAM ) )

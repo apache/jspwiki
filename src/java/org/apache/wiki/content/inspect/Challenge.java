@@ -10,17 +10,14 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 /**
  * <p>
  * Describes how Challenge classes should implement scripting and processing
- * methods to test particular Challenge schemes, such as CAPTCHA.
- * </p>
- * <p>
- * Challenge specifies three logical states, which are invoked by a combination
- * of custom JSP tags and the {@link SpamInterceptor} interceptor.
+ * methods to test particular Challenge schemes, such as CAPTCHA. Implementing
+ * classes need to implement two methods:
  * </p>
  * <ol>
  * <li><strong>formContent</strong>. When a JSP containing a &lt;SpamProtect&gt;
  * tag is encountered, the {@link SpamProtectTag#doEndTag()} method calls
- * {@link #formContent(WikiActionBeanContext)} to generate any content needed to be
- * included in the &lt;form&gt; element of the page. Note that the
+ * {@link #formContent(WikiActionBeanContext)} to generate any content needed to
+ * be included in the &lt;form&gt; element of the page. Note that the
  * &lt;SpamProtect&gt tag is not actually guaranteed to be inside of the form
  * element, but in practice, it should be.</li>
  * <li><strong>check</strong>. This method provides any back-end Challenge
@@ -42,8 +39,9 @@ public interface Challenge
      * actually injected by the {@link SpamProtectTag} tag, when it is
      * encountered on the JSP.
      * 
-     * @param actionBeanContext the current ActionBeanContext. Callers can obtain the complete
-     *            request context by calling {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
+     * @param actionBeanContext the current ActionBeanContext. Callers can
+     *            obtain the complete request context by calling
+     *            {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
      * @return the form content
      */
     public String formContent( WikiActionBeanContext actionBeanContext ) throws IOException;
@@ -51,30 +49,39 @@ public interface Challenge
     /**
      * Tests the Challenge.
      * 
-     * @param actionBeanContext the current ActionBeanContext. Callers can obtain the complete
-     *            request context by calling {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
+     * @param actionBeanContext the current ActionBeanContext. Callers can
+     *            obtain the complete request context by calling
+     *            {@link net.sourceforge.stripes.action.ActionBeanContext#getRequest()}.
      * @return {@code true} if the test succeeded; {@code false} otherwise
      */
     public boolean check( WikiActionBeanContext actionBeanContext ) throws IOException;
 
-    public enum Request
+    /**
+     * Represents what Challenge was presented to the user in the most recent
+     * HTTP response. {@link SpamProtectTag} writes the State out as an
+     * encrypted hidden form parameter.
+     */
+    public enum State
     {
         /**
-         * No challenge requested, but CAPTCHA should be generated if
-         * content-inspection determines that the ActionBean contains spam.
+         * No challenge was presented, but a CAPTCHA should be presented in
+         * the next response if the content inspector determines that
+         * the ActionBean contains spam. The state
+         * {@link #CHALLENGE_NOT_PRESENTED} occurs only when a form is
+         * presented for the first time.
          */
-        CAPTCHA_ON_DEMAND,
+        CHALLENGE_NOT_PRESENTED,
 
-        /** CAPTCHA was requested. */
-        CAPTCHA,
+        /** CAPTCHA was presented to the user. */
+        CAPTCHA_PRESENTED,
 
         /**
-         * Challenge parameter was omitted, possibly because a spammer submitted
-         * the request.
+         * Challenge parameter was omitted, probably because a spammer submitted
+         * the request without first requesting the form.
          */
-        OMITTED,
+        MISSING_STATE,
 
-        /** Password challenge was requested. */
-        PASSWORD
+        /** Password challenge was presented to the user. */
+        PASSWORD_PRESENTED
     }
 }

@@ -40,11 +40,11 @@ import org.apache.wiki.content.ContentManager;
 
 /**
  */
-public class SpamInspectionFactoryTest extends TestCase
+public class SpamInspectionPlanTest extends TestCase
 {
     public static Test suite()
     {
-        return new TestSuite( SpamInspectionFactoryTest.class );
+        return new TestSuite( SpamInspectionPlanTest.class );
     }
 
     private Properties m_props = new Properties();
@@ -53,7 +53,7 @@ public class SpamInspectionFactoryTest extends TestCase
 
     private static final float PERFECT_SCORE = 0f;
 
-    public SpamInspectionFactoryTest( String s )
+    public SpamInspectionPlanTest( String s )
     {
         super( s );
     }
@@ -62,7 +62,6 @@ public class SpamInspectionFactoryTest extends TestCase
     {
         m_props.load( TestEngine.findTestProperties() );
         m_props.setProperty( InspectionPlan.PROP_BANTIME, "1" );
-        m_engine = new TestEngine( m_props );
     }
 
     public void tearDown() throws Exception
@@ -78,6 +77,9 @@ public class SpamInspectionFactoryTest extends TestCase
      */
     public void testBanListInspector() throws Exception
     {
+        initDefaultPlanProperties();
+        m_engine = new TestEngine( m_props );
+
         // Create a new HTTP request. Make sure to add the BotTrap/UTF-8
         // parameters.
         MockHttpServletRequest request = new MockHttpServletRequest( "/", "/" );
@@ -103,6 +105,9 @@ public class SpamInspectionFactoryTest extends TestCase
      */
     public void testChangeRateInspectorVelocity() throws Exception
     {
+        initDefaultPlanProperties();
+        m_engine = new TestEngine( m_props );
+
         // Create a new HTTP request. Make sure to add the BotTrap/UTF-8
         // parameters.
         MockHttpServletRequest request = new MockHttpServletRequest( "/", "/" );
@@ -135,6 +140,9 @@ public class SpamInspectionFactoryTest extends TestCase
      */
     public void testLinkCountInspector() throws Exception
     {
+        initDefaultPlanProperties();
+        m_engine = new TestEngine( m_props );
+
         // Create a new HTTP request. Make sure to add the BotTrap/UTF-8
         // parameters.
         MockHttpServletRequest request = new MockHttpServletRequest( "/", "/" );
@@ -164,6 +172,9 @@ public class SpamInspectionFactoryTest extends TestCase
      */
     public void testChangeRateInspectorSimilarity() throws Exception
     {
+        initDefaultPlanProperties();
+        m_engine = new TestEngine( m_props );
+
         // Create a new HTTP request. Make sure to add the BotTrap/UTF-8
         // parameters.
         MockHttpServletRequest request = new MockHttpServletRequest( "/", "/" );
@@ -200,6 +211,9 @@ public class SpamInspectionFactoryTest extends TestCase
      */
     public void testBotTrapInspector() throws Exception
     {
+        initDefaultPlanProperties();
+        m_engine = new TestEngine( m_props );
+
         // Create a new HTTP request. Make sure to add the BotTrap/UTF-8
         // parameters.
         MockHttpServletRequest request = new MockHttpServletRequest( "/", "/" );
@@ -250,7 +264,9 @@ public class SpamInspectionFactoryTest extends TestCase
 
     public void testGetInspectionPlan() throws Exception
     {
-        InspectionPlan plan = SpamInspectionFactory.getInspectionPlan( m_engine, m_props );
+        m_engine = new TestEngine( m_props );
+
+        InspectionPlan plan = SpamInspectionPlan.getInspectionPlan( m_engine );
         Inspector[] inspectors = plan.getInspectors();
         assertEquals( 7, inspectors.length );
         assertEquals( UserInspector.class, inspectors[0].getClass() );
@@ -264,30 +280,45 @@ public class SpamInspectionFactoryTest extends TestCase
 
     public void testGetScoreLimit() throws Exception
     {
-        SpamInspectionFactory.getInspectionPlan( m_engine, m_props );
+        m_engine = new TestEngine( m_props );
+
+        SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( m_engine );
         // the value in the test properties file
-        assertEquals( -0.5f, SpamInspectionFactory.defaultSpamLimit( m_engine ) );
+        assertEquals( -0.5f, plan.getSpamLimit() );
     }
 
     public void testGetWeight() throws Exception
     {
-        String key = SpamInspectionFactory.PROP_INSPECTOR_WEIGHT_PREFIX + BanListInspector.class.getCanonicalName();
+        String key = SpamInspectionPlan.PROP_INSPECTOR_WEIGHT_PREFIX + BanListInspector.class.getCanonicalName();
         m_props.put( key, "-2.0f" );
-        assertEquals( -2.0f, SpamInspectionFactory.getWeight( m_props, BanListInspector.class ) );
-        assertEquals( SpamInspectionFactory.DEFAULT_WEIGHT, SpamInspectionFactory.getWeight( m_props, UserInspector.class ) );
+        m_engine = new TestEngine( m_props );
+        SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( m_engine );
+        assertEquals( -2.0f, plan.getWeight( m_props, BanListInspector.class ) );
+        assertEquals( SpamInspectionPlan.DEFAULT_WEIGHT, plan.getWeight( m_props, UserInspector.class ) );
     }
 
     public void testSetScoreLimit() throws Exception
     {
-        m_props.put( SpamInspectionFactory.PROP_SCORE_LIMIT, "-2.0f" );
-        SpamInspectionFactory.getInspectionPlan( m_engine, m_props );
-        assertEquals( -2.0f, SpamInspectionFactory.defaultSpamLimit( m_engine ) );
+        m_props.put( SpamInspectionPlan.PROP_SCORE_LIMIT, "-2.0f" );
+        m_engine = new TestEngine( m_props );
+        SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( m_engine );
+        assertEquals( -2.0f, plan.getSpamLimit() );
     }
 
     private Inspection createInspection( HttpServletRequest request ) throws Exception
     {
+        InspectionPlan plan = SpamInspectionPlan.getInspectionPlan( m_engine );
+        plan.getReputationManager().unbanHost( request );
+        WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
+        WikiContext context = m_engine.getWikiContextFactory().newViewContext( request, null, page );
+        Inspection inspection = new Inspection( context, plan );
+        return inspection;
+    }
+    
+    private void initDefaultPlanProperties()
+    {
         // Make sure all of the Inspectors always run (disable the score limits)
-        m_props.put( SpamInspectionFactory.PROP_SCORE_LIMIT, "-1000f" );
+        m_props.put( SpamInspectionPlan.PROP_SCORE_LIMIT, "-1000f" );
 
         // Define predictable weights for each Inspector
         setWeight( UserInspector.class, 1f );
@@ -302,14 +333,6 @@ public class SpamInspectionFactoryTest extends TestCase
         m_props.put( LinkCountInspector.PROP_MAXURLS, "2" );
         m_props.put( ChangeRateInspector.PROP_PAGECHANGES, "100" );
         m_props.put( ChangeRateInspector.PROP_SIMILARCHANGES, "50" );
-
-        // Create the plan
-        InspectionPlan plan = SpamInspectionFactory.getInspectionPlan( m_engine, m_props );
-        plan.getReputationManager().unbanHost( request );
-        WikiPage page = m_engine.getFrontPage( ContentManager.DEFAULT_SPACE );
-        WikiContext context = m_engine.getWikiContextFactory().newViewContext( request, null, page );
-        Inspection inspection = new Inspection( context, plan );
-        return inspection;
     }
 
     private void setupSpamParams( MockHttpServletRequest request )
@@ -324,7 +347,7 @@ public class SpamInspectionFactoryTest extends TestCase
 
     private void setWeight( Class<? extends Inspector> inspectorClass, float weight )
     {
-        String key = SpamInspectionFactory.PROP_INSPECTOR_WEIGHT_PREFIX + inspectorClass.getCanonicalName();
+        String key = SpamInspectionPlan.PROP_INSPECTOR_WEIGHT_PREFIX + inspectorClass.getCanonicalName();
         m_props.setProperty( key, String.valueOf( weight ) );
     }
 }

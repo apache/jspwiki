@@ -13,9 +13,9 @@ import org.apache.wiki.log.LoggerFactory;
  * Factory for creating spam-related {@link Inspection} and
  * {@link InspectionPlan} objects.
  */
-public final class SpamInspectionFactory
+public final class SpamInspectionPlan extends InspectionPlan
 {
-    private static final Logger log = LoggerFactory.getLogger( SpamInspectionFactory.class );
+    private static final Logger log = LoggerFactory.getLogger( SpamInspectionPlan.class );
 
     protected static final String PROP_INSPECTOR_WEIGHT_PREFIX = "inspectorWeight.spam.";
 
@@ -24,44 +24,6 @@ public final class SpamInspectionFactory
      * which a change should be considered spam.
      */
     public static final String PROP_SCORE_LIMIT = "spamScoreLimit";
-
-    private static class SpamListener implements InspectionListener
-    {
-        private final float m_limit;
-
-        public SpamListener( float limit )
-        {
-            super();
-            m_limit = limit;
-        }
-
-        public void changedScore( Inspection inspection, Finding finding ) throws InspectionInterruptedException
-        {
-            float currentScore = inspection.getScore( Topic.SPAM );
-            if( currentScore < m_limit )
-            {
-                throw new InspectionInterruptedException( this, "Limit reached." );
-            }
-        }
-    }
-
-    /**
-     * Causes an existing Inspection to interrupt when spam scores fall below a
-     * given limit. This is done by adding a private {@link InspectionListener}
-     * to the Inspection, whose only function is to listen for findings for
-     * {@link Topic#SPAM}. When the spam score goes below {@code limit}, the
-     * private listener throws an {@link InspectionInterruptedException} which
-     * terminates the inspection.
-     * 
-     * @param inspection the Inspection for which the limit is set
-     * @param limit the spam score that causes the Inspection to stop. Usually
-     *            this is a negative number.
-     */
-    public static void setSpamLimit( Inspection inspection, float limit )
-    {
-        InspectionListener listener = new SpamListener( limit );
-        inspection.addListener( Topic.SPAM, listener );
-    }
 
     /** Default limit at which we consider something to be spam. */
     protected static final float DEFAULT_SCORE_LIMIT = -0.01f;
@@ -75,37 +37,50 @@ public final class SpamInspectionFactory
 
     protected static final String PROP_CAPTCHA_CLASS = "jspwiki.captcha.implementation";
 
-    private static final Map<WikiEngine, InspectionPlan> c_plans = new HashMap<WikiEngine, InspectionPlan>();
-
-    private static final Map<WikiEngine, Challenge> c_captchas = new HashMap<WikiEngine,Challenge>();
-
-    private static final Map<WikiEngine, Float> c_spamLimits = new HashMap<WikiEngine, Float>();
+    private static final Map<WikiEngine, SpamInspectionPlan> c_plans = new HashMap<WikiEngine, SpamInspectionPlan>();
     
-    public static float defaultSpamLimit( WikiEngine engine )
+    private final Challenge m_captcha;
+
+    private final float m_limit;
+    
+    /**
+     * Private constructor to prevent direct instantiation.
+     * @throws WikiException if the SpamInspectionPlan cannot be
+     * initialized for any reason; the original Exception will be wrapped
+     */
+    private SpamInspectionPlan( Properties properties ) throws WikiException
     {
-        Float limit = c_spamLimits.get( engine );
-        return limit == null ? DEFAULT_SCORE_LIMIT : limit.floatValue();
+       super( properties ); 
+       
+       // Configure the CAPTCHA
+       m_captcha = initCaptcha( properties );
+       
+       // Get the default spam score limits
+       float limit = DEFAULT_SCORE_LIMIT;
+       String limitString = properties.getProperty( PROP_SCORE_LIMIT, String.valueOf( DEFAULT_SCORE_LIMIT ) );
+       try
+       {
+           limit = Float.parseFloat( limitString );
+       }
+       catch( NumberFormatException e )
+       {
+           log.error( "Property value " + PROP_SCORE_LIMIT + " did not parse to a float. Using " + DEFAULT_SCORE_LIMIT );
+       }
+       m_limit = limit;
+    }
+    
+    public float getSpamLimit()
+    {
+        return m_limit;
     }
 
     /**
-     * Looks up and returns the CAPTCHA ({@link Challenge}) for a given WikiEngine.
-     * If the CAPTCHA does not exist, it will be created. <em>Callers should
-     * check for {@code null} values, which indicate a CAPTCHA was
-     * not configured.</em>
-     * @return the CAPTCHA, or {@code null} if one was not specified
-     * in the wiki engine's properties (or not configured)
+     * Returns the CAPTCHA ({@link Challenge}) for a the SpamInspectionPlan.
+     * @return the CAPTCHA
      */
-    public static final Challenge getCaptcha( WikiEngine engine ) throws WikiException
+    public Challenge getCaptcha() throws WikiException
     {
-        if ( c_captchas.containsKey( engine ) )
-        {
-            return c_captchas.get( engine );
-        }
-
-        // Lazily create
-        Challenge captcha = initCaptcha( engine.getWikiProperties() );
-        c_captchas.put( engine, captcha );
-        return captcha;
+        return m_captcha;
     }
 
     /**
@@ -130,45 +105,29 @@ public final class SpamInspectionFactory
      * <code>{@value #PROP_INSPECTOR_WEIGHT_PREFIX}<var>fullyQualifiedClassname</var></code>.
      * 
      * @param engine the wiki engine
-     * @param props the properties used to initialize the InspectionPlan and
-     *            Inspectors
      * @return the InspectionPlan
      */
-    public static InspectionPlan getInspectionPlan( WikiEngine engine, Properties props )
+    public static SpamInspectionPlan getInspectionPlan( WikiEngine engine ) throws WikiException
     {
-        InspectionPlan plan = c_plans.get( engine );
+        SpamInspectionPlan plan = c_plans.get( engine );
         if( plan != null )
         {
             return plan;
         }
 
         // Create new InspectionPlan for this WikiEngine
-        plan = new InspectionPlan( props );
-        plan.addInspector( new UserInspector(), getWeight( props, UserInspector.class ) );
-        plan.addInspector( new BanListInspector(), getWeight( props, BanListInspector.class ) );
-        plan.addInspector( new ChangeRateInspector(), getWeight( props, ChangeRateInspector.class ) );
-        plan.addInspector( new LinkCountInspector(), getWeight( props, LinkCountInspector.class ) );
-        plan.addInspector( new BotTrapInspector(), getWeight( props, BotTrapInspector.class ) );
-        plan.addInspector( new AkismetInspector(), getWeight( props, AkismetInspector.class ) );
-        plan.addInspector( new PatternInspector(), getWeight( props, PatternInspector.class ) );
+        Properties props = engine.getWikiProperties();
+        plan = new SpamInspectionPlan( props );
+        plan.addInspector( new UserInspector(), plan.getWeight( props, UserInspector.class ) );
+        plan.addInspector( new BanListInspector(), plan.getWeight( props, BanListInspector.class ) );
+        plan.addInspector( new ChangeRateInspector(), plan.getWeight( props, ChangeRateInspector.class ) );
+        plan.addInspector( new LinkCountInspector(), plan.getWeight( props, LinkCountInspector.class ) );
+        plan.addInspector( new BotTrapInspector(), plan.getWeight( props, BotTrapInspector.class ) );
+        plan.addInspector( new AkismetInspector(), plan.getWeight( props, AkismetInspector.class ) );
+        plan.addInspector( new PatternInspector(), plan.getWeight( props, PatternInspector.class ) );
         c_plans.put( engine, plan );
 
         // Figure out the Challenge to use for this WikiEngine
-
-
-        // Get the default spam score limits
-        float limit = DEFAULT_SCORE_LIMIT;
-        String limitString = props.getProperty( PROP_SCORE_LIMIT, String.valueOf( DEFAULT_SCORE_LIMIT ) );
-        try
-        {
-            limit = Float.parseFloat( limitString );
-        }
-        catch( NumberFormatException e )
-        {
-            log.error( "Property value " + PROP_SCORE_LIMIT + " did not parse to a float. Using " + DEFAULT_SCORE_LIMIT );
-        }
-        c_spamLimits.put( engine, Float.valueOf( limit ) );
-
         return plan;
     }
 
@@ -179,7 +138,7 @@ public final class SpamInspectionFactory
      * @param inspectorClass the Inspector class
      * @return if found, the desired weight; if not, returns {@link #DEFAULT_WEIGHT}
      */
-    protected static float getWeight( Properties props, Class<? extends Inspector> inspectorClass )
+    protected float getWeight( Properties props, Class<? extends Inspector> inspectorClass )
     {
         String key = PROP_INSPECTOR_WEIGHT_PREFIX + inspectorClass.getCanonicalName();
         float weight = DEFAULT_WEIGHT;
