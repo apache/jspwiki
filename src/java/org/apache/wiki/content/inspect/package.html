@@ -81,24 +81,11 @@ results.</p>
 	decreases it) or has no effect. An optional String message passed to
 	the constructor provides context for the change.</li>
 	<li>The {@link
-	org.apache.wiki.content.inspect.InspectionListener} class provides
-	callers with the ability to listen for Findings for a particular Topic.
-	Listeners are registered with an Inspector by calling {@link
-	org.apache.wiki.content.inspect.Inspection#addListener(Topic,InspectionListener)}.
-	An InspectionListener can arbitrarily halt processing by throwing an
-	{@link org.apache.wiki.content.inspect.InspectionInterruptedException}.
-	This will terminate the entire Inspection.</li>
-	<li>The {@link
 	org.apache.wiki.content.inspect.ReputationManager} tracks the IP
 	addresses of hosts that have modified content recently, along with the
 	changes they have made. Callers (such as Inspectors) can add a host to
 	the list of recent modifications by calling {@link
 	org.apache.wiki.content.inspect.ReputationManager#addModifier(javax.servlet.http.HttpServletRequest,Change)}.</li>
 </ul>
-<p>In addition to these classes, this package includes a factory
-class called {@link
-org.apache.wiki.content.inspect.SpamInspectionFactory} that configures
-an shared InspectionPlan for spam, which is configured once per
-WikiEngine.</p>
 </body>
 </html>

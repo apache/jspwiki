@@ -130,7 +130,7 @@ public class SpamInterceptor implements Interceptor
      * creates a new {@link Inspection} that inspects each ActionBean property
      * indicated by the {@link SpamProtect#content()}. The
      * {@link InspectionPlan} for the Inspection is obtained by calling
-     * {@link SpamInspectionPlan#getInspectionPlan(WikiEngine, java.util.Properties)}
+     * {@link SpamInspectionPlan#getInspectionPlan(WikiEngine)}
      * . If any of the modifications are determined to be spam, a Stripes
      * {@link ValidationError} is added to the ActionBeanContext.
      * 
