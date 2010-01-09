@@ -1,3 +1,11 @@
+2010-01-09 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-198
+
+        * Checked in PasswordChallenge, which renders the
+        input for the <SpamProtect challenge="password">
+        option. CAPTCHA added to CreateProfile.jsp.
+
 2010-01-08 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-197

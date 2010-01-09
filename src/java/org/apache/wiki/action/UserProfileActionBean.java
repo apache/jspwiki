@@ -23,6 +23,10 @@ package org.apache.wiki.action;
 
 import java.security.Principal;
 
+import net.sourceforge.stripes.action.*;
+import net.sourceforge.stripes.controller.LifecycleStage;
+import net.sourceforge.stripes.validation.*;
+
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -35,13 +39,10 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.SpamProtect;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.workflow.DecisionRequiredException;
-
-import net.sourceforge.stripes.action.*;
-import net.sourceforge.stripes.controller.LifecycleStage;
-import net.sourceforge.stripes.validation.*;
 
 
 /**
@@ -112,6 +113,7 @@ public class UserProfileActionBean extends AbstractActionBean
      */
     @HandlesEvent( "save" )
     @HandlerPermission( permissionClass = WikiPermission.class, target = "${context.engine.applicationName}", actions = WikiPermission.EDIT_PROFILE_ACTION )
+    @SpamProtect
     public Resolution save()
     {
         WikiActionBeanContext context = getContext();

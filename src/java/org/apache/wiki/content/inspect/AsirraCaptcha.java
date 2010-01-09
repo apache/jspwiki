@@ -92,7 +92,7 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
  * Asirra JavaScript.
  * </p>
  */
-public class AsirraCaptcha implements Challenge
+public class AsirraCaptcha implements Captcha
 {
     /**
      * Convenience class that encapsulates the image of a pet,

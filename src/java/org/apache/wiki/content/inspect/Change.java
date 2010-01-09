@@ -7,8 +7,8 @@ import org.apache.commons.jrcs.diff.*;
 import org.apache.commons.jrcs.diff.myers.MyersDiff;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.providers.ProviderException;
 
 /**
  * Embodies the differences between two Strings, or between a proposed text
@@ -105,6 +105,7 @@ public class Change
      *            page-related WikiContext
      * @param newText the new text
      * @return Empty string, if there is no change.
+     * @throws DifferentiationFailedException if the page contents could not be retrieved or diffed
      */
     public static Change getPageChange( WikiContext context, String newText ) throws DifferentiationFailedException
     {
@@ -115,7 +116,16 @@ public class Change
         // Get current page version
         if( engine.pageExists( page.getName() ) )
         {
-            String oldText = engine.getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+            String oldText;
+            try
+            {
+                oldText = page.getContentAsString();
+            }
+            catch( ProviderException e )
+            {
+                e.printStackTrace();
+                throw new DifferentiationFailedException( "Differentiation failed: " + e.getMessage() );
+            }
             changes.append( oldText );
 
             // Don't forget to include the change note, too

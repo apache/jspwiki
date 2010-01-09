@@ -36,9 +36,7 @@ import net.sourceforge.stripes.validation.ValidationErrors;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
-import org.apache.wiki.content.inspect.BotTrapInspector;
-import org.apache.wiki.content.inspect.Challenge;
-import org.apache.wiki.content.inspect.SpamInspectionPlan;
+import org.apache.wiki.content.inspect.*;
 import org.apache.wiki.filters.SpamFilter;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
@@ -109,6 +107,8 @@ public class SpamProtectTag extends WikiTagBase
 
     private static final Random RANDOM = new SecureRandom();
 
+    private static final Challenge PASSWORD_CHALLENGE = new PasswordChallenge();
+
     /**
      * Writes the Challenge form content and spam parameters to the current
      * PageContext's JSPWriter. If a Challenge is not needed, it will not be
@@ -157,7 +157,10 @@ public class SpamProtectTag extends WikiTagBase
         }
         else if( CHALLENGE_PASSWORD.equals( challenge.toLowerCase() ) )
         {
-            m_challenge = Challenge.State.PASSWORD_PRESENTED;
+            if ( !m_wikiContext.getEngine().getAuthenticationManager().isContainerAuthenticated() )
+            {
+                m_challenge = Challenge.State.PASSWORD_PRESENTED;
+            }
         }
         else
         {
@@ -223,25 +226,26 @@ public class SpamProtectTag extends WikiTagBase
     {
         WikiEngine engine = m_wikiContext.getEngine();
         SpamInspectionPlan plan = SpamInspectionPlan.getInspectionPlan( engine );
+        WikiActionBeanContext actionBeanContext = m_wikiActionBean.getContext();
         String challengeContent = null;
 
         switch( m_challenge )
         {
             case PASSWORD_PRESENTED: {
-                // Not implemented yet
+                challengeContent = PASSWORD_CHALLENGE.formContent( actionBeanContext );
                 break;
             }
             case CAPTCHA_PRESENTED: {
-                Challenge captcha = plan.getCaptcha();
-                challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
+                Captcha captcha = plan.getCaptcha();
+                challengeContent = captcha.formContent( actionBeanContext );
                 break;
             }
             case CHALLENGE_NOT_PRESENTED: {
-                if( isSpamDetected( (WikiActionBeanContext)m_wikiContext ) )
+                if( isSpamDetected( actionBeanContext ) )
                 {
                     m_challenge = Challenge.State.CAPTCHA_PRESENTED;
-                    Challenge captcha = plan.getCaptcha();
-                    challengeContent = captcha.formContent( m_wikiActionBean.getContext() );
+                    Captcha captcha = plan.getCaptcha();
+                    challengeContent = captcha.formContent( actionBeanContext );
                 }
                 break;
             }

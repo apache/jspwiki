@@ -38,6 +38,7 @@ public class AllTests extends TestCase
 
         suite.addTest( InspectionPlanTest.suite() );
         suite.addTest( InspectionTest.suite() );
+        suite.addTest( PasswordChallengeTest.suite() );
         suite.addTest( ReputationManagerTest.suite() );
         suite.addTest( SpamInspectionPlanTest.suite() );
 

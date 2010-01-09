@@ -89,6 +89,8 @@ public class SpamInterceptor implements Interceptor
 
     private static final Logger log = LoggerFactory.getLogger( SpamInterceptor.class );
 
+    private static final Challenge PASSWORD_CHALLENGE = new PasswordChallenge();
+
     /**
      * Introspects an ActionBean and returns the value for one or more supplied
      * properties. Any properties not found will be cheerfully ignored.
@@ -160,8 +162,13 @@ public class SpamInterceptor implements Interceptor
 
             case PASSWORD_PRESENTED: {
                 // Password challenge was requested
-                // Not implemented yet
                 checkForSpam( actionBean, eventInfo );
+                if ( !PASSWORD_CHALLENGE.check( actionBean.getContext() ) )
+                {
+                    ValidationError error = new LocalizableError( "login.error.password" );
+                    actionBean.getContext().getValidationErrors().addGlobalError( error );
+                    return actionBean.getContext().getSourcePageResolution();
+                }
                 break;
             }
 

@@ -1,8 +1,8 @@
 package org.apache.wiki.content.inspect;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.WeakHashMap;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiException;
@@ -10,8 +10,8 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 
 /**
- * Factory for creating spam-related {@link Inspection} and
- * {@link InspectionPlan} objects.
+ * Spam-oriented {@link InspectionPlan} that includes a static factory method
+ * for retrieving the SpamInspectionPlan for a supplied WikiEngine.
  */
 public final class SpamInspectionPlan extends InspectionPlan
 {
@@ -37,52 +37,8 @@ public final class SpamInspectionPlan extends InspectionPlan
 
     protected static final String PROP_CAPTCHA_CLASS = "jspwiki.captcha.implementation";
 
-    private static final Map<WikiEngine, SpamInspectionPlan> c_plans = new HashMap<WikiEngine, SpamInspectionPlan>();
+    private static final Map<WikiEngine, SpamInspectionPlan> c_plans = new WeakHashMap<WikiEngine, SpamInspectionPlan>();
     
-    private final Challenge m_captcha;
-
-    private final float m_limit;
-    
-    /**
-     * Private constructor to prevent direct instantiation.
-     * @throws WikiException if the SpamInspectionPlan cannot be
-     * initialized for any reason; the original Exception will be wrapped
-     */
-    private SpamInspectionPlan( Properties properties ) throws WikiException
-    {
-       super( properties ); 
-       
-       // Configure the CAPTCHA
-       m_captcha = initCaptcha( properties );
-       
-       // Get the default spam score limits
-       float limit = DEFAULT_SCORE_LIMIT;
-       String limitString = properties.getProperty( PROP_SCORE_LIMIT, String.valueOf( DEFAULT_SCORE_LIMIT ) );
-       try
-       {
-           limit = Float.parseFloat( limitString );
-       }
-       catch( NumberFormatException e )
-       {
-           log.error( "Property value " + PROP_SCORE_LIMIT + " did not parse to a float. Using " + DEFAULT_SCORE_LIMIT );
-       }
-       m_limit = limit;
-    }
-    
-    public float getSpamLimit()
-    {
-        return m_limit;
-    }
-
-    /**
-     * Returns the CAPTCHA ({@link Challenge}) for a the SpamInspectionPlan.
-     * @return the CAPTCHA
-     */
-    public Challenge getCaptcha() throws WikiException
-    {
-        return m_captcha;
-    }
-
     /**
      * <p>
      * Looks up and returns the spam InspectionPlan for a given WikiEngine. If
@@ -132,6 +88,94 @@ public final class SpamInspectionPlan extends InspectionPlan
     }
 
     /**
+     * Returns a new instance of the configured CAPTCHA implementation class,
+     * if one was specified by the {@link #PROP_CAPTCHA_CLASS} property. If one
+     * was not specified, this method will attempt to initialize the class
+     * named by {@link #DEFAULT_CAPTCHA_CLASS}. This method is guaranteed to
+     * return a non-{@code null} value.
+     * 
+     * @param props the properties to examine
+     * @return an initialized CAPTCHA implementing class
+     * @throws WikiException if the CAPTCHA implementation cannot be found or
+     * initialized for any reason; the original Exception will be wrapped
+     */
+    protected static Captcha initCaptcha( Properties props ) throws WikiException
+    {
+        String captchaClassName = props.getProperty( PROP_CAPTCHA_CLASS, DEFAULT_CAPTCHA_CLASS );
+        Class<?> captchaClass = null;
+        try
+        {
+            captchaClass = Class.forName( captchaClassName );
+        }
+        catch( ClassNotFoundException e )
+        {
+            String msg = "No CAPTCHA implementation found for class " + captchaClassName;
+            log.error( msg, e );
+            throw new WikiException( msg, e );
+        }
+
+        Captcha captcha = null;
+        if( captchaClass != null )
+        {
+            try
+            {
+                captcha = (Captcha) captchaClass.newInstance();
+            }
+            catch( Exception e )
+            {
+                String msg = "Could not create CAPTCHA instance for class " + captchaClassName;
+                log.error( msg, e );
+                throw new WikiException( msg, e );
+            }
+        }
+        return captcha;
+    }
+    
+    private final Captcha m_captcha;
+    
+    private final float m_limit;
+
+    /**
+     * Private constructor to prevent direct instantiation.
+     * @throws WikiException if the SpamInspectionPlan cannot be
+     * initialized for any reason; the original Exception will be wrapped
+     */
+    private SpamInspectionPlan( Properties properties ) throws WikiException
+    {
+       super( properties ); 
+       
+       // Configure the CAPTCHA
+       m_captcha = initCaptcha( properties );
+       
+       // Get the default spam score limits
+       float limit = DEFAULT_SCORE_LIMIT;
+       String limitString = properties.getProperty( PROP_SCORE_LIMIT, String.valueOf( DEFAULT_SCORE_LIMIT ) );
+       try
+       {
+           limit = Float.parseFloat( limitString );
+       }
+       catch( NumberFormatException e )
+       {
+           log.error( "Property value " + PROP_SCORE_LIMIT + " did not parse to a float. Using " + DEFAULT_SCORE_LIMIT );
+       }
+       m_limit = limit;
+    }
+
+    /**
+     * Returns the CAPTCHA ({@link Challenge}) for a the SpamInspectionPlan.
+     * @return the CAPTCHA
+     */
+    public Captcha getCaptcha() throws WikiException
+    {
+        return m_captcha;
+    }
+
+    public float getSpamLimit()
+    {
+        return m_limit;
+    }
+
+    /**
      * Determines the desired weight for an Inspector class, based on looking up
      * the value in the WikiEngine Properties
      * @param props the properties used to initialize the WikiEngine
@@ -151,49 +195,5 @@ public final class SpamInspectionPlan extends InspectionPlan
         {
         }
         return weight;
-    }
-
-    /**
-     * Returns a new instance of the configured CAPTCHA implementation class,
-     * if one was specified by the {@link #PROP_CAPTCHA_CLASS} property. If one
-     * was not specified, this method will attempt to initialize the class
-     * named by {@link #DEFAULT_CAPTCHA_CLASS}. This method is guaranteed to
-     * return a non-{@code null} value.
-     * 
-     * @param props the properties to examine
-     * @return an initialized CAPTCHA implementing class
-     * @throws WikiException if the CAPTCHA implementation cannot be found or
-     * initialized for any reason; the original Exception will be wrapped
-     */
-    protected static Challenge initCaptcha( Properties props ) throws WikiException
-    {
-        String captchaClassName = props.getProperty( PROP_CAPTCHA_CLASS, DEFAULT_CAPTCHA_CLASS );
-        Class<?> captchaClass = null;
-        try
-        {
-            captchaClass = Class.forName( captchaClassName );
-        }
-        catch( ClassNotFoundException e )
-        {
-            String msg = "No CAPTCHA implementation found for class " + captchaClassName;
-            log.error( msg, e );
-            throw new WikiException( msg, e );
-        }
-
-        Challenge captcha = null;
-        if( captchaClass != null )
-        {
-            try
-            {
-                captcha = (Challenge) captchaClass.newInstance();
-            }
-            catch( Exception e )
-            {
-                String msg = "Could not create CAPTCHA instance for class " + captchaClassName;
-                log.error( msg, e );
-                throw new WikiException( msg, e );
-            }
-        }
-        return captcha;
     }
 }
