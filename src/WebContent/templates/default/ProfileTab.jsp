@@ -139,14 +139,12 @@
      </wiki:UserProfile>
 
      <%-- Spam protection: password confirmation or CAPTCHA --%>
-     <tr>
-       <td><s:label for="captcha" /></td>
-       <td>
-         <wiki:UserCheck status="notAuthenticated">
-           <wiki:SpamProtect challenge="captcha" />
-         </wiki:UserCheck>
-       </td>
-     </tr>
+     <wiki:UserCheck status="notAuthenticated">
+       <tr>
+         <td><s:label for="captcha" /></td>
+         <td><wiki:SpamProtect challenge="captcha" /></td>
+       </tr>
+     </wiki:UserCheck>
      
      <%-- Save changes --%>
      <tr>

@@ -177,7 +177,7 @@ public final class SecurityVerifier
      * {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer}
      * @return the formatted HTML table containing the result of the tests
      */
-    public final String policyRoleTable()
+    public final String getPolicyRoleTable()
     {
         Principal[] roles = m_policyPrincipals;
         String wiki = m_engine.getApplicationName();
@@ -346,7 +346,7 @@ public final class SecurityVerifier
      * @return the formatted HTML table containing the result of the tests
      * @throws WikiException if tests fail for unexpected reasons
      */
-    public final String containerRoleTable() throws WikiException
+    public final String getContainerRoleTable() throws WikiException
     {
 
         AuthorizationManager authorizationManager = m_engine.getAuthorizationManager();
@@ -447,7 +447,7 @@ public final class SecurityVerifier
      * @return the roles parsed from <code>web.xml</code>, or a zero-length array
      * @throws WikiException if the web authorizer cannot obtain the list of roles
      */
-    public final Principal[] webContainerRoles() throws WikiException
+    public final Principal[] getWebContainerRoles() throws WikiException
     {
         Authorizer authorizer = m_engine.getAuthorizationManager().getAuthorizer();
         if ( authorizer instanceof WebContainerAuthorizer )

@@ -1,3 +1,12 @@
+2010-01-17 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-199
+
+        * SecurityConfig gets the Stripes treatment. Minor
+        tweaks to SecurityVerifier to make it JSTL-friendly.
+        SecurityConfig logic moves to AdminActionBean.
+        Minor licensing doc tweaks per [JSPWIKI-544].
+
 2010-01-09 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-198

@@ -205,63 +205,66 @@
 
 Other libraries in this product include:
 
-LIBRARY										LICENSE FILE
+LIBRARY                                   LICENSE FILE
 ===================================================================================
-activation.jar								doc/LICENSE.cddl
-akismet-java-1.02.jar						doc/LICENSE.akismet
-commons-codec-1.3.jar						LICENSE
-commons-fileupload-1.2.1.jar				LICENSE
-commons-httpclient-3.0.1.jar				LICENSE
-commons-io-1.4.jar							LICENSE
-commons-lang-2.3.jar						LICENSE
-commons-logging-api.jar						LICENSE
-ecs.jar										LICENSE
-freshcookies-security-0.60.jar				LICENSE
-jakarta-taglibs-standard-1.1.2.jar			LICENSE
-jakarta-taglibs-jstl-1.1.2.jar				LICENSE
-jaxen.jar									doc/LICENSE.jaxen
-jdom.jar									doc/LICENSE.jdom
-jrcs-diff.jar								LICENSE
-jabsorb-1.3.jar								LICENSE
-jsp-api.jar									LICENSE
-log4j-1.2.14.jar							LICENSE
-lucene-highlighter.jar						LICENSE
-lucene.jar									LICENSE
-mail.jar									doc/LICENSE.cddl
-nekohtml.jar								LICENSE
-oro.jar										LICENSE
-oscache.jar									doc/LICENSE.OpenSymphony
-sandler.jar									doc/LICENSE.sandler
-servlet-api.jar								doc/LICENSE.cddl
-xmlrpc.jar									LICENSE
-slf4j-api-1.5.5.jar                      MIT-style license
-slf4j-log4j12-1.5.5.jar                      MIT-style license
+activation.jar                            doc/LICENSE.cddl
+akismet-java-1.02.jar                     doc/LICENSE.akismet
+commons-codec-1.3.jar                     LICENSE
+commons-fileupload-1.2.1.jar              LICENSE
+commons-httpclient-3.0.1.jar              LICENSE
+commons-io-1.4.jar                        LICENSE
+commons-lang-2.3.jar                      LICENSE
+ecs.jar                                   LICENSE
+ehcache-1.6.0.jar                         LICENSE
+freshcookies-security-0.62.jar            LICENSE
+jabsorb-1.3.jar                           LICENSE
+jakarta-taglibs-standard-1.1.2.jar        LICENSE
+jakarta-taglibs-jstl-1.1.2.jar            LICENSE
+jaxen.jar                                 doc/LICENSE.jaxen
+jcl-over-slf4j-1.5.6.jar                  doc/LICENSE.slf4j
+jul-to-slf4j-1.5.6.jar                    doc/LICENSE.slf4j
+jcr-1.0.jar                               doc/LICENSE.jcr
+jdom.jar                                  doc/LICENSE.jdom
+jrcs-diff.jar                             LICENSE
+jsp-api.jar                               LICENSE
+log4j-1.2.14.jar                          LICENSE
+lucene-highlighter.jar                    LICENSE
+lucene.jar                                LICENSE
+mail.jar                                  doc/LICENSE.cddl
+nekohtml.jar                              LICENSE
+priha-0.7.0-alpha                         LICENSE
+sandler.jar                               doc/LICENSE.sandler
+servlet-api.jar                           doc/LICENSE.cddl
+slf4j-api-1.5.6.jar                       doc/LICENSE.slf4j
+slf4j-log4j12-1.5.6.jar                   doc/LICENSE.slf4j
+stripes-1.6-svn-1193.jar                  LICENSE
+xmlrpc.jar                                LICENSE
 
-TEST LIBRARY								LICENSE FILE
+TEST LIBRARY                              LICENSE FILE
 ===================================================================================
-commons-el-1.0.jar							LICENSE
-custom_rhino.jar							doc/LICENSE.mpl
-hsqldb.jar									doc/LICENSE.hsqldb
-jasper-compiler-5.5.25.jar					LICENSE
-jasper-runtime-5.5.25.jar					LICENSE
-jetty-jmx-5.1.14.jar						doc/LICENSE.Jetty
-jetty-plus-5.1.14.jar						doc/LICENSE.Jetty
-jetty-servlet-5.1.14.jar					doc/LICENSE.Jetty
-junit.jar									doc/LICENSE.cpl
-selenium-java-client-driver-1.0-beta1.jar	LICENSE
-selenium-server-1.0-beta1.jar				LICENSE
-stripes-1.5.jar								LICENSE
-xercesImpl-2.6.2.jar						LICENSE
-xml-apis-1.0.b2.jar							LICENSE
-yuicompressor-2.3.3.jar						doc/LICENSE.yui
+commons-el-1.0.jar                        LICENSE
+custom_rhino.jar                          doc/LICENSE.mpl
+hsqldb.jar                                doc/LICENSE.hsqldb
+jasper-compiler-5.5.25.jar                LICENSE
+jasper-runtime-5.5.25.jar                 LICENSE
+jetty-jmx-5.1.14.jar                      doc/LICENSE.Jetty
+jetty-plus-5.1.14.jar                     doc/LICENSE.Jetty
+jetty-servlet-5.1.14.jar                  doc/LICENSE.Jetty
+junit.jar                                 doc/LICENSE.cpl
+selenium-java-client-driver-1.0b2.jar     LICENSE
+selenium-server-1.0b2.jar                 LICENSE
+xercesImpl-2.6.2.jar                      LICENSE
+xml-apis-1.0.b2.jar                       LICENSE
+yuicompressor-2.4.2.jar                   doc/LICENSE.yui
 
-JS LIBRARY									LICENSE FILE
+JAVASCRIPT LIBRARY                        LICENSE FILE
 ===================================================================================
-mootools.js									doc/LICENSE.mit
-prettify.js									LICENSE
-SlimBox										doc/LICENSE.mit 
-posteditor.js								MIT-style license
+fckconfig.js                              doc/LICENSE.mpl
+mootools.js                               doc/LICENSE.mit
+prettify.js                               LICENSE
+SlimBox                                   doc/LICENSE.mit 
+posteditor.js                             "MIT-style license"
 
-RESOURCES									LICENSE FILE
+RESOURCE                                  LICENSE FILE
 ===================================================================================
-SilkIconSet									doc/LICENSE.SilkIconSet
+SilkIconSet                               doc/LICENSE.SilkIconSet

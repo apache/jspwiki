@@ -338,7 +338,7 @@ public class EditActionBean extends AbstractPageActionBean
         {
             UserManager mgr = getContext().getEngine().getUserManager();
             UserProfile profile = mgr.getUserProfile( wikiSession );
-            if ( profile.getEmail() != null )
+            if ( profile.getEmail() != null && profile.getEmail().length() > 0 )
             {
                 setEmail( profile.getEmail() );
             }
@@ -621,7 +621,7 @@ public class EditActionBean extends AbstractPageActionBean
             UserProfile profile = engine.getUserManager().getUserProfile( session );
             if ( email.equals( profile.getEmail() ) )
             {
-                Message message = new LocalizableMessage( "changed.email" );
+                Message message = new LocalizableMessage( "changed.email", profile.getEmail(), email );
                 getContext().getMessages().add( message );
             }
         }
