@@ -38,7 +38,7 @@ Board Resolution Report
          * Andrew Jaquith                 <ajaquith@apache.org>
          * Florian Holeczek              <florianh@apache.org>
          * Harry Metske                     <metskem@apache.org>
-         * Juan Pablo Rodriquez     <juanpablo@apache.org>
+         * Juan Pablo Santos             <juanpablo@apache.org>
 
        NOW, THEREFORE, BE IT FURTHER RESOLVED, that Janne Jalkanen
        be appointed to the office of Vice President, Apache JSPWiki, to
