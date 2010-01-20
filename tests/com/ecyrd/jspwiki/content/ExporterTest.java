@@ -1,8 +1,6 @@
 package com.ecyrd.jspwiki.content;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -43,9 +41,9 @@ public class ExporterTest extends TestCase
         
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        Exporter x = new Exporter(m_engine,out,false);
+        Exporter x = new Exporter(out,false);
         
-        x.export();
+        x.export(m_engine);
         
         String res = out.toString( "UTF-8" );
         

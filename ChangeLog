@@ -1,3 +1,10 @@
+2010-01-20  Janne Jalkanen <jalkanen@apache.org>
+
+        * 2.8.4-svn-7
+        
+        * Improved exporter to also export from a FileSystemProvider repo without actually
+        loading the WikiEngine.
+        
 2009-12-23 Harry Metske <metskem@apache.org>
 
         * 2.8.4-svn-6

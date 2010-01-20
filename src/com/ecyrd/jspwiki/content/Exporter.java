@@ -38,6 +38,7 @@ import com.ecyrd.jspwiki.WikiPage;
 import com.ecyrd.jspwiki.attachment.Attachment;
 import com.ecyrd.jspwiki.auth.acl.Acl;
 import com.ecyrd.jspwiki.auth.acl.AclEntry;
+import com.ecyrd.jspwiki.providers.FileSystemProvider;
 import com.ecyrd.jspwiki.providers.ProviderException;
 
 /**
@@ -53,7 +54,6 @@ import com.ecyrd.jspwiki.providers.ProviderException;
  */
 public class Exporter
 {
-    private WikiEngine m_engine;
     private PrintWriter m_out;
     private boolean     m_verbose = false;
     
@@ -78,29 +78,81 @@ public class Exporter
      * 
      *  @throws UnsupportedEncodingException If your platform does not support UTF-8
      */
-    public Exporter(WikiEngine engine, OutputStream outStream, boolean verbose) throws UnsupportedEncodingException
+    public Exporter(OutputStream outStream, boolean verbose) throws UnsupportedEncodingException
     {
-        m_engine = engine;
         m_out = new PrintWriter( new OutputStreamWriter(outStream,"UTF-8") );
         m_verbose = verbose;
     }
     
     /**
-     *  Exports the entire repository.
+     *  Exports the entire repository using a WikiEngine.
      *  
      *  @throws ProviderException 
      *  @throws IOException 
      */
-    public void export() throws ProviderException, IOException
+    public void export(WikiEngine engine) throws ProviderException, IOException
     {
-        Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
+        Collection<WikiPage> allPages = engine.getPageManager().getAllPages();
         
+        exportDocumentHeader();
         
+        for( WikiPage p : allPages )
+        {
+            exportPage( engine, p );
+        }
+        
+        exportDocumentFooter();
+    }
+
+    protected void export( String dir ) throws IOException
+    {
+        System.out.println("Exporting a FileSystemProvider/RCSFileProvider/VersioningFileProvider compatible repository.");
+        System.out.println("This version does not export attributes, ACLs or attachments. Please use --properties for that.");
+        
+        File df = new File(dir);
+        
+        File[] pages = df.listFiles( new FilenameFilter() {
+
+            public boolean accept( File dir, String name )
+            {
+                return name.endsWith( FileSystemProvider.FILE_EXT );
+            }} );
+        
+        exportDocumentHeader();
+        
+        for( File f : pages )
+        {
+            String pageName = f.getName();
+            pageName = pageName.replace( ".txt", "" );
+            exportPageHeader( pageName, "Main", "TBD", new Date(f.lastModified()), false );
+            
+            // File content
+            
+            FileInputStream in = new FileInputStream(f);
+            exportProperty( "wiki:content", FileUtil.readContents( in, "UTF-8" ), STRING );
+            in.close();
+            
+            exportPageFooter();
+        }
+        exportDocumentFooter();
+        
+        System.out.println("...done");
+    }
+    
+    private void exportDocumentFooter()
+    {
+        m_out.println("</sv:node> <!-- EOF -->");
+        
+        m_out.flush();
+    }
+
+    private void exportDocumentHeader()
+    {
         m_out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         //  Some comments
         
         m_out.println("<!--");
-        m_out.println("This is an JSR-170 -compliant Document Tree export of a jspwiki 2.8 repository.\n"+
+        m_out.println("This is an JSR-170 -compliant Document Tree export of a JSPWiki repository.\n"+
                       "It is meant to be imported to the /pages/ node of the JCR repository, as it\n"+
                       "describes an entire wiki space.");
         m_out.println("-->");
@@ -112,15 +164,6 @@ public class Exporter
                       "xmlns:sv='http://www.jcp.org/jcr/sv/1.0' "+ 
                       "xmlns:wiki='"+NS_JSPWIKI+"'\n"+ 
                       "         sv:name='main'>" );
-        
-        for( WikiPage p : allPages )
-        {
-            exportPage( p );
-        }
-        
-        m_out.println("</sv:node> <!-- EOF -->");
-        
-        m_out.flush();
     }
     
     private void exportProperty( String name, String value, String type )
@@ -153,32 +196,72 @@ public class Exporter
      *  @return
      *  @throws IOException
      */
-    private String mkUuid( WikiPage p ) throws IOException
+    private String mkUuid( String wiki, String name ) throws IOException
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         
-        out.write( p.getWiki().getBytes("UTF-8") );
-        out.write( p.getName().getBytes("UTF-8") );
+        out.write( wiki.getBytes("UTF-8") );
+        out.write( name.getBytes("UTF-8") );
         
         return UUID.nameUUIDFromBytes( out.toByteArray() ).toString();
     }
     
-    private String guessMimeType( WikiPage p )
+    private String guessMimeType( String name, boolean isAttachment )
     {
-        if( p instanceof Attachment )
-            return m_mimeTypes.getContentType( ((Attachment)p).getFileName() );
+        if( isAttachment )
+            return m_mimeTypes.getContentType( name );
         
         return JSPWIKI_CONTENT_TYPE;
     }
     
-    protected void exportPage( WikiPage p ) throws IOException, ProviderException
+    protected void exportPage( WikiEngine engine, WikiPage p ) throws IOException, ProviderException
     {
-        String title = p.getName();
+        String name  = p.getName();
+        String title = name;
+        boolean isAttachment = p instanceof Attachment;
         
-        if( title.contains( "/" ) && !(p instanceof Attachment) )
+        title = generateTitle( name, title, isAttachment );
+        
+        exportPageHeader(p.getName(), p.getWiki(), p.getAuthor(), p.getLastModified(), isAttachment);
+
+        Map<String,Object> attrMap = p.getAttributes();
+        
+        exportAttributes( attrMap );
+        
+        //
+        //  ACLs
+        //
+        
+        Acl acl = p.getAcl();
+        
+        exportAcl( acl );
+        
+        //
+        //  Export page content
+        //
+        
+        exportProperty( "wiki:content", engine.getPureText( p ), STRING );
+        
+        //
+        //  Finally, list attachment.  According to JCR rules, these must be last.
+        //
+        /*
+        Collection<Attachment> atts = m_engine.getAttachmentManager().listAttachments( p );
+        
+        for( Attachment a : atts )
+        {
+            exportPage( a );
+        }
+        */
+        exportPageFooter();
+    }
+
+    private String generateTitle( String name, String title, boolean isAttachment )
+    {
+        if( title.contains( "/" ) && !isAttachment )
         {
             title = title.replace( '/', '_' );
-            System.err.println("Page '"+p.getName()+"' will be renamed to '"+title+"', as it contains an illegal character.");
+            System.err.println("Page '"+name+"' will be renamed to '"+title+"', as it contains an illegal character.");
         }
      
         title = title.toLowerCase();
@@ -192,7 +275,7 @@ public class Exporter
         
         if( !tryTitle.equals( title ) )
         {
-            System.err.println( "New case independence rules state that page '"+p.getName()+"' will be renamed to '"+tryTitle+"', as there is a conflict already with a page with a similar title." );
+            System.err.println( "New case independence rules state that page '"+name+"' will be renamed to '"+tryTitle+"', as there is a conflict already with a page with a similar title." );
             title = tryTitle;
         }
         
@@ -201,24 +284,18 @@ public class Exporter
         if( m_verbose )
             System.out.println("Exporting "+title);
         
-        exportCommonHeader(title, p);
+        return title;
+    }
 
-        Map<String,Object> attrMap = p.getAttributes();
+    private void exportPageFooter()
+    {
+        m_out.println(" </sv:node>");
         
-        for( Map.Entry<String, Object> e : attrMap.entrySet() )
-        {
-            if( e.getKey().equals( WikiPage.CHANGENOTE ) )
-                exportProperty( "wiki:changeNote", (String)e.getValue(), STRING );
-            else
-                exportProperty( e.getKey(), e.getValue().toString(), STRING );
-        }
-        
-        //
-        //  ACLs
-        //
-        
-        Acl acl = p.getAcl();
-        
+        m_out.flush();
+    }
+
+    private void exportAcl( Acl acl )
+    {
         if( acl != null )
         {
             ArrayList<String> propval = new ArrayList<String>();
@@ -245,56 +322,46 @@ public class Exporter
             
             exportProperty("wiki:acl", propval.toArray( new String[propval.size()] ), STRING);
         }
-        
-        //
-        //  Export page content
-        //
-        
-        exportProperty( "wiki:content", m_engine.getPureText( p ), STRING );
-        
-        //
-        //  Finally, list attachment.  According to JCR rules, these must be last.
-        //
-        /*
-        Collection<Attachment> atts = m_engine.getAttachmentManager().listAttachments( p );
-        
-        for( Attachment a : atts )
+    }
+
+    private void exportAttributes( Map<String, Object> attrMap )
+    {
+        for( Map.Entry<String, Object> e : attrMap.entrySet() )
         {
-            exportPage( a );
+            if( e.getKey().equals( WikiPage.CHANGENOTE ) )
+                exportProperty( "wiki:changeNote", (String)e.getValue(), STRING );
+            else
+                exportProperty( e.getKey(), e.getValue().toString(), STRING );
         }
-        */
-        m_out.println(" </sv:node>");
-        
-        m_out.flush();
     }
     
-    private void exportCommonHeader( String title, WikiPage p ) throws IOException
+    private void exportPageHeader( String title, String wiki, String author, Date lastModified, boolean isAttachment ) throws IOException
     {
-        m_out.println(" <sv:node sv:name='"+StringEscapeUtils.escapeXml( title )+"'>");
+        m_out.println(" <sv:node sv:name='"+StringEscapeUtils.escapeXml( title.toLowerCase() )+"'>");
         
         exportProperty( "jcr:primaryType", "nt:unstructured", NAME );
         exportProperty( "jcr:mixinTypes", 
                         new String[] {"mix:referenceable","mix:lockable"}, 
                         NAME );
-        exportProperty( "wiki:author", p.getAuthor(), STRING );
-        exportProperty( "jcr:uuid", mkUuid(p), STRING); 
+        exportProperty( "wiki:author", author, STRING );
+        exportProperty( "jcr:uuid", mkUuid(wiki,title), STRING); 
    
-        exportProperty( "wiki:lastModified", m_isoFormat.format(p.getLastModified()), DATE );
+        exportProperty( "wiki:lastModified", m_isoFormat.format(lastModified), DATE );
 
-        exportProperty( "wiki:contentType", guessMimeType( p ), STRING );
+        exportProperty( "wiki:contentType", guessMimeType( title, isAttachment ), STRING );
         
-        exportProperty( "wiki:title", p.getName(), STRING );
+        exportProperty( "wiki:title", title, STRING );
     }
     
-    protected void exportPage( Attachment att ) throws IOException, ProviderException
+    protected void exportPage( WikiEngine engine, Attachment att ) throws IOException, ProviderException
     {
-        exportCommonHeader(att.getName().toLowerCase(), att);
+        exportPageHeader(att.getName(), att.getWiki(), att.getAuthor(), att.getLastModified(), true);
         
         m_out.println("  <sv:property sv:name='"+att.getFileName()+"' sv:type='"+BINARY+"'>");
         
         m_out.print("<sv:value>");
         
-        InputStream binary = m_engine.getAttachmentManager().getAttachmentStream( att );
+        InputStream binary = engine.getAttachmentManager().getAttachmentStream( att );
        
         Base64.InputStream base64 = new Base64.InputStream(binary, Base64.ENCODE);
         
@@ -305,23 +372,101 @@ public class Exporter
         m_out.println("</sv:value>");
         m_out.println("</sv:property>");
         
-        m_out.println(" </sv:node>");
+        exportPageFooter();  
+    }
+    
+    private static final String getParam(String s[], String p, String defaultParam)
+    {
+        if( s.length < 2 ) return defaultParam;
         
-        m_out.flush();  
+        if( p == null )
+        {
+            String p1 = s[s.length-2];
+            String p2 = s[s.length-1];
+            
+            if( p1.startsWith( "-" ) ) return defaultParam;
+            
+            return p2;
+        }
+        
+        for( int i = 0; i < s.length; i++ )
+        {
+            if( s[i].equals(p) )
+            {
+                // Found potential parameter
+                
+                if( i < s.length-1 )
+                {
+                    String p2 = s[i+1];
+                 
+                    // Does the next one start with a "-"?
+                    if( p2.startsWith( "-" ) )
+                        return "";
+                    
+                    return p2;
+                }
+                
+                // Last item on list
+                return "";
+            }
+        }
+        
+        return defaultParam;
+    }
+    
+    private static final void exit()
+    {
+        System.err.println("Usage: com.ecyrd.jspwiki.content.Exporter [--properties <path to jspwiki.properties>] [--dir <versioning file provider dir>] <filename>");
+        System.exit( 1 );        
     }
     
     // FIXME: Would be useful if this actually had some options checking.
     public static void main( String[] argv ) throws IOException
     {
-        if( argv.length < 2 )
+        String propFile = getParam( argv, "--properties", null);
+        String outFile  = getParam( argv, null, null);
+        String dir      = getParam( argv, "--dir", null);
+        
+        if( outFile == null )
         {
-            System.err.println("Usage: com.ecyrd.jspwiki.content.Exporter <path to jspwiki.properties> <filename>");
-            System.exit( 1 );
+            exit();
         }
         
-        String propFile = argv[0];
-        String outFile  = argv[1];
+        if( (propFile == null && dir == null) || (propFile != null && dir != null) )
+        {
+            exit();
+        }
         
+        if( propFile != null )
+        {
+            exportWithProperties( propFile, outFile );
+        }
+        else
+        {
+            exportWithDir( dir, outFile );
+        }
+    }
+
+ 
+    /**
+     *  This is a special version of the routine which knows the FileSystemProvider default format.
+     *  
+     *  @param dir
+     *  @param outFile
+     *  @throws IOException
+     */
+    public static void exportWithDir( String dir, String outFile ) throws IOException
+    {
+        FileOutputStream out = new FileOutputStream(new File(outFile));
+        Exporter x = new Exporter( out, true );
+        
+        x.export( dir );
+        
+        out.close();
+    }
+    
+    public static void exportWithProperties( String propFile, String outFile ) throws IOException
+    {
         Properties props = new Properties();
         try
         {
@@ -339,15 +484,15 @@ public class Exporter
         }
 
         OutputStream out = null;
-        
+      
         try
         {
             out = new BufferedOutputStream( new FileOutputStream(outFile) );
             WikiEngine engine = new WikiEngine(props);
-            
-            Exporter x = new Exporter(engine, out, true );
-            
-            x.export();
+        
+            Exporter x = new Exporter(out, true );
+        
+            x.export(engine);
         }
         catch( WikiException e )
         {

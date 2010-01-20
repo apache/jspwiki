@@ -384,7 +384,7 @@
   <target name="war" depends="installinit,jar,compressedjs"
           description="Builds the WAR file for installation.">
 
-    <property name="warfile" value="${install.fulldir}/${ant.project.name}.war" />
+    <property name="warfile" value="build/${ant.project.name}.war" />
 
     <delete file="${warfile}" />
 
