@@ -18,68 +18,64 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ page import="org.apache.wiki.log.Logger" %>
-<%@ page import="org.apache.wiki.log.LoggerFactory" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.ui.admin.*" %>
-<%@ page import="org.apache.wiki.ui.TemplateManager" %>
-<%@ page import="org.apache.commons.lang.time.StopWatch" %>
+<%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
-<%@ page import="org.apache.wiki.util.TextUtil" %>
-<%! 
-    Logger log = LoggerFactory.getLogger("JSPWiki"); 
-%>
-<%
-    String bean = request.getParameter("bean");
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.ADMIN );
+<%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<s:useActionBean beanclass="org.apache.wiki.action.AdminActionBean" event="view" id="admin" executeResolution="true" />
+<s:layout-render name="${templates['DefaultLayout.jsp']}">
+  <s:layout-component name="content">
+    <h1>JSPWiki Administration</h1>
+    <div class="information">Not all things can be configured here.  Some things need to be configured
+    in your <tt>jspwiki.properties</tt> file.</div>
     
-    //
-    //  This is an experimental feature, so we will turn it off unless the
-    //  user really wants to.
-    //
-    if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
-    {
-        %>
-        <html>
-        <body>
-           <h1>Disabled</h1>
-           <p>JSPWiki admin UI has been disabled.  This is an experimental feature, and is
-           not guaranteed to work.  You may turn it on by specifying</p>
-           <pre>
-               jspwiki-x.adminui.enable=true
-           </pre>
-           <p>in your <tt>jspwiki.properties</tt> file.</p>
-           <p>Have a nice day.  Don't forget to eat lots of fruits and vegetables.</p>
-        </body>
-        </html>
-        <%
-        return;
-    }
-
-    // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "admin/AdminTemplate.jsp" );
+      <wiki:TabbedSection defaultTab="${param['tab']}">
+      
+        <wiki:Tab id="users" title="Users">
+          <wiki:Include page="admin/UserManagement.jsp" />
+        </wiki:Tab>
+          
+        <wiki:Tab id="groups" title="Groups">
+          <div>
+            <p>This is a list of all groups in this wiki.  If you click on the group name,
+            you will be taken to the administration page of that particular group.</p>
+            <p><wiki:Plugin plugin="Groups" /></p>
+          </div>
+        </wiki:Tab>
+          
+        <wiki:AdminBeanIterator type="core" id="ab">
+          <wiki:Tab id="${ab.id}" title="${ab.title}">
+            <div class="formcontainer">
+              <s:form beanclass="org.apache.wiki.action.AdminActionBean" method="post" acceptcharset="UTF-8">
+                <s:hidden name="tab-admin" value="core" />
+                <s:hidden name="tab-core" value="${ab.title}" />
+                <s:hidden name="bean" value="${ab.id}" />
+                <%= ab.doGet( (WikiContext)request.getAttribute( "wikiActionBeanContext" ) ) %>
+                <s:submit name="admin" value="Submit" />
+              </s:form>
+            </div>
+          </wiki:Tab>
+        </wiki:AdminBeanIterator>
+          
+        <wiki:AdminBeanIterator type="editors" id="ab">
+          <wiki:Tab id="${ab.id}" title="${ab.title}">
+            <div class="formcontainer"> 
+              <s:form beanclass="org.apache.wiki.action.AdminActionBean" method="post" acceptcharset="UTF-8">
+                <s:hidden name="tab-admin" value="editors" />
+                <s:hidden name="tab-editors" value="${ab.title}" />
+                <s:hidden name="bean" value="${ab.id}" />
+                <%= ab.doGet( (WikiContext)request.getAttribute( "wikiActionBeanContext" ) ) %>
+                <s:submit name="admin" value="Submit" />
+              </s:form>
+            </div>
+          </wiki:Tab>
+        </wiki:AdminBeanIterator>
     
-    pageContext.setAttribute( "engine", wiki, PageContext.REQUEST_SCOPE );
-    pageContext.setAttribute( "context", wikiContext, PageContext.REQUEST_SCOPE );
-
-    if( request.getMethod().equalsIgnoreCase("post") && bean != null )
-    {
-        AdminBean ab = wiki.getAdminBeanManager().findBean( bean );
+        <wiki:Tab id="filters" title="Filters">
+          <p>There will be more filter stuff here</p>
+        </wiki:Tab>
         
-        if( ab != null )
-        {
-            ab.doPost( wikiContext );
-        }
-        else
-        {
-            wikiContext.getWikiSession().addMessage( "No such bean "+bean+" was found!" );
-        }
-    }
-    
-%><wiki:Include page="<%=contentPage%>" />
+      </wiki:TabbedSection>
+    </div>
+  </s:layout-component>
+</s:layout-render>
