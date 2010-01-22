@@ -360,7 +360,7 @@ public class GroupActionBean extends AbstractActionBean
                     LocalizableError error = (LocalizableError) fieldError;
                     if( "editgroup.illegalname".equals( error.getMessageKey() ) )
                     {
-                        return new ForwardResolution( ErrorActionBean.class );
+                        return new ForwardResolution( MessageActionBean.class, "error" );
                     }
                 }
             }
@@ -380,7 +380,7 @@ public class GroupActionBean extends AbstractActionBean
             }
             catch( Exception e )
             {
-                return new RedirectResolution( ErrorActionBean.class ).flash( this );
+                return new RedirectResolution( MessageActionBean.class, "error" ).flash( this );
             }
         }
 
