@@ -93,7 +93,7 @@ public interface WikiContext
     public static final String    CONFLICT = HandlerInfo.getHandlerInfo( EditActionBean.class, "edit" ).getRequestContext();
 
     /** An error has been encountered and the user needs to be informed. */
-    public static final String    ERROR    = HandlerInfo.getHandlerInfo( ErrorActionBean.class, "error" ).getRequestContext();
+    public static final String    ERROR    = HandlerInfo.getHandlerInfo( MessageActionBean.class, "error" ).getRequestContext();
 
     /** User is uploading something. */
     public static final String    UPLOAD   = HandlerInfo.getHandlerInfo( AttachmentActionBean.class, "upload" ).getRequestContext();
