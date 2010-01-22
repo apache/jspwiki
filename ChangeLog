@@ -1,3 +1,22 @@
+2010-01-21 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-200
+
+        * WikiServletFilter's sole remaining function (checking for
+        cookie and container authentication) was moved into
+        WikiInterceptor and WikiContextFactory. WikiServletFilter
+        was removed.
+
+        * Moved ErrorActionBean functions into MessageActionBean.
+        
+        * The admin/Admin.jsp JSP receives the Stripes treatment, but
+        badly. It doesn't work and will need to be fixed.
+        
+        * All top-level JSPs have now been converted to Stripes
+        ActionBeans. No scriptlet code remains. Some scriptlets
+        remain in the template JSPs, but that is ok. ViewTemplate.jsp
+        and EditTemplate.jsp are removed.
+
 2010-01-17 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-199
