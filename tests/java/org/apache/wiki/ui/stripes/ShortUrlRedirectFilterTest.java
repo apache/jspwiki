@@ -20,17 +20,13 @@
  */
 package org.apache.wiki.ui.stripes;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import net.sourceforge.stripes.controller.DispatcherServlet;
-import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.MockRoundtrip;
 import net.sourceforge.stripes.mock.MockServletContext;
 
+import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.ViewActionBean;
 
@@ -43,14 +39,7 @@ public class ShortUrlRedirectFilterTest extends TestCase
     {
         // Configure the filter and servlet
         MockServletContext servletContext = new MockServletContext( "test" );
-        servletContext.setServlet(DispatcherServlet.class, "StripesDispatcher", null);
-        
-        // Add extension classes
-        Map<String,String> filterParams = new HashMap<String,String>();
-        filterParams.put("ActionResolver.Packages", "org.apache.wiki.action");
-        filterParams.put("Extension.Packages", "org.apache.wiki.ui.stripes");
-        filterParams.put( "ExceptionHandler.Class", "org.apache.wiki.ui.stripes.WikiExceptionHandler" );
-        servletContext.addFilter(StripesFilter.class, "StripesFilter", filterParams);
+        TestEngine.initMockContext( servletContext );
         servletContext.addFilter( ShortUrlRedirectFilter.class, "Redirect filter", null );
 
         // Set the configured servlet context

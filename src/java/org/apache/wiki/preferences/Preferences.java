@@ -48,7 +48,7 @@ import org.apache.wiki.util.PropertyReader;
  * and other customizable user interface items. Preferences are initialized by
  * JSPWiki by reading a series of cookies from the user's HTTP request. This
  * happens once per request, during the execution of
- * {@link org.apache.wiki.ui.WikiServletFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}.
+ * {@link org.apache.wiki.ui.stripes.WikiInterceptor}.
  * The method {@link #setupPreferences(HttpServletRequest)} performs the actual
  * initialization.
  * <p>

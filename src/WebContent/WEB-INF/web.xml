@@ -40,29 +40,6 @@
      <param-value>templates.default</param-value>
    </context-param>
 
-   <!--
-      WikiServletFilter defines a servlet filter which filters all requests. It was
-      introduced in JSPWiki 2.4.
-
-      In 2.7/2.8, the WikiServlet filter also performs an important security function:
-      it sets authentication status based on container credentials. It should generally
-      execute first. Note that if you configure a filter *before* this one that returns
-      non-null values for getUserPrincipal() or getRemoteUser(), WikiSecurityFilter
-      will pick the credentials up, and set the user's WikiSession state to
-      "authenticated." WikiServletFlter will also set the WikiSession's' state
-      to "authenticated" if jspwiki.properties property "jspwiki.cookieAuthentication"
-      is set to true, and the user possesses the correct authentication cookie.
-
-      Lastly, if jspwiki.properties property "jspwiki.cookieAssertions" is set to true,
-      WikiServletFilter will also set WikiSession state to "asserted" if the user
-      possesses the correct "assertion cookie."
-   -->
-
-   <filter>
-      <filter-name>WikiServletFilter</filter-name>
-      <filter-class>org.apache.wiki.ui.WikiServletFilter</filter-class>
-   </filter>
-   
    <!-- Configuration of the Stripes Filter. The Stripes MVC framework provides
          essential request routing, form processing and type conversion services
          for JSPWiki. -->
@@ -121,45 +98,11 @@
    </filter>
 
    <!--
-      This is new in 2.4.  This defines a servlet filter which filters all requests. 
+      The StripesFilter and DynamicMappingFilter process all requests for JSPs and ActionBeans. 
    -->
-
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/attach/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/atom/*</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/RPCU/</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/RPC2/</url-pattern>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/JSON-RPC</url-pattern>
-   </filter-mapping> 
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>*.jsp</url-pattern>
-   </filter-mapping> 
-   <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>*.action</url-pattern>
-   </filter-mapping> 
    <filter-mapping>
        <filter-name>StripesFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
-       <dispatcher>REQUEST</dispatcher>
-   </filter-mapping>
-   <filter-mapping>
-       <filter-name>StripesFilter</filter-name>
-       <servlet-name>StripesDispatcher</servlet-name>
        <dispatcher>REQUEST</dispatcher>
    </filter-mapping>
    <filter-mapping>
@@ -177,15 +120,6 @@
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
    
-    <!-- 
-        Stripes dispatcher Servlet.
-    -->
-    <servlet>
-        <servlet-name>StripesDispatcher</servlet-name>
-        <servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
@@ -236,30 +170,6 @@
        <servlet-class>org.apache.wiki.rpc.atom.AtomAPIServlet</servlet-class>       
    </servlet>
 
-   <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
-   <servlet>
-       <servlet-name>WikiServlet</servlet-name>
-       <servlet-class>org.apache.wiki.WikiServlet</servlet-class>
-       <!--
-       <load-on-startup>1</load-on-startup>
-       -->
-   </servlet>
-
-    <servlet-mapping>
-        <servlet-name>StripesDispatcher</servlet-name>
-        <url-pattern>/dispatcher</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>StripesDispatcher</servlet-name>
-        <url-pattern>/action/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>StripesDispatcher</servlet-name>
-        <url-pattern>*.action</url-pattern>
-    </servlet-mapping>
-
    <!-- PLACEHOLDER FOR PRE-COMPILED JSP SERVLETS -->
 
    <!--
@@ -288,11 +198,6 @@
    </servlet-mapping>
 
    AND REMOVE ME TOO -->
-
-   <servlet-mapping>
-       <servlet-name>WikiServlet</servlet-name>
-       <url-pattern>/wiki/*</url-pattern>
-   </servlet-mapping>
 
    <servlet-mapping>
        <servlet-name>org.jabsorb.JSONRPCServlet</servlet-name>

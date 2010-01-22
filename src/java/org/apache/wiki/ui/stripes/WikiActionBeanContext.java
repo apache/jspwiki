@@ -45,11 +45,8 @@ import net.sourceforge.stripes.action.ActionBeanContext;
  * </p>
  * <p>
  * When the WikiActionBeanContext is created, callers <em>must</em> set the
- * WikiEngine reference by calling either {@link #setEngine(WikiEngine)}
- * (which sets it directly), or {@link #setServletContext(ServletContext)}
- * (which sets it lazily). when {@link #setServletContext(ServletContext)}. The
- * HttpServletRequest reference is set via
- * {@link #setRequest(HttpServletRequest)}.
+ * WikiEngine reference by calling either {@link #setRequest(HttpServletRequest)}
+ * or {@link #setServletContext(ServletContext)} (which sets it lazily).
  * </p>
  * 
  */
@@ -117,7 +114,8 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
 
     /**
      *  {@inheritDoc}. Also calls {@link DefaultWikiContext#setHttpRequest(HttpServletRequest)} on
-     *  the DefaultWikiContext delegate.
+     *  the DefaultWikiContext delegate. As a consequence of setting the request, the
+     *  WikiSession is also set.
      */
     @Override
     public void setRequest( HttpServletRequest request )
@@ -128,8 +126,7 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
 
     /**
      * Calls the superclass
-     * {@link ActionBeanContext#setServletContext(ServletContext)} and lazily
-     * sets the internal WikiEngine reference, if still <code>null</code>.
+     * {@link ActionBeanContext#setServletContext(ServletContext)}.
      * 
      * @param servletContext the servlet context
      */
@@ -137,31 +134,8 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     public void setServletContext( ServletContext servletContext )
     {
         super.setServletContext( servletContext );
-        if( m_delegate.getEngine() == null )
-        {
-            WikiEngine engine = WikiEngine.getInstance( servletContext, null );
-            m_delegate.setEngine( engine );
-        }
     }
 
-    /**
-     *  Sets the WikiEngine by calling {@link DefaultWikiContext#setEngine(WikiEngine)} on
-     *  the DefaultWikiContext delegate.
-     */
-    public void setEngine( WikiEngine engine )
-    {
-        m_delegate.setEngine( engine );
-    }
-
-    /**
-     *  Sets the WikiSession by calling {@link DefaultWikiContext#setEngine(WikiEngine)} on
-     *  the DefaultWikiContext delegate.
-     */
-    public void setWikiSession( WikiSession wikiSession )
-    {
-        m_delegate.setWikiSession( wikiSession );
-    }
-    
     /**
      *  {@inheritDoc}
      */
@@ -169,7 +143,6 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     {
         WikiActionBeanContext copy = new WikiActionBeanContext();
         copy.m_delegate = (DefaultWikiContext)m_delegate.clone();
-        copy.setEngine( getEngine() );
         copy.setEventName( getEventName() );
         copy.setRequest( getRequest() );
         copy.setResponse( getResponse() );
@@ -185,7 +158,6 @@ public class WikiActionBeanContext extends ActionBeanContext implements WikiCont
     {
         WikiActionBeanContext copy = new WikiActionBeanContext();
         copy.m_delegate = (DefaultWikiContext) m_delegate.deepClone();
-        copy.setEngine( getEngine() );
         copy.setEventName( getEventName() );
         copy.setRequest( getRequest() );
         copy.setResponse( getResponse() );

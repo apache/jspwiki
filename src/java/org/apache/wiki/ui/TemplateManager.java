@@ -46,40 +46,6 @@ import org.apache.wiki.modules.WikiModuleInfo;
  */
 public class TemplateManager extends ModuleManager
 {
-    /**
-     * Enum that specifies the two types of templates: {@link #VIEW} and
-     * {@link #EDIT}.
-     */
-    public enum Template
-    {
-        /** Template used for viewing things. */
-        VIEW("ViewTemplate.jsp"),
-        /** Template used for editing things. */
-        EDIT("EditTemplate.jsp");
-
-        private final String m_template;
-
-        /**
-         * Package-private constructor.
-         * 
-         * @param template the name of the template
-         */
-        Template( String template )
-        {
-            m_template = template;
-        }
-
-        /**
-         * Returns the JSP for the template.
-         * 
-         * @return the template name
-         */
-        public String template()
-        {
-            return m_template;
-        }
-    }
-
     private static final String SKIN_DIRECTORY = "skins";
 
     /**
@@ -176,32 +142,6 @@ public class TemplateManager extends ModuleManager
         super( engine );
         m_engine = engine;
         initTemplateResources( engine.getTemplateDir() );
-    }
-
-    /**
-     * Check the existence of a template.
-     */
-    // FIXME: Does not work yet
-    public boolean templateExists( String templateName )
-    {
-        ServletContext context = m_engine.getServletContext();
-
-        InputStream in = context.getResourceAsStream( getPath( templateName ) + "ViewTemplate.jsp" );
-
-        if( in != null )
-        {
-            try
-            {
-                in.close();
-            }
-            catch( IOException e )
-            {
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -333,7 +273,7 @@ public class TemplateManager extends ModuleManager
      * 
      * @param pageContext The JSP PageContext
      * @param template From which template we should seek initially?
-     * @param name Which resource are we looking for (e.g. "ViewTemplate.jsp")
+     * @param name Which resource are we looking for (e.g. "DefaultLayout.jsp")
      * @return path to the JSP page; null, if it was not found.
      */
     public String findJSP( PageContext pageContext, String template, String name )

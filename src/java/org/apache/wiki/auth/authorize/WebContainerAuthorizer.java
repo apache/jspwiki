@@ -159,15 +159,13 @@ public class WebContainerAuthorizer implements WebAuthorizer
      * Group). If either parameter is <code>null</code>, this method must
      * return <code>false</code>.
      * This method simply examines the WikiSession subject to see if it
-     * possesses the desired Principal. We assume that the method
-     * {@link org.apache.wiki.ui.WikiServletFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
-     * previously executed, and that it has set the WikiSession
+     * possesses the desired Principal. We assume that the login stack
+     * has previously run, and that it has set the WikiSession
      * subject correctly by logging in the user with the various login modules,
      * in particular {@link org.apache.wiki.auth.login.WebContainerLoginModule}}.
-     * This is definitely a hack,
-     * but it eliminates the need for WikiSession to keep dangling
-     * references to the last WikiContext hanging around, just
-     * so we can look up the HttpServletRequest.
+     * This is definitely a hack, but it eliminates the need for
+     * WikiSession to keep dangling references to the last WikiContext
+     * hanging around, just so we can look up the HttpServletRequest.
      *
      * @param session the current WikiSession
      * @param role the role to check

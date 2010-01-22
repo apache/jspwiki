@@ -39,8 +39,8 @@ import net.sourceforge.stripes.controller.*;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.action.*;
+import org.apache.wiki.api.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.preferences.Preferences;
@@ -267,12 +267,12 @@ public class WikiInterceptor implements Interceptor
     /**
      * After the Stripes
      * {@link net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
-     * executes, this method injects the current WikiEngine, WikiSession and
-     * WikiActionBean into request scope, and returns <code>null</code>. After
-     * the objects are injected, downstream classes like WikiTagBase can use
-     * them. The attribute can also be accessed as variables using the JSP
-     * Expression Language (example: <code>${wikiPage}</code>). User preferences
-     * are also set up.
+     * executes, this method runs the login stack to check for user authentication,
+     * injects the current WikiEngine, WikiSession and WikiActionBean into
+     * request scope, and returns <code>null</code>. After the objects are
+     * injected, downstream classes like WikiTagBase can use them. The attribute
+     * can also be accessed as variables using the JSP Expression Language
+     * (example: <code>${wikiPage}</code>). User preferences are also set up.
      * 
      * @param context the execution context
      * @return a Resolution if the
@@ -290,34 +290,28 @@ public class WikiInterceptor implements Interceptor
         {
             return r;
         }
-
+        
         // Retrieve the ActionBean, its ActionBeanContext, and HTTP request
         WikiActionBean actionBean = (WikiActionBean) context.getActionBean();
         WikiActionBeanContext actionBeanContext = actionBean.getContext();
         HttpServletRequest request = actionBeanContext.getRequest();
 
-        // Set the WikiSession, if not set yet
+        // If no WikiSession, we have a problem
         if( actionBeanContext.getWikiSession() == null )
         {
-            WikiEngine engine = actionBeanContext.getEngine();
-            WikiSession wikiSession = SessionMonitor.getInstance( engine ).find( request.getSession() );
-            actionBeanContext.setWikiSession( wikiSession );
-
-            // Stash WikiEngine as a request attribute (can be
-            // used later as ${wikiEngine} in EL markup)
-            request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, engine );
-
-            // Stash the WikiSession as a request attribute
-            request.setAttribute( WikiContextFactory.ATTR_WIKISESSION, wikiSession );
+            throw new WikiException( "No WikiSession found!" );
         }
 
-        // Stash the ActionBean as request attribute, if not saved yet
-        if( request.getAttribute( ATTR_ACTIONBEAN ) == null )
-        {
-            request.setAttribute( ATTR_ACTIONBEAN, actionBean );
-        }
+        // Run the login stack
+        WikiEngine engine = actionBeanContext.getEngine();
+        engine.getAuthenticationManager().login( request );
 
-        // Stash it as a PageContext attribute too
+        // Stash the WikiEngine, WikiSession and ActionBean
+        request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, actionBeanContext.getEngine() );
+        request.setAttribute( WikiContextFactory.ATTR_WIKISESSION, actionBeanContext.getWikiSession() );
+        request.setAttribute( ATTR_ACTIONBEAN, actionBean );
+
+        // Stash the ActionBean as a PageContext attribute too
         PageContext pageContext = DispatcherHelper.getPageContext();
         if( pageContext != null )
         {

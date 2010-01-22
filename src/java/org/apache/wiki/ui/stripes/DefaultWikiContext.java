@@ -26,12 +26,14 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiPage;
+import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 
@@ -442,32 +444,16 @@ public class DefaultWikiContext implements WikiContext
     }
 
     /**
-     * Sets the WikiEngine for this WikiContext. This method <em>must</em> be called
-     * as soon as possible after instantiation.
-     * @param engine the WikiEngine
-     */
-    protected void setEngine( WikiEngine engine )
-    {
-        m_engine = engine;
-    }
-    
-    /**
      * Sets the HttpServletRequest for this WikiContext. This method <em>must</em> be called
-     * as soon as possible after instantiation.
+     * as soon as possible after instantiation. As a consequence of setting this method the
+     * WikiSession and WikiEngine references are also set.
      * @param request the HTTP request object
      */
     protected void setHttpRequest( HttpServletRequest request )
     {
+        ServletContext servletContext = request.getSession().getServletContext();
+        m_engine = WikiEngine.getInstance( servletContext, null );
         m_request = request;
-    }
-
-    /**
-     * Sets the WikiSession for this WikiContext. This method <em>must</em> be called
-     * as soon as possible after instantiation.
-     * @param wikiSession the WikiSession
-     */
-    protected void setWikiSession( WikiSession wikiSession )
-    {
-        m_session = wikiSession;
+        m_session = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
     }
 }

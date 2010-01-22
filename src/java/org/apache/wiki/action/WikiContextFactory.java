@@ -40,10 +40,8 @@ import net.sourceforge.stripes.util.ResolverUtil;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.content.PageAlreadyExistsException;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.content.WikiPath;
@@ -363,13 +361,13 @@ public final class WikiContextFactory
         WikiActionBeanContext context = new WikiActionBeanContext();
         context.setRequest( request );
         context.setResponse( response );
-        context.setEngine( m_engine );
         context.setServletContext( m_engine.getServletContext() );
-        WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( request.getSession() );
-        context.setWikiSession( wikiSession );
 
         // Set the request context (and related event name)
         context.setRequestContext( requestContext );
+
+        // Run the login stack
+        m_engine.getAuthenticationManager().login( request );
 
         // Extract and set the WikiPage
         if( page == null )
