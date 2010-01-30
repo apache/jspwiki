@@ -224,7 +224,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
     private UrlBindingFactory getUrlBindingFactory()
     {
         // Load the Stripes UrlBindingFactory
-        Configuration stripesConfig =WikiRuntimeConfiguration.getConfiguration( m_engine.getServletContext() );
+        Configuration stripesConfig = WikiRuntimeConfiguration.getConfiguration( m_engine.getServletContext() );
         if( stripesConfig != null )
         {
             ActionResolver resolver = stripesConfig.getActionResolver();
