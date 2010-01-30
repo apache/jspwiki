@@ -73,7 +73,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         trip.setParameter( "assertedName", "MyAssertedIdentity" );
         trip.execute( "createAssertedName" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
 
         // Verify that the asserted name cookie is present in the Response
         MockHttpServletResponse response = (MockHttpServletResponse) bean.getContext().getResponse();
@@ -100,7 +100,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         trip.setParameter( "assertedName", "MyAssertedIdentity" );
         trip.execute( "createAssertedName" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
 
         // Verify that the asserted name cookie is NOT present in the Response
         // (authenticated users cannot set the assertion cookie)

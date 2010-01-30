@@ -46,6 +46,7 @@ import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
@@ -54,7 +55,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * Displays the wiki page a users requested, resolving special page names and
  * redirecting if needed.
  */
-@UrlBinding( "/Wiki.action" )
+@UrlBinding( "/Wiki.jsp" )
 public class ViewActionBean extends AbstractPageActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( ViewActionBean.class );
@@ -115,7 +116,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     public Resolution attachments()
     {
-        return new ForwardResolution( "/Attachments.jsp" );
+        return new ForwardResolution( "/templates/default/Attachments.jsp" );
     }
 
     /**
@@ -139,17 +140,23 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Handler that forwards to the page information display JSP
-     * <code>/PageInfo.jsp</code>.
+     * Handler that forwards to the template JSP
+     * {@code AttachmentInfo.jsp} if the current page is an
+     * attachment, or {@code PageInfo.jsp} otherwise.
      * 
      * @return a forward to the content template
      */
     @HandlesEvent( "info" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "info" )
-    public Resolution info()
+    public Resolution info() throws ProviderException
     {
-        return new ForwardResolution( "/PageInfo.jsp" );
+        WikiPage page = getPage();
+        if ( page.isAttachment() )
+        {
+            return new ForwardResolution( "/templates/default/AttachmentInfo.jsp" );
+        }
+        return new ForwardResolution( "/templates/default/PageInfo.jsp" );
     }
 
     /**
@@ -286,9 +293,8 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Default handler that simply forwards the user back to the display JSP
-     * <code>/Wiki.jsp</code>. Every ActionBean needs a default handler to
-     * function properly, so we use this (very simple) one.
+     * Default handler that simply forwards the user back to the template JSP
+     * <code>/Wiki.jsp</code>.
      * 
      * @return a forward to the content template
      */
@@ -297,9 +303,10 @@ public class ViewActionBean extends AbstractPageActionBean
     @HandlesEvent( "view" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     @WikiRequestContext( "view" )
-    public Resolution view()
+    public Resolution view() throws ProviderException
     {
-        return new ForwardResolution( "/Wiki.jsp" );
+        // Forward to display JSP
+        return new ForwardResolution( "/templates/default/Wiki.jsp" );
     }
 
     /**

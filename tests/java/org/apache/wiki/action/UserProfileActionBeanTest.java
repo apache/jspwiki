@@ -251,7 +251,7 @@ public class UserProfileActionBeanTest extends TestCase
         errors = bean.getContext().getValidationErrors();
         // Check to make sure no validation errors here...
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
 
         // Verify user was saved
         assertTrue( userExists( "user" + suffix ) );
@@ -286,7 +286,7 @@ public class UserProfileActionBeanTest extends TestCase
         // Check to make sure no validation errors here...
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
         assertTrue( userExists( "user" + suffix1 ) );
 
         // Create user #2, but same loginName as #1; save; verify it did NOT
@@ -347,7 +347,7 @@ public class UserProfileActionBeanTest extends TestCase
         bean = trip.getActionBean( UserProfileActionBean.class );
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
         assertTrue( userExists( "user" + suffix ) );
 
         // Create new session and login as new user...

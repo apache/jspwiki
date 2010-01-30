@@ -175,7 +175,7 @@ public class GroupActionBeanTest extends TestCase
         GroupActionBean bean = trip.getActionBean( GroupActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
     }
     
     public void testSaveExistingGroup() throws Exception

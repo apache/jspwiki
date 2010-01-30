@@ -70,7 +70,7 @@ public class ShortUrlRedirectFilterTest extends TestCase
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
-        assertEquals( "/Wiki.action?view=&page=Foo", trip.getDestination() );
+        assertEquals( "/Wiki.jsp?view=&page=Foo", trip.getDestination() );
     }
 
     public void testRedirectViewNoPage() throws Exception
@@ -80,7 +80,7 @@ public class ShortUrlRedirectFilterTest extends TestCase
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
-        assertEquals( "/Wiki.action", trip.getDestination() );
+        assertEquals( "/Wiki.jsp", trip.getDestination() );
     }
 
     public static Test suite()

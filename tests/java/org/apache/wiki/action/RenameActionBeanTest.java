@@ -138,7 +138,7 @@ public class RenameActionBeanTest extends TestCase
         trip.execute("rename");
         errors = trip.getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action?page=TestRenamed", trip.getDestination() );
+        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
     }
@@ -165,7 +165,7 @@ public class RenameActionBeanTest extends TestCase
         trip.execute("rename");
         errors = trip.getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action?page=TestRenamed", trip.getDestination() );
+        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
         referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
@@ -187,7 +187,7 @@ public class RenameActionBeanTest extends TestCase
         trip.execute("rename");
          errors = trip.getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action?page=TestRenamed", trip.getDestination() );
+        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
         referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );
@@ -210,7 +210,7 @@ public class RenameActionBeanTest extends TestCase
         trip.execute("rename");
         errors = trip.getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Wiki.action?page=TestRenamed", trip.getDestination() );
+        assertEquals( "/Wiki.jsp?page=TestRenamed", trip.getDestination() );
         assertFalse( m_engine.pageExists( "Test" ) );
         assertTrue( m_engine.pageExists( "TestRenamed" ) );
         referringText = m_engine.getPureText( m_engine.getPage("ReferstoTest") );

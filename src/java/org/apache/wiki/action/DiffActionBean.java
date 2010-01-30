@@ -1,11 +1,6 @@
 package org.apache.wiki.action;
 
-import java.util.List;
-
-import net.sourceforge.stripes.action.DefaultHandler;
-import net.sourceforge.stripes.action.ForwardResolution;
-import net.sourceforge.stripes.action.HandlesEvent;
-import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.WikiContext;
@@ -22,6 +17,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * assume current version (= -1). If "r2" is null, then assume the previous
  * version (=current version-1)
  */
+@UrlBinding( "/Diff.jsp" )
 public class DiffActionBean extends AbstractPageActionBean
 {
     private int m_r1 = WikiProvider.LATEST_VERSION;
@@ -29,8 +25,6 @@ public class DiffActionBean extends AbstractPageActionBean
     private int m_r2 = WikiProvider.LATEST_VERSION;
 
     private String m_diffProvider = "TraditionalDiffProvider";
-
-    private List<WikiPage> m_history = null;
 
     /**
      * Returns the newer version to compare.
@@ -80,23 +74,16 @@ public class DiffActionBean extends AbstractPageActionBean
      * Returns the DiffProvider used by this wiki.
      * @return the diff provider
      */
+    @DontBind
     public String getDiffProvider()
     {
         return m_diffProvider;
     }
     
     /**
-     * Returns the page history.
-     * @return the history
-     */
-    public List<WikiPage> getHistory()
-    {
-        return m_history;
-    }
-
-    /**
      * Event that diffs the current state of the edited page and forwards the
-     * user to the diff JSP.
+     * user to the template JSP {@code AttachmentInfo.jsp} if the current page is an
+     * attachment, or {@code PageInfo.jsp} otherwise.
      * 
      * @return a forward resolution back to the preview page.
      */
@@ -118,10 +105,15 @@ public class DiffActionBean extends AbstractPageActionBean
 
         // Set the page history collection and DiffProvider
         WikiContext c = getContext();
-        m_history = c.getEngine().getVersionHistory( getPage().getName() );
         m_diffProvider = c.getEngine().getVariable( c, "jspwiki.diffProvider" );
 
-        return new ForwardResolution( "/Diff.jsp" );
+        // Forward to display JSP
+        WikiPage page = getPage();
+        if ( page.isAttachment() )
+        {
+            return new ForwardResolution( "/templates/default/AttachmentInfo.jsp" );
+        }
+        return new ForwardResolution( "/templates/default/PageInfo.jsp" );
     }
 
 }

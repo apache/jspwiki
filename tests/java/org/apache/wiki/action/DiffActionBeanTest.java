@@ -65,7 +65,7 @@ public class DiffActionBeanTest extends TestCase
     public void testDiffProvider() throws Exception
     {
         // Try diffing without specifying a page
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.execute( "diff" );
         DiffActionBean bean = trip.getActionBean( DiffActionBean.class );
         assertEquals( "TraditionalDiffProvider", bean.getDiffProvider() );
@@ -83,7 +83,7 @@ public class DiffActionBeanTest extends TestCase
         m_engine.saveText( pageName, "This is version three..." );
 
         // Diff with no versions
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.setParameter( "page", pageName );
         trip.execute( "diff" );
         
@@ -108,7 +108,7 @@ public class DiffActionBeanTest extends TestCase
     public void testNoParameters() throws Exception
     {
         // Try diffing without specifying a page
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.execute( "diff" );
 
         // ...we should NOT see any page bound to the ActionBean
@@ -138,7 +138,7 @@ public class DiffActionBeanTest extends TestCase
         m_engine.saveText( pageName, "This is version three..." );
 
         // Diff without specifying R1 or R2
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.setParameter( "page", pageName );
         trip.execute( "diff" );
         
@@ -147,8 +147,8 @@ public class DiffActionBeanTest extends TestCase
         assertEquals( WikiProvider.LATEST_VERSION, bean.getR1() );
         assertEquals( 2, bean.getR2() );
 
-        // ...and the destination should be Diff.jsp (aka display JSP)
-        assertEquals( "/Diff.jsp", trip.getDestination() );
+        // ...and the destination should be the PageInfo template JSP
+        assertEquals( "/templates/default/PageInfo.jsp", trip.getDestination() );
 
         // Delete the test page
         m_engine.deletePage( pageName );
@@ -167,7 +167,7 @@ public class DiffActionBeanTest extends TestCase
         m_engine.saveText( pageName, "This is version three..." );
 
         // Diff with R1 and R2
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.setParameter( "page", pageName );
         trip.setParameter( "r1", "1" );
         trip.setParameter( "r2", "2" );
@@ -184,8 +184,8 @@ public class DiffActionBeanTest extends TestCase
         assertEquals( 1, bean.getR1() );
         assertEquals( 2, bean.getR2() );
 
-        // ...and the destination should be Diff.jsp (aka display JSP)
-        assertEquals( "/Diff.jsp", trip.getDestination() );
+        // ...and the destination should be the PageInfo template JSP
+        assertEquals( "/templates/default/PageInfo.jsp", trip.getDestination() );
 
         // Delete the test page
         m_engine.deletePage( pageName );
@@ -203,7 +203,7 @@ public class DiffActionBeanTest extends TestCase
         m_engine.saveText( pageName, "This is version three..." );
 
         // Diff with R1 but not R2
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.setParameter( "page", pageName );
         trip.setParameter( "r1", "1" );
         trip.execute( "diff" );
@@ -213,8 +213,8 @@ public class DiffActionBeanTest extends TestCase
         assertEquals( 1, bean.getR1() );
         assertEquals( 2, bean.getR2() );
 
-        // ...and the destination should be Diff.jsp (aka display JSP)
-        assertEquals( "/Diff.jsp", trip.getDestination() );
+        // ...and the destination should be the PageInfo template JSP
+        assertEquals( "/templates/default/PageInfo.jsp", trip.getDestination() );
 
         // Delete the test page
         m_engine.deletePage( pageName );
@@ -232,7 +232,7 @@ public class DiffActionBeanTest extends TestCase
         m_engine.saveText( pageName, "This is version three..." );
 
         // Diff with R2 but not R1
-        MockRoundtrip trip = m_engine.guestTrip( "/Diff.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Diff.jsp" );
         trip.setParameter( "page", pageName );
         trip.setParameter( "r2", "1" );
         trip.execute( "diff" );
@@ -242,8 +242,8 @@ public class DiffActionBeanTest extends TestCase
         assertEquals( WikiProvider.LATEST_VERSION, bean.getR1() );
         assertEquals( 1, bean.getR2() );
 
-        // ...and the destination should be Diff.jsp (aka display JSP)
-        assertEquals( "/Diff.jsp", trip.getDestination() );
+        // ...and the destination should be the PageInfo template JSP
+        assertEquals( "/templates/default/PageInfo.jsp", trip.getDestination() );
 
         // Delete the test page
         m_engine.deletePage( pageName );

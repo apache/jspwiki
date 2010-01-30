@@ -138,8 +138,8 @@ public class EditActionBeanTest extends TestCase
         assertEquals( page, bean.getPage() );
         assertEquals( "This is the edited text\r\n", page.getContentAsString() );
 
-        // ...and the destination should be Wiki.action (aka display JSP)
-        assertEquals( "/Wiki.action?view=&page=" + pageName, trip.getDestination() );
+        // ...and the destination should be the Wiki action bean
+        assertEquals( "/Wiki.jsp?view=&page=" + pageName, trip.getDestination() );
         
         // Save the page one more time!
         trip = m_engine.guestTrip( "/Edit.action" );
@@ -185,8 +185,8 @@ public class EditActionBeanTest extends TestCase
         assertNotNull( bean.getPage() );
         assertEquals( pageName, bean.getPage().getName() );
 
-        // ...and the destination should be Wiki.action (aka display JSP)
-        assertEquals( "/Wiki.action?view=&page=" + pageName, trip.getDestination() );
+        // ...and the destination should be the Wiki action bean
+        assertEquals( "/Wiki.jsp?view=&page=" + pageName, trip.getDestination() );
 
         // Delete the test page
         m_engine.deletePage( pageName );

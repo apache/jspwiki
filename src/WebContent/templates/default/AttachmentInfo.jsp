@@ -125,10 +125,6 @@
       </form>
     </wiki:Permission>
 
-    <wiki:Permission permission="!upload">
-      <div class="formhelp"><fmt:message key="attach.add.permission" /></div>
-    </wiki:Permission>
-
     <wiki:Permission permission="delete">
       <h3><fmt:message key="info.deleteattachment"/></h3>
       <s:form beanclass="org.apache.wiki.action.ViewActionBean" class="wikiform" id="deleteForm" method="post" acceptcharset="UTF-8">
