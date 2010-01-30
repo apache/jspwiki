@@ -40,8 +40,6 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tags.TabTag.TabInfo;
 
-import com.sun.tools.internal.ws.processor.model.Request;
-
 /**
  * <p>
  * Generates a container for page tabs, as defined by collaborating
