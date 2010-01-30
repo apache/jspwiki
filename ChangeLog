@@ -1,3 +1,56 @@
+2010-01-30 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-201 aka the JSP Consolidation Checkin
+
+        * [JSPWIKI-578] Eliminated top-level JSPs for Wiki.jsp,
+        PageInfo.jsp, Diff.jsp, Delete.jsp and Attachments.jsp.
+        The relevant ActionBeans are still bound to these URLs
+        (except PageInfo.jsp), but there are no longer physical
+        JSPs for these top-level paths. The template JSPs in
+        /templates/default now contain all of the formatting
+        and markup and are mostly HTML and JSTL. At the moment,
+        ActionBeans all forward to to hard-wired template JSP
+        paths in /templates/default. A "TemplateResolution"
+        class that makes forwards dynamic based on the current
+        template will come a little later.
+
+        * Added convenience accessors getHistory() and
+        getAttachments() to AbstractPageActionBean so that
+        subclasses can inherit them. This also means template JSPs
+        now have easy JSTL access to page history and attachments.
+
+        * Added option to PageTimeComparator to allow descending
+        order sorts, used by AbstractPageActionBean. Also replaced
+        several spurious uses of the default constructor that
+        should have used the static instance instead.
+
+        * Fixed bug in AttachmentActionBean that prevented the
+        size of uploaded attachments from being seen.
+
+        * Fixed bug in DeleteActionBean that prevented attachments
+        from being deleted properly.
+
+        * Fixed bug in EditActionBean that prevented the author from
+        being correctly set when the user was already authenticated.
+
+        * Added methods getCreated() and getChangeNote() to WikiPage
+        and JCRWikiPage. Fixed bug in ContentManager that was
+        preventing creation and modification times from being
+        correctly set upon save.
+
+        * Added new JspFunctions class for convenient "short formatting"
+        of file names, ISO8601 date formatting, and the attachments
+        tab name (localized). These replace scriptlet code formerly
+        located in the old top-level Wiki.jsp and elsewhere. For example,
+        to output an ISO8601 date, JSPs can simply use a JSTL expression
+        like this: "${wiki:iso8601date(att.lastModified)}".
+
+        * TabTag now accepts two new attributes, which can be used
+        in place of the "url" attribute: "beanclass" and "event".
+        These are used to specify ActionBean names and event, and
+        are used in the same manner as <stripes:link>. TabTag
+        also now accepts child <wiki:param> tags to make this easier.
+
 2010-01-21 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-200
