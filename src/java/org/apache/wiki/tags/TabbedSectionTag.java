@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +34,13 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import net.sourceforge.stripes.util.UrlBuilder;
+
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tags.TabTag.TabInfo;
+
+import com.sun.tools.internal.ws.processor.model.Request;
 
 /**
  * <p>
@@ -136,6 +141,7 @@ public class TabbedSectionTag extends BodyTagSupport
          * cached copies.
          * 
          * @param tab the tab to add
+         * @throws ClassNotFoundException 
          */
         public void addTab( TabTag tab ) throws JspTagException
         {
@@ -146,6 +152,22 @@ public class TabbedSectionTag extends BodyTagSupport
 
             TabInfo tabInfo = new TabInfo();
             tabInfo.setAccesskey( tab.getTabInfo().getAccesskey() );
+            if ( tab.getTabInfo().getBeanclass() != null )
+            {
+                try
+                {
+                    tabInfo.setBeanclass( tab.getTabInfo().getBeanclass().getName() );
+                }
+                catch( ClassNotFoundException e )
+                {
+                    throw new JspTagException( "Could not set beanclass: " + e.getMessage() );
+                }
+            }
+            for ( Map.Entry<String,String> entry : tab.getTabInfo().getContainedParameters().entrySet() )
+            {
+                tabInfo.setContainedParameter( entry.getKey(), entry.getValue() );
+            }
+            tabInfo.setEvent( tab.getTabInfo().getEvent() );
             tabInfo.setId( tab.getTabInfo().getId() );
             tabInfo.setTitle( tab.getTabInfo().getTitle() );
             tabInfo.setTitleKey( tab.getTabInfo().getTitleKey() );
@@ -290,9 +312,30 @@ public class TabbedSectionTag extends BodyTagSupport
         {
             writer.append( " class=\"activetab\"" );
         }
+        
+        // Generate the ActionBean event URL, if supplied
+        if ( tab.getBeanclass() != null )
+        {
+            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+            UrlBuilder builder = new UrlBuilder( request.getLocale(), tab.getBeanclass(), true );
+            if ( tab.getEvent() != null )
+            {
+                builder.setEvent( tab.getEvent() );
+            }
+            for ( Map.Entry<String, String> entry : tab.getContainedParameters().entrySet() )
+            {
+                builder.addParameter( entry.getKey(), entry.getValue() );
+            }
+            String url = builder.toString();
+            if ( request.getContextPath() != null && !url.startsWith( request.getContextPath() ) )
+            {
+                url = request.getContextPath() + url;
+            }
+            writer.append( " href='" + url + "'" );
+        }
 
         // Generate the URL, if supplied
-        if( tab.getUrl() != null )
+        else if( tab.getUrl() != null )
         {
             writer.append( " href='" + tab.getUrl() + "'" );
         }

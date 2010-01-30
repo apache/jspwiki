@@ -21,7 +21,12 @@
 
 package org.apache.wiki.tags;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.jsp.JspTagException;
+
+import net.sourceforge.stripes.action.ActionBean;
 
 import org.apache.wiki.tags.TabbedSectionTag.TabCollection;
 import org.apache.wiki.util.TextUtil;
@@ -53,16 +58,22 @@ import org.apache.wiki.util.TextUtil;
  * you have something that you want to look like a part of a tag, but for
  * example, due to it being very big in size, don't want to include it as a part
  * of the page content every time. <em>Optional.</em></li>
+ * <li><b>beanclass</b> and <b>event</b> - If you <i>don't</i> want to create
+ * a Javascript-enabled tag, you can supply the name of a Stripes ActionBean
+ * and event to be invoked, the URL for which will be looked up and rendered.
+ * If the event is not specified, the default event will be used. If both
+ * {@code url} and {@code beanclass} are specified, {@code beanclass} wins.
+ * <em>Optional.</em></li>
  * </ul>
  * 
  * @since v2.3.63
  */
-public class TabTag extends WikiTagBase
+public class TabTag extends WikiTagBase implements ParamHandler
 {
     private static final long serialVersionUID = -8534125226484616489L;
     
     private final TabInfo m_tabInfo = new TabInfo();
-
+    
     /**
      * Lightweight class that holds information about TabTags.
      */
@@ -78,14 +89,11 @@ public class TabTag extends WikiTagBase
 
         private String m_url = null;
         
-        /**
-         * Sets the id.
-         * @param id
-         */
-        public void setId( String id )
-        {
-            m_id = id;
-        }
+        private Class<? extends ActionBean> m_beanclass = null;
+        
+        private String m_event = null;
+        
+        private Map<String, String> m_containedParams;
         
         /**
          * Sets the tab access key.
@@ -98,6 +106,35 @@ public class TabTag extends WikiTagBase
             // first char
         }
 
+        /**
+         * Sets the tab beanclass.
+         * @param beanclass the ActionBean class name
+         * @throws ClassNotFoundException 
+         */
+        @SuppressWarnings("unchecked")
+        public void setBeanclass( String beanclass ) throws ClassNotFoundException
+        {
+            m_beanclass = (Class<? extends ActionBean>)Class.forName( beanclass );
+        }
+        
+        /**
+         * Sets the tab event.
+         * @param event the ActionBean event handler name
+         */
+        public void setEvent( String event )
+        {
+            m_event = TextUtil.replaceEntities( event );
+        }
+        
+        /**
+         * Sets the id.
+         * @param id
+         */
+        public void setId( String id )
+        {
+            m_id = id;
+        }
+        
         /**
          * Sets the tab title.
          * 
@@ -129,25 +166,6 @@ public class TabTag extends WikiTagBase
         }
         
         /**
-         * Returns the ID for this tab.
-         * @return id
-         */
-        public String getId()
-        {
-            return m_id;
-        }
-        
-        /**
-         * Returns the URL for this tab, if supplied.
-         * 
-         * @return the URL
-         */
-        public String getUrl()
-        {
-            return m_url;
-        }
-
-        /**
          * Returns the tab access key.
          * 
          * @return the access key
@@ -155,6 +173,47 @@ public class TabTag extends WikiTagBase
         public String getAccesskey()
         {
             return m_accesskey;
+        }
+        
+        /**
+         * Returns the tab's ActionBean class name for generating an URL.
+         * @return the bean class
+         */
+        public Class<? extends ActionBean> getBeanclass()
+        {
+            return m_beanclass;
+        }
+        
+        /**
+         * Returns any parameters passed to the Tab tag.
+         * @return the params
+         */
+        public Map<String,String> getContainedParameters()
+        {
+            if ( m_containedParams == null )
+            {
+                m_containedParams = new HashMap<String,String>();
+            }
+            return m_containedParams;
+        }
+        
+        /**
+         * Returns the tab's ActionBean event name for generating an URL.
+         * @return the ActionBean event name, or {@code null} if the default
+         * should be used
+         */
+        public String getEvent()
+        {
+            return m_event;
+        }
+        
+        /**
+         * Returns the ID for this tab.
+         * @return id
+         */
+        public String getId()
+        {
+            return m_id;
         }
         
         /**
@@ -174,6 +233,33 @@ public class TabTag extends WikiTagBase
         {
             return m_tabTitleKey;
         }
+        
+        /**
+         * Returns the URL for this tab, if supplied.
+         * 
+         * @return the URL
+         */
+        public String getUrl()
+        {
+            return m_url;
+        }
+
+        /**
+         * Adds a nested parameter value to the tab
+         * @param name the parameter name
+         * @param value the value
+         */
+        public void setContainedParameter( String name, String value )
+        {
+            if( name != null )
+            {
+                if( m_containedParams == null )
+                {
+                    m_containedParams = new HashMap<String, String>();
+                }
+                m_containedParams.put( name, value );
+            }
+        }
     }
 
     protected TabInfo getTabInfo()
@@ -186,6 +272,10 @@ public class TabTag extends WikiTagBase
      */
     public int doEndTag() throws javax.servlet.jsp.JspTagException
     {
+        // Add tab to TabCollection so parent TabbedSection can get it later
+        TabCollection tc = TabbedSectionTag.getTabContext( getPageContext().getRequest() );
+        tc.addTab( this );
+
         try
         {
             pageContext.getOut().write( "</div>\n" );
@@ -205,6 +295,9 @@ public class TabTag extends WikiTagBase
     {
         super.doFinally();
         m_tabInfo.m_accesskey = null;
+        m_tabInfo.m_beanclass = null;
+        m_tabInfo.m_containedParams = null;
+        m_tabInfo.m_event = null;
         m_tabInfo.m_tabTitle = null;
         m_tabInfo.m_tabTitleKey = null;
         m_tabInfo.m_url = null;
@@ -212,8 +305,9 @@ public class TabTag extends WikiTagBase
 
     /**
      * {@inheritDoc}
+     * @throws ClassNotFoundException 
      */
-    public int doWikiStartTag() throws JspTagException
+    public int doWikiStartTag() throws JspTagException, ClassNotFoundException
     {
         //
         // Sanity checks
@@ -226,10 +320,6 @@ public class TabTag extends WikiTagBase
         {
             throw new JspTagException( "Tab Tag without \"tabTitle\" or \"tabTitleKey\" attribute" );
         }
-
-        // Add tab to TabCollection so parent TabbedSection can get it later
-        TabCollection tc = TabbedSectionTag.getTabContext( getPageContext().getRequest() );
-        tc.addTab( this );
 
         // Generate the opening <div id=foo> tag, always with "hidetab" class
         // (TabbedSection#doAfterBody will fix this later...)
@@ -265,6 +355,36 @@ public class TabTag extends WikiTagBase
     public void setAccesskey( String accessKey )
     {
         m_tabInfo.setAccesskey( accessKey );
+    }
+    
+    /**
+     * Sets the tab beanclass, which must be the name of a class of
+     * type {@link net.sourceforge.stripes.action.ActionBean}.
+     * @param beanclass the ActionBean class name
+     * @throws ClassNotFoundException if the bean class cannot be located or loaded
+     */
+    public void setBeanclass( String beanclass ) throws ClassNotFoundException
+    {
+        m_tabInfo.setBeanclass( beanclass );
+    }
+
+    /**
+     * Support for ParamTag supplied parameters in body.
+     */
+    public void setContainedParameter( String name, String value )
+    {
+        m_tabInfo.setContainedParameter( name, value );
+    }
+
+    /**
+     * Sets the tab event, which must correspond to the handler name
+     * of a Stripes ActionBean. If omitted, the event handler
+     * will be the method annotated by {@link net.sourceforge.stripes.action.DefaultHandler}.
+     * @param event the ActionBean event handler name
+     */
+    public void setEvent( String event )
+    {
+        m_tabInfo.setEvent( event );
     }
 
     /**

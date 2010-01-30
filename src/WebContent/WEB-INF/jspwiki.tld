@@ -765,6 +765,21 @@
     <bodycontent>JSP</bodycontent>
     <info>A Tag for a tab, which is a child of tabbedSection</info>
     <attribute>
+      <name>accesskey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>beanclass</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>event</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
       <name>id</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
@@ -776,11 +791,6 @@
     </attribute>
     <attribute>
       <name>titleKey</name>
-      <required>false</required>
-      <rtexprvalue>true</rtexprvalue>
-    </attribute>
-    <attribute>
-      <name>accesskey</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
@@ -897,4 +907,45 @@
           <rtexprvalue>true</rtexprvalue>
       </attribute>
   </tag>
+  
+  <function>
+    <description>
+      Returns a localized attachment tab name based on the number of attachments.
+    </description>
+    <name>attachmentsTitle</name>
+    <function-class>
+      org.apache.wiki.tags.JspFunctions
+    </function-class>
+    <function-signature>
+      String getAttachmentsTitle(java.util.Locale,java.util.Collection)
+    </function-signature>
+  </function>
+  
+  <function>
+    <description>
+      Returns a Date formatted in ISO8601 format. Ideal for sorting.
+    </description>
+    <name>iso8601date</name>
+    <function-class>
+      org.apache.wiki.tags.JspFunctions
+    </function-class>
+    <function-signature>
+      String getISO8601Date(java.util.Date)
+    </function-signature>
+  </function>
+
+  <function>
+    <description>
+      Returns a String whose characters above a supplied length
+      are replaced by the ellipsis.
+    </description>
+    <name>shorten</name>
+    <function-class>
+      org.apache.wiki.tags.JspFunctions
+    </function-class>
+    <function-signature>
+      String shortenedString(java.lang.String,int)
+    </function-signature>
+  </function>
+
 </taglib>
