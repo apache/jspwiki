@@ -340,11 +340,12 @@ public class AttachmentActionBean extends AbstractPageActionBean
         }
 
         // Close the stream and delete the filebean, since we're done with it
+        long size = filebean.getSize();
         data.close();
         filebean.delete();
 
         log.info( "User " + user + " uploaded attachment to " + getPage().getName() + " called " + filename + ", size "
-                  + filebean.getSize() );
+                  + size + " bytes." );
 
         return created;
     }
