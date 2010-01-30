@@ -27,7 +27,10 @@ import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.UrlBinding;
-import net.sourceforge.stripes.validation.*;
+import net.sourceforge.stripes.validation.LocalizableError;
+import net.sourceforge.stripes.validation.ValidationErrors;
+import net.sourceforge.stripes.validation.ValidationMethod;
+import net.sourceforge.stripes.validation.ValidationState;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.WikiPage;
@@ -69,33 +72,34 @@ public class DeleteActionBean extends AbstractPageActionBean
         // to the main page (for page) or parent page (for attachment)
         WikiEngine engine = getContext().getEngine();
         WikiPage page = getPage();
-        String pageName = page.getName();
+        String path = page.getPath().toString();
+        boolean isAttachment = page.isAttachment();
         if( m_version == Integer.MIN_VALUE )
         {
             HttpServletRequest request = getContext().getRequest();
-            log.info( "Deleting page " + pageName + ". User=" + request.getRemoteUser() + ", host="
+            log.info( "Deleting page " + path + ". User=" + request.getRemoteUser() + ", host="
                       + request.getRemoteAddr() );
-            engine.deletePage( pageName );
+            engine.deletePage( path.toString() );
             
-            BreadcrumbsTag.deleteFromBreadCrumb( request, pageName );
+            BreadcrumbsTag.deleteFromBreadCrumb( request, path );
         }
         // Just delete a single version
         else
         {
-            WikiPage p = engine.getPage( pageName, m_version );
-            log.debug( "Deleting page=" + pageName + ", version=" + m_version );
+            WikiPage p = engine.getPage( path, m_version );
+            log.debug( "Deleting page=" + path + ", version=" + m_version );
             engine.deleteVersion( p );
         }
 
-        // If attachment deleted; always redirect to parent page
-        if( page.isAttachment() )
+        // If attachment deleted; always redirect to parent attachments page
+        if( isAttachment )
         {
             String redirPage = page.getParent().getName();
-            return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", redirPage );
+            return new RedirectResolution( ViewActionBean.class, "attachments" ).addParameter( "page", redirPage );
         }
 
         // If no more versions left, redirect to main page, otherwise INFO page
-        String redirPage = engine.pageExists( pageName ) ? pageName : engine.getFrontPage();
+        String redirPage = engine.pageExists( path ) ? path : engine.getFrontPage();
         return new RedirectResolution( ViewActionBean.class, "view" ).addParameter( "page", redirPage );
     }
 
