@@ -321,7 +321,7 @@ public class EditActionBean extends AbstractPageActionBean
         Principal principal = wikiSession.getUserPrincipal();
         if ( wikiSession.isAuthenticated() )
         {
-            setAuthor( principal.getName() );
+            m_author = TextUtil.replaceEntities( principal.getName() );
         }
         else if( m_author == null )
         {
