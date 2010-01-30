@@ -170,7 +170,7 @@ public class WikiEngine
     /** If this property is set to false, we don't allow the creation of empty pages */
     public static final String PROP_ALLOW_CREATION_OF_EMPTY_PAGES = "jspwiki.allowCreationOfEmptyPages";
 
-    private static final Comparator<WikiPage> PAGE_TIME_COMPARATOR = new PageTimeComparator();
+    private static final Comparator<WikiPage> PAGE_TIME_COMPARATOR = PageTimeComparator.DEFAULT_PAGETIME_COMPARATOR;
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;

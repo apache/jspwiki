@@ -524,7 +524,7 @@ public class RSSGenerator
             feed.setChannelDescription( channelDescription );
         }
 
-        Collections.sort( changed, new PageTimeComparator() );
+        Collections.sort( changed, PageTimeComparator.DEFAULT_PAGETIME_COMPARATOR );
 
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )
@@ -608,7 +608,7 @@ public class RSSGenerator
             feed.setChannelDescription( channelDescription );
         }
 
-        Collections.sort( changed, new PageTimeComparator() );
+        Collections.sort( changed, PageTimeComparator.DEFAULT_PAGETIME_COMPARATOR );
 
         int items = 0;
         for( Iterator i = changed.iterator(); i.hasNext() && items < 15; items++ )

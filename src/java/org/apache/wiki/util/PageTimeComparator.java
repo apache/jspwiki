@@ -38,11 +38,52 @@ public class PageTimeComparator
 {
     private static final long serialVersionUID = 0L;
 
+    private final Order m_order;
+
     static Logger log = LoggerFactory.getLogger( PageTimeComparator.class ); 
 
     // A special singleton instance for quick access
-    public static final Comparator<WikiPage> DEFAULT_PAGETIME_COMPARATOR = new PageTimeComparator();
+    public static final Comparator<WikiPage> DEFAULT_PAGETIME_COMPARATOR = new PageTimeComparator( Order.ASCENDING );
 
+    /**
+     * Enum specifying the sort order for the PageTimeComparator.
+     */
+    public static enum Order
+    {
+        /**
+         * Ascending order; the earliest date will be placed first in the sorted
+         * Collection.
+         */
+        ASCENDING,
+
+        /**
+         * Descending order, the latest date will be placed first in the sorted
+         * Collection.
+         */
+        DESCENDING;
+    }
+
+    /**
+     * Constructs a new PageTimeComparator that sorts pages in ascending order
+     * based on last modification time.
+     */
+    public PageTimeComparator()
+    {
+        this( Order.ASCENDING );
+    }
+
+    /**
+     * Constructs a new PageTimeComparator, for sorting pages in ascending or
+     * descending order based on last modification time.
+     * 
+     * @param order the sort order for the Collection this PageTimeComparator
+     *            will be used with.
+     */
+    public PageTimeComparator( Order order )
+    {
+        m_order = order;
+    }
+    
     /**
      *  {@inheritDoc}
      */
@@ -69,7 +110,7 @@ public class PageTimeComparator
         }
 
         // This gets most recent on top
-        int timecomparison = w2LastMod.compareTo( w1LastMod );
+        int timecomparison = w2LastMod.compareTo( w1LastMod ) * ( m_order == Order.DESCENDING ? 1 : -1 );
 
         if( timecomparison == 0 )
         {
