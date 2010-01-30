@@ -110,11 +110,21 @@ public interface WikiPage extends Comparable<WikiPage>
     public Serializable removeAttribute( String key );
 
     /**
-     *  Returns the date when this page was last modified.
-     *  If the page has never been modified (because it has never
+     *  Returns the date when this page was first saved.
+     *  If the page has not been created (because it has never
      *  been saved, for example), this method returns {@code null}.
      *  
-     *  @return The last modification date
+     *  @return the first save date
+     */
+    public Date getCreated();
+    
+    /**
+     *  Returns the date when this page was last modified, including
+     *  the first time the page was saved. If the page has never
+     *  been modified (because it has never been saved, for example),
+     *  this method returns {@code null}.
+     *  
+     *  @return the last modification date
      */
     public Date getLastModified();
 
@@ -276,6 +286,12 @@ public interface WikiPage extends Comparable<WikiPage>
      *  @throws ProviderException If something goes wrong.
      */
     public List<WikiPage> getChildren() throws ProviderException;
+    
+    /**
+     * Returns the change note for this page version.
+     * @return the change note, or {@code null} if not provided
+     */
+    public String getChangeNote() throws ProviderException;
     
     /**
      *  Returns true, if this page is an attachment (that is, does not

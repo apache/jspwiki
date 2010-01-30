@@ -56,7 +56,7 @@ public class JCRWikiPage
     private static final long serialVersionUID = 1L;
 
     /** The name of the attribute that stores the last-modified timestamp. */
-    private static final String LAST_MODIFIED = "wiki:lastModified";
+    public static final String LAST_MODIFIED = "wiki:lastModified";
 
     private static final String AUTHOR       = "wiki:author";
 
@@ -129,6 +129,25 @@ public class JCRWikiPage
         m_engine  = engine;
         m_jcrPath = node.getPath();
         m_path    = name;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getChangeNote() throws ProviderException
+    {
+        try
+        {
+            if ( getJCRNode().hasProperty( WikiPage.CHANGENOTE ) )
+            {
+                return getAttribute( WikiPage.CHANGENOTE ).toString();
+            }
+        }
+        catch( RepositoryException e )
+        {
+            throw new ProviderException( e.getMessage(), e );
+        }
+        return null;
     }
     
     /**
@@ -775,6 +794,25 @@ public class JCRWikiPage
             throw new PageNotFoundException("No predecessor");
         
         return (JCRWikiPage)p;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Date getCreated()
+    {
+        try
+        {
+            if ( getJCRNode().hasProperty( ATTR_CREATED ) )
+            {
+                return getJCRNode().getProperty( ATTR_CREATED ).getDate().getTime();
+            }
+        }
+        catch( RepositoryException e )
+        {
+            log.warn( "RepositoryException while getting created : " + e ); 
+        }
+        return null;
     }
 
     public JCRWikiPage getCurrentVersion() throws ProviderException

@@ -505,10 +505,12 @@ public class ContentManager implements WikiEventListener
 
         int version = page.getVersion();
 
+        Calendar timestamp = Calendar.getInstance();
         if( isNew( nd ) )
         {
             nd.setProperty( JCRWikiPage.ATTR_VERSION, 1 );
-            nd.setProperty( JCRWikiPage.ATTR_CREATED, Calendar.getInstance() );
+            nd.setProperty( JCRWikiPage.ATTR_CREATED, timestamp );
+            nd.setProperty( JCRWikiPage.LAST_MODIFIED, timestamp );
             
             // New node, so nothing to check in
             nd.getParent().save();
@@ -520,6 +522,7 @@ public class ContentManager implements WikiEventListener
             checkin( getJCRPath( path ), version );
                         
             nd.setProperty( JCRWikiPage.ATTR_VERSION, version+1 );
+            nd.setProperty( JCRWikiPage.LAST_MODIFIED, timestamp );
             
             nd.save();
         }
