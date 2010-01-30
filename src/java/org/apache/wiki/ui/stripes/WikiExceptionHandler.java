@@ -23,28 +23,37 @@ package org.apache.wiki.ui.stripes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
+import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.exception.DefaultExceptionHandler;
 
+import org.apache.wiki.action.MessageActionBean;
+
 /**
- * Stripes ExceptionHandler that catches exceptions of various types and returns appropriate
- * Resolutions.
+ * Stripes ExceptionHandler that catches exceptions of various types and returns
+ * appropriate Resolutions.
  */
 public class WikiExceptionHandler extends DefaultExceptionHandler
 {
 
     /**
-     * Catches any Exceptions not handled by other methods in this class, and prints a stack trace.
+     * Catches any Exceptions not handled by other methods in this class,
+     * prints a stack trace, and forwards to {@link MessageActionBean}.
+     * It also adds the caught exception into page scope as an attribute
+     * with the standard error name {@link PageContext#EXCEPTION}.
+     * 
      * @param exception the exception caught by StripesFilter
      * @param req the current HTTP request
      * @param res the current HTTP response
-     * @return always returns <code>null</code> (that is, it does not redirect)
+     * @return always returns a ForwardResolution to the handler method
+     *         {@link MessageActionBean#error()}
      */
-    public Resolution catchAll(Throwable exception, HttpServletRequest req, HttpServletResponse res)
+    public Resolution catchAll( Throwable exception, HttpServletRequest req, HttpServletResponse res )
     {
         exception.printStackTrace();
-        return null;
+        req.setAttribute( PageContext.EXCEPTION, exception );
+        return new ForwardResolution( MessageActionBean.class, "error" );
     }
-    
 }
