@@ -624,6 +624,10 @@ public class AttachmentServlet
                     else if( item.getFieldName().equals("changenote") )
                     {
                         changeNote = item.getString("UTF-8");
+                        if (changeNote != null)
+                        {
+                            changeNote = TextUtil.replaceEntities(changeNote);
+                        }
                     }
                     else if( item.getFieldName().equals( "nextpage" ) )
                     {
@@ -837,7 +841,6 @@ public class AttachmentServlet
     {
         public long m_currentBytes;
         public long m_totalBytes;
-        public String m_uid;
 
         public void update(long recvdBytes, long totalBytes, int item)
         {

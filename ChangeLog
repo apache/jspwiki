@@ -1,3 +1,9 @@
+2010-01-31  Harry Metske <metskem@apache.org>
+
+        * 2.8.4-svn-8
+        
+        * JSPWIKI-633: TextUtil.replaceEntities done multiple times, reported by Stefan Bohn.
+        
 2010-01-20  Janne Jalkanen <jalkanen@apache.org>
 
         * 2.8.4-svn-7

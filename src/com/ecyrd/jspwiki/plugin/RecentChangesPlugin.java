@@ -214,7 +214,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                 {
                     String changenote = (String)pageref.getAttribute(WikiPage.CHANGENOTE);
                     
-                    row.addElement( new td(changenote != null ? TextUtil.replaceEntities(changenote) : "").setClass("changenote") );
+                    row.addElement( new td(changenote != null ? changenote : "").setClass("changenote") );
                 }
                 
                 //  Revert note
