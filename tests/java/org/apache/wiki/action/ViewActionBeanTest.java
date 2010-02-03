@@ -73,7 +73,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals( pageName, bean.getPage().getName() );
         
         // ...and the destination should be the Wiki template JSP
-        assertEquals("/templates/default/Wiki.jsp", trip.getDestination() );
+        assertEquals("/templates/default/Wiki.jsp?tab=view", trip.getDestination() );
     }
     
     public void testNoParameter() throws Exception {
@@ -92,7 +92,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals( page, bean.getPage() );
         
         // ...and the destination should be the Wiki template JSP
-        assertEquals("/templates/default/Wiki.jsp", trip.getDestination() );
+        assertEquals("/templates/default/Wiki.jsp?tab=view", trip.getDestination() );
     }
     
     public void testSpecialPage() throws Exception {
@@ -132,7 +132,7 @@ public class ViewActionBeanTest extends TestCase
         assertEquals( page, bean.getPage() );
         
         // ...and the destination should be the Wiki template JSP
-        assertEquals( "/templates/default/Wiki.jsp", trip.getDestination() );
+        assertEquals( "/templates/default/Wiki.jsp?tab=view", trip.getDestination() );
     }
 
     public void testViewVersion() throws Exception {

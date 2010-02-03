@@ -60,7 +60,7 @@ public class ShortUrlRedirectFilterTest extends TestCase
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
-        assertEquals( "/Edit.action?edit=&page=Foo", trip.getDestination() );
+        assertEquals( "/Edit.jsp?edit=&page=Foo", trip.getDestination() );
     }
     
     public void testRedirectView() throws Exception

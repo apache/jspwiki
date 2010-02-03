@@ -69,7 +69,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
 
         // Create session; set 'assertion' param; verify it got saved
-        trip = m_engine.guestTrip( "/UserPreferences.action" );
+        trip = m_engine.guestTrip( "/UserPreferences.jsp" );
         trip.setParameter( "assertedName", "MyAssertedIdentity" );
         trip.execute( "createAssertedName" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
@@ -90,7 +90,7 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
 
         // Create session; login in as Janne
-        trip = m_engine.guestTrip( "/UserPreferences.action" );
+        trip = m_engine.guestTrip( "/UserPreferences.jsp" );
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         boolean login = m_engine.getAuthenticationManager().login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
@@ -115,13 +115,13 @@ public class UserPreferencesActionBeanTest extends TestCase
         UserPreferencesActionBean bean;
 
         // Create session; set 'assertion' param; verify it got saved
-        trip = m_engine.guestTrip( "/UserPreferences.action" );
+        trip = m_engine.guestTrip( "/UserPreferences.jsp" );
         MockHttpServletRequest request = trip.getRequest();
         Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "MyAssertedIdentity" );
         request.setCookies( new Cookie[] { cookie } );
         trip.execute( "clearAssertedName" );
         bean = trip.getActionBean( UserPreferencesActionBean.class );
-        assertEquals( "/Login.action?logout=", trip.getDestination() );
+        assertEquals( "/Login.jsp?logout=", trip.getDestination() );
 
         // Verify that the asserted name cookie is gone from the Response
         MockHttpServletResponse response = (MockHttpServletResponse) bean.getContext().getResponse();

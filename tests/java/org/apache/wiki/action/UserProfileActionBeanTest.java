@@ -91,7 +91,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
 
         // Submit just the e-mail param
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.email", "fred@friendly.org" );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
@@ -111,7 +111,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
 
         // Submit just the full name param
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.fullname", "Fred Friendly" );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
@@ -129,7 +129,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
 
         // Submit just the login name param
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "fred" );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
@@ -147,7 +147,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
 
         // Submit just the first password field
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.password", "myPassword" );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
@@ -166,7 +166,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( MockRoundtrip.DEFAULT_SOURCE_PAGE, trip.getDestination() );
 
         // Submit just the second password field
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "passwordAgain", "myPassword" );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
@@ -192,7 +192,7 @@ public class UserProfileActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Set different passwords
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "fred" );
         trip.setParameter( "profile.fullname", "Fred Friendly" );
         trip.setParameter( "profile.email", "fred@friendly.org" );
@@ -214,7 +214,7 @@ public class UserProfileActionBeanTest extends TestCase
         ValidationErrors errors;
 
         // Set an illegal e-mail address
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "fred" );
         trip.setParameter( "profile.fullname", "Fred Friendly" );
         trip.setParameter( "profile.email", "illegalEmail" );
@@ -240,7 +240,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertFalse( userExists( "user" + suffix ) );
 
         // Create new user
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "user" + suffix );
         trip.setParameter( "profile.fullname", "Fred Friendly" + suffix );
         trip.setParameter( "profile.email", "fred@friendly.org" );
@@ -275,7 +275,7 @@ public class UserProfileActionBeanTest extends TestCase
 
         // Create user #1; save; verify it saved ok
         String suffix1 = String.valueOf( System.currentTimeMillis() );
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "user" + suffix1 );
         trip.setParameter( "profile.fullname", "Fred Friendly" + suffix1 );
         trip.setParameter( "profile.email", "fred1@friendly.org" );
@@ -293,7 +293,7 @@ public class UserProfileActionBeanTest extends TestCase
         // save
         // (because loginnames collided), and redirected back to .Action
         String suffix2 = String.valueOf( System.currentTimeMillis() );
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "user" + suffix1 );
         trip.setParameter( "profile.fullname", "Fred Friendly" + suffix2 );
         trip.setParameter( "profile.email", "fred2@friendly.org" );
@@ -310,7 +310,7 @@ public class UserProfileActionBeanTest extends TestCase
 
         // Create user #2, but same fullname as #1; save; verify it did NOT save
         // (because fullnames collided), and redirected back to .Action
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "user" + suffix2 );
         trip.setParameter( "profile.fullname", "Fred Friendly" + suffix1 );
         trip.setParameter( "profile.email", "fred2@friendly.org" );
@@ -337,7 +337,7 @@ public class UserProfileActionBeanTest extends TestCase
 
         // Create user; save; verify it saved ok
         String suffix = String.valueOf( System.currentTimeMillis() );
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         trip.setParameter( "profile.loginName", "user" + suffix );
         trip.setParameter( "profile.fullname", "Fred Friendly" + suffix );
         trip.setParameter( "profile.email", "fred1@friendly.org" );
@@ -351,7 +351,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertTrue( userExists( "user" + suffix ) );
 
         // Create new session and login as new user...
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         MockHttpServletRequest request = trip.getRequest();
         WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
         boolean login = m_engine.getAuthenticationManager().login( wikiSession, request, "user" + suffix, "mypassword" );
@@ -365,7 +365,7 @@ public class UserProfileActionBeanTest extends TestCase
         assertEquals( "fred1@friendly.org", bean.getProfile().getEmail() );
 
         // Now, create another session, and log in again....
-        trip = m_engine.guestTrip( "/UserProfile.action" );
+        trip = m_engine.guestTrip( "/UserProfile.jsp" );
         request = trip.getRequest();
         wikiSession = WikiSession.getWikiSession( m_engine, request );
         login = m_engine.getAuthenticationManager().login( wikiSession, request, "user" + suffix, "mypassword" );

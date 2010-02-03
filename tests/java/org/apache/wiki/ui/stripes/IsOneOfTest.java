@@ -39,7 +39,7 @@ public class IsOneOfTest extends TestCase
         ResolverUtil.Test test = new IsOneOf( WikiActionBean.class, PageFilter.class, WikiPlugin.class );
         resolver.find( test, "org.apache.wiki" );
         Set<Class<? extends Object>> matches = resolver.getClasses();
-        assertEquals( 71, matches.size() );
+        assertEquals( 72, matches.size() );
     }
 
     public void testActionBeanMatches()
@@ -48,7 +48,7 @@ public class IsOneOfTest extends TestCase
         ResolverUtil.Test test = new IsOneOf( WikiActionBean.class );
         resolver.find( test, "org.apache.wiki.action" );
         Set<Class<? extends Object>> matches = resolver.getClasses();
-        assertEquals( 24, matches.size() );
+        assertEquals( 25, matches.size() );
     }
 
     public void testPageFilterMatches()

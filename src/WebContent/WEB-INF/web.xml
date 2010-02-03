@@ -358,8 +358,8 @@
    <login-config>
        <auth-method>FORM</auth-method>
        <form-login-config>
-           <form-login-page>/LoginForm.jsp</form-login-page>
-           <form-error-page>/LoginForm.jsp</form-error-page>
+           <form-login-page>/templates/default/LoginForm.jsp</form-login-page>
+           <form-error-page>/templates/default/LoginForm.jsp</form-error-page>
        </form-login-config>
    </login-config>
 

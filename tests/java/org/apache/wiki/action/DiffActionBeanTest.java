@@ -93,13 +93,13 @@ public class DiffActionBeanTest extends TestCase
         assertNotNull( history );
         assertEquals( 3, history.size() );
         
-        // Verify that the history was retrieved in the right order
-        assertEquals( 1, history.get( 0 ).getVersion() );
+        // Verify that the history was retrieved in the reverse order
+        assertEquals( 3, history.get( 0 ).getVersion() );
         assertEquals( 2, history.get( 1 ).getVersion() );
-        assertEquals( 3, history.get( 2 ).getVersion() );
-        assertEquals( "This is version one.\r\n", history.get( 0 ).getContentAsString() );
+        assertEquals( 1, history.get( 2 ).getVersion() );
+        assertEquals( "This is version three...\r\n", history.get( 0 ).getContentAsString() );
         assertEquals( "This is version two!\r\n", history.get( 1 ).getContentAsString() );
-        assertEquals( "This is version three...\r\n", history.get( 2 ).getContentAsString() );
+        assertEquals( "This is version one.\r\n", history.get( 2 ).getContentAsString() );
 
         // Delete the test page
         m_engine.deletePage( pageName );

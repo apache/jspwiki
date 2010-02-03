@@ -242,7 +242,7 @@ public class GroupActionBeanTest extends TestCase
         GroupActionBean bean = trip.getActionBean( GroupActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Login.action", trip.getDestination().substring( 0, 13 ) );
+        assertEquals( "/Login.jsp", trip.getDestination().substring( 0, 13 ) );
         
         // Try saving again, this time authenticated
         trip = m_engine.authenticatedTrip( Users.JANNE, Users.JANNE_PASS, GroupActionBean.class );

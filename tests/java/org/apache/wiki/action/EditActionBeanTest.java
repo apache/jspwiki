@@ -59,7 +59,7 @@ public class EditActionBeanTest extends TestCase
     public void testEditNoParameters() throws Exception
     {
         // Try editing without specifying a page
-        MockRoundtrip trip = m_engine.guestTrip( "/Edit.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
         trip.addParameter( "wikiText", "This is the edited text" );
@@ -88,7 +88,7 @@ public class EditActionBeanTest extends TestCase
         m_engine.deletePage( "FindPage" );
 
         // Try editing the 'special page'
-        MockRoundtrip trip = m_engine.guestTrip( "/Edit.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "page", "FindPage" );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
@@ -122,7 +122,7 @@ public class EditActionBeanTest extends TestCase
         assertNotNull( "Did not save page " + pageName + "!", page );
 
         // Set up the marked-up page
-        MockRoundtrip trip = m_engine.guestTrip( "/Edit.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
         trip.setParameter( "page", pageName );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
@@ -142,7 +142,7 @@ public class EditActionBeanTest extends TestCase
         assertEquals( "/Wiki.jsp?view=&page=" + pageName, trip.getDestination() );
         
         // Save the page one more time!
-        trip = m_engine.guestTrip( "/Edit.action" );
+        trip = m_engine.guestTrip( "/Edit.jsp" );
         trip.setParameter( "page", pageName );
         startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
@@ -169,7 +169,7 @@ public class EditActionBeanTest extends TestCase
         assertFalse( m_engine.pageExists( pageName ) );
 
         // Set up the marked-up page
-        MockRoundtrip trip = m_engine.guestTrip( "/Edit.action" );
+        MockRoundtrip trip = m_engine.guestTrip( "/Edit.jsp" );
         trip.setParameter( "page", pageName );
         String startTime = String.valueOf( System.currentTimeMillis() );
         trip.addParameter( "startTime", CryptoUtil.encrypt( startTime ) );
