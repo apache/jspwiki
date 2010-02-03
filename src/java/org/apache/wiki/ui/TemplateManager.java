@@ -602,44 +602,67 @@ public class TemplateManager extends ModuleManager
         return EMPTY_MODULE_LIST;
     }
     
-    @SuppressWarnings("unchecked")
+    /**
+     * Initializes the template resources resolver map so that requests
+     * for a particular resource will be found regardless of whether the
+     * template contains that resource, or the default template does.
+     * @param template the template whose resources provide the defaults
+     */
     private void initTemplateResources( String template )
     {
-        Map<String,String> resources = new HashMap<String,String>();
-        ServletContext servletContext = m_engine.getServletContext();
-        
-        // Iterate through all of the resources in the default map
-        String templatePrefix = "/" + DIRECTORY + "/" + template + "/";
-        Set<String> templateResources = servletContext.getResourcePaths( templatePrefix );
-        Set<String> alreadyProcessed = new HashSet<String>();
+        Map<String,String> resolver = new HashMap<String,String>();
         
         // Add all of the resources the template contains
-        if ( templateResources != null )
-        {
-            for ( String resource : templateResources )
-            {
-                String shortResource = resource.substring( templatePrefix.length() ); 
-                resources.put( shortResource, resource );
-                alreadyProcessed.add( shortResource );
-            }
-        }
+        addResources( resolver, "/" + DIRECTORY + "/" + template + "/", null );
         
         // Add resources the template does not contain, but default does
-        templatePrefix = "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/";
-        Set<String> defaultResources = servletContext.getResourcePaths( templatePrefix );
-        if ( defaultResources != null )
+        addResources( resolver, "/" + DIRECTORY + "/" + DEFAULT_TEMPLATE + "/", null );
+
+        // We're done! Make the map immutable
+        m_resources = Collections.unmodifiableMap( resolver );
+    }
+
+    /**
+     * Adds all of the resources under a specified path prefix to the
+     * resource resolver map, with the "short name" of the path as the
+     * key, and the full path as the value. The short name is the portion
+     * of the path after the prefix. If a resource with that short name
+     * has already been added to the resource map, it will not be added
+     * again. Any resources ending in {@code /} (i.e., a directory path)
+     * will be processed recursively.
+     * @param resolver the resource resolver map
+     * @param prefix the path prefix that the search initiates from
+     * @param dir the directory to search relative to the path prefix. If not
+     * supplied, the path prefix directory itself will be searched
+     */
+    @SuppressWarnings("unchecked")
+    private void addResources( Map<String,String> resolver, String prefix, String dir )
+    {
+        ServletContext servletContext = m_engine.getServletContext();
+        String searchPath = dir == null ? prefix : prefix + dir;
+        Set<String> resources = servletContext.getResourcePaths( searchPath );
+        if ( resources != null )
         {
-            for ( String resource : defaultResources )
+            for ( String resource : resources )
             {
-                String shortResource = resource.substring( templatePrefix.length() ); 
-                if ( !alreadyProcessed.contains( shortResource ) )
+                String shortName = resource.substring( prefix.length() ); 
+                
+                // Directory: process these entries too
+                if ( shortName.endsWith( "/" ) )
                 {
-                    resources.put( shortResource, resource );
+                    addResources( resolver, prefix, shortName );
+                }
+
+                // Regular resource: add it if we don't have it already
+                else
+                {
+                    boolean alreadyProcessed = resolver.containsKey( shortName );
+                    if ( !alreadyProcessed )
+                    {
+                        resolver.put( shortName, resource );
+                    }
                 }
             }
         }
-        
-        // We're done! Make the map immutable
-        m_resources = Collections.unmodifiableMap( resources );
     }
 }
