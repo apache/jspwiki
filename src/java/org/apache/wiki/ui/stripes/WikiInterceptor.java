@@ -268,11 +268,11 @@ public class WikiInterceptor implements Interceptor
      * After the Stripes
      * {@link net.sourceforge.stripes.controller.LifecycleStage#ActionBeanResolution}
      * executes, this method runs the login stack to check for user authentication,
-     * injects the current WikiEngine, WikiSession and WikiActionBean into
-     * request scope, and returns <code>null</code>. After the objects are
-     * injected, downstream classes like WikiTagBase can use them. The attribute
-     * can also be accessed as variables using the JSP Expression Language
-     * (example: <code>${wikiPage}</code>). User preferences are also set up.
+     * injects the current WikiActionBean into request scope, and returns
+     * <code>null</code>. After the action bean is injected, downstream classes
+     * like WikiTagBase can use it. The attribute can also be accessed as variables
+     * using the JSP Expression Language (example: <code>${wikiActionBean}</code>).
+     * User preferences are also set up.
      * 
      * @param context the execution context
      * @return a Resolution if the
@@ -306,9 +306,7 @@ public class WikiInterceptor implements Interceptor
         WikiEngine engine = actionBeanContext.getEngine();
         engine.getAuthenticationManager().login( request );
 
-        // Stash the WikiEngine, WikiSession and ActionBean
-        request.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, actionBeanContext.getEngine() );
-        request.setAttribute( WikiContextFactory.ATTR_WIKISESSION, actionBeanContext.getWikiSession() );
+        // Stash the WikiActionBean
         request.setAttribute( ATTR_ACTIONBEAN, actionBean );
 
         // Stash the ActionBean as a PageContext attribute too

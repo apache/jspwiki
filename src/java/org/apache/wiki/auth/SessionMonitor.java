@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.action.WikiContextFactory;
 import org.apache.wiki.event.*;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
@@ -274,9 +275,17 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
     }
 
     /**
-     * Fires when the web container creates a new HTTP session;
-     * it also injects scripting session attribute <code>templates</code>
-     * into the session.
+     * <p>Prepares JSPWiki scripting variables when the web container creates
+     * a new HTTP session. These session attributes are injected:</p>
+     * <ul>
+     *   <li>{@code templates} - the template resource resolver map, returned
+     *   by {@link org.apache.wiki.ui.TemplateManager#getTemplateResources()}</li>
+     *   <li>{@code wikiEngine} - the {@link org.apache.wiki.WikiEngine}</li>
+     *   <li>{@code wikiSession} - the {@link org.apache.wiki.WikiSession}</li>
+     * </ul>
+     * <p>After the session attributes are injected, downstream classes
+     * like WikiTagBase can use it. The attributes can also be accessed as variables
+     * using the JSP Expression Language (example: <code>${wikiSession}</code>).</p>
      * 
      * @param event the HTTP session event
      */
@@ -294,6 +303,10 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
         
         // Stash 'templates' attribute for scripting
         session.setAttribute( "templates", engine.getTemplateManager().getTemplateResources() );
+        
+        // Stash the WikiEngine and WikiSession for scripting
+        session.setAttribute( WikiContextFactory.ATTR_WIKIENGINE, engine );
+        session.setAttribute( WikiContextFactory.ATTR_WIKISESSION, find( session ) );
     }
 
     /**
