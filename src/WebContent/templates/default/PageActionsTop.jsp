@@ -28,16 +28,6 @@
     <wiki:CheckRequestContext context='view|info|diff|upload|rename'>
       <wiki:Permission permission="edit">
       	<li>
-          <wiki:PageType type="page">
-            <c:set var="editTitle"><fmt:message key="actions.edit.title" /></c:set>
-            <s:link
-              beanclass="org.apache.wiki.action.EditActionBean" event="edit"
-              accesskey="e" class="action edit"
-              title="${editTitle}">
-              <fmt:message key='actions.edit' />
-              <s:param name="page" value="${wikiContext.page.name}" />
-            </s:link>
-          </wiki:PageType>
           <wiki:PageType type="attachment">
             <c:set var="editParentTitle"><fmt:message key="actions.editparent.title" /></c:set>
             <s:link

@@ -21,7 +21,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="edit" executeResolution="true" id="wikiActionBean" />
 <s:layout-render name="${templates['DefaultLayout.jsp']}">
 
   <%-- Page title should say Edit: + pagename --%>
@@ -36,13 +35,52 @@
   <s:layout-component name="script">
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-edit.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/dialog.js' />"></script>
-    <%--
-    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/posteditor.js' />"></script>
-    --%>
+    <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/stripes-support.js' />"></script>
   </s:layout-component>
 
   <s:layout-component name="content">
-    <jsp:include page="${templates['EditContent.jsp']}" />
+    <wiki:TabbedSection defaultTab="edit">
+    
+      <%-- View tab --%>
+      <wiki:Tab id="view" titleKey="view.tab" accesskey="v"
+        onclick="Stripes.executeEvent('editform', 'preview', 'previewContent');">
+        <div class="information">
+          <fmt:message key="preview.info" />
+        </div>
+        <div id="previewContent">
+          Page contents go here.
+        </div>
+      </wiki:Tab>
+
+      <%-- Editor tab --%>
+      <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e">
+        <wiki:Editor/>
+      </wiki:Tab>
+      
+      <%-- Attachments tab --%>
+      <wiki:Tab id="attachments" accesskey="a"
+        title="${wiki:attachmentsTitle(request.Locale, wikiActionBean.attachments)}">
+        <jsp:include page="${templates['tabs/AttachmentsTab.jsp']}" />
+      </wiki:Tab>
+        
+      <%-- Info tab --%>
+      <wiki:Tab id="info" titleKey="info.tab" accesskey="i">
+        <jsp:include page="${templates['tabs/PageInfoTab.jsp']}" />
+      </wiki:Tab>
+
+      <%-- Help tab --%>
+      <wiki:Tab id="help" titleKey="edit.tab.help" accesskey="h">
+        <wiki:InsertPage page="EditPageHelp" />
+        <wiki:NoSuchPage page="EditPageHelp">
+          <div class="error">
+            <fmt:message key="comment.edithelpmissing">
+              <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
+            </fmt:message>
+          </div>
+        </wiki:NoSuchPage>  
+      </wiki:Tab>
+    
+    </wiki:TabbedSection>
   </s:layout-component>
   
 </s:layout-render>

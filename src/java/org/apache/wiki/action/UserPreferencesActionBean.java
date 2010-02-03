@@ -46,7 +46,7 @@ import net.sourceforge.stripes.validation.Validate;
 
 /**
  */
-@UrlBinding( "/UserPreferences.action" )
+@UrlBinding( "/UserPreferences.jsp" )
 public class UserPreferencesActionBean extends AbstractActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( "JSPWiki" );
@@ -350,6 +350,6 @@ public class UserPreferencesActionBean extends AbstractActionBean
     @WikiRequestContext( "prefs" )
     public Resolution view()
     {
-        return new ForwardResolution( "/UserPreferences.jsp" );
+        return new ForwardResolution( "/templates/default/Preferences.jsp" ).addParameter( "tab", "prefs" );
     }
 }

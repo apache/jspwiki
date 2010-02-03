@@ -108,7 +108,7 @@ public class ViewActionBean extends AbstractPageActionBean
 
     /**
      * Handler that forwards to the page information display JSP
-     * <code>/Attachments.jsp</code>.
+     * {@code PageInfo.jsp}.
      * 
      * @return a forward to the content template
      */
@@ -116,7 +116,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     public Resolution attachments()
     {
-        return new ForwardResolution( "/templates/default/Attachments.jsp" );
+        return new ForwardResolution( "/templates/default/PageInfo.jsp" ).addParameter( "tab", "attachments" );
     }
 
     /**
@@ -156,7 +156,7 @@ public class ViewActionBean extends AbstractPageActionBean
         {
             return new ForwardResolution( "/templates/default/AttachmentInfo.jsp" );
         }
-        return new ForwardResolution( "/templates/default/PageInfo.jsp" );
+        return new ForwardResolution( "/templates/default/PageInfo.jsp" ).addParameter( "tab", "info" );
     }
 
     /**
@@ -306,7 +306,7 @@ public class ViewActionBean extends AbstractPageActionBean
     public Resolution view() throws ProviderException
     {
         // Forward to display JSP
-        return new ForwardResolution( "/templates/default/Wiki.jsp" );
+        return new ForwardResolution( "/templates/default/Wiki.jsp" ).addParameter( "tab", "view" );
     }
 
     /**

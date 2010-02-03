@@ -47,7 +47,7 @@ import org.apache.wiki.workflow.DecisionRequiredException;
 
 /**
  */
-@UrlBinding( "/UserProfile.action" )
+@UrlBinding( "/UserProfile.jsp" )
 public class UserProfileActionBean extends AbstractActionBean
 {
     Logger log = LoggerFactory.getLogger( UserProfileActionBean.class );
@@ -76,7 +76,7 @@ public class UserProfileActionBean extends AbstractActionBean
     /**
      * Pre-action that loads the UserProfile before user-supplied parameters are
      * bound to the ActionBean. Also stashes the UserProfile as a request-scoped
-     * attribute named <code>profile</code>. This attribute can be used in
+     * attribute named {@code userProfile}. This attribute can be used in
      * JSP EL expressions as <code>$%7Bprofile%7D</code>.
      * 
      * @return <code>null</code>, always
@@ -94,7 +94,7 @@ public class UserProfileActionBean extends AbstractActionBean
         m_profile.setPassword( null );
 
         // Stash the profile as a request attribute
-        getContext().getRequest().setAttribute( "profile", m_profile );
+        getContext().getRequest().setAttribute( "userProfile", m_profile );
         return null;
 
     }
@@ -136,7 +136,7 @@ public class UserProfileActionBean extends AbstractActionBean
         // know about them
         catch( Exception e )
         {
-            errors.addGlobalError( new LocalizableError( "profile.saveError", e.getMessage() ) );
+            errors.add( "profile", new LocalizableError( "profile.saveError", e.getMessage() ) );
         }
 
         // If no errors, send user to front page (or redirected page)
@@ -274,7 +274,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @DontValidate
     public Resolution create()
     {
-        return new ForwardResolution( "/CreateProfile.jsp" );
+        return new ForwardResolution( "/templates/default/CreateProfile.jsp" ).addParameter( "tab", "profile" );
     }
 
     /**
@@ -289,9 +289,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @WikiRequestContext( "profile" )
     public Resolution view()
     {
-        ForwardResolution r = new ForwardResolution( "/UserPreferences.jsp" );
-        r.addParameter( "tab", "profile" );
-        return r;
+        return new ForwardResolution( "/templates/default/Preferences.jsp" ).addParameter( "tab", "profile" );
     }
 
 }

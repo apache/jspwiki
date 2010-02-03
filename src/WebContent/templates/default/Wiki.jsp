@@ -53,10 +53,10 @@
   </wiki:CheckVersion>
     
   <s:layout-component name="content">
-    <wiki:TabbedSection defaultTab="pagecontent">
+    <wiki:TabbedSection defaultTab="view">
 
       <wiki:NoSuchPage>
-        <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v">
+        <wiki:Tab id="view" titleKey="view.tab" accesskey="v">
           <fmt:message key="common.nopage">
             <fmt:param><wiki:EditLink><fmt:message key="common.createit" /></wiki:EditLink></fmt:param>
           </fmt:message>
@@ -65,8 +65,8 @@
 
       <wiki:PageExists>
 
-        <%-- Content tab --%>
-        <wiki:Tab id="pagecontent" titleKey="view.tab" accesskey="v">
+        <%-- View tab --%>
+        <wiki:Tab id="view" titleKey="view.tab" accesskey="v">
             <%-- If the page is an older version, then offer a note and a possibility
                  to restore this version as the latest one. --%>
           <wiki:CheckVersion mode="notlatest">
@@ -131,15 +131,24 @@ if( thisVersion == WikiProvider.LATEST_VERSION ) thisVersion = latestVersion; //
           </wiki:PageType>    
         </wiki:Tab>
 
+        <%-- Edit tab --%>
+        <wiki:Permission permission="edit">
+          <wiki:Tab id="edit" titleKey="edit.tab.edit" accesskey="e"
+            beanclass="org.apache.wiki.action.EditActionBean" event="edit">
+            <wiki:Param name="page" value="${wikiActionBean.page.name}" />
+          </wiki:Tab>
+        </wiki:Permission>
+
         <%-- Attachments tab --%>
-        <wiki:Tab id="attach" accesskey="a"
+        <wiki:Tab id="attachments" accesskey="a"
           title="${wiki:attachmentsTitle(request.Locale, wikiActionBean.attachments)}"
           beanclass="org.apache.wiki.action.ViewActionBean" event="attachments">
           <wiki:Param name="page" value="${wikiActionBean.page.name}" />
         </wiki:Tab>
         
         <%-- Info tab --%>
-        <wiki:Tab id="info" titleKey="info.tab" accesskey="i" beanclass="org.apache.wiki.action.ViewActionBean" event="info">
+        <wiki:Tab id="info" titleKey="info.tab" accesskey="i"
+          beanclass="org.apache.wiki.action.ViewActionBean" event="info">
           <wiki:Param name="page" value="${wikiActionBean.page.name}" />
         </wiki:Tab>
       </wiki:PageExists>

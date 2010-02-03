@@ -21,7 +21,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<s:useActionBean beanclass="org.apache.wiki.action.EditActionBean" event="comment" executeResolution="true" id="wikiActionBean" />
 <s:layout-render name="${templates['DefaultLayout.jsp']}">
 
   <%-- Page title should say Comment: + pagename --%>
@@ -42,7 +41,27 @@
   </s:layout-component>
 
   <s:layout-component name="content">
-    <jsp:include page="${templates['CommentContent.jsp']}" />
+    <wiki:TabbedSection defaultTab="commentcontent">
+      <wiki:Tab id="pagecontent" titleKey="comment.tab.discussionpage">
+        <wiki:InsertPage/>
+      </wiki:Tab>
+    
+      <wiki:Tab id="commentcontent" titleKey="comment.tab.addcomment">
+        <wiki:Editor/>
+      </wiki:Tab>
+    
+      <%-- Edit help tab --%>
+      <wiki:Tab id="edithelp" titleKey="edit.tab.help" accesskey="h">
+        <wiki:InsertPage page="EditPageHelp" />
+        <wiki:NoSuchPage page="EditPageHelp">
+          <div class="error">
+            <fmt:message key="comment.edithelpmissing">
+              <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
+            </fmt:message>
+          </div>
+        </wiki:NoSuchPage>  
+      </wiki:Tab>
+    </wiki:TabbedSection>
   </s:layout-component>
   
 </s:layout-render>

@@ -63,10 +63,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.render.RenderingManager;
-import org.apache.wiki.ui.stripes.HandlerPermission;
-import org.apache.wiki.ui.stripes.SpamProtect;
-import org.apache.wiki.ui.stripes.WikiActionBeanContext;
-import org.apache.wiki.ui.stripes.WikiRequestContext;
+import org.apache.wiki.ui.stripes.*;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -76,6 +73,7 @@ import org.jdom.JDOMException;
  * ActionBean that manages how users edit and comment on WikiPages.
  */
 @HttpCache( allow = false )
+@UrlBinding( "/Edit.jsp" )
 public class EditActionBean extends AbstractPageActionBean
 {
     private static final String LOCK_PREFIX = "lock-";
@@ -103,30 +101,30 @@ public class EditActionBean extends AbstractPageActionBean
     private long m_startTime = -1;
 
     /**
-     * Using AJAX, returns a {@link StreamingResolution} containing
-     * a preview for the current page.
+     * AJAX event handler that returns an {@link EventResolution} containing
+     * a preview of the page contents, as submitted by the {@code wikiText}
+     * field.
      * 
-     * @return always returns a {@link StreamingResolution} containing the
+     * @return always returns a {@link EventResolution} containing the
      * results
      */
-    @HandlesEvent( "ajaxPreview" )
-    public Resolution ajaxPreview()
+    @HandlesEvent( "preview" )
+    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
+    @WikiRequestContext( "preview" )
+    public Resolution preview() throws IOException
     {
-        Resolution r = new StreamingResolution( "text/html; charset=UTF-8" ) {
-            public void stream( HttpServletResponse response ) throws IOException
-            {
-                // Parse the wiki markup
-                WikiContext context = getContext();
-                RenderingManager renderer = context.getEngine().getRenderingManager();
-                MarkupParser mp = renderer.getParser( context, m_wikiText );
-                mp.disableAccessRules();
-                WikiDocument doc = mp.parse();
-                
-                // Get the text directly from the RenderingManager, without caching
-                String result = renderer.getHTML( context, doc );
-                response.getWriter().write( result );
-            }
-        };
+        // Parse the wiki markup
+        WikiActionBeanContext context = getContext();
+        RenderingManager renderer = context.getEngine().getRenderingManager();
+        MarkupParser mp = renderer.getParser( context, m_wikiText );
+        mp.disableAccessRules();
+        WikiDocument doc = mp.parse();
+
+        // Get the text directly from the RenderingManager, without caching
+        String result = renderer.getHTML( context, doc );
+
+        // Return an EventResolution
+        Resolution r = new EventResolution( context, result, true );
         return r;
     }
 
@@ -182,9 +180,16 @@ public class EditActionBean extends AbstractPageActionBean
         // Init edit fields and forward to the display JSP
         m_append = true;
         initEditFields( "Commenting on" );
-        return new ForwardResolution( "/Comment.jsp" );
+        return new ForwardResolution( "/templates/default/Comment.jsp" );
     }
 
+    /**
+     * Loads the page's current text, initializes the EditActionBean for
+     * editing, and forwards to the template JSP {@code /templates/default/Edit.jsp}.
+     * @return always returns a {@link ForwardResolution} to the template JSP
+     * @throws ProviderException if the page's current contents cannot
+     * be retrieved
+     */
     @DefaultHandler
     @HandlesEvent( "edit" )
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.EDIT_ACTION )
@@ -196,7 +201,7 @@ public class EditActionBean extends AbstractPageActionBean
         
         // Init edit fields and forward to the display JSP
         initEditFields( "Editing" );
-        return new ForwardResolution( "/Edit.jsp" );
+        return new ForwardResolution( "/templates/default/Edit.jsp" );
     }
 
     /**
@@ -345,20 +350,6 @@ public class EditActionBean extends AbstractPageActionBean
         }
     }
 
-    /**
-     * Event that the user to the preview display JSP.
-     * 
-     * @return a forward resolution back to the preview page.
-     */
-    @HandlesEvent( "preview" )
-    @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
-    @WikiRequestContext( "preview" )
-    public Resolution preview()
-    {
-        log.debug( "Previewing " + getPage().getName() );
-        return new ForwardResolution( "/Preview.jsp" );
-    }
-    
     /**
      * Validation method that checks to see if another user has locked the page
      * before the current user starts to edit or comment on it. This method
