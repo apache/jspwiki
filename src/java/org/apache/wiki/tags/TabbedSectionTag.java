@@ -38,7 +38,7 @@ import net.sourceforge.stripes.util.UrlBuilder;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.tags.TabTag.TabInfo;
+import org.apache.wiki.tags.TabTag.Info;
 
 /**
  * <p>
@@ -128,7 +128,7 @@ public class TabbedSectionTag extends BodyTagSupport
             super();
         }
 
-        private final List<TabTag.TabInfo> m_tabs = new ArrayList<TabTag.TabInfo>();
+        private final List<TabTag.Info> m_tabs = new ArrayList<TabTag.Info>();
 
         /**
          * Adds a child TabTag to the TabCollection. When the TabbedSection tag
@@ -148,29 +148,7 @@ public class TabbedSectionTag extends BodyTagSupport
                 throw new JspTagException( "Cannot add null TabTag." );
             }
 
-            TabInfo tabInfo = new TabInfo();
-            tabInfo.setAccesskey( tab.getTabInfo().getAccesskey() );
-            if ( tab.getTabInfo().getBeanclass() != null )
-            {
-                try
-                {
-                    tabInfo.setBeanclass( tab.getTabInfo().getBeanclass().getName() );
-                }
-                catch( ClassNotFoundException e )
-                {
-                    throw new JspTagException( "Could not set beanclass: " + e.getMessage() );
-                }
-            }
-            for ( Map.Entry<String,String> entry : tab.getTabInfo().getContainedParameters().entrySet() )
-            {
-                tabInfo.setContainedParameter( entry.getKey(), entry.getValue() );
-            }
-            tabInfo.setEvent( tab.getTabInfo().getEvent() );
-            tabInfo.setId( tab.getTabInfo().getId() );
-            tabInfo.setTitle( tab.getTabInfo().getTitle() );
-            tabInfo.setTitleKey( tab.getTabInfo().getTitleKey() );
-            tabInfo.setUrl( tab.getTabInfo().getUrl() );
-            m_tabs.add( tabInfo );
+            m_tabs.add( (Info)tab.getTabInfo().clone() );
         }
 
         /**
@@ -178,7 +156,7 @@ public class TabbedSectionTag extends BodyTagSupport
          * 
          * @return the list of tab
          */
-        public List<TabTag.TabInfo> getTabs()
+        public List<TabTag.Info> getTabs()
         {
             return m_tabs;
         }
@@ -233,7 +211,7 @@ public class TabbedSectionTag extends BodyTagSupport
 
         // Figure out the active (default) tab
         TabCollection tc = getTabContext( pageContext.getRequest() );
-        List<TabTag.TabInfo> tabs = tc.getTabs();
+        List<TabTag.Info> tabs = tc.getTabs();
 
         try
         {
@@ -242,18 +220,19 @@ public class TabbedSectionTag extends BodyTagSupport
             JspWriter writer = this.getPreviousOut();
 
             writer.append( "<div class=\"tabmenu\">\n" );
-            for( TabTag.TabInfo tab : tabs )
+            for( TabTag.Info tab : tabs )
             {
                 // Is this the default tab?
-                if( tab.getId().equals( m_defaultTabID ) )
+                String id = tab.options.get( Info.ID );
+                if( id.equals( m_defaultTabID ) )
                 {
-                    m_defaultTabID = tab.getId();
+                    m_defaultTabID = id;
                 }
 
-                // If default tag still not 't set, use the first one
+                // If default tag still not set, use the first one
                 if( m_defaultTabID == null || m_defaultTabID.length() == 0 )
                 {
-                    m_defaultTabID = tab.getId();
+                    m_defaultTabID = id;
                 }
 
                 // Generate each menu item div
@@ -295,32 +274,39 @@ public class TabbedSectionTag extends BodyTagSupport
      * Outputs a single menu item <code>div</code> element for a supplied tag.
      * 
      * @param writer the JspWriter to write the output to
-     * @param tab the TabInfo object containing information about the tab
+     * @param tab the TabTag.Info object containing information about the tab
      * @throws IOException
      */
-    private void writeTabMenuItem( JspWriter writer, TabTag.TabInfo tab ) throws IOException
+    private void writeTabMenuItem( JspWriter writer, TabTag.Info tab ) throws IOException
     {
         writer.append( "  <a" );
 
         // Generate the ID
-        writer.append( " id=\"menu-" + tab.getId() + "\"" );
+        String id = tab.options.get( Info.ID );
+        writer.append( " id=\"menu-" + id + "\"" );
 
         // Active tab?
-        if( tab.getId().equals( m_defaultTabID ) )
+        if( id.equals( m_defaultTabID ) )
         {
             writer.append( " class=\"activetab\"" );
         }
+
+        // Onclick event?
+        if ( tab.options.get( Info.ON_CLICK ) != null )
+        {
+            writer.append( " onclick=\""+ tab.options.get( Info.ON_CLICK ) + "\"" );
+        }
         
         // Generate the ActionBean event URL, if supplied
-        if ( tab.getBeanclass() != null )
+        if ( tab.beanclass != null )
         {
             HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-            UrlBuilder builder = new UrlBuilder( request.getLocale(), tab.getBeanclass(), true );
-            if ( tab.getEvent() != null )
+            UrlBuilder builder = new UrlBuilder( request.getLocale(), tab.beanclass, true );
+            if ( tab.options.get( Info.EVENT ) != null )
             {
-                builder.setEvent( tab.getEvent() );
+                builder.setEvent( tab.options.get( Info.EVENT ) );
             }
-            for ( Map.Entry<String, String> entry : tab.getContainedParameters().entrySet() )
+            for ( Map.Entry<String, String> entry : tab.containedParams.entrySet() )
             {
                 builder.addParameter( entry.getKey(), entry.getValue() );
             }
@@ -333,27 +319,27 @@ public class TabbedSectionTag extends BodyTagSupport
         }
 
         // Generate the URL, if supplied
-        else if( tab.getUrl() != null )
+        else if( tab.options.get( Info.URL ) != null )
         {
-            writer.append( " href='" + tab.getUrl() + "'" );
+            writer.append( " href='" + tab.options.get( Info.URL ) + "'" );
         }
 
         // Generate the tab title
         String tabTitle = null;
-        if( tab.getTitleKey() != null )
+        if( tab.options.get( Info.TITLE_KEY ) != null )
         {
             Locale locale = pageContext.getRequest().getLocale();
             InternationalizationManager i18n = m_engine.getInternationalizationManager();
-            tabTitle = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, locale, tab.getTitleKey() );
+            tabTitle = i18n.get( InternationalizationManager.TEMPLATES_BUNDLE, locale, tab.options.get( Info.TITLE_KEY ) );
         }
         if( tabTitle == null )
         {
-            tabTitle = tab.getTitle();
+            tabTitle = tab.options.get( Info.TITLE );
         }
         writer.append( ">" );
 
         // Output the tab title
-        String accesskey = tab.getAccesskey();
+        String accesskey = tab.options.get( Info.ACCESS_KEY );
         if( tabTitle != null )
         {
             // Generate the access key, if supplied

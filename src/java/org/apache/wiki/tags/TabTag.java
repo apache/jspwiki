@@ -64,6 +64,8 @@ import org.apache.wiki.util.TextUtil;
  * If the event is not specified, the default event will be used. If both
  * {@code url} and {@code beanclass} are specified, {@code beanclass} wins.
  * <em>Optional.</em></li>
+ * <li><b>onclick</b>(Pass-through) JavaScript to be executed after the
+ * tab is clicked, but before the contents are displayed. <em>Optional.</em></li>
  * </ul>
  * 
  * @since v2.3.63
@@ -72,199 +74,61 @@ public class TabTag extends WikiTagBase implements ParamHandler
 {
     private static final long serialVersionUID = -8534125226484616489L;
     
-    private final TabInfo m_tabInfo = new TabInfo();
+    private final Info m_info = new Info();
     
     /**
      * Lightweight class that holds information about TabTags.
      */
-    public static class TabInfo 
+    public static class Info implements Cloneable
     {
-        private String m_id = null;
-        
-        private String m_accesskey = null;
+        static final String ACCESS_KEY = "accessKey";
 
-        private String m_tabTitle = null;
+        static final String EVENT = "event";
+        
+        static final String ID = "id";
 
-        private String m_tabTitleKey = null;
+        static final String ON_CLICK = "onClick";
 
-        private String m_url = null;
-        
-        private Class<? extends ActionBean> m_beanclass = null;
-        
-        private String m_event = null;
-        
-        private Map<String, String> m_containedParams;
-        
-        /**
-         * Sets the tab access key.
-         * 
-         * @param accessKey the access key
-         */
-        public void setAccesskey( String accessKey )
-        {
-            m_accesskey = TextUtil.replaceEntities( accessKey ); // take only the
-            // first char
-        }
+        static final String TITLE = "tabTitle";
 
-        /**
-         * Sets the tab beanclass.
-         * @param beanclass the ActionBean class name
-         * @throws ClassNotFoundException 
-         */
-        @SuppressWarnings("unchecked")
-        public void setBeanclass( String beanclass ) throws ClassNotFoundException
-        {
-            m_beanclass = (Class<? extends ActionBean>)Class.forName( beanclass );
-        }
+        static final String TITLE_KEY = "tabTitleKey";
+
+        static final String URL = "url";
         
         /**
-         * Sets the tab event.
-         * @param event the ActionBean event handler name
+         * The tab's ActionBean class name for generating an URL.
          */
-        public void setEvent( String event )
-        {
-            m_event = TextUtil.replaceEntities( event );
-        }
+        Class<? extends ActionBean> beanclass = null;
         
         /**
-         * Sets the id.
-         * @param id
+         * Parameters passed to the Tab tag.
          */
-        public void setId( String id )
-        {
-            m_id = id;
-        }
+        final Map<String, String> containedParams = new HashMap<String,String>();
         
         /**
-         * Sets the tab title.
-         * 
-         * @param title the tab title
+         * The String options passed to the TabTag object.
          */
-        public void setTitle( String title )
-        {
-            m_tabTitle = TextUtil.replaceEntities( title );
-        }
+        final Map<String,String> options = new HashMap<String,String>();
 
         /**
-         * Sets the tab title key.
-         * 
-         * @param key the tab title key
+         * Clones the Info object.
          */
-        public void setTitleKey( String key )
+        public Object clone()
         {
-            m_tabTitleKey = TextUtil.replaceEntities( key );
-        }
-
-        /**
-         * Sets the tab URL.
-         * 
-         * @param url the URL
-         */
-        public void setUrl( String url )
-        {
-            m_url = TextUtil.replaceEntities( url );
-        }
-        
-        /**
-         * Returns the tab access key.
-         * 
-         * @return the access key
-         */
-        public String getAccesskey()
-        {
-            return m_accesskey;
-        }
-        
-        /**
-         * Returns the tab's ActionBean class name for generating an URL.
-         * @return the bean class
-         */
-        public Class<? extends ActionBean> getBeanclass()
-        {
-            return m_beanclass;
-        }
-        
-        /**
-         * Returns any parameters passed to the Tab tag.
-         * @return the params
-         */
-        public Map<String,String> getContainedParameters()
-        {
-            if ( m_containedParams == null )
+            Info info = new Info();
+            if ( beanclass != null )
             {
-                m_containedParams = new HashMap<String,String>();
+                info.beanclass = beanclass;
             }
-            return m_containedParams;
-        }
-        
-        /**
-         * Returns the tab's ActionBean event name for generating an URL.
-         * @return the ActionBean event name, or {@code null} if the default
-         * should be used
-         */
-        public String getEvent()
-        {
-            return m_event;
-        }
-        
-        /**
-         * Returns the ID for this tab.
-         * @return id
-         */
-        public String getId()
-        {
-            return m_id;
-        }
-        
-        /**
-         * Returns the tab title.
-         * @return the title
-         */
-        public String getTitle()
-        {
-            return m_tabTitle;
-        }
-        
-        /**
-         * Returns the i18n key used to generate the tab title.
-         * @return the title key
-         */
-        public String getTitleKey()
-        {
-            return m_tabTitleKey;
-        }
-        
-        /**
-         * Returns the URL for this tab, if supplied.
-         * 
-         * @return the URL
-         */
-        public String getUrl()
-        {
-            return m_url;
-        }
-
-        /**
-         * Adds a nested parameter value to the tab
-         * @param name the parameter name
-         * @param value the value
-         */
-        public void setContainedParameter( String name, String value )
-        {
-            if( name != null )
-            {
-                if( m_containedParams == null )
-                {
-                    m_containedParams = new HashMap<String, String>();
-                }
-                m_containedParams.put( name, value );
-            }
+            info.containedParams.putAll( containedParams );
+            info.options.putAll( options );
+            return info;
         }
     }
 
-    protected TabInfo getTabInfo()
+    protected Info getTabInfo()
     {
-        return m_tabInfo;
+        return m_info;
     }
     
     /**
@@ -294,13 +158,9 @@ public class TabTag extends WikiTagBase implements ParamHandler
     public void doFinally()
     {
         super.doFinally();
-        m_tabInfo.m_accesskey = null;
-        m_tabInfo.m_beanclass = null;
-        m_tabInfo.m_containedParams = null;
-        m_tabInfo.m_event = null;
-        m_tabInfo.m_tabTitle = null;
-        m_tabInfo.m_tabTitleKey = null;
-        m_tabInfo.m_url = null;
+        m_info.beanclass = null;
+        m_info.containedParams.clear();
+        m_info.options.clear();
     }
 
     /**
@@ -316,7 +176,8 @@ public class TabTag extends WikiTagBase implements ParamHandler
         {
             throw new JspTagException( "Tab Tag without \"id\" attribute" );
         }
-        if( m_tabInfo.m_tabTitle == null && m_tabInfo.m_tabTitleKey == null )
+        if( m_info.options.get( Info.TITLE ) == null && 
+            m_info.options.get( Info.TITLE_KEY ) == null )
         {
             throw new JspTagException( "Tab Tag without \"tabTitle\" or \"tabTitleKey\" attribute" );
         }
@@ -338,13 +199,14 @@ public class TabTag extends WikiTagBase implements ParamHandler
     }
     
     /**
-     * {@inheritDoc}. Also sets the ID for the embedded {@link TabInfo object}.
+     * {@inheritDoc}. Also sets the ID for the embedded {@link Info object}.
+     * This attribute is required.
      */
     @Override
     public void setId( String id )
     {
         super.setId( id );
-        m_tabInfo.setId( id );
+        m_info.options.put( Info.ID, id );
     }
     
     /**
@@ -354,7 +216,10 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setAccesskey( String accessKey )
     {
-        m_tabInfo.setAccesskey( accessKey );
+        if ( accessKey != null && accessKey.length() > 0 )
+        {
+            m_info.options.put( Info.ACCESS_KEY, accessKey.substring( 0, 1 ) );
+        }
     }
     
     /**
@@ -363,9 +228,10 @@ public class TabTag extends WikiTagBase implements ParamHandler
      * @param beanclass the ActionBean class name
      * @throws ClassNotFoundException if the bean class cannot be located or loaded
      */
+    @SuppressWarnings("unchecked")
     public void setBeanclass( String beanclass ) throws ClassNotFoundException
     {
-        m_tabInfo.setBeanclass( beanclass );
+        m_info.beanclass = (Class<? extends ActionBean>)Class.forName( beanclass );
     }
 
     /**
@@ -373,7 +239,7 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setContainedParameter( String name, String value )
     {
-        m_tabInfo.setContainedParameter( name, value );
+        m_info.containedParams.put( name, value );
     }
 
     /**
@@ -384,9 +250,19 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setEvent( String event )
     {
-        m_tabInfo.setEvent( event );
+        m_info.options.put( Info.EVENT, TextUtil.replaceEntities( event ) );
     }
 
+    /**
+     * Sets the JavaScript to execute after the tab is clicked, but before
+     * the contents are shown.
+     * @param onclick the code
+     */
+    public void setOnclick( String onclick )
+    {
+        m_info.options.put( Info.ON_CLICK, onclick );
+    }
+    
     /**
      * Sets the tab title.
      * 
@@ -394,7 +270,7 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setTitle( String title )
     {
-        m_tabInfo.setTitle( title );
+        m_info.options.put( Info.TITLE, TextUtil.replaceEntities( title ) );
     }
 
     /**
@@ -404,7 +280,7 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setTitleKey( String key )
     {
-        m_tabInfo.setTitleKey( key );
+        m_info.options.put( Info.TITLE_KEY, TextUtil.replaceEntities( key ) );
     }
 
     /**
@@ -414,6 +290,6 @@ public class TabTag extends WikiTagBase implements ParamHandler
      */
     public void setUrl( String url )
     {
-        m_tabInfo.setUrl( url );
+        m_info.options.put( Info.URL, TextUtil.replaceEntities( url ) );
     }
 }
