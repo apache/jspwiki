@@ -46,24 +46,23 @@ Class: Stripes
 	Fixme: update to mootool 1.2.3
 */
 var Stripes = {
-	executeEvent: function( form, event, divTarget ){
-		params = event + "=&" + $(form).toQueryString();
-
-		new Request(form.action, {
-			postBody: params,
-			method: 'post',
-			onComplete: function(response){
-				// Clear the results div
-				$(divTarget).empty();
-				// Build new results if we got a response
-				if(response) var results = eval(response);
-				if(results){
-					var target = $(divTarget).addClass("warning");
-					results.each(function(result,i) {
-						var p = new Element('p').setHTML(result).injectInside(divTarget);
-					});
-				}
-			}
-		}).send();
-	}
+  executeEvent: function( formName, event, divTarget ){
+    var form = $(formName);
+    var url = form.action;
+    var params = event + "=&" + form.toQueryString();
+    var request = new Request( {
+      url: url,
+      data: params,
+      method: 'post',
+      evalResponse: true,
+      onComplete: function(response) {
+        // Clear the results div
+        $(divTarget).empty();
+        if (eventResponse.html) {
+          $(divTarget).set('html',eventResponse.results);
+        }
+      }
+    });
+    request.send();
+  }
 }
