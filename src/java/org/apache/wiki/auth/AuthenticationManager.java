@@ -639,6 +639,15 @@ public final class AuthenticationManager
     }
     
     /**
+     *  {@see #allowsCookieAuthentication()}
+     *  @return <code>true</code> if cookies are allowed for authentication
+     */
+    public boolean isCookieAuthenticated()
+    {
+        return m_allowsCookieAuthentication;
+    }
+    
+    /**
      * Determines whether the supplied Principal is a "role principal".
      * @param principal the principal to test
      * @return <code>true</code> if the Principal is of type

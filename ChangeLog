@@ -1,3 +1,32 @@
+2010-02-02 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-202
+
+        * [JSPWIKI-578] Eliminated top-level JSPs for Edit.jsp,
+        Preview.jsp, CreateProfile.jsp, Login.jsp, LoginForm.jsp,
+        LostPassword.jsp, and UserPreferences.jsp and consolidated
+        the markup into the template JSPs.
+
+        * Preview is now a tab, and its contents refresh automatically
+        when it is clicked based on the editor's contents.
+        This replaces "live" or "sneak" preview. It looks good
+        and works well. Related: a new EventResolution class
+        now exists to help events methods return AJAX that
+        stripes-support.js understands.
+        
+        * TabbedSectionTag gains an onclick() attribute that
+        passes contents through to the underlying <div>. This
+        feature is super-useful and enables the new preview
+        functionality. Refactored TabTag to make it simpler.
+
+        * Moved injection of JSTL variables ${wikiEngine}
+        and ${wikiSession} to SessionMonitor, so that they
+        are always present even if Stripes isn't involved.
+
+        * Fixed a bug in TemplateManager that was preventing
+        resources underneath the top-level templates directory
+        from being found.
+
 2010-01-30 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-201 aka the JSP Consolidation Checkin

@@ -132,9 +132,9 @@ public class SpamInterceptor implements Interceptor
      * creates a new {@link Inspection} that inspects each ActionBean property
      * indicated by the {@link SpamProtect#content()}. The
      * {@link InspectionPlan} for the Inspection is obtained by calling
-     * {@link SpamInspectionPlan#getInspectionPlan(WikiEngine)}
-     * . If any of the modifications are determined to be spam, a Stripes
-     * {@link ValidationError} is added to the ActionBeanContext.
+     * {@link SpamInspectionPlan#getInspectionPlan(WikiEngine)}.
+     * If any of the modifications are determined to be spam, a Stripes
+     * global {@link ValidationError} is added to the ActionBeanContext.
      * 
      * @return always returns {@code null}
      */
@@ -206,7 +206,8 @@ public class SpamInterceptor implements Interceptor
      * Retrieves the encrypted parameter {@link #CHALLENGE_REQUEST_PARAM} from
      * the HTTP request and returns its value. If the parameter is not found in
      * the request, we assume that the request was made by a spammer or other
-     * naughty person, and the method returns {@link org.apache.wiki.content.inspect.Challenge.State#MISSING_STATE}.
+     * naughty person, and the method returns
+     * {@link org.apache.wiki.content.inspect.Challenge.State#MISSING_STATE}.
      * Otherwise, the value of the parameter is decrypted and returned. This
      * method is guaranteed to return a non-{@code null} value.
      * 
