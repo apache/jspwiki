@@ -1,3 +1,12 @@
+2010-02-04 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-204
+
+        * [JSPWIKI-578] Eliminated the remaining top-level JSPs
+        except for Error.jsp. Minor tweaks to the
+        templates/default directory; the layout JSP and
+        related JSPs are in their own layout/subdirectory.
+
 2010-02-02 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-202
