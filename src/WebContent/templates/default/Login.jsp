@@ -39,7 +39,7 @@
         postURL = "/Login.jsp";
     }
 %>
-<s:layout-render name="${templates['DefaultLayout.jsp']}">
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <wiki:TabbedSection defaultTab="${param.tab}">
     

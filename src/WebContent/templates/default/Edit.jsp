@@ -21,7 +21,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
-<s:layout-render name="${templates['DefaultLayout.jsp']}">
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <%-- Page title should say Edit: + pagename --%>
   <s:layout-component name="headTitle">

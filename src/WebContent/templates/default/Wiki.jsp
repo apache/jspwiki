@@ -43,7 +43,7 @@
 		mainblogpage = pagename.substring(0, pagename.indexOf("_blogentry_"));
 	}
 %>
-<s:layout-render name="${templates['DefaultLayout.jsp']}">
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
 
   <%-- If wiki page is current, allow search engines to spider it --%>
   <wiki:CheckVersion mode="latest">

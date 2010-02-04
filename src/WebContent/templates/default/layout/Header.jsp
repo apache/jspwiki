@@ -33,11 +33,11 @@
 
   <div class="companylogo"></div>
 
-  <wiki:Include page="UserBox.jsp" />
+  <wiki:Include page="${templates['layout/UserBox.jsp']}" />
 
   <div class="pagename"><wiki:PageName/></div>
 
-  <div class="searchbox"><wiki:Include page="SearchBox.jsp" /></div>
+  <div class="searchbox"><wiki:Include page="${templates['layout/SearchBox.jsp']}" /></div>
 
   <div class="breadcrumbs"><fmt:message key="header.yourtrail" /><wiki:Breadcrumbs/></div>
 

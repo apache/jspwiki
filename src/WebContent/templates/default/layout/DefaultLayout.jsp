@@ -18,9 +18,9 @@
     specific language governing permissions and limitations
     under the License.
 --%>
-<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
 <%@ page import="org.apache.wiki.action.WikiContextFactory" %>
@@ -47,7 +47,7 @@
      2) DefaultLayout injects additional JSPs that are meant to be
         customized. These include:
           
-          localheader.jsp     : A "local header" that can contain company logos
+          LocalHeader.jsp     : A "local header" that can contain company logos
                                 or other markup. Default=blank
 
 --%>
@@ -164,7 +164,7 @@
     --%>
     <wiki:FeedDiscovery/>
 
-    <wiki:Include page="localheader.jsp" />
+    <wiki:Include page="${templates['layout/LocalHeader.jsp']}" />
 
 
   </head>
@@ -173,19 +173,19 @@
 
     <div id="wikibody" class="${prefs.Orientation}">
 
-      <wiki:Include page="Header.jsp" />
+      <wiki:Include page="${templates['layout/Header.jsp']}" />
 
       <div id="content">
         <div id="page">
-          <wiki:Include page="PageActionsTop.jsp" />
+          <wiki:Include page="${templates['layout/PageActionsTop.jsp']}" />
           <s:layout-component name="content" />
-          <wiki:Include page="PageActionsBottom.jsp" />
+          <wiki:Include page="${templates['layout/PageActionsBottom.jsp']}" />
         </div>
-        <wiki:Include page="Favorites.jsp" />
+        <wiki:Include page="${templates['layout/Favorites.jsp']}" />
       	<div class="clearbox"></div>
       </div>
 
-      <wiki:Include page="Footer.jsp" />
+      <wiki:Include page="${templates['layout/Footer.jsp']}" />
 
     </div>
   </body>

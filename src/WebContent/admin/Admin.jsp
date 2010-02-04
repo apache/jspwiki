@@ -23,7 +23,7 @@
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <s:useActionBean beanclass="org.apache.wiki.action.AdminActionBean" event="view" id="admin" executeResolution="true" />
-<s:layout-render name="${templates['DefaultLayout.jsp']}">
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <h1>JSPWiki Administration</h1>
     <div class="information">Not all things can be configured here.  Some things need to be configured

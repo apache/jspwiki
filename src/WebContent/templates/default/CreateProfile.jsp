@@ -23,7 +23,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<s:layout-render name="${templates['DefaultLayout.jsp']}">
+<s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
     <wiki:TabbedSection defaultTab="${param.tab}">
     
