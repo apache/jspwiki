@@ -145,7 +145,7 @@ public class LostPasswordActionBean extends AbstractActionBean
     }
 
     /**
-     * Sets the e-mail property. Used by the {@link #resetPassword()} event.
+     * Sets the e-mail property. Used by the {@link #reset()} event.
      * 
      * @param email the e-mail address
      */

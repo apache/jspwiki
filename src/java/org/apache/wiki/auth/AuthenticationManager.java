@@ -639,7 +639,7 @@ public final class AuthenticationManager
     }
     
     /**
-     *  {@see #allowsCookieAuthentication()}
+     *  @see #allowsCookieAuthentication()
      *  @return <code>true</code> if cookies are allowed for authentication
      */
     public boolean isCookieAuthenticated()
