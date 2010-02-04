@@ -135,7 +135,7 @@ public class MessageActionBean extends AbstractActionBean
     @WikiRequestContext( "message" )
     public Resolution message()
     {
-        return new ForwardResolution( "/Message.jsp" );
+        return new ForwardResolution( "/templates/default/Message.jsp" );
     }
 
     /**

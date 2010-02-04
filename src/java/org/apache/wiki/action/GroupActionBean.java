@@ -79,7 +79,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * details.
  * </p>
  */
-@UrlBinding( "/Group.action" )
+@UrlBinding( "/Group.jsp" )
 public class GroupActionBean extends AbstractActionBean
 {
     private static final String DEFAULT_NEW_GROUP_NAME = "MyGroup";
@@ -155,7 +155,7 @@ public class GroupActionBean extends AbstractActionBean
     }
 
     /**
-     * Redirects the user to the <code>/EditGroup.jsp</code> display JSP.
+     * Redirects the user to the <code>/EditGroup.jsp</code> template JSP.
      * 
      * @return {@link net.sourceforge.stripes.action.ForwardResolution} to the
      *         display JSP
@@ -166,7 +166,7 @@ public class GroupActionBean extends AbstractActionBean
     public Resolution create()
     {
         String groupName = m_group == null ? DEFAULT_NEW_GROUP_NAME : m_group.getName();
-        RedirectResolution r = new RedirectResolution( "/EditGroup.jsp" );
+        ForwardResolution r = new ForwardResolution( "/templates/default/EditGroup.jsp" );
         r.addParameter( "group", groupName );
         r.addParameter( "members", getContext().getWikiSession().getUserPrincipal() );
         return r;
@@ -210,7 +210,7 @@ public class GroupActionBean extends AbstractActionBean
     @WikiRequestContext( "editGroup" )
     public Resolution edit()
     {
-        return new ForwardResolution( "/EditGroup.jsp" ).addParameter( "group", m_group.getName() );
+        return new ForwardResolution( "/templates/default/EditGroup.jsp" ).addParameter( "group", m_group.getName() );
     }
 
     public Group getGroup()
@@ -344,7 +344,7 @@ public class GroupActionBean extends AbstractActionBean
         // User supplied a group, and it already exists
         if( m_group != null && mgr.findRole( m_group.getName() ) != null )
         {
-            return new ForwardResolution( "/Group.jsp" );
+            return new ForwardResolution( "/templates/default/Group.jsp" );
         }
 
         // It is an error if we see LocalizableError with key

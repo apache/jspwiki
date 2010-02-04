@@ -22,11 +22,9 @@
 package org.apache.wiki.action;
 
 import java.io.IOException;
-import java.security.Permission;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,11 +36,8 @@ import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.validation.Validate;
 
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiPage;
-import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.rss.RSSGenerator;
@@ -51,11 +46,17 @@ import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.util.HttpUtil;
 
+/**
+ * Generates RSS feeds for WikiPages.
+ */
 @UrlBinding( "/rss.jsp" )
 public class RSSActionBean extends AbstractPageActionBean
 {
-    private static final Logger log = LoggerFactory.getLogger( "JSPWiki" );
-    
+    private static final Logger log = LoggerFactory.getLogger( RSSActionBean.class );
+
+    /**
+     * {@inheritDoc} The {@code page} attribute is required.
+     */
     @Validate( required = true, on = "rss" )
     public void setPage( WikiPage page )
     {
@@ -63,9 +64,10 @@ public class RSSActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Generates a {@link StreamingResolution} containing the RSS feed for the current page.
-     * If the feed is already cached and hasn't expired, it is returned. Otherwise, a new
-     * feed is generated.
+     * Generates a {@link StreamingResolution} containing the RSS feed for the
+     * current page. If the feed is already cached and hasn't expired, it is
+     * returned. Otherwise, a new feed is generated.
+     * 
      * @return the resolution
      * @throws IOException if anything goes wrong
      */
@@ -196,46 +198,9 @@ public class RSSActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Generates a {@link StreamingResolution} with the names and URLs of all pages the
-     * user as has access to, following the SisterSites standard. This event
-     * method respects ACLs on pages.
-     * 
-     * @see <a href="http://usemod.com/cgi-bin/mb.pl?SisterSitesImplementationGuide">Sister
-     * Sites Implementation Guide</a>
-     * @return the streaming resolution
-     */
-    @HandlesEvent( "sisterSites" )
-    public Resolution sisterSites()
-    {
-        Resolution r = new StreamingResolution( "text/plain; charset=UTF-8" ) {
-            @SuppressWarnings( "deprecation" )
-            @Override
-            protected void stream( HttpServletResponse response ) throws Exception
-            {
-                WikiEngine engine = getContext().getEngine();
-                AuthorizationManager mgr = engine.getAuthorizationManager();
-                WikiSession session = getContext().getWikiSession();
-                Set<String> allPages = engine.getReferenceManager().findCreated();
-                for( String page : allPages )
-                {
-                    if( page.indexOf( "/" ) == -1 )
-                    {
-                        Permission permission = PermissionFactory.getPagePermission( page, PagePermission.VIEW_ACTION );
-                        if( mgr.checkPermission( session, permission ) )
-                        {
-                            String url = engine.getViewURL( page );
-                            response.getWriter().write( url + " " + page + "\n" );
-                        }
-                    }
-                }
-            }
-        };
-        return r;
-    }
-    
-    /**
      * Returns the RSS cache. If one does not exist, it will be initialized.
-     * @return
+     * 
+     * @return the cache
      */
     private Cache getRssCache()
     {

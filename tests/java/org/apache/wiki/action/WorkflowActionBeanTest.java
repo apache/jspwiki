@@ -83,11 +83,11 @@ public class WorkflowActionBeanTest extends TestCase
         // View the workflows
         trip.execute( "view" );
 
-        // Verify we are directed to the view page
+        // Verify we are directed to the template page
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Workflow.jsp", trip.getDestination() );
+        assertEquals( "/templates/default/Workflow.jsp", trip.getDestination() );
 
         // Verify that Admin owns 1 Workflow
         List<Workflow> workflows = bean.getWorkflows();
@@ -144,7 +144,7 @@ public class WorkflowActionBeanTest extends TestCase
         // happen...
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         assertEquals( 0, bean.getContext().getValidationErrors().size() );
-        assertEquals( "/Workflow.action?view=", trip.getDestination() );
+        assertEquals( "/Workflow.jsp?view=", trip.getDestination() );
 
         // Verify that the workflow is still running and was NOT aborted
         WorkflowManager mgr = m_engine.getWorkflowManager();
@@ -199,7 +199,7 @@ public class WorkflowActionBeanTest extends TestCase
         // happen...
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         assertEquals( 0, bean.getContext().getValidationErrors().size() );
-        assertEquals( "/Workflow.action?view=", trip.getDestination() );
+        assertEquals( "/Workflow.jsp?view=", trip.getDestination() );
 
         // Verify that the workflow is still running and was NOT completed
         WorkflowManager mgr = m_engine.getWorkflowManager();
@@ -226,7 +226,7 @@ public class WorkflowActionBeanTest extends TestCase
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Workflow.action?view=", trip.getDestination() );
+        assertEquals( "/Workflow.jsp?view=", trip.getDestination() );
 
         // Verify that Admin has no more current workflows
         List<Workflow> workflows = bean.getWorkflows();
@@ -260,7 +260,7 @@ public class WorkflowActionBeanTest extends TestCase
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Workflow.action?view=", trip.getDestination() );
+        assertEquals( "/Workflow.jsp?view=", trip.getDestination() );
 
         // Verify that Janne has no more current decisions
         List<Decision> decisions = bean.getDecisions();
@@ -291,11 +291,11 @@ public class WorkflowActionBeanTest extends TestCase
         // View the workflows
         trip.execute( "view" );
 
-        // Verify we are directed to the view page
+        // Verify we are directed to the template page
         WorkflowActionBean bean = trip.getActionBean( WorkflowActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Workflow.jsp", trip.getDestination() );
+        assertEquals( "/templates/default/Workflow.jsp", trip.getDestination() );
 
         // Verify that Janne does not own any Workflows
         List<Workflow> workflows = bean.getWorkflows();

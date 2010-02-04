@@ -132,7 +132,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "view"
-        trip = m_engine.guestTrip( "/Group.action" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.getRequest().setMethod( "GET" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "view" );
@@ -152,7 +152,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "save"
-        trip = m_engine.guestTrip( "/Group.action" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "save" );
         bean = trip.getActionBean( GroupActionBean.class );
@@ -170,7 +170,7 @@ public class HandlerInfoTest extends TestCase
 
         // Set up a new GroupActionBean with the real group Admin and event
         // "delete"
-        trip = m_engine.guestTrip( "/Group.action" );
+        trip = m_engine.guestTrip( "/Group.jsp" );
         trip.addParameter( "group", "Admin" );
         trip.execute( "delete" );
         bean = trip.getActionBean( GroupActionBean.class );

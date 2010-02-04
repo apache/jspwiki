@@ -72,7 +72,7 @@ import org.apache.wiki.ui.stripes.WikiRequestContext;
  * </p>
  * 
  */
-@UrlBinding( "/Rename.action" )
+@UrlBinding( "/Rename.jsp" )
 public class RenameActionBean extends AbstractPageActionBean
 {
     private static final Logger log = LoggerFactory.getLogger( RenameActionBean.class );

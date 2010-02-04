@@ -36,6 +36,10 @@ import org.apache.wiki.workflow.DecisionQueue;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Workflow;
 
+/**
+ * Displays and processes workflow events.
+ */
+@UrlBinding( "/Workflow.jsp" )
 public class WorkflowActionBean extends AbstractActionBean
 {
     private Outcome m_outcome = null;
@@ -166,14 +170,14 @@ public class WorkflowActionBean extends AbstractActionBean
     /**
      * Event that the user to the preview display JSP.
      * 
-     * @return always returns a forward resolution to the workflow page {@code
-     *         /Workflow.jsp}.
+     * @return always returns a forward resolution to the template JSP
+     * {@code /Workflow.jsp}.
      */
     @DefaultHandler
     @HandlesEvent( "view" )
     @WikiRequestContext( "workflow" )
     public Resolution view()
     {
-        return new ForwardResolution( "/Workflow.jsp" );
+        return new ForwardResolution( "/templates/default/Workflow.jsp" );
     }
 }

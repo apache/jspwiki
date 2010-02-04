@@ -21,23 +21,38 @@
 
 package org.apache.wiki.action;
 
+import net.sourceforge.stripes.action.*;
+
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.plugin.WeblogEntryPlugin;
+import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
-import net.sourceforge.stripes.action.HandlesEvent;
-import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.UrlBinding;
-
-
-@UrlBinding("/NewBlogEntry.jsp")
-public class NewBlogEntryActionBean extends AbstractActionBean
+@UrlBinding( "/NewBlogEntry.jsp" )
+public class NewBlogEntryActionBean extends AbstractPageActionBean
 {
-    @HandlesEvent("create")
-    @HandlerPermission(permissionClass=WikiPermission.class, target="${engine.applicationName}", actions=WikiPermission.CREATE_PAGES_ACTION)
-    @WikiRequestContext("newBlogEntry")
-    public Resolution create()
+    /**
+     * Event handler for new blog entries. The handler looks up the correct blog
+     * page and redirects the user to it.
+     * 
+     * @return always returns a {@link RedirectResolution} to the editing page
+     *         for the blog entry.
+     * @throws ProviderException if the page cannot be looked up
+     */
+    @DefaultHandler
+    @HandlesEvent( "blog" )
+    @HandlerPermission( permissionClass = WikiPermission.class, target = "${engine.applicationName}", actions = WikiPermission.CREATE_PAGES_ACTION )
+    @WikiRequestContext( "newBlogEntry" )
+    public Resolution create() throws ProviderException
     {
-        return null;
+        // Determine the correct page to redirect to
+        WikiEngine engine = getContext().getEngine();
+        WeblogEntryPlugin p = new WeblogEntryPlugin();
+        String blogPage = p.getNewEntryPage( engine, getPage().getName() );
+
+        // Redirect to the blog page for user to edit
+        return new RedirectResolution( EditActionBean.class ).addParameter( "page", blogPage );
     }
 }

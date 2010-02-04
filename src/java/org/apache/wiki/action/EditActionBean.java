@@ -58,7 +58,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.providers.ProviderException;
@@ -152,24 +151,6 @@ public class EditActionBean extends AbstractPageActionBean
         engine.getContentManager().unlockPage( lock );
         session.removeAttribute( LOCK_PREFIX + pagereq );
         return new RedirectResolution( ViewActionBean.class ).addParameter( "page", pagereq );
-    }
-
-    /**
-     * Event handler for new blog entries. The handler looks up the correct
-     * blog page and redirects the user to it.
-     * @return always returns a {@link RedirectResolution} to the editing
-     * page for the blog entry.
-     */
-    @HandlesEvent( "blog" )
-    public Resolution blog() throws ProviderException
-    {
-        // Determine the correct page to redirect to
-        WikiEngine engine = getContext().getEngine();
-        WeblogEntryPlugin p = new WeblogEntryPlugin();
-        String blogPage = p.getNewEntryPage( engine, getPage().getName() );
-
-        // Redirect to the blog page for user to edit
-        return new RedirectResolution( EditActionBean.class ).addParameter( "page", blogPage );
     }
 
     @HandlesEvent( "comment" )

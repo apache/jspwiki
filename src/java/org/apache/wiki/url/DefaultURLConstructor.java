@@ -83,7 +83,7 @@ public class DefaultURLConstructor
         c_urlPatterns.put( WikiContext.FIND, "%uSearch.jsp" );
         c_urlPatterns.put( WikiContext.INSTALL, "%uadmin/Install.jsp" );
         c_urlPatterns.put( WikiContext.LOGIN, "%uLogin.jsp?redirect=%n" );
-        c_urlPatterns.put( WikiContext.LOGOUT, "%uLogout.jsp" );
+        c_urlPatterns.put( WikiContext.LOGOUT, "%uLogin.jsp?logout=" );
         c_urlPatterns.put( WikiContext.MESSAGE, "%uMessage.jsp" );
         c_urlPatterns.put( WikiContext.PREFS, "%uUserPreferences.jsp" );
         c_urlPatterns.put( WikiContext.WORKFLOW, "%uWorkflow.jsp" );

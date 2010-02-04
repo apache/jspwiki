@@ -86,7 +86,7 @@ public class GroupActionBeanTest extends TestCase
         GroupActionBean bean = trip.getActionBean( GroupActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Group.jsp", trip.getDestination() );
+        assertEquals( "/templates/default/Group.jsp", trip.getDestination() );
 
         // Verify we got the right group
         Group group = bean.getGroup();
@@ -115,7 +115,7 @@ public class GroupActionBeanTest extends TestCase
         bean = trip.getActionBean( GroupActionBean.class );
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Group.action?create=&group=NonExistentGroup", trip.getDestination() );
+        assertEquals( "/Group.jsp?create=&group=NonExistentGroup", trip.getDestination() );
     }
         
     public void testViewNullGroup() throws Exception
@@ -136,7 +136,7 @@ public class GroupActionBeanTest extends TestCase
         assertEquals( 0, errors.size() );
         assertNotNull(  bean.getGroup() );
         assertEquals( "Group1", bean.getGroup().getName() );
-        assertEquals( "/Group.action?create=&group=Group1", trip.getDestination() );
+        assertEquals( "/Group.jsp?create=&group=Group1", trip.getDestination() );
     }
    
     public void testDeleteGroup() throws Exception
@@ -205,7 +205,7 @@ public class GroupActionBeanTest extends TestCase
         GroupActionBean bean = trip.getActionBean( GroupActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Group.action?view=&group=TestSaveExistingGroup", trip.getDestination() );
+        assertEquals( "/Group.jsp?view=&group=TestSaveExistingGroup", trip.getDestination() );
         
         // Verify the Group members were set on the Actionbean correctly (sorted!)
         List<Principal> members = bean.getMembers();

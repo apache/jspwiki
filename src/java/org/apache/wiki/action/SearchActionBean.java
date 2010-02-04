@@ -58,6 +58,23 @@ public class SearchActionBean extends AbstractActionBean
     
     private boolean m_details = false;
     
+    /**
+     * Enumeration of the search scope options.
+     */
+    public enum SearchScope
+    {
+        /** All page contents and attributes. */
+        ALL,
+        /** Author names only. */
+        AUTHORS,
+        /** Page names only. */
+        PAGE_NAMES,
+        /** Contents only. */
+        CONTENTS,
+        /** Attachment contents only. */
+        ATTACHMENTS
+    }
+    
     public boolean getDetails()
     {
         return m_details;
@@ -110,15 +127,6 @@ public class SearchActionBean extends AbstractActionBean
     public Collection<SearchResult> getResults()
     {
         return m_results;
-    }
-    
-    /**
-     * Returns the number of items returned by the current search.
-     * @return the number of items
-     */
-    public int getResultsCount()
-    {
-        return m_results.size();
     }
     
     /**
@@ -194,7 +202,7 @@ public class SearchActionBean extends AbstractActionBean
     public Resolution search()
     {
         m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
-        return new ForwardResolution( "/Search.jsp" );
+        return new ForwardResolution( "/templates/default/Search.jsp" );
     }
     
     /**

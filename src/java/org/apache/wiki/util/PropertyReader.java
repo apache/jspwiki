@@ -78,7 +78,7 @@ public final class PropertyReader
      */
     private static final String[] DEFAULT_PROPERTIES =
     { "jspwiki.specialPage.Login",           "Login.jsp",
-      "jspwiki.specialPage.Logout",          "Logout.jsp",
+      "jspwiki.specialPage.Logout",          "Login.jsp?logout=",
       "jspwiki.specialPage.CreateGroup",     "NewGroup.jsp",
       "jspwiki.specialPage.CreateProfile",   "Register.jsp",
       "jspwiki.specialPage.EditProfile",     "UserPreferences.jsp",
