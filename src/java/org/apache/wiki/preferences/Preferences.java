@@ -39,8 +39,6 @@ import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.stripes.LocaleConverter;
-import org.apache.wiki.util.PropertyReader;
-
 
 /**
  * <p>
@@ -400,7 +398,7 @@ public class Preferences extends HashMap<String, String>
         // Ok, set up the preferences now
         WikiEngine engine = WikiEngine.getInstance( session.getServletContext(), null );
         Preferences prefs = new Preferences();
-        Properties props = PropertyReader.loadWebAppProps( session.getServletContext() );
+        Properties props = engine.getWikiProperties();
         Locale locale = request.getLocale();
 
         // FIXME: "editor" property does not get registered, may be related with

@@ -1,6 +1,20 @@
-2010-02-04 Andrew Jaquith <ajaquith AT apache DOT org>
+2010-02-07 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-204
+
+        * Refactored WikiBackgroundThread to operate as listeners
+        for JMX timer events. Because they are no longer true threads
+        they don't keep chewing up heap if context shutdown for some
+        reason isn't normal.
+
+        * Fixed some small bugs in SessionMonitor and Preferences.
+
+        * Replaced the last few wiki:include tags with jsp:include,
+        and deprecated WikiIncludeTag.
+
+2010-02-04 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-203
 
         * [JSPWIKI-578] Eliminated the remaining top-level JSPs
         except for Error.jsp. Minor tweaks to the

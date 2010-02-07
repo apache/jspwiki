@@ -23,6 +23,7 @@ package org.apache.wiki;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -30,6 +31,7 @@ import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.*;
 
+import javax.management.MBeanServer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -546,6 +548,9 @@ public class WikiEngine
         //        of a better way to do the startup-sequence.
         try
         {
+            // Initialize the JMX timer MBean
+            WikiBackgroundThread.registerTimer( this );
+
             //  Initialize the WikiContextFactory -- this MUST be done after setting the baseURL
             m_contextFactory  = new WikiContextFactory( this, props );
             
@@ -623,7 +628,6 @@ public class WikiEngine
             m_searchManager     = (SearchManager)
                 ClassUtil.getMappedObject(SearchManager.class.getName() );
             m_searchManager.initialize( this, props );
-            
         }
 
         catch( RuntimeException e )
@@ -1585,9 +1589,10 @@ public class WikiEngine
     /**
      * Protected method that signals that the WikiEngine will be
      * shut down by the servlet container. It is called by
-     * {@link WikiServlet#destroy()}. When this method is called,
-     * it fires a "shutdown" WikiEngineEvent to all registered
-     * listeners.
+     * {@link WikiServlet#destroy()} and
+     * {@link SessionMonitor#contextDestroyed(javax.servlet.ServletContextEvent).
+     * When this method is called, it fires a "shutdown"
+     * WikiEngineEvent to all registered listeners.
      */
     public void shutdown()
     {
@@ -1595,6 +1600,7 @@ public class WikiEngine
         if( m_filterManager != null ) m_filterManager.destroy();
         LoggerFactory.unRegisterAllLoggerMBeans();
         if( m_contentManager != null ) m_contentManager.shutdown();
+        WikiBackgroundThread.unregisterTimer( this );
     }
 
     /**

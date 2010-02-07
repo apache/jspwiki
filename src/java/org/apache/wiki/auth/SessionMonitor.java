@@ -300,6 +300,10 @@ public class SessionMonitor implements HttpSessionListener, ServletContextListen
         // and it has no knowledge of getInstance(WikiEngine).
         ServletContext servletContext = session.getServletContext();
         WikiEngine engine = WikiEngine.getInstance( servletContext, null );
+        if ( m_engine == null )
+        {
+            m_engine = engine;
+        }
         
         // Stash 'templates' attribute for scripting
         session.setAttribute( "templates", engine.getTemplateManager().getTemplateResources() );
