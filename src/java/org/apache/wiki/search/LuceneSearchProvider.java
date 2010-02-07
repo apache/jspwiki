@@ -685,7 +685,7 @@ public class LuceneSearchProvider implements SearchProvider
      */
     private static final class LuceneUpdater extends WikiBackgroundThread
     {
-        protected static final int INDEX_DELAY    = 5;
+        protected static final int INDEX_DELAY   = 15;
         protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
 
@@ -698,7 +698,7 @@ public class LuceneSearchProvider implements SearchProvider
         {
             super( engine, indexDelay );
             m_provider = provider;
-            setName("JSPWiki Lucene Indexer");
+            setName("Lucene Indexer");
         }
 
         public void startupTask() throws Exception

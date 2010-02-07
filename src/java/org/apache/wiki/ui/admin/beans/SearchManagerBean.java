@@ -88,8 +88,7 @@ public class SearchManagerBean extends SimpleAdminBean
                 public void startupTask() throws Exception
                 {
                     super.startupTask();
-
-                    setName("Reindexer started");
+                    setName("Reindexer");
                 }
 
                 public void backgroundTask() throws Exception

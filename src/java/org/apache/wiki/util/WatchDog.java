@@ -388,7 +388,7 @@ public final class WatchDog
         public WatchDogThread( WikiEngine engine )
         {
             super(engine, CHECK_INTERVAL);
-            setName("WatchDog for '"+engine.getApplicationName()+"'");
+            setName("WatchDog");
         }
 
         public void startupTask()

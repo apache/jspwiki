@@ -1192,7 +1192,7 @@ public class ContentManager implements WikiEventListener
         public LockReaper( WikiEngine engine )
         {
             super( engine, 60 );
-            setName("JSPWiki Lock Reaper");
+            setName("Lock Reaper");
         }
 
         public void backgroundTask() throws Exception

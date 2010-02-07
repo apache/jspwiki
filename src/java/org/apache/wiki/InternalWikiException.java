@@ -34,10 +34,21 @@ public class InternalWikiException extends RuntimeException
     /**
      *  Create a new InternalWikiException.
      *
-     *  @param msg The Exception message.
+     *  @param msg the Exception message.
      */
     public InternalWikiException( String msg )
     {
         super( msg );
+    }
+
+    /**
+     *  Create a new InternalWikiException.
+     *
+     *  @param msg the Exception message.
+     *  @param t the cause of the Exception
+     */
+    public InternalWikiException( String msg, Throwable t )
+    {
+        super( msg, t );
     }
 }

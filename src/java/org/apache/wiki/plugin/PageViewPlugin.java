@@ -190,7 +190,7 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
         private boolean m_dirty;
 
         /** The page count storage background thread. */
-        private Thread m_pageCountSaveThread;
+        private WikiBackgroundThread m_pageCountSaveThread;
 
         /** The work directory. */
         private String m_workDir ;
@@ -677,19 +677,6 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
                 }
             }
         }
-
-        /**
-         * Is the given thread still current?
-         * 
-         * @return boolean <code>true</code> iff the thread is still the current
-         *         background thread.
-         * @param thrd
-         */
-        private synchronized boolean isRunning( Thread thrd )
-        {
-            return m_initialized && thrd == m_pageCountSaveThread;
-        }
-
     }
 
     /**
@@ -783,15 +770,13 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
          */
         public CounterSaveThread( WikiEngine engine, int interval, PageViewManager pageViewManager )
         {
-
             super( engine, interval );
-
             if( pageViewManager == null )
             {
                 throw new IllegalArgumentException( "Manager cannot be null" );
             }
-
             m_manager = pageViewManager;
+            setName( "Counter Saver" );
         }
 
         /**
@@ -800,10 +785,7 @@ public class PageViewPlugin extends AbstractFilteredPlugin implements WikiPlugin
         public void backgroundTask()
         {
 
-            if( m_manager.isRunning( this ) )
-            {
-                m_manager.storeCounters();
-            }
+            m_manager.storeCounters();
         }
     }
 }
