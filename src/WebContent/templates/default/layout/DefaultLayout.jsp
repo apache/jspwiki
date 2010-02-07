@@ -113,9 +113,6 @@
     <%--
 
          JavaScript
-
-    <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.3/mootools.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.3/mootools-yui-compressed.js"></script>
     --%>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-core.js' />"></script>
     <script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools-more.js' />"></script>
@@ -164,7 +161,7 @@
     --%>
     <wiki:FeedDiscovery/>
 
-    <wiki:Include page="${templates['layout/LocalHeader.jsp']}" />
+    <jsp:include page="${templates['layout/LocalHeader.jsp']}" />
 
 
   </head>
@@ -173,19 +170,19 @@
 
     <div id="wikibody" class="${prefs.Orientation}">
 
-      <wiki:Include page="${templates['layout/Header.jsp']}" />
+      <jsp:include page="${templates['layout/Header.jsp']}" />
 
       <div id="content">
         <div id="page">
-          <wiki:Include page="${templates['layout/PageActionsTop.jsp']}" />
+          <jsp:include page="${templates['layout/PageActionsTop.jsp']}" />
           <s:layout-component name="content" />
-          <wiki:Include page="${templates['layout/PageActionsBottom.jsp']}" />
+          <jsp:include page="${templates['layout/PageActionsBottom.jsp']}" />
         </div>
-        <wiki:Include page="${templates['layout/Favorites.jsp']}" />
+        <jsp:include page="${templates['layout/Favorites.jsp']}" />
       	<div class="clearbox"></div>
       </div>
 
-      <wiki:Include page="${templates['layout/Footer.jsp']}" />
+      <jsp:include page="${templates['layout/Footer.jsp']}" />
 
     </div>
   </body>

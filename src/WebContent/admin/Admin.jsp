@@ -18,10 +18,10 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-<%@ page import="org.apache.wiki.WikiContext" %>
-<%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jakarta.apache.org/jspwiki.tld" prefix="wiki" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="s" %>
+<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page errorPage="/Error.jsp" %>
 <s:useActionBean beanclass="org.apache.wiki.action.AdminActionBean" event="view" id="admin" executeResolution="true" />
 <s:layout-render name="${templates['layout/DefaultLayout.jsp']}">
   <s:layout-component name="content">
@@ -32,7 +32,7 @@
       <wiki:TabbedSection defaultTab="${param['tab']}">
       
         <wiki:Tab id="users" title="Users">
-          <wiki:Include page="admin/UserManagement.jsp" />
+          <jsp:include page="admin/UserManagement.jsp" />
         </wiki:Tab>
           
         <wiki:Tab id="groups" title="Groups">
