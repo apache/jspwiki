@@ -33,8 +33,8 @@ import org.apache.wiki.util.TextUtil;
  *  the WikiContext correctly.
  *
  *  @since 2.0
+ *  @deprecated Use jsp:include tag in conjunction with the JSTL syntax <code>${templates['<var>pagename</var>']} instead.
  */
-// FIXME: Perhaps unnecessary?
 public class IncludeTag
     extends WikiTagBase
 {
