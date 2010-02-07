@@ -23,7 +23,6 @@ package org.apache.wiki;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -31,7 +30,6 @@ import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.*;
 
-import javax.management.MBeanServer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -1590,7 +1588,7 @@ public class WikiEngine
      * Protected method that signals that the WikiEngine will be
      * shut down by the servlet container. It is called by
      * {@link WikiServlet#destroy()} and
-     * {@link SessionMonitor#contextDestroyed(javax.servlet.ServletContextEvent).
+     * {@link SessionMonitor#contextDestroyed(javax.servlet.ServletContextEvent)}.
      * When this method is called, it fires a "shutdown"
      * WikiEngineEvent to all registered listeners.
      */
