@@ -38,7 +38,6 @@
       <wiki:Tab id="prefs" titleKey="prefs.tab.prefs" accesskey="p">
         <h3><fmt:message key="prefs.heading"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
         <!-- Any messages or errors? -->
-        <div class="instructions"><s:messages key="prefs" /></div>
         <div class="errors"><s:errors beanclass="org.apache.wiki.action.UserPreferencesActionBean" globalErrorsOnly="true" /></div>
 
         <div class="formcontainer">

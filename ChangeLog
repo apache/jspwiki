@@ -1,3 +1,21 @@
+2010-02-12 Andrew Jaquith <ajaquith AT apache DOT org>
+
+        * 3.0.0-svn-205
+        
+        * Introduced TemplateResolution, which forwards the user to
+        the appropriate resource in /templates/<template>. It replaces
+        the use of ForwardResolution in most of the ActionBeans.
+        For example, to forward to a template JSP ("display JSP"),
+        you'd do this: new TemplateResolution( "PageInfo.jsp" ).
+        JSPWiki will figure out where the template JSP actually
+        is, and forward to the correct path.
+        
+        * Fixed some minor bugs and a few failing unit tests.
+        
+        * Removed two unnecessary JARs: jsp-api.jar and servlet-api.jar.
+        These don't seem to be needed, but please re-add them if I
+        am mistaken.
+
 2010-02-07 Andrew Jaquith <ajaquith AT apache DOT org>
 
         * 3.0.0-svn-204

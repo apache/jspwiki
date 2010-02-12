@@ -106,6 +106,10 @@ public abstract class WikiBackgroundThread implements WikiEventListener
             server.invoke( timer, "stop", new Object[] {}, new String[] {} );
             server.unregisterMBean( timer );
         }
+        catch ( InstanceNotFoundException e )
+        {
+            // Swallow: Timer wasn't every registered for some reason.
+        }
         catch( JMException e )
         {
             e.printStackTrace();

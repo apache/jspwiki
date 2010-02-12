@@ -246,6 +246,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.setParameter( "profile.email", "fred@friendly.org" );
         trip.setParameter( "profile.password", "mypassword" );
         trip.setParameter( "passwordAgain", "mypassword" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         errors = bean.getContext().getValidationErrors();
@@ -281,6 +282,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.setParameter( "profile.email", "fred1@friendly.org" );
         trip.setParameter( "profile.password", "mypassword" );
         trip.setParameter( "passwordAgain", "mypassword" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         // Check to make sure no validation errors here...
@@ -299,6 +301,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.setParameter( "profile.email", "fred2@friendly.org" );
         trip.setParameter( "profile.password", "mypassword" );
         trip.setParameter( "passwordAgain", "mypassword" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         // Check to make sure all our expected validation errors are here...
@@ -316,6 +319,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.setParameter( "profile.email", "fred2@friendly.org" );
         trip.setParameter( "profile.password", "mypassword" );
         trip.setParameter( "passwordAgain", "mypassword" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         // Check to make sure all our expected validation errors are here...
@@ -343,6 +347,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.setParameter( "profile.email", "fred1@friendly.org" );
         trip.setParameter( "profile.password", "mypassword" );
         trip.setParameter( "passwordAgain", "mypassword" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         errors = bean.getContext().getValidationErrors();
@@ -376,6 +381,7 @@ public class UserProfileActionBeanTest extends TestCase
         trip.addParameter( "profile.loginName", "wilma" );
         trip.addParameter( "profile.fullname", "Wilma Flintstone" );
         trip.addParameter( "profile.email", "wilma@flintstone.org" );
+        TestEngine.addSpamProtectParams( trip );
         trip.execute( "save" );
         bean = trip.getActionBean( UserProfileActionBean.class );
         assertEquals( "wilma", bean.getProfile().getLoginName() );

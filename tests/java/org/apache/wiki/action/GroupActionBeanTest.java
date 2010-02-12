@@ -242,7 +242,7 @@ public class GroupActionBeanTest extends TestCase
         GroupActionBean bean = trip.getActionBean( GroupActionBean.class );
         ValidationErrors errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Login.jsp", trip.getDestination().substring( 0, 13 ) );
+        assertEquals( "/Login.jsp", trip.getDestination().substring( 0, 10 ) );
         
         // Try saving again, this time authenticated
         trip = m_engine.authenticatedTrip( Users.JANNE, Users.JANNE_PASS, GroupActionBean.class );
@@ -255,7 +255,7 @@ public class GroupActionBeanTest extends TestCase
         bean = trip.getActionBean( GroupActionBean.class );
         errors = bean.getContext().getValidationErrors();
         assertEquals( 0, errors.size() );
-        assertEquals( "/Group.action?view=&group=TestSaveNewGroup", trip.getDestination() );
+        assertEquals( "/Group.jsp?view=&group=TestSaveNewGroup", trip.getDestination() );
 
         // Verify the Group members were set on the Actionbean correctly (sorted!)
         List<Principal> members = bean.getMembers();
