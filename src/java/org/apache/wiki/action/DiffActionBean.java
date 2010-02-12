@@ -10,6 +10,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.content.PageNotFoundException;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 /**
@@ -111,9 +112,9 @@ public class DiffActionBean extends AbstractPageActionBean
         WikiPage page = getPage();
         if ( page.isAttachment() )
         {
-            return new ForwardResolution( "/templates/default/AttachmentInfo.jsp" );
+            return new TemplateResolution( "AttachmentInfo.jsp" );
         }
-        return new ForwardResolution( "/templates/default/PageInfo.jsp" );
+        return new TemplateResolution( "PageInfo.jsp" );
     }
 
 }

@@ -41,6 +41,7 @@ import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 /**
@@ -247,6 +248,6 @@ public class LoginActionBean extends AbstractActionBean
         }
 
         // The user hasn't logged in yet, so forward them to the template JSP
-        return new ForwardResolution( "/templates/default/Login.jsp" ).addParameter( "tab", "login" );
+        return new TemplateResolution( "Login.jsp" ).addParameter( "tab", "login" );
     }
 }

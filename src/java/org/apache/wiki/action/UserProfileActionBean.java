@@ -38,10 +38,7 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-import org.apache.wiki.ui.stripes.HandlerPermission;
-import org.apache.wiki.ui.stripes.SpamProtect;
-import org.apache.wiki.ui.stripes.WikiActionBeanContext;
-import org.apache.wiki.ui.stripes.WikiRequestContext;
+import org.apache.wiki.ui.stripes.*;
 import org.apache.wiki.workflow.DecisionRequiredException;
 
 
@@ -266,7 +263,7 @@ public class UserProfileActionBean extends AbstractActionBean
     }
 
     /**
-     * Event handler that forwards the user to <code>/CreateProfile.jsp</code>.
+     * Event handler that forwards the user to the template JSP {@code CreateProfile.jsp}.
      * 
      * @return the resolution
      */
@@ -274,7 +271,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @DontValidate
     public Resolution create()
     {
-        return new ForwardResolution( "/templates/default/CreateProfile.jsp" ).addParameter( "tab", "profile" );
+        return new TemplateResolution( "CreateProfile.jsp" ).addParameter( "tab", "profile" );
     }
 
     /**
@@ -289,7 +286,7 @@ public class UserProfileActionBean extends AbstractActionBean
     @WikiRequestContext( "profile" )
     public Resolution view()
     {
-        return new ForwardResolution( "/templates/default/Preferences.jsp" ).addParameter( "tab", "profile" );
+        return new TemplateResolution( "Preferences.jsp" ).addParameter( "tab", "profile" );
     }
 
 }

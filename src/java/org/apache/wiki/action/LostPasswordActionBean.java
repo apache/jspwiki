@@ -40,6 +40,7 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -67,7 +68,7 @@ public class LostPasswordActionBean extends AbstractActionBean
      * Event handler that resets the user's password, based on the e-mail
      * address returned by {@link #getEmail()}.
      * 
-     * @return always returns <code>null</code>
+     * @return always forwards the user to the template JSP
      */
     @HandlesEvent( "reset" )
     public Resolution reset()
@@ -141,7 +142,7 @@ public class LostPasswordActionBean extends AbstractActionBean
             errors.addGlobalError( new LocalizableError( messageKey, m_email ) );
         }
 
-        return new ForwardResolution( "/templates/default/Login.jsp" ).addParameter( "tab", "reset" );
+        return new TemplateResolution( "Login.jsp" ).addParameter( "tab", "reset" );
     }
 
     /**
@@ -165,7 +166,7 @@ public class LostPasswordActionBean extends AbstractActionBean
     @HandlesEvent( "view" )
     public Resolution view()
     {
-        return new ForwardResolution( "/templates/default/Login.jsp" ).addParameter( "tab", "reset" );
+        return new TemplateResolution( "Login.jsp" ).addParameter( "tab", "reset" );
     }
 
 }

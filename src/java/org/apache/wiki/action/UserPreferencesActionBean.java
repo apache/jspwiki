@@ -28,6 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sourceforge.stripes.action.*;
+import net.sourceforge.stripes.controller.LifecycleStage;
+import net.sourceforge.stripes.validation.Validate;
+
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.auth.login.CookieAssertionLoginModule;
 import org.apache.wiki.auth.permissions.WikiPermission;
@@ -37,11 +41,8 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
-
-import net.sourceforge.stripes.action.*;
-import net.sourceforge.stripes.controller.LifecycleStage;
-import net.sourceforge.stripes.validation.Validate;
 
 
 /**
@@ -340,7 +341,7 @@ public class UserPreferencesActionBean extends AbstractActionBean
 
     /**
      * Handler for displaying user preferences that simply forwards to the
-     * preferences display JSP <code>PreferencesContent.jsp</code>.
+     * preferences template JSP <code>PreferencesContent.jsp</code>.
      * 
      * @return a forward to the content template
      */
@@ -350,6 +351,6 @@ public class UserPreferencesActionBean extends AbstractActionBean
     @WikiRequestContext( "prefs" )
     public Resolution view()
     {
-        return new ForwardResolution( "/templates/default/Preferences.jsp" ).addParameter( "tab", "prefs" );
+        return new TemplateResolution( "Preferences.jsp" ).addParameter( "tab", "prefs" );
     }
 }

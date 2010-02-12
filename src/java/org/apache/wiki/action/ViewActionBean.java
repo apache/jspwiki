@@ -48,6 +48,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.ui.stripes.HandlerPermission;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
@@ -107,7 +108,7 @@ public class ViewActionBean extends AbstractPageActionBean
     }
 
     /**
-     * Handler that forwards to the page information display JSP
+     * Handler that forwards to the template JSP
      * {@code PageInfo.jsp}.
      * 
      * @return a forward to the content template
@@ -116,7 +117,7 @@ public class ViewActionBean extends AbstractPageActionBean
     @HandlerPermission( permissionClass = PagePermission.class, target = "${page.path}", actions = PagePermission.VIEW_ACTION )
     public Resolution attachments()
     {
-        return new ForwardResolution( "/templates/default/PageInfo.jsp" ).addParameter( "tab", "attachments" );
+        return new TemplateResolution( "PageInfo.jsp" ).addParameter( "tab", "attachments" );
     }
 
     /**
@@ -154,9 +155,9 @@ public class ViewActionBean extends AbstractPageActionBean
         WikiPage page = getPage();
         if ( page.isAttachment() )
         {
-            return new ForwardResolution( "/templates/default/AttachmentInfo.jsp" );
+            return new TemplateResolution( "AttachmentInfo.jsp" );
         }
-        return new ForwardResolution( "/templates/default/PageInfo.jsp" ).addParameter( "tab", "info" );
+        return new TemplateResolution( "PageInfo.jsp" ).addParameter( "tab", "info" );
     }
 
     /**
@@ -294,7 +295,7 @@ public class ViewActionBean extends AbstractPageActionBean
 
     /**
      * Default handler that simply forwards the user back to the template JSP
-     * <code>/Wiki.jsp</code>.
+     * <code>Wiki.jsp</code>.
      * 
      * @return a forward to the content template
      */
@@ -306,7 +307,7 @@ public class ViewActionBean extends AbstractPageActionBean
     public Resolution view() throws ProviderException
     {
         // Forward to display JSP
-        return new ForwardResolution( "/templates/default/Wiki.jsp" ).addParameter( "tab", "view" );
+        return new TemplateResolution( "Wiki.jsp" ).addParameter( "tab", "view" );
     }
 
     /**

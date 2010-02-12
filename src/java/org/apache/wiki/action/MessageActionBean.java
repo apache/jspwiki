@@ -30,6 +30,7 @@ import net.sourceforge.stripes.validation.Validate;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.util.FileUtil;
 
@@ -135,7 +136,7 @@ public class MessageActionBean extends AbstractActionBean
     @WikiRequestContext( "message" )
     public Resolution message()
     {
-        return new ForwardResolution( "/templates/default/Message.jsp" );
+        return new TemplateResolution( "Message.jsp" );
     }
 
     /**

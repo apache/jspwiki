@@ -161,12 +161,12 @@ public class EditActionBean extends AbstractPageActionBean
         // Init edit fields and forward to the display JSP
         m_append = true;
         initEditFields( "Commenting on" );
-        return new ForwardResolution( "/templates/default/Comment.jsp" );
+        return new TemplateResolution( "Comment.jsp" );
     }
 
     /**
      * Loads the page's current text, initializes the EditActionBean for
-     * editing, and forwards to the template JSP {@code /templates/default/Edit.jsp}.
+     * editing, and forwards to the template JSP {@code Edit.jsp}.
      * @return always returns a {@link ForwardResolution} to the template JSP
      * @throws ProviderException if the page's current contents cannot
      * be retrieved
@@ -182,7 +182,7 @@ public class EditActionBean extends AbstractPageActionBean
         
         // Init edit fields and forward to the display JSP
         initEditFields( "Editing" );
-        return new ForwardResolution( "/templates/default/Edit.jsp" );
+        return new TemplateResolution( "Edit.jsp" );
     }
 
     /**

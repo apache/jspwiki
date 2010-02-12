@@ -30,6 +30,7 @@ import net.sourceforge.stripes.validation.Validate;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.WikiException;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionQueue;
@@ -171,13 +172,13 @@ public class WorkflowActionBean extends AbstractActionBean
      * Event that the user to the preview display JSP.
      * 
      * @return always returns a forward resolution to the template JSP
-     * {@code /Workflow.jsp}.
+     * {@code Workflow.jsp}.
      */
     @DefaultHandler
     @HandlesEvent( "view" )
     @WikiRequestContext( "workflow" )
     public Resolution view()
     {
-        return new ForwardResolution( "/templates/default/Workflow.jsp" );
+        return new TemplateResolution( "Workflow.jsp" );
     }
 }

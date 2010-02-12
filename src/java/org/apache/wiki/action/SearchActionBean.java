@@ -36,6 +36,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.ui.stripes.TemplateResolution;
 import org.apache.wiki.ui.stripes.WikiRequestContext;
 
 /**
@@ -193,7 +194,7 @@ public class SearchActionBean extends AbstractActionBean
      * {@link #getResults()} method (and EL expression
      * <code>$wikiActionBean.results</code>).
      * 
-     * @return always returns a {@link ForwardResolution} to
+     * @return always returns a {@link ForwardResolution} to the template JSP
      *         <code>/Search.jsp</code>.
      */
     @DefaultHandler
@@ -202,7 +203,7 @@ public class SearchActionBean extends AbstractActionBean
     public Resolution search()
     {
         m_results = m_query == null ? NO_RESULTS : doSearch( m_query );
-        return new ForwardResolution( "/templates/default/Search.jsp" );
+        return new TemplateResolution( "Search.jsp" );
     }
     
     /**
