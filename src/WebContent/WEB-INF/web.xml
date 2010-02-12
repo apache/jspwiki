@@ -204,10 +204,9 @@
        <url-pattern>/JSON-RPC</url-pattern>
    </servlet-mapping>
 
-   <!-- This means that we don't have to use redirection
-        from index.html anymore.  Yay! -->
+   <!-- Welcome file forwards to Wiki.jsp -->
    <welcome-file-list>
-       <welcome-file>Wiki.jsp</welcome-file>
+       <welcome-file>index.jsp</welcome-file>
    </welcome-file-list>
    
    <!-- Error pages -->
