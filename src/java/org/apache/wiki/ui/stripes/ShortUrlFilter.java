@@ -50,14 +50,15 @@ import org.apache.wiki.util.TextUtil;
  * configuration from <code>web.xml</code>.
  * </p>
  */
-public class ShortUrlRedirectFilter implements Filter
+public class ShortUrlFilter implements Filter
 {
-
     private String m_urlPrefix = null;
 
     private String m_urlPrefixNoTrailingSlash = null;
 
     private WikiEngine m_engine = null;
+
+    private boolean m_initialized = false;
 
     /**
      * {@inheritDoc}
@@ -84,6 +85,11 @@ public class ShortUrlRedirectFilter implements Filter
                                                                                                throws IOException,
                                                                                                    ServletException
     {
+        if ( !m_initialized )
+        {
+            lazyInit( ((HttpServletRequest)request).getSession().getServletContext() );
+        }
+        
         // Reconstruct the path (not including the host, scheme or webapp
         // context)
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -128,12 +134,16 @@ public class ShortUrlRedirectFilter implements Filter
     }
 
     /**
-     * Initializes the filter.
+     * Initializes the filter. Does nothing.
      */
     public void init( FilterConfig filterConfig ) throws ServletException
     {
+        // No-op.
+    }
+
+    private void lazyInit( ServletContext servletContext )
+    {
         // Look up the Short URL prefix
-        ServletContext servletContext = filterConfig.getServletContext();
         WikiEngine engine = WikiEngine.getInstance( servletContext, null );
         m_engine = engine;
 
@@ -155,6 +165,7 @@ public class ShortUrlRedirectFilter implements Filter
         // Add the servlet context
         m_urlPrefix = "/" + servletContext.getServletContextName() + m_urlPrefix;
         m_urlPrefixNoTrailingSlash = m_urlPrefix.substring( 0, m_urlPrefix.length() - 1 );
+        
+        m_initialized = true;
     }
-
 }

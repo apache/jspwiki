@@ -20,53 +20,48 @@
  */
 package org.apache.wiki.ui.stripes;
 
+import java.util.Properties;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockRoundtrip;
-import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.action.ViewActionBean;
 
-
-public class ShortUrlRedirectFilterTest extends TestCase
+public class ShortUrlFilterTest extends TestCase
 {
-    private MockServletContext m_servletContext = null;
+    private TestEngine m_engine = null;
 
-    public void setUp()
+    public void setUp() throws Exception
     {
-        // Configure the filter and servlet
-        MockServletContext servletContext = new MockServletContext( "test" );
-        TestEngine.initMockContext( servletContext );
-        servletContext.addFilter( ShortUrlRedirectFilter.class, "Redirect filter", null );
-
-        // Set the configured servlet context
-        m_servletContext = servletContext;
+        super.setUp();
+        Properties props = new Properties();
+        props.load( TestEngine.findTestProperties() );
+        m_engine = new TestEngine( props );
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        WikiEngine engine = WikiEngine.getInstance( m_servletContext, null );
-        engine.shutdown();
+        m_engine.shutdown();
     }
-    
+
     public void testRedirectEdit() throws Exception
     {
         // Inverse test for ShortURLConstructorTest#testEditURL1
-        MockRoundtrip trip = new MockRoundtrip( m_servletContext, "/wiki/Foo?do=Edit" );
+        MockRoundtrip trip = m_engine.guestTrip( "/wiki/Foo?do=Edit" );
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
         assertEquals( "/Edit.jsp?edit=&page=Foo", trip.getDestination() );
     }
-    
+
     public void testRedirectView() throws Exception
     {
         // Inverse test for ShortURLConstructorTest#testViewURL1
-        MockRoundtrip trip = new MockRoundtrip( m_servletContext, "/wiki/Foo" );
+        MockRoundtrip trip = m_engine.guestTrip( "/wiki/Foo" );
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
@@ -76,7 +71,7 @@ public class ShortUrlRedirectFilterTest extends TestCase
     public void testRedirectViewNoPage() throws Exception
     {
         // Inverse test for ShortURLConstructorTest#testViewURL4
-        MockRoundtrip trip = new MockRoundtrip( m_servletContext, "/wiki" );
+        MockRoundtrip trip = m_engine.guestTrip( "/wiki" );
         trip.execute();
         ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
         assertNull( bean );
@@ -85,6 +80,6 @@ public class ShortUrlRedirectFilterTest extends TestCase
 
     public static Test suite()
     {
-        return new TestSuite( ShortUrlRedirectFilterTest.class );
+        return new TestSuite( ShortUrlFilterTest.class );
     }
 }

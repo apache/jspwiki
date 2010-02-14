@@ -34,7 +34,7 @@ public class AllTests extends TestCase
         suite.addTest( HandlerInfoTest.suite() );
         suite.addTest( IsOneOfTest.suite() );
         suite.addTest( LineDelimitedTypeConverterTest.suite() );
-        suite.addTest( ShortUrlRedirectFilterTest.suite() );
+        suite.addTest( ShortUrlFilterTest.suite() );
         suite.addTest( SpamInterceptorTest.suite() );
 
         return suite;
