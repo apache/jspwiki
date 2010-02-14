@@ -23,6 +23,7 @@ package org.apache.wiki.ui.stripes;
 import java.util.Collection;
 import java.util.Locale;
 
+import net.sourceforge.stripes.config.Configuration;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.TypeConverter;
@@ -62,8 +63,8 @@ public class AdminBeanTypeConverter implements TypeConverter<AdminBean>
      */
     public AdminBean convert( String beanId, Class<? extends AdminBean> targetType, Collection<ValidationError> errors )
     {
-        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
-        WikiEngine engine = config.getEngine();
+        Configuration config = StripesFilter.getConfiguration();
+        WikiEngine engine = WikiEngine.getInstance( config.getServletContext(), null );
         AdminBeanManager mgr = engine.getAdminBeanManager();
         AdminBean bean = mgr.findBean( beanId );
 

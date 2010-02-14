@@ -23,16 +23,17 @@ package org.apache.wiki.ui.stripes;
 import java.util.Collection;
 import java.util.Locale;
 
+import net.sourceforge.stripes.config.Configuration;
+import net.sourceforge.stripes.controller.StripesFilter;
+import net.sourceforge.stripes.validation.LocalizableError;
+import net.sourceforge.stripes.validation.TypeConverter;
+import net.sourceforge.stripes.validation.ValidationError;
+
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
-
-import net.sourceforge.stripes.controller.StripesFilter;
-import net.sourceforge.stripes.validation.LocalizableError;
-import net.sourceforge.stripes.validation.TypeConverter;
-import net.sourceforge.stripes.validation.ValidationError;
 
 
 /**
@@ -67,8 +68,8 @@ public class GroupTypeConverter implements TypeConverter<Group>
      */
     public Group convert( String groupName, Class<? extends Group> targetType, Collection<ValidationError> errors )
     {
-        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
-        WikiEngine engine = config.getEngine();
+        Configuration config = StripesFilter.getConfiguration();
+        WikiEngine engine = WikiEngine.getInstance( config.getServletContext(), null );
         GroupManager mgr = engine.getGroupManager();
         Group group = null;
         try

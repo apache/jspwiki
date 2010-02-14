@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Locale;
 
+import net.sourceforge.stripes.config.Configuration;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.validation.LocalizableError;
 import net.sourceforge.stripes.validation.SimpleError;
@@ -70,8 +71,8 @@ public class WikiPageTypeConverter implements TypeConverter<WikiPage>
      */
     public WikiPage convert( String pageName, Class<? extends WikiPage> targetType, Collection<ValidationError> errors )
     {
-        WikiRuntimeConfiguration config = (WikiRuntimeConfiguration) StripesFilter.getConfiguration();
-        WikiEngine engine = config.getEngine();
+        Configuration config = StripesFilter.getConfiguration();
+        WikiEngine engine = WikiEngine.getInstance( config.getServletContext(), null );
         WikiPage page = null;
         
         // Is this a special page?
