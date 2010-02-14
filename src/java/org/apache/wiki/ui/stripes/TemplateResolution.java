@@ -42,7 +42,7 @@ public class TemplateResolution extends OnwardResolution<TemplateResolution>
         String path = templates.getTemplateResources().get( getPath() );
         if( path == null )
         {
-            path = "/templates/default/" + path;
+            path = "/templates/default/" + getPath();
         }
         setPath( path );
 
