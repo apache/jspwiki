@@ -20,6 +20,7 @@
  */
 package org.apache.wiki;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
@@ -36,7 +37,6 @@ import junit.framework.TestSuite;
 import net.sourceforge.stripes.mock.MockFilterChain;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
-import net.sourceforge.stripes.mock.MockServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wiki.api.WikiException;
@@ -347,15 +347,18 @@ public class WikiSessionTest extends TestCase
      * @throws ServletException
      * @throws IOException
      */
-    private static void runSecurityFilter(WikiEngine engine, HttpServletRequest request) throws ServletException, IOException
+    private static void runSecurityFilter(TestEngine engine, HttpServletRequest request) throws ServletException, IOException
     {
-        // Create a mock servlet context and stash the wiki engine in it
-        MockServletContext servletCtx = new MockServletContext( "JSPWiki" );
-        servletCtx.setAttribute( "org.apache.wiki.WikiEngine", engine );
-        
         // Init the mock filter configuration
-        MockFilterChain chain = TestEngine.initMockContext( servletCtx );
-        chain.doFilter( request, new MockHttpServletResponse() );
+        MockFilterChain chain = engine.getFilterChain();
+        try
+        {
+            chain.doFilter( request, new MockHttpServletResponse() );
+        }
+        catch ( FileNotFoundException e )
+        {
+            // We expect our MockFilter to throw this. No big deal.
+        }
     }
 
     public static Test suite() 

@@ -31,13 +31,13 @@ import java.util.Map;
 
 import javax.servlet.jsp.el.ELException;
 
+import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.HandlesEvent;
 import net.sourceforge.stripes.util.bean.EvaluationException;
 import net.sourceforge.stripes.util.bean.PropertyExpression;
 import net.sourceforge.stripes.util.bean.PropertyExpressionEvaluation;
 
-import org.apache.wiki.action.WikiActionBean;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.tags.SpamProtectTag;
@@ -52,9 +52,9 @@ import org.apache.wiki.tags.SpamProtectTag;
  */
 public class HandlerInfo
 {
-    private static final Map<Class<? extends WikiActionBean>, Map<Method, HandlerInfo>> CACHED_INFO = new HashMap<Class<? extends WikiActionBean>, Map<Method, HandlerInfo>>();
+    private static final Map<Class<? extends ActionBean>, Map<Method, HandlerInfo>> CACHED_INFO = new HashMap<Class<? extends ActionBean>, Map<Method, HandlerInfo>>();
 
-    private final Class<? extends WikiActionBean> m_beanClass;
+    private final Class<? extends ActionBean> m_beanClass;
 
     private final Method m_handlerMethod;
 
@@ -78,7 +78,7 @@ public class HandlerInfo
 
     /**
      * Private constructor that identifies relevant Permission and wiki request
-     * context information for a supplied WikiActionBean's event method. The
+     * context information for a supplied ActionBean's event method. The
      * supplied event method must have previously been determined to have a
      * {@link HandlesEvent} annotation. This constructor also looks for a
      * {@link HandlerPermission} annotation to determine the correct Permission
@@ -94,7 +94,7 @@ public class HandlerInfo
      * @param method the method that denotes the event handler
      * @param eventHandler the name of the event the method handles
      */
-    private HandlerInfo( Class<? extends WikiActionBean> beanClass, Method method, String eventHandler )
+    private HandlerInfo( Class<? extends ActionBean> beanClass, Method method, String eventHandler )
     {
         // Determine the permission annotated by @HandlerPermission (if
         // supplied)
@@ -195,14 +195,14 @@ public class HandlerInfo
 
     /**
      * Returns the HandlerInfo object associated with the default Stripes event
-     * handler method for a supplied class. All Stripes ActionBeans (and JSPWiki
-     * WikiActionBeans, by definition) must contain a method with the
-     * {@link net.sourceforge.stripes.action.DefaultHandler} annotation.
+     * handler method for a supplied class. All Stripes ActionBeans must contain
+     * a method with the {@link net.sourceforge.stripes.action.DefaultHandler}
+     * annotation.
      * 
      * @param beanClass the ActionBean subclass to inspect
      * @return the event info object for the default handler method
      */
-    public static final HandlerInfo getDefaultHandlerInfo( Class<? extends WikiActionBean> beanClass )
+    public static final HandlerInfo getDefaultHandlerInfo( Class<? extends ActionBean> beanClass )
     {
         Map<Method, HandlerInfo> eventInfoCollection = CACHED_INFO.get( beanClass );
         if( eventInfoCollection == null )
@@ -224,15 +224,15 @@ public class HandlerInfo
     }
 
     /**
-     * Looks up and returns the HandlerInfo for a supplied WikiActionBean class
-     * and event handler name. The supplied WikiActionBean class must contain a
+     * Looks up and returns the HandlerInfo for a supplied ActionBean class
+     * and event handler name. The supplied ActionBean class must contain a
      * Stripes event handler method whose {@link HandlesEvent} annotation value
      * matches the <code>eventHandler</code> parameter value.
      * 
      * @param eventHandler the Stripes ActionBean method to inspect
      * @return the event info object for the handler method
      */
-    public static final HandlerInfo getHandlerInfo( Class<? extends WikiActionBean> beanClass, String eventHandler )
+    public static final HandlerInfo getHandlerInfo( Class<? extends ActionBean> beanClass, String eventHandler )
     {
         Collection<HandlerInfo> handlerInfos = getHandlerInfoCollection( beanClass ).values();
         for( HandlerInfo handlerInfo : handlerInfos )
@@ -253,7 +253,7 @@ public class HandlerInfo
      * @param beanClass the ActionBean subclass to inspect
      * @return the map
      */
-    public static final Map<Method, HandlerInfo> getHandlerInfoCollection( Class<? extends WikiActionBean> beanClass )
+    public static final Map<Method, HandlerInfo> getHandlerInfoCollection( Class<? extends ActionBean> beanClass )
     {
         // If we've already figured out the method info, return the cached Map
         Map<Method, HandlerInfo> eventInfoCollection = CACHED_INFO.get( beanClass );
@@ -283,12 +283,12 @@ public class HandlerInfo
     }
 
     /**
-     * Returns the WikiActionBean class that is the parent of the event method
+     * Returns the ActionBean class that is the parent of the event method
      * used to instantiate the HandlerInfo object.
      * 
-     * @return the WikiActionBean class
+     * @return the ActionBean class
      */
-    public Class<? extends WikiActionBean> getActionBeanClass()
+    public Class<? extends ActionBean> getActionBeanClass()
     {
         return m_beanClass;
     }
@@ -322,7 +322,7 @@ public class HandlerInfo
      * the event handler method contains an additional
      * {@link WikiRequestContext} annotation, the annotation value will be used.
      * Otherwise, a default wiki request context will be returned, based on the
-     * WikiActionBean's class name plus the event name, separated by ".".
+     * ActionBean's class name plus the event name, separated by ".".
      * </p>
      * <p>
      * For example, consider the two event handler methods in FooActionBean
@@ -330,7 +330,7 @@ public class HandlerInfo
      * </p>
      * 
      * <pre>
-     * public class FooActionBean extends WikiActionBean
+     * public class FooActionBean extends ActionBean
      * {
      *     &#064;WikiRequestContext(&quot;view&quot;)
      *     &#064;HandlesEvent(&quot;view&quot;)

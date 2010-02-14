@@ -22,21 +22,27 @@
 package org.apache.wiki.action;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
+import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.config.Configuration;
+import net.sourceforge.stripes.controller.ActionResolver;
+import net.sourceforge.stripes.controller.AnnotatedClassActionResolver;
+import net.sourceforge.stripes.controller.StripesFilter;
+import net.sourceforge.stripes.controller.UrlBindingFactory;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpServletResponse;
 import net.sourceforge.stripes.mock.MockHttpSession;
-import net.sourceforge.stripes.util.ResolverUtil;
 
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiProvider;
@@ -80,15 +86,6 @@ public final class WikiContextFactory
      * WikiInterceptor.
      */
     public static final String ATTR_WIKISESSION = "wikiSession";
-
-    /** Default list of packages to search for WikiActionBean implementations. */
-    public static final String DEFAULT_ACTIONBEAN_PACKAGES = "org.apache.wiki.action";
-
-    /**
-     * Property in jspwiki.properties that specifies packages to search for
-     * WikiActionBean implementations.
-     */
-    public static final String PROPS_ACTIONBEAN_PACKAGES = "jspwiki.actionBean.packages";
 
     private static final Logger log = LoggerFactory.getLogger( WikiContextFactory.class );
 
@@ -137,6 +134,8 @@ public final class WikiContextFactory
 
     private String m_mockContextPath;
 
+    private boolean m_contextMap_inited = false;
+
    /** Maps (pre-3.0) request contexts map to WikiActionBeans. */
     private final Map<String, HandlerInfo> m_contextMap = new HashMap<String, HandlerInfo>();
 
@@ -153,15 +152,9 @@ public final class WikiContextFactory
         super();
         m_engine = engine;
 
-        initRequestContextMap( properties );
-
-
         // Set the path prefix for constructing synthetic Stripes mock requests;
         // trailing slash is removed.
         m_mockContextPath = StripesURLConstructor.getContextPath( engine );
-
-        // TODO: make packages to search in ActionBeanResolver configurable
-        // (currently hard-coded)
     }
 
     /**
@@ -176,6 +169,10 @@ public final class WikiContextFactory
      */
     public HandlerInfo findEventHandler( String requestContext )
     {
+        if ( !m_contextMap_inited )
+        {
+            initRequestContextMap();
+        }
         HandlerInfo handler = m_contextMap.get( requestContext );
         if( handler == null )
         {
@@ -246,6 +243,11 @@ public final class WikiContextFactory
      */
     public WikiActionBeanContext newViewContext( HttpServletRequest request, HttpServletResponse response, WikiPage page )
     {
+        if ( !m_contextMap_inited )
+        {
+            initRequestContextMap();
+        }
+
         // Create a new "view" WikiActionBeanContext, and swallow any exceptions
         WikiActionBeanContext ctx = null;
         try
@@ -276,55 +278,47 @@ public final class WikiContextFactory
     }
     
     /**
-     * Searches a set of named packages for WikiActionBean implementations, and
-     * returns any it finds.
-     * 
-     * @param beanPackages the packages to search on the current classpath,
-     *            separated by commas
-     * @return the discovered classes
-     */
-    private Set<Class<? extends WikiActionBean>> findBeanClasses( String[] beanPackages )
-    {
-        ResolverUtil<WikiActionBean> resolver = new ResolverUtil<WikiActionBean>();
-        resolver.findImplementations( WikiActionBean.class, beanPackages );
-        return resolver.getClasses();
-    }
-
-    /**
      * Initializes the internal map that matches wiki request contexts with
-     * HandlerInfo objects.
-     * 
-     * @param properties
+     * HandlerInfo objects. The internal map is lazily inited, because it
+     * <em>must</em> happen after the StripesFilter initializes.
      */
-    private void initRequestContextMap( Properties properties )
+    private void initRequestContextMap()
     {
-        // Look up all classes that are WikiActionBeans.
-        String beanPackagesProp = properties.getProperty( PROPS_ACTIONBEAN_PACKAGES, DEFAULT_ACTIONBEAN_PACKAGES ).trim();
-        String[] beanPackages = beanPackagesProp.split( "," );
-        Set<Class<? extends WikiActionBean>> beanClasses = findBeanClasses( beanPackages );
-
-        // Stash the contexts and corresponding classes into a Map.
-        for( Class<? extends WikiActionBean> beanClass : beanClasses )
+        Configuration stripesConfig = StripesFilter.getConfiguration();
+        if ( stripesConfig == null )
         {
-            Map<Method, HandlerInfo> handlerMethods = HandlerInfo.getHandlerInfoCollection( beanClass );
-            for( HandlerInfo handler : handlerMethods.values() )
+            throw new InternalWikiException( "Could not obtain Stripes configuration. FATAL." );
+        }
+        ActionResolver resolver = stripesConfig.getActionResolver();
+        if ( resolver instanceof AnnotatedClassActionResolver )
+        {
+            UrlBindingFactory urlBindings = ((AnnotatedClassActionResolver)resolver).getUrlBindingFactory();
+            Collection<Class<? extends ActionBean>> beanClasses = urlBindings.getActionBeanClasses();
+
+            // Stash the contexts and corresponding classes into a Map.
+            for( Class<? extends ActionBean> beanClass : beanClasses )
             {
-                String requestContext = handler.getRequestContext();
-                if( m_contextMap.containsKey( requestContext ) )
+                Map<Method, HandlerInfo> handlerMethods = HandlerInfo.getHandlerInfoCollection( beanClass );
+                for( HandlerInfo handler : handlerMethods.values() )
                 {
-                    HandlerInfo duplicateHandler = m_contextMap.get( requestContext );
-                    log.error( "Bean class " + beanClass.getCanonicalName() + " contains @WikiRequestContext annotation '"
-                               + requestContext + "' that duplicates one already declared for "
-                               + duplicateHandler.getActionBeanClass() );
-                }
-                else
-                {
-                    m_contextMap.put( requestContext, handler );
-                    log.debug( "Discovered request context '" + requestContext + "' for WikiActionBean="
-                               + beanClass.getCanonicalName() + ",event=" + handler.getEventName() );
+                    String requestContext = handler.getRequestContext();
+                    if( m_contextMap.containsKey( requestContext ) )
+                    {
+                        HandlerInfo duplicateHandler = m_contextMap.get( requestContext );
+                        log.error( "Bean class " + beanClass.getCanonicalName() + " contains @WikiRequestContext annotation '"
+                                   + requestContext + "' that duplicates one already declared for "
+                                   + duplicateHandler.getActionBeanClass() );
+                    }
+                    else
+                    {
+                        m_contextMap.put( requestContext, handler );
+                        log.debug( "Discovered request context '" + requestContext + "' for WikiActionBean="
+                                   + beanClass.getCanonicalName() + ",event=" + handler.getEventName() );
+                    }
                 }
             }
         }
+        m_contextMap_inited = true;
     }
 
 

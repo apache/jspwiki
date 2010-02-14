@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sourceforge.stripes.action.UrlBinding;
+import net.sourceforge.stripes.config.BootstrapPropertyResolver;
+import net.sourceforge.stripes.controller.AnnotatedClassActionResolver;
 import net.sourceforge.stripes.controller.DynamicMappingFilter;
 import net.sourceforge.stripes.controller.StripesFilter;
 import net.sourceforge.stripes.mock.*;
@@ -54,6 +56,7 @@ import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.tags.SpamProtectTag;
+import org.apache.wiki.ui.stripes.ShortUrlFilter;
 import org.apache.wiki.ui.stripes.SpamInterceptor;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -141,9 +144,9 @@ public class TestEngine extends WikiEngine
     public TestEngine( Properties props )
         throws WikiException
     {
-        super( new MockServletContext( "test" ), "test", cleanTestProps( props ) );
+        super( configureServletContext( new MockServletContext( "TestEngine" ) ), "test", cleanTestProps( props ) );
         
-        // Stash the WikiEngine in the servlet context
+        // Configure and stash the WikiEngine in the servlet context
         ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
     }
@@ -156,7 +159,7 @@ public class TestEngine extends WikiEngine
     public MockHttpServletRequest newHttpRequest()
     {
         UrlBinding binding = ViewActionBean.class.getAnnotation( UrlBinding.class );
-        String url = binding == null ? "/Wiki.action" : binding.value();
+        String url = binding == null ? "/Wiki.jsp" : binding.value();
         return newHttpRequest( url );
     }
 
@@ -415,6 +418,21 @@ public class TestEngine extends WikiEngine
         WikiContext context = this.getWikiContextFactory().newViewContext( request, null, page );
         saveText( context, content );
     }
+    
+    /**
+     * Shuts down the WikiEngine in an orderly fashion. All of the filters
+     * in MockServletContext are destroyed. In particular, StripesFilter's
+     * configuration stash is cleaned up.
+     */
+    public void shutdown()
+    {
+        MockServletContext servletContext = (MockServletContext)getServletContext();
+        for ( Filter filter : servletContext.getFilters() )
+        {
+            filter.destroy();
+        }
+        super.shutdown();
+    }
 
     public static void trace()
     {
@@ -454,7 +472,7 @@ public class TestEngine extends WikiEngine
         MockServletContext servletContext = (MockServletContext)getServletContext();
         if ( servletContext.getFilters().size() == 0 )
         {
-            initMockContext( servletContext );
+            getFilterChain();
         }
         return new MockRoundtrip( servletContext, beanClass );
     }
@@ -473,7 +491,7 @@ public class TestEngine extends WikiEngine
         MockServletContext servletContext = (MockServletContext)getServletContext();
         if ( servletContext.getFilters().size() == 0 )
         {
-            initMockContext( servletContext );
+            getFilterChain();
         }
         return new MockRoundtrip( servletContext, url );
     }
@@ -494,7 +512,7 @@ public class TestEngine extends WikiEngine
         MockServletContext servletContext = (MockServletContext)getServletContext();
         if ( servletContext.getFilters().size() == 0 )
         {
-            initMockContext( servletContext );
+            getFilterChain();
         }
         MockRoundtrip trip = new MockRoundtrip( servletContext, beanClass );
         WikiSession session = WikiSession.getWikiSession( this, trip.getRequest() );
@@ -503,24 +521,13 @@ public class TestEngine extends WikiEngine
     }
     
     /**
-     * Initializes a supplied MockServletContext with the Stripes filters and
-     * dummy servlet added.
+     * Initializes a MockFilterChain for a supplied MockServletContext.
      * @param servletContext the mock context
      * @return a configured MockFilterChain appropriate for the servlet context
      */
-    public static MockFilterChain initMockContext( MockServletContext servletContext )
+    public MockFilterChain getFilterChain()
     {
-        // Configure the StripesFilter
-        Map<String,String> filterParams = new HashMap<String,String>();
-        filterParams.put( "ActionResolver.Packages", "org.apache.wiki.action" );
-        filterParams.put( "Extension.Packages", "org.apache.wiki.ui.stripes" );
-        filterParams.put( "ExceptionHandler.Class", "org.apache.wiki.ui.stripes.WikiExceptionHandler" );
-        servletContext.addFilter( StripesFilter.class, "StripesFilter", filterParams );
-        
-        // Configure the DynamicMappingFilter and dummy servlet
-        filterParams = new HashMap<String,String>();
-        servletContext.addFilter( DynamicMappingFilter.class, "DynamicMappingFilter", filterParams );
-        servletContext.setServlet( MockServlet.class, "MockServlet", new HashMap<String,String>() );
+        MockServletContext servletContext = (MockServletContext)getServletContext();
         
         // Create FilterConfig
         MockFilterConfig filterConfig = new MockFilterConfig();
@@ -536,6 +543,36 @@ public class TestEngine extends WikiEngine
         }
         chain.setServlet( new MockServlet() );
         return chain;
+    }
+    
+    /**
+     * Initializes a supplied MockServletContext with the Stripes filters and
+     * dummy servlet added.
+     * @param servletContext the mock context
+     * @return a configured MockFilterChain appropriate for the servlet context
+     */
+    public static MockServletContext configureServletContext( MockServletContext servletContext )
+    {
+        // Create the ServletContext and add init params
+        Map<String,String> initParams = new HashMap<String,String>();
+        initParams.put( AnnotatedClassActionResolver.PACKAGES, "org.apache.wiki.action" );
+        servletContext.addAllInitParameters( initParams );
+        
+        // Configure the ShortURLFilter
+        servletContext.addFilter( ShortUrlFilter.class, "ShortURLFilter", null );
+        
+        // Configure the StripesFilter
+        Map<String,String> filterParams = new HashMap<String,String>();
+        filterParams.put( BootstrapPropertyResolver.PACKAGES, "org.apache.wiki.ui.stripes" );
+        filterParams.put( "ExceptionHandler.Class", "org.apache.wiki.ui.stripes.WikiExceptionHandler" );
+        servletContext.addFilter( StripesFilter.class, "StripesFilter", filterParams );
+        
+        // Configure the DynamicMappingFilter and dummy servlet
+        filterParams = new HashMap<String,String>();
+        servletContext.addFilter( DynamicMappingFilter.class, "DynamicMappingFilter", filterParams );
+        servletContext.setServlet( MockServlet.class, "MockServlet", new HashMap<String,String>() );
+        
+        return servletContext;
     }
 
     /**
@@ -567,6 +604,9 @@ public class TestEngine extends WikiEngine
             m_config = config;
         }
 
+        /**
+         * Must throw a FileNotFoundException to force DynamicMappingFilter to resolve the ActionBean.
+         */
         public void service( ServletRequest request, ServletResponse response ) throws ServletException, IOException
         {
             throw new FileNotFoundException( "File not found: required for DynamicMappingFilter." );

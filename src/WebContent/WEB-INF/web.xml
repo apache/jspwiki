@@ -39,6 +39,13 @@
      <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
      <param-value>templates.default</param-value>
    </context-param>
+   <!-- Look for ActionBean implementations in the JSPWiki "action" package.
+        If you have custom WikiActionBeans you want JSPWiki to use, specify them
+        here (comma-delimited). -->
+   <context-param>
+      <param-name>ActionResolver.Packages</param-name>
+      <param-value>org.apache.wiki.action</param-value>
+   </context-param>
 
    <!-- Configuration of the Stripes Filter. The Stripes MVC framework provides
          essential request routing, form processing and type conversion services
@@ -50,13 +57,6 @@
       <display-name>Stripes Filter</display-name>
       <filter-name>StripesFilter</filter-name>
       <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
-      <!-- Look for ActionBean implementations in the JSPWiki "action" package.
-           If you have custom WikiActionBeans you want JSPWiki to use, specify them
-           here (comma-delimited). -->
-      <init-param>
-         <param-name>ActionResolver.Packages</param-name>
-         <param-value>org.apache.wiki.action</param-value>
-      </init-param>
       <!-- Tell Stripes to auto-discover custom extensions from the "ui.stripes"
            package. Extensions JSPWiki uses includes WikiActionBeanContext,
            WikiRuntimeConfiguration, WikiInterceptor and the various TypeConverter
@@ -83,7 +83,7 @@
         <param-name>MultipartWrapper.Class</param-name>
         <param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
       </init-param>
-      <!-- Exception handler classes -->
+      <!-- Exception handler -->
       <init-param>
         <param-name>ExceptionHandler.Class</param-name>
         <param-value>org.apache.wiki.ui.stripes.WikiExceptionHandler</param-value>

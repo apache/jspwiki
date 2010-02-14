@@ -27,9 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.wiki.action.WikiContextFactory;
-
 import net.sourceforge.stripes.action.ActionBean;
+import net.sourceforge.stripes.controller.AnnotatedClassActionResolver;
 import net.sourceforge.stripes.util.ResolverUtil;
 
 
@@ -147,8 +146,7 @@ public class JspMigrator
     protected static Set<Class<? extends ActionBean>> findBeanClasses()
     {
         // Find all ActionBean implementations on the classpath
-        String beanPackagesProp = System.getProperty( WikiContextFactory.PROPS_ACTIONBEAN_PACKAGES,
-                                                      WikiContextFactory.DEFAULT_ACTIONBEAN_PACKAGES ).trim();
+        String beanPackagesProp = System.getProperty( AnnotatedClassActionResolver.PACKAGES, "org.apache.wiki.action" ).trim();
         String[] beanPackages = beanPackagesProp.split( "," );
         ResolverUtil<ActionBean> resolver = new ResolverUtil<ActionBean>();
         resolver.findImplementations( ActionBean.class, beanPackages );
