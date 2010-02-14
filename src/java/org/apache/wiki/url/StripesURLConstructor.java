@@ -34,15 +34,15 @@ import net.sourceforge.stripes.util.UrlBuilder;
 import net.sourceforge.stripes.util.bean.ParseException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.action.GroupActionBean;
+import org.apache.wiki.action.AbstractPageActionBean;
 import org.apache.wiki.action.AttachmentActionBean;
-import org.apache.wiki.action.WikiActionBean;
+import org.apache.wiki.action.GroupActionBean;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
 import org.apache.wiki.ui.stripes.HandlerInfo;
-import org.apache.wiki.ui.stripes.WikiRuntimeConfiguration;
 
 
 /**
@@ -65,13 +65,10 @@ public class StripesURLConstructor extends DefaultURLConstructor
      */
     private String m_pathPrefix;
 
-    /**
-     * Keeps references to Stripes UrlBindingFactory; lazily initialized.
-     */
-    private UrlBindingFactory m_urlBindingFactory = null;
-    
     private WikiEngine m_engine;
 
+    private UrlBindingFactory m_urlBindingFactory = null;
+    
     /**
      * Contains the base URL of the JSPWiki Web application before the
      * servlet context, with trailing slash removed.
@@ -97,15 +94,10 @@ public class StripesURLConstructor extends DefaultURLConstructor
     @Override
     public String makeURL( String context, String name, boolean absolute, String parameters )
     {
-        // Lazily initialize the binding factory
+        // Lazily obtain the binding factory reference
         if ( m_urlBindingFactory == null )
         {
             m_urlBindingFactory = getUrlBindingFactory();
-            if ( m_urlBindingFactory == null )
-            {
-                // If no UrlBindingFactory, bail
-                throw new RuntimeException( "Could not retrieve the Stripes UrlBindingFactory!" );
-            }
         }
         
         // Get the path prefix
@@ -128,7 +120,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
         else
         {
             HandlerInfo handler = m_engine.getWikiContextFactory().findEventHandler( context );
-            Class<? extends WikiActionBean> beanClass = handler.getActionBeanClass();
+            Class<? extends ActionBean> beanClass = handler.getActionBeanClass();
             UrlBinding mapping = m_urlBindingFactory.getBindingPrototype(beanClass);
             baseUrl = mapping == null ? null : mapping.getPath();
             urlBuilder = new UrlBuilder( null, baseUrl, false );
@@ -149,7 +141,7 @@ public class StripesURLConstructor extends DefaultURLConstructor
                         urlBuilder.addParameter( "attachment", name.substring( slashAt + 1,  name.length() ) );
                     }
                 }
-                else if( WikiContext.class.isAssignableFrom( beanClass ) )
+                else if( AbstractPageActionBean.class.isAssignableFrom( beanClass ) )
                 {
                     urlBuilder.addParameter( "page", name );
                 }
@@ -224,16 +216,19 @@ public class StripesURLConstructor extends DefaultURLConstructor
     private UrlBindingFactory getUrlBindingFactory()
     {
         // Load the Stripes UrlBindingFactory
-        Configuration stripesConfig = WikiRuntimeConfiguration.getConfiguration( m_engine.getServletContext() );
-        if( stripesConfig != null )
+        Configuration stripesConfig;
+        stripesConfig = StripesFilter.getConfiguration();
+        if ( stripesConfig == null )
         {
-            ActionResolver resolver = stripesConfig.getActionResolver();
-            if( resolver instanceof AnnotatedClassActionResolver )
-            {
-                return ((AnnotatedClassActionResolver) resolver).getUrlBindingFactory();
-            }
+            throw new InternalWikiException( "No Stripes configuration found!" );
         }
-        return null;
+            
+        ActionResolver resolver = stripesConfig.getActionResolver();
+        if( resolver instanceof AnnotatedClassActionResolver )
+        {
+            return ((AnnotatedClassActionResolver) resolver).getUrlBindingFactory();
+        }
+        throw new InternalWikiException( "Stripes ActionResolver did not have an URLBindingFactory!" );
     }
 
     /**
@@ -327,5 +322,4 @@ public class StripesURLConstructor extends DefaultURLConstructor
             }
         };
     }
-
 }

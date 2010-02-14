@@ -81,6 +81,7 @@ import org.apache.wiki.ui.admin.AdminBeanManager;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiInterceptor;
+import org.apache.wiki.url.StripesURLConstructor;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.*;
 import org.apache.wiki.workflow.*;
@@ -240,7 +241,7 @@ public class WikiEngine
     private ProgressManager  m_progressManager;
 
     /** Constructs URLs */
-    private URLConstructor   m_urlConstructor;
+    private StripesURLConstructor   m_urlConstructor;
 
     /** Generates RSS feed when requested. */
     private RSSGenerator     m_rssGenerator;
@@ -562,7 +563,7 @@ public class WikiEngine
             
             Class<?> urlclass = ClassUtil.findClass( "org.apache.wiki.url",
                     TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
-            m_urlConstructor = (URLConstructor) urlclass.newInstance();
+            m_urlConstructor = new StripesURLConstructor();
             m_urlConstructor.initialize( this, props );
 
             m_contentManager    = (ContentManager)ClassUtil.getMappedObject(ContentManager.class.getName(), this );
@@ -605,7 +606,7 @@ public class WikiEngine
             m_adminBeanManager = (AdminBeanManager)
                 ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
 
-            // Since we want to use a page filters initilize() method
+            // Since we want to use a page filters initialize() method
             // as a engine startup listener where we can initialize global event listeners,
             // it must be called lastly, so that all object references in the engine
             // are availabe to the initialize() method
@@ -637,16 +638,6 @@ public class WikiEngine
         catch (ClassNotFoundException e)
         {
             log.error( "JSPWiki could not start, URLConstructor was not found, stacktrace follows: ", e );
-            throw new WikiException( e.getMessage(), e );
-        }
-        catch (InstantiationException e)
-        {
-            log.error( "JSPWiki could not start, URLConstructor could not be instantiated, stacktrace follows: ", e );
-            throw new WikiException( e.getMessage(), e );
-        }
-        catch (IllegalAccessException e)
-        {
-            log.error( "JSPWiki could not start, URLConstructor cannot be accessed, stacktrace follows: ", e );
             throw new WikiException( e.getMessage(), e );
         }
         catch( Exception e )
@@ -2299,7 +2290,7 @@ public class WikiEngine
      * @since 2.2.6
      * @return the URL constructor
      */
-    public URLConstructor getURLConstructor()
+    public StripesURLConstructor getURLConstructor()
     {
         return m_urlConstructor;
     }
