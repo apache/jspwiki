@@ -82,7 +82,6 @@ import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.ui.stripes.WikiActionBeanContext;
 import org.apache.wiki.ui.stripes.WikiInterceptor;
 import org.apache.wiki.url.StripesURLConstructor;
-import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.*;
 import org.apache.wiki.workflow.*;
 
@@ -123,9 +122,6 @@ public class WikiEngine
 
     /** If true, then the user name will be stored with the page data.*/
     public static final String PROP_STOREUSERNAME= "jspwiki.storeUserName";
-
-    /** Define the used encoding.  Currently supported are ISO-8859-1 and UTF-8 */
-    public static final String PROP_ENCODING     = "jspwiki.encoding";
 
     /** The name for the base URL to use in all references. */
     public static final String PROP_BASEURL      = "jspwiki.baseURL";
@@ -175,9 +171,6 @@ public class WikiEngine
 
     /** Should the user info be saved with the page data as well? */
     private boolean          m_saveUserInfo = true;
-
-    /** If true, uses UTF8 encoding for all data */
-    private boolean          m_useUTF8      = true;
 
     /** Stores the base URL. */
     private String           m_baseURL;
@@ -519,7 +512,6 @@ public class WikiEngine
                                                         PROP_STOREUSERNAME,
                                                         m_saveUserInfo );
 
-        m_useUTF8        = "UTF-8".equals( TextUtil.getStringProperty( props, PROP_ENCODING, "ISO-8859-1" ) );
         m_baseURL = TextUtil.getStringProperty( props, PROP_BASEURL, "" );
         if( !m_baseURL.endsWith( "/" ) )
         {
@@ -547,11 +539,13 @@ public class WikiEngine
         //        of a better way to do the startup-sequence.
         try
         {
+            //  Initialize the WikiContextFactory -- this MUST be done after setting the baseURL
+            m_urlConstructor = new StripesURLConstructor();
+            m_urlConstructor.initialize( this, props );
+            m_contextFactory  = new WikiContextFactory( this, props );
+
             // Initialize the JMX timer MBean
             WikiBackgroundThread.registerTimer( this );
-
-            //  Initialize the WikiContextFactory -- this MUST be done after setting the baseURL
-            m_contextFactory  = new WikiContextFactory( this, props );
             
             /**
              *  We treat the specialPageResolver in a slightly different way
@@ -561,11 +555,6 @@ public class WikiEngine
             m_nameResolvers.add( m_specialPageResolver );
             m_nameResolvers.add( new EnglishPluralsPageNameResolver( this ) );
             
-            Class<?> urlclass = ClassUtil.findClass( "org.apache.wiki.url",
-                    TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
-            m_urlConstructor = new StripesURLConstructor();
-            m_urlConstructor.initialize( this, props );
-
             m_contentManager    = (ContentManager)ClassUtil.getMappedObject(ContentManager.class.getName(), this );
             m_pageManager       = (PageManager)ClassUtil.getMappedObject(PageManager.class.getName(), this, props );
             m_pluginManager     = (PluginManager)ClassUtil.getMappedObject(PluginManager.class.getName(), this, props );
@@ -634,11 +623,6 @@ public class WikiEngine
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.error( "Failed to start managers, stacktrace follows: ", e );
             throw new WikiException( "Failed to start managers: "+e.getMessage(), e );
-        }
-        catch (ClassNotFoundException e)
-        {
-            log.error( "JSPWiki could not start, URLConstructor was not found, stacktrace follows: ", e );
-            throw new WikiException( e.getMessage(), e );
         }
         catch( Exception e )
         {
@@ -1271,7 +1255,7 @@ public class WikiEngine
 
     /**
      *  Turns a WikiName into something that can be
-     *  called through using an URL.
+     *  called through using an URL, encoded in UTF-8.
      *
      *  @since 1.4.1
      *  @param pagename A name.  Can be actually any string.
@@ -1282,19 +1266,18 @@ public class WikiEngine
     {
         try
         {
-            return URLEncoder.encode( pagename, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
+            return URLEncoder.encode( pagename, "UTF-8" );
         }
         catch( UnsupportedEncodingException e )
         {
-            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
+            throw new InternalWikiException("UTF-8 not a supported encoding!?!  Your platform is b0rked.");
         }
     }
 
     /**
-     *  Decodes a URL-encoded request back to regular life.  This properly heeds
-     *  the encoding as defined in the settings file.
+     *  Decodes a UTF-8 URL-encoded request back to regular life.
      *
-     *  @param pagerequest The URL-encoded string to decode
+     *  @param pagerequest The UTF-8 URLencoded string to decode
      *  @return A decoded string.
      *  @see #encodeName(String)
      */
@@ -1302,11 +1285,11 @@ public class WikiEngine
     {
         try
         {
-            return URLDecoder.decode( pagerequest, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
+            return URLDecoder.decode( pagerequest, "UTF-8" );
         }
         catch( UnsupportedEncodingException e )
         {
-            throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.");
+            throw new InternalWikiException("UTF-8 not a supported encoding!?!  Your platform is b0rked.");
         }
     }
 
@@ -1315,14 +1298,11 @@ public class WikiEngine
      *  supposed to be using right now.
      *
      *  @since 1.5.3
-     *  @return The content encoding (either UTF-8 or ISO-8859-1).
+     *  @return Always returns {@code UTF-8}
      */
     public String getContentEncoding()
     {
-        if( m_useUTF8 )
-            return "UTF-8";
-
-        return "ISO-8859-1";
+        return "UTF-8";
     }
 
     /**

@@ -76,7 +76,7 @@ public interface URLConstructor
      *  @param context In which request context the request was made (this should
      *                 help in parsing)
      *  @param request The HTTP request that was used when coming here
-     *  @param encoding The encoding with which the request was made (UTF-8 or ISO-8859-1).
+     *  @param encoding The encoding with which the request was made (e.g., UTF-8).
      *  @return This method must return the name of the resource.
      *  @throws IOException If parsing failes
      */

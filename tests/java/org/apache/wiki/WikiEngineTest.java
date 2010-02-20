@@ -223,19 +223,9 @@ public class WikiEngineTest extends TestCase
                        data );
     }
 
-    public void testEncodeNameLatin1()
-    {
-        String name = "abc\u00e5\u00e4\u00f6";
-
-        assertEquals( "abc%E5%E4%F6",
-                      m_engine.encodeName(name) );
-    }
-
     public void testEncodeNameUTF8() throws Exception
     {
         String name = "\u0041\u2262\u0391\u002E";
-
-        props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
 
         m_engine.shutdown();
         m_engine = new TestEngine( props );

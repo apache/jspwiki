@@ -50,7 +50,6 @@ public class ExternalDiffProvider implements DiffProvider
     public static final String PROP_DIFFCOMMAND    = "jspwiki.diffCommand";
 
     private String m_diffCommand = null;
-    private String m_encoding;
 
     private static final char DIFF_ADDED_SYMBOL    = '+';
     private static final char DIFF_REMOVED_SYMBOL  = '-';
@@ -95,8 +94,6 @@ public class ExternalDiffProvider implements DiffProvider
         {
             throw new NoRequiredPropertyException( "ExternalDiffProvider missing required property", PROP_DIFFCOMMAND );
         }
-
-        m_encoding = engine.getContentEncoding();
     }
 
 
@@ -112,8 +109,8 @@ public class ExternalDiffProvider implements DiffProvider
 
         try
         {
-            f1 = FileUtil.newTmpFile(p1, m_encoding);
-            f2 = FileUtil.newTmpFile(p2, m_encoding);
+            f1 = FileUtil.newTmpFile(p1, "UTF-8");
+            f2 = FileUtil.newTmpFile(p2, "UTF-8");
 
             String cmd = TextUtil.replaceString(m_diffCommand, "%s1", f1.getPath());
             cmd = TextUtil.replaceString(cmd, "%s2", f2.getPath());
@@ -121,7 +118,7 @@ public class ExternalDiffProvider implements DiffProvider
             String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
 
             // FIXME: Should this rely on the system default encoding?
-            String rawWikiDiff = new String(output.getBytes("ISO-8859-1"), m_encoding);
+            String rawWikiDiff = new String(output.getBytes("UTF-8"), "UTF-8");
 
             String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 

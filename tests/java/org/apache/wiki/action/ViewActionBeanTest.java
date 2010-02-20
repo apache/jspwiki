@@ -133,6 +133,29 @@ public class ViewActionBeanTest extends TestCase
         
         // ...and the destination should be the Wiki template JSP
         assertEquals( "/templates/default/Wiki.jsp?tab=view", trip.getDestination() );
+        
+        m_engine.deletePage( pageName );
+    }
+    
+    public void testViewScandic() throws Exception {
+        String pageName = "\u00c4itiSy\u00f6\u00d6ljy\u00e4";
+
+        // Save test page
+        m_engine.saveText( pageName, "This is a test." );
+        WikiPage page = m_engine.getPage( pageName );
+        assertNotNull("Did not save page " + pageName + "!", page);
+        
+        // Set the 'page' request parameter to the encoded page name
+        MockRoundtrip trip = m_engine.guestTrip( "/Wiki.jsp" );
+        trip.setParameter( "page", "%C3%84itiSy%C3%B6%C3%96ljy%C3%A4" );
+        trip.execute( "view" );
+
+        // ...we should automatically see the page name decoded properly
+        ViewActionBean bean = trip.getActionBean( ViewActionBean.class );
+        assertEquals( pageName, bean.getPage().getName() );
+        assertEquals( page, bean.getPage() );
+        
+        m_engine.deletePage( pageName );
     }
 
     public void testViewVersion() throws Exception {

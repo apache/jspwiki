@@ -53,7 +53,6 @@ import org.apache.wiki.content.inspect.BotTrapInspector;
 import org.apache.wiki.content.inspect.Challenge;
 import org.apache.wiki.log.Logger;
 import org.apache.wiki.log.LoggerFactory;
-import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.ProviderException;
 import org.apache.wiki.tags.SpamProtectTag;
 import org.apache.wiki.ui.stripes.ShortUrlFilter;
@@ -287,11 +286,7 @@ public class TestEngine extends WikiEngine
     protected static String mangleName( String pagename )
         throws IOException
     {
-        Properties properties = new Properties();
-        String m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING,
-                                                    AbstractFileProvider.DEFAULT_ENCODING );
-
-        pagename = TextUtil.urlEncode( pagename, m_encoding );
+        pagename = TextUtil.urlEncode( pagename, "UTF-8" );
         pagename = TextUtil.replaceString( pagename, "/", "%2F" );
         return pagename;
     }
